@@ -1,0 +1,971 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <title>XCoord v1.6 - Coordinate Extraction</title>
+    <meta content="Marc Ubaldino, David Lutz, Others, MITRE Corporation"
+      name="author">
+    <meta content="Geographic Coordinate Extractor" name="description">
+  </head>
+  <body>
+    <h1>XCoord v1.6 README</h1>
+    <p>Author: Marc. C. Ubaldino, MITRE Corporation<br>
+      Date: 2013-April<br>
+      Copyright MITRE Corporation, 2012-2013<br>
+    </p>
+    <p>XCoord is a geographic coordinate extractor.&nbsp; It finds the
+      most common coordinate patterns in free text. <br>
+    </p>
+    <p><a href="doc/api-java/index.html">Java Documentation </a>contains
+
+
+
+
+
+
+
+
+
+
+      what you need to know for development.<br>
+    </p>
+    <p>Required toolkits:&nbsp; Ant, JDK 7+, a text editor (NetBeans,
+      Eclipse, InteliJ all work).&nbsp; JDK/JRE 6 may work, but we have
+      precompiled stuff looking forward.&nbsp; Java 7 is the default<br>
+      <br>
+    </p>
+    <p>Synopsis:<br>
+      <br>
+      <span style="font-family: Courier New,Courier,monospace;">#
+        compile</span><br style="font-family: Courier
+        New,Courier,monospace;">
+      <span style="font-family: Courier New,Courier,monospace;">ant </span><br
+        style="font-family: Courier New,Courier,monospace;">
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;">## run out of
+      box tests.&nbsp; <br>
+      ant test-default</p>
+    <p style="font-family: Courier New,Courier,monospace;">#&nbsp;
+      Default tests include:<br>
+      #
+      ./etc/geocoord_regex.cfg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+      evaluate each RULE and TESTS for those rules.<br>
+      # ./test/Coord_Patterns_Truth.csv&nbsp;&nbsp;&nbsp; evaluate the
+      truth data from the GeocoderEval sub-project<br>
+      # ./test/Coord_Patterns_Truth_Text.txt is a document version of
+      the truth data, w/out true lat/lon answers<br>
+      # Please note that scoring the truth data is done in GeocoderEval.<br>
+      <br>
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;"> ant test <br>
+      &gt; file?&nbsp;&nbsp; mytestdoc.txt<br>
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;">In any case,
+      find your results in the <b>./results</b> folder.<br>
+      <br>
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;">As of Spring,
+      2013 we have only begun the use of Maven. <br>
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;">mvn install<br>
+    </p>
+    <h1><br>
+    </h1>
+    <h2>RELEASE NOTES</h2>
+    <p><b>XCoord 1.6 2013-MAR St Patrick's release</b><b><br>
+      </b></p>
+    <ul>
+      <li>MGRS date filtering for various common dates in recent time;
+        for example 03 MAR 12<br>
+      </li>
+      <li>Allowing for "dashes" as separators between lat &amp; lon,
+        where in some cases it may appear as a hemisphere sign.</li>
+      <li>Introduction of Maven <br>
+      </li>
+    </ul>
+    <p><br>
+    </p>
+    <p><b>XCoord v1.5 2013-JAN&nbsp; MLK release</b><b><br>
+      </b>Major improvements<br>
+    </p>
+    <ul>
+      <li>Support for asymmetric coordinates;&nbsp; valid lat/lon
+        formats that have varying resolution, e.g., 34:45N&nbsp;
+        44:55:10W.&nbsp;&nbsp; valid MGRS grids with typos, e.g.,&nbsp;
+        483QR 443 55 ( easting has 3 digits, northing should be
+        "550");&nbsp; Grids with line breaks or interrupting
+        whitespace,&nbsp; 483QR 44\n3 55;&nbsp;&nbsp; Grids with no
+        whitespace, but invalid easting/northing, eg.
+        483QR44355&nbsp;&nbsp; -- both 443 / 550 and 440 / 355 are
+        emitted as potentially correct interpretations</li>
+      <li>Allow for multiple interpretations of a coordinate pattern,
+        e.g., MGRS case above where easting/northing is ambiguous due to
+        typos.</li>
+      <li>Testing data included patterns from wikipedia geotagging
+        conventions for wiki pages.</li>
+      <li>Expanded test cases</li>
+      <li>Improved date filtering for DMS patterns with odd punctuation,
+        e.g. 2012-12-11 10:45:00&nbsp;&nbsp; is a time not a
+        coordinate.&nbsp; Two-digit year date/time patterns matched
+        often.</li>
+      <li>Consolidated patterns library primarily due to consideration
+        of asymmetry in resolution.&nbsp; More smarts put into place in
+        parsing/normalizing.<br>
+      </li>
+    </ul>
+    <p><br>
+    </p>
+    <p><b>XCoord v1.3, 2012-10-27 THANKSGIVING release</b></p>
+    <p>Minor improvements:<br>
+    </p>
+    <ul>
+      <li>added more DM/DMS patterns to ensure coordinates with DMS
+        symbols only and no indication of hemisphere (-,+, ENSW) are
+        detected and parsed </li>
+      <li>added such tests to Truth data; see GeocoderEval project</li>
+    </ul>
+    <p><br>
+    </p>
+    <p><b>XCoord v1.2,&nbsp; 2012-10-31&nbsp; HALLOWEEN release</b><br>
+    </p>
+    <p>Major improvements:<br>
+    </p>
+    <ul>
+      <li>Precision</li>
+      <li>Test &amp; Evaluation</li>
+      <li>Rule order -- it is preserved and is currently MGRS UTM DMS DM
+        DD<br>
+      </li>
+      <li>Fixed many rules, added others</li>
+    </ul>
+    <p><br>
+      Details<br>
+    </p>
+    <ul>
+      <li>Concepts added/adjusted (org.mitre.xcoord pkg):</li>
+      <ul>
+        <li>GeocoordPrecision -- tracks number of digits mainly in DD,
+          DM, DMS patterns, and the associated precision.</li>
+        <li>Hemisphere&nbsp; -- tracks hemisphere if it is +/-, Alpha or
+          null.</li>
+        <li>PrecisionScales -- much improved assessment of inherent
+          precision in any patter</li>
+      </ul>
+      <li>Testing added</li>
+      <ul>
+        <li>TestCase, TestScript added to capture input tests</li>
+        <li>TestUtility improved to report truth data if given, and the
+          carry both truth and test results along with output for
+          evaluation later.</li>
+      </ul>
+      <li>UTMParser hemisphere detection fixed.&nbsp; "S" was allowed to
+        be a Northern lat band, when it usually means South.</li>
+      <li>DMSOrdinate now handles all logic for DD, DM, DMS parsing and
+        calculation.&nbsp; Hemisphere parsing moved here (out of
+        PatternManager)</li>
+      <li>PatternManager --- ensure Rules order-of-appearance is
+        preserved from configuration file</li>
+      <li>GeocoordMatch -- formatting was a major concern, as with Java,
+        printing a Float or Double allows near infinite decimal places
+        (I mean a lot). Where you want 35.01,&nbsp; Java might print
+        "35.00999989082911237", but you want "35.01" the string.&nbsp; <br>
+      </li>
+      <ul>
+        <li>Use GeocoordMatch.formatLatitude() or formatLongitude() to
+          get a printable string version of the calculated lat or lon</li>
+      </ul>
+    </ul>
+    <p><br>
+    </p>
+    <h2>RULE LIBRARY</h2>
+    <p>FILE: ./etc/geocoord_regex.cfg</p>
+    <p>For reference review the XCoord DEFINES as you review
+      RULES.&nbsp; There are subtle variations in field definitions.<br>
+      For brevity sake,&nbsp; only true positive tests are
+      included.&nbsp; "FAIL" tests or true negatives are omitted.&nbsp;
+      One test case per RULE is provided to illustrate each
+      pattern.&nbsp; Sources of patterns are derived from federal
+      research projects performed by the MITRE Corporation.<br>
+    </p>
+    <p>These five families of patterns are supported:<br>
+    </p>
+    <p><a href="#MGRS">MGRS pattern</a><br>
+      <a href="#UTM">UTM pattern</a><br>
+      <a href="#DMS">DMS patterns</a><br>
+      <a href="#DM">DM patterns</a><br>
+      <a href="#DD">DD patterns</a><br>
+    </p>
+    <p>Conventions in pattern IDs:&nbsp; Each pattern is enumerated with
+      the its family; a = trailing hemisphere, b = prefix hemisphere, v
+      = variable field length, dot = use of period separator, fs =
+      fractional second variant, deg = has explicit use of degree
+      symbol, and others.<br>
+    </p>
+    <p align="center"><b>Table 1.&nbsp; Sample Listing of XCoord v1.3
+        Patterns and Example Targets for Extraction</b><b><br>
+      </b></p>
+    <table border="1" cellpadding="2" cellspacing="2" width="100%">
+      <tbody>
+        <tr>
+          <th bgcolor="#c0c0c0" valign="top">Family<br>
+          </th>
+          <th bgcolor="#c0c0c0" valign="top">Pattern ID<br>
+          </th>
+          <th bgcolor="#c0c0c0" valign="top">Example<br>
+          </th>
+        </tr>
+        <tr>
+          <td bgcolor="#990000" valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><b>MGRS pattern</b><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">MGRS<br>
+          </td>
+          <td valign="top">MGRS-01<br>
+          </td>
+          <td valign="top">
+            <pre><a name="MGRS">38SMB4611036560</a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#990000" valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><b>UTM pattern</b><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">UTM<br>
+          </td>
+          <td valign="top">UTM-01<br>
+          </td>
+          <td valign="top">
+            <pre><a name="UTM">17N 699990 3333335<br>// Zone/Latitude band + northing + easting;  Optionally with units "m"<br>// for meters and or N/E marker<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#990000" valign="top"><br>
+          </td>
+          <td valign="top"><b><br>
+            </b></td>
+          <td valign="top"><b>Degree-Minute-Second patterns</b><b><br>
+            </b></td>
+        </tr>
+        <tr>
+          <td valign="top">DMS<br>
+          </td>
+          <td valign="top">DMS-01fs-a, <br>
+            DMS-01fs-b</td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DMS">01°44'55.5"N 101°22'33.0"E<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DMS">N01°44'55.5" E101°22'33.0"<br></a><a name="DMS">// fractional second resolution, w/hash marks,</a> with hemisphere<a name="DMS"><br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DMS<br>
+          </td>
+          <td valign="top">DMS-01fs-deg<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DMS">01°44'55.5" 101°22'33.0"<br>// fractional second resolution, w/hash marks, NO hemisphere <br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DMS</td>
+          <td valign="top">DMS-01dot-a,<br>
+            DMS-01dot-b<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DMS">01.44.55N 055.44.33E<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DMS">N01.44.55 E055.44.33<br>// explicit dot separator<br></a><a name="DMS"><pre></pre></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DMS</td>
+          <td valign="top">DMS-02<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DMS">N42 18' 00" W102 24' 00"<br>// variable length fields with separators and hemisphere<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DMS</td>
+          <td valign="top">DMS-01a<br>
+            DMS-02a<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DMS">421800N 1022400W<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DMS">N421800 W1022400<br>// no field separators, D/M/S<br></a><a name="DMS"><pre></pre></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DMS</td>
+          <td valign="top">DMS-03a<br>
+            DMS-03b<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DMS">4218001234N 10224001234W<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DMS">N4218001234 W10224001234<br>// no field separators; D/M/S.ss assummed <br></a><a name="DMS"><pre></pre></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#990000" valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><b>Degree-Minute patterns</b><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM</td>
+          <td valign="top">DM-00<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">4218N-009 10224W-003<br>// obscure fractional minute notation<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM</td>
+          <td valign="top">DM-01a,<br>
+            DM-01a-dash<br>
+            DM-01a-dot<br>
+            <br>
+            <br>
+            DM-01b<br>
+            DM-01b-dash<br>
+            DM-01b-dot<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">42 18-009N 102 24-003W<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM"><meta http-equiv="content-type" content="text/html; charset=UTF-8">42-18-009N; 102-24-003W<meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM"><br>42.18.009N 102.24.003W</a><a name="DM"></a><a name="DM">// Ambiguous fractional minute separator <br>// is handled with distinct patterns<br><br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">N4218.009W10224.003<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">N42 18-005 x W102 24-008<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">N42.18.005 x W102.24.008</a><a name="DM"></a><a name="DM"></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM</td>
+          <td valign="top">DM-02a<br>
+            DM-02b<br>
+            DM-02b-dash<br>
+            <br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">4218.009N 10224.003W<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">N4218.0 W10224.0<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">N4218-0018 W10224-0444<br><br>// 02a/b allows for fixed-width D/M without separators.<br></a><a name="DM"></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM<br>
+          </td>
+          <td valign="top">DM-03a<br>
+            DM-03b<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">4218009N10224003W<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">N4218009W10224003</a><a name="DM"><pre></pre>// Fixed-width patten for D/M.mmm<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM<br>
+          </td>
+          <td valign="top">DM-03-av<br>
+            DM-03-av-deg<br>
+            DM-03-av-decdm<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">N42 18' W102 24'<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">42° 18' 102° 24'<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">42° 18.44' 102° 24.11'<br>// D/M pattern with explicit hashmarks and separators<br>// 03-av-decdm is pattern with NO hemisphere<br></a><a name="DM"><pre></pre><br></a><a name="DM"><pre></pre><br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM<br>
+          </td>
+          <td valign="top">DM-03-bv<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">42° 18'N 102° 24'W<br>// trailing hemisphere, minute resolution<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM<br>
+          </td>
+          <td valign="top">DM-04a,<br>
+            DM-04b<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">N4218 W10224<br><meta http-equiv="content-type" content="text/html; charset=UTF-8"></a><a name="DM">4218N 10224W<br>// trivial DMH or HDM pattern. <br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM<br>
+          </td>
+          <td valign="top">DM-05<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">/4218N4/10224W5/<br><br>// Rare military format with checksum value.<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM<br>
+          </td>
+          <td valign="top">DM-06<br>
+          </td>
+          <td valign="top">OBE<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM<br>
+          </td>
+          <td valign="top">DM-07<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">42 DEG 18.0N 102 DEG 24.0W<br>// 'DEG' spelled out.  fractional minute resolution<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DM<br>
+          </td>
+          <td valign="top">DM-08<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DM">+42 18.0 x -102 24.0</a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#990000" valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><b>Decimal Degree patterns</b><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DD<br>
+          </td>
+          <td valign="top">DD-01<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DD">N42.3, W102.4<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DD<br>
+          </td>
+          <td valign="top">DD-02<br>
+          </td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DD">42.3N; 102.4W</a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DD</td>
+          <td valign="top">DD-03</td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DD">+42.3°;-102.4°<br>// explicit degree notation required, otherwise it is just a pair <br>// of floating point numbers.<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DD</td>
+          <td valign="top">DD-04</td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DD">Latitude: N42.3° x Longitude: W102.3°<br>// Lat/Lon fields in text, decimal degree resolution<br></a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DD</td>
+          <td valign="top">DD-05</td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DD">N42°, W102°</a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DD</td>
+          <td valign="top">DD-06</td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DD">42° N, 102° W</a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">DD</td>
+          <td valign="top">DD-07</td>
+          <td valign="top">
+            <meta http-equiv="content-type" content="text/html;
+              charset=UTF-8">
+            <pre><a name="DD">N42, W102</a></pre>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br>
+    </p>
+    <h2>Detailed Rules and Sample of Test Cases<br>
+    </h2>
+    <pre><a name="MGRS">
+//..........................................<br>//                MGRS<br>//..........................................<br>// TARGET: ZZQQQ  EEE NNN<br>//  http://en.wikipedia.org/wiki/Military_grid_reference_system<br>
+#RULE  MGRS    01      \b&lt;MGRSZone&gt;\s*&lt;MGRSQuad&gt;\s*&lt;Easting_Northing&gt;\b<br>#TEST  MGRS    01      4QFJ 50007000<br>#TEST  MGRS    01     38SMB4611036560<br><br>
+</a><a name="UTM">
+//..........................................<br>//                UTM<br>//..........................................<br>// TARGET: (?# ZZA DDDDDD DDDDDDD )<br>
+#RULE  UTM  01     \b&lt;UTMZone&gt;\s*&lt;UTMBand&gt;\s*&lt;UTMEasting&gt;[mE]{0,2}\s*&lt;UTMNorthing&gt;[mN]{0,2}\b<br></a><a name="UTM">#TEST  UTM  01     17N 699990 3333335
+
+</a><a name="DMS">
+//..........................................
+//                    Degrees Minutes Seconds
+//..........................................
+//                   DD MM SS H    DDD MM SS H
+//                 H DD MM SS    H DDD MM SS 
+#RULE   DMS     01  &lt;degLat&gt;&lt;dmLatSep&gt;&lt;minLat&gt;&lt;msLatSep&gt;\s?&lt;secLat&gt;&lt;secLatSep&gt;\s?&lt;hemiLat&gt;\s?&lt;latlonSep&gt;\s?&lt;degLon&gt;&lt;dmLonSep&gt;&lt;minLon&gt;&lt;msLonSep&gt;\s?&lt;secLon&gt;&lt;secLonSep&gt;\s?&lt;hemiLon&gt;
+// Beware unicode
+#TEST   DMS     01  42 18' 00"N 102 24' 00"W
+    </a><br><a name="DMS">// DMS 01 with fractional seconds. (a) trailing Hemi, (b) prefix Hemi
+#RULE   DMS     01fs-a  &lt;degLat&gt;&lt;dmLatSep&gt;\s?&lt;minLat&gt;&lt;msLatSep&gt;\s?&lt;secLat&gt;[.]&lt;fractSecLat&gt;&lt;secLatSep&gt;\s?&lt;hemiLat&gt;\s?&lt;latlonSep&gt;\s?&lt;degLon&gt;&lt;dmLonSep&gt;&lt;minLon&gt;&lt;msLonSep&gt;\s?&lt;secLon&gt;[.]&lt;fractSecLon&gt;&lt;secLonSep&gt;\s?&lt;hemiLon&gt;
+#TEST   DMS     01fs-a  01°44'55.5"N 101°22'33.0"E
+    </a><br><a name="DMS">#RULE   DMS     01fs-b  &lt;hemiLatPre&gt;\s?&lt;degLat&gt;&lt;dmLatSep&gt;&lt;minLat&gt;&lt;msLatSep&gt;\s?&lt;secLat&gt;[.]&lt;fractSecLat&gt;&lt;secLatSep&gt;\s?&lt;latlonSep&gt;\s?&lt;hemiLonPre&gt;&lt;degLon&gt;&lt;dmLonSep&gt;&lt;minLon&gt;&lt;msLonSep&gt;\s?&lt;secLon&gt;[.]&lt;fractSecLon&gt;&lt;secLonSep&gt;
+#TEST   DMS     01fs-b  N01°44'55.5" E101°22'33.0"
+    </a><br><a name="DMS">// DMS01 with fractional seconds, but no hemisphere symbol, just degree
+#RULE   DMS     01fs-deg  \b&lt;degLat&gt;°\s?&lt;minLat&gt;&lt;msLatSep&gt;\s?&lt;secLat&gt;[.]&lt;fractSecLat&gt;&lt;secLatSep&gt;\s?&lt;latlonSep&gt;\s?&lt;degLon&gt;°\s?&lt;minLon&gt;&lt;msLonSep&gt;\s?&lt;secLon&gt;[.]&lt;fractSecLon&gt;&lt;secLonSep&gt;
+#TEST   DMS     01fs-deg  01°44'55.5" 101°22'33.0"
+    </a><br><a name="DMS">// DMS 01 with dot as a separator. </a><a name="DMS">(a) trailing Hemi, (b) prefix Hemi</a><a name="DMS">
+// 
+#RULE   DMS     01dot-a  &lt;degLat&gt;\.&lt;minLat&gt;\.&lt;secLat&gt;&lt;secLatSep&gt;\s?&lt;hemiLat&gt;\s?&lt;latlonSep&gt;\s?&lt;degLon&gt;\.&lt;minLon&gt;\.&lt;secLon&gt;&lt;secLonSep&gt;\s?&lt;hemiLon&gt;
+#TEST   DMS     01dot-a   01.44.55N 055.44.33E
+    </a><br><a name="DMS">#RULE   DMS     01dot-b  &lt;hemiLat&gt;&lt;degLat&gt;\.&lt;minLat&gt;\.&lt;secLat&gt;&lt;secLatSep&gt;\s?&lt;latlonSep&gt;\s?&lt;hemiLon&gt;&lt;degLon&gt;\.&lt;minLon&gt;\.&lt;secLon&gt;
+#TEST   DMS     01dot-b   N01.44.55 E055.44.33
+    </a><br><a name="DMS">
+// DMS with required separators.  Optional Hemi preceeding, as DMS separators are required.
+// Variable length fields.
+#RULE   DMS     02  &lt;hemiLatPre&gt;?&lt;degLat&gt;&lt;dmLatSep&gt;&lt;minLat&gt;&lt;msLatSep&gt;\s?&lt;secLat&gt;&lt;secLatSep&gt;\s?&lt;latlonSep&gt;\s?&lt;hemiLonPre&gt;?&lt;degLon&gt;&lt;dmLonSep&gt;&lt;minLon&gt;&lt;msLonSep&gt;\s?&lt;secLon&gt;&lt;secLonSep&gt;
+#TEST   DMS     02  N42 18' 00" W102 24' 00"
+#TEST   DMS     02  GEO:(42° 18' 00" 102° 24' 00")
+    </a><br><a name="DMS">
+// DMS with NO SEPARATORS
+#RULE   DMS     01a  &lt;dmsDegLat&gt;&lt;dmsMinLat&gt;&lt;dmsSecLat&gt;\s?&lt;hemiLat&gt;\s?&lt;latlonSep&gt;?\s?&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;&lt;dmsSecLon&gt;\s?&lt;hemiLon&gt;
+#TEST   DMS     01a  421800N 1022400W
+    </a><br><a name="DMS">#RULE   DMS     02a  &lt;hemiLatPre&gt;&lt;dmsDegLat&gt;&lt;dmsMinLat&gt;&lt;dmsSecLat&gt;\s?&lt;latlonSep&gt;?\s?&lt;hemiLonPre&gt;&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;&lt;dmsSecLon&gt;
+#TEST   DMS     02a  N421800 W1022400
+</a><br><a name="DMS">// DMS NO SEPARATORS, decimal seconds
+#RULE   DMS     03a  &lt;dmsDegLat&gt;&lt;dmsMinLat&gt;&lt;dmsSecLat&gt;[.]?&lt;fractSecLat&gt;&lt;hemiLat&gt;\s?&lt;latlonSep&gt;?\s?&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;&lt;dmsSecLon&gt;[.]?&lt;fractSecLon&gt;&lt;hemiLon&gt;
+#TEST   DMS     03a  4218001234N 10224001234W
+</a><br><a name="DMS">#RULE   DMS     03b  &lt;hemiLat&gt;&lt;dmsDegLat&gt;&lt;dmsMinLat&gt;&lt;dmsSecLat&gt;[.]?&lt;fractSecLat&gt;\s?&lt;latlonSep&gt;?\s?&lt;hemiLon&gt;&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;&lt;dmsSecLon&gt;[.]?&lt;fractSecLon&gt;
+#TEST   DMS     03b  N4218001234 W10224001234
+</a><br><a name="DMS">
+</a>/<a name="DM">/..........................................
+//                    Degrees Decimal minutes
+//..........................................
+//                       
+//              00    DD MMH-mmm    DDD MMH-mmm
+//              01a   DD MM H       DDD MM H
+//              01a   DD MM.mmm H   DDD MM.mmm H
+//              01a   DD DEG MM.m H DDD DEG MM.m H
+//              01b H DD MM       H DDD MM
+//              01b H DD MM.mmm   H DDD MM.mmm
+//
+//   Variables: "x" or "BY" are equivalent separators to ";/,|(sp)"
+//              Deg symbol, ', ", or '' are all optional, but if present, they suggest pattern is a coordinate, not just a pair of numbers.
+//              Lon DDD is 1-3 numbers, Lat DD is 1-3 numbers, leading '0' optional
+    </a><br><a name="DM">// Desc:    TARGETS  DM_00 [1] DM_01 1122N-333 11122W-333
+#RULE   DM      00      &lt;dmsDegLat&gt;[-\s]?&lt;dmsMinLat&gt;&lt;hemiLat&gt;[-.]&lt;fractMinLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;dmsDegLon&gt;[-\s]?&lt;dmsMinLon&gt;&lt;hemiLon&gt;[-.]&lt;fractMinLon&gt;
+#TEST   DM      00      4218N-009 10224W-003
+    </a><br><a name="DM">
+// VARIABLE LENGTH FIELDS
+// Desc:    TARGETS  DM_02 N7922333W10022333 DM_03 N0144.555E10122.333  N0144.5555E10122.3333
+#RULE   DM      01a     &lt;degLat&gt;&lt;dmLatSep&gt;&lt;decMinLat&gt;&lt;msLatSep&gt;?\s?&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;degLon&gt;&lt;dmLonSep&gt;&lt;decMinLon&gt;&lt;msLonSep&gt;?\s?&lt;hemiLon&gt;
+#TEST   DM      01a     42 18-009N 102 24-003W
+    </a><br><a name="DM">
+    </a><br><a name="DM">#RULE   DM      01adash &lt;degLat&gt;&lt;dmLatSep&gt;&lt;decMinLat3&gt;\s?&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;degLon&gt;&lt;dmLonSep&gt;&lt;decMinLon3&gt;\s?&lt;hemiLon&gt;
+#TEST   DM      01adash  42-18-009N; 102-24-003W 
+    </a><br><a name="DM">#RULE   DM      01adot  &lt;degLat&gt;\.&lt;decMinLat3&gt;\s?&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;degLon&gt;\.&lt;decMinLon3&gt;\s?&lt;hemiLon&gt;
+#TEST   DM      01adot  42.18.009N 102.24.003W
+    </a><br><a name="DM">
+    </a><br><a name="DM">// VARIABLE LENGTH FIELDS
+// Desc:    TARGETS  DM_01a 1) 79 22.333N 100 22.333W    2) 79 22-333N 100 22-333W, DM with fractional minutes and explicit separators
+#RULE   DM      01b      &lt;hemiLat&gt;\s?&lt;degLat&gt;&lt;dmLatSep&gt;&lt;decMinLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLon&gt;\s?&lt;degLon&gt;&lt;dmLonSep&gt;&lt;decMinLon&gt;
+#TEST   DM      01b      N4218009W10224003
+#TEST   DM      01b      N4218.009W10224.003
+    </a><br><a name="DM">#RULE   DM      01bdash  &lt;hemiLat&gt;\s?&lt;degLat&gt;&lt;dmLatSep&gt;&lt;decMinLat3&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLon&gt;\s?&lt;degLon&gt;&lt;dmLonSep&gt;&lt;decMinLon3&gt;
+#TEST   DM      01bdash  N42 18-005 x W102 24-008
+    </a><br><a name="DM">#RULE   DM      01bdot  &lt;hemiLat&gt;\s?&lt;degLat&gt;[.]&lt;decMinLat3&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLon&gt;\s?&lt;degLon&gt;[.]&lt;decMinLon3&gt;
+#TEST   DM      01bdot  N42.18.005 x W102.24.008
+    </a><br><a name="DM">// COPY OF 01a/b to allow for fixed-width min, sec, but w/out delimiters.
+// Desc:    TARGETS  DM_02 N7922333W10022333 DM_03 N0144.555E10122.333  N0144.5555E10122.3333
+#RULE   DM      02a     &lt;dmsDegLat&gt;&lt;decMinLat&gt;\s?&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;dmsDegLon&gt;&lt;decMinLon&gt;\s?&lt;hemiLon&gt;
+#TEST   DM      02a     4218.009N 10224.003W
+    </a><br><a name="DM">
+// Desc:    TARGETS  DM_01a 1) 79 22.333N 100 22.333W    2) 79 22-333N 100 22-333W, DM with fractional minutes and explicit separators
+#RULE   DM      02b      &lt;hemiLat&gt;\s?&lt;dmsDegLat&gt;&lt;decMinLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLon&gt;\s?&lt;dmsDegLon&gt;&lt;decMinLon&gt;
+#TEST   DM      02b      N4218.0 W10224.0
+    </a><br><a name="DM">#RULE   DM      02bdash  &lt;hemiLat&gt;\s?&lt;dmsDegLat&gt;&lt;decMinLat3&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLon&gt;\s?&lt;dmsDegLon&gt;&lt;decMinLon3&gt;
+#TEST   DM      02bdash  N4218-0018 W10224-0444
+    </a><br><a name="DM">// Desc: FIXED, NO DELIM, FRACTIONAL MINUTES -- 03a/b
+#RULE   DM      03a      &lt;dmsDegLat&gt;&lt;dmsMinLat&gt;&lt;fractMinLat3&gt;\s?&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;&lt;fractMinLon3&gt;\s?&lt;hemiLon&gt;
+#TEST   DM      03a      4218009N10224003W
+    </a><br><a name="DM">
+#RULE   DM      03b      &lt;hemiLat&gt;\s?&lt;dmsDegLat&gt;&lt;dmsMinLat&gt;&lt;fractMinLat3&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLon&gt;\s?&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;&lt;fractMinLon3&gt;
+#TEST   DM      03b      N4218009W10224003
+    </a><br><a name="DM">// Desc: Variable width fields with D/M separators
+// Desc:    TARGET [1] HDDMM HDDDMM [2] HDDÃ°DD' HDDDÃ°DD'
+#RULE   DM      03av      &lt;hemiLatPre&gt;&lt;degLat&gt;&lt;dmLatSep&gt;&lt;minLat&gt;&lt;msLatSep&gt;?\s*&lt;latlonSep&gt;?\s*&lt;hemiLonPre&gt;&lt;degLon&gt;&lt;dmLonSep&gt;&lt;minLon&gt;&lt;msLonSep&gt;?
+#TEST   DM      03av      N42 18' W102 24'
+    </a><br><a name="DM">
+#RULE   DM      03av-deg      \b&lt;degLat&gt;°\s*&lt;minLat&gt;&lt;msLatSep&gt;?\s*&lt;latlonSep&gt;?\s*&lt;degLon&gt;°\s*&lt;minLon&gt;&lt;msLonSep&gt;?\b
+#TEST   DM      03av-deg      42° 18' 102° 24'
+    </a><br><a name="DM">
+// Desc: Variation on DM-03 -- DM pattern with no +,- ENSW markers. Just required degree and optional minutes marker.
+#RULE   DM      03av-decdm      \b&lt;degLat&gt;°\s*&lt;decMinLat&gt;&lt;msLatSep&gt;?\s*&lt;latlonSep&gt;?\s*&lt;degLon&gt;°\s*&lt;decMinLon&gt;&lt;msLonSep&gt;?\b
+#TEST   DM      03av-decdm      42° 18.44' 102° 24.11'
+    </a><br><a name="DM">
+// Desc:    TARGET [1]  DDMMH DDMMH  [3] DDÃ°DD'H
+#RULE   DM      03bv      &lt;degLat&gt;&lt;dmLatSep&gt;&lt;minLat&gt;&lt;msLatSep&gt;?\s*&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;degLon&gt;&lt;dmLonSep&gt;&lt;minLon&gt;&lt;msLonSep&gt;?\s*&lt;hemiLon&gt;
+#TEST   DM      03bv      42° 18'N 102° 24'W
+    </a><br><a name="DM">
+// desc: FIXED WIDTH FIELDS, NO SEP
+#RULE   DM      04a      &lt;hemiLat&gt;&lt;dmsDegLat&gt;&lt;dmsMinLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLon&gt;&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;
+#TEST   DM      04a      N4218 W10224
+    </a><br><a name="DM">// Desc:    TARGET [1]  DDMMH DDMMH 
+#RULE   DM      04b      &lt;dmsDegLat&gt;&lt;dmsMinLat&gt;\s*&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;\s*&lt;hemiLon&gt;
+#TEST   DM      04b      4218N 10224W
+    </a><br><a name="DM">// RANDOM PATTERNS:
+// Desc:    TARGET [1] /DDMMHd/DDDMMHd/ where d=checksum value
+#RULE   DM      05      /&lt;dmsDegLat&gt;&lt;dmsMinLat&gt;&lt;hemiLat&gt;\d/&lt;dmsDegLon&gt;&lt;dmsMinLon&gt;&lt;hemiLon&gt;\d/
+#TEST   DM      05      /4218N4/10224W5/
+    </a><br><a name="DM">// Desc:    TARGET [1]  DD DEG MM.0H DDD DEG MM.0H
+#RULE   DM      07      &lt;degLat&gt;\s*DEG\s&lt;decMinLat&gt;\s*&lt;hemiLat&gt;(?:[-;,/|]?\s*(?:BY){0,1}\s*)&lt;degLon&gt;\s*DEG\s&lt;decMinLon&gt;\s*&lt;hemiLon&gt;
+#TEST   DM      07      42 DEG 18.0N 102 DEG 24.0W
+    </a><br><a name="DM">// DM with minimal symbols.
+// Desc:    TARGET [1] +/-DD MM.mmm x +/-DDD DD.DDD
+#RULE   DM      08      &lt;hemiLatSign&gt;&lt;degLat&gt;\s&lt;decMinLat&gt;(?:\s*[x /,]\s*)&lt;hemiLonSign&gt;&lt;degLon&gt;\s&lt;decMinLon&gt;
+#TEST   DM      08      +42 18.0 x -102 24.0
+    </a><br><a name="DM">
+</a><a name="DD">
+//..........................................
+//                      Decimal Degrees
+//..........................................
+// TARGET: DD-xx, Decimal Deg, Preceding Hemisphere (a) H DD.DDDDDD° HDDD.DDDDDD°, optional deg symbol
+#RULE   DD      01      &lt;hemiLatPre&gt;\s?&lt;decDegLat&gt;&lt;degSym&gt;?\s*&lt;latlonSep&gt;?\s*&lt;hemiLonPre&gt;\s?&lt;decDegLon&gt;&lt;degSym&gt;?
+#TEST   DD      01      N42.3, W102.4
+    </a><br><a name="DD">
+// TARGET: DD-xx, Decimal Deg, Postpending Hemisphere (a) DD.DDDDDD°H DDD.DDDDDD°H,   optional deg symbol
+#RULE   DD      02      &lt;decDegLat&gt;&lt;degSym&gt;?\s?&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;decDegLon&gt;&lt;degSym&gt;?\s?&lt;hemiLon&gt;
+#TEST   DD      02      42.3N; 102.4W
+    </a><br><a name="DD">// TARGET: DD-xx, Decimal Deg, Preceding Hemisphere, +/- with deg symbol, (a) {-|+|}DD.DDDDDD° {-|+|}DDD.DDDDDD°
+#RULE   DD      03      &lt;hemiLatSign&gt;?&lt;decDegLat&gt;&lt;degSym&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLonSign&gt;?&lt;decDegLon&gt;&lt;degSym&gt;
+#TEST   DD      03      +42.3°;-102.4° 
+    </a><br><a name="DD">// TARGET: DD-xx, Decimal Deg with explicit LAT: LON: markers, both hemisphere and degree symbols are optional
+#RULE    DD    04    LATITUDE:\s*&lt;hemiLatPre&gt;?&lt;decDegLat&gt;&lt;degSym&gt;?&lt;hemiLat&gt;?\s*&lt;latlonSep&gt;\s*LONGITUDE:\s*&lt;hemiLonPre&gt;?&lt;decDegLon&gt;&lt;degSym&gt;?&lt;hemiLon&gt;?
+#TEST   DD      04      Latitude: N42.3° x Longitude: W102.3°
+    </a><br><a name="DD">
+// TARGET: DD-xx, Decimal Deg, Preceding Hemisphere (a) HDD° HDDD°, required deg symbol
+#RULE   DD      05      &lt;hemiLatPre&gt;?\s?&lt;degLat&gt;&lt;degSym&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLonPre&gt;?\s?&lt;degLon&gt;&lt;degSym&gt;
+#TEST   DD      05      N42°, W102°
+    </a><br><a name="DD">#RULE   DD      06      &lt;degLat&gt;&lt;degSym&gt;?\s?&lt;hemiLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;degLon&gt;&lt;degSym&gt;?\s?&lt;hemiLon&gt;
+#TEST   DD      06      42° N, 102° W
+    </a><br><a name="DD">
+#RULE   DD      07      &lt;hemiLat&gt;\s?&lt;degLat&gt;\s*&lt;latlonSep&gt;?\s*&lt;hemiLon&gt;\s?&lt;degLon&gt;
+#TEST   DD      07      N42, W102
+    </a><br><a name="DD"></a><a name="DD">
+    <br>
+</a></pre>
+    <a name="DD">
+      <h2><br>
+      </h2>
+      <h2>DEFINITIONS REFERENCE</h2>
+      <br>
+    </a>
+    <table border="1" cellpadding="2" cellspacing="2" width="100%">
+      <tbody>
+        <tr>
+          <th bgcolor="#c0c0c0" valign="top">Field Name<br>
+          </th>
+          <th bgcolor="#c0c0c0" valign="top">Pattern, Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td>Hemispheres</td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>hemiLat, hemiLon</td>
+          <td valign="top">ENSW<br>
+          </td>
+        </tr>
+        <tr>
+          <td>hemiLatSign, hemiLonSign</td>
+          <td valign="top">-, +<br>
+          </td>
+        </tr>
+        <tr>
+          <td>hemiLatPre, hemiLonPre</td>
+          <td valign="top">-, +, ENSW<br>
+          </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>dmLatSep, dmLonSep</td>
+          <td valign="top"> Degree symbol or separator [-°:\s]\s?</td>
+        </tr>
+        <tr>
+          <td>msLatSep, msLonSep</td>
+          <td valign="top"> Min/Sec separator or symbol<br>
+            [-'´’′:.\s]</td>
+        </tr>
+        <tr>
+          <td>secLatSep, secLonSep <br>
+          </td>
+          <td valign="top">Sec symbol or separator, can be double hash
+            mark<br>
+            ["'´’”″′\s]{0,2}</td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>latlonSep</td>
+          <td valign="top">Lat/Lon separator<br>
+            [;,/|=x\s]<br>
+          </td>
+        </tr>
+        <tr>
+          <td>dmsSep <br>
+          </td>
+          <td valign="top">Standard DMS field separator<br>
+            [-.:\s]<br>
+          </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>decDegLat, decDegLon <br>
+          </td>
+          <td valign="top">Decimal Degree field&nbsp; DD.ddd... upto 20
+            decimal places<br>
+            \d?\d\.\d{1,20}, <br>
+            [0-1]?\d?\d\.\d{1,20}</td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Variable length decimal minutes and degrees</b><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>decMinLat, decMinLon</td>
+          <td valign="top">Decimal minutes<br>
+          </td>
+        </tr>
+        <tr>
+          <td>decMinLat3, decMinLon3</td>
+          <td valign="top">Decimal minutes, 3 decimal places or more<br>
+          </td>
+        </tr>
+        <tr>
+          <td>degLat, degLon</td>
+          <td valign="top">Variable length degrees<br>
+          </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Variable length fractional units, that is the decimal
+              part of minutes or seconds only. the .mmm in M.mmm</b></td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>fractMinLat, fractMinLon</td>
+          <td valign="top">decimal part of minutes<br>
+          </td>
+        </tr>
+        <tr>
+          <td>fractSecLat, fracSecLon</td>
+          <td valign="top">decimal part of seconds<br>
+          </td>
+        </tr>
+        <tr>
+          <td>fractMinLat3, fractMinLon3</td>
+          <td valign="top">decimal part of minutes, 3 decimal places or
+            more<br>
+          </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>minLat, minLon</td>
+          <td valign="top">Minutes<br>
+          </td>
+        </tr>
+        <tr>
+          <td>secLat, secLon</td>
+          <td valign="top">Seconds<br>
+          </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td><b>Fixed length patterns</b></td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>dmsDegLat, dmsDegLon</td>
+          <td valign="top">2-digit lat, 3-digit lon<br>
+          </td>
+        </tr>
+        <tr>
+          <td>dmsMinLat, dmsMinLon</td>
+          <td valign="top">2-digit minute<br>
+          </td>
+        </tr>
+        <tr>
+          <td>dmsSecLat, dmsSecLon</td>
+          <td valign="top">2-digit second<br>
+          </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td><b>UTM components</b></td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>UTMBand <br>
+          </td>
+          <td valign="top">[A-HJ-NP-Z]</td>
+        </tr>
+        <tr>
+          <td>UTMZone <br>
+          </td>
+          <td valign="top">[0-5]?\d</td>
+        </tr>
+        <tr>
+          <td>MGRSQuad</td>
+          <td valign="top"> [A-HJ-NP-Z][A-HJ-NP-V]</td>
+        </tr>
+        <tr>
+          <td>MGRSZone <br>
+          </td>
+          <td valign="top">[0-6]?\d\s?[C-HJ-NP-X]</td>
+        </tr>
+        <tr>
+          <td>UTMEasting</td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>UTMNorthing</td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td>Easting_Northing , EastingNorthing <br>
+          </td>
+          <td valign="top">offsets with and without space separator</td>
+        </tr>
+      </tbody>
+    </table>
+    <a name="DD"><br>
+      <br>
+      <p><br>
+      </p>
+      <p><br>
+      </p>
+      <p><br>
+      </p>
+      <p> <br>
+      </p>
+    </a>
+  </body>
+</html>

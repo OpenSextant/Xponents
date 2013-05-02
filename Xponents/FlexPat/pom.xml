@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- -*- indent-tabs-mode: nil -*- -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.mitre.opensextant.Xponents</groupId>
+    <artifactId>xponents-parent</artifactId>
+    <version>1.5.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>flexpat</artifactId>
+  <version>1.3.0-SNAPSHOT</version>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.mitre.opensextant</groupId>
+      <artifactId>opensextant-commons</artifactId>
+      <version>1.3.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <header>&lt;img src='../img/mitrelogo-whiteonblue.jpg'/&gt;&lt;br&gt;copyright MITRE Corporation, 2010-2012</header>
+          <version>true</version>
+          <windowtitle>FlexPat: Flexible Patterns Toolkit</windowtitle>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

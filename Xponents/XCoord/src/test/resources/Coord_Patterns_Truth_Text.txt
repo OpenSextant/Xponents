@@ -1,0 +1,281 @@
+TEST ID: id; REMARK remark; test
+# -*- coding: utf-8 -*-; 
+#; 
+#GUIDELINES:; 
+#; 
+#  Coordinate matches require XY pair.  Will not match a bare lat or lon pattern without the other.; 
+#  As well, few patterns will match bare floating point numbers without some hemisphere designation.; 
+#; 
+#; 
+# Quote Tests ["'´’”″′s] -- if you do not see these Quotes, then you are using the wrong tool to view.; 
+# OpenOffice and other spreadsheet viewers present Unicode quotes properly. MS Excel does not do this easily.; 
+#; 
+# TEST ROWS  begin with DD_, DM_, DMS_, MGRS_, UTM_; 
+# Line wrap tests for matching content in documents, text, etc. have $NL buried in test column.  Replace $NL with newline or newline+whitespace to test; 
+# @author: Marc Ubaldino, MITRE Corp; 
+# @created: July 2011; 
+# @updated: Oct  2012; 
+###############################################################; 
+
+# TARGET {-|+|}DD.DDDDDD° {-|+|}DDD.DDDDDD°; 
+#-----------------------------; 
+TEST ID: DD_01; REMARK ;  -34° 117°
+TEST ID: DD_01; REMARK ;  N34° W117°
+TEST ID: DD_01; REMARK ;  -34.445566° 117.112233°
+TEST ID: DD_01; REMARK ;  -34.445566°ø 117.112233°ø
+TEST ID: DD_01; REMARK FAIL – out of range;  +92° W190°
+TEST ID: DD_01; REMARK Bare degrees, No hemisphere;  34° 117°
+TEST ID: DD_01; REMARK Bare degrees, No hemisphere;  34.80° 117.20°
+TEST ID: DD_01; REMARK Asymmetric coordinate, variable resolution; 34.80N 41E
+
+#TARGET H DD.DDDDDD° HDDD.DDDDDD°; 
+#-----------------------------; 
+TEST ID: DD_02; REMARK ;  N34 W117
+TEST ID: DD_02; REMARK ;  N34.445566° W117.112233°  opposite hemisphere, same XY value
+TEST ID: DD_02; REMARK ;  N34.445566° W078.112233°  LON variations
+TEST ID: DD_02; REMARK ;  N34.445566° W78.112233°  LON variations
+TEST ID: DD_02; REMARK ;  N34.445566° W081.112233°  LON variations,  test the longitude range 80-99deg
+TEST ID: DD_02; REMARK ;  N34.445566° W81.112233°  LON variations
+TEST ID: DD_02; REMARK ;  N34.445566° W091.112233°  LON variations
+TEST ID: DD_02; REMARK ;  N34.445566° W91.112233°  LON variations
+TEST ID: DD_02; REMARK ;  N34.445566° W101.112233°  LON variations
+TEST ID: DD_02; REMARK ;  N34.445566° W171.112233°  LON variations
+TEST ID: DD_02; REMARK FAIL – out of range;  N34.445566° W181.112233°  LON variations; FAIL 181 > 180. Looks like a coord.
+
+
+# TARGET [1]  DD.ddH [D]DD.ddH; 
+#-----------------------------; 
+TEST ID: DD_03; REMARK Asymmetric coordinate, variable resolution;  34.00N 44E   variable length lat/lon with trailing hemisphere
+TEST ID: DD_03; REMARK ;  34.00N 44.11E   variable length lat/lon with trailing hemisphere
+TEST ID: DD_03; REMARK ;  34.0N 44.11E   variable length lat/lon with trailing hemisphere
+TEST ID: DD_03; REMARK ;  34.0N 44.1E   variable length lat/lon with trailing hemisphere
+TEST ID: DD_03; REMARK ;  34.0S 144.1E   variable length lat/lon with trailing hemisphere
+TEST ID: DD_03; REMARK FAIL – no hemisphere;  34.00 44.11    FAIL: no hemisphere
+TEST ID: DD_03; REMARK FAIL – no hemisphere;  -34.00 +44.11   FAIL: no hemisphere
+TEST ID: DD_03; REMARK FAIL – out of range;  -234.00 +44.11   FAIL; -234 < -90 lat
+TEST ID: DD_03; REMARK FAIL – out of range;  -34.00 +181.11   FAIL; -181 > 180 lon
+TEST ID: DD_03; REMARK FAIL – out of range;  -234.00 +181.11   FAIL; -181 > 180 lon
+
+
+#TARGETS;  LAT: DD_LAT LON: DD_LON
+#-----------------------------; 
+TEST ID: DD_04; REMARK ;  LATITUDE: +32  LONGITUDE: -179
+TEST ID: DD_04; REMARK ;  (?# TARGET [1]  LATITUDE: +32.3345  LONGITUDE: -179.3412)
+TEST ID: DD_04; REMARK line wrap test;  (?# TARGET [1]  LATITUDE: +32.3345 
+LONGITUDE: -179.3412)   ## Line wrapping test.
+
+# TARGETS; DDMMH.mmm   DM with fractional minutes
+#-----------------------------; 
+TEST ID: DM_00; REMARK ;  1122N.3335 11122W.3335
+TEST ID: DM_00; REMARK ;  1122N-00 11122W-00
+TEST ID: DM_01; REMARK ;  1122.333N 11122.333W
+TEST ID: DM_02; REMARK ;  79.22.333N, 100.22.333W
+TEST ID: DM_02; REMARK DMS.sss format should be assumed if no punct;  N7922333W10022333
+TEST ID: DM_02; REMARK ;  N79.22.333 W100.22.333
+TEST ID: DM_02; REMARK ;  N79.22.333 W085.22.333    test the longitude range 80-99deg
+TEST ID: DM_02; REMARK ;  79.22.333N, 100.22.333W
+TEST ID: DM_02; REMARK line wrap test;  79.22.333N, 
+ 100.22.333W  # Line wrapping test
+TEST ID: DM_02; REMARK ;  N 79.22.333 W 100.22.333
+
+# TARGETS;  HDDMM HDDDMM,   HDD°DD' HDDD°DD'
+#-----------------------------; 
+TEST ID: DM_03; REMARK ;  N0144.555E10122.333
+TEST ID: DM_03; REMARK ;  N0144.5555E10122.3333
+TEST ID: DM_03; REMARK ;  N01°44' E101°22'
+TEST ID: DM_03; REMARK ;  01°44' 101°22'
+TEST ID: DM_03; REMARK ;  N 01° 44' E 101° 22'
+
+# TARGETS; HDDMMmmm HDDDMMmmm [2] DDMMmmmH DDDMMmmmH [3] DD.MM.mmmH DDD|DD.MM.mmmH ( [4] HDD-MM-mmm; HDDD-MM-mmm; )
+#-----------------------------; 
+TEST ID: DM_04; REMARK DMS.sss format should be assumed if no punct;    N0144555 E10122333
+TEST ID: DM_04; REMARK DMS.sss format should be assumed if no punct;    0144555N 10122333E
+TEST ID: DM_04; REMARK ;    01.44.555N 101.22.333E
+TEST ID: DM_04; REMARK ;    01.44.555N  99.22.333E
+TEST ID: DM_04; REMARK ;    01.44.555N 099.22.333E
+TEST ID: DM_04; REMARK ;    01-44-555N 101-22-333E
+TEST ID: DM_04; REMARK ;    01-44-555N  99-22-333E   test the longitude range 80-99deg
+TEST ID: DM_04; REMARK ;    01-44-555N 099-22-333E
+TEST ID: DM_04; REMARK line wrap test;    01-44-555N 
+099-22-333E # Line wrapping test
+
+# TARGET [1] /DDMMHd/DDDMMHd/ ); 
+#-----------------------------; 
+TEST ID: DM_05; REMARK ;   /0144N4/10122E5/
+TEST ID: DM_05; REMARK ;   /0144N/10122E/
+
+# TARGET [1]  DDMMH DDMMH  [3] DD°DD'H ); 
+#-----------------------------; 
+TEST ID: DM_06; REMARK ;   0144N 10122E
+TEST ID: DM_06; REMARK ;   01°44N 101°22E
+TEST ID: DM_06; REMARK ;   01°44'N 101°22'E
+TEST ID: DM_06; REMARK ;   01°44´N 101°22´E
+TEST ID: DM_06; REMARK ;   01°44’N 101°22’E
+TEST ID: DM_06; REMARK ;   01°44’ N 101°22’ E
+TEST ID: DM_06; REMARK ;   01°44’ N 85°22’ E     test the longitude range 80-99deg
+TEST ID: DM_06; REMARK ;   01°44’ N 085°22’ E    test the longitude range 80-99deg
+TEST ID: DM_06; REMARK FAIL – out of range;   01°44’ N 185°22’ E    FAIL -- bad coordinate
+TEST ID: DM_06; REMARK  Invisible  char as separator;  10:50N  041:00E 
+TEST ID: DM_06; REMARK  non-ASCII whitespace char as separator; what char is it?;  10:50N  041:00E 
+
+#TARGET;  [1]  DD DEG MM.0H DDD DEG MM.0H)
+##   Also,      DD DEG MMH DDD DEG MMH; 
+##   Also,      DD DEG MM H DDD DEG MM H; 
+#-----------------------------; 
+TEST ID: DM_07; REMARK ;    01DEG 44.0N 101DEG 44.0E
+TEST ID: DM_07; REMARK ;    01 DEG 44.0N 101 DEG 44.0E
+TEST ID: DM_07; REMARK ;    01DEG 44N 101DEG 44E
+TEST ID: DM_07; REMARK ;    01DEG 44 N 101DEG 44 E
+TEST ID: DM_07; REMARK FAIL – out of range;   333DEG 44 N 195DEG 44 E   FAIL -- bad coordinate
+TEST ID: DM_07; REMARK FAIL – out of range;    33DEG 44 N 195DEG 44 E   FAIL -- bad coordinate
+
+#TARGET;  [1] +/-DD MM.mmm x +/-DDD DD.DDD)
+#-----------------------------; 
+TEST ID: DM_08; REMARK ;  +01 44.555 x -101 22.333
+TEST ID: DM_08; REMARK FAIL – inconsistent use of +/- as hemisphere;  01 44.555 x -101 22.333 FAIL: hemisphere not consistent use of +/- with bare number coordinates.
+TEST ID: DM_08; REMARK FAIL – no hemisphere;  01 44.555 x 101 22.333  FAIL: no hemisphere +/-
+TEST ID: DM_08; REMARK ;  -01 44.555 x +101 22.333
+TEST ID: DM_08; REMARK line wrap test;  -01 44.555 
+ x +101 22.333  # Line wrapping test.
+
+
+# TARGETS [1] DD°;:.-MM';:-.SS.ss"H  [2] HDD°;:.-MM';:.-SS.ss"; 
+#-----------------------------; 
+TEST ID: DMS_01; REMARK ;   01°44'55.5"N 101°22'33.0"E
+TEST ID: DMS_01; REMARK ;   01:44:55.5N 101:22:33.0E
+TEST ID: DMS_01; REMARK ;   01;44;55.5"N 101;22;33.0"E
+TEST ID: DMS_01; REMARK ;   01-44-55.5"N 101-22-33.0"E
+TEST ID: DMS_01; REMARK ;   01.44.55.5"N 101.22.33.0"E   IS this an IP address?
+TEST ID: DMS_01; REMARK ;   01°44'55.5"N 51°22'33.0"E
+TEST ID: DMS_01; REMARK ;   01:44:55.5N 51:22:33.0E
+TEST ID: DMS_01; REMARK ;   01;44;55.5"N 51;22;33.0"E
+TEST ID: DMS_01; REMARK ;   01-44-55.5"N 51-22-33.0"E
+TEST ID: DMS_01; REMARK ;   1;44;55.5"N 51;22;33.0"E
+TEST ID: DMS_01; REMARK ;   1-44-55.5"N 51-22-33.0"E
+TEST ID: DMS_01; REMARK ;   N01;44;55.5" E101;22;33.0"
+TEST ID: DMS_01; REMARK ;   N01-44-55.5" E101-22-33.0"
+TEST ID: DMS_01; REMARK ;   N01-44-55.5" E085-22-33.0"
+TEST ID: DMS_01; REMARK ;   N01-44-55.5" E85-22-33.0"
+TEST ID: DMS_01; REMARK ;   S89-09-01 W99-09-13
+TEST ID: DMS_01; REMARK ;   665533.1S 1492311.9W
+
+
+#TARGETS:;  [1] N33 22 11.00 E111 22 33.44, [2] N33 22' 11.00 E111 22' 33.44 )
+#-----------------------------; 
+TEST ID: DMS_02; REMARK ;  N33 22 11.00 E111 22 33.44
+TEST ID: DMS_02; REMARK ;  N33 22' 11.00 E111 22' 33.44
+TEST ID: DMS_02; REMARK FAIL - is a date/time pattern; 03-04-05 12:11:10
+TEST ID: DMS_02; REMARK FAIL - is a date/time pattern; 03-04-05 12:11:10
+TEST ID: DMS_02; REMARK FAIL - is a date/time pattern; part of 1999-04...; 99-04-05 12:11:10
+TEST ID: DMS_02; REMARK FAIL - is a date/time pattern; DOB 1958-03-04; 03-04-58 12:11:10
+TEST ID: DMS_02; REMARK FAIL - is a date/time pattern; DOB 1958-03-04; 03-04-99 12:11:10
+TEST ID: DMS_02; REMARK FAIL - is a date/time pattern; ; 14-04-33 12:11:10
+TEST ID: DMS_02; REMARK FAIL - is a date/time pattern that has full year; 2003-04-05 12:11:10
+TEST ID: DMS_02; REMARK FAIL - is a date/time pattern that has full year; 2014-04-33 12:11:10
+TEST ID: DMS_02; REMARK ;  N 33 22 11.00 E 111 22 33.44
+
+#-----------------------------; 
+TEST ID: DMS_03; REMARK ;  40:26:46N,79:56:55W
+TEST ID: DMS_03; REMARK ;  40:26:46.123N,79:56:55.000W
+TEST ID: DMS_03; REMARK ;  43-04-30.2720N 073-34-58.4170W
+TEST ID: DMS_03; REMARK ;  27° 37' 45" N, 82° 42' 10" W
+TEST ID: DMS_03; REMARK ;  27° 37' 45N, 82° 42' 10W
+TEST ID: DMS_03; REMARK ;  31 53 45.55N 54 16 38.99E
+TEST ID: DMS_03; REMARK ;  27° 37'45"N, 82° 42'10"W
+TEST ID: DMS_03; REMARK ;  27° 37' 45"N, 82° 42' 10"W
+TEST ID: DMS_03; REMARK ;  N27° 37' 45", W82° 42' 10"
+TEST ID: DMS_03; REMARK ;  +27° 37'45", -82° 42'10"
+TEST ID: DMS_03; REMARK ;  N27° 37'45", -82° 42'10"
+TEST ID: DMS_03; REMARK ;  31 53 45.55N 54 16 38.99E
+TEST ID: DMS_03; REMARK ;  N27° 37'45", -082° 42'10"
+TEST ID: DMS_03; REMARK ;  +27° 37'45", -082° 42'10"
+TEST ID: DMS_03; REMARK ;  27° 37' 45”N, 82° 42' 10”W
+TEST ID: DMS_03; REMARK ;  27° 37' 45''N, 82° 42' 10''W
+TEST ID: DMS_03; REMARK ;  27° 37' 45’’N, 82° 42' 10’’W
+TEST ID: DMS_03; REMARK ;  27° 37' 45′′N, 82° 42' 10′′W
+TEST ID: DMS_03; REMARK ;   34°22′24″N   49°14′27″E
+TEST ID: DMS_03; REMARK ;   34°22 24″N   49°14 27″E
+TEST ID: DMS_03; REMARK ;   34°22′24N   49°14′27E
+TEST ID: DMS_03; REMARK ;   34° 22′ 24″N   49° 14′ 27″E
+TEST ID: DMS_03; REMARK ;   34° 22' 24"N   49° 14' 27"E
+TEST ID: DMS_03; REMARK ;   34°22'24"N 49°14'27"E
+TEST ID: DMS_03; REMARK ;   34°22'24"N   49°14'27"E
+TEST ID: DMS_03; REMARK ;   34 22'24"N   49 14'27"E
+TEST ID: DMS_03; REMARK ;   34 22' 24"N 049 14' 27"E
+TEST ID: DMS_03; REMARK ;   34°22'24" 49°14'27"
+
+# TARGETS; HDDMMSS  HDDMMSS,  plain DMS
+#-----------------------------; 
+TEST ID: DMS_04; REMARK ;   N003343 W1214344
+
+# TARGETS; H DDDEG M' S''     “DEG” and M/S hash marks
+#-----------------------------; 
+TEST ID: DMS_05; REMARK ;  11DEG 22' 33.444" N 121DEG 55' 56.777" W
+TEST ID: DMS_05; REMARK ;  N 10DEG.50'5.8'' E006DEG.02'50.6''
+TEST ID: DMS_05; REMARK ;  N 10DEG.50´5.8´´ E006DEG.02´50.6´´
+TEST ID: DMS_05; REMARK ;  N 10DEG.50´5.8´´ E076DEG.02´50.6´´
+TEST ID: DMS_05; REMARK ;  N 10DEG.50´5.8´´ E086DEG.02´50.6´´
+TEST ID: DMS_05; REMARK FAIL – out of range;  N 10DEG.50´5.8´´ E186DEG.02´50.6´´   FAIL -- bad coordinate
+TEST ID: DMS_05; REMARK ;  N 10 DEG.50´5.8´´ E 076 DEG.02´50.6´´
+
+# TARGET [1] HDD-DD-DD/HDDD-DD-DD [2] H.DD-DD-DD.DD H.DDD-DD-DD.DD); 
+#-----------------------------; 
+TEST ID: DMS_06; REMARK ;   N01-44-55/E101-22-33
+TEST ID: DMS_06; REMARK ;   N.01-44-55.66/E.101-22-33.44
+
+
+# TARGET; 3 subsecond digits      DDDDDDDDDHDDDDDDDDDDH )  – No DMS separators, presume fields are DMS.sssss
+# TARGET; 2 subsecond digits     DDDDDDDDHDDDDDDDDDH ) --- ditto
+#-----------------------------; 
+TEST ID: DMS_07; REMARK ;    014455666N1012233444E
+TEST ID: DMS_07; REMARK ;    014455666N;1012233444E
+TEST ID: DMS_07; REMARK ;    01445566N101223344E
+TEST ID: DMS_07; REMARK ;    01445566N/101223344E
+TEST ID: DMS_07; REMARK ;    0144556N10122334E
+TEST ID: DMS_07; REMARK ;    0144556N/10122334E
+TEST ID: DMS_07; REMARK ;    014456N1012233E
+TEST ID: DMS_07; REMARK ;    014456N/1012233E
+
+# MGRS; Zone + quad + easting (10x meters) northing (10x meters)
+#-----------------------------; 
+TEST ID: MGRS_01; REMARK ;       4QFJ 50007000
+TEST ID: MGRS_01; REMARK ;      38SMB4611036560
+TEST ID: MGRS_01; REMARK ;     38SMB46113656
+TEST ID: MGRS_01; REMARK ;      8SMB46113656
+TEST ID: MGRS_01; REMARK ;     38SMB 4611036560
+TEST ID: MGRS_01; REMARK ;    38SMB 46113656
+TEST ID: MGRS_01; REMARK ;    38SMB 461103656
+TEST ID: MGRS_01; REMARK ;    38SMB 4611365 6
+TEST ID: MGRS_01; REMARK ;    38SMB 4611365
+6
+TEST ID: MGRS_01; REMARK ;    38SMB 4611
+36560
+TEST ID: MGRS_01; REMARK FAIL invalid GZD char “P” for 42 zone; 42RPR 46113600
+TEST ID: MGRS_01; REMARK Large number next to MGRS pattern – should not interfere with MGRS northing.;    38SMB 46113656 40000 KG
+TEST ID: MGRS_01; REMARK FAIL – 0 GZD;     63SNV 6567 7888   FAIL gzd>60
+TEST ID: MGRS_01; REMARK FAIL – 0 GZD;     00SNV 6567 7888   FAIL 00 gzd
+TEST ID: MGRS_01; REMARK FAIL – 0 GZD;     0SNV 6567 7888    FAIL 0  gzd
+TEST ID: MGRS_01; REMARK FAIL recent date;     01JAN 2004 1800 FAIL recent date
+TEST ID: MGRS_01; REMARK FAIL recent date with spaces;     01 JAN 2004 1800 FAIL recent date
+TEST ID: MGRS_01; REMARK FAIL recent date with spaces previous century;     01 JAN 1999 1800 FAIL recent date
+
+# UTM Calc: http://www.rcn.montana.edu/resources/tools/coordinates.aspx?  http://home.hiwaay.net/~taylorc/toolbox/geography/geoutm.html ?; 
+# UTM; Zone + Lat Band + easting (meters) + northing (meters)
+#-----------------------------; 
+TEST ID: UTM_01; REMARK ;    17T 699990 3333335
+TEST ID: UTM_01; REMARK ;       7T 699990 3333335
+TEST ID: UTM_01; REMARK ;      17N 699990 3333335
+TEST ID: UTM_01; REMARK ;      17S 699990 3333335
+TEST ID: UTM_01; REMARK ;      17T 699990 3333335
+TEST ID: UTM_01; REMARK ;       7S 699990 3333335
+TEST ID: UTM_01; REMARK ;      17N6999903333335
+TEST ID: UTM_01; REMARK ;      17N 699990m 3333335m
+TEST ID: UTM_01; REMARK ;      17S 699990mE 3333335mN
+TEST ID: UTM_01; REMARK ;      17N 699990E 3333335N
+TEST ID: UTM_01; REMARK ;       7S 699990E 3333335N
+TEST ID: UTM_01; REMARK FAIL – no latitude band;      17 6999903333335         FAIL - no lat band
+TEST ID: UTM_01; REMARK FAIL – no latitude band;      17 699990m 3333335m      FAIL - no lat band
+TEST ID: UTM_01; REMARK FAIL – no latitude band;      17 699990mE 3333335mN    FAIL - no lat band
+TEST ID: UTM_01; REMARK FAIL – no latitude band;      17 699990Em 3333335Nm    FAIL - no lat band
+TEST ID: UTM_01; REMARK FAIL – no latitude band;      17 699990e 3333335n      FAIL - no lat band
+TEST ID: UTM_01; REMARK FAIL – no latitude band;      17 699990E 3333335N      FAIL - no lat band

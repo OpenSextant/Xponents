@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+
+<project name="XText" default="all">
+
+    <!-- This is required to be able to process unicode file names -->
+    <property name="version" value="1.0"/>
+
+    <!--
+    
+    XPonents Common tasks and properties.
+    
+    -->
+    <import file="${basedir}/../xponents-include.xml"/>
+    
+    <property name="build" value = "${basedir}/build" />
+    <!-- clean up from last build -->
+    <target name="clean">
+        <delete dir="${build}" />          
+        <mkdir dir="${build}" />
+    </target>
+
+    <!-- remove copied dependencies -->
+    <target name="cleanDependencies">
+        <delete file="${basedir}/lib/opensextant-commons.jar" />
+    </target>
+
+    <target name="dependencies" depends="update" >
+        <copy todir="${basedir}/lib" file="${commons_jar.location}" />
+    </target>
+        
+    <path id="compile.classpath">
+        <fileset dir="${basedir}/lib" includes="**/*.jar" />
+    </path>
+
+    
+    <!--
+    
+    XText tasks and properties.
+    
+    -->    
+    
+    <path id="compile.classpath">
+        <fileset dir="${basedir}/lib" includes="**/*.jar" />
+    </path>
+
+    <path id="runtime.classpath">
+        <pathelement location="${basedir}/etc" />
+        <pathelement location="${basedir}/src/test/resources" />
+        <fileset dir="${basedir}/lib" includes="**/*.jar" />
+        <fileset dir="${basedir}/build" includes="**/*.jar" />
+    </path>
+	
+	
+    <target name="all" depends="clean,dependencies"
+        description="Compiles XText package.">
+        <javac srcdir="${basedir}/src/main/java"
+            source="1.7" 
+            destdir="${basedir}/build"
+            classpathref="compile.classpath"
+            debug="yes"
+            deprecation="yes"
+            encoding="utf-8"
+            includeantruntime='true' >
+            <compilerarg value="-Xlint:unchecked" />
+            <include name="org/mitre/xtext/**"/>
+        </javac>
+        <jar jarfile="build/xtext-${version}.jar" basedir="build">
+            <include name="org/mitre/xtext/**"/>
+        </jar>
+    </target>
+
+    <target name="jar">
+        <jar jarfile="build/xtext-${version}.jar" basedir="lib">
+            <include name="org/mitre/xtext/**"/>
+        </jar>
+    </target>
+
+
+    <target name="test-default">
+        <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
+            <jvmArg value="-Xmx600m"/>
+            <arg value="${basedir}/src/test/resources/Asia_Fdn_Afghanistan_2009.pdf"/>
+        </java>
+    </target>
+
+    <target name="convert">
+        <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
+            <jvmArg value="-Xmx600m"/>
+            <arg value="${inputfile}"/>
+        </java>
+    </target>
+
+</project>

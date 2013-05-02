@@ -1,0 +1,75 @@
+
+
+Xponents -- XCoord, XTemporal, FlexPat, XText
+
+APRIL 2013 Release
+=============================
+XCoord v1.6
+XText v1.0
+FlexPat v1.3
+XTemporal v1.0 - unchanged.
+ 
+  ... Post to github.com/OpenSextant 
+
+JANUARY 2013 Release
+=============================
+XCoord v1.4  -- added DMS date filter for date/time patterns matching loose coordinate patterns, e.g., DMS 02
+
+
+DECEMBER 2012 Release
+=============================
+XCoord v1.3 -- cleaned up MGRS date pattern filtering/debugging
+
+OCTOBER 2012 Release
+=============================
+
+XCoord v1.2 -- see XCoord README
+
+  Important: use GeocoordMatch.formatLatitude()/formatLongitude() method
+
+
+
+
+AUGUST 2012 Release
+=============================
+FlexPat
++ del white space is instance method; not static; regex compiled could be used across threads
+
+FILES
+M    Xponents/FlexPat/src/org/mitre/util/TextUtils.java
+
+
+XCoord
++ pattern bugs where [01][0-7]\d  was too myopic.  Precluded 080, 081,... 099 from being matched as longitude.
++ separated out DMSOrdinate toDecimal()   to  getValue() and validate() methods.
+    _value is calculated in DMSOrdinate constructor so it is immediately available for caller to validate.
+
++ improved concept of filter on GeocoordMatch and in PatternManager;  Invalid coords are parsed, reported in errors, but filtered out
+
+See ../../GeocoderEval for coordinate extraction evaluation.
+  
+FILES:
+XCoord/etc/geocoord_regex.cfg
+XCoord/src/org/mitre/xcoord/DMSOrdinate.java
+XCoord/src/org/mitre/xcoord/GeocoordMatch.java
+XCoord/src/org/mitre/xcoord/PatternManager.java
+XCoord/src/org/mitre/xcoord/TestUtility.java
+XCoord/src/org/mitre/xcoord/XConstants.java
+XCoord/src/org/mitre/xcoord/XCoord.java
+XCoord/test/
+XCoord/results/xcoord_System.csv
+
+JULY 2012 Release
+===============================
+
+FlexPat 
++ OPT.  added duplicate flag to TextMatch
++ OPT.  reduce_matches reduces matches by marking duplicates and submatches (match within existing match)
+  DLutz:  iterate through loop progressively,  instead of n*n times,  (n * n-1)/2 times. 
+
+XCoord
++ BUG.  DMSOrdinate was not setting is_lat flag; toDecimal was not filtering XY range for lat/lon
+
+
+
+
