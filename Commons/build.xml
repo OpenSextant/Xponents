@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<project name="OpenSextant Commons" default="all">
+
+  <property environment="env"/>
+
+  <!-- This is required to be able to process unicode file names -->
+  <property name="version" value="1.0"/>
+	
+  <target name="clean" >
+    <delete dir="${basedir}/build" />
+    <mkdir dir="${basedir}/build"/>
+  </target>
+
+  <path id="compile.classpath">
+    <fileset dir="${basedir}/lib" includes="*.jar" />
+  </path>
+
+  <target name="all" depends="clean" 
+    description="Compiles Core Commons package.">
+    <javac srcdir="${basedir}/src/main/java"
+      source="1.7" 
+      destdir="${basedir}/build"
+      classpathref="compile.classpath"
+      debug="yes"
+      deprecation="yes"
+      encoding="utf-8"
+      includeantruntime='true' >
+      <compilerarg value="-Xlint:unchecked" />
+
+      <!-- currently only element of this that is common is data model -->
+      <include name="org/mitre/opensextant/**"/>
+    </javac>
+
+    <jar jarfile="build/opensextant-commons.jar" basedir="build" 
+       includes="org/mitre/opensextant/**"/>
+    
+  </target>
+
+  <target name="javadoc"
+    description="Builds javadoc documentation from the source code for all the packages.">
+
+    <mkdir dir="doc/api-java"/>
+
+    <javadoc package="true" private="false" protected="false" author="true" encoding="utf-8"
+      version="true" use="true" windowtitle="OpenSextant Commons" maxmemory="256m"
+      splitindex="true" classpath="${basedir}/build"  destdir="doc/api-java"
+      >
+      <packageset dir="src/main/java">
+        <include name="org/mitre/opensextant/data/**"/>
+        <include name="org/mitre/opensextant/extraction/**"/>
+        <include name="org/mitre/opensextant/util/**"/>
+      </packageset>
+    </javadoc>
+  </target>
+
+</project>
