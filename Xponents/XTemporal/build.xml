@@ -33,6 +33,7 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
+    <target name="all" depends="compile" />
     
     <!--
     
@@ -49,7 +50,7 @@
     <fileset dir="${basedir}/lib" includes="**/*.jar" />
   </path>
 	
-  <target name="all" depends="clean,dependencies"
+  <target name="compile" depends="clean,dependencies"
     description="Compiles XTemporal package.">
     <javac srcdir="${basedir}/src/main/java"
       destdir="${build}"

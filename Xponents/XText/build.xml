@@ -32,6 +32,7 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
+    <target name="all" depends="compile" />
     
     <!--
     
@@ -51,7 +52,7 @@
     </path>
 	
 	
-    <target name="all" depends="clean,dependencies"
+    <target name="compile" depends="clean,dependencies"
         description="Compiles XText package.">
         <javac srcdir="${basedir}/src/main/java"
             source="1.7" 
@@ -70,7 +71,7 @@
     </target>
 
     <target name="jar">
-        <jar jarfile="build/xtext-${version}.jar" basedir="lib">
+        <jar jarfile="build/xtext-${version}.jar" basedir="build">
             <include name="org/mitre/xtext/**"/>
         </jar>
     </target>

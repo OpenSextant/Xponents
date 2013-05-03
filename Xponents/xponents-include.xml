@@ -1,4 +1,4 @@
-<project name="Xponents" >
+<project name="Xponents-include" >
 
     <!-- Commons,     common utilities and data model 
          Xponents     extractor components
@@ -12,8 +12,7 @@
         ant   
         // $basedir refers to current working dir, not Xponents.
     
-     -->
-    
+     -->    
     <property name="xponents.home" location="${basedir}/.." />
     <property name="commons.home" location="${xponents.home}/../Commons" />
     <property name="flexpat.home" location="${xponents.home}/FlexPat" />
@@ -27,13 +26,13 @@
     </target>
 
     <target name="commons.update">
-        <subant target="all">
+        <subant target="compile">
             <fileset dir="${commons.home}" includes="build.xml"/>
         </subant>
     </target>
 
     <target name="flexpat.update">
-        <subant target="all">
+        <subant target="compile">
             <fileset dir="${flexpat.home}" includes="build.xml"/>
         </subant>
     </target>

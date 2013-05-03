@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<project name="Xponents" default="all">
+
+  <property name="version" value="1.6"/>
+
+  <!--
+    
+  XPonents master build.
+    
+  -->
+  <import file="${basedir}/xponents-include.xml"/>
+    
+  <target name="all">
+    <subant >
+      <fileset dir="FlexPat" includes="build.xml"/>      
+    </subant>
+    <subant >
+      <fileset dir="XText" includes="build.xml"/>      
+    </subant>
+    <subant >
+      <fileset dir="XCoord" includes="build.xml"/>      
+    </subant>
+    <subant >
+      <fileset dir="XTemporal" includes="build.xml"/>      
+    </subant>
+
+    <jar jarfile="opensextant-xponents-${version}.jar">
+      <fileset dir="FlexPat/build" includes="org/**" />
+      <fileset dir="XText/build" includes="org/**" />
+      <fileset dir="XCoord/build" includes="org/**" />
+      <fileset dir="XTemporal/build" includes="org/**" />
+    </jar>
+  </target>
+
+  <target name="clean" depends="clean-subs">
+    <delete file="opensextant-xponents-${version}.jar"/>
+  </target>
+
+  <target name="clean-subs">
+    <subant target="clean" >
+      <fileset dir="FlexPat" includes="build.xml"/>      
+    </subant>
+    <subant target="clean" >
+      <fileset dir="XText" includes="build.xml"/>      
+    </subant>
+    <subant target="clean" >
+      <fileset dir="XCoord" includes="build.xml"/>      
+    </subant>
+    <subant target="clean" >
+      <fileset dir="XTemporal" includes="build.xml"/>      
+    </subant>
+  </target>
+</project>

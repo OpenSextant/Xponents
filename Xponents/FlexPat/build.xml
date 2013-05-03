@@ -31,6 +31,8 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
+    <target name="all" depends="compile,javadoc" />
+    
     
     <path id="runtime.classpath">
         <pathelement location="${basedir}/etc" />
@@ -38,7 +40,7 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
-    <target name="all" depends="clean,dependencies"
+    <target name="compile" depends="clean,dependencies"
         description="Compiles FlexPat package.">
         <javac srcdir="${basedir}/src/main/java"
             destdir="${build}"
@@ -53,7 +55,7 @@
         <jar jarfile="build/flexpat-${version}.jar" basedir="${build}" includes="org/**" />
     </target>
 
-    <target name="javadoc" depends="all"
+    <target name="javadoc" 
         description="Builds javadoc documentation from the source code for all the packages.">
 
         <mkdir dir="doc/javadoc" />
@@ -63,7 +65,7 @@
             splitindex="true" classpathref="runtime.classpath" destdir="doc/javadoc"
 
             header="&lt;img src='../img/mitrelogo-whiteonblue.jpg'/&gt;&lt;br&gt;copyright MITRE Corporation, 2010-2012"
-            overview="./src/org/mitre/flexpat/overview.html"
+            overview="./src/main/javadoc/overview.html"
             >
             <packageset dir="src/main/java">
                 <include name="org/mitre/flexpat/**" />

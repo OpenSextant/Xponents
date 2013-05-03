@@ -15,8 +15,10 @@
   <path id="compile.classpath">
     <fileset dir="${basedir}/lib" includes="*.jar" />
   </path>
+  
+  <target name="all" depends="compile,javadoc" />
 
-  <target name="all" depends="clean" 
+  <target name="compile" 
     description="Compiles Core Commons package.">
     <javac srcdir="${basedir}/src/main/java"
       source="1.7" 
@@ -40,11 +42,11 @@
   <target name="javadoc"
     description="Builds javadoc documentation from the source code for all the packages.">
 
-    <mkdir dir="doc/api-java"/>
+    <mkdir dir="doc/javadoc"/>
 
     <javadoc package="true" private="false" protected="false" author="true" encoding="utf-8"
       version="true" use="true" windowtitle="OpenSextant Commons" maxmemory="256m"
-      splitindex="true" classpath="${basedir}/build"  destdir="doc/api-java"
+      splitindex="true" classpath="${basedir}/build"  destdir="doc/javadoc"
       >
       <packageset dir="src/main/java">
         <include name="org/mitre/opensextant/data/**"/>

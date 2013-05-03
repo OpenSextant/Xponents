@@ -33,7 +33,8 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
-    
+    <target name="all" depends="compile" />
+        
     <!--
     
     XCoord tasks and properties.
@@ -53,7 +54,7 @@
     </path>
 
 
-    <target name="all" depends="clean,dependencies"
+    <target name="compile" depends="clean,dependencies"
         description="Compiles XCoord package.">
         <javac srcdir="${basedir}/src/main/java"
             destdir="${build}"
@@ -69,7 +70,7 @@
         <jar jarfile="${build}/xcoord-${version}.jar" basedir="${build}" includes="org/**" />
     </target>
 
-    <target name="jar" depends="all">
+    <target name="jar" depends="compile">
         <jar jarfile="${build}/xcoord-${version}.jar" basedir="${build}" includes="org/**" />
     </target>
 

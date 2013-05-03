@@ -5,7 +5,7 @@ auth: Marc Ubaldino
 date: 2013-04-26
 
 
-         Xponents    extractor components used by OpenSextant.
+         Xponents:   extractor components used by OpenSextant.
 
          + XCoord    extract geographic coordinates
          + XTemporal extract well-defined date/time patterns
@@ -13,13 +13,23 @@ date: 2013-04-26
          + XText     convert document formats, using Tika, etc.
 
 OpenSextant extraction is based on these and other components. 
-Xponents are largely regex-based. 
+Xponents are largely regex-based.  
 XText is a document converter that is Tika-based.
 These components share a common, simple data model and utilities provided in OpenSextant Commons.
 The projects started as and still are Ant-based builds. Support for Maven has been added recently.
 We will support both indefinitely.
 
 
+What is an Xponent?
+===================
+An Xponent, as used here, is any component used for information extraction and entity normalization.
+Xponents are built with rapid prototyping in mind -- design is simple; testing and validation is built in;
+integration should be as simple as pie.
+
+
+
+Code Struture
+==================
 The general structure for these modules is:
 
   (module)/src/main/java    source code used by Ant or Maven
