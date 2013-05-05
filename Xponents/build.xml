@@ -11,6 +11,8 @@
   -->
   <import file="${basedir}/xponents-include.xml"/>
     
+	<target name="build" depends="clean,all" />
+	
   <target name="all">
     <subant >
       <fileset dir="FlexPat" includes="build.xml"/>      

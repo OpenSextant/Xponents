@@ -13,11 +13,16 @@
     
     <property name="build" value = "${basedir}/build" />
     <!-- clean up from last build -->
-    <target name="clean">
+    <target name="clean" depends ="clean.javadoc,cleanDependencies">
         <delete dir="${build}" />          
         <mkdir dir="${build}" />
     </target>
 
+    <target name="clean.javadoc">
+        <delete dir="${basedir}/doc/javadoc" />          
+        <mkdir dir="${basedir}/doc/javadoc" />
+    </target>
+	
     <!-- remove copied dependencies -->
     <target name="cleanDependencies">
         <delete file="${basedir}/lib/opensextant-commons.jar" />

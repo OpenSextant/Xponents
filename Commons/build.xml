@@ -1,22 +1,29 @@
 <?xml version="1.0"?>
 
-<project name="OpenSextant Commons" default="all">
+<project name="OpenSextant Commons" default="build">
 
   <property environment="env"/>
 
   <!-- This is required to be able to process unicode file names -->
   <property name="version" value="1.0"/>
 	
-  <target name="clean" >
+  <target name="clean" depends="clean.javadoc">
     <delete dir="${basedir}/build" />
     <mkdir dir="${basedir}/build"/>
   </target>
 
+	  <target name="clean.javadoc" >
+	    <delete dir="${basedir}/doc/javadoc" />
+	    <mkdir dir="${basedir}/doc/javadoc"/>
+	  </target>	
+	
+	
   <path id="compile.classpath">
     <fileset dir="${basedir}/lib" includes="*.jar" />
   </path>
   
-  <target name="all" depends="compile,javadoc" />
+	<target name="build" depends="clean,compile,javadoc" />
+    <target name="all" depends="compile,javadoc" />
 
   <target name="compile" 
     description="Compiles Core Commons package.">
