@@ -308,7 +308,7 @@ public class XCoord {
                 // yield GeocoordMatch.coord_text, the normalized version of the coordinate text match
                 //
                 if (patterns.filter_out(coord)) {
-                    results.message = "Filtered out coordinate pattern=" + pat.id + "'"
+                    results.message = "Filtered out coordinate pattern=" + pat.id + " value='"
                             + coord.getText() + "'";
                     if (debug) {
                         log.debug("EX " + results.message);

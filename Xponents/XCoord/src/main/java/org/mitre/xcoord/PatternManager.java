@@ -84,8 +84,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class PatternManager extends RegexPatternManager {
-    protected Logger log;
 
+    protected Logger log;
     private final MatchFilter mgrs_filter = new MGRSFilter();
     private final MatchFilter dms_filter = new DMSFilter();
     private final TextUtils utility = new TextUtils();
@@ -119,10 +119,11 @@ public final class PatternManager extends RegexPatternManager {
      */
     public void initialization() throws IOException {
         super.initialize();
-        if (debug){
+        if (debug) {
             log.debug(this.getConfigurationDebug());
         }
     }
+
     /**
      *
      * @param cce_fam 
@@ -337,6 +338,9 @@ public final class PatternManager extends RegexPatternManager {
                         m.addOtherInterpretation(m2);
                     }
                 }
+            } catch (java.lang.IllegalArgumentException parseErr) {
+                log.debug("Failed to parse MGRS pattern with text=" + m.getText() + " COORD?:" + m.coord_text, parseErr);
+                // No normalization done.
             } catch (Exception err) {
                 throw new XCoordException("Failed to parse MGRS", err);
             }
@@ -354,6 +358,9 @@ public final class PatternManager extends RegexPatternManager {
 
                     m.coord_text = utm.toString();
                 }
+            } catch (java.lang.IllegalArgumentException parseErr) {
+                log.debug("Failed to parse UTM pattern with text=" + m.getText() + " COORD?:" + m.coord_text, parseErr);
+                // No normalization done.
             } catch (Exception err) {
                 throw new XCoordException("Failed to parse UTM pattern", err);
             }
@@ -395,8 +402,7 @@ public final class PatternManager extends RegexPatternManager {
             if ((XCoord.RUNTIME_FLAGS & XConstants.MGRS_FILTERS_ON) > 0) {
                 return mgrs_filter.stop(m);
             }
-        } 
-        /**  Apply DMS filter also only if static flags say it is enabled.
+        } /**  Apply DMS filter also only if static flags say it is enabled.
          */
         else if (m.cce_family_id == XConstants.DMS_PATTERN) {
             if ((XCoord.RUNTIME_FLAGS & XConstants.DMS_FILTERS_ON) > 0) {

@@ -362,13 +362,14 @@ public class TestScript {
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
         boolean dd = false;
-        boolean dms = true;
-        boolean dm = true;
-        boolean mgrs = false;
+        boolean dms = false;
+        boolean dm = false;
+        boolean mgrs = true;
         // 
         xcoord.match_MGRS(mgrs);
 
         String[] mgrstest = {
+            "4 jul 2008",
             "10 Jan 1994", // edge case, bare minimum.                
             "10 Jan 13", // edge case, bare minimum.                
             "10 Jan 94", // no, this is the real bare minimum.
