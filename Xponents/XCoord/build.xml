@@ -80,7 +80,7 @@
     </target>
 
 
-    <target name="test" description="Template for Running an XCoord module" >
+    <target name="test" description="Template for Running an XCoord module" depends="compile">
         <input message="file?" addproperty="get.file"/>
         <java classname="org.mitre.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" >
             <arg value="-u" />
@@ -88,20 +88,20 @@
         </java>
     </target>
 
-    <target name="test-default" description="Default tests for XCoord " depends="">
+    <target name="test-default" description="Default tests for XCoord " depends="compile">
         <java classname="org.mitre.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" >
             <arg value="-f" />
             <arg value="${default_test}" />
         </java>
     </target>
 
-    <target name="test-adhoc" description="Default tests for XCoord " depends="">
+    <target name="test-adhoc" description="Default tests for XCoord " depends="compile">
         <java classname="org.mitre.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" >
             <arg value="-a" />
         </java>
     </target>
 
-    <target name="test-by-line" description="Specialized Coordinate tests for XCoord " depends="">
+    <target name="test-by-line" description="Specialized Coordinate tests for XCoord " depends="compile">
         <input message="file?" addproperty="get.file"/>
         <java classname="org.mitre.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" >
             <arg value="-t" />
