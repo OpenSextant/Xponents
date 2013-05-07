@@ -34,10 +34,6 @@
       <version>1.0.13</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.javacsv</groupId>
-      <artifactId>javacsv</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.mitre.itf</groupId>
       <artifactId>geodesy</artifactId>
       <version>1.9.24</version>
@@ -48,6 +44,12 @@
     </dependency>
 	
     <!-- Testing -->
+    <dependency>
+      <groupId>net.sf.supercsv</groupId>
+      <artifactId>super-csv</artifactId>
+      <version>2.1.0</version>
+      <!-- <scope>test</scope> -->
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
