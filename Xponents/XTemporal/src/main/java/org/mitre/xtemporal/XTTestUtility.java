@@ -38,110 +38,99 @@ import org.supercsv.cellprocessor.*;
 import org.supercsv.prefs.CsvPreference;
 
 /**
- *
+ * 
  * @author ubaldino
  */
 public class XTTestUtility {
 
-    private CsvMapWriter report = null;
+	private CsvMapWriter report = null;
 
-    /**
-     *
-     * @param file
-     * @throws IOException
-     */
-    public XTTestUtility(String file) throws IOException {
-        report = open(file);
-        report.writeHeader(header);
-    }
+	/**
+	 * 
+	 * @param file
+	 * @throws IOException
+	 */
+	public XTTestUtility(String file) throws IOException {
+		report = open(file);
+		report.writeHeader(header);
+	}
 
-    protected final static String[] header = {"RESULT_ID", "STATUS", "Message",
-        "PATTERN", "MATCHTEXT", "DATETEXT", "DATE", "OFFSET"};
+	protected final static String[] header = { "RESULT_ID", "STATUS",
+			"Message", "PATTERN", "MATCHTEXT", "DATETEXT", "DATE", "OFFSET" };
 
-    protected static final CellProcessor[] xtempResultsSpec = new CellProcessor[]{
-        // Given test data is required:
-        new NotNull(),
-        new NotNull(),
-        new NotNull(),
-            
-        // test results fields -- if result exists
-        // 
-        new Optional(),
-        new Optional(),
-        new Optional(),         
-        new Optional(), //new FmtDate("yyyy-MM-dd'T'HH:mm"),
-        new Optional()
-    };
+	protected static final CellProcessor[] xtempResultsSpec = new CellProcessor[] {
+			// Given test data is required:
+			new NotNull(), new NotNull(), new NotNull(),
 
-    /**
-     *
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public CsvMapWriter open(String file) throws IOException {
+			// test results fields -- if result exists
+			//
+			new Optional(), new Optional(), new Optional(), new Optional(), // new
+																			// FmtDate("yyyy-MM-dd'T'HH:mm"),
+			new Optional() };
 
-        FileUtility.makeDirectory(new File(file).getParentFile());
-        OutputStreamWriter iowriter = FileUtility.getOutputStream(file, "UTF-8");
-        CsvMapWriter R = new CsvMapWriter(iowriter, CsvPreference.STANDARD_PREFERENCE);
-        return R;
-    }
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public CsvMapWriter open(String file) throws IOException {
 
-    /**
+		FileUtility.makeDirectory(new File(file).getParentFile());
+		OutputStreamWriter iowriter = FileUtility
+				.getOutputStream(file, "UTF-8");
+		CsvMapWriter R = new CsvMapWriter(iowriter,
+				CsvPreference.STANDARD_PREFERENCE);
+		return R;
+	}
+
+	/**
      *
      */
-    public void close_report() {
-        if (report != null) {
-            try {
-                report.flush();
-                report.close();
-            } catch (Exception err) {
-                System.out.println("Something is a miss... ");
-                err.printStackTrace();
-            }
-        }
-    }
+	public void close_report() throws IOException {
+		if (report != null) {
+			report.flush();
+			report.close();
+		}
+	}
 
-    
-    /**   
-     * @param results 
-     * @throws IOException 
-     */
-    public void save_result(XTempResult results)
-            throws IOException {
+	/**
+	 * @param results
+	 * @throws IOException
+	 */
+	public void save_result(XTempResult results) throws IOException {
 
-        Map<String,Object> row = null;
+		Map<String, Object> row = null;
 
-        if (results.matches != null) {
-            for (TextMatch tm : results.matches) {
+		if (results.matches != null) {
+			for (TextMatch tm : results.matches) {
 
-                row = new HashMap<>();
-                row.put(header[0], results.result_id);
-                row.put(header[1], "PASS");
+				row = new HashMap<>();
+				row.put(header[0], results.result_id);
+				row.put(header[1], "PASS");
 
-            	
-            	DateMatch m = (DateMatch)tm;
-                String msg = results.message;
-                if (m.is_submatch){
-                    msg += "; Is Submatch";
-                }
-                row.put(header[2], msg);
-                row.put(header[3], m.pattern_id);
-                row.put(header[4], m.getText());
-                row.put(header[5], m.datenorm.toString());
-                row.put(header[6], m.datenorm_text);
-                row.put(header[7], m.start);
+				DateMatch m = (DateMatch) tm;
+				String msg = results.message;
+				if (m.is_submatch) {
+					msg += "; Is Submatch";
+				}
+				row.put(header[2], msg);
+				row.put(header[3], m.pattern_id);
+				row.put(header[4], m.getText());
+				row.put(header[5], m.datenorm.toString());
+				row.put(header[6], m.datenorm_text);
+				row.put(header[7], m.start);
 
-                report.write(row, header, xtempResultsSpec);
-            }
-        } else {
-            row = new HashMap<>();
-            row.put(header[0], results.result_id);
-            row.put(header[1], "FAIL");
-            row.put(header[2], results.get_trace());
-            
-            report.write(row, header, xtempResultsSpec);
+				report.write(row, header, xtempResultsSpec);
+			}
+		} else {
+			row = new HashMap<>();
+			row.put(header[0], results.result_id);
+			row.put(header[1], "FAIL");
+			row.put(header[2], results.get_trace());
 
-        }
-    }
+			report.write(row, header, xtempResultsSpec);
+
+		}
+	}
 }

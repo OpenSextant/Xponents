@@ -312,11 +312,13 @@ public class XTemporal {
 					break;
 				default:
 					XTemporal.usage();
+                	System.exit(1);
 				}
 			}
 		} catch (Exception err) {
 			// xdterr.printStackTrace();
 			XTemporal.usage();
+        	System.exit(1);
 		}
 
 		try {
