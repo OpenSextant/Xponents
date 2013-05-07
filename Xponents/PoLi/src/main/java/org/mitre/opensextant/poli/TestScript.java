@@ -24,69 +24,162 @@
  * Clause 252.227-7014 (JUN 1995)
  *
  * (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
-**************************************************   */
+ **************************************************   */
 
 package org.mitre.opensextant.poli;
 
 import org.mitre.flexpat.PatternTestCase;
 import org.mitre.flexpat.TextMatch;
+import org.mitre.opensextant.util.FileUtility;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
+import org.supercsv.cellprocessor.Optional;
+import org.supercsv.cellprocessor.constraint.NotNull;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.io.CsvMapWriter;
+import org.supercsv.prefs.CsvPreference;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.*;
 
 /**
- *
+ * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public class TestScript {
 
-    private Logger log = LoggerFactory.getLogger(TestScript.class);
-    private PatternsOfLife poli;
+	private Logger log = LoggerFactory.getLogger(TestScript.class);
+	private PatternsOfLife poli;
 
-    public TestScript(PatternsOfLife _poli) {
-        this.poli = _poli;
-    }
+	protected final static String[] header = { "result_id", "status",
+			"message", "pattern", "matchtext", "offset" };
 
-    /**
-     * System tests
-     */
-    public void test() {
+	protected static final CellProcessor[] poliResultsSpec = new CellProcessor[] {
+			// Given test data is required:
+			new NotNull(), new NotNull(), new NotNull(),
 
-        List<TextMatch> allResults = new ArrayList<>();
-        log.info("TESTING ALL SYSTEM PATTERNS");
-        for (PatternTestCase test : this.poli.patterns.testcases) {
-            log.info("TEST " + test.id);
-            PoliResult results = this.poli.extract_patterns(test.text, test.id);
-            if (results.evaluated && !results.matches.isEmpty()) {
-                for (TextMatch m : results.matches) {
-                    log.info("TEST " + test.id + " FOUND: " + m.toString());
-                    allResults.add(m);
-                }
-            } else {
-                log.info("TEST " + test.id + " STATUS: FAILED");
-            }
-        }
-    }
+			// test results fields -- if result exists
+			//
+			new Optional(), new Optional(), new Optional() };
 
-    /**
-     * Run patterns over a list of files
-     */
-    public void testUserFiles(String listfile) {
-    }
+	public TestScript(PatternsOfLife _poli) {
+		this.poli = _poli;
+	}
 
-    /**
-     * Run patterns over a single file
-     */
-    public void testUserFile(String f) {
-    }
+	private CsvMapWriter report = null;
 
-    /** Random testing 
-     */
-    public void adhoc() {
-        this.poli.patterns.disableAll();
-        this.poli.patterns.enable_patterns("PHONE");
-        this.test();
-    }
+	/** 
+     * */
+	protected void createResultsFile(String file) throws IOException {
+		report = open(file);
+		report.writeHeader(header);
+	}
+
+	/**
+    *
+    */
+	public void close_report() throws IOException {
+		if (report != null) {
+			report.flush();
+			report.close();
+		}
+	}
+
+	/**
+	 * Create a typical CSV writer -- Excel compliant
+	 * 
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public CsvMapWriter open(String file) throws IOException {
+
+		FileUtility.makeDirectory(new File(file).getParentFile());
+		OutputStreamWriter iowriter = FileUtility
+				.getOutputStream(file, "UTF-8");
+		CsvMapWriter R = new CsvMapWriter(iowriter,
+				CsvPreference.STANDARD_PREFERENCE);
+
+		return R;
+	}
+
+	/**
+	 * If test case is null, then we're likely testing patterns against a random
+	 * block of text If match is null then we likely have a test case that
+	 * yields no hits.
+	 **/
+	protected Map<String, Object> createResultRow(PatternTestCase t, TextMatch m) {
+
+		Map<String, Object> row = new HashMap<>();
+
+		if (t != null) {
+			row.put(header[0], t.id);
+		}
+		if (m != null) {
+			row.put(header[1], "PASS");
+			row.put(header[2], "msgs");
+
+			row.put(header[3], m.pattern_id);
+			row.put(header[4], m.getText());
+			row.put(header[5], m.start);
+		}
+
+		return row;
+	}
+
+	/**
+	 * System tests
+	 */
+	public void test() throws IOException {
+		
+		createResultsFile("results/test_System.csv");
+
+		// List<TextMatch> allResults = new ArrayList<>();
+		log.info("TESTING ALL SYSTEM PATTERNS");
+		for (PatternTestCase test : this.poli.patterns.testcases) {
+			log.info("TEST " + test.id);
+			PoliResult results = this.poli.extract_patterns(test.text, test.id, test.family);
+			if (results.evaluated && !results.matches.isEmpty()) {
+				try {
+					for (TextMatch m : results.matches) {
+						// log.debug("TEST " + test.id + " FOUND: " +
+						// m.toString());
+						Map<String, Object> row = createResultRow(test, m);
+						report.write(row, header, poliResultsSpec);
+					}
+				} catch (IOException ioerr) {
+					log.error("Failed to write result for " + test.id, ioerr);
+				}
+			} else {
+				log.info("TEST " + test.id + " STATUS: FAILED");
+			}
+		}
+
+		close_report();
+	}
+
+	/**
+	 * Run patterns over a list of files
+	 */
+	public void testUserFiles(String listfile) {
+	}
+
+	/**
+	 * Run patterns over a single file
+	 */
+	public void testUserFile(String f) {
+	}
+
+	/**
+	 * Random testing
+	 */
+	public void adhoc() {
+		this.poli.patterns.disableAll();
+		this.poli.patterns.enable_patterns("PHONE");
+		//this.test();
+	}
 }
