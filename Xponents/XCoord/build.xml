@@ -15,12 +15,15 @@
     <!-- clean up from last build -->
     <target name="clean" depends="clean.javadoc,cleanDependencies">
         <delete dir="${build}" />          
+    </target>
+
+    <target name="setup" >
         <mkdir dir="${build}" />
+        <mkdir dir="${basedir}/doc/javadoc" />
     </target>
 	
     <target name="clean.javadoc">
         <delete dir="${basedir}/doc/javadoc" />          
-        <mkdir dir="${basedir}/doc/javadoc" />
     </target>
 	
     <!-- remove copied dependencies -->
@@ -59,7 +62,7 @@
     </path>
 
 
-    <target name="compile" depends="clean,dependencies"
+    <target name="compile" depends="setup,dependencies"
         description="Compiles XCoord package.">
         <javac srcdir="${basedir}/src/main/java"
             destdir="${build}"
