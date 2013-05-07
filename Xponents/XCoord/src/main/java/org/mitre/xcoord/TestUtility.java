@@ -26,12 +26,18 @@
  */
 package org.mitre.xcoord;
 
-import com.csvreader.CsvWriter;
+import org.supercsv.io.CsvMapWriter;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.cellprocessor.constraint.*;
+import org.supercsv.cellprocessor.*;
+import org.supercsv.prefs.CsvPreference;
+
 import java.io.*;
+import java.util.Map;
+import java.util.HashMap;
 import org.mitre.opensextant.util.FileUtility;
 import org.mitre.flexpat.TextMatch;
 import org.mitre.flexpat.TextMatchResultSet;
-//import java.nio.charset.Charset; CsvWriter's use of Charset.from('UTF-8') appears to be wrong.
 
 /**
  *
@@ -39,12 +45,11 @@ import org.mitre.flexpat.TextMatchResultSet;
  */
 public class TestUtility {
 
-    private CsvWriter report = null;
+    private CsvMapWriter report = null;
     /**
      *
      */
     public boolean full_report = true;
-    
     /**
      * Coordinate Test Report Format
      * 
@@ -52,11 +57,49 @@ public class TestUtility {
      */
     public static String[] header = {
         // Include truth test fields:
-        "test_id", "test_fam", "true_pos", "true_lat", "true_lon", "text", 
+        "test_id", "test_fam", "true_pos", "true_lat", "true_lon", "text",
         // Include processed fields:
-        "result_id", "status", "message", "family", "pattern", 
+        "result_id", "status", "message", "family", "pattern",
         "matchtext", "lat", "lon", "mgrs", "precision", "offset"};
 
+    protected static Map<String,Object> getEmptyRow() { 
+        Map<String,Object> blank = new HashMap<>();
+        blank.put(header[0], "");
+        blank.put(header[1], "");
+        blank.put(header[2], false);
+        blank.put(header[3], "");
+        blank.put(header[4], "");
+        blank.put(header[5], "");
+        return blank;
+    }
+    
+    protected static final CellProcessor[] xcoordResultsSpec = new CellProcessor[]{
+        // Given test data is required:
+        new NotNull(),
+        new NotNull(),
+        new FmtBool("true", "false"),
+        new NotNull(),
+        new NotNull(),
+        new NotNull(),
+            
+        // test results fields -- if result exists
+        // 
+        new Optional(),
+        new Optional(),
+        new Optional(),
+        new Optional(),
+        new Optional(),
+
+        // Match data;  If result is PASS and match exists
+        new Optional(),
+        new Optional(),
+        new Optional(),
+        new Optional(),
+        new Optional(),
+        new Optional()
+
+    };
+        
     /**
      *
      * @param file
@@ -64,16 +107,7 @@ public class TestUtility {
      */
     public TestUtility(String file) throws IOException {
         report = open(file);
-        write_header();
-    }
-
-    private void write_header() throws IOException {
-
-        for (String col : header) {
-            report.write(col);
-        }
-
-        report.endRecord();
+        report.writeHeader(header);
     }
 
     /**
@@ -83,16 +117,12 @@ public class TestUtility {
      * @return
      * @throws IOException
      */
-    public CsvWriter open(String file) throws IOException {
+    public CsvMapWriter open(String file) throws IOException {
 
         FileUtility.makeDirectory(new File(file).getParentFile());
-
         OutputStreamWriter iowriter = FileUtility.getOutputStream(file, "UTF-8");
-        //CsvWriter report = new CsvWriter(file, ',', Charset.forName("UTF-8"));
-        CsvWriter R = new CsvWriter(iowriter, ',');
-        R.setRecordDelimiter('\n');
-        R.setTextQualifier('"');
-        R.setForceQualifier(true);
+        CsvMapWriter R = new CsvMapWriter(iowriter, CsvPreference.STANDARD_PREFERENCE);
+        
         return R;
     }
 
@@ -112,27 +142,26 @@ public class TestUtility {
     }
 
     /**
-     *
+     * Creates a valid row object for CSV output -- a blank row if TestCase is null, otherwise populate the row with the base test metadata.
      * @param t
-     * @throws IOException
      */
-    public void write_testcase(TestCase t) throws IOException {
-        if (t == null) {
-            report.write("");
-            report.write("");
-            report.write("");
-            report.write("");
-            report.write("");
-            report.write("");
-            return;
-        }
+    public Map<String,Object> createTestCase(TestCase t) {
 
-        report.write(t.id);
-        report.write(t.family);
-        report.write(Boolean.toString(t.true_positive));
-        report.write( t.match.lat_text );
-        report.write( t.match.lon_text );
-        report.write(t.text);
+        if (t==null) {
+            // This is used where there is no given test case... just extracting data from random data.
+            return getEmptyRow();
+        }
+        // This happens when the TestCases are well defined.
+
+        Map<String,Object> row = new HashMap<>();
+        row.put(header[0], t.id);
+        row.put(header[1], t.family);
+        row.put(header[2], t.true_positive);
+        row.put(header[3], t.match.lat_text);
+        row.put(header[4], t.match.lon_text);
+        row.put(header[5], t.text);
+        
+        return row;
     }
 
     /**
@@ -153,48 +182,51 @@ public class TestUtility {
             throws IOException {
 
 
+        Map<String,Object> row = null;
+        
         if (!results.matches.isEmpty()) {
 
             // List out true and false positives
             // 
             for (TextMatch tm : results.matches) {
                 GeocoordMatch m = (GeocoordMatch) tm;
-                if (!full_report && (m.is_submatch | m.is_duplicate)){
+                if (!full_report && (m.is_submatch | m.is_duplicate)) {
                     // Ignore submatches and duplicates
                     continue;
                 }
-                write_testcase(t);
+                row = createTestCase(t);
 
-                report.write(results.result_id);
-                report.write( (full_report & m.is_submatch) ? "IGNORE" : "PASS" );
+                row.put(header[6], results.result_id);
+                row.put(header[7], (full_report & m.is_submatch) ? "IGNORE" : "PASS");
 
                 String msg = results.message;
                 if (m.is_submatch) {
                     msg += "; Is Submatch";
                 }
-                report.write(msg);
+                row.put(header[8], msg);
 
-                report.write(XConstants.get_CCE_family(m.cce_family_id));
-                report.write(m.pattern_id);
-                report.write(m.getText());
-                //report.write("'" + m.coord_text);
-                report.write("" + m.formatLatitude());
-                report.write("" + m.formatLongitude());
+                row.put(header[9], XConstants.get_CCE_family(m.cce_family_id));
+                row.put(header[10], m.pattern_id);
+                row.put(header[11], m.getText());
+                row.put(header[12], "" + m.formatLatitude());
+                row.put(header[13], "" + m.formatLongitude());
+                String mgrs = "";
                 try {
-                    report.write(m.toMGRS());
+                    mgrs = m.toMGRS();
                 } catch (Exception err) {
-                    report.write("");
                 }
+                row.put(header[14], mgrs);
 
-                report.write(m.formatPrecision());
-                report.write("" + m.start);
-
-                //report.write("" + m.is_submatch);
-                report.endRecord();
+                row.put(header[15], m.formatPrecision());
+                row.put(header[16], new Long(m.start));
+                
+                report.write(row, header, xcoordResultsSpec);
             }
         } else {
-            write_testcase(t);
-            report.write(results.result_id);
+            row = createTestCase(t);
+
+            row.put(header[6], results.result_id);
+            
             boolean expected_failure = false;
             if (t != null) {
                 expected_failure = !t.true_positive;
@@ -205,15 +237,10 @@ public class TestUtility {
                 expected_failure = test_status.contains("FAIL");
             }
 
-            report.write(expected_failure ? "PASS" : "FAIL");  // True Negative -- you ignored one correctly
-            report.write(results.get_trace());
-            report.endRecord();
+            row.put(header[7], expected_failure ? "PASS" : "FAIL");  // True Negative -- you ignored one correctly
+            row.put(header[8], results.get_trace());
+            
+            report.write(row, header, xcoordResultsSpec);
         }
     }
-    /* 
-     public boolean evaluate(TestCase t, GeocoordMatch m){
-        
-     
-     }
-     **/
 }
