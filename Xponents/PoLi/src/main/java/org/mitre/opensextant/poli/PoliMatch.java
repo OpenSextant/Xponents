@@ -44,6 +44,10 @@ public class PoliMatch extends TextMatch {
     public int normal_case = FOUND_CASE;
     protected Map<String,String> match_groups = null;
 
+    /** */
+    public PoliMatch() {
+    }
+    
     public PoliMatch(String t) {
         this.text = t;
     }
@@ -51,7 +55,12 @@ public class PoliMatch extends TextMatch {
         this.text = t;
         this.match_groups = groups;
     }
+    
+    public void setGroups(Map<String,String> groups){
+        this.match_groups = groups;
+    }
 
+    /** */
     public void normalize() {
         if (this.text == null) {
             return;

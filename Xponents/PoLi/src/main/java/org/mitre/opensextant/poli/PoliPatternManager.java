@@ -140,27 +140,12 @@ public final class PoliPatternManager extends RegexPatternManager {
     /**
      * The match object is normalized, setting the coord_text and other data
      * from parsing "text" and knowing which pattern family was matched.
-     *
+     * @deprecated   logic for creation of a match is back in main PoLi match loop
      * @param m
      * @param groups
      * @return void
      */
     public PoliMatch create_match(String pattern_id, String matchtext, Map<String, String> groups) {
         return new PoliMatch(groups, matchtext);
-    }
-
-    /**
-     * The match object is normalized, setting the coord_text and other data
-     * from parsing "text" and knowing which pattern family was matched.
-     *
-     * @param m
-     * @param groups
-     * @return void
-     * @throws PoliException
-     */
-    public void normalize(PoliMatch m, Map<String, String> groups)
-            throws PoliException {
-
-        throw new PoliException("not yet implemented");
     }
 }
