@@ -295,11 +295,11 @@ public class XCoord {
                 // Normalize
                 try {
                     patterns.normalize_coordinate(coord, patterns.group_map(pat, match));
-                } catch (XCoordException pex) {
+                } catch (XCoordException normErr) {
                     // Quietly ignore
                     results.message = "Parse error with '" + coord.getText() + "'";
                     if (debug) {
-                        log.error("EX  Parsing error TEXT=" + coord.getText(), pex);
+                        log.error(results.message, normErr);
                     }
                     continue;
                 }
@@ -308,7 +308,7 @@ public class XCoord {
                 // yield GeocoordMatch.coord_text, the normalized version of the coordinate text match
                 //
                 if (patterns.filter_out(coord)) {
-                    results.message = "Filtered out coordinate pattern=" + pat.id + "'"
+                    results.message = "Filtered out coordinate pattern=" + pat.id + " value='"
                             + coord.getText() + "'";
                     if (debug) {
                         log.debug("EX " + results.message);

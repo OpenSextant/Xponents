@@ -281,21 +281,56 @@ public class XTemporal {
         log.info("=== SYSTEM TESTS DONE ===");
 
 
-    }
+	}
 
-    /**
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
+	/** */
+	public static void usage() {
+		System.out.println("\tXTemporal -f     -- run system tests."
+				+ "\n\tMore operations coming...");
+	}
 
-        // default test patterns, run test/debug mode.
-        XTemporal xdt = new XTemporal(true);
-        try {
-            xdt.configure();
-            xdt.test(args[0]);
-        } catch (XTempException xdterr) {
-            xdterr.printStackTrace();
-        }
-    }
+	/**
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+
+		boolean debug = true;
+		// default test patterns, run test/debug mode.
+		XTemporal xdt = new XTemporal(debug);
+		String testFile = null;
+		boolean systemTest = false;
+
+		try {
+			gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XTemporal", args,
+					"f");
+			int c;
+			while ((c = opts.getopt()) != -1) {
+				switch (c) {
+				case 'f':
+					systemTest = true;
+					break;
+				default:
+					XTemporal.usage();
+                	System.exit(1);
+				}
+			}
+		} catch (Exception err) {
+			// xdterr.printStackTrace();
+			XTemporal.usage();
+        	System.exit(1);
+		}
+
+		try {
+			xdt.configure();
+
+			if (systemTest) {
+				System.out.println("\tSYSTEM TESTS=======\n");
+				xdt.systemTests();
+			}
+		} catch (XTempException exErr) {
+			exErr.printStackTrace();
+		}
+
+	}
 }

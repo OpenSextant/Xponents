@@ -27,112 +27,110 @@
 package org.mitre.xtemporal;
 
 import java.io.*;
+import java.util.*;
 import org.mitre.opensextant.util.FileUtility;
 import org.mitre.flexpat.TextMatch;
 
-import com.csvreader.CsvWriter;
-//import java.nio.charset.Charset; CsvWriter's use of Charset.from('UTF-8') appears to be wrong.
+import org.supercsv.io.CsvMapWriter;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.cellprocessor.constraint.*;
+import org.supercsv.cellprocessor.*;
+import org.supercsv.prefs.CsvPreference;
 
 /**
- *
+ * 
  * @author ubaldino
  */
 public class XTTestUtility {
 
-    private CsvWriter report = null;
+	private CsvMapWriter report = null;
 
-    /**
-     *
-     * @param file
-     * @throws IOException
-     */
-    public XTTestUtility(String file) throws IOException {
-        report = open(file);
-        write_header();
-    }
+	/**
+	 * 
+	 * @param file
+	 * @throws IOException
+	 */
+	public XTTestUtility(String file) throws IOException {
+		report = open(file);
+		report.writeHeader(header);
+	}
 
-    private void write_header() throws IOException {
+	protected final static String[] header = { "RESULT_ID", "STATUS",
+			"Message", "PATTERN", "MATCHTEXT", "DATETEXT", "DATE", "OFFSET" };
 
-        String[] header = {"RESULT_ID", "STATUS", "Message",
-            "PATTERN", "MATCHTEXT", "DATETEXT", "DATE", "OFFSET"};
+	protected static final CellProcessor[] xtempResultsSpec = new CellProcessor[] {
+			// Given test data is required:
+			new NotNull(), new NotNull(), new NotNull(),
 
-        for (String col : header) {
-            report.write(col);
-        }
+			// test results fields -- if result exists
+			//
+			new Optional(), new Optional(), new Optional(), new Optional(), // new
+																			// FmtDate("yyyy-MM-dd'T'HH:mm"),
+			new Optional() };
 
-        report.endRecord();
-    }
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public CsvMapWriter open(String file) throws IOException {
 
-    /**
-     *
-     * @param file
-     * @return
-     * @throws IOException
-     */
-    public CsvWriter open(String file) throws IOException {
+		FileUtility.makeDirectory(new File(file).getParentFile());
+		OutputStreamWriter iowriter = FileUtility
+				.getOutputStream(file, "UTF-8");
+		CsvMapWriter R = new CsvMapWriter(iowriter,
+				CsvPreference.STANDARD_PREFERENCE);
+		return R;
+	}
 
-        FileUtility.makeDirectory(new File(file).getParentFile());
-
-        OutputStreamWriter iowriter = FileUtility.getOutputStream(file, "UTF-8");
-        //CsvWriter report = new CsvWriter(file, ',', Charset.forName("UTF-8"));
-        CsvWriter R = new CsvWriter(iowriter, ',');
-        R.setRecordDelimiter('\n');
-        R.setTextQualifier('"');
-        R.setForceQualifier(true);
-        return R;
-    }
-
-    /**
+	/**
      *
      */
-    public void close_report() {
-        if (report != null) {
-            try {
-                report.flush();
-                report.close();
-            } catch (Exception err) {
-                System.out.println("Something is a miss... ");
-                err.printStackTrace();
-            }
-        }
-    }
+	public void close_report() throws IOException {
+		if (report != null) {
+			report.flush();
+			report.close();
+		}
+	}
 
-    /**   Coordinate Test/Eval format
-     * 
-     * 
-     * Result ID, CCE family, pattern ID, status, message  // Reason for failure
-     * Result ID, CCE family, pattern ID, status, Match ID, matchtext, lat, lon etc. // Success implied by match
-     * @param results 
-     * @throws IOException 
-     */
-    public void save_result(XTempResult results)
-            throws IOException {
+	/**
+	 * @param results
+	 * @throws IOException
+	 */
+	public void save_result(XTempResult results) throws IOException {
 
-        if (results.matches != null) {
-            for (TextMatch tm : results.matches) {
-                DateMatch m = (DateMatch)tm;
-                report.write(results.result_id);
-                report.write("PASS");
-                String msg = results.message;
-                if (m.is_submatch){
-                    msg += "; Is Submatch";
-                }
-                report.write(msg);
-                report.write(m.pattern_id);
-                report.write(m.getText());
-                report.write(m.datenorm.toString());
-                report.write(m.datenorm_text);
-                report.write("" + m.start);
+		Map<String, Object> row = null;
 
-                //report.write("" + m.is_submatch);
-                report.endRecord();
-            }
-        } else {
-            report.write(results.result_id);
-            report.write("FAIL");
-            report.write(results.get_trace());
-            
-            report.endRecord();
-        }
-    }
+		if (results.matches != null) {
+			for (TextMatch tm : results.matches) {
+
+				row = new HashMap<>();
+				row.put(header[0], results.result_id);
+				row.put(header[1], "PASS");
+
+				DateMatch m = (DateMatch) tm;
+				String msg = results.message;
+				if (m.is_submatch) {
+					msg += "; Is Submatch";
+				}
+				row.put(header[2], msg);
+				row.put(header[3], m.pattern_id);
+				row.put(header[4], m.getText());
+				row.put(header[5], m.datenorm.toString());
+				row.put(header[6], m.datenorm_text);
+				row.put(header[7], m.start);
+
+				report.write(row, header, xtempResultsSpec);
+			}
+		} else {
+			row = new HashMap<>();
+			row.put(header[0], results.result_id);
+			row.put(header[1], "FAIL");
+			row.put(header[2], results.get_trace());
+
+			report.write(row, header, xtempResultsSpec);
+
+		}
+	}
 }

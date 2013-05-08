@@ -15,12 +15,15 @@
     <!-- clean up from last build -->
     <target name="clean" depends ="clean.javadoc,cleanDependencies">
         <delete dir="${build}" />          
+    </target>
+
+    <target name="setup" >
         <mkdir dir="${build}" />
+        <mkdir dir="${basedir}/doc/javadoc" />
     </target>
 
     <target name="clean.javadoc">
         <delete dir="${basedir}/doc/javadoc" />          
-        <mkdir dir="${basedir}/doc/javadoc" />
     </target>
 	
     <!-- remove copied dependencies -->
@@ -47,15 +50,16 @@
     -->
     
     	
-  <property name="default_test" value = "${basedir}/test/Date_Patterns_2012.txt " />
+  <property name="default_test" value = "${basedir}/src/test/resources/Date_Patterns_2012.txt " />
 
   <path id="runtime.classpath">
-    <pathelement location="${basedir}/etc" />
+    <pathelement location="${basedir}/src/test/resources" />
+    <pathelement location="${basedir}/src/main/resources" />
     <pathelement location="${basedir}/build/xtemporal-${version}.jar" />
     <fileset dir="${basedir}/lib" includes="**/*.jar" />
   </path>
 	
-  <target name="compile" depends="clean,dependencies"
+  <target name="compile" depends="setup,dependencies"
     description="Compiles XTemporal package.">
     <javac srcdir="${basedir}/src/main/java"
       destdir="${build}"
@@ -84,7 +88,10 @@
 
   <target name="test-default" description="Default tests for XTemp " depends="">
     <java classname="org.mitre.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" >
+      <arg value="-f" />
+      <!-- 
       <arg value="${default_test}" />
+      -->
     </java>
   </target>
 

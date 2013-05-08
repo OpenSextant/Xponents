@@ -26,18 +26,20 @@
  */
 package org.mitre.xcoord;
 
-import com.csvreader.CsvReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FilenameUtils;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.prefs.CsvPreference;
+
 import org.mitre.flexpat.PatternTestCase;
 import org.mitre.flexpat.TextMatch;
 import org.mitre.flexpat.TextMatchResultSet;
 import org.mitre.opensextant.util.FileUtility;
 import org.mitre.opensextant.util.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -221,15 +223,10 @@ public class TestScript {
      * @return
      * @throws IOException
      */
-    public CsvReader open(String file) throws IOException {
+    public CsvMapReader open(String file) throws IOException {
 
         InputStreamReader rdr = FileUtility.getInputStream(file, "UTF-8");
-        //CsvWriter report = new CsvWriter(file, ',', Charset.forName("UTF-8"));
-        CsvReader R = new CsvReader(rdr);
-        R.setRecordDelimiter('\n');
-        R.setDelimiter(',');
-        //R.setTextQualifier('"');
-        //R.setForceQualifier(true);
+        CsvMapReader R = new CsvMapReader(rdr, CsvPreference.STANDARD_PREFERENCE);
         return R;
     }
 
@@ -258,26 +255,28 @@ public class TestScript {
             // 
             tester.full_report = false;
 
-            CsvReader in = open(coordfile);
-            String line = null;
+            CsvMapReader in = open(coordfile);
             String text = null;
             int linenum = 0;
 
+            String[] columns = in.getHeader(true);
+            Map<String, String> testRow = null;
             // id, enumeration, test, true_lat, true_lon, remark
-            while (in.readRecord()) {
+            while ((testRow = in.read(columns)) != null) {
 
-                line = in.get(0);
-                //log.info(Arrays.toString(in.getValues()));
-                //++linenum;
-                text = line.trim();
-                if (text.startsWith("#")) {
+                String patid = testRow.get("id");
+                if (patid == null) {
+                    continue;
+                } 
+
+                patid = patid.trim();
+                if (patid.startsWith("#")) {
                     continue;
                 }
-                if (text.isEmpty()) {
+                if (patid.isEmpty()) {
                     continue;
                 }
 
-                String patid = line;
                 String fam = find_family(patid);
                 int famx = XConstants.get_CCE_family(fam);
 
@@ -286,17 +285,20 @@ public class TestScript {
                     continue;
                 }
 
-                linenum = Integer.parseInt(in.get(1));
-                text = in.get(2);
+                text = testRow.get("enumeration");
+                linenum = Integer.parseInt(text);
+                
+                text = testRow.get("test");
                 text = text.replace("$NL", "\n");
-                String rmks = in.get(5);
+                
+                String rmks = testRow.get("remark");
 
                 // "Patid # rowid" == test instance id
                 // DMS07#12  -- 12th example of DMS07 test.
                 // 
                 TestCase tst = new TestCase(patid + "#" + linenum, fam, text);
-                tst.match.setLatitude(in.get(3));
-                tst.match.setLongitude(in.get(4));
+                tst.match.setLatitude(testRow.get("true_lat"));
+                tst.match.setLongitude(testRow.get("true_lon"));
                 tst.setRemarks(rmks);
 
                 TextMatchResultSet results = xcoord.extract_coordinates(tst.text, tst.id);
@@ -362,13 +364,14 @@ public class TestScript {
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
         boolean dd = false;
-        boolean dms = true;
-        boolean dm = true;
-        boolean mgrs = false;
+        boolean dms = false;
+        boolean dm = false;
+        boolean mgrs = true;
         // 
         xcoord.match_MGRS(mgrs);
 
         String[] mgrstest = {
+            "4 jul 2008",
             "10 Jan 1994", // edge case, bare minimum.                
             "10 Jan 13", // edge case, bare minimum.                
             "10 Jan 94", // no, this is the real bare minimum.

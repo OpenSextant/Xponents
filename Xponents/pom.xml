@@ -25,6 +25,7 @@
     <module>XCoord</module>
     <module>XTemporal</module>
     <module>XText</module>
+    <module>PoLi</module>
   </modules>
 
   <dependencyManagement>
