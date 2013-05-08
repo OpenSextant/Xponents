@@ -67,7 +67,6 @@ public abstract class RegexPatternManager {
      *
      */
     protected List<RegexPattern> patterns_list = null;
-    // the file containing the geocoord patterns
     private URL patternFile = null;
     // the log
     /**
@@ -175,7 +174,7 @@ public abstract class RegexPatternManager {
     private StringBuilder _config_messages = new StringBuilder();
 
     /**
-     * Initializes the GeocoordFinder resource. Reads the DEFINEs and RULEs from
+     * Initializes the pattern manager implementations. Reads the DEFINEs and RULEs from
      * the pattern file and does the requisite substitutions. After
      * initialization, the {
      *
@@ -195,6 +194,7 @@ public abstract class RegexPatternManager {
 
         // the #RULE statements as name and a sequence of DEFINES and regex bits
         HashMap<String, String> rules = new HashMap<String, String>();
+        HashMap<String, String> matcherClasses = new HashMap<String, String>();
         List<String> rule_order = new ArrayList<String>();
 
         BufferedReader reader = null;
@@ -223,19 +223,16 @@ public abstract class RegexPatternManager {
             } // Is it a rule statement?
             else if (line.startsWith("#RULE")) {
                 // line should be
-                // #RULE<tab><geoform><tab><ruleName><tab><rulePattern>
+                // #RULE<tab><rule_fam><tab><rule_id><tab><pattern>
                 fields = line.split("[\t ]+", 4);
 
-                String geoForm = fields[1].trim();
+                String fam = fields[1].trim();
                 String ruleName = fields[2].trim();
                 String rulePattern = fields[3].trim();
 
-                //MCU: slash simplified.
-                //rulePattern = rulePattern.replaceAll("<slash>", "\\");
-
                 // geoform + ruleName should be unique, use as key in rules
                 // table
-                String ruleKey = geoForm + "-" + ruleName;
+                String ruleKey = fam + "-" + ruleName;
 
                 // if already a rule by that name, error
                 if (rules.containsKey(ruleKey)) {
@@ -258,6 +255,11 @@ public abstract class RegexPatternManager {
                 // testcount is a count of all tests, not just test within a rule family
                 //testcases.add(new PatternTestCase(ruleKey + "#" + testcount, fam, testtext));
                 testcases.add(create_testcase(ruleKey + "#" + testcount, fam, testtext));
+            } else if (line.startsWith("#CLASS")){
+                fields = line.split("[\t ]+", 3);
+                
+                String fam = fields[1].trim();
+                matcherClasses.put(fam, fields[2].trim());
             }
 
             // Ignore everything else
@@ -283,7 +285,7 @@ public abstract class RegexPatternManager {
 
             // the key should be of the form <geoform>_<rulename>
             String[] pieces = tmpKey.split("-", 2);
-            String tmpGeoForm = pieces[0];
+            String tmpFam = pieces[0];
             String tmpRuleName = pieces[1];
 
             Matcher elementMatcher = elementPattern.matcher(tmpRulePattern);
@@ -295,7 +297,16 @@ public abstract class RegexPatternManager {
                 _config_messages.append(", rulepattern=" + tmpRulePattern);
             }
 
-            RegexPattern pat = create_pattern(tmpGeoForm, tmpRuleName, "No Description yet...");
+            RegexPattern pat = create_pattern(tmpFam, tmpRuleName, "No Description yet...");
+            
+            if (matcherClasses.containsKey(tmpFam)){
+                pat.match_classname = matcherClasses.get(tmpFam);
+                try {
+                    pat.match_class = Class.forName( pat.match_classname );
+                } catch (ClassNotFoundException err){
+                    throw new IOException("FlexPat initialization failed due to invalid classname", err);
+                }
+            }
 
             // find and replace the DEFINEd pattern 
             while (elementMatcher.find()) {
