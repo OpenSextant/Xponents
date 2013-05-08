@@ -397,7 +397,7 @@ public class TextUtils {
      *    "-name-with.invalid characters;" // replace "-. ;"  with "_"
      *    "_name_with_invalid_characters_" // 
      * @param buf 
-     * @param replace
+     * @param replace   string of characters to replace with the one substitute char
      * @param substitution 
      * @return  
      */
@@ -413,6 +413,21 @@ public class TextUtils {
         }
         return _new.toString();
     }
+
+    /**
+     * Remove instances of any char in the remove string from buf
+     *  
+     */
+    public static String fast_remove(String buf, String remove) {
+
+        StringBuilder _new = new StringBuilder();
+        for (char ch : buf.toCharArray()) {
+            if (remove.indexOf(ch) < 0) {
+                _new.append(ch);
+            }
+        }
+        return _new.toString();
+    }    
     // UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS;
     private final static Pattern scrub_symbols = Pattern.compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
     private final static Pattern scrub_symbols2 = Pattern.compile("\\p{block=Transport and Map Symbols}+");
