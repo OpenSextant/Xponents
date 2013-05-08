@@ -50,10 +50,22 @@ public class Money extends PoliMatch {
         this(m);
         this.match_groups = elements;
     }
+    
+    public float value = -1;
+    public String currency = null;
      
     public void normalize() {
         super.normalize();
-    }
-    
-    
+
+        /* retrieve fields from this.match_groups
+         * create value and currency, and even a normalized text version of the amount
+         * Consider LOCALE -- is it european or US?  Is the number separator "," or "."?
+         * 
+         * fields:
+         *    currency_sym
+         *    currency_nom
+         *    currency_magnitude  -- if "mil", then you multiple the amt by 10^6, right?
+         *    money_amount
+         */
+    }    
 }
