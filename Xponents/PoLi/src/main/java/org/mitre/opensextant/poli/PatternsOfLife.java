@@ -1,30 +1,30 @@
 /**
- Copyright 2013 The MITRE Corporation.
+Copyright 2013 The MITRE Corporation.
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
- ** **************************************************
- * NOTICE
- *
- *  
- * This software was produced for the U. S. Government
- * under Contract No. W15P7T-12-C-F600, and is
- * subject to the Rights in Noncommercial Computer Software
- * and Noncommercial Computer Software Documentation
- * Clause 252.227-7014 (JUN 1995)
- *
- * (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
- **************************************************   */
+** **************************************************
+* NOTICE
+*
+*  
+* This software was produced for the U. S. Government
+* under Contract No. W15P7T-12-C-F600, and is
+* subject to the Rights in Noncommercial Computer Software
+* and Noncommercial Computer Software Documentation
+* Clause 252.227-7014 (JUN 1995)
+*
+* (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
+**************************************************   */
 
 package org.mitre.opensextant.poli;
 
@@ -45,233 +45,250 @@ import org.mitre.flexpat.RegexPatternManager;
  */
 public class PatternsOfLife {
 
-	String patterns_file = "/poli_patterns.cfg";
-	PoliPatternManager patterns = null;
-	static Logger log = LoggerFactory.getLogger(PatternsOfLife.class);
-	private boolean debug = false;
-	private TextUtils utility = new TextUtils();
+    String patterns_file = "/poli_patterns.cfg";
+    PoliPatternManager patterns = null;
+    static Logger log = LoggerFactory.getLogger(PatternsOfLife.class);
+    private boolean debug = false;
+    private TextUtils utility = new TextUtils();
 
-	public PatternsOfLife(boolean debugmode) {
-		if (debugmode) {
-			debug = true;
-		} else {
-			debug = log.isDebugEnabled();
-		}
-	}
+    public PatternsOfLife(boolean debugmode) {
+        if (debugmode) {
+            debug = true;
+        } else {
+            debug = log.isDebugEnabled();
+        }
+    }
 
-	/**
-	 * Default constructor, debugging off.
-	 */
-	public PatternsOfLife() {
-		this(false);
-	}
+    /**
+     * Default constructor, debugging off.
+     */
+    public PatternsOfLife() {
+        this(false);
+    }
 
-	public RegexPatternManager getPatternManager() {
-		return patterns;
-	}
+    public RegexPatternManager getPatternManager() {
+        return patterns;
+    }
 
-	/**
-	 * @throws PoliException
-	 */
-	public void configure() throws PoliException {
-		configure(getClass().getResource(patterns_file)); // default
-	}
+    /**
+     * @throws PoliException
+     */
+    public void configure() throws PoliException {
+        configure(getClass().getResource(patterns_file)); // default
+    }
 
-	/**
-	 * Configure using a particular pattern file.
-	 * 
-	 * @param patfile
-	 * @throws XCoordException
-	 */
-	public void configure(String patfile) throws PoliException {
-		if (patfile != null) {
-			patterns_file = patfile;
-		}
+    /**
+     * Configure using a particular pattern file.
+     * 
+     * @param patfile
+     * @throws XCoordException
+     */
+    public void configure(String patfile) throws PoliException {
+        if (patfile != null) {
+            patterns_file = patfile;
+        }
 
-		try {
-			patterns = new PoliPatternManager(patterns_file.trim());
-			patterns.testing = debug;
-			patterns.initialize();
-		} catch (Exception loaderr) {
-			String msg = "Could not load patterns file FILE=" + patterns_file;
-			log.error(msg, loaderr);
-			throw new PoliException(msg, loaderr);
-		}
-	}
+        try {
+            patterns = new PoliPatternManager(patterns_file.trim());
+            patterns.testing = debug;
+            patterns.initialize();
+        } catch (Exception loaderr) {
+            String msg = "Could not load patterns file FILE=" + patterns_file;
+            log.error(msg, loaderr);
+            throw new PoliException(msg, loaderr);
+        }
+    }
 
-	/**
-	 * Configure using a URL pointer to the pattern file.
-	 * 
-	 * @param patfile
-	 * @throws XCoordException
-	 */
-	public void configure(java.net.URL patfile) throws PoliException {
+    /**
+     * Configure using a URL pointer to the pattern file.
+     * 
+     * @param patfile
+     * @throws XCoordException
+     */
+    public void configure(java.net.URL patfile) throws PoliException {
 
-		try {
-			patterns = new PoliPatternManager(patfile);
-			patterns.testing = debug;
-			patterns.initialize();
-			patterns_file = patfile.getFile();
-		} catch (Exception loaderr) {
-			String msg = "Could not load patterns file URL=" + patfile;
-			log.error(msg, loaderr);
-			throw new PoliException(msg, loaderr);
-		}
-	}
+        try {
+            patterns = new PoliPatternManager(patfile);
+            patterns.testing = debug;
+            patterns.initialize();
+            patterns_file = patfile.getFile();
+        } catch (Exception loaderr) {
+            String msg = "Could not load patterns file URL=" + patfile;
+            log.error(msg, loaderr);
+            throw new PoliException(msg, loaderr);
+        }
+    }
 
-	/**
-	 * CHARS. SHP DBF limit is 255 bytes, so SHP file outputters should assess
-	 * at that time how/when to curtail match width. The max pre/post text seen
-	 * useful has typically been about 200-250 characters.
-	 */
-	private int MATCH_WIDTH = 250;
+    /**
+     * CHARS. SHP DBF limit is 255 bytes, so SHP file outputters should assess
+     * at that time how/when to curtail match width. The max pre/post text seen
+     * useful has typically been about 200-250 characters.
+     */
+    private int MATCH_WIDTH = 250;
 
-	/**
-	 * Match Width is the text buffer before and after a TextMatch. Match
-	 * buffers are used to create a match ID
-	 * 
-	 * @see TextMatch.createID
-	 * @param w
-	 */
-	public void setMatchWidth(int w) {
-		MATCH_WIDTH = w;
-	}
+    /**
+     * Match Width is the text buffer before and after a TextMatch. Match
+     * buffers are used to create a match ID
+     * 
+     * @see TextMatch.createID
+     * @param w
+     */
+    public void setMatchWidth(int w) {
+        MATCH_WIDTH = w;
+    }
 	
-	/** Extract patterns of a certain family from a block of text.
-	 * @param text - data to process
-	 * @param text_id - identifier for the data
-	 * @param family - optional filter;  to reuse the same PatManager but extract certain patterns only.
-	 * 
-	 * @return PoliResult
-	 */
-	public PoliResult extract_patterns(String text, String text_id, String family) {
+    /** Extract patterns of a certain family from a block of text.
+     * @param text - data to process
+     * @param text_id - identifier for the data
+     * @param family - optional filter;  to reuse the same PatManager but extract certain patterns only.
+     * 
+     * @return PoliResult
+     */
+    public PoliResult extract_patterns(String text, String text_id, String family) {
 
-		PoliResult results = new PoliResult();
-		results.result_id = text_id;
-		results.matches = new ArrayList<TextMatch>();
-		int bufsize = text.length();
+        PoliResult results = new PoliResult();
+        results.result_id = text_id;
+        results.matches = new ArrayList<TextMatch>();
+        int bufsize = text.length();
 
-		PoliMatch poliMatch = null;
+        PoliMatch poliMatch = null;
 
-		for (RegexPattern repat : patterns.get_patterns()) {
-			if (!repat.enabled) {
-				continue;
-			}
+        for (RegexPattern repat : patterns.get_patterns()) {
+            if (!repat.enabled) {
+                continue;
+            }
 			
-			if (family != null && !repat.id.startsWith(family)){
-				continue;
-			}
+            if (family != null && !repat.id.startsWith(family)){
+                continue;
+            }
 
-			Matcher match = repat.regex.matcher(text);
-			results.evaluated = true;
-			while (match.find()) {
+            Matcher match = repat.regex.matcher(text);
+            results.evaluated = true;
+            while (match.find()) {
 
-				Map<String, String> fields = patterns.group_map(repat, match);
+                Map<String, String> fields = patterns.group_map(repat, match);
+                            
+                if (repat.match_class == null){
+                    poliMatch =  new PoliMatch(fields, match.group());
+                } else {
+                    try {
+                        poliMatch = (PoliMatch)repat.match_class.newInstance();
+                        poliMatch.setText(match.group());
+                        poliMatch.setGroups(fields);
+                    } catch (InstantiationException classErr1){
+                        poliMatch = null;
+                        log.error("Could not create... ", classErr1);
+                    } catch (IllegalAccessException classErr2){
+                        poliMatch = null;
+                        log.error("Could not create... ", classErr2);
+                    }
+                                        
+                }
+                            
+                if (poliMatch == null) {
+                    // This would have been thrown at init.
+                    log.error("Could not find pattern family for " + repat.id);
+                    continue;
+                }
 
-				poliMatch = patterns.create_match(repat.id, match.group(),
-						fields);
-				if (poliMatch == null) {
-					// This would have been thrown at init.
-					log.error("Could not find pattern family for " + repat.id);
-					continue;
-				}
+                poliMatch.pattern_id = repat.id;
+                poliMatch.start = match.start();
+                poliMatch.end = match.end();
+                
+                poliMatch.normalize();
 
-				poliMatch.pattern_id = repat.id;
-				poliMatch.start = match.start();
-				poliMatch.end = match.end();
+                // Filter -- trivial filter is to filter out any coord that
+                // cannot
+                // TODO: Assess filters?
 
-				// Filter -- trivial filter is to filter out any coord that
-				// cannot
-				// TODO: Assess filters?
+                // returns indices for window around text match
+                int[] slices = TextUtils.get_text_window((int) poliMatch.start,
+                                                         bufsize, MATCH_WIDTH);
 
-				// returns indices for window around text match
-				int[] slices = TextUtils.get_text_window((int) poliMatch.start,
-						bufsize, MATCH_WIDTH);
+                // left l1 to left l2
+                poliMatch.setContext(TextUtils.delete_eol(text.substring(
+                    slices[0], slices[1])));
 
-				// left l1 to left l2
-				poliMatch.setContext(TextUtils.delete_eol(text.substring(
-						slices[0], slices[1])));
+                // coord.createID();
+                set_match_id(poliMatch);
 
-				// coord.createID();
-				set_match_id(poliMatch);
+                results.matches.add(poliMatch);
 
-				results.matches.add(poliMatch);
+            }
+        }
+        return results;
+    }
 
-			}
-		}
-		return results;
-	}
+    /**
+     * Assign an identifier to each Text Match found. This is an MD5 of the
+     * coord in-situ.
+     * 
+     * @param coord
+     */
+    protected void set_match_id(TextMatch match) {
+        match.match_id = utility.genTextID(match.getContext());
+    }
 
-	/**
-	 * Assign an identifier to each Text Match found. This is an MD5 of the
-	 * coord in-situ.
-	 * 
-	 * @param coord
-	 */
-	protected void set_match_id(TextMatch match) {
-		match.match_id = utility.genTextID(match.getContext());
-	}
+    public static void usage() {
+        System.out
+        .println("\tPatternsOfLife  -f          -- run all system tests\n"
+                 + "\tPatternsOfLife  -u  <file>  -- run user tests on given text file.");
+    }
 
-	public static void usage() {
-		System.out
-				.println("\tPatternsOfLife  -f          -- run all system tests\n"
-						+ "\tPatternsOfLife  -u  <file>  -- run user tests on given text file.");
-	}
+    /**
+     * Run a simple test.
+     * 
+     * @param args
+     *            only one argument accepted: a text file input.
+     */
+    public static void main(String[] args) {
+        boolean debug = true;
 
-	/**
-	 * Run a simple test.
-	 * 
-	 * @param args
-	 *            only one argument accepted: a text file input.
-	 */
-	public static void main(String[] args) {
-		boolean debug = true;
+        boolean systemTest = false;
+        String testFile = null;
+        try {
+            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("Poli", args, "u:f");
 
-		boolean systemTest = false;
-		String testFile = null;
-		try {
-			gnu.getopt.Getopt opts = new gnu.getopt.Getopt("Poli", args, "u:f");
+            int c;
+            while ((c = opts.getopt()) != -1) {
+                switch (c) {
+                    case 'f':
+                        System.out.println("\tSystem TESTS======= ");
+                        systemTest = true;
+                        break;
 
-			int c;
-			while ((c = opts.getopt()) != -1) {
-				switch (c) {
-				case 'f':
-					System.out.println("\tSystem TESTS======= ");
-					systemTest = true;
-					break;
+                    case 'u':
+                        testFile = opts.getOptarg();
+                        System.out.println("\tUser TESTS======= FILE=" + testFile);
+                        break;
 
-				case 'u':
-					testFile = opts.getOptarg();
-					System.out.println("\tUser TESTS======= FILE=" + testFile);
-					break;
+                    default:
+                        PatternsOfLife.usage();
+                        System.exit(1);
+                }
+            }
+        } catch (Exception runErr) {
+            runErr.printStackTrace();
+            PatternsOfLife.usage();
+            System.exit(1);
+        }
 
-				default:
-					PatternsOfLife.usage();
-					System.exit(1);
-				}
-			}
-		} catch (Exception runErr) {
-			runErr.printStackTrace();
-			PatternsOfLife.usage();
-			System.exit(1);
-		}
+        try {
+            // Use default config file.
+            PatternsOfLife poli = new PatternsOfLife(debug);
+            poli.configure(); // default
+            TestScript test = new TestScript(poli);
+            if (systemTest) {
+                test.test();
+            } else if (testFile != null) {
+                test.testUserFile(testFile);
+            }
 
-		try {
-			// Use default config file.
-			PatternsOfLife poli = new PatternsOfLife(debug);
-			poli.configure(); // default
-			TestScript test = new TestScript(poli);
-			if (systemTest) {
-				test.test();
-			} else if (testFile != null) {
-				test.testUserFile(testFile);
-			}
+        } catch (PoliException xerr) {
+            xerr.printStackTrace();
+        } catch (IOException ioerr) {
+            ioerr.printStackTrace();
+        }
 
-		} catch (PoliException xerr) {
-			xerr.printStackTrace();
-		} catch (IOException ioerr) {
-			ioerr.printStackTrace();
-		}
-
-	}
+    }
 }
