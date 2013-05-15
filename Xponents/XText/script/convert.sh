@@ -1,3 +1,3 @@
 export LANG=en_US
 
-ant -f ./build.xml  -Dinputfile=$1 convert
+ant -f ./testing.xml  -Dinputfile=$1 convert

@@ -48,14 +48,6 @@
     PoLi tasks and properties.
     
     -->
-    
-    	
-  <path id="runtime.classpath">
-    <pathelement location="${basedir}/src/main/resources" />
-    <pathelement location="${basedir}/src/test/resources" />
-    <pathelement location="${basedir}/build/poli-${version}.jar" />
-    <fileset dir="${basedir}/lib" includes="**/*.jar" />
-  </path>
 	
   <target name="compile" depends="setup,dependencies"
     description="Compiles PoLi package.">
@@ -75,13 +67,5 @@
   <target name="jar">
     <jar jarfile="build/poli-${version}.jar" basedir="${build}"  includes="org/**" />
   </target>
-
-
-  <target name="test-default" description="Default tests for PoLi" depends="">
-    <java classname="org.mitre.opensextant.poli.PatternsOfLife" classpathref="runtime.classpath" fork="yes" >
-      <arg value="-f" />
-    </java>
-  </target>
-
 
 </project>
