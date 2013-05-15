@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<project name="XCoord" default="test-default">
+
+    <property name="version" value="1.6"/>
+
+    <!--
+    
+    XCoord testing tasks and properties.
+    
+    -->
+    
+    <property name="default_test" value = "${basedir}/src/test/resources/Coord_Patterns_Truth_Text.txt" />
+    
+    <path id="runtime.classpath">
+        <!-- Deployed version would run config and resources out of etc. -->
+        <pathelement location="${basedir}/etc" />
+        <!-- Let your test resources override main resources. -->
+        <pathelement location="${basedir}/src/test/resources" />
+        <pathelement location="${basedir}/src/main/resources" />
+        <pathelement location="${basedir}/build/xcoord-${version}.jar" />
+        <fileset dir="${basedir}/lib" includes="**/*.jar" />
+    </path>
+
+    <target name="test" description="Template for Running an XCoord module" depends="compile">
+        <input message="file?" addproperty="get.file"/>
+        <java classname="org.mitre.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" >
+            <arg value="-u" />
+            <arg value="${get.file}" />
+        </java>
+    </target>
+
+    <target name="test-default" description="Default tests for XCoord " depends="compile">
+        <java classname="org.mitre.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" >
+            <arg value="-f" />
+            <arg value="${default_test}" />
+        </java>
+    </target>
+
+    <target name="test-adhoc" description="Default tests for XCoord " depends="compile">
+        <java classname="org.mitre.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" >
+            <arg value="-a" />
+        </java>
+    </target>
+
+    <target name="test-by-line" description="Specialized Coordinate tests for XCoord " depends="compile">
+        <input message="file?" addproperty="get.file"/>
+        <java classname="org.mitre.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" >
+            <arg value="-t" />
+            <arg value="${get.file}" />
+        </java>
+    </target>
+</project>
