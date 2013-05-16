@@ -48,9 +48,6 @@
     XTemporal tasks and properties.
     
     -->
-    
-    	
-  <property name="default_test" value = "${basedir}/src/test/resources/Date_Patterns_2012.txt " />
 
   <path id="runtime.classpath">
     <pathelement location="${basedir}/src/test/resources" />
@@ -77,23 +74,5 @@
   <target name="jar">
     <jar jarfile="build/xtemporal-${version}.jar" basedir="${build}"  includes="org/**" />
   </target>
-
-  <target name="test" description="Template for Running a module" depends="">
-    <input message="file?" addproperty="get.file"/>
-    <java classname="org.mitre.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" >
-      <arg value="${get.file}" />
-    </java>
-  </target>
-
-
-  <target name="test-default" description="Default tests for XTemp " depends="">
-    <java classname="org.mitre.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" >
-      <arg value="-f" />
-      <!-- 
-      <arg value="${default_test}" />
-      -->
-    </java>
-  </target>
-
 
 </project>

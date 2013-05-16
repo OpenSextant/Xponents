@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<project name="XTemporal" default="test-default">
+
+    <!--
+    
+    XTemporal testing tasks and properties.
+    
+    -->
+    	
+  <property name="default_test" value = "${basedir}/src/test/resources/Date_Patterns_2012.txt " />
+
+  <path id="runtime.classpath">
+    <pathelement location="${basedir}/src/test/resources" />
+    <pathelement location="${basedir}/src/main/resources" />
+    <fileset dir="${basedir}/build" includes="**/*.jar" />
+    <fileset dir="${basedir}/lib" includes="**/*.jar" />
+  </path>
+	
+  <target name="test" description="Template for Running a module" depends="">
+    <input message="file?" addproperty="get.file"/>
+    <java classname="org.mitre.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" >
+      <arg value="${get.file}" />
+    </java>
+  </target>
+
+
+  <target name="test-default" description="Default tests for XTemp " depends="">
+    <java classname="org.mitre.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" >
+      <arg value="-f" />
+      <!-- 
+      <arg value="${default_test}" />
+      -->
+    </java>
+  </target>
+
+
+</project>

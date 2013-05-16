@@ -1,9 +1,10 @@
+mvn install 
+
 ant clean
 ant
+# For now Javadoc is generated using Maven.
 # ant javadoc
-ant test-default
-
-mvn install 
+ant -f testing.xml
 
 cp ./target/*javadoc.jar ./build/
 cp ./target/*sources.jar ./build/
@@ -19,9 +20,7 @@ zip -r $PKG \
 XCoord/lib/*jar \
 XCoord/etc/geocoord_regex.cfg \
 XCoord/etc/log4j.properties \
-XCoord/build.xml  \
-XCoord/pom.xml  \
-XCoord/READ* \
+XCoord/*.* \
 XCoord/build/*jar 
 
 for dir in XCoord/doc XCoord/results XCoord/src ; do 

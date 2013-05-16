@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<project name="XText" default="test-default">
+
+    <!--
+    
+    XText testing tasks and properties.
+    
+    -->    
+    
+    <path id="runtime.classpath">
+        <pathelement location="${basedir}/etc" />
+        <pathelement location="${basedir}/src/test/resources" />
+        <fileset dir="${basedir}/build" includes="**/*.jar" />
+        <fileset dir="${basedir}/lib" includes="**/*.jar" />
+    </path>
+	
+    <target name="test-default">
+        <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
+            <jvmArg value="-Xmx600m"/>
+            <arg value="${basedir}/src/test/resources/Asia_Fdn_Afghanistan_2009.pdf"/>
+        </java>
+    </target>
+
+    <target name="convert">
+        <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
+            <jvmArg value="-Xmx600m"/>
+            <arg value="${inputfile}"/>
+        </java>
+    </target>
+
+</project>

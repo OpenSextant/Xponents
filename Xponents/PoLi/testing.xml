@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<project name="PoLi" default="test-default">
+
+    <!--
+    
+    PoLi testing tasks and properties.
+    
+    -->
+    	
+  <path id="runtime.classpath">
+    <pathelement location="${basedir}/src/main/resources" />
+    <pathelement location="${basedir}/src/test/resources" />
+    <fileset dir="${basedir}/lib" includes="**/*.jar" />
+    <fileset dir="${basedir}/build" includes="**/*.jar" />
+  </path>
+	
+  <target name="test-default" description="Default tests for PoLi" depends="">
+    <java classname="org.mitre.opensextant.poli.PatternsOfLife" classpathref="runtime.classpath" fork="yes" >
+      <arg value="-f" />
+    </java>
+  </target>
+
+</project>

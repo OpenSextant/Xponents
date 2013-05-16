@@ -52,14 +52,6 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
-    <path id="runtime.classpath">
-        <pathelement location="${basedir}/etc" />
-        <pathelement location="${basedir}/src/test/resources" />
-        <fileset dir="${basedir}/lib" includes="**/*.jar" />
-        <fileset dir="${basedir}/build" includes="**/*.jar" />
-    </path>
-	
-	
     <target name="compile" depends="setup,dependencies"
         description="Compiles XText package.">
         <javac srcdir="${basedir}/src/main/java"
@@ -82,21 +74,6 @@
         <jar jarfile="build/xtext-${version}.jar" basedir="build">
             <include name="org/mitre/xtext/**"/>
         </jar>
-    </target>
-
-
-    <target name="test-default">
-        <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
-            <jvmArg value="-Xmx600m"/>
-            <arg value="${basedir}/src/test/resources/Asia_Fdn_Afghanistan_2009.pdf"/>
-        </java>
-    </target>
-
-    <target name="convert">
-        <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
-            <jvmArg value="-Xmx600m"/>
-            <arg value="${inputfile}"/>
-        </java>
     </target>
 
 </project>
