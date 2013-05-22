@@ -30,6 +30,7 @@
 package org.mitre.flexpat;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -102,6 +103,16 @@ public abstract class RegexPatternManager {
      */
     public RegexPatternManager(URL _patternfile) {
         patternFile = _patternfile;
+    }
+
+    /**
+     *
+     * @param _patternfile
+     * @throws java.net.MalformedURLException
+     */
+    public RegexPatternManager(File _patternfile)
+            throws java.net.MalformedURLException {
+        patternFile = _patternfile.toURI().toURL();
     }
 
     /**
