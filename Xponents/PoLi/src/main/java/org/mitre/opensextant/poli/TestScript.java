@@ -28,6 +28,13 @@
 
 package org.mitre.opensextant.poli;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.*;
+
+import org.apache.commons.io.FilenameUtils;
+
 import org.mitre.flexpat.PatternTestCase;
 import org.mitre.flexpat.TextMatch;
 import org.mitre.opensextant.util.FileUtility;
@@ -40,11 +47,6 @@ import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.*;
 
 /**
  * 
@@ -171,7 +173,34 @@ public class TestScript {
 	/**
 	 * Run patterns over a single file
 	 */
-	public void testUserFile(String f) {
+	public void testUserFile(String f) throws IOException, PoliException {
+		poli.configure(new File(f));
+		String fname = FilenameUtils.getBaseName(f);
+
+		createResultsFile("results/test_" + fname + ".csv");
+
+		// List<TextMatch> allResults = new ArrayList<>();
+		log.info("TESTING FILE: " + f);
+		for (PatternTestCase test : this.poli.patterns.testcases) {
+			log.info("TEST " + test.id);
+			PoliResult results = this.poli.extract_patterns(test.text, test.id, test.family);
+			if (results.evaluated && !results.matches.isEmpty()) {
+				try {
+					for (TextMatch m : results.matches) {
+						// log.debug("TEST " + test.id + " FOUND: " +
+						// m.toString());
+						Map<String, Object> row = createResultRow(test, m);
+						report.write(row, header, poliResultsSpec);
+					}
+				} catch (IOException ioerr) {
+					log.error("Failed to write result for " + test.id, ioerr);
+				}
+			} else {
+				log.info("TEST " + test.id + " STATUS: FAILED");
+			}
+		}
+
+		close_report();
 	}
 
 	/**

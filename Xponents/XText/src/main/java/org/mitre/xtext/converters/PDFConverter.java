@@ -136,7 +136,7 @@ public class PDFConverter implements iConvert {
                 if (info != null) {
                     textdoc.addAuthor(info.getAuthor());
                     try {
-                        textdoc.addDate(info.getCreationDate());
+                        textdoc.addCreateDate(info.getCreationDate());
                     } catch (IOException io) {
                         //ignore, bad date but continue with indexing
                     }

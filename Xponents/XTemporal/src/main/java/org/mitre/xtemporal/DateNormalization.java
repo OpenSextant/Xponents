@@ -1,22 +1,21 @@
 /**
  *
- *      Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -24,19 +23,16 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  */
-/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//
-//  _____                                ____                     __                       __      
-// /\  __`\                             /\  _`\                  /\ \__                   /\ \__   
-// \ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\  
-//  \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/  
-//   \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_ 
-//    \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
-//     \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
-//               \ \_\                                                                             
-//               \/_/                                                                             
-//
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+/**
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+ * // // _____ ____ __ __ // /\ __`\ /\ _`\ /\ \__ /\ \__ // \ \ \/\ \ _____ __
+ * ___ \ \,\L\_\ __ __ _\ \ ,_\ __ ___ \ \ ,_\ // \ \ \ \ \ /\ '__`\ /'__`\ /' _
+ * `\ \/_\__ \ /'__`\/\ \/'\\ \ \/ /'__`\ /' _ `\\ \ \/ // \ \ \_\ \\ \ \L\ \/\
+ * __/ /\ \/\ \ /\ \L\ \ /\ __/\/> </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_ // \
+ * \_____\\ \ ,__/\ \____\\ \_\ \_\ \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\
+ * \_\ \_\\ \__\ // \/_____/ \ \ \/ \/____/ \/_/\/_/ \/_____/ \/____/\//\/_/
+ * \/__/ \/__/\/_/ \/_/\/_/ \/__/ // \ \_\ // \/_/ //
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
  */
 package org.mitre.xtemporal;
 
@@ -97,8 +93,8 @@ public class DateNormalization {
     static SimpleDateFormat fmt_ydm = new SimpleDateFormat("yyyy-M-d");
 
     /**
-     * @param d 
-     * @return 
+     * @param d
+     * @return
      */
     public static String format_date(Date d) {
         return fmt_ydm.format(d);
@@ -108,44 +104,46 @@ public class DateNormalization {
      *  
      * #DEFINE MON_ABBREV  JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEPT?|OCT|NOV|DEC
     
-    #DEFINE MON_NAME   [A-Z]{3}\w{0,8}
+     #DEFINE MON_NAME   [A-Z]{3}\w{0,8}
     
-    #DEFINE YEAR         [12]\d{3}
-    #DEFINE YY           \d\d
-    #DEFINE YEARYY       \d{2,4}
-    #DEFINE MM           [01]\d 
-    #DEFINE DD           [0-3]\d
-    #DEFINE SHORT_TZ     [A-Z]
+     #DEFINE YEAR         [12]\d{3}
+     #DEFINE YY           \d\d
+     #DEFINE YEARYY       \d{2,4}
+     #DEFINE MM           [01]\d 
+     #DEFINE DD           [0-3]\d
+     #DEFINE SHORT_TZ     [A-Z]
     
-    #DEFINE hh    [0-2]\d
-    #DEFINE mm    [0-5]\d
-    #DEFINE DOM         [0-3]?\d
-    #DEFINE MONTH       [01]?\d
-    #DEFINE LONG_TZ     [A-Z]{3,5}
+     #DEFINE hh    [0-2]\d
+     #DEFINE mm    [0-5]\d
+     #DEFINE DOM         [0-3]?\d
+     #DEFINE MONTH       [01]?\d
+     #DEFINE LONG_TZ     [A-Z]{3,5}
      */
     /**
-     * For now this reports only DATEs -- no TIME parsing is handled.
-     * DateFormat would work,,... except the wild variation of matching formats
-     * would be difficult to handle.
-     * 
+     * For now this reports only DATEs -- no TIME parsing is handled. DateFormat
+     * would work,,... except the wild variation of matching formats would be
+     * difficult to handle.
+     *
      * @param elements
-     * @return
-     * @throws java.text.ParseException  
+     * @return void
+     * @throws java.text.ParseException
      */
-    public static Date normalize_date(java.util.Map<String, String> elements) throws
+    public static void normalize_date(java.util.Map<String, String> elements, DateMatch dt) throws
             java.text.ParseException {
 
         cal.clear();
 
+        // Parse years.
         int year = normalize_year(elements);
         if (year == INVALID_DATE) {
-            return null;
+            return;
         }
 
         if (year > MAXIMUM_YEAR) {
             // HHMM can look like a year, e.g., 2100h or 2300 PM
-            return null;
+            return;
         }
+        dt.resolution = DateMatch.TimeResolution.YEAR;
 
         int month = normalize_month(elements);
         if (month != INVALID_DATE) {
@@ -155,24 +153,32 @@ public class DateNormalization {
         }
 
         if (month == INVALID_DATE) {
-            return null;
+            return;
         }
 
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month);
 
+        dt.resolution = DateMatch.TimeResolution.MONTH;
+
         int dom = normalize_day(elements);
         // If you got this far, then assume Day of Month is 1 (first of the month)
         if (dom == INVALID_DATE) {
+            // No date found, resolution is month
             dom = 1;
-            //return null;
         } else if (dom == 0) {
-            return null;
+            return;
+        } else {
+            dt.resolution = DateMatch.TimeResolution.DAY;            
         }
-
+        
+        
+        // Normalize Time fields found, H, M, s.SSS, etc.
+        // 
+        
         cal.set(Calendar.DAY_OF_MONTH, dom);
 
-        return cal.getTime();
+        dt.datenorm = cal.getTime();
     }
 
     /**

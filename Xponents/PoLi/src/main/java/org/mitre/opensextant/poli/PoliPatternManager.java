@@ -28,6 +28,7 @@
 
 package org.mitre.opensextant.poli;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -46,7 +47,7 @@ public final class PoliPatternManager extends RegexPatternManager {
      * @param _patternfile
      * @throws MalformedURLException
      */
-    public PoliPatternManager(String _patternfile) throws MalformedURLException {
+    public PoliPatternManager(File _patternfile) throws MalformedURLException {
         super(_patternfile);
         log = LoggerFactory.getLogger(PoliPatternManager.class);
         this.debug = log.isDebugEnabled();

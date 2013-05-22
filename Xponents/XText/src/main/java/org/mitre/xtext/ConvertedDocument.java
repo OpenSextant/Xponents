@@ -70,6 +70,8 @@ public final class ConvertedDocument {
     public String filepath = null;
     public String filename = null;
     public Date filetime = null;
+    public Date create_date = null;
+    public String create_date_text = null;
     public String relative_path = null;
     public String textpath = null;
     public String payload = null;
@@ -175,14 +177,25 @@ public final class ConvertedDocument {
         meta.put(k, b);
     }
 
-    public void addDate(String d) {
+    /** Create date text is added only on conversion.
+     * If doc conversion is retrieved from cache, caller should rely more on 
+     * the "pub_date" property.
+     */
+    public void addCreateDate(String d) {  
+        this.create_date_text = d;
         meta.put("pub_date", d);
     }
 
-    public void addDate(java.util.Calendar d) {
+    /** Create date obj is added only on conversion.
+     * If doc conversion is retrieved from cache, caller should rely more on 
+     * the "pub_date" property.
+     */
+    public void addCreateDate(java.util.Calendar d) {
         if (d == null) {
             return;
         }
+        
+        this.create_date = d.getTime();
         meta.put("pub_date", dtfmt.format(d.getTime()));
     }
 

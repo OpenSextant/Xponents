@@ -186,7 +186,7 @@ public class XTemporal {
 
                 try {
 
-                    dt.datenorm = DateNormalization.normalize_date(patterns.group_map(pat, match));
+                    DateNormalization.normalize_date(patterns.group_map(pat, match), dt);
                     if (dt.datenorm == null) {
                         continue;
                     }
