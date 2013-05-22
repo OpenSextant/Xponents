@@ -73,7 +73,7 @@ public class DefaultConverter implements iConvert {
 
         textdoc.addTitle(metadata.get(Metadata.TITLE));
         textdoc.setEncoding(metadata.get(Metadata.CONTENT_ENCODING));
-        textdoc.addDate(metadata.get(Metadata.CREATION_DATE));
+        textdoc.addCreateDate(metadata.get(Metadata.CREATION_DATE));
         textdoc.addAuthor(metadata.get(Metadata.AUTHOR));
 
         textdoc.setPayload(TextUtils.reduce_line_breaks(tikasax.toString()));
