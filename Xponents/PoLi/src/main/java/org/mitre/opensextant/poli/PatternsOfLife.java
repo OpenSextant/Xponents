@@ -28,6 +28,7 @@ limitations under the License.
 
 package org.mitre.opensextant.poli;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -83,13 +84,13 @@ public class PatternsOfLife {
      * @param patfile
      * @throws XCoordException
      */
-    public void configure(String patfile) throws PoliException {
+    public void configure(File patfile) throws PoliException {
         if (patfile != null) {
-            patterns_file = patfile;
+            patterns_file = patfile.getPath();
         }
 
         try {
-            patterns = new PoliPatternManager(patterns_file.trim());
+            patterns = new PoliPatternManager(patfile);
             patterns.testing = debug;
             patterns.initialize();
         } catch (Exception loaderr) {
