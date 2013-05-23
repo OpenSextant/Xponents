@@ -1,0 +1,8 @@
+
+
+
+Consider using JRC Names, a list of millions of entities, with some structure to it.
+http://ipsc.jrc.ec.europa.eu/index.php?id=42
+
+ Download it. 
+ lib/.../taxcat/apps  should have a "JRCentities.py" catalog ingester
