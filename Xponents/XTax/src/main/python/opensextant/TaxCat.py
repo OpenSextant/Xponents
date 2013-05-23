@@ -111,7 +111,7 @@ class TaxCatalogBuilder:
         self.count = 0
         self.set_server(self.server)
         
-        from opensextant.OpenSextantCommonsUtils import ConfigUtility
+        from CommonsUtils import ConfigUtility
         ## Load file 
         self.utility = ConfigUtility(None)
         self.stopwords = set( [] )
@@ -158,14 +158,13 @@ class TaxCatalogBuilder:
         return
     
     
-    def add_wordlist(self, catalog, fpath, start_id, taxnode=None):
+    def add_wordlist(self, catalog, datafile, start_id, taxnode=None):
         
-        _name = os.path.basename(fpath)
+        _name = os.path.basename(datafile)
         if taxnode:
             _name = taxnode
         
-        _datafile = os.path.join(LEXICA, catalog, fpath)    
-        sheet = open(_datafile,'rb')
+        sheet = open(datafile,'rb')
         words = set([])
     
         for row in sheet:
@@ -194,6 +193,4 @@ class TaxCatalogBuilder:
         
         print "COUNT: %d" %( self.count)
         sheet.close()
-    
-    
     
