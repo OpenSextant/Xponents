@@ -16,10 +16,10 @@ emerging general purpose tagger in opensextant.toolbox GATE processing package.
 
 This is not a buildable component.  Currently it is a recipe for creating a taxonomic tagger using:
 
-  SolrTextTagger
-  OpenSextant Gazetteer "solr home"
-  Python "pysolr"
-  OpenSextant opensextant.extraction.TaxonMatcher API
+ * SolrTextTagger
+ * OpenSextant Gazetteer "solr home"
+ * Python "pysolr"
+ * OpenSextant opensextant.extraction.TaxonMatcher API
 
 1. create your solr core; extending gazetteer multicore in solr.xml
    Default name for this core will be "taxcat", short for Taxonomy Catalog
@@ -37,52 +37,54 @@ Your catalog in solr will help you coalesce many differnt taxonomies into one se
 Not all entries need to be used for tagging -- that is if you think a phrase is particularly erroneous or will
 produce noise, then set valid=false.  It can remain in your catalog, though.
 
-   catalog  -- a catalog ID that you identifies the source of reference data.
-   taxnode  -- a taxon ID, that helps you associate N phrases with a given taxon
-   phrase   -- a textual phrase in the reference data
-   id       -- catalog row ID
-   valid    -- if phrase entry should really be used for tagging. 
-   attrs    -- optional.  Any amount of metadata you wish to carry forward with your tagging. This is a string, no format.
+    catalog  -- a catalog ID that you identifies the source of reference data.
+    taxnode  -- a taxon ID, that helps you associate N phrases with a given taxon
+    phrase   -- a textual phrase in the reference data
+    id       -- catalog row ID
+    valid    -- if phrase entry should really be used for tagging. 
+    attrs    -- optional.  Any amount of metadata you wish to carry forward with your tagging. This is a string, no format.
 
 
 
-  catalog = "citrus_fruit",
-  taxnode = "tropical.Pineapple"
-  phrase = { "pineapple", 
-             "la piña", 
-             ...}   // Each phrase would be its own row in Solr; but they all carry the same taxonid and cat id
+    catalog = "citrus_fruit",
+    taxnode = "tropical.Pineapple"
+    phrase = { "pineapple", 
+               "la piña", 
+                ...}   // Each phrase would be its own row in Solr; but they all carry the same taxonid and cat id
 
-  id  = (you define;  using taxcat.py API, you name a starting offset for the catalog
+    id  = (you define;  using taxcat.py API, you name a starting offset for the catalog
 
 Use of attrs and valid=T/F are optimizations. 
 
 
 ## Tagging ##
 
-   TaxMatcher.tagText( "Marc bought eight pineapples given they were on sale.",  "test" )
+    TaxMatcher.tagText( "Marc bought eight pineapples given they were on sale.",  "test" )
 
-   Should find TaxonMatch, for "pineapples", and associate that as taxon={ "tropical.Pineapple", catalog="citrus_fruit" , attrs=....}
-
-
+Should find TaxonMatch, for "pineapples", and associate that as taxon={ "tropical.Pineapple", catalog="citrus_fruit" , attrs=....}
 
 
 ## Running ## 
 
 
-  Do whatever environment setup you need to do to set ANT_HOME, JAVA_HOME, SOLR_HOME
-  Also:
+Do whatever environment setup you need to do to set ANT_HOME, JAVA_HOME, SOLR_HOME, PYTHONPATH, etc.
 
-  PYTHONPATH=./lib:./src/main/python
+    PYTHONPATH=./lib:./src/main/python
 
-  # Add all that here:
-  . setup.env
+    # Add all that here:
+    #   taxcat.env is a default.
+    . setup.env
 
-  # solr_home is set locally here in build.properties
-  ant -f  ./build.xml  create-solr-home
-  #
+    # solr_home is set locally here in build.properties
+    ant -f  ./build.xml  create-solr-home
+    #
   
-  #
-  run your python app that leverages the taxcat.py API
+    #
+    run your python app that leverages the taxcat.py API
   
-  ant -f  build.xml  build-fst
+    ant -f  build.xml  build-fst
+
+
+Note -- if you install the Python libs to your environment, you are responsible for managing them.
+This is alpha-ware.
 
