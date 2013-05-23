@@ -81,41 +81,4 @@
         </javadoc>
     </target>
 
-    <target name="package-for-maven" depends="all, javadoc" description="Creates jars for deploying to a Maven repository">
-        <jar jarfile="build/flexpat-${version}-sources.jar" basedir="src" />
-        <jar jarfile="build/flexpat-${version}-javadoc.jar" basedir="doc/javadoc" />
-    </target>
-
-    <!-- To deploy either add mvn to your path or set the maven system property to the maven executable. -->
-    <target name="setup-maven">
-        <property name="maven" value="mvn" />
-        <property name="maven_file" location="build/flexpat-${version}.jar" />
-        <property name="maven_pomFile" location="FlexPat.pom" />
-        <property name="maven_sources" location="build/flexpat-${version}-sources.jar" />
-        <property name="maven_javadoc" location="build/flexpat-${version}-javadoc.jar" />
-
-        <macrodef name="deploy">
-            <attribute name="url" />
-            <attribute name="repositoryId" />
-            <sequential>
-                <exec executable="${maven}">
-                    <arg value="-Dfile=${maven_file}" />
-                    <arg value="-DpomFile=${maven_pomFile}" />
-                    <arg value="-Dsources=${maven_sources}" />
-                    <arg value="-Djavadoc=${maven_javadoc}" />
-                    <arg value="-Durl=@{url}" />
-                    <arg value="-DrepositoryId=@{repositoryId}" />
-                    <arg value="deploy:deploy-file" />
-                </exec>
-            </sequential>
-        </macrodef>
-    </target>
-
-    <target name="deploy-snapshot" depends="package-for-maven, setup-maven" description="Deploys to the snapshot repository">
-        <deploy repositoryId="maven-proxy-snapshots" url="http://maven-proxy.mitre.org/artifactory/libs-snapshots-local"/>
-    </target>
-
-    <target name="deploy-release" depends="package-for-maven, setup-maven" description="Deploys to the release repository">
-        <deploy repositoryId="maven-proxy-releases" url="http://maven-proxy.mitre.org/artifactory/libs-releases-local"/>
-    </target>
 </project>
