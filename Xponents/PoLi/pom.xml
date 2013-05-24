@@ -10,7 +10,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>poli</artifactId>
-  <version>1b-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
