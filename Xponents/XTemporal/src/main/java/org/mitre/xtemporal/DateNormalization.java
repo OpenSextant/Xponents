@@ -26,7 +26,9 @@
 package org.mitre.xtemporal;
 
 import java.util.Date;
+
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormat;
 
@@ -36,7 +38,7 @@ import org.joda.time.format.DateTimeFormat;
  */
 public class DateNormalization {
 
-    final static DateTime cal = DateTime.now();
+    final static DateTime cal = DateTime.now(DateTimeZone.UTC);
     final static int YEAR = cal.getYear();
     final static int MILLENIUM = 2000;
     final static int CURRENT_YY = YEAR - MILLENIUM;
@@ -64,9 +66,9 @@ public class DateNormalization {
      *
      */
     public static int NO_DAY = -1;
-    final static DateTimeFormatter fmt_month = DateTimeFormat.forPattern("MMM");
-    final static DateTimeFormatter fmt_mm = DateTimeFormat.forPattern("MM");
-    final static DateTimeFormatter fmt_ydm = DateTimeFormat.forPattern("yyyy-MM-dd");
+    final static DateTimeFormatter fmt_month = DateTimeFormat.forPattern("MMM").withZoneUTC();
+    final static DateTimeFormatter fmt_mm = DateTimeFormat.forPattern("MM").withZoneUTC();
+    final static DateTimeFormatter fmt_ydm = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
 
     /**
      * @param d
@@ -128,7 +130,7 @@ public class DateNormalization {
             return;
         }
 
-        DateTime _cal = new DateTime(year, month, 1, 0, 0);
+        DateTime _cal = new DateTime(year, month, 1, 0, 0, DateTimeZone.UTC);
 
         dt.resolution = DateMatch.TimeResolution.MONTH;
 
