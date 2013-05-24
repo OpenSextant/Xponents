@@ -25,6 +25,12 @@
         <!-- Unpack Solr4 config baseline-->
         <unzip src="${taxtag}/solr/solr4-conf.zip" dest="${solr_home}/taxcat/." />
 
+        <!-- Limited Gazetteer hack: copy content from installed solrhome; Get ASCII mapping customization.
+          -->
+        <copy todir="${solr_home}/taxcat/conf">
+            <fileset file="${solr_home}/gazetteer/conf" includes="*.txt" />
+        </copy>
+
         <!-- Gaz and SolrTextTagger Solr config -->
         <!-- 
            <copy todir="${solr_home}/" file="${taxtag}/solr/solr.xml" /> 
@@ -33,6 +39,7 @@
         <copy todir="${solr_home}/taxcat/conf" file="${taxtag}/solr/taxcat/conf/solrconfig.xml" />
         <copy todir="${solr_home}/taxcat/conf" file="${taxtag}/solr/taxcat/conf/schema.xml" />
         <copy todir="${solr_home}/taxcat/lib" file="${taxtag}/solr/taxcat/lib/solr-text-tagger-1.1.jar" />
+
 
     </target>
 

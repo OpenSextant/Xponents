@@ -343,9 +343,8 @@
     
      <fieldType name="name_idx2" class="solr.TextField" positionIncrementGap="100">
       <analyzer>
-        <!-- <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/> -->
+        <charFilter class="solr.MappingCharFilterFactory" mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
         <tokenizer class="solr.ClassicTokenizerFactory"/>
-        <filter class="solr.ASCIIFoldingFilterFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
