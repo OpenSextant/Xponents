@@ -23,23 +23,12 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  */
-/**
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
- * // // _____ ____ __ __ // /\ __`\ /\ _`\ /\ \__ /\ \__ // \ \ \/\ \ _____ __
- * ___ \ \,\L\_\ __ __ _\ \ ,_\ __ ___ \ \ ,_\ // \ \ \ \ \ /\ '__`\ /'__`\ /' _
- * `\ \/_\__ \ /'__`\/\ \/'\\ \ \/ /'__`\ /' _ `\\ \ \/ // \ \ \_\ \\ \ \L\ \/\
- * __/ /\ \/\ \ /\ \L\ \ /\ __/\/> </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_ // \
- * \_____\\ \ ,__/\ \____\\ \_\ \_\ \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\
- * \_\ \_\\ \__\ // \/_____/ \ \ \/ \/____/ \/_/\/_/ \/_____/ \/____/\//\/_/
- * \/__/ \/__/\/_/ \/_/\/_/ \/__/ // \ \_\ // \/_/ //
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
- */
 package org.mitre.xtemporal;
 
-//import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
-import java.text.SimpleDateFormat;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormat;
 
 /**
  *
@@ -47,31 +36,18 @@ import java.text.SimpleDateFormat;
  */
 public class DateNormalization {
 
-    static Calendar cal = null;
-    static int YEAR = 0;
-    static int MILLENIUM = 2000;
-    static int CURRENT_YY = 0;
-    static int FUTURE_YY_THRESHOLD = 0;
-    static int MAXIMUM_YEAR = 2020;
-
-    static {
-        cal = Calendar.getInstance();
-
-        cal.setTime(new Date());
-
-        // 2012
-        YEAR = cal.get(Calendar.YEAR);
-        // 12      = 2012 - 2000
-        CURRENT_YY = YEAR - MILLENIUM;
-        // 14 = 12 + 2;
-        FUTURE_YY_THRESHOLD = CURRENT_YY + 2;
-
-        // Use of year "15" would imply 1915 in this case.
-        // Adjust 2-digit year threshold as needed.
-        // Java default is 80/20.  2000 - 2032 is the assumed year for "00" through "32"
-        // "33" is 1933
-        //
-    }
+    final static DateTime cal = DateTime.now();
+    final static int YEAR = cal.getYear();
+    final static int MILLENIUM = 2000;
+    final static int CURRENT_YY = YEAR - MILLENIUM;
+    ;
+    final static int FUTURE_YY_THRESHOLD = CURRENT_YY + 2;
+    final static int MAXIMUM_YEAR = 2020;
+    // Use of year "15" would imply 1915 in this case.
+    // Adjust 2-digit year threshold as needed.
+    // Java default is 80/20.  2000 - 2032 is the assumed year for "00" through "32"
+    // "33" is 1933
+    //
     /**
      *
      */
@@ -88,16 +64,16 @@ public class DateNormalization {
      *
      */
     public static int NO_DAY = -1;
-    static SimpleDateFormat fmt_month = new SimpleDateFormat("MMM");
-    static SimpleDateFormat fmt_mm = new SimpleDateFormat("MM");
-    static SimpleDateFormat fmt_ydm = new SimpleDateFormat("yyyy-M-d");
+    final static DateTimeFormatter fmt_month = DateTimeFormat.forPattern("MMM");
+    final static DateTimeFormatter fmt_mm = DateTimeFormat.forPattern("MM");
+    final static DateTimeFormatter fmt_ydm = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     /**
      * @param d
      * @return
      */
     public static String format_date(Date d) {
-        return fmt_ydm.format(d);
+        return fmt_ydm.print(d.getTime());
     }
 
     /* 
@@ -131,8 +107,6 @@ public class DateNormalization {
     public static void normalize_date(java.util.Map<String, String> elements, DateMatch dt) throws
             java.text.ParseException {
 
-        cal.clear();
-
         // Parse years.
         int year = normalize_year(elements);
         if (year == INVALID_DATE) {
@@ -146,9 +120,7 @@ public class DateNormalization {
         dt.resolution = DateMatch.TimeResolution.YEAR;
 
         int month = normalize_month(elements);
-        if (month != INVALID_DATE) {
-            month = month - 1;
-        } else {
+        if (month == INVALID_DATE) {
             month = normalize_month_name(elements);
         }
 
@@ -156,8 +128,7 @@ public class DateNormalization {
             return;
         }
 
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month);
+        DateTime _cal = new DateTime(year, month, 1, 0, 0);
 
         dt.resolution = DateMatch.TimeResolution.MONTH;
 
@@ -169,16 +140,15 @@ public class DateNormalization {
         } else if (dom == 0) {
             return;
         } else {
-            dt.resolution = DateMatch.TimeResolution.DAY;            
+            dt.resolution = DateMatch.TimeResolution.DAY;
         }
-        
-        
+
+
         // Normalize Time fields found, H, M, s.SSS, etc.
         // 
-        
-        cal.set(Calendar.DAY_OF_MONTH, dom);
+        DateTime _cal2 = _cal.withDayOfMonth(dom);
 
-        dt.datenorm = cal.getTime();
+        dt.datenorm = new Date(_cal2.getMillis());
     }
 
     /**
@@ -285,11 +255,8 @@ public class DateNormalization {
 
         // Standardize on month trigraph, e.g. ,DEC can get DECEMBER or DECIEMBRE
         //
-        Date mon = fmt_month.parse(text.substring(0, 3));
-
-        cal.setTime(mon);
-
-        return cal.get(Calendar.MONTH);
+        DateTime mon = fmt_month.parseDateTime(text.substring(0, 3));
+        return mon.getMonthOfYear();
     }
 
     /**
@@ -298,20 +265,21 @@ public class DateNormalization {
      * @return
      */
     public static int normalize_day(java.util.Map<String, String> elements) {
-
-        // DOM, DD -- numeric
-        int dom = getIntValue(elements.get("DOM"));
-
         int day = INVALID_DATE;
 
-        if (dom != INVALID_DATE) {
-            day = dom;
+        if (elements.containsKey("DOM")) {
+            // DOM, DD -- numeric
+            int dom = getIntValue(elements.get("DOM"));
+            if (dom != INVALID_DATE) {
+                day = dom;
+            }
+        } else if (elements.containsKey("DD")) {
+            int dd = getIntValue(elements.get("DD"));
+            if (dd != INVALID_DATE) {
+                day = dd;
+            }
         }
 
-        int dd = getIntValue(elements.get("DD"));
-        if (dd != INVALID_DATE) {
-            day = dd;
-        }
         if (day <= 31 && day >= 0) {
             return day;
         }
