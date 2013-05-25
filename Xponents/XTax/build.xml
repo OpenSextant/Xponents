@@ -28,7 +28,7 @@
         <!-- Limited Gazetteer hack: copy content from installed solrhome; Get ASCII mapping customization.
           -->
         <copy todir="${solr_home}/taxcat/conf">
-            <fileset file="${solr_home}/gazetteer/conf" includes="*.txt" />
+            <fileset dir="${solr_home}/gazetteer/conf" includes="**/*.txt"/>
         </copy>
 
         <!-- Gaz and SolrTextTagger Solr config -->
