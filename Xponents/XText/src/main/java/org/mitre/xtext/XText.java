@@ -434,7 +434,7 @@ public final class XText implements iFilter, iConvert {
         FILE_FILTER = requested_types.toArray(new String[requested_types.size()]);
     }
     /** */
-    private static String[] FILE_FILTER = null;
+    public static String[] FILE_FILTER = null;
 
     public static void main(String[] args) {
         // Setting LANG=en_US in your shell.
