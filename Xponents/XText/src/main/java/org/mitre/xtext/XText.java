@@ -446,7 +446,8 @@ public final class XText implements iFilter, iConvert {
         FILE_FILTER = requested_types.toArray(new String[requested_types.size()]);
     }
     /**
-     *      */
+     *
+     */
     private String[] FILE_FILTER = null;
 
     /**
