@@ -1,22 +1,21 @@
 /**
  *
- *      Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -40,38 +39,33 @@ import org.mitre.xtext.converters.*;
 
 /**
  *
- * Traverse a folder and return text versions of the documents found.
- * Archiving the text only copies at an output location of your choice.
- * 
- * 
- * if input is a file, 
- *     convert.  Done.
- * 
- * if input is an archive,
- *     unpack in temp space, 
- *     iterate over dir, 
- *     convert each. Done
- * 
- * if input is a folder
- *     iterate over dir, 
- *     convert each. Done
- * 
- * 
- *  TEXT OUTPUT form includes a JSON document header with metadata properties
- *  from the original item.  These are valid elements of the conversion process.
- *  We try to maintain them apart from the true, readable text of the document.
- * 
- * 
+ * Traverse a folder and return text versions of the documents found. Archiving
+ * the text only copies at an output location of your choice.
+ *
+ *
+ * if input is a file, convert. Done.
+ *
+ * if input is an archive, unpack in temp space, iterate over dir, convert each.
+ * Done
+ *
+ * if input is a folder iterate over dir, convert each. Done
+ *
+ *
+ * TEXT OUTPUT form includes a JSON document header with metadata properties
+ * from the original item. These are valid elements of the conversion process.
+ * We try to maintain them apart from the true, readable text of the document.
+ *
+ *
  * Add a ConversiontListener to XText instance to capture the converted document
  * as it comes out of the main loop for converting archives and folders.
- * 
- *    extract_text()  runs over any file type and extracts text, saving it
- *            pushing events to one optional listener
- * 
- *    convertFile(File) will convert a single file, returning a ConvertedDocument
- * 
- * 
- * 
+ *
+ * extract_text() runs over any file type and extracts text, saving it pushing
+ * events to one optional listener
+ *
+ * convertFile(File) will convert a single file, returning a ConvertedDocument
+ *
+ *
+ *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public final class XText implements iFilter, iConvert {
@@ -93,35 +87,39 @@ public final class XText implements iFilter, iConvert {
     private Set<String> requested_types = new HashSet<>();
     private Set<String> ignore_types = new HashSet<>();
 
-    /** 
+    /**
      */
     public XText() {
         defaults();
     }
 
-    /** Add the file extension for the file type you wish to convert.
-     * if Tika supports it by default it should be no problem.
+    /**
+     * Add the file extension for the file type you wish to convert. if Tika
+     * supports it by default it should be no problem.
      */
     public void convertFileType(String ext) {
         requested_types.add(ext.toLowerCase());
     }
 
-    /** Ignore files ending with.... or of type ext. 
-     * No assumption of case is made.  This is case sensitive.
+    /**
+     * Ignore files ending with.... or of type ext. No assumption of case is
+     * made. This is case sensitive.
      */
     public void ignoreFileType(String ext) {
         ignore_types.add(ext);
     }
     private ConversionListener postProcessor = null;
 
-    /**  A conversion listener is any outside application or routine that will 
-     * do something more with the converted document.  If unset nothing happens. ;)
+    /**
+     * A conversion listener is any outside application or routine that will do
+     * something more with the converted document. If unset nothing happens. ;)
      */
     public void setConversionListener(ConversionListener processor) {
         postProcessor = processor;
     }
 
-    /**  is the input an archive?
+    /**
+     * is the input an archive?
      */
     public boolean isArchive(String fpath) {
         String ext = FilenameUtils.getExtension(fpath);
@@ -155,7 +153,8 @@ public final class XText implements iFilter, iConvert {
     protected long start_time = 0;
     protected long stop_time = 0;
 
-    /** The main entry point to converting compound documents and folders.
+    /**
+     * The main entry point to converting compound documents and folders.
      */
     public void extract_text(String path) throws IOException {
 
@@ -190,7 +189,8 @@ public final class XText implements iFilter, iConvert {
         reportStatistics();
     }
 
-    /** Filter the type of files to ignore.
+    /**
+     * Filter the type of files to ignore.
      */
     @Override
     public boolean filterOutFile(String filepath) {
@@ -210,7 +210,8 @@ public final class XText implements iFilter, iConvert {
         return false;
     }
 
-    /** Unpack an archive and convert items found.
+    /**
+     * Unpack an archive and convert items found.
      */
     public void convertArchive(File input) throws IOException {
         // unpack, traverse, convert, save
@@ -220,32 +221,35 @@ public final class XText implements iFilter, iConvert {
         input = new File(inPath);
         unpacker.unpack(input);
     }
-    /** Arbitrary 16 MB limit on file size.
-     *  Maybe this should be dependent on the file type.
+    /**
+     * Arbitrary 16 MB limit on file size. Maybe this should be dependent on the
+     * file type.
      */
     public final static long FILE_SIZE_LIMIT = 0x1000000;
 
-    /** This is the proxy interface for traversing archives.
-     * 
-     *   Archive Navigator will call this interface to convert and post-process
-     *   So XText itself is a super-converter, whereas the items in 
-     *   the converter pkg are stateless, simple conversions.
-     * 
-     *   this interface implementation calls XText.convertFile()
-     *   which in turn deals with the details of saving and archiving items 
-     * 
-     *   Items retrieved from Archive Navigator are deleted from their temp space.
+    /**
+     * This is the proxy interface for traversing archives.
+     *
+     * Archive Navigator will call this interface to convert and post-process So
+     * XText itself is a super-converter, whereas the items in the converter pkg
+     * are stateless, simple conversions.
+     *
+     * this interface implementation calls XText.convertFile() which in turn
+     * deals with the details of saving and archiving items
+     *
+     * Items retrieved from Archive Navigator are deleted from their temp space.
      */
     @Override
     public ConvertedDocument convert(File input) throws IOException {
         return convertFile(input);
     }
 
-    /**  Convert one file and save it off.
-     *  
-     *   We ignore hidden files and files in hidden folders, 
-     *   e.g., .cvs_ignore,  mycode/.svn/abc.txt
-     * 
+    /**
+     * Convert one file and save it off.
+     *
+     * We ignore hidden files and files in hidden folders, e.g., .cvs_ignore,
+     * mycode/.svn/abc.txt
+     *
      */
     public ConvertedDocument convertFile(File input) throws IOException {
         // 
@@ -318,8 +322,12 @@ public final class XText implements iFilter, iConvert {
 
             if (textDoc != null) {
                 textDoc.conversion_time = duration;
+                if (textDoc.filetime == null) {
+                    textDoc.filetime = textDoc.getFiletime();
+                }
             }
         }
+
 
         if (postProcessor != null) {
             postProcessor.handleConversion(textDoc);
@@ -329,10 +337,11 @@ public final class XText implements iFilter, iConvert {
         return textDoc;
     }
 
-    /** 
-     * Navigate a folder trying to convert each file and return something to the listener.
-     * Do not sacrifice the entire job if one file fails, so exception is trapped in loop
-     * 
+    /**
+     * Navigate a folder trying to convert each file and return something to the
+     * listener. Do not sacrifice the entire job if one file fails, so exception
+     * is trapped in loop
+     *
      */
     public void convertFolder(File input) throws IOException {
         java.util.Collection<File> files = FileUtils.listFiles(input, FILE_FILTER, true);
@@ -345,8 +354,9 @@ public final class XText implements iFilter, iConvert {
         }
     }
 
-    /** TODO: this is called by default. duh.
-     *  To changed behavior, adjust settings before setup() is called
+    /**
+     * TODO: this is called by default. duh. To changed behavior, adjust
+     * settings before setup() is called
      */
     public void defaults() {
 
@@ -374,16 +384,18 @@ public final class XText implements iFilter, iConvert {
         defaultConversion = new DefaultConverter();
     }
 
-    /** Start over.
+    /**
+     * Start over.
      */
     public void clearSettings() {
         requested_types.clear();
         converters.clear();
     }
 
-    /**  If by this point you have taken items out of the requested types
-     * the converters will not be setup.   E.g., if you don't want PDF
-     * or HTML conversion - those resources will not be initialized.
+    /**
+     * If by this point you have taken items out of the requested types the
+     * converters will not be setup. E.g., if you don't want PDF or HTML
+     * conversion - those resources will not be initialized.
      */
     public void setup() throws IOException {
         defaults();
@@ -433,12 +445,15 @@ public final class XText implements iFilter, iConvert {
 
         FILE_FILTER = requested_types.toArray(new String[requested_types.size()]);
     }
-    /** */
-    private  String[] FILE_FILTER = null;
-    
-    /** Call after setup() has run to add all supported/requested file types
+    /**
+     *
      */
-    public Set<String> getFileTypes(){
+    private String[] FILE_FILTER = null;
+
+    /**
+     * Call after setup() has run to add all supported/requested file types
+     */
+    public Set<String> getFileTypes() {
         return requested_types;
     }
 
