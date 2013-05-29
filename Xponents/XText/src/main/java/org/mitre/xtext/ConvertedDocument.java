@@ -1,22 +1,21 @@
 /**
  *
- *      Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -78,13 +77,16 @@ public final class ConvertedDocument {
     private String encoding = null;
     JSONObject meta = new JSONObject();
     public static boolean overwrite = true;
-    /** Duration in Milliseconds to convert */
+    /**
+     * Duration in Milliseconds to convert
+     */
     protected int conversion_time = 0;
     public boolean is_plaintext = false;
     public boolean is_converted = false;
     public boolean do_convert = true;
-    /** Represents if conversion was actually saved or not
-     *   OR if file was retrieved from cache successfully.
+    /**
+     * Represents if conversion was actually saved or not OR if file was
+     * retrieved from cache successfully.
      */
     public boolean is_cached = false;
     public static boolean CONVERT_TO_UNIX_EOL = true;
@@ -96,35 +98,46 @@ public final class ConvertedDocument {
     }
 
     public ConvertedDocument(File item) {
+        this.file = item;
+
         this.filepath = item.getAbsolutePath();
         this.filename = item.getName();
-        this.filetime = new Date(item.lastModified());
+        this.filetime = getFiletime();
         addProperty("filepath", this.filepath);
         addProperty("conversion_date", dtfmt.format(new Date()));
-        //addProperty("filetime", dtfmt.format(this.filetime));
 
         is_plaintext = filename.toLowerCase().endsWith(".txt");
 
-        // is okay
-        this.file = item;
         this.filesize = file.length();
         addProperty("filesize", this.filesize);
     }
 
-    /** set encoding property
+    /**
+     * set encoding property
      */
     public void setEncoding(String enc) {
         this.encoding = enc;
         addProperty("encoding", enc);
     }
 
-    /** 
+    /**  get Filetime from original file.
+     */
+    public Date getFiletime() {
+        if (filetime != null) {
+            return filetime;
+        }
+        if (this.file != null) {
+            return new Date(this.file.lastModified());
+        }
+        return null;
+    }
+
+    /**
      */
     //private boolean is_output_in_final_encoding() {
     //    return (this.is_plaintext && OUTPUT_ENCODING.equalsIgnoreCase(encoding));
     //}
-
-    /** 
+    /**
      */
     public void setPayload(String buf) throws UnsupportedEncodingException {
         this.payload = buf;
@@ -145,7 +158,9 @@ public final class ConvertedDocument {
         meta.put("textsize", payload.length());
     }
 
-    /** */
+    /**
+     *
+     */
     public String getProperty(String k) {
         return meta.optString(k);
     }
@@ -177,24 +192,24 @@ public final class ConvertedDocument {
         meta.put(k, b);
     }
 
-    /** Create date text is added only on conversion.
-     * If doc conversion is retrieved from cache, caller should rely more on 
-     * the "pub_date" property.
+    /**
+     * Create date text is added only on conversion. If doc conversion is
+     * retrieved from cache, caller should rely more on the "pub_date" property.
      */
-    public void addCreateDate(String d) {  
+    public void addCreateDate(String d) {
         this.create_date_text = d;
         meta.put("pub_date", d);
     }
 
-    /** Create date obj is added only on conversion.
-     * If doc conversion is retrieved from cache, caller should rely more on 
-     * the "pub_date" property.
+    /**
+     * Create date obj is added only on conversion. If doc conversion is
+     * retrieved from cache, caller should rely more on the "pub_date" property.
      */
     public void addCreateDate(java.util.Calendar d) {
         if (d == null) {
             return;
         }
-        
+
         this.create_date = d.getTime();
         meta.put("pub_date", dtfmt.format(d.getTime()));
     }
@@ -215,12 +230,13 @@ public final class ConvertedDocument {
         this.relative_path = getRelativePath(container, this.filepath);
     }
 
-    /**  Given file /a/b/c.txt   find me just the relative part to some root.
-     *   That is, for example, if we care more about the b folder regardless of that it is
-     * physically located in /a.  Perform:
-     *   
-     *   getRelativePath( "/a", "/a/b/c.txt")  ===> b/c.txt
-     *   
+    /**
+     * Given file /a/b/c.txt find me just the relative part to some root. That
+     * is, for example, if we care more about the b folder regardless of that it
+     * is physically located in /a. Perform:
+     *
+     * getRelativePath( "/a", "/a/b/c.txt") ===> b/c.txt
+     *
      */
     public static String getRelativePath(String root, String p) {
         String _path = p.replace(root, "");
@@ -233,8 +249,8 @@ public final class ConvertedDocument {
     }
     public final static String OUTPUT_ENCODING = "UTF-8";
 
-    /**   relative_path is original relative to input folder 
-     *    TOOD: cleanup
+    /**
+     * relative_path is original relative to input folder TOOD: cleanup
      */
     private String getNewPath(String relpath) {
 
@@ -251,14 +267,13 @@ public final class ConvertedDocument {
         }
     }
 
-    /** Save payload to a folder, outputDir;
-     * 
-     *  {HEADER_META}\n
-     *  \n
-     *  Buffer
-     * 
-     * Text File is saved to your desintation output folder
-     * Files that are UTF-8 already will not be saved, copied or moved.
+    /**
+     * Save payload to a folder, outputDir;
+     *
+     * {HEADER_META}\n \n Buffer
+     *
+     * Text File is saved to your desintation output folder Files that are UTF-8
+     * already will not be saved, copied or moved.
      */
     public void save(String outputDir) throws IOException {
 
@@ -268,10 +283,10 @@ public final class ConvertedDocument {
         }
     }
 
-    /** Similar to save(), but forces the output folder to be ./xtext/
-     *  in the same folder as the input archive.
-     *     a/b/c/file.xxx  to 
-     *     a/b/c/xtext/file.xxx.txt
+    /**
+     * Similar to save(), but forces the output folder to be ./xtext/ in the
+     * same folder as the input archive. a/b/c/file.xxx to
+     * a/b/c/xtext/file.xxx.txt
      */
     public void saveEmbedded() throws IOException {
         if (is_converted) {
@@ -281,8 +296,10 @@ public final class ConvertedDocument {
         }
     }
 
-    /** This provides some means for retrieving previously converted files.
-     * .... to avoid converted them.
+    /**
+     * This provides some means for retrieving previously converted files. ....
+     * to avoid converted them.
+     *
      * @return doc ConvertedDocument from cache, otherwise null
      */
     public static ConvertedDocument getEmbeddedConversion(File obj) throws IOException {
@@ -321,8 +338,9 @@ public final class ConvertedDocument {
         return null;
     }
 
-    /** This provides some means for retrieving previously converted files.
-     * .... to avoid converted them.
+    /**
+     * This provides some means for retrieving previously converted files. ....
+     * to avoid converted them.
      */
     public static ConvertedDocument getCachedConversion(String cacheDir, File inputDir, File obj) throws IOException {
         //String cachedFile = FilenameUtils.getBaseName(obj.getName());
@@ -368,7 +386,8 @@ public final class ConvertedDocument {
         return _uncacheConversion(path, obj.getName());
     }
 
-    /** Internal function for saving payload in the XText format.
+    /**
+     * Internal function for saving payload in the XText format.
      */
     protected void _saveConversion(File target) throws IOException {
 
@@ -379,6 +398,12 @@ public final class ConvertedDocument {
                 return;
             }
         }
+
+        if (this.filetime == null) {
+            this.filetime = new Date(target.lastModified());
+        }
+        
+        meta.put("filetime", this.filetime.getTime());
 
         FileUtility.makeDirectory(target.getParentFile());
         StringBuilder buf = new StringBuilder();
@@ -400,12 +425,14 @@ public final class ConvertedDocument {
     }
     public static String XT_LABEL = "XT:";
 
-    /** Given a path, retrieve a document. */
+    /**
+     * Given a path, retrieve a document.
+     */
     public static ConvertedDocument getCachedDocument(String filepath) throws IOException {
         return getCachedDocument(new File(filepath));
     }
 
-    /** 
+    /**
      * Given a path, retrieve a document parsing out the XText format.
      */
     public static ConvertedDocument getCachedDocument(File fconv) throws IOException {
@@ -432,6 +459,8 @@ public final class ConvertedDocument {
         doc.filesize = Long.parseLong(doc.getProperty("filesize"));
         doc.textpath = fconv.getAbsolutePath();
         doc.is_cached = true;
+
+        doc.filetime = new Date(Long.parseLong(doc.getProperty("filetime")));
 
         return doc;
 
