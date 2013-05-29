@@ -1,4 +1,4 @@
-
+mvn install
 
 app=FlexPat 
 fpver=1.3
@@ -26,6 +26,12 @@ app=XTemporal
 app=XText
   cd $app
   ./mkdist.sh
+  cd ..
+
+app=PoLi
+  cd $app
+  #./mkdist.sh
+  ant 
   cd ..
 
 PKG=Xponents-release-src-v2
