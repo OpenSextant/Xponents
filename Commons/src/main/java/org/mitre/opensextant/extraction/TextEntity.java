@@ -187,4 +187,28 @@ public class TextEntity {
         this.context = m.context;
         this.match_id = m.match_id;
     }    
+    
+    public boolean isWithin( TextEntity t ){        
+        return (end <= t.end && start >= t.start);
+    }
+    public boolean isSameMatch( TextEntity t ){        
+        return (start == t.start && end == t.end);
+    }
+
+    public boolean isRightMatch( TextEntity t ){        
+        return (start == t.start);
+    }
+
+    public boolean isLeftMatch( TextEntity t ){        
+        return (end == t.end);
+    }
+
+    public boolean isOverlap( TextEntity t ){        
+        // t overlaps with self on the left side
+        // OR t overlaps with self on right side
+        // 
+        return (end > t.end && start > t.start && start < t.end)
+                || (end < t.end && start < t.start && end > t.start);
+    }
+    
 }
