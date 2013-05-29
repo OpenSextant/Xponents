@@ -1,22 +1,21 @@
 /**
  *
- *  Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -44,8 +43,12 @@ package org.mitre.opensextant.util;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.*;
+import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
+import org.mitre.opensextant.data.Language;
 
 /**
  *
@@ -93,7 +96,7 @@ public class TextUtils {
 
     /**
      * @param data
-     * @return  boolean if data is ASCII or not
+     * @return boolean if data is ASCII or not
      */
     public static boolean isASCII(byte[] data) {
         for (byte b : data) {
@@ -104,8 +107,10 @@ public class TextUtils {
         return true;
     }
 
-    /** count the number of ASCII bytes
-     * @param data 
+    /**
+     * count the number of ASCII bytes
+     *
+     * @param data
      * @return count of ASCII bytes
      */
     public static int countASCII(byte[] data) {
@@ -118,11 +123,12 @@ public class TextUtils {
         return ascii;
     }
 
-    /** 
+    /**
      * Replaces all 3 or more blank lines with a single paragraph break (\n\n)
-     * @param t 
-     * @return A string with fewer line breaks;  
-     * 
+     *
+     * @param t
+     * @return A string with fewer line breaks;
+     *
      */
     public static String reduce_line_breaks(String t) {
 
@@ -149,7 +155,7 @@ public class TextUtils {
 
     /**
      * Minimize whitespace.
-     * 
+     *
      * @param t
      * @return String
      */
@@ -315,6 +321,7 @@ public class TextUtils {
 
     /**
      * Static method -- use only if you are sure of thread-safety.
+     *
      * @param text
      * @return
      */
@@ -331,6 +338,7 @@ public class TextUtils {
 
     /**
      * Generate a Text ID using the raw bytes and MD5 algorithm.
+     *
      * @param text
      * @return
      */
@@ -369,9 +377,10 @@ public class TextUtils {
      * whitespace.
      *
      * a, b, c d e, f => [ "a", "b", "c d e", "f" ]
+     *
      * @param s
      * @param delim
-     * @return  
+     * @return
      */
     public static List<String> string2list(String s, String delim) {
         if (s == null) {
@@ -389,17 +398,19 @@ public class TextUtils {
         return values;
     }
 
-    /**  Given a string S
-     *   and a list of characters to replace with a substitute, 
-     *   
-     *   return the new string, S'.
-     * 
-     *    "-name-with.invalid characters;" // replace "-. ;"  with "_"
-     *    "_name_with_invalid_characters_" // 
-     * @param buf 
-     * @param replace   string of characters to replace with the one substitute char
-     * @param substitution 
-     * @return  
+    /**
+     * Given a string S and a list of characters to replace with a substitute,
+     *
+     * return the new string, S'.
+     *
+     * "-name-with.invalid characters;" // replace "-. ;" with "_"
+     * "_name_with_invalid_characters_" //
+     *
+     * @param buf
+     * @param replace string of characters to replace with the one substitute
+     * char
+     * @param substitution
+     * @return
      */
     public static String fast_replace(String buf, String replace, String substitution) {
 
@@ -416,7 +427,7 @@ public class TextUtils {
 
     /**
      * Remove instances of any char in the remove string from buf
-     *  
+     *
      */
     public static String fast_remove(String buf, String remove) {
 
@@ -427,7 +438,7 @@ public class TextUtils {
             }
         }
         return _new.toString();
-    }    
+    }
     // UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS;
     private final static Pattern scrub_symbols = Pattern.compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
     private final static Pattern scrub_symbols2 = Pattern.compile("\\p{block=Transport and Map Symbols}+");
@@ -438,18 +449,22 @@ public class TextUtils {
     private final static Pattern scrub_symbols_misc = Pattern.compile("\\p{block=Miscellaneous Symbols}+");
     private final static Pattern scrub_symbols_cards = Pattern.compile("\\p{block=Playing Cards}+");
 
-    /** replace Emoticons with something less nefarious -- UTF-16 characters do not play well 
-     * with some I/O routines.
-     * @param t 
-     * @return 
+    /**
+     * replace Emoticons with something less nefarious -- UTF-16 characters do
+     * not play well with some I/O routines.
+     *
+     * @param t
+     * @return
      */
     public static String remove_emoticons(String t) {
         return scrub_emoticon.matcher(t).replaceAll("{icon}");
     }
 
-    /** Replace symbology
-     * @param t 
-     * @return 
+    /**
+     * Replace symbology
+     *
+     * @param t
+     * @return
      */
     public static String remove_symbols(String t) {
         String _new = scrub_symbols.matcher(t).replaceAll("{sym}");
@@ -469,9 +484,9 @@ public class TextUtils {
      *  Example:
      *        TEXT: **The Daily Newsletter of \n\rBarbara, So.**
      *       CLEAN: __The Daily Newsletter of __Barbara, So___
-     * 
+     *
      * Where "__" represents omitted characters.
-     * </pre> 
+     * </pre>
      */
     public static String normalize_text_entity(String str) {
         if (StringUtils.isBlank(str)) {
@@ -514,14 +529,207 @@ public class TextUtils {
         // 
         return squeeze_whitespace(str.substring(s1, s2 + 1));
     }
+    // Alphabetic list of top-N languages -- ISO-639_1  "ISO2" language codes
+    // 
+    public final static String arabicLang = "ar";
+    public final static String bahasaLang = "id";
+    public final static String chineseLang = "zh";
+    public final static String chineseTradLang = "zt";
+    public final static String englishLang = "en";
+    public final static String farsiLang = "fa";
+    public final static String frenchLang = "fr";
+    public final static String germanLang = "de";
+    public final static String italianLang = "it";
+    public final static String japaneseLang = "ja";
+    public final static String koreanLang = "ko";
+    public final static String portugueseLang = "pt";
+    public final static String russianLang = "ru";
+    public final static String spanishLang = "es";
+    public final static String turkishLang = "tr";
+    public final static String thaiLang = "th";
+    public final static String vietnameseLang = "vi";
+    public final static String romanianLang = "ro";
+    private final static Map<String, Language> LanguageMap_ISO639 = new HashMap<>();
+
+    static {
+        initLanguageData();
+    }
 
     /**
+     * Initialize language codes and metadata. This establishes a map for the
+     * most common language codes/names that exist in at least ISO-639-1 and
+     * have a non-zero 2-char ID.
      *
-     * @param args
+     * Based on:
+     * http://stackoverflow.com/questions/674041/is-there-an-elegant-way-to-convert-iso-639-2-3-letter-language-codes-to-java-lo
+     *
+     * Actual code mappings: en => eng eng => en
+     *
+     * cel => '' // Celtic; Avoid this.
+     *
+     * tr => tur tur => tr
+     *
+     * Names: tr => turkish tur => turkish turkish => tr // ISO2 only
+     *
+     *
      */
-    public static void main(String[] args) {
-        String emo = "\ud83d\ude1d";
-        System.out.println("What am I? " + emo);
-        System.out.println(TextUtils.remove_emoticons("bla blah blahhh ;)  " + emo));
+    public static void initLanguageData() {
+        Locale[] locales = Locale.getAvailableLocales();
+        for (Locale locale : locales) {
+            Language l = new Language(locale.getISO3Language(), 
+                    locale.getLanguage(), locale.getDisplayLanguage());
+            String iso2 = l.getISO639_1_Code();
+
+            if (iso2 != null && iso2.length() > 0) {
+                String namekey = l.getName().toLowerCase();
+                LanguageMap_ISO639.put(iso2, l);
+                LanguageMap_ISO639.put(l.getCode(), l);
+                LanguageMap_ISO639.put(namekey, l);
+            }
+        }
+    }
+
+    /**
+     * Given an ISO2 char code (least common denominator) retrieve Language
+     * Name.
+     *
+     * This is best effort, so if your code finds nothing, this returns code
+     * normalized to lowercase.
+     */
+    public static String getLanguageName(String code) {
+        if (code == null) {
+            return null;
+        }
+
+        Language l = LanguageMap_ISO639.get(code.toLowerCase());
+        if (l == null) {
+            return code;
+        }
+        return l.getName();
+    }
+
+    /**
+     * ISO2 and ISO3 char codes for languages are unique.
+     *
+     * @param code iso2 or iso3 code
+     * @return the other code.
+     */
+    public static Language getLanguage(String code) {
+        if (code == null) {
+            return null;
+        }
+
+        return LanguageMap_ISO639.get(code.toLowerCase());
+    }
+
+    /**
+     * ISO2 and ISO3 char codes for languages are unique.
+     *
+     * @param code iso2 or iso3 code
+     * @return the other code.
+     */
+    public static String getLanguageCode(String code) {
+        if (code == null) {
+            return null;
+        }
+
+        Language l = LanguageMap_ISO639.get(code.toLowerCase());
+        if (l != null) {
+            return l.getCode();
+        }
+        return null;
+    }
+
+    private static boolean _isRomanceLanguage(String l) {
+        return (l.equals(spanishLang)
+                || l.equals(portugueseLang)
+                || l.equals(italianLang)
+                || l.equals(frenchLang)
+                || l.equals(romanianLang));
+    }
+
+    /**
+     * European languages = Romance + GER + ENG
+     *
+     * Extend definition as needed.
+     */
+    public static boolean isEuroLanguage(String l) {
+        Language lang = getLanguage(l);
+
+        if (lang == null) {
+            return false;
+        }
+        String id = lang.getISO639_1_Code();
+        return (_isRomanceLanguage(id)
+                || id.equals(germanLang)
+                || id.equals(englishLang));
+    }
+
+    /**
+     * Romance languages = SPA + POR + ITA + FRA + ROM
+     *
+     * Extend definition as needed.
+     */
+    public static boolean isRomanceLanguage(String l) {
+        Language lang = getLanguage(l);
+
+        if (lang == null) {
+            return false;
+        }
+        String id = lang.getISO639_1_Code();
+        return _isRomanceLanguage(id);
+    }
+
+    /**
+     * Utility method to check if lang ID is English...
+     *
+     * @param x a langcode
+     * @return whether langcode is english
+     */
+    public static boolean isEnglish(String x) {
+        Language lang = getLanguage(x);
+
+        if (lang == null) {
+            return false;
+        }
+        String id = lang.getISO639_1_Code();
+        return (id.equals(englishLang));
+    }
+
+    /**
+     * Utility method to check if lang ID is Chinese(Traditional or
+     * Simplified)...
+     *
+     * @param x a langcode
+     * @return whether langcode is chinese
+     */
+    public static boolean isChinese(String x) {
+        Language lang = getLanguage(x);
+
+        if (lang == null) {
+            return false;
+        }
+        String id = lang.getISO639_1_Code();
+        return (id.equals(chineseLang)
+                | id.equals(chineseTradLang));
+    }
+
+    /**
+     * Utility method to check if lang ID is Chinese, Korean, or Japanese
+     *
+     * @param x a langcode
+     * @return whether langcode is a CJK language
+     */
+    public static boolean isCJK(String x) {
+        Language lang = getLanguage(x);
+
+        if (lang == null) {
+            return false;
+        }
+        String id = lang.getISO639_1_Code();
+        return (id.equals(koreanLang)
+                | id.equals(japaneseLang)
+                | id.equals(chineseLang)
+                | id.equals(chineseTradLang));
     }
 }
