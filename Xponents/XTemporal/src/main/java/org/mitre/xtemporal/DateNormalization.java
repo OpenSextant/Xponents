@@ -251,13 +251,15 @@ public class DateNormalization {
             return INVALID_DATE;
         }
 
-        if (text.length() < 3) {
+        // How long is a month name really?  May is shortest, Deciembre or September are longest.
+        if (text.length() < 3 || text.length() > 10) {
             return INVALID_DATE;
         }
 
-        // Standardize on month trigraph, e.g. ,DEC can get DECEMBER or DECIEMBRE
-        //
-        DateTime mon = fmt_month.parseDateTime(text.substring(0, 3));
+        // TODO: Standardize on month trigraph, e.g. ,DEC can get DECEMBER or DECIEMBRE
+        // False positivies:  "market 19" is not "mar 19" or "march 19"
+        // 
+        DateTime mon = fmt_month.parseDateTime(text /*.substring(0, 3)*/);
         return mon.getMonthOfYear();
     }
 

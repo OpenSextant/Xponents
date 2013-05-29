@@ -88,3 +88,9 @@ Do whatever environment setup you need to do to set ANT_HOME, JAVA_HOME, SOLR_HO
 Note -- if you install the Python libs to your environment, you are responsible for managing them.
 This is alpha-ware.
 
+
+  Prerequisites
+
+  pysolr
+  chardet
+
