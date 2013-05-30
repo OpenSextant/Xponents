@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.*;
 import org.mitre.opensextant.util.FileUtility;
 import org.mitre.flexpat.TextMatch;
+import org.mitre.flexpat.TextMatchResultSet;
 
 import org.supercsv.io.CsvMapWriter;
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -97,7 +98,7 @@ public class XTTestUtility {
      * @param results
      * @throws IOException
      */
-    public void save_result(XTempResult results) throws IOException {
+    public void save_result(TextMatchResultSet results) throws IOException {
 
         Map<String, Object> row = null;
 

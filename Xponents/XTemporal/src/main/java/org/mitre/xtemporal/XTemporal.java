@@ -1,22 +1,21 @@
 /**
  *
- *      Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -24,21 +23,18 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  */
-/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//
-// _____                                ____                     __                       __      
-///\  __`\                             /\  _`\                  /\ \__                   /\ \__   
-//\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\  
-// \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/  
-//  \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_ 
-//   \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
-//    \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
-//            \ \_\                                                                             
-//             \/_/                                                                             
-//
-//   OpenSextant XTemporal
-// *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//
+/**
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+ * // // _____ ____ __ __ ///\ __`\ /\ _`\ /\ \__ /\ \__ //\ \ \/\ \ _____ __
+ * ___ \ \,\L\_\ __ __ _\ \ ,_\ __ ___ \ \ ,_\ // \ \ \ \ \ /\ '__`\ /'__`\ /' _
+ * `\ \/_\__ \ /'__`\/\ \/'\\ \ \/ /'__`\ /' _ `\\ \ \/ // \ \ \_\ \\ \ \L\ \/\
+ * __/ /\ \/\ \ /\ \L\ \ /\ __/\/> </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_ // \
+ * \_____\\ \ ,__/\ \____\\ \_\ \_\ \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\
+ * \_\ \_\\ \__\ // \/_____/ \ \ \/ \/____/ \/_/\/_/ \/_____/ \/____/\//\/_/
+ * \/__/ \/__/\/_/ \/_/\/_/ \/__/ // \ \_\ // \/_/ // // OpenSextant XTemporal
+ * // *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+ * //
  */
 package org.mitre.xtemporal;
 
@@ -47,6 +43,7 @@ import java.util.regex.Matcher;
 import org.mitre.flexpat.PatternTestCase;
 import org.mitre.flexpat.RegexPattern;
 import org.mitre.flexpat.TextMatch;
+import org.mitre.flexpat.TextMatchResultSet;
 import org.mitre.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,10 +147,10 @@ public class XTemporal {
      * @param text_id
      * @return
      */
-    public XTempResult extract_dates(String text, String text_id) {
+    public TextMatchResultSet extract_dates(String text, String text_id) {
 
-        XTempResult results = new XTempResult();
-        results.matches = new ArrayList<TextMatch>();
+        TextMatchResultSet results = new TextMatchResultSet();
+        results.matches = new ArrayList<>();
         results.result_id = text_id;
 
         for (RegexPattern pat : patterns.get_patterns()) {
@@ -248,6 +245,51 @@ public class XTemporal {
     }
 
     /**
+     */
+    public void adhocTests() {
+        log.info("=== SYSTEM TESTS START ===");
+
+        match_MonDayYear(true);
+        match_DateTime(false);
+
+        String[] tests = {
+            "JUN 00",
+            "JUN '13",
+            "JUN '12",
+            "JUN '17",
+            "JUN '33",
+            "JUN 2017",
+            "JUN 1917"
+        };
+        
+        try {
+            XTTestUtility tester = new XTTestUtility("./results/xtemp_Adhoc.csv");
+
+            int count=0;
+            for (String tst_text : tests) {
+                ++count;
+                TextMatchResultSet results = extract_dates(tst_text, ""+count);
+                results.add_trace("Test Payload: " + tst_text);
+
+                if (!results.evaluated) {
+                    continue;
+                }
+
+                log.info("=========SYSTEM TEST " + count + " FOUND:" + (results.matches == null ? "NOTHING" : results.matches.size()));
+                tester.save_result(results);
+
+            }
+            tester.close_report();
+
+        } catch (Exception err) {
+            log.error("Not finishing tests", err);
+            return;
+        }
+        log.info("=== SYSTEM TESTS DONE ===");
+
+    }
+
+    /**
      *
      */
     public void systemTests() {
@@ -256,12 +298,11 @@ public class XTemporal {
         match_MonDayYear(true);
         match_DateTime(true);
 
-
         try {
             XTTestUtility tester = new XTTestUtility("./results/xtemp_System.csv");
 
             for (PatternTestCase tst : patterns.testcases) {
-                XTempResult results = extract_dates(tst.text, tst.id);
+                TextMatchResultSet results = extract_dates(tst.text, tst.id);
                 results.add_trace("Test Payload: " + tst.text);
 
                 if (!results.evaluated) {
@@ -279,58 +320,66 @@ public class XTemporal {
             return;
         }
         log.info("=== SYSTEM TESTS DONE ===");
+    }
 
+    /**
+     *
+     */
+    public static void usage() {
+        System.out.println("\tXTemporal -f     -- run system tests."
+                + "\n\tMore operations coming...");
+    }
 
-	}
+    /**
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
 
-	/** */
-	public static void usage() {
-		System.out.println("\tXTemporal -f     -- run system tests."
-				+ "\n\tMore operations coming...");
-	}
+        boolean debug = true;
+        // default test patterns, run test/debug mode.
+        XTemporal xdt = new XTemporal(debug);
+        String testFile = null;
+        boolean systemTest = false;
+        boolean adhocTest = false;
 
-	/**
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
+        try {
+            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XTemporal", args,
+                    "fa");
+            int c;
+            while ((c = opts.getopt()) != -1) {
+                switch (c) {
+                    case 'f':
+                        systemTest = true;
+                        break;
+                    case 'a':
+                        adhocTest = true;
+                        break;
+                    default:
+                        XTemporal.usage();
+                        System.exit(1);
+                }
+            }
+        } catch (Exception err) {
+            // xdterr.printStackTrace();
+            XTemporal.usage();
+            System.exit(1);
+        }
 
-		boolean debug = true;
-		// default test patterns, run test/debug mode.
-		XTemporal xdt = new XTemporal(debug);
-		String testFile = null;
-		boolean systemTest = false;
+        try {
+            xdt.configure();
 
-		try {
-			gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XTemporal", args,
-					"f");
-			int c;
-			while ((c = opts.getopt()) != -1) {
-				switch (c) {
-				case 'f':
-					systemTest = true;
-					break;
-				default:
-					XTemporal.usage();
-                	System.exit(1);
-				}
-			}
-		} catch (Exception err) {
-			// xdterr.printStackTrace();
-			XTemporal.usage();
-        	System.exit(1);
-		}
+            if (systemTest) {
+                System.out.println("\tSYSTEM TESTS=======\n");
+                xdt.systemTests();
+            }
+            if (adhocTest) {
+                System.out.println("\tADHOC TESTS=======\n");
+                xdt.adhocTests();
+            }
+        } catch (XTempException exErr) {
+            exErr.printStackTrace();
+        }
 
-		try {
-			xdt.configure();
-
-			if (systemTest) {
-				System.out.println("\tSYSTEM TESTS=======\n");
-				xdt.systemTests();
-			}
-		} catch (XTempException exErr) {
-			exErr.printStackTrace();
-		}
-
-	}
+    }
 }

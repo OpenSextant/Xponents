@@ -148,9 +148,14 @@ public class DateNormalization {
 
         // Normalize Time fields found, H, M, s.SSS, etc.
         // 
-        DateTime _cal2 = _cal.withDayOfMonth(dom);
+        _cal = _cal.withDayOfMonth(dom);
+        // For normal M/D/Y patterns, set the default time to noon, UTC
+        // Overall, we want to ensure that the general yyyy-mm-dd form is not impacted
+        // by time zone and default hour of 00:00;  -- this generally would yield a date format a day early for ALL US timezones.
+        // 
+        _cal = _cal.withHourOfDay(12);
 
-        dt.datenorm = new Date(_cal2.getMillis());
+        dt.datenorm = new Date(_cal.getMillis());
     }
 
     /**
@@ -164,25 +169,37 @@ public class DateNormalization {
         // YY       yy 
         // YEARYY   yy or yyyy  
         String _YEAR = elements.get("YEAR");
+        boolean _is_4digit = false;
+        boolean _is_year = false;
 
         if (_YEAR != null) {
             //year = yy;            
             return getIntValue(_YEAR);
         }
 
-
         int year = INVALID_DATE;
 
         String _YY = elements.get("YY");
+        String _YEARYY = elements.get("YEARYY");
         if (_YY != null) {
             year = getIntValue(_YY);
-        }
+        } else if (_YEARYY != null) {
+            if (_YEARYY.startsWith("'")) {
+                _is_year = true;
+                _YEARYY = _YEARYY.substring(1);
+            }
 
-        String _YEARYY = elements.get("YEARYY");
-        if (_YEARYY != null) {
-            //
-            if (_YEARYY.length() != 4 & _YEARYY.length() != 2) {
-                return INVALID_DATE;
+            if (_YEARYY.length() == 4) {
+                _is_4digit = true;
+                _is_year = true;
+            } else if (_YEARYY.length() == 2) {
+                // Special case: 00 yields 2000
+                // this check here has no effect, as rule below considers "00" = 0, which is < FUTURE_YY_THRESHOLD
+                if ("00".equals(_YEARYY)) {
+                    _is_year = true;
+                }
+            } else {
+                year = INVALID_DATE;
             }
             year = getIntValue(_YEARYY);
         }
@@ -192,9 +209,28 @@ public class DateNormalization {
         }
 
         if (year <= FUTURE_YY_THRESHOLD) {
+            // TEST:  '12, '13, ... '15 == yield 2012, 2013, 2015 etc.
+            //   limit is deteremined by current year + fuzzy limit.
+            // is '18 2018 or 1918? What is your YY limit?
+            // 
             year += MILLENIUM;
-        } else if (year <= 99) {
+        } else if (year <= 99 && _is_year) {
+            // Okay we got something beyond the threshold but is previous century likely
+            // '21 => 1921
+            // '44 => 1944
+            // 44 =>?
             year += 1900;
+        } else if (!_is_year && year > 31 && year <= 99) {
+            // Okay its NOT a year
+            //      its NOT a month
+            // so "44" => 1944 is best guess.  not 1844, not 0044...
+            // 
+            year += 1990;
+        } else if (!_is_year) {
+            // Given two digit year that is possible day of month,... ignore!
+            // JUN 17  -- no year given
+            // JUN '17 -- is a year
+            return INVALID_DATE;
         }
 
         return year;
