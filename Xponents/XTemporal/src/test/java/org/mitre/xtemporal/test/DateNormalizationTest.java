@@ -58,6 +58,7 @@ public class DateNormalizationTest {
         assertEquals(1, result2.matches.size());
         
         DateMatch dt = (DateMatch) result2.matches.get(0);
-        assertEquals(1191196800000L, dt.datenorm.getTime());
+        long noon = (12*3600*1000);
+        assertEquals(1191196800000L+noon, dt.datenorm.getTime());
     }
 }
