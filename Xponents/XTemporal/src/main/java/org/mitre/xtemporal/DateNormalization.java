@@ -148,9 +148,14 @@ public class DateNormalization {
 
         // Normalize Time fields found, H, M, s.SSS, etc.
         // 
-        DateTime _cal2 = _cal.withDayOfMonth(dom);
+        _cal = _cal.withDayOfMonth(dom);
+        // For normal M/D/Y patterns, set the default time to noon, UTC
+        // Overall, we want to ensure that the general yyyy-mm-dd form is not impacted
+        // by time zone and default hour of 00:00;  -- this generally would yield a date format a day early for ALL US timezones.
+        // 
+        _cal = _cal.withHourOfDay(12);
 
-        dt.datenorm = new Date(_cal2.getMillis());
+        dt.datenorm = new Date(_cal.getMillis());
     }
 
     /**
@@ -188,7 +193,11 @@ public class DateNormalization {
                 _is_4digit = true;
                 _is_year = true;
             } else if (_YEARYY.length() == 2) {
-                // nothing
+                // Special case: 00 yields 2000
+                // this check here has no effect, as rule below considers "00" = 0, which is < FUTURE_YY_THRESHOLD
+                if ("00".equals(_YEARYY)) {
+                    _is_year = true;
+                }
             } else {
                 year = INVALID_DATE;
             }
