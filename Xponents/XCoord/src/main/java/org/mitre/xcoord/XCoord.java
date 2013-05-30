@@ -401,6 +401,7 @@ public class XCoord {
 
         // Use default config file.
         XCoord xc = new XCoord(debug);
+        XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT;
 
         gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XCoord", args, "af:t:u:");
 
