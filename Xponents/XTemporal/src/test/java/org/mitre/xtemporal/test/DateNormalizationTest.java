@@ -29,8 +29,8 @@ package org.mitre.xtemporal.test;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mitre.flexpat.TextMatchResultSet;
 import org.mitre.xtemporal.DateMatch;
-import org.mitre.xtemporal.XTempResult;
 import org.mitre.xtemporal.XTemporal;
 
 /**
@@ -52,10 +52,12 @@ public class DateNormalizationTest {
      */
     @Test
     public void ensureTimeZone() {
-        final XTempResult result = timeFinder.extract_dates("Oct 07", "dummy");
-        assertEquals(1, result.matches.size());
+        final TextMatchResultSet result1 = timeFinder.extract_dates("Oct 07", "dummy");
+        assertEquals(1, result1.matches.size());
+        final TextMatchResultSet result2 = timeFinder.extract_dates("Oct 2007", "dummy");
+        assertEquals(1, result2.matches.size());
         
-        DateMatch dt = (DateMatch) result.matches.get(0);
+        DateMatch dt = (DateMatch) result2.matches.get(0);
         assertEquals(1191196800000L, dt.datenorm.getTime());
     }
 }

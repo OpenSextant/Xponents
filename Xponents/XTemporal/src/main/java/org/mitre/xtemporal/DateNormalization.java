@@ -164,25 +164,33 @@ public class DateNormalization {
         // YY       yy 
         // YEARYY   yy or yyyy  
         String _YEAR = elements.get("YEAR");
+        boolean _is_4digit = false;
+        boolean _is_year = false;
 
         if (_YEAR != null) {
             //year = yy;            
             return getIntValue(_YEAR);
         }
 
-
         int year = INVALID_DATE;
 
         String _YY = elements.get("YY");
+        String _YEARYY = elements.get("YEARYY");
         if (_YY != null) {
             year = getIntValue(_YY);
-        }
+        } else if (_YEARYY != null) {
+            if (_YEARYY.startsWith("'")) {
+                _is_year = true;
+                _YEARYY = _YEARYY.substring(1);
+            }
 
-        String _YEARYY = elements.get("YEARYY");
-        if (_YEARYY != null) {
-            //
-            if (_YEARYY.length() != 4 & _YEARYY.length() != 2) {
-                return INVALID_DATE;
+            if (_YEARYY.length() == 4) {
+                _is_4digit = true;
+                _is_year = true;
+            } else if (_YEARYY.length() == 2) {
+                // nothing
+            } else {
+                year = INVALID_DATE;
             }
             year = getIntValue(_YEARYY);
         }
@@ -192,9 +200,28 @@ public class DateNormalization {
         }
 
         if (year <= FUTURE_YY_THRESHOLD) {
+            // TEST:  '12, '13, ... '15 == yield 2012, 2013, 2015 etc.
+            //   limit is deteremined by current year + fuzzy limit.
+            // is '18 2018 or 1918? What is your YY limit?
+            // 
             year += MILLENIUM;
-        } else if (year <= 99) {
+        } else if (year <= 99 && _is_year) {
+            // Okay we got something beyond the threshold but is previous century likely
+            // '21 => 1921
+            // '44 => 1944
+            // 44 =>?
             year += 1900;
+        } else if (!_is_year && year > 31 && year <= 99) {
+            // Okay its NOT a year
+            //      its NOT a month
+            // so "44" => 1944 is best guess.  not 1844, not 0044...
+            // 
+            year += 1990;
+        } else if (!_is_year) {
+            // Given two digit year that is possible day of month,... ignore!
+            // JUN 17  -- no year given
+            // JUN '17 -- is a year
+            return INVALID_DATE;
         }
 
         return year;
