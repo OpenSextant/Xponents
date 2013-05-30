@@ -15,6 +15,7 @@
     <!-- clean up from last build -->
     <target name="clean" depends="clean.javadoc,cleanDependencies">
         <delete dir="${build}" />          
+        <delete dir="${basedir}/etc" />          
     </target>
 
     <target name="setup" >

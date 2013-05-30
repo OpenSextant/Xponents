@@ -1,22 +1,21 @@
 /**
  *
- *  Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -267,7 +266,7 @@ public class TestScript {
                 String patid = testRow.get("id");
                 if (patid == null) {
                     continue;
-                } 
+                }
 
                 patid = patid.trim();
                 if (patid.startsWith("#")) {
@@ -287,10 +286,10 @@ public class TestScript {
 
                 text = testRow.get("enumeration");
                 linenum = Integer.parseInt(text);
-                
+
                 text = testRow.get("test");
                 text = text.replace("$NL", "\n");
-                
+
                 String rmks = testRow.get("remark");
 
                 // "Patid # rowid" == test instance id
@@ -353,7 +352,7 @@ public class TestScript {
     protected void focusedTests() {
 
         log.info("=== ADHOC TESTS ===");
-
+        
         log.info("Trying some specific DD tests now:\n=========================");
         xcoord.match_DD(false);
         xcoord.match_DMS(false);
@@ -364,9 +363,9 @@ public class TestScript {
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
         boolean dd = false;
-        boolean dms = false;
+        boolean dms = true;
         boolean dm = false;
-        boolean mgrs = true;
+        boolean mgrs = false;
         // 
         xcoord.match_MGRS(mgrs);
 
@@ -412,6 +411,8 @@ public class TestScript {
         xcoord.match_DMS(dms);
         xcoord.match_DM(dm);
         String[] dmtest = {
+            "41º58'46\"N, 87º54'20\"W ",
+            "Latitude: 41º58'46\"N, Longitude: 87º54'20\"W ",
             "15S5E",
             //"01-02-03-04 005-06-07-08",
             "12 kts; B 14:28N - 053:00E",
