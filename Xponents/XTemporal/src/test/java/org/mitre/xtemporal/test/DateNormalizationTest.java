@@ -53,7 +53,7 @@ public class DateNormalizationTest {
     @Test
     public void ensureTimeZone() {
         final TextMatchResultSet result1 = timeFinder.extract_dates("Oct 07", "dummy");
-        assertEquals(0, result1.matches.size());
+        assertEquals(1, result1.matches.size());
         final TextMatchResultSet result2 = timeFinder.extract_dates("Oct 2007", "dummy");
         assertEquals(1, result2.matches.size());
         
