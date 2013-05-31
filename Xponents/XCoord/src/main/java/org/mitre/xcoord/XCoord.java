@@ -1,22 +1,21 @@
 /**
  *
- *  Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -61,10 +60,10 @@ public class XCoord {
     static Logger log = LoggerFactory.getLogger(XCoord.class);
     private boolean debug = false;
     private final TextUtils utility = new TextUtils();
-    /** Reserved.
-     * This is a bit mask for caller to use. 
-     * DEFAULTS:  (a) enable all false-positive filters for coordinate types;
-     *   (b) extract context around coordinate.
+    /**
+     * Reserved. This is a bit mask for caller to use. DEFAULTS: (a) enable all
+     * false-positive filters for coordinate types; (b) extract context around
+     * coordinate.
      */
     public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS | XConstants.FLAG_EXTRACT_CONTEXT;
 
@@ -129,15 +128,19 @@ public class XCoord {
      */
     public void configure(java.net.URL patfile) throws XCoordException {
 
-        try {
-            patterns = new PatternManager(patfile);
-            patterns.testing = debug;
-            patterns.initialize();
-            patterns_file = patfile.getFile();
-        } catch (Exception loaderr) {
-            String msg = "Could not load patterns file URL=" + patfile;
-            log.error(msg, loaderr);
-            throw new XCoordException(msg, loaderr);
+        if (patfile == null) {
+            configure();
+        } else {
+            try {
+                patterns_file = patfile.getFile();
+                patterns = new PatternManager(patfile);
+                patterns.testing = debug;
+                patterns.initialize();
+            } catch (Exception loaderr) {
+                String msg = "Could not load patterns file URL=" + patfile;
+                log.error(msg, loaderr);
+                throw new XCoordException(msg, loaderr);
+            }
         }
     }
 
@@ -232,7 +235,8 @@ public class XCoord {
      * @param text
      * @param text_id
      * @param family
-     * @return TextMatchResultSet result set.  If input is null, result set is null
+     * @return TextMatchResultSet result set. If input is null, result set is
+     * null
      */
     public TextMatchResultSet extract_coordinates(String text, String text_id, int family) {
 
@@ -319,8 +323,10 @@ public class XCoord {
                 // Establish precision
                 patterns.set_precision(coord);
 
-                /** Caller may want to disable getContext operation here for short texts....
-                 * or for any use case.   This is more helpful for longer texts with many annotations.
+                /**
+                 * Caller may want to disable getContext operation here for
+                 * short texts.... or for any use case. This is more helpful for
+                 * longer texts with many annotations.
                  */
                 if ((XCoord.RUNTIME_FLAGS & XConstants.FLAG_EXTRACT_CONTEXT) > 0) {
                     // returns indices for two  windows before and after match
@@ -374,8 +380,9 @@ public class XCoord {
 
     /**
      * Assign an identifier to each Text Match found. This is an MD5 of the
-     * coord in-situ.  If context is provided, it is used to generate the identity
-     * 
+     * coord in-situ. If context is provided, it is used to generate the
+     * identity
+     *
      * otherwise make use of just pattern ID + text value.
      *
      * @param coord

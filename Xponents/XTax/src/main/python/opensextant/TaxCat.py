@@ -158,7 +158,7 @@ class TaxCatalogBuilder:
         return
     
     
-    def add_wordlist(self, catalog, datafile, start_id, taxnode=None):
+    def add_wordlist(self, catalog, datafile, start_id, taxnode=None, minlen=1):
         
         _name = os.path.basename(datafile)
         if taxnode:
@@ -187,7 +187,7 @@ class TaxCatalogBuilder:
     
             words.add(key)
                 
-            rec = {'catalog':catalog, 'taxnode':_name, 'phrase':_phrase, 'id':_id, "valid":"true" }
+            rec = {'catalog':catalog, 'taxnode':_name, 'phrase':_phrase, 'id':_id, 'valid': (len(key) >= minlen) }
             self._records.append( rec )
     
         
