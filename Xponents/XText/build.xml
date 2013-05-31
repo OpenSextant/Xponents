@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="XText" default="all">
+<project name="XText" default="build">
 
     <!-- This is required to be able to process unicode file names -->
     <property name="version" value="1.0"/>
@@ -40,7 +40,7 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
-    <target name="all" depends="compile" />
+    <target name="build" depends="jar" />
     
     <!--
     
@@ -65,12 +65,9 @@
             <compilerarg value="-Xlint:unchecked" />
             <include name="org/mitre/xtext/**"/>
         </javac>
-        <jar jarfile="build/xtext-${version}.jar" basedir="build">
-            <include name="org/mitre/xtext/**"/>
-        </jar>
     </target>
 
-    <target name="jar">
+    <target name="jar" depends="compile">
         <jar jarfile="build/xtext-${version}.jar" basedir="build">
             <include name="org/mitre/xtext/**"/>
         </jar>

@@ -102,7 +102,7 @@ public class XTTestUtility {
 
         Map<String, Object> row = null;
 
-        if (results.matches != null) {
+        if (! results.matches.isEmpty()) {
             for (TextMatch tm : results.matches) {
 
                 row = new HashMap<>();

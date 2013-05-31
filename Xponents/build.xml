@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Xponents" default="all">
+<project name="Xponents" default="build">
 
   <property name="version" value="1.6"/>
 
@@ -10,10 +10,8 @@
     
   -->
   <import file="${basedir}/xponents-include.xml"/>
-    
-	<target name="build" depends="clean,all" />
-	
-  <target name="all">
+    	
+  <target name="build" depends="clean">
     <subant >
       <fileset dir="FlexPat" includes="build.xml"/>      
     </subant>
@@ -27,11 +25,15 @@
       <fileset dir="XTemporal" includes="build.xml"/>      
     </subant>
 
+    <echo message="Xponents Build: Adding resource files for XCoord coord patterns and XTemp date patterns"/>
     <jar jarfile="opensextant-xponents-${version}.jar">
       <fileset dir="FlexPat/build" includes="org/**" />
       <fileset dir="XText/build" includes="org/**" />
       <fileset dir="XCoord/build" includes="org/**" />
       <fileset dir="XTemporal/build" includes="org/**" />
+      <!-- XPonent Resource files -->
+      <fileset dir="XTemporal/src/main/resources" includes="**.cfg" />
+      <fileset dir="XCoord/src/main/resources" includes="**.cfg" />
     </jar>
   </target>
 

@@ -253,6 +253,7 @@ public class XTemporal {
         match_DateTime(false);
 
         String[] tests = {
+            "12/30/90",
             "JUN 00",
             "JUN '13",
             "JUN '12",

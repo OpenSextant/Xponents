@@ -183,6 +183,9 @@ public class DateNormalization {
         String _YEARYY = elements.get("YEARYY");
         if (_YY != null) {
             year = getIntValue(_YY);
+            // NOTE: because we matched a YY field, this should ideally be in 
+            //    an explicity format.
+            _is_year = true;
         } else if (_YEARYY != null) {
             if (_YEARYY.startsWith("'")) {
                 _is_year = true;

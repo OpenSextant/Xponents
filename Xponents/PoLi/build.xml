@@ -41,7 +41,7 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
-    <target name="all" depends="compile" />
+    <target name="build" depends="jar" />
     
     <!--
     
@@ -64,7 +64,7 @@
     <jar jarfile="build/poli-${version}.jar" basedir="${build}"  includes="org/**" />
   </target>
 
-  <target name="jar">
+  <target name="jar" depends="compile">
     <jar jarfile="build/poli-${version}.jar" basedir="${build}"  includes="org/**" />
   </target>
 

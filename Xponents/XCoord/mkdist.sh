@@ -9,17 +9,12 @@ ant -f testing.xml
 cp ./target/*javadoc.jar ./build/
 cp ./target/*sources.jar ./build/
 
-
-mkdir -p ./etc/
-cp src/test/resources/log4j.properties ./etc
-cp src/main/resources/geocoord_regex.cfg ./etc
+cp src/main/resources/geocoord_regex.cfg ./doc
 
 PKG=XCoord-release-16
 cd ..
 zip -r $PKG \
 XCoord/lib/*jar \
-XCoord/etc/geocoord_regex.cfg \
-XCoord/etc/log4j.properties \
 XCoord/*.* \
 XCoord/build/*jar 
 

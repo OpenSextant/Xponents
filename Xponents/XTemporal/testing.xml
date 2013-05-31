@@ -8,11 +8,12 @@
     
     -->
     	
+  <!-- sample test document with variety of truth dates does not exist yet.
   <property name="default_test" value = "${basedir}/src/test/resources/Date_Patterns_2012.txt " />
+   -->
 
   <path id="runtime.classpath">
     <pathelement location="${basedir}/src/test/resources" />
-    <pathelement location="${basedir}/src/main/resources" />
     <fileset dir="${basedir}/build" includes="**/*.jar" />
     <fileset dir="${basedir}/lib" includes="**/*.jar" />
   </path>

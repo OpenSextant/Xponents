@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="XCoord" default="all">
+<project name="XCoord" default="build">
 
     <property name="version" value="1.6"/>
 
@@ -42,7 +42,7 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
-    <target name="all" depends="compile" />
+    <target name="build" depends="jar" />
         
     <!--
     
@@ -62,12 +62,13 @@
             <compilerarg value="-Xlint:unchecked" />
             <include name="org/mitre/xcoord/**"/>
         </javac>
-
-        <jar jarfile="${build}/xcoord-${version}.jar" basedir="${build}" includes="org/**" />
     </target>
 
+    <property name="build.jar" value="build/xcoord-${version}.jar"/>
     <target name="jar" depends="compile">
-        <jar jarfile="${build}/xcoord-${version}.jar" basedir="${build}" includes="org/**" />
+        <jar jarfile="${build.jar}" update="false" basedir="${build}"  includes="org/**" />    
+        <jar destfile="${build.jar}" update="true" basedir="${basedir}/src/main/resources" >
+            <include name="*.cfg"/>
+        </jar>
     </target>
-
 </project>
