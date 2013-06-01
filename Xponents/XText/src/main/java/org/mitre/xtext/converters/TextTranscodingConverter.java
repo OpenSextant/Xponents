@@ -77,6 +77,7 @@ public class TextTranscodingConverter extends ConverterAdapter {
         if (is_ascii) {
             textdoc.setEncoding("ASCII");
             textdoc.setPayload(new String(data));
+            textdoc.do_convert = false;
         } else {
             chardet.setText(data);
             CharsetMatch cs = chardet.detect();
