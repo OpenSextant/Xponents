@@ -1,22 +1,21 @@
 /**
  *
- *  Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -39,7 +38,6 @@
 //   OpenSextant Commons
 // *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 // */
-
 package org.mitre.opensextant.util;
 
 import java.io.*;
@@ -66,12 +64,12 @@ public class FileUtility {
     }
 
     /**
-     * @param buffer 
-     * @param fname 
-     * @param enc 
-     * @param append 
+     * @param buffer
+     * @param fname
+     * @param enc
+     * @param append
      * @return
-     * @throws IOException  
+     * @throws IOException
      */
     public static boolean writeFile(String buffer, String fname, String enc, boolean append)
             throws IOException {
@@ -87,38 +85,53 @@ public class FileUtility {
         return true;
     }
 
-    /** Caller is responsible for write flush, close, etc.
+    /**
+     * Caller is responsible for write flush, close, etc.
+     *
      * @param fname file path
      * @param enc encoding
-     * @param append  true = append data to existing file.
-     * @return 
-     * @throws IOException  
+     * @param append true = append data to existing file.
+     * @return
+     * @throws IOException
      */
     public static OutputStreamWriter getOutputStream(String fname, String enc, boolean append)
             throws IOException {
         return new OutputStreamWriter(new FileOutputStream(fname, append), enc);
     }
 
-    /** Caller is responsible for write flush, close, etc.
-     * @param fname 
+    /**
+     * Caller is responsible for write flush, close, etc.
+     *
+     * @param fname
      * @param enc
-     * @return 
-     * @throws IOException  
+     * @return
+     * @throws IOException
      */
     public static OutputStreamWriter getOutputStream(String fname, String enc)
             throws IOException {
         return getOutputStream(fname, enc, false);
     }
 
-    /** Getting an input stream from a file.... Is this easier?
+    /**
+     * Getting an input stream from a file.... Is this easier?
+     *
      * @param fname
-     * @param enc 
-     * @return 
-     * @throws IOException  
+     * @param enc
+     * @return
+     * @throws IOException
      */
     public static InputStreamReader getInputStream(String fname, String enc)
             throws IOException {
         return new InputStreamReader(new FileInputStream(fname), enc);
+    }
+
+    /** Simple check if a file is typed as a Spreadsheet
+     *  Tab-delimited .txt files or .dat files may be valid spreadsheets, however
+     *  this method does not look inside files.
+     */
+    public static boolean isSpreadsheet(String filepath) {
+        String testpath = filepath.toLowerCase();
+        return (testpath.endsWith(".csv") | testpath.endsWith(".xls") | testpath.endsWith(".xlsx"));
     }
 
     /**
@@ -153,10 +166,11 @@ public class FileUtility {
 
     /**
      * Slurps a text file into a string and returns the string.
-     * @param fileinput 
+     *
+     * @param fileinput
      * @param enc
      * @return
-     * @throws IOException  
+     * @throws IOException
      */
     public static String readFile(File fileinput, String enc)
             throws IOException {
@@ -171,10 +185,12 @@ public class FileUtility {
         return new String(inputBytes, enc);
     }
 
-    /** Given a file get the byte array
-     * @param fileinput 
-     * @return 
-     * @throws IOException 
+    /**
+     * Given a file get the byte array
+     *
+     * @param fileinput
+     * @return
+     * @throws IOException
      */
     public static byte[] readBytesFrom(File fileinput)
             throws IOException {
@@ -245,10 +261,12 @@ public class FileUtility {
 
     }
 
-    /** Utility for making dirs
-     * @param testDir 
-     * @return 
-     * @throws IOException 
+    /**
+     * Utility for making dirs
+     *
+     * @param testDir
+     * @return
+     * @throws IOException
      */
     public static boolean makeDirectory(File testDir /*, Logger log*/)
             throws IOException {
@@ -267,10 +285,12 @@ public class FileUtility {
         return testDir.mkdirs();
     }
 
-    /** Utility for making dirs
-     * @param dir 
+    /**
+     * Utility for making dirs
+     *
+     * @param dir
      * @return
-     * @throws IOException  
+     * @throws IOException
      */
     public static boolean makeDirectory(String dir)
             throws IOException {
@@ -281,9 +301,9 @@ public class FileUtility {
         return makeDirectory(new File(dir));
     }
 
-    /** 
-     * @param directory 
-     * @return 
+    /**
+     * @param directory
+     * @return
      * @author T. Allison, MITRE
      */
     public static boolean removeDirectory(File directory) {
@@ -322,20 +342,24 @@ public class FileUtility {
         return directory.delete();
     }
 
-    /** Generate some path with a unique date/time stamp
+    /**
+     * Generate some path with a unique date/time stamp
+     *
      * @param D
      * @param F
-     * @param Ext 
-     * @return  
+     * @param Ext
+     * @return
      */
     public static String generateUniquePath(String D, String F, String Ext) {
         return D + File.separator + generateUniqueFilename(F, Ext);
     }
 
-    /** Generate some filename with a unique date/time stamp
-     * @param F 
+    /**
+     * Generate some filename with a unique date/time stamp
+     *
+     * @param F
      * @param Ext
-     * @return  
+     * @return
      */
     public static String generateUniqueFilename(String F, String Ext) {
 
@@ -345,35 +369,39 @@ public class FileUtility {
     }
 
     /**
-     * Get the parent File of a given file. 
-     *     defensively create new file in case file is a relative file.
-     * That is, this returns a file object for the absolute path of the parent of argument f.
-     * 
-     * worst case:
-     *   getParent( ../ )  ==> "../../",  but resolve that to a real path.
-     * 
-     * @param f 
-     * @return 
+     * Get the parent File of a given file. defensively create new file in case
+     * file is a relative file. That is, this returns a file object for the
+     * absolute path of the parent of argument f.
+     *
+     * worst case: getParent( ../ ) ==> "../../", but resolve that to a real
+     * path.
+     *
+     * @param f
+     * @return
      * @author T. Allison
      */
     public static File getParent(File f) {
         return new File(f.getAbsolutePath()).getParentFile();
     }
 
-    /** If you already have a file object, get the basename.
-     * @param f 
-     * @param ext 
-     * @return 
-     * @deprecated:  Replaced by Apache Commons IO FilenameUtils.getBasename()
-     * 
+    /**
+     * If you already have a file object, get the basename.
+     *
+     * @param f
+     * @param ext
+     * @return
+     * @deprecated: Replaced by Apache Commons IO FilenameUtils.getBasename()
+     *
      */
     // public static String getBasename(File f, String ext) {
-    /** Deprecated: LineNumberReader is deprecated.
-     * @param filepath 
-     * @return 
+    /**
+     * Deprecated: LineNumberReader is deprecated.
+     *
+     * @param filepath
+     * @return
      * @throws FileNotFoundException
-     * @throws IOException  
-     * @deprecated  LineNumber reader is deprecated
+     * @throws IOException
+     * @deprecated LineNumber reader is deprecated
      */
     public static LineNumberReader getLineReader(String filepath)
             throws FileNotFoundException, IOException {
@@ -381,25 +409,27 @@ public class FileUtility {
                 new StringReader(FileUtility.readFile(filepath)));
     }
 
-    /** Simple filter
+    /**
+     * Simple filter
+     *
      * @param ext
-     * @return  
+     * @return
      */
     public static FilenameFilter getFilenameFilter(String ext) {
         return new AnyFilenameFilter(ext);
     }
 
-    /** get the base name of a file, given any file extension.
-     *  This will find the right-most instance of a file extension and return
-     *  the left hand side of that as the file basename.
-     * 
-     * commons io FilenameUtils says nothing about arbitrarily long file extensions, 
-     *   e.g., file.a.b.c.txt
-     *         => "file"  + "a.b.c.txt"
-     * 
-     * @param p 
-     * @param ext 
-     * @return 
+    /**
+     * get the base name of a file, given any file extension. This will find the
+     * right-most instance of a file extension and return the left hand side of
+     * that as the file basename.
+     *
+     * commons io FilenameUtils says nothing about arbitrarily long file
+     * extensions, e.g., file.a.b.c.txt => "file" + "a.b.c.txt"
+     *
+     * @param p
+     * @param ext
+     * @return
      */
     public static String getBasename(String p, String ext) {
         if (p == null) {
@@ -409,16 +439,16 @@ public class FileUtility {
         if (ext == null || ext.isEmpty()) {
             return fn;
         }
-        if (fn.toLowerCase().endsWith(ext)){
+        if (fn.toLowerCase().endsWith(ext)) {
             int lastidx = fn.length() - ext.length() - 1;
-            return fn.substring(0, lastidx);            
+            return fn.substring(0, lastidx);
         }
         return fn;
     }
 
     /**
      * @param fname
-     * @return  
+     * @return
      */
     public static String filenameCleaner(String fname) {
 
@@ -442,13 +472,12 @@ public class FileUtility {
     /**
      * Get a directory that does not conflict with an existing directory.
      * Returns null if that is not possible within the maxDups.
-     * 
-     * @param dir 
-     * @param dupeMarker 
-     * @param maxDups 
-     * @return 
-     * @author T. Allison
-     * NOT THREAD SAFE!
+     *
+     * @param dir
+     * @param dupeMarker
+     * @param maxDups
+     * @return
+     * @author T. Allison NOT THREAD SAFE!
      */
     public static File getSafeDir(File dir, String dupeMarker, int maxDups) {
 
@@ -469,8 +498,8 @@ public class FileUtility {
      * @author T. Allison
      * @param f
      * @param dupeMarker
-     * @param maxDups 
-     * @return 
+     * @param maxDups
+     * @return
      */
     public static File getSafeFile(File f, String dupeMarker, int maxDups) {
         if (!f.exists()) {
@@ -518,19 +547,19 @@ public class FileUtility {
         }
     }
 
-    /** A way of determining OS
-     * @return 
+    /**
+     * A way of determining OS
+     *
+     * @return
      */
     public static boolean isWindowsSystem() {
         String val = System.getProperty("os.name");
 
         /**
-         if (val == null) {
-         //log.warn("Could not verify OS name");
-         return false;
-         } else {
-         //log.debug("Operating System is " + val);
-         }*/
+         * if (val == null) { //log.warn("Could not verify OS name"); return
+         * false; } else { //log.debug("Operating System is " + val);
+         }
+         */
         return (val != null ? val.contains("Windows") : false);
     }
     /**
@@ -538,12 +567,14 @@ public class FileUtility {
      */
     public final static String COMMENT_CHAR = "#";
 
-    /**  A generic word list loader.  Part of the Meso Utility API
-     * @param resourcepath 
-     * @param case_sensitive 
+    /**
+     * A generic word list loader. Part of the Meso Utility API
+     *
+     * @param resourcepath
+     * @param case_sensitive
      * @author ubaldino, MITRE Corp
      * @return Set containing unique words found in resourcepath
-     * @throws IOException  
+     * @throws IOException
      */
     public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive)
             throws IOException {

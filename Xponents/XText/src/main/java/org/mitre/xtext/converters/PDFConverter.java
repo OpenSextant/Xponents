@@ -47,7 +47,12 @@ public class PDFConverter implements iConvert {
     public PDFConverter() throws IOException {
         stripper = new PDFTextStripper();
     }
-
+    
+    @Override
+    public synchronized ConvertedDocument convert(String data) throws IOException {
+        throw new IOException("PDF conversion as text blob is not supported here.  Send a File obj");
+    }
+    
     /** Implementation is informed by PDFBox authors.
      */
     @Override

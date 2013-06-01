@@ -25,7 +25,15 @@
     <target name="convert">
         <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
             <jvmArg value="-Xmx600m"/>
-            <arg value="${inputfile}"/>
+            <arg value="-i"/>
+            <arg value="${input}"/>
+            <arg value="-o"/>
+            <arg value="${output}"/>
+            <arg value="-e"/>
+            <arg value="-h"/>
+            <!-- 
+            <arg value="-h"/>
+            -->
         </java>
     </target>
 

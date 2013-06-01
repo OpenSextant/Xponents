@@ -1,22 +1,21 @@
 /**
  *
- *      Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2009-2013 The MITRE Corporation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *
  * **************************************************************************
- *                          NOTICE
- * This software was produced for the U. S. Government under Contract No.
+ * NOTICE This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
@@ -26,7 +25,6 @@
  */
 package org.mitre.xtext.converters;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.AutoDetectParser;
@@ -37,7 +35,6 @@ import org.apache.tika.sax.ToTextContentHandler;
 import org.mitre.opensextant.util.TextUtils;
 import java.io.IOException;
 import org.mitre.xtext.ConvertedDocument;
-import org.mitre.xtext.iConvert;
 
 /**
  *
@@ -47,15 +44,20 @@ import org.mitre.xtext.iConvert;
  *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
-public class DefaultConverter implements iConvert {
+public class DefaultConverter extends ConverterAdapter {
 
     private Parser parser = new AutoDetectParser();
     private ParseContext ctx = new ParseContext();
 
+    /**
+     * Common implementation -- take an input stream and return a ConvertedDoc
+     * @param input
+     * @param doc
+     * @return
+     * @throws IOException
+     */
     @Override
-    public ConvertedDocument convert(java.io.File doc) throws IOException {
-
-        InputStream input = new FileInputStream(doc);
+    protected ConvertedDocument conversionImplementation(InputStream input, java.io.File doc) throws IOException {
         Metadata metadata = new Metadata();
         // Unfortunately due to some bugs in the HTML body content handler
         // I have become suspicious about how Tika SAX content handlers reset or not 

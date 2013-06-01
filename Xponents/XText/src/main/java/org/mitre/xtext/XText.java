@@ -245,6 +245,20 @@ public final class XText implements iFilter, iConvert {
     }
 
     /**
+     * Unsupported iConvert interface method. To convert text from a String obj
+     * rather than a File obj, you would instantiate a converter implementation
+     * for the data you think you are converting. E.g., if you know you have a
+     * buffer of HTML content and want to save it as text, call
+     * TikaHTMLConverter().convert( buffer ) directly.
+     *
+     */
+    @Override
+    public ConvertedDocument convert(String data) throws IOException {
+        throw new IOException("Unsupported interface:  To convert text or binary data directly "
+                + "you must use an instance of a XText converter, e.g., TikaHTMLConverter");
+    }
+
+    /**
      * Convert one file and save it off.
      *
      * We ignore hidden files and files in hidden folders, e.g., .cvs_ignore,
@@ -457,21 +471,66 @@ public final class XText implements iFilter, iConvert {
         return requested_types;
     }
 
+    public static void usage() {
+        System.out.println("XText -i input  [-h] [-o output] [-e]");
+        System.out.println("  input is file or folder");
+        System.out.println("  output is a folder where you want to archive converted docs");
+        System.out.println("  -e embeds the saved, conversions in the input folder in 'xtext' folders in input tree");
+        System.out.println("  NOTE: -e has same effect as setting output to input");
+        System.out.println("  -h enables HTML scrubbing");
+    }
+
     public static void main(String[] args) {
+
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XText", args, "hei:o:");
+
+        String input = null;
+        String output = null;
+        boolean embed = false;
+        boolean filter_html = false;
+        try {
+
+            int c;
+            while ((c = opts.getopt()) != -1) {
+                switch (c) {
+                    case 'i':
+                        input = opts.getOptarg();
+                        break;
+                    case 'o':
+                        output = opts.getOptarg();
+                        break;
+                    case 'h':
+                        filter_html = true;
+                        break;
+                    case 'e':
+                        embed = true;
+                        System.out.println("Saving conversions to Input folder.  Output folder will be ignored.");
+                        break;
+                    default:
+                        XText.usage();
+                        System.exit(1);
+                }
+            }
+        } catch (Exception err) {
+            XText.usage();
+            System.exit(1);
+        }
         // Setting LANG=en_US in your shell.
         // 
         // System.setProperty("LANG", "en_US");
         XText xt = new XText();
         xt.save = true;
-        xt.save_in_folder = true; // creates a ./text/ Folder locally in directory.
-        xt.zone_web_content = true;
-        xt.archiveRoot = "/tmp/texts";
+        xt.save_in_folder = embed; // creates a ./text/ Folder locally in directory.
+        xt.zone_web_content = filter_html;
+        if (output == null) {
+            output = "/tmp/XText_Output";
+        }
+        xt.archiveRoot = output;
         xt.tempRoot = "/tmp/xtext";
-        xt.save_in_folder = true;
 
         try {
             xt.setup();
-            xt.extract_text(args[0]);
+            xt.extract_text(input);
         } catch (IOException ioerr) {
             ioerr.printStackTrace();
         }

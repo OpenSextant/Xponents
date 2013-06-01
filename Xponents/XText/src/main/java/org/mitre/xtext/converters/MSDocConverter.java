@@ -28,25 +28,24 @@ package org.mitre.xtext.converters;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.mitre.xtext.ConvertedDocument;
-import org.mitre.xtext.iConvert;
 
 /**
  * @author T. Allison, MITRE 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
-public class MSDocConverter implements iConvert {
+public class MSDocConverter extends ConverterAdapter {
     
     /** TODO: Replace with a Tika converter?
      */
     @Override
-    public ConvertedDocument convert(java.io.File doc) throws IOException {
-        java.io.InputStream io = new FileInputStream(doc);
-        org.apache.poi.hwpf.extractor.WordExtractor ex = new WordExtractor(io);
+    protected ConvertedDocument conversionImplementation(InputStream input, java.io.File doc) throws IOException {
+        org.apache.poi.hwpf.extractor.WordExtractor ex = new WordExtractor(input);
         
         String[] ps = ex.getParagraphText();
-        io.close();
+        input.close();
 
         StringBuilder sb = new StringBuilder();        
         for (int i = 0; i < ps.length; i++) {

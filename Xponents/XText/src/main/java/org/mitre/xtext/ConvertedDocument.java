@@ -98,18 +98,19 @@ public final class ConvertedDocument {
     }
 
     public ConvertedDocument(File item) {
-        this.file = item;
+        if (item != null) {
+            this.file = item;
 
-        this.filepath = item.getAbsolutePath();
-        this.filename = item.getName();
-        this.filetime = getFiletime();
-        addProperty("filepath", this.filepath);
-        addProperty("conversion_date", dtfmt.format(new Date()));
-
-        is_plaintext = filename.toLowerCase().endsWith(".txt");
-
-        this.filesize = file.length();
-        addProperty("filesize", this.filesize);
+            this.filepath = item.getAbsolutePath();
+            this.filename = item.getName();
+            this.filetime = getFiletime();
+            this.is_plaintext = filename.toLowerCase().endsWith(".txt");
+            this.filesize = file.length();
+            addProperty("filesize", this.filesize);
+            addProperty("filepath", this.filepath);
+            
+            addProperty("conversion_date", dtfmt.format(new Date()));
+        }
     }
 
     /**
@@ -120,7 +121,8 @@ public final class ConvertedDocument {
         addProperty("encoding", enc);
     }
 
-    /**  get Filetime from original file.
+    /**
+     * get Filetime from original file.
      */
     public Date getFiletime() {
         if (filetime != null) {
@@ -402,7 +404,7 @@ public final class ConvertedDocument {
         if (this.filetime == null) {
             this.filetime = new Date(target.lastModified());
         }
-        
+
         meta.put("filetime", this.filetime.getTime());
 
         FileUtility.makeDirectory(target.getParentFile());

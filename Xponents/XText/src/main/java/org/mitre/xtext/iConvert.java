@@ -28,10 +28,20 @@
 package org.mitre.xtext;
 
 /**
- *
+ * Converters are strongly recommended to provide a ability to read a File object
+ *  ... and get more metadata from that implementation
+ * as well as a an ability to read from a String
+ * 
+ * Inputstreams and IO are handled solely within the implemenation.
+ * 
+ * see converters.ConverterAdapter as a base class.
+ * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public interface iConvert {
 
+    /** */
     public ConvertedDocument convert(java.io.File doc) throws java.io.IOException;
+    /** */
+    public ConvertedDocument convert(String data) throws java.io.IOException;
 }
