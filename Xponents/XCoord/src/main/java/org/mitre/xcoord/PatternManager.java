@@ -263,7 +263,7 @@ public final class PatternManager extends RegexPatternManager {
                  */
                 if (!ddlon.hemisphere.isAlpha() && !ddlat.hemisphere.isAlpha()) {
                     if (!ddlat.hasSymbols()) {
-                        m.filter_state = XConstants.FILTERED_OUT;
+                        m.setFilteredOut(true);
                     }
                 }
             }

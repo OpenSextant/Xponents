@@ -75,10 +75,6 @@ public class GeocoordMatch extends TextMatch {
     public GeocoordPrecision precision = new GeocoordPrecision();
     private MGRS mgrs = null;
     private String gridzone = null;
-    /**
-     *
-     */
-    public int filter_state = XConstants.UNFILTERED;
 
     /**
      * @see XCoord extract_coordinates is only routine that populates this
@@ -98,7 +94,7 @@ public class GeocoordMatch extends TextMatch {
 
         // XCoord-specific meta-data.
         //   with the exception of geodetic data.
-        this.filter_state = m.filter_state;
+        this.setFilteredOut(m.isFilteredOut());
         this.cce_family_id = m.cce_family_id;
         this.precision = m.precision;
 
@@ -111,13 +107,6 @@ public class GeocoordMatch extends TextMatch {
 
     }
 
-    /**
-     *
-     * @return
-     */
-    public boolean isFilteredOut() {
-        return filter_state == XConstants.FILTERED_OUT;
-    }
 
     /**
      *
@@ -132,13 +121,14 @@ public class GeocoordMatch extends TextMatch {
         this.latitude = lat.getValue();
         this.longitude = lon.getValue();
 
-        // This coordinate has no hemisphere at all.  Possible a bare pare of floating point numbers?
-        // 
         if (!_lat.hasHemisphere() && !_lon.hasHemisphere() && !_lat.hasSymbols()) {
-            this.filter_state = XConstants.FILTERED_OUT;
+            // This coordinate has no hemisphere at all.  Possible a bare pare of floating point numbers?
+            // 
+            this.setFilteredOut(true);
         } else {
-            this.filter_state = (lat.validate() && lon.validate())
-                    ? XConstants.FILTERED_IN : XConstants.FILTERED_OUT;
+            // This coordinate has an invalid lat or lon
+            // 
+            this.setFilteredOut( !(lat.validate() && lon.validate()) );
         }
     }
 
