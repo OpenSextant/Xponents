@@ -73,11 +73,13 @@ public class TextTranscodingConverter extends ConverterAdapter {
         // 
         // Test for ASCII only first, otherwise try to detect the best charset for the text 
         //
+        textdoc.is_plaintext = true;
+        
         boolean is_ascii = StupidASCIIDetector.isASCII(data);
         if (is_ascii) {
+            textdoc.do_convert = false;
             textdoc.setEncoding("ASCII");
             textdoc.setPayload(new String(data));
-            textdoc.do_convert = false;
         } else {
             chardet.setText(data);
             CharsetMatch cs = chardet.detect();
@@ -90,8 +92,6 @@ public class TextTranscodingConverter extends ConverterAdapter {
             textdoc.setEncoding(cs.getName());
             textdoc.setPayload(new String(data, cs.getName()));
         }
-
-        textdoc.is_plaintext = true;
 
         return textdoc;
     }

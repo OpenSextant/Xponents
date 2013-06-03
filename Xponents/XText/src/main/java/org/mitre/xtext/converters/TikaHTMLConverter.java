@@ -25,8 +25,6 @@
  */
 package org.mitre.xtext.converters;
 
-import com.ibm.icu.text.CharsetDetector;
-import com.ibm.icu.text.CharsetMatch;
 import org.xml.sax.ContentHandler;
 import java.io.IOException;
 import org.mitre.xtext.ConvertedDocument;
@@ -35,10 +33,8 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.sax.BodyContentHandler;
 import java.io.*;
-import org.apache.poi.util.IOUtils;
 import org.mitre.opensextant.util.TextUtils;
 import org.apache.tika.parser.html.BoilerpipeContentHandler;
-import org.mitre.opensextant.util.FileUtility;
 
 /**
  * A Tika HTML parser that reduces large amounts of empty lines in converted
@@ -93,6 +89,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
         } else {
             text = handler.toString();
         }
+
         textdoc.setPayload(TextUtils.reduce_line_breaks(text));
 
         //-- Improve CHAR SET encoding answer.
