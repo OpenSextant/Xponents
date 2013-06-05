@@ -54,6 +54,10 @@
       <groupId>net.sf.supercsv</groupId>
       <artifactId>super-csv</artifactId>
     </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

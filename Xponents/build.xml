@@ -24,6 +24,9 @@
     <subant >
       <fileset dir="XTemporal" includes="build.xml"/>      
     </subant>
+    <subant >
+      <fileset dir="PoLi" includes="build.xml"/>      
+    </subant>
 
     <echo message="Xponents Build: Adding resource files for XCoord coord patterns and XTemp date patterns"/>
     <jar jarfile="opensextant-xponents-${version}.jar">
@@ -31,9 +34,11 @@
       <fileset dir="XText/build" includes="org/**" />
       <fileset dir="XCoord/build" includes="org/**" />
       <fileset dir="XTemporal/build" includes="org/**" />
-      <!-- XPonent Resource files -->
+      <fileset dir="PoLi/build" includes="org/**" />
+      <!-- Default XPonent Resource files  that can be overriden -->
       <fileset dir="XTemporal/src/main/resources" includes="**.cfg" />
       <fileset dir="XCoord/src/main/resources" includes="**.cfg" />
+      <fileset dir="PoLi/src/main/resources" includes="**.cfg" />
     </jar>
   </target>
 
