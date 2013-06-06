@@ -549,7 +549,7 @@ public class TextUtils {
     public final static String thaiLang = "th";
     public final static String vietnameseLang = "vi";
     public final static String romanianLang = "ro";
-    private final static Map<String, Language> LanguageMap_ISO639 = new HashMap<>();
+    private final static Map<String, Language> LanguageMap_ISO639 = new HashMap<String, Language>();
 
     static {
         initLanguageData();

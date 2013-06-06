@@ -6,6 +6,7 @@
 
   <!-- This is required to be able to process unicode file names -->
   <property name="version" value="1.0"/>
+  <property name="java_level" value="1.6" />
 	
   <target name="clean" depends="clean.javadoc">
     <delete dir="${basedir}/build" />
@@ -28,7 +29,7 @@
   <target name="compile" 
     description="Compiles Core Commons package.">
     <javac srcdir="${basedir}/src/main/java"
-      source="1.7" 
+      source="${java_level}" 
       destdir="${basedir}/build"
       classpathref="compile.classpath"
       debug="yes"

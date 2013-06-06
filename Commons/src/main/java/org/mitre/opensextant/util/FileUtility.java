@@ -603,7 +603,7 @@ public class FileUtility {
     //  Working with file types
     //
     //
-    private final static HashMap<String, String> filetypeMap = new HashMap<>();
+    private final static HashMap<String, String> filetypeMap = new HashMap<String, String>();
     public final static String IMAGE_MIMETYPE = "image";
     public final static String DOC_MIMETYPE = "document";
     public final static String APP_MIMETYPE = "application";
