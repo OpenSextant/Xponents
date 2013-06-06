@@ -125,9 +125,10 @@ public class FileUtility {
         return new InputStreamReader(new FileInputStream(fname), enc);
     }
 
-    /** Simple check if a file is typed as a Spreadsheet
-     *  Tab-delimited .txt files or .dat files may be valid spreadsheets, however
-     *  this method does not look inside files.
+    /**
+     * Simple check if a file is typed as a Spreadsheet Tab-delimited .txt files
+     * or .dat files may be valid spreadsheets, however this method does not
+     * look inside files.
      */
     public static boolean isSpreadsheet(String filepath) {
         String testpath = filepath.toLowerCase();
@@ -557,8 +558,7 @@ public class FileUtility {
 
         /**
          * if (val == null) { //log.warn("Could not verify OS name"); return
-         * false; } else { //log.debug("Operating System is " + val);
-         }
+         * false; } else { //log.debug("Operating System is " + val); }
          */
         return (val != null ? val.contains("Windows") : false);
     }
@@ -597,5 +597,125 @@ public class FileUtility {
             }
         }
         return dict;
+    }
+    //
+    //
+    //  Working with file types
+    //
+    //
+    private final static HashMap<String, String> filetypeMap = new HashMap<>();
+    public final static String IMAGE_MIMETYPE = "image";
+    public final static String DOC_MIMETYPE = "document";
+    public final static String APP_MIMETYPE = "application";
+    public final static String VID_MIMETYPE = "video";
+    public final static String AUD_MIMETYPE = "audio";
+    public final static String FOLDER_MIMETYPE = "folder";
+    public final static String FEED_MIMETYPE = "feed";
+    public final static String DATA_MIMETYPE = "data";
+    public final static String WEBARCHIVE_MIMETYPE = "web archive";
+    public final static String WEBPAGE_MIMETYPE = "web page";
+    public final static String SPREADSHEET_MIMETYPE = "spreadsheet";
+    public final static String NOT_AVAILABLE = "other";
+
+    static {
+        filetypeMap.put("", NOT_AVAILABLE);
+
+        // Image
+        filetypeMap.put("jpg", IMAGE_MIMETYPE);
+        filetypeMap.put("jpeg", IMAGE_MIMETYPE);
+        filetypeMap.put("ico", IMAGE_MIMETYPE);
+        filetypeMap.put("bmp", IMAGE_MIMETYPE);
+        filetypeMap.put("gif", IMAGE_MIMETYPE);
+        filetypeMap.put("png", IMAGE_MIMETYPE);
+        filetypeMap.put("tif", IMAGE_MIMETYPE);
+        filetypeMap.put("tiff", IMAGE_MIMETYPE);
+
+        // Data
+        filetypeMap.put("dat", DATA_MIMETYPE);
+        filetypeMap.put("xml", DATA_MIMETYPE);
+        filetypeMap.put("rdf", DATA_MIMETYPE);
+
+        // Archive
+        filetypeMap.put("mht", WEBARCHIVE_MIMETYPE);
+        filetypeMap.put("mhtml", WEBARCHIVE_MIMETYPE);
+
+        filetypeMap.put("csv", SPREADSHEET_MIMETYPE);
+        filetypeMap.put("xls", SPREADSHEET_MIMETYPE);
+        filetypeMap.put("xlsx", SPREADSHEET_MIMETYPE);
+
+        filetypeMap.put("htm", WEBPAGE_MIMETYPE);
+        filetypeMap.put("html", WEBPAGE_MIMETYPE);
+
+        // Docs
+        filetypeMap.put("odf", DOC_MIMETYPE);
+        filetypeMap.put("doc", DOC_MIMETYPE);
+        filetypeMap.put("ppt", DOC_MIMETYPE);
+        filetypeMap.put("pdf", DOC_MIMETYPE);
+        filetypeMap.put("ps", DOC_MIMETYPE);
+        filetypeMap.put("vsd", DOC_MIMETYPE);
+        filetypeMap.put("txt", DOC_MIMETYPE);
+        filetypeMap.put("pptx", DOC_MIMETYPE);
+        filetypeMap.put("docx", DOC_MIMETYPE);
+
+        //Apps
+        filetypeMap.put("do", APP_MIMETYPE);
+        filetypeMap.put("aspx", APP_MIMETYPE);
+        filetypeMap.put("asp", APP_MIMETYPE);
+        filetypeMap.put("axd", APP_MIMETYPE);
+        filetypeMap.put("js", APP_MIMETYPE);
+        filetypeMap.put("php", APP_MIMETYPE);
+        filetypeMap.put("vbs", APP_MIMETYPE);
+        filetypeMap.put("vb", APP_MIMETYPE);
+        filetypeMap.put("vba", APP_MIMETYPE);
+
+
+        // Video
+        filetypeMap.put("mov", VID_MIMETYPE);
+
+        filetypeMap.put("rm", VID_MIMETYPE);
+        filetypeMap.put("wmv", VID_MIMETYPE);
+        filetypeMap.put("mp4", VID_MIMETYPE);
+
+        // Audio
+        filetypeMap.put("au", AUD_MIMETYPE);
+        filetypeMap.put("wma", AUD_MIMETYPE);
+        filetypeMap.put("mp3", AUD_MIMETYPE);
+        filetypeMap.put("ra", AUD_MIMETYPE);
+
+        // Data Feed
+        filetypeMap.put("rss", FEED_MIMETYPE);
+    }
+
+    /**
+     * Get a plain language name of the type of file. E.g., document, image,
+     * spreadsheet, web page. Rather than the MIME type technical descriptor.
+     */
+    public static String getFileDescription(String url) {
+        if (url == null) {
+            return NOT_AVAILABLE;
+        }
+
+        if (url.endsWith("/")) {
+            return FOLDER_MIMETYPE;
+        }
+
+        // Continue on...
+        //------------
+        String test = url.toLowerCase();
+        String urlTestExtension = FilenameUtils.getExtension(test);
+        String urlMimeType = filetypeMap.get(urlTestExtension);
+        if (urlMimeType != null) {
+            return urlMimeType;
+        }
+
+        if (test.contains("rss")) {
+            return FEED_MIMETYPE;
+        }
+
+        if (test.startsWith("http:")) {
+            return WEBPAGE_MIMETYPE;
+        }
+
+        return NOT_AVAILABLE;
     }
 }
