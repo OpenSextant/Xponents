@@ -33,6 +33,7 @@ import org.mitre.itf.geodesy.Latitude;
 import org.mitre.itf.geodesy.Longitude;
 import org.mitre.itf.geodesy.MGRS;
 import org.mitre.flexpat.TextMatch;
+import org.mitre.opensextant.data.GeographyUtility;
 
 /**
  * GeocoordMatch holds all the annotation data for the actual raw and normalized
@@ -128,7 +129,7 @@ public class GeocoordMatch extends TextMatch {
         } else {
             // This coordinate has an invalid lat or lon
             // 
-            this.setFilteredOut( !(lat.validate() && lon.validate()) );
+            this.setFilteredOut( ! GeographyUtility.validateCoordinate(latitude, longitude) );
         }
     }
 

@@ -720,7 +720,7 @@ public final class DMSOrdinate {
         value = toDecimal();
     }
 
-    /**
+    /** Unused
      *
      * @return
      */
