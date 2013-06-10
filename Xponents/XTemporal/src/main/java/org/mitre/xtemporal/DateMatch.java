@@ -54,11 +54,13 @@ public class DateMatch extends TextMatch {
      */
     public enum TimeResolution {
 
-        NONE(-1), YEAR(1), MONTH(2), WEEK(3), DAY(4), HOUR(5), MINUTE(6), SECOND(7);
+        NONE(-1, "U"), YEAR(1, "Y"), MONTH(2, "M"), WEEK(3, "W"), DAY(4, "D"), HOUR(5, "H"), MINUTE(6, "m"), SECOND(7, "s");
         public int level = -1;
+        public String code = null;
 
-        TimeResolution(int l) {
+        TimeResolution(int l, String c) {
             level = l;
+            code = c;
         }
     };
     // Enum representing YEAR, MON, WEEK, DAY, HR, MIN  
