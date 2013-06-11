@@ -54,16 +54,16 @@ import org.mitre.xtext.iConvert;
 public class ArchiveNavigator {
 
     private final Logger log = LoggerFactory.getLogger(ArchiveNavigator.class);
-    private File tempDir = null;
+    //private File tempDir = null;
+    private File saveDir = null;
     private iFilter filter = null;
     private iConvert converter = null;
 
-    /**  Given a working temp folder and a file filter 
-     * unpack archives.
+    /**  Given a working temp folder and a file filter unpack archives.
      */
-    public ArchiveNavigator(String temp, iFilter fileFilter, iConvert fileConv) throws IOException {
-        tempDir = new File(FileUtility.generateUniquePath(temp, "xtext", ""));
-        FileUtility.makeDirectory(tempDir);
+    public ArchiveNavigator(String saveTo, iFilter fileFilter, iConvert fileConv) throws IOException {
+        this.saveDir = new File(saveTo);
+        FileUtility.makeDirectory(saveDir);
         filter = fileFilter;
         converter = fileConv; // Uh... this is really a proxy for XText for now.
         
@@ -73,7 +73,7 @@ public class ArchiveNavigator {
     }
     
     public String getWorkingDir(){
-        return tempDir.getAbsolutePath();
+        return saveDir.getAbsolutePath();
     }
 
     /** Unpack any archive.
@@ -103,9 +103,9 @@ public class ArchiveNavigator {
             throw new IOException("Unsupported archive type: EXT=" + ext);
         }
         
-        if (archivetmp!=null){
-            FileUtils.deleteDirectory(archivetmp);
-        }
+        //if (archivetmp!=null){
+        //    FileUtils.deleteDirectory(archivetmp);
+        //}
     }
 
     /* Un-TAR.  Oops.  Its just a copy of Un-TAR and I replace tar with zip.
@@ -114,7 +114,7 @@ public class ArchiveNavigator {
      */
     public File unzip(File zipFile) throws IOException {
 
-        String _working = tempDir.getAbsolutePath() + File.separator + FilenameUtils.getBaseName(zipFile.getPath());
+        String _working = getWorkingDir() + File.separator + FilenameUtils.getBaseName(zipFile.getPath());
         File workingDir = new File(_working);
         workingDir.mkdir();
 
@@ -148,7 +148,7 @@ public class ArchiveNavigator {
     private File gunzip(File theFile, String fname) throws IOException {
 
         GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(theFile));
-        String outFilename = tempDir.toString() + File.separator + fname + ".tar";
+        String outFilename = getWorkingDir() + File.separator + fname + ".tar";
         File outFile = new File(outFilename);
         OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilename));
 
@@ -170,7 +170,7 @@ public class ArchiveNavigator {
      */
     public File untar(File tarFile) throws IOException {
 
-        String _working = tempDir.getAbsolutePath() + File.separator + FilenameUtils.getBaseName(tarFile.getPath());
+        String _working = getWorkingDir() + File.separator + FilenameUtils.getBaseName(tarFile.getPath());
         File workingDir = new File(_working);
         workingDir.mkdir();
 
