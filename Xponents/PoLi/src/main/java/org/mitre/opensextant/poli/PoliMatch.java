@@ -63,12 +63,17 @@ public class PoliMatch extends TextMatch {
     }
 
     /**
+     * Trim whitespace and convert found text to alpha case configured for this
+     * object.
      *
      */
     public void normalize() {
         if (this.text == null) {
             return;
         }
+
+        this.text = this.text.trim();
+
         if (normal_case == FOUND_CASE) {
             this.textnorm = this.text;
         } else if (normal_case == UPPER_CASE) {
@@ -76,5 +81,5 @@ public class PoliMatch extends TextMatch {
         } else if (normal_case == LOWER_CASE) {
             this.textnorm = this.text.toLowerCase();
         }
-    }     
+    }
 }

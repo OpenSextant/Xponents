@@ -136,6 +136,11 @@ public class GeographyUtility {
      * @return
      */
     public static boolean validateCoordinate(double lat, double lon) {
+        // Java behavior for NaN -- use object/class routines to compare.
+        // 
+        if (Double.isNaN(lon) | Double.isNaN(lat)){
+            return false;
+        }
         if (Math.abs(lat) >= LAT_MAX) {
             return false;
         }
