@@ -214,11 +214,18 @@ public final class XText implements iFilter, iConvert {
      * Unpack an archive and convert items found.
      */
     public void convertArchive(File input) throws IOException {
+        String saveArchiveTo = null;
+        
         // unpack, traverse, convert, save
+        if (this.save_in_folder){
+            saveArchiveTo = input.getParentFile().getAbsolutePath() + File.separator + "xtext-zips";
+        } else {
+            saveArchiveTo = this.archiveRoot;
+        }
 
-        ArchiveNavigator unpacker = new ArchiveNavigator(this.tempRoot, this, this);
-        String inPath = unpacker.getWorkingDir() + File.separator + FilenameUtils.getBaseName(input.getName());
-        input = new File(inPath);
+        ArchiveNavigator unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
+        //String inPath = unpacker.getWorkingDir() + File.separator + FilenameUtils.getBaseName(input.getName());
+        //input = new File(inPath);
         unpacker.unpack(input);
     }
     /**
@@ -374,11 +381,17 @@ public final class XText implements iFilter, iConvert {
      */
     public void defaults() {
 
+        tempRoot = System.getProperty("java.io.tmpdir");
+        if (tempRoot == null) {
+            tempRoot = "/tmp/xtext";
+        }
+
         archive_types.add("zip");
         archive_types.add("gz");
         archive_types.add("tar");
         archive_types.add("tgz");
         archive_types.add("tar.gz");
+        //archive_types.add("7z");
 
         // Get from a config file.
         requested_types.add("doc");
@@ -523,10 +536,9 @@ public final class XText implements iFilter, iConvert {
         xt.save_in_folder = embed; // creates a ./text/ Folder locally in directory.
         xt.zone_web_content = filter_html;
         if (output == null) {
-            output = "/tmp/XText_Output";
+            output = "xtext-output";
         }
         xt.archiveRoot = output;
-        xt.tempRoot = "/tmp/xtext";
 
         try {
             xt.setup();
