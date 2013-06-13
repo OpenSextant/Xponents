@@ -65,7 +65,7 @@ public class TextMatch extends TextEntity {
     /**
      *
      */
-    private boolean filtered_out_state = true;
+    private boolean filtered_out_state = false;
 
     public boolean isFilteredOut() {
         return filtered_out_state;
