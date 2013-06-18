@@ -78,6 +78,7 @@ public final class XText implements iFilter, iConvert {
     public String tempRoot = null;
     protected String inputNode = null;
     public boolean save_in_folder = false;
+    public boolean save_in_archive_root = false; // save to the archive root rather than in the directory the file came from
     protected Set<String> archive_types = new HashSet<>();
     /**
      *
@@ -218,7 +219,11 @@ public final class XText implements iFilter, iConvert {
         
         // unpack, traverse, convert, save
         if (this.save_in_folder){
-            saveArchiveTo = input.getParentFile().getAbsolutePath() + File.separator + "xtext-zips";
+            if (this.save_in_archive_root) {
+                saveArchiveTo = this.archiveRoot + File.separator + "xtext-zips";
+            } else {
+                saveArchiveTo = input.getParentFile().getAbsolutePath() + File.separator + "xtext-zips";
+            }
         } else {
             saveArchiveTo = this.archiveRoot;
         }
