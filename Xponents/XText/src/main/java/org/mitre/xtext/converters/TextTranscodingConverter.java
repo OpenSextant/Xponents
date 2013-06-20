@@ -59,10 +59,14 @@ public class TextTranscodingConverter extends ConverterAdapter {
 
         byte[] data = null;
 
-        if (in != null && doc != null) {
-            data = FileUtility.readBytesFrom(doc);
-        } else {
-            IOUtils.readFully(in, data);
+        if (in != null) {
+            // Get byte data from input stream or file
+            if (doc != null) {
+                data = FileUtility.readBytesFrom(doc);
+            } else {
+                IOUtils.readFully(in, data);
+            }
+            in.close();
         }
 
         // Encoding heuristics here.....
@@ -74,7 +78,7 @@ public class TextTranscodingConverter extends ConverterAdapter {
         // Test for ASCII only first, otherwise try to detect the best charset for the text 
         //
         textdoc.is_plaintext = true;
-        
+
         boolean is_ascii = StupidASCIIDetector.isASCII(data);
         if (is_ascii) {
             textdoc.do_convert = false;
