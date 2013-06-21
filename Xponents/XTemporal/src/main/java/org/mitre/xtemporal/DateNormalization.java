@@ -98,9 +98,8 @@ public class DateNormalization {
      #DEFINE LONG_TZ     [A-Z]{3,5}
      */
     /**
-     * For now this reports only DATEs -- no TIME parsing is handled. DateFormat
-     * would work,,... except the wild variation of matching formats would be
-     * difficult to handle.
+     * For now this reports only DATE and standard TIME fields. Timezone is
+     * still TODO.
      *
      * @param elements
      * @return void
@@ -145,17 +144,113 @@ public class DateNormalization {
             dt.resolution = DateMatch.TimeResolution.DAY;
         }
 
-
         // Normalize Time fields found, H, M, s.SSS, etc.
         // 
         _cal = _cal.withDayOfMonth(dom);
+
         // For normal M/D/Y patterns, set the default time to noon, UTC
         // Overall, we want to ensure that the general yyyy-mm-dd form is not impacted
         // by time zone and default hour of 00:00;  -- this generally would yield a date format a day early for ALL US timezones.
         // 
-        _cal = _cal.withHourOfDay(12);
+        // Time res:  the presence of a field, hh, mm, or ss means the pattern has that level of resolution.
+        // So even if time is 00:00:00Z  -- all zeroes -- the resolution is still SECONDS.
+        // 
+        int hour = normalize_time(elements, "hh");
+        if (hour >= 0) {
+            // Only if HH:MM... is present do we try to detect TZ.
+            //
+            DateTimeZone tz = normalize_tz(elements);
+            if (tz != null) {
+                _cal = _cal.withZone(tz);
+            }
+            
+            // NON-zero hour.
+            dt.resolution = DateMatch.TimeResolution.HOUR;
+            int min = normalize_time(elements, "mm");
+            if (min >= 0) {
+                dt.resolution = DateMatch.TimeResolution.MINUTE;
+                // NON-zero minutes
+                _cal = _cal.withHourOfDay(hour);
+                _cal = _cal.withMinuteOfHour(min);
+            } else {
+                // No minutes
+                _cal = _cal.withHourOfDay(hour);
+            }
+
+
+        } else {
+            // No hour; default is 12:00 UTC.
+            _cal = _cal.withHourOfDay(12);
+        }
+
 
         dt.datenorm = new Date(_cal.getMillis());
+    }
+
+    /**
+     * Z or Zulu is not always recognized as UTC / GMT+0000
+     */
+    public static DateTimeZone normalize_tz(java.util.Map<String, String> elements) {
+
+        if (elements.containsKey("SHORT_TZ")) {
+            String tz = elements.get("SHORT_TZ");
+            if ("Z".equalsIgnoreCase(tz)) {
+                return DateTimeZone.UTC;
+            }
+
+            return DateTimeZone.forID(tz);
+
+        } else if (elements.containsKey("LONG_TZ")) {
+            String tz = elements.get("LONG_TZ");
+            if ("Zulu".equalsIgnoreCase(tz)) {
+                return DateTimeZone.UTC;
+            }
+
+            return DateTimeZone.forID(tz);
+        }
+
+        // Default is UTC+0.
+        return null;
+    }
+
+    /**
+     *
+     * Given a field hh, mm, or ss, get field from map and normalize/validate
+     * the value
+     */
+    public static int normalize_time(java.util.Map<String, String> elements, String tmField) {
+
+        if (!elements.containsKey(tmField)) {
+            return -1;
+        }
+        int val = getIntValue(elements.get(tmField));
+        if (val < 0) {
+            return -1;
+        }
+
+        switch (tmField) {
+            case "hh":
+                if (val < 24) {
+                    return val;
+                }
+                break;
+
+            case "mm":
+                if (val < 60) {
+                    return val;
+                }
+                break;
+            case "ss":
+                if (val < 60) {
+                    return val;
+                }
+                break;
+            default:
+                // Unknown field;
+                return val;
+        }
+
+        return -1;
     }
 
     /**
