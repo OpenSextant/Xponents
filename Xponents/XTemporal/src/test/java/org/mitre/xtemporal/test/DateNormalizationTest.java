@@ -52,9 +52,12 @@ public class DateNormalizationTest {
      */
     @Test
     public void ensureTimeZone() {
+        // Not parseable by default.  pattern is too noisy.
         final TextMatchResultSet result1 = timeFinder.extract_dates("Oct 07", "dummy");
-        assertEquals(1, result1.matches.size());
+        System.err.println("1 "+result1.matches.toString());
+        assertEquals(0, result1.matches.size());
         final TextMatchResultSet result2 = timeFinder.extract_dates("Oct 2007", "dummy");
+        System.err.println("2 " + result1.matches.toString());
         assertEquals(1, result2.matches.size());
         
         DateMatch dt = (DateMatch) result2.matches.get(0);
