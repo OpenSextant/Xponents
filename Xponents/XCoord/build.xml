@@ -2,7 +2,7 @@
 
 <project name="XCoord" default="build">
 
-    <property name="version" value="1.6"/>
+    <property name="version" value="1.7"/>
 
     <!--
     

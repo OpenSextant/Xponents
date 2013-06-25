@@ -2,7 +2,7 @@
 
 <project name="XTemporal" default="build">
 
-    <property name="version" value="1.0"/>
+    <property name="version" value="1.1"/>
 
     <!--
     

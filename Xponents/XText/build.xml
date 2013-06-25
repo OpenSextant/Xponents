@@ -3,7 +3,7 @@
 <project name="XText" default="build">
 
     <!-- This is required to be able to process unicode file names -->
-    <property name="version" value="1.0"/>
+    <property name="version" value="1.1"/>
 
     <!--
     
