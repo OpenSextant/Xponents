@@ -490,7 +490,7 @@ public class TextUtils {
      */
     public static String normalize_text_entity(String str) {
         if (StringUtils.isBlank(str)) {
-            return null;
+            return "";
         }
 
         char[] chars = str.toCharArray();
@@ -522,7 +522,7 @@ public class TextUtils {
 
         // NOT possible, I hope... 
         if (s2 <= s1) {
-            return null;
+            return "";
         }
 
         // Some cleanup was done on ends of String. Now clear up whitespace.
