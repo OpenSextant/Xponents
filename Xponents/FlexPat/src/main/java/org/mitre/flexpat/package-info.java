@@ -108,11 +108,9 @@
     not consider how you implement this -- it simple requires you
     implement a per-rule toggler, enable_pattern( &lt;rule-id&gt; ).<br>
     <br>
-    <tt>/**&nbsp; For tracking purposes you should assign each text
-      object to a text ID. <br>
-      &nbsp;*&nbsp; TextMatches and results can then be associated with
-      text by this ID</tt><tt><br>
-    </tt><tt>&nbsp;*/</tt><tt><br>
+    <tt>// For tracking purposes you should assign each text object to a text ID. <br>
+        // TextMatches and results can then be associated with text by this ID</tt>
+    <tt><br>
     </tt><tt>&nbsp;&nbsp;&nbsp; public MyPatternResult
       extract_mystuff(String text, String text_id) {</tt><tt><br>
     </tt><tt><br>
@@ -131,13 +129,12 @@
     </tt><tt><br>
     </tt>
     <blockquote>
-      <blockquote><tt>&nbsp;/* if repat is enabled, evaluate it. </tt><br>
-        <tt>&nbsp;&nbsp; * Once you know you want to evaluate it you
-          will likely want to cast <br>
-          &nbsp;&nbsp; *&nbsp; the generic RegexPattern </tt><br>
-        <tt>&nbsp;&nbsp; * to your own MyPattern</tt><br>
-        <tt>&nbsp;&nbsp; * and do more specific stuff with it.</tt><br>
-        <tt>&nbsp;</tt><tt>&nbsp; */</tt><br>
+      <blockquote><tt>
+        // if repat is enabled, evaluate it. <br>
+        // Once you know you want to evaluate it you will likely want to cast <br>
+        // the generic RegexPattern to your own MyPattern and do more specific stuff with it.<br>
+        <br>
+        </tt>
       </blockquote>
     </blockquote>
     <tt>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
