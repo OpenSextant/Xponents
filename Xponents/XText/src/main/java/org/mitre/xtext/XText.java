@@ -434,17 +434,7 @@ public final class XText implements iFilter, iConvert {
 
         // Invoke converter instances only as requested types suggest.
         // If caller has removed file types from the list, then 
-        String mimetype = "doc";
-        if (requested_types.contains(mimetype)) {
-            converters.put(mimetype, new MSDocConverter());
-        }
-
-        //mimetype = "docx";
-        //if (requested_types.contains(mimetype)) {
-        //    converters.put(mimetype, new MSDocxConverter());
-        //}
-
-        mimetype = "pdf";
+        String mimetype = "pdf";
         if (requested_types.contains(mimetype)) {
             converters.put(mimetype, new PDFConverter());
         }
