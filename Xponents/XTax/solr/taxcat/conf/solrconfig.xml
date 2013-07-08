@@ -51,7 +51,13 @@
        
               <lib dir="./lib" />
     -->
-  <lib dir="./lib" />
+  <!--  In order of importance:
+     (required)The text tagger,
+     (optional)Java Servlet API - for use outside of servlet container
+    -->
+  <lib path="${opensextant.home}/lib/solr-text-tagger-1.1.jar" />
+  <lib path="${opensextant.home}/lib/javax.servlet-api-3.0.1.jar" />
+
 
   <!-- A 'dir' option by itself adds any files found in the directory 
        to the classpath, this is useful for including all jars in a

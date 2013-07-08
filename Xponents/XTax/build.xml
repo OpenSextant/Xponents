@@ -7,11 +7,8 @@
     <property name="taxtag" value="${taxtag.source}" />
 
     <path id="runtime.classpath">
-        <!-- Solr webapp extensions for this Solr Home -->
-        <fileset dir="${solr_home}/taxcat/lib" includes="**/*.jar" />
-        <!-- Solr webapp -->
-        <fileset dir="${solr_home}/webapp/WEB-INF/lib" includes="**/*.jar" />
-        <fileset dir="${taxtag}/lib" includes="**/*.jar" />
+        <!-- Required classpath: Solr WAR contents + OpenSextant toolbox + servlet + JTS -->
+        <fileset dir="${opensextant.home}/lib" includes="**/*.jar" />
         <pathelement location="${taxtag}/etc" />
     </path>
 
@@ -19,7 +16,6 @@
       -->
     <target name="create-solr-home">
         <mkdir dir="${solr_home}/taxcat" />
-        <mkdir dir="${solr_home}/taxcat/lib" />
         <mkdir dir="${solr_home}/taxcat/data" />
 
         <!-- Unpack Solr4 config baseline-->
@@ -32,13 +28,8 @@
         </copy>
 
         <!-- Gaz and SolrTextTagger Solr config -->
-        <!-- 
-           <copy todir="${solr_home}/" file="${taxtag}/solr/solr.xml" /> 
-           <unjar src="${taxtag}/solr/solr.war" dest="${solr_home}/webapp/." />
-          -->
         <copy todir="${solr_home}/taxcat/conf" file="${taxtag}/solr/taxcat/conf/solrconfig.xml" />
         <copy todir="${solr_home}/taxcat/conf" file="${taxtag}/solr/taxcat/conf/schema.xml" />
-        <copy todir="${solr_home}/taxcat/lib" file="${taxtag}/solr/taxcat/lib/solr-text-tagger-1.1.jar" />
 
 
     </target>
