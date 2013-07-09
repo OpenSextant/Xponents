@@ -55,7 +55,7 @@
      (required)The text tagger,
      (optional)Java Servlet API - for use outside of servlet container
     -->
-  <lib path="${opensextant.home}/lib/solr-text-tagger-1.1.jar" />
+  <lib path="${opensextant.home}/lib/solr-text-tagger-1.2.jar" />
   <lib path="${opensextant.home}/lib/javax.servlet-api-3.0.1.jar" />
 
 
@@ -812,7 +812,7 @@
       -->
     </requestHandler>
 
-  <requestHandler name="/tag" class="org.mitre.solr.tagger.TaggerRequestHandler">
+  <requestHandler name="/tag" class="org.opensextant.solrtexttagger.TaggerRequestHandler">
     <!-- HEY! if you change this configuration then remove the cacheFile -->
     <str name="indexedField">phrase</str>
     <str name="storedField">phrase</str>
