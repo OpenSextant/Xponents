@@ -21,4 +21,13 @@
     </java>
   </target>
 
+  <target name="test-patterns" description="Default tests for PoLi" depends="">
+    <java classname="org.mitre.opensextant.poli.PatternsOfLife" classpathref="runtime.classpath" fork="yes" >
+      <arg value="-c" />
+      <arg value="${config}" />
+      <arg value="-u" />
+      <arg value="${inputfile}" />
+    </java>
+  </target>
+
 </project>

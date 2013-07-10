@@ -1,31 +1,30 @@
 /**
-            Copyright 2013 The MITRE Corporation.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
+ * Copyright 2013 The MITRE Corporation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
  ** **************************************************
  * NOTICE
  *
- *  
- * This software was produced for the U. S. Government
- * under Contract No. W15P7T-12-C-F600, and is
- * subject to the Rights in Noncommercial Computer Software
- * and Noncommercial Computer Software Documentation
- * Clause 252.227-7014 (JUN 1995)
+ *
+ * This software was produced for the U. S. Government under Contract No.
+ * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
+ * Software and Noncommercial Computer Software Documentation Clause
+ * 252.227-7014 (JUN 1995)
  *
  * (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
-**************************************************   */
-
+ * *************************************************
+ */
 package org.mitre.opensextant.poli;
 
 import java.io.File;
@@ -63,8 +62,8 @@ public final class PoliPatternManager extends RegexPatternManager {
         this.debug = log.isDebugEnabled();
     }
 
-
-    /** Enable a family of patterns 
+    /**
+     * Enable a family of patterns
      */
     public void disable_patterns(String fam) {
         for (RegexPattern pat : patterns.values()) {
@@ -74,6 +73,15 @@ public final class PoliPatternManager extends RegexPatternManager {
         }
     }
 
+    /** You don't really want to enable All patterns... unless you are brute force testing all your patterns.
+     */
+    public void enableAll() {
+        for (RegexPattern pat : patterns.values()) {
+            pat.enabled = true;
+        }
+    }
+
+    @Override
     public void enable_patterns(String fam) {
         for (RegexPattern pat : patterns.values()) {
             if (pat.id.startsWith(fam)) {
@@ -141,7 +149,8 @@ public final class PoliPatternManager extends RegexPatternManager {
     /**
      * The match object is normalized, setting the coord_text and other data
      * from parsing "text" and knowing which pattern family was matched.
-     * @deprecated   logic for creation of a match is back in main PoLi match loop
+     *
+     * @deprecated logic for creation of a match is back in main PoLi match loop
      * @param m
      * @param groups
      * @return void

@@ -28,10 +28,10 @@ package org.mitre.xcoord;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.mitre.itf.geodesy.Angle;
-import org.mitre.itf.geodesy.Latitude;
-import org.mitre.itf.geodesy.Longitude;
-import org.mitre.itf.geodesy.MGRS;
+import org.opensextant.geodesy.Angle;
+import org.opensextant.geodesy.Latitude;
+import org.opensextant.geodesy.Longitude;
+import org.opensextant.geodesy.MGRS;
 import org.mitre.flexpat.TextMatch;
 import org.mitre.opensextant.data.GeographyUtility;
 

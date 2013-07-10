@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.mitre.flexpat.*;
 import org.mitre.opensextant.util.TextUtils;
-import org.mitre.itf.geodesy.*;
+import org.opensextant.geodesy.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
