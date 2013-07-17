@@ -49,7 +49,7 @@ import java.util.HashSet;
  *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
-public class Country extends GeoBase {
+public class Country extends Place {
     /** ISO 2-character country code */
     public String CC_ISO2 = null;
     /** ISO 3-character country code */
@@ -63,7 +63,9 @@ public class Country extends GeoBase {
     private Set<String> regions = new HashSet<String>();
 
     /**
-     *
+     * A country abstraction that uses ISO 2-alpha as an ID, and any name given 
+     * as the Place.name
+     * 
      * @param iso2
      * @param nm
      */

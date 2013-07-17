@@ -11,7 +11,7 @@ public class TestUtils {
     public void test() {
         String emo = "\ud83d\ude1d";
         System.out.println("What am I? " + emo);
-        System.out.println(TextUtils.remove_emoticons("bla blah blahhh ;)  " + emo));
+        System.out.println(UnicodeTextUtils.remove_emoticons("bla blah blahhh ;)  " + emo));
 
         testISO639Names("en");
         testISO639Names("eng");

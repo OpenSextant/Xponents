@@ -439,44 +439,6 @@ public class TextUtils {
         }
         return _new.toString();
     }
-    // UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS;
-    private final static Pattern scrub_symbols = Pattern.compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
-    private final static Pattern scrub_symbols2 = Pattern.compile("\\p{block=Transport and Map Symbols}+");
-    private final static Pattern scrub_emoticon = Pattern.compile("\\p{block=Emoticons}+");
-    private final static Pattern scrub_alphasup = Pattern.compile("\\p{block=Enclosed Alphanumeric Supplement}+");
-    private final static Pattern scrub_symbols_tiles1 = Pattern.compile("\\p{block=Mahjong Tiles}+");
-    private final static Pattern scrub_symbols_tiles2 = Pattern.compile("\\p{block=Domino Tiles}+");
-    private final static Pattern scrub_symbols_misc = Pattern.compile("\\p{block=Miscellaneous Symbols}+");
-    private final static Pattern scrub_symbols_cards = Pattern.compile("\\p{block=Playing Cards}+");
-
-    /**
-     * replace Emoticons with something less nefarious -- UTF-16 characters do
-     * not play well with some I/O routines.
-     *
-     * @param t
-     * @return
-     */
-    public static String remove_emoticons(String t) {
-        return scrub_emoticon.matcher(t).replaceAll("{icon}");
-    }
-
-    /**
-     * Replace symbology
-     *
-     * @param t
-     * @return
-     */
-    public static String remove_symbols(String t) {
-        String _new = scrub_symbols.matcher(t).replaceAll("{sym}");
-        _new = scrub_symbols2.matcher(_new).replaceAll("{sym2}");
-        _new = scrub_alphasup.matcher(_new).replaceAll("{asup}");
-        _new = scrub_symbols_tiles1.matcher(_new).replaceAll("{tile1}");
-        _new = scrub_symbols_tiles2.matcher(_new).replaceAll("{tile2}");
-        _new = scrub_symbols_misc.matcher(_new).replaceAll("{sym}");
-        _new = scrub_symbols_cards.matcher(_new).replaceAll("{card}");
-
-        return _new;
-    }
 
     /**
      * Normalization: Clean the ends, Remove Line-endings from middle of entity.

@@ -56,17 +56,17 @@ public class GeoBase {
      *
      */
     public String name = null;
-    /**
-     *
-     */
-    public Country country = null;
-    /**
-     *
-     */
-    public String country_id = null;
 
     /**
-     * Creates a new instance of Geobase
+     * Creates an empty GeoBase location object
+     * @param pk 
+     * @param n 
+     */
+    public GeoBase(){
+    }
+    
+    /**
+     * Creates a new instance of GeoBase
      * @param pk 
      * @param n 
      */
@@ -93,7 +93,7 @@ public class GeoBase {
     /** Bean support
      * @param N 
      */
-    public void setName(String N) {
+    public final void setName(String N) {
         name = N;
     }
 
@@ -112,59 +112,39 @@ public class GeoBase {
     public String toString() {
         return getName();
     }
+    
     // canonical form is decimal degree
-    private Double latitude = null;
-    private Double longitude = null;
+    protected double latitude;
+    protected double longitude;
 
     /**
-     *
-     * @return
+     * @return lat in degrees
      */
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
     /**
-     *
      * @param latitude
      */
-    public void setLatitude(Double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    /**
-     *
-     * @return
+    /** 
+     * @return lon in degrees
      */
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
     /**
-     *
      * @param longitude
      */
-    public void setLongitude(Double longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-    private String featureClass = null;
-
-    public String getFeatureClass() {
-        return featureClass;
-    }
-
-    public void setFeatureClass(String featureClass) {
-        this.featureClass = featureClass;
-    }
-    private String featureCode = null;
-
-    public String getFeatureCode() {
-        return featureCode;
-    }
-
-    public void setFeatureCode(String featureCode) {
-        this.featureCode = featureCode;
-    }
+    
     private String geohash;
 
     /** Set and get Geohash -- this is delegated to caller
@@ -182,19 +162,4 @@ public class GeoBase {
     public String getGeohash() {
         return geohash;
     }
-    private char name_type = 0;
-
-    public void setName_type(char t) {
-        name_type = t;
-    }
-
-    public char getName_type() {
-        return name_type;
-    }
-
-    public boolean isAbbreviation() {
-        return name_type == ABBREVIATION_TYPE;
-    }
-    public final static char ABBREVIATION_TYPE = 'A';
-    public final static char NAME_TYPE = 'N';
 }
