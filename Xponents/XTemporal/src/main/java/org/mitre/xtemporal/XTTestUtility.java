@@ -105,7 +105,7 @@ public class XTTestUtility {
         if (! results.matches.isEmpty()) {
             for (TextMatch tm : results.matches) {
 
-                row = new HashMap<>();
+                row = new HashMap<String, Object>();
                 row.put(header[0], results.result_id);
                 row.put(header[1], "PASS");
 
@@ -125,7 +125,7 @@ public class XTTestUtility {
                 report.write(row, header, xtempResultsSpec);
             }
         } else {
-            row = new HashMap<>();
+            row = new HashMap<String, Object>();
             row.put(header[0], results.result_id);
             row.put(header[1], "FAIL");
             row.put(header[2], results.get_trace());

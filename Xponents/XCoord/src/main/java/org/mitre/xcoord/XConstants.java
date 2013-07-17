@@ -95,11 +95,11 @@ public final class XConstants {
     /**
      * 
      */
-    protected final static Map<String,Integer> familyInt = new HashMap<>();
+    protected final static Map<String,Integer> familyInt = new HashMap<String,Integer>();
     /**
      * 
      */
-    protected final static Map<Integer,String> familyLabel = new HashMap<>();
+    protected final static Map<Integer,String> familyLabel = new HashMap<Integer,String>();
     
     static {
         

@@ -465,7 +465,7 @@ public class TestScript {
 
         int count = 0;
 
-        List<String> tests = new ArrayList<>();
+        List<String> tests = new ArrayList<String>();
         if (dd) {
             tests.addAll(Arrays.asList(ddtest));
         }

@@ -114,7 +114,7 @@ public class TestScript {
      */
     protected Map<String, Object> createResultRow(PatternTestCase t, TextMatch m) {
 
-        Map<String, Object> row = new HashMap<>();
+        Map<String, Object> row = new HashMap<String, Object>();
 
         if (t != null) {
             row.put(header[0], t.id);

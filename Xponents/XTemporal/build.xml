@@ -52,6 +52,7 @@
         description="Compiles XTemporal package.">
         <javac srcdir="${basedir}/src/main/java"
             destdir="${build}"
+        	source="1.6"
             classpathref="compile.classpath"
             debug="yes"
             deprecation="yes"

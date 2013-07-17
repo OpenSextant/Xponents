@@ -228,26 +228,21 @@ public class DateNormalization {
             return -1;
         }
 
-        switch (tmField) {
-            case "hh":
-                if (val < 24) {
-                    return val;
-                }
-                break;
-
-            case "mm":
-                if (val < 60) {
-                    return val;
-                }
-                break;
-            case "ss":
-                if (val < 60) {
-                    return val;
-                }
-                break;
-            default:
-                // Unknown field;
+        if ("hh".equals("tmField")) {
+            if (val < 24) {
                 return val;
+            }
+        } else if ("mm".equals("tmField")) {
+            if (val < 60) {
+                return val;
+            }
+        } else if ("ss".equals("tmField")) {
+            if (val < 60) {
+                return val;
+            }
+        } else { 
+            // Unknown field;
+            return val;
         }
 
         return -1;

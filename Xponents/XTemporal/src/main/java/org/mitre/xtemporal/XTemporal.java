@@ -150,7 +150,7 @@ public class XTemporal {
     public TextMatchResultSet extract_dates(String text, String text_id) {
 
         TextMatchResultSet results = new TextMatchResultSet();
-        results.matches = new ArrayList<>();
+        results.matches = new ArrayList<TextMatch>();
         results.result_id = text_id;
 
         for (RegexPattern pat : patterns.get_patterns()) {

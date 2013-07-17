@@ -237,7 +237,7 @@ public class GeocoordMatch extends TextMatch {
      */
     public void addOtherInterpretation(GeocoordMatch m2) {
         if (interpretations == null) {
-            interpretations = new ArrayList<>();
+            interpretations = new ArrayList<GeocoordMatch>();
         }
         interpretations.add(m2);
     }

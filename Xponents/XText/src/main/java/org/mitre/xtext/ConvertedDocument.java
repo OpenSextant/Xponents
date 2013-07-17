@@ -65,7 +65,7 @@ public final class ConvertedDocument {
         "filesize",
         "textsize"
     };
-    public final static Set<String> valid_fields = new HashSet<>(Arrays.asList(fields));
+    public final static Set<String> valid_fields = new HashSet<String>(Arrays.asList(fields));
     public String filepath = null;
     public String filename = null;
     public Date filetime = null;

@@ -55,7 +55,7 @@
     <target name="compile" depends="setup,dependencies"
         description="Compiles XText package.">
         <javac srcdir="${basedir}/src/main/java"
-            source="1.7" 
+            source="1.6" 
             destdir="${basedir}/build"
             classpathref="compile.classpath"
             debug="yes"

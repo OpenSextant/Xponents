@@ -55,6 +55,7 @@
       destdir="${build}"
       classpathref="compile.classpath"
       debug="yes"
+      source="1.6"
       deprecation="yes"
       encoding="utf-8"
       includeantruntime='true' >

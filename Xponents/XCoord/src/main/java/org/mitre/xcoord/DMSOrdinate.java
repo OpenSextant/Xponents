@@ -117,7 +117,7 @@ public final class DMSOrdinate {
         normalize_hemisphere(text, _elements, islat);
 
         boolean _parse_state = false;
-        _normal = new HashMap<>();
+        _normal = new HashMap<String, String>();
 
         is_latitude = islat;
 
@@ -497,7 +497,7 @@ public final class DMSOrdinate {
     /**
      *
      */
-    public final static String[] COORDINATE_SYMBOLS = {"°", "º", "'", "\"", ":", "lat", "lon", "geo", "coord", "deg"};
+    public final static String[] COORDINATE_SYMBOLS = {"��", "��", "'", "\"", ":", "lat", "lon", "geo", "coord", "deg"};
     private String coord_symbol = null;
 
     /**

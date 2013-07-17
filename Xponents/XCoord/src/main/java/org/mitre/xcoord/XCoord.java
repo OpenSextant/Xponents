@@ -248,7 +248,7 @@ public class XCoord {
 
         TextMatchResultSet results = new TextMatchResultSet();
         results.result_id = text_id;
-        results.matches = new ArrayList<>();
+        results.matches = new ArrayList<TextMatch>();
 
         for (RegexPattern repat : patterns.get_patterns()) {
 

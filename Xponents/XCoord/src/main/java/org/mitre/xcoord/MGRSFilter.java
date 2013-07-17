@@ -66,7 +66,7 @@ public class MGRSFilter implements MatchFilter {
     public int CURRENT_YY = 0;
     /**
      */
-    public Set<String> IGNORE_SEQ = new HashSet<>();
+    public Set<String> IGNORE_SEQ = new HashSet<String>();
 
     /**
      *

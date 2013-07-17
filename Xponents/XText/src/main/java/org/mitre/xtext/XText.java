@@ -79,14 +79,14 @@ public final class XText implements iFilter, iConvert {
     protected String inputNode = null;
     public boolean save_in_folder = false;
     public boolean save_in_archive_root = false; // save to the archive root rather than in the directory the file came from
-    protected Set<String> archive_types = new HashSet<>();
+    protected Set<String> archive_types = new HashSet<String>();
     /**
      *
      */
-    public static Map<String, iConvert> converters = new HashMap<>();
+    public static Map<String, iConvert> converters = new HashMap<String, iConvert>();
     private iConvert defaultConversion;
-    private Set<String> requested_types = new HashSet<>();
-    private Set<String> ignore_types = new HashSet<>();
+    private Set<String> requested_types = new HashSet<String>();
+    private Set<String> ignore_types = new HashSet<String>();
 
     /**
      */

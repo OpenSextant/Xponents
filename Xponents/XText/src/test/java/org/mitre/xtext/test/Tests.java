@@ -16,7 +16,6 @@
 package org.mitre.xtext.test;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 
 import org.apache.commons.io.FileUtils;
@@ -39,7 +38,15 @@ public class Tests {
 
     @BeforeClass
     public static void createPlayground() throws IOException {
-        tempDir = Files.createTempDirectory("xtext_test").toFile();
+        
+        // change to a temp directory that is java 1.6 compliant 
+        //tempDir = Files.createTempDirectory("xtext_test").toFile();
+        File t = File.createTempFile("xtext_text","");
+        tempDir = new File(t.getAbsolutePath() + "_d");
+        tempDir.mkdir();
+        t.delete();
+        
+        
         doc = new File(tempDir, "Asia_Fdn_Afghanistan_2009.pdf");
         FileUtils.copyInputStreamToFile(Tests.class.getResourceAsStream("/Asia_Fdn_Afghanistan_2009.pdf"), doc);
     }
@@ -142,4 +149,5 @@ public class Tests {
             ioerr.printStackTrace();
         }
     }
+    
 }

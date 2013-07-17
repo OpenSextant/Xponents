@@ -63,7 +63,7 @@ public class TestUtility {
         "matchtext", "lat", "lon", "mgrs", "precision", "offset"};
 
     protected static Map<String,Object> getEmptyRow() { 
-        Map<String,Object> blank = new HashMap<>();
+        Map<String,Object> blank = new HashMap<String,Object>();
         blank.put(header[0], "");
         blank.put(header[1], "");
         blank.put(header[2], false);
@@ -153,7 +153,7 @@ public class TestUtility {
         }
         // This happens when the TestCases are well defined.
 
-        Map<String,Object> row = new HashMap<>();
+        Map<String,Object> row = new HashMap<String,Object>();
         row.put(header[0], t.id);
         row.put(header[1], t.family);
         row.put(header[2], t.true_positive);
