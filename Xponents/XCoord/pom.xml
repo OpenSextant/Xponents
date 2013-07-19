@@ -6,22 +6,22 @@
   <parent>
     <groupId>org.mitre.opensextant.Xponents</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>1.7</version>
+    <version>1.7.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>xcoord</artifactId>
-  <version>1.7</version>
+  <version>1.7.1</version>
 
   <dependencies>
     <dependency>
       <groupId>org.mitre.opensextant</groupId>
       <artifactId>opensextant-commons</artifactId>
-      <version>1.4</version>
+      <version>1.4.1</version>
     </dependency>
     <dependency>
       <groupId>org.mitre.opensextant.Xponents</groupId>
       <artifactId>flexpat</artifactId>
-      <version>1.3.1</version>
+      <version>1.3.2</version>
     </dependency>
 	
     <dependency>

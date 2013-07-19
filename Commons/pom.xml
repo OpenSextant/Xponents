@@ -6,11 +6,11 @@
   <parent>
     <groupId>org.mitre.opensextant</groupId>
     <artifactId>opensextant-parent</artifactId>
-    <version>1.4</version>
+    <version>1.4.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>opensextant-commons</artifactId>
-  <version>1.4</version>
+  <version>1.4.1</version>
 
   <dependencies>
     <dependency>
