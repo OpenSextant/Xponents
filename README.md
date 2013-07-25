@@ -22,8 +22,10 @@ XText depends on Tika 1.3+
 
 Name Matching depends on: 
 
-  OpenSextant Gazetteer; Depends on Pentaho Kettle
-  https://github.com/OpenSextant/opensextant/tree/master/Gazetteer 
+  OpenSextant Gazetteer; 
+  * Download a built gazetteer at  http://www.opensextant.org/
+  OR 
+  * Build  your own using https://github.com/OpenSextant/opensextant/tree/master/Gazetteer, which Depends on Pentaho Kettle for creation 
 
   OpenSextant SolrTextTagger
   https://github.com/OpenSextant/SolrTextTagger
