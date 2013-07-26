@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>XText Read-me</title>
+    <meta content="Marc C. Ubaldino" name="author">
+    <meta content="yet another document conversion capability"
+      name="description">
+  </head>
+  <body>
+    <h1>XText v1.0 README</h1>
+    <br>
+    Author: Marc. C. Ubaldino, MITRE Corporation<br>
+    Contributors: Tim Allison, David Lutz, MITRE Corporation<br>
+    Date: 2013-March<br>
+    Copyright MITRE Corporation, 2012-2013<br>
+    <br>
+    <br>
+    Apache Tika is awesome.&nbsp; It provides all sorts of solid content
+    conversion and parsing capabilities.&nbsp;&nbsp; XText wraps around
+    Tika basics but also provides a lean design for added other
+    extractors/converters and customizing the output of any
+    converter.&nbsp;&nbsp; XText API is intended to be a simple
+    core:&nbsp; filter and convert documents to textual
+    versions.&nbsp;&nbsp; XText adds some typical conventions for
+    integrators who wish to use a document conversion tool rather than
+    the bare Tika library.&nbsp;&nbsp; Such features include:<br>
+    <ul>
+      <li>document file type <b>filters</b></li>
+      <li>logging and <b>metrics</b></li>
+      <li><b>input/output </b>options for saving documents</li>
+      <li>lightweight listener design so you can unpack, convert and <b>process
+
+          all in the same loop</b></li>
+      <li>formalizing the <b>document meta-data practices</b>: that is,
+        what metadata is really important and how do we store it with
+        the converted document</li>
+      <li>XText API design intended to be extensible by others.</li>
+      <li>Exploit basic Tika library features.&nbsp; Tika 1.3 as of
+        XText release 1.0</li>
+      <li>supported customizations:</li>
+      <ul>
+        <li>PDF metadata harvesting (from Tika/PDFBox);&nbsp; Detecting
+          of encrypted PDFs</li>
+        <li>Web content scrapping;&nbsp; Default HTML parser is Tika's,
+          but for web articles, Boilerplate parser is better.</li>
+      </ul>
+      <li>Content is normalized to UTF-8 with unix line endings ('\n')
+        only.<br>
+      </li>
+      <ul>
+      </ul>
+    </ul>
+    <p><a href="./doc/api-java/index.html">Java Documentation </a>contains
+
+
+
+
+
+
+
+
+
+
+      what you need to know for development.</p>
+    <br>
+    <br>
+    <span style="font-family: Courier New,Courier,monospace;"># compile</span><br
+      style="font-family: Courier New,Courier,monospace;">
+    <span style="font-family: Courier New,Courier,monospace;">ant </span><br
+      style="font-family: Courier New,Courier,monospace;">
+    <p style="font-family: Courier New,Courier,monospace;">## run out of
+      box tests.&nbsp; <br>
+      ant test-default<br>
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;">Convert a
+      single file, a folder or a compressed archive or TAR:<br>
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;">ant
+      -Dinputfile=./test/doc.docx&nbsp; convert <br>
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;">ant
+      -Dinputfile=./test/somestuff.zip&nbsp; convert <br>
+    </p>
+    <p style="font-family: Courier New,Courier,monospace;">ant
+      -Dinputfile=./test/somestuff/&nbsp; convert </p>
+    <br>
+    <h1>RELEASE NOTES</h1>
+    <br>
+    <b>v1.0&nbsp; ST PATRICK's&nbsp; DAY</b><b>, 2013</b><br>
+    <ul>
+      <li>initial design</li>
+      <li>added Testing archive -- not released;&nbsp; UBL Letters from
+        SOCOM where released Fall 2012.&nbsp; They are PDFs and Word
+        docs in English and Arabic.&nbsp; They offer a good test
+        opportunity.</li>
+    </ul>
+  </body>
+</html>

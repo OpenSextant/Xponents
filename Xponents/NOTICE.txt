@@ -1,0 +1,29 @@
+
+       OpenSextant - Geospatial extraction and tagging
+             Copyright 2013, MITRE Corporation
+
+           http://sourceforge.net/projects/opensextant
+
+This software uses the Apache License 2.0.  See LICENSE.txt.
+
+This product includes software developed by
+The MITRE Corporation (http://www.mitre.org/).
+
+  This software was produced for the U. S. Government
+  under Contract No. W15P7T-11-C-F600, and is
+  subject to the Rights in Noncommercial Computer Software
+  and Noncommercial Computer Software Documentation
+  Clause 252.227-7014 (JUN 1995)
+
+
+Additionally, OpenSextant relies on these open source components
+
+  GATE, http://gate.ac.uk/
+  Apache Solr, http://lucene.apache.org
+  Apache Lucene, http://lucene.apache.org
+  Apache Commons, http://commons.apache.org
+
+And peer projects located within the OpenSextant family:
+
+  GISCore
+  SolrTextTagger

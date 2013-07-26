@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<project name="XTax Builder" default="build">
+
+    <property file="${basedir}/build.properties" />
+
+    <property name="taxtag" value="${taxtag.source}" />
+
+    <path id="runtime.classpath">
+        <!-- Required classpath: Solr WAR contents + OpenSextant toolbox + servlet + JTS -->
+        <fileset dir="${opensextant.home}/lib" includes="**/*.jar" />
+        <pathelement location="${taxtag}/etc" />
+    </path>
+
+    <!--  Add TaxCat to an existing Solr setup
+      -->
+    <target name="create-solr-home">
+        <mkdir dir="${solr_home}/taxcat" />
+        <mkdir dir="${solr_home}/taxcat/data" />
+
+        <!-- Unpack Solr4 config baseline-->
+        <unzip src="${taxtag}/solr/solr4-conf.zip" dest="${solr_home}/taxcat/." />
+
+        <!-- Limited Gazetteer hack: copy content from installed solrhome; Get ASCII mapping customization.
+          -->
+        <copy todir="${solr_home}/taxcat/conf">
+            <fileset dir="${solr_home}/gazetteer/conf" includes="**/*.txt"/>
+        </copy>
+
+        <!-- Gaz and SolrTextTagger Solr config -->
+        <copy todir="${solr_home}/taxcat/conf" file="${taxtag}/solr/taxcat/conf/solrconfig.xml" />
+        <copy todir="${solr_home}/taxcat/conf" file="${taxtag}/solr/taxcat/conf/schema.xml" />
+
+
+    </target>
+
+        
+    <!-- 2 GB to build current gazetteer with 13 million rows -->
+    <target name="build-fst">
+        <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater" classpathref="runtime.classpath" fork="yes" >
+            <jvmArg value="-Xmx500m" />
+            <jvmArg value="-Dsolr.solr.home=${solr_home}" />
+            <arg value="/tag?build=true" />
+        </java>
+    </target>
+
+
+</project>
