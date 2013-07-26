@@ -28,9 +28,9 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.mitre.flexpat.TextMatchResultSet;
-import org.mitre.xtemporal.DateMatch;
-import org.mitre.xtemporal.XTemporal;
+import org.opensextant.flexpat.TextMatchResultSet;
+import org.opensextant.xtemporal.DateMatch;
+import org.opensextant.xtemporal.XTemporal;
 
 /**
  *

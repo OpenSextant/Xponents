@@ -133,7 +133,7 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <header>&lt;img alt='[OpenSextant Logo]' height='30' width='30' src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright OpenSextant.org, 2010-2013</header>
+          <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36' src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright OpenSextant.org, 2010-2013</header>
           <version>true</version>
           <windowtitle>Xponents Extraction Toolkit</windowtitle>
         </configuration>

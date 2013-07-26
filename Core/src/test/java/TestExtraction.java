@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import org.mitre.opensextant.extraction.TextEntity;
+import org.opensextant.extraction.TextEntity;
 
 /**
  *

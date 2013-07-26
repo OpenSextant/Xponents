@@ -1,5 +1,6 @@
 
-import org.mitre.opensextant.util.*;
+import org.opensextant.util.TextUtils;
+import org.opensextant.util.UnicodeTextUtils;
 
 public class TestUtils {
 
