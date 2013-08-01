@@ -28,17 +28,12 @@
 
   <developers>
     <developer>
-      <!-- Xponents Lead: -->
       <name>Marc Ubaldino</name>
       <email>ubaldino@mitre.org</email>
       <organization>MITRE</organization>
+      <roles><role>Lead</role></roles>
     </developer>
 
-    <developer>
-      <name>David Smiley</name>
-      <email>dsmiley@mitre.org</email>
-      <organization>MITRE</organization>
-    </developer>
     <developer>
       <name>Todd Hay</name>
       <email>hayt@mitre.org</email>
@@ -47,6 +42,11 @@
     <developer>
       <name>David Lutz</name>
       <email>dlutz@mitre.org</email>
+      <organization>MITRE</organization>
+    </developer>
+    <developer>
+      <name>David Smiley</name>
+      <email>dsmiley@mitre.org</email>
       <organization>MITRE</organization>
     </developer>
   </developers>
