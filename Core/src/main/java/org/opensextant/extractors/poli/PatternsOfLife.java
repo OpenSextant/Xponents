@@ -172,7 +172,7 @@ public class PatternsOfLife extends AbstractFlexPat {
                 // TODO: Assess filters?
 
                 // returns indices for window around text match
-                int[] slices = TextUtils.get_text_window((int) poliMatch.start,
+                int[] slices = TextUtils.get_text_window( poliMatch.start,
                         bufsize, match_width);
 
                 // left l1 to left l2
