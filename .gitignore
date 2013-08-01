@@ -1,1 +1,25 @@
-/Examples/target/
+#Misc:
+.DS_Store
+
+#Maven output
+target/
+#  TODO can we remove this?:
+build/
+
+#Build files
+#Eclipse
+.classpath
+.project
+
+#IntelliJ
+/out/
+*.iml
+
+/*.ipr
+/*.iws
+/.idea/
+
+#Netbeans
+nb-configuration.xml
+nbactions*.xml
+nbproject/
