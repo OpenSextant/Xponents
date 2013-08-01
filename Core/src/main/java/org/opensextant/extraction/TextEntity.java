@@ -108,7 +108,7 @@ public class TextEntity {
             // Match not initialized
             return 0;
         }
-        return (int) (end - start);
+        return (end - start);
     }
 
     /** Convenience methods for carrying the context through the output processing */

@@ -75,7 +75,7 @@ public class Taxon {
         }
     }
 
-    public void addTags(Collection tlist) {
+    public void addTags(Collection<Object> tlist) {
         if (tlist==null){
             return;
         }

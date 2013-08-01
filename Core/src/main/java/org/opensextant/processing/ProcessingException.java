@@ -34,6 +34,7 @@ package org.opensextant.processing;
  */
 public class ProcessingException  extends Exception {
 
+    protected static final long serialVersionUID = 20001981L;
     
     public ProcessingException(Exception ex) {
         super(ex);

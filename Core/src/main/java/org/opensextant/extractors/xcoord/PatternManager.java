@@ -91,7 +91,6 @@ public final class PatternManager extends RegexPatternManager {
     protected Logger log;
     private final MatchFilter mgrs_filter = new MGRSFilter();
     private final MatchFilter dms_filter = new DMSFilter();
-    private final TextUtils utility = new TextUtils();
 
     /**
      *
@@ -350,7 +349,7 @@ public final class PatternManager extends RegexPatternManager {
 
         } else if (m.cce_family_id == XConstants.UTM_PATTERN) {
 
-            m.coord_text = utility.delete_whitespace(m.getText());
+            m.coord_text = TextUtils.delete_whitespace(m.getText());
 
             try {
                 UTM utm = UTMParser.parseUTM(m.coord_text, groups);

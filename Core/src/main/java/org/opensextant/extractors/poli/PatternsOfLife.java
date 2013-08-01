@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.TextInput;
 import org.opensextant.extraction.ConfigException;
+import org.opensextant.extraction.NormalizationException;
+
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
@@ -261,7 +263,7 @@ public class PatternsOfLife extends AbstractFlexPat {
             } else if (testFile != null) {
                 test.testUserFile(testFile);
             }
-        } catch (PoliException xerr) {
+        } catch (NormalizationException xerr) {
             xerr.printStackTrace();
         } catch (IOException ioerr) {
             ioerr.printStackTrace();

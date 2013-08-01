@@ -169,7 +169,7 @@ public class SolrGazetteer {
         loadFeatureMetaMap();
 
         String config_solr_home = System.getProperty("solr.solr.home");
-        solr = new SolrProxy(config_solr_home, "gazetteer", false);
+        solr = new SolrProxy(config_solr_home, "gazetteer");
 
         params.set(CommonParams.Q, "*:*");
         params.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");

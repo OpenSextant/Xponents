@@ -38,6 +38,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.TextMatchResult;
+import org.opensextant.extraction.NormalizationException;
 import org.opensextant.util.FileUtility;
 
 import org.slf4j.LoggerFactory;
@@ -182,7 +183,7 @@ public class TestScript {
      * Run patterns over a single file using a pre-configured PoLi. Use -c
      * config -u file test
      */
-    public void testUserFile(String f) throws IOException, PoliException {
+    public void testUserFile(String f) throws IOException, NormalizationException {
         // poli.configure(new File(f));
         String fname = FilenameUtils.getBaseName(f);
 

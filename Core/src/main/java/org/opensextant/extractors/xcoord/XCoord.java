@@ -303,7 +303,7 @@ public class XCoord extends AbstractFlexPat {
                 if ((XCoord.RUNTIME_FLAGS & XConstants.FLAG_EXTRACT_CONTEXT) > 0) {
                     // returns indices for two  windows before and after match
                     int[] slices = TextUtils.get_text_window(
-                            (int) coord.start,
+                            coord.start,
                             coord.match_length(),
                             bufsize, match_width);
 

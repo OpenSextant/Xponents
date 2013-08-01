@@ -95,8 +95,8 @@ public class GISDataModel {
     }
 
     protected void addOffsets(Feature row, TextMatch m) {
-        addColumn(row, OpenSextantSchema.START_OFFSET, (int) m.start);
-        addColumn(row, OpenSextantSchema.END_OFFSET, (int) m.end);
+        addColumn(row, OpenSextantSchema.START_OFFSET, m.start);
+        addColumn(row, OpenSextantSchema.END_OFFSET,  m.end);
     }
 
     protected void addLatLon(Feature row, Geocoding g) {

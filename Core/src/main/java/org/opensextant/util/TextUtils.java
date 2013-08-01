@@ -301,7 +301,7 @@ public class TextUtils {
          left  .... match   .... right        
          * 
          */
-        int half = (int) (width / 2);
+        int half = (width / 2);
         int left = offset - half;
         int right = offset + half;
 

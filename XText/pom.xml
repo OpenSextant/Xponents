@@ -14,7 +14,7 @@
         <!--  Settings here to ensure Java 6 compatability
             Java6 max level for SL4J;
         -->
-        <slf4j.version>1.7.4</slf4j.version>
+        <slf4j.version>1.5.6</slf4j.version>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
   </properties>
@@ -109,7 +109,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.4</version>
+      <version>1.5.6</version>
     </dependency>
 	
     <!-- Testing -->

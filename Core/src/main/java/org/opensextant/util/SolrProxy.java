@@ -49,11 +49,9 @@ import org.opensextant.data.Place;
  * This class creates a proxy to Solr setup routines and the most common data
  * brokering.
  *
- * Use either: 
- *  # SolrProxy( url ) creates a server 
- *  # SolrProxy( ) defaults to
- * environment set, creating an embedded solr server 
- *  # SolrProxy( solr.home, corename ) - create embedded solr server with specific index
+ * Use either: # SolrProxy( url ) creates a server # SolrProxy( ) defaults to
+ * environment set, creating an embedded solr server # SolrProxy( solr.home,
+ * corename ) - create embedded solr server with specific index
  *
  * @author ubaldino
  */
@@ -119,15 +117,6 @@ public class SolrProxy {
         setupCore(solr_home, core);
     }
 
-    /**
-     * Initializes a Solr server from the SOLR_HOME environment variable
-     *
-     * @throws IOException
-     */
-    public SolrProxy(String solr_home, String core, boolean noSerialize) throws IOException {
-        this.server_url = null;
-        setupCore(solr_home, core, noSerialize);
-    }
     protected Logger logger = LoggerFactory.getLogger(SolrProxy.class);
     private SolrServer solrServer = null;
     private UpdateRequest solrUpdate = null;
@@ -184,17 +173,13 @@ public class SolrProxy {
      * still relies on the presence of solr.xml
      */
     public final void setupCore(String solr_home, String corename) throws IOException {
-        this.solrServer = SolrProxy.initialize_embedded(solr_home, corename, true);
-    }
-
-    public final void setupCore(String solr_home, String corename, boolean serializationMode) throws IOException {
-        this.solrServer = SolrProxy.initialize_embedded(solr_home, corename, serializationMode);
+        this.solrServer = SolrProxy.initialize_embedded(solr_home, corename);
     }
 
     /**
      *
      */
-    public static SolrServer initialize_embedded(String solr_home, String corename, boolean avoidSerialization)
+    public static SolrServer initialize_embedded(String solr_home, String corename /*, boolean avoidSerialization*/)
             throws IOException {
 
         try {
@@ -202,13 +187,7 @@ public class SolrProxy {
             CoreContainer solrContainer = new CoreContainer(solr_home);
             solrContainer.load(solr_home, solr_xml);
 
-            if (avoidSerialization) {
-                // DEFAULT Per SolrTextTagger optimization:
-                return new NoSerializeEmbeddedSolrServer(solrContainer, corename);
-            } else {
-                // CONVENTIONAL: 
-                return new EmbeddedSolrServer(solrContainer, corename);
-            }
+            return new EmbeddedSolrServer(solrContainer, corename);
 
         } catch (Exception err) {
             throw new IOException("Failed to set up Embedded Solr", err);
