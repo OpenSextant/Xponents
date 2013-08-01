@@ -1,0 +1,62 @@
+
+#Migrating from v1.7 to v2.0#
+=============================
+
+
+Namespaces: 
+  org.mitre.xyz  or 
+  org.mitre.opensextant.xyz  or   -----> org.opensextant.xyz
+
+Package Re-org by folders:
+
+* Most previous Xponent stuff was moved to Core
+
+* Commons was merged into Core (util, data, etc)
+
+* XText has a major dependency on Tika;  and since users data may never require XText 
+ it was not moved into the Core.
+
+* Structure is fully-Mavenized
+  + use javadoc folder (instead of package-info.java in src/main/java)
+
+* Actual folder layout:
+
+Core/src/main/java/ 
+
+./org/opensextant                         Nothing here.
+./org/opensextant/data                    Core units of data; TextEntity is a span annotation; Place is a gazetteer entry, Geocoding is a resultant geocode.
+./org/opensextant/extraction              Extraction foundations; "Extractor" interface
+
+./org/opensextant/extractors              implementations of Extractors
+./org/opensextant/extractors/flexpat      FlexPat extractor base
+./org/opensextant/extractors/geo          Geo (places+countries+coordinates) extractor
+./org/opensextant/extractors/poli         Patterns of Life generic extractor
+./org/opensextant/extractors/poli/data    + PoLi data normalization
+./org/opensextant/extractors/xcoord       XCoord v2.0
+./org/opensextant/extractors/xtax         XTax v1.1
+./org/opensextant/extractors/xtemporal    XTemporal v2.0
+
+./org/opensextant/output                  (moved out of ./processing/output)  Output and formatters
+./org/opensextant/processing              Any processing; A basic XtractorGroup is a starting point for a simple pipeline (any input, multi-extractor, multi-formatter)
+./org/opensextant/util                    utilities;  SolrProxy now here.
+
+
+Core/src/main/resources --  critical patterns files for the FlexPat-based extractors XCoord, PoLi, XTemporal
+
+Core/src/main/javadoc/  -- bulk of Javadoc for core packages.
+   org/opensextant/flexpat
+   org/opensextant/xcoord
+   org/opensextant/xtemporal
+
+XText/src/main/java/
+ org/opensextant/xtext
+ org/opensextant/xtext/converters
+
+Examples/src/main/java/org/opensextant/examples
+
+
+XTax/src/main/python
+
+   ./opensextant  -- Python API for creating XTax records ready for ingest into the default "taxcat" solr schema 
+                  -- Tools for massaging row data 
+
