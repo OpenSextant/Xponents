@@ -135,6 +135,22 @@ public class FileUtility {
         return (testpath.endsWith(".csv") | testpath.endsWith(".xls") | testpath.endsWith(".xlsx"));
     }
 
+    /** Check if a file is an archive 
+     * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
+     */
+    public static boolean isArchiveFile(String filepath) {
+        String testpath = filepath.toLowerCase();
+        return testpath.endsWith(".zip") || testpath.endsWith(".tar") || testpath.endsWith(".tgz") || testpath.endsWith(".gz"); // || testpath.endsWith(".tar.gz");
+    }
+
+    /** Allow checking of a file extention; NO prefix "." 
+     * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
+     */
+    public static boolean isArchiveFileType(String ext) {
+        String x = ext.toLowerCase();
+        return x.equals("zip") || x.equals("tar") || x.equals("tgz") || x.equals("gz") || x.equals("tar.gz");
+    }
+
     /**
      *
      * @param fname

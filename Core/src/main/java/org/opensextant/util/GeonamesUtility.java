@@ -1,7 +1,30 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/**
+ Copyright 2009-2013 The MITRE Corporation.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ 
+ ** **************************************************
+ * NOTICE
+ *   
+ *  
+ * This software was produced for the U. S. Government
+ * under Contract No. W15P7T-12-C-F600, and is
+ * subject to the Rights in Noncommercial Computer Software
+ * and Noncommercial Computer Software Documentation
+ * Clause 252.227-7014 (JUN 1995)
+ *  
+ * (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
+ **************************************************   */
 package org.opensextant.util;
 
 import java.util.Set;
@@ -117,7 +140,6 @@ public class GeonamesUtility {
         // returned Country code.
         return (KNOWN_NAME_COLLISIONS.get(nm) != null);
     }
-
     public final static char ABBREVIATION_TYPE = 'A';
     public final static char NAME_TYPE = 'N';
 
@@ -169,6 +191,7 @@ public class GeonamesUtility {
 
     /**
      * Wrapper for isAbbreviation(name type)
+     *
      * @param p place
      */
     public static boolean isAbbreviation(Place p) {
@@ -177,16 +200,18 @@ public class GeonamesUtility {
 
     /**
      * Wrapper for isCountry(feat code)
+     *
      * @param p place
      */
     public static boolean isCountry(Place p) {
         return isCountry(p.getFeatureCode());
     }
 
-    /** wrapper for isNationalCaptial( feat code )
-     * 
+    /**
+     * wrapper for isNationalCaptial( feat code )
+     *
      * @param p place
-     * @return 
+     * @return
      */
     public static boolean isNationalCapital(Place p) {
         return isNationalCapital(p.getFeatureCode());
@@ -197,5 +222,17 @@ public class GeonamesUtility {
      */
     public static boolean isAdmin1(Place p) {
         return "ADM1".equalsIgnoreCase(p.getFeatureCode());
+    }
+
+    /**
+     * if a place or feature represents an administrative boundary.
+     * @param featClass
+     * @return 
+     */
+    public static boolean isAdministrative(String featClass) {
+        if (featClass == null) {
+            return false;
+        }
+        return featClass.equalsIgnoreCase("A");
     }
 }

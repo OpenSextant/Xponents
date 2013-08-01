@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+
+<project name="Xponents-v2" >
+
+  <property name="version" value="2.0-runtime" />
+  <property name="xponents" value="${basedir}/../" />
+    	
+  <path id="runtime.classpath">
+    <pathelement location="${xponents}/etc" />
+    <fileset dir="${xponents}/lib" includes="**/*.jar" />
+  </path>
+
+  
+    <target name="test" description="Basic Runner for Geo/Temporal" >
+        <input message="inputfile?" addproperty="get.inputfile"/>
+        <input message="outputfile?" addproperty="get.outputfile"/>
+        <input message="formats?" addproperty="get.formats"/>
+        <java classname="org.opensextant.examples.BasicGeoTemporalProcessing" classpathref="runtime.classpath" fork="yes" dir="${xponents}" >
+            <arg value="-i" />
+            <arg value="${get.inputfile}" />
+            <arg value="-o" />
+            <arg value="${get.outputfile}" />
+            <arg value="-f" />
+            <arg value="${get.formats}" />
+        </java>
+    </target>
+    
+    
+    <!--
+
+    XCoord testing tasks and properties.
+
+    -->
+
+    <property name="xcoord_test_data" value = "${xponents}/test/Coord_Patterns_Truth_Text.txt" />
+
+    <target name="xcoord" description="Template for Running an XCoord module" >
+        <input message="file?" addproperty="get.file"/>
+        <java classname="org.opensextant.extractors.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}" >
+            <arg value="-u" />
+            <arg value="${get.file}" />
+        </java>
+    </target>
+
+    <target name="test-xcoord" description="Default tests for XCoord " depends="">
+        <java classname="org.opensextant.extractors.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+            <arg value="-f" />
+            <arg value="${xcoord_test_data}" />
+        </java>
+    </target>
+
+    <target name="xcoord-by-line" description="Specialized Coordinate tests for XCoord " depends="">
+        <input message="file?" addproperty="get.file"/>
+        <java classname="org.opensextant.extractors.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+            <arg value="-t" />
+            <arg value="${get.file}" />
+        </java>
+    </target>
+
+    <!--
+
+    XTemporal testing tasks and properties.
+
+    -->
+
+  <!-- sample test document with variety of truth dates does not exist yet.  -->
+  <property name="xtemp_test_data" value = "${xponents}/test/Date_Patterns_2012.txt " />
+
+  <target name="xtemporal" description="Template for Running a module" depends="">
+    <input message="file?" addproperty="get.file"/>
+    <java classname="org.opensextant.extractors.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+      <arg value="${get.file}" />
+    </java>
+  </target>
+
+
+  <target name="test-xtemporal" description="Default tests for XTemp " depends="">
+    <java classname="org.opensextant.extractors.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+      <arg value="-f" />
+      <!--
+      <arg value="${xtemp_test_data}" />
+      -->
+    </java>
+  </target>
+
+
+
+    <!--
+    
+    PoLi testing tasks and properties.
+    
+    -->
+	
+  <target name="poli" description="Run user file against PoLi" depends="">
+    <java classname="org.opensextant.extractors.poli.PatternsOfLife" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+      <arg value="-f" />
+    </java>
+  </target>
+
+  <target name="test-poli" description="Default tests for PoLi" depends="">
+    <java classname="org.opensextant.extractors.poli.PatternsOfLife" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+      <arg value="-c" />
+      <arg value="${config}" />
+      <arg value="-u" />
+      <arg value="${inputfile}" />
+    </java>
+  </target>
+
+</project>

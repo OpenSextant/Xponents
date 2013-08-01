@@ -4,12 +4,12 @@
 
     <property file="${basedir}/build.properties" />
 
-    <property name="taxtag" value="${taxtag.source}" />
+    <property name="xtax" value="${xtax.source}" />
 
     <path id="runtime.classpath">
         <!-- Required classpath: Solr WAR contents + OpenSextant toolbox + servlet + JTS -->
         <fileset dir="${opensextant.home}/lib" includes="**/*.jar" />
-        <pathelement location="${taxtag}/etc" />
+        <pathelement location="${xtax}/etc" />
     </path>
 
     <!--  Add TaxCat to an existing Solr setup
@@ -19,7 +19,7 @@
         <mkdir dir="${solr_home}/taxcat/data" />
 
         <!-- Unpack Solr4 config baseline-->
-        <unzip src="${taxtag}/solr/solr4-conf.zip" dest="${solr_home}/taxcat/." />
+        <unzip src="${xtax}/solr/solr4-conf.zip" dest="${solr_home}/taxcat/." />
 
         <!-- Limited Gazetteer hack: copy content from installed solrhome; Get ASCII mapping customization.
           -->
@@ -28,8 +28,8 @@
         </copy>
 
         <!-- Gaz and SolrTextTagger Solr config -->
-        <copy todir="${solr_home}/taxcat/conf" file="${taxtag}/solr/taxcat/conf/solrconfig.xml" />
-        <copy todir="${solr_home}/taxcat/conf" file="${taxtag}/solr/taxcat/conf/schema.xml" />
+        <copy todir="${solr_home}/taxcat/conf" file="${xtax}/solr/taxcat/conf/solrconfig.xml" />
+        <copy todir="${solr_home}/taxcat/conf" file="${xtax}/solr/taxcat/conf/schema.xml" />
 
 
     </target>

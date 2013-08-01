@@ -41,15 +41,16 @@
 package org.opensextant.data;
 
 import org.opensextant.util.GeonamesUtility;
-import java.io.Serializable;
+import org.opensextant.util.GeodeticUtility;
+//import java.io.Serializable;
 
 /**
  *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
-public class Place extends GeoBase implements Comparable<Object>, Serializable {
+public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, Serializable*/ {
 
-    private static final long serialVersionUID = 2389068012345L;
+    //private static final long serialVersionUID = 2389068012345L;
     /**
      * For normalization purposes tracking the Province may be helpful.
      * Coordinate and Place both share this common field. However no need to
@@ -69,6 +70,10 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
     public Place(String pk, String n) {
         super(pk, n);
     }
+
+    public Place() {
+        super();
+    }
     protected char name_type = 0;
 
     public void setName_type(char t) {
@@ -78,7 +83,6 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
     public char getName_type() {
         return name_type;
     }
-
     /**
      *
      */
@@ -91,12 +95,13 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
         country_id = cc;
     }
 
+    @Override
     public String getCountryCode() {
         return country_id;
     }
-    
-        private String featureClass = null;
+    private String featureClass = null;
 
+    @Override
     public String getFeatureClass() {
         return featureClass;
     }
@@ -106,6 +111,7 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
     }
     private String featureCode = null;
 
+    @Override
     public String getFeatureCode() {
         return featureCode;
     }
@@ -124,6 +130,7 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
     /**
      * Wrapper around GeoBase.getKey for compat
      */
+    @Override
     public String getPlaceID() {
         return getKey();
     }
@@ -132,10 +139,12 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
         setName(nm);
     }
 
+    @Override
     public final String getPlaceName() {
         return getName();
     }
 
+    @Override
     public String getAdmin1() {
         return admin1;
     }
@@ -144,12 +153,25 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
         admin1 = key;
     }
 
+    @Override
     public String getAdmin2() {
         return admin2;
     }
 
     public void setAdmin2(String key) {
         admin2 = key;
+    }
+    private String source = null;
+
+    /**
+     * Get the original source of this information.
+     */
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String src) {
+        source = src;
     }
 
     /**
@@ -163,8 +185,24 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
      *
      * @return - true if this is a country or "country-like" place
      */
+    @Override
     public boolean isCountry() {
         return GeonamesUtility.isCountry(getFeatureCode());
+    }
+
+    @Override
+    public boolean isPlace() {
+        return !isCountry();
+    }
+    
+    @Override
+    public boolean isCoordinate(){
+        return false;
+    }
+    
+    @Override
+    public boolean isAdministrative(){
+        return GeonamesUtility.isAdministrative(featureClass);
     }
 
     /**
@@ -229,5 +267,11 @@ public class Place extends GeoBase implements Comparable<Object>, Serializable {
         }
         Place tmp = (Place) other;
         return this.getKey().compareTo(tmp.getKey());
+    }
+    
+    /** Get the relative precision of this feature; in meters of error
+     */
+    public int getPrecision(){
+        return GeodeticUtility.getFeaturePrecision(this.featureClass, this.featureCode);
     }
 }

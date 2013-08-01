@@ -58,11 +58,12 @@ public class TextEntity {
     /**
      *
      */
-    public long start = -1L;
+    public int start = -1;
     /**
      *
      */
-    public long end = -1L;
+    public int end = -1;
+    
     // Use this 
     private String context = null;
     // OR this

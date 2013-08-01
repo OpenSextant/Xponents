@@ -166,4 +166,11 @@ public class GeoBase implements LatLon {
     public String getGeohash() {
         return geohash;
     }
+    
+    /** Convenience method 
+     */
+    public void setLatLon(LatLon geo){
+        this.latitude = geo.getLatitude();
+        this.longitude = geo.getLongitude();
+    }
 }

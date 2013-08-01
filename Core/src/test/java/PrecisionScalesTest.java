@@ -13,7 +13,7 @@
 
 
 import org.junit.Test;
-import org.opensextant.xcoord.PrecisionScales;
+import org.opensextant.extractors.xcoord.PrecisionScales;
 
 import java.text.DecimalFormat;
 

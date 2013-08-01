@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.opensextant</groupId>
+  <artifactId>xponents-parent</artifactId>
+  <version>2.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>OpenSextant Xponents</name>
+  <description>An information extraction toolkit focused on geography and temporal entities</description>
+  <inceptionYear>2013</inceptionYear>
+
+  <scm>
+    <connection>scm:git:https://github.com/OpenSextant/Xponents.git</connection>
+    <developerConnection>scm:git:https://github.com/OpenSextant/Xponents.git</developerConnection>
+    <url>https://github.com/OpenSextant/Xponents.git</url>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <!-- Xponents Lead: -->
+      <name>Marc Ubaldino</name>
+      <email>ubaldino@mitre.org</email>
+      <organization>MITRE</organization>
+    </developer>
+
+    <developer>
+      <name>David Smiley</name>
+      <email>dsmiley@mitre.org</email>
+      <organization>MITRE</organization>
+    </developer>
+    <developer>
+      <name>Todd Hay</name>
+      <email>hayt@mitre.org</email>
+      <organization>MITRE</organization>
+    </developer>
+    <developer>
+      <name>David Lutz</name>
+      <email>dlutz@mitre.org</email>
+      <organization>MITRE</organization>
+    </developer>
+  </developers>
+
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <slf4j.version>1.7.4</slf4j.version>
+  </properties>
+
+  <modules>
+    <module>Core</module>
+    <module>XText</module>
+    <!--  XTax is a methodology for how to use a Solr text tagger 
+          for tagging arbitrary structured vocabularies;  No code yet; Just config and some python.
+    <module>XTax</module> 
+     -->
+    <module>Examples</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.1</version>
+      </dependency>
+
+      <!-- JUnit -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- Logging -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+       <plugins>
+         <plugin>
+           <artifactId>maven-compiler-plugin</artifactId>
+           <version>3.0</version>
+         </plugin>
+         <plugin>
+           <artifactId>maven-javadoc-plugin</artifactId>
+           <version>2.9</version>
+         </plugin>
+         <plugin>
+           <artifactId>maven-source-plugin</artifactId>
+           <version>2.2.1</version>
+         </plugin>
+         <plugin>
+           <artifactId>maven-deploy-plugin</artifactId>
+           <version>2.7</version>
+         </plugin>
+       </plugins>
+    </pluginManagement>
+
+    <plugins>
+       <plugin>
+         <artifactId>maven-compiler-plugin</artifactId>
+         <configuration>
+           <source>1.6</source>
+           <target>1.6</target>
+           <compilerArgument>-Xlint:all,-path</compilerArgument>
+           <showWarnings>true</showWarnings>
+           <showDeprecation>true</showDeprecation>
+         </configuration>
+       </plugin>
+       <plugin>
+         <artifactId>maven-javadoc-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>attach-javadocs</id>
+             <goals>
+               <goal>jar</goal>
+             </goals>
+           </execution>
+         </executions>
+       </plugin>
+       <plugin>
+         <artifactId>maven-source-plugin</artifactId>
+         <executions>
+           <execution>
+             <id>attach-sources</id>
+             <goals>
+               <goal>jar-no-fork</goal>
+             </goals>
+           </execution>
+         </executions>
+       </plugin>
+    </plugins>
+  </build>
+
+</project>

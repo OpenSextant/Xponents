@@ -28,9 +28,9 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opensextant.flexpat.TextMatchResultSet;
-import org.opensextant.xtemporal.DateMatch;
-import org.opensextant.xtemporal.XTemporal;
+import org.opensextant.extractors.flexpat.TextMatchResult;
+import org.opensextant.extractors.xtemporal.DateMatch;
+import org.opensextant.extractors.xtemporal.XTemporal;
 
 /**
  *
@@ -52,10 +52,10 @@ public class DateNormalizationTest {
     @Test
     public void ensureTimeZone() {
         // Not parseable by default.  pattern is too noisy.
-        final TextMatchResultSet result1 = timeFinder.extract_dates("Oct 07", "dummy");
+        final TextMatchResult result1 = timeFinder.extract_dates("Oct 07", "dummy");
         System.err.println("1 "+result1.matches.toString());
         assertEquals(0, result1.matches.size());
-        final TextMatchResultSet result2 = timeFinder.extract_dates("Oct 2007", "dummy");
+        final TextMatchResult result2 = timeFinder.extract_dates("Oct 2007", "dummy");
         System.err.println("2 " + result1.matches.toString());
         assertEquals(1, result2.matches.size());
         

@@ -1,0 +1,62 @@
+<project default="dist" name="Xponents Distribution">
+
+  <description>
+    Builds a version of Xponents that runs out of the box.
+  </description>
+
+  <property name="xponents.home" value="${basedir}/../" />
+  <property name="release" location="${xponents.home}/release" />
+
+
+  <target name="copy-libs" >
+    <delete dir="${release}"/>
+    <mkdir dir="${release}"/>
+    <mkdir dir="${release}/lib"/>
+    <mkdir dir="${release}/etc"/>
+    <mkdir dir="${release}/test"/>
+    <mkdir dir="${release}/script"/>
+
+
+    <!-- As Examples requires all other dependencies it is a good one for forcing the copy
+     -->
+    <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
+      <arg value="-DoutputDirectory=${release}/lib"/>
+      <arg value="dependency:copy-dependencies"/>
+    </exec>
+
+    <copy todir="${release}/lib/">
+        <fileset dir="${xponents.home}/Examples/target">
+           <include name="*.jar" />
+        </fileset>
+    </copy>
+  </target>
+
+  <target name="copy-data">
+    <copy todir="${release}/test/">
+        <fileset dir="${xponents.home}/Core/src/test/resources/">
+           <include name="*.*" />
+        </fileset>
+        <fileset dir="${xponents.home}/XText/src/test/resources/">
+           <include name="*.*" />
+        </fileset>
+    </copy>
+  </target>
+
+  <target name="copy-script">
+    <copy todir="${release}/script/">
+        <fileset dir="${xponents.home}/script"> <!-- this dir, eh? -->
+           <include name="*.xml" />
+        </fileset>
+    </copy>
+    <copy todir="${release}/etc/">
+        <fileset dir="${xponents.home}/Core/src/test/resources">
+           <include name="log4j.*" />
+        </fileset>
+    </copy>
+  </target>
+
+  <target name="dist" depends="copy-libs, copy-script, copy-data" description="Build a zip file containing a distributable, runnable thing.">
+
+   <!-- Zip it .-->
+  </target>
+</project>

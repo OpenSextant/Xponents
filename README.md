@@ -30,3 +30,27 @@ Name Matching depends on:
   OpenSextant SolrTextTagger
   https://github.com/OpenSextant/SolrTextTagger
 
+
+#Using#
+
+From a built distribution, try:
+
+  ant -f ./script/testing.xml  test-XXXX     <args>
+
+where XXXX is the name of a core component and args are the arguments to that component
+
+
+To test XCoord coordinate extraction patterns this is pretty simple:
+
+  ant -f ./script/testing.xml  test-xcoord
+
+Other Ant tasks in "testing.xml" will allow you to process your own text file.
+
+
+From source:
+
+  ## Create the distribution
+  ant -f ./script/dist.xml  
+
+  ## Now ./release/  contains a built version of XPonents that will run off of Ant from there on.
+
