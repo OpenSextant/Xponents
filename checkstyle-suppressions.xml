@@ -30,5 +30,5 @@
   <!-- header's shouldn't count -->
   <suppress checks="StrictDuplicateCode"
             files=".*"
-            lines="1-10"/>
+            lines="1-40"/><!-- TODO headers are too long! Remove ASCII art. -->
 </suppressions>
