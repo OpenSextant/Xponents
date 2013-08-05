@@ -19,11 +19,11 @@
 *.kml text
 *.pom text
 
-# Declare files that will always have CRLF line endings on checkout.
+# Windows CRLF line endings on checkout.
 *.sln text eol=crlf
 *.bat text eol=bat
 
-# LF line endings
+# Unix LF line endings on checkout.
 *.sh text eol=lf
 
 # Denote all files that are truly binary and should not be modified.
@@ -42,6 +42,7 @@
 *.dbf binary
 *.shp binary
 
+*.rtf binary
 *.xls binary
 *.xlsx binary
 *.doc binary
