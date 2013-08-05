@@ -111,7 +111,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         // to be added to a primary interpretation.
         // The stuff that varies is:  coord_text, lat, lon
         // The invariant stuff is above: matching metadata.
-        // 
+        //
         // this.coord_text = m.coord_text;
 
     }
@@ -131,11 +131,11 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
         if (!_lat.hasHemisphere() && !_lon.hasHemisphere() && !_lat.hasSymbols()) {
             // This coordinate has no hemisphere at all.  Possible a bare pare of floating point numbers?
-            // 
+            //
             this.setFilteredOut(true);
         } else {
             // This coordinate has an invalid lat or lon
-            // 
+            //
             this.setFilteredOut(!GeodeticUtility.validateCoordinate(latitude, longitude));
         }
     }
@@ -260,7 +260,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     // ************************************
     //
     //  Geocoding Interface
-    // 
+    //
     // ************************************
     @Override
     public boolean isPlace() {

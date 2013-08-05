@@ -45,10 +45,10 @@ import org.opensextant.xtext.iConvert;
 import org.opensextant.xtext.ArchiveUnpacker;
 
 /**
- * Archive is traversed, but no data is written to disk unless 
+ * Archive is traversed, but no data is written to disk unless
  * XText is in save mode.
  * Conversion listener should be listening for Converted Docs.
- * 
+ *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public class ArchiveNavigator implements ArchiveUnpacker {
@@ -66,12 +66,12 @@ public class ArchiveNavigator implements ArchiveUnpacker {
         FileUtility.makeDirectory(saveDir);
         filter = fileFilter;
         converter = fileConv; // Uh... this is really a proxy for XText for now.
-        
+
         if (filter == null || converter == null) {
-            throw new IOException("Filter and converter cannot be null -- XText is the default for both.");                    
+            throw new IOException("Filter and converter cannot be null -- XText is the default for both.");
         }
     }
-    
+
     public String getWorkingDir(){
         return saveDir.getAbsolutePath();
     }
@@ -84,7 +84,7 @@ public class ArchiveNavigator implements ArchiveUnpacker {
         // Get file extension
         String ext = FilenameUtils.getExtension(archive.getPath());
         String basename = FilenameUtils.getBaseName(archive.getName());
-        
+
         File archivetmp = null;
 
         if (ext.equalsIgnoreCase("zip")) {
@@ -102,14 +102,14 @@ public class ArchiveNavigator implements ArchiveUnpacker {
         } else {
             throw new IOException("Unsupported archive type: EXT=" + ext);
         }
-        
+
         //if (archivetmp!=null){
         //    FileUtils.deleteDirectory(archivetmp);
         //}
     }
 
     /* Un-TAR.  Oops.  Its just a copy of Un-TAR and I replace tar with zip.
-     * 
+     *
      * so there may be Zip-specific stuff here, ... but the approach is the same.
      */
     public File unzip(File zipFile) throws IOException {
@@ -141,7 +141,7 @@ public class ArchiveNavigator implements ArchiveUnpacker {
         } catch (ArchiveException ae) {
             throw new IOException(ae);
         }
-        
+
         return workingDir;
     }
 
@@ -163,10 +163,10 @@ public class ArchiveNavigator implements ArchiveUnpacker {
         return outFile;
     }
 
-    /* Un-TAR 
-     *   Once items are saved off to temp folder, they'll be converted by 
+    /* Un-TAR
+     *   Once items are saved off to temp folder, they'll be converted by
      *   the file converter.   The converter can choose to do something else with them.
-     *   
+     *
      */
     public File untar(File tarFile) throws IOException {
 

@@ -119,7 +119,7 @@ public class BasicGeoTemporalProcessing
 
         converter = new XText();
 
-        // TOOD: Rework application setup. 
+        // TOOD: Rework application setup.
         //     all inputs here should be user settable.
         converter.setTempDir("Xponents-Temp/unpack");  // temp area for unpacking Zips, etc.
         converter.setArchiveDir("Xponents-Temp/xtext");

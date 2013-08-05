@@ -45,9 +45,9 @@ public final class GeocoordNormalization  {
     private static final boolean DMLON = false;
 
     /**
-     * The match object is normalized, setting the coord_text and other data from 
+     * The match object is normalized, setting the coord_text and other data from
      * parsing "text" and knowing which pattern family was matched.
-     * 
+     *
      * @param m
      * @param groups
      * @return void
@@ -60,7 +60,7 @@ public final class GeocoordNormalization  {
         //         align with matcher.group(N)
         //    value = matcher.group(N)
         //    name  = m.regex_groups.itemAt(N)
-        // 
+        //
         if (m.cce_family_id == XConstants.DD_PATTERN) {
             // get lat text
             //     lon text  -- remove whitespace from both
@@ -79,7 +79,7 @@ public final class GeocoordNormalization  {
             //m.setLongitude(groups.get("decDegLon"), lon_hemi);
             // Yield a cooridnate-only version of text; "+42.4440 -102.3333"
             // preserving the innate precision given in the original text.
-            // 
+            //
 
             m.lat_text = ddlat.text;
             m.lon_text = ddlon.text;
@@ -87,7 +87,7 @@ public final class GeocoordNormalization  {
 
             /**
              *  DD filters enabled.
-             *     Disable:   
+             *     Disable:
              *        XCoord.RUNTIME_FLAGS XOR XConstants.DD_FILTERS_ON
              */
             if ((XCoord.RUNTIME_FLAGS & XConstants.DD_FILTERS_ON) > 0) {
@@ -111,7 +111,7 @@ public final class GeocoordNormalization  {
             //     lon text  -- remove whitespace from both
             // coord_text = lat + ' ' + lon
             // set lat, lon
-            // 
+            //
             DMSOrdinate dmlat = new DMSOrdinate(
                     groups, DMLAT, m.getText());
 
@@ -126,7 +126,7 @@ public final class GeocoordNormalization  {
 
         } else if (m.cce_family_id == XConstants.DMS_PATTERN) {
             // remove whitespace
-            // set lat, lon            
+            // set lat, lon
             //
             DMSOrdinate dmlat = new DMSOrdinate(
                     groups, DMLAT, m.getText());
@@ -152,7 +152,7 @@ public final class GeocoordNormalization  {
 
                 // Hopefully 1 candidate, but maybe 2 are found.
                 // 1 is normal.  2 arise from having odd-digit offsets in NorthingEasting
-                // 
+                //
                 if (mgrs_candidates != null) {
                     MGRS mgrs = mgrs_candidates[0];
 
@@ -219,7 +219,7 @@ public final class GeocoordNormalization  {
         }
 
         // At this point the XY = (0,0).  This does not sound useful.
-        // 
+        //
         if (m.isZero()) {
             return true;
         }
@@ -261,14 +261,14 @@ public final class GeocoordNormalization  {
             //m.precision.precision = PrecisionScales.DM_precision(m.lat_text);
             PrecisionScales.setDMSPrecision(m);
         } else if (m.cce_family_id == XConstants.DMS_PATTERN) {
-            // Precision is based on # of digits in LAT text, e.g., ##:##:## = Deg/Min/Sec 
+            // Precision is based on # of digits in LAT text, e.g., ##:##:## = Deg/Min/Sec
             //m.precision.precision = PrecisionScales.DM_precision(m.lat_text);
             PrecisionScales.setDMSPrecision(m);
         } else if (m.cce_family_id == XConstants.MGRS_PATTERN) {
-            // Precision is based on # of digits in northing or easting text, e.g., ZZZQD NNNN EEEE = 100m precision 
+            // Precision is based on # of digits in northing or easting text, e.g., ZZZQD NNNN EEEE = 100m precision
             PrecisionScales.setMGRSPrecision(m);
         } else if (m.cce_family_id == XConstants.UTM_PATTERN) {
-            // Precision is based on # of digits in northing or easting text;  
+            // Precision is based on # of digits in northing or easting text;
             PrecisionScales.setUTMPrecision(m);
         } else {
             m.precision.precision = PrecisionScales.DEFAULT_UNKNOWN_RESOLUTION;

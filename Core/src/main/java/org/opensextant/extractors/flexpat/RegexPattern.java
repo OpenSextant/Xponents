@@ -65,7 +65,7 @@ public class RegexPattern {
      *
      */
     public boolean enabled = true;
-    
+
     /** Name of a Java class that extends TextMatch and implements user's normalization routines.
      */
     public String match_classname = null;

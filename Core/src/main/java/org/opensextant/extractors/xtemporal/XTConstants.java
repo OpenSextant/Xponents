@@ -34,7 +34,7 @@ import java.util.*;
  * @author ubaldino
  */
 public class XTConstants {
-    
+
     /**
      *
      */
@@ -47,12 +47,12 @@ public class XTConstants {
      *
      */
     public final static int UNK_PATTERN = -2;
-    
+
     /**
      *
      */
     public final static int ALL_PATTERNS=-1;
-    
+
     /**
      *
      */
@@ -61,19 +61,19 @@ public class XTConstants {
      *
      */
     protected final static Map<Integer,String> familyLabel = new HashMap<Integer,String>();
-    
+
     static {
-        
+
         familyLabel.put(UNK_PATTERN, "UNK");
         familyLabel.put(MDY_FAMILY, "MDY");
         familyLabel.put(DATETIME_FAMILY, "DTM");
 
         familyInt.put("UNK", UNK_PATTERN);
         familyInt.put("DTM", DATETIME_FAMILY);
-        familyInt.put("MDY", MDY_FAMILY);        
+        familyInt.put("MDY", MDY_FAMILY);
     }
-    
-    
+
+
     /**
      *
      * @param key
@@ -86,8 +86,8 @@ public class XTConstants {
         }
         return UNK_PATTERN;
     }
-    
-    
+
+
     /**
      *
      * @param id
@@ -98,7 +98,7 @@ public class XTConstants {
         if (key != null){
             return key;
         }
-        return "UNK";        
+        return "UNK";
     }
-    
+
 }

@@ -31,20 +31,20 @@ package org.opensextant.extractors.xcoord;
  * @author ubaldino
  */
 public class Hemisphere {
-    
+
     //
     /**
      *
      */
     public String symbol = null;
-    
+
     // unset polarity means you have a bug.
     // Default = 1 should be set by interpreter.
     /**
      *
      */
     public int polarity = 0;
-    
+
     /**
      *
      * @return
@@ -56,7 +56,7 @@ public class Hemisphere {
         if (symbol.isEmpty()){
             return false;
         }
-        
+
         // Java 7:  isAlphabetic()
         return Character.isLetter(symbol.charAt(0));
     }

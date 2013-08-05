@@ -1,10 +1,10 @@
 /*
                                 NOTICE
- 
+
      This software (or technical data) was produced for the U. S.
   Government under contract W15P7T-08-C-F600, and is subject to the
   Rights in Data-General Clause 52.227-14 - Alternate IV (June 1987)
- 
+
          (c) 2007-2008 The MITRE Corporation. All Rights Reserved.
  */
 
@@ -25,9 +25,9 @@ import java.io.*;
  * @author ubaldino
  */
 public class AnyFilenameFilter implements FilenameFilter {
-    
+
     private String extension = null;
-    
+
     /**
      *
      * @param ext

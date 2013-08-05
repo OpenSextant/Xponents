@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ public final class OpenSextantSchema {
     /** Geonames style feature coding */
     public final static SimpleField FEATURE_CODE = new SimpleField("feat_code", SimpleField.Type.STRING);
     /** confidence 0.000 to 1.000 suggests our confidence that we code the MATCH TEXT to the right LAT/LON
-     *  this is a string for now to keep the actual sig-figs accurate.  
+     *  this is a string for now to keep the actual sig-figs accurate.
      */
     public final static SimpleField CONFIDENCE = new SimpleField("confidence", SimpleField.Type.STRING);
     /** Number of meters of error in coordinate of location.  Example, a city location match is likely to be 1-2 KM of error
@@ -60,7 +60,7 @@ public final class OpenSextantSchema {
 
     /** Field names: filepath */
     public final static String FILEPATH_FLD = "filepath";
-    
+
     /** Optionally the File path for the text */
     public final static SimpleField FILEPATH = new SimpleField(FILEPATH_FLD, SimpleField.Type.STRING);
     public final static SimpleField FILENAME = new SimpleField("filename", SimpleField.Type.STRING);

@@ -61,7 +61,7 @@ public class DefaultConverter extends ConverterAdapter {
     protected ConvertedDocument conversionImplementation(InputStream input, java.io.File doc) throws IOException {
         Metadata metadata = new Metadata();
         // Unfortunately due to some bugs in the HTML body content handler
-        // I have become suspicious about how Tika SAX content handlers reset or not 
+        // I have become suspicious about how Tika SAX content handlers reset or not
         // in error conditions.   HTML conversion appears to accumulate content
         ContentHandler tikasax = new ToTextContentHandler();
 

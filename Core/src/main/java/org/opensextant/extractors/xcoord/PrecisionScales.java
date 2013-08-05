@@ -27,8 +27,8 @@
 package org.opensextant.extractors.xcoord;
 
 /*
- # 
- # http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Geographical_coordinates#Precision 
+ #
+ # http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Geographical_coordinates#Precision
  */
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -69,7 +69,7 @@ public class PrecisionScales {
     };
 
     /**
-     * @param m 
+     * @param m
      */
     public static void setDDPrecision(GeocoordMatch m) {
         m.precision.setDigits( count_DD_digits(m.lat_text) );
@@ -104,7 +104,7 @@ public class PrecisionScales {
      * Counts all digits in latitude.
      *
      * @param lat
-     * @return  
+     * @return
      */
     public static int count_DMS_digits(String lat) {
         if (lat == null) {
@@ -131,7 +131,7 @@ public class PrecisionScales {
     /**
      * set precision on a DMS text coordinate
      *
-     * @param m 
+     * @param m
      */
     public static void setDMSPrecision(GeocoordMatch m) {
         m.precision.precision = LAT_DEGREE_PRECISION;
@@ -156,8 +156,8 @@ public class PrecisionScales {
             }
             return;
         }
-        
-        
+
+
         if (m.hasSeconds()) {
             m.precision.precision = DMS_SEC_PREC;
             m.precision.digits = 5;  // 1/3600th of a degree
@@ -247,8 +247,8 @@ public class PrecisionScales {
 
     /**
      * For now default UTM precision to +/- 100m
-     * @param utm 
-     * @return 
+     * @param utm
+     * @return
      */
     public static float UTM_precision(String utm) {
         return 100f;
@@ -261,7 +261,7 @@ public class PrecisionScales {
     private static final DecimalFormat[] formatters;
 
 
-    /* Static initialization here creates and caches all the numeric formatters 
+    /* Static initialization here creates and caches all the numeric formatters
      * TODO: however at runtime the formatters are cloned (as of v1.6a) so is there any benefit?
      */
     static {
@@ -279,7 +279,7 @@ public class PrecisionScales {
      * format2() -- which unfortunately rounds too early.
      * @param f
      * @param digits
-     * @return  
+     * @return
      */
     public static String format(double f, int digits) {
         //return (long)(f * digits)/digits);
@@ -288,7 +288,7 @@ public class PrecisionScales {
         }
         //Clone the formatter so that it's thread-safe
         // TODO: well, we would do this clone for every time this method is called.
-        //     to make such things MT-safe and prevent too much impact on performance, we should do a 
+        //     to make such things MT-safe and prevent too much impact on performance, we should do a
         //     more thorough implementation review of such static variables.
         DecimalFormat df = (DecimalFormat) formatters[digits].clone();
         return df.format(f);
@@ -300,8 +300,8 @@ public class PrecisionScales {
      * or printf.  See <a href="http://stackoverflow.com/a/5806991/92186">here</a>
      * for the algorithm.
      *
-     * @param f 
-     * @param digits 
+     * @param f
+     * @param digits
      * @see tests in main()
      * @deprecated TODO needs to be re-evaluated
      * @author dsmiley
@@ -342,7 +342,7 @@ public class PrecisionScales {
     /**
      * @deprecated see setDDPrecision
      * @param lat String version of decimal latitude, AS found raw
-     * @return  
+     * @return
      */
     public static double DD_precision(String lat) {
         if (lat == null) {
@@ -386,7 +386,7 @@ public class PrecisionScales {
     /**
      * @deprecated use setDMSPrecision()
      * @param lat String version of decimal latitude, AS found raw
-     * @return  
+     * @return
      */
     public static float DM_precision(String lat) {
         if (lat == null) {
@@ -395,10 +395,10 @@ public class PrecisionScales {
 
         /* Given an LAT / Y coordinate, determine the amount of precision therein.
          * @TODO: redo,  given "x xx xx" vs. "xx xx xx"  -- resolution is the same. Should only count
-         * digits after 
-         * 
+         * digits after
+         *
          * LON / X coordinate can be up to 179.9999... so would always have one more leading digit than lat.
-         * 
+         *
          */
         int digits = 0;
         for (char ch : lat.toCharArray()) {

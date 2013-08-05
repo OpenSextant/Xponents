@@ -30,11 +30,11 @@ package org.opensextant.extractors.xcoord;
 import org.opensextant.extractors.flexpat.RegexPattern;
 
 /**
- * 
+ *
  * @author ubaldino
  */
 public class GeocoordPattern extends RegexPattern {
-    
+
     // Common Coordinate Enumeration (CCE) terminology
     /**
      * Only as defined in your configured patterns, e.g., "DM", "DMS";
@@ -45,26 +45,26 @@ public class GeocoordPattern extends RegexPattern {
      * Only as defined in your configured patterns, e.g., the "01" in "DM-01"
      */
     public String cce_variant = null;
-    
+
     /**
      * XConstants value for the family
      */
     public int cce_family_id = -1;
     ///public int line_number = -1; -- thought line number from config file would help.
     // but ID should suffice.
-    
+
     /**
-     * 
+     *
      * @param _fam
      * @param _variant
      * @param _description
      */
     public GeocoordPattern(String _fam, String _variant, String _description){
         super( _fam + "-" + _variant, _description);
-        
+
         cce_family = _fam;
-        cce_variant = _variant;        
+        cce_variant = _variant;
         cce_family_id = XConstants.get_CCE_family(cce_family);
     }
-        
+
 }

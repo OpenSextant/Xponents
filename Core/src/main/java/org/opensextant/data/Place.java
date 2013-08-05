@@ -194,12 +194,12 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
     public boolean isPlace() {
         return !isCountry();
     }
-    
+
     @Override
     public boolean isCoordinate(){
         return false;
     }
-    
+
     @Override
     public boolean isAdministrative(){
         return GeonamesUtility.isAdministrative(featureClass);
@@ -268,7 +268,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
         Place tmp = (Place) other;
         return this.getKey().compareTo(tmp.getKey());
     }
-    
+
     /** Get the relative precision of this feature; in meters of error
      */
     public int getPrecision(){

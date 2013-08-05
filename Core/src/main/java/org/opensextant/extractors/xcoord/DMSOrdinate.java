@@ -106,12 +106,12 @@ public final class DMSOrdinate {
          * decMinLat, decMinLon 0.00 to 59.99... variable length, arbitrary precision
          * decMinLat3, decMinLon3 0-000 to 59-999... variable length, arbitrary precision
          * decSecLat, decSecLon --- does not exist; need test cases for sub-second accuracy most use decimal degree d.dddddd...
-         * 
+         *
          * dmsDegLat, dmsDegLon        "dd", "ddd"
          * dmsMinLat, dmsMinLon,       "00" to "59"
          * dmsSecLat, dmsSecLon,       "00" to "59"
          * fractMinLat, fracMinLon       d to dddddd  part of some other string, but represents 0.ddddd minutes
-         * fractMinLat3, fractMinLon3  ddd to dddddd  "" "" 
+         * fractMinLat3, fractMinLon3  ddd to dddddd  "" ""
          */
 
         _elements = elements;
@@ -227,7 +227,7 @@ public final class DMSOrdinate {
          if (this.is_latitude) {
          buf.append(field.format(this.degrees));  // LAT degree
          } else {
-         buf.append(field3.format(this.degrees)); // LON degree     
+         buf.append(field3.format(this.degrees)); // LON degree
          } */
         buf.append(d);  // LAT degree
 
@@ -246,7 +246,7 @@ public final class DMSOrdinate {
 
         // Reconstituing fractional minutes or seconds
         // decimal part may have been separated from minutes, so it is likely
-        // minutes is int, and fmin is another number.  
+        // minutes is int, and fmin is another number.
         // TODO:  formatting logic could be cleaner here.
         //
         if (fmin != null) {
@@ -476,10 +476,10 @@ public final class DMSOrdinate {
         has_hemi = hemi != NO_HEMISPHERE_VALUE;
 
         if (!has_hemi) {
-            hemi = POS_HEMI; // Un-specified hemisphere defaults to POSITIVE           
+            hemi = POS_HEMI; // Un-specified hemisphere defaults to POSITIVE
             /*
              if (hasSymbols()) {
-             hemi = POS_HEMI; // Un-specified hemisphere defaults to POSITIVE           
+             hemi = POS_HEMI; // Un-specified hemisphere defaults to POSITIVE
              } else {
              hemi = POS_HEMI;
              } */
@@ -753,7 +753,7 @@ public final class DMSOrdinate {
         //    return value;
         //}
         if (minutes >= 60) {
-            // This much we know, Degrees are valid? 
+            // This much we know, Degrees are valid?
             return (double) hemisphere.polarity * degrees;
         }
         if (seconds >= 60) {

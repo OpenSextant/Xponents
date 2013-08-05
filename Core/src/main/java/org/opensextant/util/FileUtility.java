@@ -135,7 +135,7 @@ public class FileUtility {
         return (testpath.endsWith(".csv") | testpath.endsWith(".xls") | testpath.endsWith(".xlsx"));
     }
 
-    /** Check if a file is an archive 
+    /** Check if a file is an archive
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
      */
     public static boolean isArchiveFile(String filepath) {
@@ -143,7 +143,7 @@ public class FileUtility {
         return testpath.endsWith(".zip") || testpath.endsWith(".tar") || testpath.endsWith(".tgz") || testpath.endsWith(".gz"); // || testpath.endsWith(".tar.gz");
     }
 
-    /** Allow checking of a file extention; NO prefix "." 
+    /** Allow checking of a file extention; NO prefix "."
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
      */
     public static boolean isArchiveFileType(String ext) {
@@ -291,7 +291,7 @@ public class FileUtility {
             return false;
         }
 
-        // if (log!=null) { log.info( "Check dir "+testDir.getPath() + " is dir=" + testDir.isDirectory() ); } 
+        // if (log!=null) { log.info( "Check dir "+testDir.getPath() + " is dir=" + testDir.isDirectory() ); }
 
         if (testDir.isDirectory()) {
             return true;

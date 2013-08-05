@@ -56,16 +56,16 @@ public class Country extends Place {
     public String CC_ISO3 = null;
     /** FIPS 10-4 2-character country code */
     public String CC_FIPS = null;
-    
+
     /** Any list of country alias names. */
     private Set<String> aliases = new HashSet<String>();
-    
+
     private Set<String> regions = new HashSet<String>();
 
     /**
-     * A country abstraction that uses ISO 2-alpha as an ID, and any name given 
+     * A country abstraction that uses ISO 2-alpha as an ID, and any name given
      * as the Place.name
-     * 
+     *
      * @param iso2
      * @param nm
      */
@@ -74,9 +74,9 @@ public class Country extends Place {
         CC_ISO2 = this.key;
         this.country_id = this.key;
     }
-    
+
     /** Country is also known as some list of aliases
-     * @param nm 
+     * @param nm
      */
     public void addAlias(String nm){
         aliases.add(nm);
@@ -88,9 +88,9 @@ public class Country extends Place {
     public Set<String> getAliases(){
         return aliases;
     }
-    
+
         /** Country is also known as some list of aliases
-         * @param regionid 
+         * @param regionid
      */
     public void addRegion(String regionid){
         regions.add(regionid);
@@ -101,5 +101,5 @@ public class Country extends Place {
      */
     public Set<String> getRegions(){
         return regions;
-    }   
+    }
 }

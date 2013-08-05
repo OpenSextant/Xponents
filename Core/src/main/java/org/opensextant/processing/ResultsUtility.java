@@ -67,7 +67,7 @@ public class ResultsUtility {
 
         t.setContext(
                 content.substring(bounds[0], bounds[1]), // text before match
-                content.substring(bounds[2], bounds[3])); // text after match        
+                content.substring(bounds[2], bounds[3])); // text after match
     }
 
     /**
@@ -82,7 +82,7 @@ public class ResultsUtility {
 
         int[] bounds = TextUtils.get_text_window(offset, doc_size, TEXT_WIDTH);
 
-        t.setContext(TextUtils.squeeze_whitespace(content.substring(bounds[0], bounds[1]))); // text after match        
+        t.setContext(TextUtils.squeeze_whitespace(content.substring(bounds[0], bounds[1]))); // text after match
     }
 
     /**

@@ -38,7 +38,7 @@ public class TestCase extends PatternTestCase {
      *
      */
     public GeocoordMatch match = null;
-    
+
     /**
      *
      */

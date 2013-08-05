@@ -63,8 +63,8 @@ public class TextEntity {
      *
      */
     public int end = -1;
-    
-    // Use this 
+
+    // Use this
     private String context = null;
     // OR this
     private String prematch = null;
@@ -100,8 +100,8 @@ public class TextEntity {
         return text;
     }
 
-    /** get the length of the matched text 
-     * @return 
+    /** get the length of the matched text
+     * @return
      */
     public int match_length() {
         if (start < 0) {
@@ -114,7 +114,7 @@ public class TextEntity {
     /** Convenience methods for carrying the context through the output processing */
     /** Set the context with before and after windows
      * @param before
-     * @param after  
+     * @param after
      */
     public void setContext(String before, String after) {
         this.prematch = before;
@@ -129,7 +129,7 @@ public class TextEntity {
     }
 
     /** Set the context buffer from a single window
-     * @param window 
+     * @param window
      */
     public void setContext(String window) {
         this.context = window;
@@ -158,7 +158,7 @@ public class TextEntity {
     public String getContextAfter() {
         return this.postmatch;
     }
-    
+
     /**
      *
      * @return
@@ -181,35 +181,35 @@ public class TextEntity {
         this.is_duplicate = m.is_duplicate;
         this.is_overlap = m.is_overlap;
         this.is_submatch = m.is_submatch;
-        
+
         // These are private.  maybe should use this.setA(m.getA())
         this.postmatch = m.postmatch;
         this.prematch = m.prematch;
         this.context = m.context;
         this.match_id = m.match_id;
-    }    
-    
-    public boolean isWithin( TextEntity t ){        
+    }
+
+    public boolean isWithin( TextEntity t ){
         return (end <= t.end && start >= t.start);
     }
-    public boolean isSameMatch( TextEntity t ){        
+    public boolean isSameMatch( TextEntity t ){
         return (start == t.start && end == t.end);
     }
 
-    public boolean isRightMatch( TextEntity t ){        
+    public boolean isRightMatch( TextEntity t ){
         return (start == t.start);
     }
 
-    public boolean isLeftMatch( TextEntity t ){        
+    public boolean isLeftMatch( TextEntity t ){
         return (end == t.end);
     }
 
-    public boolean isOverlap( TextEntity t ){        
+    public boolean isOverlap( TextEntity t ){
         // t overlaps with self on the left side
         // OR t overlaps with self on right side
-        // 
+        //
         return (end > t.end && start > t.start && start < t.end)
                 || (end < t.end && start < t.start && end > t.start);
     }
-    
+
 }

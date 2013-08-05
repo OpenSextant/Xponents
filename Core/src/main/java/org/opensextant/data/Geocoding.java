@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,25 +30,25 @@ import org.opensextant.data.LatLon;
 import org.opensextant.data.LatLon;
 
 /**
- * 
+ *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public interface Geocoding  extends LatLon {
-       
+
     //-------------------
     // High level flags: What is the geo entity?
     //-------------------
-    public boolean isPlace();   
+    public boolean isPlace();
     public boolean isCoordinate();
     public boolean isCountry();
     public boolean isAdministrative();
-    
+
     public int getPrecision();
-    
+
     /*
     public double getConfidence();
     */
-    
+
     //---------------------
     // entity metadata:
     //---------------------

@@ -38,13 +38,13 @@ public class TaxonMatch extends org.opensextant.extraction.TextMatch {
     public TaxonMatch(){
         this.type = "taxon";
     }
-    
+
     private List<Taxon> taxons = null;
 
     public List<Taxon> getTaxons(){
         return taxons;
     }
-    
+
     public void addTaxon(Taxon t) {
         if (t == null) {
             return;
@@ -55,7 +55,7 @@ public class TaxonMatch extends org.opensextant.extraction.TextMatch {
         }
         taxons.add(t);
     }
-    
+
     public boolean hasTaxons(){
         if (taxons == null){
             return false;

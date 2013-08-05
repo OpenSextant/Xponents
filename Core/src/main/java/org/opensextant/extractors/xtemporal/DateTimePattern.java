@@ -33,7 +33,7 @@ import org.opensextant.extractors.flexpat.RegexPattern;
  * @author ubaldino
  */
 public class DateTimePattern extends RegexPattern {
-    
+
     /**
      *
      */
@@ -46,7 +46,7 @@ public class DateTimePattern extends RegexPattern {
      *
      */
     public String variant = null;
-    
+
     /**
      *
      * @param fam
@@ -55,10 +55,10 @@ public class DateTimePattern extends RegexPattern {
      */
     public DateTimePattern(String fam, String id, String desc){
         super(fam + "-" + id, desc);
-        
+
         family = fam;
         variant = id;
-        
+
         family_id = XTConstants.getPatternFamily(family);
     }
 }

@@ -38,7 +38,7 @@ public abstract class ConverterAdapter implements iConvert {
     }
 
     /** Yield a ConvertedDocumented with all the file metadata and payload, to the greatest degree possible.
-     * Underlying implementation opens and closes a stream to read the file. 
+     * Underlying implementation opens and closes a stream to read the file.
      * In other words implementation of converters should close the given input stream.
      */
     @Override

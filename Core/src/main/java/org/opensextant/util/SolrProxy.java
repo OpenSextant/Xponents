@@ -492,7 +492,7 @@ public class SolrProxy {
 
         // Gazetteer place name & country:
         //   NOTE: this may be different than "matchtext" or PlaceCandidate.name field.
-        // 
+        //
         bean.setCountryCode(SolrProxy.getString(gazEntry, "cc"));
 
         // Other metadata.
@@ -504,7 +504,7 @@ public class SolrProxy {
         // Geo field is specifically Spatial4J lat,lon format.
         // Note -- Spatial4J ParseUtils offers a full validation of the parsing.
         // But since we validate on entry into the gazetteer, we need not pay that price here
-        // 
+        //
         double[] xy = SolrProxy.getCoordinate(gazEntry, "geo");
         bean.setLatitude(xy[0]);
         bean.setLongitude(xy[1]);

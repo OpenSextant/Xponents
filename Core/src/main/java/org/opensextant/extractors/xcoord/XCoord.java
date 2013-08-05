@@ -25,15 +25,15 @@
  */
 ///** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
-// _____                                ____                     __                       __      
-///\  __`\                             /\  _`\                  /\ \__                   /\ \__   
-//\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\  
-// \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/  
-//  \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_ 
+// _____                                ____                     __                       __
+///\  __`\                             /\  _`\                  /\ \__                   /\ \__
+//\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
+// \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
+//  \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
 //   \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
 //    \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
-//            \ \_\                                                                             
-//             \/_/                                                                             
+//            \ \_\
+//             \/_/
 //
 //   OpenSextant XCoord
 // *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
@@ -280,7 +280,7 @@ public class XCoord extends AbstractFlexPat {
                     continue;
                 }
 
-                // Filter -- trivial filter is to filter out any coord that cannot 
+                // Filter -- trivial filter is to filter out any coord that cannot
                 // yield GeocoordMatch.coord_text, the normalized version of the coordinate text match
                 //
                 if (GeocoordNormalization.filter_out(coord)) {
@@ -308,7 +308,7 @@ public class XCoord extends AbstractFlexPat {
                             bufsize, match_width);
 
                     // This sets the context window before/after.
-                    // 
+                    //
                     coord.setContext(
                             //                               left l1 to left l2
                             TextUtils.delete_eol(text.substring(slices[0], slices[1])),
@@ -324,7 +324,7 @@ public class XCoord extends AbstractFlexPat {
                 // and some formats, other valid interpretations are allowed
                 // But they share most of the same metadata about context
                 // They will differ as far as normalized coord_text and lat/lon
-                // 
+                //
                 if (coord.hasOtherIterpretations()) {
                     // set precision
                     // set pre/post
@@ -332,7 +332,7 @@ public class XCoord extends AbstractFlexPat {
 
                     for (GeocoordMatch m2 : coord.getOtherInterpretations()) {
                         // Other interpretations may have different coord text.
-                        //String _c = m2.coord_text;                        
+                        //String _c = m2.coord_text;
                         m2.copyMetadata(coord);
                         // Preserve coordinate text of interpretation.
                         //m2.coord_text = _c;
@@ -345,7 +345,7 @@ public class XCoord extends AbstractFlexPat {
 
         // "pass" is the wrong idea.  If no data was found
         // because there was no data, then it still passes.
-        // 
+        //
         results.pass = !results.matches.isEmpty();
 
         PatternManager.reduce_matches(results.matches);

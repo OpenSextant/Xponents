@@ -31,7 +31,7 @@ package org.opensextant.extractors.flexpat;
  * @author ubaldino
  */
 public class PatternTestCase {
-    
+
     /**
      *
      */
@@ -52,7 +52,7 @@ public class PatternTestCase {
      *
      */
     public boolean true_positive = true;
-    
+
     /**
      *
      * @param _id
@@ -60,9 +60,9 @@ public class PatternTestCase {
      * @param _text
      */
     public PatternTestCase(String _id, String _family, String _text){
-    
+
         this.id = _id;
         this.family = _family;
-        this.text = _text;        
+        this.text = _text;
     }
 }

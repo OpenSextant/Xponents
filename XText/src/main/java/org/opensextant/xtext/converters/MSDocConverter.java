@@ -33,28 +33,28 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.opensextant.xtext.ConvertedDocument;
 
 /**
- * @author T. Allison, MITRE 
+ * @author T. Allison, MITRE
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public class MSDocConverter extends ConverterAdapter {
-    
+
     /** TODO: Replace with a Tika converter?
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream input, java.io.File doc) throws IOException {
         org.apache.poi.hwpf.extractor.WordExtractor ex = new WordExtractor(input);
-        
+
         String[] ps = ex.getParagraphText();
         input.close();
 
-        StringBuilder sb = new StringBuilder();        
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < ps.length; i++) {
             sb.append(WordExtractor.stripFields(ps[i]).trim());
             sb.append('\n');
         }
         ConvertedDocument textdoc = new ConvertedDocument(doc);
         textdoc.setText(sb.toString());
-        
+
         return textdoc;
     }
 }

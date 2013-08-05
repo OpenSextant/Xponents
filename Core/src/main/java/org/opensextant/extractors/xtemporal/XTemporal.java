@@ -58,9 +58,9 @@ public class XTemporal extends AbstractFlexPat {
 
     public final static String DEFAULT_XTEMP_CFG = "/datetime_patterns.cfg";
 
-    /** 
+    /**
      * Extractor interface: getName
-     * @return 
+     * @return
      */
     public String getName() {
         return "XTemporal";

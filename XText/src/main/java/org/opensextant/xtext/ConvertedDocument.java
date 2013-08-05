@@ -369,7 +369,7 @@ public final class ConvertedDocument extends DocInput {
     }
 
     private static ConvertedDocument _uncacheConversion(StringBuilder path, String fname) throws IOException {
-        // Common 
+        // Common
         if (fname.endsWith(".txt")) {
             String cachedFile = FilenameUtils.getBaseName(fname);
             path.append(cachedFile);
@@ -412,20 +412,20 @@ public final class ConvertedDocument extends DocInput {
         //
         // This instance finds file:/<output-path>/<input-dir-name>/<relative-path-to-file>.txt
         //                 (shorter: /O/D/relpath/file.ext.txt )
-        // 
+        //
         //         for     binary /inputpath/D/relpath/file.ext
         //
         //   you gave me:  C:\data\source\
-        //   you said output goes to 
+        //   you said output goes to
         //                 D:\archives\
-        // 
+        //
         //   I found file   C:\data\source\something\file.doc
-        // 
+        //
         //   Which is to be cached at:
         //                 D:\archives\source\something\file.doc.txt
         //                 ^^^^^^^^^^^|inputdir|relpath^^^^^^^^^^^^^^
         //                 outputdir  |        |
-        // 
+        //
         //   IFFF a conversion happened.
         //   If no conversion was made, then the original file is either
         //   unconvertable or it is already valid UTF-8 or ASCII-only text/plain.
@@ -512,7 +512,7 @@ public final class ConvertedDocument extends DocInput {
         // DocInput requirement: provid id + file paths
         // If there is another Identifier to use,... caller will have an opportunity to set it
         // when the get the instance.
-        // 
+        //
         doc.setId(doc.filepath);
 
 

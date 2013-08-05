@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@
 package org.opensextant.extractors.geo;
 
 import org.opensextant.data.Place;
- 
+
 /**
  * A class to hold a Place and a score together. Used by PlaceCandidate to rank places.
  */

@@ -116,7 +116,7 @@ public class SolrGazetteer {
         // Feature Designation Name,    DESC
         // Feature Designation Text,    -
         // Feature Class                CLASS
-        // 
+        //
         while ((featMap = featreader.read(columns)) != null) {
             String feat_code = featMap.get("Feature Designation Code");
             String desc = featMap.get("Feature Designation Name");
@@ -231,7 +231,7 @@ public class SolrGazetteer {
         QueryResponse response = solr.getInternalSolrServer().query(ctryparams);
 
         // -- Process Solr Response;  This for loop matches the one in SolrMatcher
-        // 
+        //
         SolrDocumentList docList = response.getResults();
         for (SolrDocument gazEntry : docList) {
             String code = SolrProxy.getString(gazEntry, "cc");
@@ -242,7 +242,7 @@ public class SolrGazetteer {
 
             Country C = country_lookup.get(code);
             if (C != null) {
-                C.addAlias(name); // all other metadata is same. 
+                C.addAlias(name); // all other metadata is same.
                 continue;
             }
 
@@ -321,12 +321,12 @@ public class SolrGazetteer {
         QueryResponse response = solr.getInternalSolrServer().query(params);
 
         // -- Process Solr Response;  This for loop matches the one in SolrMatcher
-        // 
+        //
         SolrDocumentList docList = response.getResults();
 
         for (SolrDocument gazEntry : docList) {
             Place bean = SolrProxy.createPlace(gazEntry);
-            
+
             places.add(bean);
         }
 

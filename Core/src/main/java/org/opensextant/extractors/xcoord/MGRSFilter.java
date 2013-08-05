@@ -118,7 +118,7 @@ public class MGRSFilter implements MatchFilter {
             return true;
         }
         // IGNORE numeric sequences
-        // 
+        //
         String mgrs_offsets = m.coord_text.substring(5);
         if (IGNORE_SEQ.contains(mgrs_offsets)) {
             return true;
@@ -126,9 +126,9 @@ public class MGRSFilter implements MatchFilter {
 
         String _text = m.getText();
         // IGNORE rates or ratios spelled out:
-        //        # PER # 
-        //  e.g., 4 PER 100 
-        // 
+        //        # PER #
+        //  e.g., 4 PER 100
+        //
         String[] found = _text.split(" ");
         if (found.length > 2) {
             if ("per".equalsIgnoreCase(found[1])) {
@@ -146,14 +146,14 @@ public class MGRSFilter implements MatchFilter {
         return false;
     }
 
-    /** 
+    /**
      * TODO: exploit XTemp to make light work of date/time normalization
      * .... however this filtering is very specific.
-     * 
+     *
      * @param txt
      * @param len
      * @param fmt
-     * @return 
+     * @return
      */
     private boolean isValidDate(String txt, int len, DateFormat fmt) {
         try {
@@ -172,7 +172,7 @@ public class MGRSFilter implements MatchFilter {
             int yr = cal.get(Calendar.YEAR);
 
             // Reformat 2-digit year into current millenium.
-            // And then try... 
+            // And then try...
             if (yr <= CURRENT_YY) {
                 yr += 2000;
             } else if (yr <= 100) {

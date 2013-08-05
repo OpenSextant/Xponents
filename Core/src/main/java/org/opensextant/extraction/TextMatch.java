@@ -27,7 +27,7 @@ package org.opensextant.extraction;
 
 /**
  * A variation on TextEntity that also records pattern metadata
- * 
+ *
  * @author ubaldino
  */
 public class TextMatch extends TextEntity {
@@ -40,15 +40,15 @@ public class TextMatch extends TextEntity {
     /** Type, as in Annotation type or code.
      */
     protected String type = "generic";
-    
+
     public String getType(){
         return type;
     }
-    
+
     /**
      *
      */
-    public TextMatch() {        
+    public TextMatch() {
     }
 
     /**
@@ -67,7 +67,7 @@ public class TextMatch extends TextEntity {
 
         this.pattern_id = m.pattern_id;
     }
-    
+
     /**
      *
      */

@@ -31,6 +31,6 @@ package org.opensextant.xtext;
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public interface iFilter {
-    
+
     public boolean filterOutFile(String path);
 }
