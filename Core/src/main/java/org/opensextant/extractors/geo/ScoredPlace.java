@@ -33,38 +33,38 @@ import org.opensextant.data.Place;
  */
 public class ScoredPlace implements Comparable<Object> {
 
-	Place place;
-	Double score;
+    Place place;
+    Double score;
 
-	public Place getPlace() {
-		return place;
-	}
+    public Place getPlace() {
+        return place;
+    }
 
-	public void setPlace(Place place) {
-		this.place = place;
-	}
+    public void setPlace(Place place) {
+        this.place = place;
+    }
 
-	public Double getScore() {
-		return score;
-	}
+    public Double getScore() {
+        return score;
+    }
 
-	public void setScore(Double score) {
-		this.score = score;
-	}
+    public void setScore(Double score) {
+        this.score = score;
+    }
 
-	public ScoredPlace(Place pl, Double scr) {
-		this.place = pl;
-		this.score = scr;
-	}
+    public ScoredPlace(Place pl, Double scr) {
+        this.place = pl;
+        this.score = scr;
+    }
 
-	@Override
-	// compare by score
-	public int compareTo(Object o) {
-		if (o instanceof ScoredPlace) {
-			return -1 * this.getScore().compareTo(((ScoredPlace) o).getScore());
-		} else {
-			return 0;
-		}
-	}
+    @Override
+    // compare by score
+    public int compareTo(Object o) {
+        if (o instanceof ScoredPlace) {
+            return -1 * this.getScore().compareTo(((ScoredPlace) o).getScore());
+        } else {
+            return 0;
+        }
+    }
 
 }

@@ -67,8 +67,8 @@ import org.slf4j.LoggerFactory;
  *
  * <pre>
  * // Parts of a decimal degree Latitude/Longitude
- * #DEFINE	decDegLat	\d?\d\.\d{1,20}
- * #DEFINE	decDegLon	[0-1]?\d?\d\.\d{1,20}
+ * #DEFINE  decDegLat   \d?\d\.\d{1,20}
+ * #DEFINE  decDegLon   [0-1]?\d?\d\.\d{1,20}
  *
  * // TARGET: DD-xx, Decimal Deg, Preceding Hemisphere (a) H DD.DDDDDD° HDDD.DDDDDD°, optional deg symbol
  * #RULE   DD      01      &lt;hemiLatPre>\s?&lt;decDegLat>&lt;degSym>?\s*&lt;latlonSep>?\s*&lt;hemiLonPre>\s?&lt;decDegLon>&lt;degSym>?
