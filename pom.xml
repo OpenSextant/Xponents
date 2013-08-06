@@ -170,7 +170,6 @@
 
       <!-- run explicitly with: mvn checkstyle:check -->
 
-      <!--
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
@@ -180,6 +179,7 @@
           <consoleOutput>true</consoleOutput>
           <failOnViolation>false</failOnViolation>
         </configuration>
+        <!--
         <executions>
           <execution>
             <phase>compile</phase>
@@ -188,7 +188,8 @@
             </goals>
           </execution>
         </executions>
-      </plugin> -->
+        -->
+      </plugin>
       <!-- run explicitly with: mvn findbugs:check  -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
