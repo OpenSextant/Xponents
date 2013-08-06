@@ -1,21 +1,32 @@
 OpenSextant Solr Gazetteer
 ============================
+The OpenSextant Gazetteer is a catalog of place names and basic geographic metadata, such 
+as country code, location, feature codings.  It is currently indexed and stored using 
+Solr 4.2+ (http://lucene.apache.org/solr)
 
-This Solr-based index for the 'gazetteer' core was finalized 
-with a Solr 4.2.1 configuration.   These notes are written based on that version of Solr.
+This Solr-based index for the 'gazetteer' core was finalized with a Solr 4.2.1 configuration.   
+These notes are written based on that version of Solr.
 
 Gazetteer ingest into Solr is done using an Embedded Solr loader akin to the CSV data import handler.
+The OpenSextant Gazetteer project digests raw gazetteer data from various sources, generating
+a single merged TAB-delimited data file.  That merged data file is the input to build 
+this Gazetteer index, which is used by applications at runtime.
 
 
 Honing Gazetteer Index
 =================================
 
 Size matters.  So does content.  Your gazetteer should contain named locations and other data
-you want to use in your application.  Complete worldwide name search suggests you have a full 
-gazetteer; Lightweight desktop geocoding suggests you have the basics plus some other data, 
-but much less than the full version.
+you want to use in your application.  For example, Complete worldwide name search suggests you 
+have a full gazetteer; Lightweight desktop geocoding suggests you have the basics plus some other 
+data, but much less than the full version.
 
-Sizes Approximately:
+Merged gazetteer file:  1.8 GB with 13.5 million entries.  
+
+From this merged data set, we can filter the rows of data by making use of some simple categories.  
+Places and Place names may be well-known or rare, or some where in-between.
+
+Solr Gazetteer Sizes Approximately:
   Full gazetteer:  1.6 GB  (v1.4 or v1.5 OpenSextant)
   General         ~600 MB
   Wellknown        ~20 MB
