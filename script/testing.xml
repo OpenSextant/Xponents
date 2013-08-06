@@ -4,6 +4,12 @@
 
   <property name="version" value="2.0-runtime" />
   <property name="xponents" value="${basedir}/../" />
+
+  <!-- Copy runtime.local.cfg to runtime.cfg ; edit variables in that file.
+   -->
+  <property file="runtime.cfg" />
+
+  <property name="xponents" value="${basedir}/../" />
     	
   <path id="runtime.classpath">
     <pathelement location="${xponents}/etc" />
@@ -16,6 +22,9 @@
         <input message="outputfile?" addproperty="get.outputfile"/>
         <input message="formats?" addproperty="get.formats"/>
         <java classname="org.opensextant.examples.BasicGeoTemporalProcessing" classpathref="runtime.classpath" fork="yes" dir="${xponents}" >
+            <jvmarg value="-Dsolr.solr.home=${solr.home}" />
+            <jvmarg value="-Dopensextant.home=${opensextant.home}" />
+            <jvmarg value="-Xmx2g" />
             <arg value="-i" />
             <arg value="${get.inputfile}" />
             <arg value="-o" />

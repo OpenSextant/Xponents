@@ -52,19 +52,6 @@
               <lib dir="./lib" />
     -->
 
-  <!--  In order of importance: 
-     (required)The text tagger, 
-     (required)OpenSextant phonetics encoder - limited use currently; Packaged in OpSx Toolbox JAR
-     (optional)Java Topo Suite (JTS) for geospatial search against gazetteer.  Schema field geo is linked to use of JTS.
-     (optional)Java Servlet API - for use outside of servlet container
-    -->
-  <lib path="${opensextant.home}/lib/solr-text-tagger-1.2.jar" />
-  <!-- 
-  <lib path="${opensextant.home}/lib/OpenSextantToolbox.jar" /> -->
-  <!--  JTS is loaded only via CLASSPATH, but noted here as it gazetteer schema is geospatially searchable using both spatial4j + JTS
-  <lib path="${opensextant.home}/lib/jts-1.13.jar" /> -->
-  <lib path="${opensextant.home}/lib/javax.servlet-api-3.0.1.jar" />
-
   <!-- A 'dir' option by itself adds any files found in the directory 
        to the classpath, this is useful for including all jars in a
        directory.

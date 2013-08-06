@@ -10,6 +10,7 @@
 
   <target name="copy-libs" >
     <delete dir="${release}"/>
+
     <mkdir dir="${release}"/>
     <mkdir dir="${release}/lib"/>
     <mkdir dir="${release}/etc"/>
@@ -45,7 +46,7 @@
   <target name="copy-script">
     <copy todir="${release}/script/">
         <fileset dir="${xponents.home}/script"> <!-- this dir, eh? -->
-           <include name="*.xml" />
+           <include name="*.*" />
         </fileset>
     </copy>
     <copy todir="${release}/etc/">

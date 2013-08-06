@@ -219,13 +219,14 @@ public final class XText implements iFilter, iConvert {
     /**
      * The main entry point to converting compound documents and folders.
      */
-    public void extractText(String path) throws IOException {
+    public void extractText(String filepath) throws IOException {
 
         start_time = System.currentTimeMillis();
 
+        String path = filepath.trim();
         File input = new File(path);
         if (!input.exists()) {
-            throw new IOException("Non existent input FILE=" + path);
+            throw new IOException("Non existent input FILE=" + input.getAbsolutePath());
         }
 
         if (isArchive(path)) {

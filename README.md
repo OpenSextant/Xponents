@@ -16,6 +16,8 @@ The intent of Xponents is to provide the extraction without too much infrastruct
 
 #Dependencies#
 
+Set JAVA_HOME to your JDK6 or JDK7 installation;  Maven javadoc plugin requires JAVA_HOME set
+
 FlexPat pattern-based extractors rely on Java 6+ regular expression API
 
 XText depends on Tika 1.3+

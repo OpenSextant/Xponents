@@ -106,7 +106,25 @@ public class BasicGeoTemporalProcessing
         }
     }
 
-    public void setup() throws ConfigException {
+    /**   Ideally you should separate your one-time initialization steps, configuring your extractors
+     * apart from the repetitive steps of setting up Jobs and Inputs.   Outputs you might setup once 
+     * for the entire JVM session, or it may be something you do periodically.  In summary:
+     * 
+     * configure separately:
+     *   a) extractors, converters
+     *   b) job inputs and parameters
+     *   c) output formatters
+     *   d) other resources, e.g., filters
+     */
+    public void setup(String inFile, List<String> outFormats,
+            String outFile, String tempDir) throws ConfigException, ProcessingException, IOException {
+
+        params.isdefault = false;
+
+        if (!validateParameters(inFile, outFormats, outFile, tempDir, params)) {
+            throw new ProcessingException("VALIDATION ERRORS: " + runnerMessage.toString());
+        }
+
         //XCoord xcoord = new XCoord();
         //xcoord.configure();
         //this.addExtractor(xcoord);
@@ -137,15 +155,28 @@ public class BasicGeoTemporalProcessing
         } catch (IOException ioerr) {
             throw new ConfigException("Document converter could not start", ioerr);
         }
+
+        this.params.inputFile = inFile.trim();
+        this.params.outputFile = outFile.trim();
+
+        if (outFormats != null) {
+            for (String fmt : outFormats) {
+                params.addOutputFormat(fmt);
+                AbstractFormatter formatter = createFormatter(fmt, params);
+                this.addFormatter(formatter);
+                formatter.start(params.getJobName());
+            }
+        }
+
     }
 
     /**
      * The default formatter
      */
-    public static AbstractFormatter createFormatter(String outputFormat, Parameters p)
+    public static AbstractFormatter createFormatter(String outputFormat, Parameters plist)
             throws IOException, ProcessingException {
 
-        if (p.isdefault) {
+        if (plist.isdefault) {
             throw new ProcessingException("Caller is required to use non-default Parameters; "
                     + "\nat least set the output options, folder, jobname, etc.");
         }
@@ -154,9 +185,8 @@ public class BasicGeoTemporalProcessing
             throw new ProcessingException("Wrong formatter?");
         }
 
-        formatter.setParameters(p);
-        // formatter.setOutputDir(params.outputDir);
-        formatter.setOutputFilename(p.getJobName() + formatter.outputExtension);
+        formatter.setParameters(plist);
+        formatter.setOutputFilename(plist.getJobName() + formatter.outputExtension);
 
         return formatter;
     }
@@ -194,21 +224,7 @@ public class BasicGeoTemporalProcessing
      * somewhere....
      *
      */
-    public void run(String inFile, List<String> outFormats,
-            String outFile, String tempDir) throws ProcessingException, IOException {
-
-        if (!validateParameters(inFile, outFormats, outFile, tempDir)) {
-            throw new ProcessingException("VALIDATION ERRORS: " + runnerMessage.toString());
-        }
-        this.params.inputFile = inFile;
-        if (outFormats != null) {
-            for (String fmt : outFormats) {
-                this.params.addOutputFormat(fmt);
-                AbstractFormatter formatter = createFormatter(fmt, params);
-                this.addFormatter(formatter);
-                formatter.start(params.getJobName());
-            }
-        }
+    public void run() throws ProcessingException, IOException {
 
         printRequest();
 
@@ -217,7 +233,7 @@ public class BasicGeoTemporalProcessing
         prevTime = startTime;
 
         // All input and processing happens within:
-        converter.extractText(inFile);
+        converter.extractText(this.params.inputFile);
 
         reportMemory();
         log.info("Finished all processing");
@@ -304,7 +320,7 @@ public class BasicGeoTemporalProcessing
                 // -f outputFormat = the desired output format
                 case 'f':
                     _outFormat = opts.getOptarg();
-                    _outFormats = TextUtils.string2list(_outFormat, ",");
+                    _outFormats = TextUtils.string2list(_outFormat.trim(), ",");
                     break;
 
                 // -o outputDir = the path to output file
@@ -350,7 +366,7 @@ public class BasicGeoTemporalProcessing
      * @return true if parameters and defaults suffice; false otherwise.
      */
     public boolean validateParameters(String inPath,
-            List<String> outFormats, String outPath, String tempDir) {
+            List<String> outFormats, String outPath, String tempDir, Parameters plist) {
 
         runnerMessage = new StringBuilder();
 
@@ -358,6 +374,9 @@ public class BasicGeoTemporalProcessing
             runnerMessage.append("Please specify an Output file or folder");
             return false;
         }
+
+        inPath = inPath.trim();
+        outPath = outPath.trim();
 
         // Make sure input file exists
         File inFile = new File(inPath);
@@ -400,7 +419,7 @@ public class BasicGeoTemporalProcessing
             destDir = container;
             try {
                 // DEFAULT file name.
-                params.setJobName("OpenSextant_Output_" + Parameters.getJobTimestamp());
+                plist.setJobName("OpenSextant_Output_" + Parameters.getJobTimestamp());
             } catch (Exception fmterr) {
                 runnerMessage.append("Failed to invoke the requested format to create a default output file");
                 return false;
@@ -408,7 +427,7 @@ public class BasicGeoTemporalProcessing
         } else {
             destDir = container.getParentFile();
             destFile = container.getName();
-            params.setJobName(FilenameUtils.getBaseName(destFile));
+            plist.setJobName(FilenameUtils.getBaseName(destFile));
         }
 
         if (!destDir.exists()) {
@@ -417,7 +436,7 @@ public class BasicGeoTemporalProcessing
             return false;
         }
 
-        params.outputDir = destDir.getAbsolutePath();
+        plist.outputDir = destDir.getAbsolutePath();
 
         return true;
     }
@@ -448,8 +467,8 @@ public class BasicGeoTemporalProcessing
         try {
             BasicGeoTemporalProcessing runner = new BasicGeoTemporalProcessing();
 
-            runner.setup();
-            runner.run(_inFile, _outFormats, _outFile, _tempDir);
+            runner.setup(_inFile, _outFormats, _outFile, _tempDir);
+            runner.run();
             runner.shutdown();
             // Success.
         } catch (Exception err) {

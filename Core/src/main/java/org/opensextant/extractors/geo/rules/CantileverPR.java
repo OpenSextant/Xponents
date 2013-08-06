@@ -112,7 +112,7 @@ public class CantileverPR {
 
                     // Specifically for ADM1 names -- 
                     if (geo.isAdmin1()) {
-                        String adminKey = geo.getAdmin1();
+                        String adminKey = String.format("%s/%s",tmpCC, geo.getAdmin1());
                         Counter adm1 = adminCounts.get(adminKey);
                         if (adm1 == null) {
                             adm1 = new Counter(adminKey);
