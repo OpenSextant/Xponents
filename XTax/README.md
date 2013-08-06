@@ -1,7 +1,7 @@
 #Xtax - Taxonomy, Phrase, and everything else tagger#
 
 DRAFT
-this is an application of the SolrTextTagger.  
+this is an application of the SolrTextTagger.
 The intent is to be able to re-use the technique behind the Solr PlaceMatcher in OpenSextant
 to be able to tag virtually anything else other than place names for these situations:
 
@@ -26,13 +26,13 @@ This is not a buildable component.  Currently it is a recipe for creating a taxo
 
 2. write your reference data ingester in python
 
-3. Test your index by extending/wrapping/calling TaxonMatcher.tagText() with some 
+3. Test your index by extending/wrapping/calling TaxonMatcher.tagText() with some
 test data.  The test data should contain mentions of phrases or terms in your catalog
 
 
 ## Schema ##
 
-"taxcat" schema is quite simple, intentionally. 
+"taxcat" schema is quite simple, intentionally.
 Your catalog in solr will help you coalesce many differnt taxonomies into one searchable, online catalog.
 Not all entries need to be used for tagging -- that is if you think a phrase is particularly erroneous or will
 produce noise, then set valid=false.  It can remain in your catalog, though.
@@ -41,20 +41,20 @@ produce noise, then set valid=false.  It can remain in your catalog, though.
     taxnode  -- a taxon ID, that helps you associate N phrases with a given taxon
     phrase   -- a textual phrase in the reference data
     id       -- catalog row ID
-    valid    -- if phrase entry should really be used for tagging. 
+    valid    -- if phrase entry should really be used for tagging.
     attrs    -- optional.  Any amount of metadata you wish to carry forward with your tagging. This is a string, no format.
 
 
 
     catalog = "citrus_fruit",
     taxnode = "tropical.Pineapple"
-    phrase = { "pineapple", 
-               "la piña", 
+    phrase = { "pineapple",
+               "la piña",
                 ...}   // Each phrase would be its own row in Solr; but they all carry the same taxonid and cat id
 
     id  = (you define;  using taxcat.py API, you name a starting offset for the catalog
 
-Use of attrs and valid=T/F are optimizations. 
+Use of attrs and valid=T/F are optimizations.
 
 
 ## Tagging ##
@@ -64,7 +64,7 @@ Use of attrs and valid=T/F are optimizations.
 Should find TaxonMatch, for "pineapples", and associate that as taxon={ "tropical.Pineapple", catalog="citrus_fruit" , attrs=....}
 
 
-## Running ## 
+## Running ##
 
 
 Do whatever environment setup you need to do to set ANT_HOME, JAVA_HOME, SOLR_HOME, PYTHONPATH, etc.
@@ -78,10 +78,10 @@ Do whatever environment setup you need to do to set ANT_HOME, JAVA_HOME, SOLR_HO
     # solr_home is set locally here in build.properties
     ant -f  ./build.xml  create-solr-home
     #
-  
+
     #
     run your python app that leverages the taxcat.py API
-  
+
     ant -f  build.xml  build-fst
 
 

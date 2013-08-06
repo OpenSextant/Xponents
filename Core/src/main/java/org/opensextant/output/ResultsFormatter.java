@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ import org.opensextant.extraction.ConfigException;
 
 /**
  * Interface for classes that generate output from corpora that have been processed by OpenSextant.
- * @author Rich Markeloff, MITRE Corp. 
+ * @author Rich Markeloff, MITRE Corp.
  * Initial version created on Jul 13, 2011
  */
 public interface ResultsFormatter {
@@ -42,32 +42,32 @@ public interface ResultsFormatter {
      */
     public void setParameters(Parameters params);
 
-    /** 
-     * @return 
+    /**
+     * @return
      */
     public String getJobName();
 
     /**
      * Set the path to the output directory.
-     * @param pathname 
+     * @param pathname
      */
     public void setOutputDir(String pathname);
 
     /**
      * Set the name of the output file.
-     * @param filename 
+     * @param filename
      */
     public void setOutputFilename(String filename);
 
     /**
      * Get the type of output produced by this formatter.
-     * @return 
+     * @return
      */
     public String getOutputType();
 
     /**
      * Get the path to the output file.
-     * @return 
+     * @return
      */
     public String getOutputFilepath();
 
@@ -75,28 +75,28 @@ public interface ResultsFormatter {
      * Formats the results obtained from processing a corpus through OpenSextant.
      * Returns a string to display to the user. Typically this will be HTML to be
      * shown in a browser.
-     * 
-     * @param corpusList 
+     *
+     * @param corpusList
      * @return A message for the user
-     * @throws Exception  
+     * @throws Exception
      */
     public String formatResults(ExtractionResult corpus) throws ProcessingException;
 
     public void start(String nm) throws ProcessingException;
 
     public void finish();
-    
+
     /**
-     * 
+     *
      * @param f
-     * @throws ConfigException 
+     * @throws ConfigException
      */
     public void addField(String f) throws ConfigException;
-    
+
     /**
-     * 
+     *
      * @param f
-     * @throws ConfigException 
+     * @throws ConfigException
      */
     public void removeField(String f) throws ConfigException;
 }

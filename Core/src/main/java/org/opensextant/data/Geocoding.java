@@ -57,9 +57,9 @@ public interface Geocoding  extends LatLon {
 
     public String getPlaceID();
     public String getPlaceName();
-    
-    /** Method for determining geocoding 
+
+    /** Method for determining geocoding
      */
     public String getMethod();
-    
+
 }

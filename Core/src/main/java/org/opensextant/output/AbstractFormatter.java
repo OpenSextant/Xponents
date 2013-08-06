@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,13 +85,13 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     /**
      * GIS formats may optionally include coordinates as fields.
      * GDB and SHP have a Point geometry which carries the lat/lon already.
-     * 
+     *
      * KML, CSV, JSON, etc. it makes sense to include these explicitly.
      */
     public boolean includeCoordinate = false;
 
-    /** A basic job name that reflects file name 
-     * @return 
+    /** A basic job name that reflects file name
+     * @return
      */
     @Override
     public String getJobName() {
@@ -99,7 +99,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     }
 
     /**
-     * @param fname 
+     * @param fname
      * @see
      * org.opensextant.processing.output.ResultsFormatter#setJobName(java.lang.String)
      */
@@ -109,7 +109,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     }
 
     /**
-     * @param path 
+     * @param path
      * @see
      * org.opensextant.processing.output.ResultsFormatter#setOutputDir(java.lang.String)
      */
@@ -128,7 +128,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     /**
      * Write to a file and return HTML containing a link to the file.
      * @param corpusList
-     * @throws Exception  
+     * @throws Exception
      */
     @Override
     public String formatResults(ExtractionResult res) throws ProcessingException {
@@ -154,7 +154,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     }
 
     /**
-     * @return 
+     * @return
      * @see
      * org.opensextant.processing.output.ResultsFormatter#getOutputType()
      */
@@ -180,8 +180,8 @@ abstract public class AbstractFormatter implements ResultsFormatter {
             throw new ProcessingException("OpenSextant API cannot overwrite GIS output files -- caller must do that.  FILE=" + item.getPath() + " exists");
         }
     }
-    
-    
+
+
     @Override
     abstract public void start(String nm) throws ProcessingException;
 
@@ -191,7 +191,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     /**
      * Create the output stream appropriate for the output type.
      * IO is created using the filename represented by getOutputFilepath()
-     * @throws Exception 
+     * @throws Exception
      */
     abstract protected void createOutputStreams() throws Exception;
 
@@ -209,10 +209,10 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     //abstract public void writeRowsFor(Document doc) throws IOException;
 
     /** Write your geocoding result directly to output, instead of passing GATE objects.
-     * Result should carry GeocodingResult.recordFile as a URI for original. 
-     * 
+     * Result should carry GeocodingResult.recordFile as a URI for original.
+     *
      * @param rowdata the data to write out
      */
     abstract public void writeGeocodingResult(ExtractionResult rowdata);
-     
+
 }

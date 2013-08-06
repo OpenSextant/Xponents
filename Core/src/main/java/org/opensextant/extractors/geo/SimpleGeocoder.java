@@ -160,28 +160,28 @@ public class SimpleGeocoder implements Extractor {
     }
 
     private Parameters params = new Parameters();
-    
+
     public void setParameters(Parameters p){
         params = p;
         params.isdefault = false;
     }
-    
+
     public boolean isCoordExtractionEnabled(){
         return params.tag_coordinates;
-    }    
-    
+    }
+
     /**
      * Extractor.extract() calls first XCoord to get coordinates, then
      * PlacenameMatcher In the end you have all geo entities ranked and scored.
      * <pre>
      * Use TextMatch.getType()
      * to determine how to interpret TextMatch / Geocoding results:
-     * 
-     * Given TextMatch match 
-     * 
+     *
+     * Given TextMatch match
+     *
      *    Place tag:   ((PlaceCandiate)match).getGeocoding()
      *    Coord tag:   (Geocoding)match
-     * 
+     *
      * Both methods yield a geocoding.
      * </pre>
      * @param input
@@ -191,7 +191,7 @@ public class SimpleGeocoder implements Extractor {
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
         List<TextMatch> matches = new ArrayList<TextMatch>();
-        
+
         List<TextMatch> coordinates = null;
         if (isCoordExtractionEnabled()) {
             coordinates = xcoord.extract(input);
@@ -202,27 +202,27 @@ public class SimpleGeocoder implements Extractor {
         if (coordinates != null) {
             matches.addAll(coordinates);
         }
-        
-        chooseCandidates(candidates, coordinates);        
+
+        chooseCandidates(candidates, coordinates);
         matches.addAll( candidates );
 
         return matches;
     }
-    
-    
+
+
     private CantileverPR cantilever = new CantileverPR();
     private  void chooseCandidates(List<PlaceCandidate> candidates, List<TextMatch> coordinates){
-        // First assess names matched 
+        // First assess names matched
         // If names are to be completely filtered out, filter them out first or remove from candiate list.
         // Then apply rules.
 
         // 1. Tagger Post-processing rules: Generate Country, Nat'l Capitals and Admin names
-        // 2. Cantilever rules:        
+        // 2. Cantilever rules:
         cantilever.processCandiates(candidates);
-        
+
 
         // If valid places are to be ignored in output, then allow them as evidence
         // but mark them as filtered out (from output).
-        
+
     }
 }

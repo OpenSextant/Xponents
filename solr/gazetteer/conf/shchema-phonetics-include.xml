@@ -16,10 +16,10 @@
  limitations under the License.
 -->
 
-<!--  
+<!--
  This is the Solr schema file. This file should be named "schema.xml" and
  should be in the conf directory under the solr home
- (i.e. ./solr/conf/schema.xml by default) 
+ (i.e. ./solr/conf/schema.xml by default)
  or located where the classloader for the Solr webapp can find it.
 
  This example schema is the recommended starting point for users.
@@ -50,7 +50,7 @@
        version="x.y" is Solr's version number for the schema syntax and semantics.  It should
        not normally be changed by applications.
        1.0: multiValued attribute did not exist, all fields are multiValued by nature
-       1.1: multiValued attribute introduced, false by default 
+       1.1: multiValued attribute introduced, false by default
        1.2: omitTermFreqAndPositions attribute introduced, true by default except for text fields.
        1.3: removed optional field compress feature
        1.4: default auto-phrase (QueryParser feature) to off
@@ -71,44 +71,44 @@
         <!--
         a) reduces the input to lower case
         b) removes puncuation
-        c) reduces all diacritics to the appropriate base character 
+        c) reduces all diacritics to the appropriate base character
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.PorterStemFilterFactory"/> supposedly supports contractions, revealing word stem w/out contraction. Very limited.
         -->
         <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter.txt"/>
 
         <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.EnglishPossessiveFilterFactory"/>       
+        <filter class="solr.EnglishPossessiveFilterFactory"/>
         <filter class="solr.LowerCaseTokenizerFactory"/>
         <filter class="solr.PhoneticFilterFactory" encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer" inject="false" />
-        
+
       </analyzer>
     </fieldType>
-    
+
 
     <fieldType name="name_idx0" class="solr.TextField" positionIncrementGap="100">
       <analyzer>
         <!--
         a) reduces the input to lower case
         b) removes puncuation
-        c) reduces all diacritics to the appropriate base character 
+        c) reduces all diacritics to the appropriate base character
         -->
 
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.ASCIIFoldingFilterFactory"/>
-        <filter class="solr.EnglishPossessiveFilterFactory"/>       
+        <filter class="solr.EnglishPossessiveFilterFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
-        
+
       </analyzer>
     </fieldType>
-    
+
     <fieldType name="name_idx1" class="solr.TextField" positionIncrementGap="100">
       <analyzer>
         <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/>
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.ASCIIFoldingFilterFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.PhoneticFilterFactory" encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer" inject="false" /> 
+        <filter class="solr.PhoneticFilterFactory" encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer" inject="false" />
          </analyzer>
     </fieldType>
  </types>

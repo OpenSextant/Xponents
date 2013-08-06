@@ -71,7 +71,7 @@ public abstract class MicroMessage {
         return this.body;
     }
 
-    
+
         /** Data attributes */
     public Date pub_date = null;
     public String id = null;

@@ -5,7 +5,7 @@ Core utilities useful for OpenSextant support here.
 
 @author: ubaldino
 
-@module OpenSextantCommonsUtils; 
+@module OpenSextantCommonsUtils;
 '''
 
 version = 'v3'
@@ -16,9 +16,9 @@ import csv
 import re
 from chardet import detect as detect_charset
 
-## ---------------------------------------  
+## ---------------------------------------
 ##  TEXT UTILITIES
-## ---------------------------------------  
+## ---------------------------------------
 ##
 
 
@@ -30,9 +30,9 @@ def guess_encoding(text):
     @return: dict with encoding and confidence
     '''
     if not text: return {'confidence':0, 'encoding':None}
-    
+
     enc = detect_charset(text)
-    
+
     cset = enc['encoding']
     if cset.lower() == 'iso-8859-2':
         ## Anamoly -- chardet things Hungarian (iso-8850-2) is
@@ -53,12 +53,12 @@ def bytes2unicode(buf, encoding=None):
 
     if encoding.lower() == 'utf-8':
         return unicode(buf)
-    else:     
+    else:
         text = buf.decode(encoding)
         return unicode(text)
-    
+
     return None
-    
+
 reSqueezeWhiteSpace = re.compile(r'\s+', re.MULTILINE)
 def squeeze_whitespace(s):
     return reSqueezeWhiteSpace.sub(' ', s).strip()
@@ -69,23 +69,23 @@ def scrub_eol(t):
 BOOL_F_STR = set(["false", "0", "n", "f", "no", "", "null"])
 BOOL_T_STR = set(["true", "1", "y", "t", "yes" ])
 def get_bool(token):
-    
+
     if not token:
         return False
-    
+
     if isinstance(token, bool):
         return token
-    
+
     t=token.lower()
     if t in BOOL_F_STR:
         return False
-    
+
     if t in BOOL_T_STR:
         return True
-    
+
     return False
-    
-    
+
+
 def get_number(token):
     ''' Turn leading part of a string into a number, if possible.
     '''
@@ -101,18 +101,18 @@ def get_number(token):
 
 def has_digit(text):
     '''
-    Used primarily to report places and appears to be critical for 
-    name filtering when doing phonetics. 
+    Used primarily to report places and appears to be critical for
+    name filtering when doing phonetics.
     '''
     if text is None:
         return False
-    
+
     for ch in text:
         # ascii
         if ch.isdigit():
             return True
     return False
- 
+
 def get_text_window(offset, matchlen, textsize, width):
     ''' prepreprepre MATCH postpostpost
        ^            ^   ^            ^
@@ -125,80 +125,80 @@ def get_text_window(offset, matchlen, textsize, width):
     right_y = right_x + width
     if left_x < 0:
         left_x = 0
-        
+
     if left_y < left_x:
         left_y = left_x
-        
+
     # bounds checking  END....y?  then y=END, results in shorter postmatch
     if right_y >= textsize:
         right_y = textsize - 1
     # bounds checking   y.... x?  then x=y,  results in empty postmatch
     if right_x > right_y:
         right_x = right_y
-            
+
     return [ left_x, left_y, right_x, right_y]
 
 
 
 
-## ---------------------------------------  
+## ---------------------------------------
 ##  FILE UTILITIES
-## ---------------------------------------  
+## ---------------------------------------
 ##
 
 def get_csv_writer(fh, columns, delim=','):
     return csv.DictWriter(fh, columns, restval="", extrasaction='raise',
                             dialect='excel', lineterminator='\n',
                             delimiter=delim, quotechar='"',
-                            quoting=csv.QUOTE_ALL, escapechar='\\')                
+                            quoting=csv.QUOTE_ALL, escapechar='\\')
 
 def get_csv_reader(fh, columns, delim=','):
     return csv.DictReader(fh, columns,
                           restval="",  dialect='excel', lineterminator='\n', escapechar='\\',
                           delimiter=delim, quotechar='"', quoting=csv.QUOTE_ALL)
- 
- 
+
+
 # |||||||||||||||||||||||||||||||||||||||||||||
 # |||||||||||||||||||||||||||||||||||||||||||||
 class ConfigUtility:
 # |||||||||||||||||||||||||||||||||||||||||||||
 # |||||||||||||||||||||||||||||||||||||||||||||
     ''' A utility to load parameter lists, CSV files, word lists, etc. from a folder *dir*
-    
-    functions here take an Oxygen cfg parameter keyword or a file path. 
+
+    functions here take an Oxygen cfg parameter keyword or a file path.
     If the keyword is valid and points to a valid file path, then the file path is used.
-    In otherwords, keywords are aliases for a file on disk.  
-    
+    In otherwords, keywords are aliases for a file on disk.
+
       Ex.  'mywords' = '.\cfg\mywords_v03_filtered.txt'
-      
+
       oxygen.cfg file would have this mapping.  Your code just references 'mywords' to load it.
     '''
     def __init__(self, CFG, rootdir='.'):
-        
+
         # If config is None, then caller can still use loadDataFromFile(abspath, delim) for example.
         #
         self.config = CFG
         self.rootdir = rootdir
-        
+
     def loadCSVFile(self, keyword, delim):
         '''
-          Load a named CSV file.  If the name is not a cfg parameter, the keyword name *is* the file.        
+          Load a named CSV file.  If the name is not a cfg parameter, the keyword name *is* the file.
         '''
         f = self.config.get(keyword)
         if f is None:
             f = keyword
-        
+
         path = os.path.join(self.rootdir, f)
         return self.loadDataFromFile(path, delim)
-        
+
     def loadDataFromFile(self, path, delim):
         '''
-          Load columnar data from a file. 
-          Returns array of non-comment rows.        
+          Load columnar data from a file.
+          Returns array of non-comment rows.
         '''
         if not os.path.exists(path):
             raise Exception('File does not exist, FILE=%s' % path)
-        
+
         f = open(path, 'rb')
         filereader = csv.reader(f, delimiter=delim, lineterminator='\n')
         data = []
@@ -206,19 +206,19 @@ class ConfigUtility:
             first_cell = row[0].strip()
             if first_cell.startswith('#'):
                 continue
-            
+
             #if not delim and not first_cell:
             #    continue
-            
+
             data.append(row)
         f.close()
         return data
-    
-    
+
+
     def loadFile(self, keyword):
         '''
         Load a named word list file.
-        If the name is not a cfg parameter, the keyword name *is* the file. 
+        If the name is not a cfg parameter, the keyword name *is* the file.
         '''
         filename = ''
 
@@ -228,22 +228,22 @@ class ConfigUtility:
             filename = self.config.get(keyword)
             if filename is None:
                 filename = keyword
-        
+
             path = os.path.join(self.rootdir, filename)
             if not os.path.exists(path):
                 raise Exception('File does not exist, FILE=%s' % path)
 
         return self.loadListFromFile(path)
-    
-    
+
+
     def loadListFromFile(self, path):
         '''
-          Load text data from a file. 
-          Returns array of non-comment rows. One non-whitespace row per line.        
+          Load text data from a file.
+          Returns array of non-comment rows. One non-whitespace row per line.
         '''
         if not os.path.exists(path):
             raise Exception('File does not exist, FILE=%s' % path)
-        
+
         file = open(path, 'r')
         termlist = []
         for line in file:
@@ -252,10 +252,10 @@ class ConfigUtility:
                 continue
             if len(line) == 0:
                 continue
-            
+
             termlist.append(line.lower())
 
         file.close()
-        return termlist    
+        return termlist
 
 

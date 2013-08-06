@@ -172,16 +172,16 @@ public class GISDataModel {
     }
 
     /**
-     * Builds a GISCore feature array (rows) from a given array of TextMatches;  Enrich 
+     * Builds a GISCore feature array (rows) from a given array of TextMatches;  Enrich
      * the features with record-level attributes (columns)
-     * 
+     *
      * @param id
      * @param g
      * @param m
      * @param rowAttributes
      * @param res
      * @return
-     * @throws ConfigException 
+     * @throws ConfigException
      */
     public List<Feature> buildRows(int id, Geocoding g, TextMatch m, Map<String, Object> rowAttributes,
             ExtractionResult res) throws ConfigException {
