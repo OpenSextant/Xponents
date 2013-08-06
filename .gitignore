@@ -1,5 +1,6 @@
 #Misc:
 .DS_Store
+release
 
 #Maven output
 target/
