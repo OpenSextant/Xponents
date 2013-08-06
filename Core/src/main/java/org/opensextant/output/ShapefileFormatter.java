@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,15 +52,15 @@ public final class ShapefileFormatter extends FolderGISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
-     * @param outFilename 
-     * @throws Exception 
+     * @param outFilename
+     * @throws Exception
      */
     @Override
     protected void createOutputStreams() throws Exception {
 
         File shp = new File(getOutputFilepath());
 
-        checkOverwrite(shp); // cleanly delete first.        
+        checkOverwrite(shp); // cleanly delete first.
         shp.mkdirs();          // now recreate.
 
         _temp = createTempFolder(this.outputType);

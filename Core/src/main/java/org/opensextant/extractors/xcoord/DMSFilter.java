@@ -105,17 +105,17 @@ public class DMSFilter implements MatchFilter {
      */
     @Override
     public boolean stop(GeocoordMatch m) {
-        
+
         // We can pass patterns matching raw text that do not start
         // with numbers.  The date formats filtered here are strictly numeric dates+time
-        // If I see N42-44 or +42-44 etc... for example, then we can exit now. 
+        // If I see N42-44 or +42-44 etc... for example, then we can exit now.
         //
         String _text = m.getText();
         char ch = _text.charAt(0);
         if (!Character.isDigit(ch)){
             return false;
         }
-        
+
         for (DateFormat df : general_dates) {
             try {
                 Date D = df.parse(_text);

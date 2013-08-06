@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ package org.opensextant.processing;
 public class ProcessingException  extends Exception {
 
     protected static final long serialVersionUID = 20001981L;
-    
+
     public ProcessingException(Exception ex) {
         super(ex);
     }
@@ -43,7 +43,7 @@ public class ProcessingException  extends Exception {
     public ProcessingException(String msg) {
         super(msg);
     }
-    
+
     public ProcessingException(String msg, Exception ex) {
         super(msg, ex);
     }

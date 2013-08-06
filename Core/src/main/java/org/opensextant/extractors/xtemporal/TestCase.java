@@ -34,12 +34,12 @@ import java.util.Date;
  * @author ubaldino
  */
 public class TestCase extends PatternTestCase {
-    
+
     /**
      *
      */
     public Date date = null;
-    
+
     /**
      *
      * @param id

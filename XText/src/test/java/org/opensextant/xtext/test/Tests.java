@@ -38,15 +38,15 @@ public class Tests {
 
     @BeforeClass
     public static void createPlayground() throws IOException {
-        
-        // change to a temp directory that is java 1.6 compliant 
+
+        // change to a temp directory that is java 1.6 compliant
         //tempDir = Files.createTempDirectory("xtext_test").toFile();
         File t = File.createTempFile("xtext_text","");
         tempDir = new File(t.getAbsolutePath() + "_d");
         tempDir.mkdir();
         t.delete();
-        
-        
+
+
         doc = new File(tempDir, "Asia_Fdn_Afghanistan_2009.pdf");
         FileUtils.copyInputStreamToFile(Tests.class.getResourceAsStream("/Asia_Fdn_Afghanistan_2009.pdf"), doc);
     }
@@ -126,12 +126,12 @@ public class Tests {
         ConvertedDocument doc = new TikaHTMLConverter(false).convert(buffer);
         log.info("HTML: tile= " + doc.getProperty("title"));
         log.info("HTML: body= " + doc.getText());
-        
+
         File f = new File(Tests.class.getResource("/test.html").toURI());
         doc = new TikaHTMLConverter(true).convert(f);
         log.info("HTML: tile= " + doc.getProperty("title"));
         log.info("HTML: body= " + doc.getText());
-        
+
         doc = new TikaHTMLConverter(false).convert(f);
         log.info("HTML: tile= " + doc.getProperty("title"));
         log.info("HTML: body= " + doc.getText());
@@ -149,5 +149,5 @@ public class Tests {
             ioerr.printStackTrace();
         }
     }
-    
+
 }

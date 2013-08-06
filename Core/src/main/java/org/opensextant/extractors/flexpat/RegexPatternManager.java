@@ -194,7 +194,7 @@ public abstract class RegexPatternManager {
             pat.enabled = true;
         }
     }
-    
+
     private StringBuilder _config_messages = new StringBuilder();
 
     /**
@@ -332,7 +332,7 @@ public abstract class RegexPatternManager {
                 }
             }
 
-            // find and replace the DEFINEd pattern 
+            // find and replace the DEFINEd pattern
             while (elementMatcher.find()) {
                 int elementStart = elementMatcher.start();
                 int elementEnd = elementMatcher.end();
@@ -443,7 +443,7 @@ public abstract class RegexPatternManager {
             long m1 = M.start;
             long m2 = M.end;
 
-            // Compare from 
+            // Compare from
             for (int j = i + 1; j < len; ++j) {
                 TextMatch N = matches.get(j);
 
@@ -472,7 +472,7 @@ public abstract class RegexPatternManager {
                     continue;
                 }
 
-                // N entirely within M 
+                // N entirely within M
                 if (n1 >= m1 && m2 >= n2) {
                     M.is_overlap = true;
                     N.is_submatch = true;

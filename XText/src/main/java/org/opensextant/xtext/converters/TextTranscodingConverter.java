@@ -76,8 +76,8 @@ public class TextTranscodingConverter extends ConverterAdapter {
         // Objective:  mark small plain text payloads with unknown character set
         //             as not worthy of conversion.  Leave them as plain/text
         //             indeed they might even be straight Unicode
-        // 
-        // Test for ASCII only first, otherwise try to detect the best charset for the text 
+        //
+        // Test for ASCII only first, otherwise try to detect the best charset for the text
         //
         textdoc.is_plaintext = true;
 
@@ -105,7 +105,7 @@ public class TextTranscodingConverter extends ConverterAdapter {
     /* Tika-based solution for reading plain text was not working out.
      * it called everything latin-1 even if it was just ascii....
      * no harm really, but also no insight into encoding dection
-     * 
+     *
      import java.io.FileInputStream;
      import java.io.IOException;
      import java.io.InputStream;
@@ -131,7 +131,7 @@ public class TextTranscodingConverter extends ConverterAdapter {
      //Metadata metadata = new Metadata();
      // Body handler does not introduce extra characters as did ToText...
      //
-        
+
      ContentHandler tikasax = new BodyContentHandler(); // new ToTextContentHandler();
      try {
      parser.parse(data, tikasax, metadata, ctx);
@@ -139,7 +139,7 @@ public class TextTranscodingConverter extends ConverterAdapter {
      throw new IOException("Unable to parse content", xerr);
      }
      input.close();
-        
+
 
      ConvertedDocument textdoc = new ConvertedDocument(doc);
 

@@ -49,9 +49,9 @@ import org.slf4j.LoggerFactory;
  *
  * Once you have added Extractors to your XtractorGroup, call
  * XtractorGroup.setup()
- * 
- * Since a single processor of several may throw an exception, while others succeed, 
- * The API does not throw exceptions failing a document completely.   If you 
+ *
+ * Since a single processor of several may throw an exception, while others succeed,
+ * The API does not throw exceptions failing a document completely.   If you
  * need access to exceptions thrown by each processor or formatter, then you would
  * adapt the XtractorGroup here, but re-implementing the internal loops.
  *

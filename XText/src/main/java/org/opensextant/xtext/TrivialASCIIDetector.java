@@ -27,7 +27,7 @@
 package org.opensextant.xtext;
 
 /**
- * For whatever reason it is impossible to determine if a file is purely ASCII 
+ * For whatever reason it is impossible to determine if a file is purely ASCII
  * or not. Both ICU and Tika report pure ascii files as either cp1252 or latin-1s
  * That is not wrong... however I want to know if the file is also pure ASCII.
  *

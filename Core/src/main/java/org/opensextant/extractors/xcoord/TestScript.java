@@ -111,7 +111,7 @@ public class TestScript {
     public void systemTests() {
 
         RegexPatternManager mgr = xcoord.getPatternManager();
-        
+
         log.info("\n\n=== SYSTEM TESTS ===\n\n");
         if (!mgr.testing) {
             log.info("TESTING OFF -- TURN ON DEBUG in LOG4J");
@@ -254,7 +254,7 @@ public class TestScript {
             String _file = coordfile.trim();
             String fname = FilenameUtils.getBaseName(_file);
             TestUtility tester = new TestUtility("./results/xcoord_" + fname + "-rows.csv");
-            // 
+            //
             tester.full_report = false;
 
             CsvMapReader in = open(coordfile);
@@ -297,7 +297,7 @@ public class TestScript {
 
                 // "Patid # rowid" == test instance id
                 // DMS07#12  -- 12th example of DMS07 test.
-                // 
+                //
                 TestCase tst = new TestCase(patid + "#" + linenum, fam, text);
                 tst.match.setLatitude(testRow.get("true_lat"));
                 tst.match.setLongitude(testRow.get("true_lon"));
@@ -355,7 +355,7 @@ public class TestScript {
     protected void focusedTests() {
 
         log.info("=== ADHOC TESTS ===");
-        
+
         log.info("Trying some specific DD tests now:\n=========================");
         xcoord.match_DD(false);
         xcoord.match_DMS(false);
@@ -369,13 +369,13 @@ public class TestScript {
         boolean dms = true;
         boolean dm = false;
         boolean mgrs = false;
-        // 
+        //
         xcoord.match_MGRS(mgrs);
 
         String[] mgrstest = {
             "4 jul 2008",
-            "10 Jan 1994", // edge case, bare minimum.                
-            "10 Jan 13", // edge case, bare minimum.                
+            "10 Jan 1994", // edge case, bare minimum.
+            "10 Jan 13", // edge case, bare minimum.
             "10 Jan 94", // no, this is the real bare minimum.
             "38SMB 461136560",
             "38SMB 461103656",
@@ -403,9 +403,9 @@ public class TestScript {
             "+32.3345:-179.3412", // DD03
             " 32.3345:-179.3412", // DD03
             " 32.3345°;-179.3412°", // DD03
-            "032.3345°;-179.3412°",// DD03  leading 0 on lat; 
+            "032.3345°;-179.3412°",// DD03  leading 0 on lat;
             "N32.3345:W179.3412", // DD01
-            "032.3345°N;-179.3412°W",// DD03  leading 0 on lat; 
+            "032.3345°N;-179.3412°W",// DD03  leading 0 on lat;
             "N32.3345:E179.3412", // DD01
             "32.3345N/179.3412E", // DD02
             "32.33N 179.34E" // DD02

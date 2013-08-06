@@ -258,8 +258,8 @@ public class TextUtils {
          ^            ^   ^            ^
          l-width      l   l+len        l+len+width
          left_y  left_x   right_x      right_y
-        
-         * 
+
+         *
          */
         int left_x = offset - width;
         int left_y = offset - 1;
@@ -299,8 +299,8 @@ public class TextUtils {
      */
     public static int[] get_text_window(int offset, int textsize, int width) {
         /*
-         left  .... match   .... right        
-         * 
+         left  .... match   .... right
+         *
          */
         int half = (width / 2);
         int left = offset - half;
@@ -486,13 +486,13 @@ public class TextUtils {
             return squeeze_whitespace(str);
         }
 
-        // NOT possible, I hope... 
+        // NOT possible, I hope...
         if (s2 <= s1) {
             return "";
         }
 
         // Some cleanup was done on ends of String. Now clear up whitespace.
-        // 
+        //
         return squeeze_whitespace(str.substring(s1, s2 + 1));
     }
 
@@ -565,7 +565,7 @@ public class TextUtils {
         return CLEAN_WORD_PUNCT.matcher(tmp).replaceAll("").trim();
     }
     // Alphabetic list of top-N languages -- ISO-639_1  "ISO2" language codes
-    // 
+    //
     public final static String arabicLang = "ar";
     public final static String bahasaLang = "id";
     public final static String chineseLang = "zh";

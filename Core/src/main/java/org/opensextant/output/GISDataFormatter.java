@@ -224,7 +224,6 @@ public abstract class GISDataFormatter extends AbstractFormatter {
      */
     @Override
     public void removeField(String fld) throws ConfigException {
-
         gisDataModel.removeField(fld);
     }
 }

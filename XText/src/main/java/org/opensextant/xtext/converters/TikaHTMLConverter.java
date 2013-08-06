@@ -106,7 +106,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
         }
 
         // Indicate if we tried to filter the article at all.
-        // 
+        //
         textdoc.addProperty("filtered", scrub_article);
         textdoc.addProperty("converter", TikaHTMLConverter.class.getName());
 

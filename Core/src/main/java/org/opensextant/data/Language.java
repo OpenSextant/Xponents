@@ -46,16 +46,16 @@ public class Language {
         return this.name;
     }
 
-    /** Returns ISO 639-2 3-char code 
+    /** Returns ISO 639-2 3-char code
      */
     public String getCode() {
         return this.iso3;
     }
-    
+
     public String getISO639_1_Code(){
         return this.iso2;
     }
-    
+
     @Override
     public String toString(){
         return getName();

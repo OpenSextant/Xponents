@@ -16,7 +16,7 @@
  ** **************************************************
  * NOTICE
  *
- *  
+ *
  * This software was produced for the U. S. Government
  * under Contract No. W15P7T-12-C-F600, and is
  * subject to the Rights in Noncommercial Computer Software
@@ -51,15 +51,15 @@ public class TelephoneNumber extends PoliMatch {
         this(m);
         this.match_groups = elements;
     }
-     
+
     public void normalize() {
         super.normalize();
-        
+
         String area = match_groups.get("tel_area");
         String nmbr = match_groups.get("tel_num");
         StringBuilder _buf = new StringBuilder();
         if (area != null) {
-        	area = TextUtils.fast_remove(area, "()");
+            area = TextUtils.fast_remove(area, "()");
             _buf.append(area);
             _buf.append("-");
         }
@@ -67,6 +67,6 @@ public class TelephoneNumber extends PoliMatch {
 
         this.textnorm = _buf.toString().replace(".", "-");
     }
-    
-    
+
+
 }

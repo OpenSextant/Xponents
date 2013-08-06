@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,8 +52,8 @@ public final class KMLFormatter extends GISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
-     * @param outFilename 
-     * @throws Exception 
+     * @param outFilename
+     * @throws Exception
      */
     @Override
     protected void createOutputStreams() throws Exception {
@@ -61,7 +61,7 @@ public final class KMLFormatter extends GISDataFormatter {
         File kml = new File(getOutputFilepath());
 
         checkOverwrite(kml);
-        
+
         FileOutputStream fos = new FileOutputStream(kml);
         this.os = GISFactory.getOutputStream(DocumentType.KMZ, fos);
     }

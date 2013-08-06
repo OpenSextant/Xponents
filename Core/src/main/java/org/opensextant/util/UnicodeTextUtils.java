@@ -20,18 +20,18 @@ import java.util.regex.Pattern;
 /**
  * In working with some Unicode texts we found that certain character blocks had
  * very different behavior when processed by some IO libraries, namely opensextant's GISCore GDB library
- * which has a JNI binding.  Just the same, it is helpful to be able to scrub text down to 
+ * which has a JNI binding.  Just the same, it is helpful to be able to scrub text down to
  * plain text with fewer symbols for certain use cases.
- * 
- * 
- * 
+ *
+ *
+ *
  * Java7 required here.
- * 
+ *
  * @author ubaldino
  */
 public class UnicodeTextUtils {
-    
-    
+
+
     // UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS;
     private final static Pattern scrub_symbols = Pattern.compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
     private final static Pattern scrub_symbols2 = Pattern.compile("\\p{block=Transport and Map Symbols}+");
@@ -69,5 +69,5 @@ public class UnicodeTextUtils {
         _new = scrub_symbols_cards.matcher(_new).replaceAll("{card}");
 
         return _new;
-    }    
+    }
 }

@@ -103,14 +103,14 @@ public final class XText implements iFilter, iConvert {
     public void enableOverwrite(boolean b){
         ConvertedDocument.overwrite = b;
     }
-    
+
     public void setArchiveDir( String root) {
         archiveRoot = root;
     }
     public void setTempDir( String tmp) {
         tempRoot = tmp;
     }
-    
+
     /** Use Tika HTML de-crapifier.
      * Default: No scrubbing.
      */
@@ -341,8 +341,8 @@ public final class XText implements iFilter, iConvert {
      *
      */
     public ConvertedDocument convertFile(File input) throws IOException {
-        // 
-        // 
+        //
+        //
         if (ConvertedDocument.DEFAULT_EMBED_FOLDER.equals(input.getParentFile().getName())) {
             return null;
         }
@@ -496,7 +496,7 @@ public final class XText implements iFilter, iConvert {
         defaults();
 
         // Invoke converter instances only as requested types suggest.
-        // If caller has removed file types from the list, then 
+        // If caller has removed file types from the list, then
         String mimetype = "pdf";
         if (requested_types.contains(mimetype)) {
             converters.put(mimetype, new PDFConverter());
@@ -523,7 +523,7 @@ public final class XText implements iFilter, iConvert {
 
         //mimetype = "html";
         // ALWAYS ignore our own text conversions or those of others.
-        // 
+        //
         for (String t : requested_types) {
             ignoreFileType(t + ".txt");
         }
@@ -587,7 +587,7 @@ public final class XText implements iFilter, iConvert {
             System.exit(1);
         }
         // Setting LANG=en_US in your shell.
-        // 
+        //
         // System.setProperty("LANG", "en_US");
         XText xt = new XText();
         xt.enableSaving(true);

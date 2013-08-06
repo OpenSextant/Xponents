@@ -95,13 +95,13 @@ public class MGRSParser {
         }
 
         //---------------------------------------|
-        // 
+        //
         // MGRS precision is 1m.  Quad is 100,000m sq so resolution is 5 digits + 5 digits with optional whitespace
         // 99999n 99999e  -- in MGRS we never see "m" units or N/E denoted explicitly
         // Occassionally, newlines or whitespace are interspersed in offset
         // minimal:
         // dd
-        // ddddd ddddd  with an additional one or two white spaces.   The offsets start and end with numbers. Only whitespace between is optional. 
+        // ddddd ddddd  with an additional one or two white spaces.   The offsets start and end with numbers. Only whitespace between is optional.
         // ddddd dddddd  additional digit in Easting  -- trailing 6th digit is a typo; trim off
         // dddddd ddddd  additional digit in Northing -- trailing 6th digit is a typo; trim off
         // ddddddddddd   Typo introduces ambiguity -- only correct thing is to split on halfway point +/- 1 digit and emit two answers
@@ -113,18 +113,18 @@ public class MGRSParser {
         if (!odd_len) {
             //----------------------------
             // Completely normal MGRS with even number of digits.
-            // 
+            //
             // By this point you should have passed in normalized coordinate text - no whitespace
             //----------------------------
-            // 
+            //
             return new MGRS[]{new MGRS(text)};
         } else {
             //----------------------------
             // Slightly obscure case that is possibly a typo or Easting/Northing disturbed.
-            // 
+            //
             // The following logic for parsing is predominantly related to managing typos and rare cases.
             // < 5% of the instances seen fall into this category.
-            // 
+            //
             //----------------------------
 
             int space_count = TextUtils.count_ws(ne);
@@ -136,7 +136,7 @@ public class MGRSParser {
             if (space_count == 0) {
                 nenorm = ne;
 
-                // ddddddddd   odd number of digits, no spaces.  
+                // ddddddddd   odd number of digits, no spaces.
                 // answer 1:  dddd ddddd  ==> N=dddd0
                 // answer 2:  ddddd dddd  ==> E=dddd0
                 int midpoint = (nenorm.length() / 2);
@@ -180,7 +180,7 @@ public class MGRSParser {
                 mgrs1.insert(0, gzd);
 
                 // Just one answer:
-                
+
                 return new MGRS[]{new MGRS(TextUtils.delete_whitespace(mgrs1.toString()))};
             }
 
@@ -196,18 +196,18 @@ public class MGRSParser {
             }
 
 
-            // Given 
+            // Given
             //   ddd dd d
-            //   ddddd ddd dd  
-            //   etc. 
+            //   ddddd ddd dd
+            //   etc.
             //   You have a bunch of MGRS digits broken up by whitespace.
             //   This is really obscure case where formatting or content conversion
             //      or word processing interferred with the MGRS text.
-            //   
+            //
             //  This is < 0.1% of the cases
-            // 
+            //
             nenorm = TextUtils.delete_whitespace(ne);
-            // ddddddddd   odd number of digits, no spaces.  
+            // ddddddddd   odd number of digits, no spaces.
             // answer 1:  dddd ddddd  ==> N=dddd0
             // answer 2:  ddddd dddd  ==> E=dddd0
             midpoint = (nenorm.length() / 2);

@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,8 +55,8 @@ public final class CSVFormatter extends GISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
-     * @param outFilename 
-     * @throws Exception 
+     * @param outFilename
+     * @throws Exception
      */
     @Override
     protected void createOutputStreams() throws Exception {
@@ -64,7 +64,7 @@ public final class CSVFormatter extends GISDataFormatter {
         File csv = new File(getOutputFilepath());
 
         checkOverwrite(csv);
-        
+
         FileOutputStream fos = new FileOutputStream(csv);
         this.os = GISFactory.getOutputStream(DocumentType.CSV, fos);
     }

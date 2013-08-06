@@ -33,7 +33,7 @@ import java.util.List;
  * This result class holds all the results for a given text block.
  * Important:  When iterating over your results, matches, you should @see GeocoordMatch.is_submatch
  * to see if a match is part of another match.
- * 
+ *
  * @author ubaldino
  */
 public class TextMatchResult {
@@ -64,7 +64,7 @@ public class TextMatchResult {
      */
     public TextMatchResult() {
     }
-    
+
     private StringBuilder _msg_trace = new StringBuilder();
 
     /**

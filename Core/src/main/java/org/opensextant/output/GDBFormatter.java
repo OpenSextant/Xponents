@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,8 +54,8 @@ public class GDBFormatter extends FolderGISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
-     * @param outFilename 
-     * @throws Exception 
+     * @param outFilename
+     * @throws Exception
      */
     @Override
     protected void createOutputStreams() throws Exception {

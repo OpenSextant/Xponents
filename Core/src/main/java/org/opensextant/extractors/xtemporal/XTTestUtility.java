@@ -56,7 +56,7 @@ public class XTTestUtility {
     }
     protected final static String[] header = {"RESULT_ID", "STATUS",
         "Message", "PATTERN", "MATCHTEXT", "DATETEXT", "DATE", "RESOLUTION", "OFFSET"};
-    
+
     protected static final CellProcessor[] xtempResultsSpec = new CellProcessor[]{
         // Given test data is required:
         new NotNull(), new NotNull(), new NotNull(),

@@ -59,24 +59,24 @@ public class GeoBase implements LatLon {
 
     /**
      * Creates an empty GeoBase location object
-     * @param pk 
-     * @param n 
+     * @param pk
+     * @param n
      */
     public GeoBase(){
     }
-    
+
     /**
      * Creates a new instance of GeoBase
-     * @param pk 
-     * @param n 
+     * @param pk
+     * @param n
      */
     public GeoBase(String pk, String n) {
         this.key = pk;
         this.name = n;
     }
 
-    /** Generic ID  
-     * @return 
+    /** Generic ID
+     * @return
      */
     public String getKey() {
         return key;
@@ -91,14 +91,14 @@ public class GeoBase implements LatLon {
     }
 
     /** Bean support
-     * @param N 
+     * @param N
      */
     public final void setName(String N) {
         name = N;
     }
 
     /** Generic Name
-     * @return 
+     * @return
      */
     public String getName() {
         return name;
@@ -106,13 +106,13 @@ public class GeoBase implements LatLon {
 
     /** Generic label -- anything more sophisticated needs attention
      * E.g. to use Key + Name or just Key for a label would be very specific
-     * @return 
+     * @return
      */
     @Override
     public String toString() {
         return getName();
     }
-    
+
     // canonical form is decimal degree
     protected double latitude;
     protected double longitude;
@@ -133,7 +133,7 @@ public class GeoBase implements LatLon {
         this.latitude = latitude;
     }
 
-    /** 
+    /**
      * @return lon in degrees
      */
     @Override
@@ -148,12 +148,12 @@ public class GeoBase implements LatLon {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-    
+
     private String geohash;
 
     /** Set and get Geohash -- this is delegated to caller
      *  as core processing need not have a geohash generated when lat/lon is set.
-     * @param gh 
+     * @param gh
      */
     public void setGeohash(String gh) {
         geohash = gh;
@@ -166,8 +166,8 @@ public class GeoBase implements LatLon {
     public String getGeohash() {
         return geohash;
     }
-    
-    /** Convenience method 
+
+    /** Convenience method
      */
     public void setLatLon(LatLon geo){
         this.latitude = geo.getLatitude();

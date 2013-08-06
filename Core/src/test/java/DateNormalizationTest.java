@@ -44,7 +44,7 @@ public class DateNormalizationTest {
         timeFinder = new XTemporal(true);
         timeFinder.configure();
     }
-    
+
     /**
      * Note that this may report false negatives if the JVM's default time
      * zone is UTC.
@@ -58,7 +58,7 @@ public class DateNormalizationTest {
         final TextMatchResult result2 = timeFinder.extract_dates("Oct 2007", "dummy");
         System.err.println("2 " + result1.matches.toString());
         assertEquals(1, result2.matches.size());
-        
+
         DateMatch dt = (DateMatch) result2.matches.get(0);
         long noon = (12*3600*1000);
         assertEquals(1191196800000L+noon, dt.datenorm.getTime());

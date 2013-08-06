@@ -46,11 +46,11 @@ public class GeocoordPrecision {
     //public int precision_dec_digits = 0;
     public int digits = 0;
 
-    /** Augment number of digits in precision -- choose the maximum amount 
-     * 
+    /** Augment number of digits in precision -- choose the maximum amount
+     *
      * if in coord (a,b) if a has more digits of precision than b, use a's precision.
      * This is really only a matter of typos, where typist may have added 4 digits instead of 5, for example.
-     * @param d 
+     * @param d
      */
     public void setDigits(int d) {
         if (d > digits) {

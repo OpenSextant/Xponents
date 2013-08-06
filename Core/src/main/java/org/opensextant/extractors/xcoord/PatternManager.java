@@ -24,7 +24,7 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  *
- * 
+ *
  * @author dlutz, MITRE  creator  (lutzdavp)
  * @author ubaldino, MITRE adaptor
  * @author swainza
@@ -67,8 +67,8 @@ import org.slf4j.LoggerFactory;
  *
  * <pre>
  * // Parts of a decimal degree Latitude/Longitude
- * #DEFINE	decDegLat	\d?\d\.\d{1,20}
- * #DEFINE	decDegLon	[0-1]?\d?\d\.\d{1,20}
+ * #DEFINE  decDegLat   \d?\d\.\d{1,20}
+ * #DEFINE  decDegLon   [0-1]?\d?\d\.\d{1,20}
  *
  * // TARGET: DD-xx, Decimal Deg, Preceding Hemisphere (a) H DD.DDDDDD° HDDD.DDDDDD°, optional deg symbol
  * #RULE   DD      01      &lt;hemiLatPre>\s?&lt;decDegLat>&lt;degSym>?\s*&lt;latlonSep>?\s*&lt;hemiLonPre>\s?&lt;decDegLon>&lt;degSym>?
@@ -128,7 +128,7 @@ public final class PatternManager extends RegexPatternManager {
 
     /**
      *
-     * @param cce_fam 
+     * @param cce_fam
      * @param enabled
      */
     public void enable_CCE_family(int cce_fam, boolean enabled) {
@@ -139,7 +139,7 @@ public final class PatternManager extends RegexPatternManager {
             for (RegexPattern repat : patterns_list) {
 
                 GeocoordPattern pat = (GeocoordPattern) repat;
-                // This seems like overkill, but just changing the states of 
+                // This seems like overkill, but just changing the states of
                 // patterns for the specified group of patterns.
                 if (pat.cce_family_id == cce_fam) {
                     enable_pattern(pat);
@@ -211,9 +211,9 @@ public final class PatternManager extends RegexPatternManager {
     private final boolean DMLON = false;
 
     /**
-     * The match object is normalized, setting the coord_text and other data from 
+     * The match object is normalized, setting the coord_text and other data from
      * parsing "text" and knowing which pattern family was matched.
-     * 
+     *
      * @param m
      * @param groups
      * @return void
@@ -226,7 +226,7 @@ public final class PatternManager extends RegexPatternManager {
         //         align with matcher.group(N)
         //    value = matcher.group(N)
         //    name  = m.regex_groups.itemAt(N)
-        // 
+        //
         if (m.cce_family_id == XConstants.DD_PATTERN) {
             // get lat text
             //     lon text  -- remove whitespace from both
@@ -245,7 +245,7 @@ public final class PatternManager extends RegexPatternManager {
             //m.setLongitude(groups.get("decDegLon"), lon_hemi);
             // Yield a cooridnate-only version of text; "+42.4440 -102.3333"
             // preserving the innate precision given in the original text.
-            // 
+            //
 
             m.lat_text = ddlat.text;
             m.lon_text = ddlon.text;
@@ -253,7 +253,7 @@ public final class PatternManager extends RegexPatternManager {
 
             /**
              *  DD filters enabled.
-             *     Disable:   
+             *     Disable:
              *        XCoord.RUNTIME_FLAGS XOR XConstants.DD_FILTERS_ON
              */
             if ((XCoord.RUNTIME_FLAGS & XConstants.DD_FILTERS_ON) > 0) {
@@ -277,7 +277,7 @@ public final class PatternManager extends RegexPatternManager {
             //     lon text  -- remove whitespace from both
             // coord_text = lat + ' ' + lon
             // set lat, lon
-            // 
+            //
             DMSOrdinate dmlat = new DMSOrdinate(
                     groups, DMLAT, m.getText());
 
@@ -292,7 +292,7 @@ public final class PatternManager extends RegexPatternManager {
 
         } else if (m.cce_family_id == XConstants.DMS_PATTERN) {
             // remove whitespace
-            // set lat, lon            
+            // set lat, lon
             //
             DMSOrdinate dmlat = new DMSOrdinate(
                     groups, DMLAT, m.getText());
@@ -318,7 +318,7 @@ public final class PatternManager extends RegexPatternManager {
 
                 // Hopefully 1 candidate, but maybe 2 are found.
                 // 1 is normal.  2 arise from having odd-digit offsets in NorthingEasting
-                // 
+                //
                 if (mgrs_candidates != null) {
                     MGRS mgrs = mgrs_candidates[0];
 
@@ -387,7 +387,7 @@ public final class PatternManager extends RegexPatternManager {
         }
 
         // At this point the XY = (0,0).  This does not sound useful.
-        // 
+        //
         if (m.isZero()) {
             return true;
         }
@@ -429,14 +429,14 @@ public final class PatternManager extends RegexPatternManager {
             //m.precision.precision = PrecisionScales.DM_precision(m.lat_text);
             PrecisionScales.setDMSPrecision(m);
         } else if (m.cce_family_id == XConstants.DMS_PATTERN) {
-            // Precision is based on # of digits in LAT text, e.g., ##:##:## = Deg/Min/Sec 
+            // Precision is based on # of digits in LAT text, e.g., ##:##:## = Deg/Min/Sec
             //m.precision.precision = PrecisionScales.DM_precision(m.lat_text);
             PrecisionScales.setDMSPrecision(m);
         } else if (m.cce_family_id == XConstants.MGRS_PATTERN) {
-            // Precision is based on # of digits in northing or easting text, e.g., ZZZQD NNNN EEEE = 100m precision 
+            // Precision is based on # of digits in northing or easting text, e.g., ZZZQD NNNN EEEE = 100m precision
             PrecisionScales.setMGRSPrecision(m);
         } else if (m.cce_family_id == XConstants.UTM_PATTERN) {
-            // Precision is based on # of digits in northing or easting text;  
+            // Precision is based on # of digits in northing or easting text;
             PrecisionScales.setUTMPrecision(m);
         } else {
             m.precision.precision = PrecisionScales.DEFAULT_UNKNOWN_RESOLUTION;

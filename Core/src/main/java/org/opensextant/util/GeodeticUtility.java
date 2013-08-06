@@ -21,9 +21,9 @@ import org.opensextant.data.GeoBase;
 
 /**
  * A collection of geodetic routines used within OpenSextant.
- * This is a light wrapper around the most common routines - a full API exists 
+ * This is a light wrapper around the most common routines - a full API exists
  * in other APIs such as GISCore, Geodesy, or Spatial4J
- * 
+ *
  * @author ubaldino
  */
 public class GeodeticUtility {
@@ -59,8 +59,8 @@ public class GeodeticUtility {
         }
         return true;
     }
-    
-    
+
+
     /**
      * This returns distance in degrees, e.g., this is a Cartesian distance.
      * Only to be used for fast comparison of two locations relatively close
@@ -89,7 +89,7 @@ public class GeodeticUtility {
         return Math.sqrt(Math.pow((lat1 - lat2), 2)
                 + Math.pow((lon1 - lon2), 2));
     }
-    
+
     /**
      * Precision -- this is a first draft attempt at assigning some error bars
      * to geocoding results.
@@ -108,7 +108,7 @@ public class GeodeticUtility {
     public final static Map<String, Integer> FEATURE_GEOHASH_PRECISION = new HashMap<String, Integer>();
     public final static int DEFAULT_PRECISION = 50000; // +/- 50KM
     public final static int DEFAULT_GEOHASH_PRECISION = 5;
-    
+
     static {
         FEATURE_PRECISION.put("P", 5000);
         FEATURE_PRECISION.put("A", DEFAULT_PRECISION);
@@ -183,5 +183,5 @@ public class GeodeticUtility {
         }
 
         return DEFAULT_GEOHASH_PRECISION;
-    }        
+    }
 }

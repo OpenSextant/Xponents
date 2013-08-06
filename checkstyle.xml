@@ -118,14 +118,15 @@
   <module name="TreeWalker">
     <property name="tabWidth" value="${checkstyle.indentChars}" default="2"/>
 
-    <module name="Indentation">
-      <property name="severity" value="warning"/>
-      <property name="basicOffset" value="${checkstyle.indentChars}" default="2"/>
-      <property name="caseIndent" value="${checkstyle.indentChars}" default="2"/>
-      <!-- https://sourceforge.net/p/checkstyle/patches/226/
-          and https://github.com/maikelsteneker/checkstyle-throwsIndent -->
-      <!--<property name="throwsIndent" value="${checkstyle.indentCharsThrows}" default="4"/>-->
-    </module>
+    <!-- Commented because a little too noisy; ideally there would be a throwsIndent option -->
+    <!--<module name="Indentation">-->
+      <!--<property name="severity" value="warning"/>-->
+      <!--<property name="basicOffset" value="${checkstyle.indentChars}" default="2"/>-->
+      <!--<property name="caseIndent" value="${checkstyle.indentChars}" default="2"/>-->
+      <!--&lt;!&ndash; https://sourceforge.net/p/checkstyle/patches/226/-->
+          <!--and https://github.com/maikelsteneker/checkstyle-throwsIndent &ndash;&gt;-->
+      <!--&lt;!&ndash;<property name="throwsIndent" value="${checkstyle.indentCharsThrows}" default="4"/>&ndash;&gt;-->
+    <!--</module>-->
 
     <!-- http://checkstyle.sourceforge.net/config_annotation.html -->
     <module name="MissingOverride"/>

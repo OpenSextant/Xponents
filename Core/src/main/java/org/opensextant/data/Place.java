@@ -47,6 +47,7 @@ import org.opensextant.util.GeodeticUtility;
 /**
  *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author David P. Lutz, MITRE <dlutz at mitre dot org>
  */
 public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, Serializable*/ {
 

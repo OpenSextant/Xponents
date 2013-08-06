@@ -78,19 +78,19 @@ public class DateNormalization {
         return fmt_ydm.print(d.getTime());
     }
 
-    /* 
-     *  
+    /*
+     *
      * #DEFINE MON_ABBREV  JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEPT?|OCT|NOV|DEC
-    
+
      #DEFINE MON_NAME   [A-Z]{3}\w{0,8}
-    
+
      #DEFINE YEAR         [12]\d{3}
      #DEFINE YY           \d\d
      #DEFINE YEARYY       \d{2,4}
-     #DEFINE MM           [01]\d 
+     #DEFINE MM           [01]\d
      #DEFINE DD           [0-3]\d
      #DEFINE SHORT_TZ     [A-Z]
-    
+
      #DEFINE hh    [0-2]\d
      #DEFINE mm    [0-5]\d
      #DEFINE DOM         [0-3]?\d
@@ -100,7 +100,7 @@ public class DateNormalization {
     /**
      * For now this reports only DATE and standard TIME fields. Timezone is
      * still TODO.
-     * 
+     *
      * TODO: throw NormalizationException
      *
      * @param elements
@@ -147,16 +147,16 @@ public class DateNormalization {
         }
 
         // Normalize Time fields found, H, M, s.SSS, etc.
-        // 
+        //
         _cal = _cal.withDayOfMonth(dom);
 
         // For normal M/D/Y patterns, set the default time to noon, UTC
         // Overall, we want to ensure that the general yyyy-mm-dd form is not impacted
         // by time zone and default hour of 00:00;  -- this generally would yield a date format a day early for ALL US timezones.
-        // 
+        //
         // Time res:  the presence of a field, hh, mm, or ss means the pattern has that level of resolution.
         // So even if time is 00:00:00Z  -- all zeroes -- the resolution is still SECONDS.
-        // 
+        //
         int hour = normalize_time(elements, "hh");
         if (hour >= 0) {
             // Only if HH:MM... is present do we try to detect TZ.
@@ -165,7 +165,7 @@ public class DateNormalization {
             if (tz != null) {
                 _cal = _cal.withZone(tz);
             }
-            
+
             // NON-zero hour.
             dt.resolution = DateMatch.TimeResolution.HOUR;
             int min = normalize_time(elements, "mm");
@@ -242,7 +242,7 @@ public class DateNormalization {
             if (val < 60) {
                 return val;
             }
-        } else { 
+        } else {
             // Unknown field;
             return val;
         }
@@ -258,14 +258,14 @@ public class DateNormalization {
     public static int normalize_year(java.util.Map<String, String> elements) {
 
         // YEAR   yyyy
-        // YY       yy 
-        // YEARYY   yy or yyyy  
+        // YY       yy
+        // YEARYY   yy or yyyy
         String _YEAR = elements.get("YEAR");
         boolean _is_4digit = false;
         boolean _is_year = false;
 
         if (_YEAR != null) {
-            //year = yy;            
+            //year = yy;
             return getIntValue(_YEAR);
         }
 
@@ -275,7 +275,7 @@ public class DateNormalization {
         String _YEARYY = elements.get("YEARYY");
         if (_YY != null) {
             year = getIntValue(_YY);
-            // NOTE: because we matched a YY field, this should ideally be in 
+            // NOTE: because we matched a YY field, this should ideally be in
             //    an explicity format.
             _is_year = true;
         } else if (_YEARYY != null) {
@@ -307,7 +307,7 @@ public class DateNormalization {
             // TEST:  '12, '13, ... '15 == yield 2012, 2013, 2015 etc.
             //   limit is deteremined by current year + fuzzy limit.
             // is '18 2018 or 1918? What is your YY limit?
-            // 
+            //
             year += MILLENIUM;
         } else if (year <= 99 && _is_year) {
             // Okay we got something beyond the threshold but is previous century likely
@@ -319,7 +319,7 @@ public class DateNormalization {
             // Okay its NOT a year
             //      its NOT a month
             // so "44" => 1944 is best guess.  not 1844, not 0044...
-            // 
+            //
             year += 1990;
         } else if (!_is_year) {
             // Given two digit year that is possible day of month,... ignore!
@@ -389,7 +389,7 @@ public class DateNormalization {
 
         // TODO: Standardize on month trigraph, e.g. ,DEC can get DECEMBER or DECIEMBRE
         // False positivies:  "market 19" is not "mar 19" or "march 19"
-        // 
+        //
         DateTime mon = fmt_month.parseDateTime(text /*.substring(0, 3)*/);
         return mon.getMonthOfYear();
     }

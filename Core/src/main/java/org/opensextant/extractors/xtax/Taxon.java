@@ -40,7 +40,7 @@ public class Taxon {
 
     /**  Catalog, for example "fruit" */
     public String catalog = null;
-    
+
     /** Node name: citrus.tropical */
     public String name = null;
     /** Nod OID:  1.2.3  */
@@ -79,17 +79,17 @@ public class Taxon {
         if (tlist==null){
             return;
         }
-        
+
         for (Object o : tlist){
             addTag((String)o);
         }
     }
-    
+
     public void addTag(String t) {
         if (t==null){
             return;
         }
-        
+
         if (tagset == null) {
             tagset = new HashSet<String>();
         }

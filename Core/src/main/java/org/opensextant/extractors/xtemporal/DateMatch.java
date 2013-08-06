@@ -65,8 +65,8 @@ public class DateMatch extends TextMatch {
             code = c;
         }
     };
-    // Enum representing YEAR, MON, WEEK, DAY, HR, MIN  
-    // 
+    // Enum representing YEAR, MON, WEEK, DAY, HR, MIN
+    //
     public TimeResolution resolution = TimeResolution.NONE;
 
     /* public String toString() {

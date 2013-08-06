@@ -1,0 +1,51 @@
+# See https://help.github.com/articles/dealing-with-line-endings
+
+# Set default behavior, in case users don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files we want to always be normalized and converted 
+# to native line endings on checkout.
+*.java text
+*.py text
+*.groovy text
+
+*.csv text
+*.txt text
+*.xml text
+*.htm text
+*.html text
+*.properties text
+*.md text
+*.kml text
+*.pom text
+
+# Windows CRLF line endings on checkout.
+*.sln text eol=crlf
+*.bat text eol=bat
+
+# Unix LF line endings on checkout.
+*.sh text eol=lf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.gif binary
+*.tif binary
+*.jpg binary
+
+*.zip binary
+*.tar binary
+*.tgz binary
+
+*.pdf binary
+*.dll binary
+*.exe binary
+*.dbf binary
+*.shp binary
+
+*.rtf binary
+*.xls binary
+*.xlsx binary
+*.doc binary
+*.docx binary
+*.ppt binary
+*.pptx binary

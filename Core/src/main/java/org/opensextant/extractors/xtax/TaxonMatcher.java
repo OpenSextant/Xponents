@@ -83,7 +83,7 @@ public class TaxonMatcher implements Extractor {
         // this is not thread safe and is not static:
 
         // Pre-loading the Solr FST
-        // 
+        //
         try {
             extract(new TextInput("trivial priming of the solr pump", "__initialization___"));
         } catch (ExtractionException initErr) {
@@ -276,9 +276,9 @@ public class TaxonMatcher implements Extractor {
                 m.addTaxon(labelMap.get(solrId));
             }
 
-            // If the match has valid taxons add the match to the 
+            // If the match has valid taxons add the match to the
             // accumulator for this document.
-            // 
+            //
             if (m.hasTaxons()) {
                 matches.add(m);
             }
@@ -334,7 +334,7 @@ public class TaxonMatcher implements Extractor {
             // Invalid filter
             System.out.println("Testing invalid catalog");
             taxtag.addCatalogFilter("Boo");
-            //taxtag.reset();            
+            //taxtag.reset();
             taxtag.testDoc(doc);
 
             // Invalid filter + valid filter.

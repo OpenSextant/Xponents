@@ -11,26 +11,26 @@ package org.opensextant.data;
  * @author ubaldino
  */
 public class PlaceName {
-    
+
     /** A phonetic representation of name */
     public String name = null;
-    
-    /** Useful to have done, however lower case vs. IC4U normalization 
+
+    /** Useful to have done, however lower case vs. IC4U normalization
      *  is the question -- TODO: "namenorm" should be some language, script-dependent
      *  version of the name, normalized
      */
-    public String namenorm = null;    
+    public String namenorm = null;
     /**
      *
      */
     public int namelen = 0;
-    
+
     /** Optional slot for you to populate -- language dependent */
     public int ngram_count = 0;
-    
+
     /** A phonetic representation of name -- algorithm dependent*/
     public String phoneme = null;
-    
+
     /**
      *
      * @param nm
@@ -40,10 +40,10 @@ public class PlaceName {
         namelen = name.length();
         namenorm = name.toLowerCase();
     }
-    
+
     // script
     // language
-    
+
     /**
      *
      * @param n
@@ -52,5 +52,5 @@ public class PlaceName {
     public static String normalizeName(String n){
         return n.trim();
     }
-    
+
 }

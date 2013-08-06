@@ -62,7 +62,7 @@ public class PatternManager extends RegexPatternManager {
     public PatternManager(String _patternfile) throws MalformedURLException {
         super(_patternfile);
     }
-    
+
     /**
      *
      * @param _patternfile
@@ -120,8 +120,8 @@ public class PatternManager extends RegexPatternManager {
         return new org.opensextant.extractors.xtemporal.TestCase(id, fam, text);
     }
 
-    /** enable an instance of a pattern based on the global settings. 
-     * @param repat 
+    /** enable an instance of a pattern based on the global settings.
+     * @param repat
      */
     @Override
     public void enable_pattern(RegexPattern repat) {
@@ -149,7 +149,7 @@ public class PatternManager extends RegexPatternManager {
         for (RegexPattern repat : patterns.values()) {
 
             DateTimePattern pat = (DateTimePattern) repat;
-            // This seems like overkill, but just changing the states of 
+            // This seems like overkill, but just changing the states of
             // patterns for the specified group of patterns.
             if (pat.family_id == fam) {
                 enable_pattern(pat);

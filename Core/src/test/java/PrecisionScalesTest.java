@@ -22,7 +22,7 @@ import java.text.DecimalFormat;
  * @author jgibson
  */
 public class PrecisionScalesTest {
-    
+
     @Test
     public void precisionScalesFormattingComparison() {
         float[] data = {

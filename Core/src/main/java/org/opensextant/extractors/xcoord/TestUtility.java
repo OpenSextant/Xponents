@@ -52,7 +52,7 @@ public class TestUtility {
     public boolean full_report = true;
     /**
      * Coordinate Test Report Format
-     * 
+     *
      * important: status = PASS, FAIL, IGNORE
      */
     public static String[] header = {
@@ -62,7 +62,7 @@ public class TestUtility {
         "result_id", "status", "message", "family", "pattern",
         "matchtext", "lat", "lon", "mgrs", "precision", "offset"};
 
-    protected static Map<String,Object> getEmptyRow() { 
+    protected static Map<String,Object> getEmptyRow() {
         Map<String,Object> blank = new HashMap<String,Object>();
         blank.put(header[0], "");
         blank.put(header[1], "");
@@ -72,7 +72,7 @@ public class TestUtility {
         blank.put(header[5], "");
         return blank;
     }
-    
+
     protected static final CellProcessor[] xcoordResultsSpec = new CellProcessor[]{
         // Given test data is required:
         new NotNull(),
@@ -81,9 +81,9 @@ public class TestUtility {
         new NotNull(),
         new NotNull(),
         new NotNull(),
-            
+
         // test results fields -- if result exists
-        // 
+        //
         new Optional(),
         new Optional(),
         new Optional(),
@@ -99,7 +99,7 @@ public class TestUtility {
         new Optional()
 
     };
-        
+
     /**
      *
      * @param file
@@ -122,7 +122,7 @@ public class TestUtility {
         FileUtility.makeDirectory(new File(file).getParentFile());
         OutputStreamWriter iowriter = FileUtility.getOutputStream(file, "UTF-8");
         CsvMapWriter R = new CsvMapWriter(iowriter, CsvPreference.STANDARD_PREFERENCE);
-        
+
         return R;
     }
 
@@ -160,7 +160,7 @@ public class TestUtility {
         row.put(header[3], t.match.lat_text);
         row.put(header[4], t.match.lon_text);
         row.put(header[5], t.text);
-        
+
         return row;
     }
 
@@ -174,7 +174,7 @@ public class TestUtility {
      *
      * @TODO: use TestCase here or rely on truth evaluation in Python
      * GeocoderEval?
-     * @param t 
+     * @param t
      * @param results
      * @throws IOException
      */
@@ -183,11 +183,11 @@ public class TestUtility {
 
 
         Map<String,Object> row = null;
-        
+
         if (!results.matches.isEmpty()) {
 
             // List out true and false positives
-            // 
+            //
             for (TextMatch tm : results.matches) {
                 GeocoordMatch m = (GeocoordMatch) tm;
                 if (!full_report && (m.is_submatch || m.is_duplicate)) {
@@ -219,27 +219,27 @@ public class TestUtility {
 
                 row.put(header[15], m.formatPrecision());
                 row.put(header[16], new Long(m.start));
-                
+
                 report.write(row, header, xcoordResultsSpec);
             }
         } else {
             row = createTestCase(t);
 
             row.put(header[6], results.result_id);
-            
+
             boolean expected_failure = false;
             if (t != null) {
                 expected_failure = !t.true_positive;
             } else {
                 // If the match message contains a test payload from the test cases
-                // 
+                //
                 String test_status = results.get_trace().toUpperCase();
                 expected_failure = test_status.contains("FAIL");
             }
 
             row.put(header[7], expected_failure ? "PASS" : "FAIL");  // True Negative -- you ignored one correctly
             row.put(header[8], results.get_trace());
-            
+
             report.write(row, header, xcoordResultsSpec);
         }
     }

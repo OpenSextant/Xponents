@@ -41,5 +41,5 @@ public interface LatLon {
      * @param longitude
      */
     public void setLongitude(double longitude);
-    
+
 }
