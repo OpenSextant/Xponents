@@ -79,7 +79,7 @@ public class MGRSParser {
             int num1 = parseInt(gzd.substring(0, 1));
             int num2 = parseInt(gzd.substring(0, 2));
 
-            if (num2 == 0 | (num1 == 0 && gzd.length() == 2)) {
+            if (num2 == 0 || (num1 == 0 && gzd.length() == 2)) {
                 return null;
             }
 

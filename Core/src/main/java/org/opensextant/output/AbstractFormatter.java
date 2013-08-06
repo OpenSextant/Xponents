@@ -214,4 +214,5 @@ abstract public class AbstractFormatter implements ResultsFormatter {
      * @param rowdata the data to write out
      */
     abstract public void writeGeocodingResult(ExtractionResult rowdata);
+     
 }

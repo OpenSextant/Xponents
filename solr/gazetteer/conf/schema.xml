@@ -124,6 +124,7 @@
    <field name="lon" type="tdouble" /> -->
    <field name="lat" type="ignored" />
    <field name="lon" type="ignored" />
+   <field name="SplitCategory" type="ignored" />
    
    <!-- Name and ID bias stats are generated ahead of time and built in using ETL scripts
      these numbers offer tuning for downstream geocoding rules
@@ -379,55 +380,10 @@
       <analyzer class="org.apache.lucene.analysis.el.GreekAnalyzer"/>
     </fieldType>
     -->
-
-    <fieldType name="name_idx" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <!--
-        a) reduces the input to lower case
-        b) removes puncuation
-        c) reduces all diacritics to the appropriate base character 
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.PorterStemFilterFactory"/> supposedly supports contractions, revealing word stem w/out contraction. Very limited.
-        -->
-        <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter.txt"/>
-
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.EnglishPossessiveFilterFactory"/>       
-        <filter class="solr.LowerCaseTokenizerFactory"/>
-        <filter class="solr.PhoneticFilterFactory" encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer" inject="false" />
-        
-      </analyzer>
-    </fieldType>
-    
-
-    <fieldType name="name_idx0" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <!--
-        a) reduces the input to lower case
-        b) removes puncuation
-        c) reduces all diacritics to the appropriate base character 
-        -->
-
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.ASCIIFoldingFilterFactory"/>
-        <filter class="solr.EnglishPossessiveFilterFactory"/>       
-        <filter class="solr.LowerCaseFilterFactory"/>
-        
-      </analyzer>
-    </fieldType>
-    
-    <fieldType name="name_idx1" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/>
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <filter class="solr.ASCIIFoldingFilterFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.PhoneticFilterFactory" encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer" inject="false" /> 
-         </analyzer>
-    </fieldType>
     
     <!-- Looks like we could benefit from a char filter that combines contractions and ASCII folding;
              Sure, its more elegant to maintain separate char filters;  Or a char filter and token filter.
+         See also name_idx* fields that have phonetic support
       -->
     <fieldType name="name_idx2" class="solr.TextField" positionIncrementGap="100">
       <analyzer>

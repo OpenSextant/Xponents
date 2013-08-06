@@ -10,8 +10,43 @@
 function processAdd(cmd) {
 
   doc = cmd.solrDoc;  // org.apache.solr.common.SolrInputDocument
-  //id = doc.getFieldValue("id");
   // logger.info("update-script#processAdd: id=" + id);
+
+
+  /* See solrconfig for documentation on gazetteer filtering 
+   * =======================================================
+   */
+  debug = false;
+  filter =  params.get("include_category");
+  includeDoc = false;
+  cat = null;
+
+  if (filter == null) {
+    includeDoc = true;
+  } else {
+    if (filter == "all") {
+      includeDoc = true;
+    } else {
+      cat = doc.getFieldValue("SplitCategory");
+
+      if (cat == null || cat == "" && filter.contains("general")) {
+        includeDoc = true;
+      } else {
+        inlcudeDoc = filter.contains(cat);
+      } 
+    }
+  }
+
+  if (!includeDoc) {
+    if (debug) {
+      id = doc.getFieldValue("place_id");
+      logger.debug("update-script EXCLUDE: " + id + ", " + doc.getFieldValue('name')  + ", " + " CAT:" + cat  );
+    }
+    return false;
+  }
+  /* End Filtering
+   * ======================================================= 
+   */
 
   testing=0
   if (testing) {

@@ -472,7 +472,7 @@ public class TestScript {
         if (dd) {
             tests.addAll(Arrays.asList(ddtest));
         }
-        if (dms | dm) {
+        if (dms || dm) {
             tests.addAll(Arrays.asList(dmtest));
         }
         if (mgrs) {

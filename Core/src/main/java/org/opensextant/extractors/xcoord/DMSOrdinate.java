@@ -746,12 +746,6 @@ public final class DMSOrdinate {
      */
     public double toDecimal() {
 
-        //float value = 0.0f;
-        //boolean too_high = (is_latitude && degrees >= LAT_MAX) | (!is_latitude && degrees >= LON_MAX);
-
-        //if (too_high) {
-        //    return value;
-        //}
         if (minutes >= 60) {
             // This much we know, Degrees are valid? 
             return (double) hemisphere.polarity * degrees;

@@ -208,6 +208,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         return "" + (int) precision.precision;
     }
 
+    @Override
     public int getPrecision() {
         return (int) precision.precision;
     }
@@ -318,7 +319,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     @Override
     public String getFeatureCode() {
-        return "SITE";
+        return "COORD";
     }
 
     @Override
@@ -331,6 +332,15 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         return getText();
     }
 
+    /**
+     * Returns the exact pattern that matched.
+     * @return 
+     */
+    @Override
+    public String getMethod(){
+        return this.pattern_id;
+    }
+    
     /**
      * @return lat in degrees
      */

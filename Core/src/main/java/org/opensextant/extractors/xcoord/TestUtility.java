@@ -190,7 +190,7 @@ public class TestUtility {
             // 
             for (TextMatch tm : results.matches) {
                 GeocoordMatch m = (GeocoordMatch) tm;
-                if (!full_report && (m.is_submatch | m.is_duplicate)) {
+                if (!full_report && (m.is_submatch || m.is_duplicate)) {
                     // Ignore submatches and duplicates
                     continue;
                 }

@@ -73,10 +73,6 @@ public class ExtractionResult {
         }
     }
 
-    private String getAnnotationID(int x) {
-        return recordID + "." + x;
-    }
-
     /**
      * Add some piece of amplifying metadata about the record which may be
      * carried through to output format in some way

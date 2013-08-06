@@ -67,7 +67,7 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
     // the scope from which this evidence came
     private Scope scope = Scope.LOCAL;
     // The strength of the evidence
-    private Double weight = null;
+    private double weight = 0;
 
     public PlaceEvidence() {
         super(null, null);
@@ -96,7 +96,14 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
             return 0;
         }
         PlaceEvidence tmp = (PlaceEvidence) other;
-        return this.weight.compareTo(tmp.weight);
+        // return this.weight.compareTo(tmp.weight);
+        if (tmp.weight == weight) {
+            return 0;
+        } else if (weight > tmp.weight) {
+            return 1;
+        }
+        // must be lower:
+        return -1;
     }
 
     public Scope getScope() {
@@ -115,12 +122,22 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
         this.rule = rule;
     }
 
-    public Double getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(Double weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
+    }
+    
+    /** if Place given has same feature class and code as the current evidence
+     */
+    public boolean isSameFeature(Place geo){
+        if (this.getFeatureClass() == null){
+            return false;
+        }
+        return (this.getFeatureClass().equals(geo.getFeatureClass()) && 
+                this.getFeatureCode().equals(geo.getFeatureCode()));
     }
 
     // Override toString to get a reasonable string label for this PlaceEvidence

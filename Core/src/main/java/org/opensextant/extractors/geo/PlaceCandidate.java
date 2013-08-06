@@ -37,6 +37,7 @@ import java.util.Map;
 import org.opensextant.data.Place;
 import org.opensextant.data.LatLon;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.util.TextUtils;
 
 /**
  * A PlaceCandidate represents a portion of a document which has been identified
@@ -87,6 +88,20 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         rules = new ArrayList<String>();
         placeConfidences = new ArrayList<Double>();
 
+    }
+    
+    
+    private String textnorm = null;
+    
+    /**
+     * Get normalized version of text.
+     * @return 
+     */
+    public String getTextnorm(){
+        if (textnorm == null){
+            textnorm =  TextUtils.removePunctuation(TextUtils.removeDiacritics(getText())).toLowerCase();
+        }
+        return textnorm;
     }
 
     // ---- the getters and setters ---------
@@ -272,7 +287,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
     }
 
     // some convenience methods to add evidence
-    public void addEvidence(String rule, Double weight, String cc, String adm1,
+    public void addEvidence(String rule, double weight, String cc, String adm1,
             String fclass, String fcode, LatLon geo) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
@@ -295,7 +310,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         this.evidence.add(ev);
     }
 
-    public void addCountryEvidence(String rule, Double weight, String cc) {
+    public void addCountryEvidence(String rule, double weight, String cc) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
@@ -303,7 +318,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         this.evidence.add(ev);
     }
 
-    public void addAdmin1Evidence(String rule, Double weight, String adm1,
+    public void addAdmin1Evidence(String rule, double weight, String adm1,
             String cc) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
@@ -313,7 +328,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         this.evidence.add(ev);
     }
 
-    public void addFeatureClassEvidence(String rule, Double weight,
+    public void addFeatureClassEvidence(String rule, double weight,
             String fclass) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
@@ -322,7 +337,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         this.evidence.add(ev);
     }
 
-    public void addFeatureCodeEvidence(String rule, Double weight, String fcode) {
+    public void addFeatureCodeEvidence(String rule, double weight, String fcode) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
@@ -330,7 +345,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         this.evidence.add(ev);
     }
 
-    public void addGeocoordEvidence(String rule, Double weight, LatLon coord) {
+    public void addGeocoordEvidence(String rule, double weight, LatLon coord) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);

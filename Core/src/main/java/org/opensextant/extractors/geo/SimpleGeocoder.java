@@ -26,7 +26,6 @@
  */
 package org.opensextant.extractors.geo;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -40,12 +39,9 @@ import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.ConfigException;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.processing.ProcessingException;
-import org.opensextant.output.AbstractFormatter;
-import org.opensextant.output.FormatterFactory;
-import org.opensextant.util.TextUtils;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.processing.Parameters;
+import org.opensextant.extractors.geo.rules.*;
 
 /**
  * This is the simplest geocoding API we could devise to support embedding
@@ -69,7 +65,6 @@ public class SimpleGeocoder implements Extractor {
      */
     //private final TextUtils utility = new TextUtils();
     protected Logger log = LoggerFactory.getLogger(SimpleGeocoder.class);
-    public Parameters params = new Parameters();
     private XCoord xcoord = null;
     private PlacenameMatcher tagger = null;
     private static ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
@@ -81,16 +76,15 @@ public class SimpleGeocoder implements Extractor {
      * A default Geocoding app that demonstrates how to invoke the geocoding
      * pipline start to finish.
      *
-     * @throws Exception
      */
-    public SimpleGeocoder() throws ProcessingException {
-        super();
+    public SimpleGeocoder() {
     }
 
     @Override
     public String getName() {
         return "SimpleGeocoder";
     }
+
 
     /**
      * Configure an Extractor using a config file named by a path
@@ -142,11 +136,7 @@ public class SimpleGeocoder implements Extractor {
     @Override
     public void configure() throws ConfigException {
 
-        if (this.params.isdefault || this.params.getJobName() == null) {
-            throw new ConfigException("Please set AppBase.params with non-null values. "
-                    + "Caller is responsible for reviewing Parameters and setting isdefault=false.");
-        }
-        if (xcoord == null) {
+        if (xcoord == null && (isCoordExtractionEnabled()) ) {
             xcoord = new XCoord();
             xcoord.configure();
         }
@@ -169,20 +159,70 @@ public class SimpleGeocoder implements Extractor {
         PlacenameMatcher.shutdown();
     }
 
+    private Parameters params = new Parameters();
+    
+    public void setParameters(Parameters p){
+        params = p;
+        params.isdefault = false;
+    }
+    
+    public boolean isCoordExtractionEnabled(){
+        return params.tag_coordinates;
+    }    
+    
     /**
-     * Extractor.extract() calls first XCoord to get coordinates, then PlacenameMatcher
-     * In the end you have all geo entities ranked and scored.
-     *
+     * Extractor.extract() calls first XCoord to get coordinates, then
+     * PlacenameMatcher In the end you have all geo entities ranked and scored.
+     * <pre>
+     * Use TextMatch.getType()
+     * to determine how to interpret TextMatch / Geocoding results:
+     * 
+     * Given TextMatch match 
+     * 
+     *    Place tag:   ((PlaceCandiate)match).getGeocoding()
+     *    Coord tag:   (Geocoding)match
+     * 
+     * Both methods yield a geocoding.
+     * </pre>
      * @param input
      * @return
      * @throws ExtractionException
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
-        List<TextMatch> matches = null;
+        List<TextMatch> matches = new ArrayList<TextMatch>();
+        
+        List<TextMatch> coordinates = null;
+        if (isCoordExtractionEnabled()) {
+            coordinates = xcoord.extract(input);
+        }
 
-        List<TextMatch> coordinates = xcoord.extract(input);
+        List<PlaceCandidate> candidates = tagger.tagText(input.buffer, input.id);
+
+        if (coordinates != null) {
+            matches.addAll(coordinates);
+        }
+        
+        chooseCandidates(candidates, coordinates);        
+        matches.addAll( candidates );
 
         return matches;
+    }
+    
+    
+    private CantileverPR cantilever = new CantileverPR();
+    private  void chooseCandidates(List<PlaceCandidate> candidates, List<TextMatch> coordinates){
+        // First assess names matched 
+        // If names are to be completely filtered out, filter them out first or remove from candiate list.
+        // Then apply rules.
+
+        // 1. Tagger Post-processing rules: Generate Country, Nat'l Capitals and Admin names
+        // 2. Cantilever rules:        
+        cantilever.processCandiates(candidates);
+        
+
+        // If valid places are to be ignored in output, then allow them as evidence
+        // but mark them as filtered out (from output).
+        
     }
 }

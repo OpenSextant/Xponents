@@ -116,7 +116,6 @@ public class SolrProxy {
         this.server_url = null;
         setupCore(solr_home, core);
     }
-
     protected Logger logger = LoggerFactory.getLogger(SolrProxy.class);
     private SolrServer solrServer = null;
     private UpdateRequest solrUpdate = null;
@@ -179,7 +178,7 @@ public class SolrProxy {
     /**
      *
      */
-    public static SolrServer initialize_embedded(String solr_home, String corename /*, boolean avoidSerialization*/)
+    public static SolrServer initialize_embedded(String solr_home, String corename)
             throws IOException {
 
         try {
@@ -194,30 +193,20 @@ public class SolrProxy {
         }
     }
 
-    public static SolrServer initialize_embedded()
-            throws IOException {
-        return initialize_embedded(true);
-    }
-
     /**
      * Much simplified EmbeddedSolr setup.
      *
      * @throws IOException
      */
-    public static SolrServer initialize_embedded(boolean avoidSerialization)
+    public static SolrServer initialize_embedded()
             throws IOException {
 
         try {
             CoreContainer.Initializer initializer = new CoreContainer.Initializer();
             CoreContainer solrContainer = initializer.initialize();
 
-            if (avoidSerialization) {
-                // DEFAULT Per SolrTextTagger optimization:
-                return new NoSerializeEmbeddedSolrServer(solrContainer, "");
-            } else {
-                // CONVENTIONAL
-                return new EmbeddedSolrServer(solrContainer, "");
-            }
+            // CONVENTIONAL
+            return new EmbeddedSolrServer(solrContainer, "");
         } catch (Exception err) {
             throw new IOException("Failed to set up Embedded Solr", err);
         }

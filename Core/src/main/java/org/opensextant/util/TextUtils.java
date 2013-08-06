@@ -41,6 +41,7 @@
 package org.opensextant.util;
 
 import java.security.MessageDigest;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -113,7 +114,7 @@ public class TextUtils {
      * @param data
      * @return count of ASCII bytes
      */
-    public static int countASCII(byte[] data) {
+    public static int countASCIIChars(byte[] data) {
         int ascii = 0;
         for (byte b : data) {
             if (b > 0 || b < 0x80) {
@@ -428,6 +429,9 @@ public class TextUtils {
     /**
      * Remove instances of any char in the remove string from buf
      *
+     * @param buf
+     * @param remove
+     * @return
      */
     public static String fast_remove(String buf, String remove) {
 
@@ -450,7 +454,7 @@ public class TextUtils {
      * Where "__" represents omitted characters.
      * </pre>
      */
-    public static String normalize_text_entity(String str) {
+    public static String normalizeTextEntity(String str) {
         if (StringUtils.isBlank(str)) {
             return "";
         }
@@ -490,6 +494,75 @@ public class TextUtils {
         // Some cleanup was done on ends of String. Now clear up whitespace.
         // 
         return squeeze_whitespace(str.substring(s1, s2 + 1));
+    }
+
+    /**
+     * Intended only as a filter for punctuation within a word. Text of the form
+     * A.T.T. or U.S. becomes ATT and US. A text such as Mr.Pibbs incorrectly
+     * becomes MrPibbs but for the purposes of normalizing tokens this should be
+     * fine. Use appropriate tokenization prior to using this as a filter.
+     */
+    public static String normalizeAbbreviation(String word) {
+        return word.replace(".", "");
+    }
+
+    /**
+     * @see Phoneticizer utility from OpenSextant v1.x Remove diacritics from a
+     * phrase
+     */
+    public static String removeDiacritics(String word) {
+
+        // first, fully decomposed all chars
+        String tmpWord = Normalizer.normalize(word, Normalizer.Form.NFD);
+        StringBuilder newWord = new StringBuilder();
+        char[] chars = tmpWord.toCharArray();
+        // now, discard any characters from one of the "Mark" categories.
+        for (char c : chars) {
+            if (Character.getType(c) != Character.NON_SPACING_MARK
+                    && Character.getType(c) != Character.COMBINING_SPACING_MARK
+                    && Character.getType(c) != Character.ENCLOSING_MARK) {
+                newWord.append(c);
+            }
+        }
+        return newWord.toString();
+    }
+    /**
+     * Matches non-text after a word.
+     */
+    final static Pattern CLEAN_WORD_RIGHT = Pattern.compile("[^\\p{L}\\p{Nd}]+$");
+    /**
+     * Matches non-text preceeding text
+     */
+    final static Pattern CLEAN_WORD_LEFT = Pattern.compile("^[^\\p{L}\\p{Nd}]+");
+    /**
+     * Obscure punctuation pattern that also deals with Unicode single and
+     * double quotes
+     */
+    final static Pattern CLEAN_WORD_PUNCT = Pattern.compile("[\"'.`\\u00B4\\u2018\\u2019]");
+
+    /**
+     * Remove any leading and trailing punctuation and some internal
+     * punctuation. Internal punctuation which indicates conjunction of two
+     * tokens, e.g. a hyphen, should have caused a split into separate tokens at
+     * the tokenization stage.
+     *
+     * @see Phoneticizer utility from OpenSextant v1.x Remove punctuation from a
+     * phrase
+     */
+    public static String removePunctuation(String word) {
+
+        String tmp = CLEAN_WORD_LEFT.matcher(word).replaceAll(" ");
+        tmp = CLEAN_WORD_RIGHT.matcher(tmp).replaceAll(" ");
+
+        //remove some internal punctuation. To be removed: char hex unicode_name
+        //	"	22	QUOTATION MARK
+        //	'	27	APOSTROPHE
+        //	.	2e	FULL STOP
+        //	`	60	GRAVE ACCENT
+        //	�	b4	ACUTE ACCENT
+        //	�	2018	LEFT SINGLE QUOTATION MARK
+        //	�	2019	RIGHT SINGLE QUOTATION MARK
+        return CLEAN_WORD_PUNCT.matcher(tmp).replaceAll("").trim();
     }
     // Alphabetic list of top-N languages -- ISO-639_1  "ISO2" language codes
     // 
@@ -538,7 +611,7 @@ public class TextUtils {
     public static void initLanguageData() {
         Locale[] locales = Locale.getAvailableLocales();
         for (Locale locale : locales) {
-            Language l = new Language(locale.getISO3Language(), 
+            Language l = new Language(locale.getISO3Language(),
                     locale.getLanguage(), locale.getDisplayLanguage());
             String iso2 = l.getISO639_1_Code();
 
@@ -673,7 +746,7 @@ public class TextUtils {
         }
         String id = lang.getISO639_1_Code();
         return (id.equals(chineseLang)
-                | id.equals(chineseTradLang));
+                || id.equals(chineseTradLang));
     }
 
     /**
@@ -690,8 +763,115 @@ public class TextUtils {
         }
         String id = lang.getISO639_1_Code();
         return (id.equals(koreanLang)
-                | id.equals(japaneseLang)
-                | id.equals(chineseLang)
-                | id.equals(chineseTradLang));
+                || id.equals(japaneseLang)
+                || id.equals(chineseLang)
+                || id.equals(chineseTradLang));
+    }
+
+    /**
+     * Returns a ratio of Chinese/Japanese/Korean characters: CJK chars / ALL
+     *
+     * TODO: needs testing; not sure if this is sustainable if block; or if it
+     * is comprehensive. TODO: for performance reasons the internal chain of
+     * comparisons is embedded in the method; Otherwise for each char, an
+     * external method invocation is required.
+     *
+     * @param buf the character to be tested
+     * @return true if CJK, false otherwise
+     */
+    public static double measureCJKText(String buf) {
+
+        if (buf == null) {
+            return -1.0;
+        }
+
+        int cjkCount = countCJKChars(buf.toCharArray());
+
+        return ((double) cjkCount) / buf.length();
+    }
+
+    /**
+     * Counts the CJK characters in buffer, buf
+     * chars Inspiration:
+     * http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string
+     *
+     * @param buf
+     * @return
+     */
+    public static int countCJKChars(char[] chars) {
+        int cjkCount = 0;
+        for (char ch : chars) {
+            // Ignore ASCII outright.
+            // Ignore Latin-1 outright.
+            if (ch < 0xFE) {
+                continue;
+            }
+            Character.UnicodeBlock blk = Character.UnicodeBlock.of(ch);
+            if (( // Chinese/CJK group:
+                    blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
+                    || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
+                    || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
+                    || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
+                    || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
+                    || (blk == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
+                    || (blk == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
+                    || (blk == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
+                    // Korean: Hangul
+                    || (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
+                    || (blk == Character.UnicodeBlock.HANGUL_JAMO)
+                    || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
+                    // Japanese:
+                    || (blk == Character.UnicodeBlock.HIRAGANA)
+                    || (blk == Character.UnicodeBlock.KATAKANA)) {
+
+                // increment counter:
+                ++cjkCount;
+            }
+        }
+        return cjkCount;
+    }
+
+    /**
+     * A simple test to see if text has any CJK characters at all. It returns
+     * after the first such character.
+     *
+     * @param buf
+     * @return if buf has at least one CJK char.
+     */
+    public static boolean hasCJKText(String buf) {
+        if (buf == null) {
+            return false;
+        }
+
+        for (char ch : buf.toCharArray()) {
+            // Ignore ASCII outright.
+            // Ignore Latin-1 outright.
+            if (ch < 0xFE) {
+                continue;
+            }
+            Character.UnicodeBlock blk = Character.UnicodeBlock.of(ch);
+
+            // IF block is copied from above, in measureCJKText()
+            if (( // Chinese/CJK group:
+                    blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
+                    || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
+                    || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
+                    || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
+                    || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
+                    || (blk == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
+                    || (blk == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
+                    || (blk == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
+                    // Korean: Hangul
+                    || (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
+                    || (blk == Character.UnicodeBlock.HANGUL_JAMO)
+                    || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
+                    // Japanese:
+                    || (blk == Character.UnicodeBlock.HIRAGANA)
+                    || (blk == Character.UnicodeBlock.KATAKANA)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -59,7 +59,8 @@
      (optional)Java Servlet API - for use outside of servlet container
     -->
   <lib path="${opensextant.home}/lib/solr-text-tagger-1.2.jar" />
-  <lib path="${opensextant.home}/lib/OpenSextantToolbox.jar" />
+  <!-- 
+  <lib path="${opensextant.home}/lib/OpenSextantToolbox.jar" /> -->
   <!--  JTS is loaded only via CLASSPATH, but noted here as it gazetteer schema is geospatially searchable using both spatial4j + JTS
   <lib path="${opensextant.home}/lib/jts-1.13.jar" /> -->
   <lib path="${opensextant.home}/lib/javax.servlet-api-3.0.1.jar" />
@@ -1638,11 +1639,28 @@
     <updateRequestProcessorChain name="script" default="true" >
       <processor class="solr.StatelessScriptUpdateProcessorFactory">
         <str name="script">update-script.js</str>
-        <!--
         <lst name="params">
-          <str name="config_param">example config parameter</str>
+          <!-- Choose from: all, Basic, Wellknown, NonLatin, Rare, general (matches empty SplitCategory)
+               'all' and 'general' DO NOT appear in input Merged gazeteer (Merged.txt), they are inferred:
+               * all = no filtering.
+               * general = SplitCategory is null or empty
+            -->
+          <!-- Full gazetteer without filtering 
+          <str name="include_category">all</str>
+          -->
+
+          <!-- Full gazetteer without Rare
+          <str name="include_category">Basic,Wellknown,general,NonLatin</str>
+          -->
+
+          <!-- Default: Latin-based names only gazetteer 
+          -->
+          <str name="include_category">Basic,Wellknown,general</str>
+
+          <!-- Lean: Basic + Well-known places
+          <str name="include_category">Basic,Wellknown</str>
+          -->
         </lst>
-        -->
       </processor>
       <processor class="solr.RunUpdateProcessorFactory" />
     </updateRequestProcessorChain>

@@ -194,14 +194,14 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
     public boolean isPlace() {
         return !isCountry();
     }
-    
+
     @Override
-    public boolean isCoordinate(){
+    public boolean isCoordinate() {
         return false;
     }
-    
+
     @Override
-    public boolean isAdministrative(){
+    public boolean isAdministrative() {
         return GeonamesUtility.isAdministrative(featureClass);
     }
 
@@ -268,10 +268,29 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
         Place tmp = (Place) other;
         return this.getKey().compareTo(tmp.getKey());
     }
-    
-    /** Get the relative precision of this feature; in meters of error
+
+    /**
+     * Get the relative precision of this feature; in meters of error
      */
-    public int getPrecision(){
+    @Override
+    public int getPrecision() {
         return GeodeticUtility.getFeaturePrecision(this.featureClass, this.featureCode);
+    }
+    private String method = null;
+
+    public void setMethod(String m) {
+        method = m;
+    }
+
+    /**
+     * The method by which the geolocation was determined;
+     * GAZ, COUNTRY, etc. are typical methods for reference data
+     * XCoord or other tools can parse; so the exact method for such patterns should be revealed here.
+     *
+     * @return method of geocoding;
+     */
+    @Override
+    public String getMethod() {
+        return method;
     }
 }

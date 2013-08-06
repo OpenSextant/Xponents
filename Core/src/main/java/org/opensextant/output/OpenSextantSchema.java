@@ -30,7 +30,7 @@ package org.opensextant.output;
 import java.util.HashMap;
 import java.util.Map;
 import org.opensextant.giscore.events.SimpleField;
-import org.opensextant.processing.ProcessingException;
+import org.opensextant.extraction.ConfigException;
 /**
  *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
@@ -100,10 +100,10 @@ public final class OpenSextantSchema {
         fields.put("method", MATCH_METHOD);
     }
 
-    public static SimpleField getField(String f) throws ProcessingException {
+    public static SimpleField getField(String f) throws ConfigException {
         SimpleField F = fields.get(f);
         if (F == null) {
-            throw new ProcessingException("Field " + f + "not found");
+            throw new ConfigException("Field " + f + "not found");
         }
         return F;
     }

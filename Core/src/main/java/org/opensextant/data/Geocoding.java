@@ -26,9 +26,6 @@
 **/
 package org.opensextant.data;
 
-import org.opensextant.data.LatLon;
-import org.opensextant.data.LatLon;
-
 /**
  * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
@@ -42,7 +39,7 @@ public interface Geocoding  extends LatLon {
     public boolean isCoordinate();
     public boolean isCountry();
     public boolean isAdministrative();
-    
+        
     public int getPrecision();
     
     /*
@@ -61,4 +58,9 @@ public interface Geocoding  extends LatLon {
 
     public String getPlaceID();
     public String getPlaceName();
+    
+    /** Method for determining geocoding 
+     */
+    public String getMethod();
+    
 }

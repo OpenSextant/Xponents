@@ -132,7 +132,7 @@ public class FileUtility {
      */
     public static boolean isSpreadsheet(String filepath) {
         String testpath = filepath.toLowerCase();
-        return (testpath.endsWith(".csv") | testpath.endsWith(".xls") | testpath.endsWith(".xlsx"));
+        return (testpath.endsWith(".csv") || testpath.endsWith(".xls") || testpath.endsWith(".xlsx"));
     }
 
     /** Check if a file is an archive 

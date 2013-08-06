@@ -1,30 +1,30 @@
 /**
- Copyright 2009-2013 The MITRE Corporation.
- 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- 
+ * Copyright 2009-2013 The MITRE Corporation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
  ** **************************************************
  * NOTICE
- *   
- *  
- * This software was produced for the U. S. Government
- * under Contract No. W15P7T-12-C-F600, and is
- * subject to the Rights in Noncommercial Computer Software
- * and Noncommercial Computer Software Documentation
- * Clause 252.227-7014 (JUN 1995)
- *  
+ *
+ *
+ * This software was produced for the U. S. Government under Contract No.
+ * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
+ * Software and Noncommercial Computer Software Documentation Clause
+ * 252.227-7014 (JUN 1995)
+ *
  * (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
- **************************************************   */
+ * *************************************************
+ */
 package org.opensextant.output;
 
 import java.net.URI;
@@ -44,6 +44,7 @@ import org.opensextant.giscore.geometry.Point;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.data.Geocoding;
+import org.opensextant.extraction.ConfigException;
 import org.opensextant.processing.ProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class GISDataModel {
             defaultFields();
             try {
                 this.schema = buildSchema(jobName);
-            } catch (ProcessingException e) {
+            } catch (ConfigException e) {
                 // could not successfully construct the schema... fail hard.
                 throw new RuntimeException(e);
             }
@@ -96,7 +97,7 @@ public class GISDataModel {
 
     protected void addOffsets(Feature row, TextMatch m) {
         addColumn(row, OpenSextantSchema.START_OFFSET, m.start);
-        addColumn(row, OpenSextantSchema.END_OFFSET,  m.end);
+        addColumn(row, OpenSextantSchema.END_OFFSET, m.end);
     }
 
     protected void addLatLon(Feature row, Geocoding g) {
@@ -114,7 +115,7 @@ public class GISDataModel {
      *
      * @throws ProcessingException
      */
-    protected void addAdditionalAttributes(Feature row, Map<String, Object> rowAttributes) throws ProcessingException {
+    protected void addAdditionalAttributes(Feature row, Map<String, Object> rowAttributes) throws ConfigException {
         if (rowAttributes != null) {
 
             try {
@@ -124,7 +125,7 @@ public class GISDataModel {
                     }
                     addColumn(row, OpenSextantSchema.getField(field), rowAttributes.get(field));
                 }
-            } catch (ProcessingException fieldErr) {
+            } catch (ConfigException fieldErr) {
                 throw fieldErr;
             }
         }
@@ -171,8 +172,20 @@ public class GISDataModel {
         addColumn(row, OpenSextantSchema.MATCH_METHOD, method);
     }
 
+    /**
+     * Builds a GISCore feature array (rows) from a given array of TextMatches;  Enrich 
+     * the features with record-level attributes (columns)
+     * 
+     * @param id
+     * @param g
+     * @param m
+     * @param rowAttributes
+     * @param res
+     * @return
+     * @throws ConfigException 
+     */
     public List<Feature> buildRows(int id, Geocoding g, TextMatch m, Map<String, Object> rowAttributes,
-            ExtractionResult res) throws ProcessingException {
+            ExtractionResult res) throws ConfigException {
 
         Feature row = new Feature();
         // Administrative settings:
@@ -196,7 +209,7 @@ public class GISDataModel {
         }
 
         addMatchText(row, m);
-        addMatchMethod(row, m);
+        addMatchMethod(row, g.getMethod());
 
         addAdditionalAttributes(row, rowAttributes);
 
@@ -231,7 +244,7 @@ public class GISDataModel {
      * @return
      * @throws ProcessingException
      */
-    protected Schema buildSchema(String jobName) throws ProcessingException {
+    protected Schema buildSchema(String jobName) throws ConfigException {
 
         if (this.schema != null) {
             return this.schema;
@@ -251,11 +264,11 @@ public class GISDataModel {
 
         for (String field : field_order) {
 
-            if (!this.includeOffsets && (field.equals("start") | field.equals("end"))) {
+            if (!this.includeOffsets && (field.equals("start") || field.equals("end"))) {
                 continue;
             }
 
-            if (!this.includeCoordinate && (field.equals("lat") | field.equals("lon"))) {
+            if (!this.includeCoordinate && (field.equals("lat") || field.equals("lon"))) {
                 continue;
             }
 
@@ -268,7 +281,7 @@ public class GISDataModel {
         return this.schema;
     }
 
-    protected SimpleField getField(String field) throws ProcessingException {
+    protected SimpleField getField(String field) throws ConfigException {
         return OpenSextantSchema.getField(field);
     }
 
@@ -312,7 +325,31 @@ public class GISDataModel {
         }
     }
 
-    protected void defaultFields() {
+    /**
+     * Add a field key to the field order; Caller must also be responsible for
+     * ensuring field is valid and exists in Schema.
+     *
+     * @param fld
+     */
+    public void addField(String fld) throws ConfigException {
+        if (getField(fld) == null) {
+            throw new ConfigException("Field is not defined in Schema");
+        }
+        field_order.add(fld);
+    }
+
+    /**
+     *
+     * @param fld
+     */
+    public void removeField(String fld) throws ConfigException {
+        if (getField(fld) == null) {
+            throw new ConfigException("Field is not defined in Schema; Cannot remove non-existing field");
+        }
+        field_order.remove(fld);
+    }
+
+    protected final void defaultFields() {
         // ID occurs in all output.
         // id.
 
@@ -340,6 +377,5 @@ public class GISDataModel {
         field_order.add("precision");
         field_order.add("start");
         field_order.add("end");
-
     }
 }

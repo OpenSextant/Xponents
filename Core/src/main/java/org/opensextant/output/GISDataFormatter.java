@@ -38,6 +38,7 @@ import org.opensextant.data.Geocoding;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.processing.ProcessingException;
+import org.opensextant.extraction.ConfigException;
 
 /**
  * This is the base class for classes that convert document annotations to
@@ -199,7 +200,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
                     this.os.write(row);
                 }
 
-            } catch (ProcessingException fieldErr) {
+            } catch (ConfigException fieldErr) {
 
                 if (!error) {
                     log.error("OUTPUTTER, ERR=" + fieldErr);
@@ -207,5 +208,23 @@ public abstract class GISDataFormatter extends AbstractFormatter {
                 error = true;
             }
         }
+    }
+
+    /**
+     * @param fld
+     */
+    @Override
+    public void addField(String fld) throws ConfigException {
+        gisDataModel.addField(fld);
+    }
+
+    /**
+     *
+     * @param fld
+     */
+    @Override
+    public void removeField(String fld) throws ConfigException {
+
+        gisDataModel.removeField(fld);
     }
 }

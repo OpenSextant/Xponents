@@ -135,6 +135,10 @@ public class PlacenameMatcher {
         }
     }
 
+    public void setMatchFilter(MatchFilter f) {
+        filter = f;
+    }
+
     /**
      */
     protected static void initialize() throws IOException {
@@ -307,8 +311,13 @@ public class PlacenameMatcher {
              * filter out only text we know to be false positives regardless of
              * case. deprecated: use of filters here. Filter out unwanted tags
              * via GazetteerETL data model if
-             * (filter.filterOut(matchText.toLowerCase())) { continue; }
              */
+            if (filter != null) {
+                if (filter.filterOut(matchText.toLowerCase())) {
+                    continue;
+                }
+            }
+
             pc = new PlaceCandidate();
             pc.start = x1;
             pc.end = x2;
@@ -329,9 +338,9 @@ public class PlacenameMatcher {
             for (Integer solrId : placeRecordIds) {
                 Pgeo = beanMap.get(solrId);
 
-                if (Pgeo == null) {
-                    continue;
-                }
+                //if (Pgeo == null) {
+                //    continue;
+                //}
 
                 // Optimization:  abbreviation filter.
                 // 
@@ -379,7 +388,8 @@ public class PlacenameMatcher {
             }
 
             // if the max name bias seen >0; add apriori evidence
-            if (name_bias != 0.0) {
+            //if (name_bias != 0.0) {
+            if (name_bias > 0) {
                 pc.addRuleAndConfidence(APRIORI_NAME_RULE, name_bias);
             }
 
@@ -399,7 +409,7 @@ public class PlacenameMatcher {
         return candidates;
     }
 
-    public final static Place createPlace(SolrDocument gazEntry) {
+    public static Place createPlace(SolrDocument gazEntry) {
 
         // Creates for now org.opensextant.placedata.Place
         Place bean = SolrProxy.createPlace(gazEntry);
@@ -426,7 +436,7 @@ public class PlacenameMatcher {
         // This loops through findings and reports out just Country names for now.
         for (PlaceCandidate candidate : candidates) {
             boolean _break = false;
-            String namekey = TextUtils.normalize_text_entity(candidate.getText()); // .toLowerCase();
+            String namekey = TextUtils.normalizeTextEntity(candidate.getText()); // .toLowerCase();
             if (namekey == null) {
                 // Why is this Null?
                 countries.put("null", ++nullCount);

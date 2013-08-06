@@ -29,6 +29,7 @@ package org.opensextant.output;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
+import org.opensextant.extraction.ConfigException;
 
 /**
  * Interface for classes that generate output from corpora that have been processed by OpenSextant.
@@ -84,4 +85,18 @@ public interface ResultsFormatter {
     public void start(String nm) throws ProcessingException;
 
     public void finish();
+    
+    /**
+     * 
+     * @param f
+     * @throws ConfigException 
+     */
+    public void addField(String f) throws ConfigException;
+    
+    /**
+     * 
+     * @param f
+     * @throws ConfigException 
+     */
+    public void removeField(String f) throws ConfigException;
 }
