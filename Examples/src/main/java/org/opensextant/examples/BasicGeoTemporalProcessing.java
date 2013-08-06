@@ -33,9 +33,8 @@ import org.apache.commons.io.FilenameUtils;
 
 import org.opensextant.extraction.ConfigException;
 import org.opensextant.extraction.ExtractionMetrics;
-import org.opensextant.extraction.DocInput;
 import org.opensextant.extractors.xcoord.XCoord; // Just coordinates.
-//import org.opensextant.extractors.geo.*;  // All geo. Encapsulates XCoord, as well.
+import org.opensextant.extractors.geo.*;  // All geo. Encapsulates XCoord, as well.
 import org.opensextant.extractors.xtemporal.XTemporal;
 
 import org.opensextant.processing.XtractorGroup;
@@ -108,14 +107,17 @@ public class BasicGeoTemporalProcessing
     }
 
     public void setup() throws ConfigException {
-        XCoord xcoord = new XCoord();
-        xcoord.configure();
-        this.addExtractor(xcoord);
+        //XCoord xcoord = new XCoord();
+        //xcoord.configure();
+        //this.addExtractor(xcoord);
+        SimpleGeocoder geocoder = new SimpleGeocoder();
+        geocoder.setParameters(params);
+        geocoder.configure();
+        this.addExtractor(geocoder);
 
         XTemporal xtemp = new XTemporal();
         xtemp.configure();
         this.addExtractor(xtemp);
-
 
         converter = new XText();
 
@@ -198,7 +200,6 @@ public class BasicGeoTemporalProcessing
         if (!validateParameters(inFile, outFormats, outFile, tempDir)) {
             throw new ProcessingException("VALIDATION ERRORS: " + runnerMessage.toString());
         }
-        this.params.isdefault = false;
         this.params.inputFile = inFile;
         if (outFormats != null) {
             for (String fmt : outFormats) {

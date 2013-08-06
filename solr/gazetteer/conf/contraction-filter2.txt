@@ -1,0 +1,12 @@
+# Inserting a space before the English possessive and other contractions (and other accidental matches)
+# so they (including the apostrophe) becomes their own tokens.
+# so text like 
+# 
+#    we're heading to the park ...    => [ we, 're, heading, to, the, park ]
+#    Mexico's valiant effort to...    => [ mexico, 's, valiant, effort, to ]
+# etc.  
+#
+"'s" => " 's"
+"'ve" => " 've"
+"'re" => " 're"
+"'ll" => " 'll"
