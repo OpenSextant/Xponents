@@ -106,7 +106,7 @@ public class PlacenameMatcher {
         //tag_request = new SolrTaggerRequest(params, SolrRequest.METHOD.POST);
 
         // Pre-loading the Solr FST
-        // 
+        //
         try {
             tagText("trivial priming of the solr pump", "__initialization___");
         } catch (ExtractionException initErr) {
@@ -149,9 +149,9 @@ public class PlacenameMatcher {
 
         // NOTE: This is set via opensextant.apps.Config or by some other means
         // But it is required to intialize.  "gazetteer" is the core name of interest.
-        // Being explicit here about the core name allows integrator to field multiple cores 
-        // in the same gazetteer.  
-        // 
+        // Being explicit here about the core name allows integrator to field multiple cores
+        // in the same gazetteer.
+        //
         String config_solr_home = System.getProperty("solr.solr.home");
         if (config_solr_home != null) {
             solr = new SolrProxy(config_solr_home, "gazetteer");
@@ -165,7 +165,7 @@ public class PlacenameMatcher {
         //_params.set(CommonParams.FL, "*,score");
         // Note -- removed score for now, as we have not evaluated how score could be used in this sense.
         // Score depends on FST creation and other factors.
-        // 
+        //
         // TODO: verify that all the right metadata is being retrieved here
         _params.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
 
@@ -175,14 +175,14 @@ public class PlacenameMatcher {
         _params.set("matchText", false);//we've got the input doc as a string instead
 
         /* Possible overlaps: ALL, NO_SUB, LONGEST_DOMINANT_RIGHT
-         * See Solr Text Tagger documentation for details. 
+         * See Solr Text Tagger documentation for details.
          */
         _params.set("overlaps", "LONGEST_DOMINANT_RIGHT");
         //_params.set("overlaps", "NO_SUB");
 
         params = _params;
     }
-    // 
+    //
     private int tagNamesTime = 0;
     private int getNamesTime = 0;
     private int totalTime = 0;
@@ -229,7 +229,7 @@ public class PlacenameMatcher {
         // ...
         // "matchingDocs":{"numFound":75, "start":0, "docs":[ {
         // "place_id":"USGS1992921", "name":"Monterrey", "cc":"PR"}, {
-        //"place_id":"USGS1991763", "name":"Monterrey", "cc":"PR"}, ]   
+        //"place_id":"USGS1991763", "name":"Monterrey", "cc":"PR"}, ]
 
         long t0 = System.currentTimeMillis();
         if (debug) {
@@ -240,7 +240,7 @@ public class PlacenameMatcher {
 
         List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>();
 
-        // Setup request to tag... 
+        // Setup request to tag...
         final AtomicLong startStreamingTime = new AtomicLong();
         SolrTaggerRequest tag_request = new SolrTaggerRequest(params, buffer);
         // Stream the response to avoid serialization and to save memory by
@@ -283,13 +283,13 @@ public class PlacenameMatcher {
          * Retrieve all offsets into a long list.  These offsets will report
          * a text span and all the gazetteer record IDs that are associated to that span.
          * The text could either be a name, a code or some other abbreviation.
-         * 
-         * For practical reasons the default behavior is to filter trivial spans given 
+         *
+         * For practical reasons the default behavior is to filter trivial spans given
          * the gazetteer data that is returned for them.
-         * 
+         *
          * WARNING: lots of optimizations occur here due to the potentially large volume of tags
          * and gazetteer data that is involved.  And this is relatively early in the pipline.
-         * 
+         *
          */
         PlaceCandidate pc;
         Place Pgeo;
@@ -343,15 +343,15 @@ public class PlacenameMatcher {
                 //}
 
                 // Optimization:  abbreviation filter.
-                // 
+                //
                 // Do not add PlaceCandidates for lower case tokens that are marked as Abbreviations
                 // Unless flagged to do so.
                 // DEFAULT behavior is to avoid lower case text that is tagged as an abbreviation in gazetteer,
-                // 
-                // Common terms:  in, or, oh, me, us, we, 
+                //
+                // Common terms:  in, or, oh, me, us, we,
                 //   etc.
                 // Are all not typically place names or valid abbreviations in text.
-                //                 
+                //
                 if (!allow_lowercase_abbrev) {
                     if (Pgeo.isAbbreviation() && _is_lower) {
                         _is_valid = false;
@@ -363,9 +363,9 @@ public class PlacenameMatcher {
                     }
 
                 }
-                // Optimization: Add distinct place objects once. 
+                // Optimization: Add distinct place objects once.
                 //   don't add Place if null or already added to this instance of PlaceCandidate
-                // 
+                //
                 if (!seenPlaces.contains(Pgeo.getPlaceID())) {
                     pc.addPlace(Pgeo);
                     seenPlaces.add(Pgeo.getPlaceID());

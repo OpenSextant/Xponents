@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ import org.opensextant.extractors.geo.PlaceEvidence.Scope;
 
 /**
  * The Cantilever calculates an aggregate is-place confidence score for PlaceCandidates
- * that share a common base name. It also propagates each PlaceCandidate's 
+ * that share a common base name. It also propagates each PlaceCandidate's
  * place evidence across all PlaceCandidates with the same base name.
  */
 public class Cantilever {
@@ -54,15 +54,15 @@ public class Cantilever {
 
 	// the inexact matcher used to find the "same" place
 	//private static Phoneticizer phoner = new Phoneticizer();
-        
+
 	// which phonetic/inexact algorithm to use
 	// private static String phoneticAlgName = "SimplePhonetic0";
 
 
 	/**
-	 * Iterate through a List of PlaceCandidates to determine is-place confidence scores and 
+	 * Iterate through a List of PlaceCandidates to determine is-place confidence scores and
 	 * propagate place evidence.
-	 * 
+	 *
 	 * @param pcList The PlaceCandidates found in a document
 	 */
 	public static void propagateEvidence(List<PlaceCandidate> pcList) {

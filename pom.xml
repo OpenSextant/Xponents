@@ -60,9 +60,9 @@
   <modules>
     <module>Core</module>
     <module>XText</module>
-    <!--  XTax is a methodology for how to use a Solr text tagger 
+    <!--  XTax is a methodology for how to use a Solr text tagger
           for tagging arbitrary structured vocabularies;  No code yet; Just config and some python.
-    <module>XTax</module> 
+    <module>XTax</module>
      -->
     <module>Examples</module>
   </modules>
@@ -170,7 +170,7 @@
 
       <!-- run explicitly with: mvn checkstyle:check -->
 
-      <!-- 
+      <!--
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>

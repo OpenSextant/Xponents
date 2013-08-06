@@ -47,7 +47,7 @@ public class GeodeticUtility {
      */
     public static boolean validateCoordinate(double lat, double lon) {
         // Java behavior for NaN -- use object/class routines to compare.
-        // 
+        //
         if (Double.isNaN(lon) || Double.isNaN(lat)) {
             return false;
         }

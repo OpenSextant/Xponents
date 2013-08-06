@@ -110,7 +110,7 @@ public class CantileverPR {
                     count.increment();
                     ++countryTotal;
 
-                    // Specifically for ADM1 names -- 
+                    // Specifically for ADM1 names --
                     if (geo.isAdmin1()) {
                         String adminKey = String.format("%s/%s",tmpCC, geo.getAdmin1());
                         Counter adm1 = adminCounts.get(adminKey);

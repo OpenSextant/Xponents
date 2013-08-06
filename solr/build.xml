@@ -2,13 +2,13 @@
 
 <project name="OpenSextant-Gazetteer" default="build">
 
-	<!-- where to deploy the Solr Gazetteer 
+	<!-- where to deploy the Solr Gazetteer
              Please configure "build.local.properties" and rename to "build.properties"
-             
+
              Required:  opensextant.home is used inside the gazetteer solr home, e.g., for referencing libs for classpath in solrconfig.xml
                       as well, solr.home is required to independently name it.
 
-             From the OpenSextant application side, solr.home is derived from opensextant.home;  but with 
+             From the OpenSextant application side, solr.home is derived from opensextant.home;  but with
              Gazetteer creation we are not using OpenSextant apps, so both vars are required
          -->
         <property file="${basedir}/build.properties" />
@@ -16,7 +16,7 @@
         <!-- Gazetteer source file is "MergedGazetteer.txt".  Its fields are as follows:
          -->
         <property name="fieldnames" value="id,place_id,name,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,,name_bias,id_bias,name_type,,SplitCategory" />
-	
+
 	<path id="runtime.classpath">
 		<pathelement location="${basedir}/script" />
 
@@ -28,7 +28,7 @@
 
 	<!-- Prepare Solr Home-->
 
-	<!-- 1. create Solr home 
+	<!-- 1. create Solr home
          2. copy Solr home skeleton
          3. unpack solr4-conf.zip to gaz/conf/.
          4. copy runtime libs - SolrTextTagger, servlet-api  - to gaz/lib
@@ -103,5 +103,5 @@
                 </chmod>
 	</target>
 
-	
+
 </project>

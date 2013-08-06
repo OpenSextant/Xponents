@@ -334,13 +334,13 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     /**
      * Returns the exact pattern that matched.
-     * @return 
+     * @return
      */
     @Override
     public String getMethod(){
         return this.pattern_id;
     }
-    
+
     /**
      * @return lat in degrees
      */

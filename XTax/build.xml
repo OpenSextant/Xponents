@@ -34,7 +34,7 @@
 
     </target>
 
-        
+
     <!-- 2 GB to build current gazetteer with 13 million rows -->
     <target name="build-fst">
         <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater" classpathref="runtime.classpath" fork="yes" >

@@ -50,7 +50,7 @@ public class TweetGeocoder {
 
     public TweetGeocoder(String job) throws IOException, ConfigException, ProcessingException {
         // This is to bypass XCoord processing within GATE
-        // Although we still want to use XCoord for some adhoc processing.        
+        // Although we still want to use XCoord for some adhoc processing.
         // This is not internal to XCoord.  It is internal to the PR that uses XCoord: GeocoordFinderPR
         Parameters.RUNTIME_FLAGS = Parameters.FLAG_NO_COORDINATES;//| Parameters.FLAG_ALLOW_LOWERCASE_ABBREV;
         Parameters.RUNTIME_FLAGS ^= Parameters.FLAG_EXTRACT_CONTEXT;
@@ -62,11 +62,11 @@ public class TweetGeocoder {
             userlocX.match_UTM(false);
             // Explicitly enable DD
 
-            // Note -- for parsing coordinates in Tweet metadata 
+            // Note -- for parsing coordinates in Tweet metadata
             // we need to turn off the normal Decimal degree filters.
             //  Decimal degrees are really the only thing we want out of tweets,
             //  so we need to carefully undo DD filters.
-            // 
+            //
             userlocX.match_DD(true);
             XCoord.RUNTIME_FLAGS ^= XConstants.DD_FILTERS_ON;  // Be less strict with Decimal degrees.
             XCoord.RUNTIME_FLAGS ^= XConstants.FLAG_EXTRACT_CONTEXT;  // ignore text context.
@@ -83,7 +83,7 @@ public class TweetGeocoder {
         geocoder = new SimpleGeocoder();
         Parameters job1 = new Parameters();
         Parameters job2 = new Parameters();
-        
+
         // Fill out the basic I/O parameters.
         job1.outputDir = "/tmp";
 
@@ -138,7 +138,7 @@ public class TweetGeocoder {
         user_output.addField("tweet");
 
         user_output.start(job2.getJobName());
-        
+
         geocoder.setParameters(job1);
 
         geocoder.configure();
@@ -300,7 +300,7 @@ public class TweetGeocoder {
         String _new = TextUtils.fast_replace(x, "\n\r", " ");
         _new = UnicodeTextUtils.remove_emoticons(_new);
         _new = UnicodeTextUtils.remove_symbols(_new);
-        
+
         return _new;
     }
 
@@ -326,7 +326,7 @@ public class TweetGeocoder {
             throw new ParseException("Failed to parse Tweet " + twerr.getMessage(), 0);
         }
     }
-    
+
     public static int START_ROW = 0;
     public static int MAX_ROWS = -10000;
 

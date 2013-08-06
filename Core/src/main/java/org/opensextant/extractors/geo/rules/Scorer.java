@@ -1,4 +1,4 @@
-/** 
+/**
  Copyright 2009-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,10 +58,10 @@ import org.opensextant.util.GeodeticUtility;
 public class Scorer {
 
 	// TODO Need deterministic technique to estimate weights
-	
+
 	// weight of apriori info
 	final double biasWeight = 0.1;
-	
+
 	// weights of the four evidence information types
 	final double nameWeight = 0.01;
 	final double geocoordWeight = 1.90;
@@ -73,8 +73,8 @@ public class Scorer {
 
 	// document level country and admin1  evidence
 	List<PlaceEvidence> docEvidList = new ArrayList<PlaceEvidence>();
-	
-	
+
+
 	// the minimum value returned by scoreEvidence to avoid multiplying
 	// everything by zero
 	final Double MinEvidenceValue = .00001;
@@ -104,7 +104,7 @@ public class Scorer {
 
 	/**
 	 * Score each of the place candidates
-	 * 
+	 *
 	 * @param pcList
 	 */
 	public void score(List<PlaceCandidate> pcList) {
@@ -114,7 +114,7 @@ public class Scorer {
 			// for each Place on the PC
 			for (Place p : pc.getPlaces()) {
 				//System.out.println();
-				
+
 				double prior = biasWeight * p.getId_bias();
 				double evidenceScore = scoreEvidence(p, pc.getEvidence());
 
@@ -140,12 +140,12 @@ public class Scorer {
 
 		double prodScore = 1.0;
 		double sumScore = 0.0;
-		
+
 		// TODO if there is evidence but no country and admin evidence
 		// use document level evidence
 		// if no evidence from candidate, use document level evidence
 		if (evidList.size() == 0) {
-			
+
 			if(docEvidList.size() > 0){
 				//System.out.println("Using doc level evidence");
 				//System.out.println(docEvidList.toString());
@@ -154,9 +154,9 @@ public class Scorer {
 				// no local or document level evidence
 				return 0.0;
 			}
-			
-			
-		
+
+
+
 		}
 
 		// for each bit of evidence
@@ -178,7 +178,7 @@ public class Scorer {
 	/**
 	 * The scoring function which calculates the similarity between a place and
 	 * a single piece of evidence
-	 * 
+	 *
 	 * @param ev
 	 * @param place
 	 * @return
@@ -207,9 +207,9 @@ public class Scorer {
 	 * as found in the gazetteer Exact match =1.0 Exact match (ignoring case) =
 	 * <NameSimilarityCaseInsens> .... Any condition not caught in the above =
 	 * <NameSimilarityFloor>
-	 * 
+	 *
 	 * Range = 0.0 -> 1.0 (no negative score)
-	 * 
+	 *
 	 */
 
 	private double scoreName(PlaceEvidence evidence, Place place) {
@@ -251,10 +251,10 @@ public class Scorer {
 	 * Compare the geocoord evidence from the document with the location
 	 * (geocoord) of the candidate as found in the gazetteer. Comparison is
 	 * based on dist between evidence and gazetteer place. Range = -1.0 -> 1.0
-	 * 
+	 *
 	 * NOTE: these thresholds really should be modulated by FeatureType rather
 	 * than be absolutes
-	 * 
+	 *
 	 * @param evidence
 	 * @param place
 	 * @return
@@ -275,9 +275,9 @@ public class Scorer {
 		// distance between candidate and evidence (in degrees)
 		//double dist = gazetteerGeo.distanceDeg(evidenceGeo);
                 double dist = GeodeticUtility.distanceDegrees(
-                        evidence.getLatitude(), evidence.getLongitude(), 
+                        evidence.getLatitude(), evidence.getLongitude(),
                         place.getLatitude(), place.getLongitude());
-		
+
 		// non-null coords, check the thresholds
 
 		// if near
@@ -298,13 +298,13 @@ public class Scorer {
 		}
 	}
 
-        
+
 	/* ---------------------Feature Type Similarity ------------------ */
 	/**
 	 * Compare the similarity/compatibility of the feature type evidence as
 	 * found in the document with the feature type info from the place in the
 	 * gazetteer. Range = -1.0 <-> 1.0
-	 * 
+	 *
 	 * @param evidence
 	 * @param place
 	 * @return
@@ -344,19 +344,19 @@ public class Scorer {
 			return featureTypeConfusedScore * weight;
 		}
 
-		
-		// partial credit for places used to describe spot features e.g. "the Washington office" 
+
+		// partial credit for places used to describe spot features e.g. "the Washington office"
 		if (isSiteFeature(evidenceFClass) && isAreaFeature(gazetteerFClass)) {
 			return featureTypeConfusedScore * weight;
 		}
-		
+
 		// floor value for "important" gazetteer entries
 		if (place.isAdministrative()) {
 			return featureTypeConfusedScore * weight;
 		}
-		
-		
-		
+
+
+
 		// must be incompatible class/code
 		if (weight > 0.0) {
 			return MinEvidenceValue;
@@ -370,17 +370,17 @@ public class Scorer {
         protected static boolean isAreaFeature(String cls){
             return ("A".equals(cls) || "L".equals(cls) || "P".equals(cls));
         }
-        
+
         protected static boolean isSiteFeature(String cls){
             return "S".equals(cls);
         }
-        
+
 	/* ---------------------Admin Structure Similarity ------------------ */
 	/**
 	 * Compare the similarity/consistency of the administrative structure
 	 * evidence found in the document with that of the place from the gazetteer.
 	 * Range = -1.0 -> 1.0
-	 * 
+	 *
 	 * @param evidence
 	 * @param place
 	 * @return
@@ -436,11 +436,11 @@ public class Scorer {
 
 	}
 
-	
+
 	public void setDocumentLevelEvidence(List<PlaceEvidence> docEvidList){
 		this.docEvidList = docEvidList;
 	}
-	
-	
-	
+
+
+
 }

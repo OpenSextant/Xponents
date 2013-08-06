@@ -10,13 +10,13 @@
   <property file="runtime.cfg" />
 
   <property name="xponents" value="${basedir}/../" />
-    	
+
   <path id="runtime.classpath">
     <pathelement location="${xponents}/etc" />
     <fileset dir="${xponents}/lib" includes="**/*.jar" />
   </path>
 
-  
+
     <target name="test" description="Basic Runner for Geo/Temporal" >
         <input message="inputfile?" addproperty="get.inputfile"/>
         <input message="outputfile?" addproperty="get.outputfile"/>
@@ -33,8 +33,8 @@
             <arg value="${get.formats}" />
         </java>
     </target>
-    
-    
+
+
     <!--
 
     XCoord testing tasks and properties.
@@ -95,11 +95,11 @@
 
 
     <!--
-    
+
     PoLi testing tasks and properties.
-    
+
     -->
-	
+
   <target name="poli" description="Run user file against PoLi" depends="">
     <java classname="org.opensextant.extractors.poli.PatternsOfLife" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
       <arg value="-f" />

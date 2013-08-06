@@ -1,14 +1,14 @@
 Xponents
 ========
 
- Part of OpenSextant 2.0 
+ Part of OpenSextant 2.0
  Date: 25 JULY 2013
 
-Xponents is a set of text extractor libraries with a light veneer of processing control, including: 
+Xponents is a set of text extractor libraries with a light veneer of processing control, including:
 
   * Document conversion using Tika;
-  * Geographic name and coordinate extraction; 
-  * Temporal extraction; 
+  * Geographic name and coordinate extraction;
+  * Temporal extraction;
   * Pattern-based extraction
 
 The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.
@@ -22,12 +22,12 @@ FlexPat pattern-based extractors rely on Java 6+ regular expression API
 
 XText depends on Tika 1.3+
 
-Name Matching depends on: 
+Name Matching depends on:
 
-  OpenSextant Gazetteer; 
+  OpenSextant Gazetteer;
   * Download a built gazetteer at  http://www.opensextant.org/
-  OR 
-  * Build  your own using https://github.com/OpenSextant/opensextant/tree/master/Gazetteer, which Depends on Pentaho Kettle for creation 
+  OR
+  * Build  your own using https://github.com/OpenSextant/opensextant/tree/master/Gazetteer, which Depends on Pentaho Kettle for creation
 
   OpenSextant SolrTextTagger
   https://github.com/OpenSextant/SolrTextTagger
@@ -52,7 +52,7 @@ Other Ant tasks in "testing.xml" will allow you to process your own text file.
 From source:
 
   ## Create the distribution
-  ant -f ./script/dist.xml  
+  ant -f ./script/dist.xml
 
   ## Now ./release/  contains a built version of XPonents that will run off of Ant from there on.
 

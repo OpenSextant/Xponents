@@ -129,14 +129,14 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
     public void setWeight(double weight) {
         this.weight = weight;
     }
-    
+
     /** if Place given has same feature class and code as the current evidence
      */
     public boolean isSameFeature(Place geo){
         if (this.getFeatureClass() == null){
             return false;
         }
-        return (this.getFeatureClass().equals(geo.getFeatureClass()) && 
+        return (this.getFeatureClass().equals(geo.getFeatureClass()) &&
                 this.getFeatureCode().equals(geo.getFeatureCode()));
     }
 

@@ -89,13 +89,13 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         placeConfidences = new ArrayList<Double>();
 
     }
-    
-    
+
+
     private String textnorm = null;
-    
+
     /**
      * Get normalized version of text.
-     * @return 
+     * @return
      */
     public String getTextnorm(){
         if (textnorm == null){
@@ -106,7 +106,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
 
     // ---- the getters and setters ---------
     //
-    
+
     /** After candidate has been scored and all, the final best place is the geocoding result for the given name in context.
      */
     public Geocoding getGeocoding(){
@@ -120,7 +120,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         if (chosen != null) {
             return chosen;
         }
-        
+
         List<Place> l = this.getPlaces();
         if (l.isEmpty()) {
             chosen = null; // ensure null.
@@ -204,7 +204,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         return placeConfidences;
     }
 
-    // check if at least one of the Places has the given country code 
+    // check if at least one of the Places has the given country code
     public boolean possibleCountry(String cc) {
         for (Place p : rankedPlaces) {
             if (p.getCountryCode() != null && p.getCountryCode().equalsIgnoreCase(cc)) {
@@ -214,7 +214,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         return false;
     }
 
-    // check if at least one of the Places has the given admin code 
+    // check if at least one of the Places has the given admin code
     public boolean possibleAdmin(String adm, String cc) {
 
         // check the non-null admins first

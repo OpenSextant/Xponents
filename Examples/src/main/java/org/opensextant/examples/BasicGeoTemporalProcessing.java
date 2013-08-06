@@ -107,9 +107,9 @@ public class BasicGeoTemporalProcessing
     }
 
     /**   Ideally you should separate your one-time initialization steps, configuring your extractors
-     * apart from the repetitive steps of setting up Jobs and Inputs.   Outputs you might setup once 
+     * apart from the repetitive steps of setting up Jobs and Inputs.   Outputs you might setup once
      * for the entire JVM session, or it may be something you do periodically.  In summary:
-     * 
+     *
      * configure separately:
      *   a) extractors, converters
      *   b) job inputs and parameters

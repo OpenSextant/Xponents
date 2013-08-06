@@ -3,18 +3,18 @@
 <project name="XText" default="test-default">
 
     <!--
-    
+
     XText testing tasks and properties.
-    
-    -->    
-    
+
+    -->
+
     <path id="runtime.classpath">
         <pathelement location="${basedir}/etc" />
         <pathelement location="${basedir}/src/test/resources" />
         <fileset dir="${basedir}/build" includes="**/*.jar" />
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
-	
+
     <target name="test-default">
         <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
             <jvmArg value="-Xmx600m"/>
@@ -31,7 +31,7 @@
             <arg value="${output}"/>
             <arg value="-e"/>
             <arg value="-h"/>
-            <!-- 
+            <!--
             <arg value="-h"/>
             -->
         </java>

@@ -1,6 +1,6 @@
 
 #OpenSextant Xponents: Example Processing Apps#
 
-BasicGeoTemporalProcessing 
+BasicGeoTemporalProcessing
 TweetGeocoder
 
