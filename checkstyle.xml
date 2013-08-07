@@ -151,7 +151,7 @@
          since some people don't like references to "LOGGER" shouting out all
          over their code -->
     <module name="ConstantName">
-      <property name="severity" value="error"/>
+      <property name="severity" value="warning"/><!-- TODO temporary -->
       <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$|^log(ger)?$"/>
     </module>
     <module name="LocalFinalVariableName">
@@ -171,10 +171,10 @@
       <property name="severity" value="error"/>
     </module>
     <module name="ParameterName">
-      <property name="severity" value="error"/>
+      <property name="severity" value="warning"/><!-- TODO temporary -->
     </module>
     <module name="StaticVariableName">
-      <property name="severity" value="error"/>
+      <property name="severity" value="warning"/><!-- TODO temporary -->
     </module>
     <module name="TypeName">
       <property name="severity" value="error"/>
