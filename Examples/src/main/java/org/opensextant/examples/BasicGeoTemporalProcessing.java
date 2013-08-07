@@ -99,7 +99,7 @@ public class BasicGeoTemporalProcessing
      *
      */
     public void shutdown() {
-        // PlacenameMatcher.shutdown();
+        //PlacenameMatcher.shutdown();
 
         for (ResultsFormatter outputter : formatters) {
             outputter.finish();
@@ -426,6 +426,10 @@ public class BasicGeoTemporalProcessing
             }
         } else {
             destDir = container.getParentFile();
+            if (destDir == null) {
+                destDir = new File(".");
+                log.info("Saving output to current working directory");
+            }
             destFile = container.getName();
             plist.setJobName(FilenameUtils.getBaseName(destFile));
         }
