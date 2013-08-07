@@ -203,7 +203,7 @@ public class TweetGeocoder {
              */
             ExtractionResult res = new ExtractionResult(tw.id);
 
-            res.matches = userlocX.extract(new TextInput(tw.author_location, tw.id));
+            res.matches = userlocX.extract(new TextInput(tw.id, tw.author_location));
             if (res.matches.isEmpty()) {
 
                 try {

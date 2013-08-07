@@ -85,7 +85,7 @@ public class TaxonMatcher implements Extractor {
         // Pre-loading the Solr FST
         //
         try {
-            extract(new TextInput("trivial priming of the solr pump", "__initialization___"));
+            extract(new TextInput("__initialization___", "trivial priming of the solr pump"));
         } catch (ExtractionException initErr) {
             throw new IOException("Unable to prime the tagger", initErr);
         }
@@ -292,7 +292,7 @@ public class TaxonMatcher implements Extractor {
     }
 
     public void testDoc(String buf) throws ExtractionException {
-        List<TextMatch> matches = this.extract(new TextInput(buf, "test"));
+        List<TextMatch> matches = this.extract(new TextInput("test", buf));
 
         for (TextMatch tx : matches) {
             System.out.println(tx.toString());
