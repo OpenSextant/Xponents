@@ -417,7 +417,7 @@ public class TextUtils {
 
         StringBuilder _new = new StringBuilder();
         for (char ch : buf.toCharArray()) {
-            if (replace.indexOf(ch) > 0) {
+            if (replace.indexOf(ch) >= 0) {
                 _new.append(substitution);
             } else {
                 _new.append(ch);
