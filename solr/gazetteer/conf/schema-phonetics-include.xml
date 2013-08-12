@@ -46,73 +46,78 @@
 -->
 
 <schema name="gazetteer" version="1.5">
-  <!-- attribute "name" is the name of this schema and is only used for display purposes.
-       version="x.y" is Solr's version number for the schema syntax and semantics.  It should
-       not normally be changed by applications.
-       1.0: multiValued attribute did not exist, all fields are multiValued by nature
-       1.1: multiValued attribute introduced, false by default
-       1.2: omitTermFreqAndPositions attribute introduced, true by default except for text fields.
-       1.3: removed optional field compress feature
-       1.4: default auto-phrase (QueryParser feature) to off
-       1.5: omitNorms defaults to true for primitive field types (int, float, boolean, string...)
-     -->
+    <!-- attribute "name" is the name of this schema and is only used for display purposes.
+         version="x.y" is Solr's version number for the schema syntax and semantics.  It should
+         not normally be changed by applications.
+         1.0: multiValued attribute did not exist, all fields are multiValued by nature
+         1.1: multiValued attribute introduced, false by default
+         1.2: omitTermFreqAndPositions attribute introduced, true by default except for text fields.
+         1.3: removed optional field compress feature
+         1.4: default auto-phrase (QueryParser feature) to off
+         1.5: omitNorms defaults to true for primitive field types (int, float, boolean, string...)
+       -->
 
-  <types>
-    <!-- field type definitions. The "name" attribute is
-       just a label to be used by field definitions.  The "class"
-       attribute and any other attributes determine the real
-       behavior of the fieldType.
-         Class names starting with "solr" refer to java classes in a
-       standard package such as org.apache.solr.analysis
-    -->
-
-    <fieldType name="name_idx" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <!--
-        a) reduces the input to lower case
-        b) removes puncuation
-        c) reduces all diacritics to the appropriate base character
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.PorterStemFilterFactory"/> supposedly supports contractions, revealing word stem w/out contraction. Very limited.
-        -->
-        <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter.txt"/>
-
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.EnglishPossessiveFilterFactory"/>
-        <filter class="solr.LowerCaseTokenizerFactory"/>
-        <filter class="solr.PhoneticFilterFactory" encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer" inject="false" />
-
-      </analyzer>
-    </fieldType>
-
-
-    <fieldType name="name_idx0" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <!--
-        a) reduces the input to lower case
-        b) removes puncuation
-        c) reduces all diacritics to the appropriate base character
+    <types>
+        <!-- field type definitions. The "name" attribute is
+           just a label to be used by field definitions.  The "class"
+           attribute and any other attributes determine the real
+           behavior of the fieldType.
+             Class names starting with "solr" refer to java classes in a
+           standard package such as org.apache.solr.analysis
         -->
 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.ASCIIFoldingFilterFactory"/>
-        <filter class="solr.EnglishPossessiveFilterFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
+        <fieldType name="name_idx" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <!--
+                a) reduces the input to lower case
+                b) removes puncuation
+                c) reduces all diacritics to the appropriate base character
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.PorterStemFilterFactory"/> supposedly supports contractions, revealing word stem w/out contraction. Very limited.
+                -->
+                <charFilter class="solr.MappingCharFilterFactory"
+                            mapping="contraction-filter.txt" />
 
-      </analyzer>
-    </fieldType>
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.EnglishPossessiveFilterFactory" />
+                <filter class="solr.LowerCaseTokenizerFactory" />
+                <filter class="solr.PhoneticFilterFactory"
+                        encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer"
+                        inject="false" />
 
-    <fieldType name="name_idx1" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/>
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-        <filter class="solr.ASCIIFoldingFilterFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.PhoneticFilterFactory" encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer" inject="false" />
-         </analyzer>
-    </fieldType>
- </types>
+            </analyzer>
+        </fieldType>
 
+
+        <fieldType name="name_idx0" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <!--
+                a) reduces the input to lower case
+                b) removes puncuation
+                c) reduces all diacritics to the appropriate base character
+                -->
+
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.ASCIIFoldingFilterFactory" />
+                <filter class="solr.EnglishPossessiveFilterFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+
+            </analyzer>
+        </fieldType>
+
+        <fieldType name="name_idx1" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <charFilter class="solr.MappingCharFilterFactory"
+                            mapping="contraction-filter2.txt" />
+                <tokenizer class="solr.WhitespaceTokenizerFactory" />
+                <filter class="solr.ASCIIFoldingFilterFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+                <filter class="solr.PhoneticFilterFactory"
+                        encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer"
+                        inject="false" />
+            </analyzer>
+        </fieldType>
+    </types>
 
 
 </schema>

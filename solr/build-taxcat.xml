@@ -24,7 +24,7 @@
         <!-- Limited Gazetteer hack: copy content from installed solrhome; Get ASCII mapping customization.
           -->
         <copy todir="${solr_home}/taxcat/conf">
-            <fileset dir="${solr_home}/gazetteer/conf" includes="**/*.txt"/>
+            <fileset dir="${solr_home}/gazetteer/conf" includes="**/*.txt" />
         </copy>
 
         <!-- Gaz and SolrTextTagger Solr config -->
@@ -37,7 +37,8 @@
 
     <!-- 2 GB to build current gazetteer with 13 million rows -->
     <target name="build-fst">
-        <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater" classpathref="runtime.classpath" fork="yes" >
+        <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater"
+              classpathref="runtime.classpath" fork="yes">
             <jvmArg value="-Xmx500m" />
             <jvmArg value="-Dsolr.solr.home=${solr_home}" />
             <arg value="/tag?build=true" />

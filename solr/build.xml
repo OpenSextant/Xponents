@@ -2,106 +2,110 @@
 
 <project name="OpenSextant-Gazetteer" default="build">
 
-	<!-- where to deploy the Solr Gazetteer
-             Please configure "build.local.properties" and rename to "build.properties"
+    <!-- where to deploy the Solr Gazetteer
+    Please configure "build.local.properties" and rename to "build.properties"
 
-             Required:  opensextant.home is used inside the gazetteer solr home, e.g., for referencing libs for classpath in solrconfig.xml
-                      as well, solr.home is required to independently name it.
+    Required:  opensextant.home is used inside the gazetteer solr home, e.g., for referencing libs for classpath in solrconfig.xml
+          as well, solr.home is required to independently name it.
 
-             From the OpenSextant application side, solr.home is derived from opensextant.home;  but with
-             Gazetteer creation we are not using OpenSextant apps, so both vars are required
-         -->
-        <property file="${basedir}/build.properties" />
+    From the OpenSextant application side, solr.home is derived from opensextant.home;  but with
+    Gazetteer creation we are not using OpenSextant apps, so both vars are required
+    -->
+    <property file="${basedir}/build.properties" />
 
-        <!-- Gazetteer source file is "MergedGazetteer.txt".  Its fields are as follows:
-         -->
-        <property name="fieldnames" value="id,place_id,name,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,,name_bias,id_bias,name_type,,SplitCategory" />
+    <!-- Gazetteer source file is "MergedGazetteer.txt".  Its fields are as follows:
+     -->
+    <property name="fieldnames"
+              value="id,place_id,name,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,,name_bias,id_bias,name_type,,SplitCategory" />
 
-	<path id="runtime.classpath">
-		<pathelement location="${basedir}/script" />
+    <path id="runtime.classpath">
+        <pathelement location="${basedir}/script" />
 
-                <!-- Required classpath: Solr WAR contents + OpenSextant toolbox + servlet + JTS -->
-		<fileset dir="${opensextant.home}/lib" includes="**/*.jar" />
-	</path>
+        <!-- Required classpath: Solr WAR contents + OpenSextant toolbox + servlet + JTS -->
+        <fileset dir="${opensextant.home}/lib" includes="**/*.jar" />
+    </path>
 
 
+    <!-- Prepare Solr Home-->
 
-	<!-- Prepare Solr Home-->
-
-	<!-- 1. create Solr home
+    <!-- 1. create Solr home
          2. copy Solr home skeleton
          3. unpack solr4-conf.zip to gaz/conf/.
          4. copy runtime libs - SolrTextTagger, servlet-api  - to gaz/lib
-          -->
+    -->
 
-	<target name="create-solr-home">
-		<mkdir dir="${solr.home}" />
-		<mkdir dir="${solr.home}/gazetteer" />
-		<mkdir dir="${solr.home}/gazetteer/data" />
+    <target name="create-solr-home">
+        <mkdir dir="${solr.home}" />
+        <mkdir dir="${solr.home}/gazetteer" />
+        <mkdir dir="${solr.home}/gazetteer/data" />
 
-		<!-- Unpack Solr4 config baseline-->
-		<unzip src="${basedir}/solr/solr4-conf.zip" dest="${solr.home}/gazetteer/." />
+        <!-- Unpack Solr4 config baseline-->
+        <unzip src="${basedir}/solr/solr4-conf.zip" dest="${solr.home}/gazetteer/." />
 
-		<!-- Gaz and SolrTextTagger Solr config -->
-		<copy todir="${solr.home}/" file="${basedir}/solr/solr.xml" />
-		<copy todir="${solr.home}/gazetteer/conf">
-                  <fileset dir="${basedir}/solr/gazetteer/conf">
-                    <!-- Include character mappings, schema, server config -->
-                    <include name="**/*.*"/>
-                  </fileset>
-                </copy>
-	</target>
+        <!-- Gaz and SolrTextTagger Solr config -->
+        <copy todir="${solr.home}/" file="${basedir}/solr/solr.xml" />
+        <copy todir="${solr.home}/gazetteer/conf">
+            <fileset dir="${basedir}/solr/gazetteer/conf">
+                <!-- Include character mappings, schema, server config -->
+                <include name="**/*.*" />
+            </fileset>
+        </copy>
+    </target>
 
-	<target name="create">
-		<java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater" classpathref="runtime.classpath" fork="yes" dir="${exec_dir}">
-			<jvmarg value="-Xmx2G" />
-                        <!-- This MaxPermSize appears to be helpful for loading numerous JARs -->
-			<jvmarg value="-XX:MaxPermSize=256m" />
-			<jvmarg value="-Dopensextant.home=${opensextant.home}" />
-			<jvmarg value="-Dsolr.solr.home=${solr.home}" />
-			<arg value="--input=${csv}" />
-			<arg value="/update?update.contentType=text/csv&amp;skipLines=1&amp;optimize=true&amp;separator=%09&amp;header=false&amp;trim=on&amp;fieldnames=${fieldnames}" />
-		</java>
-	</target>
+    <target name="create">
+        <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater"
+              classpathref="runtime.classpath" fork="yes" dir="${exec_dir}">
+            <jvmarg value="-Xmx2G" />
+            <!-- This MaxPermSize appears to be helpful for loading numerous JARs -->
+            <jvmarg value="-XX:MaxPermSize=256m" />
+            <jvmarg value="-Dopensextant.home=${opensextant.home}" />
+            <jvmarg value="-Dsolr.solr.home=${solr.home}" />
+            <arg value="--input=${csv}" />
+            <arg value="/update?update.contentType=text/csv&amp;skipLines=1&amp;optimize=true&amp;separator=%09&amp;header=false&amp;trim=on&amp;fieldnames=${fieldnames}" />
+        </java>
+    </target>
 
-	<!-- 2 GB to build current gazetteer with 13 million rows -->
-	<target name="build-fst">
-		<java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater" classpathref="runtime.classpath" fork="yes" dir="${exec_dir}">
-			<jvmarg value="-Xmx2G" />
-                        <!-- This MaxPermSize appears to be helpful for loading numerous JARs -->
-			<jvmarg value="-XX:MaxPermSize=256m" />
-			<jvmarg value="-Dopensextant.home=${opensextant.home}" />
-			<jvmarg value="-Dsolr.solr.home=${solr.home}" />
-			<arg value="/tag?build=true" />
-		</java>
-	</target>
+    <!-- 2 GB to build current gazetteer with 13 million rows -->
+    <target name="build-fst">
+        <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater"
+              classpathref="runtime.classpath" fork="yes" dir="${exec_dir}">
+            <jvmarg value="-Xmx2G" />
+            <!-- This MaxPermSize appears to be helpful for loading numerous JARs -->
+            <jvmarg value="-XX:MaxPermSize=256m" />
+            <jvmarg value="-Dopensextant.home=${opensextant.home}" />
+            <jvmarg value="-Dsolr.solr.home=${solr.home}" />
+            <arg value="/tag?build=true" />
+        </java>
+    </target>
 
-	<target name="build" depends="prepare,copy-libs">
-		<antcall target="create-solr-home" />
-		<antcall target="create" />
-		<antcall target="build-fst" />
-	</target>
+    <target name="build" depends="prepare,copy-libs">
+        <antcall target="create-solr-home" />
+        <antcall target="create" />
+        <antcall target="build-fst" />
+    </target>
 
-        <!-- Just rebuild the gazetteer from Merged.txt into an existing SOLR_HOME -->
-	<target name="rebuild" >
-            <echo > No depdencies enforced.  If you are rebuilding the Gazetteer then SOLR_HOME must exist, per create-solr-home</echo>
-	    <antcall target="create" />
-	    <antcall target="build-fst" />
-        </target>
+    <!-- Just rebuild the gazetteer from Merged.txt into an existing SOLR_HOME -->
+    <target name="rebuild">
+        <echo>No depdencies enforced. If you are rebuilding the Gazetteer then SOLR_HOME must exist,
+            per create-solr-home
+        </echo>
+        <antcall target="create" />
+        <antcall target="build-fst" />
+    </target>
 
-        <!-- Create a Jetty or other Webapp server to allow us to browse the gazetteer
-          -->
-	<target name="create-server">
-		<unzip src="${basedir}/../external/jetty-v8.zip" dest="${opensextant.home}/" />
-		<copy todir="${jetty.home}/lib/ext" file="${opensextant.lib}/solr/jts-1.13.jar" />
-		<copy todir="${jetty.home}/webapps" file="${basedir}/solr/solr.war" />
+    <!-- Create a Jetty or other Webapp server to allow us to browse the gazetteer
+      -->
+    <target name="create-server">
+        <unzip src="${basedir}/../external/jetty-v8.zip" dest="${opensextant.home}/" />
+        <copy todir="${jetty.home}/lib/ext" file="${opensextant.lib}/solr/jts-1.13.jar" />
+        <copy todir="${jetty.home}/webapps" file="${basedir}/solr/solr.war" />
 
-                <chmod perm="ug+x" type="file">
-                   <fileset dir="${jetty.home}">
-                      <include name="bin/*.*" />
-                   </fileset>
-                </chmod>
-	</target>
+        <chmod perm="ug+x" type="file">
+            <fileset dir="${jetty.home}">
+                <include name="bin/*.*" />
+            </fileset>
+        </chmod>
+    </target>
 
 
 </project>

@@ -33,21 +33,22 @@
   sharedLib: path to a lib directory that will be shared across all cores
 -->
 <solr persistent="false">
-	<!-- by default, this is 50 @ WARN
-  <logging enabled="true">
-  	<watcher size="100" threshold="INFO" />
-  </logging>
-   -->
-
-  <!--
-  adminPath: RequestHandler path to manage cores.
-    If 'null' (or absent), cores will not be manageable via request handler
-  -->
-  <cores adminPath="/admin/cores" defaultCoreName="gazetteer" host="${host:}" hostPort="${jetty.port:}">
-    <core name="gazetteer" instanceDir="./gazetteer" />
-
-    <!-- uncomment in your deployed instance if using taxcat
-    <core name="taxcat" instanceDir="./taxcat" />
+    <!-- by default, this is 50 @ WARN
+    <logging enabled="true">
+      <watcher size="100" threshold="INFO" />
+    </logging>
     -->
-  </cores>
+
+    <!--
+    adminPath: RequestHandler path to manage cores.
+      If 'null' (or absent), cores will not be manageable via request handler
+    -->
+    <cores adminPath="/admin/cores" defaultCoreName="gazetteer" host="${host:}"
+           hostPort="${jetty.port:}">
+        <core name="gazetteer" instanceDir="./gazetteer" />
+
+        <!-- uncomment in your deployed instance if using taxcat
+        <core name="taxcat" instanceDir="./taxcat" />
+        -->
+    </cores>
 </solr>
