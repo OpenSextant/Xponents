@@ -93,7 +93,7 @@
 
         <!-- Integer ID from gazetteer ETL; Integer for performance reasons -->
         <field name="id" type="int" required="true" />
-        <field name="_version_" type="long" indexed="true" stored="true" />
+        <!--<field name="_version_" type="long" indexed="true" stored="true" />-->
 
         <!-- Place ID from source gazetteer -->
         <field name="place_id" type="string" required="true" />
@@ -113,7 +113,7 @@
         <copyField source="name" dest="name_phoneme" />
          -->
 
-        <!-- geo = XY coordinate in the form 'lat,lon' Update-script.js handles merging fields
+        <!-- geo = XY coordinate in the form 'lat,lon' update-script.js handles merging fields
              lat,lon are now ignored
          -->
         <field name="geo" type="geo" />
@@ -124,6 +124,8 @@
         <field name="lon" type="tdouble" /> -->
         <field name="lat" type="ignored" />
         <field name="lon" type="ignored" />
+
+        <!-- see update-script.js -->
         <field name="SplitCategory" type="ignored" />
 
         <!-- Name and ID bias stats are generated ahead of time and built in using ETL scripts
