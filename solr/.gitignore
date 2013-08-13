@@ -1,1 +1,8 @@
-build.properties
+/build.properties
+
+/gazetteer/data
+/taxcat/data
+
+/solr*.war
+/winstone*.jar
+/lib

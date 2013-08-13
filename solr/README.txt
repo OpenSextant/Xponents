@@ -57,26 +57,17 @@ The choices for this parameter are:
           <str name="include_category">[cat,cat,cat,...]</str>
 
 
-Deploying with a Web App server
+Running Solr
 =================================
 
-The easiest way to interact with your Solr Index is to provision your own web-app 
-server locally or on a server. The basics:
+The build script includes a convenient means of running Solr with the text tagger by running
+"ant start-solr" and is gracefully stopped via "ant stop-solr".  It uses the tiny Winstone servlet
+engine which is downloaded automatically. It downloads a Solr war as well.
 
-  copy solr.war to server 'webapps' folder
-  add some JARs to server 'libs'
-  set JVM args, such as -Dsolr.solr.home=/path/to/your/solr
-
-
-For example, Jetty:
-
-   download a version of Jetty (v8.1 works with Java6; v9 works with Java7)
-   unzip jetty-distribution-8.1.7.v20120910.zip
-   //
-   // move jetty-... folder to ./jetty for simplicity sake
-
-   copy solr.war to jetty/webapps/
-   Start jetty --- ant -f run-ant.xml jetty
+Alternatively, if you already have Solr deployed or freshly downloaded, you can tell it where its
+"home directory" is by pointing it to this very directory.  For example, from a downloaded Solr
+distribution:
+example %> java -Dsolr.solr.home=/OpenSextant/Xponents/solr -jar start.jar
 
 
 Customization
@@ -87,33 +78,3 @@ Phonetics
 As of OpenSextant 1.5 (July 2013), the use of phonetics codecs to provide a phoneme version of a place name
 was removed, as it had not been used.   The last few name field types that allowed for phonetic encoding were as follows:
 
-
-Classpath
-===============
-
-If your solr invocation -- embedded or server -- is not working right due to Class not found issues, then try 
-setting the JAR libraries and classpath elements directly in solrconfig.xml for the respective solr cores.
-
-  E.g.,  as of v1.4 we had libraries configured in solrconfig.xml, but found this to be better managed from your own classpath.
-  Web servers and other tools likely want to have extra libs (sometimes lib/ext or in <base_install>/lib) so they can provision
-  global classes to applications in containers.   JTS in particular will not be found soon enough if deployed in a web-app where
-  Solr Embedded might be used:  it needs to be copied to the global classpath.
-
-  Example solrconfig.xml "libs"  section:
-
-  <!--  Add the following libraries to your Classpath (DEFAULT)  OR configure them here.
-
-     In order of importance:
-     (required)The text tagger,
-     (required)OpenSextant phonetics encoder - limited use currently; Packaged in OpSx Toolbox JAR
-     (optional)Java Topo Suite (JTS) for geospatial search against gazetteer.  Schema field geo is linked to use of JTS.
-     (optional)Java Servlet API - for use outside of servlet container
-    -->
-  <!--
-  <lib path="${opensextant.home}/lib/solr-text-tagger-1.2.jar" /> -->
-  <!--
-  <lib path="${opensextant.home}/lib/OpenSextantToolbox.jar" /> -->
-  <!--  JTS is loaded only via CLASSPATH, but noted here as it gazetteer schema is geospatially searchable using both spatial4j + JTS
-  <lib path="${opensextant.home}/lib/jts-1.13.jar" /> -->
-  <!--
-  <lib path="${opensextant.home}/lib/javax.servlet-api-3.0.1.jar" /> -->

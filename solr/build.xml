@@ -1,111 +1,96 @@
 <?xml version="1.0"?>
 
-<project name="OpenSextant-Gazetteer" default="build">
+<project name="OpenSextant-Gazetteer" default="index">
 
-    <!-- where to deploy the Solr Gazetteer
-    Please configure "build.local.properties" and rename to "build.properties"
-
-    Required:  opensextant.home is used inside the gazetteer solr home, e.g., for referencing libs for classpath in solrconfig.xml
-          as well, solr.home is required to independently name it.
-
-    From the OpenSextant application side, solr.home is derived from opensextant.home;  but with
-    Gazetteer creation we are not using OpenSextant apps, so both vars are required
-    -->
-    <property file="${basedir}/build.properties" />
-
-    <!-- Gazetteer source file is "MergedGazetteer.txt".  Its fields are as follows:
-     -->
-    <property name="fieldnames"
+    <property name="csv.file" location="MergedGazetteer-20130725-v15a.txt" />
+    <property name="csv.fieldnames"
               value="id,place_id,name,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,,name_bias,id_bias,name_type,,SplitCategory" />
+    <!-- TODO put mapping in solrconfig.xml defaults -->
 
-    <path id="runtime.classpath">
-        <pathelement location="${basedir}/script" />
+    <!-- Solr config & data (this is the standard System property name Solr uses) -->
+    <property name="solr.solr.home" location="." />
 
-        <!-- Required classpath: Solr WAR contents + OpenSextant toolbox + servlet + JTS -->
-        <fileset dir="${opensextant.home}/lib" includes="**/*.jar" />
-    </path>
+    <property name="solr.v" value="4.2.1" />
+    <!-- a small servlet engine -->
+    <property name="winstone.v" value="0.9.10-hudson-24" />
+    <property name="textTagger.v" value="1.2-SNAPSHOT" />
 
+    <!-- get some dependencies -->
+    <get skipexisting="true" dest=".">
+        <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
+        <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
+    </get>
 
-    <!-- Prepare Solr Home-->
+    <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
+    <copy todir="lib" overwrite="false" failonerror="false"
+          file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar"
+           />
+    <get dest="lib" skipexisting="true" ignoreerrors="true">
+        <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+        <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+    </get>
 
-    <!-- 1. create Solr home
-         2. copy Solr home skeleton
-         3. unpack solr4-conf.zip to gaz/conf/.
-         4. copy runtime libs - SolrTextTagger, servlet-api  - to gaz/lib
-    -->
+    <!-- TARGETS: -->
 
-    <target name="create-solr-home">
-        <mkdir dir="${solr.home}" />
-        <mkdir dir="${solr.home}/gazetteer" />
-        <mkdir dir="${solr.home}/gazetteer/data" />
-
-        <!-- Unpack Solr4 config baseline-->
-        <unzip src="${basedir}/solr/solr4-conf.zip" dest="${solr.home}/gazetteer/." />
-
-        <!-- Gaz and SolrTextTagger Solr config -->
-        <copy todir="${solr.home}/" file="${basedir}/solr/solr.xml" />
-        <copy todir="${solr.home}/gazetteer/conf">
-            <fileset dir="${basedir}/solr/gazetteer/conf">
-                <!-- Include character mappings, schema, server config -->
-                <include name="**/*.*" />
-            </fileset>
-        </copy>
+    <target name="clean" description="Delete indexed data">
+        <delete dir="${solr.solr.home}/gazetteer/data/" />
     </target>
 
-    <target name="create">
-        <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater"
-              classpathref="runtime.classpath" fork="yes" dir="${exec_dir}">
-            <jvmarg value="-Xmx2G" />
-            <!-- This MaxPermSize appears to be helpful for loading numerous JARs -->
-            <jvmarg value="-XX:MaxPermSize=256m" />
-            <jvmarg value="-Dopensextant.home=${opensextant.home}" />
-            <jvmarg value="-Dsolr.solr.home=${solr.home}" />
-            <arg value="--input=${csv}" />
-            <arg value="/update?update.contentType=text/csv&amp;skipLines=1&amp;optimize=true&amp;separator=%09&amp;header=false&amp;trim=on&amp;fieldnames=${fieldnames}" />
+    <target name="_index">
+        <available property="csvFile.exists" file="${csv.file}" />
+        <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${csv.file}" />
+        <get
+            src="http://localhost:8983/solr/gazetteer/update?optimize=true&amp;stream.file=${csv.file}&amp;update.contentType=text/csv&amp;skipLines=1&amp;separator=%09&amp;header=false&amp;trim=on&amp;fieldnames=${csv.fieldnames}"
+            dest="${java.io.tmpdir}/update-csv.response.xml" />
+
+        <echo message="Building FST..." />
+        <get src="http://localhost:8983/solr/gazetteer/tag?build=true"
+            dest="${java.io.tmpdir}/build-fst.response.xml" />
+    </target>
+
+    <target name="index" depends="start-solr-daemon, _index, stop-solr" description="Starts Solr, indexes data, then stops it">
+    </target>
+
+    <target name="start-solr-daemon">
+        <parallel>
+            <daemons>
+                <exec-solr />
+            </daemons>
+        </parallel>
+
+        <echo message="Waiting for Solr to start by checking its URL..." />
+        <waitfor maxwait="10" maxwaitunit="second" checkevery="500" timeoutproperty="solr.failed">
+            <http url="http://localhost:8983/solr/gazetteer/select" />
+        </waitfor>
+        <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
+    </target>
+
+    <macrodef name="exec-solr">
+        <sequential>
+            <!-- 2 GB to build current gazetteer with 13 million rows -->
+            <java jar="winstone-${winstone.v}.jar" fork="true" clonevm="true" failonerror="true"
+                  maxmemory="2G">
+                <sysproperty key="java.awt.headless" value="true" />
+                <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
+                <sysproperty key="solr.enableRemoteStreaming" value="true" />
+                <arg value="--controlPort=8081" />
+                <arg value="--commonLibFolder=none" /><!-- default 'lib' conflicts with Solr -->
+                <arg value="--httpPort=8983" />
+                <arg value="--warfile=solr-${solr.v}.war" />
+                <arg value="--prefix=/solr" />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target name="start-solr" description="Start Solr (Winstone) on port 8983. Stop it via stop-solr.">
+        <exec-solr />
+    </target>
+
+    <target name="stop-solr" description="Shut down Solr (Winstone)">
+        <java classpath="winstone-${winstone.v}.jar" classname="winstone.tools.WinstoneControl">
+            <!-- by default, port 8081 -->
+            <arg value="shutdown" />
         </java>
     </target>
-
-    <!-- 2 GB to build current gazetteer with 13 million rows -->
-    <target name="build-fst">
-        <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater"
-              classpathref="runtime.classpath" fork="yes" dir="${exec_dir}">
-            <jvmarg value="-Xmx2G" />
-            <!-- This MaxPermSize appears to be helpful for loading numerous JARs -->
-            <jvmarg value="-XX:MaxPermSize=256m" />
-            <jvmarg value="-Dopensextant.home=${opensextant.home}" />
-            <jvmarg value="-Dsolr.solr.home=${solr.home}" />
-            <arg value="/tag?build=true" />
-        </java>
-    </target>
-
-    <target name="build" depends="prepare,copy-libs">
-        <antcall target="create-solr-home" />
-        <antcall target="create" />
-        <antcall target="build-fst" />
-    </target>
-
-    <!-- Just rebuild the gazetteer from Merged.txt into an existing SOLR_HOME -->
-    <target name="rebuild">
-        <echo>No depdencies enforced. If you are rebuilding the Gazetteer then SOLR_HOME must exist,
-            per create-solr-home
-        </echo>
-        <antcall target="create" />
-        <antcall target="build-fst" />
-    </target>
-
-    <!-- Create a Jetty or other Webapp server to allow us to browse the gazetteer
-      -->
-    <target name="create-server">
-        <unzip src="${basedir}/../external/jetty-v8.zip" dest="${opensextant.home}/" />
-        <copy todir="${jetty.home}/lib/ext" file="${opensextant.lib}/solr/jts-1.13.jar" />
-        <copy todir="${jetty.home}/webapps" file="${basedir}/solr/solr.war" />
-
-        <chmod perm="ug+x" type="file">
-            <fileset dir="${jetty.home}">
-                <include name="bin/*.*" />
-            </fileset>
-        </chmod>
-    </target>
-
 
 </project>
