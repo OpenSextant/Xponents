@@ -57,7 +57,7 @@
 
         <!-- Integer ID from gazetteer ETL; Integer for performance reasons -->
         <field name="id" type="int" required="true" />
-        <!--<field name="_version_" type="long" indexed="true" stored="true" />-->
+        <!--<field name="_version_" type="long" />-->
 
         <!-- Place ID from source gazetteer -->
         <field name="place_id" type="string" required="true" />
@@ -120,12 +120,12 @@
         <field name="adm3" type="string" />
 
         <!-- Name type is a flag that tells us if an entry is a code, abbrev (A), or a name (N) -->
-        <field name="name_type" type="string" stored="true" />
+        <field name="name_type" type="string" />
 
         <!--  TODO: Make use of Currently unused fields, e.g., source is source of gazetteer records, e.g., NGA, user, USGS, etc.
-        <field name="script"       type="string" stored="false" />
+        <field name="script"       type="string" />
          -->
-        <field name="source" type="string" stored="false" />
+        <field name="source" type="string" />
 
         <!--
 

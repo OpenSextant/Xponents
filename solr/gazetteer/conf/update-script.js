@@ -43,10 +43,6 @@ function processAdd(cmd) {
     if (lat != null && lon != null)
         doc.setField("geo", lat+","+lon);
 
-    // Individual lat/lon no longer needed.
-    doc.removeField("lat");
-    doc.removeField("lon");
-
     // OPTIMIZATION,  Name Type is stored. So optimize it. If possible.
     nt = doc.getFieldValue("name_type");
     if (nt!=null) {
