@@ -61,38 +61,36 @@ import org.opensextant.extraction.SolrTaggerRequest;
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
  * the Solr server.
+ * <p />
+ * This class is not thread-safe. It could be made to be with little effort.
  *
  * @author David Smiley - dsmiley@mitre.org
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
 public class PlacenameMatcher {
 
-    /**
-     * Generic Solr Matcher stuff:
-     */
     protected final static String requestHandler = "/tag";
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
     protected final boolean debug = log.isDebugEnabled();
+
     /**
      * In the interest of optimization we made the Solr instance a static class
      * attribute that should be thread safe and shareable across instances of
      * SolrMatcher
      */
-    protected static SolrParams params = null;
     protected static SolrProxy solr = null;
-    /**
+    protected static SolrParams params = null;
+
+    /*
      * Gazetteer specific stuff:
      */
+
     private final String APRIORI_NAME_RULE = "AprioriNameBias";
     //private SolrTaggerRequest tag_request = null;
     private Map<Integer, Place> beanMap = new HashMap<Integer, Place>(100); // initial size
-    /**
-     * In the interest of optimization we made the Solr instance a static class
-     * attribute that should be thread safe and shareable across instances of
-     * SolrMatcher
-     */
+
     private MatchFilter filter = null;
-    private boolean allow_lowercase_abbrev = false;
+    private boolean allowLowercaseAbbrev = false;
 
     /**
      *
@@ -115,7 +113,7 @@ public class PlacenameMatcher {
     }
 
     /**
-     * allow_lowercase_abbrev is a flag that will allow us to tag "in" or "in."
+     * A flag that will allow us to tag "in" or "in."
      * as a possible abbreviation. By default such things are not abbreviations,
      * e.g., Indiana is typically IN or In. or Ind., for example. Oregon, OR or
      * Ore. etc.
@@ -123,7 +121,7 @@ public class PlacenameMatcher {
      * but almost never in or or for those cases.
      */
     public void setAllowLowerCaseAbbreviations(boolean b) {
-        allow_lowercase_abbrev = b;
+        allowLowercaseAbbrev = b;
     }
 
     /**
@@ -152,35 +150,36 @@ public class PlacenameMatcher {
         // Being explicit here about the core name allows integrator to field multiple cores
         // in the same gazetteer.
         //
-        String config_solr_home = System.getProperty("solr.solr.home");
-        if (config_solr_home != null) {
-            solr = new SolrProxy(config_solr_home, "gazetteer");
+        String configSolrHome = System.getProperty("solr.solr.home");
+        if (configSolrHome != null) {
+            solr = new SolrProxy(configSolrHome, "gazetteer");
         } else {
             solr = new SolrProxy(System.getProperty("solr.url"));//e.g. http://localhost:8983/solr/gazetteer/
         }
-        ModifiableSolrParams _params = new ModifiableSolrParams();
-        _params.set(CommonParams.QT, requestHandler);
+        ModifiableSolrParams params = new ModifiableSolrParams();
+        params.set(CommonParams.QT, requestHandler);
         //request all fields in the Solr index
         // Do we need specific fields or *?  If faster use specific fields. TODO.
-        //_params.set(CommonParams.FL, "*,score");
+        //params.set(CommonParams.FL, "*,score");
         // Note -- removed score for now, as we have not evaluated how score could be used in this sense.
         // Score depends on FST creation and other factors.
         //
         // TODO: verify that all the right metadata is being retrieved here
-        _params.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+        params.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id," +
+                "name_bias,id_bias,name_type");
 
-        _params.set("tagsLimit", 100000);
-        _params.set(CommonParams.ROWS, 100000);
-        _params.set("subTags", false);
-        _params.set("matchText", false);//we've got the input doc as a string instead
+        params.set("tagsLimit", 100000);
+        params.set(CommonParams.ROWS, 100000);
+        params.set("subTags", false);
+        params.set("matchText", false);//we've got the input doc as a string instead
 
         /* Possible overlaps: ALL, NO_SUB, LONGEST_DOMINANT_RIGHT
          * See Solr Text Tagger documentation for details.
          */
-        _params.set("overlaps", "LONGEST_DOMINANT_RIGHT");
-        //_params.set("overlaps", "NO_SUB");
+        params.set("overlaps", "LONGEST_DOMINANT_RIGHT");
+        //params.set("overlaps", "NO_SUB");
 
-        params = _params;
+        PlacenameMatcher.params = params;
     }
     //
     private int tagNamesTime = 0;
@@ -242,12 +241,12 @@ public class PlacenameMatcher {
 
         // Setup request to tag...
         final AtomicLong startStreamingTime = new AtomicLong();
-        SolrTaggerRequest tag_request = new SolrTaggerRequest(params, buffer);
+        SolrTaggerRequest tagRequest = new SolrTaggerRequest(params, buffer);
         // Stream the response to avoid serialization and to save memory by
         // only keeping one SolrDocument materialized at a time
-        tag_request.setStreamingResponseCallback(new StreamingResponseCallback() {
+        tagRequest.setStreamingResponseCallback(new StreamingResponseCallback() {
             @Override
-            public void streamDocListInfo(long l, long l2, Float aFloat) {
+            public void streamDocListInfo(long numFound, long start, Float maxScore) {
                 startStreamingTime.set(System.currentTimeMillis());
             }
 
@@ -263,7 +262,7 @@ public class PlacenameMatcher {
 
         QueryResponse response;
         try {
-            response = tag_request.process(solr.getInternalSolrServer());
+            response = tagRequest.process(solr.getInternalSolrServer());
         } catch (Exception err) {
             throw new ExtractionException("Failed to tag document=" + docid, err);
         }
@@ -292,12 +291,12 @@ public class PlacenameMatcher {
          *
          */
         PlaceCandidate pc;
-        Place Pgeo;
-        int x1 = -1, x2 = -1;
+        Place pGeo;
+        int x1, x2;
         Set<String> seenPlaces = new HashSet<String>();
-        Double name_bias = 0.0;
+        Double nameBias;
 
-        String matchText = null;
+        String matchText;
         for (NamedList<?> tag : tags) {
             x1 = (Integer) tag.get("startOffset");
             x2 = (Integer) tag.get("endOffset");//+1 char after last matched
@@ -326,19 +325,19 @@ public class PlacenameMatcher {
             // this, but since we already have the content as a String then
             // we might as well not make the tagger do any more work.
             pc.setText(matchText); //
-            name_bias = 0.0;
+            nameBias = 0.0;
 
             @SuppressWarnings("unchecked")
             List<Integer> placeRecordIds = (List<Integer>) tag.get("ids");
             //clear out places seen for the next candidate
             seenPlaces.clear();
-            boolean _is_valid = true;
-            boolean _is_lower = StringUtils.isAllLowerCase(pc.getText());
+            boolean isValid = true;
+            boolean isLower = StringUtils.isAllLowerCase(pc.getText());
 
             for (Integer solrId : placeRecordIds) {
-                Pgeo = beanMap.get(solrId);
+                pGeo = beanMap.get(solrId);
 
-                //if (Pgeo == null) {
+                //if (pGeo == null) {
                 //    continue;
                 //}
 
@@ -352,9 +351,9 @@ public class PlacenameMatcher {
                 //   etc.
                 // Are all not typically place names or valid abbreviations in text.
                 //
-                if (!allow_lowercase_abbrev) {
-                    if (Pgeo.isAbbreviation() && _is_lower) {
-                        _is_valid = false;
+                if (!allowLowercaseAbbrev) {
+                    if (pGeo.isAbbreviation() && isLower) {
+                        isValid = false;
                         if (debug) {
                             log.debug("Ignore lower case term=" + pc.getText());
                         }
@@ -366,15 +365,12 @@ public class PlacenameMatcher {
                 // Optimization: Add distinct place objects once.
                 //   don't add Place if null or already added to this instance of PlaceCandidate
                 //
-                if (!seenPlaces.contains(Pgeo.getPlaceID())) {
-                    pc.addPlace(Pgeo);
-                    seenPlaces.add(Pgeo.getPlaceID());
+                if (!seenPlaces.contains(pGeo.getPlaceID())) {
+                    pc.addPlace(pGeo);
+                    seenPlaces.add(pGeo.getPlaceID());
 
                     // get max name bias
-                    Double n_bias = Pgeo.getName_bias();
-                    if (n_bias > name_bias) {
-                        name_bias = n_bias;
-                    }
+                    nameBias = Math.max(nameBias, pGeo.getName_bias());
                 }
             }
 
@@ -383,14 +379,14 @@ public class PlacenameMatcher {
              * token/place/name is not valid.
              *
              */
-            if (!_is_valid || !pc.hasPlaces()) {
+            if (!isValid || !pc.hasPlaces()) {
                 continue;
             }
 
             // if the max name bias seen >0; add apriori evidence
-            //if (name_bias != 0.0) {
-            if (name_bias > 0) {
-                pc.addRuleAndConfidence(APRIORI_NAME_RULE, name_bias);
+            //if (nameBias != 0.0) {
+            if (nameBias > 0) {
+                pc.addRuleAndConfidence(APRIORI_NAME_RULE, nameBias);
             }
 
             candidates.add(pc);
@@ -435,7 +431,7 @@ public class PlacenameMatcher {
 
         // This loops through findings and reports out just Country names for now.
         for (PlaceCandidate candidate : candidates) {
-            boolean _break = false;
+            boolean dobreak = false;
             String namekey = TextUtils.normalizeTextEntity(candidate.getText()); // .toLowerCase();
             if (namekey == null) {
                 // Why is this Null?
@@ -452,7 +448,7 @@ public class PlacenameMatcher {
 
                 if (p.isAbbreviation()) {
                     log.debug("Ignore all abbreviations for now " + candidate.getText());
-                    _break = true;
+                    dobreak = true;
                     break;
                 }
                 if (p.isCountry()) {
@@ -463,11 +459,11 @@ public class PlacenameMatcher {
                     }
                     ++count;
                     countries.put(namekey, count);
-                    _break = true;
+                    dobreak = true;
                     break;
                 }
             }
-            if (_break) {
+            if (dobreak) {
                 continue;
             }
         }
