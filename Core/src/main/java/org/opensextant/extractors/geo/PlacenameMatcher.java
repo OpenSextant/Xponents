@@ -71,7 +71,6 @@ public class PlacenameMatcher {
 
     protected final static String requestHandler = "/tag";
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
-    protected final boolean debug = log.isDebugEnabled();
 
     /**
      * In the interest of optimization we made the Solr instance a static class
@@ -231,9 +230,7 @@ public class PlacenameMatcher {
         //"place_id":"USGS1991763", "name":"Monterrey", "cc":"PR"}, ]
 
         long t0 = System.currentTimeMillis();
-        if (debug) {
-            log.debug("TEXT SIZE = " + buffer.length());
-        }
+        log.debug("TEXT SIZE = {}", buffer.length());
 
         beanMap.clear();
 
@@ -274,9 +271,7 @@ public class PlacenameMatcher {
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
 
-        if (debug) {
-            log.debug("DOC=" + docid + " TAGS SIZE = " + tags.size());
-        }
+        log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
 
         /*
          * Retrieve all offsets into a long list.  These offsets will report
@@ -354,9 +349,7 @@ public class PlacenameMatcher {
                 if (!allowLowercaseAbbrev) {
                     if (pGeo.isAbbreviation() && isLower) {
                         isValid = false;
-                        if (debug) {
-                            log.debug("Ignore lower case term=" + pc.getText());
-                        }
+                        log.debug("Ignore lower case term={}", pc.getText());
 
                         break;
                     }
@@ -393,7 +386,7 @@ public class PlacenameMatcher {
         }
         long t3 = System.currentTimeMillis();
 
-        if (debug) {
+        if (log.isDebugEnabled()) {
             summarizeExtraction(candidates, docid);
         }
 
