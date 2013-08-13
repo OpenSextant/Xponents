@@ -30,7 +30,7 @@ function processAdd(cmd) {
             if (cat == null || cat == "" && filter.contains("general")) {
                 includeDoc = true;
             } else {
-                inlcudeDoc = filter.contains(cat);
+                includeDoc = filter.contains(cat);
             }
         }
     }
