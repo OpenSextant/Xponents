@@ -837,6 +837,17 @@
            -->
     </requestHandler>
 
+    <requestHandler name="/updateGazCsv" class="solr.UpdateRequestHandler">
+        <lst name="defaults">
+            <str name="update.chain">script</str>
+            <str name="separator">&#9;</str>
+            <bool name="trim">true</bool>
+            <int name="skipLines">1</int>
+            <bool name="header">false</bool>
+            <str name="fieldnames">id,place_id,name,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,,name_bias,id_bias,name_type,,SplitCategory</str>
+        </lst>
+    </requestHandler>
+
     <requestHandler name="/analysis/field"
                     startup="lazy"
                     class="solr.FieldAnalysisRequestHandler" />
@@ -889,7 +900,7 @@
 
       See more about the script update processor at http://wiki.apache.org/solr/ScriptUpdateProcessor
     -->
-    <updateRequestProcessorChain name="script" default="true">
+    <updateRequestProcessorChain name="script">
         <processor class="solr.StatelessScriptUpdateProcessorFactory">
             <str name="script">update-script.js</str>
             <lst name="params">

@@ -3,9 +3,6 @@
 <project name="OpenSextant-Gazetteer" default="index">
 
     <property name="csv.file" location="MergedGazetteer-20130725-v15a.txt" />
-    <property name="csv.fieldnames"
-              value="id,place_id,name,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,,name_bias,id_bias,name_type,,SplitCategory" />
-    <!-- TODO put mapping in solrconfig.xml defaults -->
 
     <!-- Solr config & data (this is the standard System property name Solr uses) -->
     <property name="solr.solr.home" location="." />
@@ -40,7 +37,7 @@
         <available property="csvFile.exists" file="${csv.file}" />
         <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${csv.file}" />
         <get
-            src="http://localhost:8983/solr/gazetteer/update?optimize=true&amp;stream.file=${csv.file}&amp;update.contentType=text/csv&amp;skipLines=1&amp;separator=%09&amp;header=false&amp;trim=on&amp;fieldnames=${csv.fieldnames}"
+            src="http://localhost:8983/solr/gazetteer/updateGazCsv?optimize=true&amp;stream.file=${csv.file}&amp;update.contentType=text/csv"
             dest="${java.io.tmpdir}/update-csv.response.xml" />
 
         <echo message="Building FST..." />
