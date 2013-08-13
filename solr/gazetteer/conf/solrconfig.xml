@@ -893,29 +893,30 @@
         <processor class="solr.StatelessScriptUpdateProcessorFactory">
             <str name="script">update-script.js</str>
             <lst name="params">
-                <!-- Choose from: all, Basic, Wellknown, NonLatin, Rare, general (matches empty SplitCategory)
-                     'all' and 'general' DO NOT appear in input Merged gazeteer (Merged.txt), they are inferred:
-                     * all = no filtering.
-                     * general = SplitCategory is null or empty
+                <!-- Choose from: all, Basic, Wellknown, NonLatin, Rare, general (matches empty SplitCategory field)
                   -->
-                <!-- Full gazetteer without filtering
-                <str name="include_category">all</str>
-                -->
 
                 <!-- Full gazetteer without Rare
-                <str name="include_category">Basic,Wellknown,general,NonLatin</str>
+                <arr name="include_category">
+                    <str>Basic</str><str>Wellknown</str><str>general</str><str>NonLatin</str>
+                </arr>
                 -->
 
                 <!-- Default: Latin-based names only gazetteer
                 -->
-                <str name="include_category">Basic,Wellknown,general</str>
+                <arr name="include_category">
+                    <str>Basic</str><str>Wellknown</str><str>general</str>
+                </arr>
 
                 <!-- Lean: Basic + Well-known places
-                <str name="include_category">Basic,Wellknown</str>
+                <arr name="include_category">
+                    <str>Basic</str><str>Wellknown</str>
+                </arr>
                 -->
             </lst>
         </processor>
         <processor class="solr.RunUpdateProcessorFactory" />
+        <processor class="solr.LogUpdateProcessorFactory" />
     </updateRequestProcessorChain>
 
     <queryResponseWriter name="json" class="solr.JSONResponseWriter">

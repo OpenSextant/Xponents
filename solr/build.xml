@@ -73,6 +73,7 @@
                 <sysproperty key="java.awt.headless" value="true" />
                 <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
                 <sysproperty key="solr.enableRemoteStreaming" value="true" />
+                <sysproperty key="java.util.logging.config.file" value="logging.properties" />
                 <arg value="--controlPort=8081" />
                 <arg value="--commonLibFolder=none" /><!-- default 'lib' conflicts with Solr -->
                 <arg value="--httpPort=8983" />

@@ -5,56 +5,36 @@ the example solrconfig.xml and must be uncommented to be enabled.
 See http://wiki.apache.org/solr/ScriptUpdateProcessor for more details.
 */
 
+var includeCategorySet = null;
+{
+    var ic = params.get("include_category");//array of String
+    if (ic != null) {
+        includeCategorySet = new java.util.HashSet(ic);
+    }
+}
+var CAT_FIELD = params.get("category_field") || "SplitCategory";
+
 function processAdd(cmd) {
 
-    doc = cmd.solrDoc;  // org.apache.solr.common.SolrInputDocument
+    var doc = cmd.solrDoc;  // org.apache.solr.common.SolrInputDocument
     // logger.info("update-script#processAdd: id=" + id);
 
 
     /* See solrconfig for documentation on gazetteer filtering
     * =======================================================
     */
-    debug = false;
-    filter =  params.get("include_category");
-    includeDoc = false;
-    cat = null;
 
-    if (filter == null) {
-        includeDoc = true;
-    } else {
-        if (filter == "all") {
-            includeDoc = true;
-        } else {
-            cat = doc.getFieldValue("SplitCategory");
-
-            if (cat == null || cat == "" && filter.contains("general")) {
-                includeDoc = true;
-            } else {
-                includeDoc = filter.contains(cat);
-            }
+    if (includeCategorySet != null) {
+        var cat = doc.getFieldValue(CAT_FIELD) || "general";
+        if (!includeCategorySet.contains(cat)) {
+            logger.trace("update-script EXCLUDE: {}", doc);
+            return false;
         }
     }
 
-    if (!includeDoc) {
-        if (debug) {
-            id = doc.getFieldValue("place_id");
-            logger.debug("update-script EXCLUDE: " + id + ", " + doc.getFieldValue('name')  + ", " + " CAT:" + cat  );
-        }
-        return false;
-    }
     /* End Filtering
     * =======================================================
     */
-
-    testing=0
-    if (testing) {
-        // Testing script - Objective here is to index only MEX data, cc='MX';
-        // return false for everything else
-        country = doc.getFieldValue("FIPS_cc");
-
-        if (country != "MX")
-            return false;
-    }
 
     // CREATE searchable lat lon
     lat = doc.getFieldValue("lat");
