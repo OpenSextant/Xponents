@@ -680,13 +680,13 @@
         Note: This field type has some optional params:
         spatialContextFactory, geo, distCalculator, worldbounds,
         distErrPct,
-        defaultFieldValuesArrayLen, prefixTree, maxLevels, maxDetailDist
+        defaultFieldValuesArrayLen, prefixTree, maxLevels, maxDistErr
         -->
         <fieldType name="geo" class="solr.SpatialRecursivePrefixTreeFieldType"
-                   spatialContextFactory="com.spatial4j.core.context.jts.JtsSpatialContextFactory"
+                   maxDistErr="0.00009" distErrPct="0.025"
                    units="degrees" />
-
-        <!-- maxDetailDist="0.00009"/> 10meter accuracy specified in degrees (111.2km/degree)-->
+        <!-- spatialContextFactory="com.spatial4j.core.context.jts.JtsSpatialContextFactory" -->
+        <!-- maxDistErr="0.00009"/> 10meter accuracy specified in degrees (111.2km/degree)-->
 
     </types>
 
