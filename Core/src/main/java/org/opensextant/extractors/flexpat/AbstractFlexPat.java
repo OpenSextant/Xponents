@@ -8,6 +8,7 @@ import java.net.URL;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.ConfigException;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 
@@ -29,6 +30,7 @@ public abstract class AbstractFlexPat implements Extractor {
     protected URL patterns_url = null;
     protected RegexPatternManager patterns = null;
     private final TextUtils utility = new TextUtils();
+    private ProgressMonitor progressMonitor;
 
     public AbstractFlexPat() {
     }
@@ -140,6 +142,22 @@ public abstract class AbstractFlexPat implements Extractor {
     public void disableAll() {
         patterns.disableAll();
     }
+
+    @Override
+    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+        this.progressMonitor = progressMonitor;
+    }
+
+    @Override
+    public void updateProgress(double progress) {
+        if (this.progressMonitor != null) progressMonitor.updateStepProgress(progress);
+    }
+
+    @Override
+    public void markComplete() {
+        if (this.progressMonitor != null) progressMonitor.completeStep();
+    }
+    
 
 /*
     public void enablePatterns(String prefix);

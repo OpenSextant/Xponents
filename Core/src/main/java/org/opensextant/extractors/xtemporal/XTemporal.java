@@ -48,6 +48,7 @@ import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
+import org.opensextant.processing.progress.ProgressMonitor;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -65,6 +66,7 @@ public class XTemporal extends AbstractFlexPat {
     public String getName() {
         return "XTemporal";
     }
+    
 
     /**
      *
@@ -104,7 +106,6 @@ public class XTemporal extends AbstractFlexPat {
     @Override
     public List<TextMatch> extract(TextInput input) {
         TextMatchResult results = extract_dates(input.buffer, input.id);
-
         return results.matches;
     }
 
@@ -122,6 +123,7 @@ public class XTemporal extends AbstractFlexPat {
         results.matches = new ArrayList<TextMatch>();
         results.result_id = text_id;
 
+        int patternsComplete = 0;
         for (RegexPattern pat : patterns.get_patterns()) {
 
             if (debug) {
@@ -170,11 +172,15 @@ public class XTemporal extends AbstractFlexPat {
                 results.matches.add(dt);
             }
 
+            patternsComplete++;
+            updateProgress(patternsComplete/(double)patterns.get_patterns().size()+1);
         }
 
         results.pass = !results.matches.isEmpty();
 
         PatternManager.reduce_matches(results.matches);
+        
+        
 
         return results;
     }
@@ -342,4 +348,6 @@ public class XTemporal extends AbstractFlexPat {
         }
 
     }
+    
+
 }

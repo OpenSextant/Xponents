@@ -475,6 +475,7 @@ public final class XText implements iFilter, iConvert {
         requested_types.add("xlsx");
         requested_types.add("xls");
         requested_types.add("rtf");
+        requested_types.add("log");
 
         defaultConversion = new DefaultConverter();
     }

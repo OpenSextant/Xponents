@@ -41,6 +41,7 @@ import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.processing.Parameters;
+import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.extractors.geo.rules.*;
 
 /**
@@ -71,6 +72,7 @@ public class SimpleGeocoder implements Extractor {
     private static ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
     private static ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
     private ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
+    private ProgressMonitor progressMonitor;
 
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding
@@ -225,4 +227,20 @@ public class SimpleGeocoder implements Extractor {
         // but mark them as filtered out (from output).
 
     }
+    
+    @Override
+    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+        this.progressMonitor = progressMonitor;
+    }
+
+    @Override
+    public void updateProgress(double progress) {
+        if (this.progressMonitor != null) progressMonitor.updateStepProgress(progress);
+    }
+
+    @Override
+    public void markComplete() {
+        if (this.progressMonitor != null) progressMonitor.completeStep();
+    }
+
 }

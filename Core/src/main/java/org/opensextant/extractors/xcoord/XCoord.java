@@ -49,6 +49,7 @@ import org.opensextant.extractors.flexpat.TextMatchResult;
 import java.util.*;
 import java.util.regex.Matcher;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
+import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;
 
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,7 @@ public class XCoord extends AbstractFlexPat {
     public XCoord() {
         this(false);
     }
+
 
     /**
      * Extractor interface: getName
@@ -225,6 +227,7 @@ public class XCoord extends AbstractFlexPat {
         results.result_id = text_id;
         results.matches = new ArrayList<TextMatch>();
 
+        int patternsComplete=0;
         for (RegexPattern repat : patterns.get_patterns()) {
 
             if (debug) {
@@ -341,6 +344,10 @@ public class XCoord extends AbstractFlexPat {
                     }
                 }
             }
+            
+            patternsComplete++;
+            updateProgress(patternsComplete/(double)patterns.get_patterns().size()+1);
+
         }
 
         // "pass" is the wrong idea.  If no data was found
@@ -404,4 +411,5 @@ public class XCoord extends AbstractFlexPat {
             xerr.printStackTrace();
         }
     }
+
 }

@@ -26,6 +26,7 @@
  */
 package org.opensextant.extractors.xtax;
 
+import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.SolrProxy;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class TaxonMatcher implements Extractor {
     private boolean debug = log.isDebugEnabled();
     private boolean tag_all = true;
     // private SolrTaggerRequest tag_request = null;
+    private ProgressMonitor progressMonitor;
 
     /**
      *
@@ -287,6 +289,8 @@ public class TaxonMatcher implements Extractor {
         if (debug) {
             log.debug("FOUND LABELS count=" + matches.size());
         }
+        
+        progressMonitor.completeStep();
 
         return matches;
     }
@@ -348,4 +352,20 @@ public class TaxonMatcher implements Extractor {
             err.printStackTrace();
         }
     }
+    
+    @Override
+    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+        this.progressMonitor = progressMonitor;
+    }
+
+    @Override
+    public void updateProgress(double progress) {
+        if (this.progressMonitor != null) progressMonitor.updateStepProgress(progress);
+    }
+
+    @Override
+    public void markComplete() {
+        if (this.progressMonitor != null) progressMonitor.completeStep();
+    }
+
 }
