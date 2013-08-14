@@ -3,6 +3,4 @@
 /gazetteer/data
 /taxcat/data
 
-/solr*.war
-/winstone*.jar
 /lib
