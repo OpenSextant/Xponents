@@ -163,7 +163,6 @@ public class PlacenameMatcher {
             solr = new SolrProxy(System.getProperty("solr.url"));//e.g. http://localhost:8983/solr/gazetteer/
         }
         ModifiableSolrParams params = new ModifiableSolrParams();
-        params.set(CommonParams.QT, requestHandler);
         //request all fields in the Solr index
         // Do we need specific fields or *?  If faster use specific fields. TODO.
         //params.set(CommonParams.FL, "*,score");
@@ -349,6 +348,7 @@ public class PlacenameMatcher {
     private QueryResponse tagTextCallSolrTagger(String buffer, String docid, final Map<Integer, Place> placesOut)
             throws ExtractionException {
         SolrTaggerRequest tagRequest = new SolrTaggerRequest(params, buffer);
+        tagRequest.setPath(requestHandler);
         // Stream the response to avoid serialization and to save memory by
         // only keeping one SolrDocument materialized at a time
         tagRequest.setStreamingResponseCallback(new StreamingResponseCallback() {
