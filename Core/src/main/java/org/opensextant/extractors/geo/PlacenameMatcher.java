@@ -69,27 +69,34 @@ import org.opensextant.extraction.SolrTaggerRequest;
  */
 public class PlacenameMatcher {
 
-    protected final static String requestHandler = "/tag";
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * In the interest of optimization we made the Solr instance a static class
+    /*
+     * Marc: In the interest of optimization we made the Solr instance a static class
      * attribute that should be thread safe and shareable across instances of
-     * SolrMatcher
+     * SolrMatcher.
+     * David: TODO bad design; don't make static
      */
-    protected static SolrProxy solr = null;
-    protected static SolrParams params = null;
+    private static String requestHandler = "/tag";
+    private static String coreName = "gazetteer";
+    private static SolrProxy solr = null;
+    private static SolrParams params = null;
 
     /*
      * Gazetteer specific stuff:
      */
 
-    private final String APRIORI_NAME_RULE = "AprioriNameBias";
+    private static final String APRIORI_NAME_RULE = "AprioriNameBias";
     //private SolrTaggerRequest tag_request = null;
     private Map<Integer, Place> beanMap = new HashMap<Integer, Place>(100); // initial size
 
     private MatchFilter filter = null;
     private boolean allowLowercaseAbbrev = false;
+
+    //updated after each call to getText();
+    private int tagNamesTime;
+    private int getNamesTime;
+    private int totalTime;
 
     /**
      *
@@ -151,7 +158,7 @@ public class PlacenameMatcher {
         //
         String configSolrHome = System.getProperty("solr.solr.home");
         if (configSolrHome != null) {
-            solr = new SolrProxy(configSolrHome, "gazetteer");
+            solr = new SolrProxy(configSolrHome, coreName);
         } else {
             solr = new SolrProxy(System.getProperty("solr.url"));//e.g. http://localhost:8983/solr/gazetteer/
         }
@@ -180,10 +187,6 @@ public class PlacenameMatcher {
 
         PlacenameMatcher.params = params;
     }
-    //
-    private int tagNamesTime = 0;
-    private int getNamesTime = 0;
-    private int totalTime = 0;
 
     /**
      * Emphemeral metric for the current tagText() call. Caller must get these
