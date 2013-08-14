@@ -7,17 +7,24 @@
     <!-- Solr config & data (this is the standard System property name Solr uses) -->
     <property name="solr.solr.home" location="." />
 
-    <property name="solr.v" value="4.2.1" />
+    <property name="solr.v" value="4.4.0" />
 
     <property name="jetty.v" value="8.1.9.v20130131" />
     <property name="winstone.v" value="0.9.10-hudson-24" />
     <property name="textTagger.v" value="1.2-SNAPSHOT" />
+    <property name="slf4j.v" value="1.6.6" />
 
     <!-- get some dependencies -->
     <target name="init">
+
         <get dest="." skipexisting="true">
             <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
             <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
+        </get>
+        <get dest="containerLib/" skipexisting="true">
+            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/${slf4j.v}/slf4j-api-${slf4j.v}.jar" />
+            <url url="http://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/${slf4j.v}/jcl-over-slf4j-${slf4j.v}.jar" />
+            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-jdk14/${slf4j.v}/slf4j-jdk14-${slf4j.v}.jar" />
         </get>
 
         <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
@@ -75,7 +82,7 @@
                 <sysproperty key="solr.enableRemoteStreaming" value="true" />
                 <sysproperty key="java.util.logging.config.file" value="logging.properties" />
                 <arg value="--controlPort=8081" />
-                <arg value="--commonLibFolder=none" /><!-- default 'lib' conflicts with Solr -->
+                <arg value="--commonLibFolder=containerLib" />
                 <arg value="--httpPort=8983" />
                 <arg value="--warfile=solr-${solr.v}.war" />
                 <arg value="--prefix=/solr" />
@@ -103,7 +110,7 @@
         </get>
         <echo message="java
  -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=. -Djava.util.logging.config.file=logging.properties
- -jar jetty-runner-${jetty.v}.jar --port 8983 --path /solr solr-${solr.v}.war"/>
+ -jar jetty-runner-${jetty.v}.jar --lib containerLib --port 8983 --path /solr solr-${solr.v}.war"/>
     </target>
 
 </project>
