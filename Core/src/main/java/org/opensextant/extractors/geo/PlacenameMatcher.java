@@ -40,6 +40,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 //import org.apache.solr.client.solrj.SolrRequest;
 //import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -371,6 +372,21 @@ public class PlacenameMatcher {
         } catch (Exception err) {
             throw new ExtractionException("Failed to tag document=" + docid, err);
         }
+
+        //see https://issues.apache.org/jira/browse/SOLR-5154
+        SolrDocumentList docList = response.getResults();
+        if (docList == null)
+            docList = (SolrDocumentList) response.getResponse().get("matchingDocs");//SolrTextTagger v1.x
+        if (docList != null) {
+            log.debug("Not streaming docs from Solr (not supported)");
+            StreamingResponseCallback callback = tagRequest
+                    .getStreamingResponseCallback();
+            callback.streamDocListInfo(docList.getNumFound(), docList.getStart(), docList.getMaxScore());
+            for (SolrDocument solrDoc : docList) {
+                callback.streamSolrDocument(solrDoc);
+            }
+        }
+
         return response;
     }
 
