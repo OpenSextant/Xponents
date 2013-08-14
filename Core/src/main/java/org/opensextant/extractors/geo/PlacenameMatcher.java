@@ -71,10 +71,10 @@ public class PlacenameMatcher {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /*
-     * Marc: In the interest of optimization we made the Solr instance a static class
+     * MarcU: In the interest of optimization we made the Solr instance a static class
      * attribute that should be thread safe and shareable across instances of
      * SolrMatcher.
-     * David: TODO bad design; don't make static
+     * DavidS: TODO bad design; don't make static
      */
     private static String requestHandler = "/tag";
     private static String coreName = "gazetteer";
@@ -237,16 +237,15 @@ public class PlacenameMatcher {
         // Calls solr tagger; populates beanMap and returns tags in response
         beanMap.clear();
         QueryResponse response = tagTextCallSolrTagger(buffer, docid, beanMap);
+
         @SuppressWarnings("unchecked")
-        List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
+        List<NamedList> tags = (List<NamedList>) response.getResponse().get("tags");
 
         this.tagNamesTime = response.getQTime();
         long t1 = t0 + tagNamesTime;
         long t2 = System.currentTimeMillis();
 
-
-        /*
-         * Retrieve all offsets into a long list.  These offsets will report
+        /* Retrieve all offsets into a long list.  These offsets will report
          * a text span and all the gazetteer record IDs that are associated to that span.
          * The text could either be a name, a code or some other abbreviation.
          *
@@ -258,22 +257,19 @@ public class PlacenameMatcher {
          *
          */
         log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
-        List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>();
 
-        PlaceCandidate pc;
-        Place pGeo;
-        int x1, x2;
-        Set<String> seenPlaces = new HashSet<String>();
-        Double nameBias;
+        List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>( Math.min(128, tags.size()) );
 
-        String matchText;
-        for (NamedList<?> tag : tags) {
-            x1 = (Integer) tag.get("startOffset");
-            x2 = (Integer) tag.get("endOffset");//+1 char after last matched
-            matchText = buffer.substring(x1, x2);
+        tagLoop: for (NamedList tag : tags) {
 
-            /**
-             * We can filter out trivial place name matches that we know to be
+            int x1 = (Integer) tag.get("startOffset");
+            int x2 = (Integer) tag.get("endOffset");//+1 char after last matched
+            // Could have enabled the "matchText" option from the tagger to get
+            // this, but since we already have the content as a String then
+            // we might as well not make the tagger do any more work.
+            String matchText = buffer.substring(x1, x2);
+
+            /* We can filter out trivial place name matches that we know to be
              * close to false positives 100% of the time. E.g,. "way", "back",
              * "north" You might consider two different stop filters, Is "North"
              * different than "north"? This first pass filter should really
@@ -287,29 +283,20 @@ public class PlacenameMatcher {
                 }
             }
 
-            pc = new PlaceCandidate();
+            PlaceCandidate pc = new PlaceCandidate();
             pc.start = x1;
             pc.end = x2;
-
-            // Could have enabled the "matchText" option from the tagger to get
-            // this, but since we already have the content as a String then
-            // we might as well not make the tagger do any more work.
-            pc.setText(matchText); //
-            nameBias = 0.0;
+            pc.setText(matchText);
 
             @SuppressWarnings("unchecked")
             List<Integer> placeRecordIds = (List<Integer>) tag.get("ids");
-            //clear out places seen for the next candidate
-            seenPlaces.clear();
-            boolean isValid = true;
+            assert placeRecordIds.size() == new HashSet<Integer>(placeRecordIds).size() : "ids should be unique";
+            assert ! placeRecordIds.isEmpty();
             boolean isLower = StringUtils.isAllLowerCase(pc.getText());
-
+            double maxNameBias = 0.0;
             for (Integer solrId : placeRecordIds) {
-                pGeo = beanMap.get(solrId);
-
-                //if (pGeo == null) {
-                //    continue;
-                //}
+                Place pGeo = beanMap.get(solrId);
+                assert pGeo != null;
 
                 // Optimization:  abbreviation filter.
                 //
@@ -321,44 +308,31 @@ public class PlacenameMatcher {
                 //   etc.
                 // Are all not typically place names or valid abbreviations in text.
                 //
-                if (!allowLowercaseAbbrev) {
-                    if (pGeo.isAbbreviation() && isLower) {
-                        isValid = false;
-                        log.debug("Ignore lower case term={}", pc.getText());
-
-                        break;
-                    }
-
+                if (!allowLowercaseAbbrev && pGeo.isAbbreviation() && isLower) {
+                    log.debug("Ignore lower case term={}", pc.getText());
+                    //DWS: TODO what if there is another pGeo for this pc that isn't an abbrev?
+                    //  Therefore shouldn't we continue this loop and not tagLoop?
+                    continue tagLoop;
                 }
-                // Optimization: Add distinct place objects once.
-                //   don't add Place if null or already added to this instance of PlaceCandidate
-                //
-                if (!seenPlaces.contains(pGeo.getPlaceID())) {
-                    pc.addPlace(pGeo);
-                    seenPlaces.add(pGeo.getPlaceID());
 
-                    // get max name bias
-                    nameBias = Math.max(nameBias, pGeo.getName_bias());
-                }
-            }
+                pc.addPlace(pGeo);
 
-            /**
-             * Some rule above triggered a flag that indicates this
-             * token/place/name is not valid.
-             *
-             */
-            if (!isValid || !pc.hasPlaces()) {
+                maxNameBias = Math.max(maxNameBias, pGeo.getName_bias());
+            }//for place in tag
+
+            // Skip this PlaceCandidate if has no places (e.g. due to filtering)
+            if (!pc.hasPlaces()) {
+                log.debug("Place has no places={}", pc.getText());
                 continue;
             }
 
-            // if the max name bias seen >0; add apriori evidence
-            //if (nameBias != 0.0) {
-            if (nameBias > 0) {
-                pc.addRuleAndConfidence(APRIORI_NAME_RULE, nameBias);
+            // if the max name bias seen >0, add apriori evidence
+            if (maxNameBias > 0) {
+                pc.addRuleAndConfidence(APRIORI_NAME_RULE, maxNameBias);
             }
 
             candidates.add(pc);
-        }
+        }//for tag
         long t3 = System.currentTimeMillis();
 
         //this.tagNamesTime = (int)(t1 - t0);
@@ -472,7 +446,6 @@ public class PlacenameMatcher {
         //String solrHome = args[0];
 
         PlacenameMatcher sm = new PlacenameMatcher();
-
         try {
             String docContent = "We drove to Sin City. The we drove to -$IN ĆITŸ .";
 
@@ -483,10 +456,10 @@ public class PlacenameMatcher {
             for (PlaceCandidate pc : matches) {
                 System.out.println(pc.toString());
             }
-
-            sm.shutdown();
         } catch (Exception err) {
             err.printStackTrace();
+        } finally {
+            sm.shutdown();
         }
     }
 }
