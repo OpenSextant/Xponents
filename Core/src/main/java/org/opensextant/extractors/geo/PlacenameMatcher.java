@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.StreamingResponseCallback;
@@ -235,46 +234,16 @@ public class PlacenameMatcher {
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
 
+        // Calls solr tagger; populates beanMap and returns tags in response
         beanMap.clear();
-
-        List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>();
-
-        // Setup request to tag...
-        final AtomicLong startStreamingTime = new AtomicLong();
-        SolrTaggerRequest tagRequest = new SolrTaggerRequest(params, buffer);
-        // Stream the response to avoid serialization and to save memory by
-        // only keeping one SolrDocument materialized at a time
-        tagRequest.setStreamingResponseCallback(new StreamingResponseCallback() {
-            @Override
-            public void streamDocListInfo(long numFound, long start, Float maxScore) {
-                startStreamingTime.set(System.currentTimeMillis());
-            }
-
-            //Future optimization: it would be nice if Solr could give us the doc id without
-            // giving us a SolrDocument, allowing us to conditionally get it.
-            // it would save disk IO & speed, at the expense of putting ids into memory.
-            @Override
-            public void streamSolrDocument(final SolrDocument solrDoc) {
-                Integer id = (Integer) solrDoc.getFirstValue("id");
-                beanMap.put(id, createPlace(solrDoc));
-            }
-        });
-
-        QueryResponse response;
-        try {
-            response = tagRequest.process(solr.getInternalSolrServer());
-        } catch (Exception err) {
-            throw new ExtractionException("Failed to tag document=" + docid, err);
-        }
-
-        this.tagNamesTime = response.getQTime();
-        long t1 = startStreamingTime.get();
-        long t2 = System.currentTimeMillis();
-
+        QueryResponse response = tagTextCallSolrTagger(buffer, docid, beanMap);
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
 
-        log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
+        this.tagNamesTime = response.getQTime();
+        long t1 = t0 + tagNamesTime;
+        long t2 = System.currentTimeMillis();
+
 
         /*
          * Retrieve all offsets into a long list.  These offsets will report
@@ -288,6 +257,9 @@ public class PlacenameMatcher {
          * and gazetteer data that is involved.  And this is relatively early in the pipline.
          *
          */
+        log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
+        List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>();
+
         PlaceCandidate pc;
         Place pGeo;
         int x1, x2;
@@ -389,16 +361,43 @@ public class PlacenameMatcher {
         }
         long t3 = System.currentTimeMillis();
 
-        if (log.isDebugEnabled()) {
-            summarizeExtraction(candidates, docid);
-        }
-
-
         //this.tagNamesTime = (int)(t1 - t0);
         this.getNamesTime = (int) (t2 - t1);
         this.totalTime = (int) (t3 - t0);
 
+        if (log.isDebugEnabled()) {
+            summarizeExtraction(candidates, docid);
+        }
         return candidates;
+    }
+
+    private QueryResponse tagTextCallSolrTagger(String buffer, String docid, final Map<Integer, Place> placesOut)
+            throws ExtractionException {
+        SolrTaggerRequest tagRequest = new SolrTaggerRequest(params, buffer);
+        // Stream the response to avoid serialization and to save memory by
+        // only keeping one SolrDocument materialized at a time
+        tagRequest.setStreamingResponseCallback(new StreamingResponseCallback() {
+            @Override
+            public void streamDocListInfo(long numFound, long start, Float maxScore) {
+            }
+
+            //Future optimization: it would be nice if Solr could give us the doc id without
+            // giving us a SolrDocument, allowing us to conditionally get it.
+            // it would save disk IO & speed, at the expense of putting ids into memory.
+            @Override
+            public void streamSolrDocument(final SolrDocument solrDoc) {
+                Integer id = (Integer) solrDoc.getFirstValue("id");
+                placesOut.put(id, createPlace(solrDoc));
+            }
+        });
+
+        QueryResponse response;
+        try {
+            response = tagRequest.process(solr.getInternalSolrServer());
+        } catch (Exception err) {
+            throw new ExtractionException("Failed to tag document=" + docid, err);
+        }
+        return response;
     }
 
     public static Place createPlace(SolrDocument gazEntry) {
