@@ -44,6 +44,7 @@ import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
+import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;
 
 /**
@@ -100,7 +101,6 @@ public class PatternsOfLife extends AbstractFlexPat {
     @Override
     public List<TextMatch> extract(TextInput input) {
         TextMatchResult results = extract_patterns(input.buffer, input.id, null);
-
         return results.matches;
     }
 
@@ -123,6 +123,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
         PoliMatch poliMatch = null;
 
+        int patternsComplete=0;
         for (RegexPattern repat : patterns.get_patterns()) {
             if (!repat.enabled) {
                 continue;
@@ -185,6 +186,8 @@ public class PatternsOfLife extends AbstractFlexPat {
                 results.matches.add(poliMatch);
 
             }
+            patternsComplete++;
+            updateProgress(patternsComplete/(double)patterns.get_patterns().size()+1);
         }
 
         results.pass = !results.matches.isEmpty();
@@ -269,4 +272,5 @@ public class PatternsOfLife extends AbstractFlexPat {
             ioerr.printStackTrace();
         }
     }
+
 }

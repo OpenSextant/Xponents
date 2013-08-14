@@ -29,6 +29,8 @@ package org.opensextant.extraction;
 
 import java.util.List;
 
+import org.opensextant.processing.progress.ProgressMonitor;
+
 /**
  * For now, this interface is closer to an AbstractExtractor
  * where a clean interface might be
@@ -56,5 +58,9 @@ public interface Extractor {
     public void configure(java.net.URL patfile) throws ConfigException;
 
     public List<TextMatch> extract(TextInput input) throws ExtractionException;
+
+    public void setProgressMonitor(ProgressMonitor progressMonitor);
+    public void updateProgress(double progress);
+    public void markComplete();
 
 }

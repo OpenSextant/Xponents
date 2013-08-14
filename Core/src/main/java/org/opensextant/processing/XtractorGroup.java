@@ -36,6 +36,9 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.TextInput;
 import org.opensextant.extraction.DocInput;
 import org.opensextant.output.ResultsFormatter;
+import org.opensextant.processing.progress.ProgressListener;
+import org.opensextant.processing.progress.ProgressMonitor;
+import org.opensextant.processing.progress.ProgressMonitorBase;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +79,8 @@ public class XtractorGroup {
      * clears errors and other state.
      */
     protected List<String> currErrors = new ArrayList<String>();
+    
+    protected ProgressMonitor progressMonitor = new ProgressMonitorBase();
 
     /**
      */
@@ -83,19 +88,19 @@ public class XtractorGroup {
     }
 
     public void addExtractor(Extractor xprocessor) {
+        xprocessor.setProgressMonitor(progressMonitor);
         extractors.add(xprocessor);
     }
 
     public void addFormatter(ResultsFormatter formatter) {
         formatters.add(formatter);
     }
-    private int currProc = 0;
-
-    public double getProgress() {
-        if (extractors.isEmpty()) {
-            return -1; // no work done. Avoid div by zero.F
-        }
-        return (double) currProc / extractors.size();
+    
+    public void addProgressListener(ProgressListener listener) {
+        progressMonitor.addProgressListener(listener);
+    }
+    public void removeProgressListener(ProgressListener listener) {
+        progressMonitor.removeProgressListener(listener);
     }
 
     /**
@@ -105,14 +110,15 @@ public class XtractorGroup {
      */
     public List<TextMatch> process(TextInput input) {
         List<TextMatch> oneResultSet = new ArrayList<TextMatch>();
+        progressMonitor.setNumberOfSteps(extractors.size());
 
         /**
          * Process all extraction and compile on a single list.
          */
         for (Extractor x : extractors) {
             try {
-                ++currProc;
                 List<TextMatch> results = x.extract(input);
+                x.markComplete();
                 if (results != null && !results.isEmpty()) {
                     oneResultSet.addAll(results);
                 }
@@ -121,6 +127,7 @@ public class XtractorGroup {
                 currErrors.add("Extractor=" + x.getName() + " ERR=" + loopErr.getMessage());
             }
         }
+        progressMonitor.completeDocument();
         return oneResultSet;
     }
 
@@ -147,7 +154,6 @@ public class XtractorGroup {
     /** DRAFT: still figuring out the rules for 'reset' between processing or inputs.
      */
     public void reset() {
-        currProc = 0;
         currErrors.clear();
     }
 
