@@ -8,24 +8,27 @@
     <property name="solr.solr.home" location="." />
 
     <property name="solr.v" value="4.2.1" />
-    <!-- a small servlet engine -->
+
+    <property name="jetty.v" value="8.1.9.v20130131" />
     <property name="winstone.v" value="0.9.10-hudson-24" />
     <property name="textTagger.v" value="1.2-SNAPSHOT" />
 
     <!-- get some dependencies -->
-    <get skipexisting="true" dest=".">
-        <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
-        <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
-    </get>
+    <target name="init">
+        <get dest="." skipexisting="true">
+            <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
+            <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
+        </get>
 
-    <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
-    <copy todir="lib" overwrite="false" failonerror="false"
-          file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar"
-           />
-    <get dest="lib" skipexisting="true" ignoreerrors="true">
-        <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
-        <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
-    </get>
+        <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
+        <copy todir="lib" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar"
+                />
+        <get dest="lib" skipexisting="true" ignoreerrors="true">
+            <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+            <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+        </get>
+    </target>
 
     <!-- TARGETS: -->
 
@@ -48,7 +51,7 @@
     <target name="index" depends="start-solr-daemon, _index, stop-solr" description="Starts Solr, indexes data, then stops it">
     </target>
 
-    <target name="start-solr-daemon">
+    <target name="start-solr-daemon" depends="init">
         <parallel>
             <daemons>
                 <exec-solr />
@@ -80,7 +83,9 @@
         </sequential>
     </macrodef>
 
-    <target name="start-solr" description="Start Solr (Winstone) on port 8983. Stop it via stop-solr.">
+    <target name="start-solr" description="Start Solr (Winstone) on port 8983. Stop it via stop-solr."
+            depends="init">
+        <echo level="Winstone doesn't properly handle HTTP POST chunked Transfer-Encoding" />
         <exec-solr />
     </target>
 
@@ -89,6 +94,16 @@
             <!-- by default, port 8081 -->
             <arg value="shutdown" />
         </java>
+        <!-- FYI I haven't found an equivalent for jetty-runner -->
+    </target>
+
+    <target name="print-start-jetty" description="Print instructions to run Solr with Jetty">
+        <get dest="." skipexisting="true">
+            <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
+        </get>
+        <echo message="java
+ -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=. -Djava.util.logging.config.file=logging.properties
+ -jar jetty-runner-${jetty.v}.jar --port 8983 --path /solr solr-${solr.v}.war"/>
     </target>
 
 </project>
