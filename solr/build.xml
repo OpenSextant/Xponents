@@ -85,7 +85,7 @@
 
     <target name="start-solr" description="Start Solr (Winstone) on port 8983. Stop it via stop-solr."
             depends="init">
-        <echo level="Winstone doesn't properly handle HTTP POST chunked Transfer-Encoding" />
+        <echo level="warning" message="Winstone doesn't properly handle HTTP POST chunked Transfer-Encoding" />
         <exec-solr />
     </target>
 
