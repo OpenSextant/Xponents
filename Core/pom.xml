@@ -2,213 +2,221 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.opensextant</groupId>
-    <artifactId>xponents-parent</artifactId>
+    <parent>
+        <groupId>org.opensextant</groupId>
+        <artifactId>xponents-parent</artifactId>
+        <version>2.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>opensextant-xponents</artifactId>
     <version>2.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
 
-  <artifactId>opensextant-xponents</artifactId>
-  <version>2.0-SNAPSHOT</version>
+    <dependencies>
 
-  <dependencies>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.2</version>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.2</version>
-    </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
-    </dependency>
+        <dependency>
+            <groupId>org.opensextant</groupId>
+            <artifactId>solr-text-tagger</artifactId>
+            <version>1.2-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-      <groupId>org.opensextant</groupId>
-      <artifactId>solr-text-tagger</artifactId>
-      <version>1.2-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jcl-over-slf4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.opensextant</groupId>
+            <artifactId>geodesy</artifactId>
+            <version>2.0.0</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.opensextant</groupId>
-      <artifactId>geodesy</artifactId>
-      <version>2.0.0</version>
-    </dependency>
+        <dependency>
+            <groupId>org.opensextant</groupId>
+            <artifactId>giscore</artifactId>
+            <version>2.0.0</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.opensextant</groupId>
-      <artifactId>giscore</artifactId>
-      <version>2.0.0</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>4.2.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+            <optional>true</optional>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.solr</groupId>
-      <artifactId>solr-core</artifactId>
-      <version>4.2.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jcl-over-slf4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>4.2.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.woodstox</groupId>
+                    <artifactId>woodstox-core-asl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.solr</groupId>
-      <artifactId>solr-solrj</artifactId>
-      <version>4.2.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jcl-over-slf4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.woodstox</groupId>
-          <artifactId>woodstox-core-asl</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.2</version>
+        </dependency>
 
-    <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>2.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
 
-    <!-- Testing -->
-    <dependency>
-      <groupId>net.sf.supercsv</groupId>
-      <artifactId>super-csv</artifactId>
-      <version>2.1.0</version>
-      <!-- TOOD: move test code for extractors out to src/test/java; for now the
-        test classes are embedded.
-       -->
-      <!-- <scope>test</scope> -->
-    </dependency>
+        <!-- Testing -->
+        <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv</artifactId>
+            <version>2.1.0</version>
+            <!-- TOOD: move test code for extractors out to src/test/java; for now the
+              test classes are embedded.
+             -->
+            <!-- <scope>test</scope> -->
+        </dependency>
 
-    <dependency>
-      <groupId>gnu.getopt</groupId>
-      <artifactId>java-getopt</artifactId>
-      <version>1.0.13</version>
-    </dependency>
+        <dependency>
+            <groupId>gnu.getopt</groupId>
+            <artifactId>java-getopt</artifactId>
+            <version>1.0.13</version>
+        </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.10</version>
-    </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>runtime</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
 
 
-  <build>
-    <plugins>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.0</version>
-         <configuration>
-           <source>1.6</source>
-           <target>1.6</target>
-           <compilerArgument>-Xlint:all,-path</compilerArgument>
-           <showWarnings>true</showWarnings>
-           <showDeprecation>true</showDeprecation>
-         </configuration>
-      </plugin>
 
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36' src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright OpenSextant.org, 2010-2013</header>
-          <version>true</version>
-          <windowtitle>Xponents Extraction Toolkit</windowtitle>
-        </configuration>
-        <version>2.9.1</version>
-         <executions>
-           <execution>
-             <id>attach-javadocs</id>
-             <goals>
-               <goal>jar</goal>
-             </goals>
-           </execution>
-         </executions>
-      </plugin>
+    <build>
+        <plugins>
 
-       <plugin>
-         <artifactId>maven-source-plugin</artifactId>
-         <version>2.2.1</version>
-         <executions>
-           <execution>
-             <id>attach-sources</id>
-             <goals>
-               <goal>jar-no-fork</goal>
-             </goals>
-           </execution>
-         </executions>
-       </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <compilerArgument>-Xlint:all,-path</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
 
-    </plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36'
+                        src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
+                        OpenSextant.org, 2010-2013
+                    </header>
+                    <version>true</version>
+                    <windowtitle>Xponents Extraction Toolkit</windowtitle>
+                </configuration>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-  </build>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-        <repositories>
+        </plugins>
+
+    </build>
+
+    <repositories>
         <repository>
-          <id>sonatype-nexus-snapshots</id>
-          <name>Sonatype Nexus Snapshots</name>
-          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-          <releases><enabled>false</enabled></releases>
-          <snapshots><enabled>true</enabled></snapshots>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
-        </repositories>
+    </repositories>
 
 </project>
