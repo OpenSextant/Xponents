@@ -30,18 +30,6 @@
 
         <dependency>
             <groupId>org.opensextant</groupId>
-            <artifactId>solr-text-tagger</artifactId>
-            <version>1.2-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.opensextant</groupId>
             <artifactId>geodesy</artifactId>
             <version>2.0.0</version>
         </dependency>
@@ -52,6 +40,7 @@
             <version>2.0.0</version>
         </dependency>
 
+        <!-- only for EmbeddedSolrServer, which is optional -->
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-core</artifactId>
@@ -62,7 +51,19 @@
                     <artifactId>jcl-over-slf4j</artifactId>
                 </exclusion>
             </exclusions>
-            <optional>true</optional>
+        </dependency>
+        <!-- only if used via EmbeddedSolrServer -->
+        <dependency>
+            <groupId>org.opensextant</groupId>
+            <artifactId>solr-text-tagger</artifactId>
+            <version>1.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -119,12 +120,14 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -133,14 +136,6 @@
             <version>${slf4j.version}</version>
             <scope>runtime</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>log4j</groupId>
