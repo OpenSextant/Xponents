@@ -70,9 +70,9 @@
 
     <macrodef name="exec-solr">
         <sequential>
-            <!-- 2 GB to build current gazetteer with 13 million rows -->
+            <!-- 1 GB to build current gazetteer with 13 million rows -->
             <java jar="winstone-${winstone.v}.jar" fork="true" clonevm="true" failonerror="true"
-                  maxmemory="2G">
+                  maxmemory="1G">
                 <sysproperty key="java.awt.headless" value="true" />
                 <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
                 <sysproperty key="solr.enableRemoteStreaming" value="true" />
