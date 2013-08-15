@@ -11,7 +11,7 @@
 
     <property name="jetty.v" value="8.1.9.v20130131" />
     <property name="winstone.v" value="0.9.10-hudson-24" />
-    <property name="textTagger.v" value="1.2-SNAPSHOT" />
+    <property name="textTagger.v" value="2.0-SNAPSHOT" />
     <property name="slf4j.v" value="1.6.6" />
 
     <!-- get some dependencies -->
@@ -49,10 +49,6 @@
         <get
             src="http://localhost:8983/solr/gazetteer/updateGazCsv?optimize=true&amp;stream.file=${csv.file}&amp;update.contentType=text/csv"
             dest="${java.io.tmpdir}/update-csv.response.xml" />
-
-        <echo message="Building FST..." />
-        <get src="http://localhost:8983/solr/gazetteer/tag?build=true"
-            dest="${java.io.tmpdir}/build-fst.response.xml" />
     </target>
 
     <target name="index" depends="start-solr-daemon, _index, stop-solr" description="Starts Solr, indexes data, then stops it">

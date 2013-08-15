@@ -61,7 +61,10 @@
 
         <!-- Place ID from source gazetteer -->
         <field name="place_id" type="string" required="true" />
-        <field name="name" type="name_idx2" required="true" />
+        <field name="name" type="name_text" required="true" />
+
+        <field name="name_tag" type="name_tag" stored="false"/>
+        <copyField source="name" dest="name_tag" />
 
         <!-- phonetic variant for FST -->
         <!--
@@ -262,13 +265,21 @@
                  Sure, its more elegant to maintain separate char filters;  Or a char filter and token filter.
              See also name_idx* fields that have phonetic support
           -->
-        <fieldType name="name_idx2" class="solr.TextField" positionIncrementGap="100">
-            <analyzer>
-                <!-- <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/> -->
+        <fieldType name="name_tag" class="solr.TextField" positionIncrementGap="100"
+                   postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true">
+            <!-- ?? <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/> -->
+            <analyzer type="index">
                 <charFilter class="solr.MappingCharFilterFactory"
                             mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
                 <tokenizer class="solr.ClassicTokenizerFactory" />
-                <!-- <filter class="solr.ASCIIFoldingFilterFactory" /> -->
+                <filter class="solr.LowerCaseFilterFactory" />
+                <!-- only difference between index & query chains: -->
+                <filter class="org.opensextant.solrtexttagger.ConcatenateFilterFactory" />
+            </analyzer>
+            <analyzer type="query">
+                <charFilter class="solr.MappingCharFilterFactory"
+                            mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
+                <tokenizer class="solr.ClassicTokenizerFactory" />
                 <filter class="solr.LowerCaseFilterFactory" />
             </analyzer>
         </fieldType>

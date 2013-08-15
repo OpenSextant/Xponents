@@ -99,6 +99,8 @@
     <directoryFactory name="DirectoryFactory"
                       class="${solr.directoryFactory:solr.StandardDirectoryFactory}" />
 
+    <codecFactory name="CodecFactory" class="solr.SchemaCodecFactory" />
+
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          Index Config - These settings control low-level behavior of indexing
          Most example settings here show the default value, but are commented
@@ -792,15 +794,10 @@
     </requestHandler>
 
     <requestHandler name="/tag" class="org.opensextant.solrtexttagger.TaggerRequestHandler">
-        <!-- HEY! if you change this configuration then remove the cacheFile -->
-        <str name="indexedField">name</str>
-        <str name="storedField">name</str>
-        <bool name="partialMatches">false</bool>
+        <str name="field">name_tag</str>
         <bool name="matchText">false</bool>
-        <str name="cacheFile">taggerCache.fst</str>
-        <int name="valueMinLen">1</int>
-        <int name="valueMaxLen">100</int>
         <str name="fq">name_bias:[0 TO *]</str>
+
         <lst name="defaults">
             <str name="echoParams">none</str>
             <str name="fl">place_id,name,cc</str>
