@@ -140,7 +140,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-asl</artifactId>
+                    <artifactId>wstx-asl</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
