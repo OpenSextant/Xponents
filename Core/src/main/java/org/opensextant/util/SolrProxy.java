@@ -42,7 +42,6 @@ import org.apache.solr.core.CoreContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.opensextant.solrtexttagger.NoSerializeEmbeddedSolrServer;
 import org.opensextant.data.Place;
 
 /**
@@ -176,17 +175,28 @@ public class SolrProxy {
     }
 
     /**
-     *
+     * Creates an {@link EmbeddedSolrServer} given solr home & the core to use. These may be null
+     * and you get the default.
      */
-    public static SolrServer initialize_embedded(String solr_home, String corename)
+    public static EmbeddedSolrServer initialize_embedded(String solrHome, String coreName)
             throws IOException {
-
         try {
-            File solr_xml = new File(solr_home + File.separator + "solr.xml");
-            CoreContainer solrContainer = new CoreContainer(solr_home);
-            solrContainer.load(solr_home, solr_xml);
+            CoreContainer solrContainer;
 
-            return new EmbeddedSolrServer(solrContainer, corename);
+            if (solrHome == null) {
+                solrContainer = new CoreContainer();
+                //  before Solr 4.4:
+//                solrContainer = new CoreContainer.Initializer().initialize();
+            } else {
+                solrContainer = new CoreContainer(solrHome);
+                //  before Solr 4.4:
+//                File solrXml = new File(solrHome + File.separator + "solr.xml");
+//                solrContainer = new CoreContainer(solrHome);
+//                solrContainer.load(solrHome, solrXml);
+            }
+            solrContainer.load();//since Solr 4.4
+
+            return new EmbeddedSolrServer(solrContainer, coreName);
 
         } catch (Exception err) {
             throw new IOException("Failed to set up Embedded Solr", err);
@@ -194,22 +204,13 @@ public class SolrProxy {
     }
 
     /**
-     * Much simplified EmbeddedSolr setup.
+     * Creates a {@link EmbeddedSolrServer} based on defaults.
      *
      * @throws IOException
      */
-    public static SolrServer initialize_embedded()
+    public static EmbeddedSolrServer initialize_embedded()
             throws IOException {
-
-        try {
-            CoreContainer.Initializer initializer = new CoreContainer.Initializer();
-            CoreContainer solrContainer = initializer.initialize();
-
-            // CONVENTIONAL
-            return new EmbeddedSolrServer(solrContainer, "");
-        } catch (Exception err) {
-            throw new IOException("Failed to set up Embedded Solr", err);
-        }
+        return initialize_embedded(null, null);
     }
 
     /**
