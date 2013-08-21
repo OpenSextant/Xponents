@@ -68,7 +68,7 @@ public class SolrGazetteer {
      * SolrMatcher
      */
     private ModifiableSolrParams params = new ModifiableSolrParams();
-    private SolrProxy solr = null;
+    protected SolrProxy solr = null;
     private Map<String, Country> country_lookup = null;
     private Map<String, String> iso2fips = new HashMap<String, String>();
     private Map<String, String> fips2iso = new HashMap<String, String>();

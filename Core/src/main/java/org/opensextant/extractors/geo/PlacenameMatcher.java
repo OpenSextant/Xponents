@@ -69,28 +69,25 @@ import org.opensextant.extraction.SolrTaggerRequest;
  */
 public class PlacenameMatcher {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(PlacenameMatcher.class);
+    private final boolean debug = log.isDebugEnabled();
 
     /*
-     * MarcU: In the interest of optimization we made the Solr instance a static class
-     * attribute that should be thread safe and shareable across instances of
-     * SolrMatcher.
-     * DavidS: TODO bad design; don't make static
      */
-    private static String requestHandler = "/tag";
-    private static String coreName = "gazetteer";
-    private static SolrProxy solr = null;
-    private static SolrParams params = null;
+    private final static String requestHandler = "/tag";
+    private final static String coreName = "gazetteer";
+    private SolrProxy solr = null;
+    private final ModifiableSolrParams params = new ModifiableSolrParams();
 
     /*
      * Gazetteer specific stuff:
      */
-
     private static final String APRIORI_NAME_RULE = "AprioriNameBias";
     //private SolrTaggerRequest tag_request = null;
-    private Map<Integer, Place> beanMap = new HashMap<Integer, Place>(100); // initial size
+    //private Map<Integer, Place> beanMap = new HashMap<Integer, Place>(100); // initial size
 
-    private MatchFilter filter = null;
+    private TagFilter filter = new TagFilter();
+    private MatchFilter userfilter = null;
     private boolean allowLowercaseAbbrev = false;
 
     //updated after each call to getText();
@@ -103,12 +100,11 @@ public class PlacenameMatcher {
      * @throws IOException
      */
     public PlacenameMatcher() throws IOException {
-        PlacenameMatcher.initialize();
+        initialize();
 
         // Instance variable that will have the transient payload to tag
         // this is not thread safe and is not static:
         //tag_request = new SolrTaggerRequest(params, SolrRequest.METHOD.POST);
-
         // Pre-loading the Solr FST
         //
         try {
@@ -119,10 +115,9 @@ public class PlacenameMatcher {
     }
 
     /**
-     * A flag that will allow us to tag "in" or "in."
-     * as a possible abbreviation. By default such things are not abbreviations,
-     * e.g., Indiana is typically IN or In. or Ind., for example. Oregon, OR or
-     * Ore. etc.
+     * A flag that will allow us to tag "in" or "in." as a possible
+     * abbreviation. By default such things are not abbreviations, e.g., Indiana
+     * is typically IN or In. or Ind., for example. Oregon, OR or Ore. etc.
      *
      * but almost never in or or for those cases.
      */
@@ -133,23 +128,24 @@ public class PlacenameMatcher {
     /**
      * Close solr resources.
      */
-    public static void shutdown() {
+    public void shutdown() {
         if (solr != null) {
             solr.close();
         }
     }
 
+    /**
+     * Currently unused user filter; default TagFilter is used internally.
+     *
+     * @param f
+     */
     public void setMatchFilter(MatchFilter f) {
-        filter = f;
+        userfilter = f;
     }
 
     /**
      */
-    protected static void initialize() throws IOException {
-
-        if (solr != null) {
-            return;
-        }
+    protected final void initialize() throws IOException {
 
         // NOTE: This is set via opensextant.apps.Config or by some other means
         // But it is required to intialize.  "gazetteer" is the core name of interest.
@@ -162,7 +158,7 @@ public class PlacenameMatcher {
         } else {
             solr = new SolrProxy(System.getProperty("solr.url"));//e.g. http://localhost:8983/solr/gazetteer/
         }
-        ModifiableSolrParams params = new ModifiableSolrParams();
+        //params = new ModifiableSolrParams();
         //request all fields in the Solr index
         // Do we need specific fields or *?  If faster use specific fields. TODO.
         //params.set(CommonParams.FL, "*,score");
@@ -170,8 +166,8 @@ public class PlacenameMatcher {
         // Score depends on FST creation and other factors.
         //
         // TODO: verify that all the right metadata is being retrieved here
-        params.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id," +
-                "name_bias,id_bias,name_type");
+        params.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,"
+                + "name_bias,id_bias,name_type");
 
         params.set("tagsLimit", 100000);
         params.set(CommonParams.ROWS, 100000);
@@ -183,8 +179,6 @@ public class PlacenameMatcher {
          */
         params.set("overlaps", "LONGEST_DOMINANT_RIGHT");
         //params.set("overlaps", "NO_SUB");
-
-        PlacenameMatcher.params = params;
     }
 
     /**
@@ -235,7 +229,8 @@ public class PlacenameMatcher {
         log.debug("TEXT SIZE = {}", buffer.length());
 
         // Calls solr tagger; populates beanMap and returns tags in response
-        beanMap.clear();
+        //beanMap.clear();
+        Map<Integer, Place> beanMap = new HashMap<Integer, Place>(100);
         QueryResponse response = tagTextCallSolrTagger(buffer, docid, beanMap);
 
         @SuppressWarnings("unchecked")
@@ -258,29 +253,25 @@ public class PlacenameMatcher {
          */
         log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
 
-        List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>( Math.min(128, tags.size()) );
+        List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>(Math.min(128, tags.size()));
 
-        tagLoop: for (NamedList tag : tags) {
+        tagLoop:
+        for (NamedList tag : tags) {
 
             int x1 = (Integer) tag.get("startOffset");
             int x2 = (Integer) tag.get("endOffset");//+1 char after last matched
             // Could have enabled the "matchText" option from the tagger to get
             // this, but since we already have the content as a String then
             // we might as well not make the tagger do any more work.
+
             String matchText = buffer.substring(x1, x2);
 
-            /* We can filter out trivial place name matches that we know to be
-             * close to false positives 100% of the time. E.g,. "way", "back",
-             * "north" You might consider two different stop filters, Is "North"
-             * different than "north"? This first pass filter should really
-             * filter out only text we know to be false positives regardless of
-             * case. deprecated: use of filters here. Filter out unwanted tags
-             * via GazetteerETL data model if
+            /**
+             * Filter out trivial tags. Due to normalization, we tend to get
+             * lots of false positives that can be eliminated early.
              */
-            if (filter != null) {
-                if (filter.filterOut(matchText.toLowerCase())) {
-                    continue;
-                }
+            if (filter.filterOut(matchText)) {
+                continue;
             }
 
             PlaceCandidate pc = new PlaceCandidate();
@@ -291,8 +282,9 @@ public class PlacenameMatcher {
             @SuppressWarnings("unchecked")
             List<Integer> placeRecordIds = (List<Integer>) tag.get("ids");
             assert placeRecordIds.size() == new HashSet<Integer>(placeRecordIds).size() : "ids should be unique";
-            assert ! placeRecordIds.isEmpty();
-            boolean isLower = StringUtils.isAllLowerCase(pc.getText());
+            assert !placeRecordIds.isEmpty();
+            boolean isLower = StringUtils.isAllLowerCase(matchText);
+
             double maxNameBias = 0.0;
             for (Integer solrId : placeRecordIds) {
                 Place pGeo = beanMap.get(solrId);
@@ -309,7 +301,9 @@ public class PlacenameMatcher {
                 // Are all not typically place names or valid abbreviations in text.
                 //
                 if (!allowLowercaseAbbrev && pGeo.isAbbreviation() && isLower) {
-                    log.debug("Ignore lower case term={}", pc.getText());
+                    if (debug) {
+                        log.debug("Ignore lower case term={}", pc.getText());
+                    }
                     //DWS: TODO what if there is another pGeo for this pc that isn't an abbrev?
                     //  Therefore shouldn't we continue this loop and not tagLoop?
                     continue tagLoop;
@@ -322,7 +316,9 @@ public class PlacenameMatcher {
 
             // Skip this PlaceCandidate if has no places (e.g. due to filtering)
             if (!pc.hasPlaces()) {
-                log.debug("Place has no places={}", pc.getText());
+                if (debug) {
+                    log.debug("Place has no places={}", pc.getText());
+                }
                 continue;
             }
 
@@ -339,12 +335,22 @@ public class PlacenameMatcher {
         this.getNamesTime = (int) (t2 - t1);
         this.totalTime = (int) (t3 - t0);
 
-        if (log.isDebugEnabled()) {
+        if (debug) {
             summarizeExtraction(candidates, docid);
         }
         return candidates;
     }
 
+    /**
+     * Solr call: tag input buffer, returning all candiate place names with
+     * associated gazetteer metadata.
+     *
+     * @param buffer
+     * @param docid
+     * @param placesOut
+     * @return
+     * @throws ExtractionException
+     */
     private QueryResponse tagTextCallSolrTagger(String buffer, String docid, final Map<Integer, Place> placesOut)
             throws ExtractionException {
         SolrTaggerRequest tagRequest = new SolrTaggerRequest(params, buffer);
@@ -375,14 +381,21 @@ public class PlacenameMatcher {
 
         //see https://issues.apache.org/jira/browse/SOLR-5154
         SolrDocumentList docList = response.getResults();
-        if (docList == null)
+        if (docList == null) {
             docList = (SolrDocumentList) response.getResponse().get("matchingDocs");//SolrTextTagger v1.x
+        }
         if (docList != null) {
-            log.debug("Not streaming docs from Solr (not supported)");
+            if (debug) {
+                log.debug("Not streaming docs from Solr (not supported)");
+            }
             StreamingResponseCallback callback = tagRequest
                     .getStreamingResponseCallback();
             callback.streamDocListInfo(docList.getNumFound(), docList.getStart(), docList.getMaxScore());
             for (SolrDocument solrDoc : docList) {
+                /**
+                 * This appears to be an empty list; what is this explicit
+                 * callback loop for?
+                 */
                 callback.streamSolrDocument(solrDoc);
             }
         }
@@ -390,6 +403,13 @@ public class PlacenameMatcher {
         return response;
     }
 
+    /**
+     * Adapt the SolrProxy method for creating a Place object. Here, for
+     * disambiguation down stream gazetteer metrics are added.
+     *
+     * @param gazEntry
+     * @return
+     */
     public static Place createPlace(SolrDocument gazEntry) {
 
         // Creates for now org.opensextant.placedata.Place
@@ -412,6 +432,7 @@ public class PlacenameMatcher {
 
         log.debug("DOC=" + docid + " PLACE CANDIDATES SIZE = " + candidates.size());
         Map<String, Integer> countries = new HashMap<String, Integer>();
+        Map<String, Integer> places = new HashMap<String, Integer>();
         int nullCount = 0;
 
         // This loops through findings and reports out just Country names for now.
@@ -431,11 +452,12 @@ public class PlacenameMatcher {
                     continue;
                 }
 
-                if (p.isAbbreviation()) {
-                    log.debug("Ignore all abbreviations for now " + candidate.getText());
-                    dobreak = true;
-                    break;
-                }
+                /*
+                 if (p.isAbbreviation()) {
+                 log.debug("Ignore all abbreviations for now " + candidate.getText());
+                 dobreak = true;
+                 break;
+                 }*/
                 if (p.isCountry()) {
                     Integer count = countries.get(namekey);
                     if (count == null) {
@@ -446,6 +468,14 @@ public class PlacenameMatcher {
                     countries.put(namekey, count);
                     dobreak = true;
                     break;
+                } else {
+                    Integer count = places.get(namekey);
+                    if (count == null) {
+                        count = new Integer(1);
+                        places.put(namekey, count);
+                    }
+                    ++count;
+                    places.put(namekey, count);
                 }
             }
             if (dobreak) {
@@ -453,6 +483,50 @@ public class PlacenameMatcher {
             }
         }
         log.debug("Countries found:" + countries.toString());
+        log.debug("Places found:" + places.toString());
+    }
+
+    /* We can filter out trivial place name matches that we know to be
+     * close to false positives 100% of the time. E.g,. "way", "back",
+     * "north" You might consider two different stop filters, Is "North"
+     * different than "north"? This first pass filter should really
+     * filter out only text we know to be false positives regardless of
+     * case. deprecated: use of filters here. Filter out unwanted tags
+     * via GazetteerETL data model or in Solr index if you believe certain items
+     * will always be filtered.  Then set name_bias  < 0.0
+     */
+    class TagFilter extends MatchFilter {
+
+        final static int MIN_WORD_LEN = 3;
+
+        /**
+         * This may need to be turned off for processing lower-case or dirty
+         * data.
+         */
+        boolean filter_stopwords = true;
+
+        TagFilter() throws IOException {
+            super("/place-match-filters.txt");
+        }
+
+        public void enableStopwordFilter(boolean b) {
+            filter_stopwords = b;
+        }
+
+        @Override
+        public boolean filterOut(String t) {
+            if (super.filterOut(t.toLowerCase())) {
+                return true;
+            }
+            if (!filter_stopwords) {
+                return false;
+            }
+
+            if (StringUtils.isAllLowerCase(t) && t.length() < MIN_WORD_LEN) {
+                return true;
+            }
+            return false;
+        }
     }
 
     /**

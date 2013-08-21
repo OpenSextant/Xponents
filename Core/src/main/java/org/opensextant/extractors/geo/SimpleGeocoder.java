@@ -45,17 +45,15 @@ import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.extractors.geo.rules.*;
 
 /**
- * This is the simplest geocoding API we could devise to support embedding
- * OpenSextant into your Java applications directly. You instantiate it and can
- * geocode text rapidly and repeatedly. You, the caller is responsible for
- * managing storage of results and formatting of results.
- *
- * Our other API classes demonstrate how to format results, and eventually how
- * to store them.
- *
- * In no way does this SimpleGeocoder compromise on the quality or thoroughness
- * of the geocoding processing. It is the same processing, just a lighter weight
- * method than say using the WS or GATE Runner versions.
+ * A simple variation on the geocoding algorithms: geotag all possible things
+ * and determine a best geo-location for each tagged item. This uses the
+ * following components:
+ * <ul>
+ * <li>PlacenameMatcher: place name tagging and gazetteering</li>
+ * <li>XCoord: coordinate extraction</li>
+ * <li>geo.rules.* pkg: disambiguation rules to choose the best location for
+ * tagged names</li>
+ * </ul>
  *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
@@ -68,10 +66,10 @@ public class SimpleGeocoder implements Extractor {
     protected Logger log = LoggerFactory.getLogger(SimpleGeocoder.class);
     private XCoord xcoord = null;
     private PlacenameMatcher tagger = null;
-    private static ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
-    private static ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
-    private static ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
-    private ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
+    private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
+    private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
+    private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
+    private final ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
     private ProgressMonitor progressMonitor;
 
     /**
@@ -86,7 +84,6 @@ public class SimpleGeocoder implements Extractor {
     public String getName() {
         return "SimpleGeocoder";
     }
-
 
     /**
      * Configure an Extractor using a config file named by a path
@@ -138,7 +135,7 @@ public class SimpleGeocoder implements Extractor {
     @Override
     public void configure() throws ConfigException {
 
-        if (xcoord == null && (isCoordExtractionEnabled()) ) {
+        if (xcoord == null && (isCoordExtractionEnabled())) {
             xcoord = new XCoord();
             xcoord.configure();
         }
@@ -158,17 +155,19 @@ public class SimpleGeocoder implements Extractor {
     public void shutdown() {
 
         reportMetrics();
-        PlacenameMatcher.shutdown();
+        if (tagger != null) {
+            tagger.shutdown();
+        }
     }
 
     private Parameters params = new Parameters();
 
-    public void setParameters(Parameters p){
+    public void setParameters(Parameters p) {
         params = p;
         params.isdefault = false;
     }
 
-    public boolean isCoordExtractionEnabled(){
+    public boolean isCoordExtractionEnabled() {
         return params.tag_coordinates;
     }
 
@@ -186,6 +185,7 @@ public class SimpleGeocoder implements Extractor {
      *
      * Both methods yield a geocoding.
      * </pre>
+     *
      * @param input
      * @return
      * @throws ExtractionException
@@ -206,28 +206,28 @@ public class SimpleGeocoder implements Extractor {
         }
 
         chooseCandidates(candidates, coordinates);
-        matches.addAll( candidates );
+        matches.addAll(candidates);
 
         return matches;
     }
 
+    private final CantileverPR cantilever = new CantileverPR();
 
-    private CantileverPR cantilever = new CantileverPR();
-    private  void chooseCandidates(List<PlaceCandidate> candidates, List<TextMatch> coordinates){
+    private void chooseCandidates(List<PlaceCandidate> candidates, List<TextMatch> coordinates) {
         // First assess names matched
         // If names are to be completely filtered out, filter them out first or remove from candiate list.
         // Then apply rules.
 
-        // 1. Tagger Post-processing rules: Generate Country, Nat'l Capitals and Admin names
-        // 2. Cantilever rules:
+        // 1. Identify all hard geographic entities:  coordinates; coded places (other patterns provided by your domain, etc.)
+        // 1a. identify country + AMD1 for each coordinate; summarize distinct country + ADM1 as evidence
+        // 2. Tagger Post-processing rules: Generate Country, Nat'l Capitals and Admin names
+        // 3. Cantilever rules: General disambiguation
         cantilever.processCandiates(candidates);
-
 
         // If valid places are to be ignored in output, then allow them as evidence
         // but mark them as filtered out (from output).
-
     }
-    
+
     @Override
     public void setProgressMonitor(ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
@@ -235,12 +235,16 @@ public class SimpleGeocoder implements Extractor {
 
     @Override
     public void updateProgress(double progress) {
-        if (this.progressMonitor != null) progressMonitor.updateStepProgress(progress);
+        if (this.progressMonitor != null) {
+            progressMonitor.updateStepProgress(progress);
+        }
     }
 
     @Override
     public void markComplete() {
-        if (this.progressMonitor != null) progressMonitor.completeStep();
+        if (this.progressMonitor != null) {
+            progressMonitor.completeStep();
+        }
     }
 
 }
