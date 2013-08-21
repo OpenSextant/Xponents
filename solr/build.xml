@@ -2,10 +2,11 @@
 
 <project name="OpenSextant-Gazetteer" default="index">
 
-    <property name="csv.file" location="MergedGazetteer-20130725-v15a.txt" />
+    <!-- Solr Home and Gazetteer config data sourced here: -->
+    <property file="build.properties" />
 
     <!-- Solr config & data (this is the standard System property name Solr uses) -->
-    <property name="solr.solr.home" location="." />
+    <property name="solr.solr.home" location="${solr.home}" />
 
     <property name="solr.v" value="4.4.0" />
 
@@ -14,14 +15,28 @@
     <property name="textTagger.v" value="2.0-SNAPSHOT" />
     <property name="slf4j.v" value="1.6.6" />
 
-    <!-- get some dependencies -->
-    <target name="init">
+    <!-- setup proxy -->
+    <target name="proxy" >
+      <property name="proxy.port" value="80"/>
+      <property name="proxy.user" value=""/>
+      <property name="proxy.pass" value=""/>
+      <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/>
+    </target>
 
-        <get dest="." skipexisting="true">
+    <target name="setup">
+        <mkdir dir="build" />
+        <mkdir dir="build/containerLib" />
+    </target>
+
+
+    <!-- get some dependencies -->
+    <target name="init" depends="proxy, setup">
+
+        <get dest="build" skipexisting="true">
             <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
             <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
         </get>
-        <get dest="containerLib/" skipexisting="true">
+        <get dest="build/containerLib/" skipexisting="true">
             <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/${slf4j.v}/slf4j-api-${slf4j.v}.jar" />
             <url url="http://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/${slf4j.v}/jcl-over-slf4j-${slf4j.v}.jar" />
             <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-jdk14/${slf4j.v}/slf4j-jdk14-${slf4j.v}.jar" />
@@ -44,11 +59,11 @@
     </target>
 
     <target name="_index">
-        <available property="csvFile.exists" file="${csv.file}" />
-        <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${csv.file}" />
+        <available property="csvFile.exists" file="${gazetteer.data.file}" />
+        <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
         <get
-            src="http://localhost:8983/solr/gazetteer/updateGazCsv?optimize=true&amp;stream.file=${csv.file}&amp;update.contentType=text/csv"
-            dest="${java.io.tmpdir}/update-csv.response.xml" />
+            src="http://localhost:8983/solr/gazetteer/addGazetteer?optimize=true&amp;stream.file=${gazetteer.data.file}&amp;update.contentType=text/csv"
+            dest="build/update-csv.response.xml" />
     </target>
 
     <target name="index" depends="start-solr-daemon, _index, stop-solr" description="Starts Solr, indexes data, then stops it">
@@ -62,7 +77,7 @@
         </parallel>
 
         <echo message="Waiting for Solr to start by checking its URL..." />
-        <waitfor maxwait="10" maxwaitunit="second" checkevery="500" timeoutproperty="solr.failed">
+        <waitfor maxwait="15" maxwaitunit="second" checkevery="500" timeoutproperty="solr.failed">
             <http url="http://localhost:8983/solr/gazetteer/select" />
         </waitfor>
         <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
@@ -71,16 +86,16 @@
     <macrodef name="exec-solr">
         <sequential>
             <!-- 1 GB to build current gazetteer with 13 million rows -->
-            <java jar="winstone-${winstone.v}.jar" fork="true" clonevm="true" failonerror="true"
+            <java jar="build/winstone-${winstone.v}.jar" fork="true" clonevm="true" failonerror="true"
                   maxmemory="1G">
                 <sysproperty key="java.awt.headless" value="true" />
                 <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
                 <sysproperty key="solr.enableRemoteStreaming" value="true" />
                 <sysproperty key="java.util.logging.config.file" value="logging.properties" />
                 <arg value="--controlPort=8081" />
-                <arg value="--commonLibFolder=containerLib" />
+                <arg value="--commonLibFolder=build/containerLib" />
                 <arg value="--httpPort=8983" />
-                <arg value="--warfile=solr-${solr.v}.war" />
+                <arg value="--warfile=build/solr-${solr.v}.war" />
                 <arg value="--prefix=/solr" />
             </java>
         </sequential>
@@ -93,20 +108,20 @@
     </target>
 
     <target name="stop-solr" description="Shut down Solr (Winstone)">
-        <java classpath="winstone-${winstone.v}.jar" classname="winstone.tools.WinstoneControl">
+        <java classpath="build/winstone-${winstone.v}.jar" classname="winstone.tools.WinstoneControl">
             <!-- by default, port 8081 -->
             <arg value="shutdown" />
         </java>
         <!-- FYI I haven't found an equivalent for jetty-runner -->
     </target>
 
-    <target name="print-start-jetty" description="Print instructions to run Solr with Jetty">
-        <get dest="." skipexisting="true">
+    <target name="print-start-jetty" description="Print instructions to run Solr with Jetty" depends="proxy">
+        <get dest="build" skipexisting="true">
             <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
         </get>
         <echo message="java
- -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=. -Djava.util.logging.config.file=logging.properties
- -jar jetty-runner-${jetty.v}.jar --lib containerLib --port 8983 --path /solr solr-${solr.v}.war"/>
+ -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=${solr.solr.home} -Djava.util.logging.config.file=logging.properties
+ -jar build/jetty-runner-${jetty.v}.jar --lib build/containerLib --port 8983 --path /solr build/solr-${solr.v}.war"/>
     </target>
 
 </project>

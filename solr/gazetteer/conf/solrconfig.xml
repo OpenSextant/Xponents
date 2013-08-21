@@ -834,7 +834,8 @@
            -->
     </requestHandler>
 
-    <requestHandler name="/updateGazCsv" class="solr.UpdateRequestHandler">
+    <!-- This operation is reserved for the default OpenSextant gazetteer -->
+    <requestHandler name="/addGazetteer" class="solr.UpdateRequestHandler">
         <lst name="defaults">
             <str name="update.chain">script</str>
             <str name="separator">&#9;</str>

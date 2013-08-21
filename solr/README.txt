@@ -13,6 +13,27 @@ a single merged TAB-delimited data file.  That merged data file is the input to 
 this Gazetteer index, which is used by applications at runtime.
 
 
+Getting started
+================================
+
+Gazetteer data is generally best downloaded from here:
+   http://opensextant.org/downloads.html (download files coming....)
+   For example, 
+   http://opensextant.org/downloads/gazdata/gazdata-20130811.zip
+
+   (Under the OpenSextant/Gazetteer project you can try your hand at building the 
+    gazetteer catalog from scratch, if you need fine tuning and know what you are doing.)
+
+Customize your build.properties file, first copying the build.local.properties as a template.
+
+  gazetteer.data.file   -- set the path to the MergedGazetteer.txt (TAB-delimited data file) as your input
+                           NO default.
+
+  solr.home             -- set the location of your solr home; the "gazetteer" core is the output
+                           Default: ./
+ 
+
+
 Honing Gazetteer Index
 =================================
 
