@@ -39,20 +39,34 @@ public class Tweet extends MicroMessage {
          *
          */
         id = tw.getString("id");
-        setBody(tw.getString("text"));
+        setText(tw.getString("text"));
 
         // "Wed Oct 10 03:58:28 +0000 2012"
         pub_date = tm_parser.parse(tw.getString("created_at"));
 
         setUser(tw.getJSONObject("user"));
+        setAuthorXY(tw.optJSONObject("geo"));
+        setAuthorLocation(tw.optString("location"));
     }
 
+    public void setAuthorXY(JSONObject geo) {
+        if (geo == null) {
+            return;
+        }
+        if (geo.containsKey("coordinates")) {
+            author_xy_val = geo.getString("coordinates");
+        }
+    }
     @Override
     public void reset() {
         super.reset();
         if (tags != null) {
             tags.clear();
         }
+    }
+
+    public void setAuthorLocation(String desc) {
+        author_location = desc;
     }
 
 

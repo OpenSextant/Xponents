@@ -21,12 +21,13 @@ public abstract class MicroMessage {
     /**
      * NewsItem -- override later
      */
-    //public String body = null;
+    //public String messageText = null;
     //public long rawbytes = 0L;
     public String author = null;
     public String location_cc = null;
     public String author_cc = null;
     public String author_location = null;
+    public String author_xy_val = null;
     public LatLon author_xy = null;
 
     public MicroMessage() {
@@ -37,13 +38,13 @@ public abstract class MicroMessage {
     public MicroMessage(String _id, String text, Date tm) {
 
         this.id = _id;
-        this.setBody(text);
+        this.setText(text);
         this.pub_date = tm;
     }
 
     public void reset() {
         id = null;
-        body = null;
+        messageText = null;
         rawbytes = 0;
         location_cc = null;
         author_cc = null;
@@ -55,8 +56,8 @@ public abstract class MicroMessage {
     /**
      * NewsItem -- override later
      */
-    public final void setBody(String t) {
-        body = t;
+    public final void setText(String t) {
+        messageText = t;
         if (t != null) {
             rawbytes = t.length();
         } else {
@@ -67,17 +68,16 @@ public abstract class MicroMessage {
     /**
 
      */
-    public String getBody() {
-        return this.body;
+    public String getText() {
+        return this.messageText;
     }
 
 
         /** Data attributes */
     public Date pub_date = null;
     public String id = null;
-    public String subject = null;
     /** Integration attributes */
-    protected String body = null;
+    protected String messageText = null;
     public long rawbytes = 0L;  // This is really Char Count.
 
 

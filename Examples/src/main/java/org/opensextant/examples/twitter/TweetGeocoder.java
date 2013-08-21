@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONObject;
 
-
 import org.opensextant.extractors.geo.SimpleGeocoder;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.extractors.xcoord.XConstants;
@@ -43,8 +42,8 @@ public class TweetGeocoder {
     private SimpleGeocoder geocoder = null;
     XCoord userlocX;
     private static String formatType = null;
-    GISDataFormatter tw_output;
-    GISDataFormatter user_output;
+    GISDataFormatter tweetOutput;
+    GISDataFormatter userOutput;
     private static Set<String> tweet_stop;
     private static Set<String> tweet_pass;
 
@@ -57,9 +56,8 @@ public class TweetGeocoder {
 
         userlocX = new XCoord();
         try {
-            userlocX.configure(TweetGeocoder.class.getResource("/tweet-xcoord.cfg"));
-            userlocX.match_MGRS(false);
-            userlocX.match_UTM(false);
+            userlocX.configure(TweetGeocoder.class.getResource("/twitter/tweet-xcoord.cfg"));
+            userlocX.disableAll();
             // Explicitly enable DD
 
             // Note -- for parsing coordinates in Tweet metadata
@@ -76,23 +74,24 @@ public class TweetGeocoder {
 
         }
 
-        tweet_stop = FileUtility.loadDictionary("tweet-not-places.txt", true);
-        tweet_pass = FileUtility.loadDictionary("tweet-places.txt", true);
-
+        tweet_stop = FileUtility.loadDictionary("/twitter/tweet-not-places.txt", true);
+        tweet_pass = FileUtility.loadDictionary("/twitter/tweet-places.txt", true);
 
         geocoder = new SimpleGeocoder();
-        Parameters job1 = new Parameters();
-        Parameters job2 = new Parameters();
+        Parameters tweetJob = new Parameters();
+        Parameters userJob = new Parameters();
 
         // Fill out the basic I/O parameters.
-        job1.outputDir = "/tmp";
+        tweetJob.outputDir = "./output";
+        FileUtility.makeDirectory(tweetJob.outputDir);
 
         if (formatType == null) {
             formatType = "CSV";
         }
 
-        job1.setJobName(job);
+        tweetJob.setJobName(job);
         boolean overwrite = true;
+        tweetJob.isdefault = false;
 
         // Caller should be sure "timestamp" field does not overwrite existing field.
         // DEFINE this once.
@@ -100,46 +99,52 @@ public class TweetGeocoder {
         OpenSextantSchema.addTextField("tweet");
         OpenSextantSchema.addTextField("author");
 
-        // Given the job parameters you can then create the default tw_output formatter
+        // Given the job parameters you can then create the default tweetOutput formatter
         // which takes the Parameters as guidance on file paths, locations, oput filters, etc.
-        tw_output = createFormatter(formatType, job1);
-        tw_output.overwrite = overwrite;
-        tw_output.includeOffsets = false;
-        tw_output.includeCoordinate = true;
-        tw_output.start(job1.getJobName());
+        tweetOutput = createFormatter(formatType, tweetJob);
+        tweetOutput.overwrite = overwrite;
+        tweetOutput.includeOffsets = false;
+        tweetOutput.includeCoordinate = true;
+        tweetOutput.setGisDataModel();
 
-        job2.outputDir = "/tmp";
-        job2.setJobName(job + "_Users");
-        user_output = createFormatter(formatType, job2);
-        user_output.overwrite = overwrite;
+        userJob.outputDir = tweetJob.outputDir;
+        userJob.setJobName(job + "_Users");
+        userJob.isdefault = false;
+        userOutput = createFormatter(formatType, userJob);
+        userOutput.overwrite = overwrite;
 
         // Tune User profile geo schema -- very few fields that matter.
-        user_output.includeOffsets = false;
-        user_output.includeCoordinate = true;
+        userOutput.includeOffsets = false;
+        userOutput.includeCoordinate = true;
+        userOutput.setGisDataModel();
 
         // Swap these fields.
-        tw_output.removeField("context");
-        tw_output.addField("tweet");
+        tweetOutput.removeField("context");
+        tweetOutput.addField("tweet");
 
-        tw_output.addField("timestamp");
-        tw_output.addField("author");
+        tweetOutput.addField("timestamp");
+        tweetOutput.addField("author");
 
-        user_output.removeField("start");
-        user_output.removeField("end");
+        userOutput.removeField("start");
+        userOutput.removeField("end");
 
-        // user_output.field_order.remove("method");
-        user_output.removeField("placename");
-        user_output.removeField("confidence");
+        // userOutput.field_order.remove("method");
+        userOutput.removeField("placename");
+        userOutput.removeField("confidence");
 
-        user_output.addField("timestamp");
-        user_output.addField("author");
+        userOutput.addField("timestamp");
+        userOutput.addField("author");
 
-        user_output.removeField("context");
-        user_output.addField("tweet");
+        userOutput.removeField("context");
+        userOutput.addField("tweet");
 
-        user_output.start(job2.getJobName());
+        // Create output files, by starting the job formatters.
+        // This creates the IO streams and sets the schema for those files.
+        //
+        tweetOutput.start(tweetJob.getJobName());
+        userOutput.start(userJob.getJobName());
 
-        geocoder.setParameters(job1);
+        geocoder.setParameters(tweetJob);
 
         geocoder.configure();
 
@@ -178,48 +183,37 @@ public class TweetGeocoder {
      */
     public void geocodeTweetUser(Tweet tw) {
 
-        ExtractionResult geo = new ExtractionResult(tw.id);
-        geo.addAttribute("timestamp", tw.pub_date);
-        geo.addAttribute("author", tw.author);
-        geo.addAttribute("tweet", tw.getBody());
+        if (tw.author_xy_val == null || tw.author_location == null) {
+            return;
+        }
 
-        if (tw.author_xy != null) {
+        ExtractionResult res = new ExtractionResult(tw.id);
+        res.addAttribute("timestamp", tw.pub_date);
+        res.addAttribute("author", tw.author);
+        res.addAttribute("tweet", tw.getText());
 
-            // Geocoding object is the final data that is written to GISCore or other outputs, per the ResultsFormatter IF.
-            GeocoordMatch userLoc_geocoded = new GeocoordMatch();
+        if (tw.author_xy_val != null) {
 
-            userLoc_geocoded.setLatitude(tw.author_xy.getLatitude());
-            userLoc_geocoded.setLongitude(tw.author_xy.getLongitude());
-
-            geo.matches.add(userLoc_geocoded);
-            // Method = USER-GEO;
-
-            user_output.writeGeocodingResult(geo);
-
+            res.matches = userlocX.extract(new TextInput(tw.id, tw.author_xy_val));
         } else if (tw.author_location != null) {
-
-            /**
-             * Produces Geocoding TextMatch objects:
-             */
-            ExtractionResult res = new ExtractionResult(tw.id);
 
             res.matches = userlocX.extract(new TextInput(tw.id, tw.author_location));
             if (res.matches.isEmpty()) {
 
                 try {
-                    res.matches.addAll(geocoder.extract(new TextInput(tw.id, tw.author_location.toUpperCase())));
+                    res.matches = geocoder.extract(new TextInput(tw.id, tw.author_location));
                 } catch (Exception userErr) {
                     log.error("Geocoding error with Users?", userErr);
                 }
             }
-            if (!res.matches.isEmpty()) {
-                res.addAttribute("timestamp", tw.pub_date);
-                res.addAttribute("author", tw.author);
-                res.addAttribute("author", tw.getBody());
-            }
-            user_output.writeGeocodingResult(res);
-
         }
+
+        if (res.matches.isEmpty()) {
+            return;
+        }
+
+        userOutput.writeGeocodingResult(res);
+
     }
 
     /**
@@ -229,17 +223,17 @@ public class TweetGeocoder {
     public void geocodeTweet(Tweet tw) {
         ++recordCount;
 
-        if (tw.getBody() != null && !tw.getBody().isEmpty()) {
+        if (tw.getText() != null && !tw.getText().isEmpty()) {
             try {
                 ExtractionResult res = new ExtractionResult(tw.id);
                 // Place name tagger may not work if content has mostly lower case proper names.!!!! TODO: allow mixed case;
-                res.matches = geocoder.extract(new TextInput(tw.id, tw.getBody().toUpperCase()));
+                res.matches = geocoder.extract(new TextInput(tw.id, tw.getText()));
                 res.addAttribute("timestamp", tw.pub_date);
-                res.addAttribute("tweet", tw.getBody());
+                res.addAttribute("tweet", tw.getText());
                 res.addAttribute("author", tw.author);
                 enrichResults(res.matches);
 
-                tw_output.writeGeocodingResult(res);
+                tweetOutput.writeGeocodingResult(res);
             } catch (Exception err) {
                 log.error("Geocoding error?", err);
             }
@@ -264,6 +258,10 @@ public class TweetGeocoder {
 
             String norm = g.getText().toLowerCase();
 
+            if (norm.contains(" tnt ")) {
+                g.setFilteredOut(true);
+            }
+
             // Filter out duplicates
             if (distinct_names.contains(norm)) {
                 g.setFilteredOut(true);
@@ -272,23 +270,31 @@ public class TweetGeocoder {
                 distinct_names.add(norm);
             }
 
-            if (tweet_stop.contains(norm)) {
+            if (tweet_pass.contains(norm)) {
+                // let it pass.
+            } else if (tweet_stop.contains(norm)) {
                 g.setFilteredOut(true);
                 if (debug) {
                     log.debug("Filter out:" + norm);
                 }
-            } else if (tweet_pass.contains(norm) || !TextUtils.isASCII(g.getText().getBytes())) {
+                // Hmmm:
+                // } else if (tweet_pass.contains(norm) || !TextUtils.isASCII(g.getText().getBytes())) {
                 // DO Nothing.
                 //
             } else if (norm.length() < 4) {
-                Geocoding geo = (Geocoding) g;
+                /**
+                 * TBD. refactoring name tagger.
+                 */
+                /*Geocoding geo = (Geocoding) g;
 
-                if (!(geo.isCountry() || geo.isAdministrative())) {
-                    g.setFilteredOut(true);
-                    if (debug) {
-                        log.info("Filter out short term:" + norm);
-                    }
-                }
+                 if (!(geo.isCountry() || geo.isAdministrative())) {
+                 g.setFilteredOut(true);
+                 if (debug) {
+                 log.info("Filter out short term:" + norm);
+                 }
+                 }
+                 *
+                 */
             }
         }
     }
@@ -320,7 +326,7 @@ public class TweetGeocoder {
             tw.fromJSON(twj);
 
             // RESET using a cleaned up status text
-            tw.setBody(scrubText(separateHashMark(tw.getBody())));
+            tw.setText(scrubText(separateHashMark(tw.getText())));
 
         } catch (Exception twerr) {
             throw new ParseException("Failed to parse Tweet " + twerr.getMessage(), 0);
@@ -367,17 +373,17 @@ public class TweetGeocoder {
         if (geocoder != null) {
             geocoder.shutdown();
         }
-        if (tw_output != null) {
-            tw_output.finish();
+        if (tweetOutput != null) {
+            tweetOutput.finish();
         }
-        if (user_output != null) {
-            user_output.finish();
+        if (userOutput != null) {
+            userOutput.finish();
         }
     }
 
     public static void main(String[] args) {
 
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TweetGeocoder", args, "ln:i:f:");
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TweetGeocoder", args, "n:i:f:");
 
         try {
             String jobname = null;
