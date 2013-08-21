@@ -464,6 +464,17 @@ public class FileUtility {
     }
 
     /**
+     * On occasion file path may contain unicode chars, however as the is
+     * encoded, it may not be decodable by OS/FS.
+     *
+     * @param path
+     * @return
+     */
+    public static String getValidFilename(String path) {
+        return TextUtils.normalizeUnicode(path);
+    }
+
+    /**
      * @param fname
      * @return
      */

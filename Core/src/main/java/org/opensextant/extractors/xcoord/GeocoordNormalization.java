@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.util.TextUtils;
+import org.opensextant.util.GeodeticUtility;
 import org.opensextant.geodesy.*;
 
 /**
@@ -50,8 +51,7 @@ public final class GeocoordNormalization  {
      *
      * @param m
      * @param groups
-     * @return void
-     * @throws XCoordException
+     * @throws NormalizationException
      */
     public static void normalize_coordinate(GeocoordMatch m, Map<String, String> groups)
             throws NormalizationException {
@@ -87,14 +87,14 @@ public final class GeocoordNormalization  {
 
             /**
              *  DD filters enabled.
-             *     Disable:
-             *        XCoord.RUNTIME_FLAGS XOR XConstants.DD_FILTERS_ON
+             *  
+             * To Disable: XCoord.RUNTIME_FLAGS XOR XConstants.DD_FILTERS_ON
              */
             if ((XCoord.RUNTIME_FLAGS & XConstants.DD_FILTERS_ON) > 0) {
                 /**
                  * With FILTERS ON
-                 *    if lat/lon have no ALPHA hemisphere -- ENSW
-                 *        and if lat/lon text for match has no COORD symbology
+                 *    if lat/lon have no ALPHA hemisphere, i.e.,
+                 * ENSW                 *        and if lat/lon text for match has no COORD symbology
                  *             then this is likely not a DD coordinate -- filter out.
                  */
                 if (!ddlon.hemisphere.isAlpha() && !ddlat.hemisphere.isAlpha()) {
@@ -102,6 +102,9 @@ public final class GeocoordNormalization  {
                         m.setFilteredOut(true);
                     }
                 }
+            } else {
+                // DD filters OFF, so do not filter out
+                m.setFilteredOut(!GeodeticUtility.validateCoordinate(m.getLatitude(), m.getLongitude()));
             }
 
             m.coord_text = m.lat_text + " " + m.lon_text;

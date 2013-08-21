@@ -282,7 +282,6 @@ public class TextUtils {
             right_x = right_y;
         }
 
-
         int[] slice = {
             left_x, left_y, right_x, right_y};
 
@@ -526,6 +525,27 @@ public class TextUtils {
         }
         return newWord.toString();
     }
+
+    /**
+     * Normalize to "Normalization Form Canonical Decomposition" (NFD) REF:
+     * http://stackoverflow.com/questions/3610013/file-listfiles-mangles-unicode-names-with-jdk-6-unicode-normalization-issues
+     * This supports proper file name retrieval from file system, among other
+     * things. In many situations we see unicode file names -- Java can list
+     * them, but in using the Java-provided version of the filename the OS/FS
+     * may not be able to find the file by the name given in a particular
+     * normalized form.
+     *
+     * @param str
+     * @return
+     */
+    public static String normalizeUnicode(String str) {
+        Normalizer.Form form = Normalizer.Form.NFD;
+        if (!Normalizer.isNormalized(str, form)) {
+            return Normalizer.normalize(str, form);
+        }
+        return str;
+    }
+
     /**
      * Matches non-text after a word.
      */
@@ -791,8 +811,7 @@ public class TextUtils {
     }
 
     /**
-     * Counts the CJK characters in buffer, buf
-     * chars Inspiration:
+     * Counts the CJK characters in buffer, buf chars Inspiration:
      * http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string
      *
      * @param buf

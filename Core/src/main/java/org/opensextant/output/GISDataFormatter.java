@@ -73,10 +73,18 @@ public abstract class GISDataFormatter extends AbstractFormatter {
      *
      */
     public GISDataFormatter() {
+        this.debug = log.isDebugEnabled();
     }
 
     public void setGisDataModel(GISDataModel gisDataModel) {
         this.gisDataModel = gisDataModel;
+    }
+
+    /**
+     * Use Default GIS Data Model based on current state of formatter
+     */
+    public void setGisDataModel() {
+        this.gisDataModel = new GISDataModel(getJobName(), includeOffsets, includeCoordinate);
     }
 
     /**
@@ -85,8 +93,11 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     @Override
     public void start(String containerName) throws ProcessingException {
 
+        /**
+         * apply default GIS data model
+         */
         if (this.gisDataModel == null) {
-            this.gisDataModel = new GISDataModel(getJobName(), includeOffsets, includeCoordinate);
+            setGisDataModel();
         }
 
         try {
@@ -173,7 +184,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     public void writeGeocodingResult(ExtractionResult rowdata) {
         boolean error = false;
 
-        if (log.isDebugEnabled()) {
+        if (debug) {
             log.debug("Adding data for File " + rowdata.recordFile + " Count=" + rowdata.matches.size());
         }
 
@@ -185,7 +196,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
             // Increment ID
             id++;
 
-            if (log.isDebugEnabled()) {
+            if (debug) {
                 log.debug("Add " + id + "#" + g.toString());
             }
 
@@ -193,7 +204,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
 
             try {
                 for (Feature row : gisDataModel.buildRows(id, (Geocoding) g, g, rowdata.attributes, rowdata)) {
-                    if (log.isDebugEnabled()) {
+                    if (debug) {
                         log.debug("FEATURE: " + row.toString());
                     }
 

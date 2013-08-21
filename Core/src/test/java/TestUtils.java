@@ -1,6 +1,11 @@
-
+import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 import org.opensextant.util.UnicodeTextUtils;
+import org.opensextant.util.AnyFilenameFilter;
+
+import java.io.File;
+import java.net.URL;
+import java.net.URI;
 
 public class TestUtils {
 
@@ -10,6 +15,9 @@ public class TestUtils {
     }
 
     public void test() {
+
+        testFilenames();
+
         String emo = "\ud83d\ude1d";
         System.out.println("What am I? " + emo);
         System.out.println(UnicodeTextUtils.remove_emoticons("bla blah blahhh ;)  " + emo));
@@ -23,10 +31,46 @@ public class TestUtils {
         testISO639Names("ara");
         testISO639Names("ar");
         testISO639Names("Arabic");
-        testISO639Names("msa");
+        testISO639Names("msa");  // Modern Standard Arabic or Malay?
         testISO639Names("Burmese");
         testISO639Names("Pol");
         testISO639Names("Not a language");
+    }
+
+    private boolean testFile(File testfile) {
+        try {
+            if (testfile.exists()) {
+                System.out.println("file does exist.");
+                return true;
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        System.out.println("file does not exist.");
+        return false;
+
+    }
+
+    public void testFilenames() {
+        try {
+            String rawpath = "/unicode-filenãme.txt";
+            URL testobj = TestUtils.class.getResource(rawpath);
+            File testfile = new File(testobj.toURI());
+            File parentdir = testfile.getParentFile();
+            testFile(testfile);
+
+            String testpath = FileUtility.getValidFilename(testobj.toURI().getPath());
+            testfile = new File(testpath);
+            testFile(testfile);
+
+            File[] testfiles = parentdir.listFiles(new AnyFilenameFilter(".txt"));
+            for (File f : testfiles) {
+                System.out.println("File exists? FILE:" + f.getAbsolutePath() + "? " + (f.exists() ? "Y" : "N"));
+            }
+
+        } catch (Exception err) {
+            System.out.println("Failed to verify path");
+        }
     }
 
     /**
