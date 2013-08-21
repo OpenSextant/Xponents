@@ -86,6 +86,7 @@ public class BasicGeoTemporalProcessing
     /* Process 4 MB of text content  800 x 5KB average documents */
     private ExtractionMetrics conversionMetric = new ExtractionMetrics("doc-conversion");
     private ExtractionMetrics processingMetric = new ExtractionMetrics("doc-processing");
+    private boolean overwriteOutput = true;
 
     /**
      *
@@ -163,6 +164,7 @@ public class BasicGeoTemporalProcessing
             for (String fmt : outFormats) {
                 params.addOutputFormat(fmt);
                 AbstractFormatter formatter = createFormatter(fmt, params);
+                formatter.overwrite = overwriteOutput;
                 this.addFormatter(formatter);
                 formatter.start(params.getJobName());
             }
