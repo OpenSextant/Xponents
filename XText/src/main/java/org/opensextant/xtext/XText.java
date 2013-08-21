@@ -100,19 +100,20 @@ public final class XText implements iFilter, iConvert {
         defaults();
     }
 
-    public void enableOverwrite(boolean b){
+    public void enableOverwrite(boolean b) {
         ConvertedDocument.overwrite = b;
     }
 
-    public void setArchiveDir( String root) {
+    public void setArchiveDir(String root) {
         archiveRoot = root;
     }
-    public void setTempDir( String tmp) {
+
+    public void setTempDir(String tmp) {
         tempRoot = tmp;
     }
 
-    /** Use Tika HTML de-crapifier.
-     * Default: No scrubbing.
+    /**
+     * Use Tika HTML de-crapifier. Default: No scrubbing.
      */
     public void enableHTMLScrubber(boolean b) {
         zone_web_content = b;
@@ -215,6 +216,15 @@ public final class XText implements iFilter, iConvert {
     }
     protected long start_time = 0;
     protected long stop_time = 0;
+
+    /**
+     * Override the current setting for input Root
+     *
+     * @param tmpInput
+     */
+    public void setInputRoot(File tmpInput) {
+        this.inputRoot = tmpInput;
+    }
 
     /**
      * The main entry point to converting compound documents and folders.
@@ -339,6 +349,9 @@ public final class XText implements iFilter, iConvert {
      * We ignore hidden files and files in hidden folders, e.g., .cvs_ignore,
      * mycode/.svn/abc.txt
      *
+     * @param input
+     * @return converted document object
+     * @throws java.io.IOException
      */
     public ConvertedDocument convertFile(File input) throws IOException {
         //
@@ -383,7 +396,12 @@ public final class XText implements iFilter, iConvert {
             if (this.save_in_folder) {
                 // Uncache a file close to the original  F <== ./xtext/F.txt
                 textDoc = ConvertedDocument.getEmbeddedConversion(input);
-            } else {
+            } else if (this.inputRoot != null) {
+                // Only if the caller is using the XText API extracText(), then will this work.
+                //  If user is trying to call convertFile(path) directly all the various optimizations here
+                //  will not necessarily make sense.
+                //
+                //
                 // Uncache a file in some other tree of archives that aligns
                 // with the tree of the original source.
                 //        .../mine/source/path/F  <====  /archive/source/path/F.txt
@@ -399,24 +417,26 @@ public final class XText implements iFilter, iConvert {
             textDoc = converter.convert(input);
             long t2 = System.currentTimeMillis();
             int duration = (int) (t2 - t1);
-            if (textDoc != null && this.save && textDoc.is_converted) {
-                if (this.save_in_folder) {
-                    // Saves close to original in ./text/ folder where original resides.
-                    textDoc.saveEmbedded();
-                } else {
-                    textDoc.setPathRelativeTo(inputRoot.getAbsolutePath());
-                    textDoc.save(outputNode);
-                }
-            }
-
             if (textDoc != null) {
+                if (textDoc.buffer == null) {
+                    throw new IOException("Engineering error: Doc converted, but converter failed to setText()");
+                }
+                if (this.save && textDoc.is_converted) {
+                    if (this.save_in_folder) {
+                        // Saves close to original in ./text/ folder where original resides.
+                        textDoc.saveEmbedded();
+                    } else {
+                        textDoc.setPathRelativeTo(inputRoot.getAbsolutePath());
+                        textDoc.save(outputNode);
+                    }
+                }
+
                 textDoc.conversion_time = duration;
                 if (textDoc.filetime == null) {
                     textDoc.filetime = textDoc.getFiletime();
                 }
             }
         }
-
 
         if (postProcessor != null) {
             postProcessor.handleConversion(textDoc);
@@ -521,7 +541,6 @@ public final class XText implements iFilter, iConvert {
 
         //converters.put("eml", new EMailConverter());
         //converters.put("*", new TextTranscodingConverter());
-
         //mimetype = "html";
         // ALWAYS ignore our own text conversions or those of others.
         //
