@@ -116,9 +116,9 @@ public class SolrProxy {
         setupCore(solr_home, core);
     }
     protected Logger logger = LoggerFactory.getLogger(SolrProxy.class);
-    private SolrServer solrServer = null;
+    protected SolrServer solrServer = null;
     private UpdateRequest solrUpdate = null;
-    private String server_url = null;
+    protected String server_url = null;
     private boolean writable = false;
 
     public void setWritable(boolean b) {
@@ -185,14 +185,8 @@ public class SolrProxy {
 
             if (solrHome == null) {
                 solrContainer = new CoreContainer();
-                //  before Solr 4.4:
-//                solrContainer = new CoreContainer.Initializer().initialize();
             } else {
                 solrContainer = new CoreContainer(solrHome);
-                //  before Solr 4.4:
-//                File solrXml = new File(solrHome + File.separator + "solr.xml");
-//                solrContainer = new CoreContainer(solrHome);
-//                solrContainer.load(solrHome, solrXml);
             }
             solrContainer.load();//since Solr 4.4
 
@@ -354,6 +348,22 @@ public class SolrProxy {
         } else {
             Integer v = Integer.parseInt(obj.toString());
             return v.intValue();
+        }
+    }
+
+    /**
+     * Get a long from a record
+     */
+    public static long getLong(SolrDocument d, String f) {
+        Object obj = d.getFieldValue(f);
+        if (obj == null) {
+            return 0;
+        }
+
+        if (obj instanceof Long) {
+            return ((Long) obj).longValue();
+        } else {
+            return new Long(obj.toString()).longValue();
         }
     }
 
