@@ -74,10 +74,6 @@
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.lucene</groupId>
-                    <artifactId>lucene-misc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
                     <artifactId>lucene-queryparser</artifactId>
                 </exclusion>
                 <exclusion>
