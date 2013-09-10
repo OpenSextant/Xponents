@@ -371,7 +371,7 @@ public class TweetGeocoder {
     public void shutdown() {
         // Close connections and save your output.
         if (geocoder != null) {
-            geocoder.shutdown();
+            geocoder.cleanup();
         }
         if (tweetOutput != null) {
             tweetOutput.finish();

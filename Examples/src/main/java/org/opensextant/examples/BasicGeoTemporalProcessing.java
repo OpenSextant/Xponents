@@ -101,6 +101,7 @@ public class BasicGeoTemporalProcessing
      */
     public void shutdown() {
         //PlacenameMatcher.shutdown();
+        cleanupAll();
 
         for (ResultsFormatter outputter : formatters) {
             outputter.finish();
@@ -130,6 +131,11 @@ public class BasicGeoTemporalProcessing
         //xcoord.configure();
         //this.addExtractor(xcoord);
         SimpleGeocoder geocoder = new SimpleGeocoder();
+
+        // Testing only
+        params.tag_coordinates = false;
+        params.tag_places = true;
+        
         geocoder.setParameters(params);
         geocoder.configure();
         this.addExtractor(geocoder);
