@@ -61,8 +61,11 @@
 
         <!-- Place ID from source gazetteer -->
         <field name="place_id" type="string" required="true" />
+
+        <!-- place name indexed for typical free-text search -->
         <field name="name" type="name_text" required="true" />
 
+        <!-- place name indexed separately for the tagger -->
         <field name="name_tag" type="name_tag" stored="false"/>
         <copyField source="name" dest="name_tag" />
 
