@@ -37,65 +37,115 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.opensextant.extraction.ExtractionException;
-import org.opensextant.extraction.SolrTaggerRequest;
 import org.opensextant.extraction.TextInput;
+import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.Extractor;
-import org.opensextant.util.FileUtility;
 import org.opensextant.extraction.ConfigException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Connects to a Solr sever via HTTP and tags place names in document. The
- * <code>SOLR_HOME</code> environment variable must be set to the location of
- * the Solr server.
- *
+ * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents.
+ * The phrases can be from simple word lists or they can connect to a taxonomy of sorts -- 
+ * the "taxcat" solr core (see Xponents/solr/taxcat and Xponents/XTax for implementation) 
+ * 
+ * Set either JVM arg solr.solr.home, solr.url (for server) to point to Solr index 
+ * 
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
-public class TaxonMatcher implements Extractor {
+public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
-    private static String requestHandler = "/tag";
     private static ModifiableSolrParams params;
-    //private final String fields = "";
-    private static SolrProxy solr = null;
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-    private boolean debug = log.isDebugEnabled();
+    static {
+        params = new ModifiableSolrParams();
+        params.set(CommonParams.QT, requestHandler);
+        params.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag");
+
+        params.set("tagsLimit", 100000);
+        params.set("subTags", false);
+        params.set("matchText", false);
+
+        /*
+         * Possible overlaps: ALL, NO_SUB, LONGEST_DOMINANT_RIGHT See Solr Text
+         * Tagger documentation for details.
+         */
+        params.set("overlaps", "NO_SUB");
+
+    }
     private boolean tag_all = true;
-    // private SolrTaggerRequest tag_request = null;
     private ProgressMonitor progressMonitor;
 
     /**
-     *
+     * 
      * @throws IOException
      */
     public TaxonMatcher() throws IOException {
-        TaxonMatcher.initialize();
+        // TaxonMatcher.initialize();
 
         // Instance variable that will have the transient payload to tag
         // this is not thread safe and is not static:
 
         // Pre-loading the Solr FST
         //
-        try {
-            extract(new TextInput("__initialization___", "trivial priming of the solr pump"));
-        } catch (ExtractionException initErr) {
-            throw new IOException("Unable to prime the tagger", initErr);
+    }
+
+    /**
+     * Extractor interface.
+     */
+    public void cleanup(){
+        this.shutdown();        
+    }
+    
+    
+    /**
+     * Be explicit about the solr core to use for tagging
+     */
+    public String getCoreName() {
+        return "taxcat";
+    }
+
+    /**
+     * Return the Solr Parameters for the tagger op.
+     * 
+     * @return
+     */
+    public SolrParams getMatcherParameters() {
+        return params;
+    }
+
+    /**
+     * Caller must implement their domain objects, POJOs... this callback
+     * handler only hashes them.
+     * 
+     * @param doc
+     * @return
+     */
+    public Object createTag(SolrDocument refData) {
+
+        String _cat = SolrProxy.getString(refData, "catalog");
+
+        // Filter out unused matching records.
+        if (!tag_all && !this.catalogs.contains(_cat)) {
+            return null;
         }
+        Taxon label = new Taxon();
+
+        label.catalog = _cat;
+        label.name = SolrProxy.getString(refData, "taxnode");
+        label.addTerm(SolrProxy.getString(refData, "phrase"));
+        label.addTags(refData.getFieldValues("tag"));
+        return label;
     }
 
     /**
      * Extractor interface: getName
-     *
+     * 
      * @return
      */
     public String getName() {
@@ -105,7 +155,8 @@ public class TaxonMatcher implements Extractor {
     @Override
     public void configure() throws ConfigException {
         try {
-            TaxonMatcher.initialize();
+            initialize();
+            extract(new TextInput("__initialization___", "trivial priming of the solr pump"));
         } catch (Exception err) {
             throw new ConfigException("Failed to configure TaxMatcher", err);
         }
@@ -113,8 +164,9 @@ public class TaxonMatcher implements Extractor {
 
     /**
      * Configure an Extractor using a config file named by a path
-     *
-     * @param patfile configuration file path
+     * 
+     * @param patfile
+     *            configuration file path
      */
     @Override
     public void configure(String patfile) throws ConfigException {
@@ -123,8 +175,9 @@ public class TaxonMatcher implements Extractor {
 
     /**
      * Configure an Extractor using a config file named by a URL
-     *
-     * @param patfile configuration URL
+     * 
+     * @param patfile
+     *            configuration URL
      */
     @Override
     public void configure(java.net.URL patfile) throws ConfigException {
@@ -132,29 +185,6 @@ public class TaxonMatcher implements Extractor {
 
     }
 
-    protected static void initialize() throws IOException {
-
-        if (solr != null) {
-            return;
-        }
-
-        String config_solr_home = System.getProperty("solr.solr.home");
-        solr = new SolrProxy(config_solr_home, "taxcat");
-
-        params = new ModifiableSolrParams();
-        params.set(CommonParams.QT, requestHandler);
-        params.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag");
-
-        params.set("tagsLimit", 100000);
-        params.set("subTags", false);
-        params.set("matchText", false);//we've got the input doc as a string instead
-
-        /* Possible overlaps: ALL, NO_SUB, LONGEST_DOMINANT_RIGHT
-         * See Solr Text Tagger documentation for details.
-         */
-        params.set("overlaps", "NO_SUB");
-
-    }
     /**
      * Catalogs is a list of catalogs caller wants to tag for. If set, only
      * taxon matches with the catalog ID in this list will be returned by
@@ -165,7 +195,7 @@ public class TaxonMatcher implements Extractor {
     public void addCatalogFilters(String[] cats) {
         catalogs.addAll(Arrays.asList(cats));
         tag_all = false;
-        //reset();
+        // reset();
     }
 
     public void addCatalogFilter(String cat) {
@@ -179,76 +209,33 @@ public class TaxonMatcher implements Extractor {
     }
 
     /**
-     * Close solr resources.
-     */
-    public static void shutdown() {
-        if (solr != null) {
-            solr.close();
-        }
-    }
-
-    /**
      * "tags" are instances of the matching text spans from your input buffer
      * "matchingDocs" are records from the taxonomy catalog. They have all the
      * metadata.
-     *
+     * 
      * tags' ids array are pointers into matchingDocs, by Solr record ID.
-     *
+     * 
      * // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
      * "startOffset":38}, // { "ids":[750308, 2769912, 2770041, 10413973,
      * 10417546], "endOffset":49, // "startOffset":41}, // ... //
      * "matchingDocs":{"numFound":75, "start":0, "docs":[ // {records matching}]
-     *
+     * 
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
 
         List<TextMatch> matches = new ArrayList<TextMatch>();
-
-        SolrTaggerRequest tag_request = new SolrTaggerRequest(params, input.buffer);
-
         String docid = input.id;
 
-        QueryResponse response = null;
-        try {
-            response = tag_request.process(solr.getInternalSolrServer());
-        } catch (Exception err) {
-            throw new ExtractionException("Failed to tag document", err);
-        }
-
-        // -- Process Solr Response
-
-        SolrDocumentList docList = (SolrDocumentList) response.getResponse().get("matchingDocs");
-        Map<Integer, Taxon> labelMap = new HashMap<Integer, Taxon>(docList.size());
-        for (SolrDocument solrDoc : docList) {
-
-            String _cat = SolrProxy.getString(solrDoc, "catalog");
-
-            // Filter out unused matching records.
-            if (!tag_all && !this.catalogs.contains(_cat)) {
-                continue;
-            }
-            Taxon label = new Taxon();
-
-            label.catalog = _cat;
-            label.name = SolrProxy.getString(solrDoc, "taxnode");
-            label.addTerm(SolrProxy.getString(solrDoc, "phrase"));
-            label.addTags(solrDoc.getFieldValues("tag"));
-
-            // Hashed on "id"
-            Integer id = (Integer) solrDoc.getFirstValue("id");
-            labelMap.put(id, label);
-        }
-
+        Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
+        QueryResponse response = tagTextCallSolrTagger(input.buffer, docid, beanMap);
 
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
 
-        if (debug) {
-            log.debug("TAGS SIZE = " + tags.size());
-        }
+        log.debug("TAGS SIZE = {}", tags.size());
 
-        /**
+        /*
          * Retrieve all offsets into a long list.
          */
         TaxonMatch m = null;
@@ -259,7 +246,7 @@ public class TaxonMatcher implements Extractor {
         for (NamedList<?> tag : tags) {
             m = new TaxonMatch();
             x1 = (Integer) tag.get("startOffset");
-            x2 = (Integer) tag.get("endOffset");//+1 char after last matched
+            x2 = (Integer) tag.get("endOffset");// +1 char after last matched
             m.start = x1;
             m.end = x2;
             m.pattern_id = "taxtag";
@@ -275,7 +262,9 @@ public class TaxonMatcher implements Extractor {
             List<Integer> taxonIDs = (List<Integer>) tag.get("ids");
 
             for (Integer solrId : taxonIDs) {
-                m.addTaxon(labelMap.get(solrId));
+                Object refData = beanMap.get(solrId);
+                if (refData != null)
+                    m.addTaxon((Taxon) refData);
             }
 
             // If the match has valid taxons add the match to the
@@ -286,73 +275,13 @@ public class TaxonMatcher implements Extractor {
             }
         }
 
-        if (debug) {
-            log.debug("FOUND LABELS count=" + matches.size());
-        }
-        
-        progressMonitor.completeStep();
+        log.debug("FOUND LABELS count={}", matches.size());
+
+        markComplete();
 
         return matches;
     }
 
-    public void testDoc(String buf) throws ExtractionException {
-        List<TextMatch> matches = this.extract(new TextInput("test", buf));
-
-        for (TextMatch tx : matches) {
-            System.out.println(tx.toString());
-        }
-    }
-
-    /**
-     * Do a basic test
-     */
-    public static void main(String[] args) throws Exception {
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TaxTagger", args, "f:");
-
-        int c = -1;
-        String file = null;
-        while ((c = opts.getopt()) != -1) {
-
-            switch (c) {
-                case 'f':
-                    file = opts.getOptarg();
-                    break;
-
-                default:
-                    System.out.println("Usage  -f filename ");
-                    System.exit(-1);
-            }
-
-        }
-        TaxonMatcher taxtag = new TaxonMatcher();
-
-        try {
-            //String doc = "Fruits of paradise are like pineapple, guava, passion fruit. "+
-            //        " You may abandon the calories by eating fewer than one a day";
-
-            String doc = FileUtility.readFile(file);
-
-            // No filters.
-            taxtag.testDoc(doc);
-
-            // Invalid filter
-            System.out.println("Testing invalid catalog");
-            taxtag.addCatalogFilter("Boo");
-            //taxtag.reset();
-            taxtag.testDoc(doc);
-
-            // Invalid filter + valid filter.
-            System.out.println("Testing a valid catalog");
-            taxtag.addCatalogFilter("CWMD");
-            //taxtag.reset();
-            taxtag.testDoc(doc);
-
-            TaxonMatcher.shutdown();
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-    }
-    
     @Override
     public void setProgressMonitor(ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
@@ -360,12 +289,14 @@ public class TaxonMatcher implements Extractor {
 
     @Override
     public void updateProgress(double progress) {
-        if (this.progressMonitor != null) progressMonitor.updateStepProgress(progress);
+        if (this.progressMonitor != null)
+            progressMonitor.updateStepProgress(progress);
     }
 
     @Override
     public void markComplete() {
-        if (this.progressMonitor != null) progressMonitor.completeStep();
+        if (this.progressMonitor != null)
+            progressMonitor.completeStep();
     }
 
 }

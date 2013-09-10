@@ -41,7 +41,7 @@ import org.slf4j.Logger;
  */
 public final class PoliPatternManager extends RegexPatternManager {
 
-    Logger log = LoggerFactory.getLogger(PoliPatternManager.class);
+    Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      *
@@ -50,7 +50,7 @@ public final class PoliPatternManager extends RegexPatternManager {
      */
     public PoliPatternManager(File _patternfile) throws MalformedURLException {
         super(_patternfile);
-        log = LoggerFactory.getLogger(PoliPatternManager.class);
+        log = LoggerFactory.getLogger(getClass());
         this.debug = log.isDebugEnabled();
     }
 
@@ -60,7 +60,7 @@ public final class PoliPatternManager extends RegexPatternManager {
      */
     public PoliPatternManager(URL _patternfile) {
         super(_patternfile);
-        log = LoggerFactory.getLogger(PoliPatternManager.class);
+        log = LoggerFactory.getLogger(getClass());
         this.debug = log.isDebugEnabled();
     }
 

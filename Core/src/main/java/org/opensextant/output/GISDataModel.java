@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 public class GISDataModel {
 
-    protected static final Logger log = LoggerFactory.getLogger(GISDataModel.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected boolean includeOffsets;
     protected boolean includeCoordinate;
     protected Schema schema = null;

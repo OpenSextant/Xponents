@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Use this XCoord class for both test and development of patterns, as well as
  * to extract coordinates at runtime.
- *
+ * 
  * @author ubaldino
  */
 public class XCoord extends AbstractFlexPat {
@@ -67,18 +67,19 @@ public class XCoord extends AbstractFlexPat {
      * false-positive filters for coordinate types; (b) extract context around
      * coordinate.
      */
-    public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS | XConstants.FLAG_EXTRACT_CONTEXT;
+    public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS
+            | XConstants.FLAG_EXTRACT_CONTEXT;
     protected static String DEFAULT_XCOORD_CFG = "/geocoord_regex.cfg";
 
     /**
      * Debugging constructor -- if debugmode = True, enable debugging else if
      * log4j debug mode is enabled, respect that.
-     *
+     * 
      * @param debugmode
      */
     public XCoord(boolean debugmode) {
         this.patterns_file = DEFAULT_XCOORD_CFG;
-        log = LoggerFactory.getLogger(XCoord.class);
+        log = LoggerFactory.getLogger(getClass());
         if (debugmode) {
             debug = true;
         } else {
@@ -93,10 +94,16 @@ public class XCoord extends AbstractFlexPat {
         this(false);
     }
 
+    /**
+     * Extractor interface: extractors are responsible for cleaning up after
+     * themselves.
+     */
+    public void cleanup() {
+    }
 
     /**
      * Extractor interface: getName
-     *
+     * 
      * @return
      */
     public String getName() {
@@ -140,7 +147,7 @@ public class XCoord extends AbstractFlexPat {
      */
     @Override
     public void disableAll() {
-        super.disableAll();  // Disable unsupported patterns.
+        super.disableAll(); // Disable unsupported patterns.
         match_DD(false);
         match_DMS(false);
         match_DM(false);
@@ -150,7 +157,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of DMS patterns
-     *
+     * 
      * @param flag
      */
     public void match_DMS(boolean flag) {
@@ -159,7 +166,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of DM patterns
-     *
+     * 
      * @param flag
      */
     public void match_DM(boolean flag) {
@@ -168,7 +175,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of DD patterns
-     *
+     * 
      * @param flag
      */
     public void match_DD(boolean flag) {
@@ -177,7 +184,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of MGRS patterns
-     *
+     * 
      * @param flag
      */
     public void match_MGRS(boolean flag) {
@@ -186,7 +193,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of UTM patterns
-     *
+     * 
      * @param flag
      */
     public void match_UTM(boolean flag) {
@@ -196,7 +203,7 @@ public class XCoord extends AbstractFlexPat {
     /**
      * Assess all enabled patterns against the given text. Resulting TextMatch
      * objects carry both the original text ID and their own match ID
-     *
+     * 
      * @param text
      * @param text_id
      * @return
@@ -208,12 +215,12 @@ public class XCoord extends AbstractFlexPat {
     /**
      * Limit the extraction to a particular family of coordinates. Diagnostic
      * messages appear in TextMatchResultSet only when debug = ON.
-     *
+     * 
      * @param text
      * @param text_id
      * @param family
      * @return TextMatchResultSet result set. If input is null, result set is
-     * null
+     *         null
      */
     public TextMatchResult extract_coordinates(String text, String text_id, int family) {
 
@@ -227,33 +234,25 @@ public class XCoord extends AbstractFlexPat {
         results.result_id = text_id;
         results.matches = new ArrayList<TextMatch>();
 
-        int patternsComplete=0;
+        int patternsComplete = 0;
         for (RegexPattern repat : patterns.get_patterns()) {
 
-            if (debug) {
-                log.debug("pattern=" + repat.id);
-            }
+            log.debug("pattern={}", repat.id);
 
             if (!repat.enabled) {
-                if (debug) {
-                    log.debug("CFG pattern=" + repat.id + " not enabled");
-                }
+                log.debug("CFG pattern={} not enabled", repat.id);
                 continue;
             }
 
             GeocoordPattern pat = (GeocoordPattern) repat;
 
-            // If family specified, the limit to that family.  Only one for now.
+            // If family specified, the limit to that family. Only one for now.
             // To limit multiple use enable_XXXX()
-            if (family != XConstants.ALL_PATTERNS
-                    && pat.cce_family_id != family) {
+            if (family != XConstants.ALL_PATTERNS && pat.cce_family_id != family) {
 
-                if (debug) {
-                    log.debug("CFG pattern=" + pat.id + " not requested.");
-                }
+                log.debug("CFG pattern={} not requested", pat.id);
                 continue;
             }
-
 
             Matcher match = pat.regex.matcher(text);
             results.evaluated = true;
@@ -273,7 +272,8 @@ public class XCoord extends AbstractFlexPat {
 
                 // Normalize
                 try {
-                    GeocoordNormalization.normalize_coordinate(coord, patterns.group_map(pat, match));
+                    GeocoordNormalization.normalize_coordinate(coord,
+                            patterns.group_map(pat, match));
                 } catch (NormalizationException normErr) {
                     if (debug) {
                         // Quietly ignore
@@ -283,14 +283,16 @@ public class XCoord extends AbstractFlexPat {
                     continue;
                 }
 
-                // Filter -- trivial filter is to filter out any coord that cannot
-                // yield GeocoordMatch.coord_text, the normalized version of the coordinate text match
+                // Filter -- trivial filter is to filter out any coord that
+                // cannot
+                // yield GeocoordMatch.coord_text, the normalized version of the
+                // coordinate text match
                 //
                 if (GeocoordNormalization.filter_out(coord)) {
                     if (debug) {
                         results.message = "Filtered out coordinate pattern=" + pat.id + " value='"
                                 + coord.getText() + "'";
-                        log.debug("EX " + results.message);
+                        log.debug("Normalization Filter fired, MSG={}", results.message);
                     }
                     continue;
                 }
@@ -304,18 +306,16 @@ public class XCoord extends AbstractFlexPat {
                  * longer texts with many annotations.
                  */
                 if ((XCoord.RUNTIME_FLAGS & XConstants.FLAG_EXTRACT_CONTEXT) > 0) {
-                    // returns indices for two  windows before and after match
-                    int[] slices = TextUtils.get_text_window(
-                            coord.start,
-                            coord.match_length(),
+                    // returns indices for two windows before and after match
+                    int[] slices = TextUtils.get_text_window(coord.start, coord.match_length(),
                             bufsize, match_width);
 
                     // This sets the context window before/after.
                     //
                     coord.setContext(
-                            //                               left l1 to left l2
+                    // left l1 to left l2
                             TextUtils.delete_eol(text.substring(slices[0], slices[1])),
-                            //                                right r1 to r2
+                            // right r1 to r2
                             TextUtils.delete_eol(text.substring(slices[2], slices[3])));
                 }
                 // coord.createID();
@@ -323,7 +323,8 @@ public class XCoord extends AbstractFlexPat {
 
                 results.matches.add(coord);
 
-                // Other Interpretations -- due to possible ambiguities with typos
+                // Other Interpretations -- due to possible ambiguities with
+                // typos
                 // and some formats, other valid interpretations are allowed
                 // But they share most of the same metadata about context
                 // They will differ as far as normalized coord_text and lat/lon
@@ -335,22 +336,22 @@ public class XCoord extends AbstractFlexPat {
 
                     for (GeocoordMatch m2 : coord.getOtherInterpretations()) {
                         // Other interpretations may have different coord text.
-                        //String _c = m2.coord_text;
+                        // String _c = m2.coord_text;
                         m2.copyMetadata(coord);
                         // Preserve coordinate text of interpretation.
-                        //m2.coord_text = _c;
+                        // m2.coord_text = _c;
 
                         results.matches.add(m2);
                     }
                 }
             }
-            
+
             patternsComplete++;
-            updateProgress(patternsComplete/(double)patterns.get_patterns().size()+1);
+            updateProgress(patternsComplete / (double) patterns.get_patterns().size() + 1);
 
         }
 
-        // "pass" is the wrong idea.  If no data was found
+        // "pass" is the wrong idea. If no data was found
         // because there was no data, then it still passes.
         //
         results.pass = !results.matches.isEmpty();
@@ -362,8 +363,9 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Run a simple test.
-     *
-     * @param args only one argument accepted: a text file input.
+     * 
+     * @param args
+     *            only one argument accepted: a text file input.
      */
     public static void main(String[] args) {
         boolean debug = true;
@@ -375,36 +377,35 @@ public class XCoord extends AbstractFlexPat {
         gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XCoord", args, "af:t:u:");
 
         try {
-            //xc.configure( "file:./etc/test_regex.cfg"); // default
+            // xc.configure( "file:./etc/test_regex.cfg"); // default
             xc.configure(); // default
             TestScript test = new TestScript(xc);
 
             int c;
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
-                    case 'f':
-                        System.out.println("\tSYSTEM TESTS=======\n" + opts.getOptarg());
-                        test.test(opts.getOptarg());
-                        test.fileTruth("test/Coord_Patterns_Truth.csv");
-                        break;
+                case 'f':
+                    System.out.println("\tSYSTEM TESTS=======\n" + opts.getOptarg());
+                    test.test(opts.getOptarg());
+                    test.fileTruth("test/Coord_Patterns_Truth.csv");
+                    break;
 
-                    case 't':
-                        System.out.println("\tUSER TEST\n=======\n" + opts.getOptarg());
-                        test.fileTestByLines(opts.getOptarg());
-                        break;
+                case 't':
+                    System.out.println("\tUSER TEST\n=======\n" + opts.getOptarg());
+                    test.fileTestByLines(opts.getOptarg());
+                    break;
 
-                    case 'u':
-                        System.out.println("\tUSER FILE\n=======\n" + opts.getOptarg());
-                        test.fileTests(opts.getOptarg());
-                        break;
+                case 'u':
+                    System.out.println("\tUSER FILE\n=======\n" + opts.getOptarg());
+                    test.fileTests(opts.getOptarg());
+                    break;
 
-                    case 'a':
-                        System.out.println("\tAdhoc Tests\n=======\n" + opts.getOptarg());
-                        test.focusedTests();
-                        break;
+                case 'a':
+                    System.out.println("\tAdhoc Tests\n=======\n" + opts.getOptarg());
+                    test.focusedTests();
+                    break;
 
-
-                    default:
+                default:
                 }
             }
         } catch (Exception xerr) {

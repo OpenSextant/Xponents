@@ -62,5 +62,7 @@ public interface Extractor {
     public void setProgressMonitor(ProgressMonitor progressMonitor);
     public void updateProgress(double progress);
     public void markComplete();
+    
+    public void cleanup();
 
 }

@@ -104,7 +104,7 @@ public class SolrGazetteer {
     }
 
     private void loadFeatureMetaMap() throws IOException {
-        java.io.InputStream io = SolrGazetteer.class.getResourceAsStream("/feature-metadata-2013.csv");
+        java.io.InputStream io = getClass().getResourceAsStream("/feature-metadata-2013.csv");
         java.io.Reader featIO = new InputStreamReader(io);
         CsvMapReader featreader = new CsvMapReader(featIO, CsvPreference.EXCEL_PREFERENCE);
         String[] columns = featreader.getHeader(true);
@@ -134,7 +134,7 @@ public class SolrGazetteer {
     }
 
     private void loadCountryNameMap() throws IOException {
-        java.io.InputStream io = SolrGazetteer.class.getResourceAsStream("/country-names-2013.csv");
+        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2013.csv");
         java.io.Reader countryIO = new InputStreamReader(io);
         CsvMapReader countryMap = new CsvMapReader(countryIO, CsvPreference.EXCEL_PREFERENCE);
         String[] columns = countryMap.getHeader(true);

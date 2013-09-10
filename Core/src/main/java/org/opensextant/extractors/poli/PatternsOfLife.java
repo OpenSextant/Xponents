@@ -16,13 +16,13 @@
  ** **************************************************
  * NOTICE
  *
-*
+ *
  * This software was produced for the U. S. Government under Contract No.
  * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
  *
-* (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
+ * (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
  * *************************************************
  */
 package org.opensextant.extractors.poli;
@@ -48,7 +48,7 @@ import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;
 
 /**
- *
+ * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public class PatternsOfLife extends AbstractFlexPat {
@@ -57,7 +57,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
     public PatternsOfLife(boolean debugmode) {
         patterns_file = DEFAULT_POLI_CFG;
-        log = LoggerFactory.getLogger(PatternsOfLife.class);
+        log = LoggerFactory.getLogger(getClass());
 
         if (debugmode) {
             debug = true;
@@ -74,8 +74,15 @@ public class PatternsOfLife extends AbstractFlexPat {
     }
 
     /**
+     * Extractor interface: extractors are responsible for cleaning up after
+     * themselves.
+     */
+    public void cleanup() {
+    }
+
+    /**
      * Extractor interface: getName
-     *
+     * 
      * @return
      */
     public String getName() {
@@ -106,12 +113,15 @@ public class PatternsOfLife extends AbstractFlexPat {
 
     /**
      * Extract patterns of a certain family from a block of text.
-     *
-     * @param text - data to process
-     * @param text_id - identifier for the data
-     * @param family - optional filter; to reuse the same PatManager but extract
-     * certain patterns only.
-     *
+     * 
+     * @param text
+     *            - data to process
+     * @param text_id
+     *            - identifier for the data
+     * @param family
+     *            - optional filter; to reuse the same PatManager but extract
+     *            certain patterns only.
+     * 
      * @return PoliResult
      */
     public TextMatchResult extract_patterns(String text, String text_id, String family) {
@@ -123,7 +133,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
         PoliMatch poliMatch = null;
 
-        int patternsComplete=0;
+        int patternsComplete = 0;
         for (RegexPattern repat : patterns.get_patterns()) {
             if (!repat.enabled) {
                 continue;
@@ -173,12 +183,10 @@ public class PatternsOfLife extends AbstractFlexPat {
                 // TODO: Assess filters?
 
                 // returns indices for window around text match
-                int[] slices = TextUtils.get_text_window( poliMatch.start,
-                        bufsize, match_width);
+                int[] slices = TextUtils.get_text_window(poliMatch.start, bufsize, match_width);
 
                 // left l1 to left l2
-                poliMatch.setContext(TextUtils.delete_eol(text.substring(
-                        slices[0], slices[1])));
+                poliMatch.setContext(TextUtils.delete_eol(text.substring(slices[0], slices[1])));
 
                 // coord.createID();
                 set_match_id(poliMatch);
@@ -187,7 +195,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
             }
             patternsComplete++;
-            updateProgress(patternsComplete/(double)patterns.get_patterns().size()+1);
+            updateProgress(patternsComplete / (double) patterns.get_patterns().size() + 1);
         }
 
         results.pass = !results.matches.isEmpty();
@@ -197,15 +205,15 @@ public class PatternsOfLife extends AbstractFlexPat {
     }
 
     public static void usage() {
-        System.out
-                .println("\tPatternsOfLife  -f          -- run all system tests\n"
+        System.out.println("\tPatternsOfLife  -f          -- run all system tests\n"
                 + "\tPatternsOfLife  -u  <file>  -- run user tests on given text file.");
     }
 
     /**
      * Run a simple test.
-     *
-     * @param args only one argument accepted: a text file input.
+     * 
+     * @param args
+     *            only one argument accepted: a text file input.
      */
     public static void main(String[] args) {
         boolean debug = true;
@@ -219,24 +227,24 @@ public class PatternsOfLife extends AbstractFlexPat {
             int c;
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
-                    case 'f':
-                        System.out.println("\tSystem TESTS======= ");
-                        systemTest = true;
-                        break;
+                case 'f':
+                    System.out.println("\tSystem TESTS======= ");
+                    systemTest = true;
+                    break;
 
-                    case 'u':
-                        testFile = opts.getOptarg();
-                        System.out.println("\tUser TESTS======= FILE=" + testFile);
-                        break;
+                case 'u':
+                    testFile = opts.getOptarg();
+                    System.out.println("\tUser TESTS======= FILE=" + testFile);
+                    break;
 
-                    case 'c':
-                        config = opts.getOptarg();
-                        System.out.println("\tUser Patterns Configuration ======= FILE=" + config);
-                        break;
+                case 'c':
+                    config = opts.getOptarg();
+                    System.out.println("\tUser Patterns Configuration ======= FILE=" + config);
+                    break;
 
-                    default:
-                        PatternsOfLife.usage();
-                        System.exit(1);
+                default:
+                    PatternsOfLife.usage();
+                    System.exit(1);
                 }
             }
         } catch (Exception runErr) {

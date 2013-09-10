@@ -53,7 +53,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     /**
      *
      */
-    protected static final Logger log = LoggerFactory.getLogger(AbstractFormatter.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private String filename = "unset";
     /** File extension for callers to know. */
     public String outputExtension = null;

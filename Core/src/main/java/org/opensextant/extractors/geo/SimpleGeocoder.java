@@ -63,9 +63,9 @@ public class SimpleGeocoder implements Extractor {
      *
      */
     //private final TextUtils utility = new TextUtils();
-    protected Logger log = LoggerFactory.getLogger(SimpleGeocoder.class);
+    protected Logger log = LoggerFactory.getLogger(getClass());
     private XCoord xcoord = null;
-    private PlacenameMatcher tagger = null;
+    private GazetteerMatcher tagger = null;
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
     private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
@@ -141,7 +141,7 @@ public class SimpleGeocoder implements Extractor {
         }
         try {
             if (tagger == null) {
-                tagger = new PlacenameMatcher();
+                tagger = new GazetteerMatcher();
             }
         } catch (IOException ioerr) {
             throw new ConfigException("Init err w/Solr", ioerr);
@@ -152,7 +152,7 @@ public class SimpleGeocoder implements Extractor {
     /**
      * Please shutdown the application cleanly when done.
      */
-    public void shutdown() {
+    public void cleanup() {
 
         reportMetrics();
         if (tagger != null) {

@@ -32,29 +32,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.solr.client.solrj.StreamingResponseCallback;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-//import org.apache.solr.client.solrj.SolrRequest;
-//import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.opensextant.data.Place;
 import org.opensextant.util.TextUtils;
 import org.opensextant.util.SolrProxy;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.ExtractionException;
-import org.opensextant.extraction.SolrTaggerRequest;
+import org.opensextant.extraction.SolrMatcherSupport;
 
 /**
  * 
@@ -66,18 +58,39 @@ import org.opensextant.extraction.SolrTaggerRequest;
  * 
  * @author David Smiley - dsmiley@mitre.org
  * @author Marc Ubaldino - ubaldino@mitre.org
- * @deprecated See GazetteerMatcher, which splits up Solr tagger mechanics and actual gazetter logic.
  */
-public class PlacenameMatcher {
-
-    private final Logger log = LoggerFactory.getLogger(getClass());
-    private final boolean debug = log.isDebugEnabled();
+public class GazetteerMatcher extends SolrMatcherSupport {
 
     /*
+     * Gazetteer specific stuff:
      */
-    private final static String requestHandler = "/tag";
-    private final static String coreName = "gazetteer";
-    private SolrProxy solr = null;
+    private static final String APRIORI_NAME_RULE = "AprioriNameBias";
+    private TagFilter filter = new TagFilter();
+    private MatchFilter userfilter = null;
+    private boolean allowLowercaseAbbrev = false;
+
+    /**
+     * 
+     * @throws IOException
+     */
+    public GazetteerMatcher() throws IOException {
+        initialize();
+
+        // Instance variable that will have the transient payload to tag
+        // this is not thread safe and is not static:
+        // tag_request = new SolrTaggerRequest(params, SolrRequest.METHOD.POST);
+        // Pre-loading the Solr FST
+        //
+        try {
+            tagText("trivial priming of the solr pump", "__initialization___");
+        } catch (ExtractionException initErr) {
+            throw new IOException("Unable to prime the tagger", initErr);
+        }
+    }
+
+    public String getCoreName() {
+        return "gazetteer";
+    }
 
     // All of these Solr-parameters for tagging are not user-tunable.
     private static final ModifiableSolrParams params = new ModifiableSolrParams();
@@ -100,40 +113,8 @@ public class PlacenameMatcher {
         // params.set("overlaps", "NO_SUB");
     }
 
-    /*
-     * Gazetteer specific stuff:
-     */
-    private static final String APRIORI_NAME_RULE = "AprioriNameBias";
-    // private SolrTaggerRequest tag_request = null;
-    // private Map<Integer, Place> beanMap = new HashMap<Integer, Place>(100);
-    // // initial size
-
-    private TagFilter filter = new TagFilter();
-    private MatchFilter userfilter = null;
-    private boolean allowLowercaseAbbrev = false;
-
-    // updated after each call to getText();
-    private int tagNamesTime;
-    private int getNamesTime;
-    private int totalTime;
-
-    /**
-     * 
-     * @throws IOException
-     */
-    public PlacenameMatcher() throws IOException {
-        initialize();
-
-        // Instance variable that will have the transient payload to tag
-        // this is not thread safe and is not static:
-        // tag_request = new SolrTaggerRequest(params, SolrRequest.METHOD.POST);
-        // Pre-loading the Solr FST
-        //
-        try {
-            tagText("trivial priming of the solr pump", "__initialization___");
-        } catch (ExtractionException initErr) {
-            throw new IOException("Unable to prime the tagger", initErr);
-        }
+    public SolrParams getMatcherParameters() {
+        return params;
     }
 
     /**
@@ -148,66 +129,12 @@ public class PlacenameMatcher {
     }
 
     /**
-     * Close solr resources.
-     */
-    public void shutdown() {
-        if (solr != null) {
-            solr.close();
-        }
-    }
-
-    /**
      * Currently unused user filter; default TagFilter is used internally.
      * 
      * @param f
      */
     public void setMatchFilter(MatchFilter f) {
         userfilter = f;
-    }
-
-    /**
-     */
-    protected final void initialize() throws IOException {
-
-        // NOTE: This is set via opensextant.apps.Config or by some other means
-        // But it is required to intialize. "gazetteer" is the core name of
-        // interest.
-        // Being explicit here about the core name allows integrator to field
-        // multiple cores
-        // in the same gazetteer.
-        //
-        String configSolrHome = System.getProperty("solr.solr.home");
-        if (configSolrHome != null) {
-            solr = new SolrProxy(configSolrHome, coreName);
-        } else {
-            solr = new SolrProxy(System.getProperty("solr.url"));
-            // e.g. http://localhost:8983/solr/gazetteer/
-        }
-
-    }
-
-    /**
-     * Emphemeral metric for the current tagText() call. Caller must get these
-     * numbers immediately after call.
-     * 
-     * @return time to tag
-     */
-    public int getTaggingNamesTime() {
-        return tagNamesTime;
-    }
-
-    /**
-     * @return time to get gazetteer records.
-     */
-    public int getRetrievingNamesTime() {
-        return getNamesTime;
-    }
-
-    /**
-     * @return time to get gazetteer records.
-     */
-    public int getTotalTime() {
-        return totalTime;
     }
 
     /**
@@ -235,13 +162,11 @@ public class PlacenameMatcher {
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
 
-        // Calls solr tagger; populates beanMap and returns tags in response
-        // beanMap.clear();
-        Map<Integer, Place> beanMap = new HashMap<Integer, Place>(100);
+        Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
         QueryResponse response = tagTextCallSolrTagger(buffer, docid, beanMap);
 
         @SuppressWarnings("unchecked")
-        List<NamedList> tags = (List<NamedList>) response.getResponse().get("tags");
+        List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
 
         this.tagNamesTime = response.getQTime();
         long t1 = t0 + tagNamesTime;
@@ -264,7 +189,7 @@ public class PlacenameMatcher {
 
         List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>(Math.min(128, tags.size()));
 
-        tagLoop: for (NamedList tag : tags) {
+        tagLoop: for (NamedList<?> tag : tags) {
 
             int x1 = (Integer) tag.get("startOffset");
             int x2 = (Integer) tag.get("endOffset");// +1 char after last
@@ -296,7 +221,9 @@ public class PlacenameMatcher {
 
             double maxNameBias = 0.0;
             for (Integer solrId : placeRecordIds) {
-                Place pGeo = beanMap.get(solrId);
+                // Yes, we must cast here.  
+                // As long as createTag generates the correct type stored in beanMap we are fine.
+                Place pGeo = (Place) beanMap.get(solrId);
                 assert pGeo != null;
 
                 // Optimization: abbreviation filter.
@@ -345,75 +272,14 @@ public class PlacenameMatcher {
         this.getNamesTime = (int) (t2 - t1);
         this.totalTime = (int) (t3 - t0);
 
-        if (debug) {
+        if (log.isDebugEnabled()) {
             summarizeExtraction(candidates, docid);
         }
         return candidates;
     }
 
-
-    /**
-     * Solr call: tag input buffer, returning all candiate place names with
-     * associated gazetteer metadata.
-     * 
-     * @param buffer
-     * @param docid
-     * @param placesOut
-     * @return
-     * @throws ExtractionException
-     */
-    protected QueryResponse tagTextCallSolrTagger(String buffer, String docid,
-            final Map<Integer, Place> placesOut) throws ExtractionException {
-        SolrTaggerRequest tagRequest = new SolrTaggerRequest(params, buffer);
-        tagRequest.setPath(requestHandler);
-        // Stream the response to avoid serialization and to save memory by
-        // only keeping one SolrDocument materialized at a time
-        tagRequest.setStreamingResponseCallback(new StreamingResponseCallback() {
-            @Override
-            public void streamDocListInfo(long numFound, long start, Float maxScore) {
-            }
-
-            // Future optimization: it would be nice if Solr could give
-            // us the doc id without
-            // giving us a SolrDocument, allowing us to conditionally
-            // get it.
-            // it would save disk IO & speed, at the expense of putting
-            // ids into memory.
-            @Override
-            public void streamSolrDocument(final SolrDocument solrDoc) {
-                Integer id = (Integer) solrDoc.getFirstValue("id");
-                placesOut.put(id, createPlace(solrDoc));
-            }
-        });
-
-        QueryResponse response;
-        try {
-            response = tagRequest.process(solr.getInternalSolrServer());
-        } catch (Exception err) {
-            throw new ExtractionException("Failed to tag document=" + docid, err);
-        }
-
-        // see https://issues.apache.org/jira/browse/SOLR-5154
-        SolrDocumentList docList = response.getResults();
-        if (docList == null) {
-            // SolrTextTagger v1.x
-            docList = (SolrDocumentList) response.getResponse().get("matchingDocs");
-        }
-        if (docList != null) {
-            //log.debug("Not streaming docs from Solr (not supported)");
-            StreamingResponseCallback callback = tagRequest.getStreamingResponseCallback();
-            callback.streamDocListInfo(docList.getNumFound(), docList.getStart(),
-                    docList.getMaxScore());
-            for (SolrDocument solrDoc : docList) {
-                /**
-                 * This appears to be an empty list; what is this explicit
-                 * callback loop for?
-                 */
-                callback.streamSolrDocument(solrDoc);
-            }
-        }
-
-        return response;
+    public Object createTag(SolrDocument tag) {
+        return createPlace(tag);
     }
 
     /**
@@ -549,7 +415,7 @@ public class PlacenameMatcher {
     public static void main(String[] args) throws Exception {
         // String solrHome = args[0];
 
-        PlacenameMatcher sm = new PlacenameMatcher();
+        GazetteerMatcher sm = new GazetteerMatcher();
         try {
             String docContent = "We drove to Sin City. The we drove to -$IN ĆITŸ .";
 

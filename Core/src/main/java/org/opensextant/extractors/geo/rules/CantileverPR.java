@@ -48,7 +48,7 @@ public class CantileverPR {
 
     //private Cantilever cntlvr = new Cantilever();
     private Scorer scr = new Scorer();
-    static Logger log = LoggerFactory.getLogger(CantileverPR.class);
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * This does the actual work of analyzing the evidence attached to the place
