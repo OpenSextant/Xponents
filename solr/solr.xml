@@ -46,8 +46,7 @@
     <cores adminPath="/admin/cores" defaultCoreName="gazetteer">
         <core name="gazetteer" instanceDir="./gazetteer" />
 
-        <!-- uncomment in your deployed instance if using taxcat
+        <!-- uncomment in your deployed instance if using taxcat -->
         <core name="taxcat" instanceDir="./taxcat" />
-        -->
     </cores>
 </solr>

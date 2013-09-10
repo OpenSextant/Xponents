@@ -261,9 +261,22 @@
          -->
         <fieldType name="random" class="solr.RandomSortField" indexed="true" />
 
+
+
+
+        <!-- 
+
+            =============================================================
+            OpenSextant Xponents custom types start here.
+            =============================================================
+
+        -->
+
+
         <!-- Looks like we could benefit from a char filter that combines contractions and ASCII folding;
                  Sure, its more elegant to maintain separate char filters;  Or a char filter and token filter.
              See also name_idx* fields that have phonetic support
+             SOLR-TEXT-TAGGER v2.0 in effect here:  postingsFormat="Memory"
           -->
         <fieldType name="name_tag" class="solr.TextField" positionIncrementGap="100"
                    postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true">

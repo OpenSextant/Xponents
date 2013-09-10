@@ -122,13 +122,12 @@
         <field name="taxnode" type="string" required="true" stored="true" indexed="true" />
         <field name="tag" type="string" required="false" stored="true" indexed="true"
                multiValued="true" />
-        <field name="phrase" type="name_idx2" required="true" stored="true" indexed="true" />
+        <field name="phrase" type="phrase_text" required="true" stored="true" indexed="true" />
+        <field name="phrase_tag" type="phrase_idx" required="true" stored="false" indexed="true" />
+        <copyField source="phrase" dest="phrase_tag" />
+
         <field name="valid" type="boolean" required="true" default="true" stored="true"
                indexed="true" />
-
-        <!-- "name_idx2 is aggressive tokenization.  For keyword or code word, we should add a generic
-             lower-cased string field.
-         -->
 
         <!--
         <dynamicField name="*" type="string" indexed="true"/>
@@ -160,53 +159,6 @@
          Unless this field is marked with required="false", it will be a required field
       -->
     <uniqueKey>id</uniqueKey>
-
-    <!-- DEPRECATED: The defaultSearchField is consulted by various query parsers when
-     parsing a query string that isn't explicit about the field.  Machine (non-user)
-     generated queries are best made explicit, or they can use the "df" request parameter
-     which takes precedence over this.
-     Note: Un-commenting defaultSearchField will be insufficient if your request handler
-     in solrconfig.xml defines "df", which takes precedence. That would need to be removed.
-    <defaultSearchField>text</defaultSearchField> -->
-
-    <!-- DEPRECATED: The defaultOperator (AND|OR) is consulted by various query parsers
-     when parsing a query string to determine if a clause of the query should be marked as
-     required or optional, assuming the clause isn't already marked by some operator.
-     The default is OR, which is generally assumed so it is not a good idea to change it
-     globally here.  The "q.op" request parameter takes precedence over this.
-    <solrQueryParser defaultOperator="OR"/> -->
-
-    <!-- copyField commands copy one field to another at the time a document
-          is added to the index.  It's used either to index the same field differently,
-          or to add multiple fields to the same field for easier/faster searching.  -->
-
-    <!-- <copyField source="cat" dest="text"/> -->
-
-    <!-- Above, multiple source fields are copied to the [text] field.
-       Another way to map multiple source fields to the same
-       destination field is to use the dynamic field syntax.
-       copyField also supports a maxChars to copy setting.  -->
-
-    <!-- <copyField source="*_t" dest="text" maxChars="3000"/> -->
-
-    <!-- copy name to alphaNameSort, a field designed for sorting by name -->
-    <!-- <copyField source="name" dest="alphaNameSort"/> -->
-
-
-    <!-- Similarity is the scoring routine for each document vs. a query.
-         A custom similarity may be specified here, but the default is fine
-         for most applications.  -->
-    <!-- <similarity class="org.apache.lucene.search.similarities.DefaultSimilarity"/> -->
-    <!-- ... OR ...
-         Specify a SimilarityFactory class name implementation
-         allowing parameters to be used.
-    -->
-    <!--
-    <similarity class="com.example.solr.CustomSimilarityFactory">
-      <str name="paramkey">param value</str>
-    </similarity>
-    -->
-
 
     <types>
         <!-- field type definitions. The "name" attribute is
@@ -335,6 +287,15 @@
         </fieldType>
         -->
 
+
+        <!-- 
+
+            ==================================================
+            OpenSextant Xponents custom types start here.
+            ==================================================
+
+        -->
+
         <fieldType name="name_idx0" class="solr.TextField" positionIncrementGap="100">
             <analyzer>
                 <!--
@@ -351,12 +312,33 @@
             </analyzer>
         </fieldType>
 
-
-        <fieldType name="name_idx2" class="solr.TextField" positionIncrementGap="100">
+        <!-- Functionally the same as text_general, but no stop filter -->
+        <fieldType name="phrase_text" class="solr.TextField" positionIncrementGap="100">
             <analyzer>
-                <charFilter class="solr.MappingCharFilterFactory"
-                            mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+            </analyzer>
+        </fieldType>
+
+        <!-- This is a very generic tokenization and normalization scheme.  It is not language-specific. 
+             SOLR-TEXT-TAGGER v2.0 in effect here:  postingsFormat="Memory"
+          -->
+        <fieldType name="phrase_idx" class="solr.TextField" positionIncrementGap="100" 
+            postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true" >
+            <analyzer type="index">
+                <!-- maintain this configuration in synch between index and query analyzers -->
+                <charFilter class="solr.MappingCharFilterFactory" mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
                 <tokenizer class="solr.ClassicTokenizerFactory" />
+                <filter class="solr.EnglishPossessiveFilterFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+
+                <!-- only difference between index & query chains: -->
+                <filter class="org.opensextant.solrtexttagger.ConcatenateFilterFactory" />
+            </analyzer>
+            <analyzer type="query">
+                <charFilter class="solr.MappingCharFilterFactory" mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
+                <tokenizer class="solr.ClassicTokenizerFactory" />
+                <filter class="solr.EnglishPossessiveFilterFactory" />
                 <filter class="solr.LowerCaseFilterFactory" />
             </analyzer>
         </fieldType>
@@ -369,258 +351,8 @@
             </analyzer>
         </fieldType>
 
-
-        <!-- A general text field that has reasonable, generic
-             cross-language defaults: it tokenizes with StandardTokenizer,
-         removes stop words from case-insensitive "stopwords.txt"
-         (empty by default), and down cases.  At query time only, it
-         also applies synonyms. -->
-        <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
-            <analyzer type="index">
-                <tokenizer class="solr.StandardTokenizerFactory" />
-                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"
-                        enablePositionIncrements="true" />
-                <!-- in this example, we will only use synonyms at query time
-                <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
-                -->
-                <filter class="solr.LowerCaseFilterFactory" />
-            </analyzer>
-            <analyzer type="query">
-                <tokenizer class="solr.StandardTokenizerFactory" />
-                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"
-                        enablePositionIncrements="true" />
-                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true"
-                        expand="true" />
-                <filter class="solr.LowerCaseFilterFactory" />
-            </analyzer>
-        </fieldType>
-
-        <!-- A text field with defaults appropriate for English: it
-             tokenizes with StandardTokenizer, removes English stop words
-             (lang/stopwords_en.txt), down cases, protects words from protwords.txt, and
-             finally applies Porter's stemming.  The query time analyzer
-             also applies synonyms from synonyms.txt. -->
-        <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
-            <analyzer type="index">
-                <tokenizer class="solr.StandardTokenizerFactory" />
-                <!-- in this example, we will only use synonyms at query time
-                <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
-                -->
-                <!-- Case insensitive stop word removal.
-                  add enablePositionIncrements=true in both the index and query
-                  analyzers to leave a 'gap' for more accurate phrase queries.
-                -->
-                <filter class="solr.StopFilterFactory"
-                        ignoreCase="true"
-                        words="lang/stopwords_en.txt"
-                        enablePositionIncrements="true"
-                        />
-                <filter class="solr.LowerCaseFilterFactory" />
-                <filter class="solr.EnglishPossessiveFilterFactory" />
-                <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-                <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
-                    <filter class="solr.EnglishMinimalStemFilterFactory"/>
-                -->
-                <filter class="solr.PorterStemFilterFactory" />
-            </analyzer>
-            <analyzer type="query">
-                <tokenizer class="solr.StandardTokenizerFactory" />
-                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true"
-                        expand="true" />
-                <filter class="solr.StopFilterFactory"
-                        ignoreCase="true"
-                        words="lang/stopwords_en.txt"
-                        enablePositionIncrements="true"
-                        />
-                <filter class="solr.LowerCaseFilterFactory" />
-                <filter class="solr.EnglishPossessiveFilterFactory" />
-                <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-                <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
-                    <filter class="solr.EnglishMinimalStemFilterFactory"/>
-                -->
-                <filter class="solr.PorterStemFilterFactory" />
-            </analyzer>
-        </fieldType>
-
-        <!-- A text field with defaults appropriate for English, plus
-         aggressive word-splitting and autophrase features enabled.
-         This field is just like text_en, except it adds
-         WordDelimiterFilter to enable splitting and matching of
-         words on case-change, alpha numeric boundaries, and
-         non-alphanumeric chars.  This means certain compound word
-         cases will work, for example query "wi fi" will match
-         document "WiFi" or "wi-fi".
-            -->
-        <fieldType name="text_en_splitting" class="solr.TextField" positionIncrementGap="100"
-                   autoGeneratePhraseQueries="true">
-            <analyzer type="index">
-                <tokenizer class="solr.WhitespaceTokenizerFactory" />
-                <!-- in this example, we will only use synonyms at query time
-                <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
-                -->
-                <!-- Case insensitive stop word removal.
-                  add enablePositionIncrements=true in both the index and query
-                  analyzers to leave a 'gap' for more accurate phrase queries.
-                -->
-                <filter class="solr.StopFilterFactory"
-                        ignoreCase="true"
-                        words="lang/stopwords_en.txt"
-                        enablePositionIncrements="true"
-                        />
-                <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1"
-                        generateNumberParts="1" catenateWords="1" catenateNumbers="1"
-                        catenateAll="0" splitOnCaseChange="1" />
-                <filter class="solr.LowerCaseFilterFactory" />
-                <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-                <filter class="solr.PorterStemFilterFactory" />
-            </analyzer>
-            <analyzer type="query">
-                <tokenizer class="solr.WhitespaceTokenizerFactory" />
-                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true"
-                        expand="true" />
-                <filter class="solr.StopFilterFactory"
-                        ignoreCase="true"
-                        words="lang/stopwords_en.txt"
-                        enablePositionIncrements="true"
-                        />
-                <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1"
-                        generateNumberParts="1" catenateWords="0" catenateNumbers="0"
-                        catenateAll="0" splitOnCaseChange="1" />
-                <filter class="solr.LowerCaseFilterFactory" />
-                <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-                <filter class="solr.PorterStemFilterFactory" />
-            </analyzer>
-        </fieldType>
-
-        <!-- Less flexible matching, but less false matches.  Probably not ideal for product names,
-             but may be good for SKUs.  Can insert dashes in the wrong place and still match. -->
-        <fieldType name="text_en_splitting_tight" class="solr.TextField" positionIncrementGap="100"
-                   autoGeneratePhraseQueries="true">
-            <analyzer>
-                <tokenizer class="solr.WhitespaceTokenizerFactory" />
-                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true"
-                        expand="false" />
-                <filter class="solr.StopFilterFactory" ignoreCase="true"
-                        words="lang/stopwords_en.txt" />
-                <filter class="solr.WordDelimiterFilterFactory" generateWordParts="0"
-                        generateNumberParts="0" catenateWords="1" catenateNumbers="1"
-                        catenateAll="0" />
-                <filter class="solr.LowerCaseFilterFactory" />
-                <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
-                <filter class="solr.EnglishMinimalStemFilterFactory" />
-                <!-- this filter can remove any duplicate tokens that appear at the same position - sometimes
-                     possible with WordDelimiterFilter in conjuncton with stemming. -->
-                <filter class="solr.RemoveDuplicatesTokenFilterFactory" />
-            </analyzer>
-        </fieldType>
-
-        <!-- Just like text_general except it reverses the characters of
-         each token, to enable more efficient leading wildcard queries. -->
-        <fieldType name="text_general_rev" class="solr.TextField" positionIncrementGap="100">
-            <analyzer type="index">
-                <tokenizer class="solr.StandardTokenizerFactory" />
-                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"
-                        enablePositionIncrements="true" />
-                <filter class="solr.LowerCaseFilterFactory" />
-                <filter class="solr.ReversedWildcardFilterFactory" withOriginal="true"
-                        maxPosAsterisk="3" maxPosQuestion="2" maxFractionAsterisk="0.33" />
-            </analyzer>
-            <analyzer type="query">
-                <tokenizer class="solr.StandardTokenizerFactory" />
-                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true"
-                        expand="true" />
-                <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"
-                        enablePositionIncrements="true" />
-                <filter class="solr.LowerCaseFilterFactory" />
-            </analyzer>
-        </fieldType>
-
-        <!-- charFilter + WhitespaceTokenizer  -->
-        <!--
-        <fieldType name="text_char_norm" class="solr.TextField" positionIncrementGap="100" >
-          <analyzer>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
-            <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-          </analyzer>
-        </fieldType>
-        -->
-
-        <!-- This is an example of using the KeywordTokenizer along
-             With various TokenFilterFactories to produce a sortable field
-             that does not include some properties of the source text
-          -->
-        <fieldType name="alphaOnlySort" class="solr.TextField" sortMissingLast="true"
-                   omitNorms="true">
-            <analyzer>
-                <!-- KeywordTokenizer does no actual tokenizing, so the entire
-                     input string is preserved as a single token
-                  -->
-                <tokenizer class="solr.KeywordTokenizerFactory" />
-                <!-- The LowerCase TokenFilter does what you expect, which can be
-                     when you want your sorting to be case insensitive
-                  -->
-                <filter class="solr.LowerCaseFilterFactory" />
-                <!-- The TrimFilter removes any leading or trailing whitespace -->
-                <filter class="solr.TrimFilterFactory" />
-                <!-- The PatternReplaceFilter gives you the flexibility to use
-                     Java Regular expression to replace any sequence of characters
-                     matching a pattern with an arbitrary replacement string,
-                     which may include back references to portions of the original
-                     string matched by the pattern.
-
-                     See the Java Regular Expression documentation for more
-                     information on pattern and replacement string syntax.
-
-                     http://java.sun.com/j2se/1.6.0/docs/api/java/util/regex/package-summary.html
-                  -->
-                <filter class="solr.PatternReplaceFilterFactory"
-                        pattern="([^a-z])" replacement="" replace="all"
-                        />
-            </analyzer>
-        </fieldType>
-
-        <fieldtype name="phonetic" stored="false" indexed="true" class="solr.TextField">
-            <analyzer>
-                <tokenizer class="solr.StandardTokenizerFactory" />
-                <filter class="solr.PhoneticFilterFactory" encoder="Metaphone" inject="false" />
-            </analyzer>
-        </fieldtype>
-
-        <!-- lowercases the entire field value, keeping it as a single token.  -->
-        <fieldType name="lowercase" class="solr.TextField" positionIncrementGap="100">
-            <analyzer>
-                <tokenizer class="solr.KeywordTokenizerFactory" />
-                <filter class="solr.LowerCaseFilterFactory" />
-            </analyzer>
-        </fieldType>
-
-        <fieldType name="text_path" class="solr.TextField" positionIncrementGap="100">
-            <analyzer>
-                <tokenizer class="solr.PathHierarchyTokenizerFactory" />
-            </analyzer>
-        </fieldType>
-
-
-        <!-- since fields of this type are by default not stored or indexed,
-             any data added to them will be ignored outright.  -->
-        <fieldtype name="ignored" stored="false" indexed="false" multiValued="true"
-                   class="solr.StrField" />
-
-        <!-- This point type indexes the coordinates as separate fields (subFields)
-          If subFieldType is defined, it references a type, and a dynamic field
-          definition is created matching *___<typename>.  Alternately, if
-          subFieldSuffix is defined, that is used to create the subFields.
-          Example: if subFieldType="double", then the coordinates would be
-            indexed in fields myloc_0___double,myloc_1___double.
-          Example: if subFieldSuffix="_d" then the coordinates would be indexed
-            in fields myloc_0_d,myloc_1_d
-          The subFields are an implementation detail of the fieldType, and end
-          users normally should not need to know about them.
-         -->
-        <!-- <fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/> -->
-
-        <!-- A specialized field for geospatial search. If indexed, this fieldType must not be multivalued. -->
-        <fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate" />
+        <!-- Omitted:  text_en, text_general, etc. many other variations on text field types. 
+             They all refer to additional config files which must be copied in in order to use them. -->
 
     </types>
 

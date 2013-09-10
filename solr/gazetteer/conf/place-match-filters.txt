@@ -1,0 +1,179 @@
+# OPENSEXTANT
+# (c)2013
+#
+# This is a Place Name Matcher optimization
+# It contains terms that 99.9% of the time are not actual names of places.
+# Adding filters here reduces the number of candidate tags processed for geotagging/geocoding
+# 
+# These are span matches, that is only if the word(lowercase) in question matches one of the items below exactly
+# will it be filtered out.
+#
+# The only terms included here are primarily things that are still in the OpenSextant Gazetteer, marked as name_bias >= 0.0
+# and therefore are tagged as possible place names.
+#
+#=================================
+# ordinals, directions.
+#=================================
+north
+northern
+north-east
+north east
+northeast
+north-west
+north west
+northwest
+south
+south-east
+south east
+southeast
+south-west
+south west
+southwest
+southern
+west
+western
+east
+eastern
+central
+center
+interior
+exterior
+superior
+#=================================
+# generic location references.
+#=================================
+geo
+area
+location
+world
+globe
+city
+civil
+town
+base
+road
+highway
+federal
+national
+international
+united
+place
+way
+back
+home
+public
+republic
+region
+regional
+coast
+border
+borders
+desert
+land
+point
+passage
+market
+school
+schools
+shelter
+village
+airport
+real estate
+compound
+#=================================
+# document artifacts
+#=================================
+head
+page
+read
+note
+close
+story
+web
+forum
+main
+post
+overview
+review
+section
+book
+journal
+chronicle
+total
+sub
+link
+#=================================
+# Sizes
+#=================================
+long
+short
+low
+high
+big
+little
+large
+small
+best
+major
+minor
+#=================================
+## Days Of Week Names
+#=================================
+day
+daily
+early
+annual
+mon
+tue
+wed
+thur
+thu
+fri
+sat
+sun
+monday
+tuesday
+wednesday
+thursday
+friday
+saturday
+sunday
+#=================================
+# English language months
+#=================================
+december
+dec
+november
+nov
+october
+oct
+sept
+september
+aug
+august
+jul
+july
+jun
+june
+may
+apr
+april
+mar
+march
+feb
+february
+jan
+january
+#=================================
+# common colors not usually places
+#=================================
+red
+white
+black
+blue
+yellow
+
+#=================================
+##
+##  Only add to this file as a developer/integrator. 
+##

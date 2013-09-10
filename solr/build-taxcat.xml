@@ -1,49 +1,19 @@
 <?xml version="1.0"?>
 
-<project name="XTax Builder" default="build">
+<project name="OpenSextant-TaxCat" default="index">
 
-    <property file="${basedir}/build.properties" />
+    <!-- Solr Home and Gazetteer config data sourced here: -->
+    <property file="build.properties" />
 
-    <property name="xtax" value="${xtax.source}" />
+    <!-- Solr config & data (this is the standard System property name Solr uses) -->
+    <property name="solr.solr.home" location="${solr.home}" />
 
-    <path id="runtime.classpath">
-        <!-- Required classpath: Solr WAR contents + OpenSextant toolbox + servlet + JTS -->
-        <fileset dir="${opensextant.home}/lib" includes="**/*.jar" />
-        <pathelement location="${xtax}/etc" />
-    </path>
+    <import file="build-solr-support.xml" />
 
-    <!--  Add TaxCat to an existing Solr setup
-      -->
-    <target name="create-solr-home">
-        <mkdir dir="${solr_home}/taxcat" />
-        <mkdir dir="${solr_home}/taxcat/data" />
+    <!-- TARGETS: -->
 
-        <!-- Unpack Solr4 config baseline-->
-        <unzip src="${xtax}/solr/solr4-conf.zip" dest="${solr_home}/taxcat/." />
-
-        <!-- Limited Gazetteer hack: copy content from installed solrhome; Get ASCII mapping customization.
-          -->
-        <copy todir="${solr_home}/taxcat/conf">
-            <fileset dir="${solr_home}/gazetteer/conf" includes="**/*.txt" />
-        </copy>
-
-        <!-- Gaz and SolrTextTagger Solr config -->
-        <copy todir="${solr_home}/taxcat/conf" file="${xtax}/solr/taxcat/conf/solrconfig.xml" />
-        <copy todir="${solr_home}/taxcat/conf" file="${xtax}/solr/taxcat/conf/schema.xml" />
-
-
+    <target name="clean" description="Delete indexed data">
+        <delete dir="${solr.solr.home}/taxcat/data/" />
     </target>
-
-
-    <!-- 2 GB to build current gazetteer with 13 million rows -->
-    <target name="build-fst">
-        <java classname="org.opensextant.solrtexttagger.EmbeddedSolrUpdater"
-              classpathref="runtime.classpath" fork="yes">
-            <jvmArg value="-Xmx500m" />
-            <jvmArg value="-Dsolr.solr.home=${solr_home}" />
-            <arg value="/tag?build=true" />
-        </java>
-    </target>
-
 
 </project>

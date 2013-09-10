@@ -116,6 +116,9 @@
     <directoryFactory name="DirectoryFactory"
                       class="${solr.directoryFactory:solr.StandardDirectoryFactory}" />
 
+    <codecFactory name="CodecFactory" class="solr.SchemaCodecFactory" />
+
+
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          Index Config - These settings control low-level behavior of indexing
          Most example settings here show the default value, but are commented
@@ -806,12 +809,9 @@
     </requestHandler>
 
     <requestHandler name="/tag" class="org.opensextant.solrtexttagger.TaggerRequestHandler">
-        <!-- HEY! if you change this configuration then remove the cacheFile -->
-        <str name="indexedField">phrase</str>
-        <str name="storedField">phrase</str>
+        <str name="field">phrase_tag</str>
         <bool name="partialMatches">false</bool>
         <bool name="matchText">false</bool>
-        <str name="cacheFile">taggerCache.fst</str>
         <int name="valueMinLen">2</int>
         <int name="valueMaxLen">200</int>
         <str name="fq">valid:true</str>
@@ -1622,17 +1622,17 @@
 
       See more about the script update processor at http://wiki.apache.org/solr/ScriptUpdateProcessor
     -->
+    <!--
     <updateRequestProcessorChain name="script" default="true">
         <processor class="solr.StatelessScriptUpdateProcessorFactory">
             <str name="script">update-script.js</str>
-            <!--
             <lst name="params">
               <str name="config_param">example config parameter</str>
             </lst>
-            -->
         </processor>
         <processor class="solr.RunUpdateProcessorFactory" />
     </updateRequestProcessorChain>
+    -->
 
     <!-- Response Writers
 

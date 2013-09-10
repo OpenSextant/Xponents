@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+
+<project name="OpenSextant XTax Solr support" >
+
+    <property name="solr.v" value="4.4.0" />
+
+    <property name="jetty.v" value="8.1.9.v20130131" />
+    <property name="winstone.v" value="0.9.10-hudson-24" />
+    <property name="textTagger.v" value="2.0-SNAPSHOT" />
+    <property name="slf4j.v" value="1.6.6" />
+
+    <!-- setup proxy -->
+    <target name="proxy" >
+      <property name="proxy.port" value="80"/>
+      <property name="proxy.user" value=""/>
+      <property name="proxy.pass" value=""/>
+      <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/>
+    </target>
+
+    <target name="setup">
+        <mkdir dir="build" />
+        <mkdir dir="build/containerLib" />
+    </target>
+
+
+    <!-- get some dependencies -->
+    <target name="init" depends="proxy, setup">
+
+        <get dest="build" skipexisting="true">
+            <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
+            <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
+        </get>
+        <get dest="build/containerLib/" skipexisting="true">
+            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/${slf4j.v}/slf4j-api-${slf4j.v}.jar" />
+            <url url="http://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/${slf4j.v}/jcl-over-slf4j-${slf4j.v}.jar" />
+            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-jdk14/${slf4j.v}/slf4j-jdk14-${slf4j.v}.jar" />
+        </get>
+
+        <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
+        <copy todir="lib" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar"
+                />
+        <get dest="lib" skipexisting="true" ignoreerrors="true">
+            <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+            <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+        </get>
+    </target>
+
+    <!-- TARGETS: -->
+
+
+    <target name="start-solr-daemon" depends="init">
+        <parallel>
+            <daemons>
+                <exec-solr />
+            </daemons>
+        </parallel>
+
+        <echo message="Waiting for Solr to start by checking its URL..." />
+        <waitfor maxwait="15" maxwaitunit="second" checkevery="500" timeoutproperty="solr.failed">
+            <http url="http://localhost:${solr.server.port}/solr/" />
+        </waitfor>
+        <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
+    </target>
+
+    <macrodef name="exec-solr">
+        <sequential>
+            <!-- 1 GB to build current gazetteer with 13 million rows -->
+            <java jar="build/winstone-${winstone.v}.jar" fork="true" clonevm="true" failonerror="true"
+                  maxmemory="1G">
+                <sysproperty key="java.awt.headless" value="true" />
+                <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
+                <sysproperty key="solr.enableRemoteStreaming" value="true" />
+                <sysproperty key="java.util.logging.config.file" value="logging.properties" />
+                <arg value="--controlPort=8081" />
+                <arg value="--commonLibFolder=build/containerLib" />
+                <arg value="--httpPort=${solr.server.port}" />
+                <arg value="--warfile=build/solr-${solr.v}.war" />
+                <arg value="--prefix=/solr" />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target name="start-solr" description="Start Solr (Winstone) on value of 'solr.server.port'. Stop it via stop-solr."
+            depends="init">
+        <echo level="warning" message="Winstone doesn't properly handle HTTP POST chunked Transfer-Encoding" />
+        <exec-solr />
+    </target>
+
+    <target name="stop-solr" description="Shut down Solr (Winstone)">
+        <java classpath="build/winstone-${winstone.v}.jar" classname="winstone.tools.WinstoneControl">
+            <!-- by default, port 8081 -->
+            <arg value="shutdown" />
+        </java>
+        <!-- FYI I haven't found an equivalent for jetty-runner -->
+    </target>
+
+    <target name="print-start-jetty" description="Print instructions to run Solr with Jetty" depends="proxy">
+        <get dest="build" skipexisting="true">
+            <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
+        </get>
+        <echo message="java
+ -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=${solr.solr.home} -Djava.util.logging.config.file=logging.properties
+ -jar build/jetty-runner-${jetty.v}.jar --lib build/containerLib --port ${solr.server.port} --path /solr build/solr-${solr.v}.war"/>
+    </target>
+
+</project>

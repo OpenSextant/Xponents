@@ -918,16 +918,15 @@
                 -->
 
                 <!-- Default: Latin-based names only gazetteer
-                -->
                 <arr name="include_category">
                     <str>Basic</str><str>Wellknown</str><str>general</str>
                 </arr>
-
+                -->
                 <!-- Lean: Basic + Well-known places
+                -->
                 <arr name="include_category">
                     <str>Basic</str><str>Wellknown</str>
                 </arr>
-                -->
             </lst>
         </processor>
         <processor class="solr.RunUpdateProcessorFactory" />

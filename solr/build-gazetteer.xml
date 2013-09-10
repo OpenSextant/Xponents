@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<project name="OpenSextant-Gazetteer" default="index">
+
+    <!-- Solr Home and Gazetteer config data sourced here: -->
+    <property file="build.properties" />
+
+    <!-- Solr config & data (this is the standard System property name Solr uses) -->
+    <property name="solr.solr.home" location="${solr.home}" />
+
+    <import file="build-solr-support.xml" />
+
+    <!-- TARGETS: -->
+
+    <target name="clean" description="Delete indexed data">
+        <delete dir="${solr.solr.home}/gazetteer/data/" />
+    </target>
+
+    <target name="_index">
+        <available property="csvFile.exists" file="${gazetteer.data.file}" />
+        <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
+        <get
+            src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?optimize=true&amp;stream.file=${gazetteer.data.file}&amp;update.contentType=text/csv"
+            dest="build/update-csv.response.xml" />
+    </target>
+
+    <target name="index" depends="start-solr-daemon, _index, stop-solr" description="Starts Solr, indexes data, then stops it">
+    </target>
+
+    <target name="start-solr-daemon" depends="init">
+        <parallel>
+            <daemons>
+                <exec-solr />
+            </daemons>
+        </parallel>
+
+        <echo message="Waiting for Solr to start by checking its URL..." />
+        <waitfor maxwait="15" maxwaitunit="second" checkevery="500" timeoutproperty="solr.failed">
+            <http url="http://localhost:${solr.server.port}/solr/gazetteer/select" />
+        </waitfor>
+        <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
+    </target>
+
+
+</project>
