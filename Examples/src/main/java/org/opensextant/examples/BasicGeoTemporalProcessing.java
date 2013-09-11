@@ -127,14 +127,19 @@ public class BasicGeoTemporalProcessing
             throw new ProcessingException("VALIDATION ERRORS: " + runnerMessage.toString());
         }
 
+        // If you are dead-sure you want only coordinates from text, then just use XCoord.
+        // Otherwise SimpleGeocoder does both coords + names.
+        // 
         //XCoord xcoord = new XCoord();
         //xcoord.configure();
         //this.addExtractor(xcoord);
         SimpleGeocoder geocoder = new SimpleGeocoder();
 
         // Testing only
+        /*
         params.tag_coordinates = false;
         params.tag_places = true;
+        */
         
         geocoder.setParameters(params);
         geocoder.configure();
