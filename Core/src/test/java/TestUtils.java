@@ -16,12 +16,10 @@ public class TestUtils {
 
     public void test() {
 
-        testFilenames();
-
-        String emo = "\ud83d\ude1d";
-        System.out.println("What am I? " + emo);
-        System.out.println(UnicodeTextUtils.remove_emoticons("bla blah blahhh ;)  " + emo));
-
+        System.out.println("Known languages");
+        for (String lang : TextUtils.getLanguageMap().keySet()) {
+            System.out.println(String.format("Lang %s %s", lang, TextUtils.getLanguage(lang)));
+        }
         testISO639Names("en");
         testISO639Names("eng");
         testISO639Names("English");
@@ -31,10 +29,17 @@ public class TestUtils {
         testISO639Names("ara");
         testISO639Names("ar");
         testISO639Names("Arabic");
-        testISO639Names("msa");  // Modern Standard Arabic or Malay?
+        testISO639Names("msa"); // Modern Standard Arabic or Malay?
         testISO639Names("Burmese");
         testISO639Names("Pol");
         testISO639Names("Not a language");
+        testISO639Names("tl");
+
+        testFilenames();
+
+        String emo = "\ud83d\ude1d";
+        System.out.println("What am I? " + emo);
+        System.out.println(UnicodeTextUtils.remove_emoticons("bla blah blahhh ;)  " + emo));
     }
 
     private boolean testFile(File testfile) {
@@ -74,7 +79,7 @@ public class TestUtils {
     }
 
     /**
-     *
+     * 
      * @param args
      */
     public static void main(String[] args) {
