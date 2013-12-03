@@ -42,7 +42,7 @@
             <groupId>org.opensextant</groupId>
             <artifactId>geodesy</artifactId>
             <version>2.0.0</version>
-            <!-- https://github.com/OpenSextant/giscore/issues/2 TODO remove once fixed-->
+            <!-- https://github.com/OpenSextant/geodesy/issues/4 TODO remove once shipped >2.0.0-->
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -54,12 +54,12 @@
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>giscore</artifactId>
-            <version>2.0.1</version>
-            <!-- https://github.com/OpenSextant/giscore/issues/2 TODO remove once fixed-->
+            <version>2.0.2</version>
+            <!-- https://github.com/OpenSextant/giscore/issues/4 TODO remove once fixed >2.0.2-->
             <exclusions>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -195,7 +195,7 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
             <scope>runtime</scope>
-            <!-- <optional>true</optional> -->
+            <optional>true</optional>
         </dependency>
 
         <dependency>
