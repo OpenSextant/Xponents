@@ -43,6 +43,11 @@ import org.opensextant.util.TextUtils;
  */
 public class Parameters extends java.util.Properties {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
     public boolean tag_countries = true;
     public boolean tag_places = true;
     public boolean tag_coordinates = true;

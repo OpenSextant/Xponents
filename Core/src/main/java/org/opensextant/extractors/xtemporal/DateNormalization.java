@@ -261,7 +261,7 @@ public class DateNormalization {
         // YY       yy
         // YEARYY   yy or yyyy
         String _YEAR = elements.get("YEAR");
-        boolean _is_4digit = false;
+        //boolean _is_4digit = false;
         boolean _is_year = false;
 
         if (_YEAR != null) {
@@ -285,7 +285,7 @@ public class DateNormalization {
             }
 
             if (_YEARYY.length() == 4) {
-                _is_4digit = true;
+                //_is_4digit = true;
                 _is_year = true;
             } else if (_YEARYY.length() == 2) {
                 // Special case: 00 yields 2000

@@ -45,7 +45,10 @@
 
   <target name="copy-script">
     <copy todir="${release}/script/">
-        <fileset dir="${xponents.home}/script"> <!-- this dir, eh? -->
+        <fileset dir="${xponents.home}/script">
+           <include name="*.*" />
+        </fileset>
+        <fileset dir="${xponents.home}/XText/script">
            <include name="*.*" />
         </fileset>
     </copy>

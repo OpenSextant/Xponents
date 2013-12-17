@@ -47,17 +47,13 @@ public abstract class FolderGISDataFormatter extends GISDataFormatter {
      */
     @Override
     protected void closeOutputStreams() throws Exception {
-        /* if (this.zos != null) {
-            this.zos.flush();
-            this.zos.close();
-        }
-         */
         super.closeOutputStreams();
 
-        if (CLEANUP_TEMP_FOLDERS && _temp != null) {
-            if (_temp.exists()) {
-                FileUtils.deleteDirectory(_temp);
-            }
-        }
+        // Unsure about the cleanup strategy -- if this can be generalized, or if it is GIS format dependent.
+        // if (CLEANUP_TEMP_FOLDERS && _temp != null) {
+        //    if (_temp.exists()) {
+        //        FileUtils.deleteDirectory(_temp);
+        //    }
+        //}
     }
 }

@@ -309,7 +309,6 @@ public class XTemporal extends AbstractFlexPat {
 		boolean debug = true;
 		// default test patterns, run test/debug mode.
 		XTemporal xdt = new XTemporal(debug);
-		String testFile = null;
 		boolean systemTest = false;
 		boolean adhocTest = false;
 

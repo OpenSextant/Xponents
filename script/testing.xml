@@ -101,6 +101,23 @@
 
 
 
+  <!-- XText -->
+    <target name="convert">
+        <java classname="org.opensextant.xtext.XText"  classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+            <jvmArg value="-Xmx600m"/>
+            <arg value="-i"/>
+            <arg value="${input}"/>
+            <arg value="-o"/>
+            <arg value="${output}"/>
+            <arg value="-e"/>
+            <arg value="-h"/>
+            <!--
+            <arg value="-h"/>
+            -->
+        </java>
+    </target>
+
+
 
   <!-- Examples Testing area -->
   <target name="test" description="Basic Runner for Geo/Temporal" >

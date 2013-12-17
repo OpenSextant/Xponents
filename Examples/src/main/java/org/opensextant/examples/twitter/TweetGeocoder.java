@@ -365,6 +365,7 @@ public class TweetGeocoder {
                 break;
             }
         }
+        io.close();
         shutdown();
     }
 
