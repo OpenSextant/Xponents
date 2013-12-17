@@ -141,7 +141,7 @@ public class SolrProxy {
 	 * 
 	 * @throws IOException
 	 */
-	public final void initialize() throws IOException {
+	public  void initialize() throws IOException {
 
 		if (!StringUtils.isBlank(server_url)) {
 			if (server_url.toLowerCase().startsWith("http:")) {

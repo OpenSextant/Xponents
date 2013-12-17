@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.*;
 import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.Language;
 import org.supercsv.io.CsvMapReader;
@@ -179,6 +180,36 @@ public class TextUtils {
      */
     public static String delete_eol(String t) {
         return t.replace('\n', ' ').replace('\r', ' ');
+    }
+
+    public final static char NL = '\n';
+    public final static char CR = '\r';
+    public final static char SP = ' ';
+    public final static char TAB = '\t';
+    public final static char DEL = 0x7F;
+
+    /**
+     * Delete control chars from text data; leaving text and whitespace only.
+     * Delete char (^?) is also removed.
+     * Length may differ if ctl chars are removed.  
+     * @param t
+     * @return scrubbed buffer
+     */
+    public static String delete_controls(String t) {
+
+        if (t == null) {
+            return null;
+        }
+        StringBuilder tmpCleanBuf = new StringBuilder();
+
+        for (char ch : t.toCharArray()) {
+            if ((ch < 0x20 && !(ch == TAB || ch == NL)) || (ch == DEL)) {
+                continue;
+            }
+
+            tmpCleanBuf.append(ch);
+        }
+        return tmpCleanBuf.toString();
     }
 
     /**
@@ -607,7 +638,8 @@ public class TextUtils {
     static {
         try {
             initLanguageData();
-            initLOCLanguageData(); // Only fills in if a language code does not exist.
+            initLOCLanguageData(); // Only fills in if a language code does not
+                                   // exist.
             // initICULanguageData();
         } catch (Exception err) {
             err.printStackTrace();

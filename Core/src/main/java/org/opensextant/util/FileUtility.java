@@ -643,9 +643,16 @@ public class FileUtility {
     public final static String WEBPAGE_MIMETYPE = "web page";
     public final static String SPREADSHEET_MIMETYPE = "spreadsheet";
     public final static String NOT_AVAILABLE = "other";
+    public final static String GIS_MIMETYPE = "GIS data";
 
     static {
         filetypeMap.put("", NOT_AVAILABLE);
+        
+        // GIS Data
+        filetypeMap.put("gdb", GIS_MIMETYPE);
+        filetypeMap.put("shp", GIS_MIMETYPE);
+        filetypeMap.put("kml", GIS_MIMETYPE);
+        filetypeMap.put("kmz", GIS_MIMETYPE);
 
         // Image
         filetypeMap.put("jpg", IMAGE_MIMETYPE);
