@@ -125,7 +125,10 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.9.1</version>
         <configuration>
-          <header>&lt;img src='../img/mitrelogo-whiteonblue.jpg'/&gt;&lt;br&gt;copyright MITRE Corporation, 2010-2012</header>
+          <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36'
+                        src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
+                        OpenSextant.org, 2010-2013
+           </header>
           <version>true</version>
           <windowtitle>XText - Content Extraction Simplified</windowtitle>
         </configuration>
