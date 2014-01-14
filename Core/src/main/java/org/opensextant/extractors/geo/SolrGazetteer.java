@@ -44,8 +44,8 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.opensextant.data.Place;
 import org.opensextant.data.Country;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
@@ -60,15 +60,15 @@ import org.supercsv.prefs.CsvPreference;
  */
 public class SolrGazetteer {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private final boolean debug = log.isDebugEnabled();
+    //private final Logger log = LoggerFactory.getLogger(this.getClass());
+    //private final boolean debug = log.isDebugEnabled();
     /**
      * In the interest of optimization we made the Solr instance a static class
      * attribute that should be thread safe and shareable across instances of
      * SolrMatcher
      */
     private ModifiableSolrParams params = new ModifiableSolrParams();
-    protected SolrProxy solr = null;
+    private SolrProxy solr = null;
     private Map<String, Country> country_lookup = null;
     private Map<String, String> iso2fips = new HashMap<String, String>();
     private Map<String, String> fips2iso = new HashMap<String, String>();
@@ -86,6 +86,11 @@ public class SolrGazetteer {
     }
     private Map<String, String> _default_country_names = new HashMap<String, String>();
 
+   
+    /** Returns the SolrProxy used internally. */
+    public SolrProxy getSolrProxy(){
+        return solr;
+    }
     /**
      */
     public static String normalizeCountryName(String c) {
@@ -131,6 +136,7 @@ public class SolrGazetteer {
             }
             features.put(String.format("%s/%s", feat_class, feat_code), desc);
         }
+        featreader.close();
     }
 
     private void loadCountryNameMap() throws IOException {
@@ -156,10 +162,11 @@ public class SolrGazetteer {
             _default_country_names.put(cc.toUpperCase(), n.toLowerCase());
         }
 
+        countryMap.close();
+
         if (_default_country_names.isEmpty()) {
             throw new IOException("No data found in country name map");
         }
-
     }
 
     /**
@@ -177,6 +184,15 @@ public class SolrGazetteer {
             loadCountries();
         } catch (SolrServerException loadErr) {
             throw new IOException(loadErr);
+        }
+    }
+    
+    /**
+     * Close or release all resources.
+     */
+    public void shutdown() {
+        if (solr != null){
+            solr.close();
         }
     }
 
@@ -334,14 +350,15 @@ public class SolrGazetteer {
     }
 
     /**
-     * Do a basic test
+     * Do a basic test -- This main prog makes use of the default JVM arg for solr:  -Dsolr.solr.home = /path/to/solr
      */
     public static void main(String[] args) throws Exception {
         //String solrHome = args[0];
+        /*
         String OPENSEXTANT_HOME = System.getProperty("opensextant.home");
         String SOLR_HOME = OPENSEXTANT_HOME + File.separator + ".." + File.separator + "opensextant-solr";
         System.setProperty("solr.solr.home", SOLR_HOME);
-
+         */
 
         SolrGazetteer gaz = new SolrGazetteer();
 
@@ -360,12 +377,10 @@ public class SolrGazetteer {
                 System.out.println(pc.toString() + " which is categorized as: " + gaz.getFeatureName(pc.getFeatureClass(), pc.getFeatureCode()));
             }
 
-
-
         } catch (Exception err) {
             err.printStackTrace();
         }
-        gaz.solr.close();
+        gaz.shutdown();
         System.exit(0);
 
     }
