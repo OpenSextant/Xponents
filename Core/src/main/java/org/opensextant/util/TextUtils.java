@@ -40,6 +40,9 @@
 // */
 package org.opensextant.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.text.Normalizer;
@@ -48,6 +51,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
@@ -190,8 +195,9 @@ public class TextUtils {
 
     /**
      * Delete control chars from text data; leaving text and whitespace only.
-     * Delete char (^?) is also removed.
-     * Length may differ if ctl chars are removed.  
+     * Delete char (^?) is also removed. Length may differ if ctl chars are
+     * removed.
+     * 
      * @param t
      * @return scrubbed buffer
      */
@@ -997,4 +1003,68 @@ public class TextUtils {
 
         return false;
     }
+
+    /**
+     * Compress bytes from a Unicode string. Conversion to bytes first to avoid
+     * unicode or platform-dependent IO issues.
+     * 
+     * @param buf  UTF-8 encoded text
+     * @return byte array
+     * @throws IOException
+     */
+    public static byte[] compress(String buf) throws IOException {
+        return compress(buf, "UTF-8");
+    }
+
+    /**
+     * 
+     * @param buf   text
+     * @param charset character set encoding for text
+     * @return
+     * @throws IOException
+     */
+    public static byte[] compress(String buf, String charset) throws IOException {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        GZIPOutputStream gz = new GZIPOutputStream(out);
+        gz.write(buf.getBytes(charset));
+        gz.close();
+
+        return out.toByteArray();
+    }
+
+    /**
+     * 
+     * @param gzData
+     * @return buffer UTF-8 decoded string
+     * 
+     * @throws IOException
+     */
+    public static String uncompress(byte[] gzData) throws IOException {
+        return uncompress(gzData, "UTF-8");
+    }
+
+    /**
+     * 
+     * @param gzData
+     * @param charset character set decoding for text
+     * @return
+     * @throws IOException
+     */
+    public static String uncompress(byte[] gzData, String charset) throws IOException {
+        GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(gzData));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = gzipInputStream.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+
+        gzipInputStream.close();
+        out.close();
+
+        return new String(out.toByteArray(), charset);
+    }
+
 }
