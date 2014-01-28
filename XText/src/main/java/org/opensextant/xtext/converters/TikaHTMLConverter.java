@@ -26,8 +26,8 @@
 package org.opensextant.xtext.converters;
 
 import org.opensextant.xtext.TrivialASCIIDetector;
-import org.opensextant.xtext.ConverterAdapter;
 import org.xml.sax.ContentHandler;
+
 import java.io.IOException;
 import java.io.File;
 import java.io.InputStream;
@@ -43,7 +43,7 @@ import org.opensextant.util.TextUtils;
 /**
  * A Tika HTML parser that reduces large amounts of empty lines in converted
  * HTML text.
- *
+ * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public class TikaHTMLConverter extends ConverterAdapter {
@@ -61,6 +61,12 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
     /**
      * a barebones HTML parser.
+     * 
+     * <pre>
+     * TODO: mis-encoded HTML entities are not decoded
+     * properly. E.g., finding "&#8211;" (82xx range is dashes, quotes) for
+     * example, does not decode correctly unless the page encoding is declared as UTF-8.
+     * </pre>
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream input, File doc) throws IOException {
@@ -69,7 +75,8 @@ public class TikaHTMLConverter extends ConverterAdapter {
         // HTML Conversion here is simply not resetting its internal buffers
         // Its just accumulating and error out when it reaches MAX
         ContentHandler handler = new BodyContentHandler(MAX_HTML_FILE_SIZE);
-        //ContentHandler article_handler = new BoilerpipeContentHandler(handler);
+        // ContentHandler article_handler = new
+        // BoilerpipeContentHandler(handler);
 
         BoilerpipeContentHandler scrubbingHandler = null;
         if (scrub_article) {
@@ -78,10 +85,10 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
         try {
             parser.parse(input, (scrub_article ? scrubbingHandler : handler), metadata, new ParseContext());
-            input.close();
         } catch (Exception xerr) {
-            input.close();
             throw new IOException("Unable to parse content", xerr);
+        } finally {
+            input.close();
         }
         ConvertedDocument textdoc = new ConvertedDocument(doc);
 
@@ -96,12 +103,13 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
         textdoc.setText(TextUtils.reduce_line_breaks(text));
 
-        //-- Improve CHAR SET encoding answer.
+        // -- Improve CHAR SET encoding answer.
         byte[] data = textdoc.buffer.getBytes();
         if (TrivialASCIIDetector.isASCII(data)) {
             textdoc.setEncoding("ASCII");
         } else {
-            // Okay, okay... let Tika name whatever encoding it found or guessed at.
+            // Okay, okay... let Tika name whatever encoding it found or guessed
+            // at.
             textdoc.setEncoding(metadata.get(Metadata.CONTENT_ENCODING));
         }
 

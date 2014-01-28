@@ -26,9 +26,9 @@
  */
 package org.opensextant.xtext.converters;
 
-import org.opensextant.xtext.ConverterAdapter;
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.opensextant.xtext.ConvertedDocument;
 
@@ -38,7 +38,7 @@ import org.opensextant.xtext.ConvertedDocument;
  */
 public class MSDocConverter extends ConverterAdapter {
 
-    /** TODO: Replace with a Tika converter?
+    /** 
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream input, java.io.File doc) throws IOException {

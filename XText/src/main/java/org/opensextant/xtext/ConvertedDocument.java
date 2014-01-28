@@ -295,6 +295,7 @@ public final class ConvertedDocument extends DocInput {
         return _path;
     }
     public final static String OUTPUT_ENCODING = "UTF-8";
+    public final static String CONVERTED_TEXT_EXT = "-utf8.txt";
 
     /**
      * relative_path is original relative to input folder TOOD: cleanup
@@ -310,7 +311,7 @@ public final class ConvertedDocument extends DocInput {
         } else {
             // Remove ".txt" at end of file replacing it with something to denote
             // It is a transcoded text file.
-            return relpath.substring(0, relpath.length() - 4) + "-utf8.txt";
+            return relpath.substring(0, relpath.length() - 4) + CONVERTED_TEXT_EXT;
         }
     }
 

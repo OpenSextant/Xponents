@@ -134,6 +134,16 @@ public class MGRSFilter implements MatchFilter {
             if ("per".equalsIgnoreCase(found[1])) {
                 return true;
             }
+            // Units of measure:  'sec' or 'Sec';  the term sec is more a word than an MGRS quad here.
+            // 
+            // 'dd sec ...' fail, filter out.            
+            // 'dd Sec ...' fail, filter out.            
+            // 'dd SEC dd ' pass
+            // 'ddSEC...' pass
+            //
+            if ("sec".equals(found[1]) || "Sec".equals(found[1])){
+                return true;
+            }
         }
 
         for (DateFormat format : df) {

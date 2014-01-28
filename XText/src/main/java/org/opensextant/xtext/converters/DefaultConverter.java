@@ -25,52 +25,70 @@
  */
 package org.opensextant.xtext.converters;
 
-import org.opensextant.xtext.ConverterAdapter;
 import java.io.InputStream;
+
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.detect.Detector;
 import org.apache.tika.metadata.Metadata;
-import org.xml.sax.ContentHandler;
-import org.apache.tika.sax.ToTextContentHandler;
+//import org.xml.sax.ContentHandler;
+import org.apache.tika.sax.BodyContentHandler;
+//import org.apache.tika.sax.ToTextContentHandler;
 import org.opensextant.util.TextUtils;
+
 import java.io.IOException;
+
 import org.opensextant.xtext.ConvertedDocument;
 
 /**
- *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
- */
-/**
- *
+ * Default conversion is almost a pass through from Tika's auto parser and BodyContentHandler.
+ * Encoding, author, create date and title are saved to ConvertedDoc.  The text of the document
+ * is stripped of extra blank lines.
+ * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public class DefaultConverter extends ConverterAdapter {
 
-    private Parser parser = new AutoDetectParser();
+    /* 1 MB of text from a given document */
+    public final static int MAX_TEXT_SIZE = 0x100000;
+    private Detector detector = new DefaultDetector();
+    private Parser parser = new AutoDetectParser(detector);
     private ParseContext ctx = new ParseContext();
 
+    private int maxBuffer = MAX_TEXT_SIZE;
+
+    public DefaultConverter() {
+        ctx.set(Parser.class, parser);
+    }
+
+    public DefaultConverter(int sz) {
+        this();
+        maxBuffer = sz;
+    }
+
     /**
-     * Common implementation -- take an input stream and return a ConvertedDoc
+     * Common implementation -- take an input stream and return a ConvertedDoc;
+     * 
      * @param input
      * @param doc
      * @return
      * @throws IOException
+     *             if underlying Tika parser/writer had an IO problem, an parser
+     *             problem, or MAX_TEXT_SIZE is reached.
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream input, java.io.File doc) throws IOException {
         Metadata metadata = new Metadata();
-        // Unfortunately due to some bugs in the HTML body content handler
-        // I have become suspicious about how Tika SAX content handlers reset or not
-        // in error conditions.   HTML conversion appears to accumulate content
-        ContentHandler tikasax = new ToTextContentHandler();
+        BodyContentHandler handler = new BodyContentHandler(maxBuffer);
 
         try {
-            parser.parse(input, tikasax, metadata, ctx);
-            input.close();
+            parser.parse(input, handler, metadata, ctx);
         } catch (Exception xerr) {
-            input.close();
             throw new IOException("Unable to parse content", xerr);
+        } finally {
+            input.close();
         }
         ConvertedDocument textdoc = new ConvertedDocument(doc);
 
@@ -79,8 +97,7 @@ public class DefaultConverter extends ConverterAdapter {
         textdoc.addCreateDate(metadata.get(Metadata.CREATION_DATE));
         textdoc.addAuthor(metadata.get(Metadata.AUTHOR));
 
-        textdoc.setText(TextUtils.reduce_line_breaks(tikasax.toString()));
-        //textdoc.setText(tikasax.toString());
+        textdoc.setText(TextUtils.reduce_line_breaks(handler.toString()));
 
         return textdoc;
     }

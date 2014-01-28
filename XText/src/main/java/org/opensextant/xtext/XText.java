@@ -29,24 +29,24 @@ import org.opensextant.xtext.converters.TextTranscodingConverter;
 import org.opensextant.xtext.converters.TikaHTMLConverter;
 import org.opensextant.xtext.converters.ArchiveNavigator;
 import org.opensextant.xtext.converters.DefaultConverter;
-import org.opensextant.xtext.converters.PDFConverter;
+//import org.opensextant.xtext.converters.PDFConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import org.apache.commons.io.FilenameUtils;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
  *
  * Traverse a folder and return text versions of the documents found. Archiving
  * the text only copies at an output location of your choice.
- *
+ *<pre>
  *
  * if input is a file, convert. Done.
  *
@@ -54,7 +54,7 @@ import org.apache.commons.io.FileUtils;
  * Done
  *
  * if input is a folder iterate over dir, convert each. Done
- *
+ *</pre>
  *
  * TEXT OUTPUT form includes a JSON document header with metadata properties
  * from the original item. These are valid elements of the conversion process.
@@ -84,6 +84,9 @@ public final class XText implements iFilter, iConvert {
     protected String inputNode = null;
     private boolean save_in_folder = false;
     private boolean save_in_archive_root = false; // save to the archive root rather than in the directory the file came from
+    
+    private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE; /* XText default is 1 MB of text */
+
 
     protected Set<String> archive_types = new HashSet<String>();
     /**
@@ -110,6 +113,10 @@ public final class XText implements iFilter, iConvert {
 
     public void setTempDir(String tmp) {
         tempRoot = tmp;
+    }
+    
+    public void setMaxBufferSize(int sz){
+        maxBuffer = sz;
     }
 
     /**
@@ -274,6 +281,12 @@ public final class XText implements iFilter, iConvert {
             return true;
         }
         if (filepath.contains(".svn")) {
+            return true;
+        }
+        
+        // ignore '-utf8.txt'  as XText likely generated them.
+        // 
+        if (n.endsWith(ConvertedDocument.CONVERTED_TEXT_EXT)){
             return true;
         }
 
@@ -497,7 +510,7 @@ public final class XText implements iFilter, iConvert {
         requested_types.add("rtf");
         requested_types.add("log");
 
-        defaultConversion = new DefaultConverter();
+        defaultConversion = new DefaultConverter(maxBuffer);
     }
 
     /**
@@ -519,9 +532,9 @@ public final class XText implements iFilter, iConvert {
         // Invoke converter instances only as requested types suggest.
         // If caller has removed file types from the list, then
         String mimetype = "pdf";
-        if (requested_types.contains(mimetype)) {
-            converters.put(mimetype, new PDFConverter());
-        }
+        //if (requested_types.contains(mimetype)) {
+            //converters.put(mimetype, new PDFConverter());
+        //}
 
         mimetype = "txt";
         if (requested_types.contains(mimetype)) {
@@ -542,7 +555,12 @@ public final class XText implements iFilter, iConvert {
         //converters.put("eml", new EMailConverter());
         //converters.put("*", new TextTranscodingConverter());
         //mimetype = "html";
+        
+        
         // ALWAYS ignore our own text conversions or those of others.
+        // So here all known convertable types will need a filter for their conversion, e.g., 
+        //  pdf => ignore pdf.txt
+        //  doc => ignore doc.txt
         //
         for (String t : requested_types) {
             ignoreFileType(t + ".txt");

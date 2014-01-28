@@ -13,37 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.opensextant.xtext;
+package org.opensextant.xtext.converters;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.File;
+
+import org.apache.tika.io.TikaInputStream;
 import org.apache.commons.io.IOUtils;
+import org.opensextant.xtext.ConvertedDocument;
+import org.opensextant.xtext.iConvert;
 
 /**
- *
+ * 
  * @author ubaldino
  */
 public abstract class ConverterAdapter implements iConvert {
 
     protected abstract ConvertedDocument conversionImplementation(InputStream in, File doc) throws IOException;
 
-    /** Yield a ConvertedDocument with no File metadata.  Underlying implementation opens and closes a stream to read the string.
-     * Metadata is derived solely from the text provided, e.g., length, conversion time, encoding.
+    /**
+     * Yield a ConvertedDocument with no File metadata. Underlying
+     * implementation opens and closes a stream to read the string. Metadata is
+     * derived solely from the text provided, e.g., length, conversion time,
+     * encoding.
      */
     @Override
     public ConvertedDocument convert(String data) throws IOException {
-        return conversionImplementation(IOUtils.toInputStream(data), null);
+        return conversionImplementation(TikaInputStream.get(IOUtils.toInputStream(data)), null);
     }
 
-    /** Yield a ConvertedDocumented with all the file metadata and payload, to the greatest degree possible.
-     * Underlying implementation opens and closes a stream to read the file.
-     * In other words implementation of converters should close the given input stream.
+    /**
+     * Yield a ConvertedDocumented with all the file metadata and payload, to
+     * the greatest degree possible. Underlying implementation opens and closes
+     * a stream to read the file. In other words implementation of converters
+     * should close the given input stream.
      */
     @Override
     public ConvertedDocument convert(java.io.File doc) throws IOException {
-        InputStream input = new FileInputStream(doc);
+        InputStream input = TikaInputStream.get(doc);
         return conversionImplementation(input, doc);
     }
 }

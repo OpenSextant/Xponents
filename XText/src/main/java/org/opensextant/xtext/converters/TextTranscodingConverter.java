@@ -26,16 +26,21 @@
 package org.opensextant.xtext.converters;
 
 import org.opensextant.xtext.TrivialASCIIDetector;
-import org.opensextant.xtext.ConverterAdapter;
+
 import java.io.IOException;
+
 import org.opensextant.xtext.ConvertedDocument;
+
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
+
 import org.apache.poi.util.IOUtils;
 import org.opensextant.util.FileUtility;
 
 /**
- *
+ * Text converter that detects original encoding to include pure ASCII, Latin1, UTF-8 etc
+ * Whereas Tika does not make a not of pure-ASCII texts.
+ *  
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public class TextTranscodingConverter extends ConverterAdapter {
@@ -101,57 +106,4 @@ public class TextTranscodingConverter extends ConverterAdapter {
 
         return textdoc;
     }
-
-    /* Tika-based solution for reading plain text was not working out.
-     * it called everything latin-1 even if it was just ascii....
-     * no harm really, but also no insight into encoding dection
-     *
-     import java.io.FileInputStream;
-     import java.io.IOException;
-     import java.io.InputStream;
-     import java.io.BufferedInputStream;
-     import org.apache.tika.parser.Parser;
-     import org.apache.tika.parser.txt.TXTParser;
-     import org.apache.tika.parser.ParseContext;
-     import org.apache.tika.metadata.Metadata;
-     import org.xml.sax.ContentHandler;
-     //import org.apache.tika.sax.ToTextContentHandler;
-     import org.apache.tika.sax.*;
-     */
-    //@Override
-    /*
-     public ConvertedDocument convertWithTika(java.io.File doc) throws IOException {
-     //private Parser parser = new TXTParser();
-     //private ParseContext ctx = new ParseContext();
-
-     byte[] data = FileUtility.readBytesFrom(doc);
-     cd.setText(data);
-     CharsetMatch cs = cd.detect();
-
-     //Metadata metadata = new Metadata();
-     // Body handler does not introduce extra characters as did ToText...
-     //
-
-     ContentHandler tikasax = new BodyContentHandler(); // new ToTextContentHandler();
-     try {
-     parser.parse(data, tikasax, metadata, ctx);
-     } catch (Exception xerr) {
-     throw new IOException("Unable to parse content", xerr);
-     }
-     input.close();
-
-
-     ConvertedDocument textdoc = new ConvertedDocument(doc);
-
-     //textdoc.addTitle(metadata.get(Metadata.TITLE));
-     //textdoc.setEncoding(metadata.get(Metadata.CONTENT_ENCODING));
-     //textdoc.addDate(metadata.get(Metadata.CREATION_DATE));
-     //textdoc.addAuthor(metadata.get(Metadata.AUTHOR));
-
-     //textdoc.setText(TextUtils.reduce_line_breaks(tikasax.toString()));
-     //textdoc.setText(tikasax.toString());
-
-     return textdoc;
-     }
-     */
 }
