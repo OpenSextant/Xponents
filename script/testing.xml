@@ -9,8 +9,6 @@
    -->
   <property file="runtime.cfg" />
 
-  <property name="xponents" value="${basedir}/../" />
-
   <path id="runtime.classpath">
     <pathelement location="${xponents}/etc" />
     <fileset dir="${xponents}/lib" includes="**/*.jar" />
