@@ -8,7 +8,10 @@ package org.opensextant.examples.twitter;
 import java.io.File;
 import java.util.Date;
 import java.util.Map;
+
 import net.sf.json.JSONObject;
+
+import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
 
 /**
@@ -28,7 +31,7 @@ public abstract class MicroMessage {
     public String author_cc = null;
     public String author_location = null;
     public String author_xy_val = null;
-    public LatLon author_xy = null;
+    public Geocoding author_xy = null;
 
     public MicroMessage() {
     }
