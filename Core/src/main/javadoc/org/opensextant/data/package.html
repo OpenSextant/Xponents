@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <h1> Xponents Common Data Model<br>
+    </h1>
+    The key constructs here are the GeoBase and Geocoding.&nbsp; GeoBase
+    provides a base class for anything that has an ID, name or label,
+    and a coordinate.&nbsp; Geocoding provides an interface for any
+    heuristic that helps ground some data to a coordinate, while
+    providing additional metadata about the geocoding itself.&nbsp; For
+    example, beyond an actual coordinate useful geocoding attributes
+    include:<br>
+    <ul>
+      <li>precision and confidence</li>
+      <li>country code and province code or name</li>
+      <li>method or source for geocoding, e.g., derivation or rote
+        lookup<br>
+      </li>
+      <li>etc.</li>
+    </ul>
+    <p>Country and Place objects are extensions of GeoBase. Country is
+      used extensively in place name extraction, reverse geocoding, and
+      general country name/code lookups.&nbsp; See GeonamesUtility for
+      more country metadata tools.<br>
+    </p>
+    <br>
+    <b><br>
+    </b><br>
+    <br>
+  </body>
+</html>
