@@ -41,6 +41,9 @@ import org.opensextant.processing.progress.ProgressMonitor;
  */
 public interface Extractor {
 
+    /** optional constant - a universal doc ID holder*/
+    public final static String NO_DOC_ID = "no-docid";
+
     public String getName();
 
     /** Configure an Extractor using defaults for that extractor
@@ -57,7 +60,10 @@ public interface Extractor {
      */
     public void configure(java.net.URL patfile) throws ConfigException;
 
+    /** Useuful for working with batches of inputs that have an innate row ID + buffer pairing */
     public List<TextMatch> extract(TextInput input) throws ExtractionException;
+    /** Useful for working with text buffers adhoc. Fewer assumptions about input data here.*/
+    public List<TextMatch> extract(String input) throws ExtractionException;
 
     public void setProgressMonitor(ProgressMonitor progressMonitor);
     public void updateProgress(double progress);

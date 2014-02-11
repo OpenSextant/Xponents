@@ -41,17 +41,19 @@
 package org.opensextant.extractors.xcoord;
 
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
+import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.TextInput;
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.TextMatchResult;
+
 import java.util.*;
 import java.util.regex.Matcher;
+
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;
-
 import org.slf4j.LoggerFactory;
 
 /**
@@ -130,6 +132,16 @@ public class XCoord extends AbstractFlexPat {
         return results.matches;
     }
 
+    /**
+     * Support the standard Extractor interface. This provides access to the
+     * most common extraction;
+     */
+    @Override
+    public List<TextMatch> extract(String input_buf) {
+        TextMatchResult results = extract_coordinates(input_buf, Extractor.NO_DOC_ID);
+
+        return results.matches;
+    }
     /**
      *
      */
@@ -273,7 +285,7 @@ public class XCoord extends AbstractFlexPat {
                 // Normalize
                 try {
                     GeocoordNormalization.normalize_coordinate(coord,
-                            patterns.group_map(pat, match));
+                            patterns.group_matches(pat, match));
                 } catch (NormalizationException normErr) {
                     if (debug) {
                         // Quietly ignore
@@ -292,7 +304,7 @@ public class XCoord extends AbstractFlexPat {
                     if (debug) {
                         results.message = "Filtered out coordinate pattern=" + pat.id + " value='"
                                 + coord.getText() + "'";
-                        log.debug("Normalization Filter fired, MSG={}", results.message);
+                        log.info("Normalization Filter fired, MSG=" + results.message);
                     }
                     continue;
                 }
@@ -374,7 +386,7 @@ public class XCoord extends AbstractFlexPat {
         XCoord xc = new XCoord(debug);
         XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT;
 
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XCoord", args, "af:t:u:");
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XCoord", args, "aft:u:");
 
         try {
             // xc.configure( "file:./etc/test_regex.cfg"); // default
@@ -386,8 +398,9 @@ public class XCoord extends AbstractFlexPat {
                 switch (c) {
                 case 'f':
                     System.out.println("\tSYSTEM TESTS=======\n" + opts.getOptarg());
-                    test.test(opts.getOptarg());
-                    test.fileTruth("test/Coord_Patterns_Truth.csv");
+                    //test.test(opts.getOptarg());
+                    test.systemTests();
+                    test.fileTruth("src/test/resources/Coord_Patterns_Truth.csv");
                     break;
 
                 case 't':

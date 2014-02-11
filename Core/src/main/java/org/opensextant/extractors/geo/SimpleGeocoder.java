@@ -211,6 +211,10 @@ public class SimpleGeocoder implements Extractor {
         return matches;
     }
 
+    @Override
+    public List<TextMatch> extract(String input_buf) throws ExtractionException {
+        throw new ExtractionException("Not yet implemented");
+    }
     private final CantileverPR cantilever = new CantileverPR();
 
     private void chooseCandidates(List<PlaceCandidate> candidates, List<TextMatch> coordinates) {

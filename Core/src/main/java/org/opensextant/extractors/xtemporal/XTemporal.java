@@ -115,6 +115,16 @@ public class XTemporal extends AbstractFlexPat {
 		return results.matches;
 	}
 
+	   /**
+     * Support the standard Extractor interface. This provides access to the
+     * most common extraction;
+     */
+    @Override
+    public List<TextMatch> extract(String input_buf) {
+        TextMatchResult results = extract_dates(input_buf, NO_DOC_ID);
+        return results.matches;
+    }
+
 	/**
 	 * A direct call to extract dates; which is useful for diagnostics and
 	 * development/testing.
