@@ -61,7 +61,8 @@
 			<groupId>org.opensextant</groupId>
 			<artifactId>geodesy</artifactId>
 			<!--  Java 7 required for this version: 2.0.0 -->
-			<version>2.0.1-20130807.193447-1</version>			
+			<!-- <version>2.0.1-20130807.193447-1</version>	-->
+			<version>2.0.0</version>
 		</dependency>
 		<!-- only for EmbeddedSolrServer, which is optional -->
 		<dependency>
@@ -214,7 +215,7 @@
 				<version>3.0</version>
 				<configuration>
 					<source>1.6</source>
-					<target>1.6</target>
+					<target>1.7</target> <!-- Geodesy and GISCore must be re-released for Java6 to support 1.6 here -->
 					<compilerArgument>-Xlint:all,-path</compilerArgument>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
