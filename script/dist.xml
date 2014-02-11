@@ -56,6 +56,9 @@
         <fileset dir="${xponents.home}/Core/src/test/resources">
            <include name="log4j.*" />
         </fileset>
+        <fileset dir="${xponents.home}/Core/src/test/resources">
+           <include name="Coord_Patterns*.*" />
+        </fileset>
     </copy>
   </target>
 

@@ -48,6 +48,8 @@ import org.opensextant.extraction.TextInput;
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 
+import java.io.File;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -375,6 +377,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Run a simple test.
+     * TODO: Move Main program to Examples or other test area.
      * 
      * @param args
      *            only one argument accepted: a text file input.
@@ -398,9 +401,12 @@ public class XCoord extends AbstractFlexPat {
                 switch (c) {
                 case 'f':
                     System.out.println("\tSYSTEM TESTS=======\n" + opts.getOptarg());
-                    //test.test(opts.getOptarg());
                     test.systemTests();
-                    test.fileTruth("src/test/resources/Coord_Patterns_Truth.csv");
+                    
+                    // Truth source is at src/test/resources  -- Or anywhere in your runtime classpath at TOP LEVEL!
+                    //
+                    URL truthData = XCoord.class.getResource("/Coord_Patterns_Truth.csv");
+                    test.fileTruth(new File(truthData.getPath()));
                     break;
 
                 case 't':

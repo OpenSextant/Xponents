@@ -25,15 +25,16 @@
  */
 package org.opensextant.extractors.xcoord;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FilenameUtils;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
-
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
@@ -225,9 +226,9 @@ public class TestScript {
      * @return
      * @throws IOException
      */
-    public CsvMapReader open(String file) throws IOException {
+    public CsvMapReader open(File file) throws IOException {
 
-        InputStreamReader rdr = FileUtility.getInputStream(file, "UTF-8");
+        InputStreamReader rdr = FileUtility.getInputStream(file.getAbsolutePath(), "UTF-8");
         CsvMapReader R = new CsvMapReader(rdr, CsvPreference.STANDARD_PREFERENCE);
         return R;
     }
@@ -241,7 +242,7 @@ public class TestScript {
      *
      * @param coordfile
      */
-    public void fileTruth(String coordfile) {
+    public void fileTruth(File coordfile) {
 
         xcoord.match_UTM(true);
         xcoord.match_MGRS(true);
@@ -251,8 +252,8 @@ public class TestScript {
 
         try {
 
-            String _file = coordfile.trim();
-            String fname = FilenameUtils.getBaseName(_file);
+            //String _file = coordfile.trim();
+            String fname = FilenameUtils.getBaseName(coordfile.getName());
             TestUtility tester = new TestUtility("./results/xcoord_" + fname + "-rows.csv");
             //
             tester.full_report = false;
