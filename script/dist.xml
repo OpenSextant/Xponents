@@ -59,7 +59,19 @@
     </copy>
   </target>
 
-  <target name="dist" depends="copy-libs, copy-script, copy-data" description="Build a zip file containing a distributable, runnable thing.">
+  <target name="copy-docs">
+    <copy todir="${release}/doc/Core">
+        <fileset dir="${xponents.home}/Core/target/apidocs"/>
+    </copy>
+    <copy todir="${release}/doc/XText">
+        <fileset dir="${xponents.home}/XText/target/apidocs"/>
+    </copy>
+    <copy todir="${release}/doc/Examples">
+        <fileset dir="${xponents.home}/Examples/target/apidocs" />
+    </copy>
+  </target>
+
+  <target name="dist" depends="copy-libs, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
 
    <!-- Zip it .-->
   </target>
