@@ -2,28 +2,38 @@
 
 <project name="XText" default="test-default">
 
+
+    <property name="xponents" value="${basedir}/../"/>
     <!--
 
     XText testing tasks and properties.
 
     -->
-
-    <path id="runtime.classpath">
-        <pathelement location="${basedir}/etc" />
+    <path id="build.classpath">
         <pathelement location="${basedir}/src/test/resources" />
         <fileset dir="${basedir}/build" includes="**/*.jar" />
         <fileset dir="${basedir}/lib" includes="**/*.jar" />
     </path>
 
+    <path id="runtime.classpath">
+        <pathelement location="${xponents}/etc" />
+        <fileset dir="${xponents}/lib" includes="**/*.jar" />
+    </path>
+
     <target name="test-default">
-        <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
+
+        <mkdir dir="${xponents}/results" />
+        <java classname="org.opensextant.xtext.XText"  classpathref="runtime.classpath" fork="yes">
             <jvmArg value="-Xmx600m"/>
-            <arg value="${basedir}/src/test/resources/Asia_Fdn_Afghanistan_2009.pdf"/>
+            <arg value="-i"/>
+            <arg value="${xponents}/test/Asia_Fdn_Afghanistan_2009.pdf"/>
+            <arg value="-o"/>
+            <arg value="${xponents}/results/"/>
         </java>
     </target>
 
     <target name="convert">
-        <java classname="org.mitre.xtext.XText"  classpathref="runtime.classpath" fork="yes">
+        <java classname="org.opensextant.xtext.XText"  classpathref="runtime.classpath" fork="yes">
             <jvmArg value="-Xmx600m"/>
             <arg value="-i"/>
             <arg value="${input}"/>
