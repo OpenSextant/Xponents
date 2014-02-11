@@ -207,28 +207,28 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         catalogs.clear();
         tag_all = true;
     }
-
+    
     /**
-     * "tags" are instances of the matching text spans from your input buffer
-     * "matchingDocs" are records from the taxonomy catalog. They have all the
-     * metadata.
-     * 
-     * tags' ids array are pointers into matchingDocs, by Solr record ID.
-     * 
-     * // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
-     * "startOffset":38}, // { "ids":[750308, 2769912, 2770041, 10413973,
-     * 10417546], "endOffset":49, // "startOffset":41}, // ... //
-     * "matchingDocs":{"numFound":75, "start":0, "docs":[ // {records matching}]
-     * 
+     * Light-weight usage: text in, matches out.
      */
-    @Override
-    public List<TextMatch> extract(TextInput input) throws ExtractionException {
-
+    public List<TextMatch> extract(String input_buf) throws ExtractionException {
+        return extractorImpl(null, input_buf);
+    }
+        
+    /**
+     * Implementation details -- use with or without the formal ID/buffer pairing.
+     * 
+     * @param id
+     * @param buf
+     * @return
+     * @throws ExtractionException
+     */
+    private List<TextMatch> extractorImpl(String id, String buf) throws ExtractionException {
         List<TextMatch> matches = new ArrayList<TextMatch>();
-        String docid = input.id;
+        String docid = (id !=null ? id : NO_DOC_ID );
 
         Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
-        QueryResponse response = tagTextCallSolrTagger(input.buffer, docid, beanMap);
+        QueryResponse response = tagTextCallSolrTagger(buf, docid, beanMap);
 
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
@@ -256,7 +256,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
             // Could have enabled the "matchText" option from the tagger to get
             // this, but since we already have the content as a String then
             // we might as well not make the tagger do any more work.
-            m.setText(input.buffer.substring(x1, x2));
+            m.setText(buf.substring(x1, x2));
 
             @SuppressWarnings("unchecked")
             List<Integer> taxonIDs = (List<Integer>) tag.get("ids");
@@ -280,6 +280,25 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         markComplete();
 
         return matches;
+
+    }
+
+    /**
+     * "tags" are instances of the matching text spans from your input buffer
+     * "matchingDocs" are records from the taxonomy catalog. They have all the
+     * metadata.
+     * 
+     * tags' ids array are pointers into matchingDocs, by Solr record ID.
+     * 
+     * // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
+     * "startOffset":38}, // { "ids":[750308, 2769912, 2770041, 10413973,
+     * 10417546], "endOffset":49, // "startOffset":41}, // ... //
+     * "matchingDocs":{"numFound":75, "start":0, "docs":[ // {records matching}]
+     * 
+     */
+    @Override
+    public List<TextMatch> extract(TextInput input) throws ExtractionException {
+        return extractorImpl(input.id, input.buffer);
     }
 
     @Override
