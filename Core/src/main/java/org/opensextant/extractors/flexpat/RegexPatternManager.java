@@ -28,7 +28,9 @@
  */
 package org.opensextant.extractors.flexpat;
 
+import org.opensextant.extraction.TextEntity;
 import org.opensextant.extraction.TextMatch;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -92,8 +94,7 @@ public abstract class RegexPatternManager {
      * @param _patternfile
      * @throws java.net.MalformedURLException
      */
-    public RegexPatternManager(String _patternfile)
-            throws java.net.MalformedURLException {
+    public RegexPatternManager(String _patternfile) throws java.net.MalformedURLException {
         patternFile = new URL(_patternfile);
     }
 
@@ -110,8 +111,7 @@ public abstract class RegexPatternManager {
      * @param _patternfile
      * @throws java.net.MalformedURLException
      */
-    public RegexPatternManager(File _patternfile)
-            throws java.net.MalformedURLException {
+    public RegexPatternManager(File _patternfile) throws java.net.MalformedURLException {
         patternFile = _patternfile.toURI().toURL();
     }
 
@@ -212,7 +212,6 @@ public abstract class RegexPatternManager {
         patterns = new HashMap<String, RegexPattern>();
         patterns_list = new ArrayList<RegexPattern>();
 
-
         // the #DEFINE statements as name and regex
         HashMap<String, String> defines = new HashMap<String, String>();
 
@@ -291,7 +290,6 @@ public abstract class RegexPatternManager {
         }// end file read loop
         reader.close();
 
-
         // defines and rules should be completely populated
 
         // substitute all uses of DEFINE patterns within a RULE
@@ -302,7 +300,6 @@ public abstract class RegexPatternManager {
         // the pattern of a DEFINE within a RULE e.g "<somePiece>"
         String elementRegex = "<[a-zA-Z0-9_]+>";
         Pattern elementPattern = Pattern.compile(elementRegex);
-
 
         for (String tmpKey : rule_order) {
             String tmpRulePattern = rules.get(tmpKey);
@@ -348,7 +345,6 @@ public abstract class RegexPatternManager {
                 groupNum++;
             }
 
-
             for (String tmpDefineName : defines.keySet()) {
 
                 // NOTE:  Use of parens, "(expr)", is required to create groups within a pattern.
@@ -379,7 +375,6 @@ public abstract class RegexPatternManager {
             }
         }
 
-
         if (debug) {
             _config_messages.append("\nFound # of PATTERNS=" + patterns.values().size());
 
@@ -404,7 +399,10 @@ public abstract class RegexPatternManager {
     }
 
     /**
-     *
+     * NOTE: We're dealing with Java6's inability to use named groups.  So we have to 
+     * track FlexPat slots in line with Matcher fields matched.  Essentially this comes down to 
+     * a simple Name:Offset pairing;  our limitation here is no nesting.
+     * 
      * @param p
      * @param matched
      * @return
@@ -418,6 +416,23 @@ public abstract class RegexPatternManager {
             // Put the matcher group in a hash with an appropriate name.
             String nm = p.regex_groups.get(x);
             pairs.put(nm, matched.group(x + 1));
+        }
+
+        return pairs;
+    }
+
+    public Map<String, TextEntity> group_matches(RegexPattern p, java.util.regex.Matcher matched) {
+
+        Map<String, TextEntity> pairs = new HashMap<String, TextEntity>();
+        int cnt = matched.groupCount();
+        for (int x = 0; x < cnt; ++x) {
+
+            // Put the matcher group in a hash with an appropriate name.
+            String nm = p.regex_groups.get(x);
+            TextEntity e = new TextEntity();
+            e.setText(matched.group(x + 1));
+            e.start = matched.start(x + 1);
+            pairs.put(nm, e);
         }
 
         return pairs;

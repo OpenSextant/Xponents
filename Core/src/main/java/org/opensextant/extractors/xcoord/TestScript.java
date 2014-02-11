@@ -367,7 +367,7 @@ public class TestScript {
 
         boolean dd = false;
         boolean dms = true;
-        boolean dm = false;
+        boolean dm = true;
         boolean mgrs = false;
         //
         xcoord.match_MGRS(mgrs);
@@ -417,8 +417,7 @@ public class TestScript {
             "41º58'46\"N, 87º54'20\"W ",
             "Latitude: 41º58'46\"N, Longitude: 87º54'20\"W ",
             "15S5E",
-            //"01-02-03-04 005-06-07-08",
-            "12 kts; B 14:28N - 053:00E",
+            //"01-02-03-04 005-06-07-08",           
             " 79.22.333N, 100.22.333W",
             " N 01° 44' E 101° 22'",
             "+42 18.0 x -102 24.0",

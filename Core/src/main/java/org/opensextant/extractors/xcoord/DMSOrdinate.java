@@ -29,17 +29,19 @@ package org.opensextant.extractors.xcoord;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.opensextant.extraction.NormalizationException;
+import org.opensextant.extraction.TextEntity;
 
 /**
  * DMSOrdinate represents all the various fields a WGS84 cartesian coordinate
  * could have. degree/minute/second, as well as fractional minutes and
  * fractional seconds.
- *
+ * 
  * Patterns may have symbols which further indicate if a pattern is a literal
  * decimal number (e.g., 33-44, 33.44, 33.444, 33-4444) of if the numbers are in
  * minutes/seconds units (33:44).
- *
+ * 
  * @author ubaldino
  */
 public final class DMSOrdinate {
@@ -52,16 +54,42 @@ public final class DMSOrdinate {
      *
      */
     public final static int LON_MAX = 180;
-    private float degrees = 0;
-    private float minutes = 0;
-    private float seconds = 0;
+    private float degrees = -1;
+    private float minutes = -1;
+    private float seconds = -1;
     private boolean is_latitude = false;
+
+    /** Where does the Degree value begin in text? */
+    protected int offsetDeg = -1;
+    protected int offsetMatch = -1;
+    protected int offsetOrdinate = -1;
+
     /**
      *
      */
     public Hemisphere hemisphere = new Hemisphere();
     public boolean has_hemi = false;
     private double value = 0;
+
+    /** */
+    public static enum Resolution {
+        DEG, SUBDEG, MIN, SUBMIN, SEC, SUBSEC
+    };
+
+    /**
+     * <pre>
+     * Specificity is a field resolution, that is how many fields were specified in the match? 
+     *  Ex. D:M:S.ss  match is pretty fine -- sub-second  
+     *  Versus absolute resolution which looks at the significant-figures in the absolute value.
+     *  Ex. D.dddddddddddd  is very fine, too. This can either be coarse or super-fine.
+     *  
+     *  Lat/Lon specificity mismatches indicate false-positives, lat(DEG) with a lon(SUBMIN)
+     *  its unlikely they are valid pair.
+     * 
+     * </pre>
+     */
+    public Resolution specificity = Resolution.DEG;
+
     /**
      *
      */
@@ -70,6 +98,7 @@ public final class DMSOrdinate {
      * The raw input elements
      */
     private Map<String, String> _elements = null;
+    private Map<String, TextEntity> _fields = null;
     /**
      * The normalized DMS components
      */
@@ -78,43 +107,46 @@ public final class DMSOrdinate {
     /**
      * DMS ordinates can be made up of degrees, minutes, seconds and then
      * decimal minutes and decimal seconds
-     *
+     * 
      * fractional minutes dddd are formatted as ".dddd" then parsed; ADD to
      * existing minutes fractional seconds dddd are formatted as ".dddd" then
      * parsed; ADD to existing seconds
-     *
+     * 
      * decimal minutes d.ddd.. are parsed as float, divide by 60 to get # of
      * degrees decimal seconds d.ddd.. "" "" , divide by 3600 to get # of
      * degrees
-     *
-     *
+     * 
+     * 
      * All Constructors must set is_latitude from a given flag. This is used for
      * range validation.
-     *
+     * 
      * @param elements
      * @param islat
      * @param text
      * @throws XCoordException
      */
-    public DMSOrdinate(java.util.Map<String, String> elements, boolean islat, String text)
+    public DMSOrdinate(Map<String, TextEntity> fields, Map<String, String> elements, boolean islat, String text)
             throws NormalizationException {
 
         // VALID XCoord elements or groups:
-        /* degLat, degLon       dd, ddd   variable length
-         * minLat, minLon       0-59,     ""
-         * secLat, secLon       0-59,     ""
-         * decMinLat, decMinLon 0.00 to 59.99... variable length, arbitrary precision
-         * decMinLat3, decMinLon3 0-000 to 59-999... variable length, arbitrary precision
-         * decSecLat, decSecLon --- does not exist; need test cases for sub-second accuracy most use decimal degree d.dddddd...
-         *
-         * dmsDegLat, dmsDegLon        "dd", "ddd"
-         * dmsMinLat, dmsMinLon,       "00" to "59"
-         * dmsSecLat, dmsSecLon,       "00" to "59"
-         * fractMinLat, fracMinLon       d to dddddd  part of some other string, but represents 0.ddddd minutes
-         * fractMinLat3, fractMinLon3  ddd to dddddd  "" ""
+        /*
+         * degLat, degLon dd, ddd variable length minLat, minLon 0-59, ""
+         * secLat, secLon 0-59, "" decMinLat, decMinLon 0.00 to 59.99...
+         * variable length, arbitrary precision decMinLat3, decMinLon3 0-000 to
+         * 59-999... variable length, arbitrary precision decSecLat, decSecLon
+         * --- does not exist; need test cases for sub-second accuracy most use
+         * decimal degree d.dddddd...
+         * 
+         * dmsDegLat, dmsDegLon "dd", "ddd" dmsMinLat, dmsMinLon, "00" to "59"
+         * dmsSecLat, dmsSecLon, "00" to "59" fractMinLat, fracMinLon d to
+         * dddddd part of some other string, but represents 0.ddddd minutes
+         * fractMinLat3, fractMinLon3 ddd to dddddd "" ""
          */
 
+        _fields = fields;
         _elements = elements;
+        //offsetMatch = startOffset;
+
         normalize_hemisphere(text, _elements, islat);
 
         boolean _parse_state = false;
@@ -145,7 +177,32 @@ public final class DMSOrdinate {
     }
 
     /**
-     *
+     * offsets for degree and hemisphere until this point are likely absolute within a document
+     * Reset them using this relative offset.  Offsets will then be relative to text.
+     * @param matchStart
+     */
+    protected void setRelativeOffsets(int matchStart) {
+        if (offsetDeg >= 0) {
+            offsetDeg = offsetDeg - matchStart;
+            
+            // DEFAULT: is to set ordinate where degrees start.
+            offsetOrdinate = offsetDeg;            
+        }
+        // degreeOffset is not set?
+
+        if (offsetHemi >= 0) {
+            // Reset relative to start.
+            offsetHemi = offsetHemi - matchStart;
+            if (offsetHemi > offsetDeg) {
+                offsetOrdinate = offsetDeg;
+            } else {
+                offsetOrdinate = offsetHemi;
+            }
+        }
+    }
+
+    /**
+     * 
      * @return
      */
     public boolean hasHemisphere() {
@@ -155,12 +212,13 @@ public final class DMSOrdinate {
 
     /**
      * Get the cartesian value for this ordinate
-     *
+     * 
      * @return
      */
     public double getValue() {
         return value;
     }
+
     /**
      *
      */
@@ -191,18 +249,18 @@ public final class DMSOrdinate {
      * Get back a normalized version of what you found. Yield zero-padded
      * version of coordinate, e.g., if DMS xdeg M' SS" is parsed we want
      * xxx:MM:SS fully padded
-     *
+     * 
      * 45 33N-00811 given 45:33.00811 normalized, DEG:MIN.mmmmm
-     *
+     * 
      * Full format should be:
-     *
+     * 
      * hDDD.ddd hDDD:MM.mmm hDDD:MM.mmm:SS.sss unlikely -- if this happens --
      * both fractional minutes and fractional seconds, pattern has errors
      * hDDD:MM:SS.sss
-     *
+     * 
      * .ddd, .mmm, .sss --- as many decimal places as there are h --- +/-
      * hemisphere
-     *
+     * 
      */
     protected void set_normalized_text() {
 
@@ -221,45 +279,47 @@ public final class DMSOrdinate {
 
         has_degrees = true;
 
-        // This cascades -- degrees, assumed.  Minutes and then possibly Seconds
+        // This cascades -- degrees, assumed. Minutes and then possibly Seconds
         // but we won't ever have seconds w/out deg or minutes first.
         /*
-         if (this.is_latitude) {
-         buf.append(field.format(this.degrees));  // LAT degree
-         } else {
-         buf.append(field3.format(this.degrees)); // LON degree
-         } */
-        buf.append(d);  // LAT degree
+         * if (this.is_latitude) { buf.append(field.format(this.degrees)); //
+         * LAT degree } else { buf.append(field3.format(this.degrees)); // LON
+         * degree }
+         */
+        buf.append(d); // LAT degree
 
         if (m == null) {
-            // Degrees only or Decimal degrees.   Quietly fail.
+            // Degrees only or Decimal degrees. Quietly fail.
             this.text = buf.toString();
             return;
         }
 
         has_minutes = true;
         buf.append(":");
-        //buf.append(fieldDec.format(minutes));
+        // buf.append(fieldDec.format(minutes));
         buf.append(m);
 
-        // has_seconds is not reliable.  fractional minutes may be part of minutes field
+        // has_seconds is not reliable. fractional minutes may be part of
+        // minutes field
 
         // Reconstituing fractional minutes or seconds
         // decimal part may have been separated from minutes, so it is likely
         // minutes is int, and fmin is another number.
-        // TODO:  formatting logic could be cleaner here.
+        // TODO: formatting logic could be cleaner here.
         //
         if (fmin != null) {
-            has_seconds = true;  // Seconds precision in the form of fractional minutes.
+            has_seconds = true; // Seconds precision in the form of fractional
+                                // minutes.
             // buf.append(".");
-            buf.append(fmin);  // append text as-is.  No arithmetic.
+            buf.append(fmin); // append text as-is. No arithmetic.
         }
 
-        // TODO:  either minutes is decimal, OR fmin is available OR seconds are available.
+        // TODO: either minutes is decimal, OR fmin is available OR seconds are
+        // available.
         if (s != null) {
             has_seconds = true;
             buf.append(":");
-            //buf.append(fieldDec.format(seconds));
+            // buf.append(fieldDec.format(seconds));
             buf.append(s);
 
             if (fsec != null) {
@@ -285,7 +345,8 @@ public final class DMSOrdinate {
         return new Integer(val);
     }
 
-    /**  Convert numbers like "8.888" or "8-888" to decimal numbers.
+    /**
+     * Convert numbers like "8.888" or "8-888" to decimal numbers.
      */
     private Float getDecimalValue(String field, String norm) {
         String val = _elements.get(field);
@@ -302,7 +363,7 @@ public final class DMSOrdinate {
 
     /**
      * As a result of this, the fsec field text will be saved with decimal
-     * point.  Convert "-888" to the decimal part of a value, e.g., "0.888"
+     * point. Convert "-888" to the decimal part of a value, e.g., "0.888"
      */
     private Float getFractionValue(String field, String norm) {
         String val = _elements.get(field);
@@ -322,21 +383,52 @@ public final class DMSOrdinate {
         return Float.parseFloat(val);
     }
 
+    public final static String[] degLatFields = { "degLat", "dmsDegLat", "decDegLat" };
+    public final static String[] degLonFields = { "degLon", "dmsDegLon", "decDegLon" };
+
+    private void findDegreeOffset(String[] fieldNames) {
+        /**
+         * Helpful for determining where the distinct coordinates start in the text.  Usually, Degrees are first.
+         */
+        for (String f : fieldNames) {
+            TextEntity val = _fields.get(f);
+            if (val != null) {
+                offsetDeg = val.start;
+                return;
+            }
+        }
+    }
+
     /**
-     *
+     * This should cascade.
+     * 
+     * <pre>
+     * IF Degrees specified, 
+     *    then if minutes, 
+     *       then if seconds...
+     * </pre>
+     * 
+     * It would be difficult to skip minutes if DEG and SEC are only fields
+     * present.
+     * 
      * @return
      */
     public final boolean digest_latitude_match() {
+
+        findDegreeOffset(degLatFields);
+
         // DEGREES
         Integer deg = getIntValue("degLat", "deg");
         Integer deg2 = getIntValue("dmsDegLat", "deg");
         Float deg3 = getDecimalValue("decDegLat", "deg");
+        // Default Res is DEG
         if (deg != null) {
             degrees = deg.intValue();
         } else if (deg2 != null) {
             degrees = deg2.intValue();
         } else if (deg3 != null) {
             degrees = deg3.floatValue();
+            specificity = Resolution.SUBDEG; // Decimal degree           
         } else {
             return false;
         }
@@ -357,12 +449,22 @@ public final class DMSOrdinate {
             minutes = min3dash.floatValue();
         }
 
-        Float min_fract = getFractionValue("fractMinLat", "fmin");
-        Float min_fract2 = getFractionValue("fractMinLat3", "fmin"); // variation 2, is a 3-digit or longer fraction
-        if (min_fract != null) {
-            minutes += min_fract.floatValue();
-        } else if (min_fract2 != null) {
-            minutes += min_fract2.floatValue();
+        // minutes is unset? fail.
+        if (minutes >= 0) {
+            specificity = Resolution.MIN;
+
+            Float min_fract = getFractionValue("fractMinLat", "fmin");
+            Float min_fract2 = getFractionValue("fractMinLat3", "fmin");
+            // variation 2, is a 3-digit or longer fraction
+
+            if (min_fract != null || min_fract2 != null) {
+                specificity = Resolution.SUBMIN;
+                if (min_fract != null) {
+                    minutes += min_fract.floatValue();
+                } else if (min_fract2 != null) {
+                    minutes += min_fract2.floatValue();
+                }
+            }
         }
 
         // SECONDS
@@ -375,12 +477,20 @@ public final class DMSOrdinate {
             seconds = sec2.intValue();
         }
 
-        Float fsec = getFractionValue("fractSecLat", "fsec");
-        Float fsec2 = getFractionValue("fractSecLatOpt", "fsec");
-        if (fsec != null) {
-            seconds += fsec.floatValue();
-        } else if (fsec2 != null) {
-            seconds += fsec2.floatValue();
+        if (seconds >= 0) {
+
+            specificity = Resolution.SEC;
+
+            Float fsec = getFractionValue("fractSecLat", "fsec");
+            Float fsec2 = getFractionValue("fractSecLatOpt", "fsec");
+            if (fsec != null || fsec2 != null) {
+                specificity = Resolution.SUBSEC;
+                if (fsec != null) {
+                    seconds += fsec.floatValue();
+                } else if (fsec2 != null) {
+                    seconds += fsec2.floatValue();
+                }
+            }
         }
 
         return true;
@@ -389,10 +499,11 @@ public final class DMSOrdinate {
     /**
      * This is a copy of the logic for digest_latitude_match; All I replace is
      * "Lat" with "Lon"
-     *
+     * 
      * @return
      */
     public final boolean digest_longitude_match() {
+        findDegreeOffset(degLonFields);
         // DEGREES
         Integer deg = getIntValue("degLon", "deg");
         Integer deg2 = getIntValue("dmsDegLon", "deg");
@@ -403,6 +514,7 @@ public final class DMSOrdinate {
             degrees = deg2.intValue();
         } else if (deg3 != null) {
             degrees = deg3.floatValue();
+            specificity = Resolution.SUBDEG; // Decimal degree
         } else {
             return false;
         }
@@ -423,14 +535,21 @@ public final class DMSOrdinate {
             minutes = min3dash.floatValue();
         }
 
-        Float min_fract = getFractionValue("fractMinLon", "fmin");
-        Float min_fract2 = getFractionValue("fractMinLon3", "fmin"); // variation 2, is a 3-digit or longer fraction
-        if (min_fract != null) {
-            minutes += min_fract.floatValue();
-        } else if (min_fract2 != null) {
-            minutes += min_fract2.floatValue();
-        }
+        if (minutes >= 0) {
+            specificity = Resolution.MIN;
+            Float min_fract = getFractionValue("fractMinLon", "fmin");
+            Float min_fract2 = getFractionValue("fractMinLon3", "fmin");
+            // variation 2, is a 3-digit or longer fraction
 
+            if (min_fract != null || min_fract2 != null) {
+                specificity = Resolution.SUBMIN;
+                if (min_fract != null) {
+                    minutes += min_fract.floatValue();
+                } else if (min_fract2 != null) {
+                    minutes += min_fract2.floatValue();
+                }
+            }
+        }
 
         // SECONDS
         Integer sec = getIntValue("secLon", "sec");
@@ -442,12 +561,20 @@ public final class DMSOrdinate {
             seconds = sec2.intValue();
         }
 
-        Float fsec = getFractionValue("fractSecLon", "fsec");
-        Float fsec2 = getFractionValue("fractSecLonOpt", "fsec");
-        if (fsec != null) {
-            seconds += fsec.floatValue();
-        } else if (fsec2 != null) {
-            seconds += fsec2.floatValue();
+        if (seconds >= 0) {
+
+            specificity = Resolution.SEC;
+            Float fsec = getFractionValue("fractSecLon", "fsec");
+            Float fsec2 = getFractionValue("fractSecLonOpt", "fsec");
+
+            if (fsec != null || fsec2 != null) {
+                specificity = Resolution.SUBSEC;
+                if (fsec != null) {
+                    seconds += fsec.floatValue();
+                } else if (fsec2 != null) {
+                    seconds += fsec2.floatValue();
+                }
+            }
         }
 
         return true;
@@ -459,13 +586,12 @@ public final class DMSOrdinate {
      * of a hemisphere may match to null. In which case, -- NO_HEMISPHERE --
      * caller should assume POSITIVE hemisphere is implied. further filtering by
      * caller is warranted.
-     *
+     * 
      * @param text
      * @param elements
      * @param islat
      */
-    protected void normalize_hemisphere(String text,
-            java.util.Map<String, String> elements, boolean islat) {
+    protected void normalize_hemisphere(String text, java.util.Map<String, String> elements, boolean islat) {
 
         int hemi = (islat ? getLatHemisphereSign(elements) : getLonHemisphereSign(elements));
 
@@ -478,31 +604,30 @@ public final class DMSOrdinate {
         if (!has_hemi) {
             hemi = POS_HEMI; // Un-specified hemisphere defaults to POSITIVE
             /*
-             if (hasSymbols()) {
-             hemi = POS_HEMI; // Un-specified hemisphere defaults to POSITIVE
-             } else {
-             hemi = POS_HEMI;
-             } */
+             * if (hasSymbols()) { hemi = POS_HEMI; // Un-specified hemisphere
+             * defaults to POSITIVE } else { hemi = POS_HEMI; }
+             */
         }
 
         hemisphere.polarity = hemi; // -1 or 1 only.
     }
 
     /**
-     *
+     * 
      * @return
      */
     public boolean hasSymbols() {
         return coord_symbol != null;
     }
-    /**
-     *
-     */
-    public final static String[] COORDINATE_SYMBOLS = {"��", "��", "'", "\"", ":", "lat", "lon", "geo", "coord", "deg"};
-    private String coord_symbol = null;
 
     /**
      *
+     */
+    public final static String[] COORDINATE_SYMBOLS = { "°", "º", "'", "\"", ":", "lat", "lon", "geo", "coord", "deg" };
+    private String coord_symbol = null;
+
+    /**
+     * 
      * @param text
      * @return
      */
@@ -515,6 +640,7 @@ public final class DMSOrdinate {
         }
         return null;
     }
+
     /**
      */
     public final static String WEST = "W";
@@ -560,7 +686,7 @@ public final class DMSOrdinate {
     }
 
     /**
-     *
+     * 
      * @param hemi
      * @return
      */
@@ -574,7 +700,7 @@ public final class DMSOrdinate {
     }
 
     /**
-     *
+     * 
      * @param val
      * @return
      */
@@ -589,13 +715,35 @@ public final class DMSOrdinate {
         return NO_HEMISPHERE;
     }
 
+    public final static String[] hemiLatFields = { "hemiLat", "hemiLatSign", "hemiLatPre" };
+
+    public final static String[] hemiLonFields = { "hemiLon", "hemiLonSign", "hemiLonPre" };
+
+    protected int offsetHemi = -1;
+
+    private void findHemiOffset(String[] fieldNames) {
+        /**
+         * Helpful for determining where the distinct coordinates start in the text.  Usually, Degrees are first.
+         */
+        for (String f : fieldNames) {
+            TextEntity val = _fields.get(f);
+            if (val != null) {
+                offsetHemi = val.start;
+                return;
+            }
+        }
+    }
+
     /**
      * @see getLonHemisphereSign
-     *
-     * @param elements list of trimmed components of the match
+     * 
+     * @param elements
+     *            list of trimmed components of the match
      * @return
      */
     protected int getLatHemisphereSign(java.util.Map<String, String> elements) {
+
+        findHemiOffset(hemiLatFields);
 
         String hemiLat = elements.get("hemiLat");
         String hemiSignLat = elements.get("hemiLatSign");
@@ -618,15 +766,17 @@ public final class DMSOrdinate {
 
     /**
      * Given a list of match groups find the first Longitude Hemisphere group
-     *
+     * 
      * hemiLon W, E group used mostly for DMS, DM, DD formats hemiLonSign +, -
      * group allowed only for specific formats; +/- may appear before any number
      * not just coords. hemiLonPre W, E, +, -
-     *
-     * @param elements list of trimmed components of the match
+     * 
+     * @param elements
+     *            list of trimmed components of the match
      * @return
      */
     protected int getLonHemisphereSign(java.util.Map<String, String> elements) {
+        findHemiOffset(hemiLonFields);
 
         String hemiLon = elements.get("hemiLon");
         String hemiSignLon = elements.get("hemiLonSign");
@@ -648,7 +798,7 @@ public final class DMSOrdinate {
 
     /**
      * Only used for literal decimal degrees that require little parsing.
-     *
+     * 
      * @param deg
      * @param min
      * @param sec
@@ -667,7 +817,7 @@ public final class DMSOrdinate {
 
     /**
      * Unused as of ver1.0
-     *
+     * 
      * @param deg
      * @param min
      * @param sec
@@ -685,7 +835,7 @@ public final class DMSOrdinate {
 
     /**
      * Unused
-     *
+     * 
      * @param deg
      * @param min
      * @param sec
@@ -721,8 +871,9 @@ public final class DMSOrdinate {
         value = toDecimal();
     }
 
-    /** Unused
-     *
+    /**
+     * Unused
+     * 
      * @return
      */
     public boolean validate() {
@@ -739,9 +890,9 @@ public final class DMSOrdinate {
      * toDD() Return the decimal value to the extent it makes sense. That is,
      * calculating minutes or seconds where MIN or SEC fields are out of bounds
      * for those units does not make sense, return at least Deg or Deg/Min.
-     *
+     * 
      * Validation of the ordinate is a second step to be done by caller.
-     *
+     * 
      * @return
      */
     public double toDecimal() {
@@ -757,4 +908,29 @@ public final class DMSOrdinate {
 
         return (double) hemisphere.polarity * (degrees + (minutes / 60) + (seconds / 3600));
     }
+
+    public boolean hasDegrees() {
+        return specificity == Resolution.DEG || specificity == Resolution.SUBDEG;
+    }
+
+    public boolean hasSubDegrees() {
+        return specificity == Resolution.SUBDEG;
+    }
+
+    public boolean hasMinutes() {
+        return specificity == Resolution.MIN || specificity == Resolution.SUBMIN;
+    }
+
+    public boolean hasSubMinutes() {
+        return specificity == Resolution.SUBMIN;
+    }
+
+    public boolean hasSeconds() {
+        return specificity == Resolution.SEC || specificity == Resolution.SUBSEC;
+    }
+
+    public boolean hasSubSeconds() {
+        return specificity == Resolution.SUBSEC;
+    }
+
 }

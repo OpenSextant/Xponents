@@ -73,25 +73,29 @@ public class MGRSParser {
         }
 
         String gzd = elements.get("MGRSZone");
-        if (gzd != null) {
-            // GZD Rule:  00 not allowed in 5-digit GZD
-            //             0 not allowed in 4-digit
-            int num1 = parseInt(gzd.substring(0, 1));
-            int num2 = parseInt(gzd.substring(0, 2));
+        /*
+         * Gridzone required.
+         */
+        if (gzd == null) {
+            return null;
+        }
+        // GZD Rule:  00 not allowed in 5-digit GZD
+        //             0 not allowed in 4-digit
+        int num1 = parseInt(gzd.substring(0, 1));
+        int num2 = parseInt(gzd.substring(0, 2));
 
-            if (num2 == 0 || (num1 == 0 && gzd.length() == 2)) {
-                return null;
-            }
+        if (num2 == 0 || (num1 == 0 && gzd.length() == 2)) {
+            return null;
+        }
 
-            if (num1 < 0) {
-                // Pattern should have never matched.
-                return null;
-            }
+        if (num1 < 0) {
+            // Pattern should have never matched.
+            return null;
+        }
 
-            // GZD Rule numbered zones not greate than 60
-            if (num2 > 60) {
-                return null;
-            }
+        // GZD Rule numbered zones not greate than 60
+        if (num2 > 60) {
+            return null;
         }
 
         //---------------------------------------|
@@ -117,7 +121,7 @@ public class MGRSParser {
             // By this point you should have passed in normalized coordinate text - no whitespace
             //----------------------------
             //
-            return new MGRS[]{new MGRS(text)};
+            return new MGRS[] { new MGRS(text) };
         } else {
             //----------------------------
             // Slightly obscure case that is possibly a typo or Easting/Northing disturbed.
@@ -141,19 +145,16 @@ public class MGRSParser {
                 // answer 2:  ddddd dddd  ==> E=dddd0
                 int midpoint = (nenorm.length() / 2);
                 mgrs1 = new StringBuilder(ne);
-                mgrs1.insert(midpoint, "0");  // N=dddd0,  add 0
+                mgrs1.insert(midpoint, "0"); // N=dddd0,  add 0
                 mgrs1.insert(0, Q);
                 mgrs1.insert(0, gzd);
 
                 StringBuilder mgrs2 = new StringBuilder(ne);
-                mgrs2.append("0");   // E=dddd0  add 0
+                mgrs2.append("0"); // E=dddd0  add 0
                 mgrs2.insert(0, Q);
                 mgrs2.insert(0, gzd);
 
-                return new MGRS[]{
-                            new MGRS(mgrs1.toString()),
-                            new MGRS(mgrs2.toString())
-                        };
+                return new MGRS[] { new MGRS(mgrs1.toString()), new MGRS(mgrs2.toString()) };
 
             }
 
@@ -170,9 +171,8 @@ public class MGRSParser {
             // dd ddddddd
             // where whitespace is ' ' or '\n' or '\r', etc.
 
-
             // GIVEN: dddd ddddd
-            if (space_count == 1 && (ws_index+1) == midpoint) {
+            if (space_count == 1 && (ws_index + 1) == midpoint) {
                 mgrs1 = new StringBuilder(nenorm);
                 // ANSWER: dddd0 ddddd
                 mgrs1.insert(ws_index, "0");
@@ -181,7 +181,7 @@ public class MGRSParser {
 
                 // Just one answer:
 
-                return new MGRS[]{new MGRS(TextUtils.delete_whitespace(mgrs1.toString()))};
+                return new MGRS[] { new MGRS(TextUtils.delete_whitespace(mgrs1.toString())) };
             }
 
             if (space_count == 1 && (ws_index == midpoint)) {
@@ -192,9 +192,8 @@ public class MGRSParser {
                 mgrs1.insert(0, Q);
                 mgrs1.insert(0, gzd);
 
-                return new MGRS[]{new MGRS(TextUtils.delete_whitespace(mgrs1.toString()))};
+                return new MGRS[] { new MGRS(TextUtils.delete_whitespace(mgrs1.toString())) };
             }
-
 
             // Given
             //   ddd dd d
@@ -212,19 +211,16 @@ public class MGRSParser {
             // answer 2:  ddddd dddd  ==> E=dddd0
             midpoint = (nenorm.length() / 2);
             mgrs1 = new StringBuilder(nenorm);
-            mgrs1.insert(midpoint, "0");  // N=dddd0,  add 0
+            mgrs1.insert(midpoint, "0"); // N=dddd0,  add 0
             mgrs1.insert(0, Q);
             mgrs1.insert(0, gzd);
 
             StringBuilder mgrs2 = new StringBuilder(nenorm);
-            mgrs2.append("0");   // E=dddd0  add 0
+            mgrs2.append("0"); // E=dddd0  add 0
             mgrs2.insert(0, Q);
             mgrs2.insert(0, gzd);
 
-            return new MGRS[]{
-                        new MGRS(mgrs1.toString()),
-                        new MGRS(mgrs2.toString())
-                    };
+            return new MGRS[] { new MGRS(mgrs1.toString()), new MGRS(mgrs2.toString()) };
         }
     }
 

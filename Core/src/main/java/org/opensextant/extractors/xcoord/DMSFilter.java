@@ -59,12 +59,6 @@ public class DMSFilter implements MatchFilter {
     /**
      *
      */
-    /* UNUSED year filter stuff.
-     public Date today = new Date();
-     public final static int MAX_YEARS_AGO = 50;  // If valid date/year found -- what is worth filtering?
-     public Calendar cal = Calendar.getInstance();
-     public static int CURRENT_YEAR = 0;
-     */
     /**
      *
      */
@@ -74,9 +68,6 @@ public class DMSFilter implements MatchFilter {
      *
      */
     public DMSFilter() {
-
-        //cal.setTime(today);
-        //CURRENT_YEAR = cal.get(Calendar.YEAR);
 
         for (String fmt : general_formats) {
             DateFormat df = new SimpleDateFormat(fmt);
@@ -105,6 +96,7 @@ public class DMSFilter implements MatchFilter {
      */
     @Override
     public boolean stop(GeocoordMatch m) {
+
 
         // We can pass patterns matching raw text that do not start
         // with numbers.  The date formats filtered here are strictly numeric dates+time
