@@ -45,7 +45,11 @@ public class UTMParser {
     public final static char UTM_SOUTH = 'S';
 
     /**
-     *
+     * TODO: Needs lots of false positive filtering mainly using context. Did 
+     * text indicate this is UTM?  Where there units, e.g., "m"?
+     * 
+     * Those things are currently optional.
+     * 
      * @param text
      * @param elements
      * @return
