@@ -5,14 +5,11 @@
 package org.opensextant.examples.twitter;
 
 //import java.text.DateFormat;
-import java.io.File;
 import java.util.Date;
-import java.util.Map;
 
 import net.sf.json.JSONObject;
 
 import org.opensextant.data.Geocoding;
-import org.opensextant.data.LatLon;
 
 /**
  * TODO: create a better common data class.

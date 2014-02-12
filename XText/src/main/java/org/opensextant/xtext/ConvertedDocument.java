@@ -35,10 +35,11 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import net.sf.json.JSONObject;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.opensextant.util.FileUtility;
-import org.opensextant.extraction.DocInput;
+import org.opensextant.data.DocInput;
 
 /**
  *

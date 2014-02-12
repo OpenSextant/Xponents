@@ -34,7 +34,7 @@
 
   <target name="copy-data">
     <copy todir="${release}/test/">
-        <fileset dir="${xponents.home}/Core/src/test/resources/">
+        <fileset dir="${xponents.home}/Extraction/src/test/resources/">
            <include name="*.*" />
         </fileset>
         <fileset dir="${xponents.home}/XText/src/test/resources/">
@@ -53,18 +53,18 @@
         </fileset>
     </copy>
     <copy todir="${release}/etc/">
-        <fileset dir="${xponents.home}/Core/src/test/resources">
+        <fileset dir="${xponents.home}/Extraction/src/test/resources">
            <include name="log4j.*" />
         </fileset>
-        <fileset dir="${xponents.home}/Core/src/test/resources">
+        <fileset dir="${xponents.home}/Extraction/src/test/resources">
            <include name="Coord_Patterns*.*" />
         </fileset>
     </copy>
   </target>
 
   <target name="copy-docs">
-    <copy todir="${release}/doc/Core">
-        <fileset dir="${xponents.home}/Core/target/apidocs"/>
+    <copy todir="${release}/doc/Extraction">
+        <fileset dir="${xponents.home}/Extraction/target/apidocs"/>
     </copy>
     <copy todir="${release}/doc/XText">
         <fileset dir="${xponents.home}/XText/target/apidocs"/>

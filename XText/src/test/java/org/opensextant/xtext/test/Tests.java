@@ -19,9 +19,12 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensextant.util.FileUtility;
 import org.opensextant.xtext.*;
 import org.opensextant.xtext.converters.*;
 import org.slf4j.Logger;
@@ -136,10 +139,16 @@ public class Tests {
         log.info("HTML: tile= " + doc.getProperty("title"));
         log.info("HTML: body= " + doc.getText());
     }
+    
+    public void testHTMLDecode(String f) throws IOException {
+        String out = StringEscapeUtils.unescapeHtml(FileUtility.readFile(f));
+        FileUtility.writeFile(out, f + ".out");
+    }
 
     public static void main(String[] args) {
         Tests t = new Tests();
         try {
+            t.testHTMLDecode(args[0]);
             t.testHTMLConversion();
             if (args.length > 0) {
                 t.trivialUncache(args[0]);

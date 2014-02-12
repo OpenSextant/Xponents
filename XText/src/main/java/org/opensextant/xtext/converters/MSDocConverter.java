@@ -54,6 +54,8 @@ public class MSDocConverter extends ConverterAdapter {
         }
         ConvertedDocument textdoc = new ConvertedDocument(doc);
         textdoc.setText(sb.toString());
+        
+        ex.close();
 
         return textdoc;
     }

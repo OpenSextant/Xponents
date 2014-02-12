@@ -2,8 +2,8 @@ package org.opensextant.examples;
 
 import java.util.List;
 
+import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
-import org.opensextant.extraction.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.util.FileUtility;

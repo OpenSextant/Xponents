@@ -1,33 +1,33 @@
 package org.opensextant.examples.twitter;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
 import java.text.ParseException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import net.sf.json.JSONObject;
 
+import org.opensextant.data.TextInput;
+import org.opensextant.extraction.ConfigException;
+import org.opensextant.extraction.ExtractionResult;
+import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.SimpleGeocoder;
-import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.extractors.xcoord.XConstants;
-import org.opensextant.extractors.xcoord.GeocoordMatch;
-
-import org.opensextant.extraction.*;
-
+import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.output.FormatterFactory;
 import org.opensextant.output.GISDataFormatter;
 import org.opensextant.output.OpenSextantSchema;
-
-import org.opensextant.data.*;
-
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
-
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 import org.opensextant.util.UnicodeTextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
