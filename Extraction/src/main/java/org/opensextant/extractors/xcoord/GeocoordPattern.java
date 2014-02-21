@@ -60,7 +60,7 @@ public class GeocoordPattern extends RegexPattern {
      * @param _description
      */
     public GeocoordPattern(String _fam, String _variant, String _description){
-        super( _fam + "-" + _variant, _description);
+        super(_fam, _fam + "-" + _variant, _description);
 
         cce_family = _fam;
         cce_variant = _variant;

@@ -86,6 +86,7 @@ public final class XText implements iFilter, iConvert {
     private boolean save_in_archive_root = false; // save to the archive root rather than in the directory the file came from
     
     private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE; /* XText default is 1 MB of text */
+    private long maxFileSize = FILE_SIZE_LIMIT;
 
 
     protected Set<String> archive_types = new HashSet<String>();
@@ -117,6 +118,9 @@ public final class XText implements iFilter, iConvert {
     
     public void setMaxBufferSize(int sz){
         maxBuffer = sz;
+    }
+    public void setMaxFileSize(int sz){
+        maxFileSize = sz;
     }
 
     /**
@@ -319,6 +323,7 @@ public final class XText implements iFilter, iConvert {
         //input = new File(inPath);
         unpacker.unpack(input);
     }
+    
     /**
      * Arbitrary 16 MB limit on file size. Maybe this should be dependent on the
      * file type.
@@ -390,7 +395,7 @@ public final class XText implements iFilter, iConvert {
 
         log.info("Converting FILE=" + input.getAbsolutePath());
 
-        if (FileUtils.sizeOf(input) > FILE_SIZE_LIMIT) {
+        if (FileUtils.sizeOf(input) > maxFileSize) {
             log.info("Valid File is too large FILE=" + input.getAbsolutePath());
             return null;
         }

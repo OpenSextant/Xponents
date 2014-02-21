@@ -38,14 +38,7 @@ public class DateTimePattern extends RegexPattern {
      *
      */
     public int family_id = -1;
-    /**
-     *
-     */
-    public String family = null;
-    /**
-     *
-     */
-    public String variant = null;
+
 
     /**
      *
@@ -54,10 +47,7 @@ public class DateTimePattern extends RegexPattern {
      * @param desc
      */
     public DateTimePattern(String fam, String id, String desc){
-        super(fam + "-" + id, desc);
-
-        family = fam;
-        variant = id;
+        super(fam, fam + "-" + id, desc);
 
         family_id = XTConstants.getPatternFamily(family);
     }

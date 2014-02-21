@@ -24,7 +24,7 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  */
-package org.opensextant.extractors.xtax;
+package org.opensextant.data;
 
 import java.util.Set;
 import java.util.HashSet;

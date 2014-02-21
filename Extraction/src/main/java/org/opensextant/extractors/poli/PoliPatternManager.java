@@ -117,7 +117,7 @@ public final class PoliPatternManager extends RegexPatternManager {
      */
     @Override
     protected RegexPattern create_pattern(String fam, String rule, String desc) {
-        RegexPattern p = new RegexPattern(fam + "-" + rule, desc);
+        RegexPattern p = new RegexPattern(fam, fam + "-" + rule, desc);
         return p;
     }
 

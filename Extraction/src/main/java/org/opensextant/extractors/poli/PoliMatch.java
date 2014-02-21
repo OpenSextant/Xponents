@@ -47,13 +47,16 @@ public class PoliMatch extends TextMatch {
      *
      */
     public PoliMatch() {
+        this.producer = "PoLi";
     }
 
     public PoliMatch(String t) {
         this.text = t;
+        this.producer = "PoLi";
     }
 
     public PoliMatch(Map<String, String> groups, String t) {
+        this.producer = "PoLi";
         this.text = t;
         this.match_groups = groups;
     }

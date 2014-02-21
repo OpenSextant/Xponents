@@ -49,6 +49,7 @@ public class DateMatch extends TextMatch {
     public DateMatch() {
         // populate attrs as needed;
         type = "datetime";
+        producer = "XTemp";
     }
 
     /**

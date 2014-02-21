@@ -30,8 +30,10 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.opensextant.util.TextUtils;
 import org.opensextant.extraction.TextEntity;
+import org.opensextant.extraction.TextMatch;
 
 /**
  * Abstract class encapsulating basic results formatter functionality.
@@ -65,16 +67,14 @@ public class ResultsUtility {
 
         int[] bounds = TextUtils.get_text_window(offset, match_size, doc_size, TEXT_WIDTH);
 
-        t.setContext(
-                content.substring(bounds[0], bounds[1]), // text before match
+        t.setContext(content.substring(bounds[0], bounds[1]), // text before match
                 content.substring(bounds[2], bounds[3])); // text after match
     }
 
     /**
      * Given the GATE annotation set the context on the TextEntity object.
      */
-    public static void setContextFor(String content,
-            TextEntity t, int offset, int match_size, int doc_size) {
+    public static void setContextFor(String content, TextEntity t, int offset, int match_size, int doc_size) {
 
         if (t.getContext() != null) {
             return;
@@ -83,6 +83,32 @@ public class ResultsUtility {
         int[] bounds = TextUtils.get_text_window(offset, doc_size, TEXT_WIDTH);
 
         t.setContext(TextUtils.squeeze_whitespace(content.substring(bounds[0], bounds[1]))); // text after match
+    }
+
+    /**
+     * Testers for TextMatch: isLocation macro
+     * @param m
+     * @return
+     */
+    public static boolean isLocation(TextMatch m) {
+        if (StringUtils.isBlank(m.getType())) {
+            return false;
+        }
+        String test = m.getType().toLowerCase();
+        return "coord".equals(test) || "place".equals(test);
+    }
+
+    /**
+     * Testers for TextMatch: isDatetime macro
+     * @param m
+     * @return
+     */
+    public static boolean isDatetime(TextMatch m) {
+        if (StringUtils.isBlank(m.getType())) {
+            return false;
+        }
+        String test = m.getType().toLowerCase();
+        return "datetime".equals(test);
     }
 
     /**
@@ -105,6 +131,7 @@ public class ResultsUtility {
     public static boolean isPlaceName(String a) {
         return PLACE_ANNOTATION.equals(a);
     }
+
     /**
      * Control floating point accuracy on any results.
      *

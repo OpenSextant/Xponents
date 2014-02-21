@@ -177,6 +177,7 @@ public class PatternsOfLife extends AbstractFlexPat {
                     continue;
                 }
 
+                poliMatch.setType(repat.family);
                 poliMatch.pattern_id = repat.id;
                 poliMatch.start = match.start();
                 poliMatch.end = match.end();

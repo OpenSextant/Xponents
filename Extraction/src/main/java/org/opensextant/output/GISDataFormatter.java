@@ -67,7 +67,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
      */
 	protected boolean groupByDocument = false;
 	private int id = 0;
-	private GISDataModel gisDataModel;
+	protected GISDataModel gisDataModel;
 
 	/**
      *

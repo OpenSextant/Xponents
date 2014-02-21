@@ -98,7 +98,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      */
     public GeocoordMatch() {
         // populate attrs as needed;
-        type = "COORD";
+        this.type = "coord";
+        this.producer = "XCoord";
     }
 
     /**

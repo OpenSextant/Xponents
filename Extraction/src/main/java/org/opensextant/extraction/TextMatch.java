@@ -36,6 +36,11 @@ public class TextMatch extends TextEntity {
      * the ID of the pattern that extracted this
      */
     public String pattern_id = null;
+    
+    /** 
+     * A short label or tag representing the matcher, extractor, tagger, etc. that produced this match.
+     */
+    public String producer = null;
 
     /** Type, as in Annotation type or code.
      */
@@ -43,6 +48,14 @@ public class TextMatch extends TextEntity {
 
     public String getType(){
         return type;
+    }
+    
+    /**
+     * Allow matchers and taggers to set a type label, e.g., pattern family or other string.
+     * @param t
+     */
+    public void setType(String t){
+        type = t;
     }
 
     /**

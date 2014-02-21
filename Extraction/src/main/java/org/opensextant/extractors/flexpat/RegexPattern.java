@@ -70,13 +70,15 @@ public class RegexPattern {
      */
     public String match_classname = null;
     public Class match_class = null;
+    public String family = null;
 
     /**
      *
      * @param _id
      * @param _description
      */
-    public RegexPattern(String _id, String _description) {
+    public RegexPattern(String _family, String _id, String _description) {
+        family = _family;
         id = _id;
         description = _description;
     }

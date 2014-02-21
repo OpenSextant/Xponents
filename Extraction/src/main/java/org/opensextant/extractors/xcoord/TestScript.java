@@ -366,10 +366,11 @@ public class TestScript {
         TextMatchResult results = null;
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
-        boolean dd = false;
+        boolean dd = true;
         boolean dms = true;
         boolean dm = true;
-        boolean mgrs = false;
+        boolean mgrs = true;
+        boolean utm = true;
         //
         xcoord.match_MGRS(mgrs);
 
@@ -465,10 +466,21 @@ public class TestScript {
             "27° 37' 45’’N 82° 42' 10’’W", // no lat/lon sep
             "27° 37 45N, 82° 42 10W" // no min hash.
         };
+        
+        String[] utm_tests = {
+                "12\n\t\nX\t\n245070175",
+                "12\n\nX\n266070175",
+                "12 X 266070175",
+                "12X 266070 175"
+        };
 
+        xcoord.match_UTM(utm);
         int count = 0;
 
         List<String> tests = new ArrayList<String>();
+        if (utm){
+            tests.addAll(Arrays.asList(utm_tests));
+        }
         if (dd) {
             tests.addAll(Arrays.asList(ddtest));
         }

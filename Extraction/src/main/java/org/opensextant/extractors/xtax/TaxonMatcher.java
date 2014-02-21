@@ -44,6 +44,7 @@ import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
+import org.opensextant.data.Taxon;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.SolrMatcherSupport;
