@@ -84,13 +84,14 @@ public class SolrGazetteer {
     public SolrGazetteer() throws IOException {
         initialize();
     }
+
     private Map<String, String> _default_country_names = new HashMap<String, String>();
 
-   
     /** Returns the SolrProxy used internally. */
-    public SolrProxy getSolrProxy(){
+    public SolrProxy getSolrProxy() {
         return solr;
     }
+
     /**
      */
     public static String normalizeCountryName(String c) {
@@ -112,60 +113,68 @@ public class SolrGazetteer {
         java.io.InputStream io = getClass().getResourceAsStream("/feature-metadata-2013.csv");
         java.io.Reader featIO = new InputStreamReader(io);
         CsvMapReader featreader = new CsvMapReader(featIO, CsvPreference.EXCEL_PREFERENCE);
-        String[] columns = featreader.getHeader(true);
-        Map<String, String> featMap = null;
 
-        // Feature Metadata is from Universal Gazetteer
-        //-----------------------------------
-        // Feature Designation Code,    CODE
-        // Feature Designation Name,    DESC
-        // Feature Designation Text,    -
-        // Feature Class                CLASS
-        //
-        while ((featMap = featreader.read(columns)) != null) {
-            String feat_code = featMap.get("Feature Designation Code");
-            String desc = featMap.get("Feature Designation Name");
-            String feat_class = featMap.get("Feature Class");
+        try {
+            String[] columns = featreader.getHeader(true);
+            Map<String, String> featMap = null;
 
-            if (feat_code == null) {
-                continue;
+            // Feature Metadata is from Universal Gazetteer
+            //-----------------------------------
+            // Feature Designation Code,    CODE
+            // Feature Designation Name,    DESC
+            // Feature Designation Text,    -
+            // Feature Class                CLASS
+            //
+            while ((featMap = featreader.read(columns)) != null) {
+                String feat_code = featMap.get("Feature Designation Code");
+                String desc = featMap.get("Feature Designation Name");
+                String feat_class = featMap.get("Feature Class");
+
+                if (feat_code == null) {
+                    continue;
+                }
+
+                if (feat_code.startsWith("#")) {
+                    continue;
+                }
+                features.put(String.format("%s/%s", feat_class, feat_code), desc);
             }
-
-            if (feat_code.startsWith("#")) {
-                continue;
-            }
-            features.put(String.format("%s/%s", feat_class, feat_code), desc);
+        } finally {
+            featreader.close();
         }
-        featreader.close();
     }
 
     private void loadCountryNameMap() throws IOException {
         java.io.InputStream io = getClass().getResourceAsStream("/country-names-2013.csv");
         java.io.Reader countryIO = new InputStreamReader(io);
         CsvMapReader countryMap = new CsvMapReader(countryIO, CsvPreference.EXCEL_PREFERENCE);
-        String[] columns = countryMap.getHeader(true);
-        Map<String, String> country_names = null;
-        while ((country_names = countryMap.read(columns)) != null) {
-            String n = country_names.get("country_name");
-            String cc = country_names.get("ISO2_cc");
-            String fips = country_names.get("FIPS_cc");
-            iso2fips.put(cc, fips);
-            fips2iso.put(fips, cc);
 
-            if (n == null || cc == null) {
-                continue;
+        try {
+            String[] columns = countryMap.getHeader(true);
+            Map<String, String> country_names = null;
+            while ((country_names = countryMap.read(columns)) != null) {
+                String n = country_names.get("country_name");
+                String cc = country_names.get("ISO2_cc");
+                String fips = country_names.get("FIPS_cc");
+                iso2fips.put(cc, fips);
+                fips2iso.put(fips, cc);
+
+                if (n == null || cc == null) {
+                    continue;
+                }
+
+                // FIPS could be *, but as long as we use ISO2, we're fine. if ("*".equals(cc)){ cc = fips.toUpperCase(); }
+
+                // Normalize:              "US"  =>  "united states of america"
+                _default_country_names.put(cc.toUpperCase(), n.toLowerCase());
             }
-
-            // FIPS could be *, but as long as we use ISO2, we're fine. if ("*".equals(cc)){ cc = fips.toUpperCase(); }
-
-            // Normalize:              "US"  =>  "united states of america"
-            _default_country_names.put(cc.toUpperCase(), n.toLowerCase());
+            if (_default_country_names.isEmpty()) {
+                throw new IOException("No data found in country name map");
+            }
         }
 
-        countryMap.close();
-
-        if (_default_country_names.isEmpty()) {
-            throw new IOException("No data found in country name map");
+        finally {
+            countryMap.close();
         }
     }
 
@@ -179,19 +188,21 @@ public class SolrGazetteer {
         solr = new SolrProxy(config_solr_home, "gazetteer");
 
         params.set(CommonParams.Q, "*:*");
-        params.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+        params.set(CommonParams.FL,
+                "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
         try {
             loadCountries();
         } catch (SolrServerException loadErr) {
             throw new IOException(loadErr);
         }
     }
+
     
     /**
      * Close or release all resources.
      */
     public void shutdown() {
-        if (solr != null){
+        if (solr != null) {
             solr.close();
         }
     }
@@ -202,6 +213,7 @@ public class SolrGazetteer {
     public Map<String, Country> getCountries() {
         return country_lookup;
     }
+
     public final static Country UNK_Country = new Country("UNK", "invalid");
 
     /**
@@ -331,7 +343,7 @@ public class SolrGazetteer {
         if (as_solr) {
             params.set("q", place);
         } else {
-            params.set("q", "\"" + place + "\"");  // Bare keyword query needs to be quoted as "word word word"
+            params.set("q", "\"" + place + "\""); // Bare keyword query needs to be quoted as "word word word"
         }
 
         QueryResponse response = solr.getInternalSolrServer().query(params);
@@ -370,11 +382,11 @@ public class SolrGazetteer {
                 System.out.println(c.getKey() + " = " + c.name + "\t  Aliases: " + c.getAliases().toString());
             }
 
-
             List<Place> matches = gaz.search("+Boston +City");
 
             for (Place pc : matches) {
-                System.out.println(pc.toString() + " which is categorized as: " + gaz.getFeatureName(pc.getFeatureClass(), pc.getFeatureCode()));
+                System.out.println(pc.toString() + " which is categorized as: "
+                        + gaz.getFeatureName(pc.getFeatureClass(), pc.getFeatureCode()));
             }
 
         } catch (Exception err) {
