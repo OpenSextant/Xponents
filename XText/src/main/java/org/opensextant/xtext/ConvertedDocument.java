@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.text.SimpleDateFormat;
@@ -50,24 +52,11 @@ public final class ConvertedDocument extends DocInput {
     public static String DEFAULT_EMBED_FOLDER = "xtext";
     private static SimpleDateFormat dtfmt = new SimpleDateFormat("yyyy-MM-dd");
     public final static String[] fields = {
-        // Dublin Core style metadata fields
-        "title",
-        "author",
-        "creator_tool",
-        "pub_date",
-        "keywords",
-        "subject",
-        "filepath",
-        "encoding",
-        //
-        // -- XText metadata.
-        "filtered",
-        "converter",
-        "conversion_date",
-        "encrypted",
-        "filesize",
-        "textsize"
-    };
+            // Dublin Core style metadata fields
+            "title", "author", "creator_tool", "pub_date", "keywords", "subject", "filepath", "encoding",
+            //
+            // -- XText metadata.
+            "filtered", "converter", "conversion_date", "encrypted", "filesize", "textsize" };
     public final static Set<String> valid_fields = new HashSet<String>(Arrays.asList(fields));
     public String filepath = null;
     public String filename = null;
@@ -119,6 +108,19 @@ public final class ConvertedDocument extends DocInput {
             // Fill out TextInput basics:
             setId(this.filepath);
         }
+    }
+
+    /**
+     * All properties are added as a string
+     * @return
+     */
+    public Map<String, String> getProperties() {
+        Map<String, String> props = new HashMap<String, String>();
+
+        for (Object fld : meta.keySet()) {
+            props.put(fld.toString(), meta.getString(fld.toString()));
+        }
+        return props;
     }
 
     /**
@@ -222,7 +224,14 @@ public final class ConvertedDocument extends DocInput {
             return;
         }
         meta.put(k, v);
+    }
 
+    /*
+     * Add a custom property of your own. No validation here.
+     * Use addProperty to add only valid core fields. 
+     */
+    public void addUserProperty(String k, String v) {
+        meta.put(k, v);
     }
 
     public void addProperty(String k, long i) {
@@ -295,6 +304,7 @@ public final class ConvertedDocument extends DocInput {
         }
         return _path;
     }
+
     public final static String OUTPUT_ENCODING = "UTF-8";
     public final static String CONVERTED_TEXT_EXT = "-utf8.txt";
 
@@ -340,7 +350,8 @@ public final class ConvertedDocument extends DocInput {
     public void saveEmbedded() throws IOException {
         if (is_converted) {
             String container = new File(this.filepath).getParent();
-            File target = new File(container + File.separator + DEFAULT_EMBED_FOLDER + File.separator + getNewPath(this.filename));
+            File target = new File(container + File.separator + DEFAULT_EMBED_FOLDER + File.separator
+                    + getNewPath(this.filename));
             this._saveConversion(target);
         }
     }
@@ -407,7 +418,6 @@ public final class ConvertedDocument extends DocInput {
             path.append(File.separator);
         }
 
-
         // I now have a path name that was likely the one stored in cache.
         // Return the ConvertedDocument if exists at this path.
         // Otherwise it is not in cache.... so converter must convert and save.
@@ -455,6 +465,18 @@ public final class ConvertedDocument extends DocInput {
         meta.put("filetime", this.filetime.getTime());
 
         FileUtility.makeDirectory(target.getParentFile());
+        saveBuffer(target);
+        textpath = target.getAbsolutePath();
+        this.is_cached = true;
+    }
+
+    /**
+     * Internally save Buffer with its metadata to a given filepath
+     * Expert mode:  use this only if you know what you are doing.
+     *    You can add additional metadata to the meta sheet using addProperty()
+     *    Then overwrite existing doc conversions
+     */
+    public void saveBuffer(File target) throws IOException {
         StringBuilder buf = new StringBuilder();
 
         // META data cannot be empty.
@@ -468,10 +490,8 @@ public final class ConvertedDocument extends DocInput {
         buf.append(Base64.encodeBase64String(meta.toString().getBytes()));
         buf.append("\n");
         FileUtility.writeFile(buf.toString(), target.getAbsolutePath(), OUTPUT_ENCODING, false);
-
-        textpath = target.getAbsolutePath();
-        this.is_cached = true;
     }
+
     public static String XT_LABEL = "XT:";
 
     /**
@@ -516,7 +536,6 @@ public final class ConvertedDocument extends DocInput {
         // when the get the instance.
         //
         doc.setId(doc.filepath);
-
 
         return doc;
     }

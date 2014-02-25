@@ -508,12 +508,15 @@ public final class XText implements iFilter, iConvert {
         requested_types.add("txt");  // only for encoding conversions.
         requested_types.add("msg");
         requested_types.add("eml");
+        requested_types.add("emlx");
         requested_types.add("ppt");
         requested_types.add("pptx");
         requested_types.add("xlsx");
         requested_types.add("xls");
         requested_types.add("rtf");
-        requested_types.add("log");
+        
+        // requested_types.add("log");  // Uncommon.  Caller must expclitly add raw data types
+        // and archives.
 
         defaultConversion = new DefaultConverter(maxBuffer);
     }
