@@ -387,7 +387,7 @@ public class XCoord extends AbstractFlexPat {
 
         // Use default config file.
         XCoord xc = new XCoord(debug);
-        XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT;
+        XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT | XConstants.MGRS_FILTERS_ON;
 
         gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XCoord", args, "aft:u:");
 

@@ -369,12 +369,13 @@ public class TestScript {
         boolean dd = true;
         boolean dms = true;
         boolean dm = true;
-        boolean mgrs = true;
-        boolean utm = true;
+        boolean mgrs = false;
+        boolean utm = false;
         //
         xcoord.match_MGRS(mgrs);
 
         String[] mgrstest = {
+            "14 MRE\n\n 1445",
             "4 jul 2008",
             "10 Jan 1994", // edge case, bare minimum.
             "10 Jan 13", // edge case, bare minimum.
