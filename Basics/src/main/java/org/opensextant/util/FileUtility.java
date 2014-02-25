@@ -633,6 +633,7 @@ public class FileUtility {
     private final static HashMap<String, String> filetypeMap = new HashMap<String, String>();
     public final static String IMAGE_MIMETYPE = "image";
     public final static String DOC_MIMETYPE = "document";
+    public final static String MESSAGE_MIMETYPE = "message";
     public final static String APP_MIMETYPE = "application";
     public final static String VID_MIMETYPE = "video";
     public final static String AUD_MIMETYPE = "audio";
@@ -691,6 +692,12 @@ public class FileUtility {
         filetypeMap.put("pptx", DOC_MIMETYPE);
         filetypeMap.put("docx", DOC_MIMETYPE);
 
+        // Messages
+        filetypeMap.put("eml", MESSAGE_MIMETYPE);
+        filetypeMap.put("emlx", MESSAGE_MIMETYPE);
+        filetypeMap.put("msg", MESSAGE_MIMETYPE);
+        filetypeMap.put("sms", MESSAGE_MIMETYPE);
+        
         //Apps
         filetypeMap.put("do", APP_MIMETYPE);
         filetypeMap.put("aspx", APP_MIMETYPE);

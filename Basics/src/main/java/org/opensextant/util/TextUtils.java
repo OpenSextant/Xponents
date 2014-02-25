@@ -486,7 +486,7 @@ public class TextUtils {
      *        TEXT: **The Daily Newsletter of \n\rBarbara, So.**
      *       CLEAN: __The Daily Newsletter of __Barbara, So___
      * 
-     * Where "__" represents omitted characters.
+     * Where "__" represents omitted characters.  
      * </pre>
      */
     public static String normalizeTextEntity(String str) {
