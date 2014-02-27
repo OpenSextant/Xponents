@@ -63,13 +63,28 @@
   </target>
 
   <target name="copy-docs">
-    <copy todir="${release}/doc/Extraction">
+    <copy todir="${release}/doc/Extraction/apidocs">
         <fileset dir="${xponents.home}/Extraction/target/apidocs"/>
     </copy>
-    <copy todir="${release}/doc/XText">
+    <copy todir="${release}/doc/Extraction/">
+        <fileset dir="${xponents.home}/Extraction/doc"/>
+    </copy>
+    <copy todir="${release}/doc/Extraction/">
+        <fileset dir="${xponents.home}/Extraction/src/main/resources">
+           <include name="*.cfg" />
+        </fileset>
+    </copy>
+
+    <copy todir="${release}/doc/XText/apidocs">
         <fileset dir="${xponents.home}/XText/target/apidocs"/>
     </copy>
-    <copy todir="${release}/doc/Examples">
+    <copy todir="${release}/doc/XText/">
+        <fileset dir="${xponents.home}/XText/">
+           <include name="*.htm*" />
+           <include name="*.md" />
+        </fileset>
+    </copy>
+    <copy todir="${release}/doc/Examples/apidocs">
         <fileset dir="${xponents.home}/Examples/target/apidocs" />
     </copy>
   </target>

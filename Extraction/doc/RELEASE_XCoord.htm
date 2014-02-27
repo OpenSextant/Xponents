@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>XCOORD RELEASE NOTES</title>
+  </head>
+  <body>
+    <h2>XCoord RELEASE NOTES</h2>
+    <p><br>
+      <b>XCoord 2.0 2013-July Independence Release<br>
+      </b></p>
+    <ul>
+      <li>Xponents now fully maven built, set apart from the
+        "opensextant" super project.</li>
+      <li>Improved concept of precision/resolution</li>
+      <li>Added more MGRS filters and pattern refinements</li>
+      <li>Parsing unbalanced pattern matches better now, while being
+        more flexible with allowed punctuation.&nbsp; Managing false
+        positives from looser patterns is important.&nbsp; E.g., pattern
+        with +/-DEG&nbsp; DEG MIN SEC&nbsp; would be an imbalanced
+        lat/lon pair where longitude is specified to seconds, but
+        latitude is degrees only. Such a case is very much a false
+        positive.&nbsp; <br>
+      </li>
+    </ul>
+    <p><b>XCoord 1.6 2013-MAR St Patrick's release</b><b><br>
+      </b></p>
+    <ul>
+      <li>MGRS date filtering for various common dates in recent time;
+        for example 03 MAR 12<br>
+      </li>
+      <li>Allowing for "dashes" as separators between lat &amp; lon,
+        where in some cases it may appear as a hemisphere sign.</li>
+      <li>Introduction of Maven <br>
+      </li>
+    </ul>
+    <p><br>
+    </p>
+    <p><b>XCoord v1.5 2013-JAN&nbsp; MLK release</b><b><br>
+      </b>Major improvements<br>
+    </p>
+    <ul>
+      <li>Support for asymmetric coordinates;&nbsp; valid lat/lon
+        formats that have varying resolution, e.g., 34:45N&nbsp;
+        44:55:10W.&nbsp;&nbsp; valid MGRS grids with typos, e.g.,&nbsp;
+        483QR 443 55 ( easting has 3 digits, northing should be
+        "550");&nbsp; Grids with line breaks or interrupting
+        whitespace,&nbsp; 483QR 44\n3 55;&nbsp;&nbsp; Grids with no
+        whitespace, but invalid easting/northing, eg.
+        483QR44355&nbsp;&nbsp; -- both 443 / 550 and 440 / 355 are
+        emitted as potentially correct interpretations</li>
+      <li>Allow for multiple interpretations of a coordinate pattern,
+        e.g., MGRS case above where easting/northing is ambiguous due to
+        typos.</li>
+      <li>Testing data included patterns from wikipedia geotagging
+        conventions for wiki pages.</li>
+      <li>Expanded test cases</li>
+      <li>Improved date filtering for DMS patterns with odd punctuation,
+        e.g. 2012-12-11 10:45:00&nbsp;&nbsp; is a time not a
+        coordinate.&nbsp; Two-digit year date/time patterns matched
+        often.</li>
+      <li>Consolidated patterns library primarily due to consideration
+        of asymmetry in resolution.&nbsp; More smarts put into place in
+        parsing/normalizing.<br>
+      </li>
+    </ul>
+    <p><br>
+    </p>
+    <p><b>XCoord v1.3, 2012-10-27 THANKSGIVING release</b></p>
+    <p>Minor improvements:<br>
+    </p>
+    <ul>
+      <li>added more DM/DMS patterns to ensure coordinates with DMS
+        symbols only and no indication of hemisphere (-,+, ENSW) are
+        detected and parsed </li>
+      <li>added such tests to Truth data; see GeocoderEval project</li>
+    </ul>
+    <p><br>
+    </p>
+    <p><b>XCoord v1.2,&nbsp; 2012-10-31&nbsp; HALLOWEEN release</b><br>
+    </p>
+    <p>Major improvements:<br>
+    </p>
+    <ul>
+      <li>Precision</li>
+      <li>Test &amp; Evaluation</li>
+      <li>Rule order -- it is preserved and is currently MGRS UTM DMS DM
+        DD<br>
+      </li>
+      <li>Fixed many rules, added others</li>
+    </ul>
+    <p><br>
+      Details<br>
+    </p>
+    <ul>
+      <li>Concepts added/adjusted (org.mitre.xcoord pkg):</li>
+      <ul>
+        <li>GeocoordPrecision -- tracks number of digits mainly in DD,
+          DM, DMS patterns, and the associated precision.</li>
+        <li>Hemisphere&nbsp; -- tracks hemisphere if it is +/-, Alpha or
+          null.</li>
+        <li>PrecisionScales -- much improved assessment of inherent
+          precision in any patter</li>
+      </ul>
+      <li>Testing added</li>
+      <ul>
+        <li>TestCase, TestScript added to capture input tests</li>
+        <li>TestUtility improved to report truth data if given, and the
+          carry both truth and test results along with output for
+          evaluation later.</li>
+      </ul>
+      <li>UTMParser hemisphere detection fixed.&nbsp; "S" was allowed to
+        be a Northern lat band, when it usually means South.</li>
+      <li>DMSOrdinate now handles all logic for DD, DM, DMS parsing and
+        calculation.&nbsp; Hemisphere parsing moved here (out of
+        PatternManager)</li>
+      <li>PatternManager --- ensure Rules order-of-appearance is
+        preserved from configuration file</li>
+      <li>GeocoordMatch -- formatting was a major concern, as with Java,
+        printing a Float or Double allows near infinite decimal places
+        (I mean a lot). Where you want 35.01,&nbsp; Java might print
+        "35.00999989082911237", but you want "35.01" the string.&nbsp; <br>
+      </li>
+      <ul>
+        <li>Use GeocoordMatch.formatLatitude() or formatLongitude() to
+          get a printable string version of the calculated lat or lon</li>
+      </ul>
+    </ul>
+    <p><br>
+    </p>
+  </body>
+</html>
