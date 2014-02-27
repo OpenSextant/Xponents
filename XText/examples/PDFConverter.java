@@ -23,7 +23,7 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  */
-package org.opensextant.xtext.converters;
+//package org.opensextant.xtext.converters;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -34,6 +34,8 @@ import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.iConvert;
 
 /**
+ * Retired PDF Converter.
+ * 
  * @deprecated  Tika's PDF parser does a better job.  The extra metadata fields I was grabbing here are not that useful. 
  * Handling of encrypted PDF documents is still suspect.
  * 

@@ -73,7 +73,7 @@ public class XCoord extends AbstractFlexPat {
      */
     public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS
             | XConstants.FLAG_EXTRACT_CONTEXT;
-    protected static String DEFAULT_XCOORD_CFG = "/geocoord_regex.cfg";
+    protected static String DEFAULT_XCOORD_CFG = "/geocoord_patterns.cfg";
 
     /**
      * Debugging constructor -- if debugmode = True, enable debugging else if
