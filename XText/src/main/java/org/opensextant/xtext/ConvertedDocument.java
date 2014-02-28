@@ -28,8 +28,10 @@ package org.opensextant.xtext;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
@@ -57,9 +59,25 @@ public final class ConvertedDocument extends DocInput {
             //
             // -- XText metadata.
             "filtered", "converter", "conversion_date", "encrypted", "filesize", "textsize" };
+
+    /**
+     * Converters will populate metadatata. If the entry is an object or a file, its name will reflect that. 
+     * Interpreting the entry name as a file name on a file system is up to the recipient.  E.g., Mail attachments 
+     * might be file names;  Embedded objects may be object IDs.
+     */
+    public final static String CHILD_ENTRY_KEY = "entry.name";
+    /**
+     * if you are a child document/object, then 
+     */
+    public ConvertedDocument parent = null;
+    private List<ConvertedDocument> children = null;
+    private List<Content> childrenContent = null;
+
     public final static Set<String> valid_fields = new HashSet<String>(Arrays.asList(fields));
     public String filepath = null;
     public String filename = null;
+    public String extension = null;
+    public String basename = null;
     public Date filetime = null;
     public Date create_date = null;
     public String create_date_text = null;
@@ -84,6 +102,9 @@ public final class ConvertedDocument extends DocInput {
     private File file = null;
     public long filesize = -1;
 
+    private boolean isChild = false;
+    private boolean isParent = true; // Default
+
     public ConvertedDocument() {
         // Used only for uncaching previously saved converted docs.
         super(null, null);
@@ -100,6 +121,9 @@ public final class ConvertedDocument extends DocInput {
             this.filetime = getFiletime();
             this.is_plaintext = filename.toLowerCase().endsWith(".txt");
             this.filesize = file.length();
+            this.extension = FilenameUtils.getExtension(filename);
+            this.basename = FilenameUtils.getBaseName(filename);
+
             addProperty("filesize", this.filesize);
             addProperty("filepath", this.filepath);
 
@@ -108,6 +132,98 @@ public final class ConvertedDocument extends DocInput {
             // Fill out TextInput basics:
             setId(this.filepath);
         }
+    }
+
+    /**
+     * Not that helpful: isChild or not is more meaningful.
+     * @return
+     */
+    public boolean isParent() {
+        return isParent;
+    }
+
+    public boolean isChild() {
+        return isChild;
+    }
+
+    public void setIsChild(boolean b) {
+        isChild = b;
+        isParent = !isChild;
+    }
+
+    protected File parentContainer = null;
+
+    /**
+     * Representation of the parent containing document.
+     * @param par
+     */
+    public void setParent(ConvertedDocument par) {
+        // supporting only one level of nesting here.  Parents have children.
+        // Parents do not have parents, etc.  Children do not have children.
+        //
+        isChild = true;
+        isParent = false;
+
+        parent = par;
+        if (parent != null) {
+            meta.put("xtext_parent_id", this.parent.id);
+            meta.put("xtext_parent_path", this.parent.filepath);
+            // Currently, Parent must be alread converted; and if any text output exists 
+            // and was cached, then park children in the same parent folder.
+            // 
+            parentContainer = parent.parentContainer;
+        }
+    }
+
+    /**
+     * If this doc is a Parent doc, then evaluate what its "container" should be, that is to house child objects and their conversions.
+     * If it is a child, ignore -- ensure child.parentContainer = child.parent.parentContainer
+     * Children do not get to choose.
+     * 
+     * @param saveEmbedded
+     */
+    public void evalParentContainer(boolean saveEmbedded) {
+        if (!isParent) {
+            return;
+        }
+        // This is the parent now.
+        String parPath = null;
+        parentContainer = null;
+        String parName = String.format("%s_%s", basename, extension);
+
+        if (saveEmbedded) {
+            // parent obj is at Parent.xyz
+            // parent textpath is at xtext/Parent.xyz.txt
+            // create  ./xtext/../Parent
+            // child is at      
+            // parent textpath ../../Parent/
+            parPath = new File(textpath).getParentFile().getParent();
+        } else {
+            parPath = new File(textpath).getParent();
+        }
+        parentContainer = new File(parPath + File.separator + parName);
+    }
+
+    public void addChild(ConvertedDocument ch) {
+        if (children == null) {
+            children = new ArrayList<ConvertedDocument>();
+        }
+        children.add(ch);
+    }
+
+    public void addRawChild(Content child) {
+        if (childrenContent == null) {
+            childrenContent = new ArrayList<Content>();
+        }
+        childrenContent.add(child);
+    }
+
+    public boolean hasRawChildren() {
+        return (childrenContent != null && childrenContent.size() > 0);
+    }
+
+    public List<Content> getRawChildren() {
+        return childrenContent;
     }
 
     /**
@@ -271,6 +387,19 @@ public final class ConvertedDocument extends DocInput {
         meta.put("pub_date", dtfmt.format(d.getTime()));
     }
 
+    /**
+     * For convenience,... add using Date obj
+     * @param d
+     */
+    public void addCreateDate(java.util.Date d) {
+        if (d == null) {
+            return;
+        }
+
+        this.create_date = d;
+        meta.put("pub_date", dtfmt.format(d.getTime()));
+    }
+
     public void addConverter(Class c) {
         meta.put("converter", c.getName());
     }
@@ -283,8 +412,20 @@ public final class ConvertedDocument extends DocInput {
         meta.put("author", a);
     }
 
+    /**
+     * Find the relative path where this item should reside.
+     *   Given file  /source/a/b/c.xyz
+     *   where will reside in archive?    /archive/.../source/a/b/c.xyz
+     * Parent/Child relationship is complicated still.
+     * @param container
+     */
     public void setPathRelativeTo(String container) {
-        this.relative_path = getRelativePath(container, this.filepath);
+        String relPath = container;
+        if (isChild && parentContainer != null) {
+            relPath = parentContainer.getAbsolutePath();
+        }
+
+        this.relative_path = getRelativePath(relPath, this.filepath);
     }
 
     /**
@@ -349,7 +490,8 @@ public final class ConvertedDocument extends DocInput {
      */
     public void saveEmbedded() throws IOException {
         if (is_converted) {
-            String container = new File(this.filepath).getParent();
+            String container = (parentContainer != null ? parentContainer.getAbsolutePath() : new File(this.filepath)
+                    .getParent());
             File target = new File(container + File.separator + DEFAULT_EMBED_FOLDER + File.separator
                     + getNewPath(this.filename));
             this._saveConversion(target);
@@ -464,10 +606,25 @@ public final class ConvertedDocument extends DocInput {
 
         meta.put("filetime", this.filetime.getTime());
 
+        // Tracking Parent/Child objects.
+        meta.put("xtext_id", this.id);
+
         FileUtility.makeDirectory(target.getParentFile());
         saveBuffer(target);
         textpath = target.getAbsolutePath();
         this.is_cached = true;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public String getParentID() {
+        return meta.optString("xtext_parent_id");
+    }
+
+    public String getParentPath() {
+        return meta.optString("xtext_parent_path");
     }
 
     /**
@@ -531,11 +688,12 @@ public final class ConvertedDocument extends DocInput {
 
         doc.filetime = new Date(Long.parseLong(doc.getProperty("filetime")));
 
-        // DocInput requirement: provid id + file paths
+        // DocInput requirement: provided id + file paths
         // If there is another Identifier to use,... caller will have an opportunity to set it
         // when the get the instance.
         //
-        doc.setId(doc.filepath);
+        String idvalue = doc.meta.optString("xtext_id");
+        doc.setId(idvalue != null ? idvalue : doc.filepath);
 
         return doc;
     }

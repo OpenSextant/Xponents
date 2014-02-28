@@ -28,6 +28,7 @@ package org.opensextant.xtext.converters;
 import org.opensextant.xtext.TrivialASCIIDetector;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import org.opensextant.xtext.ConvertedDocument;
 
@@ -45,9 +46,9 @@ import org.opensextant.util.FileUtility;
  */
 public class TextTranscodingConverter extends ConverterAdapter {
 
-    private final CharsetDetector chardet = new CharsetDetector();
+    private final static CharsetDetector chardet = new CharsetDetector();
     private final static int IGNORE_THRESHOLD_SIZE = 1024; // 1KB
-    private final static int IGNORE_THRESHOLD_CONF = 65;   // 0 to 100
+    private final static int IGNORE_THRESHOLD_CONF = 65; // 0 to 100
 
     /**
      * A converter that tries to get a decent encoding ASCII, UTF-8 or other,
@@ -96,8 +97,7 @@ public class TextTranscodingConverter extends ConverterAdapter {
             CharsetMatch cs = chardet.detect();
             if (ConvertedDocument.OUTPUT_ENCODING.equalsIgnoreCase(cs.getName())) {
                 textdoc.do_convert = false;
-            } else if (data.length < IGNORE_THRESHOLD_SIZE
-                    && cs.getConfidence() < IGNORE_THRESHOLD_CONF) {
+            } else if (data.length < IGNORE_THRESHOLD_SIZE && cs.getConfidence() < IGNORE_THRESHOLD_CONF) {
                 textdoc.do_convert = false;
             }
             textdoc.setEncoding(cs.getName());
@@ -105,5 +105,29 @@ public class TextTranscodingConverter extends ConverterAdapter {
         }
 
         return textdoc;
+    }
+
+    /**
+     * If you have a buffer of text for a document and are unable to get a provided charset, 
+     * try this static method.  Better than nothing. This does not imply that the original document is a plain text doc.
+     * It could be an object that was parsed adhoc.  We cannot make any assumption about 
+     * the state of the conversion.  This only sets String buffer and charset.
+     * 
+     * @param d
+     * @throws UnsupportedEncodingException 
+     */
+    public static void setTextAndEncoding(ConvertedDocument doc, byte[] data) throws UnsupportedEncodingException {
+        boolean is_ascii = TrivialASCIIDetector.isASCII(data);
+        if (is_ascii) {
+            doc.setEncoding("ASCII");
+            doc.setText(new String(data));
+            return;
+        }
+
+        chardet.setText(data);
+        CharsetMatch cs = chardet.detect();
+
+        doc.setEncoding(cs.getName());
+        doc.setText(new String(data, cs.getName()));
     }
 }

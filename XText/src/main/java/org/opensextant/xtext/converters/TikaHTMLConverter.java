@@ -35,6 +35,7 @@ import java.io.InputStream;
 import org.apache.tika.parser.html.HtmlParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.parser.html.BoilerpipeContentHandler;
 import org.opensextant.xtext.ConvertedDocument;
@@ -92,7 +93,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
         }
         ConvertedDocument textdoc = new ConvertedDocument(doc);
 
-        textdoc.addTitle(metadata.get(Metadata.TITLE));
+        textdoc.addTitle(metadata.get(TikaCoreProperties.TITLE));
 
         String text = null;
         if (scrub_article) {

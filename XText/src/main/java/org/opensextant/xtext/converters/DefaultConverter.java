@@ -25,21 +25,18 @@
  */
 package org.opensextant.xtext.converters;
 
+import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.detect.Detector;
 import org.apache.tika.metadata.Metadata;
-//import org.xml.sax.ContentHandler;
+import org.apache.tika.metadata.TikaCoreProperties;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
-//import org.apache.tika.sax.ToTextContentHandler;
 import org.opensextant.util.TextUtils;
-
-import java.io.IOException;
-
 import org.opensextant.xtext.ConvertedDocument;
 
 /**
@@ -56,6 +53,7 @@ public class DefaultConverter extends ConverterAdapter {
     private Detector detector = new DefaultDetector();
     private Parser parser = new AutoDetectParser(detector);
     private ParseContext ctx = new ParseContext();
+
 
     private int maxBuffer = MAX_TEXT_SIZE;
 
@@ -92,13 +90,12 @@ public class DefaultConverter extends ConverterAdapter {
         }
         ConvertedDocument textdoc = new ConvertedDocument(doc);
 
-        textdoc.addTitle(metadata.get(Metadata.TITLE));
+        textdoc.addTitle(metadata.get(TikaCoreProperties.TITLE));
         textdoc.setEncoding(metadata.get(Metadata.CONTENT_ENCODING));
-        textdoc.addCreateDate(metadata.get(Metadata.CREATION_DATE));
-        textdoc.addAuthor(metadata.get(Metadata.AUTHOR));
+        textdoc.addCreateDate(metadata.getDate(TikaCoreProperties.CREATED));
+        textdoc.addAuthor(metadata.get(TikaCoreProperties.CREATOR));
 
         textdoc.setText(TextUtils.reduce_line_breaks(handler.toString()));
-
         return textdoc;
     }
 }

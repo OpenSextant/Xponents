@@ -25,11 +25,13 @@
  */
 package org.opensextant.xtext;
 
+import org.opensextant.util.FileUtility;
+import org.opensextant.xtext.converters.ImageMetadataConverter;
+import org.opensextant.xtext.converters.MessageConverter;
 import org.opensextant.xtext.converters.TextTranscodingConverter;
 import org.opensextant.xtext.converters.TikaHTMLConverter;
 import org.opensextant.xtext.converters.ArchiveNavigator;
 import org.opensextant.xtext.converters.DefaultConverter;
-//import org.opensextant.xtext.converters.PDFConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+
+import org.apache.tika.io.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 
@@ -84,10 +88,9 @@ public final class XText implements iFilter, iConvert {
     protected String inputNode = null;
     private boolean save_in_folder = false;
     private boolean save_in_archive_root = false; // save to the archive root rather than in the directory the file came from
-    
+
     private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE; /* XText default is 1 MB of text */
     private long maxFileSize = FILE_SIZE_LIMIT;
-
 
     protected Set<String> archive_types = new HashSet<String>();
     /**
@@ -115,11 +118,12 @@ public final class XText implements iFilter, iConvert {
     public void setTempDir(String tmp) {
         tempRoot = tmp;
     }
-    
-    public void setMaxBufferSize(int sz){
+
+    public void setMaxBufferSize(int sz) {
         maxBuffer = sz;
     }
-    public void setMaxFileSize(int sz){
+
+    public void setMaxFileSize(int sz) {
         maxFileSize = sz;
     }
 
@@ -183,6 +187,7 @@ public final class XText implements iFilter, iConvert {
     public void ignoreFileType(String ext) {
         ignore_types.add(ext);
     }
+
     private ConversionListener postProcessor = null;
 
     /**
@@ -204,11 +209,13 @@ public final class XText implements iFilter, iConvert {
         return archive_types.contains(ext.toLowerCase());
 
     }
+
     private String outputNode;
 
     public void setOutputNode(String name) {
         outputNode = archiveRoot + File.separator + name;
     }
+
     protected long total_conv_time = 0;
     protected int average_conv_time = 0;
     protected int total_conversions = 0;
@@ -222,9 +229,10 @@ public final class XText implements iFilter, iConvert {
 
     protected void reportStatistics() {
         average_conv_time = (int) ((float) total_conv_time / total_conversions);
-        log.info("TOTAL of N=" + total_conversions + " documents converted"
-                + "\n With an average time (ms) of " + average_conv_time);
+        log.info("TOTAL of N=" + total_conversions + " documents converted" + "\n With an average time (ms) of "
+                + average_conv_time);
     }
+
     protected long start_time = 0;
     protected long stop_time = 0;
 
@@ -287,10 +295,10 @@ public final class XText implements iFilter, iConvert {
         if (filepath.contains(".svn")) {
             return true;
         }
-        
+
         // ignore '-utf8.txt'  as XText likely generated them.
         // 
-        if (n.endsWith(ConvertedDocument.CONVERTED_TEXT_EXT)){
+        if (n.endsWith(ConvertedDocument.CONVERTED_TEXT_EXT)) {
             return true;
         }
 
@@ -323,7 +331,7 @@ public final class XText implements iFilter, iConvert {
         //input = new File(inPath);
         unpacker.unpack(input);
     }
-    
+
     /**
      * Arbitrary 16 MB limit on file size. Maybe this should be dependent on the
      * file type.
@@ -361,6 +369,10 @@ public final class XText implements iFilter, iConvert {
                 + "you must use an instance of a XText converter, e.g., TikaHTMLConverter");
     }
 
+    public ConvertedDocument convertFile(File input) throws IOException {
+        return convertFile(input, null);
+    }
+
     /**
      * Convert one file and save it off.
      *
@@ -371,7 +383,7 @@ public final class XText implements iFilter, iConvert {
      * @return converted document object
      * @throws java.io.IOException
      */
-    public ConvertedDocument convertFile(File input) throws IOException {
+    public ConvertedDocument convertFile(File input, ConvertedDocument parent) throws IOException {
         //
         //
         if (ConvertedDocument.DEFAULT_EMBED_FOLDER.equals(input.getParentFile().getName())) {
@@ -440,12 +452,30 @@ public final class XText implements iFilter, iConvert {
                     throw new IOException("Engineering error: Doc converted, but converter failed to setText()");
                 }
                 if (this.save && textDoc.is_converted) {
+                    // Get Parent info in there.
+                    if (parent != null) {
+                        textDoc.setParent(parent);
+                    }
+
                     if (this.save_in_folder) {
                         // Saves close to original in ./text/ folder where original resides.
                         textDoc.saveEmbedded();
-                    } else {
+                    } else {                       
                         textDoc.setPathRelativeTo(inputRoot.getAbsolutePath());
                         textDoc.save(outputNode);
+                    }
+                    // Children items will be persisted in the same folder structure where the textdoc.textpath resides.
+                    // That is, Email or Embedded objects will be parsed are saved in ./xtext/ folder or in the separate archive.
+                    // But this must be down now, as we have all the dynamic metadata + raw artifacts;  As it is all written out to disk, 
+                    // it will be written out together.
+                    // 
+                    if (textDoc.hasRawChildren()) {
+                        convertChildren(textDoc);
+
+                        // 1. children saved to disk
+                        // 2. children converted.
+                        // 3. children attached to parent here.
+                        //   'textdoc' should now be well endowed with all the children metadata.
                     }
                 }
 
@@ -482,6 +512,52 @@ public final class XText implements iFilter, iConvert {
     }
 
     /**
+     * Save children objects for a given ConvertedDocument to a location.... convert those items immediately, saving the Parent metadata along with them.
+     * You should have setParent already
+     * @param parentDoc
+     * @throws IOException 
+     */
+    public void convertChildren(ConvertedDocument parentDoc) throws IOException {
+        parentDoc.evalParentContainer(this.save_in_folder);
+        FileUtility.makeDirectory(parentDoc.parentContainer);
+        String targetPath = parentDoc.parentContainer.getAbsolutePath();
+
+        for (Content child : parentDoc.getRawChildren()) {
+            if (child.content == null) {
+                log.error("Attempted to write out child object with no content {}", child.id);
+                continue;
+            }
+
+            OutputStream io = null;
+            try {
+                // We just assume for now Child ID is filename.
+                // Alternatively,  child.meta.getProperty( ConvertedDocument.CHILD_ENTRY_KEY )
+                //  same result, just more verbose.
+                //
+                File childFile = new File(targetPath + File.separator + child.id);
+                io = new FileOutputStream(childFile);
+                IOUtils.write(child.content, io);
+
+                ConvertedDocument childConv = convertFile(childFile, parentDoc);
+                if (childConv != null) {
+                    // Push down all child metadata down to ConvertedDoc
+                    for (String k : child.meta.stringPropertyNames()) {
+                        String val = child.meta.getProperty(k);
+                        childConv.addUserProperty(k, val);
+                    }
+                    // Save cached version once again.
+                    childConv.saveBuffer(new File(childConv.textpath));
+                    parentDoc.addChild(childConv);
+                }
+            } catch (Exception err) {
+                log.error("Failed to write out child {}, but will continue with others", child.id);
+            } finally {
+                io.close();
+            }
+        }
+    }
+
+    /**
      * TODO: this is called by default. duh. To changed behavior, adjust
      * settings before setup() is called
      */
@@ -505,7 +581,7 @@ public final class XText implements iFilter, iConvert {
         requested_types.add("pdf");
         requested_types.add("htm");
         requested_types.add("html");
-        requested_types.add("txt");  // only for encoding conversions.
+        requested_types.add("txt"); // only for encoding conversions.
         requested_types.add("msg");
         requested_types.add("eml");
         requested_types.add("emlx");
@@ -514,7 +590,13 @@ public final class XText implements iFilter, iConvert {
         requested_types.add("xlsx");
         requested_types.add("xls");
         requested_types.add("rtf");
-        
+
+        // Only Photographic images will be supported by default.
+        // BMP, GIF, PNG, ICO, etc. must be added by caller.
+        // 
+        requested_types.add("jpg");
+        requested_types.add("jpeg");
+
         // requested_types.add("log");  // Uncommon.  Caller must expclitly add raw data types
         // and archives.
 
@@ -535,13 +617,12 @@ public final class XText implements iFilter, iConvert {
      * conversion - those resources will not be initialized.
      */
     public void setup() throws IOException {
-        defaults();
 
         // Invoke converter instances only as requested types suggest.
         // If caller has removed file types from the list, then
         String mimetype = "pdf";
         //if (requested_types.contains(mimetype)) {
-            //converters.put(mimetype, new PDFConverter());
+        //converters.put(mimetype, new PDFConverter());
         //}
 
         mimetype = "txt";
@@ -560,11 +641,24 @@ public final class XText implements iFilter, iConvert {
             requested_types.add("xhtml");
         }
 
-        //converters.put("eml", new EMailConverter());
-        //converters.put("*", new TextTranscodingConverter());
-        //mimetype = "html";
-        
-        
+        MessageConverter emailParser = new MessageConverter();
+        mimetype = "eml";
+        if (requested_types.contains(mimetype)) {
+            converters.put("eml", emailParser);
+        }
+        mimetype = "msg";
+        if (requested_types.contains(mimetype)) {
+            converters.put("msg", emailParser);
+        }
+
+        ImageMetadataConverter imgConv = new ImageMetadataConverter();
+        String[] imageTypes = { "jpeg", "jpg" };
+        for (String img : imageTypes) {
+            if (requested_types.contains(img)) {
+                converters.put(img, imgConv);
+            }
+        }
+
         // ALWAYS ignore our own text conversions or those of others.
         // So here all known convertable types will need a filter for their conversion, e.g., 
         //  pdf => ignore pdf.txt
@@ -576,6 +670,7 @@ public final class XText implements iFilter, iConvert {
 
         FILE_FILTER = requested_types.toArray(new String[requested_types.size()]);
     }
+
     /**
      *
      */
@@ -610,22 +705,22 @@ public final class XText implements iFilter, iConvert {
             int c;
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
-                    case 'i':
-                        input = opts.getOptarg();
-                        break;
-                    case 'o':
-                        output = opts.getOptarg();
-                        break;
-                    case 'h':
-                        filter_html = true;
-                        break;
-                    case 'e':
-                        embed = true;
-                        System.out.println("Saving conversions to Input folder.  Output folder will be ignored.");
-                        break;
-                    default:
-                        XText.usage();
-                        System.exit(1);
+                case 'i':
+                    input = opts.getOptarg();
+                    break;
+                case 'o':
+                    output = opts.getOptarg();
+                    break;
+                case 'h':
+                    filter_html = true;
+                    break;
+                case 'e':
+                    embed = true;
+                    System.out.println("Saving conversions to Input folder.  Output folder will be ignored.");
+                    break;
+                default:
+                    XText.usage();
+                    System.exit(1);
                 }
             }
         } catch (Exception err) {
@@ -636,6 +731,7 @@ public final class XText implements iFilter, iConvert {
         //
         // System.setProperty("LANG", "en_US");
         XText xt = new XText();
+        xt.enableOverwrite(true); // Given this is a test application, we will overwrite every time XText is called.
         xt.enableSaving(true);
         xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in directory.
         xt.enableHTMLScrubber(filter_html);
