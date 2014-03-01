@@ -82,6 +82,12 @@ public class MGRSFilter implements MatchFilter {
         _df2.setLenient(true);
         df.add(_df2);
 
+        // Patterns like 15 EST 2012
+        DateFormat _df3 = new java.text.SimpleDateFormat("HHZZZyyyy");
+        // turn off lenient date parsing
+        _df3.setLenient(true);
+        df.add(_df3);
+
         cal = Calendar.getInstance();
         cal.setTime(today);
         CURRENT_YEAR = cal.get(Calendar.YEAR);
