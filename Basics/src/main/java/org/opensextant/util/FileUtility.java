@@ -71,8 +71,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static boolean writeFile(String buffer, String fname, String enc, boolean append)
-            throws IOException {
+    public static boolean writeFile(String buffer, String fname, String enc, boolean append) throws IOException {
         if (fname == null || enc == null || buffer == null) {
             throw new IOException("Null values cannot be used to write out file.");
         }
@@ -94,8 +93,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static OutputStreamWriter getOutputStream(String fname, String enc, boolean append)
-            throws IOException {
+    public static OutputStreamWriter getOutputStream(String fname, String enc, boolean append) throws IOException {
         return new OutputStreamWriter(new FileOutputStream(fname, append), enc);
     }
 
@@ -107,8 +105,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static OutputStreamWriter getOutputStream(String fname, String enc)
-            throws IOException {
+    public static OutputStreamWriter getOutputStream(String fname, String enc) throws IOException {
         return getOutputStream(fname, enc, false);
     }
 
@@ -120,8 +117,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static InputStreamReader getInputStream(String fname, String enc)
-            throws IOException {
+    public static InputStreamReader getInputStream(String fname, String enc) throws IOException {
         return new InputStreamReader(new FileInputStream(fname), enc);
     }
 
@@ -135,12 +131,26 @@ public class FileUtility {
         return (testpath.endsWith(".csv") || testpath.endsWith(".xls") || testpath.endsWith(".xlsx"));
     }
 
+    /**
+     * Using Commons getExtension(), determine if the filename represents an image media type.
+     * @param filepath
+     * @return
+     */
+    public static boolean isImage(String filepath) {
+        if (filepath == null) {
+            return false;
+        }
+        String ext = FilenameUtils.getExtension(filepath.toLowerCase());
+        return imageTypeMap.containsKey(ext);
+    }
+
     /** Check if a file is an archive
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
      */
     public static boolean isArchiveFile(String filepath) {
         String testpath = filepath.toLowerCase();
-        return testpath.endsWith(".zip") || testpath.endsWith(".tar") || testpath.endsWith(".tgz") || testpath.endsWith(".gz"); // || testpath.endsWith(".tar.gz");
+        return testpath.endsWith(".zip") || testpath.endsWith(".tar") || testpath.endsWith(".tgz")
+                || testpath.endsWith(".gz"); // || testpath.endsWith(".tar.gz");
     }
 
     /** Allow checking of a file extention; NO prefix "."
@@ -157,8 +167,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static String readFile(String fname)
-            throws IOException {
+    public static String readFile(String fname) throws IOException {
         return readFile(new File(fname), default_encoding);
     }
 
@@ -168,10 +177,10 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static String readFile(File f)
-            throws IOException {
+    public static String readFile(File f) throws IOException {
         return readFile(f, default_encoding);
     }
+
     /**
      *
      */
@@ -189,8 +198,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static String readFile(File fileinput, String enc)
-            throws IOException {
+    public static String readFile(File fileinput, String enc) throws IOException {
         if (fileinput == null) {
             return null;
         }
@@ -209,8 +217,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static byte[] readBytesFrom(File fileinput)
-            throws IOException {
+    public static byte[] readBytesFrom(File fileinput) throws IOException {
         if (fileinput == null) {
             return null;
         }
@@ -234,8 +241,7 @@ public class FileUtility {
         }
 
         FileInputStream instream = new FileInputStream(fname);
-        GZIPInputStream gzin =
-                new GZIPInputStream(new BufferedInputStream(instream), default_buffer);
+        GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), default_buffer);
 
         byte[] inputBytes = new byte[default_buffer];
         StringBuilder buf = new StringBuilder();
@@ -264,8 +270,7 @@ public class FileUtility {
         }
 
         FileOutputStream outstream = new FileOutputStream(fname);
-        GZIPOutputStream gzout =
-                new GZIPOutputStream(new BufferedOutputStream(outstream), default_buffer);
+        GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), default_buffer);
 
         gzout.write(text.getBytes(default_encoding));
 
@@ -285,8 +290,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static boolean makeDirectory(File testDir /*, Logger log*/)
-            throws IOException {
+    public static boolean makeDirectory(File testDir /*, Logger log*/) throws IOException {
         if (testDir == null) {
             return false;
         }
@@ -309,8 +313,7 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static boolean makeDirectory(String dir)
-            throws IOException {
+    public static boolean makeDirectory(String dir) throws IOException {
         if (dir == null) {
             return false;
         }
@@ -325,7 +328,6 @@ public class FileUtility {
      */
     public static boolean removeDirectory(File directory) {
         //taken from http://www.java2s.com/Tutorial/Java/0180__File/Removeadirectoryandallofitscontents.htm
-
 
         if (directory == null) {
             return false;
@@ -420,10 +422,8 @@ public class FileUtility {
      * @throws IOException
      * @deprecated LineNumber reader is deprecated
      */
-    public static LineNumberReader getLineReader(String filepath)
-            throws FileNotFoundException, IOException {
-        return new LineNumberReader(
-                new StringReader(FileUtility.readFile(filepath)));
+    public static LineNumberReader getLineReader(String filepath) throws FileNotFoundException, IOException {
+        return new LineNumberReader(new StringReader(FileUtility.readFile(filepath)));
     }
 
     /**
@@ -545,6 +545,7 @@ public class FileUtility {
         }
         return null;
     }
+
     /**
      *
      */
@@ -589,6 +590,7 @@ public class FileUtility {
          */
         return (val != null ? val.contains("Windows") : false);
     }
+
     /**
      *
      */
@@ -603,8 +605,7 @@ public class FileUtility {
      * @return Set containing unique words found in resourcepath
      * @throws IOException
      */
-    public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive)
-            throws IOException {
+    public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive) throws IOException {
 
         InputStream io = FileUtility.class.getResourceAsStream(resourcepath);
         BufferedReader reader = new BufferedReader(new InputStreamReader(io, default_encoding));
@@ -625,6 +626,7 @@ public class FileUtility {
         }
         return dict;
     }
+
     //
     //
     //  Working with file types
@@ -646,24 +648,28 @@ public class FileUtility {
     public final static String NOT_AVAILABLE = "other";
     public final static String GIS_MIMETYPE = "GIS data";
 
+    private final static HashMap<String, String> imageTypeMap = new HashMap<String, String>();
+
     static {
+
+        // Image
+        imageTypeMap.put("jpg", IMAGE_MIMETYPE);
+        imageTypeMap.put("jpeg", IMAGE_MIMETYPE);
+        imageTypeMap.put("ico", IMAGE_MIMETYPE);
+        imageTypeMap.put("bmp", IMAGE_MIMETYPE);
+        imageTypeMap.put("gif", IMAGE_MIMETYPE);
+        imageTypeMap.put("png", IMAGE_MIMETYPE);
+        imageTypeMap.put("tif", IMAGE_MIMETYPE);
+        imageTypeMap.put("tiff", IMAGE_MIMETYPE);
+        filetypeMap.putAll(imageTypeMap);
+
         filetypeMap.put("", NOT_AVAILABLE);
-        
+
         // GIS Data
         filetypeMap.put("gdb", GIS_MIMETYPE);
         filetypeMap.put("shp", GIS_MIMETYPE);
         filetypeMap.put("kml", GIS_MIMETYPE);
         filetypeMap.put("kmz", GIS_MIMETYPE);
-
-        // Image
-        filetypeMap.put("jpg", IMAGE_MIMETYPE);
-        filetypeMap.put("jpeg", IMAGE_MIMETYPE);
-        filetypeMap.put("ico", IMAGE_MIMETYPE);
-        filetypeMap.put("bmp", IMAGE_MIMETYPE);
-        filetypeMap.put("gif", IMAGE_MIMETYPE);
-        filetypeMap.put("png", IMAGE_MIMETYPE);
-        filetypeMap.put("tif", IMAGE_MIMETYPE);
-        filetypeMap.put("tiff", IMAGE_MIMETYPE);
 
         // Data
         filetypeMap.put("dat", DATA_MIMETYPE);
@@ -697,7 +703,7 @@ public class FileUtility {
         filetypeMap.put("emlx", MESSAGE_MIMETYPE);
         filetypeMap.put("msg", MESSAGE_MIMETYPE);
         filetypeMap.put("sms", MESSAGE_MIMETYPE);
-        
+
         //Apps
         filetypeMap.put("do", APP_MIMETYPE);
         filetypeMap.put("aspx", APP_MIMETYPE);
@@ -708,7 +714,6 @@ public class FileUtility {
         filetypeMap.put("vbs", APP_MIMETYPE);
         filetypeMap.put("vb", APP_MIMETYPE);
         filetypeMap.put("vba", APP_MIMETYPE);
-
 
         // Video
         filetypeMap.put("mov", VID_MIMETYPE);

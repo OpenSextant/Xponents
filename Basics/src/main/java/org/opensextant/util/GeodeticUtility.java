@@ -15,9 +15,14 @@
  */
 package org.opensextant.util;
 
+import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.GeoBase;
+import org.opensextant.data.LatLon;
 
 /**
  * A collection of geodetic routines used within OpenSextant.
@@ -28,9 +33,9 @@ import org.opensextant.data.GeoBase;
  */
 public class GeodeticUtility {
 
-        /**
-     *
-     */
+    /**
+    *
+    */
     public final static int LAT_MAX = 90;
     /**
      *
@@ -60,7 +65,6 @@ public class GeodeticUtility {
         return true;
     }
 
-
     /**
      * This returns distance in degrees, e.g., this is a Cartesian distance.
      * Only to be used for fast comparison of two locations relatively close
@@ -70,7 +74,7 @@ public class GeodeticUtility {
      * @return distance between p1 and p2 in degrees.
      */
     public static double distanceDegrees(GeoBase p1, GeoBase p2) {
-        if (p1 == null || p2 == null){
+        if (p1 == null || p2 == null) {
             return Double.MAX_VALUE;
         }
         return Math.sqrt(Math.pow((p1.getLatitude() - p2.getLatitude()), 2)
@@ -86,8 +90,7 @@ public class GeodeticUtility {
      * @return distance between p1 and p2 in degrees.
      */
     public static double distanceDegrees(double lat1, double lon1, double lat2, double lon2) {
-        return Math.sqrt(Math.pow((lat1 - lat2), 2)
-                + Math.pow((lon1 - lon2), 2));
+        return Math.sqrt(Math.pow((lat1 - lat2), 2) + Math.pow((lon1 - lon2), 2));
     }
 
     /**
@@ -142,8 +145,7 @@ public class GeodeticUtility {
             return DEFAULT_PRECISION;
         }
 
-        String lookup = (feat_code != null
-                ? feat_type + "/" + feat_code : feat_type);
+        String lookup = (feat_code != null ? feat_type + "/" + feat_code : feat_type);
 
         Integer prec = FEATURE_PRECISION.get(lookup);
 
@@ -168,8 +170,7 @@ public class GeodeticUtility {
             return DEFAULT_GEOHASH_PRECISION;
         }
 
-        String lookup = (feat_code != null
-                ? feat_type + "/" + feat_code : feat_type);
+        String lookup = (feat_code != null ? feat_type + "/" + feat_code : feat_type);
 
         Integer prec = FEATURE_GEOHASH_PRECISION.get(lookup);
 
@@ -183,5 +184,34 @@ public class GeodeticUtility {
         }
 
         return DEFAULT_GEOHASH_PRECISION;
+    }
+
+    /**
+     * The most simplistic parsing and validation of "lat lon" or "lat, lon"
+     * any amount of whitespace is allowed, provided the lat lon order is there.
+     * @param lat_lon
+     * @return
+     */
+    public static LatLon parseLatLon(String lat_lon) throws ParseException {
+        if (StringUtils.isBlank(lat_lon)) {
+            return null;
+        }
+        String delim = lat_lon.contains(",") ? "," : " ";
+
+        List<String> LL = TextUtils.string2list(lat_lon, delim);
+        LatLon geo = null;
+        try {
+            geo = new GeoBase(null, lat_lon);
+            geo.setLatitude(Double.parseDouble(LL.get(0)));
+            geo.setLongitude(Double.parseDouble(LL.get(1)));
+
+        } catch (Exception parseerr) {
+            throw new ParseException("Unable to Parse text as XY:" + parseerr.getMessage(), 0);
+        }
+
+        if (!validateCoordinate(geo.getLatitude(), geo.getLongitude())) {
+            throw new ParseException("Invalid Coordinate values", 0);
+        }
+        return geo;
     }
 }

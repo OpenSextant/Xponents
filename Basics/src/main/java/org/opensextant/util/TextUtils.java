@@ -285,6 +285,33 @@ public class TextUtils {
     }
 
     /**
+     * For measuring the upper-case-ness of short texts.
+     * Returns true if ALL letters in text are UPPERCASE.
+     * Allows for non-letters in text.
+     * 
+     * @param dat
+     * @return
+     */
+    public static boolean isUpper(String dat) {
+        if (dat == null) {
+            return false;
+        }
+        int letterCount = 0;
+        for (char c : dat.toCharArray()) {
+            if (!Character.isLetter(c)) {
+                continue;
+            }
+            ++letterCount;
+            if (Character.isLowerCase(c)) {
+                return false;
+            }
+        }
+        // IF at least one Letter found
+        // then 
+        return letterCount > 0;
+    }
+
+    /**
      * EH: EHCommons.get_text_window
      * 
      * @param offset

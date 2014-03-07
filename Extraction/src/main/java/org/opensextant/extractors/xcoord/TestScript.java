@@ -375,6 +375,8 @@ public class TestScript {
         xcoord.match_MGRS(mgrs);
 
         String[] mgrstest = {
+            "04RAA80099\n\t1",               // Fail -- too much whitespace.
+            "12FTF82711",
             "15 EST 2008",
             "14 MRE\n\n 1445",
             "4 jul 2008",
@@ -393,9 +395,14 @@ public class TestScript {
             "10 Jan 2005 02", // MGRS 01, 10JAN 200502
             "10 Jan 1995 02"
         };
+        
 
         xcoord.match_DD(dd);
         String[] ddtest = {
+            "00 N 130 WA",
+            "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
+            "-385331-17004121",
+            "CAN-385331-17004121",
             "15S5E",
             "TARGET [1]  LATITUDE: +32.3345  LONGITUDE: -179.3412", //DD04
             "TARGET [1]  LATITUDE= +32.3345  LONGITUDE= -179.3412", //DD04
@@ -418,6 +425,8 @@ public class TestScript {
         xcoord.match_DMS(dms);
         xcoord.match_DM(dm);
         String[] dmtest = {
+            "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
+            "-385331-17004121",
             "41º58'46\"N, 87º54'20\"W ",
             "Latitude: 41º58'46\"N, Longitude: 87º54'20\"W ",
             "15S5E",

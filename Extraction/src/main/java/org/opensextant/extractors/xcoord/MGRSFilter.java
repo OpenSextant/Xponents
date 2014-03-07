@@ -34,6 +34,9 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
+import org.opensextant.util.TextUtils;
+
 /**
  * MGRS Filters include ignoring these patterns:
  *
@@ -111,7 +114,9 @@ public class MGRSFilter implements MatchFilter {
     }
 
     /**
+     * TODO: Document rules.
      * stop a match
+     * Note, use of case sensitivity filter is really limited to MGRS.  UTM might have the "m" units designation on matches; MGRS typically does not.
      *
      * @param m
      * @return
@@ -119,6 +124,12 @@ public class MGRSFilter implements MatchFilter {
     @Override
     public boolean stop(GeocoordMatch m) {
 
+        // Simple case filter.  44ger7780 is not really an MGRS.
+        // 
+        if (! TextUtils.isUpper(m.getText())){
+            return true;
+        }
+        
         int len = m.coord_text.length();
         if (len < 6) {
             return true;

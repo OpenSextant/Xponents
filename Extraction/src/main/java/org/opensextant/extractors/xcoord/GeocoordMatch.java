@@ -39,6 +39,7 @@ import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextEntity;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.data.Geocoding;
+import org.opensextant.data.LatLon;
 import org.opensextant.util.GeodeticUtility;
 
 /**
@@ -120,6 +121,17 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
+     * If you are given a vetted XY, use that.
+     * @param yx
+     */
+    public void setLatLon(LatLon yx) {
+        if (yx != null) {
+            this.setLatitude(yx.getLatitude());
+            this.setLongitude(yx.getLongitude());
+        }
+    }
+
+    /**
      * 
      * @param m
      */
@@ -154,7 +166,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
         this.latitude = lat.getValue();
         this.longitude = lon.getValue();
-        
+
         lat.setRelativeOffsets(start);
         lon.setRelativeOffsets(start);
         setRelativeOffset(start);
@@ -169,56 +181,57 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
             //
             this.setFilteredOut(!GeodeticUtility.validateCoordinate(latitude, longitude));
         }
-        
+
         if (!this.isFilteredOut()) {
             // If not yet filtered out for some other reason, evaluate the fields in the matched YX pair
             //  If a degree lat is paired up with sub-second longitude then you have a dire mismatch.
             // 
-            this.setFilteredOut(! GeocoordNormalization.evaluateSpecificity( lat, lon));
+            this.setFilteredOut(!GeocoordNormalization.evaluateSpecificity(lat, lon));
         }
     }
 
-    public final String[] separators = {"latlonSepNoDash","latlonSep", "xySep", "trivialSep"};
+    public final String[] separators = { "latlonSepNoDash", "latlonSep", "xySep", "trivialSep" };
     protected int offsetSeparator = -1;
     protected String separator = null;
-    
+
     /**
      * 
      * @param fields
      */
-    protected void setSeparator(Map<String, TextEntity> fields){
-        for (String k : separators){
+    protected void setSeparator(Map<String, TextEntity> fields) {
+        for (String k : separators) {
             TextEntity val = fields.get(k);
-            if (val!= null){
+            if (val != null) {
                 offsetSeparator = val.start;
                 separator = val.getText();
                 return;
             }
         }
     }
-    
+
     /**
      * TODO: this should only be called once.
      * @param s
      */
-    protected void setRelativeOffset(int s){
-        if (offsetSeparator>=0){
+    protected void setRelativeOffset(int s) {
+        if (offsetSeparator >= 0) {
             offsetSeparator = offsetSeparator - s;
         }
     }
+
     /**
      * Evaluate DM/DMS patterns only...
      * 
      * @throws ExtractionException
      */
-    public boolean evaluateDashes() throws NormalizationException{
-        if (lat== null || lon == null){
-            throw new NormalizationException("Set lat/lon first before evaluating dashes"); 
+    public boolean evaluateDashes() throws NormalizationException {
+        if (lat == null || lon == null) {
+            throw new NormalizationException("Set lat/lon first before evaluating dashes");
         }
-        if (lat.offsetOrdinate < 0 || lon.offsetOrdinate < 0){
-            throw new NormalizationException("Degree offsets my exist");             
+        if (lat.offsetOrdinate < 0 || lon.offsetOrdinate < 0) {
+            throw new NormalizationException("Degree offsets my exist");
         }
-        
+
         // Relative offsets to text.  Given the match, find where the degree starts.
         // 
         // LAT / LON pairs -- where does lat start and end?
@@ -227,18 +240,18 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         //  H D:M:S sep H D:M:S
         // Choose the end of the latitude text based on the hemisphere.
         // OR  Based on the start of the longitude hemisphere        
-        int x2 =  lon.offsetOrdinate;  // Remains as-is, by default. 
-        
-        if ( offsetSeparator > 0){            
+        int x2 = lon.offsetOrdinate; // Remains as-is, by default. 
+
+        if (offsetSeparator > 0) {
             // Offsets are regex char 1.. based or 0.. based?
-            x2 = offsetSeparator - 1;  // Exclude the offset; should remain as-is;
-        } else if (lat.offsetHemi>0 && lat.offsetHemi>lat.offsetDeg){
-            x2 = lat.offsetHemi + 1;  // Include the hemisphere for Lat. +1
+            x2 = offsetSeparator - 1; // Exclude the offset; should remain as-is;
+        } else if (lat.offsetHemi > 0 && lat.offsetHemi > lat.offsetDeg) {
+            x2 = lat.offsetHemi + 1; // Include the hemisphere for Lat. +1
         }
-        
-        String latText = getText().substring(lat.offsetDeg, x2).trim();  // By this point x2 offset should be exclusive end of LAT          
+
+        String latText = getText().substring(lat.offsetDeg, x2).trim(); // By this point x2 offset should be exclusive end of LAT          
         String lonText = getText().substring(lon.offsetOrdinate).trim();
-        
+
         // TODO: This fails to work if "-" is used as a separator, <Lat> - <Lon>
         // But in certain situations it is helpful to know if dash as field
         // separators can reveal a false positive
@@ -247,20 +260,21 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         //
         int lat_dashes = StringUtils.countMatches(latText, "-");
         int lon_dashes = StringUtils.countMatches(lonText, "-");
-        
+
         // ASSUMPTION:  LON follows LAT, so where LAT, -LON
         //  the "-" may be part of the LAT field.
-        if (lon.hemisphere.symbol != null) {            
-            
+        if (lon.hemisphere.symbol != null) {
+
             if ("-".equals(lon.hemisphere.symbol)) {
                 --lon_dashes;
             }
         }
-        
+
         // Dash count is even?
         return lat_dashes != lon_dashes;
         // Caller should override this assessment if counting dashes in lat or lon is irrelevant.
     }
+
     /**
      * 
      * @return
@@ -462,6 +476,15 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     @Override
     public String getMethod() {
         return this.pattern_id;
+    }
+    
+    /**
+     * This reuses TextMatch.pattern_id attr;  Use get/setMethod() or pattern_id as needed.
+     * @param matchMethod
+     * @return
+     */
+    public void setMethod(String matchMethod){
+        pattern_id = matchMethod;
     }
 
     /**

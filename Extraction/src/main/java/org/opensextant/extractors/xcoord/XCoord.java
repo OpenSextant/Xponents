@@ -71,8 +71,7 @@ public class XCoord extends AbstractFlexPat {
      * false-positive filters for coordinate types; (b) extract context around
      * coordinate.
      */
-    public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS
-            | XConstants.FLAG_EXTRACT_CONTEXT;
+    public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS | XConstants.FLAG_EXTRACT_CONTEXT;
     protected static String DEFAULT_XCOORD_CFG = "/geocoord_patterns.cfg";
 
     /**
@@ -144,6 +143,7 @@ public class XCoord extends AbstractFlexPat {
 
         return results.matches;
     }
+
     /**
      *
      */
@@ -227,6 +227,32 @@ public class XCoord extends AbstractFlexPat {
     }
 
     /**
+     * Strictly internal heuristic.
+     *     ABC<coord>123  -- coordinate pattern found buried in alpha-numeric text.
+     * @param buf
+     * @param offset
+     * @return
+     */
+    private boolean filterOutContext(String buf, int offset) {
+        // Filter for pre-match.
+        if (offset == 0) {
+            // Do nothing.
+            return false;
+        }
+
+        // Character preceeding this offset is Alphanumeric.
+        // In that context, this is likely a false positive.
+        // 
+        char c1 = buf.charAt(offset);
+        if (Character.isWhitespace(c1)) {
+            // word break; -- Pattern must have matched word boundary or optional WS.
+            return false;
+        }
+        char c2 = buf.charAt(offset - 1);
+        return Character.isDigit(c2) || Character.isLetter(c2);
+    }
+
+    /**
      * Limit the extraction to a particular family of coordinates. Diagnostic
      * messages appear in TextMatchResultSet only when debug = ON.
      * 
@@ -284,10 +310,16 @@ public class XCoord extends AbstractFlexPat {
                 coord.end = match.end();
                 coord.setText(match.group());
 
+                if ((RUNTIME_FLAGS & XConstants.CONTEXT_FILTERS_ON) > 0) {
+                    if (this.filterOutContext(text, coord.start)) {
+                        log.debug("Filtered out noisy match, {} found by {}", coord.getText(), pat.id);
+                        continue;
+                    }
+                }
+
                 // Normalize
                 try {
-                    GeocoordNormalization.normalize_coordinate(coord,
-                            patterns.group_matches(pat, match));
+                    GeocoordNormalization.normalize_coordinate(coord, patterns.group_matches(pat, match));
                 } catch (NormalizationException normErr) {
                     if (debug) {
                         // Quietly ignore
@@ -304,8 +336,8 @@ public class XCoord extends AbstractFlexPat {
                 //
                 if (GeocoordNormalization.filter_out(coord)) {
                     if (debug) {
-                        results.message = "Filtered out coordinate pattern=" + pat.id + " value='"
-                                + coord.getText() + "'";
+                        results.message = "Filtered out coordinate pattern=" + pat.id + " value='" + coord.getText()
+                                + "'";
                         log.info("Normalization Filter fired, MSG=" + results.message);
                     }
                     continue;
@@ -321,8 +353,7 @@ public class XCoord extends AbstractFlexPat {
                  */
                 if ((XCoord.RUNTIME_FLAGS & XConstants.FLAG_EXTRACT_CONTEXT) > 0) {
                     // returns indices for two windows before and after match
-                    int[] slices = TextUtils.get_text_window(coord.start, coord.match_length(),
-                            bufsize, match_width);
+                    int[] slices = TextUtils.get_text_window(coord.start, coord.match_length(), bufsize, match_width);
 
                     // This sets the context window before/after.
                     //
@@ -387,7 +418,8 @@ public class XCoord extends AbstractFlexPat {
 
         // Use default config file.
         XCoord xc = new XCoord(debug);
-        XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT | XConstants.MGRS_FILTERS_ON;
+        XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT | XConstants.MGRS_FILTERS_ON
+                | XConstants.CONTEXT_FILTERS_ON;
 
         gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XCoord", args, "aft:u:");
 
@@ -402,7 +434,7 @@ public class XCoord extends AbstractFlexPat {
                 case 'f':
                     System.out.println("\tSYSTEM TESTS=======\n" + opts.getOptarg());
                     test.systemTests();
-                    
+
                     // Truth source is at src/test/resources  -- Or anywhere in your runtime classpath at TOP LEVEL!
                     //
                     URL truthData = XCoord.class.getResource("/Coord_Patterns_Truth.csv");

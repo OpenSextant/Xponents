@@ -81,6 +81,26 @@ public class PrecisionScales {
             m.precision.precision = DEFAULT_UNKNOWN_RESOLUTION;
         }
     }
+    
+    /**
+     * Return XCoord precision (+/- meters) in latitude.
+     * @param lat
+     * @return
+     */
+    public static GeocoordPrecision getDDPrecision(String lat){
+        GeocoordPrecision prec = new GeocoordPrecision();
+
+        // Find the number of digits used in lat.
+        prec.setDigits( count_DD_digits(lat) );
+
+        // Determine the error given the number of digits
+        if (prec.digits < DD_precision_list.length) {
+            prec.precision = DD_precision_list[prec.digits];
+        } else {
+            prec.precision = DEFAULT_UNKNOWN_RESOLUTION;
+        }        
+        return prec;
+    }
 
     /**
      *

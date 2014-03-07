@@ -85,12 +85,15 @@ public final class XConstants {
     public final static int DD_FILTERS_ON  =  0x02;
     /** RUNTIME FLAGS: filter MGRS coordinates -- date patterns and NUM PER NUM  patterns e.g., the ratio "4 per 4000" is not MGRS*/
     public final static int MGRS_FILTERS_ON = 0x04;
-    /** RUNTIME FLAGS: filter all coordinate patterns that have filters */
-    public final static int FLAG_ALL_FILTERS = (MGRS_FILTERS_ON|DD_FILTERS_ON|DMS_FILTERS_ON);
+    /** RUNTIME FLAGS:  filter out coordinate matches that appear embedded in other text, e.g., ABC45.44,77.1W */
+    public final static int CONTEXT_FILTERS_ON = 0x20;
+   /** RUNTIME FLAGS: filter all coordinate patterns that have filters */
+    public final static int FLAG_ALL_FILTERS = (MGRS_FILTERS_ON|DD_FILTERS_ON|DMS_FILTERS_ON|CONTEXT_FILTERS_ON);
 
     /** RUNTIME FLAGS: extract context or not */
     public final static int FLAG_EXTRACT_CONTEXT = 0x10;
-
+    
+ 
 
     /**
      *

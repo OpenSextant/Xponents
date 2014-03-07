@@ -37,7 +37,10 @@ import org.opensextant.util.TextUtils;
 public class MGRSParser {
 
     /**
-     *
+     * Given the match parse MGRS as best as can be done. 
+     * TODO: provide level of confidence.  Items that match MGRS scheme perfectly are more likely to be MGRS than those that 
+     * are not perfect matches, e.g. typos, inadvertent text wrapping, whitespace etc.
+     * 
      * @param text
      * @param elements
      * @return
@@ -114,6 +117,11 @@ public class MGRSParser {
         String ne = elements.get("Easting_Northing");
         int digits = TextUtils.count_digits(ne);
         boolean odd_len = ((digits & 0x0001) == 1);
+
+        if (!isValidEastingNorthing(ne, odd_len)) {
+            return null;
+        }
+
         if (!odd_len) {
             //----------------------------
             // Completely normal MGRS with even number of digits.
@@ -155,7 +163,6 @@ public class MGRSParser {
                 mgrs2.insert(0, gzd);
 
                 return new MGRS[] { new MGRS(mgrs1.toString()), new MGRS(mgrs2.toString()) };
-
             }
 
             nenorm = TextUtils.squeeze_whitespace(ne);
@@ -222,6 +229,53 @@ public class MGRSParser {
 
             return new MGRS[] { new MGRS(mgrs1.toString()), new MGRS(mgrs2.toString()) };
         }
+    }
+
+    /**
+     * A hueuristic from looking at real data, real text artifacts - typos, line endings, whitespace wrapping, etc.
+     * 
+     * Acceptable Northing/Eastings:
+     * dd dd
+     * dddd dddd
+     * 
+     * typos: (odd number of digits;  whitespace or not.)
+     * ddd dd
+     * ddddd
+     * 
+     * Not valid:
+     * 
+     * dd dd\nd   odd digits and has line endings
+     * 
+     * @param ne
+     * @return
+     */
+    protected static boolean isValidEastingNorthing(String ne, boolean oddLength){
+        // PARSE RULE:  ignore abnormal MGRS patterns with line endings in the match
+        // 
+        //  The MGRS easting/northing is messy and contains line endings.
+        //  Abort. This is not likely an MGRS worth anything.
+        // 
+
+        boolean containsEOL = (ne.contains("\n") || ne.contains("\r"));
+        boolean containsTAB = ne.contains("\t");
+        if (oddLength){
+            return ! ( containsEOL || containsTAB);                   
+        }
+        
+        int wsCount = TextUtils.count_ws(ne);
+
+        // NO:
+        // dd dd\ndd  
+        // YES:  normal text wrap on offset.
+        // dd\ndd
+        if (wsCount>1 && containsEOL){
+            return false;
+        }
+        if (wsCount>2){
+            return false;
+        }
+        
+        return true;
     }
 
     /**
