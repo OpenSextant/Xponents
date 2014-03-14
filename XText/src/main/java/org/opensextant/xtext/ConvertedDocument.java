@@ -210,6 +210,14 @@ public final class ConvertedDocument extends DocInput {
         }
         children.add(ch);
     }
+    
+    /**
+     * true if this is a parent and has ConvertedDocument children. 
+     * @return
+     */
+    public boolean hasChildren(){
+        return (children!=null && !children.isEmpty());
+    }
 
     public void addRawChild(Content child) {
         if (childrenContent == null) {
@@ -218,12 +226,22 @@ public final class ConvertedDocument extends DocInput {
         childrenContent.add(child);
     }
 
+    /**
+     * true if this is a parent and has raw Content children, e.g., raw bytes + metadata
+     * which can in turn be saved as Files and then Converted to children
+     * 
+     * @return
+     */
     public boolean hasRawChildren() {
-        return (childrenContent != null && childrenContent.size() > 0);
+        return (childrenContent != null && !childrenContent.isEmpty());
     }
 
     public List<Content> getRawChildren() {
         return childrenContent;
+    }
+    
+    public List<ConvertedDocument> getChildren(){
+        return children;
     }
 
     /**
