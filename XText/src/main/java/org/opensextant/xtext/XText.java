@@ -486,7 +486,15 @@ public final class XText implements iFilter, iConvert {
             }
         }
 
-        if (postProcessor != null) {
+        /*
+         * Conversion Listeners are called only for parent documents.  That is for an email with 4 attachments, 
+         * this listener is called on the parent email message, but not for the individual 4 attachments.
+         * The final parent document here will have all Raw Children (bytes + metadata) and Converted Children (ConvertedDocument obj)
+         * Caller will have to detect if returned item via listener is a Parent with Children.
+         * 
+         * Behavior here is TBD.
+         */
+        if (postProcessor != null && parent == null) {
             postProcessor.handleConversion(textDoc);
         }
 
