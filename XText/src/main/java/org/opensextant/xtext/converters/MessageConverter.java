@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.mail.Address;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
@@ -70,26 +71,39 @@ public class MessageConverter extends ConverterAdapter {
             // Connect to the message file
             // 
             MimeMessage msg = new MimeMessage(noSession, in);
-            
-            ConvertedDocument parentMsgDoc = new ConvertedDocument(doc);
-            setMailAttributes(parentMsgDoc, msg);
-
-            StringBuilder rawText = new StringBuilder();
-            // Since content is taken from file system, use file name
-            String messageFilePrefix = (doc != null ? FilenameUtils.getBaseName(doc.getName()) : parentMsgDoc.id);
-
-            // Find all attachments and plain text.
-            parseMessage(msg, parentMsgDoc, rawText, messageFilePrefix);
-
-            parentMsgDoc.setText(rawText.toString());
-
-            return parentMsgDoc;
-
+            return convertMimeMessage(msg, doc);
         } catch (Exception xerr) {
             throw new IOException("Unable to parse content", xerr);
         } finally {
             in.close();
         }
+    }
+
+    /**
+     * Convert the MIME Message with or without the File doc.
+     *  -- live email capture from a mailbox:  you have the MimeMessage; there is no File object
+     *  -- email capture from a filesystem:   you retrieved the MimeMessage from a File object
+     *  
+     * @param msg
+     * @param doc
+     * @return
+     * @throws MessagingException
+     * @throws IOException
+     */
+    public ConvertedDocument convertMimeMessage(Message msg, File doc) throws MessagingException, IOException {
+        ConvertedDocument parentMsgDoc = new ConvertedDocument(doc);
+        setMailAttributes(parentMsgDoc, msg);
+
+        StringBuilder rawText = new StringBuilder();
+        // Since content is taken from file system, use file name
+        String messageFilePrefix = (doc != null ? FilenameUtils.getBaseName(doc.getName()) : parentMsgDoc.id);
+
+        // Find all attachments and plain text.
+        parseMessage(msg, parentMsgDoc, rawText, messageFilePrefix);
+
+        parentMsgDoc.setText(rawText.toString());
+
+        return parentMsgDoc;
     }
 
     /**
@@ -100,7 +114,7 @@ public class MessageConverter extends ConverterAdapter {
      * @param message
      * @throws MessagingException
      */
-    private void setMailAttributes(ConvertedDocument msgdoc, MimeMessage message) throws MessagingException {
+    private void setMailAttributes(ConvertedDocument msgdoc, Message message) throws MessagingException {
         msgdoc.id = getMessageID(message);
         String mailSubj = message.getSubject();
         msgdoc.addTitle(mailSubj);
@@ -113,10 +127,10 @@ public class MessageConverter extends ConverterAdapter {
             msgdoc.addAuthor(sender0);
         }
 
-        msgdoc.addUserProperty(MAIL_KEY_PREFIX+"msgid", msgdoc.id);
-        msgdoc.addUserProperty(MAIL_KEY_PREFIX+"sender", sender0);
-        msgdoc.addUserProperty(MAIL_KEY_PREFIX+"date", message.getSentDate().toString());
-        msgdoc.addUserProperty(MAIL_KEY_PREFIX+"subject", mailSubj);
+        msgdoc.addUserProperty(MAIL_KEY_PREFIX + "msgid", msgdoc.id);
+        msgdoc.addUserProperty(MAIL_KEY_PREFIX + "sender", sender0);
+        msgdoc.addUserProperty(MAIL_KEY_PREFIX + "date", message.getSentDate().toString());
+        msgdoc.addUserProperty(MAIL_KEY_PREFIX + "subject", mailSubj);
 
     }
 
@@ -127,10 +141,10 @@ public class MessageConverter extends ConverterAdapter {
      * @return
      * @throws MessagingException 
      */
-    private String getMessageID(MimeMessage message) throws MessagingException {
+    public static String getMessageID(Message message) throws MessagingException {
         String[] msgIds = message.getHeader("Message-Id");
         if (msgIds == null || msgIds.length == 0) {
-            logger.error("No Message ID!");
+            //logger.error("No Message ID!");
             return null;
         }
         String msgId = null;
@@ -144,7 +158,7 @@ public class MessageConverter extends ConverterAdapter {
         }
         return msgLocalId;
     }
-    
+
     public static String MAIL_KEY_PREFIX = "mail:";
 
     /**
@@ -226,7 +240,7 @@ public class MessageConverter extends ConverterAdapter {
                     // finest grained elements, at which point
                     parseMessage(mp.getBodyPart(i), parent, buf, msgPrefixId);
                 }
-                
+
                 // Exit point
                 return;
 
@@ -250,7 +264,7 @@ public class MessageConverter extends ConverterAdapter {
                 } else if (part instanceof InputStream) {
 
                     // Retrieve byte stream.
-                    Content child = createChildContent( filename, (InputStream) part);
+                    Content child = createChildContent(filename, (InputStream) part);
                     copyMailAttrs(parent, child);
                     parent.addRawChild(child);
 
@@ -268,8 +282,8 @@ public class MessageConverter extends ConverterAdapter {
                 String disposition = bodyPart.getDisposition();
                 logger.debug("{}# Saving {} ", msgPrefixId, filename);
                 if (disposition == null || disposition.equalsIgnoreCase(Part.ATTACHMENT)) {
-                   
-                    Content child = createChildContent( filename, ((MimeBodyPart) bodyPart).getRawInputStream());
+
+                    Content child = createChildContent(filename, ((MimeBodyPart) bodyPart).getRawInputStream());
                     copyMailAttrs(parent, child);
                     parent.addRawChild(child);
                     return;
@@ -284,7 +298,7 @@ public class MessageConverter extends ConverterAdapter {
             }
         }
     }
-    
+
     /**
      * More conveniently create Child item.
      * @param file_id
@@ -292,7 +306,7 @@ public class MessageConverter extends ConverterAdapter {
      * @return
      * @throws IOException
      */
-    private Content createChildContent(String file_id, InputStream input) throws IOException{
+    private Content createChildContent(String file_id, InputStream input) throws IOException {
         Content child = new Content();
         child.id = file_id;
         child.content = IOUtils.toByteArray(input);
