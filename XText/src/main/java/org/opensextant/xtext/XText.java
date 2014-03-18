@@ -735,6 +735,12 @@ public final class XText implements iFilter, iConvert {
             XText.usage();
             System.exit(1);
         }
+
+        if (input == null) {
+            System.out.println("An input argument is required, e.g., -Dinput=/Folder/...");
+            System.exit(-1);
+        }
+
         // Setting LANG=en_US in your shell.
         //
         // System.setProperty("LANG", "en_US");
@@ -743,6 +749,7 @@ public final class XText implements iFilter, iConvert {
         xt.enableSaving(true);
         xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in directory.
         xt.enableHTMLScrubber(filter_html);
+        
         if (output == null) {
             output = "xtext-output";
         }
