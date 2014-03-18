@@ -53,12 +53,27 @@ public final class ConvertedDocument extends DocInput {
 
     public static String DEFAULT_EMBED_FOLDER = "xtext";
     private static SimpleDateFormat dtfmt = new SimpleDateFormat("yyyy-MM-dd");
+
+    /** 
+     * The url where this document (html, image, doc download) was found
+     * The url-referrer the page containing the url.
+     */
+    public final static String URL_FIELD = "url";
+    public final static String URL_REFERRER_FIELD = "url-referrer";
+
     public final static String[] fields = {
             // Dublin Core style metadata fields
             "title", "author", "creator_tool", "pub_date", "keywords", "subject", "filepath", "encoding",
             //
-            // -- XText metadata.
-            "filtered", "converter", "conversion_date", "encrypted", "filesize", "textsize" };
+            // XText metadata.
+            "filtered", "converter", "conversion_date", "encrypted", "filesize", "textsize",
+
+            // Consideration for compound documents; if this instance is a child doc then what is the parent?
+            "xtext_id", // REQUIRED -- the current document ID.
+            "xtext_parent_id", "xtext_parent_path",
+
+            // Additional metadata for web content.
+            URL_FIELD, URL_REFERRER_FIELD };
 
     /**
      * Converters will populate metadatata. If the entry is an object or a file, its name will reflect that. 
@@ -132,6 +147,17 @@ public final class ConvertedDocument extends DocInput {
             // Fill out TextInput basics:
             setId(this.filepath);
         }
+    }
+
+    /**
+     * Record a URL that represents the source of the document.
+     * 
+     * @param url  the url to the item, e.g., http:/a.b.com/folder/my.doc
+     * @param referringURL  the url where the doc was found, e.g., http:/a.b.com/folder/
+     */
+    public void addSourceURL(String url, String referringURL) {
+        this.addProperty(URL_FIELD, url);
+        this.addProperty(URL_REFERRER_FIELD, referringURL);
     }
 
     /**
@@ -210,13 +236,13 @@ public final class ConvertedDocument extends DocInput {
         }
         children.add(ch);
     }
-    
+
     /**
      * true if this is a parent and has ConvertedDocument children. 
      * @return
      */
-    public boolean hasChildren(){
-        return (children!=null && !children.isEmpty());
+    public boolean hasChildren() {
+        return (children != null && !children.isEmpty());
     }
 
     public void addRawChild(Content child) {
@@ -239,8 +265,8 @@ public final class ConvertedDocument extends DocInput {
     public List<Content> getRawChildren() {
         return childrenContent;
     }
-    
-    public List<ConvertedDocument> getChildren(){
+
+    public List<ConvertedDocument> getChildren() {
         return children;
     }
 
