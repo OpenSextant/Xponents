@@ -12,7 +12,7 @@ import java.util.Set;
 import net.sf.json.JSONObject;
 
 import org.opensextant.data.TextInput;
-import org.opensextant.extraction.ConfigException;
+import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.SimpleGeocoder;

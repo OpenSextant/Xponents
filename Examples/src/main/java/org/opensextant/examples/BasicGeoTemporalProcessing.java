@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 
-import org.opensextant.extraction.ConfigException;
+import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionMetrics;
 import org.opensextant.extractors.xcoord.XCoord; // Just coordinates.
 import org.opensextant.extractors.geo.*;  // All geo. Encapsulates XCoord, as well.
