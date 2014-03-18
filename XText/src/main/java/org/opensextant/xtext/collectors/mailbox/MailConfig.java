@@ -218,8 +218,8 @@ public class MailConfig extends Properties {
      * 
      * ## Connection
      * #####################
-     * mail.host=imccas03.mitre.org
-     * mail.user=ubaldino
+     * mail.host=SERVERSERVER
+     * mail.user=USER
      * mail.password=XXXXXXXX
      * mail.folder=Inbox
      * mail.protocol=imap
@@ -240,7 +240,7 @@ public class MailConfig extends Properties {
      * mail.imaps.class=com.sun.mail.IMAPSSLStore
      * 
      * mail.microsoft.exchange.version=2007
-     * mail.imap.auth.ntlm.domain=MITRE
+     * mail.imap.auth.ntlm.domain=xxxxxDOMAINxxxxx
      * 
      * 
      * Java Mail params:

@@ -27,6 +27,7 @@ import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.iFilter;
 import org.opensextant.xtext.collectors.CollectionListener;
+import org.opensextant.xtext.collectors.Collector;
 import org.opensextant.xtext.collectors.web.HyperLink;
 import org.opensextant.xtext.collectors.web.WebClient;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author ubaldino
  *
  */
-public class DefaultSharepointCrawl extends SharepointClient implements iFilter {
+public class DefaultSharepointCrawl extends SharepointClient implements iFilter, Collector {
     /**
      * A collection listener to consult as far as how to record the found & converted content
      * as well as to determine what is worth saving.
@@ -60,7 +61,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements iFilter 
             throws MalformedURLException, ConfigException {
         super(srcSite, destFolder, u, p, dom);
     }
-    
+
     /**
      * Important that you set a listener if you want to see what was captured.
      * As well as optimize future harvests.  Listener tells the collector if the item in question was harvested or not.
@@ -115,13 +116,13 @@ public class DefaultSharepointCrawl extends SharepointClient implements iFilter 
         if (filterOutFile(link.getAbsoluteURL())) {
             return true;
         }
-//        if (link.isPageAnchor()) {
-//            log.debug("Filter out anchor link {}", link);
-//            return true;
-//        }
+        //        if (link.isPageAnchor()) {
+        //            log.debug("Filter out anchor link {}", link);
+        //            return true;
+        //        }
         return false;
     }
-    
+
     /**
      * recursive folder crawl through sharepoint site. This is where docs are
      * converted and recorded.  
@@ -132,11 +133,11 @@ public class DefaultSharepointCrawl extends SharepointClient implements iFilter 
      */
     public void collectItems(String link) throws IOException {
 
-        if (depth >= MAX_DEPTH){
+        if (depth >= MAX_DEPTH) {
             log.info("Maximum Depth reached with link: {}", link);
             return;
         }
-        
+
         HttpResponse page = getPage(link);
         String rawData = WebClient.readTextStream(page.getEntity().getContent());
 
@@ -144,16 +145,16 @@ public class DefaultSharepointCrawl extends SharepointClient implements iFilter 
 
         ++depth;
         for (SPLink l : items) {
-            
-            if (filterOut(l)){
+
+            if (filterOut(l)) {
                 log.debug("Filtering out {}", l);
                 continue;
             }
-            
+
             // Download artifacts
             if (l.isFile()) {
                 pause();
-                
+
                 try {
                     String oid = TextUtils.text_id(l.getAbsoluteURL());
 
@@ -161,19 +162,19 @@ public class DefaultSharepointCrawl extends SharepointClient implements iFilter 
                         if (listener != null && listener.exists(oid)) {
                             continue;
                         }
-                    } catch (Exception err1) {                        
+                    } catch (Exception err1) {
                         log.error("Collection Listener error", err1);
                         continue;
                     }
-                    
+
                     // create URL for link and download artifact.
                     HttpResponse itemPage = getPage(l.getAbsoluteURL());
-                    
+
                     // B. Drop files in archive mirroring the original
                     // Sharepoint site structure.
                     File itemSaved = createArchiveFile(l.getNormalPath());
                     WebClient.downloadFile(itemPage.getEntity(), itemSaved.getAbsolutePath());
-                    
+
                     convertContent(itemSaved, l);
 
                 } catch (Exception fileErr) {
@@ -198,12 +199,11 @@ public class DefaultSharepointCrawl extends SharepointClient implements iFilter 
             }
             // Traverse sub-folders, N-deep?
         }
-        
+
         --depth;
 
     }
-    
-    
+
     /**
      * TODO: redesign so both Web crawl and Sharepoint crawl share this common routine:
      * copy copy copy -- see DefaultWebCrawl 
@@ -245,5 +245,4 @@ public class DefaultSharepointCrawl extends SharepointClient implements iFilter 
             }
         }
     }
-    
 }

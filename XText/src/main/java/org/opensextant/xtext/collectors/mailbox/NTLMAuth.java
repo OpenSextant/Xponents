@@ -21,7 +21,7 @@ import javax.mail.PasswordAuthentication;
 
 /**
  * 
- * @author ubaldino at mitre
+ * @author ubaldino
  * 
  */
 public class NTLMAuth extends Authenticator {

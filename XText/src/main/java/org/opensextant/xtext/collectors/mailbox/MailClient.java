@@ -40,8 +40,6 @@ public class MailClient {
     protected MailConfig config = null;
     protected String archiveRoot = null;
 
-
-
     public MailClient(MailConfig cfg, String archive) {
         config = cfg;
         archiveRoot = archive;
@@ -52,8 +50,7 @@ public class MailClient {
     public void setConverter(XText conversionManager) {
         converter = conversionManager;
     }
-    
-    
+
     /**
      * Close Mailbox cleanly.
      * 
@@ -133,7 +130,8 @@ public class MailClient {
             connect();
             disconnect();
         } catch (Exception err) {
-            throw new ConfigException("Mail Source is unavailabile.", err);
+            String msg = String.format("%s -- failed to collect mail account", getName());
+            throw new ConfigException(msg, err);
         }
         return;
     }
@@ -149,6 +147,16 @@ public class MailClient {
                 throw new ConfigException("Destination archive does not exist. Caller must create prior to creation.");
             }
         }
+    }
+    
+    private String name = "Unnamed Mail Crawler";
+
+    public void setName(String n) {
+        name = n;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

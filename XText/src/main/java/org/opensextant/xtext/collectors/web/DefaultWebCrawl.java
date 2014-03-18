@@ -32,6 +32,7 @@ import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.iFilter;
 import org.opensextant.xtext.collectors.CollectionListener;
+import org.opensextant.xtext.collectors.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author ubaldino
  *
  */
-public class DefaultWebCrawl extends WebClient implements iFilter {
+public class DefaultWebCrawl extends WebClient implements iFilter, Collector {
 
     /**
      * A collection listener to consult as far as how to record the found & converted content
@@ -295,5 +296,4 @@ public class DefaultWebCrawl extends WebClient implements iFilter {
             }
         }
     }
-
 }

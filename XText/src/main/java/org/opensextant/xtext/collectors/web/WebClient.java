@@ -190,7 +190,7 @@ public class WebClient {
             HttpResponse page = getPage(site);
             return;
         } catch (Exception err) {
-            throw new ConfigException(site, err);
+            throw new ConfigException(String.format("%s failed to collect URL %s", getName(), site), err);
         }
     }
 
@@ -320,5 +320,15 @@ public class WebClient {
      */
     public static void downloadFile(HttpEntity entity, String destPath) throws IOException {
         org.apache.commons.io.IOUtils.copy(entity.getContent(), new FileOutputStream(destPath));
+    }
+    
+    private String name = "Unamed Web crawler";
+    
+    public void setName(String n){
+        name = n;
+    }
+    
+    public String getName() {
+        return name;
     }
 }

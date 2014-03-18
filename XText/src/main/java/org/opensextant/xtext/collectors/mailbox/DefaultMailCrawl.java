@@ -32,11 +32,12 @@ import org.opensextant.xtext.ConversionListener;
 import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.XText;
 import org.opensextant.xtext.collectors.CollectionListener;
+import org.opensextant.xtext.collectors.Collector;
 import org.opensextant.xtext.converters.MessageConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultMailCrawl extends MailClient implements ConversionListener {
+public class DefaultMailCrawl extends MailClient implements ConversionListener, Collector {
 
     /**
      * A collection listener to consult as far as how to record the found & converted content
@@ -246,7 +247,7 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener {
                         OutputStream msgIO = new FileOutputStream(msgFile);
                         // Requirement:  Write data to disk first, saving a ".eml" file.
                         message.writeTo(msgIO);
-                        
+
                         // NOTE: here the act of converting the ".eml" file now invokes 
                         // the default MessageConverter logic and finally calls this as the ConversionListener
                         // 
@@ -281,5 +282,16 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener {
         }
 
         disconnect();
+    }
+
+    private String name = null;
+
+    public void setName(String n) {
+        name = n;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }
