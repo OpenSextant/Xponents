@@ -9,92 +9,147 @@
       name="description">
   </head>
   <body>
-    <h1>XText v1.0 README</h1>
-    <br>
-    Author: Marc. C. Ubaldino, MITRE Corporation<br>
-    Contributors: Tim Allison, David Lutz, MITRE Corporation<br>
-    Date: 2013-March<br>
-    Copyright MITRE Corporation, 2012-2013<br>
-    <br>
-    <br>
-    Apache Tika is awesome.&nbsp; It provides all sorts of solid content
-    conversion and parsing capabilities.&nbsp;&nbsp; XText wraps around
-    Tika basics but also provides a lean design for added other
-    extractors/converters and customizing the output of any
-    converter.&nbsp;&nbsp; XText API is intended to be a simple
-    core:&nbsp; filter and convert documents to textual
-    versions.&nbsp;&nbsp; XText adds some typical conventions for
-    integrators who wish to use a document conversion tool rather than
-    the bare Tika library.&nbsp;&nbsp; Such features include:<br>
+    <h1><font face="Calibri">XText v1.4 README</font></h1>
+    <font face="Calibri"> <br>
+      <b>Author</b>: Marc. C. Ubaldino, MITRE Corporation<br>
+      Contributors: Tim Allison, David Lutz, MITRE Corporation<br>
+      Date: 2013-March<br>
+      Updated: 2014-March<br>
+      Copyright MITRE Corporation, 2012-2014<br>
+      <br>
+      <a href="http://tika.apache.org">Apache Tika </a>is
+      awesome.&nbsp; It provides all sorts of solid content conversion
+      and parsing capabilities.&nbsp;&nbsp; XText wraps around Tika
+      basics but also provides a lean design for added other
+      extractors/converters and customizing the output of any
+      converter.&nbsp;&nbsp; XText API is intended to be a simple
+      core:&nbsp; filter and convert documents to textual
+      versions.&nbsp;&nbsp; It provides a number of parameters for how
+      the conversions are managed including where to cache conversions,
+      and file size limits.<br>
+      <br>
+      Major file conversions supported:<br>
+    </font>
     <ul>
-      <li>document file type <b>filters</b></li>
-      <li>logging and <b>metrics</b></li>
-      <li><b>input/output </b>options for saving documents</li>
-      <li>lightweight listener design so you can unpack, convert and <b>process
-
-          all in the same loop</b></li>
-      <li>formalizing the <b>document meta-data practices</b>: that is,
-        what metadata is really important and how do we store it with
-        the converted document</li>
-      <li>XText API design intended to be extensible by others.</li>
-      <li>Exploit basic Tika library features.&nbsp; Tika 1.3 as of
-        XText release 1.0</li>
-      <li>supported customizations:</li>
+      <li><font face="Calibri">Anything <b>Tika</b> can do.</font></li>
+      <li><font face="Calibri"><b>E</b><b>mail message </b>archiving
+          (traverse RFC822 MIME message, saving attachments, etc)<br>
+        </font></li>
+      <li><font face="Calibri">Limited <b>web crawl</b> and archiving</font></li>
+      <li><font face="Calibri">JPEG EXIF parsing (saves full EXIF header
+          as text; EXIF location &amp; time as metadata)<br>
+        </font></li>
+    </ul>
+    <p><font face="Calibri">Major features added beyond Tika:<br>
+      </font></p>
+    <ul>
+      <li><font face="Calibri"><b>Conversion caching/archiving: </b>conversions
+          can be maintained close to originals or in parallel structure</font></li>
+      <li><font face="Calibri"><b>Metadata preservation</b>: metadata
+          about original and the conversion process are persisted with
+          conversions</font></li>
+    </ul>
+    <p></p>
+    <font face="Calibri">XText adds some typical conventions for
+      integrators who wish to use a document conversion tool rather than
+      the bare Tika library.&nbsp;&nbsp; Such features include:<br>
+    </font>
+    <ul>
+      <li><font face="Calibri">document file type <b>filters</b></font></li>
+      <li><font face="Calibri">logging and <b>metrics</b></font></li>
+      <li><font face="Calibri"><b>input/output </b>options for saving
+          documents</font></li>
+      <li><font face="Calibri">lightweight listener design so you can
+          unpack, convert and <b>process all in the same loop</b></font></li>
+      <li><font face="Calibri">formalizing the <b>document meta-data
+            practices</b>: that is, what metadata is really important
+          and how do we store it with the converted document</font></li>
+      <li><font face="Calibri">XText API design intended to be
+          extensible by others.</font></li>
+      <li><font face="Calibri">Exploit basic Tika library features.
+          (XText v1.4 builds off Tika v1.5)<br>
+        </font></li>
+      <li><font face="Calibri">supported customizations:</font></li>
       <ul>
-        <li>PDF metadata harvesting (from Tika/PDFBox);&nbsp; Detecting
-          of encrypted PDFs</li>
-        <li>Web content scrapping;&nbsp; Default HTML parser is Tika's,
-          but for web articles, Boilerplate parser is better.</li>
+        <li><font face="Calibri">PDF metadata harvesting (from
+            Tika/PDFBox);&nbsp; Detecting of encrypted PDFs</font></li>
+        <li><font face="Calibri">Web content scrapping;&nbsp; Default
+            HTML parser is Tika's, but for web articles, Boilerplate
+            parser is better.</font></li>
       </ul>
-      <li>Content is normalized to UTF-8 with unix line endings ('\n')
-        only.<br>
-      </li>
+      <li><font face="Calibri">Content is normalized to UTF-8 with unix
+          line endings ('\n') only.<br>
+        </font> </li>
       <ul>
       </ul>
     </ul>
-    <p><a href="./doc/api-java/index.html">Java Documentation </a>contains
-
-
-
-
-
-
-
-
-
-
-      what you need to know for development.</p>
+    <font face="Calibri"> </font>
+    <p><font face="Calibri"><a href="./doc/api-java/index.html">Java
+          Documentation </a>contains what you need to know for
+        development.<br>
+      </font></p>
+    <h2><font face="Calibri">Basic Usage<br>
+      </font></h2>
     <br>
-    <br>
-    <span style="font-family: Courier New,Courier,monospace;"># compile</span><br
-      style="font-family: Courier New,Courier,monospace;">
-    <span style="font-family: Courier New,Courier,monospace;">ant </span><br
-      style="font-family: Courier New,Courier,monospace;">
-    <p style="font-family: Courier New,Courier,monospace;">## run out of
-      box tests.&nbsp; <br>
-      ant test-default<br>
-    </p>
-    <p style="font-family: Courier New,Courier,monospace;">Convert a
-      single file, a folder or a compressed archive or TAR:<br>
-    </p>
-    <p style="font-family: Courier New,Courier,monospace;">ant
-      -Dinputfile=./test/doc.docx&nbsp; convert <br>
-    </p>
-    <p style="font-family: Courier New,Courier,monospace;">ant
-      -Dinputfile=./test/somestuff.zip&nbsp; convert <br>
-    </p>
-    <p style="font-family: Courier New,Courier,monospace;">ant
-      -Dinputfile=./test/somestuff/&nbsp; convert </p>
-    <br>
-    <h1>RELEASE NOTES</h1>
-    <br>
-    <b>v1.0&nbsp; ST PATRICK's&nbsp; DAY</b><b>, 2013</b><br>
+    <blockquote> <span style="font-family: Courier
+        New,Courier,monospace;"># compile</span><br style="font-family:
+        Courier New,Courier,monospace;">
+      <span style="font-family: Courier New,Courier,monospace;">mvn
+        install</span><br style="font-family: Courier
+        New,Courier,monospace;">
+      <p style="font-family: Courier New,Courier,monospace;">## run out
+        of box tests if you are using a release of Xponents:</p>
+      <p style="font-family: Courier New,Courier,monospace;"># Run a
+        unit test on a good size PDF doc<br>
+        ant -f script/xtest-test.xml&nbsp; test-default<br>
+      </p>
+      <p style="font-family: Courier New,Courier,monospace;"># Convert a
+        single file, a folder or a compressed archive or TAR.<br>
+        # If you provide -Doutput=/path/to/xyz/&nbsp; then XText
+        conversions are saved to that path<br>
+      </p>
+      <p style="font-family: Courier New,Courier,monospace;">ant
+        -Dinputfile=./test/doc.docx&nbsp; convert <br>
+      </p>
+      <p style="font-family: Courier New,Courier,monospace;">ant
+        -Dinputfile=./test/somestuff.zip&nbsp; convert <br>
+      </p>
+      <p style="font-family: Courier New,Courier,monospace;">ant
+        -Dinputfile=./test/somestuff/&nbsp; convert </p>
+    </blockquote>
+    <font face="Calibri"><br>
+    </font>
+    <h1><font face="Calibri">RELEASE NOTES</font></h1>
+    <font face="Calibri"> <br>
+      <b>v1.0&nbsp; ST PATRICK's&nbsp; DAY</b><b>, 2013</b><br>
+    </font>
     <ul>
-      <li>initial design</li>
-      <li>added Testing archive -- not released;&nbsp; UBL Letters from
-        SOCOM where released Fall 2012.&nbsp; They are PDFs and Word
-        docs in English and Arabic.&nbsp; They offer a good test
-        opportunity.</li>
+      <li><font face="Calibri">initial design</font></li>
+      <li><font face="Calibri">added Testing archive -- not
+          released;&nbsp; UBL Letters from SOCOM where released Fall
+          2012.&nbsp; They are PDFs and Word docs in English and
+          Arabic.&nbsp; They offer a good test opportunity.</font></li>
+    </ul>
+    <p><font face="Calibri"><b>v1.4&nbsp; ST PATRICK's DAY, 2014</b><br>
+      </font></p>
+    <ul>
+      <li><font face="Calibri">Added Tika 1.5 as primary conversion tool</font></li>
+      <li><font face="Calibri">Introduced content collectors: Email,
+          web, Sharepoint</font></li>
+      <li><font face="Calibri">Added MessageConverter for email
+          traversal, conversion and archiving. <br>
+        </font></li>
+      <li><font face="Calibri">Added OLEConverter to support MS object
+          conversion, e.g. Outlook message files (untested)</font></li>
+      <li><font face="Calibri">Added ImageConverter which saves full
+          EXIF header as text and preserves interesting GPS location and
+          date/time as formal metadata that can be retrieved later.</font></li>
+    </ul>
+    <p><br>
+    </p>
+    <p><br>
+    </p>
+    <ul>
     </ul>
   </body>
 </html>

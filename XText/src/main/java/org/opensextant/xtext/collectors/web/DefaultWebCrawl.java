@@ -1,0 +1,299 @@
+/**
+ *
+ * Copyright 2013-2014 OpenSextant.org
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package org.opensextant.xtext.collectors.web;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Collection;
+import java.util.Date;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.impl.cookie.DateParseException;
+import org.apache.http.impl.cookie.DateUtils;
+import org.opensextant.ConfigException;
+import org.opensextant.util.FileUtility;
+import org.opensextant.util.TextUtils;
+import org.opensextant.xtext.ConvertedDocument;
+import org.opensextant.xtext.iFilter;
+import org.opensextant.xtext.collectors.CollectionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * A demonstration of how to use the WebClient to crawl a site and convert it as you go.
+ * An optional collection listener is settable to let you do something with each item collected/converted.
+ * 
+ * @author ubaldino
+ *
+ */
+public class DefaultWebCrawl extends WebClient implements iFilter {
+
+    /**
+     * A collection listener to consult as far as how to record the found & converted content
+     * as well as to determine what is worth saving.
+     * 
+     */
+    protected CollectionListener listener = null;
+    private Logger log = LoggerFactory.getLogger(getClass());
+
+    /**
+     * 
+     * @param srcSite
+     * @param destFolder
+     * @throws MalformedURLException
+     * @throws ConfigException
+     */
+    public DefaultWebCrawl(String srcSite, String destFolder) throws MalformedURLException, ConfigException {
+        super(srcSite, destFolder);
+    }
+
+    /**
+     * Important that you set a listener if you want to see what was captured.
+     * As well as optimize future harvests.  Listener tells the collector if the item in question was harvested or not.
+     * @param l
+     */
+    public void setListener(CollectionListener l) {
+        listener = l;
+    }
+
+    /**
+     * For web crawl, this default crawler considers flash, video media, etc. to be out of scope.
+     * Other HREF links, like mailto:xyz@me.com  are also items to avoid.
+     * Method is left open so you may override.
+     * @param path a url
+     */
+    @Override
+    public boolean filterOutFile(String path) {
+        String url = path.toLowerCase();
+        if (url.endsWith(".flv")) {
+            return true;
+        }
+        if (url.endsWith(".mp4")) {
+            return true;
+        }
+        if (url.startsWith("mailto:")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Run the collection.
+     * Make sure you have set your converter and collection listener
+     * If you have a converter that also has a conversion listener, whoa!!  good luck.
+     * This web crawl example is meant to provide the mechanics of the conversion listener 
+     * as implemented by the collection listener.  
+     * The details on how actions at collection time differ from conversion time are TBD.
+     * 
+     * @throws IOException
+     */
+    public void collect() throws IOException {
+        collectItems(null, this.getSite());
+    }
+
+    /**
+     * Override this if you have differnt ideas about what URL patterns are of interest.
+     * DEFAULT FILTER OUT:  video files, page anchors, mailto links
+     * @param link
+     * @return
+     */
+    public boolean filterOut(HyperLink link) {
+        if (filterOutFile(link.getAbsoluteURL())) {
+            return true;
+        }
+        if (link.isPageAnchor()) {
+            log.debug("Filter out anchor link {}", link);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * recursive folder crawl through a site. This is where docs are
+     * converted and recorded.
+     * 
+     * @param link
+     * @param site
+     * @throws IOException
+     */
+    public void collectItems(String _link, String site) throws IOException {
+        String link = site;
+        if (_link != null) {
+            link = _link;
+        }
+
+        HttpResponse page = getPage(link);
+
+        /*
+         * As of XText 1.4, this HTTP header does not appear to be avaiable often using this http API:
+         */
+        Header lastModStr = page.getFirstHeader("Last-Modified");
+        Date lastMod = null;
+        if (lastModStr != null) {
+            try {
+                lastMod = DateUtils.parseDate(lastModStr.getValue());
+            } catch (DateParseException e) {
+                log.error("Found Date header for last-modified", e);
+            }
+        }
+
+        /*
+         * 1.  Capture the page content represented by the requested link.
+         *     It is saved to  FILE.html
+         */
+        String rawData = WebClient.readTextStream(page.getEntity().getContent());
+        HyperLink thisLink = new HyperLink(link, link, site);
+        String thisPath = thisLink.getNormalPath();
+        if (thisLink.isDynamic()) {
+            thisPath = thisPath + ".html";
+        }
+        File thisPage = createArchiveFile(thisPath);
+        // OVERWRITE:
+        if (!thisPage.exists()) {
+            FileUtility.writeFile(rawData, thisPage.getAbsolutePath());
+        }
+        ++depth;
+
+        log.info("Starting in on {} from {} @ depth=" + depth, link, site);
+        pause();
+
+        Collection<HyperLink> items = parseContentPage(rawData, link, site);
+
+        /* 2. Collect items on this page.
+         * 
+         */
+        for (HyperLink l : items) {
+            if (filterOut(l)) {
+                continue;
+            }
+
+            String key = l.getNormalPath();
+            if (key == null) {
+                key = l.getAbsoluteURL();
+            }
+            if (found.containsKey(key)) {
+                continue;
+            }
+            found.put(key, l);
+
+            if (!l.isCurrentPage()) {
+                // Page represented by link, l, is on another website.
+                continue;
+            }
+
+            String fpath = l.getNormalPath();
+            if (l.isDynamic()) {
+                fpath = fpath + ".html";
+            }
+
+            // B. Drop files in archive mirroring the original
+            // 
+            File itemSaved = createArchiveFile(fpath);
+
+            if (saved.contains(itemSaved.getAbsolutePath())) {
+                // in theory this item resolved to an item that was already saved. 
+                // ignore.
+                continue;
+            }
+
+            // Download artifacts
+            if (l.isFile() || l.isDynamic()) {
+                pause();
+
+                try {
+                    // The default document ID will be an MD5 hash ID of the URL.
+                    // This may differ for other collectors/harvesters/listeners
+                    // 
+                    String oid = TextUtils.text_id(l.getAbsoluteURL());
+
+                    try {
+                        if (listener != null && listener.exists(oid)) {
+                            // You already collected this. So it will be ignored.
+                            continue;
+                        }
+                    } catch (Exception err1) {
+                        log.error("Collection Listener error", err1);
+                        continue;
+                    }
+
+                    // create URL for link and download artifact.
+                    HttpResponse itemPage = getPage(l.getAbsoluteURL());
+                    // Regardless of the item's discovered path, determine
+                    // the relative path.
+
+                    l.setFilepath(itemSaved);
+                    saved.add(itemSaved.getAbsolutePath());
+
+                    WebClient.downloadFile(itemPage.getEntity(), itemSaved.getAbsolutePath());
+
+                    convertContent(itemSaved, l);
+
+                    // Continue to crawl deeper...
+                    //
+                    if (l.isWebPage() && depth <= MAX_DEPTH) {
+                        collectItems(l.getAbsoluteURL(), site);
+                    }
+                } catch (Exception fileErr) {
+                    log.error("Item for URL {} was not saved due to a net or IO issue.", l.getAbsoluteURL(), fileErr);
+                }
+            }
+        }
+        --depth;
+    }
+
+    /**
+     * convert and record a downloaded item, given the item and its source URL.
+     * @param item
+     * @throws IOException 
+     */
+    protected void convertContent(File item, HyperLink link) throws IOException {
+
+        if (item == null || link == null) {
+            throw new IOException("Bad data - null values for file and link...");
+        }
+
+        if (converter == null && listener != null) {
+            log.debug("Link {} was saved to {}", link.getAbsoluteURL(), item.getAbsolutePath());
+            listener.collected(item);
+            return;
+        }
+
+        /**
+         *  Convert the item.
+         */
+        ConvertedDocument doc = null;
+        if (item.exists()) {
+            // record with a success state.
+            doc = converter.convert(item);
+
+            if (doc != null) {
+                doc.addSourceURL(link.getAbsoluteURL(), link.getReferrer());
+                // This path must already exist
+                doc.saveBuffer(new File(doc.textpath));
+
+                if (listener != null) {
+                    listener.collected(doc);
+                }
+            } else {
+                log.error("Document was not converted, FILE={}", item);
+            }
+        }
+    }
+
+}
