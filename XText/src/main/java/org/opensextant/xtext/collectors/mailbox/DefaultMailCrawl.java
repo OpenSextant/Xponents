@@ -284,14 +284,5 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
         disconnect();
     }
 
-    private String name = null;
 
-    public void setName(String n) {
-        name = n;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
 }
