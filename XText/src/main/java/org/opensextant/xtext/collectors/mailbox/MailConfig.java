@@ -31,6 +31,9 @@ import com.sun.mail.util.MailSSLSocketFactory;
 import org.opensextant.ConfigException;
 
 /**
+ * See reference property file at src/test/resources/collectors/imap-templ.cfg
+ * This IMAP template documents the various parameters for configuring a Java mail client to use IMAP or IMAP/SSL
+ * 
  * @author ubaldino
  * @author b. o'neill
  *
