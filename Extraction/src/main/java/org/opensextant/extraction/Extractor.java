@@ -29,6 +29,7 @@ package org.opensextant.extraction;
 
 import java.util.List;
 
+import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
 import org.opensextant.processing.progress.ProgressMonitor;
 

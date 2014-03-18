@@ -35,9 +35,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
+import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extraction.ConfigException;
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;

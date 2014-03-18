@@ -32,10 +32,10 @@ import java.util.ArrayList;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionMetrics;
 import org.opensextant.extraction.Extractor;
-import org.opensextant.extraction.ConfigException;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.xcoord.XCoord;

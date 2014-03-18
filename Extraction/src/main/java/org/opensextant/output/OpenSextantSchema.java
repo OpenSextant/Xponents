@@ -29,8 +29,9 @@ package org.opensextant.output;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.opensextant.ConfigException;
 import org.opensextant.giscore.events.SimpleField;
-import org.opensextant.extraction.ConfigException;
 /**
  *
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>

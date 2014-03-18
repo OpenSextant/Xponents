@@ -26,6 +26,7 @@
  */
 package org.opensextant.extractors.xtax;
 
+import org.opensextant.ConfigException;
 import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.SolrProxy;
 
@@ -50,7 +51,6 @@ import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.Extractor;
-import org.opensextant.extraction.ConfigException;
 
 /**
  * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents.

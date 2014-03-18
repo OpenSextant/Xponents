@@ -5,8 +5,9 @@
 package org.opensextant.extractors.flexpat;
 
 import java.net.URL;
+
+import org.opensextant.ConfigException;
 import org.opensextant.extraction.Extractor;
-import org.opensextant.extraction.ConfigException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;

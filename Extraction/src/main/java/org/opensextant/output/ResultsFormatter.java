@@ -26,10 +26,10 @@
 **/
 package org.opensextant.output;
 
+import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
-import org.opensextant.extraction.ConfigException;
 
 /**
  * Interface for classes that generate output from corpora that have been processed by OpenSextant.

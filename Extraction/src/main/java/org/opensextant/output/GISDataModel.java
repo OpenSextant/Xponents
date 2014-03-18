@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
+import org.opensextant.ConfigException;
 import org.opensextant.giscore.events.Feature;
 import org.opensextant.giscore.events.Schema;
 import org.opensextant.giscore.events.SimpleField;
@@ -43,7 +44,6 @@ import org.opensextant.giscore.geometry.Point;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.data.Geocoding;
-import org.opensextant.extraction.ConfigException;
 import org.opensextant.processing.ProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

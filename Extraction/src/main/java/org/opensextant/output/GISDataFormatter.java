@@ -28,6 +28,7 @@ package org.opensextant.output;
 
 import java.io.File;
 
+import org.opensextant.ConfigException;
 import org.opensextant.giscore.DocumentType;
 import org.opensextant.giscore.events.ContainerEnd;
 import org.opensextant.giscore.events.ContainerStart;
@@ -38,7 +39,6 @@ import org.opensextant.data.Geocoding;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.processing.ProcessingException;
-import org.opensextant.extraction.ConfigException;
 
 /**
  * This is the base class for classes that convert document annotations to

@@ -41,8 +41,8 @@ package org.opensextant.extractors.xtemporal;
 import java.util.*;
 import java.util.regex.Matcher;
 
+import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
-import org.opensextant.extraction.ConfigException;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPattern;
