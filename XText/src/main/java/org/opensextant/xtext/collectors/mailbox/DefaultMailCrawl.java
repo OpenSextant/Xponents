@@ -27,6 +27,7 @@ import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import org.apache.commons.lang.StringUtils;
 import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.ConversionListener;
 import org.opensextant.xtext.ConvertedDocument;
@@ -209,6 +210,8 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                     String messageFilename = MessageConverter.createSafeFilename(message.getSubject());
                     if (messageFilename.length() > 60) {
                         messageFilename = messageFilename.substring(0, 60);
+                    } if (StringUtils.isBlank(messageFilename)){
+                        messageFilename = "No_Subject";
                     }
 
                     String msgId = MessageConverter.getMessageID(message);
