@@ -16,6 +16,8 @@ public class Content {
      * parentID + "_part" + N,  e.g., docA_part4 
      */
     public String id = null;
+    
+    public String encoding = null;
 
     /**
      * a raw byte array for the content in motion. 

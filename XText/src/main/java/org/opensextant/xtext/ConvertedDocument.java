@@ -107,6 +107,13 @@ public final class ConvertedDocument extends DocInput {
     protected int conversion_time = 0;
     public boolean is_plaintext = false;
     public boolean is_converted = false;
+
+    /**
+     * Mail messages are ridiculous complex compound documents.
+     *   The parent document and all its attachments are marked as  is_RFC822_attachment = true.
+     *   HTML and text formats are most susceptible to encoding issues.
+     */
+    public boolean is_RFC822_attachment = false;
     public boolean do_convert = true;
     /**
      * Represents if conversion was actually saved or not OR if file was
@@ -230,9 +237,19 @@ public final class ConvertedDocument extends DocInput {
         parentContainer = new File(parPath + File.separator + parName);
     }
 
+    /**
+     * Add children converte docs.
+     * @param ch
+     */
     public void addChild(ConvertedDocument ch) {
         if (children == null) {
             children = new ArrayList<ConvertedDocument>();
+        }
+        /** You are adding a child item to a parent that is marked as an RFC822 document, so naturally the
+         * child is now an RFC822 attachment. 
+         */
+        if (is_RFC822_attachment) {
+            ch.is_RFC822_attachment = true;
         }
         children.add(ch);
     }
@@ -296,6 +313,15 @@ public final class ConvertedDocument extends DocInput {
     public void setEncoding(String enc) {
         this.encoding = enc;
         addProperty("encoding", enc);
+    }
+
+    /**
+     * get the charset encoding.
+     * 
+     * @return the character set encoding set by metadata discovery or by the setEncoding() method.
+     */
+    public String getEncoding() {
+        return this.encoding;
     }
 
     /**

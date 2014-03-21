@@ -33,6 +33,16 @@ public abstract class ConverterAdapter implements iConvert {
     protected abstract ConvertedDocument conversionImplementation(InputStream in, File doc) throws IOException;
 
     /**
+     * Not an iConvert interface, yet.
+     * This would take great care in all implementations to ensure the converters do not rely on
+     * the "File doc" argument.
+     */
+    //@Override
+    public ConvertedDocument convert(InputStream data) throws IOException {
+        return conversionImplementation(data, null);
+    }
+    
+    /**
      * Yield a ConvertedDocument with no File metadata. Underlying
      * implementation opens and closes a stream to read the string. Metadata is
      * derived solely from the text provided, e.g., length, conversion time,
