@@ -300,11 +300,10 @@ public class MessageConverter extends ConverterAdapter {
                     logger.debug("{}# Save String MIME part", msgPrefixId);
                     boolean convertedStr = true;
                     String text = (String) part;
-                    if (meta.isQP()) {
+                    if (meta.isQP() || meta.isBase64()) {
                         try {
                             partIO = IOUtils.toInputStream(text);
-                            byte[] textBytes = decodeMIMEText(partIO,
-                                    meta.transferEncoding);
+                            byte[] textBytes = decodeMIMEText(partIO, meta.transferEncoding);
                             if (meta.charset != null) {
                                 text = new String(textBytes, meta.charset);
                             } else {
@@ -313,11 +312,13 @@ public class MessageConverter extends ConverterAdapter {
                         } catch (Exception decodeErr) {
                             logger.error("Decoding error with bare text in body of message");
                         }
+                    } else {
+                        logger.debug("Other encoding is unaccounted: {}", meta.transferEncoding);
                     }
 
                     // Note, before trying any of these decoding trick
-                    
-                    buf.append( TextUtils.delete_controls(text) );
+
+                    buf.append(TextUtils.delete_controls(text));
 
                     buf.append("\n*******************\n");
                     // Note, the "=XX" sequence is reserved for RFC822 encoding of special chars and non-ASCII.
@@ -329,7 +330,7 @@ public class MessageConverter extends ConverterAdapter {
                 } else if (part instanceof InputStream) {
 
                     // Retrieve byte stream.
-                    partIO =  (InputStream) part;
+                    partIO = (InputStream) part;
                     Content child = createChildContent(filename, partIO, meta);
                     copyMailAttrs(parent, child);
                     parent.addRawChild(child);
@@ -406,12 +407,14 @@ public class MessageConverter extends ConverterAdapter {
 
         // Plain text is likely handled up above as (String)part are encountered in-line.
         // Here HTML attachments need to be decoded.
-        if (meta.isHTML() & meta.isQP()) {
+        if (meta.isHTML() && (meta.isQP()|| meta.isBase64())) {
             try {
                 child.content = decodeMIMEText(input, meta.transferEncoding);
             } catch (Exception decoderErr) {
                 logger.error("MIME Decoding failed with parameters: {}", meta.mimeType);
             }
+        } else {
+            logger.debug("Other encoding is unaccounted: {}", meta.transferEncoding);
         }
 
         // Default or last resort.
@@ -498,6 +501,14 @@ public class MessageConverter extends ConverterAdapter {
                 return false;
             }
             return "quoted-printable".equalsIgnoreCase(transferEncoding);
+        }
+
+        public boolean isBase64() {
+            if (transferEncoding == null) {
+                return false;
+            }
+            return "base64".equalsIgnoreCase(transferEncoding);
+
         }
 
         public boolean isImage() {
