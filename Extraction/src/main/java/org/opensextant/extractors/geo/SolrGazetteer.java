@@ -26,7 +26,9 @@
  */
 package org.opensextant.extractors.geo;
 
+import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrProxy;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -72,10 +75,6 @@ public class SolrGazetteer {
     private Map<String, Country> country_lookup = null;
     private Map<String, String> iso2fips = new HashMap<String, String>();
     private Map<String, String> fips2iso = new HashMap<String, String>();
-    /**
-     * Feature map is a fast lookup F/CODE ==> description or name
-     */
-    private Map<String, String> features = new HashMap<String, String>();
 
     /**
      *
@@ -85,7 +84,6 @@ public class SolrGazetteer {
         initialize();
     }
 
-    private Map<String, String> _default_country_names = new HashMap<String, String>();
 
     /** Returns the SolrProxy used internally. */
     public SolrProxy getSolrProxy() {
@@ -98,91 +96,17 @@ public class SolrGazetteer {
         return StringUtils.capitalize(c.toLowerCase());
     }
 
-    /**
-     * Find a readable name or description of a class/code
-     *
-     * @param cls feature class, e.g., P
-     * @param code feature code, e.g., PPL
-     */
-    public String getFeatureName(String cls, String code) {
-        String lookup = String.format("%s/%s", cls, code);
-        return features.get(lookup);
-    }
 
-    private void loadFeatureMetaMap() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/feature-metadata-2013.csv");
-        java.io.Reader featIO = new InputStreamReader(io);
-        CsvMapReader featreader = new CsvMapReader(featIO, CsvPreference.EXCEL_PREFERENCE);
-
-        try {
-            String[] columns = featreader.getHeader(true);
-            Map<String, String> featMap = null;
-
-            // Feature Metadata is from Universal Gazetteer
-            //-----------------------------------
-            // Feature Designation Code,    CODE
-            // Feature Designation Name,    DESC
-            // Feature Designation Text,    -
-            // Feature Class                CLASS
-            //
-            while ((featMap = featreader.read(columns)) != null) {
-                String feat_code = featMap.get("Feature Designation Code");
-                String desc = featMap.get("Feature Designation Name");
-                String feat_class = featMap.get("Feature Class");
-
-                if (feat_code == null) {
-                    continue;
-                }
-
-                if (feat_code.startsWith("#")) {
-                    continue;
-                }
-                features.put(String.format("%s/%s", feat_class, feat_code), desc);
-            }
-        } finally {
-            featreader.close();
-        }
-    }
-
-    private void loadCountryNameMap() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2013.csv");
-        java.io.Reader countryIO = new InputStreamReader(io);
-        CsvMapReader countryMap = new CsvMapReader(countryIO, CsvPreference.EXCEL_PREFERENCE);
-
-        try {
-            String[] columns = countryMap.getHeader(true);
-            Map<String, String> country_names = null;
-            while ((country_names = countryMap.read(columns)) != null) {
-                String n = country_names.get("country_name");
-                String cc = country_names.get("ISO2_cc");
-                String fips = country_names.get("FIPS_cc");
-                iso2fips.put(cc, fips);
-                fips2iso.put(fips, cc);
-
-                if (n == null || cc == null) {
-                    continue;
-                }
-
-                // FIPS could be *, but as long as we use ISO2, we're fine. if ("*".equals(cc)){ cc = fips.toUpperCase(); }
-
-                // Normalize:              "US"  =>  "united states of america"
-                _default_country_names.put(cc.toUpperCase(), n.toLowerCase());
-            }
-            if (_default_country_names.isEmpty()) {
-                throw new IOException("No data found in country name map");
-            }
-        }
-
-        finally {
-            countryMap.close();
-        }
-    }
-
+    private GeonamesUtility geodataUtil = null;
+    
     /**
      */
     private void initialize() throws IOException {
-        loadCountryNameMap();
-        loadFeatureMetaMap();
+
+        geodataUtil = new GeonamesUtility();
+        
+        //loadCountryNameMap();
+        //loadFeatureMetaMap();
 
         String config_solr_home = System.getProperty("solr.solr.home");
         solr = new SolrProxy(config_solr_home, "gazetteer");
@@ -291,10 +215,10 @@ public class SolrGazetteer {
          * Finally choose default official names given the map of name:iso2
          */
         for (Country C : country_lookup.values()) {
-            String n = _default_country_names.get(C.getCountryCode());
+            String n = geodataUtil.getDefaultCountryName(C.getCountryCode());
             if (n != null) {
                 for (String alias : C.getAliases()) {
-                    if (n.equalsIgnoreCase(alias.toLowerCase())) {
+                    if (n.equalsIgnoreCase(alias)) {
                         C.setName(alias);
                     }
                 }
@@ -373,6 +297,7 @@ public class SolrGazetteer {
          */
 
         SolrGazetteer gaz = new SolrGazetteer();
+        GeonamesUtility geodataUtil = new GeonamesUtility();
 
         try {
 
@@ -386,7 +311,7 @@ public class SolrGazetteer {
 
             for (Place pc : matches) {
                 System.out.println(pc.toString() + " which is categorized as: "
-                        + gaz.getFeatureName(pc.getFeatureClass(), pc.getFeatureCode()));
+                        + geodataUtil.getFeatureName(pc.getFeatureClass(), pc.getFeatureCode()));
             }
 
         } catch (Exception err) {

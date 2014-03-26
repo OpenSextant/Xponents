@@ -168,6 +168,16 @@ public class GeonamesUtility {
             throw new IOException("No data found in country name map");
         }
     }
+    
+    /**
+     * Finds a default country name for a CC if one exists.
+     * 
+     * @param cc_iso2  country code.
+     * @return
+     */
+    public String getDefaultCountryName(String cc_iso2){
+        return _default_country_names.get(cc_iso2);
+    }
 
     /**
      * List all country names, official and variant names.
