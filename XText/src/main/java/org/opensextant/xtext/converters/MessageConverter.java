@@ -407,7 +407,7 @@ public class MessageConverter extends ConverterAdapter {
 
         // Plain text is likely handled up above as (String)part are encountered in-line.
         // Here HTML attachments need to be decoded.
-        if (meta.isHTML() && (meta.isQP()|| meta.isBase64())) {
+        if (meta.isHTML() && (meta.isQP() || meta.isBase64())) {
             try {
                 child.content = decodeMIMEText(input, meta.transferEncoding);
             } catch (Exception decoderErr) {
