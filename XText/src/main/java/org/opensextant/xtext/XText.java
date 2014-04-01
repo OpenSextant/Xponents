@@ -317,13 +317,17 @@ public final class XText implements iFilter, iConvert {
 
         // unpack, traverse, convert, save
         if (this.save_in_folder) {
+            // Saving directly in the folder, aka embedded mode
             if (this.save_in_archive_root) {
                 saveArchiveTo = this.archiveRoot + File.separator + "xtext-zips";
+                this.setInputRoot(new File(saveArchiveTo));
             } else {
                 saveArchiveTo = input.getParentFile().getAbsolutePath() + File.separator + "xtext-zips";
             }
         } else {
+            // Save converted items in a parallel archive for this zip archive.
             saveArchiveTo = this.archiveRoot;
+            this.setInputRoot(new File(saveArchiveTo + File.separator + FilenameUtils.getBaseName(input.getName())));
         }
 
         ArchiveUnpacker unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
@@ -460,7 +464,7 @@ public final class XText implements iFilter, iConvert {
                     if (this.save_in_folder) {
                         // Saves close to original in ./text/ folder where original resides.
                         textDoc.saveEmbedded();
-                    } else {                       
+                    } else {
                         textDoc.setPathRelativeTo(inputRoot.getAbsolutePath());
                         textDoc.save(outputNode);
                     }
@@ -749,7 +753,7 @@ public final class XText implements iFilter, iConvert {
         xt.enableSaving(true);
         xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in directory.
         xt.enableHTMLScrubber(filter_html);
-        
+
         if (output == null) {
             output = "xtext-output";
         }
