@@ -26,13 +26,13 @@
 package org.opensextant.xtext;
 
 import org.opensextant.util.FileUtility;
+import org.opensextant.xtext.converters.EmbeddedContentConverter;
 import org.opensextant.xtext.converters.ImageMetadataConverter;
 import org.opensextant.xtext.converters.MessageConverter;
 import org.opensextant.xtext.converters.TextTranscodingConverter;
 import org.opensextant.xtext.converters.TikaHTMLConverter;
 import org.opensextant.xtext.converters.ArchiveNavigator;
 import org.opensextant.xtext.converters.DefaultConverter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +79,7 @@ import org.apache.commons.io.FileUtils;
  */
 public final class XText implements iFilter, iConvert {
 
-    private Logger log = LoggerFactory.getLogger(XText.class);
+    private Logger log = LoggerFactory.getLogger(getClass());
     private boolean save = true;
     private boolean zone_web_content = false;
     private String archiveRoot = null;
@@ -88,6 +88,7 @@ public final class XText implements iFilter, iConvert {
     protected String inputNode = null;
     private boolean save_in_folder = false;
     private boolean save_in_archive_root = false; // save to the archive root rather than in the directory the file came from
+    private boolean extractEmbedded = true;
 
     private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE; /* XText default is 1 MB of text */
     private long maxFileSize = FILE_SIZE_LIMIT;
@@ -98,6 +99,7 @@ public final class XText implements iFilter, iConvert {
      */
     public static Map<String, iConvert> converters = new HashMap<String, iConvert>();
     private iConvert defaultConversion;
+    private iConvert embeddedConversion;
     private Set<String> requested_types = new HashSet<String>();
     private Set<String> ignore_types = new HashSet<String>();
 
@@ -111,12 +113,44 @@ public final class XText implements iFilter, iConvert {
         ConvertedDocument.overwrite = b;
     }
 
-    public void setArchiveDir(String root) {
-        archiveRoot = root;
+    /**
+     * 
+     * @param root
+     * @throws IOException
+     */
+    public void setArchiveDir(String root) throws IOException {
+        if (root == null) {
+            throw new IOException("Archive cannot be null");
+        }
+        archiveRoot = FilenameUtils.normalizeNoEndSeparator(root, true);
+        if (archiveRoot == null) {
+            throw new IOException("Archive root is invalid");
+        }
+        File test = new File(archiveRoot);
+
+        if (!test.exists() || !test.isDirectory()) {
+            throw new IOException("Archive root directory must exist");
+        }
     }
 
-    public void setTempDir(String tmp) {
-        tempRoot = tmp;
+    /**
+     * Set the temp working directory
+     * @param tmp
+     * @throws IOException
+     */
+    public void setTempDir(String tmp) throws IOException {
+        if (tmp == null) {
+            throw new IOException("Temp Dir cannot be null");
+        }
+        tempRoot = FilenameUtils.normalizeNoEndSeparator(tmp, true);
+        if (tempRoot == null) {
+            throw new IOException("Temp Dir is invalid");
+        }
+        File test = new File(tempRoot);
+
+        if (!test.exists() || !test.isDirectory()) {
+            throw new IOException("Temp Dir must exist");
+        }
     }
 
     public void setMaxBufferSize(int sz) {
@@ -212,8 +246,23 @@ public final class XText implements iFilter, iConvert {
 
     private String outputNode;
 
-    public void setOutputNode(String name) {
-        outputNode = archiveRoot + File.separator + name;
+    /**
+     * If archiveRoot is set, it is used in conjunction with the outputnode
+     * If not set, the outputNode is....
+     * 
+     * @param name
+     */
+    public void setOutputNode(String name) throws IOException {
+        if (archiveRoot == null) {
+            outputNode = FilenameUtils.normalizeNoEndSeparator(outputNode, true);
+        } else {
+            outputNode = FilenameUtils.concat(archiveRoot, name);
+            if (outputNode != null) {
+                outputNode = FilenameUtils.normalizeNoEndSeparator(outputNode, true);
+            } else {
+                throw new IOException("Output node is misconfigured;  ArchiveRoot is required " + name);
+            }
+        }
     }
 
     protected long total_conv_time = 0;
@@ -252,7 +301,11 @@ public final class XText implements iFilter, iConvert {
 
         start_time = System.currentTimeMillis();
 
-        String path = filepath.trim();
+        String path = FilenameUtils.normalize(filepath, true);
+        if (path == null) {
+            throw new IOException("Failed to normalize the path: " + filepath);
+        }
+
         File input = new File(path);
         if (!input.exists()) {
             throw new IOException("Non existent input FILE=" + input.getAbsolutePath());
@@ -309,6 +362,14 @@ public final class XText implements iFilter, iConvert {
         return false;
     }
 
+    private static String createPath(String dir, String item) throws IOException {
+        String newPath = FilenameUtils.concat(dir, item);
+        if (newPath == null) {
+            throw new IOException("Invalid path");
+        }
+        return newPath;
+    }
+
     /**
      * Unpack an archive and convert items found.
      */
@@ -319,20 +380,18 @@ public final class XText implements iFilter, iConvert {
         if (this.save_in_folder) {
             // Saving directly in the folder, aka embedded mode
             if (this.save_in_archive_root) {
-                saveArchiveTo = this.archiveRoot + File.separator + "xtext-zips";
+                saveArchiveTo = createPath(this.archiveRoot, "xtext-zips");
                 this.setInputRoot(new File(saveArchiveTo));
             } else {
-                saveArchiveTo = input.getParentFile().getAbsolutePath() + File.separator + "xtext-zips";
+                saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), "xtext-zips");
             }
         } else {
             // Save converted items in a parallel archive for this zip archive.
             saveArchiveTo = this.archiveRoot;
-            this.setInputRoot(new File(saveArchiveTo + File.separator + FilenameUtils.getBaseName(input.getName())));
+            this.setInputRoot(new File(createPath(saveArchiveTo, FilenameUtils.getBaseName(input.getName()))));
         }
 
         ArchiveUnpacker unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
-        //String inPath = unpacker.getWorkingDir() + File.separator + FilenameUtils.getBaseName(input.getName());
-        //input = new File(inPath);
         unpacker.unpack(input);
     }
 
@@ -379,9 +438,13 @@ public final class XText implements iFilter, iConvert {
 
     /**
      * Convert one file and save it off.
-     *
      * We ignore hidden files and files in hidden folders, e.g., .cvs_ignore,
      * mycode/.svn/abc.txt
+     * 
+     * This is the end of the line for the conversion logic;  convertFile figures out if it should 
+     * return the cached version or attempt a conversion;  it also tries to save children items 
+     * As children items may require special attention they are not converted -- caller can pass in 
+     * ConversionListener and can deal with children file objects on their end. 
      *
      * @param input
      * @return converted document object
@@ -418,7 +481,11 @@ public final class XText implements iFilter, iConvert {
 
         iConvert converter = converters.get(ext);
         if (converter == null) {
-            converter = defaultConversion;
+            if (extractEmbedded && EmbeddedContentConverter.isSupported(ext)) {
+                converter = embeddedConversion;
+            } else {
+                converter = defaultConversion;
+            }
         }
 
         ConvertedDocument textDoc = null;
@@ -447,14 +514,26 @@ public final class XText implements iFilter, iConvert {
         // Convert or Read object, IFF no cache exists for that object.
         //------------------
         if (textDoc == null) {
+            // Measure how long conversions take.
             long t1 = System.currentTimeMillis();
-            textDoc = converter.convert(input);
+
+            try {
+                textDoc = converter.convert(input);
+            } catch (Exception convErr) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Conversion error FILE={}", input.getPath(), convErr);
+                } else {
+                    log.error("Conversion error FILE={} MSG={}", input.getPath(), convErr.getMessage());
+                }
+            }
             long t2 = System.currentTimeMillis();
             int duration = (int) (t2 - t1);
             if (textDoc != null) {
-                if (textDoc.buffer == null) {
-                    throw new IOException("Engineering error: Doc converted, but converter failed to setText()");
-                }
+                // Buffer can be null.   If you got this far, you are interested in the file, as it passed 
+                // all filters above.  Return the document with whatever metadata it found.
+                //if (textDoc.buffer == null) {
+                //    throw new IOException("Engineering error: Doc converted, but converter failed to setText()");
+                //}
                 if (this.save && textDoc.is_converted) {
                     // Get Parent info in there.
                     if (parent != null) {
@@ -482,11 +561,13 @@ public final class XText implements iFilter, iConvert {
                         //   'textdoc' should now be well endowed with all the children metadata.
                     }
                 }
+            } else {
+                textDoc = new ConvertedDocument(input);
+            }
 
-                textDoc.conversion_time = duration;
-                if (textDoc.filetime == null) {
-                    textDoc.filetime = textDoc.getFiletime();
-                }
+            textDoc.conversion_time = duration;
+            if (textDoc.filetime == null) {
+                textDoc.filetime = textDoc.getFiletime();
             }
         }
 
@@ -546,25 +627,30 @@ public final class XText implements iFilter, iConvert {
                 // Alternatively,  child.meta.getProperty( ConvertedDocument.CHILD_ENTRY_KEY )
                 //  same result, just more verbose.
                 //
-                File childFile = new File(targetPath + File.separator + child.id);
+                File childFile = new File(FilenameUtils.concat(targetPath, child.id));
                 io = new FileOutputStream(childFile);
                 IOUtils.write(child.content, io);
 
                 ConvertedDocument childConv = convertFile(childFile, parentDoc);
                 if (childConv != null) {
-                    // Push down all child metadata down to ConvertedDoc
-                    for (String k : child.meta.stringPropertyNames()) {
-                        String val = child.meta.getProperty(k);
-                        childConv.addUserProperty(k, val);
+                    if (childConv.is_converted) {
+                        // Push down all child metadata down to ConvertedDoc
+                        for (String k : child.meta.stringPropertyNames()) {
+                            String val = child.meta.getProperty(k);
+                            childConv.addUserProperty(k, val);
+                        }
+                        // Save cached version once again.
+                        childConv.saveBuffer(new File(childConv.textpath));
                     }
-                    // Save cached version once again.
-                    childConv.saveBuffer(new File(childConv.textpath));
                     parentDoc.addChild(childConv);
+
                 }
             } catch (Exception err) {
-                log.error("Failed to write out child {}, but will continue with others", child.id);
+                log.error("Failed to write out child {}, but will continue with others", child.id, err);
             } finally {
-                io.close();
+                if (io != null) {
+                    io.close();
+                }
             }
         }
     }
@@ -575,9 +661,14 @@ public final class XText implements iFilter, iConvert {
      */
     public void defaults() {
 
-        tempRoot = System.getProperty("java.io.tmpdir");
-        if (tempRoot == null) {
-            tempRoot = "/tmp/xtext";
+        String tmp = System.getProperty("java.io.tmpdir");
+        if (tmp == null) {
+            tmp = "/tmp/xtext";
+        }
+        try {
+            setTempDir(tmp);
+        } catch (Exception err) {
+            log.error("You have accepted the defaults, but the temp dir is not available.", err);
         }
 
         archive_types.add("zip");
@@ -613,6 +704,7 @@ public final class XText implements iFilter, iConvert {
         // and archives.
 
         defaultConversion = new DefaultConverter(maxBuffer);
+        embeddedConversion = new EmbeddedContentConverter(maxBuffer);
     }
 
     /**
@@ -632,12 +724,8 @@ public final class XText implements iFilter, iConvert {
 
         // Invoke converter instances only as requested types suggest.
         // If caller has removed file types from the list, then
-        String mimetype = "pdf";
-        //if (requested_types.contains(mimetype)) {
-        //converters.put(mimetype, new PDFConverter());
-        //}
 
-        mimetype = "txt";
+        String mimetype = "txt";
         if (requested_types.contains(mimetype)) {
             converters.put(mimetype, new TextTranscodingConverter());
         }
@@ -754,12 +842,13 @@ public final class XText implements iFilter, iConvert {
         xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in directory.
         xt.enableHTMLScrubber(filter_html);
 
-        if (output == null) {
-            output = "xtext-output";
-        }
-        xt.setArchiveDir(output);
-
         try {
+            if (output == null) {
+                output = "xtext-output";
+                FileUtility.makeDirectory(output);
+            }
+
+            xt.setArchiveDir(output);
             xt.setup();
             xt.extractText(input);
         } catch (IOException ioerr) {

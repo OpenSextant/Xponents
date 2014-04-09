@@ -114,7 +114,11 @@ public class ArchiveNavigator implements ArchiveUnpacker {
      */
     public File unzip(File zipFile) throws IOException {
 
-        String _working = getWorkingDir() + File.separator + FilenameUtils.getBaseName(zipFile.getPath());
+        String _working = FilenameUtils.concat(getWorkingDir(), FilenameUtils.getBaseName(zipFile.getPath()));
+        if (_working == null){
+            throw new IOException("Invalid archive path for "+zipFile.getPath());
+        }
+        
         File workingDir = new File(_working);
         workingDir.mkdir();
 
@@ -170,7 +174,10 @@ public class ArchiveNavigator implements ArchiveUnpacker {
      */
     public File untar(File tarFile) throws IOException {
 
-        String _working = getWorkingDir() + File.separator + FilenameUtils.getBaseName(tarFile.getPath());
+        String _working = FilenameUtils.concat( getWorkingDir(), FilenameUtils.getBaseName(tarFile.getPath()));
+        if (_working == null){
+            throw new IOException("Invalid archive path for "+tarFile.getPath());
+        }
         File workingDir = new File(_working);
         workingDir.mkdir();
 
