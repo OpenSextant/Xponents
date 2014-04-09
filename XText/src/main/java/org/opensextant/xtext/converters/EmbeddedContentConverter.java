@@ -98,7 +98,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
         }
 
         ParserContainerExtractor extractor = new ParserContainerExtractor();
-        EmbeddedObjectExtractor objExtractor = new EmbeddedObjectExtractor(compoundDoc, false);
+        EmbeddedObjectExtractor objExtractor = new EmbeddedObjectExtractor(compoundDoc, true);
 
         TikaInputStream tikaStream = null;
         try {
@@ -117,7 +117,10 @@ public class EmbeddedContentConverter extends DefaultConverter {
     static {
         filterableMeta.add("application/x-emf");
         filterableMeta.add("application/x-msmetafile");
-        filterableMeta.add("image/png");
+
+        // PNG is not trivial item, as are icons or EMF stuff.
+        // filter out particular mime-types by situation in resource handler EmbeddedObjectExtractor
+        // filterableMeta.add("image/png");
     }
 
     /**
@@ -130,9 +133,11 @@ public class EmbeddedContentConverter extends DefaultConverter {
 
         ConvertedDocument parent = null;
         int objectCount = 0;
+        boolean filterOut = true;
 
         EmbeddedObjectExtractor(ConvertedDocument par, boolean filterTrivia) throws IOException {
             parent = par;
+            filterOut = filterTrivia;
         }
 
         /**
@@ -144,6 +149,11 @@ public class EmbeddedContentConverter extends DefaultConverter {
         public boolean filterOutTrivialObjects(String mediaType) {
             if (filterableMeta.contains(mediaType)) {
                 return true;
+            }
+            if (filterOut) {
+                if ("image/png".equalsIgnoreCase(mediaType)) {
+                     return true;
+                }
             }
             return false;
         }
