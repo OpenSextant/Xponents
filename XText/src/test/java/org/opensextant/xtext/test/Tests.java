@@ -16,6 +16,7 @@
 package org.opensextant.xtext.test;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 import org.apache.commons.io.FileUtils;
@@ -112,16 +113,43 @@ public class Tests {
         XText xt = new XText();
         xt.enableSaveWithInput(test_save);
         xt.enableSaving(test_save);
-        xt.enableOverwrite(false); // reuse cached conversions if possible.
+        xt.enableOverwrite(true); // reuse cached conversions if possible.
         xt.setup();
         xt.setConversionListener(
                 new ConversionListener() {
             public void handleConversion(ConvertedDocument d) {
-                log.info("FILE=" + d.filename + " Converted?=" + d.is_converted);
+                log.info("FILE=" + d.filename + " Converted?=" + d.is_converted + " ID={}", d.id);
+                d.setDefaultID();
+                log.info("\t\tTry resetting Doc ID to default ID = " +d.id);
             }
         });
         xt.extractText(input);
     }
+    
+    @Test
+    public void parseEmbedded() throws IOException{
+        URL item = Test.class.getResource("/T-DS_Excel2003-PPT2003_1.xls");
+        String input = item.getFile();
+
+        XText xt = new XText();
+        xt.enableSaveWithInput(true);
+        
+        xt.enableSaving(true);
+        xt.enableOverwrite(true); // reuse cached conversions if possible.
+        
+        xt.setup();
+        xt.setConversionListener(
+                new ConversionListener() {
+            public void handleConversion(ConvertedDocument d) {
+                log.info("FILE=" + d.filename + " Converted?=" + d.is_converted + " ID={}", d.id);
+                d.setDefaultID();
+                log.info("\t\tTry resetting Doc ID to default ID = " +d.id);
+            }
+        });
+        xt.extractText(input);
+        
+        //assert(true);
+}
 
     @Test
     public void testHTMLConversion() throws IOException, java.net.URISyntaxException {
