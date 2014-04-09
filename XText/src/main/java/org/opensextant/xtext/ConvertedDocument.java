@@ -42,7 +42,9 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.opensextant.util.FileUtility;
+import org.opensextant.util.TextUtils;
 import org.opensextant.data.DocInput;
 
 /**
@@ -306,6 +308,7 @@ public final class ConvertedDocument extends DocInput {
     public void setId(String ident) {
         this.id = ident;
     }
+    
 
     /**
      * set encoding property
@@ -368,16 +371,42 @@ public final class ConvertedDocument extends DocInput {
         return this.textpath;
     }
 
+    private boolean has_text = false;
+    
     /**
+     * Reports if the doc has text available, after it was converted.
+     * NOTE: this is false if you ask before it is converted.
+     * 
+     * @return true if there is text available.  false if the converters have not tried to set text or they tried and found no text.
+     */    
+    public boolean hasText(){
+        return has_text;
+    }
+    
+    /**
+     * Set default ID only after all conversion and all metadata has been acquired.
+     * MD5 hash of text, if text is available, or of the filepath if file is empty.
+     * 
      */
-    //private boolean is_output_in_final_encoding() {
-    //    return (this.is_plaintext && OUTPUT_ENCODING.equalsIgnoreCase(encoding));
-    //}
+    public void setDefaultID(){
+        if (hasText()){
+            id = TextUtils.text_id(getText());
+        } else {
+            id = TextUtils.text_id(filepath);        
+        }
+    }
+    
     /**
+     * The whole point of this mess:  get the text from the original. It is set here and line endings normalized to unix line endings, \n
      */
     public void setText(String buf) throws UnsupportedEncodingException {
         this.buffer = buf;
-        //int rawlen = buf.length();
+        
+        if (StringUtils.isBlank(buffer)){
+            return;
+        }
+        
+        has_text = true;
 
         // Now figure out if we have a converted document or not.
         if (do_convert) {
