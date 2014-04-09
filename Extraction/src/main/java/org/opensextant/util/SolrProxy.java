@@ -30,7 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -38,7 +37,6 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.util.DateUtil;
 import org.apache.solr.core.CoreContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +53,7 @@ import org.opensextant.data.Place;
  * 
  * @author ubaldino
  */
-public class SolrProxy {
+public class SolrProxy extends SolrUtil {
 
 	public static String OPENSEXTANT_HOME = System
 			.getProperty("opensextant.home");
@@ -336,149 +334,7 @@ public class SolrProxy {
 		return solrServer;
 	}
 
-	/**
-	 * Get an integer from a record
-	 */
-	public static int getInteger(SolrDocument d, String f) {
-		Object obj = d.getFieldValue(f);
-		if (obj == null) {
-			return 0;
-		}
 
-		if (obj instanceof Integer) {
-			return ((Integer) obj).intValue();
-		} else {
-			Integer v = Integer.parseInt(obj.toString());
-			return v.intValue();
-		}
-	}
-
-	/**
-	 * Get a long from a record
-	 */
-	public static long getLong(SolrDocument d, String f) {
-		Object obj = d.getFieldValue(f);
-		if (obj == null) {
-			return 0;
-		}
-
-		if (obj instanceof Long) {
-			return ((Long) obj).longValue();
-		} else {
-			return new Long(obj.toString()).longValue();
-		}
-	}
-
-	/**
-	 * Get a floating point object from a record
-	 */
-	public static Float getFloat(SolrDocument d, String f) {
-		Object obj = d.getFieldValue(f);
-		if (obj == null) {
-			return 0F;
-		} else {
-			return (Float) obj;
-		}
-	}
-
-	/**
-	 * Get a Date object from a record
-	 * 
-	 * @throws java.text.ParseException
-	 */
-	public static Date getDate(SolrDocument d, String f)
-			throws java.text.ParseException {
-		if (d == null || f == null) {
-			return null;
-		}
-		Object obj = d.getFieldValue(f);
-		if (obj == null) {
-			return null;
-		}
-		if (obj instanceof Date) {
-			return (Date) obj;
-		} else if (obj instanceof String) {
-			return DateUtil.parseDate((String) obj);
-		}
-		return null;
-	}
-
-	/**
-     *
-     */
-	public static char getChar(SolrDocument solrDoc, String name) {
-		String result = getString(solrDoc, name);
-		if (result == null) {
-			return 0;
-		}
-		if (result.isEmpty()) {
-			return 0;
-		}
-		return result.charAt(0);
-	}
-
-	/**
-	 * Get a String object from a record
-	 */
-	public static String getString(SolrDocument solrDoc, String name) {
-		Object result = solrDoc.getFirstValue(name);
-		if (result == null) {
-			return null;
-		}
-		return result.toString();
-	}
-
-	/**
-	 * 
-	 * Get a double from a record
-	 */
-	public static double getDouble(SolrDocument solrDoc, String name) {
-		Object result = solrDoc.getFirstValue(name);
-		if (result == null) {
-			throw new IllegalStateException("Blank: " + name + " in " + solrDoc);
-		}
-		if (result instanceof Number) {
-			Number number = (Number) result;
-			return number.doubleValue();
-		} else {
-			return Double.parseDouble(result.toString());
-		}
-	}
-
-	/**
-	 * Parse XY pair stored in Solr Spatial4J record. No validation is done.
-	 * 
-	 * @return XY double array, [lat, lon]
-	 */
-	public static double[] getCoordinate(SolrDocument solrDoc, String field) {
-		String xy = (String) solrDoc.getFirstValue(field);
-		if (xy == null) {
-			throw new IllegalStateException("Blank: " + field + " in "
-					+ solrDoc);
-		}
-
-		final double[] xyPair = { 0.0, 0.0 };
-		String[] lat_lon = xy.split(",", 2);
-		xyPair[0] = Double.parseDouble(lat_lon[0]);
-		xyPair[1] = Double.parseDouble(lat_lon[1]);
-
-		return xyPair;
-	}
-
-	/**
-	 * Parse XY pair stored in Solr Spatial4J record. No validation is done.
-	 * 
-	 * @return XY double array, [lat, lon]
-	 */
-	public static double[] getCoordinate(String xy) {
-
-		final double[] xyPair = { 0.0, 0.0 };
-		String[] lat_lon = xy.split(",", 2);
-		xyPair[0] = Double.parseDouble(lat_lon[0]);
-		xyPair[1] = Double.parseDouble(lat_lon[1]);
-
-		return xyPair;
-	}
 
 	/**
 	 * Creates the bare minimum Gazetteer Place record
