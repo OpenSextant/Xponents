@@ -181,6 +181,7 @@ public class MessageConverter extends ConverterAdapter {
      * @deprecated  Use Commons codecs to decode; this is just linending/wrapping solution
      * @return
      */
+    @Deprecated
     public static String scrubRFC822Encoding(String buf) {
         // replace line endings that appear to be wrappings.
         // Note - TEXT=\nTEXT  is a line wrap that likely broke the text
