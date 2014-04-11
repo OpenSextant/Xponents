@@ -1,0 +1,5 @@
+# We need to ensure that these don't get changed inadvertently because
+# it could break the tests
+*.eml -text
+word_doc_as_html.htm -text
+xtext-embedded-attached-text.txt -text
