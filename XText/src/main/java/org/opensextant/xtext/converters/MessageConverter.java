@@ -355,6 +355,10 @@ public class MessageConverter extends ConverterAdapter {
                     Content child = createChildContent(filename, partIO, meta);
 
                     copyMailAttrs(parent, child);
+                    if (meta.isHTML() && (meta.isInline() || (!meta.isAttachment()))) {
+                        child.meta.setProperty(MAIL_KEY_PREFIX + "html-body", "true");
+                    }
+
                     parent.addRawChild(child);
                     return;
                 }
@@ -446,6 +450,8 @@ public class MessageConverter extends ConverterAdapter {
         private boolean ishtml = false;
         private boolean iscal = false;
         private boolean isImage = false;
+        private boolean isAttachment = false;
+        private boolean isInline = false;
         public String desc = "data";
 
         @Override
@@ -493,6 +499,15 @@ public class MessageConverter extends ConverterAdapter {
                     transferEncoding = headers[0];
                 }
             }
+
+            String dispostion = bodyPart.getDisposition();
+            if (dispostion != null) {
+                if (dispostion.startsWith("attachment")) {
+                    isAttachment = true;
+                } else if (dispostion.startsWith("inline")) {
+                    isInline = true;
+                }
+            }
         }
 
         /** is QP encoding 
@@ -526,6 +541,14 @@ public class MessageConverter extends ConverterAdapter {
 
         public boolean isText() {
             return istext;
+        }
+
+        public boolean isAttachment() {
+            return isAttachment;
+        }
+
+        public boolean isInline() {
+            return isInline;
         }
 
         public String getPossibleFileExtension() {
