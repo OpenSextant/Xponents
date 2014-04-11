@@ -41,6 +41,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 
 import org.apache.tika.io.IOUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -556,6 +558,13 @@ public final class XText implements iFilter, iConvert {
                     for (String k : child.meta.stringPropertyNames()) {
                         String val = child.meta.getProperty(k);
                         childConv.addUserProperty(k, val);
+                    }
+                    if(child.mimeType != null) {
+                        try {
+                            childConv.setMimeType(new MimeType(child.mimeType));
+                        } catch (MimeTypeParseException e) {
+                            log.warn("Invalid mime type encountered: {} ignoring.", child.mimeType);
+                        }
                     }
                     // Save cached version once again.
                     childConv.saveBuffer(new File(childConv.textpath));

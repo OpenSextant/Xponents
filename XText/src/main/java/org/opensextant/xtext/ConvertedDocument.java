@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import javax.activation.MimeType;
 
 import net.sf.json.JSONObject;
 
@@ -99,6 +100,7 @@ public final class ConvertedDocument extends DocInput {
     public String relative_path = null;
     public String textpath = null;
     private String encoding = null;
+    private MimeType mimeType = null;
     JSONObject meta = new JSONObject();
     protected static boolean overwrite = true;
     /**
@@ -322,6 +324,24 @@ public final class ConvertedDocument extends DocInput {
      */
     public String getEncoding() {
         return this.encoding;
+    }
+
+    /**
+     * Get the mime type of the document, may be {@code null}.
+     *
+     * @return The mime type of the document, if available.
+     */
+    public MimeType getMimeType() {
+        return mimeType;
+    }
+
+    /**
+     * Set the mime type of the document, may be {@code null}.
+     *
+     * @param mimeType the mime type of the document.
+     */
+    public void setMimeType(MimeType mimeType) {
+        this.mimeType = mimeType;
     }
 
     /**
