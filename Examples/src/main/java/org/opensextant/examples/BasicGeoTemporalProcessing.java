@@ -277,7 +277,11 @@ public class BasicGeoTemporalProcessing
      * features will be consumed by downstream processing
      */
     @Override
-    public void handleConversion(ConvertedDocument txtdoc) {
+    public void handleConversion(ConvertedDocument txtdoc, String fpath) {
+        if (txtdoc == null){
+            log.error("NOTE: Document could not be converted FILE={}",fpath);
+            return;
+        }
         total_rawbytes += txtdoc.filesize;
         ++total_docs;
         total_size += txtdoc.buffer.length();
