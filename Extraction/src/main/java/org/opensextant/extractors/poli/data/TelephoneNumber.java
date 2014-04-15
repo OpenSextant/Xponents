@@ -59,7 +59,7 @@ public class TelephoneNumber extends PoliMatch {
         String nmbr = match_groups.get("tel_num");
         StringBuilder _buf = new StringBuilder();
         if (area != null) {
-            area = TextUtils.fast_remove(area, "()");
+            area = TextUtils.removeAny(area, "()");
             _buf.append(area);
             _buf.append("-");
         }
@@ -67,6 +67,4 @@ public class TelephoneNumber extends PoliMatch {
 
         this.textnorm = _buf.toString().replace(".", "-");
     }
-
-
 }
