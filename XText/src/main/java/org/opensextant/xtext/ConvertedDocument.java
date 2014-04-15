@@ -770,20 +770,24 @@ public final class ConvertedDocument extends DocInput {
             // NOT an XText cache
             return null;
         }
-        ConvertedDocument doc = new ConvertedDocument();
         // Decode JSON
         String json = new String(Base64.decodeBase64(header.substring(XT_LABEL.length())));
-        doc.meta = JSONObject.fromObject(json);
+        JSONObject doc_meta = JSONObject.fromObject(json);
+        String fpath = doc_meta.getString("filepath");
+
+        ConvertedDocument doc = new ConvertedDocument(new File(fpath));
+        doc.meta = doc_meta; 
 
         // Set plain text buffer
         doc.buffer = buf.substring(0, x);
 
         // Retrieve values for useful attrs.
         doc.encoding = doc.getProperty("encoding");
-        doc.filepath = doc.getProperty("filepath");
+        doc.filepath = fpath;
         doc.filesize = Long.parseLong(doc.getProperty("filesize"));
         doc.textpath = fconv.getAbsolutePath();
         doc.is_cached = true;
+        doc.is_converted = true;
 
         doc.filetime = new Date(Long.parseLong(doc.getProperty("filetime")));
 
