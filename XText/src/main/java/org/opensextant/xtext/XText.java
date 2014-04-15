@@ -47,34 +47,35 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
- *
+ * 
  * Traverse a folder and return text versions of the documents found. Archiving
  * the text only copies at an output location of your choice.
- *<pre>
- *
+ * 
+ * <pre>
+ * 
  * if input is a file, convert. Done.
- *
+ * 
  * if input is an archive, unpack in temp space, iterate over dir, convert each.
  * Done
- *
+ * 
  * if input is a folder iterate over dir, convert each. Done
- *</pre>
- *
+ * </pre>
+ * 
  * TEXT OUTPUT form includes a JSON document header with metadata properties
  * from the original item. These are valid elements of the conversion process.
  * We try to maintain them apart from the true, readable text of the document.
- *
- *
+ * 
+ * 
  * Add a ConversiontListener to XText instance to capture the converted document
  * as it comes out of the main loop for converting archives and folders.
- *
+ * 
  * extractText() runs over any file type and extracts text, saving it pushing
  * events to one optional listener
- *
+ * 
  * convertFile(File) will convert a single file, returning a ConvertedDocument
- *
- *
- *
+ * 
+ * 
+ * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public final class XText implements iFilter, iConvert {
@@ -86,11 +87,21 @@ public final class XText implements iFilter, iConvert {
     private File inputRoot = null;
     private String tempRoot = null;
     protected String inputNode = null;
+    /**
+     * Embedded mode
+     */
     private boolean save_in_folder = false;
-    private boolean save_in_archive_root = false; // save to the archive root rather than in the directory the file came from
+
+    /**
+     * Archive mode: save to the archive root rather than in the directory the
+     * file came from. Either embedded mode or archive mode.
+     */
     private boolean extractEmbedded = true;
 
-    private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE; /* XText default is 1 MB of text */
+    private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE; /*
+                                                             * XText default is
+                                                             * 1 MB of text
+                                                             */
     private long maxFileSize = FILE_SIZE_LIMIT;
 
     protected Set<String> archive_types = new HashSet<String>();
@@ -135,6 +146,7 @@ public final class XText implements iFilter, iConvert {
 
     /**
      * Set the temp working directory
+     * 
      * @param tmp
      * @throws IOException
      */
@@ -168,11 +180,15 @@ public final class XText implements iFilter, iConvert {
         zone_web_content = b;
     }
 
+    public void enableEmbeddedExtraction(boolean b) {
+        extractEmbedded = b;
+    }
+
     /**
      * The overall flag to save converted output or not. DEFAULT: true = save
      * it; provided caller specifies either saveWithInput or provides an
      * archiveRoot
-     *
+     * 
      * @param b
      */
     public void enableSaving(boolean b) {
@@ -182,10 +198,11 @@ public final class XText implements iFilter, iConvert {
     /**
      * Save converted content with input. Xtext creates a new "xtext" folder in
      * the containing folder of the current file
+     * 
      * <pre>
      * input is:     a/b/c.doc
      * saved as:     a/b/xtext/c.doc.txt
-     *
+     * 
      * DEFAULT: do not save in input folder
      * </pre>
      */
@@ -197,13 +214,14 @@ public final class XText implements iFilter, iConvert {
      * Saving to an archive specified by the caller; This is inferred if a
      * non-null, pre-existing archive root is set; DEFAULT: do not save in
      * archive.
+     * 
      * <pre>
      * input is:   a/b/c.doc
      * output is:  archiveRoot/a/b/c.doc.txt
      * </pre>
      */
     public void enableSaveInArchive(boolean b) {
-        save_in_archive_root = b;
+        save_in_folder = !b;
     }
 
     /**
@@ -247,8 +265,8 @@ public final class XText implements iFilter, iConvert {
     private String outputNode;
 
     /**
-     * If archiveRoot is set, it is used in conjunction with the outputnode
-     * If not set, the outputNode is....
+     * If archiveRoot is set, it is used in conjunction with the outputnode If
+     * not set, the outputNode is....
      * 
      * @param name
      */
@@ -260,7 +278,8 @@ public final class XText implements iFilter, iConvert {
             if (outputNode != null) {
                 outputNode = FilenameUtils.normalizeNoEndSeparator(outputNode, true);
             } else {
-                throw new IOException("Output node is misconfigured;  ArchiveRoot is required " + name);
+                throw new IOException("Output node is misconfigured;  ArchiveRoot is required "
+                        + name);
             }
         }
     }
@@ -278,8 +297,8 @@ public final class XText implements iFilter, iConvert {
 
     protected void reportStatistics() {
         average_conv_time = (int) ((float) total_conv_time / total_conversions);
-        log.info("TOTAL of N=" + total_conversions + " documents converted" + "\n With an average time (ms) of "
-                + average_conv_time);
+        log.info("TOTAL of N=" + total_conversions + " documents converted"
+                + "\n With an average time (ms) of " + average_conv_time);
     }
 
     protected long start_time = 0;
@@ -287,7 +306,7 @@ public final class XText implements iFilter, iConvert {
 
     /**
      * Override the current setting for input Root
-     *
+     * 
      * @param tmpInput
      */
     public void setInputRoot(File tmpInput) {
@@ -335,11 +354,33 @@ public final class XText implements iFilter, iConvert {
         reportStatistics();
     }
 
+    public boolean filterOutFile(File input) {
+        //
+        //
+        if (ConvertedDocument.DEFAULT_EMBED_FOLDER.equals(input.getParentFile().getName())) {
+            return true;
+        }
+
+        return filterOutFile(input.getAbsolutePath());
+    }
+
+    public final static String DEFAULT_EMBED_FOLDER_IN_PATH = String.format("/%s/",
+            ConvertedDocument.DEFAULT_EMBED_FOLDER);
+    public final static String DEFAULT_EMBED_FOLDER_IN_WINPATH = String.format("\\%s\\",
+            ConvertedDocument.DEFAULT_EMBED_FOLDER);
+
     /**
      * Filter the type of files to ignore.
      */
     @Override
     public boolean filterOutFile(String filepath) {
+
+        // Filter out any of our own xtext caches 
+        //
+        if (filepath.contains(DEFAULT_EMBED_FOLDER_IN_PATH)
+                || filepath.contains(DEFAULT_EMBED_FOLDER_IN_WINPATH)) {
+            return true;
+        }
 
         String n = FilenameUtils.getBaseName(filepath);
         if (n.startsWith(".")) {
@@ -349,8 +390,8 @@ public final class XText implements iFilter, iConvert {
             return true;
         }
 
-        // ignore '-utf8.txt'  as XText likely generated them.
-        // 
+        // ignore '-utf8.txt' as XText likely generated them.
+        //
         if (n.endsWith(ConvertedDocument.CONVERTED_TEXT_EXT)) {
             return true;
         }
@@ -376,19 +417,17 @@ public final class XText implements iFilter, iConvert {
     public void convertArchive(File input) throws IOException {
         String saveArchiveTo = null;
 
+        String archive_name = FilenameUtils.getBaseName(input.getName());
+        String archive_ext = FilenameUtils.getExtension(input.getName());
+        String node_name = String.format("%s_%s", archive_name, archive_ext);
+        saveArchiveTo = createPath(this.archiveRoot, node_name);
+
         // unpack, traverse, convert, save
         if (this.save_in_folder) {
-            // Saving directly in the folder, aka embedded mode
-            if (this.save_in_archive_root) {
-                saveArchiveTo = createPath(this.archiveRoot, "xtext-zips");
-                this.setInputRoot(new File(saveArchiveTo));
-            } else {
-                saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), "xtext-zips");
-            }
+            saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), node_name);
         } else {
             // Save converted items in a parallel archive for this zip archive.
-            saveArchiveTo = this.archiveRoot;
-            this.setInputRoot(new File(createPath(saveArchiveTo, FilenameUtils.getBaseName(input.getName()))));
+            this.setInputRoot(new File(saveArchiveTo));
         }
 
         ArchiveUnpacker unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
@@ -403,14 +442,14 @@ public final class XText implements iFilter, iConvert {
 
     /**
      * This is the proxy interface for traversing archives.
-     *
+     * 
      * Archive Navigator will call this interface to convert and post-process So
      * XText itself is a super-converter, whereas the items in the converter pkg
      * are stateless, simple conversions.
-     *
+     * 
      * this interface implementation calls XText.convertFile() which in turn
      * deals with the details of saving and archiving items
-     *
+     * 
      * Items retrieved from Archive Navigator are deleted from their temp space.
      */
     @Override
@@ -424,7 +463,7 @@ public final class XText implements iFilter, iConvert {
      * for the data you think you are converting. E.g., if you know you have a
      * buffer of HTML content and want to save it as text, call
      * TikaHTMLConverter().convert( buffer ) directly.
-     *
+     * 
      */
     @Override
     public ConvertedDocument convert(String data) throws IOException {
@@ -437,27 +476,22 @@ public final class XText implements iFilter, iConvert {
     }
 
     /**
-     * Convert one file and save it off.
-     * We ignore hidden files and files in hidden folders, e.g., .cvs_ignore,
-     * mycode/.svn/abc.txt
+     * Convert one file and save it off. We ignore hidden files and files in
+     * hidden folders, e.g., .cvs_ignore, mycode/.svn/abc.txt
      * 
-     * This is the end of the line for the conversion logic;  convertFile figures out if it should 
-     * return the cached version or attempt a conversion;  it also tries to save children items 
-     * As children items may require special attention they are not converted -- caller can pass in 
-     * ConversionListener and can deal with children file objects on their end. 
-     *
+     * This is the end of the line for the conversion logic; convertFile figures
+     * out if it should return the cached version or attempt a conversion; it
+     * also tries to save children items As children items may require special
+     * attention they are not converted -- caller can pass in ConversionListener
+     * and can deal with children file objects on their end.
+     * 
      * @param input
      * @return converted document object
      * @throws java.io.IOException
      */
     public ConvertedDocument convertFile(File input, ConvertedDocument parent) throws IOException {
-        //
-        //
-        if (ConvertedDocument.DEFAULT_EMBED_FOLDER.equals(input.getParentFile().getName())) {
-            return null;
-        }
 
-        if (filterOutFile(input.getAbsolutePath())) {
+        if (parent == null && filterOutFile(input)) {
             return null;
         }
 
@@ -474,15 +508,31 @@ public final class XText implements iFilter, iConvert {
 
         log.info("Converting FILE=" + input.getAbsolutePath());
 
+        /*
+         * Handle archives.
+         */
+        if (isArchive(fname)) {
+            // inputRoot = null; // Will be set by de-archiver temp.
+            String zip_inputNode = FilenameUtils.getBaseName(fname);
+            setOutputNode(zip_inputNode);
+            convertArchive(input);
+            return null;
+        }
+
+        /*
+         * Otherwise this is a normal file...
+         */
         if (FileUtils.sizeOf(input) > maxFileSize) {
             log.info("Valid File is too large FILE=" + input.getAbsolutePath());
             return null;
         }
 
+        boolean cachable = true;
         iConvert converter = converters.get(ext);
         if (converter == null) {
             if (extractEmbedded && EmbeddedContentConverter.isSupported(ext)) {
                 converter = embeddedConversion;
+                cachable = false; // Such content is processed every time.  Oh well... 
             } else {
                 converter = defaultConversion;
             }
@@ -490,29 +540,32 @@ public final class XText implements iFilter, iConvert {
 
         ConvertedDocument textDoc = null;
 
-        //------------------
+        // ------------------
         // Retrieve previous conversions
-        //------------------
-        if (!ConvertedDocument.overwrite && this.save) {
+        // ------------------
+        if (cachable && !ConvertedDocument.overwrite && this.save) {
             if (this.save_in_folder) {
-                // Uncache a file close to the original  F <== ./xtext/F.txt
+                // Uncache a file close to the original F <== ./xtext/F.txt
                 textDoc = ConvertedDocument.getEmbeddedConversion(input);
             } else if (this.inputRoot != null) {
-                // Only if the caller is using the XText API extracText(), then will this work.
-                //  If user is trying to call convertFile(path) directly all the various optimizations here
-                //  will not necessarily make sense.
+                // Only if the caller is using the XText API extracText(), then
+                // will this work.
+                // If user is trying to call convertFile(path) directly all the
+                // various optimizations here
+                // will not necessarily make sense.
                 //
                 //
                 // Uncache a file in some other tree of archives that aligns
                 // with the tree of the original source.
-                //        .../mine/source/path/F  <====  /archive/source/path/F.txt
-                textDoc = ConvertedDocument.getCachedConversion(this.outputNode, this.inputRoot, input);
+                // .../mine/source/path/F <==== /archive/source/path/F.txt
+                textDoc = ConvertedDocument.getCachedConversion(this.outputNode, this.inputRoot,
+                        input);
             }
         }
 
-        //------------------
+        // ------------------
         // Convert or Read object, IFF no cache exists for that object.
-        //------------------
+        // ------------------
         if (textDoc == null) {
             // Measure how long conversions take.
             long t1 = System.currentTimeMillis();
@@ -523,17 +576,21 @@ public final class XText implements iFilter, iConvert {
                 if (log.isDebugEnabled()) {
                     log.debug("Conversion error FILE={}", input.getPath(), convErr);
                 } else {
-                    log.error("Conversion error FILE={} MSG={}", input.getPath(), convErr.getMessage());
+                    log.error("Conversion error FILE={} MSG={}", input.getPath(),
+                            convErr.getMessage());
                 }
             }
             long t2 = System.currentTimeMillis();
             int duration = (int) (t2 - t1);
             if (textDoc != null) {
-                // Buffer can be null.   If you got this far, you are interested in the file, as it passed 
-                // all filters above.  Return the document with whatever metadata it found.
-                //if (textDoc.buffer == null) {
-                //    throw new IOException("Engineering error: Doc converted, but converter failed to setText()");
-                //}
+                // Buffer can be null. If you got this far, you are interested
+                // in the file, as it passed
+                // all filters above. Return the document with whatever metadata
+                // it found.
+                // if (textDoc.buffer == null) {
+                // throw new
+                // IOException("Engineering error: Doc converted, but converter failed to setText()");
+                // }
                 if (this.save && textDoc.is_converted) {
                     // Get Parent info in there.
                     if (parent != null) {
@@ -541,24 +598,30 @@ public final class XText implements iFilter, iConvert {
                     }
 
                     if (this.save_in_folder) {
-                        // Saves close to original in ./text/ folder where original resides.
+                        // Saves close to original in ./text/ folder where
+                        // original resides.
                         textDoc.saveEmbedded();
                     } else {
                         textDoc.setPathRelativeTo(inputRoot.getAbsolutePath());
                         textDoc.save(outputNode);
                     }
-                    // Children items will be persisted in the same folder structure where the textdoc.textpath resides.
-                    // That is, Email or Embedded objects will be parsed are saved in ./xtext/ folder or in the separate archive.
-                    // But this must be down now, as we have all the dynamic metadata + raw artifacts;  As it is all written out to disk, 
+                    // Children items will be persisted in the same folder
+                    // structure where the textdoc.textpath resides.
+                    // That is, Email or Embedded objects will be parsed are
+                    // saved in ./xtext/ folder or in the separate archive.
+                    // But this must be down now, as we have all the dynamic
+                    // metadata + raw artifacts; As it is all written out to
+                    // disk,
                     // it will be written out together.
-                    // 
+                    //
                     if (textDoc.hasRawChildren()) {
                         convertChildren(textDoc);
 
                         // 1. children saved to disk
                         // 2. children converted.
                         // 3. children attached to parent here.
-                        //   'textdoc' should now be well endowed with all the children metadata.
+                        // 'textdoc' should now be well endowed with all the
+                        // children metadata.
                     }
                 }
             } else {
@@ -572,15 +635,18 @@ public final class XText implements iFilter, iConvert {
         }
 
         /*
-         * Conversion Listeners are called only for parent documents.  That is for an email with 4 attachments, 
-         * this listener is called on the parent email message, but not for the individual 4 attachments.
-         * The final parent document here will have all Raw Children (bytes + metadata) and Converted Children (ConvertedDocument obj)
-         * Caller will have to detect if returned item via listener is a Parent with Children.
+         * Conversion Listeners are called only for parent documents. That is
+         * for an email with 4 attachments, this listener is called on the
+         * parent email message, but not for the individual 4 attachments. The
+         * final parent document here will have all Raw Children (bytes +
+         * metadata) and Converted Children (ConvertedDocument obj) Caller will
+         * have to detect if returned item via listener is a Parent with
+         * Children.
          * 
          * Behavior here is TBD.
          */
         if (postProcessor != null && parent == null) {
-            postProcessor.handleConversion(textDoc);
+            postProcessor.handleConversion(textDoc, input.getAbsolutePath());
         }
 
         trackStatistics(textDoc);
@@ -591,7 +657,7 @@ public final class XText implements iFilter, iConvert {
      * Navigate a folder trying to convert each file and return something to the
      * listener. Do not sacrifice the entire job if one file fails, so exception
      * is trapped in loop
-     *
+     * 
      */
     public void convertFolder(File input) throws IOException {
         java.util.Collection<File> files = FileUtils.listFiles(input, FILE_FILTER, true);
@@ -605,10 +671,12 @@ public final class XText implements iFilter, iConvert {
     }
 
     /**
-     * Save children objects for a given ConvertedDocument to a location.... convert those items immediately, saving the Parent metadata along with them.
-     * You should have setParent already
+     * Save children objects for a given ConvertedDocument to a location....
+     * convert those items immediately, saving the Parent metadata along with
+     * them. You should have setParent already
+     * 
      * @param parentDoc
-     * @throws IOException 
+     * @throws IOException
      */
     public void convertChildren(ConvertedDocument parentDoc) throws IOException {
         parentDoc.evalParentContainer(this.save_in_folder);
@@ -624,8 +692,9 @@ public final class XText implements iFilter, iConvert {
             OutputStream io = null;
             try {
                 // We just assume for now Child ID is filename.
-                // Alternatively,  child.meta.getProperty( ConvertedDocument.CHILD_ENTRY_KEY )
-                //  same result, just more verbose.
+                // Alternatively, child.meta.getProperty(
+                // ConvertedDocument.CHILD_ENTRY_KEY )
+                // same result, just more verbose.
                 //
                 File childFile = new File(FilenameUtils.concat(targetPath, child.id));
                 io = new FileOutputStream(childFile);
@@ -646,7 +715,8 @@ public final class XText implements iFilter, iConvert {
 
                 }
             } catch (Exception err) {
-                log.error("Failed to write out child {}, but will continue with others", child.id, err);
+                log.error("Failed to write out child {}, but will continue with others", child.id,
+                        err);
             } finally {
                 if (io != null) {
                     io.close();
@@ -656,7 +726,7 @@ public final class XText implements iFilter, iConvert {
     }
 
     /**
-     * TODO: this is called by default. duh. To changed behavior, adjust
+     * TODO: this is called by default. duh. To change behavior, adjust
      * settings before setup() is called
      */
     public void defaults() {
@@ -676,7 +746,7 @@ public final class XText implements iFilter, iConvert {
         archive_types.add("tar");
         archive_types.add("tgz");
         archive_types.add("tar.gz");
-        //archive_types.add("7z");
+        // archive_types.add("7z");
 
         // Get from a config file.
         requested_types.add("doc");
@@ -696,12 +766,12 @@ public final class XText implements iFilter, iConvert {
 
         // Only Photographic images will be supported by default.
         // BMP, GIF, PNG, ICO, etc. must be added by caller.
-        // 
+        //
         requested_types.add("jpg");
         requested_types.add("jpeg");
 
-        // requested_types.add("log");  // Uncommon.  Caller must expclitly add raw data types
-        // and archives.
+        // requested_types.add("log"); // Uncommon. Caller must expclitly add
+        // raw data types and archives.
 
         defaultConversion = new DefaultConverter(maxBuffer);
         embeddedConversion = new EmbeddedContentConverter(maxBuffer);
@@ -760,9 +830,10 @@ public final class XText implements iFilter, iConvert {
         }
 
         // ALWAYS ignore our own text conversions or those of others.
-        // So here all known convertable types will need a filter for their conversion, e.g., 
-        //  pdf => ignore pdf.txt
-        //  doc => ignore doc.txt
+        // So here all known convertable types will need a filter for their
+        // conversion, e.g.,
+        // pdf => ignore pdf.txt
+        // doc => ignore doc.txt
         //
         for (String t : requested_types) {
             ignoreFileType(t + ".txt");
@@ -787,7 +858,7 @@ public final class XText implements iFilter, iConvert {
         System.out.println("XText -i input  [-h] [-o output] [-e]");
         System.out.println("  input is file or folder");
         System.out.println("  output is a folder where you want to archive converted docs");
-        System.out.println("  -e embeds the saved, conversions in the input folder in 'xtext' folders in input tree");
+        System.out.println("  -e embeds the saved conversions in the input folder under 'xtext/'");
         System.out.println("  NOTE: -e has same effect as setting output to input");
         System.out.println("  -h enables HTML scrubbing");
     }
@@ -816,7 +887,8 @@ public final class XText implements iFilter, iConvert {
                     break;
                 case 'e':
                     embed = true;
-                    System.out.println("Saving conversions to Input folder.  Output folder will be ignored.");
+                    System.out
+                            .println("Saving conversions to Input folder.  Output folder will be ignored.");
                     break;
                 default:
                     XText.usage();
@@ -837,9 +909,11 @@ public final class XText implements iFilter, iConvert {
         //
         // System.setProperty("LANG", "en_US");
         XText xt = new XText();
-        xt.enableOverwrite(true); // Given this is a test application, we will overwrite every time XText is called.
+        xt.enableOverwrite(true); // Given this is a test application, we will
+                                  // overwrite every time XText is called.
         xt.enableSaving(true);
-        xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in directory.
+        xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in
+                                       // directory.
         xt.enableHTMLScrubber(filter_html);
 
         try {
