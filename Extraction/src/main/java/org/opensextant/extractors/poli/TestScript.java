@@ -58,18 +58,18 @@ public class TestScript {
 
     private Logger log = LoggerFactory.getLogger(TestScript.class);
     private PatternsOfLife poli;
-    protected final static String[] header = {"result_id", "status",
-        "message", "pattern", "matchtext", "offset"};
-    protected static final CellProcessor[] poliResultsSpec = new CellProcessor[]{
-        // Given test data is required:
-        new NotNull(), new NotNull(), new NotNull(),
-        // test results fields -- if result exists
-        //
-        new Optional(), new Optional(), new Optional()};
+    protected final static String[] header = { "result_id", "status", "message", "pattern", "matchtext", "offset" };
+    protected static final CellProcessor[] poliResultsSpec = new CellProcessor[] {
+            // Given test data is required:
+            new NotNull(), new NotNull(), new NotNull(),
+            // test results fields -- if result exists
+            //
+            new Optional(), new Optional(), new Optional() };
 
     public TestScript(PatternsOfLife _poli) {
         this.poli = _poli;
     }
+
     private CsvMapWriter report = null;
 
     /**
@@ -83,7 +83,7 @@ public class TestScript {
     /**
      *
      */
-    public void close_report() throws IOException {
+    public void closeReport() throws IOException {
         if (report != null) {
             report.flush();
             report.close();
@@ -100,10 +100,8 @@ public class TestScript {
     public CsvMapWriter open(String file) throws IOException {
 
         FileUtility.makeDirectory(new File(file).getParentFile());
-        OutputStreamWriter iowriter = FileUtility
-                .getOutputStream(file, "UTF-8");
-        CsvMapWriter R = new CsvMapWriter(iowriter,
-                CsvPreference.STANDARD_PREFERENCE);
+        OutputStreamWriter iowriter = FileUtility.getOutputStream(file, "UTF-8");
+        CsvMapWriter R = new CsvMapWriter(iowriter, CsvPreference.STANDARD_PREFERENCE);
 
         return R;
     }
@@ -137,6 +135,18 @@ public class TestScript {
             row.put(header[3], m.pattern_id);
             row.put(header[4], m.getText());
             row.put(header[5], m.start);
+        } else {
+            if (!t.true_positive) {
+                row.put(header[1], "PASS"); // true negative
+            } else {
+                row.put(header[1], "FAIL"); // false negative                
+            }
+            row.put(header[2], "test='" + t.text + "', nothing found");
+
+            row.put(header[3], "");
+            row.put(header[4], "");
+            row.put(header[5], "");
+
         }
 
         return row;
@@ -166,11 +176,14 @@ public class TestScript {
                     log.error("Failed to write result for " + test.id, ioerr);
                 }
             } else {
+                Map<String, Object> row = createResultRow(test, null);
+                report.write(row, header, poliResultsSpec);
+
                 log.info("TEST " + test.id + " STATUS: FAILED");
             }
         }
 
-        close_report();
+        closeReport();
     }
 
     /**
@@ -231,15 +244,17 @@ public class TestScript {
             log.info("FILE TEST " + fileID + " STATUS: FAILED");
         }
 
-        close_report();
+        closeReport();
     }
 
     /**
      * Random testing
+     * TOOD: move the testing off to test package.  Such things involve re-compiling and therefore core lib is 
+     * recompiled to do adhoc testing.
      */
     public void adhoc() {
-        this.poli.disableAll();
-        this.poli.getPatternManager().enable_patterns("PHONE");
-        //this.test();
+        // this.poli.disableAll();
+        // this.poli.getPatternManager().enable_patterns("PHONE");
+        // this.test();
     }
 }
