@@ -23,7 +23,7 @@ package org.opensextant;
  */
 public class ConfigException extends Exception {
 
-    protected static final long serialVersionUID = 20031981L;
+    protected static final long serialVersionUID = 1981L;
 
     public ConfigException(String msg) {
         super(msg);
