@@ -76,8 +76,6 @@ public class TikaHTMLConverter extends ConverterAdapter {
         // HTML Conversion here is simply not resetting its internal buffers
         // Its just accumulating and error out when it reaches MAX
         ContentHandler handler = new BodyContentHandler(MAX_HTML_FILE_SIZE);
-        // ContentHandler article_handler = new
-        // BoilerpipeContentHandler(handler);
 
         BoilerpipeContentHandler scrubbingHandler = null;
         if (scrub_article) {
