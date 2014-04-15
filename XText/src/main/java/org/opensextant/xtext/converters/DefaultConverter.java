@@ -36,6 +36,7 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.ConvertedDocument;
 
@@ -53,7 +54,6 @@ public class DefaultConverter extends ConverterAdapter {
     private Detector detector = new DefaultDetector();
     private Parser parser = new AutoDetectParser(detector);
     private ParseContext ctx = new ParseContext();
-
 
     private int maxBuffer = MAX_TEXT_SIZE;
 
@@ -77,7 +77,8 @@ public class DefaultConverter extends ConverterAdapter {
      *             problem, or MAX_TEXT_SIZE is reached.
      */
     @Override
-    protected ConvertedDocument conversionImplementation(InputStream input, java.io.File doc) throws IOException {
+    protected ConvertedDocument conversionImplementation(InputStream input, java.io.File doc)
+            throws IOException {
         Metadata metadata = new Metadata();
         BodyContentHandler handler = new BodyContentHandler(maxBuffer);
 
@@ -95,7 +96,18 @@ public class DefaultConverter extends ConverterAdapter {
         textdoc.addCreateDate(metadata.getDate(TikaCoreProperties.CREATED));
         textdoc.addAuthor(metadata.get(TikaCoreProperties.CREATOR));
 
-        textdoc.setText(TextUtils.reduce_line_breaks(handler.toString()));
+        // v1.5:  until this version this blank line reducer was in place.  
+        //     Using Java6 it appeared to cause StackOverflow when it encountered a document hundreds of \n in a row.
+        //     Eg.., a Spreadsheet doc converted to text may have thousands of empty lines following the last data row.
+        // TextUtils.reduce_line_breaks(txt)
+        String t = handler.toString();
+        if (t != null) {
+            if (FileUtility.isSpreadsheet(textdoc.filename)) {
+                textdoc.setText(t.trim());
+            } else {
+                textdoc.setText(TextUtils.reduce_line_breaks(t));
+            }
+        }
         return textdoc;
     }
 }
