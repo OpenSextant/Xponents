@@ -60,7 +60,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
         supportedTypes.add("docx");
         supportedTypes.add("doc");
         supportedTypes.add("pdf");
-        supportedTypes.add("xls");
+        // Tika 1.5 test case only - supportedTypes.add("xls");
     }
 
     public EmbeddedContentConverter() {
