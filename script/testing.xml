@@ -27,14 +27,14 @@
 
     <target name="xcoord" description="Template for Running an XCoord module" >
         <input message="file?" addproperty="get.file"/>
-        <java classname="org.opensextant.extractors.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}" >
+        <java classname="org.opensextant.extractors.test.TestXCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}" >
             <arg value="-u" />
             <arg value="${get.file}" />
         </java>
     </target>
 
     <target name="test-xcoord" description="Default tests for XCoord " depends="">
-        <java classname="org.opensextant.extractors.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+        <java classname="org.opensextant.extractors.test.TestXCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
             <arg value="-f" />
             <arg value="${xcoord_test_data}" />
         </java>
@@ -42,7 +42,7 @@
 
     <target name="xcoord-by-line" description="Specialized Coordinate tests for XCoord " depends="">
         <input message="file?" addproperty="get.file"/>
-        <java classname="org.opensextant.extractors.xcoord.XCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+        <java classname="org.opensextant.extractors.test.TestXCoord" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
             <arg value="-t" />
             <arg value="${get.file}" />
         </java>
@@ -59,14 +59,14 @@
 
   <target name="xtemporal" description="Template for Running a module" depends="">
     <input message="file?" addproperty="get.file"/>
-    <java classname="org.opensextant.extractors.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+    <java classname="org.opensextant.extractors.test.TestXTemporal" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
       <arg value="${get.file}" />
     </java>
   </target>
 
 
   <target name="test-xtemporal" description="Default tests for XTemp " depends="">
-    <java classname="org.opensextant.extractors.xtemporal.XTemporal" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+    <java classname="org.opensextant.extractors.test.TestXTemporal" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
       <arg value="-f" />
       <!--
       <arg value="${xtemp_test_data}" />
@@ -83,13 +83,13 @@
     -->
 
   <target name="poli" description="Run user file against PoLi" depends="">
-    <java classname="org.opensextant.extractors.poli.PatternsOfLife" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+    <java classname="org.opensextant.extractors.test.TestPoLi" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
       <arg value="-f" />
     </java>
   </target>
 
   <target name="test-poli" description="Default tests for PoLi" depends="">
-    <java classname="org.opensextant.extractors.poli.PatternsOfLife" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
+    <java classname="org.opensextant.extractors.test.TestPoli" classpathref="runtime.classpath" fork="yes" dir="${xponents}">
       <arg value="-c" />
       <arg value="${config}" />
       <arg value="-u" />
