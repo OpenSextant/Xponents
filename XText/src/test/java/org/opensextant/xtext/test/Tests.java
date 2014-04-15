@@ -117,8 +117,8 @@ public class Tests {
         xt.setup();
         xt.setConversionListener(
                 new ConversionListener() {
-            public void handleConversion(ConvertedDocument d) {
-                log.info("FILE=" + d.filename + " Converted?=" + d.is_converted + " ID={}", d.id);
+            public void handleConversion(ConvertedDocument d, String fpath) {
+                log.info("FILE=" + d.filename + " Converted?=" + d.is_converted + " ID={} PATH={}", d.id, fpath);
                 d.setDefaultID();
                 log.info("\t\tTry resetting Doc ID to default ID = " +d.id);
             }
@@ -140,8 +140,8 @@ public class Tests {
         xt.setup();
         xt.setConversionListener(
                 new ConversionListener() {
-            public void handleConversion(ConvertedDocument d) {
-                log.info("FILE=" + d.filename + " Converted?=" + d.is_converted + " ID={}", d.id);
+            public void handleConversion(ConvertedDocument d, String fpath) {
+                log.info("FILE=" + d.filename + " Converted?=" + d.is_converted + " ID={} PATH={}", d.id, fpath);
                 d.setDefaultID();
                 log.info("\t\tTry resetting Doc ID to default ID = " +d.id);
             }

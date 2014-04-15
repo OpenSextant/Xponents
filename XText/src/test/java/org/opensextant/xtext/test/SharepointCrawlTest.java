@@ -107,7 +107,7 @@ public class SharepointCrawlTest implements CollectionListener {
     }
 
     @Override
-    public void collected(ConvertedDocument doc) throws IOException {
+    public void collected(ConvertedDocument doc, String fpath) throws IOException {
         log.info("Got doc with {} = {}", doc.id, doc.filepath);
     }
 
