@@ -43,11 +43,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
-import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
