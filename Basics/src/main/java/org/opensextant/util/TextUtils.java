@@ -285,9 +285,8 @@ public class TextUtils {
     }
 
     /**
-     * For measuring the upper-case-ness of short texts.
-     * Returns true if ALL letters in text are UPPERCASE.
-     * Allows for non-letters in text.
+     * For measuring the upper-case-ness of short texts. Returns true if ALL
+     * letters in text are UPPERCASE. Allows for non-letters in text.
      * 
      * @param dat
      * @return
@@ -307,7 +306,7 @@ public class TextUtils {
             }
         }
         // IF at least one Letter found
-        // then 
+        // then
         return letterCount > 0;
     }
 
@@ -494,7 +493,7 @@ public class TextUtils {
      * @param remove
      * @return
      */
-    public static String fast_remove(String buf, String remove) {
+    public static String removeAny(String buf, String remove) {
 
         StringBuilder _new = new StringBuilder();
         for (char ch : buf.toCharArray()) {
@@ -506,6 +505,52 @@ public class TextUtils {
     }
 
     /**
+     * Replace any of the removal chars with the sub.  A many to one replacement.
+     * alt:  use regex String.replace(//, '')
+     * @param buf
+     * @param remove
+     * @param sub
+     * @return
+     */
+    public static String replaceAny(String buf, String remove, String sub) {
+
+        StringBuilder _new = new StringBuilder();
+        for (char ch : buf.toCharArray()) {
+            if (remove.indexOf(ch) < 0) {
+                _new.append(ch);
+            } else {
+                _new.append(sub);
+            }
+        }
+        return _new.toString();
+    }
+
+    /**
+     * compare to trim( string, chars ), but you can trim any chars
+     * 
+     * Example: - a b c remove "-" from string above.
+     * 
+     * @param buf
+     * @param remove
+     * @return
+     */
+    public static String removeAnyLeft(String buf, String remove) {
+
+        boolean eval = true;
+        // Start from left.
+        int x = 0;
+        for (char ch : buf.toCharArray()) {
+            if (eval && remove.indexOf(ch) >= 0) {
+                ++x;
+                continue;
+            } else {
+                eval = false; // shunt the evaluation of the chars.
+            }
+        }
+        return buf.substring(x);
+    }
+
+    /**
      * Normalization: Clean the ends, Remove Line-endings from middle of entity.
      * 
      * <pre>
@@ -513,7 +558,7 @@ public class TextUtils {
      *        TEXT: **The Daily Newsletter of \n\rBarbara, So.**
      *       CLEAN: __The Daily Newsletter of __Barbara, So___
      * 
-     * Where "__" represents omitted characters.  
+     * Where "__" represents omitted characters.
      * </pre>
      */
     public static String normalizeTextEntity(String str) {
@@ -709,22 +754,31 @@ public class TextUtils {
     public static void initLanguageData() {
         Locale[] locales = Locale.getAvailableLocales();
         for (Locale locale : locales) {
-            Language l = new Language(locale.getISO3Language(), locale.getLanguage(), locale.getDisplayLanguage());
+            Language l = new Language(locale.getISO3Language(), locale.getLanguage(),
+                    locale.getDisplayLanguage());
             addLanguage(l);
         }
 
     }
 
+    /**
+     * This is Libray of Congress data for language IDs. This is offered as a tool to help downstream language ID
+     * and enrich metadata when tagging data from particular countries.
+     * 
+     * TODO: consider whether this should be initialized optionally.
+     * @see http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt  for reference data used here.
+     * 
+     * @throws java.io.IOException
+     */
     public static void initLOCLanguageData() throws java.io.IOException {
-        // Add Missing languages.
-        // TODO: make use of available NLP language data for ISO639
         //
         // DATA FILE: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt
 
         java.io.InputStream io = TextUtils.class.getResourceAsStream("/ISO-639-2_utf-8.txt");
         java.io.Reader featIO = new InputStreamReader(io);
         // Pipe-delimited data.
-        CsvMapReader langReader = new CsvMapReader(featIO, new CsvPreference.Builder('"', '|', "\n").build());
+        CsvMapReader langReader = new CsvMapReader(featIO,
+                new CsvPreference.Builder('"', '|', "\n").build());
 
         String[] columns = langReader.getHeader(true);
 
@@ -771,26 +825,6 @@ public class TextUtils {
     }
 
     /**
-     * @deprecated - I found that IBM ICU4J did not offer much over what was available from JDK
-     */
-    /*
-    public static void initICULanguageData() {
-        com.ibm.icu.util.ULocale[] locales = com.ibm.icu.util.ULocale.getAvailableLocales();
-        for (com.ibm.icu.util.ULocale locale : locales) {
-            Language l = new Language(locale.getISO3Language(), locale.getLanguage(), locale.getDisplayLanguage());
-            String iso2 = l.getISO639_1_Code();
-
-            if (iso2 != null && iso2.length() > 0) {
-                String namekey = l.getName().toLowerCase();
-                LanguageMap_ISO639.put(iso2, l);
-                LanguageMap_ISO639.put(l.getCode(), l);
-                LanguageMap_ISO639.put(namekey, l);
-            }
-        }
-    }
-    */
-
-    /**
      * Given an ISO2 char code (least common denominator) retrieve Language
      * Name.
      * 
@@ -812,8 +846,7 @@ public class TextUtils {
     /**
      * ISO2 and ISO3 char codes for languages are unique.
      * 
-     * @param code
-     *            iso2 or iso3 code
+     * @param code iso2 or iso3 code
      * @return the other code.
      */
     public static Language getLanguage(String code) {
@@ -827,8 +860,7 @@ public class TextUtils {
     /**
      * ISO2 and ISO3 char codes for languages are unique.
      * 
-     * @param code
-     *            iso2 or iso3 code
+     * @param code iso2 or iso3 code
      * @return the other code.
      */
     public static String getLanguageCode(String code) {
@@ -844,8 +876,8 @@ public class TextUtils {
     }
 
     private static boolean _isRomanceLanguage(String l) {
-        return (l.equals(spanishLang) || l.equals(portugueseLang) || l.equals(italianLang) || l.equals(frenchLang) || l
-                .equals(romanianLang));
+        return (l.equals(spanishLang) || l.equals(portugueseLang) || l.equals(italianLang)
+                || l.equals(frenchLang) || l.equals(romanianLang));
     }
 
     /**
@@ -916,8 +948,7 @@ public class TextUtils {
     /**
      * Utility method to check if lang ID is Chinese, Korean, or Japanese
      * 
-     * @param x
-     *            a langcode
+     * @param x  a langcode
      * @return whether langcode is a CJK language
      */
     public static boolean isCJK(String x) {
@@ -939,8 +970,7 @@ public class TextUtils {
      * comparisons is embedded in the method; Otherwise for each char, an
      * external method invocation is required.
      * 
-     * @param buf
-     *            the character to be tested
+     * @param buf  the character to be tested
      * @return true if CJK, false otherwise
      */
     public static double measureCJKText(String buf) {
@@ -982,9 +1012,11 @@ public class TextUtils {
                     || (blk == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
                     // Korean: Hangul
                     || (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
-                    || (blk == Character.UnicodeBlock.HANGUL_JAMO) || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
+                    || (blk == Character.UnicodeBlock.HANGUL_JAMO)
+                    || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
                     // Japanese:
-                    || (blk == Character.UnicodeBlock.HIRAGANA) || (blk == Character.UnicodeBlock.KATAKANA)) {
+                    || (blk == Character.UnicodeBlock.HIRAGANA)
+                    || (blk == Character.UnicodeBlock.KATAKANA)) {
 
                 // increment counter:
                 ++cjkCount;
@@ -1025,9 +1057,11 @@ public class TextUtils {
                     || (blk == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
                     // Korean: Hangul
                     || (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
-                    || (blk == Character.UnicodeBlock.HANGUL_JAMO) || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
+                    || (blk == Character.UnicodeBlock.HANGUL_JAMO)
+                    || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
                     // Japanese:
-                    || (blk == Character.UnicodeBlock.HIRAGANA) || (blk == Character.UnicodeBlock.KATAKANA)) {
+                    || (blk == Character.UnicodeBlock.HIRAGANA)
+                    || (blk == Character.UnicodeBlock.KATAKANA)) {
                 return true;
             }
         }
@@ -1039,7 +1073,7 @@ public class TextUtils {
      * Compress bytes from a Unicode string. Conversion to bytes first to avoid
      * unicode or platform-dependent IO issues.
      * 
-     * @param buf  UTF-8 encoded text
+     * @param buf UTF-8 encoded text
      * @return byte array
      * @throws IOException
      */
@@ -1049,7 +1083,7 @@ public class TextUtils {
 
     /**
      * 
-     * @param buf   text
+     * @param buf text
      * @param charset character set encoding for text
      * @return
      * @throws IOException
