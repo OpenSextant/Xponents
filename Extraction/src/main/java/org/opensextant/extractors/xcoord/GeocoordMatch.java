@@ -133,6 +133,15 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     /**
      * 
+     * @return
+     */
+    @Override
+    public String getAdminName() {
+        return null;
+    }
+
+    /**
+     * 
      * @param m
      */
     public void copyMetadata(GeocoordMatch m) {
@@ -477,13 +486,13 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     public String getMethod() {
         return this.pattern_id;
     }
-    
+
     /**
      * This reuses TextMatch.pattern_id attr;  Use get/setMethod() or pattern_id as needed.
      * @param matchMethod
      * @return
      */
-    public void setMethod(String matchMethod){
+    public void setMethod(String matchMethod) {
         pattern_id = matchMethod;
     }
 
@@ -493,6 +502,14 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     @Override
     public double getLatitude() {
         return latitude;
+    }
+
+    public String getLatText() {
+        return this.lat_text;
+    }
+
+    public String getLonText() {
+        return this.lon_text;
     }
 
     /**

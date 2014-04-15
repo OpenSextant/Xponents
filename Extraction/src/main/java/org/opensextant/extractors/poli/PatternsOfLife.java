@@ -29,22 +29,18 @@ package org.opensextant.extractors.poli;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.io.IOException;
-import java.util.List;
 
-import org.slf4j.LoggerFactory;
-import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extraction.NormalizationException;
-import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
+import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
-import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -209,82 +205,4 @@ public class PatternsOfLife extends AbstractFlexPat {
 
         return results;
     }
-
-    public static void usage() {
-        System.out.println("\tPatternsOfLife  -f          -- run all system tests\n"
-                + "\tPatternsOfLife  -u  <file>  -- run user tests on given text file.");
-    }
-
-    /**
-     * Run a simple test.
-     * 
-     * @param args
-     *            only one argument accepted: a text file input.
-     */
-    public static void main(String[] args) {
-        boolean debug = true;
-
-        boolean systemTest = false;
-        String testFile = null;
-        String config = null;
-        try {
-            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("Poli", args, "c:u:f");
-
-            int c;
-            while ((c = opts.getopt()) != -1) {
-                switch (c) {
-                case 'f':
-                    System.out.println("\tSystem TESTS======= ");
-                    systemTest = true;
-                    break;
-
-                case 'u':
-                    testFile = opts.getOptarg();
-                    System.out.println("\tUser TESTS======= FILE=" + testFile);
-                    break;
-
-                case 'c':
-                    config = opts.getOptarg();
-                    System.out.println("\tUser Patterns Configuration ======= FILE=" + config);
-                    break;
-
-                default:
-                    PatternsOfLife.usage();
-                    System.exit(1);
-                }
-            }
-        } catch (Exception runErr) {
-            runErr.printStackTrace();
-            PatternsOfLife.usage();
-            System.exit(1);
-        }
-        PatternsOfLife poli = null;
-
-        try {
-            // Use default config file.
-            poli = new PatternsOfLife(debug);
-            if (config == null) {
-                poli.configure(); // default
-            } else {
-                poli.configure(config);
-            }
-        } catch (ConfigException xerr) {
-            xerr.printStackTrace();
-            System.exit(-1);
-        }
-
-        try {
-            TestScript test = new TestScript(poli);
-            if (systemTest) {
-                test.test();
-            } else if (testFile != null) {
-                test.testUserFile(testFile);
-            }
-        } catch (NormalizationException xerr) {
-            xerr.printStackTrace();
-        } catch (IOException ioerr) {
-            ioerr.printStackTrace();
-        }
-    }
-
 }

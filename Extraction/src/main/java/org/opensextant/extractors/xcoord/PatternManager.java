@@ -34,11 +34,14 @@ package org.opensextant.extractors.xcoord;
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
+import org.opensextant.extractors.test.CoordinateTestCase;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,6 +208,6 @@ public final class PatternManager extends RegexPatternManager {
 	 */
 	@Override
 	protected PatternTestCase create_testcase(String id, String fam, String text) {
-		return new TestCase(id, fam, text);
+		return new CoordinateTestCase(id, fam, text);
 	}
 }
