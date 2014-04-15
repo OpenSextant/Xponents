@@ -30,6 +30,19 @@
            <include name="*.jar" />
         </fileset>
     </copy>
+    <copy todir="${release}/lib/">
+        <fileset dir="${xponents.home}/Extraction/target">
+           <include name="*-tests.jar" />
+        </fileset>
+        <!--
+        <fileset dir="${xponents.home}/Basics/target">
+           <include name="*-tests.jar" />
+        </fileset>
+        <fileset dir="${xponents.home}/XText/target">
+           <include name="*-tests.jar" />
+        </fileset>
+        -->
+    </copy>
   </target>
 
   <target name="copy-data">
