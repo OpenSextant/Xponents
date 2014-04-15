@@ -214,4 +214,25 @@ public class GeodeticUtility {
         }
         return geo;
     }
+    
+    /**
+     * Parse coordinate from object
+     * @param lat
+     * @param lon
+     * @return
+     * @throws ParseException
+     */
+    public static LatLon parseLatLon(Object lat, Object lon) throws ParseException{
+        if (lat == null || lon == null) {
+            // incomplete data.
+            // Caller should test
+            throw new ParseException("Incomplete data, null lat or lon",0);
+        }
+        
+        LatLon yx = new GeoBase();
+        yx.setLatitude(Double.parseDouble(lat.toString()));
+        yx.setLongitude(Double.parseDouble(lon.toString()));
+        
+        return yx;       
+    }
 }
