@@ -33,5 +33,5 @@ package org.opensextant.xtext;
  */
 public interface ConversionListener {
 
-    public void handleConversion( ConvertedDocument doc );
+    public void handleConversion( ConvertedDocument doc, String path );
 }

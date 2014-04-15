@@ -99,7 +99,7 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
      * @throws IOException 
      */
     @Override
-    public void handleConversion(ConvertedDocument doc) {
+    public void handleConversion(ConvertedDocument doc, String filepath) {
 
         if (listener == null) {
             // nothing to do.
@@ -107,14 +107,14 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
         }
 
         if (doc == null) {
-            log.debug("Item was not converted");
+            log.debug("Item was not converted, FILE={}", filepath);
             return;
         }
 
         try {
             // Converted document is discovered, then enters this interface method.
             //
-            listener.collected(doc);
+            listener.collected(doc, filepath);
 
             if (doc.hasChildren()) {
                 // NOTE:  our internal ID for children documents may not match what is preserved on disk in XText metadata.
@@ -126,11 +126,13 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                     child.setId(TextUtils.text_id(uniqueValue));
 
                     // Record the child attachment.
-                    listener.collected(child);
+                    listener.collected(child, child.filepath);
                 }
             }
         } catch (IOException err) {
-            log.error("Failed to record or manage the email message and/or its attachments");
+            log.error(
+                    "Failed to record or manage the email message and/or its attachments, FILE={}",
+                    filepath);
         }
     }
 
@@ -188,7 +190,8 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                  * in session
                  */
                 if (message.isExpunged()) {
-                    log.info("Message deleted during session; Unable to collect. Mail Subj: {}", message.getSubject());
+                    log.info("Message deleted during session; Unable to collect. Mail Subj: {}",
+                            message.getSubject());
                     continue;
                 }
 
@@ -207,10 +210,12 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                     // 1. Identify the email message.
                     //    and determine if you need to capture it again.
                     // 
-                    String messageFilename = MessageConverter.createSafeFilename(message.getSubject());
+                    String messageFilename = MessageConverter.createSafeFilename(message
+                            .getSubject());
                     if (messageFilename.length() > 60) {
                         messageFilename = messageFilename.substring(0, 60);
-                    } if (StringUtils.isBlank(messageFilename)){
+                    }
+                    if (StringUtils.isBlank(messageFilename)) {
                         messageFilename = "No_Subject";
                     }
 
@@ -235,8 +240,8 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
                     if (log.isDebugEnabled()) {
                         log.debug("Message: {}", message.getSubject());
-                        String msg = String.format("Processing message: %s / %s of available: %s", readCount,
-                                totalCount, available);
+                        String msg = String.format("Processing message: %s / %s of available: %s",
+                                readCount, totalCount, available);
                         log.debug(msg);
                     }
 
@@ -262,8 +267,8 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
                     if (!config.isReadOnly() && config.isDeleteOnRead()) {
                         message.setFlag(Flags.Flag.DELETED, true);
-                        String dbg = String.format("Processing message: %d / %d of available:%d", readCount,
-                                totalCount, available);
+                        String dbg = String.format("Processing message: %d / %d of available:%d",
+                                readCount, totalCount, available);
                         log.debug(dbg);
                         setForDeleteNow = true;
                     }
@@ -286,6 +291,5 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
         disconnect();
     }
-
 
 }

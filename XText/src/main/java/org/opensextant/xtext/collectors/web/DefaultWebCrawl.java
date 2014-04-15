@@ -289,7 +289,7 @@ public class DefaultWebCrawl extends WebClient implements iFilter, Collector {
                 doc.saveBuffer(new File(doc.textpath));
 
                 if (listener != null) {
-                    listener.collected(doc);
+                    listener.collected(doc, item.getAbsolutePath());
                 }
             } else {
                 log.error("Document was not converted, FILE={}", item);

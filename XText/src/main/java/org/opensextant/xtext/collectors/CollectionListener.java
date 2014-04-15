@@ -10,7 +10,7 @@ public interface CollectionListener {
     /**
      * Listen for collected and converted document
      */
-    public void collected(ConvertedDocument doc) throws IOException;
+    public void collected(ConvertedDocument doc, String filepath) throws IOException;
 
     /**
      * Listen for collected raw files.
