@@ -20,6 +20,11 @@ public class Content {
     public String encoding = null;
 
     /**
+     * The mime type of the content.
+     */
+    public String mimeType = null;
+
+    /**
      * a raw byte array for the content in motion. 
      * This helps capture raw data before you have made a decision to write the data out and where   
      */

@@ -330,6 +330,7 @@ public class MessageConverter extends ConverterAdapter {
                         }
 
                         child.content = text.getBytes(child.encoding);
+                        child.mimeType = meta.mimeType;
                         copyMailAttrs(parent, child);
                         parent.addRawChild(child);
                     } else {
@@ -438,6 +439,8 @@ public class MessageConverter extends ConverterAdapter {
         } else {
             logger.debug("Other encoding is unaccounted: {}", meta.transferEncoding);
         }
+
+        child.mimeType = meta.mimeType;
 
         // Default or last resort.
         if (child.content == null) {

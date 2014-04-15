@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import javax.activation.MimeType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -71,16 +72,24 @@ public class MessageConverterTest {
         if (!"\r\n".equals(sep)) {
             orig_text_attach = orig_text_attach.replaceAll(sep, "\r\n");
         }
+        Assert.assertEquals("text/plain", new MimeType(text_attach.mimeType).getBaseType());
         Assert.assertEquals(orig_text_attach, new String(text_attach.content, text_attach.encoding));
 
-        Assert.assertNotNull("Embedded HTML was not found.", children.get("word_doc_as_html.htm"));
-        Assert.assertNotNull("Doc with geocoded image was not found.", children.get("doc_with_embedded_geocoded_image2.docx"));
-        Assert.assertNotNull("Photo with attached image was not found.", children.get("android_photo_with_gps1.jpeg"));
+        Content html_attach = children.get("word_doc_as_html.htm");
+        Assert.assertNotNull("Embedded HTML was not found.", html_attach);
+        Assert.assertEquals("text/html", new MimeType(html_attach.mimeType).getBaseType());
+        Content word_attach = children.get("doc_with_embedded_geocoded_image2.docx");
+        Assert.assertNotNull("Doc with geocoded image was not found.", word_attach);
+        Assert.assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", new MimeType(word_attach.mimeType).getBaseType());
+        Content jpeg_attach = children.get("android_photo_with_gps1.jpeg");
+        Assert.assertNotNull("Photo with attached image was not found.", jpeg_attach);
+        Assert.assertEquals("image/jpeg", new MimeType(jpeg_attach.mimeType).getBaseType());
 
         Content htmlbody = null;
         for (final Content child : doc.getRawChildren()) {
             if ("true".equals(child.meta.getProperty(MessageConverter.MAIL_KEY_PREFIX + "html-body"))) {
                 Assert.assertNull("multiple html bodies found", htmlbody);
+                Assert.assertEquals("text/html", new MimeType(child.mimeType).getBaseType());
                 htmlbody = child;
             }
         }
