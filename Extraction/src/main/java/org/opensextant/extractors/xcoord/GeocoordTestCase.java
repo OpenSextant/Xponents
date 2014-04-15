@@ -24,17 +24,15 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  */
-package org.opensextant.extractors.test;
+package org.opensextant.extractors.xcoord;
 
 import org.opensextant.extractors.flexpat.PatternTestCase;
-import org.opensextant.extractors.xcoord.GeocoordMatch;
-import org.opensextant.extractors.xcoord.XConstants;
 
 /**
  *
  * @author ubaldino
  */
-public class CoordinateTestCase extends PatternTestCase {
+public class GeocoordTestCase extends PatternTestCase {
 
     /**
      *
@@ -52,7 +50,7 @@ public class CoordinateTestCase extends PatternTestCase {
      * @param _family
      * @param _text
      */
-    public CoordinateTestCase(String _id, String _family, String _text) {
+    public GeocoordTestCase(String _id, String _family, String _text) {
 
         super(_id, _family, _text);
 

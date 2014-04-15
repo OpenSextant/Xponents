@@ -34,7 +34,6 @@ package org.opensextant.extractors.xcoord;
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
-import org.opensextant.extractors.test.CoordinateTestCase;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -208,6 +207,6 @@ public final class PatternManager extends RegexPatternManager {
 	 */
 	@Override
 	protected PatternTestCase create_testcase(String id, String fam, String text) {
-		return new CoordinateTestCase(id, fam, text);
+		return new GeocoordTestCase(id, fam, text);
 	}
 }

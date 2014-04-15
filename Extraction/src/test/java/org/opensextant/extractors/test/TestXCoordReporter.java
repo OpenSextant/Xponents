@@ -39,6 +39,7 @@ import java.util.HashMap;
 import org.opensextant.util.FileUtility;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.TextMatchResult;
+import org.opensextant.extractors.xcoord.GeocoordTestCase;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xcoord.XConstants;
 
@@ -148,7 +149,7 @@ public class TestXCoordReporter {
      * Creates a valid row object for CSV output -- a blank row if TestCase is null, otherwise populate the row with the base test metadata.
      * @param t
      */
-    public Map<String,Object> createTestCase(CoordinateTestCase t) {
+    public Map<String,Object> createTestCase(GeocoordTestCase t) {
 
         if (t==null) {
             // This is used where there is no given test case... just extracting data from random data.
@@ -181,7 +182,7 @@ public class TestXCoordReporter {
      * @param results
      * @throws IOException
      */
-    public void save_result(CoordinateTestCase t, TextMatchResult results)
+    public void save_result(GeocoordTestCase t, TextMatchResult results)
             throws IOException {
 
 

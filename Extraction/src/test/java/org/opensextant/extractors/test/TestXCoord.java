@@ -40,6 +40,7 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
+import org.opensextant.extractors.xcoord.GeocoordTestCase;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xcoord.XConstants;
 import org.opensextant.extractors.xcoord.XCoord;
@@ -197,7 +198,7 @@ public class TestXCoord {
                     continue;
                 }
 
-                CoordinateTestCase tst = new CoordinateTestCase("#" + in.getLineNumber(), fam, text);
+                GeocoordTestCase tst = new GeocoordTestCase("#" + in.getLineNumber(), fam, text);
                 TextMatchResult results = xcoord.extract_coordinates(tst.text, tst.id);
                 /**
                  * tst.family_id
@@ -303,7 +304,7 @@ public class TestXCoord {
                 // "Patid # rowid" == test instance id
                 // DMS07#12  -- 12th example of DMS07 test.
                 //
-                CoordinateTestCase tst = new CoordinateTestCase(patid + "#" + linenum, fam, text);
+                GeocoordTestCase tst = new GeocoordTestCase(patid + "#" + linenum, fam, text);
                 tst.match.setLatitude(testRow.get("true_lat"));
                 tst.match.setLongitude(testRow.get("true_lon"));
                 tst.setRemarks(rmks);
