@@ -55,7 +55,7 @@ public class XTTestUtility {
         report.writeHeader(header);
     }
     protected final static String[] header = {"RESULT_ID", "STATUS",
-        "Message", "PATTERN", "MATCHTEXT", "DATETEXT", "DATE", "RESOLUTION", "OFFSET"};
+        "Message", "PATTERN", "MATCHTEXT", "DATETEXT", "DATE", "RESOLUTION", "JAVA_EPOCH", "OFFSET"};
 
     protected static final CellProcessor[] xtempResultsSpec = new CellProcessor[]{
         // Given test data is required:
@@ -65,6 +65,7 @@ public class XTTestUtility {
         new Optional(), new Optional(), new Optional(), new Optional(), // new
         // FmtDate("yyyy-MM-dd'T'HH:mm"),
         new Optional(),  // res
+        new Optional(),   // java epoch
         new Optional()   // offset
     };
 
@@ -120,7 +121,8 @@ public class XTTestUtility {
                 row.put(header[5], m.datenorm.toString());
                 row.put(header[6], m.datenorm_text);
                 row.put(header[7], m.resolution.toString());
-                row.put(header[8], m.start);
+                row.put(header[8], m.datenorm.getTime());
+                row.put(header[9], m.start);
 
                 report.write(row, header, xtempResultsSpec);
             }
