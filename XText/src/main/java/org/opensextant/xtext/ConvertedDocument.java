@@ -499,7 +499,7 @@ public final class ConvertedDocument extends DocInput {
         meta.put("pub_date", dtfmt.format(d.getTime()));
     }
 
-    public void addConverter(Class c) {
+    public void addConverter(Class<?> c) {
         meta.put("converter", c.getName());
     }
 
