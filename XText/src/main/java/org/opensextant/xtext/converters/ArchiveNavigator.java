@@ -45,45 +45,47 @@ import org.opensextant.xtext.iConvert;
 import org.opensextant.xtext.ArchiveUnpacker;
 
 /**
- * Archive is traversed, but no data is written to disk unless
- * XText is in save mode.
- * Conversion listener should be listening for Converted Docs.
- *
+ * Archive is traversed, but no data is written to disk unless XText is in save
+ * mode. Conversion listener should be listening for Converted Docs.
+ * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  */
 public class ArchiveNavigator implements ArchiveUnpacker {
 
     private final Logger log = LoggerFactory.getLogger(ArchiveNavigator.class);
-    //private File tempDir = null;
+    // private File tempDir = null;
     private File saveDir = null;
     private iFilter filter = null;
     private iConvert converter = null;
 
-    /**  Given a working temp folder and a file filter unpack archives.
+    /**
+     * Given a working temp folder and a file filter unpack archives.
      */
-    public ArchiveNavigator(String saveTo, iFilter fileFilter, iConvert fileConv) throws IOException {
+    public ArchiveNavigator(String saveTo, iFilter fileFilter, iConvert fileConv)
+            throws IOException {
         this.saveDir = new File(saveTo);
         FileUtility.makeDirectory(saveDir);
         filter = fileFilter;
         converter = fileConv; // Uh... this is really a proxy for XText for now.
 
         if (filter == null || converter == null) {
-            throw new IOException("Filter and converter cannot be null -- XText is the default for both.");
+            throw new IOException(
+                    "Filter and converter cannot be null -- XText is the default for both.");
         }
     }
 
-    public String getWorkingDir(){
+    public String getWorkingDir() {
         return saveDir.getAbsolutePath();
     }
 
-    /** Unpack any archive.
-     * You must provide a converter -- which converts each file.
+    /**
+     * Unpack any archive. You must provide a converter -- which converts each
+     * file.
      */
     public void unpack(File archive) throws IOException {
 
         // Get file extension
         String ext = FilenameUtils.getExtension(archive.getPath());
-        String basename = FilenameUtils.getBaseName(archive.getName());
 
         File archivetmp = null;
 
@@ -91,9 +93,9 @@ public class ArchiveNavigator implements ArchiveUnpacker {
             archivetmp = unzip(archive);
         } else if (ext.equalsIgnoreCase("tar")) {
             archivetmp = untar(archive);
-        } else if (ext.equalsIgnoreCase("gz")
-                || ext.equalsIgnoreCase("tgz")
+        } else if (ext.equalsIgnoreCase("gz") || ext.equalsIgnoreCase("tgz")
                 || ext.equalsIgnoreCase("tar.gz")) {
+            String basename = FilenameUtils.getBaseName(archive.getName());
             // We assume the file is a tarball. First unzip it
             File tarFile = gunzip(archive, basename);
 
@@ -103,29 +105,34 @@ public class ArchiveNavigator implements ArchiveUnpacker {
             throw new IOException("Unsupported archive type: EXT=" + ext);
         }
 
-        //if (archivetmp!=null){
-        //    FileUtils.deleteDirectory(archivetmp);
-        //}
+        // if (archivetmp!=null){
+        // FileUtils.deleteDirectory(archivetmp);
+        // }
     }
 
-    /* Un-TAR.  Oops.  Its just a copy of Un-TAR and I replace tar with zip.
-     *
-     * so there may be Zip-specific stuff here, ... but the approach is the same.
+    /*
+     * Un-TAR. Oops. Its just a copy of Un-TAR and I replace tar with zip.
+     * 
+     * so there may be Zip-specific stuff here, ... but the approach is the
+     * same.
      */
     public File unzip(File zipFile) throws IOException {
 
-        String _working = FilenameUtils.concat(getWorkingDir(), FilenameUtils.getBaseName(zipFile.getPath()));
-        if (_working == null){
-            throw new IOException("Invalid archive path for "+zipFile.getPath());
-        }
-        
-        File workingDir = new File(_working);
-        workingDir.mkdir();
+        // String _working = FilenameUtils.concat(getWorkingDir(),
+        // FilenameUtils.getBaseName(zipFile.getPath()));
+        // if (_working == null){
+        // throw new IOException("Invalid archive path for "+zipFile.getPath());
+        // }
+
+        // File workingDir = new File(_working);
+        // workingDir.mkdir();
+        File workingDir = saveDir;
 
         InputStream input = new BufferedInputStream(new FileInputStream(zipFile));
+        ZipArchiveInputStream in = null;
         try {
-            ZipArchiveInputStream in =
-                    (ZipArchiveInputStream) (new ArchiveStreamFactory().createArchiveInputStream("zip", input));
+            in = (ZipArchiveInputStream) (new ArchiveStreamFactory().createArchiveInputStream(
+                    "zip", input));
 
             ZipArchiveEntry zipEntry;
             while ((zipEntry = (ZipArchiveEntry) in.getNextEntry()) != null) {
@@ -134,57 +141,77 @@ public class ArchiveNavigator implements ArchiveUnpacker {
                 }
 
                 try {
-                    File tmpFile = saveArchiveEntry(zipEntry, in, _working);
+                    File tmpFile = saveArchiveEntry(zipEntry, in, workingDir);
                     converter.convert(tmpFile);
 
                 } catch (IOException err) {
-                    log.error("Unable to save item, FILE=" + zipEntry.getName() + "!" + zipEntry.getName(), err);
+                    log.error(
+                            "Unable to save item, FILE=" + zipEntry.getName() + "!"
+                                    + zipEntry.getName(), err);
                 }
             }
-            in.close();
+            return workingDir;
+
         } catch (ArchiveException ae) {
             throw new IOException(ae);
+        } finally {
+            in.close();
         }
-
-        return workingDir;
     }
 
+    /**
+     * 
+     * @param theFile
+     * @param fname
+     * @return
+     * @throws IOException
+     */
     private File gunzip(File theFile, String fname) throws IOException {
 
-        GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(theFile));
-        String outFilename = getWorkingDir() + File.separator + fname + ".tar";
-        File outFile = new File(outFilename);
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(outFilename));
+        GZIPInputStream gzipInputStream = null;
+        OutputStream out = null;
 
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = gzipInputStream.read(buf)) > 0) {
-            out.write(buf, 0, len);
+        try {
+            gzipInputStream = new GZIPInputStream(new FileInputStream(theFile));
+            String outFilename = getWorkingDir() + File.separator + fname + ".tar";
+            File outFile = new File(outFilename);
+            out = new BufferedOutputStream(new FileOutputStream(outFilename));
+
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = gzipInputStream.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+
+            return outFile;
+        } finally {
+            gzipInputStream.close();
+            if (out != null) {
+                out.close();
+            }
         }
-
-        gzipInputStream.close();
-        out.close();
-        return outFile;
     }
 
-    /* Un-TAR
-     *   Once items are saved off to temp folder, they'll be converted by
-     *   the file converter.   The converter can choose to do something else with them.
-     *
+    /*
+     * Un-TAR Once items are saved off to temp folder, they'll be converted by
+     * the file converter. The converter can choose to do something else with
+     * them.
      */
     public File untar(File tarFile) throws IOException {
 
-        String _working = FilenameUtils.concat( getWorkingDir(), FilenameUtils.getBaseName(tarFile.getPath()));
-        if (_working == null){
-            throw new IOException("Invalid archive path for "+tarFile.getPath());
+        String _working = FilenameUtils.concat(getWorkingDir(),
+                FilenameUtils.getBaseName(tarFile.getPath()));
+        if (_working == null) {
+            throw new IOException("Invalid archive path for " + tarFile.getPath());
         }
         File workingDir = new File(_working);
         workingDir.mkdir();
 
         InputStream input = new BufferedInputStream(new FileInputStream(tarFile));
+        TarArchiveInputStream in = null;
         try {
-            TarArchiveInputStream in =
-                    (TarArchiveInputStream) (new ArchiveStreamFactory().createArchiveInputStream("tar", input));
+            in = (TarArchiveInputStream) (new ArchiveStreamFactory().createArchiveInputStream(
+                    "tar", input));
 
             TarArchiveEntry tarEntry;
             while ((tarEntry = (TarArchiveEntry) in.getNextEntry()) != null) {
@@ -196,27 +223,53 @@ public class ArchiveNavigator implements ArchiveUnpacker {
                     File tmpFile = saveArchiveEntry(tarEntry, in, _working);
                     converter.convert(tmpFile);
                 } catch (IOException err) {
-                    log.error("Unable to save item, FILE=" + tarFile.getName() + "!" + tarEntry.getName(), err);
+                    log.error(
+                            "Unable to save item, FILE=" + tarFile.getName() + "!"
+                                    + tarEntry.getName(), err);
                 }
             }
-            in.close();
         } catch (ArchiveException ae) {
             throw new IOException(ae);
+        } finally {
+            in.close();
         }
         return workingDir;
     }
 
+    /**
+     * save to root dir
+     * 
+     * @param E
+     * @param archiveio
+     * @param root
+     * @return
+     * @throws IOException
+     */
+    private File saveArchiveEntry(ArchiveEntry E, InputStream archiveio, File root)
+            throws IOException {
+        return saveArchiveEntry(E, archiveio, root.getAbsolutePath());
+    }
+
     /** */
-    private File saveArchiveEntry(ArchiveEntry E, InputStream archiveio, String root) throws IOException {
-        File target = new File(root + File.separator + E.getName());
+    private File saveArchiveEntry(ArchiveEntry E, InputStream archiveio, String root)
+            throws IOException {
+        String targetPath = FilenameUtils.concat(root, E.getName());
+        if (targetPath == null) {
+            throw new IOException("Invalid archive entry target for " + E.getName());
+        }
+        File target = new File(targetPath);
 
         target.getParentFile().mkdirs();
         if (log.isDebugEnabled()) {
             log.debug("File = " + E.getName());
         }
-        OutputStream output = new FileOutputStream(target);
-        IOUtils.copy(archiveio, output);
-        output.close();
+        OutputStream output = null;
+        try {
+            output = new FileOutputStream(target);
+            IOUtils.copy(archiveio, output);
+        } finally {
+            output.close();
+        }
         return target;
     }
 
