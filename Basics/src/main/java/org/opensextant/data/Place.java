@@ -50,12 +50,8 @@ import org.opensextant.util.GeodeticUtility;
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  * @author David P. Lutz, MITRE <dlutz at mitre dot org>
  */
-public class Place extends GeoBase implements Comparable<Object>, Geocoding /*
-                                                                             * ,
-                                                                             * Serializable
-                                                                             */{
+public class Place extends GeoBase implements Comparable<Object>, Geocoding {
 
-    // private static final long serialVersionUID = 2389068012345L;
     /**
      * For normalization purposes tracking the Province may be helpful.
      * Coordinate and Place both share this common field. However no need to
