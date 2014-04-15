@@ -42,21 +42,25 @@ package org.opensextant.data;
 
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.GeodeticUtility;
+
 //import java.io.Serializable;
 
 /**
- *
+ * 
  * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
  * @author David P. Lutz, MITRE <dlutz at mitre dot org>
  */
-public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, Serializable*/ {
+public class Place extends GeoBase implements Comparable<Object>, Geocoding /*
+                                                                             * ,
+                                                                             * Serializable
+                                                                             */{
 
-    //private static final long serialVersionUID = 2389068012345L;
+    // private static final long serialVersionUID = 2389068012345L;
     /**
      * For normalization purposes tracking the Province may be helpful.
      * Coordinate and Place both share this common field. However no need to
      * create an intermediate parent-class yet.
-     *
+     * 
      * Province is termed ADM1 -- or the first level of administrative boundary
      */
     protected String admin1 = null;
@@ -64,7 +68,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
 
     /**
      * Creates a new instance of Geobase
-     *
+     * 
      * @param pk
      * @param n
      */
@@ -75,6 +79,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
     public Place() {
         super();
     }
+
     protected char name_type = 0;
 
     public void setName_type(char t) {
@@ -84,6 +89,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
     public char getName_type() {
         return name_type;
     }
+
     /**
      *
      */
@@ -100,6 +106,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
     public String getCountryCode() {
         return country_id;
     }
+
     private String featureClass = null;
 
     @Override
@@ -110,6 +117,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
     public void setFeatureClass(String featureClass) {
         this.featureClass = featureClass;
     }
+
     private String featureCode = null;
 
     @Override
@@ -162,7 +170,10 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
     public void setAdmin2(String key) {
         admin2 = key;
     }
+
     private String source = null;
+
+    protected String adminName = null;
 
     /**
      * Get the original source of this information.
@@ -183,7 +194,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
 
     /**
      * Is this Place a Country?
-     *
+     * 
      * @return - true if this is a country or "country-like" place
      */
     @Override
@@ -208,9 +219,9 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
 
     /**
      * Is this Place a State or Province?
-     *
+     * 
      * @return - true if this is a State, Province or other first level admin
-     * area
+     *         area
      */
     public boolean isAdmin1() {
         return GeonamesUtility.isAdmin1(getFeatureCode());
@@ -218,12 +229,13 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
 
     /**
      * Is this Place a National Capital?
-     *
+     * 
      * @return - true if this is a a national Capital area
      */
     public boolean isNationalCapital() {
         return GeonamesUtility.isNationalCapital(getFeatureCode());
     }
+
     // the a priori estimates
     private Double name_bias;
     private Double id_bias;
@@ -254,12 +266,13 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
 
     @Override
     public String toString() {
-        return this.getName() + "(" + this.getAdmin1() + ","
-                + this.getCountryCode() + "," + this.getFeatureCode() + ")";
+        return this.getName() + "(" + this.getAdmin1() + "," + this.getCountryCode() + ","
+                + this.getFeatureCode() + ")";
     }
 
-    /* two Places with the same PlaceID are the same "place"
-     * two Places with different PlaceIDs ARE PROBABLY different "places"
+    /*
+     * two Places with the same PlaceID are the same "place" two Places with
+     * different PlaceIDs ARE PROBABLY different "places"
      */
     @Override
     public int compareTo(Object other) {
@@ -270,28 +283,48 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding /*, 
         return this.getKey().compareTo(tmp.getKey());
     }
 
+    private int precision = -1;
+
+    public void setPrecision(int prec) {
+        precision = prec;
+    }
+
     /**
      * Get the relative precision of this feature; in meters of error
      */
     @Override
     public int getPrecision() {
-        return GeodeticUtility.getFeaturePrecision(this.featureClass, this.featureCode);
+        if (precision > 0) {
+            return precision;
+        } else {
+            return GeodeticUtility.getFeaturePrecision(this.featureClass, this.featureCode);
+        }
     }
-    private String method = null;
+
+    protected String method = null;
 
     public void setMethod(String m) {
         method = m;
     }
 
     /**
-     * The method by which the geolocation was determined;
-     * GAZ, COUNTRY, etc. are typical methods for reference data
-     * XCoord or other tools can parse; so the exact method for such patterns should be revealed here.
-     *
+     * The method by which the geolocation was determined; GAZ, COUNTRY, etc.
+     * are typical methods for reference data XCoord or other tools can parse;
+     * so the exact method for such patterns should be revealed here.
+     * 
      * @return method of geocoding;
      */
     @Override
     public String getMethod() {
         return method;
+    }
+
+    @Override
+    public String getAdminName() {
+        return adminName;
+    }
+
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
     }
 }
