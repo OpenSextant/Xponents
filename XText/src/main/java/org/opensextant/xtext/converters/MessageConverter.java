@@ -288,6 +288,7 @@ public class MessageConverter extends ConverterAdapter {
                 return;
             } else {
                 Object part = bodyPart.getContent();
+                boolean isTextPlain = bodyPart.isMimeType("text/plain");
                 if (part instanceof String) {
 
                     /* We will take the first charset encoding found for the body text of hte message.
@@ -296,34 +297,50 @@ public class MessageConverter extends ConverterAdapter {
                     if (meta.charset != null && parent.getEncoding() == null) {
                         parent.setEncoding(meta.charset);
                     }
-                    // Decode TEXT from MIME base64 or QP encoded data.
-                    // 
-                    logger.debug("{}# Save String MIME part", msgPrefixId);
-                    boolean convertedStr = true;
                     String text = (String) part;
-                    if (meta.isQP() || meta.isBase64()) {
-                        try {
-                            partIO = IOUtils.toInputStream(text);
-                            byte[] textBytes = decodeMIMEText(partIO, meta.transferEncoding);
-                            if (meta.charset != null) {
-                                text = new String(textBytes, meta.charset);
-                            } else {
-                                text = new String(textBytes);
+                    if(!isTextPlain) {
+                        // Decode TEXT from MIME base64 or QP encoded data.
+                        // TODO: Is this necessary? The mime libraries seem to handle base64 unencoding automatically
+                        // (at least for text/plain attachments). -jgibson
+                        logger.debug("{}# Save String MIME part", msgPrefixId);
+                        if (meta.isQP() || meta.isBase64()) {
+                            try {
+                                partIO = IOUtils.toInputStream(text);
+                                byte[] textBytes = decodeMIMEText(partIO, meta.transferEncoding);
+                                if (meta.charset != null) {
+                                    text = new String(textBytes, meta.charset);
+                                } else {
+                                    text = new String(textBytes);
+                                }
+                            } catch (Exception decodeErr) {
+                                logger.error("Decoding error with bare text in body of message");
                             }
-                        } catch (Exception decodeErr) {
-                            logger.error("Decoding error with bare text in body of message");
+                        } else {
+                            logger.debug("Other encoding is unaccounted: {}", meta.transferEncoding);
                         }
-                    } else {
-                        logger.debug("Other encoding is unaccounted: {}", meta.transferEncoding);
                     }
 
-                    // Note, before trying any of these decoding trick
+                    if (meta.isAttachment()) {
+                        Content child = new Content();
+                        child.id = filename;
+                        child.encoding = meta.charset;
+                        child.meta.setProperty(ConvertedDocument.CHILD_ENTRY_KEY, filename);
+                        if (child.encoding == null) {
+                            child.encoding = "UTF-8";
+                        }
 
-                    buf.append(TextUtils.delete_controls(text));
+                        child.content = text.getBytes(child.encoding);
+                        copyMailAttrs(parent, child);
+                        parent.addRawChild(child);
+                    } else {
+                        // Note, before trying any of these decoding trick
 
-                    buf.append("\n*******************\n");
-                    // Note, the "=XX" sequence is reserved for RFC822 encoding of special chars and non-ASCII.
-                    // So I avoid using "=====".... as a separator.
+                        buf.append(TextUtils.delete_controls(text));
+
+                        buf.append("\n*******************\n");
+                        // Note, the "=XX" sequence is reserved for RFC822 encoding of special chars and non-ASCII.
+                        // So I avoid using "=====".... as a separator.
+                    }
 
                     // Exit point
                     return;
