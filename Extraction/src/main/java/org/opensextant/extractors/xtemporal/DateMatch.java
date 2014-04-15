@@ -66,11 +66,14 @@ public class DateMatch extends TextMatch {
             code = c;
         }
     };
+
     // Enum representing YEAR, MON, WEEK, DAY, HR, MIN
     //
     public TimeResolution resolution = TimeResolution.NONE;
 
-    /* public String toString() {
-     return text + " @(" + start + ":" + end + ") matched by " + this.pattern_id;
-     } */
+    /** Flag caller can use to classify if a date match is distant */
+    public boolean isDistantPast = false;
+    /** Flag caller can use to classify if date is future relative to a given date, by default TODAY*/
+    public boolean isFuture = false;
+
 }
