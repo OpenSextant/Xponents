@@ -70,7 +70,8 @@ public class MessageConverter extends ConverterAdapter {
      * 
      */
     @Override
-    protected ConvertedDocument conversionImplementation(InputStream in, File doc) throws IOException {
+    protected ConvertedDocument conversionImplementation(InputStream in, File doc)
+            throws IOException {
 
         attachmentNumber = 0;
         textEncodings.clear();
@@ -97,7 +98,8 @@ public class MessageConverter extends ConverterAdapter {
      * @throws MessagingException
      * @throws IOException
      */
-    public ConvertedDocument convertMimeMessage(Message msg, File doc) throws MessagingException, IOException {
+    public ConvertedDocument convertMimeMessage(Message msg, File doc) throws MessagingException,
+            IOException {
         ConvertedDocument parentMsgDoc = new ConvertedDocument(doc);
         parentMsgDoc.is_RFC822_attachment = true;
         //parentMsgDoc.setEncoding(parseCharset(msg.getContentType()));
@@ -106,7 +108,8 @@ public class MessageConverter extends ConverterAdapter {
 
         StringBuilder rawText = new StringBuilder();
         // Since content is taken from file system, use file name
-        String messageFilePrefix = (doc != null ? FilenameUtils.getBaseName(doc.getName()) : parentMsgDoc.id);
+        String messageFilePrefix = (doc != null ? FilenameUtils.getBaseName(doc.getName())
+                : parentMsgDoc.id);
 
         // Find all attachments and plain text.
         parseMessage(msg, parentMsgDoc, rawText, messageFilePrefix);
@@ -124,7 +127,8 @@ public class MessageConverter extends ConverterAdapter {
      * @param message
      * @throws MessagingException
      */
-    private void setMailAttributes(ConvertedDocument msgdoc, Message message) throws MessagingException {
+    private void setMailAttributes(ConvertedDocument msgdoc, Message message)
+            throws MessagingException {
         msgdoc.id = getMessageID(message);
         String mailSubj = message.getSubject();
         msgdoc.addTitle(mailSubj);
@@ -173,23 +177,23 @@ public class MessageConverter extends ConverterAdapter {
         return msgLocalId;
     }
 
-    public static String MAIL_KEY_PREFIX = "mail:";
-
     /**
-     * Replace line wrapping and deal with content encoding issues.
-     * @param buf
-     * @deprecated  Use Commons codecs to decode; this is just linending/wrapping solution
+     * Given a global msg ID, create an ID that should be relatively unique.
+     * 
+     * @param globalId
      * @return
      */
-    @Deprecated
-    public static String scrubRFC822Encoding(String buf) {
-        // replace line endings that appear to be wrappings.
-        // Note - TEXT=\nTEXT  is a line wrap that likely broke the text
-        // 1. a =\nb ==> "a b"
-        // 2. a=\nb ==> "ab"
-        // 
-        return buf.replace(" =\n", "\n").replace("=\n", "");
+    public static String getShorterMessageID(String globalId) {
+        String msgId = parseMessageId(globalId);
+        String[] msgid_parts = msgId.split("@");
+
+        if (msgid_parts.length > 1) {
+            return msgid_parts[0];
+        }
+        return msgId;
     }
+
+    public static String MAIL_KEY_PREFIX = "mail:";
 
     /**
      * Whacky...  each child attachment will have some knowledge about the containing mail messsage which carried it.
@@ -222,8 +226,8 @@ public class MessageConverter extends ConverterAdapter {
      * @param buf
      * @throws IOException
      */
-    public void parseMessage(Part bodyPart, ConvertedDocument parent, StringBuilder buf, String msgPrefixId)
-            throws IOException {
+    public void parseMessage(Part bodyPart, ConvertedDocument parent, StringBuilder buf,
+            String msgPrefixId) throws IOException {
 
         InputStream partIO = null;
         ++attachmentNumber;
@@ -298,7 +302,7 @@ public class MessageConverter extends ConverterAdapter {
                         parent.setEncoding(meta.charset);
                     }
                     String text = (String) part;
-                    if(!isTextPlain) {
+                    if (!isTextPlain) {
                         // Decode TEXT from MIME base64 or QP encoded data.
                         // TODO: Is this necessary? The mime libraries seem to handle base64 unencoding automatically
                         // (at least for text/plain attachments). -jgibson
@@ -358,7 +362,8 @@ public class MessageConverter extends ConverterAdapter {
                     return;
                 } else {
                     /* MCU: identify unknown MIME parts */
-                    logger.debug("Skipping this an unknown bodyPart type: " + part.getClass().getName());
+                    logger.debug("Skipping this an unknown bodyPart type: "
+                            + part.getClass().getName());
                     //return;
                 }
             }
@@ -422,11 +427,15 @@ public class MessageConverter extends ConverterAdapter {
      * @return
      * @throws IOException
      */
-    private Content createChildContent(String file_id, InputStream input, PartMetadata meta) throws IOException {
+    private Content createChildContent(String file_id, InputStream input, PartMetadata meta)
+            throws IOException {
         Content child = new Content();
         child.id = file_id;
         child.encoding = meta.charset;
         child.meta.setProperty(ConvertedDocument.CHILD_ENTRY_KEY, file_id);
+        
+        child.meta.setProperty(MAIL_KEY_PREFIX + "Content-Disposition",
+                (meta.disposition == null ? "none" : meta.disposition));
 
         // Plain text is likely handled up above as (String)part are encountered in-line.
         // Here HTML attachments need to be decoded.
@@ -466,6 +475,8 @@ public class MessageConverter extends ConverterAdapter {
         public String mimeType = null;
         public String charset = null;
         public String transferEncoding = null;
+        public String disposition = null;
+
         private boolean istext = false;
         private boolean ishtml = false;
         private boolean iscal = false;
@@ -520,11 +531,11 @@ public class MessageConverter extends ConverterAdapter {
                 }
             }
 
-            String dispostion = bodyPart.getDisposition();
-            if (dispostion != null) {
-                if (dispostion.startsWith("attachment")) {
+            disposition = bodyPart.getDisposition();
+            if (disposition != null) {
+                if (disposition.startsWith("attachment")) {
                     isAttachment = true;
-                } else if (dispostion.startsWith("inline")) {
+                } else if (disposition.startsWith("inline")) {
                     isInline = true;
                 }
             }
@@ -627,7 +638,8 @@ public class MessageConverter extends ConverterAdapter {
      *         special chars.
      */
     public static String createSafeFilename(String text) {
-        String tmp = TextUtils.squeeze_whitespace(text).replaceAll("[\"'&;.“”)(%$?:<>\\*#~!@\\\\/ ]", "_");
+        String tmp = TextUtils.squeeze_whitespace(text).replaceAll(
+                "[\"'&;.“”)(%$?:<>\\*#~!@\\\\/ ]", "_");
 
         for (int x = tmp.length() - 1; x > 0; --x) {
             char ch = tmp.charAt(x);
