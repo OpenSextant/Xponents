@@ -434,7 +434,7 @@ public class MessageConverter extends ConverterAdapter {
         child.encoding = meta.charset;
         child.meta.setProperty(ConvertedDocument.CHILD_ENTRY_KEY, file_id);
         
-        child.meta.setProperty(MAIL_KEY_PREFIX + "Content-Disposition",
+        child.meta.setProperty(MAIL_KEY_PREFIX + "disposition",
                 (meta.disposition == null ? "none" : meta.disposition));
 
         // Plain text is likely handled up above as (String)part are encountered in-line.
