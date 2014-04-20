@@ -173,7 +173,8 @@ public class ArchiveNavigator implements ArchiveUnpacker {
 
         try {
             gzipInputStream = new GZIPInputStream(new FileInputStream(theFile));
-            String outFilename = getWorkingDir() + File.separator + fname + ".tar";
+            // TODO:  more testing on this particular case:  gunzip *.gz *.tgz *.tar.gz -- a mix of tar and gunzip
+            String outFilename = getWorkingDir() + '/' + fname + ".tar";
             File outFile = new File(outFilename);
             out = new BufferedOutputStream(new FileOutputStream(outFilename));
 

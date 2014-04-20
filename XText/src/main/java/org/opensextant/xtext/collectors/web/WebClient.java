@@ -46,6 +46,7 @@ import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.opensextant.ConfigException;
 import org.opensextant.xtext.XText;
+import org.opensextant.xtext.collectors.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +111,7 @@ public class WebClient {
      * @return
      */
     protected File createArchiveFile(String relpath) {
-        String itemArchivedPath = archiveRoot + File.separator + relpath;
+        String itemArchivedPath = archiveRoot + Collector.PATH_SEP + relpath;
         File itemSaved = new File(itemArchivedPath.replaceAll("//", "/"));
         itemSaved.getParentFile().mkdirs();
         return itemSaved;

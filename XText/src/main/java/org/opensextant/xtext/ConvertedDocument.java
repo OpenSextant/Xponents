@@ -54,6 +54,10 @@ import org.opensextant.data.DocInput;
  */
 public final class ConvertedDocument extends DocInput {
 
+    /**
+     */
+    public final static char UNIVERSAL_PATH_SEP = '/';
+    
     public static String DEFAULT_EMBED_FOLDER = "xtext";
     private static SimpleDateFormat dtfmt = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -238,7 +242,7 @@ public final class ConvertedDocument extends DocInput {
         } else {
             parPath = new File(textpath).getParent();
         }
-        parentContainer = new File(parPath + File.separator + parName);
+        parentContainer = new File(parPath + UNIVERSAL_PATH_SEP + parName);
     }
 
     /**
@@ -558,7 +562,7 @@ public final class ConvertedDocument extends DocInput {
     public static String getRelativePath(String root, String p) {
         String _path = p.replace(root, "");
         if (_path.length() > 0) {
-            if (_path.charAt(0) == File.separatorChar) {
+            if (_path.charAt(0) == '/' || _path.charAt(0) == '\\') {
                 _path = _path.substring(1);
             }
         }
@@ -597,7 +601,7 @@ public final class ConvertedDocument extends DocInput {
     public void save(String outputDir) throws IOException {
 
         if (is_converted) {
-            File target = new File(outputDir + File.separator + getNewPath(this.relative_path));
+            File target = new File(outputDir + UNIVERSAL_PATH_SEP + getNewPath(this.relative_path));
             this._saveConversion(target);
         }
     }
@@ -611,8 +615,14 @@ public final class ConvertedDocument extends DocInput {
         if (is_converted) {
             String container = (parentContainer != null ? parentContainer.getAbsolutePath() : new File(this.filepath)
                     .getParent());
-            File target = new File(container + File.separator + DEFAULT_EMBED_FOLDER + File.separator
-                    + getNewPath(this.filename));
+            StringBuilder _path = new StringBuilder();
+            _path.append(container);
+            _path.append(UNIVERSAL_PATH_SEP);
+            _path.append(DEFAULT_EMBED_FOLDER);
+            _path.append(UNIVERSAL_PATH_SEP);
+            _path.append(getNewPath(this.filename));
+            
+            File target = new File(_path.toString());
             this._saveConversion(target);
         }
     }
@@ -629,9 +639,9 @@ public final class ConvertedDocument extends DocInput {
         // Make path -- TODO: generalize this path builder stuff.
         StringBuilder path = new StringBuilder();
         path.append(container);
-        path.append(File.separator);
+        path.append(UNIVERSAL_PATH_SEP);
         path.append(DEFAULT_EMBED_FOLDER);
-        path.append(File.separator);
+        path.append(UNIVERSAL_PATH_SEP);
 
         // I now have a path name that was likely the one stored in cache.
         // Return the ConvertedDocument if exists at this path.
@@ -671,12 +681,10 @@ public final class ConvertedDocument extends DocInput {
         // Make path -- TODO: generalize this path builder stuff.
         StringBuilder path = new StringBuilder();
         path.append(cacheDir);
-        path.append(File.separator);
-        //path.append(inputDir.getName());
-        //path.append(File.separator);
+        path.append(UNIVERSAL_PATH_SEP);
         if (rel_path.length() > 0) {
             path.append(rel_path);
-            path.append(File.separator);
+            path.append(UNIVERSAL_PATH_SEP);
         }
 
         // I now have a path name that was likely the one stored in cache.

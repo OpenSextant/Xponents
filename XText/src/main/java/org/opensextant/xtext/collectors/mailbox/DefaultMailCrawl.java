@@ -54,10 +54,11 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
     final static SimpleDateFormat dateKeyFormat = new SimpleDateFormat("yyyyMMdd");
 
-    private File createDateFolder(Date d) {
+    protected File createDateFolder(Date d) {
         String dateKey = dateKeyFormat.format(d.getTime());
+        String path = String.format("%s%s%s", archiveRoot, Collector.PATH_SEP, dateKey);
 
-        File dateFolder = new File(archiveRoot + File.separator + dateKey);
+        File dateFolder = new File(path);
         if (!dateFolder.exists()) {
             if (!dateFolder.mkdir()) {
                 return null;
@@ -66,9 +67,10 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
         return dateFolder;
     }
 
-    private File createMessageFolder(File parent, String msgid) {
+    protected File createMessageFolder(File parent, String msgid) {
 
-        File msgFolder = new File(parent.getAbsolutePath() + File.separator + msgid);
+        String path = String.format("%s%s%s", parent.getAbsolutePath(), Collector.PATH_SEP, msgid);
+        File msgFolder = new File(path);
         if (!msgFolder.exists()) {
             if (!msgFolder.mkdir()) {
                 return null;
@@ -145,6 +147,7 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
      * - reimplement 
      * 
      */
+    @Override
     public void collect() throws MessagingException {
 
         File dateFolder = createDateFolder(new Date());
@@ -200,9 +203,11 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                 log.debug("Message Subject: " + message.getSubject() + "  new?: " + newMessage);
 
                 boolean setForDeleteNow = false;
+                String subject = message.getSubject();
                 if (message.getSubject() == null) {
                     log.info("Empty message title MSG number=" + message.getMessageNumber());
-                    continue;
+                    //continue;
+                    subject = "No_Subject";
                 }
 
                 if ((!config.isReadNewMessagesOnly() || newMessage)) {
@@ -210,13 +215,9 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                     // 1. Identify the email message.
                     //    and determine if you need to capture it again.
                     // 
-                    String messageFilename = MessageConverter.createSafeFilename(message
-                            .getSubject());
+                    String messageFilename = MessageConverter.createSafeFilename(subject);
                     if (messageFilename.length() > 60) {
                         messageFilename = messageFilename.substring(0, 60);
-                    }
-                    if (StringUtils.isBlank(messageFilename)) {
-                        messageFilename = "No_Subject";
                     }
 
                     String msgId = MessageConverter.getMessageID(message);
@@ -245,24 +246,10 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                         log.debug(msg);
                     }
 
-                    try {
-                        File msgFolder = createMessageFolder(dateFolder, msgId);
-
-                        // Save the file and do the conversion
-                        // 
-                        String msgFilepath = String.format("%s/%s.eml", msgFolder, messageFilename);
-                        File msgFile = new File(msgFilepath);
-                        OutputStream msgIO = new FileOutputStream(msgFile);
-                        // Requirement:  Write data to disk first, saving a ".eml" file.
-                        message.writeTo(msgIO);
-
-                        // NOTE: here the act of converting the ".eml" file now invokes 
-                        // the default MessageConverter logic and finally calls this as the ConversionListener
-                        // 
-                        converter.convertFile(msgFile);
-
-                    } catch (Exception msgErr) {
-                        log.error("Failed reading, saving document", msgErr);
+                    // Save file in archive, Convert it, etc.
+                    int status = saveMessageToFile(dateFolder, message, msgId, messageFilename);
+                    if (status < 0) {
+                        ++errCount;
                     }
 
                     if (!config.isReadOnly() && config.isDeleteOnRead()) {
@@ -286,10 +273,54 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
             } catch (MessagingException me) {
                 log.error("Failed to read messsage #{}", totalCount, me);
                 ++errCount;
+            } catch (IOException writeErr) {
+                log.error("Failed to write msg.eml #{}", totalCount, writeErr);
+                ++errCount;
             }
         }
 
         disconnect();
     }
 
+    /**
+     * A very specific MESSAGE ->> FILE archiving method.
+     * Mail item will end up in:
+     * 
+     *   YYYYMMDD/MSGID/SUBJ.eml  .. the original email.
+     *   YYYYMMDD/MSGID/SUBJ_eml/ .. attachments here..
+     *   
+     * @param dateFolder
+     * @param msg
+     * @param oid
+     * @param fname
+     * @throws IOException
+     * @throws MessagingException
+     */
+    protected int saveMessageToFile(File dateFolder, Message msg, String oid, String fname)
+            throws IOException, MessagingException {
+        OutputStream msgIO = null;
+        try {
+            File msgFolder = createMessageFolder(dateFolder, oid);
+
+            // Save the file and do the conversion
+            // 
+            String msgFilepath = String.format("%s/%s.eml", msgFolder, fname);
+            File msgFile = new File(msgFilepath);
+            msgIO = new FileOutputStream(msgFile);
+            // Requirement:  Write data to disk first, saving a ".eml" file.
+            msg.writeTo(msgIO);
+
+            // NOTE: here the act of converting the ".eml" file now invokes 
+            // the default MessageConverter logic and finally calls this as the ConversionListener
+            // 
+            converter.convertFile(msgFile);
+            return 0;
+
+        } catch (Exception msgErr) {
+            log.error("Failed reading, saving document", msgErr);
+            return -1;
+        } finally {
+            msgIO.close();
+        }
+    }
 }

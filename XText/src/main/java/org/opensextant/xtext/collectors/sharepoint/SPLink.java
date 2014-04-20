@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.opensextant.xtext.collectors.Collector;
 import org.opensextant.xtext.collectors.web.HyperLink;
 
 public class SPLink extends HyperLink {
@@ -73,7 +74,7 @@ public class SPLink extends HyperLink {
     public String getNormalPath() {
         String folder = getSharepointFolder();
         if (folder != null) {
-            return String.format("%s%s%s", folder, File.separator, getName());
+            return String.format("%s%s%s", folder, Collector.PATH_SEP, getName());
         }
         return null;
     }
