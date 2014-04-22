@@ -1001,23 +1001,7 @@ public class TextUtils {
                 continue;
             }
             Character.UnicodeBlock blk = Character.UnicodeBlock.of(ch);
-            if (( // Chinese/CJK group:
-            blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
-                    || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
-                    || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
-                    || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
-                    || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
-                    || (blk == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
-                    || (blk == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
-                    || (blk == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
-                    // Korean: Hangul
-                    || (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
-                    || (blk == Character.UnicodeBlock.HANGUL_JAMO)
-                    || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
-                    // Japanese:
-                    || (blk == Character.UnicodeBlock.HIRAGANA)
-                    || (blk == Character.UnicodeBlock.KATAKANA)) {
-
+            if (isCJK(blk)) {
                 // increment counter:
                 ++cjkCount;
             }
@@ -1044,29 +1028,31 @@ public class TextUtils {
                 continue;
             }
             Character.UnicodeBlock blk = Character.UnicodeBlock.of(ch);
-
-            // IF block is copied from above, in measureCJKText()
-            if (( // Chinese/CJK group:
-            blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
-                    || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
-                    || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
-                    || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
-                    || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
-                    || (blk == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
-                    || (blk == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
-                    || (blk == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
-                    // Korean: Hangul
-                    || (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
-                    || (blk == Character.UnicodeBlock.HANGUL_JAMO)
-                    || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
-                    // Japanese:
-                    || (blk == Character.UnicodeBlock.HIRAGANA)
-                    || (blk == Character.UnicodeBlock.KATAKANA)) {
+            if (isCJK(blk)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public static boolean isCJK(Character.UnicodeBlock blk) {
+        // Chinese/CJK group:
+        return (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
+                || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
+                || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
+                || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
+                || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
+                || (blk == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
+                || (blk == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
+                || (blk == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
+                // Korean: Hangul
+                || (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
+                || (blk == Character.UnicodeBlock.HANGUL_JAMO)
+                || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
+                // Japanese:
+                || (blk == Character.UnicodeBlock.HIRAGANA)
+                || (blk == Character.UnicodeBlock.KATAKANA);
     }
 
     /**
