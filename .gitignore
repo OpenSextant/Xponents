@@ -6,6 +6,7 @@ release
 target/
 #  TODO can we remove this?:
 build/
+bin/
 
 #Build files
 #Eclipse
