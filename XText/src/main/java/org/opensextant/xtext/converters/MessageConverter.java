@@ -168,7 +168,7 @@ public class MessageConverter extends ConverterAdapter {
         String msgId = null;
         String msgLocalId = null;
         //String msgIdFilename = null;
-        msgId = parseMessageId(msgIds[0]);
+        msgId = extractAngleValue(msgIds[0]);
         String[] msgid_parts = msgId.split("@");
         msgLocalId = msgId;
         if (msgid_parts.length > 1) {
@@ -184,7 +184,7 @@ public class MessageConverter extends ConverterAdapter {
      * @return
      */
     public static String getShorterMessageID(String globalId) {
-        String msgId = parseMessageId(globalId);
+        String msgId = extractAngleValue(globalId);
         String[] msgid_parts = msgId.split("@");
 
         if (msgid_parts.length > 1) {
@@ -325,16 +325,12 @@ public class MessageConverter extends ConverterAdapter {
                     }
 
                     if (meta.isAttachment()) {
-                        Content child = new Content();
-                        child.id = filename;
-                        child.encoding = meta.charset;
-                        child.meta.setProperty(ConvertedDocument.CHILD_ENTRY_KEY, filename);
+                        Content child = createBaseChildContent(filename, meta);
                         if (child.encoding == null) {
                             child.encoding = "UTF-8";
                         }
 
                         child.content = text.getBytes(child.encoding);
-                        child.mimeType = meta.mimeType;
                         copyMailAttrs(parent, child);
                         parent.addRawChild(child);
                     } else {
@@ -370,9 +366,8 @@ public class MessageConverter extends ConverterAdapter {
 
             if (bodyPart instanceof MimeBodyPart && !bodyPart.isMimeType("multipart/*")) {
 
-                String disposition = bodyPart.getDisposition();
                 logger.debug("{}# Saving {} ", msgPrefixId, filename);
-                if (disposition == null || disposition.equalsIgnoreCase(Part.ATTACHMENT)) {
+                if (meta.disposition == null || meta.isAttachment) {
 
                     partIO = ((MimeBodyPart) bodyPart).getRawInputStream();
                     Content child = createChildContent(filename, partIO, meta);
@@ -429,14 +424,7 @@ public class MessageConverter extends ConverterAdapter {
      */
     private Content createChildContent(String file_id, InputStream input, PartMetadata meta)
             throws IOException {
-        Content child = new Content();
-        child.id = file_id;
-        child.encoding = meta.charset;
-        child.meta.setProperty(ConvertedDocument.CHILD_ENTRY_KEY, file_id);
-        
-        child.meta.setProperty(MAIL_KEY_PREFIX + "disposition",
-                (meta.disposition == null ? "none" : meta.disposition));
-
+        Content child = createBaseChildContent(file_id, meta);
         // Plain text is likely handled up above as (String)part are encountered in-line.
         // Here HTML attachments need to be decoded.
         if (meta.isHTML() && (meta.isQP() || meta.isBase64())) {
@@ -449,12 +437,35 @@ public class MessageConverter extends ConverterAdapter {
             logger.debug("Other encoding is unaccounted: {}", meta.transferEncoding);
         }
 
-        child.mimeType = meta.mimeType;
-
         // Default or last resort.
         if (child.content == null) {
             child.content = IOUtils.toByteArray(input);
         }
+
+        return child;
+    }
+
+    /**
+     * Create a Child item with all of the metadata populated correctly.
+     *
+     * @param file_id
+     * @param meta
+     * @return
+     */
+    private Content createBaseChildContent(String file_id, PartMetadata meta) {
+        Content child = new Content();
+        child.id = file_id;
+        child.encoding = meta.charset;
+        child.meta.setProperty(ConvertedDocument.CHILD_ENTRY_KEY, file_id);
+
+        child.meta.setProperty(MAIL_KEY_PREFIX + "disposition",
+                (meta.disposition == null ? "none" : meta.disposition));
+
+        if (meta.contentId != null) {
+            child.meta.setProperty(MAIL_KEY_PREFIX + "content-id", meta.contentId);
+        }
+
+        child.mimeType = meta.mimeType;
 
         return child;
     }
@@ -476,6 +487,7 @@ public class MessageConverter extends ConverterAdapter {
         public String charset = null;
         public String transferEncoding = null;
         public String disposition = null;
+        public String contentId = null;
 
         private boolean istext = false;
         private boolean ishtml = false;
@@ -533,11 +545,16 @@ public class MessageConverter extends ConverterAdapter {
 
             disposition = bodyPart.getDisposition();
             if (disposition != null) {
-                if (disposition.startsWith("attachment")) {
+                if (disposition.startsWith(Part.ATTACHMENT)) {
                     isAttachment = true;
-                } else if (disposition.startsWith("inline")) {
+                } else if (disposition.startsWith(Part.INLINE)) {
                     isInline = true;
                 }
+            }
+
+            String[] contentIds = bodyPart.getHeader("Content-Id");
+            if (contentIds != null && contentIds.length > 0 && (!StringUtils.isBlank(contentIds[0]))) {
+                contentId = extractAngleValue(contentIds[0]);
             }
         }
 
@@ -652,20 +669,20 @@ public class MessageConverter extends ConverterAdapter {
         return tmp;
     }
 
-    private static Pattern msgId_Cleaner = Pattern.compile("<(.+)>");
+    private static final Pattern ANGLE_EXTRACTOR = Pattern.compile("<(.+)>");
 
     /**
-     * Parse 'id' from '<id>'
-     * 
-     * @param smtpId
+     * Parse 'value' from '<value>'
+     *
+     * @param value
      * @return
      */
-    public static String parseMessageId(String smtpId) {
-        Matcher regex = msgId_Cleaner.matcher(smtpId);
+    private static String extractAngleValue(String value) {
+        Matcher regex = ANGLE_EXTRACTOR.matcher(value);
         if (regex.matches()) {
             String msgId = regex.group(1);
             return msgId;
         }
-        return smtpId;
+        return value;
     }
 }
