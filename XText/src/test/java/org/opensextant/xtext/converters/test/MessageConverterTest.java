@@ -46,6 +46,7 @@ public class MessageConverterTest {
     private static File TEST_FILE;
 
     private static final String CONTENT_ID = MessageConverter.MAIL_KEY_PREFIX + "content-id";
+    private static final String CONTENT_DISPOSITION = MessageConverter.MAIL_KEY_PREFIX + "disposition";
 
     @BeforeClass
     public static void setupTemporaryFolder() throws IOException {
@@ -76,19 +77,23 @@ public class MessageConverterTest {
         Assert.assertEquals("text/plain", new MimeType(text_attach.mimeType).getBaseType());
         Assert.assertEquals(orig_text_attach, new String(text_attach.content, text_attach.encoding));
         Assert.assertEquals("A686FA7D9F4FB64E99601455209639C5@imc.mitre.org", text_attach.meta.getProperty(CONTENT_ID));
+        Assert.assertEquals("attachment", text_attach.meta.getProperty(CONTENT_DISPOSITION));
 
         Content html_attach = children.get("word_doc_as_html.htm");
         Assert.assertNotNull("Embedded HTML was not found.", html_attach);
         Assert.assertEquals("text/html", new MimeType(html_attach.mimeType).getBaseType());
         Assert.assertEquals("64B706D14F6CAF4598A5A756E2E763A0@imc.mitre.org", html_attach.meta.getProperty(CONTENT_ID));
+        Assert.assertEquals("attachment", html_attach.meta.getProperty(CONTENT_DISPOSITION));
         Content word_attach = children.get("doc_with_embedded_geocoded_image2.docx");
         Assert.assertNotNull("Doc with geocoded image was not found.", word_attach);
         Assert.assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", new MimeType(word_attach.mimeType).getBaseType());
         Assert.assertEquals("3ED3B89ABF3D1840B551B527B4DA054D@imc.mitre.org", word_attach.meta.getProperty(CONTENT_ID));
+        Assert.assertEquals("attachment", word_attach.meta.getProperty(CONTENT_DISPOSITION));
         Content jpeg_attach = children.get("android_photo_with_gps1.jpeg");
         Assert.assertNotNull("Photo with attached image was not found.", jpeg_attach);
         Assert.assertEquals("image/jpeg", new MimeType(jpeg_attach.mimeType).getBaseType());
         Assert.assertEquals("485710da-7b60-461a-a566-0ad2e0a14b82@imc.mitre.org", jpeg_attach.meta.getProperty(CONTENT_ID));
+        Assert.assertEquals("inline", jpeg_attach.meta.getProperty(CONTENT_DISPOSITION));
 
         Content htmlbody = null;
         for (final Content child : doc.getRawChildren()) {
