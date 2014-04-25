@@ -544,12 +544,10 @@ public class MessageConverter extends ConverterAdapter {
             }
 
             disposition = bodyPart.getDisposition();
-            if (disposition != null) {
-                if (disposition.startsWith(Part.ATTACHMENT)) {
-                    isAttachment = true;
-                } else if (disposition.startsWith(Part.INLINE)) {
-                    isInline = true;
-                }
+            if (Part.ATTACHMENT.equals(disposition)) {
+                isAttachment = true;
+            } else if (Part.INLINE.equals(disposition)) {
+                isInline = true;
             }
 
             String[] contentIds = bodyPart.getHeader("Content-Id");
