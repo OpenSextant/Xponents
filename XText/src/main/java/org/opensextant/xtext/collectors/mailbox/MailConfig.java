@@ -175,7 +175,7 @@ public class MailConfig extends Properties {
             return;
         }
         if (!new File(getKeyStore()).exists()) {
-            throw new ConfigException("Keystore set, but is invalid file");
+            throw new ConfigException("Keystore set, but is invalid file: "+getKeyStore());
         }
         System.setProperty("javax.net.ssl.keyStore", getKeyStore());
 
