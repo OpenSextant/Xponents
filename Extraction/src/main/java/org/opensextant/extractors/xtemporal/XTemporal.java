@@ -149,6 +149,7 @@ public class XTemporal extends AbstractFlexPat {
         results.matches = new ArrayList<TextMatch>();
         results.result_id = text_id;
 
+        int found = 0;
         int patternsComplete = 0;
         for (RegexPattern pat : patterns.get_patterns()) {
 
@@ -165,6 +166,7 @@ public class XTemporal extends AbstractFlexPat {
 
             while (match.find()) {
 
+                ++found;
                 DateMatch dt = new DateMatch();
 
                 dt.pattern_id = pat.id;
@@ -184,6 +186,7 @@ public class XTemporal extends AbstractFlexPat {
                     // Flags worth setting here.
                     dt.isDistantPast = isDistantPast(dt.datenorm.getTime());
                     dt.isFuture = isFuture(dt.datenorm.getTime());
+                    set_match_id(dt, found);
 
                     results.pass = true;
 

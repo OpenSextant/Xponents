@@ -30,7 +30,7 @@ public abstract class AbstractFlexPat implements Extractor {
     protected String patterns_file = null;
     protected URL patterns_url = null;
     protected RegexPatternManager patterns = null;
-    private final TextUtils utility = new TextUtils();
+    protected final TextUtils textUtility = new TextUtils();
     private ProgressMonitor progressMonitor;
 
     public AbstractFlexPat() {
@@ -44,9 +44,10 @@ public abstract class AbstractFlexPat implements Extractor {
      * Create Patterns Manager given the result of configure(?) which is a URL
      * (preferred) or a path; If a URL is set it is used.
      */
-    protected abstract RegexPatternManager createPatternManager() throws java.net.MalformedURLException;
+    protected abstract RegexPatternManager createPatternManager()
+            throws java.net.MalformedURLException;
 
-    public RegexPatternManager getPatternManager(){
+    public RegexPatternManager getPatternManager() {
         return patterns;
     }
 
@@ -58,7 +59,12 @@ public abstract class AbstractFlexPat implements Extractor {
      */
     @Override
     public void configure() throws ConfigException {
-        configure(getClass().getResource(patterns_file)); // default
+        // Default behavior - get the default patterns file.
+        patterns_url = getClass().getResource(patterns_file);
+        if (patterns_url == null) {
+            throw new ConfigException("Did not find your configuration file=" + patterns_file);
+        }
+        configure(patterns_url);
     }
 
     /**
@@ -120,7 +126,7 @@ public abstract class AbstractFlexPat implements Extractor {
     }
 
     /**
-     * (Optional) Assign an identifier to each Text Match found. This is an MD5
+     * Optional. Assign an identifier to each Text Match found. This is an MD5
      * of the match in-situ. If context is provided, it is used to generate the
      * identity
      *
@@ -130,10 +136,21 @@ public abstract class AbstractFlexPat implements Extractor {
      */
     protected void set_match_id(TextMatch m) {
         if (m.getContextBefore() == null) {
-            m.match_id = utility.genTextID(m.pattern_id + m.getText());
+            m.match_id = textUtility.genTextID(String.format("%s,%s", m.pattern_id, m.getText()));
         } else {
-            m.match_id = utility.genTextID(m.getContextBefore() + m.getText() + m.getContextAfter());
+            m.match_id = textUtility.genTextID(m.getContextBefore() + m.getText()
+                    + m.getContextAfter());
         }
+    }
+
+    /**
+     * Optional.  assign ID for the match to pattern, text and a count incrementor 
+     * @param m
+     * @param count
+     */
+    protected void set_match_id(TextMatch m, int count) {
+        m.match_id = textUtility.genTextID(String.format("%s,%s,%d", m.pattern_id, m.getText(),
+                count));
     }
 
     public void enableAll() {
@@ -151,18 +168,19 @@ public abstract class AbstractFlexPat implements Extractor {
 
     @Override
     public void updateProgress(double progress) {
-        if (this.progressMonitor != null) progressMonitor.updateStepProgress(progress);
+        if (this.progressMonitor != null)
+            progressMonitor.updateStepProgress(progress);
     }
 
     @Override
     public void markComplete() {
-        if (this.progressMonitor != null) progressMonitor.completeStep();
+        if (this.progressMonitor != null)
+            progressMonitor.completeStep();
     }
-    
 
-/*
-    public void enablePatterns(String prefix);
+    /*
+        public void enablePatterns(String prefix);
 
-    public void disablePatterns(String prefix);
-    * */
+        public void disablePatterns(String prefix);
+        * */
 }

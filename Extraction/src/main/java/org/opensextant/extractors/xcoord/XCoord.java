@@ -58,6 +58,8 @@ import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 /**
  * Use this XCoord class for both test and development of patterns, as well as
  * to extract coordinates at runtime.
@@ -275,6 +277,7 @@ public class XCoord extends AbstractFlexPat {
         results.matches = new ArrayList<TextMatch>();
 
         int patternsComplete = 0;
+        int found = 0;
         for (RegexPattern repat : patterns.get_patterns()) {
 
             log.debug("pattern={}", repat.id);
@@ -299,6 +302,7 @@ public class XCoord extends AbstractFlexPat {
 
             while (match.find()) {
 
+                ++found;
                 GeocoordMatch coord = new GeocoordMatch();
 
                 // MATCH METHOD aka Pattern ID aka CCE instance
@@ -358,13 +362,13 @@ public class XCoord extends AbstractFlexPat {
                     // This sets the context window before/after.
                     //
                     coord.setContext(
-                    // left l1 to left l2
+                            // left l1 to left l2
                             TextUtils.delete_eol(text.substring(slices[0], slices[1])),
                             // right r1 to r2
                             TextUtils.delete_eol(text.substring(slices[2], slices[3])));
                 }
-                // coord.createID();
-                set_match_id(coord);
+                
+                set_match_id(coord, found);
 
                 results.matches.add(coord);
 

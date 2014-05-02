@@ -134,6 +134,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
         PoliMatch poliMatch = null;
 
+        int found=0;
         int patternsComplete = 0;
         for (RegexPattern repat : patterns.get_patterns()) {
             if (!repat.enabled) {
@@ -148,6 +149,7 @@ public class PatternsOfLife extends AbstractFlexPat {
             results.evaluated = true;
             while (match.find()) {
 
+                ++found;
                 Map<String, String> fields = patterns.group_map(repat, match);
 
                 if (repat.match_class == null) {
@@ -189,9 +191,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
                 // left l1 to left l2
                 poliMatch.setContext(TextUtils.delete_eol(text.substring(slices[0], slices[1])));
-
-                // coord.createID();
-                set_match_id(poliMatch);
+                set_match_id(poliMatch, found);
 
                 results.matches.add(poliMatch);
 
