@@ -39,7 +39,8 @@
             <arg value="${input}"/>
             <arg value="-o"/>
             <arg value="${output}"/>
-            <arg value="-e"/>
+            <!-- <arg value="-e"/>
+            -->
             <arg value="-h"/>
             <!--
             <arg value="-h"/>
