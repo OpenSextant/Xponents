@@ -58,8 +58,6 @@ import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
-
 /**
  * Use this XCoord class for both test and development of patterns, as well as
  * to extract coordinates at runtime.
