@@ -284,6 +284,7 @@ public class DefaultWebCrawl extends WebClient implements iFilter, Collector {
             doc = converter.convert(item);
 
             if (doc != null) {
+                doc.setDefaultID();
                 doc.addSourceURL(link.getAbsoluteURL(), link.getReferrer());
                 // This path must already exist
                 doc.saveBuffer(new File(doc.textpath));

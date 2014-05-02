@@ -116,6 +116,9 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
         try {
             // Converted document is discovered, then enters this interface method.
             //
+            // Parent doc will be ./A.eml
+            // Child Attachments will be ./A_eml/b.doc
+            //
             listener.collected(doc, filepath);
 
             if (doc.hasChildren()) {
@@ -124,7 +127,7 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                 for (ConvertedDocument child : doc.getChildren()) {
 
                     // This creates a new ID out of the parent doc id and the attachment filename.
-                    String uniqueValue = String.format("%s#%s", doc.id, child.filename);
+                    String uniqueValue = String.format("%s,%s", doc.id, child.filename);
                     child.setId(TextUtils.text_id(uniqueValue));
 
                     // Record the child attachment.
@@ -221,11 +224,13 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                     }
 
                     String msgId = MessageConverter.getMessageID(message);
+
                     if (msgId == null) {
                         log.error("How can a message ID be null? SUBJ={}", message.getSubject());
                         continue;
                     }
-
+                    msgId = MessageConverter.getShorterMessageID(msgId);
+                    
                     try {
                         if (listener != null && listener.exists(msgId)) {
                             // You already collected this item. Ignoring.
