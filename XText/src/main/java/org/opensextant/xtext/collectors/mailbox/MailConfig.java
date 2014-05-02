@@ -99,6 +99,9 @@ public class MailConfig extends Properties {
 
     public MailConfig(URL cfgUrl) throws IOException, ConfigException {
         super(System.getProperties());
+        if (cfgUrl == null){
+            throw new ConfigException("Mail Configuration not found");
+        }
 
         InputStream io = cfgUrl.openStream();
         this.load(io);

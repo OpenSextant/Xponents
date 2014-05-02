@@ -129,7 +129,9 @@ public class MessageConverter extends ConverterAdapter {
      */
     private void setMailAttributes(ConvertedDocument msgdoc, Message message)
             throws MessagingException {
-        msgdoc.id = getMessageID(message);
+        String msg_id = getMessageID(message);
+        msgdoc.id = getShorterMessageID(msg_id);
+
         String mailSubj = message.getSubject();
         msgdoc.addTitle(mailSubj);
 
@@ -144,7 +146,7 @@ public class MessageConverter extends ConverterAdapter {
         String dt = (d != null ? d.toString() : "");
         msgdoc.addCreateDate(d != null ? d : msgdoc.filetime);
 
-        msgdoc.addUserProperty(MAIL_KEY_PREFIX + "msgid", msgdoc.id);
+        msgdoc.addUserProperty(MAIL_KEY_PREFIX + "msgid", msg_id);
         msgdoc.addUserProperty(MAIL_KEY_PREFIX + "sender", sender0);
 
         msgdoc.addUserProperty(MAIL_KEY_PREFIX + "date", dt);
@@ -187,10 +189,17 @@ public class MessageConverter extends ConverterAdapter {
         String msgId = parseMessageId(globalId);
         String[] msgid_parts = msgId.split("@");
 
+        String shorter = msgId;
         if (msgid_parts.length > 1) {
-            return msgid_parts[0];
+            shorter = msgid_parts[0];
         }
-        return msgId;
+        
+        // Clean up MSG ID
+        // The same ID that is used to archive will be used to record in DB.
+        //
+        shorter = TextUtils.replaceAny(shorter, "#$.%~", "_");
+
+        return shorter;
     }
 
     public static String MAIL_KEY_PREFIX = "mail:";
@@ -641,6 +650,7 @@ public class MessageConverter extends ConverterAdapter {
         String tmp = TextUtils.squeeze_whitespace(text).replaceAll(
                 "[\"'&;.“”)(%$?:<>\\*#~!@\\\\/ ]", "_");
 
+        // Trim trailing "__" from resulting file name.
         for (int x = tmp.length() - 1; x > 0; --x) {
             char ch = tmp.charAt(x);
             if (ch != '_') {
