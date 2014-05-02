@@ -10,7 +10,8 @@ import org.apache.http.HttpResponse;
 import org.opensextant.util.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.opensextant.xtext.collectors.sharepoint.*;
+import org.opensextant.xtext.collectors.sharepoint.SPLink;
+import org.opensextant.xtext.collectors.sharepoint.SharepointClient;
 
 /* 
  */

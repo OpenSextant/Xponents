@@ -57,7 +57,7 @@ public final class ConvertedDocument extends DocInput {
     /**
      */
     public final static char UNIVERSAL_PATH_SEP = '/';
-    
+
     public static String DEFAULT_EMBED_FOLDER = "xtext";
     private static SimpleDateFormat dtfmt = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -70,7 +70,8 @@ public final class ConvertedDocument extends DocInput {
 
     public final static String[] fields = {
             // Dublin Core style metadata fields
-            "title", "author", "creator_tool", "pub_date", "keywords", "subject", "filepath", "encoding",
+            "title", "author", "creator_tool", "pub_date", "keywords", "subject", "filepath",
+            "encoding",
             //
             // XText metadata.
             "filtered", "converter", "conversion_date", "encrypted", "filesize", "textsize",
@@ -97,6 +98,7 @@ public final class ConvertedDocument extends DocInput {
 
     public final static Set<String> valid_fields = new HashSet<String>(Arrays.asList(fields));
     public String filepath = null;
+
     public String filename = null;
     public String extension = null;
     public String basename = null;
@@ -130,6 +132,8 @@ public final class ConvertedDocument extends DocInput {
     public boolean is_cached = false;
     public static boolean CONVERT_TO_UNIX_EOL = true;
     private File file = null;
+    private File folder = null;
+
     public long filesize = -1;
 
     private boolean isChild = false;
@@ -140,6 +144,8 @@ public final class ConvertedDocument extends DocInput {
         super(null, null);
     }
 
+    public boolean WINDOWS_OS = FileUtility.isWindowsSystem();
+
     public ConvertedDocument(File item) {
         super(null, null);
 
@@ -147,6 +153,15 @@ public final class ConvertedDocument extends DocInput {
             this.file = item;
 
             this.filepath = item.getAbsolutePath();
+            if (WINDOWS_OS) {
+                // An effort to normalize paths.  This should have no effect on existing
+                // Caches of data on existing *nix deployments. TOOD: Look at how URL could be used
+                // e.g., file:/xyz/file.txt
+                //       file:/C:/xyz/file.txt    are OS-independent and use "/" always.
+                //
+                this.filepath = XText.fixPath(filepath);
+            }
+            this.folder = item.getParentFile();
             this.filename = item.getName();
             this.filetime = getFiletime();
             this.is_plaintext = filename.toLowerCase().endsWith(".txt");
@@ -220,11 +235,14 @@ public final class ConvertedDocument extends DocInput {
      * If this doc is a Parent doc, then evaluate what its "container" should be, that is to house child objects and their conversions.
      * If it is a child, ignore -- ensure child.parentContainer = child.parent.parentContainer
      * Children do not get to choose.
-     * 
+     * @deprecated  -- prefer to have children archived with originals always.  If you are pulling off binary data from originals (email, compound docs, etc) you will go nuts tracking it all.
      * @param saveEmbedded
      */
     public void evalParentContainer(boolean saveEmbedded) {
         if (!isParent) {
+            return;
+        }
+        if (parentContainer != null) {
             return;
         }
         // This is the parent now.
@@ -242,6 +260,24 @@ public final class ConvertedDocument extends DocInput {
         } else {
             parPath = new File(textpath).getParent();
         }
+        parentContainer = new File(parPath + UNIVERSAL_PATH_SEP + parName);
+    }
+
+    /**
+     * Evaluate a folder for archiving children close to where the parent original resides.
+     * Whereas evalParentContainer(boolean) which tries to choose if children are archived embedded with parents in ./xtext
+     * or in a parallel archive.
+     */
+    public void evalParentChildContainer() {
+        if (!isParent) {
+            return;
+        }
+        if (parentContainer != null) {
+            return;
+        }
+        String parName = String.format("%s_%s", basename, extension);
+        String parPath = folder.getAbsolutePath();
+
         parentContainer = new File(parPath + UNIVERSAL_PATH_SEP + parName);
     }
 
@@ -314,7 +350,6 @@ public final class ConvertedDocument extends DocInput {
     public void setId(String ident) {
         this.id = ident;
     }
-    
 
     /**
      * set encoding property
@@ -384,6 +419,14 @@ public final class ConvertedDocument extends DocInput {
         return this.filepath;
     }
 
+    public File getFolder() {
+        return this.folder;
+    }
+
+    public File getFile() {
+        return this.file;
+    }
+
     /**
      * DocInput interface: getTextpath
      *
@@ -396,40 +439,40 @@ public final class ConvertedDocument extends DocInput {
     }
 
     private boolean has_text = false;
-    
+
     /**
      * Reports if the doc has text available, after it was converted.
      * NOTE: this is false if you ask before it is converted.
      * 
      * @return true if there is text available.  false if the converters have not tried to set text or they tried and found no text.
-     */    
-    public boolean hasText(){
+     */
+    public boolean hasText() {
         return has_text;
     }
-    
+
     /**
      * Set default ID only after all conversion and all metadata has been acquired.
      * MD5 hash of text, if text is available, or of the filepath if file is empty.
      * 
      */
-    public void setDefaultID(){
-        if (hasText()){
+    public void setDefaultID() {
+        if (hasText()) {
             id = TextUtils.text_id(getText());
         } else {
-            id = TextUtils.text_id(filepath);        
+            id = TextUtils.text_id(filepath);
         }
     }
-    
+
     /**
      * The whole point of this mess:  get the text from the original. It is set here and line endings normalized to unix line endings, \n
      */
     public void setText(String buf) throws UnsupportedEncodingException {
         this.buffer = buf;
-        
-        if (StringUtils.isBlank(buffer)){
+
+        if (StringUtils.isBlank(buffer)) {
             return;
         }
-        
+
         has_text = true;
 
         // Now figure out if we have a converted document or not.
@@ -542,9 +585,9 @@ public final class ConvertedDocument extends DocInput {
      * Parent/Child relationship is complicated still.
      * @param container
      */
-    public void setPathRelativeTo(String container) {
+    public void setPathRelativeTo(String container, boolean childrenWithParent) {
         String relPath = container;
-        if (isChild && parentContainer != null) {
+        if (isChild && parentContainer != null && !childrenWithParent) {
             relPath = parentContainer.getAbsolutePath();
         }
 
@@ -560,7 +603,7 @@ public final class ConvertedDocument extends DocInput {
      *
      */
     public static String getRelativePath(String root, String p) {
-        String _path = p.replace(root, "");
+        String _path = XText.fixPath(p).replace(root, "");
         if (_path.length() > 0) {
             if (_path.charAt(0) == '/' || _path.charAt(0) == '\\') {
                 _path = _path.substring(1);
@@ -613,15 +656,15 @@ public final class ConvertedDocument extends DocInput {
      */
     public void saveEmbedded() throws IOException {
         if (is_converted) {
-            String container = (parentContainer != null ? parentContainer.getAbsolutePath() : new File(this.filepath)
-                    .getParent());
+            String container = (parentContainer != null ? parentContainer.getAbsolutePath()
+                    : new File(this.filepath).getParent());
             StringBuilder _path = new StringBuilder();
             _path.append(container);
             _path.append(UNIVERSAL_PATH_SEP);
             _path.append(DEFAULT_EMBED_FOLDER);
             _path.append(UNIVERSAL_PATH_SEP);
             _path.append(getNewPath(this.filename));
-            
+
             File target = new File(_path.toString());
             this._saveConversion(target);
         }
@@ -634,14 +677,9 @@ public final class ConvertedDocument extends DocInput {
      * @return doc ConvertedDocument from cache, otherwise null
      */
     public static ConvertedDocument getEmbeddedConversion(File obj) throws IOException {
-        String container = obj.getParent();
 
-        // Make path -- TODO: generalize this path builder stuff.
-        StringBuilder path = new StringBuilder();
-        path.append(container);
-        path.append(UNIVERSAL_PATH_SEP);
-        path.append(DEFAULT_EMBED_FOLDER);
-        path.append(UNIVERSAL_PATH_SEP);
+        String cacheFolder = String.format("%s/%s", XText.fixPath(obj.getParent()),
+                DEFAULT_EMBED_FOLDER);
 
         // I now have a path name that was likely the one stored in cache.
         // Return the ConvertedDocument if exists at this path.
@@ -649,20 +687,28 @@ public final class ConvertedDocument extends DocInput {
         //
         // This instance finds file:./xtext/F.ext.txt  for a file:./F.ext
         //
-        return _uncacheConversion(path, obj.getName());
+        return _uncacheConversion(cacheFolder, obj.getName());
     }
 
-    private static ConvertedDocument _uncacheConversion(StringBuilder path, String fname) throws IOException {
+    /**
+     * Pass in a folder.  and the name of the object to uncache.
+     *
+     * @param path
+     * @param fname
+     * @return
+     * @throws IOException
+     */
+    private static ConvertedDocument _uncacheConversion(String path, String fname)
+            throws IOException {
         // Common
+        String targetPath = null;
         if (fname.endsWith(".txt")) {
             String cachedFile = FilenameUtils.getBaseName(fname);
-            path.append(cachedFile);
-            path.append("-utf8.txt");
+            targetPath = String.format("%s/%s-utf8.txt", path, cachedFile);
         } else {
-            path.append(fname);
-            path.append(".txt");
+            targetPath = String.format("%s/%s.txt", path, fname);
         }
-        File target = new File(path.toString());
+        File target = new File(targetPath);
         if (target.exists()) {
             return ConvertedDocument.getCachedDocument(target);
         }
@@ -673,19 +719,12 @@ public final class ConvertedDocument extends DocInput {
      * This provides some means for retrieving previously converted files. ....
      * to avoid converted them.
      */
-    public static ConvertedDocument getCachedConversion(String cacheDir, File inputDir, File obj) throws IOException {
-        //String cachedFile = FilenameUtils.getBaseName(obj.getName());
+    public static ConvertedDocument getCachedConversion(String cacheDir, String inputDir, File obj)
+            throws IOException {
+        String rel_path = getRelativePath(inputDir, obj.getParentFile().getAbsolutePath());
 
-        String rel_path = getRelativePath(inputDir.getAbsolutePath(), obj.getParentFile().getAbsolutePath());
-
-        // Make path -- TODO: generalize this path builder stuff.
-        StringBuilder path = new StringBuilder();
-        path.append(cacheDir);
-        path.append(UNIVERSAL_PATH_SEP);
-        if (rel_path.length() > 0) {
-            path.append(rel_path);
-            path.append(UNIVERSAL_PATH_SEP);
-        }
+        // This folder contains the cached Item.
+        String cacheFolder = String.format("%s/%s", cacheDir, rel_path);
 
         // I now have a path name that was likely the one stored in cache.
         // Return the ConvertedDocument if exists at this path.
@@ -711,7 +750,7 @@ public final class ConvertedDocument extends DocInput {
         //   If no conversion was made, then the original file is either
         //   unconvertable or it is already valid UTF-8 or ASCII-only text/plain.
         //
-        return _uncacheConversion(path, obj.getName());
+        return _uncacheConversion(cacheFolder, obj.getName());
     }
 
     /**
@@ -721,8 +760,7 @@ public final class ConvertedDocument extends DocInput {
 
         if (!ConvertedDocument.overwrite) {
             if (target.exists()) {
-                textpath = target.getAbsolutePath();
-                // throw new IOException("Not overwriting");
+                textpath = XText.fixPath(target.getAbsolutePath());
                 return;
             }
         }
@@ -738,7 +776,7 @@ public final class ConvertedDocument extends DocInput {
 
         FileUtility.makeDirectory(target.getParentFile());
         saveBuffer(target);
-        textpath = target.getAbsolutePath();
+        textpath = XText.fixPath(target.getAbsolutePath());
         this.is_cached = true;
     }
 
@@ -804,14 +842,14 @@ public final class ConvertedDocument extends DocInput {
         String fpath = doc_meta.getString("filepath");
 
         ConvertedDocument doc = new ConvertedDocument(new File(fpath));
-        doc.meta = doc_meta; 
+        doc.meta = doc_meta;
 
         // Set plain text buffer
         doc.buffer = buf.substring(0, x);
 
         // Retrieve values for useful attrs.
         doc.encoding = doc.getProperty("encoding");
-        doc.filepath = fpath;
+        doc.filepath = fpath; /* note: path should already have been normalized, using "/" */
         doc.filesize = Long.parseLong(doc.getProperty("filesize"));
         doc.textpath = fconv.getAbsolutePath();
         doc.is_cached = true;

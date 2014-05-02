@@ -86,13 +86,14 @@ public final class XText implements iFilter, iConvert {
     private boolean save = true;
     private boolean zone_web_content = false;
     private String archiveRoot = null;
-    private File inputRoot = null;
+    private String inputRoot = null;
     private String tempRoot = null;
     protected String inputNode = null;
     /**
      * Embedded mode
      */
     private boolean save_in_folder = false;
+    private boolean save_children_in_folder = true;
 
     /**
      * Archive mode: save to the archive root rather than in the directory the
@@ -135,10 +136,11 @@ public final class XText implements iFilter, iConvert {
         if (root == null) {
             throw new IOException("Archive cannot be null");
         }
-        archiveRoot = FilenameUtils.normalizeNoEndSeparator(root, true);
+        archiveRoot = fixPath(root);
         if (archiveRoot == null) {
             throw new IOException("Archive root is invalid");
         }
+
         File test = new File(archiveRoot);
 
         if (!test.exists() || !test.isDirectory()) {
@@ -149,6 +151,7 @@ public final class XText implements iFilter, iConvert {
     /**
      * Set the temp working directory
      * 
+     * @deprecated Currently unused temp folder
      * @param tmp
      * @throws IOException
      */
@@ -213,6 +216,20 @@ public final class XText implements iFilter, iConvert {
     }
 
     /**
+     * Experimental.
+     * 
+     * ON by default.  If you have email, for example, folder/A.eml
+     * then children will appear at folder/A_eml/child.doc  for some child.doc attachment.
+     * Behavior may differ in each case.  But essentially, this flag directs XText to write back to inputRoot
+     *
+     * Embedded parent/child docs (email, compound docs, etc) are special cases,
+     * @param b
+     */
+    public void enableSaveChildrenWithInput(boolean b) {
+        save_children_in_folder = b;
+    }
+
+    /**
      * Saving to an archive specified by the caller; This is inferred if a
      * non-null, pre-existing archive root is set; DEFAULT: do not save in
      * archive.
@@ -273,17 +290,29 @@ public final class XText implements iFilter, iConvert {
      * @param name
      */
     public void setOutputNode(String name) throws IOException {
+        if (!save) {
+            // Not saving output.
+            return;
+        }
+
         if (archiveRoot == null) {
+            outputNode = inputRoot;
+            return;
+        }
+        if (name == null) {
+            outputNode = archiveRoot;
+            return;
+        }
+
+        // Finally, use a "archiveRoot/name"
+        //
+        outputNode = FilenameUtils.concat(archiveRoot, name);
+        if (outputNode != null) {
             outputNode = FilenameUtils.normalizeNoEndSeparator(outputNode, true);
         } else {
-            outputNode = FilenameUtils.concat(archiveRoot, name);
-            if (outputNode != null) {
-                outputNode = FilenameUtils.normalizeNoEndSeparator(outputNode, true);
-            } else {
-                throw new IOException("Output node is misconfigured;  ArchiveRoot is required "
-                        + name);
-            }
+            throw new IOException("Output node is misconfigured;  ArchiveRoot is required " + name);
         }
+
     }
 
     protected long total_conv_time = 0;
@@ -311,8 +340,27 @@ public final class XText implements iFilter, iConvert {
      * 
      * @param tmpInput
      */
-    public void setInputRoot(File tmpInput) {
+    public void setInputRoot(String tmpInput) {
         this.inputRoot = tmpInput;
+        if (inputRoot != null) {
+            inputRoot = fixPath(tmpInput);
+        }
+    }
+
+    /**
+     * Most of the path mechanics are string-based, rather than file-system based,
+     * so path adjustments are best done to be sure all paths from configuration
+     * or from inputs should conform to a common convention.  paths will be more like URLs, using
+     * "/" as the standard path separator.
+     *
+     * @param p
+     * @return
+     */
+    protected static String fixPath(String p) {
+        if (p == null) {
+            return null;
+        }
+        return p.replace('\\', '/');
     }
 
     /**
@@ -338,12 +386,12 @@ public final class XText implements iFilter, iConvert {
             setOutputNode(inputNode);
             convertArchive(input);
         } else if (input.isFile()) {
-            inputRoot = input.getParentFile();
+            setInputRoot(input.getParent());
             inputNode = input.getParentFile().getName();
             setOutputNode(inputNode);
             convertFile(input);
         } else if (input.isDirectory()) {
-            inputRoot = input;
+            setInputRoot(input.getAbsolutePath());
             inputNode = input.getName();
             setOutputNode(inputNode);
             convertFolder(input);
@@ -405,8 +453,17 @@ public final class XText implements iFilter, iConvert {
         return false;
     }
 
+    /**
+     * NOTE: Use of File() or FilenameUtils.concat() are OS dependent, here
+     * what we want is more like a URL string representation always using /a/b/c/
+     * Instead of potentially \ and/or / mixed.
+     * @param dir
+     * @param item
+     * @return
+     * @throws IOException
+     */
     private static String createPath(String dir, String item) throws IOException {
-        String newPath = FilenameUtils.concat(dir, item);
+        String newPath = String.format("%s/%s", fixPath(dir), item);
         if (newPath == null) {
             throw new IOException("Invalid path");
         }
@@ -429,7 +486,7 @@ public final class XText implements iFilter, iConvert {
             saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), node_name);
         } else {
             // Save converted items in a parallel archive for this zip archive.
-            this.setInputRoot(new File(saveArchiveTo));
+            this.setInputRoot(saveArchiveTo);
         }
 
         ArchiveUnpacker unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
@@ -495,6 +552,11 @@ public final class XText implements iFilter, iConvert {
 
         if (parent == null && filterOutFile(input)) {
             return null;
+        }
+
+        if (this.inputRoot == null) {
+            throw new IOException(
+                    "Please set an input root; convertFile() was called outside of extractText()");
         }
 
         String fname = input.getName();
@@ -604,7 +666,7 @@ public final class XText implements iFilter, iConvert {
                         // original resides.
                         textDoc.saveEmbedded();
                     } else {
-                        textDoc.setPathRelativeTo(inputRoot.getAbsolutePath());
+                        textDoc.setPathRelativeTo(inputRoot, this.save_children_in_folder);
                         textDoc.save(outputNode);
                     }
                     // Children items will be persisted in the same folder
@@ -681,7 +743,8 @@ public final class XText implements iFilter, iConvert {
      * @throws IOException
      */
     public void convertChildren(ConvertedDocument parentDoc) throws IOException {
-        parentDoc.evalParentContainer(this.save_in_folder);
+        //parentDoc.evalParentContainer(this.save_children_in_folder);
+        parentDoc.evalParentChildContainer();
         FileUtility.makeDirectory(parentDoc.parentContainer);
         String targetPath = parentDoc.parentContainer.getAbsolutePath();
 
@@ -714,7 +777,7 @@ public final class XText implements iFilter, iConvert {
                         childConv.saveBuffer(new File(childConv.textpath));
                     }
 
-                    if(child.mimeType != null) {
+                    if (child.mimeType != null) {
                         try {
                             childConv.setMimeType(new MimeType(child.mimeType));
                         } catch (MimeTypeParseException e) {

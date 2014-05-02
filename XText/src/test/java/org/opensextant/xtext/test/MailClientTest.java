@@ -6,7 +6,8 @@ import java.net.URL;
 import javax.mail.MessagingException;
 
 import org.opensextant.ConfigException;
-import org.opensextant.xtext.collectors.mailbox.*;
+import org.opensextant.xtext.collectors.mailbox.MailConfig;
+import org.opensextant.xtext.collectors.mailbox.MailClient;
 
 public class MailClientTest {
 
