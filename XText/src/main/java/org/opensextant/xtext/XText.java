@@ -587,7 +587,7 @@ public final class XText implements iFilter, iConvert {
             return null;
         }
 
-        log.info("Converting FILE=" + input.getAbsolutePath());
+        log.debug("Converting FILE=" + input.getAbsolutePath());
 
         /*
          * Handle archives.
