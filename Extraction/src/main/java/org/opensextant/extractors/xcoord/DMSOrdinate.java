@@ -125,8 +125,8 @@ public final class DMSOrdinate {
      * @param text
      * @throws XCoordException
      */
-    public DMSOrdinate(Map<String, TextEntity> fields, Map<String, String> elements, boolean islat, String text)
-            throws NormalizationException {
+    public DMSOrdinate(Map<String, TextEntity> fields, Map<String, String> elements, boolean islat,
+            String text) throws NormalizationException {
 
         // VALID XCoord elements or groups:
         /*
@@ -169,7 +169,8 @@ public final class DMSOrdinate {
         }
 
         if (!_parse_state) {
-            throw new NormalizationException("Unable to parse match due to " + (islat ? "LAT" : "LON"));
+            throw new NormalizationException("Unable to parse match due to "
+                    + (islat ? "LAT" : "LON"));
         }
 
         set_normalized_text();
@@ -184,9 +185,9 @@ public final class DMSOrdinate {
     protected void setRelativeOffsets(int matchStart) {
         if (offsetDeg >= 0) {
             offsetDeg = offsetDeg - matchStart;
-            
+
             // DEFAULT: is to set ordinate where degrees start.
-            offsetOrdinate = offsetDeg;            
+            offsetOrdinate = offsetDeg;
         }
         // degreeOffset is not set?
 
@@ -591,7 +592,8 @@ public final class DMSOrdinate {
      * @param elements
      * @param islat
      */
-    protected void normalize_hemisphere(String text, java.util.Map<String, String> elements, boolean islat) {
+    protected void normalize_hemisphere(String text, java.util.Map<String, String> elements,
+            boolean islat) {
 
         int hemi = (islat ? getLatHemisphereSign(elements) : getLonHemisphereSign(elements));
 
@@ -623,7 +625,8 @@ public final class DMSOrdinate {
     /**
      *
      */
-    public final static String[] COORDINATE_SYMBOLS = { "°", "º", "'", "\"", ":", "lat", "lon", "geo", "coord", "deg" };
+    public final static String[] COORDINATE_SYMBOLS = { "°", "º", "'", "\"", ":", "lat", "lon",
+            "geo", "coord", "deg" };
     private String coord_symbol = null;
 
     /**
@@ -897,11 +900,11 @@ public final class DMSOrdinate {
      */
     public double toDecimal() {
 
-        if (minutes >= 60) {
+        if (minutes >= 60 || minutes < 0) {
             // This much we know, Degrees are valid?
             return (double) hemisphere.polarity * degrees;
         }
-        if (seconds >= 60) {
+        if (seconds >= 60 || seconds < 0) {
             // At least you have degress and minutes, right?
             return (double) hemisphere.polarity * (degrees + (minutes / 60));
         }
