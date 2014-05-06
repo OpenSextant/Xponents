@@ -101,10 +101,10 @@ public final class XText implements iFilter, iConvert {
      */
     private boolean extractEmbedded = true;
 
-    private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE; /*
-                                                             * XText default is
-                                                             * 1 MB of text
-                                                             */
+    /**
+     * XText default is 1 MB of text
+     */
+    private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE;
     private long maxFileSize = FILE_SIZE_LIMIT;
 
     protected Set<String> archive_types = new HashSet<String>();
@@ -136,16 +136,18 @@ public final class XText implements iFilter, iConvert {
         if (root == null) {
             throw new IOException("Archive cannot be null");
         }
+
+        // User tried setting a non-null archive... so implicitly they are not saving with input
+        //
+        this.enableSaveInArchive(true);
         archiveRoot = fixPath(root);
-        if (archiveRoot == null) {
-            throw new IOException("Archive root is invalid");
-        }
 
         File test = new File(archiveRoot);
 
         if (!test.exists() || !test.isDirectory()) {
             throw new IOException("Archive root directory must exist");
         }
+
     }
 
     /**
@@ -284,8 +286,11 @@ public final class XText implements iFilter, iConvert {
     private String outputNode;
 
     /**
-     * If archiveRoot is set, it is used in conjunction with the outputnode If
-     * not set, the outputNode is....
+     * If you are caching conversions in an archive folder, A, then 
+     * this generally sets your ouputNode to /A/name/
+     * 
+     * An items saved here will be of the form /A/name/relative/path
+     * For an input that came from /some/input/name/relative/path
      * 
      * @param name
      */
@@ -306,19 +311,19 @@ public final class XText implements iFilter, iConvert {
 
         // Finally, use a "archiveRoot/name"
         //
-        outputNode = FilenameUtils.concat(archiveRoot, name);
-        if (outputNode != null) {
-            outputNode = FilenameUtils.normalizeNoEndSeparator(outputNode, true);
-        } else {
-            throw new IOException("Output node is misconfigured;  ArchiveRoot is required " + name);
-        }
-
+        outputNode = createPath(archiveRoot, name);
     }
 
     protected long total_conv_time = 0;
     protected int average_conv_time = 0;
     protected int total_conversions = 0;
 
+    /**
+     * Records overall counts and conversion times for documents converted.
+     * This may not account for error'd documents.
+     * 
+     * @param d
+     */
     protected void trackStatistics(ConvertedDocument d) {
         if (d != null) {
             total_conv_time += d.conversion_time;
@@ -326,7 +331,7 @@ public final class XText implements iFilter, iConvert {
         ++total_conversions;
     }
 
-    protected void reportStatistics() {
+    public void reportStatistics() {
         average_conv_time = (int) ((float) total_conv_time / total_conversions);
         log.info("TOTAL of N=" + total_conversions + " documents converted"
                 + "\n With an average time (ms) of " + average_conv_time);
@@ -381,9 +386,6 @@ public final class XText implements iFilter, iConvert {
         }
 
         if (isArchive(path)) {
-            inputRoot = null; // Will be set by de-archiver temp.
-            inputNode = FilenameUtils.getBaseName(path);
-            setOutputNode(inputNode);
             convertArchive(input);
         } else if (input.isFile()) {
             setInputRoot(input.getParent());
@@ -463,32 +465,47 @@ public final class XText implements iFilter, iConvert {
      * @throws IOException
      */
     private static String createPath(String dir, String item) throws IOException {
-        String newPath = String.format("%s/%s", fixPath(dir), item);
-        if (newPath == null) {
-            throw new IOException("Invalid path");
-        }
-        return newPath;
+        return String.format("%s/%s", fixPath(dir), item);
     }
 
     /**
      * Unpack an archive and convert items found.
+     * Given (input)/A.zip
+     * The zip is dearchived to 
+     *    (input)/A_zip/     
+     * or (archive)/(input)/A_zip
+     * 
+     * Items are then converted in either folder for the conversion archiving; depending on your choice of embedded vs. non-embedded
+     * 
      */
     public void convertArchive(File input) throws IOException {
-        String saveArchiveTo = null;
+
+        if (!this.save_in_folder && !this.save_children_in_folder && this.archiveRoot == null) {
+            log.error(
+                    "Sorry -- if not saving in input folder, you must provide a separate archive to contain ZIP and other archives that are extracted.  Ignoring FILE={}",
+                    input);
+            return;
+        }
 
         String archive_name = FilenameUtils.getBaseName(input.getName());
         String archive_ext = FilenameUtils.getExtension(input.getName());
-        String node_name = String.format("%s_%s", archive_name, archive_ext);
-        saveArchiveTo = createPath(this.archiveRoot, node_name);
+        inputNode = String.format("%s_%s", archive_name, archive_ext);
+        // Set output name to input name.  That is, once we extract A.zip to ./(originals)/A_zip/   this de-archived folder will 
+        // Also exist in ./(converted)/A_zip/  or ./(originals)/A_zip/xtext/ embedded.
+        //
+        setOutputNode(inputNode);
+
+        String saveArchiveTo = null;
 
         // unpack, traverse, convert, save
-        if (this.save_in_folder) {
-            saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), node_name);
+        if (this.save_children_in_folder) {
+            saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), inputNode);
         } else {
             // Save converted items in a parallel archive for this zip archive.
-            this.setInputRoot(saveArchiveTo);
+            saveArchiveTo = createPath(this.archiveRoot, inputNode);
         }
-
+        
+        this.setInputRoot(saveArchiveTo);
         ArchiveUnpacker unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
         unpacker.unpack(input);
     }
@@ -576,10 +593,10 @@ public final class XText implements iFilter, iConvert {
          * Handle archives.
          */
         if (isArchive(fname)) {
-            // inputRoot = null; // Will be set by de-archiver temp.
-            String zip_inputNode = FilenameUtils.getBaseName(fname);
-            setOutputNode(zip_inputNode);
             convertArchive(input);
+
+            // NULL here implies the actual file, A.zip does not have any text representation itself.
+            // However its children do.
             return null;
         }
 
@@ -743,7 +760,6 @@ public final class XText implements iFilter, iConvert {
      * @throws IOException
      */
     public void convertChildren(ConvertedDocument parentDoc) throws IOException {
-        //parentDoc.evalParentContainer(this.save_children_in_folder);
         parentDoc.evalParentChildContainer();
         FileUtility.makeDirectory(parentDoc.parentContainer);
         String targetPath = parentDoc.parentContainer.getAbsolutePath();
@@ -865,6 +881,10 @@ public final class XText implements iFilter, iConvert {
      */
     public void setup() throws IOException {
 
+        if (!this.save_in_folder && this.archiveRoot == null) {
+            throw new IOException(
+                    "If not saving conversions with your input folders, you must provide an archive path");
+        }
         // Invoke converter instances only as requested types suggest.
         // If caller has removed file types from the list, then
 
@@ -990,12 +1010,14 @@ public final class XText implements iFilter, iConvert {
         xt.enableHTMLScrubber(filter_html);
 
         try {
-            if (output == null) {
+            if (output == null && !embed) {
                 output = "xtext-output";
                 FileUtility.makeDirectory(output);
+                System.out.println("Default output folder is $PWD/" + output);
             }
-
+            // Notice this main program requires an output path.
             xt.setArchiveDir(output);
+
             xt.setup();
             xt.extractText(input);
         } catch (IOException ioerr) {
