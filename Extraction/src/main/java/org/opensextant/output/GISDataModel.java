@@ -143,7 +143,7 @@ public class GISDataModel {
                 addColumn(row, OpenSextantSchema.TEXTPATH, recordTextFile);
             }
         } else {
-            log.info("No File path given");
+            log.error("No File path given");
         }
     }
 

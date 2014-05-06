@@ -290,19 +290,14 @@ public class FileUtility {
      * @return
      * @throws IOException
      */
-    public static boolean makeDirectory(File testDir /*, Logger log*/) throws IOException {
+    public static boolean makeDirectory(File testDir) throws IOException {
         if (testDir == null) {
             return false;
         }
 
-        // if (log!=null) { log.info( "Check dir "+testDir.getPath() + " is dir=" + testDir.isDirectory() ); }
-
         if (testDir.isDirectory()) {
             return true;
         }
-
-        // if (log!=null) { log.info( "Make dir? Path=" + testDir.getPath() + " status="+testDir.mkdirs()); }
-        // If directory does not exist, then create
         return testDir.mkdirs();
     }
 

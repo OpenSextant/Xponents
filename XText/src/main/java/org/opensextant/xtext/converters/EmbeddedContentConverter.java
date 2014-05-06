@@ -164,7 +164,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
             String ext = "dat";
 
             if (filterOutTrivialObjects(mediaType.toString())) {
-                log.info("Filtering out object " + mediaType);
+                log.debug("Filtering out object " + mediaType);
                 return;
             }
 
