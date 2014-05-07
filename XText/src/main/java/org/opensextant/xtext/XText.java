@@ -506,7 +506,8 @@ public final class XText implements iFilter, iConvert {
         }
         
         this.setInputRoot(saveArchiveTo);
-        ArchiveUnpacker unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
+        ArchiveNavigator unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
+        unpacker.overwrite = ConvertedDocument.overwrite;
         unpacker.unpack(input);
     }
 
