@@ -57,6 +57,7 @@ public class ArchiveNavigator implements ArchiveUnpacker {
     private File saveDir = null;
     private iFilter filter = null;
     private iConvert converter = null;
+    public boolean overwrite = false;
 
     /**
      * Given a working temp folder and a file filter unpack archives.
@@ -104,10 +105,7 @@ public class ArchiveNavigator implements ArchiveUnpacker {
         } else {
             throw new IOException("Unsupported archive type: EXT=" + ext);
         }
-
-        // if (archivetmp!=null){
-        // FileUtils.deleteDirectory(archivetmp);
-        // }
+        log.info("Archive FILE={} has been processed to DIR={}", archive, archivetmp);
     }
 
     /*
@@ -254,16 +252,21 @@ public class ArchiveNavigator implements ArchiveUnpacker {
     /** */
     private File saveArchiveEntry(ArchiveEntry E, InputStream archiveio, String root)
             throws IOException {
+
+        // Note: using native OS file path is fine here.  As long as you do not 
+        // try any string mechanics on paths.
+        //
         String targetPath = FilenameUtils.concat(root, E.getName());
         if (targetPath == null) {
             throw new IOException("Invalid archive entry target for " + E.getName());
         }
         File target = new File(targetPath);
+        if (target.exists() && !overwrite) {
+            return target;
+        }
 
         target.getParentFile().mkdirs();
-        if (log.isDebugEnabled()) {
-            log.debug("File = " + E.getName());
-        }
+        log.debug("ARCHIVE_ENTRY={}", E.getName());
         OutputStream output = null;
         try {
             output = new FileOutputStream(target);
