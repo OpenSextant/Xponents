@@ -62,7 +62,7 @@ public class GeoBase implements LatLon {
      * @param pk
      * @param n
      */
-    public GeoBase(){
+    public GeoBase() {
     }
 
     /**
@@ -114,8 +114,8 @@ public class GeoBase implements LatLon {
     }
 
     // canonical form is decimal degree
-    protected double latitude;
-    protected double longitude;
+    protected double latitude = 0;
+    protected double longitude = 0;
 
     /**
      * @return lat in degrees
@@ -169,7 +169,7 @@ public class GeoBase implements LatLon {
 
     /** Convenience method
      */
-    public void setLatLon(LatLon geo){
+    public void setLatLon(LatLon geo) {
         this.latitude = geo.getLatitude();
         this.longitude = geo.getLongitude();
     }
