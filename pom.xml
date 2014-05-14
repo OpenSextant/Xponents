@@ -70,6 +70,28 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Module Versions -->
+      <dependency>
+        <groupId>org.opensextant</groupId>
+        <artifactId>opensextant-xponents-basics</artifactId>
+        <version>2.4.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opensextant</groupId>
+        <artifactId>opensextant-xponents</artifactId>
+        <version>2.4.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opensextant</groupId>
+        <artifactId>opensextant-xponents-xtext</artifactId>
+        <version>1.5.2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opensextant</groupId>
+        <artifactId>opensextant-xponents-examples</artifactId>
+        <version>2.4.1-SNAPSHOT</version>
+      </dependency>
+
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
