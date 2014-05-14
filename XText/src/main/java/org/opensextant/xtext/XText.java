@@ -128,9 +128,12 @@ public final class XText implements iFilter, iConvert {
     }
 
     /**
-     * 
+     * This enables saving in an archive and disables saving with input.
+     *
      * @param root
      * @throws IOException
+     * @see #enableSaveInArchive(boolean)
+     * @see #enableSaveWithInput(boolean)
      */
     public void setArchiveDir(String root) throws IOException {
         if (root == null) {
@@ -204,14 +207,16 @@ public final class XText implements iFilter, iConvert {
 
     /**
      * Save converted content with input. Xtext creates a new "xtext" folder in
-     * the containing folder of the current file
-     * 
+     * the containing folder of the current file. This is disabled if a
+     * non-null, pre-existing archive root is set.
+     *
      * <pre>
      * input is:     a/b/c.doc
      * saved as:     a/b/xtext/c.doc.txt
-     * 
+     *
      * DEFAULT: do not save in input folder
      * </pre>
+     * @see #setArchiveDir(java.lang.String)
      */
     public void enableSaveWithInput(boolean b) {
         save_in_folder = b;
@@ -235,11 +240,12 @@ public final class XText implements iFilter, iConvert {
      * Saving to an archive specified by the caller; This is inferred if a
      * non-null, pre-existing archive root is set; DEFAULT: do not save in
      * archive.
-     * 
+     *
      * <pre>
      * input is:   a/b/c.doc
      * output is:  archiveRoot/a/b/c.doc.txt
      * </pre>
+     * @see #setArchiveDir(java.lang.String)
      */
     public void enableSaveInArchive(boolean b) {
         save_in_folder = !b;
