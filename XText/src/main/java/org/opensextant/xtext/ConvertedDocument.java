@@ -642,7 +642,9 @@ public final class ConvertedDocument extends DocInput {
      * already will not be saved, copied or moved.
      */
     public void save(String outputDir) throws IOException {
-
+        if (outputDir == null) {
+            throw new NullPointerException("outputDir was null");
+        }
         if (is_converted) {
             File target = new File(outputDir + UNIVERSAL_PATH_SEP + getNewPath(this.relative_path));
             this._saveConversion(target);
