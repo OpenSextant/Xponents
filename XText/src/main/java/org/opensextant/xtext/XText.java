@@ -47,6 +47,9 @@ import javax.activation.MimeTypeParseException;
 import org.apache.tika.io.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 /**
  * 
@@ -454,11 +457,8 @@ public final class XText implements iFilter, iConvert {
             return true;
         }
 
-        String ext = FilenameUtils.getExtension(filepath);
-        if (!requested_types.contains(ext)) {
-            return true;
-        }
-        return false;
+        String ext = FilenameUtils.getExtension(filepath).toLowerCase();
+        return !requested_types.contains(ext);
     }
 
     /**
@@ -748,7 +748,9 @@ public final class XText implements iFilter, iConvert {
      * 
      */
     public void convertFolder(File input) throws IOException {
-        java.util.Collection<File> files = FileUtils.listFiles(input, FILE_FILTER, true);
+        java.util.Collection<File> files = FileUtils.listFiles(input,
+                new SuffixFileFilter(FILE_FILTER, IOCase.INSENSITIVE),
+                FileFilterUtils.trueFileFilter());
         for (File f : files) {
             try {
                 convertFile(f);
