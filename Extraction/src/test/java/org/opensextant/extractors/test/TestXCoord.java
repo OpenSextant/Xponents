@@ -134,7 +134,8 @@ public class TestXCoord {
             TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_System.csv");
 
             for (PatternTestCase tst : mgr.testcases) {
-                TextMatchResult results = xcoord.extract_coordinates(tst.text, tst.id, tst.family_id);
+                TextMatchResult results = xcoord.extract_coordinates(tst.text, tst.id,
+                        tst.family_id);
                 results.add_trace("Test Payload: " + tst.text);
 
                 if (!results.evaluated) {
@@ -176,7 +177,8 @@ public class TestXCoord {
 
             String _file = coordfile.trim();
             String fname = FilenameUtils.getBaseName(_file);
-            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname + "-lines.csv");
+            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname
+                    + "-lines.csv");
 
             java.io.LineNumberReader in = FileUtility.getLineReader(coordfile);
             String line = null;
@@ -259,7 +261,8 @@ public class TestXCoord {
 
             //String _file = coordfile.trim();
             String fname = FilenameUtils.getBaseName(coordfile.getName());
-            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname + "-rows.csv");
+            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname
+                    + "-rows.csv");
             //
             tester.full_report = false;
 
@@ -370,15 +373,32 @@ public class TestXCoord {
         TextMatchResult results = null;
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
-        boolean dd = true;
-        boolean dms = true;
-        boolean dm = true;
+        boolean dd = false;
+        boolean dms = false;
+        boolean dm = false;
         boolean mgrs = true;
         boolean utm = false;
         //
         xcoord.match_MGRS(mgrs);
 
-        String[] mgrstest = { "04RAA80099\n\t1", // Fail -- too much whitespace.
+        String[] mgrstest = {
+                "7MAR13 1600", 
+                "17MAR13 1600", 
+                "17MAR13 2014", 
+                "17MAY13 2014", 
+                "17JUN13 2014", 
+                "17JUL13 2014", 
+                "17SEP13 2014", 
+                "17OCT13 2014", 
+                "17NOV13 2014", 
+                "17DEC13 2014", 
+                "17APR13 2014", 
+                "17AUG13 2014", 
+                "17JAN13 2014", 
+                "7JAN13 2001", 
+                "17 JAN 13 2014", 
+                "7 JAN 13 2001", 
+                "04RAA80099\n\t1", // Fail -- too much whitespace.
                 "12FTF82711", "15 EST 2008", "14 MRE\n\n 1445", "4 jul 2008", "10 Jan 1994", // edge case, bare minimum.
                 "10 Jan 13", // edge case, bare minimum.
                 "10 Jan 94", // no, this is the real bare minimum.
@@ -389,7 +409,7 @@ public class TestXCoord {
                 "10 Jan 1995 02" };
 
         xcoord.match_DD(dd);
-        String[] ddtest = { "00 N 130 WA",
+        String[] ddtest = { "1.718114°  44.699603°", "N34.445566° W078.112233°","00 N 130 WA",
                 "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
                 "-385331-17004121", "CAN-385331-17004121", "15S5E",
                 "TARGET [1]  LATITUDE: +32.3345  LONGITUDE: -179.3412", //DD04
