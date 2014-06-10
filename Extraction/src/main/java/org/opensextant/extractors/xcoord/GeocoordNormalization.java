@@ -30,6 +30,7 @@ package org.opensextant.extractors.xcoord;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jetty.util.log.Log;
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextEntity;
 import org.opensextant.util.TextUtils;
@@ -193,9 +194,11 @@ public final class GeocoordNormalization {
                     }
                 }
             } catch (java.lang.IllegalArgumentException parseErr) {
-                throw new NormalizationException("Failed to parse MGRS pattern with text=" + m.getText() + " COORD?:"
-                        + m.coord_text, parseErr);
-                // No normalization done.
+                //.debug("Failed to parse MGRS pattern with text=" + m.getText() + " COORD?:"
+                //        + m.coord_text, parseErr);
+                // No normalization was possible as this match represents an invalid MGRS value
+                //                 
+                m.setFilteredOut(true);
             } catch (Exception err) {
                 throw new NormalizationException("Failed to parse MGRS", err);
             }

@@ -26,8 +26,11 @@
  */
 package org.opensextant.extractors.xcoord;
 
+import java.util.HashSet;
 import java.util.Map;
-import org.opensextant.geodesy.*;
+import java.util.Set;
+
+import org.opensextant.geodesy.MGRS;
 import org.opensextant.util.TextUtils;
 
 /**
@@ -75,13 +78,24 @@ public class MGRSParser {
             }
         }
 
+        // If we matched an obvious and invalid month
+        // as an MGRS, then fail early.  Otherwise MGRSFilter 
+        // will parse out more complex patterns that are date + time
+        // NOTE: an MGRS pattern may indeed look like a date+time in some cases but it
+        // can actually be a valid MGRS. Take care not to filter out too aggressively.
+        if (filterOutMonths(text)) {
+            return null;
+        }
+
         String gzd = elements.get("MGRSZone");
+        
         /*
          * Gridzone required.
          */
         if (gzd == null) {
             return null;
         }
+        
         // GZD Rule:  00 not allowed in 5-digit GZD
         //             0 not allowed in 4-digit
         int num1 = parseInt(gzd.substring(0, 1));
@@ -249,7 +263,7 @@ public class MGRSParser {
      * @param ne
      * @return
      */
-    protected static boolean isValidEastingNorthing(String ne, boolean oddLength){
+    protected static boolean isValidEastingNorthing(String ne, boolean oddLength) {
         // PARSE RULE:  ignore abnormal MGRS patterns with line endings in the match
         // 
         //  The MGRS easting/northing is messy and contains line endings.
@@ -258,23 +272,23 @@ public class MGRSParser {
 
         boolean containsEOL = (ne.contains("\n") || ne.contains("\r"));
         boolean containsTAB = ne.contains("\t");
-        if (oddLength){
-            return ! ( containsEOL || containsTAB);                   
+        if (oddLength) {
+            return !(containsEOL || containsTAB);
         }
-        
+
         int wsCount = TextUtils.count_ws(ne);
 
         // NO:
         // dd dd\ndd  
         // YES:  normal text wrap on offset.
         // dd\ndd
-        if (wsCount>1 && containsEOL){
+        if (wsCount > 1 && containsEOL) {
             return false;
         }
-        if (wsCount>2){
+        if (wsCount > 2) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -290,4 +304,46 @@ public class MGRSParser {
             return -1;
         }
     }
+
+    /**
+     * While date/month patterns match the MGRS format, there are certain months that are just too common 
+     * to believe they are relevant MGRS patterns.
+     * 
+     */
+    private final static Set<String> ignoreMonths = new HashSet<String>();
+    static {
+        ignoreMonths.add("jan");  // Lat band that is mostly water; Southern Africa
+        ignoreMonths.add("feb");  // ditto; almost always water.
+        //ignoreMonths.add("mar");  // Valid Congo, Brazil.
+        
+        ignoreMonths.add("apr");  // Invalid zone, first letter is C-X; Not likely to ever match 
+        ignoreMonths.add("aug");  // ditto    
+        
+        // Other months, however have to be parsed. If they are dates 
+        // AND runtime flags have MGRS Filters enabled, then dates will be filtered out usually.
+        //  
+    }
+
+    /**
+     * Filter out well-known date patterns that are not valid MGRS;
+     * MGRS Filter may additionally parse out more patterns. But we generate an MGRS object here 
+     * we can filter such things out ahead of time, avoiding the inevitable exception.
+     * @param t
+     * @return
+     */
+    private static boolean filterOutMonths(String t) {
+
+        String raw = t.toLowerCase();
+        String t1 = raw.substring(2, 5);
+        if (ignoreMonths.contains(t1)) {
+            return true;
+        }
+        t1 = t.substring(1, 4);
+        if (ignoreMonths.contains(t1)) {
+            return true;
+        }
+        return false;
+
+    }
+
 }

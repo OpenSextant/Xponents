@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
 import org.opensextant.util.TextUtils;
 
 /**
@@ -59,7 +58,7 @@ public class MGRSFilter implements MatchFilter {
     public Date today = new Date();
     /**
      */
-    public static int MAX_YEARS_AGO = 80;  // If valid date/year found -- what is worth filtering?
+    public static int MAX_YEARS_AGO = 80; // If valid date/year found -- what is worth filtering?
     /**
      */
     public Calendar cal = null;
@@ -79,6 +78,15 @@ public class MGRSFilter implements MatchFilter {
         // turn off lenient date parsing
         _df.setLenient(false);
         df.add(_df);
+
+        DateFormat _df2a = new java.text.SimpleDateFormat("dMMMyyhhmm");
+        // turn off lenient date parsing
+        _df2a.setLenient(true);
+        df.add(_df2a);
+        DateFormat _df2b = new java.text.SimpleDateFormat("ddMMMyyhhmm");
+        // turn off lenient date parsing
+        _df2b.setLenient(true);
+        df.add(_df2b);
 
         DateFormat _df2 = new java.text.SimpleDateFormat("dMMMyy");
         // turn off lenient date parsing
@@ -126,10 +134,10 @@ public class MGRSFilter implements MatchFilter {
 
         // Simple case filter.  44ger7780 is not really an MGRS.
         // 
-        if (! TextUtils.isUpper(m.getText())){
+        if (!TextUtils.isUpper(m.getText())) {
             return true;
         }
-        
+
         int len = m.coord_text.length();
         if (len < 6) {
             return true;
@@ -151,6 +159,7 @@ public class MGRSFilter implements MatchFilter {
             if ("per".equalsIgnoreCase(found[1])) {
                 return true;
             }
+            
             // Units of measure:  'sec' or 'Sec';  the term sec is more a word than an MGRS quad here.
             // 
             // 'dd sec ...' fail, filter out.            
@@ -158,11 +167,13 @@ public class MGRSFilter implements MatchFilter {
             // 'dd SEC dd ' pass
             // 'ddSEC...' pass
             //
-            if ("sec".equals(found[1]) || "Sec".equals(found[1])){
+            if ("sec".equalsIgnoreCase(found[1])) {
                 return true;
             }
         }
 
+        // Eliminate easy to match DATE + TIME formats commonly used 
+        // 
         for (DateFormat format : df) {
             if (isValidDate(m.coord_text, len, format)) {
                 return true;
@@ -186,8 +197,8 @@ public class MGRSFilter implements MatchFilter {
         try {
             String dt;
 
-            if (len > 9) {
-                dt = txt.substring(0, 9);
+            if (len > 10) {
+                dt = txt.substring(0, 10);
             } else {
                 dt = txt;
             }
@@ -206,11 +217,14 @@ public class MGRSFilter implements MatchFilter {
                 yr += 1900;
             }
 
-            if (CURRENT_YEAR - yr < MAX_YEARS_AGO) {
+            /* Filter out only recent years, not future years.
+             * 
+             */
+            int pastYearDelta = CURRENT_YEAR - yr;
+            if (pastYearDelta < MAX_YEARS_AGO && pastYearDelta > 0) {
                 // Looks like a valid, recent year
                 return true;
             }
-
 
             String hh = txt.substring(5, 7);
             String mm = txt.substring(7, 9);
