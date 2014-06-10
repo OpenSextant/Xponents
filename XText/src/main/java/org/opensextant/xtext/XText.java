@@ -182,8 +182,12 @@ public final class XText implements iFilter, iConvert {
         maxBuffer = sz;
     }
 
+    //public void setMaxFileSize(long sz) {
+    //    maxFileSize = sz;
+    //}
+
     public void setMaxFileSize(int sz) {
-        maxFileSize = sz;
+        maxFileSize = (long) sz;
     }
 
     /**
@@ -267,7 +271,9 @@ public final class XText implements iFilter, iConvert {
      * made. This is case sensitive.
      */
     public void ignoreFileType(String ext) {
-        ignore_types.add(ext);
+        if (ext != null) {
+            ignore_types.add(ext.toLowerCase());
+        }
     }
 
     private ConversionListener postProcessor = null;
@@ -510,7 +516,7 @@ public final class XText implements iFilter, iConvert {
             // Save converted items in a parallel archive for this zip archive.
             saveArchiveTo = createPath(this.archiveRoot, inputNode);
         }
-        
+
         this.setInputRoot(saveArchiveTo);
         ArchiveNavigator unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
         unpacker.overwrite = ConvertedDocument.overwrite;
@@ -518,10 +524,10 @@ public final class XText implements iFilter, iConvert {
     }
 
     /**
-     * Arbitrary 16 MB limit on file size. Maybe this should be dependent on the
+     * Arbitrary 32 MB limit on file size. Maybe this should be dependent on the
      * file type.
      */
-    public final static long FILE_SIZE_LIMIT = 0x1000000;
+    public final static long FILE_SIZE_LIMIT = 0x2000000;
 
     /**
      * This is the proxy interface for traversing archives.
@@ -748,9 +754,8 @@ public final class XText implements iFilter, iConvert {
      * 
      */
     public void convertFolder(File input) throws IOException {
-        java.util.Collection<File> files = FileUtils.listFiles(input,
-                new SuffixFileFilter(FILE_FILTER, IOCase.INSENSITIVE),
-                FileFilterUtils.trueFileFilter());
+        java.util.Collection<File> files = FileUtils.listFiles(input, new SuffixFileFilter(
+                FILE_FILTER, IOCase.INSENSITIVE), FileFilterUtils.trueFileFilter());
         for (File f : files) {
             try {
                 convertFile(f);

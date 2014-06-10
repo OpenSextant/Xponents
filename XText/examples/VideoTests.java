@@ -1,4 +1,4 @@
-package org.opensextant.xtext.test;
+// package org.opensextant.xtext.test;
 
 import java.io.IOException;
 

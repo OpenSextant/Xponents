@@ -35,7 +35,7 @@ import org.opensextant.xtext.ConvertedDocument;
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
 
-import org.apache.poi.util.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.opensextant.util.FileUtility;
 
 /**
