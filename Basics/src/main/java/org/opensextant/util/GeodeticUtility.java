@@ -50,11 +50,11 @@ public class GeodeticUtility {
     /**
     *
     */
-    public final static int LAT_MAX = 90;
+    public static final int LAT_MAX = 90;
     /**
      *
      */
-    public final static int LON_MAX = 180;
+    public static final int LON_MAX = 180;
 
     /**
      * TODO: consider using geodesy, however that API has no obvious simple
@@ -121,10 +121,10 @@ public class GeodeticUtility {
      * city is 10km of error, etc.
      *
      */
-    public final static Map<String, Integer> FEATURE_PRECISION = new HashMap<String, Integer>();
-    public final static Map<String, Integer> FEATURE_GEOHASH_PRECISION = new HashMap<String, Integer>();
-    public final static int DEFAULT_PRECISION = 50000; // +/- 50KM
-    public final static int DEFAULT_GEOHASH_PRECISION = 5;
+    public static final Map<String, Integer> FEATURE_PRECISION = new HashMap<String, Integer>();
+    public static final Map<String, Integer> FEATURE_GEOHASH_PRECISION = new HashMap<String, Integer>();
+    public static final int DEFAULT_PRECISION = 50000; // +/- 50KM
+    public static final int DEFAULT_GEOHASH_PRECISION = 5;
 
     static {
         FEATURE_PRECISION.put("P", 5000);

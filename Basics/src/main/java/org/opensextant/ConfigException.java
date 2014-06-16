@@ -17,8 +17,8 @@
 package org.opensextant;
 
 /**
- * Generic OpenSextant Configuration Exception 
- * 
+ * Generic OpenSextant Configuration Exception
+ *
  * @author ubaldino
  */
 public class ConfigException extends Exception {

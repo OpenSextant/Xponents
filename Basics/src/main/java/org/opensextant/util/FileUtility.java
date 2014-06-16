@@ -588,7 +588,7 @@ public class FileUtility {
     /**
      *
      */
-    public final static String COMMENT_CHAR = "#";
+    public static final String COMMENT_CHAR = "#";
 
     /**
      * A generic word list loader. Part of the Meso Utility API
@@ -626,23 +626,23 @@ public class FileUtility {
     //  Working with file types
     //
     //
-    private final static HashMap<String, String> filetypeMap = new HashMap<String, String>();
-    public final static String IMAGE_MIMETYPE = "image";
-    public final static String DOC_MIMETYPE = "document";
-    public final static String MESSAGE_MIMETYPE = "message";
-    public final static String APP_MIMETYPE = "application";
-    public final static String VID_MIMETYPE = "video";
-    public final static String AUD_MIMETYPE = "audio";
-    public final static String FOLDER_MIMETYPE = "folder";
-    public final static String FEED_MIMETYPE = "feed";
-    public final static String DATA_MIMETYPE = "data";
-    public final static String WEBARCHIVE_MIMETYPE = "web archive";
-    public final static String WEBPAGE_MIMETYPE = "web page";
-    public final static String SPREADSHEET_MIMETYPE = "spreadsheet";
-    public final static String NOT_AVAILABLE = "other";
-    public final static String GIS_MIMETYPE = "GIS data";
+    private static final HashMap<String, String> filetypeMap = new HashMap<String, String>();
+    public static final String IMAGE_MIMETYPE = "image";
+    public static final String DOC_MIMETYPE = "document";
+    public static final String MESSAGE_MIMETYPE = "message";
+    public static final String APP_MIMETYPE = "application";
+    public static final String VID_MIMETYPE = "video";
+    public static final String AUD_MIMETYPE = "audio";
+    public static final String FOLDER_MIMETYPE = "folder";
+    public static final String FEED_MIMETYPE = "feed";
+    public static final String DATA_MIMETYPE = "data";
+    public static final String WEBARCHIVE_MIMETYPE = "web archive";
+    public static final String WEBPAGE_MIMETYPE = "web page";
+    public static final String SPREADSHEET_MIMETYPE = "spreadsheet";
+    public static final String NOT_AVAILABLE = "other";
+    public static final String GIS_MIMETYPE = "GIS data";
 
-    private final static HashMap<String, String> imageTypeMap = new HashMap<String, String>();
+    private static final HashMap<String, String> imageTypeMap = new HashMap<String, String>();
 
     static {
 

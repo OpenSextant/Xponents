@@ -33,14 +33,14 @@ public class UnicodeTextUtils {
 
 
     // UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS;
-    private final static Pattern scrub_symbols = Pattern.compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
-    private final static Pattern scrub_symbols2 = Pattern.compile("\\p{block=Transport and Map Symbols}+");
-    private final static Pattern scrub_emoticon = Pattern.compile("\\p{block=Emoticons}+");
-    private final static Pattern scrub_alphasup = Pattern.compile("\\p{block=Enclosed Alphanumeric Supplement}+");
-    private final static Pattern scrub_symbols_tiles1 = Pattern.compile("\\p{block=Mahjong Tiles}+");
-    private final static Pattern scrub_symbols_tiles2 = Pattern.compile("\\p{block=Domino Tiles}+");
-    private final static Pattern scrub_symbols_misc = Pattern.compile("\\p{block=Miscellaneous Symbols}+");
-    private final static Pattern scrub_symbols_cards = Pattern.compile("\\p{block=Playing Cards}+");
+    private static final Pattern scrub_symbols = Pattern.compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
+    private static final Pattern scrub_symbols2 = Pattern.compile("\\p{block=Transport and Map Symbols}+");
+    private static final Pattern scrub_emoticon = Pattern.compile("\\p{block=Emoticons}+");
+    private static final Pattern scrub_alphasup = Pattern.compile("\\p{block=Enclosed Alphanumeric Supplement}+");
+    private static final Pattern scrub_symbols_tiles1 = Pattern.compile("\\p{block=Mahjong Tiles}+");
+    private static final Pattern scrub_symbols_tiles2 = Pattern.compile("\\p{block=Domino Tiles}+");
+    private static final Pattern scrub_symbols_misc = Pattern.compile("\\p{block=Miscellaneous Symbols}+");
+    private static final Pattern scrub_symbols_cards = Pattern.compile("\\p{block=Playing Cards}+");
 
     /**
      * replace Emoticons with something less nefarious -- UTF-16 characters do

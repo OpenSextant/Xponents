@@ -186,7 +186,7 @@ public class GeonamesUtility {
         return country_lookup;
     }
 
-    public final static Country UNK_Country = new Country("UNK", "invalid");
+    public static final Country UNK_Country = new Country("UNK", "invalid");
 
     /**
      * Get Country by the default ISO digraph returns the Unknown country if you
@@ -219,11 +219,11 @@ public class GeonamesUtility {
     /**
      *
      */
-    public final static Set<String> COUNTRY_ADM0 = new HashSet<String>();
+    public static final Set<String> COUNTRY_ADM0 = new HashSet<String>();
     /**
      *
      */
-    public final static String COUNTRY_ADM0_NORM = "0";
+    public static final String COUNTRY_ADM0_NORM = "0";
 
     static {
         COUNTRY_ADM0.add("0");
@@ -281,7 +281,7 @@ public class GeonamesUtility {
      * @experimental A trivial way of looking at mapping well-known name
      *               collisions to country codes
      */
-    public final static Map<String, String> KNOWN_NAME_COLLISIONS = new HashMap<String, String>();
+    public static final Map<String, String> KNOWN_NAME_COLLISIONS = new HashMap<String, String>();
 
     static {
 
@@ -320,8 +320,8 @@ public class GeonamesUtility {
         return (KNOWN_NAME_COLLISIONS.get(nm) != null);
     }
 
-    public final static char ABBREVIATION_TYPE = 'A';
-    public final static char NAME_TYPE = 'N';
+    public static final char ABBREVIATION_TYPE = 'A';
+    public static final char NAME_TYPE = 'N';
 
     /**
      * Check if name type is an Abbreviation
