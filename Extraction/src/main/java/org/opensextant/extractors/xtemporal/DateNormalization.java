@@ -38,13 +38,13 @@ import org.joda.time.format.DateTimeFormat;
  */
 public class DateNormalization {
 
-    final static DateTime cal = DateTime.now(DateTimeZone.UTC);
-    final static int YEAR = cal.getYear();
-    final static int MILLENIUM = 2000;
-    final static int CURRENT_YY = YEAR - MILLENIUM;
+    static final DateTime cal = DateTime.now(DateTimeZone.UTC);
+    static final int YEAR = cal.getYear();
+    static final int MILLENIUM = 2000;
+    static final int CURRENT_YY = YEAR - MILLENIUM;
     ;
-    final static int FUTURE_YY_THRESHOLD = CURRENT_YY + 2;
-    final static int MAXIMUM_YEAR = 2020;
+    static final int FUTURE_YY_THRESHOLD = CURRENT_YY + 2;
+    static final int MAXIMUM_YEAR = 2020;
     // Use of year "15" would imply 1915 in this case.
     // Adjust 2-digit year threshold as needed.
     // Java default is 80/20.  2000 - 2032 is the assumed year for "00" through "32"
@@ -66,9 +66,9 @@ public class DateNormalization {
      *
      */
     public static int NO_DAY = -1;
-    final static DateTimeFormatter fmt_month = DateTimeFormat.forPattern("MMM").withZoneUTC();
-    final static DateTimeFormatter fmt_mm = DateTimeFormat.forPattern("MM").withZoneUTC();
-    final static DateTimeFormatter fmt_ydm = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
+    static final DateTimeFormatter fmt_month = DateTimeFormat.forPattern("MMM").withZoneUTC();
+    static final DateTimeFormatter fmt_mm = DateTimeFormat.forPattern("MM").withZoneUTC();
+    static final DateTimeFormatter fmt_ydm = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
 
     /**
      * @param d

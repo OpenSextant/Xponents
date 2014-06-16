@@ -43,16 +43,16 @@ public class PrecisionScales {
     /**
      *
      */
-    public final static float DEFAULT_UNKNOWN_RESOLUTION = 111000f; // Lat 1deg = 111KM approx. maximum
+    public static final float DEFAULT_UNKNOWN_RESOLUTION = 111000f; // Lat 1deg = 111KM approx. maximum
     /**
      *
      */
-    public final static float LAT_DEGREE_PRECISION = (int) (DEFAULT_UNKNOWN_RESOLUTION / 2);
+    public static final float LAT_DEGREE_PRECISION = (int) (DEFAULT_UNKNOWN_RESOLUTION / 2);
     /**
      * Maximal error in METERS in coordinate with N decimal places; for up to 12
      * decimal places.
      */
-    public final static double[] DD_precision_list = {
+    public static final double[] DD_precision_list = {
             // 
             LAT_DEGREE_PRECISION, // 0
             // 
@@ -81,7 +81,7 @@ public class PrecisionScales {
             LAT_DEGREE_PRECISION / 1000000000000L };
 
     // Last entry above.
-    final static double FINEST_DD_PRECISION = LAT_DEGREE_PRECISION / 1000000000000L;
+    static final double FINEST_DD_PRECISION = LAT_DEGREE_PRECISION / 1000000000000L;
 
     /**
      * @param m

@@ -49,15 +49,15 @@ public final class DMSOrdinate {
     /**
      *
      */
-    public final static int LAT_MAX = 90;
+    public static final int LAT_MAX = 90;
     /**
      *
      */
-    public final static int LON_MAX = 180;
+    public static final int LON_MAX = 180;
     private float degrees = -1;
     private float minutes = -1;
     private float seconds = -1;
-    private boolean is_latitude = false;
+    private boolean isLatitude = false;
 
     /** Where does the Degree value begin in text? */
     protected int offsetDeg = -1;
@@ -97,12 +97,12 @@ public final class DMSOrdinate {
     /**
      * The raw input elements
      */
-    private Map<String, String> _elements = null;
-    private Map<String, TextEntity> _fields = null;
+    private Map<String, String> fieldValues = null;
+    private Map<String, TextEntity> fields = null;
     /**
      * The normalized DMS components
      */
-    private Map<String, String> _normal = null;
+    private Map<String, String> normalizedValues = null;
 
     /**
      * DMS ordinates can be made up of degrees, minutes, seconds and then
@@ -120,12 +120,12 @@ public final class DMSOrdinate {
      * All Constructors must set is_latitude from a given flag. This is used for
      * range validation.
      * 
-     * @param elements
+     * @param fieldElements
      * @param islat
      * @param text
      * @throws XCoordException
      */
-    public DMSOrdinate(Map<String, TextEntity> fields, Map<String, String> elements, boolean islat,
+    public DMSOrdinate(Map<String, TextEntity> fieldMatches, Map<String, String> fieldVals, boolean islat,
             String text) throws NormalizationException {
 
         // VALID XCoord elements or groups:
@@ -143,16 +143,16 @@ public final class DMSOrdinate {
          * fractMinLat3, fractMinLon3 ddd to dddddd "" ""
          */
 
-        _fields = fields;
-        _elements = elements;
+        fields = fieldMatches;
+        fieldValues = fieldVals;
         //offsetMatch = startOffset;
 
-        normalize_hemisphere(text, _elements, islat);
+        normalize_hemisphere(text, fieldValues, islat);
 
         boolean _parse_state = false;
-        _normal = new HashMap<String, String>();
+        normalizedValues = new HashMap<String, String>();
 
-        is_latitude = islat;
+        isLatitude = islat;
 
         try {
 
@@ -235,16 +235,16 @@ public final class DMSOrdinate {
     /**
      *
      */
-    protected final static DecimalFormat field = new DecimalFormat("00");
+    protected static final DecimalFormat field = new DecimalFormat("00");
     /**
      *
      */
-    protected final static DecimalFormat field3 = new DecimalFormat("000");
+    protected static final DecimalFormat field3 = new DecimalFormat("000");
     // Decimal format out to 6 places for min/sec DMS fields.
     /**
      *
      */
-    protected final static DecimalFormat fieldDec = new DecimalFormat("00.######");
+    protected static final DecimalFormat fieldDec = new DecimalFormat("00.######");
 
     /**
      * Get back a normalized version of what you found. Yield zero-padded
@@ -265,11 +265,11 @@ public final class DMSOrdinate {
      */
     protected void set_normalized_text() {
 
-        String d = _normal.get("deg");
-        String m = _normal.get("min");
-        String fmin = _normal.get("fmin");
-        String s = _normal.get("sec");
-        String fsec = _normal.get("fsec");
+        String d = normalizedValues.get("deg");
+        String m = normalizedValues.get("min");
+        String fmin = normalizedValues.get("fmin");
+        String s = normalizedValues.get("sec");
+        String fsec = normalizedValues.get("fsec");
 
         StringBuilder buf = new StringBuilder();
         if (hemisphere.polarity == -1) {
@@ -333,11 +333,11 @@ public final class DMSOrdinate {
     }
 
     private void saveField(String fieldNorm, String val) {
-        _normal.put(fieldNorm, val);
+        normalizedValues.put(fieldNorm, val);
     }
 
     private Integer getIntValue(String field, String norm) {
-        String val = _elements.get(field);
+        String val = fieldValues.get(field);
         if (val == null) {
             return null;
         }
@@ -350,7 +350,7 @@ public final class DMSOrdinate {
      * Convert numbers like "8.888" or "8-888" to decimal numbers.
      */
     private Float getDecimalValue(String field, String norm) {
-        String val = _elements.get(field);
+        String val = fieldValues.get(field);
         if (val == null) {
             return null;
         }
@@ -367,7 +367,7 @@ public final class DMSOrdinate {
      * point. Convert "-888" to the decimal part of a value, e.g., "0.888"
      */
     private Float getFractionValue(String field, String norm) {
-        String val = _elements.get(field);
+        String val = fieldValues.get(field);
         if (val == null) {
             return null;
         }
@@ -384,15 +384,15 @@ public final class DMSOrdinate {
         return Float.parseFloat(val);
     }
 
-    public final static String[] degLatFields = { "degLat", "dmsDegLat", "decDegLat" };
-    public final static String[] degLonFields = { "degLon", "dmsDegLon", "decDegLon" };
+    public static final String[] degLatFields = { "degLat", "dmsDegLat", "decDegLat" };
+    public static final String[] degLonFields = { "degLon", "dmsDegLon", "decDegLon" };
 
     private void findDegreeOffset(String[] fieldNames) {
         /**
          * Helpful for determining where the distinct coordinates start in the text.  Usually, Degrees are first.
          */
         for (String f : fieldNames) {
-            TextEntity val = _fields.get(f);
+            TextEntity val = fields.get(f);
             if (val != null) {
                 offsetDeg = val.start;
                 return;
@@ -598,7 +598,7 @@ public final class DMSOrdinate {
         int hemi = (islat ? getLatHemisphereSign(elements) : getLonHemisphereSign(elements));
 
         if (!hemisphere.isAlpha()) {
-            coord_symbol = hasCoordinateSymbols(text);
+            coordinateSymbol = hasCoordinateSymbols(text);
         }
 
         has_hemi = hemi != NO_HEMISPHERE_VALUE;
@@ -619,15 +619,16 @@ public final class DMSOrdinate {
      * @return
      */
     public boolean hasSymbols() {
-        return coord_symbol != null;
+        return coordinateSymbol != null;
     }
 
     /**
      *
      */
-    public final static String[] COORDINATE_SYMBOLS = { "°", "º", "'", "\"", ":", "lat", "lon",
+    public static final String[] COORDINATE_SYMBOLS = { "°", "º", "'", "\"", ":", "lat", "lon",
             "geo", "coord", "deg" };
-    private String coord_symbol = null;
+    
+    private String coordinateSymbol = null;
 
     /**
      * 
@@ -646,37 +647,37 @@ public final class DMSOrdinate {
 
     /**
      */
-    public final static String WEST = "W";
+    public static final String WEST = "W";
     /**
      */
-    public final static String SOUTH = "S";
+    public static final String SOUTH = "S";
     /**
      */
-    public final static String NORTH = "N";
+    public static final String NORTH = "N";
     /**
      */
-    public final static String EAST = "E";
+    public static final String EAST = "E";
     /**
      */
-    public final static String NEGATIVE = "-";
+    public static final String NEGATIVE = "-";
     /**
      */
-    public final static String POSITIVE = "+";
+    public static final String POSITIVE = "+";
     /**
      */
-    public final static int NO_HEMISPHERE = 0;
+    public static final int NO_HEMISPHERE = 0;
     /**
      */
-    public final static int NO_HEMISPHERE_VALUE = -0x10;
+    public static final int NO_HEMISPHERE_VALUE = -0x10;
     /**
      */
-    public final static int POS_HEMI = 1;
+    public static final int POS_HEMI = 1;
     /**
      */
-    public final static int NEG_HEMI = -1;
+    public static final int NEG_HEMI = -1;
     /**
      */
-    public final static Map<String, Integer> HEMI_MAP = new HashMap<String, Integer>();
+    public static final Map<String, Integer> HEMI_MAP = new HashMap<String, Integer>();
 
     static {
 
@@ -718,9 +719,9 @@ public final class DMSOrdinate {
         return NO_HEMISPHERE;
     }
 
-    public final static String[] hemiLatFields = { "hemiLat", "hemiLatSign", "hemiLatPre" };
+    public static final String[] hemiLatFields = { "hemiLat", "hemiLatSign", "hemiLatPre" };
 
-    public final static String[] hemiLonFields = { "hemiLon", "hemiLonSign", "hemiLonPre" };
+    public static final String[] hemiLonFields = { "hemiLon", "hemiLonSign", "hemiLonPre" };
 
     protected int offsetHemi = -1;
 
@@ -729,7 +730,7 @@ public final class DMSOrdinate {
          * Helpful for determining where the distinct coordinates start in the text.  Usually, Degrees are first.
          */
         for (String f : fieldNames) {
-            TextEntity val = _fields.get(f);
+            TextEntity val = fields.get(f);
             if (val != null) {
                 offsetHemi = val.start;
                 return;
@@ -812,7 +813,7 @@ public final class DMSOrdinate {
         degrees = deg;
         minutes = min;
         seconds = sec;
-        is_latitude = islat;
+        isLatitude = islat;
         hemisphere.polarity = hemi_sign;
 
         value = toDecimal();
@@ -854,7 +855,7 @@ public final class DMSOrdinate {
         degrees = Integer.parseInt(deg);
         text = deg;
 
-        is_latitude = islat;
+        isLatitude = islat;
         hemisphere.polarity = hemi_sign;
 
         if (hemi_sign < 0) {
@@ -880,10 +881,10 @@ public final class DMSOrdinate {
      * @return
      */
     public boolean validate() {
-        if (is_latitude && Math.abs(value) >= LAT_MAX) {
+        if (isLatitude && Math.abs(value) >= LAT_MAX) {
             return false;
         }
-        if (!is_latitude && Math.abs(value) >= LON_MAX) {
+        if (!isLatitude && Math.abs(value) >= LON_MAX) {
             return false;
         }
         return true;

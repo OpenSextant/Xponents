@@ -38,11 +38,11 @@ public class UTMParser {
     /**
      *
      */
-    public final static char UTM_NORTH = 'N';
+    public static final char UTM_NORTH = 'N';
     /**
      *
      */
-    public final static char UTM_SOUTH = 'S';
+    public static final char UTM_SOUTH = 'S';
 
     /**
      * TODO: Needs lots of false positive filtering mainly using context. Did 

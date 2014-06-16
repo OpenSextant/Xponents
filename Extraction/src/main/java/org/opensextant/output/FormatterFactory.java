@@ -41,8 +41,8 @@ public class FormatterFactory {
     /**
      *
      */
-    private final static String[] OUTPUT_FORMATS = {"CSV", "GDB", "JSON", "KML", "WKT", "Shapefile", "SHP"};
-    private final static Set<String> OUTPUT_FORMATS_LOOKUP = new HashSet<String>();
+    private static final String[] OUTPUT_FORMATS = {"CSV", "GDB", "JSON", "KML", "WKT", "Shapefile", "SHP"};
+    private static final Set<String> OUTPUT_FORMATS_LOOKUP = new HashSet<String>();
 
     static {
         for (String fmt : OUTPUT_FORMATS) {

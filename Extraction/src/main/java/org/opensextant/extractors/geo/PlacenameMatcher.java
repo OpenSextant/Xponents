@@ -75,8 +75,8 @@ public class PlacenameMatcher {
 
     /*
      */
-    private final static String requestHandler = "/tag";
-    private final static String coreName = "gazetteer";
+    private static final String requestHandler = "/tag";
+    private static final String coreName = "gazetteer";
     private SolrProxy solr = null;
 
     // All of these Solr-parameters for tagging are not user-tunable.
@@ -511,7 +511,7 @@ public class PlacenameMatcher {
      */
     class TagFilter extends MatchFilter {
 
-        final static int MIN_WORD_LEN = 3;
+        static final int MIN_WORD_LEN = 3;
 
         /**
          * This may need to be turned off for processing lower-case or dirty

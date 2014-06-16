@@ -38,47 +38,47 @@ import org.opensextant.giscore.events.SimpleField;
  */
 public final class OpenSextantSchema {
 
-    public final static SimpleField SCHEMA_OID = new SimpleField("id", SimpleField.Type.OID);
+    public static final SimpleField SCHEMA_OID = new SimpleField("id", SimpleField.Type.OID);
     /** Match Text captures the raw text matched by the tagger. */
-    public final static SimpleField MATCH_TEXT = new SimpleField("matchtext", SimpleField.Type.STRING);
+    public static final SimpleField MATCH_TEXT = new SimpleField("matchtext", SimpleField.Type.STRING);
     /** ISO Country code */
-    public final static SimpleField ISO_COUNTRY = new SimpleField("iso_cc", SimpleField.Type.STRING);
+    public static final SimpleField ISO_COUNTRY = new SimpleField("iso_cc", SimpleField.Type.STRING);
     /** Geonames Feature class */
-    public final static SimpleField FEATURE_CLASS = new SimpleField("feat_class", SimpleField.Type.STRING);
+    public static final SimpleField FEATURE_CLASS = new SimpleField("feat_class", SimpleField.Type.STRING);
     /** Geonames style feature coding */
-    public final static SimpleField FEATURE_CODE = new SimpleField("feat_code", SimpleField.Type.STRING);
+    public static final SimpleField FEATURE_CODE = new SimpleField("feat_code", SimpleField.Type.STRING);
     /** confidence 0.000 to 1.000 suggests our confidence that we code the MATCH TEXT to the right LAT/LON
      *  this is a string for now to keep the actual sig-figs accurate.
      */
-    public final static SimpleField CONFIDENCE = new SimpleField("confidence", SimpleField.Type.STRING);
+    public static final SimpleField CONFIDENCE = new SimpleField("confidence", SimpleField.Type.STRING);
     /** Number of meters of error in coordinate of location.  Example, a city location match is likely to be 1-2 KM of error
      * depending on which gazetteer is referenced.  A coordinate's precision is implied by number of decimal places, etc.
      */
-    public final static SimpleField PRECISION = new SimpleField("precision", SimpleField.Type.INT);
+    public static final SimpleField PRECISION = new SimpleField("precision", SimpleField.Type.INT);
     /** the name in the Gazetteer entry; which aligns with the MATCH TEXT
      */
-    public final static SimpleField PLACE_NAME = new SimpleField("placename", SimpleField.Type.STRING);
+    public static final SimpleField PLACE_NAME = new SimpleField("placename", SimpleField.Type.STRING);
 
     /** Field names: filepath */
-    public final static String FILEPATH_FLD = "filepath";
+    public static final String FILEPATH_FLD = "filepath";
 
     /** Optionally the File path for the text */
-    public final static SimpleField FILEPATH = new SimpleField(FILEPATH_FLD, SimpleField.Type.STRING);
-    public final static SimpleField FILENAME = new SimpleField("filename", SimpleField.Type.STRING);
-    public final static SimpleField TEXTPATH = new SimpleField("textpath", SimpleField.Type.STRING);
+    public static final SimpleField FILEPATH = new SimpleField(FILEPATH_FLD, SimpleField.Type.STRING);
+    public static final SimpleField FILENAME = new SimpleField("filename", SimpleField.Type.STRING);
+    public static final SimpleField TEXTPATH = new SimpleField("textpath", SimpleField.Type.STRING);
     //private static SimpleField prematchField = new SimpleField("prematch", SimpleField.Type.STRING);
     //private static SimpleField postmatchField = new SimpleField("postmatch", SimpleField.Type.STRING);
     /** A text window around the MATCH TEXT delineated by START/END offsets.  Default window size is +/- 150 characters
      */
-    public final static SimpleField CONTEXT = new SimpleField("context", SimpleField.Type.STRING);
-    public final static SimpleField START_OFFSET = new SimpleField("start", SimpleField.Type.INT);
-    public final static SimpleField END_OFFSET = new SimpleField("end", SimpleField.Type.INT);
+    public static final SimpleField CONTEXT = new SimpleField("context", SimpleField.Type.STRING);
+    public static final SimpleField START_OFFSET = new SimpleField("start", SimpleField.Type.INT);
+    public static final SimpleField END_OFFSET = new SimpleField("end", SimpleField.Type.INT);
     /** The method used to match the data in MATCH TEXT */
-    public final static SimpleField MATCH_METHOD = new SimpleField("method", SimpleField.Type.STRING);
-    public final static SimpleField PROVINCE = new SimpleField("province", SimpleField.Type.STRING);
-    public final static SimpleField LAT = new SimpleField("lat", SimpleField.Type.FLOAT);
-    public final static SimpleField LON = new SimpleField("lon", SimpleField.Type.FLOAT);
-    private final static Map<String, SimpleField> fields = new HashMap<String, SimpleField>();
+    public static final SimpleField MATCH_METHOD = new SimpleField("method", SimpleField.Type.STRING);
+    public static final SimpleField PROVINCE = new SimpleField("province", SimpleField.Type.STRING);
+    public static final SimpleField LAT = new SimpleField("lat", SimpleField.Type.FLOAT);
+    public static final SimpleField LON = new SimpleField("lon", SimpleField.Type.FLOAT);
+    private static final Map<String, SimpleField> fields = new HashMap<String, SimpleField>();
 
     static {
         fields.put("id", SCHEMA_OID);

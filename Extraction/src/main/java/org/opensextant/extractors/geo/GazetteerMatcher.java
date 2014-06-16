@@ -377,7 +377,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      */
     class TagFilter extends MatchFilter {
 
-        final static int MIN_WORD_LEN = 3;
+        static final int MIN_WORD_LEN = 3;
 
         /**
          * This may need to be turned off for processing lower-case or dirty

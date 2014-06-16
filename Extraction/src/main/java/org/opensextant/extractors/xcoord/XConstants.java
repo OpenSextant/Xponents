@@ -37,72 +37,72 @@ public final class XConstants {
     /**
      *
      */
-    public final static int UNK_PATTERN=0;
+    public static final int UNK_PATTERN=0;
     /**
      *
      */
-    public final static int DD_PATTERN=1;
+    public static final int DD_PATTERN=1;
     /**
      *
      */
-    public final static int DM_PATTERN=2;
+    public static final int DM_PATTERN=2;
     /**
      *
      */
-    public final static int DMS_PATTERN=3;
+    public static final int DMS_PATTERN=3;
     /**
      *
      */
-    public final static int MGRS_PATTERN=4;
+    public static final int MGRS_PATTERN=4;
     /**
      *
      */
-    public final static int UTM_PATTERN=5;
+    public static final int UTM_PATTERN=5;
     /**
      *
      */
-    public final static int ALL_PATTERNS=-1;
+    public static final int ALL_PATTERNS=-1;
 
 
     /**
      *
      */
-    public final static int UNFILTERED = -1;
+    public static final int UNFILTERED = -1;
     /**
      *
      */
-    public final static int FILTERED_OUT = 0;
+    public static final int FILTERED_OUT = 0;
     /**
      *
      */
-    public final static int FILTERED_IN = 1;
+    public static final int FILTERED_IN = 1;
 
 
     /** RUNTIME FLAGS: filter DMS coordinates */
-    public final static int DMS_FILTERS_ON =  0x01;
+    public static final int DMS_FILTERS_ON =  0x01;
     /** RUNTIME FLAGS: filter Decimal Degree coordinates -- primarily for bare floating point numbers w/out hemisphere or other symbols
      */
-    public final static int DD_FILTERS_ON  =  0x02;
+    public static final int DD_FILTERS_ON  =  0x02;
     /** RUNTIME FLAGS: filter MGRS coordinates -- date patterns and NUM PER NUM  patterns e.g., the ratio "4 per 4000" is not MGRS*/
-    public final static int MGRS_FILTERS_ON = 0x04;
+    public static final int MGRS_FILTERS_ON = 0x04;
     /** RUNTIME FLAGS:  filter out coordinate matches that appear embedded in other text, e.g., ABC45.44,77.1W */
-    public final static int CONTEXT_FILTERS_ON = 0x20;
+    public static final int CONTEXT_FILTERS_ON = 0x20;
    /** RUNTIME FLAGS: filter all coordinate patterns that have filters */
-    public final static int FLAG_ALL_FILTERS = (MGRS_FILTERS_ON|DD_FILTERS_ON|DMS_FILTERS_ON|CONTEXT_FILTERS_ON);
+    public static final int FLAG_ALL_FILTERS = (MGRS_FILTERS_ON|DD_FILTERS_ON|DMS_FILTERS_ON|CONTEXT_FILTERS_ON);
 
     /** RUNTIME FLAGS: extract context or not */
-    public final static int FLAG_EXTRACT_CONTEXT = 0x10;
+    public static final int FLAG_EXTRACT_CONTEXT = 0x10;
     
  
 
     /**
      *
      */
-    public final static Map<String,Integer> familyInt = new HashMap<String,Integer>();
+    public static final Map<String,Integer> familyInt = new HashMap<String,Integer>();
     /**
      *
      */
-    public final static Map<Integer,String> familyLabel = new HashMap<Integer,String>();
+    public static final Map<Integer,String> familyLabel = new HashMap<Integer,String>();
 
     static {
 

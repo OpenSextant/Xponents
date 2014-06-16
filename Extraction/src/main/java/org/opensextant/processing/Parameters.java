@@ -77,8 +77,8 @@ public class Parameters extends java.util.Properties {
      *   forcing you to actually look at these parameters.
      */
     public boolean isdefault = true;
-    public final static int FLAG_EXTRACT_CONTEXT = 0x10;
-    public final static int FLAG_NO_COORDINATES  = 0x20;
+    public static final int FLAG_EXTRACT_CONTEXT = 0x10;
+    public static final int FLAG_NO_COORDINATES  = 0x20;
 
     /* DEFAULT RUNTIME FLAGS: */
     public static int RUNTIME_FLAGS = FLAG_EXTRACT_CONTEXT;
@@ -93,7 +93,7 @@ public class Parameters extends java.util.Properties {
         return formats;
     }
 
-    public final static String INVALID_FCNAME_CHAR = "\\/+-.;, $&"; // Basically only ASCII A-Z, 0-9 are valid.
+    public static final String INVALID_FCNAME_CHAR = "\\/+-.;, $&"; // Basically only ASCII A-Z, 0-9 are valid.
 
     public void setJobName(String nm) {
         jobName = TextUtils.fast_replace(nm, INVALID_FCNAME_CHAR, "_");
@@ -103,7 +103,7 @@ public class Parameters extends java.util.Properties {
         return jobName;
     }
 
-    private final static DateTimeFormatter procdate_fmt = DateTimeFormat.forPattern("yyyyMMMdd_HHmm");
+    private static final DateTimeFormatter procdate_fmt = DateTimeFormat.forPattern("yyyyMMMdd_HHmm");
 
     /**
      * Generates a simple job date/time key for the job

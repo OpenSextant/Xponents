@@ -42,10 +42,10 @@ import org.opensextant.extraction.TextMatch;
 public class ResultsUtility {
 
     // -------------
-    public final static String PLACE_ANNOTATION = "PLACE";
-    public final static String PLACE_CANDIDATE_ANNOTATION = "placeCandidate";
-    public final static String GEOCOORD_ANNOTATION = "geocoord";
-    public final static Set<String> GATE_GEOCODE_ANNOTATIONS = new HashSet<String>();
+    public static final String PLACE_ANNOTATION = "PLACE";
+    public static final String PLACE_CANDIDATE_ANNOTATION = "placeCandidate";
+    public static final String GEOCOORD_ANNOTATION = "geocoord";
+    public static final Set<String> GATE_GEOCODE_ANNOTATIONS = new HashSet<String>();
 
     static {
         // This annot set matches "isLocation(annotType)"
@@ -138,7 +138,7 @@ public class ResultsUtility {
      * @return A string representation of a double with a fixed number of digits
      * to the right of the decimal point.
      */
-    final static DecimalFormat confFmt = new DecimalFormat("0.000");
+    static final DecimalFormat confFmt = new DecimalFormat("0.000");
 
     public static String formatConfidence(double d) {
         return confFmt.format(d);

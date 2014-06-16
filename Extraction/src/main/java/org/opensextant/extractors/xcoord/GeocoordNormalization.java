@@ -63,10 +63,10 @@ public final class GeocoordNormalization {
         // Hoaky Java 6 issue:  REGEX does not use named groups, so here we map both the value to
         // a text/offset pair (in groups) and provide just the key/text pairs  (_elements)
         // 
-        Map<String, String> _elements = new HashMap<String,String>();
+        Map<String, String> fieldValues = new HashMap<String,String>();
         for (String name : groups.keySet()){
             TextEntity val = groups.get(name);
-            _elements.put(name, val.getText());
+            fieldValues.put(name, val.getText());
         }
         
         // Extract m.regex_groups, and ordered list of group names
@@ -82,8 +82,8 @@ public final class GeocoordNormalization {
             //
             // decDegLat, decDegLon, degSym, hemiLat, hemiLon
             //
-            DMSOrdinate ddlat = new DMSOrdinate(groups, _elements, DMLAT, m.getText());
-            DMSOrdinate ddlon = new DMSOrdinate(groups, _elements, DMLON, m.getText());
+            DMSOrdinate ddlat = new DMSOrdinate(groups, fieldValues, DMLAT, m.getText());
+            DMSOrdinate ddlon = new DMSOrdinate(groups, fieldValues, DMLON, m.getText());
 
             // Yield a cooridnate-only version of text; "+42.4440 -102.3333"
             // preserving the innate precision given in the original text.
@@ -124,8 +124,8 @@ public final class GeocoordNormalization {
             // coord_text = lat + ' ' + lon
             // set lat, lon
             //
-            DMSOrdinate dmlat = new DMSOrdinate(groups, _elements, DMLAT, m.getText());
-            DMSOrdinate dmlon = new DMSOrdinate(groups, _elements, DMLON, m.getText());
+            DMSOrdinate dmlat = new DMSOrdinate(groups, fieldValues, DMLAT, m.getText());
+            DMSOrdinate dmlon = new DMSOrdinate(groups, fieldValues, DMLON, m.getText());
 
             m.lat_text = dmlat.text;
             m.lon_text = dmlon.text;
@@ -141,8 +141,8 @@ public final class GeocoordNormalization {
             // remove whitespace
             // set lat, lon
             //
-            DMSOrdinate dmlat = new DMSOrdinate(groups, _elements, DMLAT, m.getText());
-            DMSOrdinate dmlon = new DMSOrdinate(groups, _elements, DMLON, m.getText());
+            DMSOrdinate dmlat = new DMSOrdinate(groups, fieldValues, DMLAT, m.getText());
+            DMSOrdinate dmlon = new DMSOrdinate(groups, fieldValues, DMLON, m.getText());
 
             m.lat_text = dmlat.text;
             m.lon_text = dmlon.text;
@@ -163,7 +163,7 @@ public final class GeocoordNormalization {
 
             // TODO: make use of multiple answers.
             try {
-                MGRS[] mgrs_candidates = MGRSParser.parseMGRS(m.getText(), m.coord_text, _elements);
+                MGRS[] mgrs_candidates = MGRSParser.parseMGRS(m.getText(), m.coord_text, fieldValues);
 
                 // Hopefully 1 candidate, but maybe 2 are found.
                 // 1 is normal. 2 arise from having odd-digit offsets in
@@ -208,7 +208,7 @@ public final class GeocoordNormalization {
             m.coord_text = TextUtils.delete_whitespace(m.getText());
 
             try {
-                UTM utm = UTMParser.parseUTM(m.coord_text, _elements);
+                UTM utm = UTMParser.parseUTM(m.coord_text, fieldValues);
                 if (utm != null) {
                     Geodetic2DPoint pt = utm.getGeodetic();
                     m.setLatitude(pt.getLatitudeAsDegrees());

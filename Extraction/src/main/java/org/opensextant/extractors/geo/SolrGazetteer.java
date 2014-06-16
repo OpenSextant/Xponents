@@ -138,7 +138,7 @@ public class SolrGazetteer {
         return country_lookup;
     }
 
-    public final static Country UNK_Country = new Country("UNK", "invalid");
+    public static final Country UNK_Country = new Country("UNK", "invalid");
 
     /**
      * Get Country by the default ISO digraph returns the Unknown country if you

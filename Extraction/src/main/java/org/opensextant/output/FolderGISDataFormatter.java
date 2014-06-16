@@ -38,7 +38,7 @@ public abstract class FolderGISDataFormatter extends GISDataFormatter {
 
     protected ZipOutputStream zos;
     protected File _temp = null;
-    public final static boolean CLEANUP_TEMP_FOLDERS = false;
+    public static final boolean CLEANUP_TEMP_FOLDERS = false;
 
     /**
      *

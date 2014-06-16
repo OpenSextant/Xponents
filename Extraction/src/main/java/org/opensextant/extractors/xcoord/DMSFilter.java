@@ -52,7 +52,7 @@ public class DMSFilter implements MatchFilter {
     /**
      *
      */
-    public final static String[] general_formats = {
+    public static final String[] general_formats = {
         "yy-dd-mm HH:MM:ss",
         "mm-dd-yy HH:MM:ss"
     };

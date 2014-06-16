@@ -38,29 +38,29 @@ public class XTConstants {
     /**
      *
      */
-    public final static int MDY_FAMILY  = 0;
+    public static final int MDY_FAMILY  = 0;
     /**
      *
      */
-    public final static int DATETIME_FAMILY  = 1;
+    public static final int DATETIME_FAMILY  = 1;
     /**
      *
      */
-    public final static int UNK_PATTERN = -2;
+    public static final int UNK_PATTERN = -2;
 
     /**
      *
      */
-    public final static int ALL_PATTERNS=-1;
+    public static final int ALL_PATTERNS=-1;
 
     /**
      *
      */
-    protected final static Map<String,Integer> familyInt = new HashMap<String,Integer>();
+    protected static final Map<String,Integer> familyInt = new HashMap<String,Integer>();
     /**
      *
      */
-    protected final static Map<Integer,String> familyLabel = new HashMap<Integer,String>();
+    protected static final Map<Integer,String> familyLabel = new HashMap<Integer,String>();
 
     static {
 

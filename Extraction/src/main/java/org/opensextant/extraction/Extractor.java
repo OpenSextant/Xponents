@@ -60,7 +60,7 @@ import org.opensextant.processing.progress.ProgressMonitor;
 public interface Extractor {
 
     /** optional constant - a universal doc ID holder*/
-    public final static String NO_DOC_ID = "no-docid";
+    public static final String NO_DOC_ID = "no-docid";
 
     public String getName();
 

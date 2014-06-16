@@ -310,7 +310,7 @@ public class MGRSParser {
      * to believe they are relevant MGRS patterns.
      * 
      */
-    private final static Set<String> ignoreMonths = new HashSet<String>();
+    private static final Set<String> ignoreMonths = new HashSet<String>();
     static {
         ignoreMonths.add("jan");  // Lat band that is mostly water; Southern Africa
         ignoreMonths.add("feb");  // ditto; almost always water.

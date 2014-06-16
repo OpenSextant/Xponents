@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PatternsOfLife extends AbstractFlexPat {
 
-    public final static String DEFAULT_POLI_CFG = "/poli_patterns.cfg";
+    public static final String DEFAULT_POLI_CFG = "/poli_patterns.cfg";
 
     public PatternsOfLife(boolean debugmode) {
         patterns_file = DEFAULT_POLI_CFG;

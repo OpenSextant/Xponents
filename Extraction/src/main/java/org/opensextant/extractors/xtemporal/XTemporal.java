@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XTemporal extends AbstractFlexPat {
 
-    public final static String DEFAULT_XTEMP_CFG = "/datetime_patterns.cfg";
+    public static final String DEFAULT_XTEMP_CFG = "/datetime_patterns.cfg";
 
     /** Application constants -- note the notion of TODAY is relative to the caller's notion of TODAY.
      * If you are processing data from the past but have a sense of what TODAY is, then when found dates fall on either side of that
@@ -66,8 +66,8 @@ public class XTemporal extends AbstractFlexPat {
     public static Date TODAY = new Date();
     public static long TODAY_EPOCH = TODAY.getTime();
 
-    public final static int JAVA_0_DATE_YEAR = 1970;
-    public final static long ONE_YEAR_MS = 365L * 24L * 3600L * 1000L;
+    public static final int JAVA_0_DATE_YEAR = 1970;
+    public static final long ONE_YEAR_MS = 365L * 24L * 3600L * 1000L;
 
     /**
      * Extractor interface: getName
