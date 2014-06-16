@@ -13,10 +13,10 @@ public class Content {
 
     /**
      * any identifier for tracking the content.  If this is an object with no name or ID, caller should assign an enumeration, e.g. 
-     * parentID + "_part" + N,  e.g., docA_part4 
+     * parentID + "_part" + N,  e.g., docA_part4
      */
     public String id = null;
-    
+
     public String encoding = null;
 
     /**
@@ -25,8 +25,8 @@ public class Content {
     public String mimeType = null;
 
     /**
-     * a raw byte array for the content in motion. 
-     * This helps capture raw data before you have made a decision to write the data out and where   
+     * a raw byte array for the content in motion.
+     * This helps capture raw data before you have made a decision to write the data out and where
      */
     public byte[] content = null;
 

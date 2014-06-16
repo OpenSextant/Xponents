@@ -130,6 +130,9 @@ public class MessageConverter extends ConverterAdapter {
     private void setMailAttributes(ConvertedDocument msgdoc, Message message)
             throws MessagingException {
         String msg_id = getMessageID(message);
+        if (msg_id==null){
+            return;
+        }
         msgdoc.id = getShorterMessageID(msg_id);
 
         String mailSubj = message.getSubject();

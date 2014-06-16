@@ -25,7 +25,6 @@
  */
 package org.opensextant.xtext.converters;
 
-import org.opensextant.xtext.TrivialASCIIDetector;
 import org.xml.sax.ContentHandler;
 
 import java.io.IOException;
@@ -38,6 +37,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.parser.html.BoilerpipeContentHandler;
+
 import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.util.TextUtils;
 
@@ -104,7 +104,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
         // -- Improve CHAR SET encoding answer.
         byte[] data = textdoc.buffer.getBytes();
-        if (TrivialASCIIDetector.isASCII(data)) {
+        if (TextUtils.isASCII(data)) {
             textdoc.setEncoding("ASCII");
         } else {
             // Okay, okay... let Tika name whatever encoding it found or guessed

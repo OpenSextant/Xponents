@@ -87,7 +87,7 @@ public final class XText implements iFilter, iConvert {
 
     private Logger log = LoggerFactory.getLogger(getClass());
     private boolean save = true;
-    private boolean zone_web_content = false;
+    private boolean zoneWebContent = false;
     private String archiveRoot = null;
     private String inputRoot = null;
     private String tempRoot = null;
@@ -95,8 +95,18 @@ public final class XText implements iFilter, iConvert {
     /**
      * Embedded mode
      */
-    private boolean save_in_folder = false;
-    private boolean save_children_in_folder = true;
+    private boolean saveConversionsWithOriginals = false;
+    
+    /**
+     * saveExtractedChildrenWithOriginals  - deteremines how embedded items are archived, e.g., Email attachements, or embedded images.
+     * They are children to some parent container -- XText yields two things:  the original child, and the conversion of the child. 
+     * 
+     * Example:  a.doc (child) saved from A.eml (parent)
+     * 
+     * saveExtractedChildrenWithOriginals = True;    a is saved in same folder where A exists  
+     * saveExtractedChildrenWithOriginals = False;   a is saved in a separate output archive. 
+     */
+    private boolean saveExtractedChildrenWithOriginals = true;
 
     /**
      * Archive mode: save to the archive root rather than in the directory the
@@ -110,15 +120,16 @@ public final class XText implements iFilter, iConvert {
     private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE;
     private long maxFileSize = FILE_SIZE_LIMIT;
 
-    protected Set<String> archive_types = new HashSet<String>();
+    protected Set<String> archiveFileTypes = new HashSet<String>();
+    
     /**
      *
      */
     public static Map<String, iConvert> converters = new HashMap<String, iConvert>();
     private iConvert defaultConversion;
     private iConvert embeddedConversion;
-    private Set<String> requested_types = new HashSet<String>();
-    private Set<String> ignore_types = new HashSet<String>();
+    private Set<String> requestedFileTypes = new HashSet<String>();
+    private Set<String> ignoreFileTypes = new HashSet<String>();
 
     /**
      */
@@ -194,7 +205,7 @@ public final class XText implements iFilter, iConvert {
      * Use Tika HTML de-crapifier. Default: No scrubbing.
      */
     public void enableHTMLScrubber(boolean b) {
-        zone_web_content = b;
+        zoneWebContent = b;
     }
 
     public void enableEmbeddedExtraction(boolean b) {
@@ -226,7 +237,7 @@ public final class XText implements iFilter, iConvert {
      * @see #setArchiveDir(java.lang.String)
      */
     public void enableSaveWithInput(boolean b) {
-        save_in_folder = b;
+        saveConversionsWithOriginals = b;
     }
 
     /**
@@ -240,7 +251,7 @@ public final class XText implements iFilter, iConvert {
      * @param b
      */
     public void enableSaveChildrenWithInput(boolean b) {
-        save_children_in_folder = b;
+        saveExtractedChildrenWithOriginals = b;
     }
 
     /**
@@ -255,7 +266,7 @@ public final class XText implements iFilter, iConvert {
      * @see #setArchiveDir(java.lang.String)
      */
     public void enableSaveInArchive(boolean b) {
-        save_in_folder = !b;
+        saveConversionsWithOriginals = !b;
     }
 
     /**
@@ -263,7 +274,7 @@ public final class XText implements iFilter, iConvert {
      * supports it by default it should be no problem.
      */
     public void convertFileType(String ext) {
-        requested_types.add(ext.toLowerCase());
+        requestedFileTypes.add(ext.toLowerCase());
     }
 
     /**
@@ -272,7 +283,7 @@ public final class XText implements iFilter, iConvert {
      */
     public void ignoreFileType(String ext) {
         if (ext != null) {
-            ignore_types.add(ext.toLowerCase());
+            ignoreFileTypes.add(ext.toLowerCase());
         }
     }
 
@@ -294,7 +305,7 @@ public final class XText implements iFilter, iConvert {
         if (ext == null) {
             return false;
         }
-        return archive_types.contains(ext.toLowerCase());
+        return archiveFileTypes.contains(ext.toLowerCase());
 
     }
 
@@ -464,7 +475,7 @@ public final class XText implements iFilter, iConvert {
         }
 
         String ext = FilenameUtils.getExtension(filepath).toLowerCase();
-        return !requested_types.contains(ext);
+        return !requestedFileTypes.contains(ext);
     }
 
     /**
@@ -492,16 +503,16 @@ public final class XText implements iFilter, iConvert {
      */
     public void convertArchive(File input) throws IOException {
 
-        if (!this.save_in_folder && !this.save_children_in_folder && this.archiveRoot == null) {
+        if (!this.saveConversionsWithOriginals && !this.saveExtractedChildrenWithOriginals && this.archiveRoot == null) {
             log.error(
                     "Sorry -- if not saving in input folder, you must provide a separate archive to contain ZIP and other archives that are extracted.  Ignoring FILE={}",
                     input);
             return;
         }
 
-        String archive_name = FilenameUtils.getBaseName(input.getName());
-        String archive_ext = FilenameUtils.getExtension(input.getName());
-        inputNode = String.format("%s_%s", archive_name, archive_ext);
+        String aName = FilenameUtils.getBaseName(input.getName());
+        String aExt = FilenameUtils.getExtension(input.getName());
+        inputNode = String.format("%s_%s", aName, aExt);
         // Set output name to input name.  That is, once we extract A.zip to ./(originals)/A_zip/   this de-archived folder will 
         // Also exist in ./(converted)/A_zip/  or ./(originals)/A_zip/xtext/ embedded.
         //
@@ -510,7 +521,7 @@ public final class XText implements iFilter, iConvert {
         String saveArchiveTo = null;
 
         // unpack, traverse, convert, save
-        if (this.save_children_in_folder) {
+        if (this.saveExtractedChildrenWithOriginals) {
             saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), inputNode);
         } else {
             // Save converted items in a parallel archive for this zip archive.
@@ -592,11 +603,11 @@ public final class XText implements iFilter, iConvert {
         String fname = input.getName();
 
         String ext = FilenameUtils.getExtension(fname).toLowerCase();
-        if (ignore_types.contains(ext)) {
+        if (ignoreFileTypes.contains(ext)) {
             return null;
         }
 
-        if (!requested_types.contains(ext)) {
+        if (!requestedFileTypes.contains(ext)) {
             return null;
         }
 
@@ -638,7 +649,7 @@ public final class XText implements iFilter, iConvert {
         // Retrieve previous conversions
         // ------------------
         if (cachable && !ConvertedDocument.overwrite && this.save) {
-            if (this.save_in_folder) {
+            if (this.saveConversionsWithOriginals) {
                 // Uncache a file close to the original F <== ./xtext/F.txt
                 textDoc = ConvertedDocument.getEmbeddedConversion(input);
             } else if (this.inputRoot != null) {
@@ -691,12 +702,12 @@ public final class XText implements iFilter, iConvert {
                         textDoc.setParent(parent);
                     }
 
-                    if (this.save_in_folder) {
+                    if (this.saveConversionsWithOriginals) {
                         // Saves close to original in ./text/ folder where
                         // original resides.
                         textDoc.saveEmbedded();
                     } else {
-                        textDoc.setPathRelativeTo(inputRoot, this.save_children_in_folder);
+                        textDoc.setPathRelativeTo(inputRoot, this.saveExtractedChildrenWithOriginals);
                         textDoc.save(outputNode);
                     }
                     // Children items will be persisted in the same folder
@@ -844,34 +855,34 @@ public final class XText implements iFilter, iConvert {
             log.error("You have accepted the defaults, but the temp dir is not available.", err);
         }
 
-        archive_types.add("zip");
-        archive_types.add("gz");
-        archive_types.add("tar");
-        archive_types.add("tgz");
-        archive_types.add("tar.gz");
+        archiveFileTypes.add("zip");
+        archiveFileTypes.add("gz");
+        archiveFileTypes.add("tar");
+        archiveFileTypes.add("tgz");
+        archiveFileTypes.add("tar.gz");
         // archive_types.add("7z");
 
         // Get from a config file.
-        requested_types.add("doc");
-        requested_types.add("docx");
-        requested_types.add("pdf");
-        requested_types.add("htm");
-        requested_types.add("html");
-        requested_types.add("txt"); // only for encoding conversions.
-        requested_types.add("msg");
-        requested_types.add("eml");
-        requested_types.add("emlx");
-        requested_types.add("ppt");
-        requested_types.add("pptx");
-        requested_types.add("xlsx");
-        requested_types.add("xls");
-        requested_types.add("rtf");
+        requestedFileTypes.add("doc");
+        requestedFileTypes.add("docx");
+        requestedFileTypes.add("pdf");
+        requestedFileTypes.add("htm");
+        requestedFileTypes.add("html");
+        requestedFileTypes.add("txt"); // only for encoding conversions.
+        requestedFileTypes.add("msg");
+        requestedFileTypes.add("eml");
+        requestedFileTypes.add("emlx");
+        requestedFileTypes.add("ppt");
+        requestedFileTypes.add("pptx");
+        requestedFileTypes.add("xlsx");
+        requestedFileTypes.add("xls");
+        requestedFileTypes.add("rtf");
 
         // Only Photographic images will be supported by default.
         // BMP, GIF, PNG, ICO, etc. must be added by caller.
         //
-        requested_types.add("jpg");
-        requested_types.add("jpeg");
+        requestedFileTypes.add("jpg");
+        requestedFileTypes.add("jpeg");
 
         // requested_types.add("log"); // Uncommon. Caller must expclitly add
         // raw data types and archives.
@@ -884,7 +895,7 @@ public final class XText implements iFilter, iConvert {
      * Start over.
      */
     public void clearSettings() {
-        requested_types.clear();
+        requestedFileTypes.clear();
         converters.clear();
     }
 
@@ -895,7 +906,7 @@ public final class XText implements iFilter, iConvert {
      */
     public void setup() throws IOException {
 
-        if (!this.save_in_folder && this.archiveRoot == null) {
+        if (!this.saveConversionsWithOriginals && this.archiveRoot == null) {
             throw new IOException(
                     "If not saving conversions with your input folders, you must provide an archive path");
         }
@@ -903,35 +914,35 @@ public final class XText implements iFilter, iConvert {
         // If caller has removed file types from the list, then
 
         String mimetype = "txt";
-        if (requested_types.contains(mimetype)) {
+        if (requestedFileTypes.contains(mimetype)) {
             converters.put(mimetype, new TextTranscodingConverter());
         }
 
         mimetype = "html";
-        if (requested_types.contains(mimetype)) {
-            iConvert _conv = new TikaHTMLConverter(this.zone_web_content);
-            converters.put(mimetype, _conv);
-            converters.put("htm", _conv);
-            converters.put("xhtml", _conv);
+        if (requestedFileTypes.contains(mimetype)) {
+            iConvert webConv = new TikaHTMLConverter(this.zoneWebContent);
+            converters.put(mimetype, webConv);
+            converters.put("htm", webConv);
+            converters.put("xhtml", webConv);
 
-            requested_types.add("htm");
-            requested_types.add("xhtml");
+            requestedFileTypes.add("htm");
+            requestedFileTypes.add("xhtml");
         }
 
         MessageConverter emailParser = new MessageConverter();
         mimetype = "eml";
-        if (requested_types.contains(mimetype)) {
+        if (requestedFileTypes.contains(mimetype)) {
             converters.put("eml", emailParser);
         }
         mimetype = "msg";
-        if (requested_types.contains(mimetype)) {
+        if (requestedFileTypes.contains(mimetype)) {
             converters.put("msg", emailParser);
         }
 
         ImageMetadataConverter imgConv = new ImageMetadataConverter();
         String[] imageTypes = { "jpeg", "jpg" };
         for (String img : imageTypes) {
-            if (requested_types.contains(img)) {
+            if (requestedFileTypes.contains(img)) {
                 converters.put(img, imgConv);
             }
         }
@@ -942,11 +953,11 @@ public final class XText implements iFilter, iConvert {
         // pdf => ignore pdf.txt
         // doc => ignore doc.txt
         //
-        for (String t : requested_types) {
+        for (String t : requestedFileTypes) {
             ignoreFileType(t + ".txt");
         }
 
-        FILE_FILTER = requested_types.toArray(new String[requested_types.size()]);
+        FILE_FILTER = requestedFileTypes.toArray(new String[requestedFileTypes.size()]);
     }
 
     /**
@@ -958,7 +969,7 @@ public final class XText implements iFilter, iConvert {
      * Call after setup() has run to add all supported/requested file types
      */
     public Set<String> getFileTypes() {
-        return requested_types;
+        return requestedFileTypes;
     }
 
     public static void usage() {
