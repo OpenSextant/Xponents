@@ -1,6 +1,11 @@
 
 #2014#
 
+* Xponents 2.4.3 - June 2014
+ - Extraction: MGRS filters for well known dates/months, lower case (default is to filter out lowercase), and Line endings in Latband/GZD
+ - XText bug fixes; check style review:  v1.5.4
+ - POM cleanup and indentation
+
 *  Xponents 2.3  - May 2014
  - minor tweeks in APIs
  - added set_match_id(match, counter)  to FlexPat matchers
