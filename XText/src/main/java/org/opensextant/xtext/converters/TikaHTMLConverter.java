@@ -70,7 +70,8 @@ public class TikaHTMLConverter extends ConverterAdapter {
      * </pre>
      */
     @Override
-    protected ConvertedDocument conversionImplementation(InputStream input, File doc) throws IOException {
+    protected ConvertedDocument conversionImplementation(InputStream input, File doc)
+            throws IOException {
         Metadata metadata = new Metadata();
 
         // HTML Conversion here is simply not resetting its internal buffers
@@ -83,7 +84,8 @@ public class TikaHTMLConverter extends ConverterAdapter {
         }
 
         try {
-            parser.parse(input, (scrub_article ? scrubbingHandler : handler), metadata, new ParseContext());
+            parser.parse(input, (scrub_article ? scrubbingHandler : handler), metadata,
+                    new ParseContext());
         } catch (Exception xerr) {
             throw new IOException("Unable to parse content", xerr);
         } finally {
