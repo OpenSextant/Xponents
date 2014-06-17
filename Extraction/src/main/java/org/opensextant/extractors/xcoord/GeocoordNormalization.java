@@ -30,7 +30,6 @@ package org.opensextant.extractors.xcoord;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jetty.util.log.Log;
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextEntity;
 import org.opensextant.util.TextUtils;
