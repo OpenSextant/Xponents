@@ -137,11 +137,17 @@ public class MGRSFilter implements MatchFilter {
         if (!TextUtils.isUpper(m.getText())) {
             return true;
         }
-
+        
         int len = m.coord_text.length();
         if (len < 6) {
             return true;
         }
+        
+        String eolTest = m.getText().substring(0,5);
+        if (eolTest.contains("\n")|| eolTest.contains("\r") ){
+            return true;
+        }
+        
         // IGNORE numeric sequences
         //
         String mgrs_offsets = m.coord_text.substring(5);
