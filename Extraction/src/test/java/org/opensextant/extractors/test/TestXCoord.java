@@ -382,6 +382,11 @@ public class TestXCoord {
         xcoord.match_MGRS(mgrs);
 
         String[] mgrstest = {
+                "12 ctf 4000",
+                "04\nSMB800999",
+                "12\nDTF\r7070",
+                "12\rDTF\r7070",
+                "12\n\rDTF\r7070",
                 "7MAR13 1600", 
                 "17MAR13 1600", 
                 "17MAR13 2014", 
