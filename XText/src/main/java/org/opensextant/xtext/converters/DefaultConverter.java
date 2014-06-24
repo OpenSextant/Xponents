@@ -45,7 +45,7 @@ import org.opensextant.xtext.ConvertedDocument;
  * Encoding, author, create date and title are saved to ConvertedDoc.  The text of the document
  * is stripped of extra blank lines.
  * 
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class DefaultConverter extends ConverterAdapter {
 
@@ -102,7 +102,7 @@ public class DefaultConverter extends ConverterAdapter {
         // TextUtils.reduce_line_breaks(txt)
         String t = handler.toString();
         if (t != null) {
-            if (FileUtility.isSpreadsheet(textdoc.filename)) {
+            if (textdoc.filename!= null && FileUtility.isSpreadsheet(textdoc.filename)) {
                 textdoc.setText(t.trim());
             } else {
                 textdoc.setText(TextUtils.reduce_line_breaks(t));
