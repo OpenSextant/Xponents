@@ -50,7 +50,7 @@ import org.opensextant.data.DocInput;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public final class ConvertedDocument extends DocInput {
 
@@ -599,7 +599,7 @@ public final class ConvertedDocument extends DocInput {
      * is, for example, if we care more about the b folder regardless of that it
      * is physically located in /a. Perform:
      *
-     * getRelativePath( "/a", "/a/b/c.txt") ===> b/c.txt
+     * getRelativePath( "/a", "/a/b/c.txt") ===&gt; b/c.txt
      *
      */
     public static String getRelativePath(String root, String p) {
