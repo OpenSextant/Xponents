@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class Tests {
 
