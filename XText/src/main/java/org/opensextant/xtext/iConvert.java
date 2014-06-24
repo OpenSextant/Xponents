@@ -36,7 +36,7 @@ package org.opensextant.xtext;
  *
  * see converters.ConverterAdapter as a base class.
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public interface iConvert {
 
