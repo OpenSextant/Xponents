@@ -48,7 +48,7 @@ import org.opensextant.xtext.ArchiveUnpacker;
  * Archive is traversed, but no data is written to disk unless XText is in save
  * mode. Conversion listener should be listening for Converted Docs.
  * 
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class ArchiveNavigator implements ArchiveUnpacker {
 
