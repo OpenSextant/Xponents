@@ -81,7 +81,7 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
  * 
  * 
  * 
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public final class XText implements iFilter, iConvert {
 
@@ -96,7 +96,7 @@ public final class XText implements iFilter, iConvert {
      * Embedded mode
      */
     private boolean saveConversionsWithOriginals = false;
-    
+
     /**
      * saveExtractedChildrenWithOriginals  - deteremines how embedded items are archived, e.g., Email attachements, or embedded images.
      * They are children to some parent container -- XText yields two things:  the original child, and the conversion of the child. 
@@ -108,11 +108,9 @@ public final class XText implements iFilter, iConvert {
      */
     private boolean saveExtractedChildrenWithOriginals = true;
 
-    /**
-     * Archive mode: save to the archive root rather than in the directory the
-     * file came from. Either embedded mode or archive mode.
+    /** flag to manage if children are extracted or not.
      */
-    private boolean extractEmbedded = true;
+    private boolean extractEmbedded = false;
 
     /**
      * XText default is 1 MB of text
@@ -121,7 +119,7 @@ public final class XText implements iFilter, iConvert {
     private long maxFileSize = FILE_SIZE_LIMIT;
 
     protected Set<String> archiveFileTypes = new HashSet<String>();
-    
+
     /**
      *
      */
@@ -208,6 +206,11 @@ public final class XText implements iFilter, iConvert {
         zoneWebContent = b;
     }
 
+    /**
+     * enable/disable the extraction of embedded child documents in found documents.
+     * Using embedded extraction may yield many small sub documents, aka children.
+     * @param b
+     */
     public void enableEmbeddedExtraction(boolean b) {
         extractEmbedded = b;
     }
@@ -503,7 +506,8 @@ public final class XText implements iFilter, iConvert {
      */
     public void convertArchive(File input) throws IOException {
 
-        if (!this.saveConversionsWithOriginals && !this.saveExtractedChildrenWithOriginals && this.archiveRoot == null) {
+        if (!this.saveConversionsWithOriginals && !this.saveExtractedChildrenWithOriginals
+                && this.archiveRoot == null) {
             log.error(
                     "Sorry -- if not saving in input folder, you must provide a separate archive to contain ZIP and other archives that are extracted.  Ignoring FILE={}",
                     input);
@@ -678,12 +682,7 @@ public final class XText implements iFilter, iConvert {
             try {
                 textDoc = converter.convert(input);
             } catch (Exception convErr) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Conversion error FILE={}", input.getPath(), convErr);
-                } else {
-                    log.error("Conversion error FILE={} MSG={}", input.getPath(),
-                            convErr.getMessage());
-                }
+                throw new IOException("Conversion error FILE=" + input.getPath(), convErr);
             }
             long t2 = System.currentTimeMillis();
             int duration = (int) (t2 - t1);
@@ -707,7 +706,8 @@ public final class XText implements iFilter, iConvert {
                         // original resides.
                         textDoc.saveEmbedded();
                     } else {
-                        textDoc.setPathRelativeTo(inputRoot, this.saveExtractedChildrenWithOriginals);
+                        textDoc.setPathRelativeTo(inputRoot,
+                                this.saveExtractedChildrenWithOriginals);
                         textDoc.save(outputNode);
                     }
                     // Children items will be persisted in the same folder

@@ -2,6 +2,9 @@ package org.opensextant.xtext;
 
 import java.util.Properties;
 
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+
 public class Content {
 
     /**
@@ -34,4 +37,13 @@ public class Content {
      * a proxy for the metadata sheet that eventually will end up in ConvertedDocument.meta
      */
     public Properties meta = new Properties();
+
+    /**
+     * carry Tika properties where possible
+     */
+    public Metadata tikaMetadata = null;
+    /**
+     * carry Tika MediaType where possible
+     */
+    public MediaType tikaMediatype = null;
 }
