@@ -50,7 +50,7 @@ public class GeonamesUtility {
     private Map<String, String> iso2fips = new HashMap<String, String>();
     private Map<String, String> fips2iso = new HashMap<String, String>();
     /**
-     * Feature map is a fast lookup F/CODE ==> description or name
+     * Feature map is a fast lookup F/CODE ==&gt; description or name
      */
     private Map<String, String> features = new HashMap<String, String>();
 
@@ -60,6 +60,7 @@ public class GeonamesUtility {
      * A utility class that offers many static routines; If you instantiate this
      * class it will require metadata files for country-names and feature-codes
      * in your classpath
+     * @throws IOException if metadata files are not found or do not load.
      */
     public GeonamesUtility() throws IOException {
 
@@ -68,6 +69,10 @@ public class GeonamesUtility {
     }
 
     /**
+     * This may help revert to a more readable country name, e.g., if you are given upper case name and you want some version of it as a proper name
+     * But no need to use this if you have good reference data.
+     * @param c country name
+     * @return capitalize the name of a country
      */
     public static String normalizeCountryName(String c) {
         return StringUtils.capitalize(c.toLowerCase());
@@ -76,10 +81,9 @@ public class GeonamesUtility {
     /**
      * Find a readable name or description of a class/code
      * 
-     * @param cls
-     *            feature class, e.g., P
-     * @param code
-     *            feature code, e.g., PPL
+     * @param cls  feature class, e.g., P
+     * @param code feature code, e.g., PPL
+     * @return name for a feature/code pair
      */
     public String getFeatureName(String cls, String code) {
         String lookup = String.format("%s/%s", cls, code);
@@ -145,7 +149,7 @@ public class GeonamesUtility {
             // FIPS could be *, but as long as we use ISO2, we're fine. if
             // ("*".equals(cc)){ cc = fips.toUpperCase(); }
 
-            // Normalize: "US" => "united states of america"
+            // Normalize: "US" =&gt; "united states of america"
             _default_country_names.put(cc, n.toLowerCase());
 
             Country C = new Country(cc, n);
@@ -168,19 +172,20 @@ public class GeonamesUtility {
             throw new IOException("No data found in country name map");
         }
     }
-    
+
     /**
      * Finds a default country name for a CC if one exists.
      * 
      * @param cc_iso2  country code.
-     * @return
+     * @return name of country
      */
-    public String getDefaultCountryName(String cc_iso2){
+    public String getDefaultCountryName(String cc_iso2) {
         return _default_country_names.get(cc_iso2);
     }
 
     /**
      * List all country names, official and variant names.
+     * @return map of countries, keyed by ISO country code
      */
     public Map<String, Country> getCountries() {
         return country_lookup;
@@ -194,22 +199,19 @@ public class GeonamesUtility {
      * 
      * TODO: throw a GazetteerException of some sort. for null query or invalid
      * code.
+     * @param isocode ISO code
+     * @return Country object
      */
     public Country getCountry(String isocode) {
         if (isocode == null) {
             return null;
         }
         return country_lookup.get(isocode);
-        /*
-         * If you need all country names, use SolrGazetteer if
-         * (country_lookup.containsKey(isocode)) { return
-         * country_lookup.get(isocode); }
-         */
-        // return UNK_Country;
     }
 
     /**
-     *
+     * @param fips FIPS code
+     * @return Country object
      */
     public Country getCountryByFIPS(String fips) {
         String isocode = fips2iso.get(fips);
@@ -237,8 +239,8 @@ public class GeonamesUtility {
      * code is a number alone, "0" is returned for "00", "000", etc. And other
      * numbers are 0-padded as 2-digits
      * 
-     * @param v
-     * @return
+     * @param v admin code
+     * @return fixed admin code
      */
     public static String normalizeAdminCode(String v) {
 
@@ -267,33 +269,42 @@ public class GeonamesUtility {
     }
 
     /**
-     * This presumes you have already normalized these values
+     * Get a hiearchical path for a boundar or a place.
+     * This presumes you have already normalized these values.
+     * <pre>
+     *    CC.ADM1.ADM2.ADM3... etc. for example:
+     *    
+     *    'US.48.201'  ... some county in Texas.
+     *    
+     * </pre>
      * 
-     * @param c
-     * @param adm1
-     * @return
+     * @param c  country code
+     * @param adm1 ADM1 code
+     * @return HASC path
      */
     public static String getHASC(String c, String adm1) {
         return String.format("%s.%s", c, adm1);
     }
 
     /**
-     * @experimental A trivial way of looking at mapping well-known name
+     * Experimental. A trivial way of looking at mapping well-known name
      *               collisions to country codes
      */
     public static final Map<String, String> KNOWN_NAME_COLLISIONS = new HashMap<String, String>();
 
     static {
 
+        // Mapping:  A well-known place ===>  country code for country that could be confused with that place name.
         KNOWN_NAME_COLLISIONS.put("new mexico", "MX");
         KNOWN_NAME_COLLISIONS.put("savannah", "GG");
-        KNOWN_NAME_COLLISIONS.put("atlanta", "GG");
+        KNOWN_NAME_COLLISIONS.put("atlanta", "GG");  // Georgia, USA  ==> Georgia (country)
         KNOWN_NAME_COLLISIONS.put("new jersey", "JE");
         KNOWN_NAME_COLLISIONS.put("new england", "UK");
         KNOWN_NAME_COLLISIONS.put("british columbia", "UK");
     }
 
     /**
+     * Experimental. 
      * Given a normalized name phrase, does it collide with country name?
      * 
      * Usage: Savannah is a great city. Georgia is lucky it has 10 Chic-fil-a
@@ -309,8 +320,8 @@ public class GeonamesUtility {
      * TODO: replace with simple config file of such rules that are objective
      * and can be generalized
      * 
-     * @param nm
-     * @return CountryCode
+     * @param nm  country name
+     * @return if country name is ambiguous and collides with other name  
      */
     public static boolean isCountryNameCollision(String nm) {
 
@@ -326,8 +337,8 @@ public class GeonamesUtility {
     /**
      * Check if name type is an Abbreviation
      * 
-     * @param name_type
-     *            code
+     * @param name_type code
+     * @return true if code is abbreviation
      */
     public static boolean isAbbreviation(char name_type) {
         return name_type == ABBREVIATION_TYPE;
@@ -336,8 +347,8 @@ public class GeonamesUtility {
     /**
      * Check if name type is an Abbreviation
      * 
-     * @param name_type
-     *            code
+     * @param name_type  OpenSextant code
+     * @return true if code is abbreviation
      */
     public static boolean isAbbreviation(String name_type) {
         return name_type.charAt(0) == ABBREVIATION_TYPE;
@@ -345,7 +356,7 @@ public class GeonamesUtility {
 
     /**
      * Is this Place a Country?
-     * 
+     * @param featCode feat code or designation
      * @return - true if this is a country or "country-like" place
      */
     public static boolean isCountry(String featCode) {
@@ -354,9 +365,8 @@ public class GeonamesUtility {
 
     /**
      * Is this Place a State or Province?
-     * 
-     * @return - true if this is a State, Province or other first level admin
-     *         area
+     * @param featCode feature code
+     * @return - true if this is a State, Province or other first level admin area
      */
     public static boolean isAdmin1(String featCode) {
         return "ADM1".equalsIgnoreCase(featCode);
@@ -364,7 +374,7 @@ public class GeonamesUtility {
 
     /**
      * Is this Place a National Capital?
-     * 
+     * @param featCode feature code
      * @return - true if this is a a national Capital area
      */
     public static boolean isNationalCapital(String featCode) {
@@ -374,8 +384,8 @@ public class GeonamesUtility {
     /**
      * Wrapper for isAbbreviation(name type)
      * 
-     * @param p
-     *            place
+     * @param p place
+     * @return true if is coded as abbreviation 
      */
     public static boolean isAbbreviation(Place p) {
         return isAbbreviation(p.getName_type());
@@ -384,8 +394,8 @@ public class GeonamesUtility {
     /**
      * Wrapper for isCountry(feat code)
      * 
-     * @param p
-     *            place
+     * @param p  place
+     * @return true if is Country, e.g., PCLI
      */
     public static boolean isCountry(Place p) {
         return isCountry(p.getFeatureCode());
@@ -394,17 +404,16 @@ public class GeonamesUtility {
     /**
      * wrapper for isNationalCaptial( feat code )
      * 
-     * @param p
-     *            place
-     * @return
+     * @param p place
+     * @return true if is PPLC or similar
      */
     public static boolean isNationalCapital(Place p) {
         return isNationalCapital(p.getFeatureCode());
     }
 
     /**
-     * @param p
-     *            place
+     * @param p place
+     * @return true if is ADM1
      */
     public static boolean isAdmin1(Place p) {
         return "ADM1".equalsIgnoreCase(p.getFeatureCode());
@@ -413,8 +422,8 @@ public class GeonamesUtility {
     /**
      * if a place or feature represents an administrative boundary.
      * 
-     * @param featClass
-     * @return
+     * @param featClass feature type in question
+     * @return true if is admin
      */
     public static boolean isAdministrative(String featClass) {
         if (featClass == null) {

@@ -43,61 +43,60 @@ package org.opensextant.data;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class GeoBase implements LatLon {
 
     /**
-     *
+     * identifier ID
      */
     protected String key = null;
+
     /**
-     *
+     * any name associated with this place
      */
     public String name = null;
 
     /**
      * Creates an empty GeoBase location object
-     * @param pk
-     * @param n
      */
     public GeoBase() {
     }
 
     /**
      * Creates a new instance of GeoBase
-     * @param pk
-     * @param n
+     * @param placeId place Id
+     * @param nm place name
      */
-    public GeoBase(String pk, String n) {
-        this.key = pk;
-        this.name = n;
+    public GeoBase(String placeId, String nm) {
+        this.key = placeId;
+        this.name = nm;
     }
 
-    /** Generic ID
-     * @return
+    /** 
+     * @return place id
      */
     public String getKey() {
         return key;
     }
 
     /**
-     *
-     * @param k
+     * legacy nomenclature.  Place ID is better.
+     * @param k place Id
      */
     public void setKey(String k) {
         key = k;
     }
 
-    /** Bean support
-     * @param N
+    /** 
+     * @param nm name for this location
      */
-    public final void setName(String N) {
-        name = N;
+    public final void setName(String nm) {
+        name = nm;
     }
 
-    /** Generic Name
-     * @return
+    /**
+     * @return  name of location
      */
     public String getName() {
         return name;
@@ -105,7 +104,7 @@ public class GeoBase implements LatLon {
 
     /** Generic label -- anything more sophisticated needs attention
      * E.g. to use Key + Name or just Key for a label would be very specific
-     * @return
+     * @return string repr of the location
      */
     @Override
     public String toString() {
@@ -125,7 +124,7 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     * @param latitude
+     * @param latitude in degrees
      */
     @Override
     public void setLatitude(double latitude) {
@@ -133,7 +132,7 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     * @return lon in degrees
+     * @return longitude in degrees
      */
     @Override
     public double getLongitude() {
@@ -141,7 +140,7 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     * @param longitude
+     * @param longitude in degrees
      */
     @Override
     public void setLongitude(double longitude) {
@@ -152,7 +151,7 @@ public class GeoBase implements LatLon {
 
     /** Set and get Geohash -- this is delegated to caller
      *  as core processing need not have a geohash generated when lat/lon is set.
-     * @param gh
+     * @param gh geohash
      */
     public void setGeohash(String gh) {
         geohash = gh;
@@ -160,13 +159,14 @@ public class GeoBase implements LatLon {
 
     /**
      *
-     * @return
+     * @return geohash 
      */
     public String getGeohash() {
         return geohash;
     }
 
     /** Convenience method
+     * @param geo lat/lon pair
      */
     public void setLatLon(LatLon geo) {
         this.latitude = geo.getLatitude();

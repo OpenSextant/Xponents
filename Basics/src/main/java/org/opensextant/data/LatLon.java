@@ -33,12 +33,12 @@ public interface LatLon {
     public double getLongitude();
 
     /**
-     * @param latitude
+     * @param latitude in degrees
      */
     public void setLatitude(double latitude);
 
     /**
-     * @param longitude
+     * @param longitude in degrees
      */
     public void setLongitude(double longitude);
 

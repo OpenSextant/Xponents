@@ -33,7 +33,7 @@ public class PlaceName {
 
     /**
      *
-     * @param nm
+     * @param nm name
      */
     public PlaceName(String nm){
         name = normalizeName(nm);
@@ -41,16 +41,13 @@ public class PlaceName {
         namenorm = name.toLowerCase();
     }
 
-    // script
-    // language
-
     /**
-     *
-     * @param n
-     * @return
+     * Currently only whitespace trim is default normalization.
+     * @param nm name
+     * @return normalized name.
      */
-    public static String normalizeName(String n){
-        return n.trim();
+    public static String normalizeName(String nm){
+        return nm.trim();
     }
 
 }

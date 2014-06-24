@@ -39,7 +39,7 @@ import org.opensextant.util.TextUtils;
  * For now I'm using attributes directly to facilitate compile-time stuff.
  * But a property sheet of k,v pairs may help later
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class Parameters extends java.util.Properties {
 

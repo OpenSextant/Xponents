@@ -43,6 +43,9 @@ public abstract class AbstractFlexPat implements Extractor {
     /**
      * Create Patterns Manager given the result of configure(?) which is a URL
      * (preferred) or a path; If a URL is set it is used.
+     *
+     * @return the regex pattern manager
+     * @throws java.net.MalformedURLException config error
      */
     protected abstract RegexPatternManager createPatternManager()
             throws java.net.MalformedURLException;
@@ -52,10 +55,8 @@ public abstract class AbstractFlexPat implements Extractor {
     }
 
     /**
-     * Configure with the default coordinate patterns file, geocoord_regex.cfg
-     * in CLASSPATH
-     *
-     * @throws ConfigException
+     * Configures whatever default patterns file is named.
+     * @throws ConfigException config error, pattern file not found
      */
     @Override
     public void configure() throws ConfigException {
@@ -70,8 +71,8 @@ public abstract class AbstractFlexPat implements Extractor {
     /**
      * Configure using a particular pattern file.
      *
-     * @param patfile
-     * @throws ConfigException
+     * @param patfile a pattern file.
+     * @throws ConfigException if pattern file not found
      */
     @Override
     public void configure(String patfile) throws ConfigException {
@@ -92,8 +93,8 @@ public abstract class AbstractFlexPat implements Extractor {
     /**
      * Configure using a URL pointer to the pattern file.
      *
-     * @param patfile
-     * @throws ConfigException
+     * @param patfile patterns file URL
+     * @throws ConfigException if pattern file not found
      */
     @Override
     public void configure(URL patfile) throws ConfigException {
@@ -118,8 +119,7 @@ public abstract class AbstractFlexPat implements Extractor {
      * Match Width is the text buffer before and after a TextMatch. Match
      * buffers are used to create a match ID
      *
-     * @see TextMatch.createID
-     * @param w
+     * @param w width
      */
     public void setMatchWidth(int w) {
         match_width = w;
@@ -145,8 +145,8 @@ public abstract class AbstractFlexPat implements Extractor {
 
     /**
      * Optional.  assign ID for the match to pattern, text and a count incrementor 
-     * @param m
-     * @param count
+     * @param m text match obj
+     * @param count incrementor for this text match within the result set for a given text
      */
     protected void set_match_id(TextMatch m, int count) {
         m.match_id = textUtility.genTextID(String.format("%s,%s,%d", m.pattern_id, m.getText(),
@@ -177,10 +177,4 @@ public abstract class AbstractFlexPat implements Extractor {
         if (this.progressMonitor != null)
             progressMonitor.completeStep();
     }
-
-    /*
-        public void enablePatterns(String prefix);
-
-        public void disablePatterns(String prefix);
-        * */
 }

@@ -33,7 +33,7 @@ import org.opensextant.util.TextUtils;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TelephoneNumber extends PoliMatch {
 

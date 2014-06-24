@@ -42,6 +42,7 @@ public class ExtractionMetrics {
 
     /**
      * A named metric
+     * @param nm name of metric
      */
     public ExtractionMetrics(String nm) {
         this.name = nm;
@@ -56,6 +57,7 @@ public class ExtractionMetrics {
 
     /**
      * avg time spent for this metric in milliseconds
+     * @return average time 
      */
     public int getAverageTime() {
         if (callCount == 0) return 0;

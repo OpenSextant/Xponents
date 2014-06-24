@@ -74,8 +74,8 @@ public class RegexPattern {
 
     /**
      *
-     * @param _id
-     * @param _description
+     * @param _id  pattern identity
+     * @param _description  optional description
      */
     public RegexPattern(String _family, String _id, String _description) {
         family = _family;
@@ -85,7 +85,7 @@ public class RegexPattern {
 
     /**
      *
-     * @return
+     * @return string representation of the pattern
      */
     public String toString() {
         return id + ", Pattern:" + regex.pattern().toString();

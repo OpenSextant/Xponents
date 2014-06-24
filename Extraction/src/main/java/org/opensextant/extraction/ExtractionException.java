@@ -46,8 +46,8 @@ public class ExtractionException extends Exception {
 
     /**
      *
-     * @param msg
-     * @param cause
+     * @param msg error message
+     * @param cause  root cause
      */
     public ExtractionException(String msg, Throwable cause) {
         super(msg, cause);
@@ -55,7 +55,7 @@ public class ExtractionException extends Exception {
 
     /**
      *
-     * @param msg
+     * @param msg error message
      */
     public ExtractionException(String msg) {
         super(msg);

@@ -34,7 +34,7 @@ import org.opensextant.ConfigException;
 import org.opensextant.giscore.events.SimpleField;
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public final class OpenSextantSchema {
 

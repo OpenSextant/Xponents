@@ -60,9 +60,9 @@ public class GeodeticUtility {
      * TODO: consider using geodesy, however that API has no obvious simple
      * validator.
      *
-     * @param lat
-     * @param lon
-     * @return
+     * @param lat latitude
+     * @param lon longitude
+     * @return if lat/lon is valid
      */
     public static boolean validateCoordinate(double lat, double lon) {
         // Java behavior for NaN -- use object/class routines to compare.
@@ -85,6 +85,8 @@ public class GeodeticUtility {
      * together, e.g., within the same 1 or 2 degrees of lat or lon. Beyond that
      * there can be a lot of distortion in the physical distance.
      *
+     *@param p1 point 
+     *@param p2 point
      * @return distance between p1 and p2 in degrees.
      */
     public static double distanceDegrees(GeoBase p1, GeoBase p2) {
@@ -101,6 +103,10 @@ public class GeodeticUtility {
      * together, e.g., within the same 1 or 2 degrees of lat or lon. Beyond that
      * there can be a lot of distortion in the physical distance.
      *
+     * @param lat1 P1.lat
+     * @param lon1 P1.lon
+     * @param lat2 P2.lat
+     * @param lon2 P2.lon
      * @return distance between p1 and p2 in degrees.
      */
     public static double distanceDegrees(double lat1, double lon1, double lat2, double lon2) {
@@ -148,7 +154,8 @@ public class GeodeticUtility {
     /**
      * For a given feature type and code, determine what sort of resolution or
      * precision should be considered for that place, approximately.
-     *
+     * @param feat_type major feature type
+     * @param feat_code minor feature type or designation
      * @return precision approx error in meters for a given feature. -1 if no
      * feature type given.
      */
@@ -176,7 +183,10 @@ public class GeodeticUtility {
     }
 
     /** For a given Geonames feature class/designation provide a guess about how long
-     * geohash should be.
+     * geohash should be.  Geohash in this use is very approximate 
+     * @param feat_type major feature type
+     * @param feat_code minor feature type or designation
+     * @return prefix length for a geohash, e.g., for a province in general is 3 chars of geohash sufficient?
      */
     public static int getGeohashPrecision(String feat_type, String feat_code) {
         if (feat_type == null && feat_code == null) {
@@ -203,8 +213,9 @@ public class GeodeticUtility {
     /**
      * The most simplistic parsing and validation of "lat lon" or "lat, lon"
      * any amount of whitespace is allowed, provided the lat lon order is there.
-     * @param lat_lon
-     * @return
+     * @param lat_lon string form of a simple lat/lon, e.g.,  "Y X";  No symbols 
+     * @return LatLon object
+     * @throws ParseException if string is unparsable
      */
     public static LatLon parseLatLon(String lat_lon) throws ParseException {
         if (StringUtils.isBlank(lat_lon)) {
@@ -228,25 +239,25 @@ public class GeodeticUtility {
         }
         return geo;
     }
-    
+
     /**
      * Parse coordinate from object
-     * @param lat
-     * @param lon
-     * @return
-     * @throws ParseException
+     * @param lat latitude
+     * @param lon longitude
+     * @return LatLon object
+     * @throws ParseException if objects are not valid numbers
      */
-    public static LatLon parseLatLon(Object lat, Object lon) throws ParseException{
+    public static LatLon parseLatLon(Object lat, Object lon) throws ParseException {
         if (lat == null || lon == null) {
             // incomplete data.
             // Caller should test
-            throw new ParseException("Incomplete data, null lat or lon",0);
+            throw new ParseException("Incomplete data, null lat or lon", 0);
         }
-        
+
         LatLon yx = new GeoBase();
         yx.setLatitude(Double.parseDouble(lat.toString()));
         yx.setLongitude(Double.parseDouble(lon.toString()));
-        
-        return yx;       
+
+        return yx;
     }
 }

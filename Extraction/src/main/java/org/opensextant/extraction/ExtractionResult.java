@@ -65,6 +65,7 @@ public class ExtractionResult {
     /**
      * Given a record ID, create a container for holding onto all the geocodes
      * for that particular data object.
+     * @param rid result ID, optionally null
      */
     public ExtractionResult(String rid) {
         recordID = rid;
@@ -76,6 +77,8 @@ public class ExtractionResult {
     /**
      * Add some piece of amplifying metadata about the record which may be
      * carried through to output format in some way
+     * @param f field 
+     * @param v value
      */
     public void addAttribute(String f, Object v) {
         if (attributes == null) {

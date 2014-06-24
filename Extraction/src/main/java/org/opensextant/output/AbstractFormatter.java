@@ -128,7 +128,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     /**
      * Write to a file and return HTML containing a link to the file.
      * @param corpusList
-     * @throws Exception
+     * @throws ProcessingException processing or formatting error
      */
     @Override
     public String formatResults(ExtractionResult res) throws ProcessingException {

@@ -44,7 +44,7 @@ package org.opensextant.data;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public interface Geocoding  extends LatLon {
 
@@ -75,7 +75,7 @@ public interface Geocoding  extends LatLon {
     public String getPlaceID();
     public String getPlaceName();
 
-    /** Method for determining geocoding
+    /** @return Method for determining geocoding
      */
     public String getMethod();
 

@@ -28,6 +28,9 @@ public class Language {
 
     /** A normalize view of a Language  - ISO 639-2 and -1 codes and display name
      *  codes are lower cased.
+     *  @param id3 ISO 639-2 3-alpha code
+     *  @param id2 ISO 639-2 2-alpha code
+     *  @param name of language
      */
     public Language( String id3, String id2, String name) {
         iso3 = id3;
@@ -41,12 +44,12 @@ public class Language {
         this.name = name;
     }
 
-    /** Provide display name; English */
+    /** @return display name of language */
     public String getName() {
         return this.name;
     }
 
-    /** Returns ISO 639-2 3-char code
+    /** @return ISO 639-2 3-char code
      */
     public String getCode() {
         return this.iso3;

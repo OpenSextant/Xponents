@@ -32,7 +32,7 @@ import java.util.Map;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class PoliMatch extends TextMatch {
 

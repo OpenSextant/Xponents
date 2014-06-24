@@ -1,6 +1,6 @@
 /**
  *
- *  Copyright 2009-2013 The MITRE Corporation.
+ *  Copyright 2009-2014 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import java.util.HashSet;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class Country extends Place {
     /** ISO 2-character country code */
@@ -65,8 +65,8 @@ public class Country extends Place {
      * A country abstraction that uses ISO 2-alpha as an ID, and any name given
      * as the Place.name
      *
-     * @param iso2
-     * @param nm
+     * @param iso2  ISO 2-alpha code for this country
+     * @param nm    Country name
      */
     public Country(String iso2, String nm){
         super(iso2, nm);
@@ -75,7 +75,7 @@ public class Country extends Place {
     }
 
     /** Country is also known as some list of aliases
-     * @param nm
+     * @param nm  Country name/alias
      */
     public void addAlias(String nm){
         aliases.add(nm);
@@ -83,14 +83,14 @@ public class Country extends Place {
 
     /**
      *
-     * @return
+     * @return  set of aliases
      */
     public Set<String> getAliases(){
         return aliases;
     }
 
     /** Country is also known as some list of aliases
-     * @param regionid
+     * @param regionid  Region identifier or name.
      */
     public void addRegion(String regionid){
         regions.add(regionid);
@@ -98,7 +98,7 @@ public class Country extends Place {
 
     /**
      *
-     * @return
+     * @return  set of regions in which this country belongs. 
      */
     public Set<String> getRegions(){
         return regions;

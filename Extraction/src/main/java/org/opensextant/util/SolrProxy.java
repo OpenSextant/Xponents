@@ -178,7 +178,7 @@ public class SolrProxy extends SolrUtil {
 	}
 
 	/**
-	 * Creates an {@link EmbeddedSolrServer} given solr home & the core to use.
+	 * Creates an EmbeddedSolrServer given solr home &amp; the core to use.
 	 * These may be null and you get the default.
 	 */
 	public static EmbeddedSolrServer initialize_embedded(String solrHome,
@@ -201,7 +201,7 @@ public class SolrProxy extends SolrUtil {
 	}
 
 	/**
-	 * Creates a {@link EmbeddedSolrServer} based on defaults.
+	 * Creates a EmbeddedSolrServer}based on defaults.
 	 * 
 	 * @throws IOException
 	 */

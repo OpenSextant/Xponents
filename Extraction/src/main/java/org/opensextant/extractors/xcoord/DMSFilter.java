@@ -80,8 +80,8 @@ public class DMSFilter implements MatchFilter {
     /**
      * pass a match
      *
-     * @param m
-     * @return
+     * @param m coord match
+     * @return true if match is not filtered
      */
     @Override
     public boolean pass(GeocoordMatch m) {
@@ -91,8 +91,8 @@ public class DMSFilter implements MatchFilter {
     /**
      * stop a match if it is a bad DMS pattern, e.g., date or date/time.
      *
-     * @param m
-     * @return
+     * @param m coord match
+     * @return true if match is filtered out
      */
     @Override
     public boolean stop(GeocoordMatch m) {

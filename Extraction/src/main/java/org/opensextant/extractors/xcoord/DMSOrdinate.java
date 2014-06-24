@@ -120,10 +120,10 @@ public final class DMSOrdinate {
      * All Constructors must set is_latitude from a given flag. This is used for
      * range validation.
      * 
-     * @param fieldElements
-     * @param islat
-     * @param text
-     * @throws XCoordException
+     * @param fieldElements  groups within the matched regex/pattern
+     * @param islat  true if matched part is for latitude
+     * @param text  the raw text of the matched coordinate
+     * @throws NormalizationException if coordinate is not valid or unable to normalize
      */
     public DMSOrdinate(Map<String, TextEntity> fieldMatches, Map<String, String> fieldVals, boolean islat,
             String text) throws NormalizationException {

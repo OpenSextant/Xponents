@@ -29,7 +29,7 @@ package org.opensextant.data;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TextInput {
     public String buffer = null;

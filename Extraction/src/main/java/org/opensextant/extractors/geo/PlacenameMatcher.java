@@ -61,7 +61,7 @@ import org.opensextant.extraction.SolrTaggerRequest;
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
  * the Solr server.
- * <p />
+ * <p >
  * This class is not thread-safe. It could be made to be with little effort.
  * 
  * @author David Smiley - dsmiley@mitre.org

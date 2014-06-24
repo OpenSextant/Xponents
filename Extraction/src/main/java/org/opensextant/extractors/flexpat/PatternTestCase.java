@@ -55,9 +55,9 @@ public class PatternTestCase {
 
     /**
      *
-     * @param _id
-     * @param _family
-     * @param _text
+     * @param _id pattern identifier
+     * @param _family  family of pattern
+     * @param _text   text for test case
      */
     public PatternTestCase(String _id, String _family, String _text){
 

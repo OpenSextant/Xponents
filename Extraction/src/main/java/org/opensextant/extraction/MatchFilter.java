@@ -31,15 +31,29 @@ import java.io.IOException;
 import java.util.Set;
 import org.opensextant.util.FileUtility;
 
+/**
+ * The Class MatchFilter.
+ */
 public class MatchFilter /*implements Filter*/ {
 
+    /** The tag filter. */
     public Set<String> tagFilter = null;
 
+    /**
+     * Instantiates a new match filter.
+     *
+     * @param stopfile the stopfile
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public MatchFilter(String stopfile) throws IOException {
         tagFilter = FileUtility.loadDictionary(stopfile, false);
     }
 
-    /** If value is in stop list, then filter it out.
+    /**
+     *  If value is in stop list, then filter it out.
+     *
+     * @param value the value
+     * @return true, if successful
      */
     public boolean filterOut(String value) {
         return tagFilter.contains(value);

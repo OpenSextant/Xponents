@@ -45,8 +45,8 @@ public final class PoliPatternManager extends RegexPatternManager {
 
     /**
      *
-     * @param _patternfile
-     * @throws MalformedURLException
+     * @param _patternfile patterns file
+     * @throws MalformedURLException config err
      */
     public PoliPatternManager(File _patternfile) throws MalformedURLException {
         super(_patternfile);
@@ -56,7 +56,7 @@ public final class PoliPatternManager extends RegexPatternManager {
 
     /**
      *
-     * @param _patternfile
+     * @param _patternfile patterns file URL
      */
     public PoliPatternManager(URL _patternfile) {
         super(_patternfile);
@@ -66,6 +66,8 @@ public final class PoliPatternManager extends RegexPatternManager {
 
     /**
      * Enable a family of patterns
+     * @param fam pat family to disable
+     * 
      */
     public void disable_patterns(String fam) {
         for (RegexPattern pat : patterns.values()) {
@@ -95,7 +97,7 @@ public final class PoliPatternManager extends RegexPatternManager {
     /**
      * enable an instance of a pattern based on the global settings.
      *
-     * @param repat
+     * @param repat regex pattern 
      */
     @Override
     public void enable_pattern(RegexPattern repat) {
@@ -110,9 +112,9 @@ public final class PoliPatternManager extends RegexPatternManager {
      * #RULE FAMILY RID REGEX PatternManager here adds compiled pattern and
      * DEFINES.
      *
-     * @param fam
-     * @param rule
-     * @param desc
+     * @param fam  pattern family 
+     * @param rule pattern rule ID
+     * @param desc optional description
      * @return
      */
     @Override
@@ -123,10 +125,11 @@ public final class PoliPatternManager extends RegexPatternManager {
 
     /**
      * Implementation has the option to check a pattern; For now invalid
-     * patterns are only logged.
+     * patterns are only logged.  All patterns in config file are valid.
+     * Override this as needed.
      *
-     * @param repat
-     * @return
+     * @param repat pattern object
+     * @return true if pattern is valid
      */
     @Override
     protected boolean validate_pattern(RegexPattern repat) {
@@ -138,10 +141,10 @@ public final class PoliPatternManager extends RegexPatternManager {
      * Implementation must create TestCases given the #TEST directive, #TEST RID
      * TID TEXT
      *
-     * @param id
-     * @param text
-     * @param fam
-     * @return
+     * @param id  test ID
+     * @param text text for test
+     * @param fam pattern family to test
+     * @return test case
      */
     @Override
     protected PatternTestCase create_testcase(String id, String fam, String text) {
@@ -152,10 +155,11 @@ public final class PoliPatternManager extends RegexPatternManager {
      * The match object is normalized, setting the coord_text and other data
      * from parsing "text" and knowing which pattern family was matched.
      *
+     * @param pattern_id the pattern_id
+     * @param matchtext the matchtext
+     * @param groups the groups
+     * @return the poli match
      * @deprecated logic for creation of a match is back in main PoLi match loop
-     * @param m
-     * @param groups
-     * @return void
      */
     public PoliMatch create_match(String pattern_id, String matchtext, Map<String, String> groups) {
         return new PoliMatch(groups, matchtext);

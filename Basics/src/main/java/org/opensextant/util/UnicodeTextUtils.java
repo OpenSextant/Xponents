@@ -46,8 +46,8 @@ public class UnicodeTextUtils {
      * replace Emoticons with something less nefarious -- UTF-16 characters do
      * not play well with some I/O routines.
      *
-     * @param t
-     * @return
+     * @param t text
+     * @return scrubbed text
      */
     public static String remove_emoticons(String t) {
         return scrub_emoticon.matcher(t).replaceAll("{icon}");
@@ -56,8 +56,8 @@ public class UnicodeTextUtils {
     /**
      * Replace symbology
      *
-     * @param t
-     * @return
+     * @param t text 
+     * @return scrubbed text
      */
     public static String remove_symbols(String t) {
         String _new = scrub_symbols.matcher(t).replaceAll("{sym}");

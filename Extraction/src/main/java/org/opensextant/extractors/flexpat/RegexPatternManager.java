@@ -45,23 +45,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p> This is the culmination of various date/time extraction efforts in python
- * and Java. This API poses no assumptions on input data or on execution. </p>
- *
- *
- * <p> <ul> <b>Features of REGEX patterns file</b>: <li>DEFINE - a component of
- * a pattern to match</li> <li>RULE - a complete pattern to match</li> </ul>
- * </p>
- *
- * <p>See XCoord PatternManager for a good example implementation. </p>
+ * <p > This is the culmination of various date/time extraction efforts in python
+ * and Java. This API poses no assumptions on input data or on execution. 
+ * Features of REGEX patterns file:
+ * <ul>
+ *  <li>DEFINE - a component of a pattern to match</li> 
+ * <li>RULE - a complete pattern to match</li>
+ * </ul>
+ * This work started in Java 6 and has the limitation of Java 6 Regex, mainly that there are no named groups available in matching.
+ * 
+ * <p >See XCoord PatternManager for a good example implementation. 
  *
  */
 public abstract class RegexPatternManager {
 
-    // the named patterns used to write the regexs
-    //(workaround for Java's lack of NamedGroups)
-    //private HashMap<String, String> groupNames = new HashMap<String, String>();
-    // The final regexs indexed by the <rule form>_<rule name>
     /**
      *
      */
@@ -71,11 +68,7 @@ public abstract class RegexPatternManager {
      */
     protected List<RegexPattern> patterns_list = null;
     private URL patternFile = null;
-    // the log
-    /**
-     *
-     */
-    // protected Logger log = null;
+
     /**
      *
      */
@@ -91,8 +84,8 @@ public abstract class RegexPatternManager {
 
     /**
      *
-     * @param _patternfile
-     * @throws java.net.MalformedURLException
+     * @param _patternfile patterns file
+     * @throws java.net.MalformedURLException configuration error or resource not found.
      */
     public RegexPatternManager(String _patternfile) throws java.net.MalformedURLException {
         patternFile = new URL(_patternfile);
@@ -100,7 +93,7 @@ public abstract class RegexPatternManager {
 
     /**
      *
-     * @param _patternfile
+     * @param _patternfile patterns file URL
      */
     public RegexPatternManager(URL _patternfile) {
         patternFile = _patternfile;
@@ -108,8 +101,8 @@ public abstract class RegexPatternManager {
 
     /**
      *
-     * @param _patternfile
-     * @throws java.net.MalformedURLException
+     * @param _patternfile patterns file obj
+     * @throws java.net.MalformedURLException configuration error or resource not found.
      */
     public RegexPatternManager(File _patternfile) throws java.net.MalformedURLException {
         patternFile = _patternfile.toURI().toURL();
@@ -117,7 +110,7 @@ public abstract class RegexPatternManager {
 
     /**
      *
-     * @return
+     * @return collection of patterns
      */
     public Collection<RegexPattern> get_patterns() {
         return patterns_list;
@@ -126,8 +119,8 @@ public abstract class RegexPatternManager {
     /**
      * Access the paterns by ID
      *
-     * @param id
-     * @return
+     * @param id pattern id
+     * @return found pattern or null
      */
     public RegexPattern get_pattern(String id) {
         return patterns.get(id);
@@ -138,9 +131,9 @@ public abstract class RegexPatternManager {
      * #RULE FAMILY RID REGEX PatternManager here adds compiled pattern and
      * DEFINES.
      *
-     * @param fam
-     * @param rule
-     * @param desc
+     * @param fam family
+     * @param rule rule ID within the family
+     * @param desc optional description
      * @return
      */
     protected abstract RegexPattern create_pattern(String fam, String rule, String desc);
@@ -149,8 +142,8 @@ public abstract class RegexPatternManager {
      * Implementation has the option to check a pattern; For now invalid
      * patterns are only logged.
      *
-     * @param pat
-     * @return
+     * @param pat pattern object
+     * @return true if pattern is valid
      */
     protected abstract boolean validate_pattern(RegexPattern pat);
 
@@ -158,23 +151,25 @@ public abstract class RegexPatternManager {
      * Implementation must create TestCases given the #TEST directive, #TEST RID
      * TID TEXT
      *
-     * @param id
-     * @param fam
-     * @param text
-     * @return
+     * @param id  pattern id
+     * @param fam pattern family 
+     * @param text text for test case
+     * @return test case object
      */
     protected abstract PatternTestCase create_testcase(String id, String fam, String text);
 
     /**
      * enable an instance of a pattern based on the global settings.
      *
-     * @param p
+     * @param p the pattern obj to enable
      */
     public abstract void enable_pattern(RegexPattern p);
 
     /**
      * default adapter -- you must override. This should be abstract, but not
      * all pattern managers are required to support this.
+     * 
+     * @param name pattern name to enable.
      */
     public void enable_patterns(String name) {
         //throw new Exception("not implemented");
@@ -200,12 +195,9 @@ public abstract class RegexPatternManager {
     /**
      * Initializes the pattern manager implementations. Reads the DEFINEs and
      * RULEs from the pattern file and does the requisite substitutions. After
-     * initialization, the {
+     * initialization patterns HashMap will be populated.
      *
-     * @patterns} {@link HashMap} will be populated.
-     *
-     * @throws IOException
-     * @see patterns
+     * @throws IOException if patterns file can not be loaded and parsed
      */
     public void initialize() throws IOException {
 
@@ -390,6 +382,8 @@ public abstract class RegexPatternManager {
      * Instead of relying on a logging API, we now throw Exceptionsages for real
      * configuration errors, and capture configuration details in a buffer if
      * debug is on.
+     *
+     * @return the configuration debug
      */
     public String getConfigurationDebug() {
         if (!debug) {
@@ -402,10 +396,10 @@ public abstract class RegexPatternManager {
      * NOTE: We're dealing with Java6's inability to use named groups.  So we have to 
      * track FlexPat slots in line with Matcher fields matched.  Essentially this comes down to 
      * a simple Name:Offset pairing;  our limitation here is no nesting.
-     * 
-     * @param p
-     * @param matched
-     * @return
+     *
+     * @param p pattern
+     * @param matched  matcher
+     * @return map containing the matched groups, as deciphered by Flexpat and the definitions in the patterns file
      */
     public Map<String, String> group_map(RegexPattern p, java.util.regex.Matcher matched) {
 
@@ -421,6 +415,13 @@ public abstract class RegexPatternManager {
         return pairs;
     }
 
+    /**
+     * Matched fields as TextEntities
+     *
+     * @param p the p
+     * @param matched the matched
+     * @return the map
+     */
     public Map<String, TextEntity> group_matches(RegexPattern p, java.util.regex.Matcher matched) {
 
         Map<String, TextEntity> pairs = new HashMap<String, TextEntity>();
@@ -439,18 +440,10 @@ public abstract class RegexPatternManager {
     }
 
     /**
-     *
-     * @param matches
+     * This operates on the listed objects, flagging each match as distinct, overlapping with other match or if it is completely contained within other match.
+     * @param matches  a list of related matches from a single text
      */
     public static void reduce_matches(List<TextMatch> matches) {
-        /**
-         * EH O2:
-         *
-         * for each match M for each match N if M.order=N.order ignore; # M is N
-         * if M.x2 < N.x1: ignore M before N if M.x2>N.x2 ignore M after N if
-         * N.x1 < M.x1 < M.x2 < N.x2: N contains M else Assume overlap
-         *
-         */
         int len = matches.size();
 
         for (int i = 0; i < len; ++i) {

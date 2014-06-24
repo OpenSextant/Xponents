@@ -78,7 +78,7 @@ public interface ResultsFormatter {
      *
      * @param corpusList
      * @return A message for the user
-     * @throws Exception
+     * @throws ProcessingException formatting error
      */
     public String formatResults(ExtractionResult corpus) throws ProcessingException;
 

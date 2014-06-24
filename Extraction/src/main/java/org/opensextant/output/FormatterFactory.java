@@ -34,7 +34,7 @@ import org.opensextant.processing.ProcessingException;
 
 /**
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class FormatterFactory {
 

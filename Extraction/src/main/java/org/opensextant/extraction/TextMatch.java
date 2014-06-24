@@ -52,7 +52,7 @@ public class TextMatch extends TextEntity {
     
     /**
      * Allow matchers and taggers to set a type label, e.g., pattern family or other string.
-     * @param t
+     * @param t type
      */
     public void setType(String t){
         type = t;
@@ -65,7 +65,7 @@ public class TextMatch extends TextEntity {
     }
 
     /**
-     * @return
+     * @return string representation
      */
     @Override
     public String toString() {
@@ -73,7 +73,7 @@ public class TextMatch extends TextEntity {
     }
 
     /**
-     * @return
+     * @param m a text match to copy to this instance
      */
     public void copy(TextMatch m) {
         super.copy(m);
@@ -81,9 +81,6 @@ public class TextMatch extends TextEntity {
         this.pattern_id = m.pattern_id;
     }
 
-    /**
-     *
-     */
     private boolean filtered_out_state = false;
 
     public boolean isFilteredOut() {

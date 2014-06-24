@@ -46,7 +46,7 @@ package org.opensextant.extraction;
  * Modeled after FlexPat TextMatch or GATE's Annotation -- this is intended to be
  * a very simple struct to hold data useful for post-processing entities once found.
  *
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TextEntity {
 
@@ -85,8 +85,8 @@ public class TextEntity {
     }
 
     /**
-     *
-     * @param t
+     * sets the value of the TextEntity
+     * @param t text
      */
     public void setText(String t) {
         text = t;
@@ -94,14 +94,14 @@ public class TextEntity {
 
     /**
      *
-     * @return
+     * @return text, value of a TextEntity
      */
     public String getText() {
         return text;
     }
 
     /** get the length of the matched text
-     * @return
+     * @return int, length
      */
     public int match_length() {
         if (start < 0) {
@@ -113,8 +113,8 @@ public class TextEntity {
 
     /** Convenience methods for carrying the context through the output processing */
     /** Set the context with before and after windows
-     * @param before
-     * @param after
+     * @param before text before match
+     * @param after text after match
      */
     public void setContext(String before, String after) {
         this.prematch = before;
@@ -129,7 +129,7 @@ public class TextEntity {
     }
 
     /** Set the context buffer from a single window
-     * @param window
+     * @param window - textual window
      */
     public void setContext(String window) {
         this.context = window;
@@ -137,7 +137,7 @@ public class TextEntity {
 
     /**
      *
-     * @return
+     * @return context buffer regardless if it is singular context or separate pre/post match 
      */
     public String getContext() {
         return this.context;
@@ -145,7 +145,7 @@ public class TextEntity {
 
     /**
      *
-     * @return
+     * @return text before match
      */
     public String getContextBefore() {
         return this.prematch;
@@ -153,7 +153,7 @@ public class TextEntity {
 
     /**
      *
-     * @return
+     * @return text after match
      */
     public String getContextAfter() {
         return this.postmatch;
@@ -161,7 +161,7 @@ public class TextEntity {
 
     /**
      *
-     * @return
+     * @return  string representation of entity
      */
     @Override
     public String toString() {
@@ -170,7 +170,7 @@ public class TextEntity {
 
     /**
      *
-     * @param m
+     * @param m match/entity object to copy  
      */
     public void copy(TextEntity m) {
 

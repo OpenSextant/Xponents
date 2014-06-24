@@ -34,7 +34,6 @@ import org.opensextant.geodesy.Angle;
 import org.opensextant.geodesy.Latitude;
 import org.opensextant.geodesy.Longitude;
 import org.opensextant.geodesy.MGRS;
-import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextEntity;
 import org.opensextant.extraction.TextMatch;
@@ -132,8 +131,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * 
-     * @return
+     * GeoBase interface.
+     * @return null always.  The raw matched object does not automatically provide an admin name.  Override if other behavior is desired.
      */
     @Override
     public String getAdminName() {
@@ -165,8 +164,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     /**
      * Set the ordinates back on the match;  general filters are assessed.
      * 
-     * @param _lat
-     * @param _lon
+     * @param _lat lat obj
+     * @param _lon lon obj
      */
     public void setCoordinate(DMSOrdinate _lat, DMSOrdinate _lon) {
 
@@ -231,7 +230,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     /**
      * Evaluate DM/DMS patterns only...
      * 
-     * @throws ExtractionException
+     * @throws NormalizationException
      */
     public boolean evaluateDashes() throws NormalizationException {
         if (lat == null || lon == null) {
@@ -490,7 +489,6 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     /**
      * This reuses TextMatch.pattern_id attr;  Use get/setMethod() or pattern_id as needed.
      * @param matchMethod
-     * @return
      */
     public void setMethod(String matchMethod) {
         pattern_id = matchMethod;

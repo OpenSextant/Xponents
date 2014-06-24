@@ -64,23 +64,45 @@ public interface Extractor {
 
     public String getName();
 
-    /** Configure an Extractor using defaults for that extractor
+    /**
+     *  Configure an Extractor using defaults for that extractor.
+     *
+     * @throws ConfigException the config exception
      */
     public void configure() throws ConfigException;
 
-    /** Configure an Extractor using a config file named by a path
+    /**
+     *  Configure an Extractor using a config file named by a path.
+     *
      * @param patfile configuration file path
+     * @throws ConfigException the config exception
      */
     public void configure(String patfile) throws ConfigException;
 
-    /** Configure an Extractor using a config file named by a URL
+    /**
+     *  Configure an Extractor using a config file named by a URL.
+     *
      * @param patfile configuration URL
+     * @throws ConfigException the config exception
      */
     public void configure(java.net.URL patfile) throws ConfigException;
 
-    /** Useuful for working with batches of inputs that have an innate row ID + buffer pairing */
+    /**
+     *  Useuful for working with batches of inputs that have an innate row ID + buffer pairing.
+     *
+     * @param input text input
+     * @return the list of TextMatch
+     * @throws ExtractionException error if underlying extractor(s) fail
+     */
     public List<TextMatch> extract(TextInput input) throws ExtractionException;
-    /** Useful for working with text buffers adhoc. Fewer assumptions about input data here.*/
+    
+    /**
+     *  Useful for working with text buffers adhoc. Fewer assumptions about input data here.
+     *
+     * @param input text input, as a string
+     * @return the list of TextMatch
+     * @throws ExtractionException error if underlying extractor(s) fail
+     */
     public List<TextMatch> extract(String input) throws ExtractionException;
 
     public void setProgressMonitor(ProgressMonitor progressMonitor);

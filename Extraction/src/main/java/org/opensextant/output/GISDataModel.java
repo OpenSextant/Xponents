@@ -44,7 +44,6 @@ import org.opensextant.giscore.geometry.Point;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.data.Geocoding;
-import org.opensextant.processing.ProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +111,7 @@ public class GISDataModel {
      * geocoding whereas attrs on GeocodingResult are global for all geocodings
      * in that result set
      *
-     * @throws ProcessingException
+     * @throws ConfigException
      */
     protected void addAdditionalAttributes(Feature row, Map<String, Object> rowAttributes) throws ConfigException {
         if (rowAttributes != null) {
@@ -181,7 +180,7 @@ public class GISDataModel {
      * @param rowAttributes
      * @param res
      * @return
-     * @throws ConfigException
+     * @throws ConfigException schema configuration error
      */
     public List<Feature> buildRows(int id, Geocoding g, TextMatch m, Map<String, Object> rowAttributes,
             ExtractionResult res) throws ConfigException {
@@ -241,7 +240,7 @@ public class GISDataModel {
      * Create a schema instance with the fields properly typed and ordered
      *
      * @return
-     * @throws ProcessingException
+     * @throws ConfigException schema configuration error
      */
     protected Schema buildSchema(String jobName) throws ConfigException {
 
@@ -328,7 +327,8 @@ public class GISDataModel {
      * Add a field key to the field order; Caller must also be responsible for
      * ensuring field is valid and exists in Schema.
      *
-     * @param fld
+     * @param fld field name
+     * @throws ConfigException the config exception
      */
     public void addField(String fld) throws ConfigException {
         if (getField(fld) == null) {
@@ -338,8 +338,10 @@ public class GISDataModel {
     }
 
     /**
+     * Removes the field.
      *
-     * @param fld
+     * @param fld field name
+     * @throws ConfigException the config exception
      */
     public void removeField(String fld) throws ConfigException {
         if (getField(fld) == null) {
@@ -348,6 +350,9 @@ public class GISDataModel {
         field_order.remove(fld);
     }
 
+    /**
+     * Default fields.
+     */
     protected final void defaultFields() {
         // ID occurs in all output.
         // id.

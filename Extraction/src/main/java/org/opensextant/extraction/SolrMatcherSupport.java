@@ -47,7 +47,7 @@ import org.opensextant.extraction.SolrTaggerRequest;
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
  * the Solr server.
- * <p />
+ * <p >
  * This class is not thread-safe. It could be made to be with little effort.
  * 
  * @author David Smiley - dsmiley@mitre.org
@@ -78,14 +78,16 @@ public abstract class SolrMatcherSupport {
     }
 
     /**
-     * Be explicit about the solr core to use for tagging
+     * Be explicit about the solr core to use for tagging.
+     *
+     * @return the core name
      */
     public abstract String getCoreName();
 
     /**
      * Return the Solr Parameters for the tagger op.
      * 
-     * @return
+     * @return SolrParams 
      */
     public abstract SolrParams getMatcherParameters();
 
@@ -93,12 +95,15 @@ public abstract class SolrMatcherSupport {
      * Caller must implement their domain objects, POJOs... this callback
      * handler only hashes them.
      * 
-     * @param doc
-     * @return
+     * @param doc record to convert to Place record
+     * @return object representing a Place
      */
     public abstract Object createTag(SolrDocument doc);
 
     /**
+     * Initialize.
+     *
+     * @throws IOException if solr server cannot be established from local index or from http server
      */
     protected final void initialize() throws IOException {
 
@@ -146,13 +151,13 @@ public abstract class SolrMatcherSupport {
      * Solr call: tag input buffer, returning all candiate reference data that
      * matched during tagging.
      * 
-     * @param buffer
-     * @param docid
+     * @param buffer text to tag
+     * @param docid  id for text, only for tracking purposes
      * @param refDataMap
      *            - a map of reference data in solr, It will store caller's
-     *            domain objects. e.g., rec.id => domain(rec)
-     * @return
-     * @throws ExtractionException
+     *            domain objects. e.g., rec.id =&gt; domain(rec)
+     * @return solr response
+     * @throws ExtractionException tagger error
      */
     protected QueryResponse tagTextCallSolrTagger(String buffer, String docid,
             final Map<Integer, Object> refDataMap) throws ExtractionException {

@@ -69,7 +69,7 @@ public class TextMatchResult {
 
     /**
      *
-     * @param msg
+     * @param msg processing/matching message
      */
     public void add_trace(String msg) {
         _msg_trace.append(msg);
@@ -78,7 +78,7 @@ public class TextMatchResult {
 
     /**
      *
-     * @return
+     * @return message buffer for matching
      */
     public String get_trace() {
         return _msg_trace.toString();

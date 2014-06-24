@@ -71,8 +71,8 @@ public class DateNormalization {
     static final DateTimeFormatter fmt_ydm = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
 
     /**
-     * @param d
-     * @return
+     * @param d date obj
+     * @return formatted date
      */
     public static String format_date(Date d) {
         return fmt_ydm.print(d.getTime());
@@ -104,7 +104,6 @@ public class DateNormalization {
      * TODO: throw NormalizationException
      *
      * @param elements
-     * @return void
      * @throws java.text.ParseException
      */
     public static void normalize_date(java.util.Map<String, String> elements, DateMatch dt) throws
@@ -252,8 +251,8 @@ public class DateNormalization {
 
     /**
      *
-     * @param elements
-     * @return
+     * @param elements all matched fields 
+     * @return year fixed if possible, otherwise INVALID_DATE
      */
     public static int normalize_year(java.util.Map<String, String> elements) {
 

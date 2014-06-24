@@ -24,7 +24,7 @@
  * **************************************************************************
  */
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//  
+//
 // _____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
@@ -36,7 +36,7 @@
 //             \/_/
 //
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-// 
+//
 package org.opensextant.util;
 
 import java.io.*;
@@ -52,31 +52,32 @@ import org.apache.commons.io.FilenameUtils;
 public class FileUtility {
 
     /**
+     * Write file, UTF-8 is default charset here.
      *
-     * @param buffer
-     * @param fname
-     * @return
-     * @throws IOException
+     * @param buffer  text to save
+     * @param fname   name of file to save
+     * @return status
+     * @throws IOException  if file had IO errors.
      */
     public static boolean writeFile(String buffer, String fname) throws IOException {
         return writeFile(buffer, fname, "UTF-8", false);
     }
 
     /**
-     * @param buffer
-     * @param fname
-     * @param enc
-     * @param append
-     * @return
-     * @throws IOException
+     * @param buffer  text to save
+     * @param fname   name of file to save
+     * @param enc  text encoding
+     * @param append if you wish to add to existing file.
+     * @return status if written
+     * @throws IOException if file had IO errors.
      */
     public static boolean writeFile(String buffer, String fname, String enc, boolean append) throws IOException {
         if (fname == null || enc == null || buffer == null) {
             throw new IOException("Null values cannot be used to write out file.");
         }
 
-        FileOutputStream file = new FileOutputStream(fname, append); // APPEND
-        OutputStreamWriter fout = new OutputStreamWriter(file, enc);
+        final FileOutputStream file = new FileOutputStream(fname, append); // APPEND
+        final OutputStreamWriter fout = new OutputStreamWriter(file, enc);
         fout.write(buffer, 0, buffer.length());
         fout.flush();
         fout.close();
@@ -89,8 +90,8 @@ public class FileUtility {
      * @param fname file path
      * @param enc encoding
      * @param append true = append data to existing file.
-     * @return
-     * @throws IOException
+     * @return stream writer
+     * @throws IOException if stream could not be opened
      */
     public static OutputStreamWriter getOutputStream(String fname, String enc, boolean append) throws IOException {
         return new OutputStreamWriter(new FileOutputStream(fname, append), enc);
@@ -99,22 +100,22 @@ public class FileUtility {
     /**
      * Caller is responsible for write flush, close, etc.
      *
-     * @param fname
-     * @param enc
-     * @return
-     * @throws IOException
+     * @param fname file name
+     * @param enc text encoding
+     * @return stream writer
+     * @throws IOException if stream could not be openeed
      */
     public static OutputStreamWriter getOutputStream(String fname, String enc) throws IOException {
         return getOutputStream(fname, enc, false);
     }
 
     /**
-     * Getting an input stream from a file.... Is this easier?
+     * Getting an input stream from a file.
      *
-     * @param fname
-     * @param enc
-     * @return
-     * @throws IOException
+     * @param fname file name
+     * @param enc text encoding
+     * @return reader the java.io reader
+     * @throws IOException if file could not be opened
      */
     public static InputStreamReader getInputStream(String fname, String enc) throws IOException {
         return new InputStreamReader(new FileInputStream(fname), enc);
@@ -124,60 +125,64 @@ public class FileUtility {
      * Simple check if a file is typed as a Spreadsheet Tab-delimited .txt files
      * or .dat files may be valid spreadsheets, however this method does not
      * look inside files.
+     * @param filepath path to file
+     * @return true if file represents one of the various spreadsheet file formats
      */
     public static boolean isSpreadsheet(String filepath) {
-        String testpath = filepath.toLowerCase();
+        final String testpath = filepath.toLowerCase();
         return (testpath.endsWith(".csv") || testpath.endsWith(".xls") || testpath.endsWith(".xlsx"));
     }
 
     /**
      * Using Commons getExtension(), determine if the filename represents an image media type.
-     * @param filepath
-     * @return
+     * @param filepath path to file
+     * @return if file represents any type of image
      */
     public static boolean isImage(String filepath) {
         if (filepath == null) {
             return false;
         }
-        String ext = FilenameUtils.getExtension(filepath.toLowerCase());
+        final String ext = FilenameUtils.getExtension(filepath.toLowerCase());
         return imageTypeMap.containsKey(ext);
     }
 
     /** Check if a file is an archive
+     * @param filepath path to file
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
      */
     public static boolean isArchiveFile(String filepath) {
-        String testpath = filepath.toLowerCase();
+        final String testpath = filepath.toLowerCase();
         return testpath.endsWith(".zip") || testpath.endsWith(".tar") || testpath.endsWith(".tgz")
                 || testpath.endsWith(".gz"); // || testpath.endsWith(".tar.gz");
     }
 
     /** Allow checking of a file extention; NO prefix "."
+     * @param ext extension to test
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
      */
     public static boolean isArchiveFileType(String ext) {
-        String x = ext.toLowerCase();
+        final String x = ext.toLowerCase();
         return x.equals("zip") || x.equals("tar") || x.equals("tgz") || x.equals("gz") || x.equals("tar.gz");
     }
 
     /**
      *
-     * @param fname
-     * @return
-     * @throws IOException
+     * @param filepath path to file
+     * @return buffer from file
+     * @throws IOException on error
      */
-    public static String readFile(String fname) throws IOException {
-        return readFile(new File(fname), default_encoding);
+    public static String readFile(String filepath) throws IOException {
+        return readFile(new File(filepath), default_encoding);
     }
 
     /**
      *
-     * @param f - File object
-     * @return
-     * @throws IOException
+     * @param filepath path to file
+     * @return buffer from file
+     * @throws IOException on error
      */
-    public static String readFile(File f) throws IOException {
-        return readFile(f, default_encoding);
+    public static String readFile(File filepath) throws IOException {
+        return readFile(filepath, default_encoding);
     }
 
     /**
@@ -192,18 +197,18 @@ public class FileUtility {
     /**
      * Slurps a text file into a string and returns the string.
      *
-     * @param fileinput
-     * @param enc
-     * @return
-     * @throws IOException
+     * @param fileinput file object
+     * @param enc text encoding
+     * @return buffer from file
+     * @throws IOException on error 
      */
     public static String readFile(File fileinput, String enc) throws IOException {
         if (fileinput == null) {
             return null;
         }
 
-        FileInputStream instream = new FileInputStream(fileinput);
-        byte[] inputBytes = new byte[instream.available()];
+        final FileInputStream instream = new FileInputStream(fileinput);
+        final byte[] inputBytes = new byte[instream.available()];
         instream.read(inputBytes);
         instream.close();
         return new String(inputBytes, enc);
@@ -212,17 +217,17 @@ public class FileUtility {
     /**
      * Given a file get the byte array
      *
-     * @param fileinput
-     * @return
-     * @throws IOException
+     * @param fileinput file object
+     * @return byte array
+     * @throws IOException on error
      */
     public static byte[] readBytesFrom(File fileinput) throws IOException {
         if (fileinput == null) {
             return null;
         }
 
-        FileInputStream instream = new FileInputStream(fileinput);
-        byte[] inputBytes = new byte[instream.available()];
+        final FileInputStream instream = new FileInputStream(fileinput);
+        final byte[] inputBytes = new byte[instream.available()];
         instream.read(inputBytes);
         instream.close();
         return inputBytes;
@@ -230,20 +235,20 @@ public class FileUtility {
 
     /**
      *
-     * @param fname
-     * @return
-     * @throws IOException
+     * @param filepath path to file
+     * @return text buffer, UTF-8 decoded
+     * @throws IOException on error
      */
-    public static String readGzipFile(String fname) throws IOException {
-        if (fname == null) {
+    public static String readGzipFile(String filepath) throws IOException {
+        if (filepath == null) {
             return null;
         }
 
-        FileInputStream instream = new FileInputStream(fname);
-        GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), default_buffer);
+        final FileInputStream instream = new FileInputStream(filepath);
+        final GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), default_buffer);
 
-        byte[] inputBytes = new byte[default_buffer];
-        StringBuilder buf = new StringBuilder();
+        final byte[] inputBytes = new byte[default_buffer];
+        final StringBuilder buf = new StringBuilder();
 
         int readcount = 0;
         while ((readcount = gzin.read(inputBytes, 0, default_buffer)) != -1) {
@@ -258,18 +263,18 @@ public class FileUtility {
 
     /**
      *
-     * @param text
-     * @param fname
-     * @return
-     * @throws IOException
+     * @param text buffer to write
+     * @param filepath path to file
+     * @return status true if file was written
+     * @throws IOException on error
      */
-    public static boolean writeGzipFile(String text, String fname) throws IOException {
-        if (fname == null || text == null) {
+    public static boolean writeGzipFile(String text, String filepath) throws IOException {
+        if (filepath == null || text == null) {
             return false;
         }
 
-        FileOutputStream outstream = new FileOutputStream(fname);
-        GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), default_buffer);
+        final FileOutputStream outstream = new FileOutputStream(filepath);
+        final GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), default_buffer);
 
         gzout.write(text.getBytes(default_encoding));
 
@@ -285,9 +290,9 @@ public class FileUtility {
     /**
      * Utility for making dirs
      *
-     * @param testDir
-     * @return
-     * @throws IOException
+     * @param testDir dir to test
+     * @return if directory was created or if it already exists
+     * @throws IOException if testDir was not created
      */
     public static boolean makeDirectory(File testDir) throws IOException {
         if (testDir == null) {
@@ -303,9 +308,9 @@ public class FileUtility {
     /**
      * Utility for making dirs
      *
-     * @param dir
-     * @return
-     * @throws IOException
+     * @param dir  dirPath
+     * @return if directory was created or if it already exists
+     * @throws IOException if testDir was not created
      */
     public static boolean makeDirectory(String dir) throws IOException {
         if (dir == null) {
@@ -316,8 +321,9 @@ public class FileUtility {
     }
 
     /**
-     * @param directory
-     * @return
+     * Java oddity - recursive removal of a directory
+     * @param directory dir to remove
+     * @return if all contents and dir itself was removed.
      * @author T. Allison, MITRE
      */
     public static boolean removeDirectory(File directory) {
@@ -333,13 +339,13 @@ public class FileUtility {
             return false;
         }
 
-        String[] list = directory.list();
+        final String[] list = directory.list();
 
         // Some JVMs return null for File.list() when the
         // directory is empty.
         if (list != null) {
             for (int i = 0; i < list.length; i++) {
-                File entry = new File(directory, list[i]);
+                final File entry = new File(directory, list[i]);
                 if (entry.isDirectory()) {
                     if (!removeDirectory(entry)) {
                         return false;
@@ -358,10 +364,10 @@ public class FileUtility {
     /**
      * Generate some path with a unique date/time stamp
      *
-     * @param D
-     * @param F
-     * @param Ext
-     * @return
+     * @param D directory
+     * @param F filename
+     * @param Ext file extension
+     * @return  unique path
      */
     public static String generateUniquePath(String D, String F, String Ext) {
         return D + File.separator + generateUniqueFilename(F, Ext);
@@ -370,61 +376,31 @@ public class FileUtility {
     /**
      * Generate some filename with a unique date/time stamp
      *
-     * @param F
-     * @param Ext
-     * @return
+     * @param F filename
+     * @param Ext file extension
+     * @return unique filename
      */
     public static String generateUniqueFilename(String F, String Ext) {
 
-        SimpleDateFormat fileDateFmt = new SimpleDateFormat("_yyyyMMdd,HHmmss,S");
+        final SimpleDateFormat fileDateFmt = new SimpleDateFormat("_yyyyMMdd,HHmmss,S");
 
         return F + fileDateFmt.format(new Date()) + Ext;
     }
 
     /**
-     * Get the parent File of a given file. defensively create new file in case
-     * file is a relative file. That is, this returns a file object for the
-     * absolute path of the parent of argument f.
-     *
-     * worst case: getParent( ../ ) ==> "../../", but resolve that to a real
-     * path.
-     *
-     * @param f
-     * @return
-     * @author T. Allison
+     * 
+     * @param f the file in question.
+     * @return  the parent File of a given file.
      */
     public static File getParent(File f) {
         return new File(f.getAbsolutePath()).getParentFile();
     }
 
     /**
-     * If you already have a file object, get the basename.
-     *
-     * @param f
-     * @param ext
-     * @return
-     * @deprecated: Replaced by Apache Commons IO FilenameUtils.getBasename()
-     *
-     */
-    // public static String getBasename(File f, String ext) {
-    /**
-     * Deprecated: LineNumberReader is deprecated.
-     *
-     * @param filepath
-     * @return
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @deprecated LineNumber reader is deprecated
-     */
-    public static LineNumberReader getLineReader(String filepath) throws FileNotFoundException, IOException {
-        return new LineNumberReader(new StringReader(FileUtility.readFile(filepath)));
-    }
-
-    /**
      * Simple filter
      *
-     * @param ext
-     * @return
+     * @param ext the extension to filter on
+     * @return filename filter
      */
     public static FilenameFilter getFilenameFilter(String ext) {
         return new AnyFilenameFilter(ext);
@@ -436,22 +412,22 @@ public class FileUtility {
      * that as the file basename.
      *
      * commons io FilenameUtils says nothing about arbitrarily long file
-     * extensions, e.g., file.a.b.c.txt => "file" + "a.b.c.txt"
+     * extensions, e.g., file.a.b.c.txt split into ("file" + "a.b.c.txt")
      *
-     * @param p
-     * @param ext
-     * @return
+     * @param p path
+     * @param ext extension
+     * @return basename of path, less the extension
      */
     public static String getBasename(String p, String ext) {
         if (p == null) {
             return null;
         }
-        String fn = FilenameUtils.getBaseName(p);
+        final String fn = FilenameUtils.getBaseName(p);
         if (ext == null || ext.isEmpty()) {
             return fn;
         }
         if (fn.toLowerCase().endsWith(ext)) {
-            int lastidx = fn.length() - ext.length() - 1;
+            final int lastidx = fn.length() - ext.length() - 1;
             return fn.substring(0, lastidx);
         }
         return fn;
@@ -461,16 +437,17 @@ public class FileUtility {
      * On occasion file path may contain unicode chars, however as the is
      * encoded, it may not be decodable by OS/FS.
      *
-     * @param path
-     * @return
+     * @param path path to normalize
+     * @return filename
      */
     public static String getValidFilename(String path) {
         return TextUtils.normalizeUnicode(path);
     }
 
     /**
-     * @param fname
-     * @return
+     * Another utility to deal with unicode in filenames
+     * @param fname name to clean
+     * @return cleaner filenname
      */
     public static String filenameCleaner(String fname) {
 
@@ -481,10 +458,10 @@ public class FileUtility {
             return null;
         }
 
-        char[] text = fname.toCharArray();
-        StringBuilder cleaned_text = new StringBuilder();
+        final char[] text = fname.toCharArray();
+        final StringBuilder cleaned_text = new StringBuilder();
 
-        for (char c : text) {
+        for (final char c : text) {
             cleaned_text.append(normalizeFilenameChar(c));
         }
 
@@ -495,10 +472,10 @@ public class FileUtility {
      * Get a directory that does not conflict with an existing directory.
      * Returns null if that is not possible within the maxDups.
      *
-     * @param dir
-     * @param dupeMarker
-     * @param maxDups
-     * @return
+     * @param dir directory
+     * @param dupeMarker incrementor
+     * @param maxDups max incrementor
+     * @return file object 
      * @author T. Allison NOT THREAD SAFE!
      */
     public static File getSafeDir(File dir, String dupeMarker, int maxDups) {
@@ -506,9 +483,9 @@ public class FileUtility {
         if (!dir.exists()) {
             return dir;
         }
-        String base = dir.getName();
+        final String base = dir.getName();
         for (int i = 1; i < maxDups; i++) {
-            File tmp = new File(dir.getParentFile(), base + dupeMarker + i);
+            final File tmp = new File(dir.getParentFile(), base + dupeMarker + i);
             if (!tmp.isDirectory()) {
                 return tmp;
             }
@@ -518,21 +495,21 @@ public class FileUtility {
 
     /**
      * @author T. Allison
-     * @param f
-     * @param dupeMarker
-     * @param maxDups
-     * @return
+     * @param f file obj
+     * @param dupeMarker incrementor
+     * @param maxDups max incrementor
+     * @return new file
      */
     public static File getSafeFile(File f, String dupeMarker, int maxDups) {
         if (!f.exists()) {
             return f;
         }
 
-        int suffixInd = f.getName().lastIndexOf(".");
-        String base = f.getName().substring(0, suffixInd);
-        String suffix = (suffixInd + 1 <= f.getName().length()) ? f.getName().substring(suffixInd + 1) : "";
+        final int suffixInd = f.getName().lastIndexOf(".");
+        final String base = f.getName().substring(0, suffixInd);
+        final String suffix = (suffixInd + 1 <= f.getName().length()) ? f.getName().substring(suffixInd + 1) : "";
         for (int i = 1; i < maxDups; i++) {
-            File tmp = new File(f.getParentFile(), base + dupeMarker + i + "." + suffix);
+            final File tmp = new File(f.getParentFile(), base + dupeMarker + i + "." + suffix);
             if (!tmp.exists()) {
                 return tmp;
             }
@@ -541,16 +518,15 @@ public class FileUtility {
     }
 
     /**
-     *
+     * Char to use in place of special chars when scrubbing filenames.
      */
     public static char FILENAME_REPLACE_CHAR = '_';
 
-    // Tests for valid filename chars for simple normalization
-    // A-Z, a-z, _-, 0-9,
     /**
-     *
-     * @param c
-     * @return
+     *  Tests for valid filename chars for simple normalization
+     * A-Z, a-z, _-, 0-9,
+     * @param c character to allow
+     * @return given character or replacement char
      */
     protected static char normalizeFilenameChar(char c) {
 
@@ -572,11 +548,12 @@ public class FileUtility {
 
     /**
      * A way of determining OS
-     *
-     * @return
+     * Beware, OS X has Darwin in its full OS name.
+     * 
+     * @return if OS is windows-based
      */
     public static boolean isWindowsSystem() {
-        String val = System.getProperty("os.name");
+        final String val = System.getProperty("os.name");
 
         /**
          * if (val == null) { //log.warn("Could not verify OS name"); return
@@ -586,25 +563,25 @@ public class FileUtility {
     }
 
     /**
-     *
+     * Char used in config files, dict files.
      */
     public static final String COMMENT_CHAR = "#";
 
     /**
      * A generic word list loader. Part of the Meso Utility API
      *
-     * @param resourcepath
-     * @param case_sensitive
+     * @param resourcepath  classpath location of a resource
+     * @param case_sensitive if terms are loaded with case preserved or not.
      * @author ubaldino, MITRE Corp
      * @return Set containing unique words found in resourcepath
-     * @throws IOException
+     * @throws IOException on error, resource does not exist
      */
     public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive) throws IOException {
 
-        InputStream io = FileUtility.class.getResourceAsStream(resourcepath);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(io, default_encoding));
+        final InputStream io = FileUtility.class.getResourceAsStream(resourcepath);
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(io, default_encoding));
 
-        Set<String> dict = new HashSet<String>();
+        final Set<String> dict = new HashSet<String>();
         String newline = null;
         String test = null;
         while ((newline = reader.readLine()) != null) {
@@ -729,6 +706,8 @@ public class FileUtility {
     /**
      * Get a plain language name of the type of file. E.g., document, image,
      * spreadsheet, web page. Rather than the MIME type technical descriptor.
+     * @param url item to describe
+     * @return plain language description of the URL
      */
     public static String getFileDescription(String url) {
         if (url == null) {
@@ -741,9 +720,9 @@ public class FileUtility {
 
         // Continue on...
         //------------
-        String test = url.toLowerCase();
-        String urlTestExtension = FilenameUtils.getExtension(test);
-        String urlMimeType = filetypeMap.get(urlTestExtension);
+        final String test = url.toLowerCase();
+        final String urlTestExtension = FilenameUtils.getExtension(test);
+        final String urlMimeType = filetypeMap.get(urlTestExtension);
         if (urlMimeType != null) {
             return urlMimeType;
         }

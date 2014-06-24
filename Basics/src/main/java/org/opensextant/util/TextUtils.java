@@ -66,8 +66,7 @@ import org.supercsv.prefs.CsvPreference;
 public class TextUtils {
 
     /**
-     * @threadsafe False; use TextUtils() instance instead.
-     * 
+     * Reusable MD5 digest; not thread safe 
      */
     protected static MessageDigest md5 = null;
     /**
@@ -105,7 +104,7 @@ public class TextUtils {
     }
 
     /**
-     * @param data
+     * @param data  bytes to test
      * @return boolean if data is ASCII or not
      */
     public static boolean isASCII(byte[] data) {
@@ -120,7 +119,7 @@ public class TextUtils {
     /**
      * count the number of ASCII bytes
      * 
-     * @param data
+     * @param data bytes to count
      * @return count of ASCII bytes
      */
     public static int countASCIIChars(byte[] data) {
@@ -136,7 +135,7 @@ public class TextUtils {
     /**
      * Replaces all 3 or more blank lines with a single paragraph break (\n\n)
      * 
-     * @param t
+     * @param t text
      * @return A string with fewer line breaks;
      * 
      */
@@ -152,7 +151,7 @@ public class TextUtils {
     /**
      * Delete whitespace of any sort.
      * 
-     * @param t
+     * @param t text
      * @return String, without whitespace.
      */
     public static String delete_whitespace(String t) {
@@ -166,8 +165,8 @@ public class TextUtils {
     /**
      * Minimize whitespace.
      * 
-     * @param t
-     * @return String
+     * @param t text
+     * @return scrubbed string
      */
     public static String squeeze_whitespace(String t) {
         Matcher m = delws.matcher(t);
@@ -178,9 +177,9 @@ public class TextUtils {
     }
 
     /**
-     * 
-     * @param t
-     * @return
+     * Replace line endings with SPACE
+     * @param t text
+     * @return scrubbed string
      */
     public static String delete_eol(String t) {
         return t.replace('\n', ' ').replace('\r', ' ');
@@ -197,7 +196,7 @@ public class TextUtils {
      * Delete char (^?) is also removed. Length may differ if ctl chars are
      * removed.
      * 
-     * @param t
+     * @param t text
      * @return scrubbed buffer
      */
     public static String delete_controls(String t) {
@@ -220,8 +219,8 @@ public class TextUtils {
     /**
      * Counts all digits in text.
      * 
-     * @param txt
-     * @return
+     * @param txt text to count
+     * @return count of digits
      */
     public static int count_digits(String txt) {
         if (txt == null) {
@@ -239,8 +238,8 @@ public class TextUtils {
 
     /**
      * 
-     * @param v
-     * @return
+     * @param v text value
+     * @return true if text is a number
      */
     public static boolean is_numeric(String v) {
 
@@ -263,10 +262,10 @@ public class TextUtils {
     }
 
     /**
-     * Counts all digits in text.
+     * Counts all whitespace in text.
      * 
-     * @param txt
-     * @return
+     * @param txt text
+     * @return whitespace count
      */
     public static int count_ws(String txt) {
         if (txt == null) {
@@ -287,8 +286,8 @@ public class TextUtils {
      * For measuring the upper-case-ness of short texts. Returns true if ALL
      * letters in text are UPPERCASE. Allows for non-letters in text.
      * 
-     * @param dat
-     * @return
+     * @param dat  text or data
+     * @return true if text is Upper
      */
     public static boolean isUpper(String dat) {
         if (dat == null) {
@@ -310,18 +309,24 @@ public class TextUtils {
     }
 
     /**
-     * EH: EHCommons.get_text_window
+     * Find the text window(s) around a match.  Given the size of a buffer, the match and desired width
+     * return
      * 
-     * @param offset
-     * @param width
-     * @param textsize
-     * @param matchlen
-     * @return
+     *  <pre>
+     * prepreprepre      MATCH        postpostpost
+     * ^           ^                  ^          ^
+     * l-width     l                 l+len   l+len+width
+     * left1     left2              right1    right2     
+     *  </pre>
+     * 
+     * @param offset  offset of match
+     * @param width   width of window left and right of match
+     * @param textsize  size of buffer containing match; used for boundary conditions
+     * @param matchlen length of match
+     * @return  window offsets left of match, right of match:  [ l1, l2, r1, r2 ]
      */
     public static int[] get_text_window(int offset, int matchlen, int textsize, int width) {
         /*
-         * prepreprepre MATCH postpostpost ^ ^ ^ ^ l-width l l+len l+len+width
-         * left_y left_x right_x right_y
          */
         int left_x = offset - width;
         int left_y = offset - 1;
@@ -352,10 +357,10 @@ public class TextUtils {
     /**
      * Get a single text window around the offset.
      * 
-     * @param offset
-     * @param width
-     * @param textsize
-     * @return offsets of window bounded by document ends.
+     * @param offset  offset of match
+     * @param width   width of window left and right of match
+     * @param textsize  size of buffer containing match; used for boundary conditions
+     * @return  window offsets of a text span contianing match [ left, right ]
      */
     public static int[] get_text_window(int offset, int textsize, int width) {
         /*
@@ -382,8 +387,8 @@ public class TextUtils {
     /**
      * Static method -- use only if you are sure of thread-safety.
      * 
-     * @param text
-     * @return
+     * @param text text or data
+     * @return identifier for the text, an MD5 hash
      */
     public static String text_id(String text) {
         if (text == null) {
@@ -399,8 +404,8 @@ public class TextUtils {
     /**
      * Generate a Text ID using the raw bytes and MD5 algorithm.
      * 
-     * @param text
-     * @return
+     * @param text text or data
+     * @return identifier for the text, an MD5 hash
      */
     public String genTextID(String text) {
         if (text == null) {
@@ -415,8 +420,8 @@ public class TextUtils {
 
     /**
      * 
-     * @param md5digest
-     * @return
+     * @param md5digest byte array
+     * @return MD5 hash for the data
      */
     public static String md5_id(byte[] md5digest) {
         // Thanks to javacream:
@@ -436,11 +441,11 @@ public class TextUtils {
      * Get a list of values into a nice, scrubbed array of values, no
      * whitespace.
      * 
-     * a, b, c d e, f => [ "a", "b", "c d e", "f" ]
+     * a, b, c d e, f =&gt; [ "a", "b", "c d e", "f" ]
      * 
-     * @param s
-     * @param delim
-     * @return
+     * @param s string to split
+     * @param delim delimiter, no default.
+     * @return list of split strings, which are also whitespace trimmed
      */
     public static List<String> string2list(String s, String delim) {
         if (s == null) {
@@ -466,11 +471,10 @@ public class TextUtils {
      * "-name-with.invalid characters;" // replace "-. ;" with "_"
      * "_name_with_invalid_characters_" //
      * 
-     * @param buf
-     * @param replace
-     *            string of characters to replace with the one substitute char
-     * @param substitution
-     * @return
+     * @param buf  buffer
+     * @param replace  string of characters to replace with the one substitute char
+     * @param substitution string to insert in place of chars
+     * @return scrubbed text
      */
     public static String fast_replace(String buf, String replace, String substitution) {
 
@@ -488,9 +492,9 @@ public class TextUtils {
     /**
      * Remove instances of any char in the remove string from buf
      * 
-     * @param buf
-     * @param remove
-     * @return
+     * @param buf text
+     * @param remove   string to remove 
+     * @return scrubbed text
      */
     public static String removeAny(String buf, String remove) {
 
@@ -506,10 +510,10 @@ public class TextUtils {
     /**
      * Replace any of the removal chars with the sub.  A many to one replacement.
      * alt:  use regex String.replace(//, '')
-     * @param buf
-     * @param remove
-     * @param sub
-     * @return
+     * @param buf text
+     * @param remove string to replace
+     * @param sub  the replacement string
+     * @return scrubbed text
      */
     public static String replaceAny(String buf, String remove, String sub) {
 
@@ -529,9 +533,9 @@ public class TextUtils {
      * 
      * Example: - a b c remove "-" from string above.
      * 
-     * @param buf
-     * @param remove
-     * @return
+     * @param buf text
+     * @param remove string to remove
+     * @return scrubbed text
      */
     public static String removeAnyLeft(String buf, String remove) {
 
@@ -559,6 +563,8 @@ public class TextUtils {
      * 
      * Where "__" represents omitted characters.
      * </pre>
+     * @param str text
+     * @return scrubbed text
      */
     public static String normalizeTextEntity(String str) {
         if (StringUtils.isBlank(str)) {
@@ -603,14 +609,17 @@ public class TextUtils {
      * A.T.T. or U.S. becomes ATT and US. A text such as Mr.Pibbs incorrectly
      * becomes MrPibbs but for the purposes of normalizing tokens this should be
      * fine. Use appropriate tokenization prior to using this as a filter.
+     * @param word phrase with periods denoting some abbreviation.
+     * @return scrubbed text
      */
     public static String normalizeAbbreviation(String word) {
         return word.replace(".", "");
     }
 
     /**
-     * @see Phoneticizer utility from OpenSextant v1.x Remove diacritics from a
-     *      phrase
+     * Supports Phoneticizer utility from OpenSextant v1.x Remove diacritics from a phrase
+     * @param word text
+     * @return scrubbed text
      */
     public static String removeDiacritics(String word) {
 
@@ -639,8 +648,8 @@ public class TextUtils {
      * Java-provided version of the filename the OS/FS may not be able to find
      * the file by the name given in a particular normalized form.
      * 
-     * @param str
-     * @return
+     * @param str text
+     * @return normalized string, encoded with NFD bytes
      */
     public static String normalizeUnicode(String str) {
         Normalizer.Form form = Normalizer.Form.NFD;
@@ -670,8 +679,9 @@ public class TextUtils {
      * tokens, e.g. a hyphen, should have caused a split into separate tokens at
      * the tokenization stage.
      * 
-     * @see Phoneticizer utility from OpenSextant v1.x Remove punctuation from a
-     *      phrase
+     *  Phoneticizer utility from OpenSextant v1.x Remove punctuation from a phrase
+     * @param word text
+     * @return scrubbed text
      */
     public static String removePunctuation(String word) {
 
@@ -726,6 +736,7 @@ public class TextUtils {
     /**
      * TODO: should be immutable list. But this is not a security issue; If
      * caller wants to add language they can.
+     * @return map of lang ID to language obj
      */
     public static Map<String, Language> getLanguageMap() {
         return LanguageMap_ISO639;
@@ -736,19 +747,20 @@ public class TextUtils {
      * most common language codes/names that exist in at least ISO-639-1 and
      * have a non-zero 2-char ID.
      * 
+     * <pre>
      * Based on:
      * http://stackoverflow.com/questions/674041/is-there-an-elegant-way
      * -to-convert-iso-639-2-3-letter-language-codes-to-java-lo
      * 
-     * Actual code mappings: en => eng eng => en
+     * Actual code mappings: en =&gt; eng eng =&gt; en
      * 
-     * cel => '' // Celtic; Avoid this.
+     * cel =&gt; '' // Celtic; Avoid this.
      * 
-     * tr => tur tur => tr
+     * tr =&gt; tur tur =&gt; tr
      * 
-     * Names: tr => turkish tur => turkish turkish => tr // ISO2 only
+     * Names: tr =&gt; turkish tur =&gt; turkish turkish =&gt; tr // ISO2 only
      * 
-     * 
+     * </pre>
      */
     public static void initLanguageData() {
         Locale[] locales = Locale.getAvailableLocales();
@@ -765,9 +777,9 @@ public class TextUtils {
      * and enrich metadata when tagging data from particular countries.
      * 
      * TODO: consider whether this should be initialized optionally.
-     * @see http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt  for reference data used here.
+     * Reference: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt  
      * 
-     * @throws java.io.IOException
+     * @throws java.io.IOException if resource file is not found
      */
     public static void initLOCLanguageData() throws java.io.IOException {
         //
@@ -802,7 +814,7 @@ public class TextUtils {
     /**
      * Extend the basic language dictionary.
      * 
-     * @param lg
+     * @param lg language object
      */
     public static void addLanguage(Language lg) {
         if (lg == null) {
@@ -829,6 +841,8 @@ public class TextUtils {
      * 
      * This is best effort, so if your code finds nothing, this returns code
      * normalized to lowercase.
+     * @param code lang ID
+     * @return name of language
      */
     public static String getLanguageName(String code) {
         if (code == null) {
@@ -881,8 +895,9 @@ public class TextUtils {
 
     /**
      * European languages = Romance + GER + ENG
-     * 
      * Extend definition as needed.
+     * @param l language ID
+     * @return true if language is European in nature 
      */
     public static boolean isEuroLanguage(String l) {
         Language lang = getLanguage(l);
@@ -898,6 +913,8 @@ public class TextUtils {
      * Romance languages = SPA + POR + ITA + FRA + ROM
      * 
      * Extend definition as needed.
+     * @param l lang ID
+     * @return true if language is a Romance language
      */
     public static boolean isRomanceLanguage(String l) {
         Language lang = getLanguage(l);
@@ -912,8 +929,7 @@ public class TextUtils {
     /**
      * Utility method to check if lang ID is English...
      * 
-     * @param x
-     *            a langcode
+     * @param x  a langcode
      * @return whether langcode is english
      */
     public static boolean isEnglish(String x) {
@@ -988,8 +1004,8 @@ public class TextUtils {
      * http://stackoverflow
      * .com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string
      * 
-     * @param buf
-     * @return
+     * @param chars char array for the text in question.
+     * @return count of CJK characters
      */
     public static int countCJKChars(char[] chars) {
         int cjkCount = 0;
@@ -1012,7 +1028,7 @@ public class TextUtils {
      * A simple test to see if text has any CJK characters at all. It returns
      * after the first such character.
      * 
-     * @param buf
+     * @param buf text
      * @return if buf has at least one CJK char.
      */
     public static boolean hasCJKText(String buf) {
@@ -1060,7 +1076,7 @@ public class TextUtils {
      * 
      * @param buf UTF-8 encoded text
      * @return byte array
-     * @throws IOException
+     * @throws IOException on error with compression or text encoding
      */
     public static byte[] compress(String buf) throws IOException {
         return compress(buf, "UTF-8");
@@ -1070,8 +1086,8 @@ public class TextUtils {
      * 
      * @param buf text
      * @param charset character set encoding for text
-     * @return
-     * @throws IOException
+     * @return byte array for the compressed result
+     * @throws IOException  on error with compression or text encoding
      */
     public static byte[] compress(String buf, String charset) throws IOException {
 
@@ -1085,10 +1101,10 @@ public class TextUtils {
 
     /**
      * 
-     * @param gzData
+     * @param gzData   byte array containing gzipped buffer
      * @return buffer UTF-8 decoded string
      * 
-     * @throws IOException
+     * @throws IOException  on error with decompression or text encoding
      */
     public static String uncompress(byte[] gzData) throws IOException {
         return uncompress(gzData, "UTF-8");
@@ -1096,10 +1112,10 @@ public class TextUtils {
 
     /**
      * 
-     * @param gzData
+     * @param gzData  byte array containing gzipped buffer
      * @param charset character set decoding for text
-     * @return
-     * @throws IOException
+     * @return buffer of uncompressed, decoded string
+     * @throws IOException  on error with decompression or text encoding
      */
     public static String uncompress(byte[] gzData, String charset) throws IOException {
         GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(gzData));

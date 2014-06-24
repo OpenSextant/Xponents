@@ -43,10 +43,11 @@ public class MGRSParser {
      * Given the match parse MGRS as best as can be done. 
      * TODO: provide level of confidence.  Items that match MGRS scheme perfectly are more likely to be MGRS than those that 
      * are not perfect matches, e.g. typos, inadvertent text wrapping, whitespace etc.
-     * 
-     * @param text
-     * @param elements
-     * @return
+     *
+     * @param rawtext the rawtext
+     * @param _text text normalized, optionally
+     * @param elements matched groups within regex pattern
+     * @return array of possible MGRS interpretations.
      */
     public static MGRS[] parseMGRS(String rawtext, String _text, Map<String, String> elements) {
         // pad MGRS
@@ -260,8 +261,9 @@ public class MGRSParser {
      * 
      * dd dd\nd   odd digits and has line endings
      * 
-     * @param ne
-     * @return
+     * @param ne NE string, e.g,. 56789 01234
+     * @param oddLength if len is odd
+     * @return if easting/northing is valid
      */
     protected static boolean isValidEastingNorthing(String ne, boolean oddLength) {
         // PARSE RULE:  ignore abnormal MGRS patterns with line endings in the match
@@ -294,8 +296,8 @@ public class MGRSParser {
 
     /**
      *
-     * @param x
-     * @return
+     * @param x an integer string
+     * @return int for the string
      */
     protected static int parseInt(String x) {
         try {

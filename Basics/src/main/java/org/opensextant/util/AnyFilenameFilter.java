@@ -11,15 +11,16 @@ public class AnyFilenameFilter implements FilenameFilter {
 
     /**
      *
-     * @param ext
+     * @param ext file extension
      */
     public AnyFilenameFilter(String ext){ extension = ext; }
+    
     /**
      * FilenameFilter implementation for XML files
      *
-     * @param dir
-     * @param fname
-     * @return
+     * @param dir dir to filter on
+     * @param fname file name to test
+     * @return if file is accepted by this filter
      */
     public boolean accept(File dir, String fname) {
         if (dir == null || fname == null) {
