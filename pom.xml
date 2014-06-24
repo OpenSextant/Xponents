@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.4.3</version>
+    <version>2.5</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -55,7 +55,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.5.6</slf4j.version>
+        <slf4j.version>1.7.5</slf4j.version>
     </properties>
 
     <modules>
@@ -74,22 +74,22 @@
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-basics</artifactId>
-                <version>2.4.3</version>
+                <version>2.5</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents</artifactId>
-                <version>2.4.3</version>
+                <version>2.5</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-xtext</artifactId>
-                <version>1.5.4</version>
+                <version>2.5</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-examples</artifactId>
-                <version>2.4.3</version>
+                <version>2.5</version>
             </dependency>
 
             <dependency>
@@ -175,8 +175,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.6</source>
-                    <target>1.6</target>
-                    <compilerVersion>1.6</compilerVersion>
+                    <target>1.7</target>
+                    <compilerVersion>1.7</compilerVersion>
                     <compilerArgument>-Xlint:all,-path</compilerArgument>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
