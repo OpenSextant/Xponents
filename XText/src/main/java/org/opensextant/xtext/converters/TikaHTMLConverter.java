@@ -45,7 +45,7 @@ import org.opensextant.util.TextUtils;
  * A Tika HTML parser that reduces large amounts of empty lines in converted
  * HTML text.
  * 
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TikaHTMLConverter extends ConverterAdapter {
 

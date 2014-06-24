@@ -40,7 +40,7 @@ import org.opensextant.util.TextUtils;
  * Text converter that detects original encoding to include pure ASCII, Latin1, UTF-8 etc
  * Whereas Tika does not make a not of pure-ASCII texts.
  *  
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TextTranscodingConverter extends ConverterAdapter {
 
