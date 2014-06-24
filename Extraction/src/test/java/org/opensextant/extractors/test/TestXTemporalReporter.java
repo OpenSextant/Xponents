@@ -25,8 +25,11 @@
  */
 package org.opensextant.extractors.test;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.File;
+import java.io.OutputStreamWriter;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.opensextant.util.FileUtility;
 import org.opensextant.extraction.TextMatch;

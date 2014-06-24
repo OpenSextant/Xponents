@@ -26,8 +26,11 @@
 package org.opensextant.extractors.test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.*;
 
@@ -155,6 +158,21 @@ public class TestXCoord {
         }
         log.info("=== SYSTEM TESTS DONE ===");
     }
+    
+    /**
+     * Deprecated: LineNumberReader is deprecated. Very limited as this reads the entire buffer first.
+     *
+     * @param filepath file to read.
+     * @return LineNumberReader obj
+     * @throws FileNotFoundException
+     * @throws IOException if reader could not be created
+     * @deprecated LineNumber reader is deprecated
+     */
+    @Deprecated
+    public static LineNumberReader getLineReader(String filepath) throws FileNotFoundException, IOException {
+        return new LineNumberReader(new StringReader(FileUtility.readFile(filepath)));
+    }
+
 
     /**
      * This will accomodate any test file that has at least the following style:
@@ -180,7 +198,7 @@ public class TestXCoord {
             TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname
                     + "-lines.csv");
 
-            java.io.LineNumberReader in = FileUtility.getLineReader(coordfile);
+            java.io.LineNumberReader in = getLineReader(coordfile);
             String line = null;
             while ((line = in.readLine()) != null) {
 
