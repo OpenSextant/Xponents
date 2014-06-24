@@ -34,7 +34,7 @@ import org.opensextant.xtext.ConvertedDocument;
 
 /**
  * @author T. Allison, MITRE
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class MSDocConverter extends ConverterAdapter {
 

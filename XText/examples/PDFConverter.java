@@ -39,7 +39,7 @@ import org.opensextant.xtext.iConvert;
  * @deprecated  Tika's PDF parser does a better job.  The extra metadata fields I was grabbing here are not that useful. 
  * Handling of encrypted PDF documents is still suspect.
  * 
- * @author Marc C. Ubaldino, MITRE <ubaldino at mitre dot org>
+ * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class PDFConverter implements iConvert {
 
