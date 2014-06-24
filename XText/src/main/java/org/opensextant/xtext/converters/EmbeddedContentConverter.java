@@ -29,12 +29,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
 import org.apache.tika.extractor.EmbeddedResourceHandler;
 import org.apache.tika.extractor.ParserContainerExtractor;
 import org.apache.tika.io.TikaInputStream;
@@ -60,7 +61,8 @@ public class EmbeddedContentConverter extends DefaultConverter {
         supportedTypes.add("docx");
         supportedTypes.add("doc");
         supportedTypes.add("pdf");
-        // Tika 1.5 test case only - supportedTypes.add("xls");
+        // Tika 1.5 test case only - 
+        // supportedTypes.add("xls");
     }
 
     public EmbeddedContentConverter() {
@@ -81,7 +83,10 @@ public class EmbeddedContentConverter extends DefaultConverter {
      * @return
      */
     public static boolean isSupported(String fileext) {
-        return supportedTypes.contains(fileext);
+        if (StringUtils.isBlank(fileext)) {
+            return false;
+        }
+        return supportedTypes.contains(fileext.toLowerCase());
     }
 
     /**
@@ -90,10 +95,14 @@ public class EmbeddedContentConverter extends DefaultConverter {
      * 
      */
     @Override
-    protected ConvertedDocument conversionImplementation(InputStream in, File doc) throws IOException {
-
+    protected ConvertedDocument conversionImplementation(InputStream in, File doc)
+            throws IOException {
         ConvertedDocument compoundDoc = super.conversionImplementation(in, doc);
-        if (!isSupported(compoundDoc.extension)) {
+
+        String ext = FilenameUtils.getExtension(doc.getName());
+        if (!isSupported(ext)) {
+            // We know we don't support textifying compound docs of this type.  DONE!
+            // 
             return compoundDoc; // Not really compound by our standards here.
         }
 
@@ -104,13 +113,59 @@ public class EmbeddedContentConverter extends DefaultConverter {
         try {
             tikaStream = TikaInputStream.get(doc);
             extractor.extract(tikaStream, extractor, objExtractor);
-        } catch (TikaException e) {
-            throw new IOException("Stream parsing problem");
+            compoundDoc.is_converted = true;
+            if (compoundDoc.hasRawChildren()) {
+                // Create text buffer for this compound document here.
+                // If raw children should be post-processed by some other means, that is up to caller.
+                // This parent document at least contains a complete text representation of the content in the original doc.
+                StringBuilder completeText = new StringBuilder();
+
+                completeText.append(compoundDoc.getText());
+                completeText.append("\n==Embedded Objects==\n");
+                completeText.append(renderText(compoundDoc.getRawChildren()));
+
+                compoundDoc.setText(completeText.toString());
+                compoundDoc.is_converted = true;
+                return compoundDoc;
+            } else {
+                // Okay, the complicated Embedded doc approach did not yied anything.
+                // Try the simple approach.
+                return compoundDoc;
+            }
+        } catch (Exception e) {
+            throw new IOException("Stream parsing problem", e);
         } finally {
             tikaStream.close();
         }
+    }
 
-        return compoundDoc;
+    private DefaultConverter conv = new DefaultConverter();
+
+    /**
+     * 
+     * @param childObjects
+     * @return
+     */
+    private String renderText(List<Content> childObjects) {
+        StringBuilder buf = new StringBuilder();
+        for (Content c : childObjects) {
+
+            buf.append(String.format("\n[Embedded: %s; %s]\n", c.id, c.tikaMediatype.toString()));
+            try {
+                // NOTE: To do this well, you may have to write bytes to disk as a valid file name
+                //  And let Tika convert in full.
+
+                ConvertedDocument text = conv.conversionImplementation(
+                        TikaInputStream.get(c.content, c.tikaMetadata), null);
+                buf.append(text.getText());
+            } catch (IOException ioe) {
+                buf.append("Unconvertable content");
+            }
+
+            buf.append("\n");
+        }
+
+        return buf.toString();
     }
 
     private final static Set<String> filterableMeta = new HashSet<String>();
@@ -152,12 +207,16 @@ public class EmbeddedContentConverter extends DefaultConverter {
             }
             if (filterOut) {
                 if ("image/png".equalsIgnoreCase(mediaType)) {
-                     return true;
+                    return true;
                 }
             }
             return false;
         }
 
+        /**
+         * EmbeddedResourceHandler interface;  listen for objects and handle them as needed.
+         */
+        @Override
         public void handle(String filename, MediaType mediaType, InputStream stream) {
             Metadata md = new Metadata();
             ++objectCount;
@@ -167,9 +226,9 @@ public class EmbeddedContentConverter extends DefaultConverter {
                 log.debug("Filtering out object " + mediaType);
                 return;
             }
-
+            MimeType mimeType = null;
             try {
-                MimeType mimeType = TikaConfig.getDefaultConfig().getMimeRepository()
+                mimeType = TikaConfig.getDefaultConfig().getMimeRepository()
                         .getRegisteredMimeType(mediaType.toString());
                 ext = mimeType.getExtension();
 
@@ -189,10 +248,11 @@ public class EmbeddedContentConverter extends DefaultConverter {
                 filename = String.format("%s,Part%d.%s", parent.basename, objectCount, ext);
                 has_fname = false;
             } else if (filename.length() < 3) {
-                filename = String.format("%s,Part_%s_%d.%s", parent.basename, filename, objectCount, ext);
+                filename = String.format("%s,Part_%s_%d.%s", parent.basename, filename,
+                        objectCount, ext);
             }
-            
-            if (filename.contains("/")){
+
+            if (filename.contains("/")) {
                 filename = filename.replace("/", "_");
             }
 
@@ -203,6 +263,12 @@ public class EmbeddedContentConverter extends DefaultConverter {
             Content child = new Content();
             child.id = filename;
             child.meta.setProperty(ConvertedDocument.CHILD_ENTRY_KEY, filename);
+            if (mimeType != null) {
+                child.mimeType = mimeType.toString();
+            }
+            // NOTE: this is redundant here; as we just created tika Metadata() object ourselves.
+            child.tikaMetadata = md;
+            child.tikaMediatype = mediaType;
 
             try {
                 child.content = IOUtils.toByteArray(stream);
@@ -210,7 +276,9 @@ public class EmbeddedContentConverter extends DefaultConverter {
                 log.error("Embedded object IO error", e1);
             }
 
-            parent.addRawChild(child);
+            if (child.content.length > 0) {
+                parent.addRawChild(child);
+            }
         }
     }
 }
