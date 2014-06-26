@@ -76,6 +76,13 @@
   </target>
 
   <target name="copy-docs">
+    <copy todir="${release}/">
+        <fileset dir="${xponents.home}/">
+           <include name="NOTICE" />
+           <include name="LICENSE" />
+           <include name="*.md" />
+        </fileset>
+    </copy>
     <copy todir="${release}/doc/Extraction/apidocs">
         <fileset dir="${xponents.home}/Extraction/target/apidocs"/>
     </copy>

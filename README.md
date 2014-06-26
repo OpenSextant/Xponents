@@ -1,9 +1,9 @@
 Xponents
 ========
 
- Part of Xponents 2.x (OpenSextant v2.0)
+ Part of Xponents 2.5 (OpenSextant v2.0)
  Date:     25 JULY 2013
- Updated:  01 MAY 2014
+ Updated:  01 June 2014
 
 Xponents is a set of text extractor libraries with a light veneer of processing control, including:
 
@@ -15,22 +15,32 @@ Xponents is a set of text extractor libraries with a light veneer of processing 
 
 The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.
 
+#Documentation#
+When you build or use a release, see component documentation in ./doc/
+ * ./doc/Examples  shows some Examples of geo/temporal extractors and output formatters
+ * ./doc/Extraction provides the core library for geo, temporal and other pattern-based extraction
+ * ./doc/XText  documents the document conversion, text extraction library
+ * ./doc/Basics TBD -- primarily used in Extraction, however there are utilities and reference data useful on its own.
+ * Javadoc for each module is provided in each folder
+ 
+As well, the documentation for each module is in the respective source tree.
 
 #Dependencies#
 
 ##Java##
 Set JAVA_HOME to your JDK6 or JDK7 installation;  Maven javadoc plugin requires JAVA_HOME set
 Minimum Requirement: 
-  - Java 6 
+  - Java 7  (2.5 or later)
+  - Java 6  (2.4.3 or earlier)
   - Maven 3.2 to build and develop
   - Ant 1.9 is useful for running release scripts
  
 FlexPat pattern-based extractors rely on Java 6+ regular expression API
 
 ##Other Libraries##
-XText depends on Tika 1.3+
-XCoord depends on Geodesy (OpenSextant)
-Extraction makes usef of GISCore (OpenSextant)
+XText depends on Tika 1.5+
+XCoord depends on Geodesy (OpenSextant) for geodetic parsing and validation 
+Extraction makes usef of GISCore (OpenSextant) for output file formatting
 
 Name Matching depends on:
 
