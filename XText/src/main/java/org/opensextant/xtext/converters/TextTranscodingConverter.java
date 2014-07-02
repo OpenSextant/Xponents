@@ -111,7 +111,8 @@ public class TextTranscodingConverter extends ConverterAdapter {
      * It could be an object that was parsed adhoc.  We cannot make any assumption about 
      * the state of the conversion.  This only sets String buffer and charset.
      * 
-     * @param d
+     * @param doc the doc
+     * @param data the byte data to test
      * @throws UnsupportedEncodingException 
      */
     public static void setTextAndEncoding(ConvertedDocument doc, byte[] data) throws UnsupportedEncodingException {

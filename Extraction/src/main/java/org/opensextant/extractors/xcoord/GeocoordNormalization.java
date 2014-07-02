@@ -53,8 +53,8 @@ public final class GeocoordNormalization {
      * The match object is normalized, setting the coord_text and other data
      * from parsing "text" and knowing which pattern family was matched.
      * 
-     * @param m
-     * @param groups
+     * @param m match 
+     * @param groups fields
      * @throws NormalizationException
      */
     public static void normalize_coordinate(GeocoordMatch m, Map<String, TextEntity> groups) throws NormalizationException {
@@ -132,7 +132,7 @@ public final class GeocoordNormalization {
             m.setCoordinate(dmlat, dmlon);
 
             if (!m.isFilteredOut()){
-                m.setFilteredOut(m.evaluateDashes());
+                m.setFilteredOut(m.evaluateInvalidDashes());
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
 
@@ -149,7 +149,7 @@ public final class GeocoordNormalization {
             m.setCoordinate(dmlat, dmlon);
             
             if (!m.isFilteredOut()){
-                m.setFilteredOut(m.evaluateDashes());
+                m.setFilteredOut(m.evaluateInvalidDashes());
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
 
@@ -229,8 +229,8 @@ public final class GeocoordNormalization {
      * Not all pattens might have filters. This "filter_out" implies you should
      * evaluate the MatchFilter.stop() method on any implementation.
      * 
-     * @param m
-     * @return
+     * @param m the match
+     * @return true if match is invalid and should be marked as filtered out
      */
     public static boolean filter_out(GeocoordMatch m) {
         // Different reasons to filter out coordinate matches.
@@ -274,10 +274,12 @@ public final class GeocoordNormalization {
 
     /**
      * Hueuristic for what style of fields are allowed in valid DD or DM/DMS coordinates.
+     * This evaluates if a lat/lon pair have disparate field specificity.  A lat with Deg:Min
+     * should not be paired with a lon with Deg:Min:Sec:Subsec  for example.
      * 
      * @param lat
      * @param lon
-     * @return
+     * @return true if specifity of lat and lon are reasonable.
      */
     public static boolean evaluateSpecificity(DMSOrdinate lat, DMSOrdinate lon) {
 
@@ -314,8 +316,9 @@ public final class GeocoordNormalization {
     }
 
     /**
+     * set the precision on a match based on the situation (match + pattern)
      * 
-     * @param m
+     * @param m match
      */
     public static void set_precision(GeocoordMatch m) {
 

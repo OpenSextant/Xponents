@@ -161,6 +161,7 @@ public final class PoliPatternManager extends RegexPatternManager {
      * @return the poli match
      * @deprecated logic for creation of a match is back in main PoLi match loop
      */
+    @Deprecated
     public PoliMatch create_match(String pattern_id, String matchtext, Map<String, String> groups) {
         return new PoliMatch(groups, matchtext);
     }

@@ -172,6 +172,7 @@ public final class XText implements iFilter, iConvert {
      * @param tmp
      * @throws IOException
      */
+    @Deprecated
     public void setTempDir(String tmp) throws IOException {
         if (tmp == null) {
             throw new IOException("Temp Dir cannot be null");

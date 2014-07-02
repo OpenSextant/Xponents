@@ -26,12 +26,7 @@
  */
 package org.opensextant.extractors.geo;
 
-import org.opensextant.util.GeonamesUtility;
-import org.opensextant.util.SolrProxy;
-
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,14 +39,13 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.opensextant.data.Place;
 import org.opensextant.data.Country;
-
+import org.opensextant.data.Place;
+import org.opensextant.util.GeonamesUtility;
+import org.opensextant.util.SolrProxy;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-import org.supercsv.io.CsvMapReader;
-import org.supercsv.prefs.CsvPreference;
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The
@@ -77,20 +71,29 @@ public class SolrGazetteer {
     private Map<String, String> fips2iso = new HashMap<String, String>();
 
     /**
+     * Instantiates a new solr gazetteer.
      *
-     * @throws IOException
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public SolrGazetteer() throws IOException {
         initialize();
     }
 
 
-    /** Returns the SolrProxy used internally. */
+    /**
+     *  Returns the SolrProxy used internally.
+     *
+     * @return the solr proxy
+     */
     public SolrProxy getSolrProxy() {
         return solr;
     }
 
     /**
+     * Normalize country name.
+     *
+     * @param c the c
+     * @return the string
      */
     public static String normalizeCountryName(String c) {
         return StringUtils.capitalize(c.toLowerCase());
@@ -100,6 +103,9 @@ public class SolrGazetteer {
     private GeonamesUtility geodataUtil = null;
     
     /**
+     * Initialize.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private void initialize() throws IOException {
 
@@ -133,19 +139,25 @@ public class SolrGazetteer {
 
     /**
      * List all country names, official and variant names.
+     *
+     * @return the countries
      */
     public Map<String, Country> getCountries() {
         return country_lookup;
     }
 
+    /** The Constant UNK_Country. */
     public static final Country UNK_Country = new Country("UNK", "invalid");
 
     /**
      * Get Country by the default ISO digraph returns the Unknown country if you
      * are not using an ISO2 code.
-     *
+     * 
      * TODO: throw a GazetteerException of some sort. for null query or invalid
      * code.
+     *
+     * @param isocode the isocode
+     * @return the country
      */
     public Country getCountry(String isocode) {
         if (isocode == null) {
@@ -158,7 +170,10 @@ public class SolrGazetteer {
     }
 
     /**
+     * Gets the country by fips.
      *
+     * @param fips the fips
+     * @return the country by fips
      */
     public Country getCountryByFIPS(String fips) {
         String isocode = fips2iso.get(fips);
@@ -168,8 +183,10 @@ public class SolrGazetteer {
     /**
      * This only returns Country objects that are names; It does not produce any
      * abbreviation variants.
-     *
+     * 
      * TODO: allow caller to get all entries, including abbreviations.
+     *
+     * @throws SolrServerException the solr server exception
      */
     protected void loadCountries() throws SolrServerException {
         country_lookup = new HashMap<String, Country>();
@@ -230,16 +247,17 @@ public class SolrGazetteer {
      * <pre>
      * Search the gazetteer using a phrase.
      * The phrase will be quoted internally as it searches Solr
-     *
+     * 
      *  e.g., search( "\"Boston City\"" )
-     *
+     * 
      * Solr Gazetteer uses OR as default joiner for clauses.  Without quotes
      * the above search would be "Boston" OR "City" effectively.
-     *
+     * 
      * </pre>
      *
+     * @param place_string the place_string
      * @return places List of place entries
-     * @throws MatcherException
+     * @throws SolrServerException the solr server exception
      */
     public List<Place> search(String place_string) throws SolrServerException {
         return search(place_string, false);
@@ -248,18 +266,20 @@ public class SolrGazetteer {
     /**
      * <pre>
      * Search the gazetteer using one of the following:
-     *
+     * 
      *   a name or keyword
      *   a Solr style fielded query, which by default includes bare keyword searches
-     *
+     * 
      *  search( "\"Boston City\"" )
-     *
+     * 
      * Solr Gazetteer uses OR as default joiner for clauses.
-     *
+     * 
      * </pre>
      *
+     * @param place the place
+     * @param as_solr the as_solr
      * @return places List of place entries
-     * @throws MatcherException
+     * @throws SolrServerException the solr server exception
      */
     public List<Place> search(String place, boolean as_solr) throws SolrServerException {
 
@@ -285,40 +305,4 @@ public class SolrGazetteer {
         return places;
     }
 
-    /**
-     * Do a basic test -- This main prog makes use of the default JVM arg for solr:  -Dsolr.solr.home = /path/to/solr
-     */
-    public static void main(String[] args) throws Exception {
-        //String solrHome = args[0];
-        /*
-        String OPENSEXTANT_HOME = System.getProperty("opensextant.home");
-        String SOLR_HOME = OPENSEXTANT_HOME + File.separator + ".." + File.separator + "opensextant-solr";
-        System.setProperty("solr.solr.home", SOLR_HOME);
-         */
-
-        SolrGazetteer gaz = new SolrGazetteer();
-        GeonamesUtility geodataUtil = new GeonamesUtility();
-
-        try {
-
-            // Try to get countries
-            Map<String, Country> countries = gaz.getCountries();
-            for (Country c : countries.values()) {
-                System.out.println(c.getKey() + " = " + c.name + "\t  Aliases: " + c.getAliases().toString());
-            }
-
-            List<Place> matches = gaz.search("+Boston +City");
-
-            for (Place pc : matches) {
-                System.out.println(pc.toString() + " which is categorized as: "
-                        + geodataUtil.getFeatureName(pc.getFeatureClass(), pc.getFeatureCode()));
-            }
-
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        gaz.shutdown();
-        System.exit(0);
-
-    }
 }

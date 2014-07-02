@@ -94,8 +94,8 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
     private String textnorm = null;
 
     /**
-     * Get normalized version of text.
-     * @return
+     * 
+     * @return normalized version of text.
      */
     public String getTextnorm(){
         if (textnorm == null){
@@ -115,6 +115,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
     }
     /**
      * Get the most highly ranked Place, or Null if empty list.
+     * @return Place the best choice
      */
     public Place getBestPlace() {
         if (chosen != null) {
@@ -135,6 +136,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
     /**
      * Get the disambiguation score of the most highly ranked Place, or 0.0 if
      * empty list.
+     * @return score of best place
      */
     public Double getBestPlaceScore() {
         List<Double> l = this.getScores();
@@ -145,7 +147,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
     }
 
     /**
-     * Does our confidence indicate that this is actually a place?
+     * @return true = if a Place.  Does our confidence indicate that this is actually a place?
      */
     public boolean isPlace() {
         return (this.getPlaceConfidenceScore() > 0.0);
@@ -153,6 +155,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
 
     /**
      * Get a ranked list of places
+     * @return list of places ranked, sorted.
      */
     public List<Place> getPlaces() {
         this.sort();
@@ -161,6 +164,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
 
     /**
      * Get a ranked list of scores
+     * @return list of scores
      */
     public List<Double> getScores() {
         this.sort();
@@ -243,6 +247,8 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
      * Get the PlaceConfidence score. This is the confidence that this
      * PlaceCandidate represents a named place and not a person,organization or
      * other entity.
+     *
+     * @return the place confidence score
      */
     public Double getPlaceConfidenceScore() {
         if (placeConfidences.size() == 0) {
@@ -273,6 +279,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
      * only intended to be used in calibration/testing, it would not normally be
      * used in production.Note that it removes any existing rules and
      * confidences.
+     * @param score confidence score for this place.
      */
     public void setPlaceConfidenceScore(Double score) {
         placeConfidences.clear();
@@ -357,9 +364,6 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         return this.evidence;
     }
 
-    /**
-     * Convenience method for determining the state of a PlaceCandidate
-     */
     public boolean hasPlaces() {
         return !this.scoredPlaces.isEmpty();
     }

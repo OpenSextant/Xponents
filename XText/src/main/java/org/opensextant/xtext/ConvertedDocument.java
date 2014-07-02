@@ -146,6 +146,11 @@ public final class ConvertedDocument extends DocInput {
 
     public boolean WINDOWS_OS = FileUtility.isWindowsSystem();
 
+    /**
+     * Instantiates a new converted document.
+     *
+     * @param item file on disk
+     */
     public ConvertedDocument(File item) {
         super(null, null);
 
@@ -192,12 +197,15 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * Not that helpful: isChild or not is more meaningful.
-     * @return
+     * @return true if this instance is a Parent item.
      */
     public boolean isParent() {
         return isParent;
     }
 
+    /**
+     * @return true if instance is a child document/object that was contained in or attached to some other document.
+     */
     public boolean isChild() {
         return isChild;
     }
@@ -211,7 +219,7 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * Representation of the parent containing document.
-     * @param par
+     * @param par  parent obj
      */
     public void setParent(ConvertedDocument par) {
         // supporting only one level of nesting here.  Parents have children.
@@ -236,8 +244,9 @@ public final class ConvertedDocument extends DocInput {
      * If it is a child, ignore -- ensure child.parentContainer = child.parent.parentContainer
      * Children do not get to choose.
      * @deprecated  -- prefer to have children archived with originals always.  If you are pulling off binary data from originals (email, compound docs, etc) you will go nuts tracking it all.
-     * @param saveEmbedded
+     * @param saveEmbedded if embedded children should be saved to disk
      */
+    @Deprecated
     public void evalParentContainer(boolean saveEmbedded) {
         if (!isParent) {
             return;
@@ -283,7 +292,7 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * Add children converte docs.
-     * @param ch
+     * @param ch child doc
      */
     public void addChild(ConvertedDocument ch) {
         if (children == null) {
@@ -299,8 +308,8 @@ public final class ConvertedDocument extends DocInput {
     }
 
     /**
-     * true if this is a parent and has ConvertedDocument children. 
-     * @return
+     * 
+     * @return true if this is a parent and has ConvertedDocument children.
      */
     public boolean hasChildren() {
         return (children != null && !children.isEmpty());
@@ -317,7 +326,7 @@ public final class ConvertedDocument extends DocInput {
      * true if this is a parent and has raw Content children, e.g., raw bytes + metadata
      * which can in turn be saved as Files and then Converted to children
      * 
-     * @return
+     * @return true if instance is a parent and it has non-trivial children
      */
     public boolean hasRawChildren() {
         return (childrenContent != null && !childrenContent.isEmpty());
@@ -333,7 +342,7 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * All properties are added as a string
-     * @return
+     * @return  new Map of properties;  Copy of the internal JSON properties
      */
     public Map<String, String> getProperties() {
         Map<String, String> props = new HashMap<String, String>();
@@ -345,14 +354,16 @@ public final class ConvertedDocument extends DocInput {
     }
 
     /**
-     * support DocInput abstraction
+     * DocInput abstraction.  "Identity" of a document is subjective. By default it is the
+     * filepath, but could easily be set to MD5 digest, UUID, or some external record ID for this item.
+     * @param ident id of this instance. 
      */
     public void setId(String ident) {
         this.id = ident;
     }
 
     /**
-     * set encoding property
+     * @param enc text encoding 
      */
     public void setEncoding(String enc) {
         this.encoding = enc;
@@ -402,7 +413,7 @@ public final class ConvertedDocument extends DocInput {
     /**
      * DocInput interface: getText
      *
-     * @return buffer
+     * @return buffer - the text
      */
     @Override
     public String getText() {
@@ -491,7 +502,8 @@ public final class ConvertedDocument extends DocInput {
     }
 
     /**
-     *
+     * @param k key for property
+     * @return
      */
     public String getProperty(String k) {
         return meta.optString(k);
@@ -580,10 +592,12 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * Find the relative path where this item should reside.
+     * <pre>
      *   Given file  /source/a/b/c.xyz
      *   where will reside in archive?    /archive/.../source/a/b/c.xyz
+     *   </pre>
      * Parent/Child relationship is complicated still.
-     * @param container
+     * @param container folder that represents the parent document
      */
     public void setPathRelativeTo(String container, boolean childrenWithParent) {
         String relPath = container;
@@ -597,10 +611,12 @@ public final class ConvertedDocument extends DocInput {
     /**
      * Given file /a/b/c.txt find me just the relative part to some root. That
      * is, for example, if we care more about the b folder regardless of that it
-     * is physically located in /a. Perform:
+     * is physically located in /a. Perform:<pre>
      *
-     * getRelativePath( "/a", "/a/b/c.txt") ===&gt; b/c.txt
-     *
+     * getRelativePath( "/a", "/a/b/c.txt") ===&gt; b/c.txt</pre>
+     * @param root prefix path
+     * @param p full path to an item.
+     * @return
      */
     public static String getRelativePath(String root, String p) {
         String _path = XText.fixPath(p).replace(root, "");

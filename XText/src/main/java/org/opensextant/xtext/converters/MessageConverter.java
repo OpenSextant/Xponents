@@ -67,7 +67,8 @@ public class MessageConverter extends ConverterAdapter {
     private List<String> textEncodings = new LinkedList<String>();
 
     /**
-     * 
+     * @param in stream
+     * @param doc original file 
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream in, File doc)
@@ -94,7 +95,7 @@ public class MessageConverter extends ConverterAdapter {
      *  
      * @param msg
      * @param doc
-     * @return
+     * @return doc conversion, likely a parent document with 1 or more child attachments
      * @throws MessagingException
      * @throws IOException
      */
@@ -123,14 +124,14 @@ public class MessageConverter extends ConverterAdapter {
      * Copy innate Message metadata into the ConvertedDocument properties to save that metadata in the normal place.
      * This metadata will also be replicated down through children items to reflect the fact the attachment was sent via this message.
      * 
-     * @param msgdoc
-     * @param message
+     * @param msgdoc  doc conversion
+     * @param message  original mail message
      * @throws MessagingException
      */
     private void setMailAttributes(ConvertedDocument msgdoc, Message message)
             throws MessagingException {
         String msg_id = getMessageID(message);
-        if (msg_id==null){
+        if (msg_id == null) {
             return;
         }
         msgdoc.id = getShorterMessageID(msg_id);
@@ -160,8 +161,8 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * Retrieve the Identifier part of a message, that is <id@server> we want the "id" part.
      * 
-     * @param message
-     * @return
+     * @param message mail message
+     * @return ID 
      * @throws MessagingException 
      */
     public static String getMessageID(Message message) throws MessagingException {
@@ -185,8 +186,8 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * Given a global msg ID, create an ID that should be relatively unique.
      * 
-     * @param globalId
-     * @return
+     * @param globalId the full SMTP/MIME message ID
+     * @return a shorter version of the ID cleaned of special chars
      */
     public static String getShorterMessageID(String globalId) {
         String msgId = extractAngleValue(globalId);
@@ -196,7 +197,7 @@ public class MessageConverter extends ConverterAdapter {
         if (msgid_parts.length > 1) {
             shorter = msgid_parts[0];
         }
-        
+
         // Clean up MSG ID
         // The same ID that is used to archive will be used to record in DB.
         //
@@ -210,8 +211,8 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * Whacky...  each child attachment will have some knowledge about the containing mail messsage which carried it.
      * 
-     * @param parent
-     * @param child
+     * @param parent parent doc
+     * @param child  raw content
      */
     private void copyMailAttrs(ConvertedDocument parent, Content child) {
 
@@ -233,10 +234,10 @@ public class MessageConverter extends ConverterAdapter {
      * This is a recursive parser that pulls off attachments into Child content or saves plain text as main message text.
      * Calendar invites are ignored.
      * 
-     * @param bodyPart
-     * @param parent
-     * @param buf
-     * @throws IOException
+     * @param bodyPart  individual sub-part to append to buffer
+     * @param parent parent doc
+     * @param buf text to append
+     * @throws IOException on error
      */
     public void parseMessage(Part bodyPart, ConvertedDocument parent, StringBuilder buf,
             String msgPrefixId) throws IOException {
@@ -431,7 +432,7 @@ public class MessageConverter extends ConverterAdapter {
      * 
      * @param file_id
      * @param input
-     * @return
+     * @return content raw child object
      * @throws IOException
      */
     private Content createChildContent(String file_id, InputStream input, PartMetadata meta)
@@ -460,9 +461,9 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * Create a Child item with all of the metadata populated correctly.
      *
-     * @param file_id
-     * @param meta
-     * @return
+     * @param file_id file ID, if Tika found one, or a custom one.
+     * @param meta metadata pulled from the MIME part
+     * @return content abstraction for the child
      */
     private Content createBaseChildContent(String file_id, PartMetadata meta) {
         Content child = new Content();
@@ -470,8 +471,8 @@ public class MessageConverter extends ConverterAdapter {
         child.encoding = meta.charset;
         child.meta.setProperty(ConvertedDocument.CHILD_ENTRY_KEY, file_id);
 
-        child.meta.setProperty(MAIL_KEY_PREFIX + "disposition",
-                (meta.disposition == null ? "none" : meta.disposition));
+        child.meta.setProperty(MAIL_KEY_PREFIX + "disposition", (meta.disposition == null ? "none"
+                : meta.disposition));
 
         if (meta.contentId != null) {
             child.meta.setProperty(MAIL_KEY_PREFIX + "content-id", meta.contentId);
@@ -490,6 +491,10 @@ public class MessageConverter extends ConverterAdapter {
      * Help determine charset, object type, filename if any, and file extension
      * Mainly to guide how to parse, filter and employ the text content of this Part.
      * 
+     * @author ubaldino
+     *
+     */
+    /**
      * @author ubaldino
      *
      */
@@ -563,12 +568,14 @@ public class MessageConverter extends ConverterAdapter {
             }
 
             String[] contentIds = bodyPart.getHeader("Content-Id");
-            if (contentIds != null && contentIds.length > 0 && (!StringUtils.isBlank(contentIds[0]))) {
+            if (contentIds != null && contentIds.length > 0
+                    && (!StringUtils.isBlank(contentIds[0]))) {
                 contentId = extractAngleValue(contentIds[0]);
             }
         }
 
         /** is QP encoding 
+         * @return true if is quoted-printable
          */
         public boolean isQP() {
             if (transferEncoding == null) {
@@ -577,6 +584,9 @@ public class MessageConverter extends ConverterAdapter {
             return "quoted-printable".equalsIgnoreCase(transferEncoding);
         }
 
+        /**
+         * @return true if is Base64 encoded
+         */
         public boolean isBase64() {
             if (transferEncoding == null) {
                 return false;
@@ -609,6 +619,9 @@ public class MessageConverter extends ConverterAdapter {
             return isInline;
         }
 
+        /**
+         * @return "html", if item is HTML, "txt" if item is plain text
+         */
         public String getPossibleFileExtension() {
             if (isHTML()) {
                 return "html";
@@ -622,8 +635,8 @@ public class MessageConverter extends ConverterAdapter {
 
     /**
      * 
-     * @param mimespec
-     * @return
+     * @param mimespec encoding spec
+     * @return charset name
      */
     public static String parseCharset(String mimespec) {
         //String cs = MimeUtility.javaCharset(mimespec);
@@ -643,8 +656,8 @@ public class MessageConverter extends ConverterAdapter {
      * file name for such things. TODO: possibly switch to MIME4J and Apache
      * James
      * 
-     * @param mimetype
-     * @return
+     * @param mimetype just the mime type, w/out charset
+     * @return file extension to map to given MIME
      */
     public static String getFileExtension(String mimetype) {
         if ("text/plain".equalsIgnoreCase(mimetype)) {
@@ -660,7 +673,7 @@ public class MessageConverter extends ConverterAdapter {
      * Create a safe filename from arbitrary text. That is no special shell
      * operators $, #, ?, >, <, *, ' ', etc.
      * 
-     * @param text
+     * @param text text of a filename
      * @return file name constructed from input text and underscores in place of
      *         special chars.
      */
@@ -683,10 +696,10 @@ public class MessageConverter extends ConverterAdapter {
     private static final Pattern ANGLE_EXTRACTOR = Pattern.compile("<(.+)>");
 
     /**
-     * Parse 'value' from '<value>'
+     * Parse 'value' from '<value>'  Used for pulling emailaddress or msgId value from headers.
      *
-     * @param value
-     * @return
+     * @param value any text
+     * @return value stripped of &lt;, gt&;
      */
     private static String extractAngleValue(String value) {
         Matcher regex = ANGLE_EXTRACTOR.matcher(value);

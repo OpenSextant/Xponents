@@ -134,7 +134,7 @@ public abstract class RegexPatternManager {
      * @param fam family
      * @param rule rule ID within the family
      * @param desc optional description
-     * @return
+     * @return pattern object
      */
     protected abstract RegexPattern create_pattern(String fam, String rule, String desc);
 

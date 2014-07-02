@@ -68,6 +68,7 @@ import org.opensextant.extraction.SolrTaggerRequest;
  * @author Marc Ubaldino - ubaldino@mitre.org
  * @deprecated See GazetteerMatcher, which splits up Solr tagger mechanics and actual gazetter logic.
  */
+@Deprecated
 public class PlacenameMatcher {
 
     private final Logger log = LoggerFactory.getLogger(getClass());

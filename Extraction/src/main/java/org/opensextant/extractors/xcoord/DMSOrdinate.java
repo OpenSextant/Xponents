@@ -71,7 +71,8 @@ public final class DMSOrdinate {
     public boolean has_hemi = false;
     private double value = 0;
 
-    /** */
+    /** Resolution field for DMS.ms
+     */
     public static enum Resolution {
         DEG, SUBDEG, MIN, SUBMIN, SEC, SUBSEC
     };
@@ -119,29 +120,30 @@ public final class DMSOrdinate {
      * 
      * All Constructors must set is_latitude from a given flag. This is used for
      * range validation.
-     * 
-     * @param fieldElements  groups within the matched regex/pattern
+     *
+     * @param fieldMatches the field matches
+     * @param fieldVals the field vals
      * @param islat  true if matched part is for latitude
      * @param text  the raw text of the matched coordinate
      * @throws NormalizationException if coordinate is not valid or unable to normalize
      */
-    public DMSOrdinate(Map<String, TextEntity> fieldMatches, Map<String, String> fieldVals, boolean islat,
-            String text) throws NormalizationException {
+    public DMSOrdinate(Map<String, TextEntity> fieldMatches, Map<String, String> fieldVals,
+            boolean islat, String text) throws NormalizationException {
 
         // VALID XCoord elements or groups:
-        /*
-         * degLat, degLon dd, ddd variable length minLat, minLon 0-59, ""
-         * secLat, secLon 0-59, "" decMinLat, decMinLon 0.00 to 59.99...
-         * variable length, arbitrary precision decMinLat3, decMinLon3 0-000 to
-         * 59-999... variable length, arbitrary precision decSecLat, decSecLon
-         * --- does not exist; need test cases for sub-second accuracy most use
-         * decimal degree d.dddddd...
-         * 
-         * dmsDegLat, dmsDegLon "dd", "ddd" dmsMinLat, dmsMinLon, "00" to "59"
-         * dmsSecLat, dmsSecLon, "00" to "59" fractMinLat, fracMinLon d to
-         * dddddd part of some other string, but represents 0.ddddd minutes
-         * fractMinLat3, fractMinLon3 ddd to dddddd "" ""
-         */
+
+        // degLat, degLon dd, ddd variable length 
+        // minLat, minLon 0-59, ""
+        // secLat, secLon 0-59, "" 
+        // decMinLat, decMinLon 0.00 to 59.99...variable length, arbitrary precision 
+        // decMinLat3, decMinLon3 0-000 to 59-999... variable length, arbitrary precision 
+        // decSecLat, decSecLon --- does not exist; need test cases for sub-second accuracy most use
+        // decimal degree d.dddddd...
+        //
+        // dmsDegLat, dmsDegLon "dd", "ddd" dmsMinLat, dmsMinLon, "00" to "59"
+        // dmsSecLat, dmsSecLon, "00" to "59" 
+        // fractMinLat, fracMinLon d to dddddd part of some other string, but represents 0.ddddd minutes
+        // fractMinLat3, fractMinLon3 ddd to dddddd "" ""
 
         fields = fieldMatches;
         fieldValues = fieldVals;
@@ -180,7 +182,7 @@ public final class DMSOrdinate {
     /**
      * offsets for degree and hemisphere until this point are likely absolute within a document
      * Reset them using this relative offset.  Offsets will then be relative to text.
-     * @param matchStart
+     * @param matchStart offset of match into doc
      */
     protected void setRelativeOffsets(int matchStart) {
         if (offsetDeg >= 0) {
@@ -204,7 +206,7 @@ public final class DMSOrdinate {
 
     /**
      * 
-     * @return
+     * @return true if match has Hemisphere 
      */
     public boolean hasHemisphere() {
         // return hemisphere.polarity != NO_HEMISPHERE_VALUE;
@@ -214,7 +216,7 @@ public final class DMSOrdinate {
     /**
      * Get the cartesian value for this ordinate
      * 
-     * @return
+     * @return double
      */
     public double getValue() {
         return value;
@@ -412,7 +414,7 @@ public final class DMSOrdinate {
      * It would be difficult to skip minutes if DEG and SEC are only fields
      * present.
      * 
-     * @return
+     * @return true if Latitude fields parse properly
      */
     public final boolean digest_latitude_match() {
 
@@ -501,7 +503,7 @@ public final class DMSOrdinate {
      * This is a copy of the logic for digest_latitude_match; All I replace is
      * "Lat" with "Lon"
      * 
-     * @return
+     * @return true if longitude fields parse properly
      */
     public final boolean digest_longitude_match() {
         findDegreeOffset(degLonFields);
@@ -588,9 +590,9 @@ public final class DMSOrdinate {
      * caller should assume POSITIVE hemisphere is implied. further filtering by
      * caller is warranted.
      * 
-     * @param text
-     * @param elements
-     * @param islat
+     * @param text raw text of match
+     * @param elements fields
+     * @param islat true if match represents latitude
      */
     protected void normalize_hemisphere(String text, java.util.Map<String, String> elements,
             boolean islat) {
@@ -616,7 +618,7 @@ public final class DMSOrdinate {
 
     /**
      * 
-     * @return
+     * @return true if match has symbols
      */
     public boolean hasSymbols() {
         return coordinateSymbol != null;
@@ -627,7 +629,7 @@ public final class DMSOrdinate {
      */
     public static final String[] COORDINATE_SYMBOLS = { "°", "º", "'", "\"", ":", "lat", "lon",
             "geo", "coord", "deg" };
-    
+
     private String coordinateSymbol = null;
 
     /**
@@ -691,8 +693,8 @@ public final class DMSOrdinate {
 
     /**
      * 
-     * @param hemi
-     * @return
+     * @param hemi pos/neg number 1 or -1
+     * @return +/- symbol
      */
     public static String get_hemisphere_symbol(int hemi) {
         if (hemi == -1) {
@@ -705,8 +707,8 @@ public final class DMSOrdinate {
 
     /**
      * 
-     * @param val
-     * @return
+     * @param val +/- sign
+     * @return 1 or -1 polarity
      */
     public static int get_hemisphere_sign(String val) {
         if (val == null) {
@@ -743,7 +745,7 @@ public final class DMSOrdinate {
      * 
      * @param elements
      *            list of trimmed components of the match
-     * @return
+     * @return polarity of hemisphere from fields
      */
     protected int getLatHemisphereSign(java.util.Map<String, String> elements) {
 
@@ -777,7 +779,7 @@ public final class DMSOrdinate {
      * 
      * @param elements
      *            list of trimmed components of the match
-     * @return
+     * @return polarity of hemisphere from fields
      */
     protected int getLonHemisphereSign(java.util.Map<String, String> elements) {
         findHemiOffset(hemiLonFields);
@@ -802,13 +804,14 @@ public final class DMSOrdinate {
 
     /**
      * Only used for literal decimal degrees that require little parsing.
-     * 
-     * @param deg
-     * @param min
-     * @param sec
-     * @param islat
-     * @param hemi_sign
+     * @deprecated For XCoord purposes use the DMSOrdinate(map, map, boolean, text) form.
+     * @param deg  degrees
+     * @param min  minutes
+     * @param sec seconds
+     * @param islat true if match is latitude
+     * @param hemi_sign  polarity of hemisphere
      */
+    @Deprecated
     public DMSOrdinate(int deg, int min, int sec, boolean islat, int hemi_sign) {
         degrees = deg;
         minutes = min;
@@ -820,15 +823,16 @@ public final class DMSOrdinate {
     }
 
     /**
-     * Unused as of ver1.0
-     * 
-     * @param deg
-     * @param min
-     * @param sec
-     * @param msec
-     * @param islat
-     * @param hemi_sign
+     * Construct a lat or lon ordinate from given values.
+     * @deprecated For XCoord purposes use the DMSOrdinate(map, map, boolean, text) form.
+     * @param deg degrees
+     * @param min minutes
+     * @param sec seconds
+     * @param msec millis
+     * @param islat true if match is latitude
+     * @param hemi_sign polarity of hemisphere
      */
+    @Deprecated
     public DMSOrdinate(int deg, int min, int sec, int msec, boolean islat, int hemi_sign) {
         this(deg, min, sec, islat, hemi_sign);
         if (msec > 0) {
@@ -838,15 +842,18 @@ public final class DMSOrdinate {
     }
 
     /**
-     * Unused
+     * Construct a lat or lon ordinate from given values.
      * 
-     * @param deg
-     * @param min
-     * @param sec
-     * @param islat
-     * @param hemi_sign
-     * @throws java.text.ParseException
+     * @deprecated For XCoord purposes use the DMSOrdinate(map, map, boolean, text) form.
+     * 
+     * @param deg degrees
+     * @param min minutes
+     * @param sec seconds
+     * @param islat isLat
+     * @param hemi_sign polarity
+     * @throws java.text.ParseException on parsing error or if values are null
      */
+    @Deprecated
     public DMSOrdinate(String deg, String min, String sec, boolean islat, int hemi_sign)
             throws java.text.ParseException {
         if (deg == null) {

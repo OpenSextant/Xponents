@@ -40,14 +40,14 @@ package org.opensextant.extractors.xcoord;
 public interface MatchFilter {
 
     /** pass a match
-     * @param m
-     * @return
+     * @param m match
+     * @return true if instance m is valid coordinate
      */
     public boolean pass(GeocoordMatch m);
 
     /** stop a match
-     * @param m
-     * @return
+     * @param m match
+     * @return true if instance m is NOT valid coordinate
      */
     public boolean stop(GeocoordMatch m);
 }

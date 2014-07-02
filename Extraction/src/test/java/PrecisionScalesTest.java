@@ -39,6 +39,7 @@ public class PrecisionScalesTest {
      * @author dsmiley
      * @return String formatted number
      */
+    @Deprecated
     public static String format2(double f, int digits) {
         long rounderShift = 1;
         //TODO DWS: the comment here is probably obsolete since adding the round()
@@ -76,6 +77,7 @@ public class PrecisionScalesTest {
      * @param lat String version of decimal latitude, AS found raw
      * @return
      */
+    @Deprecated
     public static double DD_precision(String lat) {
         if (lat == null) {
             return -1;
@@ -101,6 +103,7 @@ public class PrecisionScalesTest {
      *
      * Ah same precision, but different number of digits.
      */
+    @Deprecated
     public static float[] DM_precision_list = {
         PrecisionScales.DEFAULT_UNKNOWN_RESOLUTION, // 0
         PrecisionScales.DEFAULT_UNKNOWN_RESOLUTION, // 1
@@ -120,6 +123,7 @@ public class PrecisionScalesTest {
      * @param lat String version of decimal latitude, AS found raw
      * @return
      */
+    @Deprecated
     public static float DM_precision(String lat) {
         if (lat == null) {
             return -1;

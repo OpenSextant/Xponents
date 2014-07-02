@@ -122,7 +122,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * abbreviation. By default such things are not abbreviations, e.g., Indiana
      * is typically IN or In. or Ind., for example. Oregon, OR or Ore. etc.
      * 
-     * but almost never in or or for those cases.
+     * but almost never 'in' or 'or' for those cases.
+     *
+     * @param b flag true = allow lower case abbreviations to be tagged, e.g., as in social media or 
      */
     public void setAllowLowerCaseAbbreviations(boolean b) {
         allowLowercaseAbbrev = b;
@@ -131,7 +133,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Currently unused user filter; default TagFilter is used internally.
      * 
-     * @param f
+     * @param f a match filter
      */
     public void setMatchFilter(MatchFilter f) {
         userfilter = f;
@@ -142,8 +144,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * Converts a GATE document to a string and passes it to the Solr server via
      * HTTP POST. The tokens and featureName parameters are not used.
      * 
-     * @param buffer
-     * @param docid
+     * @param buffer text
+     * @param docid  identity of the text
      * 
      * @return place_candidates List of place candidates
      * @throws ExtractionException
@@ -286,8 +288,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * Adapt the SolrProxy method for creating a Place object. Here, for
      * disambiguation down stream gazetteer metrics are added.
      * 
-     * @param gazEntry
-     * @return
+     * @param gazEntry a solr record from the gazetteer
+     * @return Place (Xponents) object
      */
     public static Place createPlace(SolrDocument gazEntry) {
 
@@ -300,9 +302,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return bean;
     }
 
-    /**
-     * Debugging
-     */
     private void summarizeExtraction(List<PlaceCandidate> candidates, String docid) {
         if (candidates == null) {
             log.error("Something is very wrong.");
@@ -406,30 +405,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 return true;
             }
             return false;
-        }
-    }
-
-    /**
-     * Do a basic test
-     */
-    public static void main(String[] args) throws Exception {
-        // String solrHome = args[0];
-
-        GazetteerMatcher sm = new GazetteerMatcher();
-        try {
-            String docContent = "We drove to Sin City. The we drove to -$IN ĆITŸ .";
-
-            System.out.println(docContent);
-
-            List<PlaceCandidate> matches = sm.tagText(docContent, "main-test");
-
-            for (PlaceCandidate pc : matches) {
-                System.out.println(pc.toString());
-            }
-        } catch (Exception err) {
-            err.printStackTrace();
-        } finally {
-            sm.shutdown();
         }
     }
 }

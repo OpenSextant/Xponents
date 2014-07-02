@@ -73,9 +73,11 @@ public class RegexPattern {
     public String family = null;
 
     /**
-     *
-     * @param _id  pattern identity
-     * @param _description  optional description
+     * Metadata for a Regular Expression pattern
+     * 
+     * @param _family  name of family 
+     * @param _id   pattern id within family
+     * @param _description  optional description of pattern
      */
     public RegexPattern(String _family, String _id, String _description) {
         family = _family;
