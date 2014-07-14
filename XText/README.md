@@ -1,11 +1,11 @@
 XText v2.5 README
 =================
 
-  Author: Marc. C. Ubaldino, MITRE Corporation
-  Contributors: Tim Allison, David Lutz, MITRE Corporation
-  Date: 2013-March
-  Updated: 2014-July
-  Copyright MITRE Corporation, 2012-2014
+    Author: Marc. C. Ubaldino, MITRE Corporation
+    Contributors: Tim Allison, David Lutz, MITRE Corporation
+    Date: 2013-March
+    Updated: 2014-July
+    Copyright MITRE Corporation, 2012-2014
 
 #Apache Tika is awesome#
 Tika  provides all sorts of solid content conversion and parsing capabilities.  XText wraps around Tika basics but 
@@ -46,20 +46,20 @@ Supported customizations:
 
 Basic Usage
 
+    //compile:
+    
+    mvn install
+    //run out of box tests if you are using a release of Xponents:
 
-  compile
-  mvn install
-  //run out of box tests if you are using a release of Xponents:
+    Run a unit test on a good size PDF doc
+    ant -f script/xtest-test.xml  test-default
+    // Convert a single file, a folder or a compressed archive or TAR.
+    // If you provide -Doutput=/path/to/xyz/  then XText conversions are saved to that path
+    ant -Dinputfile=./test/doc.docx  convert 
+    ant -Dinputfile=./test/somestuff.zip  convert 
+    ant -Dinputfile=./test/somestuff/  convert
 
-  Run a unit test on a good size PDF doc
-  ant -f script/xtest-test.xml  test-default
-  // Convert a single file, a folder or a compressed archive or TAR.
-  // If you provide -Doutput=/path/to/xyz/  then XText conversions are saved to that path
-  ant -Dinputfile=./test/doc.docx  convert 
-  ant -Dinputfile=./test/somestuff.zip  convert 
-  ant -Dinputfile=./test/somestuff/  convert
-
-  See ./script/convert.sh or convert.bat;  Ant required.
+    See ./script/convert.sh or convert.bat;  Ant required.
   
 
 #RELEASE NOTES#
