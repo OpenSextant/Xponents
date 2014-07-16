@@ -5,9 +5,9 @@ XText Usage
 
 The three main constructs in XText are:
 
-- the document conversion.  This is ALWAYS an interpretation of the real thing. There is no right answer for BIN>TEXT
-- data converters.  These are simple classes that take a single input object or stream and return a conversion.
-- data collectors. Crawling is also an interpretation of an original data sources.  XText supports simple web, 
+- **The document conversion.**  This is ALWAYS an interpretation of the real thing. There is no right answer for BIN>TEXT
+- **The data converters.**  These are simple classes that take a single input object or stream and return a conversion.
+- **The data collectors.** Crawling is also an interpretation of an original data sources.  XText supports simple web, 
   sharepoint, and IMAP mail box crawls. PST mailbox crawl is now experimental.
   
 
