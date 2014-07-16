@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+
 import javax.activation.MimeType;
 
 import net.sf.json.JSONObject;
@@ -240,6 +241,30 @@ public final class ConvertedDocument extends DocInput {
     }
 
     /**
+     * Apache Commons file utils "concat(dir, file)" makes a mess of file names.  
+     * Java can support "/" equally well on all platforms.  
+     * there is no apparent need to use platform specific file separators in this context.
+     * @param dir
+     * @param fname
+     * @return full path.
+     */
+    private static String makePath(File dir, String fname) {
+        return String.format("%s%s%s", dir.getAbsolutePath(), UNIVERSAL_PATH_SEP, fname);
+    }
+
+    /**
+     * Apache Commons file utils "concat(dir, file)" makes a mess of file names.  
+     * Java can support "/" equally well on all platforms.  
+     * there is no apparent need to use platform specific file separators in this context.
+     * @param dir
+     * @param fname
+     * @return full path.
+     */
+    private static String makePath(String dir, String fname) {
+        return String.format("%s%s%s", dir, UNIVERSAL_PATH_SEP, fname);
+    }
+
+    /**
      * If this doc is a Parent doc, then evaluate what its "container" should be, that is to house child objects and their conversions.
      * If it is a child, ignore -- ensure child.parentContainer = child.parent.parentContainer
      * Children do not get to choose.
@@ -269,7 +294,7 @@ public final class ConvertedDocument extends DocInput {
         } else {
             parPath = new File(textpath).getParent();
         }
-        parentContainer = new File(parPath + UNIVERSAL_PATH_SEP + parName);
+        parentContainer = new File(makePath(parPath, parName));
     }
 
     /**
@@ -287,7 +312,7 @@ public final class ConvertedDocument extends DocInput {
         String parName = String.format("%s_%s", basename, extension);
         String parPath = folder.getAbsolutePath();
 
-        parentContainer = new File(parPath + UNIVERSAL_PATH_SEP + parName);
+        parentContainer = new File(makePath(parPath, parName));
     }
 
     /**
@@ -662,7 +687,7 @@ public final class ConvertedDocument extends DocInput {
             throw new NullPointerException("outputDir was null");
         }
         if (is_converted) {
-            File target = new File(outputDir + UNIVERSAL_PATH_SEP + getNewPath(this.relative_path));
+            File target = new File(makePath(outputDir, getNewPath(this.relative_path)));
             this._saveConversion(target);
         }
     }
@@ -696,8 +721,7 @@ public final class ConvertedDocument extends DocInput {
      */
     public static ConvertedDocument getEmbeddedConversion(File obj) throws IOException {
 
-        String cacheFolder = String.format("%s/%s", XText.fixPath(obj.getParent()),
-                DEFAULT_EMBED_FOLDER);
+        String cacheFolder = makePath(XText.fixPath(obj.getParent()), DEFAULT_EMBED_FOLDER);
 
         // I now have a path name that was likely the one stored in cache.
         // Return the ConvertedDocument if exists at this path.
@@ -711,10 +735,10 @@ public final class ConvertedDocument extends DocInput {
     /**
      * Pass in a folder.  and the name of the object to uncache.
      *
-     * @param path
-     * @param fname
-     * @return
-     * @throws IOException
+     * @param path  containing folder
+     * @param fname  original file name sought
+     * @return previously converted document or null if not found.
+     * @throws IOException on error, likely from getCachedDocument
      */
     private static ConvertedDocument _uncacheConversion(String path, String fname)
             throws IOException {
@@ -735,14 +759,22 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * This provides some means for retrieving previously converted files. ....
-     * to avoid converted them.
+     * to avoid converted them.  This method takes the arguments and tries to infer the 
+     * actual location of a cached item.
+     * TODO:  For compound documents this needs more work.
+     * 
+     * @param cacheDir  shadow dir or separate archive path
+     * @param inputDir  original input folder where this item came from
+     * @param obj  the requested file.
+     * @return the cached version of the conversion; null if not found or if no conversion was made.
+     * @throws IOException
      */
     public static ConvertedDocument getCachedConversion(String cacheDir, String inputDir, File obj)
             throws IOException {
         String rel_path = getRelativePath(inputDir, obj.getParentFile().getAbsolutePath());
 
         // This folder contains the cached Item.
-        String cacheFolder = String.format("%s/%s", cacheDir, rel_path);
+        String cacheFolder = makePath(cacheDir, rel_path);
 
         // I now have a path name that was likely the one stored in cache.
         // Return the ConvertedDocument if exists at this path.
@@ -800,12 +832,16 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * 
-     * @return
+     * @return id of parent document. 
      */
     public String getParentID() {
         return meta.optString("xtext_parent_id");
     }
 
+    /**
+     * 
+     * @return path of parent document
+     */
     public String getParentPath() {
         return meta.optString("xtext_parent_path");
     }
@@ -815,6 +851,8 @@ public final class ConvertedDocument extends DocInput {
      * Expert mode:  use this only if you know what you are doing.
      *    You can add additional metadata to the meta sheet using addProperty()
      *    Then overwrite existing doc conversions
+     * @param target cached file to save a conversion.
+     * @throws IOException
      */
     public void saveBuffer(File target) throws IOException {
         StringBuilder buf = new StringBuilder();
