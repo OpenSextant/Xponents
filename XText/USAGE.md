@@ -151,17 +151,17 @@ And so 1 compound document -- the email file -- may yield 9 total objects to cac
 
 The benefits of caching text conversions needs to be weighed by each user of XText.
 
-   XText conv = new XText()
+    XText conv = new XText()
 
-   conv.enableSaveWithInput(true);   // Save in input folder in cache folders ".../xtext/"
-   conv.enableSaving(true);          // Save == cache ON    
-   conv.enableOverwrite(false);      // reuse cached conversions if possible.
-   conv.setup();                     // Finally, run setup, which double checks settings, folders, etc.
+    conv.enableSaveWithInput(true);   // Save in input folder in cache folders ".../xtext/"
+    conv.enableSaving(true);          // Save == cache ON    
+    conv.enableOverwrite(false);      // reuse cached conversions if possible.
+    conv.setup();                     // Finally, run setup, which double checks settings, folders, etc.
    
-   // Alternatively, instead of enableSaveWithInput(true), you want to save in a separate archive,
-   //
-   // Please be sure not to put your conversion archive under any possible input folders.   
-   conv.setArchiveDir("/path/to/conversion/archive/");
+    // Alternatively, instead of enableSaveWithInput(true), you want to save in a separate archive,
+    //
+    // Please be sure not to put your conversion archive under any possible input folders.   
+    conv.setArchiveDir("/path/to/conversion/archive/");
 
    
 #Error Handling#
