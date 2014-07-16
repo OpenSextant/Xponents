@@ -186,6 +186,14 @@
              http://wiki.apache.org/lucene-java/AvailableLockFactories
         -->
         <!-- <lockType>native</lockType> -->
+    <!--  WARNING: Your text tagger core is writable by multiple threads with the lockType=None,
+          However, this is the only way multiple threads can make use of an EmbeddedSolrServer text tagger.
+          There is no "read-only" mode in Solr. Yuck.
+          
+          CAVEAT: When you create your text tagger you must ensure that you have exactly one process 
+          updating the core records, and NO other processes are trying to use it. 
+     -->
+    <lockType>none</lockType>
 
         <!-- Unlock On Startup
 
@@ -918,15 +926,15 @@
                 -->
 
                 <!-- Default: Latin-based names only gazetteer
+                -->
                 <arr name="include_category">
                     <str>Basic</str><str>Wellknown</str><str>general</str>
                 </arr>
-                -->
                 <!-- Lean: Basic + Well-known places
-                -->
                 <arr name="include_category">
                     <str>Basic</str><str>Wellknown</str>
                 </arr>
+                -->
             </lst>
         </processor>
         <processor class="solr.RunUpdateProcessorFactory" />
