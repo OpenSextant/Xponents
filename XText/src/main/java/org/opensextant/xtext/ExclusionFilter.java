@@ -30,7 +30,7 @@ package org.opensextant.xtext;
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public interface iFilter {
+public interface ExclusionFilter {
 
     public boolean filterOutFile(String path);
 }

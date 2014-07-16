@@ -27,6 +27,8 @@
 
 package org.opensextant.xtext;
 
+import org.opensextant.ConfigException;
+
 /**
  * Converters are strongly recommended to provide a ability to read a File object
  *  ... and get more metadata from that implementation
@@ -38,10 +40,10 @@ package org.opensextant.xtext;
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public interface iConvert {
+public interface Converter {
 
     /** */
-    public ConvertedDocument convert(java.io.File doc) throws java.io.IOException;
+    public ConvertedDocument convert(java.io.File doc) throws java.io.IOException, ConfigException;
     /** */
-    public ConvertedDocument convert(String data) throws java.io.IOException;
+    public ConvertedDocument convert(String data) throws java.io.IOException, ConfigException;
 }
