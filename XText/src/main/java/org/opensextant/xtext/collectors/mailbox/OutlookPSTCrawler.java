@@ -31,6 +31,7 @@ import com.pff.PSTFile;
 import com.pff.PSTFolder;
 import com.pff.PSTMessage;
 import com.pff.PSTObject;
+import com.pff.PSTRecipient;
 
 /**
  * OutlookPSTCrawler traverses a PST file and pulls out: E-Mail files + attachments, Contacts, Appointments, etc. 
@@ -270,21 +271,67 @@ public class OutlookPSTCrawler implements Collector {
 
     }
 
+    /**
+     * 
+     * @param groupName
+     * @param folderName
+     * @param appt
+     * @return
+     * @throws IOException
+     * @throws PSTException
+     * @throws ConfigException
+     */
     public String processAppointment(String groupName, String folderName, PSTAppointment appt)
-            throws IOException {
+            throws IOException, PSTException, ConfigException {
         File appts = createGroupFolder(groupName, folderName);
-        String fname = MessageConverter.createSafeFilename(appt.getDisplayName());
+        String fname = MessageConverter.createSafeFilename(appt.getSubject());
 
         StringBuilder buf = new StringBuilder();
-        buf.append(appt.getDisplayName());
+        buf.append(appt.getSubject());
         buf.append(" appointment");
         buf.append(ITEM_SEP);
 
-        formatFields(parseValidEntries(appt.toString()), buf);
+        List<String> rList = getRecipients(appt);
+        if (rList != null) {
+            addHeaderText(buf, "X-recipients", StringUtils.join(rList, "; "));
+        } else {
+            addHeaderText(buf, "X-recipients", "No Recipients");
+        }
+
+        // Get a list of attachments.
+        List<String> attFiles = processAttachments(appt, appts);
+        if (attFiles != null && !attFiles.isEmpty()) {
+            addHeaderText(buf, "X-attchments", StringUtils.join(attFiles, "; "));
+        }
+        buf.append("\n\n");
+        buf.append(appt.getBody().trim());
+
+        //formatFields(parseValidEntries(appt.toString()), buf);
 
         String savedPath = makePath(appts, fname + ".txt");
         FileUtility.writeFile(buf.toString(), savedPath);
         return savedPath;
+    }
+
+    /**
+     * 
+     * @param appt
+     * @return
+     * @throws PSTException
+     * @throws IOException
+     */
+    public List<String> getRecipients(PSTAppointment appt) throws PSTException, IOException {
+
+        int recipients = appt.getNumberOfRecipients();
+        if (recipients > 0) {
+            List<String> rList = new ArrayList<String>();
+            for (int r = 0; r < recipients; ++r) {
+                PSTRecipient R = appt.getRecipient(r);
+                rList.add(String.format("%s <%s>", R.getDisplayName(), R.getEmailAddress()));
+            }
+            return rList;
+        }
+        return null;
     }
 
     private static String ITEM_SEP = "\n=====================\n";
