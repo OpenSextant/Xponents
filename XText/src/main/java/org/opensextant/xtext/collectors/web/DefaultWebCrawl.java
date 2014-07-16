@@ -30,7 +30,7 @@ import org.opensextant.ConfigException;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.ConvertedDocument;
-import org.opensextant.xtext.iFilter;
+import org.opensextant.xtext.ExclusionFilter;
 import org.opensextant.xtext.collectors.CollectionListener;
 import org.opensextant.xtext.collectors.Collector;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author ubaldino
  *
  */
-public class DefaultWebCrawl extends WebClient implements iFilter, Collector {
+public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Collector {
 
     /**
      * A collection listener to consult as far as how to record the found & converted content
@@ -262,8 +262,9 @@ public class DefaultWebCrawl extends WebClient implements iFilter, Collector {
      * convert and record a downloaded item, given the item and its source URL.
      * @param item
      * @throws IOException 
+     * @throws ConfigException 
      */
-    protected void convertContent(File item, HyperLink link) throws IOException {
+    protected void convertContent(File item, HyperLink link) throws IOException, ConfigException {
 
         if (item == null || link == null) {
             throw new IOException("Bad data - null values for file and link...");

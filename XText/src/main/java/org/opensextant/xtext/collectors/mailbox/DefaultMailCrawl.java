@@ -27,7 +27,6 @@ import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import org.apache.commons.lang.StringUtils;
 import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.ConversionListener;
 import org.opensextant.xtext.ConvertedDocument;

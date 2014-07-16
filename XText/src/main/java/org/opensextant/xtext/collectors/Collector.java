@@ -6,12 +6,12 @@ public interface Collector {
     
     /**
      * 
-     * @return
+     * @return name of the collector
      */
     public String getName();
+    
     /**
-     * 
-     * @return
+     * Invokes collection.
      */
     public void collect() throws Exception;
 }

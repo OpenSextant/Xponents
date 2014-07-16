@@ -20,7 +20,7 @@ public interface CollectionListener {
     /**
      * If the item identified by ID already exists, the collector will pass by it quietly
      * @param oid
-     * @return
+     * @return true if item exists in the caller's collection.  Implementor can then make a decision what to do if item exists or not.
      */
     public boolean exists(String oid) ;
 }

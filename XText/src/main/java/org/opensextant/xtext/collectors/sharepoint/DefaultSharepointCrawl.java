@@ -25,7 +25,7 @@ import org.apache.http.HttpResponse;
 import org.opensextant.ConfigException;
 import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.ConvertedDocument;
-import org.opensextant.xtext.iFilter;
+import org.opensextant.xtext.ExclusionFilter;
 import org.opensextant.xtext.collectors.CollectionListener;
 import org.opensextant.xtext.collectors.Collector;
 import org.opensextant.xtext.collectors.web.HyperLink;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author ubaldino
  *
  */
-public class DefaultSharepointCrawl extends SharepointClient implements iFilter, Collector {
+public class DefaultSharepointCrawl extends SharepointClient implements ExclusionFilter, Collector {
     /**
      * A collection listener to consult as far as how to record the found & converted content
      * as well as to determine what is worth saving.
@@ -211,8 +211,9 @@ public class DefaultSharepointCrawl extends SharepointClient implements iFilter,
      * convert and record a downloaded item, given the item and its source URL.
      * @param item
      * @throws IOException 
+     * @throws ConfigException 
      */
-    protected void convertContent(File item, HyperLink link) throws IOException {
+    protected void convertContent(File item, HyperLink link) throws IOException, ConfigException {
 
         if (item == null || link == null) {
             throw new IOException("Bad data - null values for file and link...");
