@@ -28,21 +28,21 @@ package org.opensextant.xtext.converters;
 
 import java.io.*;
 import java.util.zip.GZIPInputStream;
-import org.apache.commons.io.FilenameUtils;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.zip.*;
 import org.apache.commons.compress.archivers.tar.*;
 import org.apache.commons.compress.utils.IOUtils;
-
+import org.opensextant.ConfigException;
 import org.opensextant.util.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.opensextant.xtext.iFilter;
-import org.opensextant.xtext.iConvert;
-import org.opensextant.xtext.ArchiveUnpacker;
+import org.opensextant.xtext.ExclusionFilter;
+import org.opensextant.xtext.Converter;
+import org.opensextant.xtext.collectors.Collector;
 
 /**
  * Archive is traversed, but no data is written to disk unless XText is in save
@@ -50,20 +50,20 @@ import org.opensextant.xtext.ArchiveUnpacker;
  * 
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public class ArchiveNavigator implements ArchiveUnpacker {
+public class ArchiveNavigator implements Collector {
 
     private final Logger log = LoggerFactory.getLogger(ArchiveNavigator.class);
     // private File tempDir = null;
     private File saveDir = null;
-    private iFilter filter = null;
-    private iConvert converter = null;
+    private ExclusionFilter filter = null;
+    private Converter converter = null;
     public boolean overwrite = false;
 
     /**
      * Given a working temp folder and a file filter unpack archives.
      */
-    public ArchiveNavigator(String saveTo, iFilter fileFilter, iConvert fileConv)
-            throws IOException {
+    public ArchiveNavigator(File inputFile, String saveTo, ExclusionFilter fileFilter,
+            Converter fileConv) throws IOException {
         this.saveDir = new File(saveTo);
         FileUtility.makeDirectory(saveDir);
         filter = fileFilter;
@@ -73,39 +73,43 @@ public class ArchiveNavigator implements ArchiveUnpacker {
             throw new IOException(
                     "Filter and converter cannot be null -- XText is the default for both.");
         }
+
+        currentArchive = inputFile;
     }
 
     public String getWorkingDir() {
         return saveDir.getAbsolutePath();
     }
 
+    private File currentArchive = null;
+
     /**
      * Unpack any archive. You must provide a converter -- which converts each
      * file.
+     * @throws ConfigException 
      */
-    public void unpack(File archive) throws IOException {
-
+    public void collect() throws IOException, ConfigException {
         // Get file extension
-        String ext = FilenameUtils.getExtension(archive.getPath());
+        String ext = FilenameUtils.getExtension(currentArchive.getPath());
 
         File archivetmp = null;
 
         if (ext.equalsIgnoreCase("zip")) {
-            archivetmp = unzip(archive);
+            archivetmp = unzip(currentArchive);
         } else if (ext.equalsIgnoreCase("tar")) {
-            archivetmp = untar(archive);
+            archivetmp = untar(currentArchive);
         } else if (ext.equalsIgnoreCase("gz") || ext.equalsIgnoreCase("tgz")
                 || ext.equalsIgnoreCase("tar.gz")) {
-            String basename = FilenameUtils.getBaseName(archive.getName());
+            String basename = FilenameUtils.getBaseName(currentArchive.getName());
             // We assume the file is a tarball. First unzip it
-            File tarFile = gunzip(archive, basename);
+            File tarFile = gunzip(currentArchive, basename);
 
             // Then untar it
             archivetmp = untar(tarFile);
         } else {
             throw new IOException("Unsupported archive type: EXT=" + ext);
         }
-        log.info("Archive FILE={} has been processed to DIR={}", archive, archivetmp);
+        log.info("Archive FILE={} has been processed to DIR={}", currentArchive, archivetmp);
     }
 
     /*
@@ -114,7 +118,7 @@ public class ArchiveNavigator implements ArchiveUnpacker {
      * so there may be Zip-specific stuff here, ... but the approach is the
      * same.
      */
-    public File unzip(File zipFile) throws IOException {
+    public File unzip(File zipFile) throws IOException, ConfigException {
 
         // String _working = FilenameUtils.concat(getWorkingDir(),
         // FilenameUtils.getBaseName(zipFile.getPath()));
@@ -196,7 +200,7 @@ public class ArchiveNavigator implements ArchiveUnpacker {
      * the file converter. The converter can choose to do something else with
      * them.
      */
-    public File untar(File tarFile) throws IOException {
+    public File untar(File tarFile) throws IOException, ConfigException {
 
         String _working = FilenameUtils.concat(getWorkingDir(),
                 FilenameUtils.getBaseName(tarFile.getPath()));
@@ -285,5 +289,11 @@ public class ArchiveNavigator implements ArchiveUnpacker {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
