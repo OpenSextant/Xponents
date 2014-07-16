@@ -22,13 +22,13 @@ import java.io.File;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.commons.io.IOUtils;
 import org.opensextant.xtext.ConvertedDocument;
-import org.opensextant.xtext.iConvert;
+import org.opensextant.xtext.Converter;
 
 /**
  * 
  * @author ubaldino
  */
-public abstract class ConverterAdapter implements iConvert {
+public abstract class ConverterAdapter implements Converter {
 
     protected abstract ConvertedDocument conversionImplementation(InputStream in, File doc) throws IOException;
 
