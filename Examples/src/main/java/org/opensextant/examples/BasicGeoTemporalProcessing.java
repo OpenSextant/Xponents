@@ -235,9 +235,10 @@ public class BasicGeoTemporalProcessing
      * <code>main</code> method for a description of the input parameters. TODO:
      * outFile is not used. It is only used as a part of global settings
      * somewhere....
+     * @throws ConfigException 
      *
      */
-    public void run() throws ProcessingException, IOException {
+    public void run() throws ProcessingException, IOException, ConfigException {
 
         printRequest();
 
