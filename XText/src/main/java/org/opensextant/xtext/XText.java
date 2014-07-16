@@ -25,6 +25,7 @@
  */
 package org.opensextant.xtext;
 
+import org.opensextant.ConfigException;
 import org.opensextant.util.FileUtility;
 import org.opensextant.xtext.converters.EmbeddedContentConverter;
 import org.opensextant.xtext.converters.ImageMetadataConverter;
@@ -33,6 +34,7 @@ import org.opensextant.xtext.converters.TextTranscodingConverter;
 import org.opensextant.xtext.converters.TikaHTMLConverter;
 import org.opensextant.xtext.converters.ArchiveNavigator;
 import org.opensextant.xtext.converters.DefaultConverter;
+import org.opensextant.xtext.collectors.mailbox.OutlookPSTCrawler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
@@ -83,7 +86,7 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
  * 
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public final class XText implements iFilter, iConvert {
+public final class XText implements ExclusionFilter, Converter {
 
     private Logger log = LoggerFactory.getLogger(getClass());
     private boolean save = true;
@@ -123,9 +126,9 @@ public final class XText implements iFilter, iConvert {
     /**
      *
      */
-    public static Map<String, iConvert> converters = new HashMap<String, iConvert>();
-    private iConvert defaultConversion;
-    private iConvert embeddedConversion;
+    public static Map<String, Converter> converters = new HashMap<String, Converter>();
+    private Converter defaultConversion;
+    private Converter embeddedConversion;
     private Set<String> requestedFileTypes = new HashSet<String>();
     private Set<String> ignoreFileTypes = new HashSet<String>();
 
@@ -162,7 +165,12 @@ public final class XText implements iFilter, iConvert {
         if (!test.exists() || !test.isDirectory()) {
             throw new IOException("Archive root directory must exist");
         }
+    }
 
+    private String extractedChildrenArchiveDir = null;
+
+    public void setExtractedChildrenArchiveDir(String folder) {
+        extractedChildrenArchiveDir = folder;
     }
 
     /**
@@ -310,7 +318,17 @@ public final class XText implements iFilter, iConvert {
             return false;
         }
         return archiveFileTypes.contains(ext.toLowerCase());
+    }
 
+    public boolean isPST(String fpath) {
+        return isPSTExtension(FilenameUtils.getExtension(fpath));
+    }
+
+    public static boolean isPSTExtension(String ext) {
+        if (ext == null) {
+            return false;
+        }
+        return ("pst".equalsIgnoreCase(ext));
     }
 
     private String outputNode;
@@ -389,7 +407,7 @@ public final class XText implements iFilter, iConvert {
      * "/" as the standard path separator.
      *
      * @param p
-     * @return
+     * @return  fixed path
      */
     protected static String fixPath(String p) {
         if (p == null) {
@@ -400,8 +418,9 @@ public final class XText implements iFilter, iConvert {
 
     /**
      * The main entry point to converting compound documents and folders.
+     * @throws ConfigException 
      */
-    public void extractText(String filepath) throws IOException {
+    public void extractText(String filepath) throws IOException, ConfigException {
 
         start_time = System.currentTimeMillis();
 
@@ -488,7 +507,7 @@ public final class XText implements iFilter, iConvert {
      * Instead of potentially \ and/or / mixed.
      * @param dir
      * @param item
-     * @return
+     * @return  path
      * @throws IOException
      */
     private static String createPath(String dir, String item) throws IOException {
@@ -503,9 +522,10 @@ public final class XText implements iFilter, iConvert {
      * or (archive)/(input)/A_zip
      * 
      * Items are then converted in either folder for the conversion archiving; depending on your choice of embedded vs. non-embedded
+     * @throws ConfigException 
      * 
      */
-    public void convertArchive(File input) throws IOException {
+    public void convertArchive(File input) throws IOException, ConfigException {
 
         if (!this.saveConversionsWithOriginals && !this.saveExtractedChildrenWithOriginals
                 && this.archiveRoot == null) {
@@ -528,15 +548,59 @@ public final class XText implements iFilter, iConvert {
         // unpack, traverse, convert, save
         if (this.saveExtractedChildrenWithOriginals) {
             saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), inputNode);
-        } else {
+        } else if (extractedChildrenArchiveDir != null) {
             // Save converted items in a parallel archive for this zip archive.
-            saveArchiveTo = createPath(this.archiveRoot, inputNode);
+            saveArchiveTo = createPath(extractedChildrenArchiveDir, inputNode);
+        } else {
+            throw new ConfigException(
+                    "Archive files cannot be dearchived without a target folder to store child binaries");
         }
 
         this.setInputRoot(saveArchiveTo);
-        ArchiveNavigator unpacker = new ArchiveNavigator(saveArchiveTo, this, this);
-        unpacker.overwrite = ConvertedDocument.overwrite;
-        unpacker.unpack(input);
+        ArchiveNavigator deArchiver = new ArchiveNavigator(input, saveArchiveTo, this, this);
+        deArchiver.overwrite = ConvertedDocument.overwrite;
+        deArchiver.collect();
+    }
+
+    /**
+     * 
+     * @param input
+     * @throws IOException
+     */
+    public void convertOutlookPST(File input) throws ConfigException, IOException {
+        if (!this.save) {
+            log.error("Warning -- PST file found, but save = true is required to parse it.  Enable saving and chose a cache folder");
+        }
+
+        OutlookPSTCrawler pst = new OutlookPSTCrawler(input);
+        pst.setConverter(this);
+        pst.overwriteMode = ConvertedDocument.overwrite;
+        pst.incrementalMode = true;
+
+        String saveTo = null;
+        // unpack, traverse, convert, save
+        if (this.saveExtractedChildrenWithOriginals) {
+            saveTo = createPath(input.getParentFile().getAbsolutePath(), inputNode);
+        } else if (extractedChildrenArchiveDir != null) {
+            // Save converted items in a parallel archive for this zip archive.
+            saveTo = createPath(extractedChildrenArchiveDir, inputNode);
+        } else {
+            throw new ConfigException(
+                    "PST Files cannot be dearchived without a target folder to store child binaries");
+        }
+
+        File saveFolder = new File(saveTo);
+        if (!saveFolder.exists()) {
+            FileUtility.makeDirectory(saveFolder);
+        }
+
+        pst.setOutputDir(saveFolder);
+        pst.configure();
+        try {
+            pst.collect();
+        } catch (Exception err) {
+            throw new ConfigException("Unable to fully digest PST file " + input, err);
+        }
     }
 
     /**
@@ -556,9 +620,10 @@ public final class XText implements iFilter, iConvert {
      * deals with the details of saving and archiving items
      * 
      * Items retrieved from Archive Navigator are deleted from their temp space.
+     * @throws ConfigException 
      */
     @Override
-    public ConvertedDocument convert(File input) throws IOException {
+    public ConvertedDocument convert(File input) throws IOException, ConfigException {
         return convertFile(input);
     }
 
@@ -576,7 +641,7 @@ public final class XText implements iFilter, iConvert {
                 + "you must use an instance of a XText converter, e.g., TikaHTMLConverter");
     }
 
-    public ConvertedDocument convertFile(File input) throws IOException {
+    public ConvertedDocument convertFile(File input) throws IOException, ConfigException {
         return convertFile(input, null);
     }
 
@@ -594,7 +659,8 @@ public final class XText implements iFilter, iConvert {
      * @return converted document object
      * @throws java.io.IOException
      */
-    public ConvertedDocument convertFile(File input, ConvertedDocument parent) throws IOException {
+    public ConvertedDocument convertFile(File input, ConvertedDocument parent) throws IOException,
+            ConfigException {
 
         if (parent == null && filterOutFile(input)) {
             return null;
@@ -619,13 +685,16 @@ public final class XText implements iFilter, iConvert {
         log.debug("Converting FILE=" + input.getAbsolutePath());
 
         /*
-         * Handle archives.
+         * Handle archives or PST files. Or other large compound single file.
          */
         if (isArchive(fname)) {
             convertArchive(input);
 
             // NULL here implies the actual file, A.zip does not have any text representation itself.
             // However its children do.
+            return null;
+        } else if (isPSTExtension(ext)) {
+            convertOutlookPST(input);
             return null;
         }
 
@@ -638,7 +707,7 @@ public final class XText implements iFilter, iConvert {
         }
 
         boolean cachable = true;
-        iConvert converter = converters.get(ext);
+        Converter converter = converters.get(ext);
         if (converter == null) {
             if (extractEmbedded && EmbeddedContentConverter.isSupported(ext)) {
                 converter = embeddedConversion;
@@ -885,6 +954,10 @@ public final class XText implements iFilter, iConvert {
         requestedFileTypes.add("jpg");
         requestedFileTypes.add("jpeg");
 
+        // Limited PST support here.  PST will not behave the same as other files.
+        // Its closer to a Zip archive than an ordinary file.
+        requestedFileTypes.add("pst");
+
         // requested_types.add("log"); // Uncommon. Caller must expclitly add
         // raw data types and archives.
 
@@ -911,6 +984,14 @@ public final class XText implements iFilter, iConvert {
             throw new IOException(
                     "If not saving conversions with your input folders, you must provide an archive path");
         }
+
+        if (extractedChildrenArchiveDir != null) {
+            if (!new File(extractedChildrenArchiveDir).exists()) {
+                throw new IOException(
+                        "If saving child items from archives or PST files, you must create the parent folder first. Dir does not exist:"
+                                + extractedChildrenArchiveDir);
+            }
+        }
         // Invoke converter instances only as requested types suggest.
         // If caller has removed file types from the list, then
 
@@ -921,7 +1002,7 @@ public final class XText implements iFilter, iConvert {
 
         mimetype = "html";
         if (requestedFileTypes.contains(mimetype)) {
-            iConvert webConv = new TikaHTMLConverter(this.zoneWebContent);
+            Converter webConv = new TikaHTMLConverter(this.zoneWebContent);
             converters.put(mimetype, webConv);
             converters.put("htm", webConv);
             converters.put("xhtml", webConv);
@@ -974,22 +1055,29 @@ public final class XText implements iFilter, iConvert {
     }
 
     public static void usage() {
-        System.out.println("XText -i input  [-h] [-o output] [-e]");
+        System.out.println("XText -i input  [-h] [-o output] [-e] [-c]|[-x folder]");
         System.out.println("  input is file or folder");
         System.out.println("  output is a folder where you want to archive converted docs");
         System.out.println("  -e embeds the saved conversions in the input folder under 'xtext/'");
+        System.out.println("  -c embeds the extracted children binaries in the input folder");
+        System.out.println("     (NOT the conversions, the binaries from Archives, PST, etc)");
+        System.out.println("     Default behavior is to extract originals to output archive.");
+        System.out.println("  -x folder    Opposite of -c. Extract children and save to a separate folder. ");
         System.out.println("  NOTE: -e has same effect as setting output to input");
         System.out.println("  -h enables HTML scrubbing");
     }
 
     public static void main(String[] args) {
 
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XText", args, "hei:o:");
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XText", args, "hx:cei:o:");
 
         String input = null;
         String output = null;
         boolean embed = false;
         boolean filter_html = false;
+        boolean saveChildrenWithInput = false;
+        String saveChildrenTo = null;
+
         try {
 
             int c;
@@ -1003,6 +1091,12 @@ public final class XText implements iFilter, iConvert {
                     break;
                 case 'h':
                     filter_html = true;
+                    break;
+                case 'c':
+                    saveChildrenWithInput = true;
+                    break;
+                case 'x':
+                    saveChildrenTo = opts.getOptarg();
                     break;
                 case 'e':
                     embed = true;
@@ -1034,6 +1128,13 @@ public final class XText implements iFilter, iConvert {
         xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in
                                        // directory.
         xt.enableHTMLScrubber(filter_html);
+        xt.enableSaveChildrenWithInput(saveChildrenWithInput);
+
+        // Manage the extraction of compound files -- archives, PST mailbox file, etc.
+        // ... others?
+        if (!saveChildrenWithInput && saveChildrenTo != null) {
+            xt.setExtractedChildrenArchiveDir(saveChildrenTo);
+        }
 
         try {
             if (output == null && !embed) {
@@ -1047,7 +1148,11 @@ public final class XText implements iFilter, iConvert {
             xt.setup();
             xt.extractText(input);
         } catch (IOException ioerr) {
+            XText.usage();
             ioerr.printStackTrace();
+        } catch (ConfigException cfgerr) {
+            XText.usage();
+            cfgerr.printStackTrace();
         }
     }
 }

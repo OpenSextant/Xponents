@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensextant.ConfigException;
 import org.opensextant.util.FileUtility;
 import org.opensextant.xtext.*;
 import org.opensextant.xtext.converters.*;
@@ -105,11 +106,11 @@ public class Tests {
     }
 
     @Test
-    public void testTrivialInventory() throws IOException {
+    public void testTrivialInventory() throws IOException, ConfigException {
         trivialInventory(doc.getCanonicalPath(), true);
     }
 
-    public void trivialInventory(String input, boolean test_save) throws IOException {
+    public void trivialInventory(String input, boolean test_save) throws IOException, ConfigException {
         XText xt = new XText();
         xt.enableSaveWithInput(test_save);
         xt.enableSaving(test_save);
@@ -127,7 +128,7 @@ public class Tests {
     }
     
     @Test
-    public void parseEmbedded() throws IOException{
+    public void parseEmbedded() throws IOException, ConfigException{
         URL item = Test.class.getResource("/T-DS_Excel2003-PPT2003_1.xls");
         String input = item.getFile();
 
