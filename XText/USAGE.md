@@ -142,9 +142,10 @@ Finally you have the text conversions of the originals.
 All of this you might want to save on disk in a structure that reflects the innate original structure.
 
 If you have an 1 email message with 3 attachments in a single RFC822 file, for example, you have 
-1. a single original
-2. 4 extracted items
-3. up to 4 converted items
+
+* a single original
+* 4 extracted items
+* up to 4 converted items
 
 And so 1 compound document -- the email file -- may yield 9 total objects to cache.
 
