@@ -558,27 +558,28 @@ public class TestXCoord {
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
                 case 'f':
-                    System.out.println("\tSYSTEM TESTS=======\n" + opts.getOptarg());
+                    String testFile = "/Coord_Patterns_Truth.csv";
+                    System.out.println("SYSTEM TESTS=======FILE="+testFile+"\n");
                     test.systemTests();
 
                     // Truth source is at src/test/resources  -- Or anywhere in your runtime classpath at TOP LEVEL!
                     //
-                    URL truthData = XCoord.class.getResource("/Coord_Patterns_Truth.csv");
+                    URL truthData = XCoord.class.getResource(testFile);
                     test.fileTruth(new File(truthData.getPath()));
                     break;
 
                 case 't':
-                    System.out.println("\tUSER TEST\n=======\n" + opts.getOptarg());
+                    System.out.println("USER TEST\n=======\n" + opts.getOptarg());
                     test.fileTestByLines(opts.getOptarg());
                     break;
 
                 case 'u':
-                    System.out.println("\tUSER FILE\n=======\n" + opts.getOptarg());
+                    System.out.println("USER FILE\n=======\n" + opts.getOptarg());
                     test.fileTests(opts.getOptarg());
                     break;
 
                 case 'a':
-                    System.out.println("\tAdhoc Tests\n=======\n" + opts.getOptarg());
+                    System.out.println("Adhoc Tests\n=======\n");
                     test.focusedTests();
                     break;
 

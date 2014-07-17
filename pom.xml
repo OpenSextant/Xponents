@@ -242,6 +242,7 @@
                         <configuration>
                             <outputDirectory>lib</outputDirectory>
                             <includeScope>runtime</includeScope>
+                            <includeScope>test</includeScope>
                         </configuration>
                     </execution>
                     <execution>

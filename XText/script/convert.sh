@@ -15,4 +15,4 @@ crawl_output=$3
 shift
 shift
 # echo $*
-java -Xmx512m  -classpath "$basedir/lib/*" org.opensextant.xtext.XText  -i "$input" -o "$output" -x "$crawl_output"
+java -Xmx512m  -classpath "$basedir/etc:$basedir/lib/*" org.opensextant.xtext.XText  -i "$input" -o "$output" -x "$crawl_output"

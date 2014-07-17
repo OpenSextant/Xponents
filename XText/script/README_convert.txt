@@ -34,6 +34,18 @@ You as a user should organize your own data and review how you will manage the
 output.  And so when XText hits archival documents (Zip, PST, TAR, etc) it
 crawls them collecting the original, individual items in an crawl output folder.
 Above the "\originals-dir" argument denotes this folder.
+
+
+Example Use:
+
+   mkdir  ./output
+   mkdir  ./crawls
+
+   # Just one file
+   ./script/convert.sh   "./test/Asia_Fdn_Afghanistan_2009.pdf"   ./output    ./crawls
+
+   # A whole folder
+   ./script/convert.sh   ./test  ./output    ./crawls
        
 
 The Arguments to Java program, org.opensextant.xtext.XText, are as follows
