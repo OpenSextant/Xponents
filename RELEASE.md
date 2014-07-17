@@ -1,7 +1,7 @@
 
 #2014#
 
-* Xponents 2.5 - June 2014 (Pending)
+* Xponents 2.5 - July 2014 
  - Java 7+ required now;  Java 6 source syntax supported, but release will be Java 7 binary
  - Javadoc cleanup 
 

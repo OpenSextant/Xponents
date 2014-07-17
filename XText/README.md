@@ -46,6 +46,11 @@ Supported customizations:
 
 Basic Usage
 
+    Running it: From a release, see
+
+       ./script/README_convert.txt
+       ./script/convert.sh or convert.bat script
+
     //compile:
     
     mvn install

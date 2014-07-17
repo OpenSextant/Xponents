@@ -1,7 +1,7 @@
 Xponents
 ========
 
- Part of Xponents 2.5 (OpenSextant v2.0)
+ Xponents 2.5 (part of OpenSextant v2.0)
  Date:     25 JULY 2013
  Updated:  01 June 2014
 
@@ -30,8 +30,8 @@ As well, the documentation for each module is in the respective source tree.
 ##Java##
 Set JAVA_HOME to your JDK6 or JDK7 installation;  Maven javadoc plugin requires JAVA_HOME set
 Minimum Requirement: 
-  - Java 7  (2.5 or later)
-  - Java 6  (2.4.3 or earlier)
+  - Java 7  (Xponents 2.5 or later)
+  - Java 6  (Xponents 2.4.3 or earlier)
   - Maven 3.2 to build and develop
   - Ant 1.9 is useful for running release scripts
  
