@@ -17,36 +17,34 @@
 -->
 
 <!--
-   This is an example of a simple "solr.xml" file for configuring one or
-   more Solr Cores, as well as allowing Cores to be added, removed, and
+   This is an example of a simple "solr.xml" file for configuring one or 
+   more Solr Cores, as well as allowing Cores to be added, removed, and 
    reloaded via HTTP requests.
 
-   More information about options available in this configuration file,
+   More information about options available in this configuration file, 
    and Solr Core administration can be found online:
    http://wiki.apache.org/solr/CoreAdmin
 -->
 
 <!--
  All (relative) paths are relative to the installation path
-
+  
   persistent: Save changes made via the API to this file
   sharedLib: path to a lib directory that will be shared across all cores
 -->
-<solr persistent="false" sharedLib="lib">
-    <!-- by default, this is 50 @ WARN
-    <logging enabled="true">
-      <watcher size="100" threshold="INFO" />
-    </logging>
-    -->
+<solr persistent="false">
+	<!-- by default, this is 50 @ WARN
+  <logging enabled="true">
+  	<watcher size="100" threshold="INFO" />
+  </logging>
+   -->
 
-    <!--
-    adminPath: RequestHandler path to manage cores.
-      If 'null' (or absent), cores will not be manageable via request handler
-    -->
-    <cores adminPath="/admin/cores" defaultCoreName="gazetteer">
-        <core name="gazetteer" instanceDir="./gazetteer" />
-
-        <!-- uncomment in your deployed instance if using taxcat -->
-        <core name="taxcat" instanceDir="./taxcat" />
-    </cores>
+  <!--
+  adminPath: RequestHandler path to manage cores.  
+    If 'null' (or absent), cores will not be manageable via request handler
+  -->
+  <cores adminPath="/admin/cores" defaultCoreName="gazetteer" host="${host:}" hostPort="${jetty.port:}">
+    <core name="gazetteer" instanceDir="./gazetteer" />
+    <core name="taxcat" instanceDir="./taxcat" />
+  </cores>
 </solr>

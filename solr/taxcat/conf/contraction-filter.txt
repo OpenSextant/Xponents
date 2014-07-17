@@ -1,0 +1,12 @@
+# tokenization rules in GATE require just about everything is a token
+# so text like 
+# 
+#    we're heading to the park ...    => [ we, re, heading, to, the, park ]
+#    Mexico's valient effort to...    => [ mexico, s, valient, effort, to ]
+# etc.  
+#
+# Converting that very pervasive apostrophe to a space yields two tokens from one.
+# Regardless if the context of the apostrophe is inside a proper name, a contraction, or a possessive
+# the tokenization principle must be the same.
+#
+"'" => " "
