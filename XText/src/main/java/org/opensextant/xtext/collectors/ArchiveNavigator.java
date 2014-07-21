@@ -24,7 +24,7 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  */
-package org.opensextant.xtext.converters;
+package org.opensextant.xtext.collectors;
 
 import java.io.*;
 import java.util.zip.GZIPInputStream;
@@ -37,12 +37,10 @@ import org.apache.commons.compress.archivers.zip.*;
 import org.apache.commons.compress.archivers.tar.*;
 import org.apache.commons.compress.utils.IOUtils;
 import org.opensextant.ConfigException;
-import org.opensextant.util.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.opensextant.xtext.ExclusionFilter;
 import org.opensextant.xtext.Converter;
-import org.opensextant.xtext.collectors.Collector;
 
 /**
  * Archive is traversed, but no data is written to disk unless XText is in save
@@ -53,21 +51,20 @@ import org.opensextant.xtext.collectors.Collector;
 public class ArchiveNavigator implements Collector {
 
     private final Logger log = LoggerFactory.getLogger(ArchiveNavigator.class);
-    // private File tempDir = null;
     private File saveDir = null;
     private ExclusionFilter filter = null;
     private Converter converter = null;
     public boolean overwrite = false;
 
     /**
-     * Given a working temp folder and a file filter unpack archives.
+     * Given a working temp folder and a file filter unpack archives.  Teh working dir, saveTo, is not created.
+     * It must exist ahead of time;
      */
     public ArchiveNavigator(File inputFile, String saveTo, ExclusionFilter fileFilter,
             Converter fileConv) throws IOException {
         this.saveDir = new File(saveTo);
-        FileUtility.makeDirectory(saveDir);
         filter = fileFilter;
-        converter = fileConv; // Uh... this is really a proxy for XText for now.
+        converter = fileConv;
 
         if (filter == null || converter == null) {
             throw new IOException(
@@ -102,7 +99,7 @@ public class ArchiveNavigator implements Collector {
                 || ext.equalsIgnoreCase("tar.gz")) {
             String basename = FilenameUtils.getBaseName(currentArchive.getName());
             // We assume the file is a tarball. First unzip it
-            File tarFile = gunzip(currentArchive, basename);
+            File tarFile = gunzipAsTAR(currentArchive, basename);
 
             // Then untar it
             archivetmp = untar(tarFile);
@@ -165,10 +162,10 @@ public class ArchiveNavigator implements Collector {
      * 
      * @param theFile
      * @param fname
-     * @return
+     * @return TAR file path for result.
      * @throws IOException
      */
-    private File gunzip(File theFile, String fname) throws IOException {
+    private File gunzipAsTAR(File theFile, String fname) throws IOException {
 
         GZIPInputStream gzipInputStream = null;
         OutputStream out = null;
