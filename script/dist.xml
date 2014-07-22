@@ -6,7 +6,59 @@
 
   <property name="xponents.home" value="${basedir}/../" />
   <property name="release" location="${xponents.home}/release" />
+  <property name="release.xtext" location="${xponents.home}/XText-2.5" />
 
+
+  <!--  Consolidate XText items to their own release app
+    -->
+  <target name="rel.xtext">
+    <delete dir="${release.xtext}"/>
+
+    <mkdir dir="${release.xtext}"/>
+    <mkdir dir="${release.xtext}/lib"/>
+    <mkdir dir="${release.xtext}/logs"/>
+    <mkdir dir="${release.xtext}/test"/>
+    <mkdir dir="${release.xtext}/script"/>
+
+    <exec executable="mvn" dir="${xponents.home}/XText" failonerror="true">
+      <arg value="-DoutputDirectory=${release.xtext}/lib"/>
+      <arg value="-DincludeScope=test"/>
+      <arg value="-DincludeScope=runtime"/>
+      <arg value="-DincludeScope=compile"/>
+      <arg value="dependency:copy-dependencies"/>
+    </exec>
+
+    <copy todir="${release.xtext}/lib/">
+        <fileset dir="${xponents.home}/XText/target">
+           <include name="*.jar" />
+        </fileset>
+        <fileset dir="${xponents.home}/XText/lib">
+           <include name="*.jar" />
+        </fileset>
+    </copy>
+
+    <copy todir="${release.xtext}">
+        <fileset dir="${xponents.home}/XText/">
+           <include name="*.htm*" />
+           <include name="*.md" />
+        </fileset>
+    </copy>
+
+    <copy todir="${release.xtext}/script/">
+        <fileset dir="${xponents.home}/XText/script">
+           <include name="*.*" />
+        </fileset>
+    </copy>
+
+    <copy todir="${release.xtext}/test/">
+        <fileset dir="${xponents.home}/XText/src/test/resources/">
+           <include name="*.*" />
+        </fileset>
+    </copy>
+  </target>
+
+ 
+  <!-- Release script for Xponents complete. -->
 
   <target name="copy-libs" >
     <delete dir="${xponents.home}/Examples/lib"/>
