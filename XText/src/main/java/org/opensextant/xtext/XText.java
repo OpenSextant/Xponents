@@ -32,11 +32,13 @@ import org.opensextant.xtext.converters.ImageMetadataConverter;
 import org.opensextant.xtext.converters.MessageConverter;
 import org.opensextant.xtext.converters.TextTranscodingConverter;
 import org.opensextant.xtext.converters.TikaHTMLConverter;
-import org.opensextant.xtext.converters.ArchiveNavigator;
 import org.opensextant.xtext.converters.DefaultConverter;
+import org.opensextant.xtext.collectors.ArchiveNavigator;
 import org.opensextant.xtext.collectors.mailbox.OutlookPSTCrawler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import gnu.getopt.LongOpt;
 
 import java.io.*;
 import java.util.Set;
@@ -89,27 +91,14 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 public final class XText implements ExclusionFilter, Converter {
 
     private Logger log = LoggerFactory.getLogger(getClass());
-    private boolean save = true;
-    private boolean zoneWebContent = false;
-    private String archiveRoot = null;
-    private String inputRoot = null;
-    private String tempRoot = null;
-    protected String inputNode = null;
-    /**
-     * Embedded mode
-     */
-    private boolean saveConversionsWithOriginals = false;
+    private boolean saving = true;
+    private boolean scrubHTML = false;
 
-    /**
-     * saveExtractedChildrenWithOriginals  - deteremines how embedded items are archived, e.g., Email attachements, or embedded images.
-     * They are children to some parent container -- XText yields two things:  the original child, and the conversion of the child. 
-     * 
-     * Example:  a.doc (child) saved from A.eml (parent)
-     * 
-     * saveExtractedChildrenWithOriginals = True;    a is saved in same folder where A exists  
-     * saveExtractedChildrenWithOriginals = False;   a is saved in a separate output archive. 
-     */
-    private boolean saveExtractedChildrenWithOriginals = true;
+    private PathManager paths = new PathManager();
+
+    public PathManager getPathManager() {
+        return paths;
+    }
 
     /** flag to manage if children are extracted or not.
      */
@@ -142,67 +131,14 @@ public final class XText implements ExclusionFilter, Converter {
         ConvertedDocument.overwrite = b;
     }
 
-    /**
-     * This enables saving in an archive and disables saving with input.
-     *
-     * @param root
-     * @throws IOException
-     * @see #enableSaveInArchive(boolean)
-     * @see #enableSaveWithInput(boolean)
-     */
+    /** @deprecated  use getPathManager().setConversionRoot( path ) */
     public void setArchiveDir(String root) throws IOException {
-        if (root == null) {
-            throw new IOException("Archive cannot be null");
-        }
-
-        // User tried setting a non-null archive... so implicitly they are not saving with input
-        //
-        this.enableSaveInArchive(true);
-        archiveRoot = fixPath(root);
-
-        File test = new File(archiveRoot);
-
-        if (!test.exists() || !test.isDirectory()) {
-            throw new IOException("Archive root directory must exist");
-        }
-    }
-
-    private String extractedChildrenArchiveDir = null;
-
-    public void setExtractedChildrenArchiveDir(String folder) {
-        extractedChildrenArchiveDir = folder;
-    }
-
-    /**
-     * Set the temp working directory
-     * 
-     * @deprecated Currently unused temp folder
-     * @param tmp
-     * @throws IOException
-     */
-    @Deprecated
-    public void setTempDir(String tmp) throws IOException {
-        if (tmp == null) {
-            throw new IOException("Temp Dir cannot be null");
-        }
-        tempRoot = FilenameUtils.normalizeNoEndSeparator(tmp, true);
-        if (tempRoot == null) {
-            throw new IOException("Temp Dir is invalid");
-        }
-        File test = new File(tempRoot);
-
-        if (!test.exists() || !test.isDirectory()) {
-            throw new IOException("Temp Dir must exist");
-        }
+        paths.setConversionCache(root);
     }
 
     public void setMaxBufferSize(int sz) {
         maxBuffer = sz;
     }
-
-    //public void setMaxFileSize(long sz) {
-    //    maxFileSize = sz;
-    //}
 
     public void setMaxFileSize(int sz) {
         maxFileSize = (long) sz;
@@ -212,7 +148,7 @@ public final class XText implements ExclusionFilter, Converter {
      * Use Tika HTML de-crapifier. Default: No scrubbing.
      */
     public void enableHTMLScrubber(boolean b) {
-        zoneWebContent = b;
+        scrubHTML = b;
     }
 
     /**
@@ -232,53 +168,8 @@ public final class XText implements ExclusionFilter, Converter {
      * @param b
      */
     public void enableSaving(boolean b) {
-        save = b;
-    }
-
-    /**
-     * Save converted content with input. Xtext creates a new "xtext" folder in
-     * the containing folder of the current file. This is disabled if a
-     * non-null, pre-existing archive root is set.
-     *
-     * <pre>
-     * input is:     a/b/c.doc
-     * saved as:     a/b/xtext/c.doc.txt
-     *
-     * DEFAULT: do not save in input folder
-     * </pre>
-     * @see #setArchiveDir(java.lang.String)
-     */
-    public void enableSaveWithInput(boolean b) {
-        saveConversionsWithOriginals = b;
-    }
-
-    /**
-     * Experimental.
-     * 
-     * ON by default.  If you have email, for example, folder/A.eml
-     * then children will appear at folder/A_eml/child.doc  for some child.doc attachment.
-     * Behavior may differ in each case.  But essentially, this flag directs XText to write back to inputRoot
-     *
-     * Embedded parent/child docs (email, compound docs, etc) are special cases,
-     * @param b
-     */
-    public void enableSaveChildrenWithInput(boolean b) {
-        saveExtractedChildrenWithOriginals = b;
-    }
-
-    /**
-     * Saving to an archive specified by the caller; This is inferred if a
-     * non-null, pre-existing archive root is set; DEFAULT: do not save in
-     * archive.
-     *
-     * <pre>
-     * input is:   a/b/c.doc
-     * output is:  archiveRoot/a/b/c.doc.txt
-     * </pre>
-     * @see #setArchiveDir(java.lang.String)
-     */
-    public void enableSaveInArchive(boolean b) {
-        saveConversionsWithOriginals = !b;
+        saving = b;
+        paths.enableSaving(b);
     }
 
     /**
@@ -331,37 +222,6 @@ public final class XText implements ExclusionFilter, Converter {
         return ("pst".equalsIgnoreCase(ext));
     }
 
-    private String outputNode;
-
-    /**
-     * If you are caching conversions in an archive folder, A, then 
-     * this generally sets your ouputNode to /A/name/
-     * 
-     * An items saved here will be of the form /A/name/relative/path
-     * For an input that came from /some/input/name/relative/path
-     * 
-     * @param name
-     */
-    public void setOutputNode(String name) throws IOException {
-        if (!save) {
-            // Not saving output.
-            return;
-        }
-
-        if (archiveRoot == null) {
-            outputNode = inputRoot;
-            return;
-        }
-        if (name == null) {
-            outputNode = archiveRoot;
-            return;
-        }
-
-        // Finally, use a "archiveRoot/name"
-        //
-        outputNode = createPath(archiveRoot, name);
-    }
-
     protected long total_conv_time = 0;
     protected int average_conv_time = 0;
     protected int total_conversions = 0;
@@ -389,34 +249,8 @@ public final class XText implements ExclusionFilter, Converter {
     protected long stop_time = 0;
 
     /**
-     * Override the current setting for input Root
-     * 
-     * @param tmpInput
-     */
-    public void setInputRoot(String tmpInput) {
-        this.inputRoot = tmpInput;
-        if (inputRoot != null) {
-            inputRoot = fixPath(tmpInput);
-        }
-    }
-
-    /**
-     * Most of the path mechanics are string-based, rather than file-system based,
-     * so path adjustments are best done to be sure all paths from configuration
-     * or from inputs should conform to a common convention.  paths will be more like URLs, using
-     * "/" as the standard path separator.
-     *
-     * @param p
-     * @return  fixed path
-     */
-    protected static String fixPath(String p) {
-        if (p == null) {
-            return null;
-        }
-        return p.replace('\\', '/');
-    }
-
-    /**
+     * Optional API routine.  If XText is used as a main program, this is the entry point for extraction/collection.
+     * If XText is used as an API, caller may use convertFile() directly without engaging in the setup and assumptions behind this convenience method. 
      * The main entry point to converting compound documents and folders.
      * @throws ConfigException 
      */
@@ -424,51 +258,72 @@ public final class XText implements ExclusionFilter, Converter {
 
         start_time = System.currentTimeMillis();
 
-        String path = FilenameUtils.normalize(filepath, true);
+        log.info("Conversion.  INPUT PATH={}", filepath);
+        String path = FilenameUtils.normalize(new File(filepath).getAbsolutePath(), true);
         if (path == null) {
             throw new IOException("Failed to normalize the path: " + filepath);
         }
 
         File input = new File(path);
         if (!input.exists()) {
-            throw new IOException("Non existent input FILE=" + input.getAbsolutePath());
+            throw new IOException("Non existent input FILE=" + path);
         }
 
-        if (isArchive(path)) {
+        /* Filter on absolute path */
+        if (PathManager.isXTextCache(path)) {
+            throw new ConfigException(
+                    "XText cannot be directed to extract text from its own cache files. "
+                            + "Move the cache files out of ./xtext/ folders if you really need to do this.");
+        }
+
+        if (isArchive(input.getName())) {
+            // Archive will collect originals to "export" 
+            // Archive will save conversions to "output"
+            // PathManager is STATEFUL for as long as this archive is processing
+            // If an archive is uncovered while traversing files, its contents can be dumped to the child export folder.
             convertArchive(input);
+        } else if (isPST(input.getName())) {
+            this.convertOutlookPST(input);
         } else if (input.isFile()) {
-            setInputRoot(input.getParent());
-            inputNode = input.getParentFile().getName();
-            setOutputNode(inputNode);
+            // If prefix is not set, then conversion will be dumped flatly to output area.
+            paths.setInputRoot(input);
             convertFile(input);
         } else if (input.isDirectory()) {
-            setInputRoot(input.getAbsolutePath());
-            inputNode = input.getName();
-            setOutputNode(inputNode);
+            paths.setInputRoot(input);
             convertFolder(input);
         }
 
         stop_time = System.currentTimeMillis();
 
-        log.info("Output can be accessed at " + this.archiveRoot);
+        if (saving) {
+            if (paths.isSaveWithInput()) {
+                log.info(
+                        "Output can be accessed at from the input folder {} in 'xtext' sub-folders",
+                        input.getParent());
+            } else {
+                log.info("Output can be accessed at " + paths.getConversionCache());
+            }
+        }
 
         reportStatistics();
     }
 
-    public boolean filterOutFile(File input) {
+    /**
+     * Filter out File object if it is an XText conversion of some sort. That is, if 
+     * file "./a/b/c/xtext/file.doc.txt  is found, it is omitted because it is contained in "./xtext"
+     * 
+     * @param input file obj
+     * @return true if file's immediate parent is named 'xtext'
+     */
+    private boolean filterOutFile(File input) {
         //
         //
-        if (ConvertedDocument.DEFAULT_EMBED_FOLDER.equals(input.getParentFile().getName())) {
+        if (PathManager.isXTextCache(input)) {
             return true;
         }
 
         return filterOutFile(input.getAbsolutePath());
     }
-
-    public final static String DEFAULT_EMBED_FOLDER_IN_PATH = String.format("/%s/",
-            ConvertedDocument.DEFAULT_EMBED_FOLDER);
-    public final static String DEFAULT_EMBED_FOLDER_IN_WINPATH = String.format("\\%s\\",
-            ConvertedDocument.DEFAULT_EMBED_FOLDER);
 
     /**
      * Filter the type of files to ignore.
@@ -478,8 +333,7 @@ public final class XText implements ExclusionFilter, Converter {
 
         // Filter out any of our own xtext caches 
         //
-        if (filepath.contains(DEFAULT_EMBED_FOLDER_IN_PATH)
-                || filepath.contains(DEFAULT_EMBED_FOLDER_IN_WINPATH)) {
+        if (PathManager.isXTextCache(filepath)) {
             return true;
         }
 
@@ -502,19 +356,6 @@ public final class XText implements ExclusionFilter, Converter {
     }
 
     /**
-     * NOTE: Use of File() or FilenameUtils.concat() are OS dependent, here
-     * what we want is more like a URL string representation always using /a/b/c/
-     * Instead of potentially \ and/or / mixed.
-     * @param dir
-     * @param item
-     * @return  path
-     * @throws IOException
-     */
-    private static String createPath(String dir, String item) throws IOException {
-        return String.format("%s/%s", fixPath(dir), item);
-    }
-
-    /**
      * Unpack an archive and convert items found.
      * Given (input)/A.zip
      * The zip is dearchived to 
@@ -527,39 +368,26 @@ public final class XText implements ExclusionFilter, Converter {
      */
     public void convertArchive(File input) throws IOException, ConfigException {
 
-        if (!this.saveConversionsWithOriginals && !this.saveExtractedChildrenWithOriginals
-                && this.archiveRoot == null) {
-            log.error(
-                    "Sorry -- if not saving in input folder, you must provide a separate archive to contain ZIP and other archives that are extracted.  Ignoring FILE={}",
-                    input);
+        if (!paths.verifyArchiveExport(input.getAbsolutePath())) {
             return;
         }
 
-        String aName = FilenameUtils.getBaseName(input.getName());
-        String aExt = FilenameUtils.getExtension(input.getName());
-        inputNode = String.format("%s_%s", aName, aExt);
-        // Set output name to input name.  That is, once we extract A.zip to ./(originals)/A_zip/   this de-archived folder will 
-        // Also exist in ./(converted)/A_zip/  or ./(originals)/A_zip/xtext/ embedded.
-        //
-        setOutputNode(inputNode);
+        File saveFolder = paths.getArchiveExportDir(input);
+        String savePrefix = paths.getStipPrefixPath();
 
-        String saveArchiveTo = null;
+        paths.setStripPrefixPath(saveFolder.getAbsolutePath());
+        paths.setInputRoot(saveFolder);
 
-        // unpack, traverse, convert, save
-        if (this.saveExtractedChildrenWithOriginals) {
-            saveArchiveTo = createPath(input.getParentFile().getAbsolutePath(), inputNode);
-        } else if (extractedChildrenArchiveDir != null) {
-            // Save converted items in a parallel archive for this zip archive.
-            saveArchiveTo = createPath(extractedChildrenArchiveDir, inputNode);
-        } else {
-            throw new ConfigException(
-                    "Archive files cannot be dearchived without a target folder to store child binaries");
-        }
-
-        this.setInputRoot(saveArchiveTo);
-        ArchiveNavigator deArchiver = new ArchiveNavigator(input, saveArchiveTo, this, this);
+        ArchiveNavigator deArchiver = new ArchiveNavigator(input, saveFolder.getAbsolutePath(),
+                this, this);
         deArchiver.overwrite = ConvertedDocument.overwrite;
+
+        log.info("\tArchive Found ({}). Expanding to {}", input, saveFolder);
+
         deArchiver.collect();
+
+        // Done:
+        paths.setStripPrefixPath(savePrefix);
     }
 
     /**
@@ -568,7 +396,7 @@ public final class XText implements ExclusionFilter, Converter {
      * @throws IOException
      */
     public void convertOutlookPST(File input) throws ConfigException, IOException {
-        if (!this.save) {
+        if (!this.saving) {
             log.error("Warning -- PST file found, but save = true is required to parse it.  Enable saving and chose a cache folder");
         }
 
@@ -577,30 +405,24 @@ public final class XText implements ExclusionFilter, Converter {
         pst.overwriteMode = ConvertedDocument.overwrite;
         pst.incrementalMode = true;
 
-        String saveTo = null;
-        // unpack, traverse, convert, save
-        if (this.saveExtractedChildrenWithOriginals) {
-            saveTo = createPath(input.getParentFile().getAbsolutePath(), inputNode);
-        } else if (extractedChildrenArchiveDir != null) {
-            // Save converted items in a parallel archive for this zip archive.
-            saveTo = createPath(extractedChildrenArchiveDir, inputNode);
-        } else {
-            throw new ConfigException(
-                    "PST Files cannot be dearchived without a target folder to store child binaries");
-        }
+        File saveFolder = paths.getArchiveExportDir(input);
+        String savePrefix = paths.getStipPrefixPath();
 
-        File saveFolder = new File(saveTo);
-        if (!saveFolder.exists()) {
-            FileUtility.makeDirectory(saveFolder);
-        }
-
-        pst.setOutputDir(saveFolder);
+        paths.setStripPrefixPath(saveFolder.getAbsolutePath());
+        paths.setInputRoot(saveFolder);
+        pst.setOutputPSTDir(saveFolder);
         pst.configure();
+
+        log.info("\tPST Email Archive Found ({}). Expanding to {}", input, saveFolder);
+
         try {
             pst.collect();
         } catch (Exception err) {
             throw new ConfigException("Unable to fully digest PST file " + input, err);
         }
+
+        // Done:
+        paths.setStripPrefixPath(savePrefix);
     }
 
     /**
@@ -666,9 +488,12 @@ public final class XText implements ExclusionFilter, Converter {
             return null;
         }
 
-        if (this.inputRoot == null) {
-            throw new IOException(
-                    "Please set an input root; convertFile() was called outside of extractText()");
+        if (saving) {
+            if (!paths.isSaveWithInput() && !paths.hasInputRoot()) {
+
+                throw new IOException(
+                        "Please set an input root; convertFile() was called in save/cache mode without having PathManager setup");
+            }
         }
 
         String fname = input.getName();
@@ -722,24 +547,8 @@ public final class XText implements ExclusionFilter, Converter {
         // ------------------
         // Retrieve previous conversions
         // ------------------
-        if (cachable && !ConvertedDocument.overwrite && this.save) {
-            if (this.saveConversionsWithOriginals) {
-                // Uncache a file close to the original F <== ./xtext/F.txt
-                textDoc = ConvertedDocument.getEmbeddedConversion(input);
-            } else if (this.inputRoot != null) {
-                // Only if the caller is using the XText API extracText(), then
-                // will this work.
-                // If user is trying to call convertFile(path) directly all the
-                // various optimizations here
-                // will not necessarily make sense.
-                //
-                //
-                // Uncache a file in some other tree of archives that aligns
-                // with the tree of the original source.
-                // .../mine/source/path/F <==== /archive/source/path/F.txt
-                textDoc = ConvertedDocument.getCachedConversion(this.outputNode, this.inputRoot,
-                        input);
-            }
+        if (cachable && !ConvertedDocument.overwrite && this.saving) {
+            textDoc = paths.getCachedConversion(input);
         }
 
         // ------------------
@@ -765,21 +574,14 @@ public final class XText implements ExclusionFilter, Converter {
                 // throw new
                 // IOException("Engineering error: Doc converted, but converter failed to setText()");
                 // }
-                if (this.save && textDoc.is_converted) {
+                if (this.saving && textDoc.is_converted) {
                     // Get Parent info in there.
                     if (parent != null) {
                         textDoc.setParent(parent);
                     }
 
-                    if (this.saveConversionsWithOriginals) {
-                        // Saves close to original in ./text/ folder where
-                        // original resides.
-                        textDoc.saveEmbedded();
-                    } else {
-                        textDoc.setPathRelativeTo(inputRoot,
-                                this.saveExtractedChildrenWithOriginals);
-                        textDoc.save(outputNode);
-                    }
+                    paths.saveConversion(textDoc);
+
                     // Children items will be persisted in the same folder
                     // structure where the textdoc.textpath resides.
                     // That is, Email or Embedded objects will be parsed are
@@ -915,16 +717,6 @@ public final class XText implements ExclusionFilter, Converter {
      */
     public void defaults() {
 
-        String tmp = System.getProperty("java.io.tmpdir");
-        if (tmp == null) {
-            tmp = "/tmp/xtext";
-        }
-        try {
-            setTempDir(tmp);
-        } catch (Exception err) {
-            log.error("You have accepted the defaults, but the temp dir is not available.", err);
-        }
-
         archiveFileTypes.add("zip");
         archiveFileTypes.add("gz");
         archiveFileTypes.add("tar");
@@ -980,18 +772,8 @@ public final class XText implements ExclusionFilter, Converter {
      */
     public void setup() throws IOException {
 
-        if (!this.saveConversionsWithOriginals && this.archiveRoot == null) {
-            throw new IOException(
-                    "If not saving conversions with your input folders, you must provide an archive path");
-        }
+        paths.configure();
 
-        if (extractedChildrenArchiveDir != null) {
-            if (!new File(extractedChildrenArchiveDir).exists()) {
-                throw new IOException(
-                        "If saving child items from archives or PST files, you must create the parent folder first. Dir does not exist:"
-                                + extractedChildrenArchiveDir);
-            }
-        }
         // Invoke converter instances only as requested types suggest.
         // If caller has removed file types from the list, then
 
@@ -1002,7 +784,7 @@ public final class XText implements ExclusionFilter, Converter {
 
         mimetype = "html";
         if (requestedFileTypes.contains(mimetype)) {
-            Converter webConv = new TikaHTMLConverter(this.zoneWebContent);
+            Converter webConv = new TikaHTMLConverter(this.scrubHTML);
             converters.put(mimetype, webConv);
             converters.put("htm", webConv);
             converters.put("xhtml", webConv);
@@ -1055,21 +837,56 @@ public final class XText implements ExclusionFilter, Converter {
     }
 
     public static void usage() {
-        System.out.println("XText -i input  [-h] [-o output] [-e] [-c]|[-x folder]");
+        System.out.println();
+        System.out.println("==========XText Usage=============");
+        System.out
+                .println("XText --input input  [--output output]|[--embed-conversion]    "
+                        + "\n\t[--embed-children]|[--export folder]     [--clean-html]   [--strip-prefix path]");
         System.out.println("  input is file or folder");
         System.out.println("  output is a folder where you want to archive converted docs");
         System.out.println("  -e embeds the saved conversions in the input folder under 'xtext/'");
         System.out.println("  -c embeds the extracted children binaries in the input folder");
         System.out.println("     (NOT the conversions, the binaries from Archives, PST, etc)");
         System.out.println("     Default behavior is to extract originals to output archive.");
-        System.out.println("  -x folder    Opposite of -c. Extract children and save to a separate folder. ");
+        System.out
+                .println("  -x folder    Opposite of -c. Extract children and save to a separate folder. ");
         System.out.println("  NOTE: -e has same effect as setting output to input");
         System.out.println("  -h enables HTML scrubbing");
+        System.out.println("========================");
+    }
+
+    /**
+     * Purely for logging when using the cmd line variation.
+     * 
+     * @author ubaldino
+     *
+     */
+    static class MainProgramListener implements ConversionListener {
+
+        private Logger log = LoggerFactory.getLogger(getClass());
+
+        @Override
+        public void handleConversion(ConvertedDocument doc, String path) {
+            boolean converted = false;
+            if (doc != null) {
+                converted = doc.is_converted;
+            }
+            log.info("Converted. FILE={} Status={}, Converted={}", path, doc != null, converted);
+        }
     }
 
     public static void main(String[] args) {
 
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XText", args, "hx:cei:o:");
+        LongOpt[] options = { new LongOpt("input", LongOpt.REQUIRED_ARGUMENT, null, 'i'),
+                new LongOpt("output", LongOpt.OPTIONAL_ARGUMENT, null, 'o'),
+                new LongOpt("export", LongOpt.OPTIONAL_ARGUMENT, null, 'x'),
+                new LongOpt("strip-prefix", LongOpt.OPTIONAL_ARGUMENT, null, 'p'),
+                new LongOpt("clean-html", LongOpt.NO_ARGUMENT, null, 'h'),
+                new LongOpt("embed-conversion", LongOpt.NO_ARGUMENT, null, 'e'),
+                new LongOpt("embed-children", LongOpt.NO_ARGUMENT, null, 'c'), };
+
+        // "hcex:i:o:p:"
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XText", args, "", options);
 
         String input = null;
         String output = null;
@@ -1077,12 +894,20 @@ public final class XText implements ExclusionFilter, Converter {
         boolean filter_html = false;
         boolean saveChildrenWithInput = false;
         String saveChildrenTo = null;
+        String prefix = null;
+
+        XText xt = new XText();
 
         try {
-
             int c;
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
+
+                case 0:
+                    // Long opt processed.
+
+                    break;
+
                 case 'i':
                     input = opts.getOptarg();
                     break;
@@ -1097,6 +922,9 @@ public final class XText implements ExclusionFilter, Converter {
                     break;
                 case 'x':
                     saveChildrenTo = opts.getOptarg();
+                    break;
+                case 'p':
+                    prefix = opts.getOptarg();
                     break;
                 case 'e':
                     embed = true;
@@ -1121,19 +949,23 @@ public final class XText implements ExclusionFilter, Converter {
         // Setting LANG=en_US in your shell.
         //
         // System.setProperty("LANG", "en_US");
-        XText xt = new XText();
+
         xt.enableOverwrite(true); // Given this is a test application, we will
                                   // overwrite every time XText is called.
-        xt.enableSaving(true);
-        xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in
-                                       // directory.
+        xt.enableSaving(embed || output != null);
+        xt.getPathManager().enableSaveWithInput(embed); // creates a ./text/ Folder locally in
+        // directory.
         xt.enableHTMLScrubber(filter_html);
-        xt.enableSaveChildrenWithInput(saveChildrenWithInput);
+        xt.getPathManager().enableSaveChildrenWithInput(saveChildrenWithInput);
+
+        // If user wishes to strip input paths of some prefix
+        // Output will be dumped in the resulting relative path.
+        xt.getPathManager().setStripPrefixPath(prefix);
 
         // Manage the extraction of compound files -- archives, PST mailbox file, etc.
         // ... others?
         if (!saveChildrenWithInput && saveChildrenTo != null) {
-            xt.setExtractedChildrenArchiveDir(saveChildrenTo);
+            xt.getPathManager().setExtractedChildrenCache(saveChildrenTo);
         }
 
         try {
@@ -1143,7 +975,9 @@ public final class XText implements ExclusionFilter, Converter {
                 System.out.println("Default output folder is $PWD/" + output);
             }
             // Notice this main program requires an output path.
-            xt.setArchiveDir(output);
+            xt.getPathManager().setConversionCache(output);
+            // Set itself to listen, as this is the main program.
+            xt.setConversionListener(new MainProgramListener());
 
             xt.setup();
             xt.extractText(input);
