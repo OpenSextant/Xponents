@@ -1,9 +1,10 @@
 
 #2014#
 
-* Xponents 2.5 - July 2014 
+* Xponents 2.5.1 - July 2014 
  - Java 7+ required now;  Java 6 source syntax supported, but release will be Java 7 binary
- - Javadoc cleanup 
+ - Javadoc cleanup
+ - XText refactor, given added archive file support; concept of caching and crawling is optional and moved out of main conversion logic. 
 
 * Xponents 2.4.3 - June 2014
  - Extraction: MGRS filters for well known dates/months, lower case (default is to filter out lowercase), and Line endings in Latband/GZD

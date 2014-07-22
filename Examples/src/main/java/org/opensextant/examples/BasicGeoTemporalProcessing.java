@@ -34,7 +34,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionMetrics;
 import org.opensextant.extractors.xcoord.XCoord; // Just coordinates.
-import org.opensextant.extractors.geo.*;  // All geo. Encapsulates XCoord, as well.
+import org.opensextant.extractors.geo.*; // All geo. Encapsulates XCoord, as well.
 import org.opensextant.extractors.xtemporal.XTemporal;
 
 import org.opensextant.processing.XtractorGroup;
@@ -53,6 +53,7 @@ import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 
 import org.slf4j.LoggerFactory;
+
 //import org.slf4j.Logger;
 
 /**
@@ -73,9 +74,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author ubaldino
  */
-public class BasicGeoTemporalProcessing
-        extends XtractorGroup
-        implements ConversionListener {
+public class BasicGeoTemporalProcessing extends XtractorGroup implements ConversionListener {
 
     private Parameters params = new Parameters();
     protected XText converter;
@@ -118,8 +117,8 @@ public class BasicGeoTemporalProcessing
      *   c) output formatters
      *   d) other resources, e.g., filters
      */
-    public void setup(String inFile, List<String> outFormats,
-            String outFile, String tempDir) throws ConfigException, ProcessingException, IOException {
+    public void setup(String inFile, List<String> outFormats, String outFile, String tempDir)
+            throws ConfigException, ProcessingException, IOException {
 
         params.isdefault = false;
 
@@ -130,20 +129,21 @@ public class BasicGeoTemporalProcessing
         // If you are dead-sure you want only coordinates from text, then just use XCoord.
         // Otherwise SimpleGeocoder does both coords + names.
         // 
-        //XCoord xcoord = new XCoord();
-        //xcoord.configure();
-        //this.addExtractor(xcoord);
-        SimpleGeocoder geocoder = new SimpleGeocoder();
+        XCoord xcoord = new XCoord();
+        xcoord.configure();
+        this.addExtractor(xcoord);
 
         // Testing only
         /*
         params.tag_coordinates = false;
         params.tag_places = true;
         */
+
         
-        geocoder.setParameters(params);
-        geocoder.configure();
-        this.addExtractor(geocoder);
+        //SimpleGeocoder geocoder = new SimpleGeocoder();
+        //geocoder.setParameters(params);
+        //geocoder.configure();
+        //this.addExtractor(geocoder);
 
         XTemporal xtemp = new XTemporal();
         xtemp.configure();
@@ -151,10 +151,6 @@ public class BasicGeoTemporalProcessing
 
         converter = new XText();
 
-        // TOOD: Rework application setup.
-        //     all inputs here should be user settable.
-        converter.setTempDir("Xponents-Temp/unpack");  // temp area for unpacking Zips, etc.
-        converter.setArchiveDir("Xponents-Temp/xtext");
         converter.enableHTMLScrubber(false);
         converter.enableSaving(true);
         converter.enableOverwrite(false);
@@ -162,6 +158,10 @@ public class BasicGeoTemporalProcessing
 
         // Complications:  Where do we save converted items?
         //
+        if (tempDir != null) {
+            converter.getPathManager().setConversionCache(tempDir);
+        }
+
         try {
             converter.setup();
         } catch (IOException ioerr) {
@@ -193,7 +193,8 @@ public class BasicGeoTemporalProcessing
             throw new ProcessingException("Caller is required to use non-default Parameters; "
                     + "\nat least set the output options, folder, jobname, etc.");
         }
-        AbstractFormatter formatter = (AbstractFormatter) FormatterFactory.getInstance(outputFormat);
+        AbstractFormatter formatter = (AbstractFormatter) FormatterFactory
+                .getInstance(outputFormat);
         if (formatter == null) {
             throw new ProcessingException("Wrong formatter?");
         }
@@ -252,6 +253,7 @@ public class BasicGeoTemporalProcessing
         reportMemory();
         log.info("Finished all processing");
     }
+
     long startTime = 0;
     long prevTime = 0;
 
@@ -279,8 +281,8 @@ public class BasicGeoTemporalProcessing
      */
     @Override
     public void handleConversion(ConvertedDocument txtdoc, String fpath) {
-        if (txtdoc == null){
-            log.error("NOTE: Document could not be converted FILE={}",fpath);
+        if (txtdoc == null) {
+            log.error("NOTE: Document could not be converted FILE={}", fpath);
             return;
         }
         total_rawbytes += txtdoc.filesize;
@@ -314,6 +316,7 @@ public class BasicGeoTemporalProcessing
         log.info("===============\nDOCUMENT PROCESSING");
         log.info("\t" + processingMetric.toString());
     }
+
     private static String _inFile = null;
     private static String _outFile = null;
     private static String _outFormat = null;
@@ -330,30 +333,30 @@ public class BasicGeoTemporalProcessing
         while ((c = opts.getopt()) != -1) {
             switch (c) {
 
-                // -i inputFile = path to file or directory of files to be processed
-                case 'i':
-                    _inFile = opts.getOptarg();
-                    break;
+            // -i inputFile = path to file or directory of files to be processed
+            case 'i':
+                _inFile = opts.getOptarg();
+                break;
 
-                // -f outputFormat = the desired output format
-                case 'f':
-                    _outFormat = opts.getOptarg();
-                    _outFormats = TextUtils.string2list(_outFormat.trim(), ",");
-                    break;
+            // -f outputFormat = the desired output format
+            case 'f':
+                _outFormat = opts.getOptarg();
+                _outFormats = TextUtils.string2list(_outFormat.trim(), ",");
+                break;
 
-                // -o outputDir = the path to output file
-                case 'o':
-                    _outFile = opts.getOptarg();
-                    break;
+            // -o outputDir = the path to output file
+            case 'o':
+                _outFile = opts.getOptarg();
+                break;
 
-                // -t tempDir = the path to temp directory
-                case 't':
-                    _tempDir = opts.getOptarg();
-                    break;
-                case 'h':
-                default:
-                    printHelp();
-                    System.exit(-1);
+            // -t tempDir = the path to temp directory
+            case 't':
+                _tempDir = opts.getOptarg();
+                break;
+            case 'h':
+            default:
+                printHelp();
+                System.exit(-1);
             }
         }
     }
@@ -376,6 +379,7 @@ public class BasicGeoTemporalProcessing
         System.out.println("\t-o outputFile = the path to output file");
         System.out.println("\t-t tempDir = the path to the temporary storage directory");
     }
+
     private StringBuilder runnerMessage = new StringBuilder();
 
     /**
@@ -383,8 +387,8 @@ public class BasicGeoTemporalProcessing
      *
      * @return true if parameters and defaults suffice; false otherwise.
      */
-    public boolean validateParameters(String inPath,
-            List<String> outFormats, String outPath, String tempDir, Parameters plist) {
+    public boolean validateParameters(String inPath, List<String> outFormats, String outPath,
+            String tempDir, Parameters plist) {
 
         runnerMessage = new StringBuilder();
 
@@ -423,7 +427,8 @@ public class BasicGeoTemporalProcessing
         //String ext = FilenameUtils.getExtension(inPath);
 
         if (FileUtility.isArchiveFile(inPath) && tempDir == null) {
-            runnerMessage.append("A directory for temporary storage must be provided for unpacking Zip and other archive files");
+            runnerMessage
+                    .append("A directory for temporary storage must be provided for unpacking Zip and other archive files");
             return false;
         }
 
@@ -439,7 +444,8 @@ public class BasicGeoTemporalProcessing
                 // DEFAULT file name.
                 plist.setJobName("OpenSextant_Output_" + Parameters.getJobTimestamp());
             } catch (Exception fmterr) {
-                runnerMessage.append("Failed to invoke the requested format to create a default output file");
+                runnerMessage
+                        .append("Failed to invoke the requested format to create a default output file");
                 return false;
             }
         } else {

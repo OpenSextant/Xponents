@@ -9,10 +9,16 @@
 
 
   <target name="copy-libs" >
+    <delete dir="${xponents.home}/Examples/lib"/>
+    <delete dir="${xponents.home}/Extraction/lib"/>
+    <delete dir="${xponents.home}/XText/lib"/>
+    <delete dir="${xponents.home}/Basics/lib"/>
+
     <delete dir="${release}"/>
 
     <mkdir dir="${release}"/>
     <mkdir dir="${release}/lib"/>
+    <mkdir dir="${release}/logs"/>
     <mkdir dir="${release}/etc"/>
     <mkdir dir="${release}/test"/>
     <mkdir dir="${release}/script"/>
