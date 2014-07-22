@@ -3,7 +3,7 @@
 <project name="XText" default="test-default">
 
 
-    <property name="xponents" value="${basedir}/../"/>
+    <property name="xponents" value="${basedir}/.."/>
     <!--
 
     XText testing tasks and properties.
@@ -20,28 +20,27 @@
         <fileset dir="${xponents}/lib" includes="**/*.jar" />
     </path>
 
+
+    <!-- Short hand is used -->
     <target name="test-default">
 
         <mkdir dir="${xponents}/results" />
         <java classname="org.opensextant.xtext.XText"  classpathref="runtime.classpath" fork="yes">
-            <jvmArg value="-Xmx600m"/>
-            <arg value="-i"/>
-            <arg value="${xponents}/test/Asia_Fdn_Afghanistan_2009.pdf"/>
-            <arg value="-o"/>
-            <arg value="${xponents}/results/"/>
+            <jvmarg value="-Xmx600m"/>
+            <arg value="--input=${xponents}/test/Asia_Fdn_Afghanistan_2009.pdf"/>
+            <arg value="--output=${xponents}/results/"/>
         </java>
     </target>
 
     <target name="convert">
         <java classname="org.opensextant.xtext.XText"  classpathref="runtime.classpath" fork="yes">
-            <jvmArg value="-Xmx600m"/>
-            <arg value="-i"/>
-            <arg value="${input}"/>
-            <arg value="-o"/>
-            <arg value="${output}"/>
+            <jvmarg value="-Xmx600m"/>
+            <jvmarg value="-Dlog4j.configuration='file:${basedir}/script/log4j.properties'"/>
+            <jvmarg value="-Dxtext.home='${basedir}'"/>
+            <arg value="--input='${input}'"/>
+            <arg value="--output='${output}'"/>
             <!-- <arg value="-e"/>
             -->
-            <arg value="-h"/>
             <!--
             <arg value="-h"/>
             -->
