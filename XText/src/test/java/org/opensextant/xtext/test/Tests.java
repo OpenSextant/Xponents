@@ -81,7 +81,7 @@ public class Tests {
         File inputFile = new File(input);
         if (inputFile.isFile()) {
             try {
-                ConvertedDocument doc = ConvertedDocument.getCachedDocument(inputFile);
+                ConvertedDocument doc = PathManager.getCachedDocument(inputFile);
                 if (doc == null) {
                     log.info("No document in cache for " + inputFile.getPath());
                 } else {
@@ -95,7 +95,7 @@ public class Tests {
             for (File f : listing) {
                 try {
                     if ("xtext".equals(f.getParentFile().getName())) {
-                        ConvertedDocument doc = ConvertedDocument.getCachedDocument(f);
+                        ConvertedDocument doc = PathManager.getCachedDocument(f);
                         log.info(doc.filepath + " TITLE=" + doc.getProperty("title"));
                     }
                 } catch (Exception anyErr) {
@@ -112,7 +112,7 @@ public class Tests {
 
     public void trivialInventory(String input, boolean test_save) throws IOException, ConfigException {
         XText xt = new XText();
-        xt.enableSaveWithInput(test_save);
+        xt.getPathManager().enableSaveWithInput(test_save);
         xt.enableSaving(test_save);
         xt.enableOverwrite(true); // reuse cached conversions if possible.
         xt.setup();
@@ -133,7 +133,7 @@ public class Tests {
         String input = item.getFile();
 
         XText xt = new XText();
-        xt.enableSaveWithInput(true);
+        xt.getPathManager().enableSaveWithInput(true);
         
         xt.enableSaving(true);
         xt.enableOverwrite(true); // reuse cached conversions if possible.

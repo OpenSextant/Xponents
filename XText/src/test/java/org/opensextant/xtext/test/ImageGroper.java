@@ -56,13 +56,13 @@ public class ImageGroper {
         // System.setProperty("LANG", "en_US");
         XText xt = new XText();
         xt.enableSaving(true);
-        xt.enableSaveWithInput(embed); // creates a ./text/ Folder locally in directory.
+        xt.getPathManager().enableSaveWithInput(embed); // creates a ./text/ Folder locally in directory.
         xt.clearSettings();
         xt.convertFileType("jpg");
         xt.convertFileType("jpeg");
 
         try {
-            xt.setArchiveDir(output);
+            xt.getPathManager().setConversionCache(output);
             xt.setup();
             xt.extractText(input);
         } catch (IOException ioerr) {

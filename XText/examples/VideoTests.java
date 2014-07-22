@@ -17,8 +17,8 @@ public class VideoTests implements ConversionListener {
     public void run(String input) throws IOException {
 
         XText xt = new XText();
-        xt.enableSaveWithInput(false);
-        xt.setArchiveDir("video-output");
+        xt.getPathManager().enableSaveWithInput(false);
+        xt.getPathManager().setConversionCache("video-output");
 
         xt.enableSaving(true);
         xt.convertFileType("mp4");
