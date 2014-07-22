@@ -42,8 +42,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.opensextant.ConfigException;
 import org.opensextant.xtext.XText;
 import org.opensextant.xtext.collectors.Collector;
@@ -67,7 +69,7 @@ public class WebClient {
      */
     public WebClient(String siteUrl, String archive) throws MalformedURLException, ConfigException {
         setSite(siteUrl);
-        archiveRoot = archive;        
+        archiveRoot = archive;
     }
 
     protected String archiveRoot = null;
@@ -86,7 +88,8 @@ public class WebClient {
         if (archiveRoot != null) {
             File test = new File(archiveRoot);
             if (!(test.isDirectory() && test.exists())) {
-                throw new ConfigException("Destination archive does not exist. Caller must create prior to creation.");
+                throw new ConfigException(
+                        "Destination archive does not exist. Caller must create prior to creation.");
             }
         }
     }
@@ -102,7 +105,6 @@ public class WebClient {
      */
     public void setConverter(XText conversionManager) {
         converter = conversionManager;
-        //converter.setArchiveDir(archiveRoot);
     }
 
     /**
@@ -124,7 +126,7 @@ public class WebClient {
      * current depth of the crawl at any time.
      */
     protected int depth = 0;
-    
+
     /** Maximum number of levels that will be crawled.
      */
     public final static int MAX_DEPTH = 10;
@@ -161,11 +163,14 @@ public class WebClient {
     }
 
     /**
+     * TODO: Update to use HTTP client "HttpClients....build()" method of creating and tailoring HttpClient
+     * using the proxy and cookie settings, as well as any other tuning.
+     * 
      * Override if your context requires a different style of HTTP client.
      * @return
      */
     public HttpClient getClient() {
-        HttpClient httpClient = new DefaultHttpClient();
+        HttpClient httpClient = HttpClients.createDefault();
 
         /*
          * 
@@ -174,7 +179,8 @@ public class WebClient {
             httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
         }
 
-        httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+        httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
+                CookieSpecs.BROWSER_COMPATIBILITY);
         return httpClient;
     }
 
@@ -191,19 +197,21 @@ public class WebClient {
             HttpResponse page = getPage(site);
             return;
         } catch (Exception err) {
-            throw new ConfigException(String.format("%s failed to collect URL %s", getName(), site), err);
+            throw new ConfigException(
+                    String.format("%s failed to collect URL %s", getName(), site), err);
         }
     }
 
     /**
      * clears state of crawl.
      */
-    public void reset(){
+    public void reset() {
         // Clear list of distinct items found
-        this.found.clear(); 
+        this.found.clear();
         // Clear list of items tracked/saved in this session.
         this.saved.clear();
     }
+
     /**
      * 
      * @param i
@@ -272,7 +280,8 @@ public class WebClient {
         while (matches.find()) {
             String link = matches.group(1).trim();
             String link_lc = link.toLowerCase();
-            if ("/".equals(link) || "#".equals(link) || link_lc.startsWith("javascript") || link.startsWith("../")) {
+            if ("/".equals(link) || "#".equals(link) || link_lc.startsWith("javascript")
+                    || link.startsWith("../")) {
                 continue;
             }
             if (link.endsWith("/")) {
@@ -322,13 +331,13 @@ public class WebClient {
     public static void downloadFile(HttpEntity entity, String destPath) throws IOException {
         org.apache.commons.io.IOUtils.copy(entity.getContent(), new FileOutputStream(destPath));
     }
-    
+
     private String name = "Unamed Web crawler";
-    
-    public void setName(String n){
+
+    public void setName(String n) {
         name = n;
     }
-    
+
     public String getName() {
         return name;
     }
