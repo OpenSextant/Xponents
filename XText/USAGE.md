@@ -101,7 +101,7 @@ So, XText can be set up to take an input folder/file and record the conversion
 of all found originals in a "xtext" cache.    If XText "save" = false, then you are not caching. 
 To enable caching, 
 
-    XText.enableSaving(true);
+    XText..getPathManager().enableSaving(true);
 
 The cache could be saved along side the originals, in the very same input folder structure that is found.
 OR the cache could be saved in a separate, parallel folder structure.
@@ -150,18 +150,29 @@ If you have an 1 email message with 3 attachments in a single RFC822 file, for e
 And so 1 compound document -- the email file -- may yield 9 total objects to cache.
 
 The benefits of caching text conversions needs to be weighed by each user of XText.
+Since XText is primarily for conversion, the ConversionListener should be used to retrieve
+the conversion of any item found by XText.  To use caching the general pattern is to use the PathManager.
 
+    // The gist...
+    //
     XText conv = new XText()
+    conv.getPathManager().set....( "some param" )
+    conv.getPathManager().enable....( bool )
+    // finally, 
+    conv.setup()
 
-    conv.enableSaveWithInput(true);   // Save in input folder in cache folders ".../xtext/"
-    conv.enableSaving(true);          // Save == cache ON    
-    conv.enableOverwrite(false);      // reuse cached conversions if possible.
-    conv.setup();                     // Finally, run setup, which double checks settings, folders, etc.
+    // For Example:    
+
+    conv.getPathManager().enableSaving(true);          // Save == cache ON    
+    conv.getPathManager().enableSaveWithInput(true);   // Save in input folder in cache folders ".../xtext/"
+    conv.getPathManager().enableOverwrite(false);      // reuse cached conversions if possible.
+    conv.setup();                                      // Finally, run setup, which double checks settings, folders, etc.
    
     // Alternatively, instead of enableSaveWithInput(true), you want to save in a separate archive,
     //
-    // Please be sure not to put your conversion archive under any possible input folders.   
-    conv.setArchiveDir("/path/to/conversion/archive/");
+    // Please be sure not to put your conversion archive under any possible input folders. 
+    //  
+    conv.getPathManager.setConversionCache("/path/to/conversion/archive/");
 
    
 #Error Handling#

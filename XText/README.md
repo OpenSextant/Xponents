@@ -70,10 +70,11 @@ Basic Usage
 #RELEASE NOTES#
 
 
-##v2.5  SUMMER, 2014##
+##v2.5.1  SUMMER, 2014##
 - PDFBox updated
 - JavaDoc improvements, looking to Java 8 stringent javadoc checking
 - Added Outlook PST support (initial). via java-libpst.  This support is planned for Tika 1.6.
+- PathManager construct added to offload complexities of dealing with caching, crawling, collecting.
 
 ##v1.4  ST PATRICK's DAY, 2014##
 
