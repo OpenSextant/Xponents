@@ -164,6 +164,17 @@ public class FileUtility {
         final String x = ext.toLowerCase();
         return x.equals("zip") || x.equals("tar") || x.equals("tgz") || x.equals("gz") || x.equals("tar.gz");
     }
+    
+    /**
+     * Test is a path or file extension ends with .txt
+     * NPE if null is passed in.
+     * @param filepath path or extension, including "."
+     * 
+     * @return true if is .txt or .TXT
+     */
+    public static boolean isPlainText(String filepath){
+        return  filepath.toLowerCase().endsWith(".txt");
+    }
 
     /**
      *
