@@ -23,7 +23,7 @@ Major file conversions supported include:
 * JPEG EXIF parsing (saves full EXIF header as text; EXIF location & time as metadata)
 * Support for Embedded Object extraction
 
-#Major features added beyond Tika#:
+#Major features added beyond Tika#
 
 Conversion caching/archiving: conversions can be maintained close to originals or in parallel structure
 Metadata preservation: metadata about original and the conversion process are persisted with conversions
