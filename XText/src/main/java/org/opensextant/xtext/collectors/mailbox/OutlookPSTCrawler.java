@@ -114,30 +114,41 @@ public class OutlookPSTCrawler implements Collector {
         defaultOutputName = FilenameUtils.getBaseName(pst.getName()) + "_pst";
     }
 
+    /**
+     * Beware -- you can set the path for the PST output (outputPSTDir) or you can set the path its parent path (outputDir).
+     * Outside apps may want to control the path setup.   To use the default,  setOutputDir(); configure(); 
+     * @throws ConfigException
+     */
     public void configure() throws ConfigException {
-        if (outputDir == null) {
-            throw new ConfigException("Output Dir is not configured");
-        }
-        if (outputDir.exists()) {
-            outputPSTDir = new File(String.format("%s/%s", outputDir.getAbsolutePath(),
-                    defaultOutputName));
-            if (!incrementalMode && outputPSTDir.exists()) {
-                throw new ConfigException(
-                        "Output Dir contains target, but you are not in overwrite mode");
+
+        if (outputPSTDir == null) {
+
+            if (outputDir == null) {
+                throw new ConfigException("Output Dir is not configured");
             }
 
-            if (!outputPSTDir.exists()) {
-                try {
-                    FileUtility.makeDirectory(outputPSTDir);
-                } catch (IOException err) {
-                    throw new ConfigException("Unable to create target", err);
+            if (outputDir.exists()) {
+                outputPSTDir = new File(String.format("%s/%s", outputDir.getAbsolutePath(),
+                        defaultOutputName));
+                if (!incrementalMode && outputPSTDir.exists()) {
+                    throw new ConfigException(
+                            "Output Dir contains target, but you are not in overwrite mode");
                 }
+
+                if (!outputPSTDir.exists()) {
+                    try {
+                        FileUtility.makeDirectory(outputPSTDir);
+                    } catch (IOException err) {
+                        throw new ConfigException("Unable to create target", err);
+                    }
+                }
+            } else {
+                throw new ConfigException(
+                        "Please create containing output directory. DIR does not exist:"
+                                + outputDir.getAbsolutePath());
             }
-        } else {
-            throw new ConfigException(
-                    "Please create containing output directory. DIR does not exist:"
-                            + outputDir.getAbsolutePath());
         }
+
         log.info(" Input: PST =  " + pst.getAbsolutePath());
         log.info(" Modes: Incremental =" + incrementalMode);
         log.info(" Modes: Overwrite =" + overwriteMode);
@@ -669,8 +680,20 @@ public class OutlookPSTCrawler implements Collector {
         return outputDir;
     }
 
+    /**
+     * Set the parent container of PST output.
+     * @param outputDir
+     */
     public void setOutputDir(File outputDir) {
         this.outputDir = outputDir;
+    }
+
+    /**
+     * set the location of the output.
+     * @param pstDir
+     */
+    public void setOutputPSTDir(File pstDir) {
+        this.outputPSTDir = pstDir;
     }
 
     /**
