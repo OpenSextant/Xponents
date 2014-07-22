@@ -15,9 +15,10 @@ crawl_output=$3
 shift
 shift
 # echo $*
+logfile=$basedir/logs/xtext-stderr.log
 
 # Debug logging: -Dlog4j.debug
 java  -Dlog4j.configuration="file:${basedir}/script/log4j.properties" -Dxtext.home="${basedir}" -Xmx512m  \
-   -classpath "$basedir/lib/*" org.opensextant.xtext.XText  --input="$input" --output="$output" --export="$crawl_output"
+   -classpath "$basedir/lib/*" org.opensextant.xtext.XText  --input="$input" --output="$output" --export="$crawl_output" > $logfile 2>&1
 
 

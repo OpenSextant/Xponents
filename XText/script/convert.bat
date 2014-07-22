@@ -10,6 +10,7 @@ set scriptdir=%~dp0
 set scriptdir=%scriptdir:~0,-1%
 set basedir=%scriptdir%\..
 set logconf=%scriptdir:\=/%
+set logfile=%basedir%\logs\xtext-stderr.log
 
 REM -Dlog4j.debug
-java -Dlog4j.configuration="file:/%logconf%/log4j.properties" -Dxtext.home="%basedir%"  -Xmx512m  -classpath "%basedir%\lib\*" org.opensextant.xtext.XText  --input=%1 --output=%2 --export=%3
+java -Dlog4j.configuration="file:/%logconf%/log4j.properties" -Dxtext.home="%basedir%"  -Xmx512m  -classpath "%basedir%\lib\*" org.opensextant.xtext.XText  --input=%1 --output=%2 --export=%3 >%logfile% 2>&1 

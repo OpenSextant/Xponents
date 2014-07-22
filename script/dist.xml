@@ -5,8 +5,10 @@
   </description>
 
   <property name="xponents.home" value="${basedir}/../" />
-  <property name="release" location="${xponents.home}/release" />
-  <property name="release.xtext" location="${xponents.home}/XText-2.5" />
+  <property name="version" value="2.5.1"/>
+  <property name="release" location="${xponents.home}/Xponents-${version}" />
+
+  <property name="release.xtext" location="${xponents.home}/XText-${version}" />
 
 
   <!--  Consolidate XText items to their own release app
