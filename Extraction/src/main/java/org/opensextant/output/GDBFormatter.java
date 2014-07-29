@@ -40,7 +40,7 @@ import org.opensextant.processing.ProcessingException;
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Jan 6, 2012
  */
-public class GDBFormatter extends FolderGISDataFormatter {
+public class GDBFormatter extends GISDataFormatter {
 
     /**
      *
@@ -65,12 +65,12 @@ public class GDBFormatter extends FolderGISDataFormatter {
         checkOverwrite(gdb);
         // gdb.mkdirs();
 
-        _temp = createTempFolder(this.outputType);
+        File _temp = createTempFolder(this.outputType);
         File zipfile = new File(_temp + File.separator + gdb.getName() + ".zip");
         FileOutputStream fos = new FileOutputStream(zipfile);
-        this.zos = new ZipOutputStream(fos);
+        ZipOutputStream zos = new ZipOutputStream(fos);
         Object[] args = new Object[1];
         args[0] = gdb;
-        this.os = new FileGdbOutputStream(this.zos, args);
+        this.os = new FileGdbOutputStream(zos, args);
     }
 }

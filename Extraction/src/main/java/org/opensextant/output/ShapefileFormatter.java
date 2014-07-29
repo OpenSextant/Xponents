@@ -38,7 +38,7 @@ import org.opensextant.processing.ProcessingException;
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Jan 6, 2012
  */
-public final class ShapefileFormatter extends FolderGISDataFormatter {
+public final class ShapefileFormatter extends GISDataFormatter {
 
     /**
      *
@@ -63,12 +63,12 @@ public final class ShapefileFormatter extends FolderGISDataFormatter {
         checkOverwrite(shp); // cleanly delete first.
         shp.mkdirs();          // now recreate.
 
-        _temp = createTempFolder(this.outputType);
+        File _temp = createTempFolder(this.outputType);
         File zipfile = new File(_temp + File.separator + shp.getName() + ".zip");
         FileOutputStream fos = new FileOutputStream(zipfile);
 
-        this.zos = new ZipOutputStream(fos);
+        ZipOutputStream zos = new ZipOutputStream(fos);
 
-        this.os = GISFactory.getOutputStream(DocumentType.Shapefile, this.zos, shp);
+        this.os = GISFactory.getOutputStream(DocumentType.Shapefile, zos, shp);
     }
 }
