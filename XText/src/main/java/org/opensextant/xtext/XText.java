@@ -752,9 +752,6 @@ public final class XText implements ExclusionFilter, Converter {
 
         // requested_types.add("log"); // Uncommon. Caller must expclitly add
         // raw data types and archives.
-
-        defaultConversion = new DefaultConverter(maxBuffer);
-        embeddedConversion = new EmbeddedContentConverter(maxBuffer);
     }
 
     /**
@@ -772,6 +769,9 @@ public final class XText implements ExclusionFilter, Converter {
      */
     public void setup() throws IOException {
 
+        defaultConversion = new DefaultConverter(maxBuffer);
+        embeddedConversion = new EmbeddedContentConverter(maxBuffer);
+        
         paths.configure();
 
         // Invoke converter instances only as requested types suggest.

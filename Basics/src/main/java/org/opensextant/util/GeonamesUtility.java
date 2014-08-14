@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.Country;
@@ -75,7 +76,7 @@ public class GeonamesUtility {
      * @return capitalize the name of a country
      */
     public static String normalizeCountryName(String c) {
-        return StringUtils.capitalize(c.toLowerCase());
+        return StringUtils.capitalize(c.toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -143,14 +144,14 @@ public class GeonamesUtility {
                 continue;
             }
 
-            cc = cc.toUpperCase();
-            fips = fips.toUpperCase();
+            cc = cc.toUpperCase(Locale.ENGLISH);
+            fips = fips.toUpperCase(Locale.ENGLISH);
 
             // FIPS could be *, but as long as we use ISO2, we're fine. if
             // ("*".equals(cc)){ cc = fips.toUpperCase(); }
 
             // Normalize: "US" =&gt; "united states of america"
-            _default_country_names.put(cc, n.toLowerCase());
+            _default_country_names.put(cc, n.toLowerCase(Locale.ENGLISH));
 
             Country C = new Country(cc, n);
             C.CC_FIPS = fips;
@@ -265,7 +266,7 @@ public class GeonamesUtility {
         // typically allow upper/lower casing. We choose UPPER case as
         // normalization.
         //
-        return v.toUpperCase();
+        return v.toUpperCase(Locale.ENGLISH);
     }
 
     /**

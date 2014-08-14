@@ -742,7 +742,7 @@ public class FileUtility {
             return FEED_MIMETYPE;
         }
 
-        if (test.startsWith("http:")) {
+        if (test.startsWith("http:") || test.startsWith("https:")) {
             return WEBPAGE_MIMETYPE;
         }
 
