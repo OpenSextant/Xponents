@@ -145,6 +145,32 @@ public class FileUtility {
         final String ext = FilenameUtils.getExtension(filepath.toLowerCase());
         return imageTypeMap.containsKey(ext);
     }
+   
+    /**
+     * Checks file extension of given filepath to see if the format is a known video type.
+     * @param filepath file name or path
+     * @return true if file is likely an video file format.
+     */
+    public static boolean isVideo(String filepath){
+        if (filepath == null) {
+            return false;
+        }
+        final String ext = FilenameUtils.getExtension(filepath.toLowerCase());
+        return VID_MIMETYPE.equals(filetypeMap.get(ext));
+    }
+    
+    /**
+     * Checks file extension of given filepath to see if the format is a known audio type.
+     * @param filepath file name or path
+     * @return true if file is likely an audio file format.
+     */
+    public static boolean isAudio(String filepath){
+        if (filepath == null) {
+            return false;
+        }
+        final String ext = FilenameUtils.getExtension(filepath.toLowerCase());
+        return AUD_MIMETYPE.equals(filetypeMap.get(ext));
+    }    
 
     /** Check if a file is an archive
      * @param filepath path to file
@@ -637,6 +663,8 @@ public class FileUtility {
         // Image
         imageTypeMap.put("jpg", IMAGE_MIMETYPE);
         imageTypeMap.put("jpeg", IMAGE_MIMETYPE);
+        imageTypeMap.put("jp2", IMAGE_MIMETYPE);
+        imageTypeMap.put("jpx", IMAGE_MIMETYPE);
         imageTypeMap.put("ico", IMAGE_MIMETYPE);
         imageTypeMap.put("bmp", IMAGE_MIMETYPE);
         imageTypeMap.put("gif", IMAGE_MIMETYPE);
@@ -703,6 +731,8 @@ public class FileUtility {
         filetypeMap.put("rm", VID_MIMETYPE);
         filetypeMap.put("wmv", VID_MIMETYPE);
         filetypeMap.put("mp4", VID_MIMETYPE);
+        filetypeMap.put("mpeg", VID_MIMETYPE);
+        filetypeMap.put("mpg", VID_MIMETYPE);
 
         // Audio
         filetypeMap.put("au", AUD_MIMETYPE);

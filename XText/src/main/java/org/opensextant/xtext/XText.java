@@ -200,6 +200,12 @@ public final class XText implements ExclusionFilter, Converter {
         postProcessor = processor;
     }
 
+    private boolean useTikaPST = false;
+
+    public void enableTikaPST(boolean flag) {
+        useTikaPST = flag;
+    }
+
     /**
      * is the input an archive?
      */
@@ -282,7 +288,7 @@ public final class XText implements ExclusionFilter, Converter {
             // PathManager is STATEFUL for as long as this archive is processing
             // If an archive is uncovered while traversing files, its contents can be dumped to the child export folder.
             convertArchive(input);
-        } else if (isPST(input.getName())) {
+        } else if (isPST(input.getName()) && !useTikaPST) {
             this.convertOutlookPST(input);
         } else if (input.isFile()) {
             // If prefix is not set, then conversion will be dumped flatly to output area.
@@ -518,7 +524,7 @@ public final class XText implements ExclusionFilter, Converter {
             // NULL here implies the actual file, A.zip does not have any text representation itself.
             // However its children do.
             return null;
-        } else if (isPSTExtension(ext)) {
+        } else if (isPSTExtension(ext) && !useTikaPST) {
             convertOutlookPST(input);
             return null;
         }
@@ -771,7 +777,7 @@ public final class XText implements ExclusionFilter, Converter {
 
         defaultConversion = new DefaultConverter(maxBuffer);
         embeddedConversion = new EmbeddedContentConverter(maxBuffer);
-        
+
         paths.configure();
 
         // Invoke converter instances only as requested types suggest.
