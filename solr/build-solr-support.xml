@@ -2,12 +2,12 @@
 
 <project name="OpenSextant XTax Solr support" >
 
-    <property name="solr.v" value="4.4.0" />
+    <property name="solr.v" value="4.7.2" />
 
     <property name="jetty.v" value="8.1.9.v20130131" />
-    <property name="winstone.v" value="0.9.10-hudson-24" />
+    <property name="winstone.v" value="0.9.10" />
     <property name="textTagger.v" value="2.0-SNAPSHOT" />
-    <property name="slf4j.v" value="1.6.6" />
+    <property name="slf4j.v" value="1.7.5" />
 
     <!-- setup proxy -->
     <target name="proxy" >
@@ -23,8 +23,8 @@
     </target>
 
 
-    <!-- get some dependencies -->
-    <target name="init" depends="proxy, setup">
+    <!-- get some dependencies 'proxy' -->
+    <target name="init" depends="setup">
 
         <get dest="build" skipexisting="true">
             <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
@@ -57,7 +57,7 @@
         </parallel>
 
         <echo message="Waiting for Solr to start by checking its URL..." />
-        <waitfor maxwait="15" maxwaitunit="second" checkevery="500" timeoutproperty="solr.failed">
+        <waitfor maxwait="60" checkevery="200" timeoutproperty="solr.failed">
             <http url="http://localhost:${solr.server.port}/solr/" />
         </waitfor>
         <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
@@ -72,7 +72,9 @@
                 <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
                 <sysproperty key="solr.enableRemoteStreaming" value="true" />
                 <sysproperty key="java.util.logging.config.file" value="logging.properties" />
-                <arg value="--controlPort=8081" />
+            	<!-- 
+                <arg value="-controlPort=8081" />
+                -->
                 <arg value="--commonLibFolder=build/containerLib" />
                 <arg value="--httpPort=${solr.server.port}" />
                 <arg value="--warfile=build/solr-${solr.v}.war" />
