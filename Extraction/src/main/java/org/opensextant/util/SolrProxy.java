@@ -30,6 +30,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -41,349 +43,296 @@ import org.apache.solr.core.CoreContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
+import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
 
 /**
- * This class creates a proxy to Solr setup routines and the most common data
- * brokering.
- * 
- * Use either: # SolrProxy( url ) creates a server # SolrProxy( ) defaults to
- * environment set, creating an embedded solr server # SolrProxy( solr.home,
- * corename ) - create embedded solr server with specific index
+ * As Xponents is a multi-core instance of Solr, a single default solr home and default solr core
+ * does not make sense.  Each wrapper around Solr (via SolrProxy) needs to name the solr home and an explicit core name.
  * 
  * @author ubaldino
  */
 public class SolrProxy extends SolrUtil {
 
-	public static String OPENSEXTANT_HOME = System
-			.getProperty("opensextant.home");
-	public static String SOLR_HOME = null;
+    /**A single method to help find a suitable value for SOLR HOME
+     * 
+     * If given is null, then system variables are checked.
+     * @param given solr home.
+     */
+    public static String deriveSolrHome(String given) throws ConfigException {
+        if (given != null) {
+            return given;
+        }
 
-	/**
-	 * Choose the Solr Home from different approaches if SOLR_HOME has been set
-	 * by caller programtically, then force that into the JVM arg solr.solr.home
-	 * Otherwise if JVM arg has been specified, use it. Otherwise infer the
-	 * default as a folder named located at
-	 * ${opensextant.home}/../opensextant-solr
-	 */
-	public static void setDefaultSolrHome() throws IOException {
-		if (SOLR_HOME == null) {
-			SOLR_HOME = System.getProperty("solr.solr.home");
-			if (SOLR_HOME == null) {
-				SOLR_HOME = OPENSEXTANT_HOME + File.separator + ".."
-						+ File.separator + "opensextant-solr";
-				try {
-					SOLR_HOME = new File(SOLR_HOME).getCanonicalPath();
-					System.setProperty("solr.solr.home", SOLR_HOME);
-				} catch (Exception ioerr) {
-					throw new IOException("Solr Home is erroneous", ioerr);
-				}
-			}
-		} else {
-			System.setProperty("solr.solr.home", SOLR_HOME);
-		}
-	}
+        String solrHome = System.getProperty("opensextant.solr");
+        if (solrHome != null) {
+            return solrHome;
+        }
+        solrHome = System.getProperty("solr.solr.home");
 
-	/**
-	 * Initializes a Solr server from a URL
-	 * 
-	 * @throws IOException
-	 */
-	public SolrProxy(String url) throws IOException {
-		this.server_url = url;
-		initialize();
-	}
+        if (solrHome != null) {
+            return solrHome;
+        }
 
-	/**
-	 * Initializes a Solr server from the SOLR_HOME environment variable
-	 * 
-	 * @throws IOException
-	 */
-	public SolrProxy() throws IOException {
-		this.server_url = null;
-		// get SOLR_HOME variable from environment
-		// This produces a local EmbeddedSolrServer
-		SolrProxy.setDefaultSolrHome();
-		initialize();
-	}
+        solrHome = System.getProperty("solr.url");
+        if (solrHome != null) {
+            return solrHome;
+        }
 
-	/**
-	 * Initializes a Solr server from the SOLR_HOME environment variable
-	 * 
-	 * @throws IOException
-	 */
-	public SolrProxy(String solr_home, String core) throws IOException {
-		this.server_url = null;
-		setupCore(solr_home, core);
-	}
+        throw new ConfigException(
+                "A non-null value for SOLR HOME is required; Either pass to constructor, set opensextant.solr, set solr.solr.home, or solr.url");
 
-	protected Logger logger = LoggerFactory.getLogger(SolrProxy.class);
-	protected SolrServer solrServer = null;
-	private UpdateRequest solrUpdate = null;
-	protected String server_url = null;
-	private boolean writable = false;
+    }
 
-	public void setWritable(boolean b) {
-		writable = b;
-	}
+    protected String solrHome = null;
+    protected String coreName = null;
 
-	/**
-	 * 
-	 * Is Solr server instance allowed to write to index?
-	 */
-	public boolean isWritable() {
-		return writable;
-	}
+    /**
+     * Initializes a Solr server from a URL
+     * 
+     * @throws IOException
+     */
+    public SolrProxy(URL url) throws IOException {
+        this.server_url = url;
+        solrServer = initializeHTTP(this.server_url);
+    }
 
-	/**
-	 * 
-	 * @throws IOException
-	 */
-	public  void initialize() throws IOException {
+    /**
+     * Initializes a Solr server from the SOLR_HOME environment variable
+     * 
+     * @throws IOException
+     */
+    public SolrProxy(String core) throws ConfigException {
+        this.server_url = null;
+        this.solrHome = deriveSolrHome(null);
+        this.coreName = core;
+        solrServer = setupCore(solrHome, core);
+    }
 
-		if (!StringUtils.isBlank(server_url)) {
-			if (server_url.toLowerCase().startsWith("http:")) {
-				this.solrServer = initialize_http(server_url);
-			}
-		} else {
-			this.solrServer = initialize_embedded();
-		}
-	}
+    /**
+     * Initializes a Solr server from the SOLR_HOME environment variable
+     * 
+     * @throws IOException
+     */
+    public SolrProxy(String solr_home, String core) throws ConfigException {
+        this.server_url = null;
+        solrHome = solr_home;
+        this.coreName = core;
+        solrServer = setupCore(solrHome, core);
+    }
 
-	/**
-	 * Get an HTTP server for Solr.
-	 * 
-	 * @param url
-	 * @return Instance of a Solr server
-	 * @throws MalformedURLException
-	 */
-	public static SolrServer initialize_http(String url)
-			throws MalformedURLException {
+    protected Logger logger = LoggerFactory.getLogger(SolrProxy.class);
+    protected SolrServer solrServer = null;
+    private UpdateRequest solrUpdate = null;
+    protected URL server_url = null;
+    private boolean writable = false;
 
-		HttpSolrServer server = new HttpSolrServer(url);
-		server.setAllowCompression(true);
+    public void setWritable(boolean b) {
+        writable = b;
+    }
 
-		return server;
+    /**
+     * 
+     * Is Solr server instance allowed to write to index?
+     */
+    public boolean isWritable() {
+        return writable;
+    }
 
-	}
+    /**
+     * Get an HTTP server for Solr.
+     * 
+     * @param url
+     * @return Instance of a Solr server
+     * @throws MalformedURLException
+     */
+    public static SolrServer initializeHTTP(URL url) throws MalformedURLException {
 
-	/**
-	 * An improved, supported method for creating an EmbeddedSolr from a single
-	 * or multi-core solr instance. If you just have the one core, this setup
-	 * still relies on the presence of solr.xml
-	 */
-	public final void setupCore(String solr_home, String corename)
-			throws IOException {
-		this.solrServer = SolrProxy.initialize_embedded(solr_home, corename);
-	}
+        HttpSolrServer server = new HttpSolrServer(url.toString());
+        server.setAllowCompression(true);
 
-	/**
-	 * Creates an EmbeddedSolrServer given solr home &amp; the core to use.
-	 * These may be null and you get the default.
-	 */
-	public static EmbeddedSolrServer initialize_embedded(String solrHome,
-			String coreName) throws IOException {
-		try {
-			CoreContainer solrContainer;
+        return server;
 
-			if (solrHome == null) {
-				solrContainer = new CoreContainer();
-			} else {
-				solrContainer = new CoreContainer(solrHome);
-			}
-			solrContainer.load();// since Solr 4.4
+    }
 
-			return new EmbeddedSolrServer(solrContainer, coreName);
+    /**
+     * Creates an EmbeddedSolrServer given solr home &amp; the core to use.
+     * These may be null and you get the default.
+     */
+    public static EmbeddedSolrServer setupCore(String _solrHome, String _coreName)
+            throws ConfigException {
 
-		} catch (Exception err) {
-			throw new IOException("Failed to set up Embedded Solr", err);
-		}
-	}
+        try {
+            CoreContainer solrContainer;
 
-	/**
-	 * Creates a EmbeddedSolrServer}based on defaults.
-	 * 
-	 * @throws IOException
-	 */
-	public static EmbeddedSolrServer initialize_embedded() throws IOException {
-		return initialize_embedded(null, null);
-	}
+            if (_solrHome == null) {
+                solrContainer = new CoreContainer();
+            } else {
+                solrContainer = new CoreContainer(_solrHome);
+            }
+            solrContainer.load();// since Solr 4.4
 
-	/**
-	 * Add one solr record.
-	 * 
-	 * @param solrRecord
-	 * @throws Exception
-	 */
-	public void add(SolrInputDocument solrRecord) throws Exception {
+            return new EmbeddedSolrServer(solrContainer, _coreName);
 
-		if (!this.writable) {
-			throw new Exception(
-					"This instance is not configured for writing to index");
-		}
+        } catch (Exception err) {
+            throw new ConfigException("Failed to set up Embedded Solr at "+_solrHome +" CORE:"+_coreName, err);
+        }
+    }
 
-		// Initialize per batch if nec.y
-		if (solrUpdate == null) {
-			solrUpdate = new UpdateRequest();
-		}
+    /**
+     * Creates the bare minimum Gazetteer Place record
+     * 
+     * @return Place
+     */
+    public static Place createPlace(SolrDocument gazEntry) {
 
-		// Initialize per record
-		// .. add data to record
-		// .. add record to batch request
-		solrUpdate.add(solrRecord);
-	}
+        Place bean = new Place(SolrUtil.getString(gazEntry, "place_id"), SolrProxy.getString(
+                gazEntry, "name"));
 
-	/**
-	 * Add many solr records.
-	 * 
-	 * @param solrRecords
-	 * @throws Exception
-	 */
-	public void add(java.util.Collection<SolrInputDocument> solrRecords)
-			throws Exception {
+        bean.setName_type(SolrUtil.getChar(gazEntry, "name_type"));
+        bean.setCountryCode(SolrUtil.getString(gazEntry, "cc"));
 
-		if (!this.writable) {
-			throw new Exception(
-					"This instance is not configured for writing to index");
-		}
+        // Other metadata.
+        bean.setAdmin1(SolrUtil.getString(gazEntry, "adm1"));
+        bean.setAdmin2(SolrUtil.getString(gazEntry, "adm2"));
+        bean.setFeatureClass(SolrUtil.getString(gazEntry, "feat_class"));
+        bean.setFeatureCode(SolrUtil.getString(gazEntry, "feat_code"));
 
-		// Initialize per batch if nec.y
-		if (solrUpdate == null) {
-			solrUpdate = new UpdateRequest();
-		}
+        // Geo field is specifically Spatial4J lat,lon format.
+        // Value should have already been validated as it was stored in index
+        double[] xy = SolrUtil.getCoordinate(gazEntry, "geo");
+        bean.setLatitude(xy[0]);
+        bean.setLongitude(xy[1]);
 
-		// Initialize per record
-		// .. add data to record
-		// .. add record to batch request
-		solrUpdate.add(solrRecords);
-	}
+        return bean;
+    }
 
-	public void openIndex() throws IOException {
-		if (solrServer == null) {
-			initialize();
-		}
-	}
+    /**
+     * Add one solr record.
+     * 
+     * @param solrRecord
+     * @throws Exception
+     */
+    public void add(SolrInputDocument solrRecord) throws Exception {
 
-	/**
-	 * Optimizes the Solr server
-	 */
-	public void optimize() throws IOException, SolrServerException {
-		solrServer.optimize(true, false); // Don't wait'
-	}
+        if (!this.writable) {
+            throw new Exception("This instance is not configured for writing to index");
+        }
 
-	/**
-	 * Invokes <code>saveIndex(false)</code>
-	 */
-	public void saveIndex() {
-		saveIndex(false);
-	}
+        // Initialize per batch if nec.y
+        if (solrUpdate == null) {
+            solrUpdate = new UpdateRequest();
+        }
 
-	/**
-	 * Save and optionally records to server or index On failure, current
-	 * accumulating request is cleared and nullified to avoid retransmitting bad
-	 * data.
-	 * 
-	 * In the event of a failure all records since last "saveIndex" would be
-	 * lost and should be resubmitted.
-	 */
-	public void saveIndex(boolean commit) {
-		if (solrUpdate == null) {
-			return;
-		}
+        // Initialize per record
+        // .. add data to record
+        // .. add record to batch request
+        solrUpdate.add(solrRecord);
+    }
 
-		logger.info("Saving records to index");
-		try {
-			solrServer.request(solrUpdate);
-			if (commit) {
-				solrServer.commit();
-			}
-			solrUpdate.clear();
-			solrUpdate = null;
-		} catch (Exception filex) {
-			logger.error("Index failed during indexing", filex);
-			solrUpdate.clear();
-			solrUpdate = null;
-		}
-	}
+    /**
+     * Add many solr records.
+     * 
+     * @param solrRecords
+     * @throws Exception
+     */
+    public void add(java.util.Collection<SolrInputDocument> solrRecords) throws Exception {
 
-	/**
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void saveAndReopen() throws FileNotFoundException, IOException {
-		saveIndex(/* commit = */true);
-		openIndex();
-	}
+        if (!this.writable) {
+            throw new Exception("This instance is not configured for writing to index");
+        }
 
-	/**
+        // Initialize per batch if nec.y
+        if (solrUpdate == null) {
+            solrUpdate = new UpdateRequest();
+        }
+
+        // Initialize per record
+        // .. add data to record
+        // .. add record to batch request
+        solrUpdate.add(solrRecords);
+    }
+
+    /** Reopen an existing solr proxy.
+     * 
+     */
+    public void openIndex() throws ConfigException, IOException {
+        if (solrServer == null) {
+            if (server_url != null) {
+                solrServer = initializeHTTP(server_url);
+            } else {
+                solrServer = setupCore(solrHome, coreName);
+            }
+        }
+    }
+
+    /**
+     * Optimizes the Solr server
+     */
+    public void optimize() throws IOException, SolrServerException {
+        solrServer.optimize(true, false); // Don't wait'
+    }
+
+    /**
+     * Invokes <code>saveIndex(false)</code>
+     */
+    public void saveIndex() {
+        saveIndex(false);
+    }
+
+    /**
+     * Save and optionally records to server or index On failure, current
+     * accumulating request is cleared and nullified to avoid retransmitting bad
+     * data.
+     * 
+     * In the event of a failure all records since last "saveIndex" would be
+     * lost and should be resubmitted.
+     */
+    public void saveIndex(boolean commit) {
+        if (solrUpdate == null) {
+            return;
+        }
+
+        logger.info("Saving records to index");
+        try {
+            solrServer.request(solrUpdate);
+            if (commit) {
+                solrServer.commit();
+            }
+            solrUpdate.clear();
+            solrUpdate = null;
+        } catch (Exception filex) {
+            logger.error("Index failed during indexing", filex);
+            solrUpdate.clear();
+            solrUpdate = null;
+        }
+    }
+
+    /**
+     * 
+     * @throws IOException
+     */
+    public void saveAndReopen() throws ConfigException, IOException {
+        saveIndex(/* commit = */true);
+        openIndex();
+    }
+
+    /**
      *
      */
-	public void close() {
-		if (isWritable()) {
-			saveIndex();
-		}
+    public void close() {
+        if (isWritable()) {
+            saveIndex();
+        }
 
-		if (solrServer != null) {
-			solrServer.shutdown();
-			solrServer = null;
-		}
-	}
+        if (solrServer != null) {
+            solrServer.shutdown();
+            solrServer = null;
+        }
+    }
 
-	public SolrServer getInternalSolrServer() {
-		return solrServer;
-	}
+    public SolrServer getInternalSolrServer() {
+        return solrServer;
+    }
 
-
-
-	/**
-	 * Creates the bare minimum Gazetteer Place record
-	 * 
-	 * @return Place
-	 */
-	public static Place createPlace(SolrDocument gazEntry) {
-
-		// Creates for now org.opensextant.placedata.Place
-		Place bean = new Place(SolrProxy.getString(gazEntry, "place_id"),
-				SolrProxy.getString(gazEntry, "name"));
-
-		bean.setName_type(SolrProxy.getChar(gazEntry, "name_type"));
-
-		// Gazetteer place name & country:
-		// NOTE: this may be different than "matchtext" or PlaceCandidate.name
-		// field.
-		//
-		bean.setCountryCode(SolrProxy.getString(gazEntry, "cc"));
-
-		// Other metadata.
-		bean.setAdmin1(SolrProxy.getString(gazEntry, "adm1"));
-		bean.setAdmin2(SolrProxy.getString(gazEntry, "adm2"));
-		bean.setFeatureClass(SolrProxy.getString(gazEntry, "feat_class"));
-		bean.setFeatureCode(SolrProxy.getString(gazEntry, "feat_code"));
-
-		// Geo field is specifically Spatial4J lat,lon format.
-		// Note -- Spatial4J ParseUtils offers a full validation of the parsing.
-		// But since we validate on entry into the gazetteer, we need not pay
-		// that price here
-		//
-		double[] xy = SolrProxy.getCoordinate(gazEntry, "geo");
-		bean.setLatitude(xy[0]);
-		bean.setLongitude(xy[1]);
-
-		return bean;
-	}
-
-	/**
-	 * A simple test for verifying that a SolrProxy can be created and
-	 * initialized.
-	 */
-	public static void main(String[] args) {
-
-		try {
-			SolrProxy test = new SolrProxy();
-			test.initialize();
-		} catch (Exception err) {
-			err.printStackTrace();
-		}
-	}
 }

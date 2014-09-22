@@ -10,14 +10,13 @@ import org.opensextant.util.GeonamesUtility;
 
 public class TestGazetteer {
 
-
     /**
      * Do a basic test -- This main prog makes use of the default JVM arg for solr:  -Dsolr.solr.home = /path/to/solr
      *
      * @param args the arguments
      * @throws Exception the exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         //String solrHome = args[0];
         /*
         String OPENSEXTANT_HOME = System.getProperty("opensextant.home");
@@ -25,17 +24,23 @@ public class TestGazetteer {
         System.setProperty("solr.solr.home", SOLR_HOME);
          */
 
-        SolrGazetteer gaz = new SolrGazetteer();
-        GeonamesUtility geodataUtil = new GeonamesUtility();
-
+        SolrGazetteer gaz = null;
         try {
+
+            gaz = new SolrGazetteer();
+
+            GeonamesUtility geodataUtil = new GeonamesUtility();
 
             // Try to get countries
             Map<String, Country> countries = gaz.getCountries();
             for (Country c : countries.values()) {
-                System.out.println(c.getKey() + " = " + c.name + "\t  Aliases: " + c.getAliases().toString());
+                System.out.println(c.getKey() + " = " + c.name + "\t  Aliases: "
+                        + c.getAliases().toString());
             }
 
+            /* A Solr/lucene style parametric search.  By default, search queries "name" field.
+             *
+             */
             List<Place> matches = gaz.search("+Boston +City");
 
             for (Place pc : matches) {
@@ -45,8 +50,9 @@ public class TestGazetteer {
 
         } catch (Exception err) {
             err.printStackTrace();
+        } finally {
+            gaz.shutdown();
+            System.exit(0);
         }
-        gaz.shutdown();
-        System.exit(0);
     }
 }

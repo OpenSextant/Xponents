@@ -39,13 +39,13 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.Place;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrProxy;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
-
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The
@@ -67,7 +67,11 @@ public class SolrGazetteer {
     private ModifiableSolrParams params = new ModifiableSolrParams();
     private SolrProxy solr = null;
     private Map<String, Country> country_lookup = null;
-    private Map<String, String> iso2fips = new HashMap<String, String>();
+    //private Map<String, String> iso2fips = new HashMap<String, String>();
+    /**
+     * Default country code in solr gazetteer is ISO, so if given a FIPS code, we need
+     * a helpful lookup to get ISO code for lookup.
+     */
     private Map<String, String> fips2iso = new HashMap<String, String>();
 
     /**
@@ -75,10 +79,21 @@ public class SolrGazetteer {
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public SolrGazetteer() throws IOException {
+    public SolrGazetteer() throws ConfigException {
         initialize();
     }
 
+    private String solrHome = null;
+
+    /**
+     * Instantiates a new solr gazetteer.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public SolrGazetteer(String solrHomeDir) throws ConfigException {
+        solrHome = solrHomeDir;
+        initialize();
+    }
 
     /**
      *  Returns the SolrProxy used internally.
@@ -99,35 +114,37 @@ public class SolrGazetteer {
         return StringUtils.capitalize(c.toLowerCase());
     }
 
-
     private GeonamesUtility geodataUtil = null;
-    
+
     /**
      * Initialize.
+     * Cascading env variables:  First use value from constructor, 
+     * then opensextant.solr, then solr.solr.home
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private void initialize() throws IOException {
+    private void initialize() throws ConfigException {
 
-        geodataUtil = new GeonamesUtility();
-        
-        //loadCountryNameMap();
-        //loadFeatureMetaMap();
+        //solrHome = SolrConfiguration.deriveSolrHome(solrHome);
 
-        String config_solr_home = System.getProperty("solr.solr.home");
-        solr = new SolrProxy(config_solr_home, "gazetteer");
+        solr = new SolrProxy("gazetteer");
 
         params.set(CommonParams.Q, "*:*");
         params.set(CommonParams.FL,
                 "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+
         try {
+            geodataUtil = new GeonamesUtility();
             loadCountries();
         } catch (SolrServerException loadErr) {
-            throw new IOException(loadErr);
+            throw new ConfigException(
+                    "SolrGazetteer is unable to load countries due to Solr error", loadErr);
+        } catch (IOException ioErr) {
+            throw new ConfigException(
+                    "SolrGazetteer is unable to load countries due to IO/file error", ioErr);
         }
     }
 
-    
     /**
      * Close or release all resources.
      */
@@ -192,7 +209,8 @@ public class SolrGazetteer {
         country_lookup = new HashMap<String, Country>();
 
         ModifiableSolrParams ctryparams = new ModifiableSolrParams();
-        ctryparams.set(CommonParams.FL, "id,name,cc,FIPS_cc,ISO3_cc,adm1,adm2,feat_class,feat_code,geo,name_type");
+        ctryparams.set(CommonParams.FL,
+                "id,name,cc,FIPS_cc,ISO3_cc,adm1,adm2,feat_class,feat_code,geo,name_type");
 
         ctryparams.set("q", "+feat_class:A +feat_code:PCL* +name_type:N");
         ctryparams.set("rows", 2000);

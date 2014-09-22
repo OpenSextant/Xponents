@@ -40,7 +40,7 @@ import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
-
+import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
 import org.opensextant.util.TextUtils;
 import org.opensextant.util.SolrProxy;
@@ -65,7 +65,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * Gazetteer specific stuff:
      */
     private static final String APRIORI_NAME_RULE = "AprioriNameBias";
-    private TagFilter filter = new TagFilter();
+    private TagFilter filter = null;
     private MatchFilter userfilter = null;
     private boolean allowLowercaseAbbrev = false;
 
@@ -73,7 +73,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * 
      * @throws IOException
      */
-    public GazetteerMatcher() throws IOException {
+    public GazetteerMatcher() throws ConfigException {
         initialize();
 
         // Instance variable that will have the transient payload to tag
@@ -82,9 +82,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // Pre-loading the Solr FST
         //
         try {
+            filter = new TagFilter();
             tagText("trivial priming of the solr pump", "__initialization___");
         } catch (ExtractionException initErr) {
-            throw new IOException("Unable to prime the tagger", initErr);
+            throw new ConfigException("Unable to prime the tagger", initErr);
+        } catch (IOException filterErr) {
+            throw new ConfigException("Default tag filter not found", filterErr);
         }
     }
 
@@ -384,7 +387,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          */
         boolean filter_stopwords = true;
 
-        TagFilter() throws IOException {
+        public TagFilter() throws IOException {
             super("/place-match-filters.txt");
         }
 

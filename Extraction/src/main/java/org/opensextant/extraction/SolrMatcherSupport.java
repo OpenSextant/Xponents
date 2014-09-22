@@ -34,10 +34,9 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.SolrParams;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.opensextant.ConfigException;
 import org.opensextant.util.SolrProxy;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.SolrTaggerRequest;
@@ -101,26 +100,14 @@ public abstract class SolrMatcherSupport {
     public abstract Object createTag(SolrDocument doc);
 
     /**
-     * Initialize.
+     * Initialize. This capability is not supporting taggers/matchers using HTTP server.
+     * For now it is intedended to be in-memory, local embedded solr server.
      *
      * @throws IOException if solr server cannot be established from local index or from http server
      */
-    protected final void initialize() throws IOException {
+    public final void initialize() throws ConfigException {
 
-        // NOTE: This is set via opensextant.apps.Config or by some other means
-        // But it is required to intialize. "gazetteer" is the core name of
-        // interest.
-        // Being explicit here about the core name allows integrator to field
-        // multiple cores
-        // in the same gazetteer.
-        //
-        String configSolrHome = System.getProperty("solr.solr.home");
-        if (configSolrHome != null) {
-            solr = new SolrProxy(configSolrHome, getCoreName());
-        } else {
-            solr = new SolrProxy(System.getProperty("solr.url"));
-            // e.g. http://localhost:8983/solr/gazetteer/
-        }
+        solr = new SolrProxy(getCoreName());        
     }
 
     /**

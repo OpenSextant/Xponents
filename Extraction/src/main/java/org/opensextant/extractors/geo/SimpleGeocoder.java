@@ -26,22 +26,21 @@
  */
 package org.opensextant.extractors.geo;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
+import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.ExtractionMetrics;
 import org.opensextant.extraction.Extractor;
-import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.geo.rules.CantileverPR;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.progress.ProgressMonitor;
-import org.opensextant.extractors.geo.rules.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple variation on the geocoding algorithms: geotag all possible things
@@ -138,14 +137,9 @@ public class SimpleGeocoder implements Extractor {
             xcoord = new XCoord();
             xcoord.configure();
         }
-        try {
-            if (tagger == null) {
-                tagger = new GazetteerMatcher();
-            }
-        } catch (IOException ioerr) {
-            throw new ConfigException("Init err w/Solr", ioerr);
+        if (tagger == null) {
+            tagger = new GazetteerMatcher();
         }
-
     }
 
     /**
@@ -214,6 +208,7 @@ public class SimpleGeocoder implements Extractor {
     public List<TextMatch> extract(String input_buf) throws ExtractionException {
         throw new ExtractionException("Not yet implemented");
     }
+
     private final CantileverPR cantilever = new CantileverPR();
 
     private void chooseCandidates(List<PlaceCandidate> candidates, List<TextMatch> coordinates) {
