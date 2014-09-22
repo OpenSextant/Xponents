@@ -6,8 +6,8 @@
     <parent>
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
-        <version>2.6</version>
         <relativePath>../pom.xml</relativePath>
+        <version>2.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>opensextant-xponents</artifactId>
