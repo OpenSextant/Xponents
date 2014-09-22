@@ -18,7 +18,7 @@
          that you fully re-index after changing this setting as it can
          affect both how text is indexed and queried.
     -->
-    <luceneMatchVersion>LUCENE_44</luceneMatchVersion>
+    <luceneMatchVersion>LUCENE_47</luceneMatchVersion>
 
     <!-- lib directives can be used to instruct Solr to load an Jars
          identified and use them to resolve any "plugins" specified in
@@ -652,8 +652,8 @@
              using enableRemoteStreaming="true"
 
           -->
-        <requestParsers enableRemoteStreaming="${solr.enableRemoteStreaming:false}"
-                        multipartUploadLimitInKB="2048000" />
+        <requestParsers enableRemoteStreaming="true"
+                        multipartUploadLimitInKB="8092000" />
 
         <!-- HTTP Caching
 
@@ -849,11 +849,15 @@
             <str name="separator">&#9;</str>
             <bool name="trim">true</bool>
             <int name="skipLines">1</int>
-            <bool name="header">false</bool>
+            <bool name="header">true</bool>
             <!--
-            Record_ID,PLACE_ID,PLACE_NAME,LATITUDE,LONGITUDE,FEATURE_CLASS,FEATURE_CODE,FIPS_COUNTRY_CODE,ISO2_COUNTRY_CODE,ISO3_COUNTRY_CODE,ADMIN_LEVEL_1,ADMIN_LEVEL_2,ADMIN_LEVEL_3,ADMIN_LEVEL_4,ADMIN_LEVEL_5,SOURCE,SOURCE_FEATURE_ID,SOURCE_NAME_ID,SCRIPT,CONFLATE_KEY,PLACE_NAME_BIAS,PLACE_ID_BIAS,NAME_TYPE,NAME_TYPE_SYSTEM,SplitCategory
+            2.0
+            Record_ID,PLACE_ID,PLACE_NAME,PLACE_NAME_EXPANDED,LATITUDE,LONGITUDE,FEATURE_CLASS,FEATURE_CODE,FIPS_COUNTRY_CODE,ISO2_COUNTRY_CODE,ISO3_COUNTRY_CODE,ADMIN_LEVEL_1,ADMIN_LEVEL_2,ADMIN_LEVEL_3,ADMIN_LEVEL_4,ADMIN_LEVEL_5,SOURCE,SOURCE_FEATURE_ID,SOURCE_NAME_ID,SCRIPT,CONFLATE_KEY,PLACE_NAME_BIAS,PLACE_ID_BIAS,NAME_TYPE,NAME_TYPE_SYSTEM,SplitCategory,SEARCH_ONLY
+            2.1
+            Record_ID,PLACE_ID,PLACE_NAME,PLACE_NAME_EXPANDED,LATITUDE,LONGITUDE,FEATURE_CLASS,FEATURE_CODE,FIPS_COUNTRY_CODE,ISO2_COUNTRY_CODE,ISO3_COUNTRY_CODE,ADMIN_LEVEL_1,ADMIN_LEVEL_2,ADMIN_LEVEL_3,ADMIN_LEVEL_4,ADMIN_LEVEL_5,SOURCE,SOURCE_FEATURE_ID,SOURCE_NAME_ID,SCRIPT,PLACE_NAME_BIAS,PLACE_ID_BIAS,NAME_TYPE,NAME_TYPE_SYSTEM,SplitCategory,SEARCH_ONLY
+             
             -->
-            <str name="fieldnames">id,place_id,name,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,,name_bias,id_bias,name_type,,SplitCategory</str>
+            <str name="fieldnames">id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,name_bias,id_bias,name_type,,SplitCategory,</str>
             <!-- saves space (but not much) -->
             <str name="f.name_type.map">abbrev:A</str>
             <str name="f.name_type.map">name:N</str>
