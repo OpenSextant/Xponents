@@ -40,9 +40,11 @@
 package org.opensextant.util;
 
 import java.io.*;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.*;
+
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -71,7 +73,8 @@ public class FileUtility {
      * @return status if written
      * @throws IOException if file had IO errors.
      */
-    public static boolean writeFile(String buffer, String fname, String enc, boolean append) throws IOException {
+    public static boolean writeFile(String buffer, String fname, String enc, boolean append)
+            throws IOException {
         if (fname == null || enc == null || buffer == null) {
             throw new IOException("Null values cannot be used to write out file.");
         }
@@ -93,7 +96,8 @@ public class FileUtility {
      * @return stream writer
      * @throws IOException if stream could not be opened
      */
-    public static OutputStreamWriter getOutputStream(String fname, String enc, boolean append) throws IOException {
+    public static OutputStreamWriter getOutputStream(String fname, String enc, boolean append)
+            throws IOException {
         return new OutputStreamWriter(new FileOutputStream(fname, append), enc);
     }
 
@@ -130,7 +134,8 @@ public class FileUtility {
      */
     public static boolean isSpreadsheet(String filepath) {
         final String testpath = filepath.toLowerCase();
-        return (testpath.endsWith(".csv") || testpath.endsWith(".xls") || testpath.endsWith(".xlsx"));
+        return (testpath.endsWith(".csv") || testpath.endsWith(".xls") || testpath
+                .endsWith(".xlsx"));
     }
 
     /**
@@ -145,32 +150,32 @@ public class FileUtility {
         final String ext = FilenameUtils.getExtension(filepath.toLowerCase());
         return imageTypeMap.containsKey(ext);
     }
-   
+
     /**
      * Checks file extension of given filepath to see if the format is a known video type.
      * @param filepath file name or path
      * @return true if file is likely an video file format.
      */
-    public static boolean isVideo(String filepath){
+    public static boolean isVideo(String filepath) {
         if (filepath == null) {
             return false;
         }
         final String ext = FilenameUtils.getExtension(filepath.toLowerCase());
         return VID_MIMETYPE.equals(filetypeMap.get(ext));
     }
-    
+
     /**
      * Checks file extension of given filepath to see if the format is a known audio type.
      * @param filepath file name or path
      * @return true if file is likely an audio file format.
      */
-    public static boolean isAudio(String filepath){
+    public static boolean isAudio(String filepath) {
         if (filepath == null) {
             return false;
         }
         final String ext = FilenameUtils.getExtension(filepath.toLowerCase());
         return AUD_MIMETYPE.equals(filetypeMap.get(ext));
-    }    
+    }
 
     /** Check if a file is an archive
      * @param filepath path to file
@@ -188,9 +193,10 @@ public class FileUtility {
      */
     public static boolean isArchiveFileType(String ext) {
         final String x = ext.toLowerCase();
-        return x.equals("zip") || x.equals("tar") || x.equals("tgz") || x.equals("gz") || x.equals("tar.gz");
+        return x.equals("zip") || x.equals("tar") || x.equals("tgz") || x.equals("gz")
+                || x.equals("tar.gz");
     }
-    
+
     /**
      * Test is a path or file extension ends with .txt
      * NPE if null is passed in.
@@ -198,8 +204,8 @@ public class FileUtility {
      * 
      * @return true if is .txt or .TXT
      */
-    public static boolean isPlainText(String filepath){
-        return  filepath.toLowerCase().endsWith(".txt");
+    public static boolean isPlainText(String filepath) {
+        return filepath.toLowerCase().endsWith(".txt");
     }
 
     /**
@@ -282,7 +288,8 @@ public class FileUtility {
         }
 
         final FileInputStream instream = new FileInputStream(filepath);
-        final GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), default_buffer);
+        final GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream),
+                default_buffer);
 
         final byte[] inputBytes = new byte[default_buffer];
         final StringBuilder buf = new StringBuilder();
@@ -311,7 +318,8 @@ public class FileUtility {
         }
 
         final FileOutputStream outstream = new FileOutputStream(filepath);
-        final GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), default_buffer);
+        final GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream),
+                default_buffer);
 
         gzout.write(text.getBytes(default_encoding));
 
@@ -544,7 +552,8 @@ public class FileUtility {
 
         final int suffixInd = f.getName().lastIndexOf(".");
         final String base = f.getName().substring(0, suffixInd);
-        final String suffix = (suffixInd + 1 <= f.getName().length()) ? f.getName().substring(suffixInd + 1) : "";
+        final String suffix = (suffixInd + 1 <= f.getName().length()) ? f.getName().substring(
+                suffixInd + 1) : "";
         for (int i = 1; i < maxDups; i++) {
             final File tmp = new File(f.getParentFile(), base + dupeMarker + i + "." + suffix);
             if (!tmp.exists()) {
@@ -605,7 +614,7 @@ public class FileUtility {
     public static final String COMMENT_CHAR = "#";
 
     /**
-     * A generic word list loader. Part of the Meso Utility API
+     * A generic word list loader. 
      *
      * @param resourcepath  classpath location of a resource
      * @param case_sensitive if terms are loaded with case preserved or not.
@@ -613,10 +622,37 @@ public class FileUtility {
      * @return Set containing unique words found in resourcepath
      * @throws IOException on error, resource does not exist
      */
-    public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive) throws IOException {
+    public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive)
+            throws IOException {
 
-        final InputStream io = FileUtility.class.getResourceAsStream(resourcepath);
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(io, default_encoding));
+        URL resource = FileUtility.class.getResource(resourcepath);
+        if (resource!=null){
+            return loadDictionary(resource, case_sensitive);
+        }
+        throw new IOException("Item not found: "+resourcepath);
+    }
+
+    /**
+     * A generic word list loader. 
+     *
+     * @param resourcepath  classpath location of a resource
+     * @param case_sensitive if terms are loaded with case preserved or not.
+     * @author ubaldino, MITRE Corp
+     * @return Set containing unique words found in resourcepath
+     * @throws IOException on error, resource does not exist
+     */
+    public static Set<String> loadDictionary(URL resource, boolean case_sensitive)
+            throws IOException {
+
+        try (InputStream io = resource.openStream()) {
+            return loadDict(io, case_sensitive);
+        }
+    }
+    
+    private static Set<String> loadDict(InputStream io, boolean case_sensitive) throws IOException{
+        
+         BufferedReader reader = new BufferedReader(new InputStreamReader(io,
+                default_encoding));
 
         final Set<String> dict = new HashSet<String>();
         String newline = null;
@@ -633,6 +669,21 @@ public class FileUtility {
             }
         }
         return dict;
+    }
+    
+    /**
+     * Load a word list from a file path.
+     * 
+     * @param resource
+     * @param case_sensitive
+     * @return
+     * @throws IOException
+     */
+    public static Set<String> loadDictionary(File resource, boolean case_sensitive)
+            throws IOException {
+        try (InputStream io = new FileInputStream(resource)) {
+            return loadDict(io, case_sensitive);
+        }
     }
 
     //
