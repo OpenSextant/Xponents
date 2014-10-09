@@ -174,7 +174,7 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
+                    <source>1.7</source>
                     <target>1.7</target>
                     <compilerVersion>1.7</compilerVersion>
                     <compilerArgument>-Xlint:all,-path</compilerArgument>
