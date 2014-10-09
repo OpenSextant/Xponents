@@ -43,8 +43,7 @@
 package org.opensextant.extraction;
 
 /**
- * Modeled after FlexPat TextMatch or GATE's Annotation -- this is intended to be
- * a very simple struct to hold data useful for post-processing entities once found.
+ * A very simple struct to hold data useful for post-processing entities once found.
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
@@ -54,13 +53,13 @@ public class TextEntity {
      *
      */
     protected String text = null;
-    // the location this was found in the document
+
     /**
-     *
+     * char offset of entity; location in document where entity starts.
      */
     public int start = -1;
     /**
-     *
+     * char offset of entity; location in document where entity ends.
      */
     public int end = -1;
 
@@ -189,22 +188,23 @@ public class TextEntity {
         this.match_id = m.match_id;
     }
 
-    public boolean isWithin( TextEntity t ){
+    public boolean isWithin(TextEntity t) {
         return (end <= t.end && start >= t.start);
     }
-    public boolean isSameMatch( TextEntity t ){
+
+    public boolean isSameMatch(TextEntity t) {
         return (start == t.start && end == t.end);
     }
 
-    public boolean isRightMatch( TextEntity t ){
+    public boolean isRightMatch(TextEntity t) {
         return (start == t.start);
     }
 
-    public boolean isLeftMatch( TextEntity t ){
+    public boolean isLeftMatch(TextEntity t) {
         return (end == t.end);
     }
 
-    public boolean isOverlap( TextEntity t ){
+    public boolean isOverlap(TextEntity t) {
         // t overlaps with self on the left side
         // OR t overlaps with self on right side
         //
