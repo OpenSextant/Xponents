@@ -47,7 +47,7 @@ public class Parameters extends java.util.Properties {
      * 
      */
     private static final long serialVersionUID = 1L;
-    
+
     public boolean tag_countries = true;
     public boolean tag_places = true;
     public boolean tag_coordinates = true;
@@ -78,7 +78,7 @@ public class Parameters extends java.util.Properties {
      */
     public boolean isdefault = true;
     public static final int FLAG_EXTRACT_CONTEXT = 0x10;
-    public static final int FLAG_NO_COORDINATES  = 0x20;
+    public static final int FLAG_NO_COORDINATES = 0x20;
 
     /* DEFAULT RUNTIME FLAGS: */
     public static int RUNTIME_FLAGS = FLAG_EXTRACT_CONTEXT;
@@ -99,11 +99,12 @@ public class Parameters extends java.util.Properties {
         jobName = TextUtils.fast_replace(nm, INVALID_FCNAME_CHAR, "_");
     }
 
-    public String getJobName(){
+    public String getJobName() {
         return jobName;
     }
 
-    private static final DateTimeFormatter procdate_fmt = DateTimeFormat.forPattern("yyyyMMMdd_HHmm");
+    private static final DateTimeFormatter procdate_fmt = DateTimeFormat
+            .forPattern("yyyyMMMdd_HHmm");
 
     /**
      * Generates a simple job date/time key for the job
