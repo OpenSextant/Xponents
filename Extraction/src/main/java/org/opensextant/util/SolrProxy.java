@@ -26,25 +26,22 @@
  */
 package org.opensextant.util;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.CoreContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * As Xponents is a multi-core instance of Solr, a single default solr home and default solr core
