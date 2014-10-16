@@ -108,6 +108,8 @@ public class PathManager {
      * <li>... for archives, etc. set it once!
      * </ul>
      * Do not set it for each file when traversing a folder contents.
+     * <br>
+     * NOTA BENE: Set conversion cache location first.
      * 
      * <pre>
      *   cache =  /output/converted/
