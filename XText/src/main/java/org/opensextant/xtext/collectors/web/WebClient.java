@@ -21,8 +21,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,13 +39,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.opensextant.ConfigException;
 import org.opensextant.xtext.XText;
 import org.opensextant.xtext.collectors.Collector;
@@ -170,17 +167,17 @@ public class WebClient {
      * @return
      */
     public HttpClient getClient() {
-        HttpClient httpClient = HttpClients.createDefault();
+        HttpClientBuilder clientHelper = HttpClientBuilder.create();
 
-        /*
-         * 
-         */
         if (proxyHost != null) {
-            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+            clientHelper.setProxy(proxyHost);
         }
 
-        httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
-                CookieSpecs.BROWSER_COMPATIBILITY);
+        RequestConfig globalConfig = RequestConfig.custom()
+                .setCookieSpec(CookieSpecs.BROWSER_COMPATIBILITY).build();
+        
+        HttpClient httpClient = clientHelper.setDefaultRequestConfig(globalConfig).build();
+
         return httpClient;
     }
 

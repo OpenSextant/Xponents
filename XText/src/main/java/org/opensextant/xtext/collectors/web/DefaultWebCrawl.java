@@ -24,8 +24,8 @@ import java.util.Date;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.utils.DateUtils;
 import org.apache.http.impl.cookie.DateParseException;
-import org.apache.http.impl.cookie.DateUtils;
 import org.opensextant.ConfigException;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
@@ -60,7 +60,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * @throws MalformedURLException
      * @throws ConfigException
      */
-    public DefaultWebCrawl(String srcSite, String destFolder) throws MalformedURLException, ConfigException {
+    public DefaultWebCrawl(String srcSite, String destFolder) throws MalformedURLException,
+            ConfigException {
         super(srcSite, destFolder);
     }
 
@@ -147,11 +148,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         Header lastModStr = page.getFirstHeader("Last-Modified");
         Date lastMod = null;
         if (lastModStr != null) {
-            try {
-                lastMod = DateUtils.parseDate(lastModStr.getValue());
-            } catch (DateParseException e) {
-                log.error("Found Date header for last-modified", e);
-            }
+            lastMod = DateUtils.parseDate(lastModStr.getValue());
         }
 
         /*
@@ -251,7 +248,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                         collectItems(l.getAbsoluteURL(), site);
                     }
                 } catch (Exception fileErr) {
-                    log.error("Item for URL {} was not saved due to a net or IO issue.", l.getAbsoluteURL(), fileErr);
+                    log.error("Item for URL {} was not saved due to a net or IO issue.",
+                            l.getAbsoluteURL(), fileErr);
                 }
             }
         }
