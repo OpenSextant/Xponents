@@ -68,7 +68,7 @@ public class Country extends Place {
      * @param iso2  ISO 2-alpha code for this country
      * @param nm    Country name
      */
-    public Country(String iso2, String nm){
+    public Country(String iso2, String nm) {
         super(iso2, nm);
         CC_ISO2 = this.key;
         this.country_id = this.key;
@@ -77,7 +77,7 @@ public class Country extends Place {
     /** Country is also known as some list of aliases
      * @param nm  Country name/alias
      */
-    public void addAlias(String nm){
+    public void addAlias(String nm) {
         aliases.add(nm);
     }
 
@@ -85,14 +85,14 @@ public class Country extends Place {
      *
      * @return  set of aliases
      */
-    public Set<String> getAliases(){
+    public Set<String> getAliases() {
         return aliases;
     }
 
     /** Country is also known as some list of aliases
      * @param regionid  Region identifier or name.
      */
-    public void addRegion(String regionid){
+    public void addRegion(String regionid) {
         regions.add(regionid);
     }
 
@@ -100,7 +100,18 @@ public class Country extends Place {
      *
      * @return  set of regions in which this country belongs. 
      */
-    public Set<String> getRegions(){
+    public Set<String> getRegions() {
         return regions;
+    }
+
+    private boolean uniqueName = false;
+
+    public void setUniqueName(boolean b) {
+        uniqueName = b;
+    }
+
+    public boolean hasUniqueName() {
+        return uniqueName;
+
     }
 }

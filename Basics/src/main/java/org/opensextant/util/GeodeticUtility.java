@@ -260,4 +260,13 @@ public class GeodeticUtility {
 
         return yx;
     }
+
+    /**
+     * Create a string representation of a decimal lat/lon.
+     * @param yx
+     * @return  "lat, lon" formatted with 4 decimal places; that is an average amount of precision for common XY=>String uses.
+     */
+    public final static String formatLatLon(final LatLon yx) {
+        return String.format("%2.4f,%3.4f", yx.getLatitude(), yx.getLongitude());
+    }
 }

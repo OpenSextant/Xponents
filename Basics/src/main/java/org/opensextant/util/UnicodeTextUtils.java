@@ -69,5 +69,5 @@ public class UnicodeTextUtils {
         _new = scrub_symbols_cards.matcher(_new).replaceAll("{card}");
 
         return _new;
-    }
+    }        
 }

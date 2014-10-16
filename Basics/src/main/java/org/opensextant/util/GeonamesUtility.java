@@ -123,7 +123,7 @@ public class GeonamesUtility {
     }
 
     private void loadCountryNameMap() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2013.csv");
+        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2014.csv");
         java.io.Reader countryIO = new InputStreamReader(io);
         CsvMapReader countryMap = new CsvMapReader(countryIO, CsvPreference.EXCEL_PREFERENCE);
         String[] columns = countryMap.getHeader(true);
@@ -146,6 +146,10 @@ public class GeonamesUtility {
 
             cc = cc.toUpperCase(Locale.ENGLISH);
             fips = fips.toUpperCase(Locale.ENGLISH);
+            
+            // Unique Name?  E.g., "Georgia" country name is not unique. 
+            // This flag helps inform Disambiguation choose countries and places.
+            boolean isUniq = Boolean.parseBoolean(country_names.get("is_unique_name"));
 
             // FIPS could be *, but as long as we use ISO2, we're fine. if
             // ("*".equals(cc)){ cc = fips.toUpperCase(); }
@@ -157,6 +161,7 @@ public class GeonamesUtility {
             C.CC_FIPS = fips;
             C.CC_ISO2 = cc;
             C.CC_ISO3 = iso3;
+            C.setUniqueName(isUniq);
 
             // TOOD: resolve overwriting some key conflicts ISO2 codes may also
             // be FIPS

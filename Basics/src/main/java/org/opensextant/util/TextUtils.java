@@ -104,6 +104,109 @@ public class TextUtils {
     }
 
     /**
+     * Checks if non-ASCII and non-LATIN characters are present.
+     * @param data
+     * @return
+     */
+    public final static boolean isLatin(String data) {
+        char[] ch = data.toCharArray();
+        boolean isLatin = true;
+        for (char c : ch) {
+            if (isASCII(c)) {
+                continue;
+            }
+            if (!Character.isLetter(c)) {
+                continue;
+            }
+            Character.UnicodeBlock blk = Character.UnicodeBlock.of(c);
+            if (blk == Character.UnicodeBlock.LATIN_1_SUPPLEMENT
+                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_A
+                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_B
+                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_C
+                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_D
+                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_ADDITIONAL) {
+                continue;
+
+            }
+
+            isLatin = false;
+            break;
+        }
+
+        //
+        return isLatin;
+    }
+
+    /**
+     * Helpful hints on parsing Unicode phrases.
+     * Reference: http://www.rgagnon.com/javadetails/java-0456.html
+     */
+
+    private static final String ALPHAMAP_PLAIN_ASCII = "AaEeIiOoUu" // grave
+            + "AaEeIiOoUuYy" // acute
+            + "AaEeIiOoUuYy" // circumflex
+            + "AaOoNn" // tilde
+            + "AaEeIiOoUuYy" // umlaut
+            + "Aa" // ring
+            + "Cc" // cedilla
+            + "OoUu" // double acute
+            + "Oo" // Scandanavian o
+            + "AaEe" // A/E wiht micron
+            ;
+
+    private static final String ALPHAMAP_UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" // grave
+            + "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD" // acute
+            + "\u00C2\u00E2\u00CA\u00EA\u00CE\u00EE\u00D4\u00F4\u00DB\u00FB\u0176\u0177" // circumflex
+            + "\u00C3\u00E3\u00D5\u00F5\u00D1\u00F1" // tilde
+            + "\u00C4\u00E4\u00CB\u00EB\u00CF\u00EF\u00D6\u00F6\u00DC\u00FC\u0178\u00FF" // umlaut
+            + "\u00C5\u00E5" //ring
+            + "\u00C7\u00E7" // cedilla
+            + "\u0150\u0151\u0170\u0171" // double acute
+            + "\u00D8\u00F8" // Scandanavian o  Øø
+            + "\u0100\u0101\u0112\u0113" // E-bar, A-bar
+
+    ;
+
+    /**
+     * remove accents from a string and replace with ASCII equivalent
+     * Reference: http://www.rgagnon.com/javadetails/java-0456.html
+     * Caveat:  This implementation is not exhaustive.
+     * 
+     * @param s the string
+     * @return converted string
+     */
+    public final static String replaceDiacritics(final String s) {
+        if (s == null) {
+            return null;
+        }
+        if ("".equals(s)) {
+            return s;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int n = s.length();
+        for (int i = 0; i < n; i++) {
+            char c = s.charAt(i);
+            int pos = ALPHAMAP_UNICODE.indexOf(c);
+            if (pos > -1) {
+                sb.append(ALPHAMAP_PLAIN_ASCII.charAt(pos));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 
+     * @param c
+     * @return
+     */
+    public final static boolean isASCII(char c) {
+        return c > 0 && c <= 0x7F;
+    }
+
+    /**
      * @param data  bytes to test
      * @return boolean if data is ASCII or not
      */
@@ -602,6 +705,19 @@ public class TextUtils {
         // Some cleanup was done on ends of String. Now clear up whitespace.
         //
         return squeeze_whitespace(str.substring(s1, s2 + 1));
+    }
+    
+    private final static Pattern tokenizer = Pattern.compile("\\s+");
+
+    /**
+     * Parse a substring snippet of text. Return the left most complete tokens
+     * TODO: reimplement as Lucene analyzer
+     * 
+     * @param str
+     * @return
+     */
+    public static String[] tokens(String str){
+       return tokenizer.split(str);
     }
 
     /**
