@@ -54,184 +54,184 @@ import org.opensextant.processing.ProcessingException;
  */
 public abstract class GISDataFormatter extends AbstractFormatter {
 
-	/**
+    /**
      *
      */
-	protected DocumentType doc_type = null;
-	/**
+    protected DocumentType doc_type = null;
+    /**
      *
      */
-	protected IGISOutputStream os = null;
-	/**
+    protected IGISOutputStream os = null;
+    /**
      *
      */
-	protected boolean groupByDocument = false;
-	private int id = 0;
-	protected GISDataModel gisDataModel;
+    protected boolean groupByDocument = false;
+    private int id = 0;
+    protected GISDataModel gisDataModel;
+    protected boolean allowNonGeo = false; /* For vanilla CSV, where match does not have lat/lon */
 
-	/**
+    /**
      *
      */
-	public GISDataFormatter() {
-		this.debug = log.isDebugEnabled();
-	}
+    public GISDataFormatter() {
+        this.debug = log.isDebugEnabled();
+    }
 
-	public void setGisDataModel(GISDataModel gisDataModel) {
-		this.gisDataModel = gisDataModel;
-	}
+    public void setGisDataModel(GISDataModel gisDataModel) {
+        this.gisDataModel = gisDataModel;
+    }
 
-	/**
-	 * Use Default GIS Data Model based on current state of formatter
-	 */
-	public void setGisDataModel() {
-		this.gisDataModel = new GISDataModel(getJobName(), includeOffsets,
-				includeCoordinate);
-	}
+    /**
+     * Use Default GIS Data Model based on current state of formatter
+     */
+    public void setGisDataModel() {
+        this.gisDataModel = new GISDataModel(getJobName(), includeOffsets, includeCoordinate);
+    }
 
-	/**
-	 * Start output.
-	 */
-	@Override
-	public void start(String containerName) throws ProcessingException {
+    /**
+     * Start output.
+     */
+    @Override
+    public void start(String containerName) throws ProcessingException {
 
-		/**
-		 * apply default GIS data model
-		 */
-		if (this.gisDataModel == null) {
-			setGisDataModel();
-		}
+        /**
+         * apply default GIS data model
+         */
+        if (this.gisDataModel == null) {
+            setGisDataModel();
+        }
 
-		try {
-			createOutputStreams();
-		} catch (Exception create_err) {
-			throw new ProcessingException(create_err);
-		}
+        try {
+            createOutputStreams();
+        } catch (Exception create_err) {
+            throw new ProcessingException(create_err);
+        }
 
-		DocumentStart ds = new DocumentStart(doc_type);
-		this.os.write(ds);
-		this.os.write(gisDataModel.getSchema());
+        DocumentStart ds = new DocumentStart(doc_type);
+        this.os.write(ds);
+        this.os.write(gisDataModel.getSchema());
 
-		ContainerStart containerStart = new ContainerStart();
-		containerStart.setType("Folder");
-		containerStart.setName(containerName);
-		this.os.write(containerStart);
-	}
+        ContainerStart containerStart = new ContainerStart();
+        containerStart.setType("Folder");
+        containerStart.setName(containerName);
+        this.os.write(containerStart);
+    }
 
-	@Override
-	public void finish() {
-		if (this.os == null) {
-			return;
-		}
+    @Override
+    public void finish() {
+        if (this.os == null) {
+            return;
+        }
 
-		ContainerEnd containerEnd = new ContainerEnd();
-		this.os.write(containerEnd);
+        ContainerEnd containerEnd = new ContainerEnd();
+        this.os.write(containerEnd);
 
-		try {
-			closeOutputStreams();
-		} catch (Exception closer) {
-			log.error("ERROR finalizing data file ", closer);
-		}
-	}
+        try {
+            closeOutputStreams();
+        } catch (Exception closer) {
+            log.error("ERROR finalizing data file ", closer);
+        }
+    }
 
-	protected File createTempFolder(String key) {
-		File tempDir = new File(this.outputParams.tempDir + File.separator
-				+ key + "_" + System.currentTimeMillis());
-		tempDir.mkdirs();
-		return tempDir;
-	}
+    protected File createTempFolder(String key) {
+        File tempDir = new File(this.outputParams.tempDir + File.separator + key + "_"
+                + System.currentTimeMillis());
+        tempDir.mkdirs();
+        return tempDir;
+    }
 
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	@Override
-	protected void closeOutputStreams() throws Exception {
-		if (this.os != null) {
-			this.os.close();
-		}
-	}
+    /**
+     * 
+     * @throws Exception
+     */
+    @Override
+    protected void closeOutputStreams() throws Exception {
+        if (this.os != null) {
+            this.os.close();
+        }
+    }
 
-	/**
-	 * This helps you figure out what to put in the GIS products.
-	 */
-	protected boolean filterOut(TextMatch geo) {
-		if (!(geo instanceof Geocoding)) {
-			return true;
-		}
+    /**
+     * This helps you figure out what to put in the GIS products.
+     */
+    protected boolean filterOut(TextMatch geo) {
 
-		if (geo.isFilteredOut()) {
-			return true;
-		}
+        if (geo.isFilteredOut()) {
+            return true;
+        }
+        if (this.allowNonGeo) {
+            return false;
+        }
+        if (geo instanceof Geocoding) {
+            Geocoding geocoding = (Geocoding) geo;
 
-		Geocoding geocoding = (Geocoding) geo;
+            if (!outputParams.output_coordinates && geocoding.isCoordinate()) {
+                return true;
+            } else if (!outputParams.output_countries && geocoding.isCountry()) {
+                return true;
+            } else if (!outputParams.output_places && geocoding.isPlace()) {
+                return true;
+            }
+        }
 
-		if (!outputParams.output_coordinates && geocoding.isCoordinate()) {
-			return true;
-		} else if (!outputParams.output_countries && geocoding.isCountry()) {
-			return true;
-		} else if (!outputParams.output_places && geocoding.isPlace()) {
-			return true;
-		}
+        return false;
+    }
 
-		return false;
-	}
+    /**
+     * This allows you to add either output of a Corpus processor
+     * (gate.Document, gate.Corpus) or to add a Geocoding Result directly
+     * 
+     */
+    @Override
+    public void writeGeocodingResult(ExtractionResult rowdata) {
+        boolean error = false;
 
-	/**
-	 * This allows you to add either output of a Corpus processor
-	 * (gate.Document, gate.Corpus) or to add a Geocoding Result directly
-	 * 
-	 */
-	@Override
-	public void writeGeocodingResult(ExtractionResult rowdata) {
-		boolean error = false;
+        log.debug("Adding data for File {} Count={}", rowdata.recordFile, rowdata.matches.size());
 
-		log.debug("Adding data for File {} Count={}", rowdata.recordFile,
-				rowdata.matches.size());
+        for (TextMatch g : rowdata.matches) {
 
-		for (TextMatch g : rowdata.matches) {
+            if (filterOut(g)) {
+                continue;
+            }
+            // Increment ID
+            id++;
 
-			if (filterOut(g)) {
-				continue;
-			}
-			// Increment ID
-			id++;
+            log.debug("Add {}#{}", id, g);
 
-			log.debug("Add {}#{}", id, g);
+            // Only TextMatches that implement the Geocoding interface are
+            // allowed here:
 
-			// Only TextMatches that implement the Geocoding interface are
-			// allowed here:
+            try {
+                for (Feature row : gisDataModel.buildRows(id, (Geocoding) g, g, rowdata.attributes,
+                        rowdata)) {
+                    log.debug("FEATURE: {}", row);
+                    this.os.write(row);
+                }
 
-			try {
-				for (Feature row : gisDataModel.buildRows(id, (Geocoding) g, g,
-						rowdata.attributes, rowdata)) {
-					log.debug("FEATURE: {}", row);
-					this.os.write(row);
-				}
+            } catch (ConfigException fieldErr) {
 
-			} catch (ConfigException fieldErr) {
+                if (!error) {
+                    log.error("OUTPUTTER, ERR=" + fieldErr);
+                }
+                error = true;
+            }
+        }
+    }
 
-				if (!error) {
-					log.error("OUTPUTTER, ERR=" + fieldErr);
-				}
-				error = true;
-			}
-		}
-	}
+    /**
+     * @param fld
+     */
+    @Override
+    public void addField(String fld) throws ConfigException {
+        gisDataModel.addField(fld);
+    }
 
-	/**
-	 * @param fld
-	 */
-	@Override
-	public void addField(String fld) throws ConfigException {
-		gisDataModel.addField(fld);
-	}
-
-	/**
-	 * 
-	 * @param fld
-	 */
-	@Override
-	public void removeField(String fld) throws ConfigException {
-		gisDataModel.removeField(fld);
-	}
+    /**
+     * 
+     * @param fld
+     */
+    @Override
+    public void removeField(String fld) throws ConfigException {
+        gisDataModel.removeField(fld);
+    }
 }

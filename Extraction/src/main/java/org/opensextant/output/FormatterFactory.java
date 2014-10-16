@@ -27,7 +27,9 @@
 package org.opensextant.output;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.opensextant.processing.ProcessingException;
@@ -41,21 +43,25 @@ public class FormatterFactory {
     /**
      *
      */
-    private static final String[] OUTPUT_FORMATS = {"CSV", "GDB", "JSON", "KML", "WKT", "Shapefile", "SHP"};
-    private static final Set<String> OUTPUT_FORMATS_LOOKUP = new HashSet<String>();
+    private static final String[] OUTPUT_FORMATS = {"CSV", "GeoCSV", "GDB", "JSON", "KML", "WKT", "Shapefile", "SHP"};
+    private static final Map<String,String> OUTPUT_FORMATS_LOOKUP = new HashMap<>();
 
     static {
         for (String fmt : OUTPUT_FORMATS) {
-            OUTPUT_FORMATS_LOOKUP.add(fmt);
-            OUTPUT_FORMATS_LOOKUP.add(fmt.toLowerCase());
+            OUTPUT_FORMATS_LOOKUP.put(fmt.toLowerCase(), fmt);
         }
+        OUTPUT_FORMATS_LOOKUP.put("shp", "Shapefile");
+
     }
 
     /**
      * Check if this is a known format
      */
     public static boolean isSupported(String fmt) {
-        return OUTPUT_FORMATS_LOOKUP.contains(fmt);
+        if (fmt==null){
+            return false;
+        }
+        return OUTPUT_FORMATS_LOOKUP.containsKey(fmt.toLowerCase());
     }
 
     public static String[] getSupportedFormats() {
@@ -75,14 +81,11 @@ public class FormatterFactory {
      */
     public static ResultsFormatter getInstance(String fmt) throws ProcessingException {
 
-        String formatterClass = fmt.toUpperCase();
-
-        // Too easy to just use one convention.
-        //
-        if (fmt.equalsIgnoreCase("shapefile") || fmt.equalsIgnoreCase("shp")) {
-            formatterClass = "Shapefile";
+        String formatterClass = OUTPUT_FORMATS_LOOKUP.get(fmt.toLowerCase());
+        if (formatterClass==null){
+            throw new ProcessingException("Unsupported Formatter: " + fmt);            
         }
-
+        
         formatterClass = PKG + "." + formatterClass + "Formatter";
 
         try {
