@@ -644,8 +644,12 @@ public class FileUtility {
     public static Set<String> loadDictionary(URL resource, boolean case_sensitive)
             throws IOException {
 
-        try (InputStream io = resource.openStream()) {
+        InputStream io = null;
+        try { 
+            io = resource.openStream(); 
             return loadDict(io, case_sensitive);
+        } finally {
+            io.close();
         }
     }
     
@@ -681,8 +685,12 @@ public class FileUtility {
      */
     public static Set<String> loadDictionary(File resource, boolean case_sensitive)
             throws IOException {
-        try (InputStream io = new FileInputStream(resource)) {
+        InputStream io = null;
+        try { 
+            io = new FileInputStream(resource); 
             return loadDict(io, case_sensitive);
+        } finally {
+            io.close();
         }
     }
 
