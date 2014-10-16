@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.7-SNAPSHOT</version>
+    <version>2.6.1</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -74,22 +74,22 @@
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-basics</artifactId>
-                <version>2.7-SNAPSHOT</version>
+                <version>2.6.1</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents</artifactId>
-                <version>2.7-SNAPSHOT</version>
+                <version>2.6.1</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-xtext</artifactId>
-                <version>2.7-SNAPSHOT</version>
+                <version>2.6.1</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-examples</artifactId>
-                <version>2.7-SNAPSHOT</version>
+                <version>2.6.1</version>
             </dependency>
 
             <dependency>
@@ -174,7 +174,7 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
+                    <source>1.6</source>
                     <target>1.7</target>
                     <compilerVersion>1.7</compilerVersion>
                     <compilerArgument>-Xlint:all,-path</compilerArgument>
