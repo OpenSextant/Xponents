@@ -854,10 +854,9 @@ public final class XText implements ExclusionFilter, Converter {
         System.out.println("  -c embeds the extracted children binaries in the input folder");
         System.out.println("     (NOT the conversions, the binaries from Archives, PST, etc)");
         System.out.println("     Default behavior is to extract originals to output archive.");
-        System.out
-                .println("  -x folder    Opposite of -c. Extract children and save to a separate folder. ");
+        System.out.println("  -x folder\tOpposite of -c. Extract children and save to <folder>");
         System.out.println("  NOTE: -e has same effect as setting output to input");
-        System.out.println("  -h enables HTML scrubbing");
+        System.out.println("  -H enables HTML scrubbing");
         System.out.println("========================");
     }
 
@@ -887,7 +886,7 @@ public final class XText implements ExclusionFilter, Converter {
                 new LongOpt("output", LongOpt.OPTIONAL_ARGUMENT, null, 'o'),
                 new LongOpt("export", LongOpt.OPTIONAL_ARGUMENT, null, 'x'),
                 new LongOpt("strip-prefix", LongOpt.OPTIONAL_ARGUMENT, null, 'p'),
-                new LongOpt("clean-html", LongOpt.NO_ARGUMENT, null, 'h'),
+                new LongOpt("clean-html", LongOpt.NO_ARGUMENT, null, 'H'),
                 new LongOpt("embed-conversion", LongOpt.NO_ARGUMENT, null, 'e'),
                 new LongOpt("embed-children", LongOpt.NO_ARGUMENT, null, 'c'), };
 
@@ -920,7 +919,7 @@ public final class XText implements ExclusionFilter, Converter {
                 case 'o':
                     output = opts.getOptarg();
                     break;
-                case 'h':
+                case 'H':
                     filter_html = true;
                     break;
                 case 'c':
