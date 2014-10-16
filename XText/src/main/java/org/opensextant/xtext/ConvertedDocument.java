@@ -449,8 +449,6 @@ public final class ConvertedDocument extends DocInput {
         return this.textpath;
     }
 
-    private boolean has_text = false;
-
     /**
      * Reports if the doc has text available, after it was converted.
      * NOTE: this is false if you ask before it is converted.
@@ -458,7 +456,7 @@ public final class ConvertedDocument extends DocInput {
      * @return true if there is text available.  false if the converters have not tried to set text or they tried and found no text.
      */
     public boolean hasText() {
-        return has_text;
+        return buffer.length()>0;
     }
 
     /**
@@ -483,8 +481,6 @@ public final class ConvertedDocument extends DocInput {
         if (StringUtils.isBlank(buffer)) {
             return;
         }
-
-        has_text = true;
 
         // Now figure out if we have a converted document or not.
         if (do_convert) {
