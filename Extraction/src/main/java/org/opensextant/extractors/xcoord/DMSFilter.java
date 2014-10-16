@@ -47,7 +47,7 @@ import java.util.List;
  *
  * @author ubaldino
  */
-public class DMSFilter implements MatchFilter {
+public class DMSFilter implements GeocoordMatchFilter {
 
     /**
      *

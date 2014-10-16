@@ -48,7 +48,7 @@ import org.opensextant.util.TextUtils;
  *
  * @author ubaldino
  */
-public class MGRSFilter implements MatchFilter {
+public class MGRSFilter implements GeocoordMatchFilter {
 
     /** DateFormat used to check for dates that look like MGRS i.e. ddMMMyyyy
      */

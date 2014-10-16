@@ -37,7 +37,7 @@ package org.opensextant.extractors.xcoord;
  *
  * @author ubaldino
  */
-public interface MatchFilter {
+public interface GeocoordMatchFilter {
 
     /** pass a match
      * @param m match

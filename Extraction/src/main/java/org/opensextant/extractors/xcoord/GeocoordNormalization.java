@@ -41,8 +41,8 @@ import org.opensextant.geodesy.*;
  */
 public final class GeocoordNormalization {
 
-    private static final MatchFilter mgrs_filter = new MGRSFilter();
-    private static final MatchFilter dms_filter = new DMSFilter();
+    private static final GeocoordMatchFilter mgrs_filter = new MGRSFilter();
+    private static final GeocoordMatchFilter dms_filter = new DMSFilter();
 
     private static final boolean DMLAT = true;
     private static final boolean DMLON = false;
