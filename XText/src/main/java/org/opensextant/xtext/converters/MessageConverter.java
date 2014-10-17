@@ -61,7 +61,7 @@ import javax.mail.internet.MimeUtility;
 
 public class MessageConverter extends ConverterAdapter {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
     private Session noSession = Session.getDefaultInstance(new Properties());
     private int attachmentNumber = 0;
     private List<String> textEncodings = new LinkedList<String>();

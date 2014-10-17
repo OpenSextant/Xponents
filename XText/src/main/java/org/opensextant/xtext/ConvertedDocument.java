@@ -124,6 +124,7 @@ public final class ConvertedDocument extends DocInput {
      *   HTML and text formats are most susceptible to encoding issues.
      */
     public boolean is_RFC822_attachment = false;
+    public boolean is_webArchive = false;
     public boolean do_convert = true;
     /**
      * Represents if conversion was actually saved or not OR if file was
@@ -138,7 +139,7 @@ public final class ConvertedDocument extends DocInput {
 
     private boolean isChild = false;
     private boolean isParent = true; // Default
-
+    
     public ConvertedDocument() {
         // Used only for uncaching previously saved converted docs.
         super(null, null);

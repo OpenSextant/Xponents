@@ -33,6 +33,7 @@ import org.opensextant.xtext.converters.MessageConverter;
 import org.opensextant.xtext.converters.TextTranscodingConverter;
 import org.opensextant.xtext.converters.TikaHTMLConverter;
 import org.opensextant.xtext.converters.DefaultConverter;
+import org.opensextant.xtext.converters.WebArchiveConverter;
 import org.opensextant.xtext.collectors.ArchiveNavigator;
 import org.opensextant.xtext.collectors.mailbox.OutlookPSTCrawler;
 import org.slf4j.Logger;
@@ -663,6 +664,13 @@ public final class XText implements ExclusionFilter, Converter {
      * @throws IOException
      */
     public void convertChildren(ConvertedDocument parentDoc) throws IOException {
+        
+        if (parentDoc.is_webArchive){
+            // Web Archive is a single document.  Only intent here is to convert to a single text document.
+            // 
+            return;
+        }
+        
         parentDoc.evalParentChildContainer();
         FileUtility.makeDirectory(parentDoc.parentContainer);
         String targetPath = parentDoc.parentContainer.getAbsolutePath();
@@ -745,6 +753,18 @@ public final class XText implements ExclusionFilter, Converter {
         requestedFileTypes.add("xlsx");
         requestedFileTypes.add("xls");
         requestedFileTypes.add("rtf");
+        
+        // Testing:
+        requestedFileTypes.add("dot");
+        requestedFileTypes.add("dotx");
+        requestedFileTypes.add("odt");
+        requestedFileTypes.add("odf");
+        requestedFileTypes.add("docm");
+
+        // Web Archives.
+        requestedFileTypes.add("mht");
+        //requestedFileTypes.add("wps");  MS Works?  No tika support really.
+        
 
         // Only Photographic images will be supported by default.
         // BMP, GIF, PNG, ICO, etc. must be added by caller.
@@ -802,11 +822,16 @@ public final class XText implements ExclusionFilter, Converter {
         MessageConverter emailParser = new MessageConverter();
         mimetype = "eml";
         if (requestedFileTypes.contains(mimetype)) {
-            converters.put("eml", emailParser);
+            converters.put(mimetype, emailParser);
         }
         mimetype = "msg";
         if (requestedFileTypes.contains(mimetype)) {
-            converters.put("msg", emailParser);
+            converters.put(mimetype, emailParser);
+        }
+        WebArchiveConverter webArchiveParser = new WebArchiveConverter();
+        mimetype = "mht"; /* RFC822 */
+        if (requestedFileTypes.contains(mimetype)) {
+            converters.put(mimetype, webArchiveParser);
         }
 
         ImageMetadataConverter imgConv = new ImageMetadataConverter();
