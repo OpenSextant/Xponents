@@ -80,6 +80,10 @@ public class WebArchiveConverter extends MessageConverter {
         String test = data.substring(0, sub - 1).toLowerCase().trim();
         
         // Typically the term 'script' does not actually appear in these octet-streams.
+        if (test.contains("javascript") || test.contains("document.write(") || test.contains("xmlhttp")){
+            return true;
+        }
+        // Less obvious clues.  Must contain all:
         if (test.contains("function") && test.contains("{") && test.contains("var ") && test.contains("=")) {
             return true;
         }
