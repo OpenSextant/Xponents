@@ -76,9 +76,11 @@ public class WebArchiveConverter extends MessageConverter {
             return true; /* not really */
         }
 
-        int sub = Math.min(1000, data.length());
+        int sub = Math.min(4000, data.length());
         String test = data.substring(0, sub - 1).toLowerCase().trim();
-        if (test.contains("function") && test.contains("{") && test.contains("var ")) {
+        
+        // Typically the term 'script' does not actually appear in these octet-streams.
+        if (test.contains("function") && test.contains("{") && test.contains("var ") && test.contains("=")) {
             return true;
         }
 
