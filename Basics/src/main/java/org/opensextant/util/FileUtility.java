@@ -837,4 +837,21 @@ public class FileUtility {
 
         return NOT_AVAILABLE;
     }
+    
+    /**
+     * Check if path or URL is a webpage.
+     * 
+     * @param link
+     * @return
+     */
+    public static boolean isWebURL(String link) {
+        if (link == null) {
+            return false;
+        }
+        String test = link.toLowerCase();
+        if (test.startsWith("http:") || test.startsWith("https:")) {
+            return true;
+        }
+        return false;
+    }
 }
