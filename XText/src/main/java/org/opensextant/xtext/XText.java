@@ -913,7 +913,9 @@ public final class XText implements ExclusionFilter, Converter {
                 new LongOpt("strip-prefix", LongOpt.OPTIONAL_ARGUMENT, null, 'p'),
                 new LongOpt("clean-html", LongOpt.NO_ARGUMENT, null, 'H'),
                 new LongOpt("embed-conversion", LongOpt.NO_ARGUMENT, null, 'e'),
-                new LongOpt("embed-children", LongOpt.NO_ARGUMENT, null, 'c'), };
+                new LongOpt("embed-children", LongOpt.NO_ARGUMENT, null, 'c'),
+                new LongOpt("tika-pst", LongOpt.NO_ARGUMENT, null, 'T')
+                };
 
         // "hcex:i:o:p:"
         gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XText", args, "", options);
@@ -960,6 +962,9 @@ public final class XText implements ExclusionFilter, Converter {
                     embed = true;
                     System.out
                             .println("Saving conversions to Input folder.  Output folder will be ignored.");
+                    break;
+                case 'T':
+                    xt.enableTikaPST(true);
                     break;
                 default:
                     XText.usage();
