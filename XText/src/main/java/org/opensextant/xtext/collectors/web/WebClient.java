@@ -42,6 +42,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.opensextant.ConfigException;
 import org.opensextant.xtext.XText;
@@ -175,7 +176,7 @@ public class WebClient {
 
         RequestConfig globalConfig = RequestConfig.custom()
                 .setCookieSpec(CookieSpecs.BROWSER_COMPATIBILITY).build();
-        
+
         HttpClient httpClient = clientHelper.setDefaultRequestConfig(globalConfig).build();
 
         return httpClient;
@@ -242,7 +243,13 @@ public class WebClient {
         HttpGet httpget = new HttpGet();
 
         try {
-            httpget.setURI(new URI(siteURL));
+            /**
+             * TODO: require outside caller encode URL properly.
+             * For now, whitespace is only main issue.
+             */
+            String encodedURL = siteURL.replaceAll(" ", "%20");
+            URI address = new URI(encodedURL);
+            httpget.setURI(address);
             HttpResponse response = httpClient.execute(httpget);
 
             if (response.getStatusLine().getStatusCode() == 404) {

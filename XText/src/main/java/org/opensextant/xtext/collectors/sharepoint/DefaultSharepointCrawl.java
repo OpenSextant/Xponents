@@ -168,6 +168,8 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
                     }
 
                     // create URL for link and download artifact.
+                    // encode URL prior to retrieval.
+                    // 
                     HttpResponse itemPage = getPage(l.getAbsoluteURL());
 
                     // B. Drop files in archive mirroring the original
