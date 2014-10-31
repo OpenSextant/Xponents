@@ -64,7 +64,8 @@ Basic Usage
     ant -Dinputfile=./test/somestuff.zip  convert 
     ant -Dinputfile=./test/somestuff/  convert
 
-    See ./script/convert.sh or convert.bat;  Ant required.
+    // Ant is not required for these scripts:
+    See ./script/convert.sh or convert.bat  
   
 
 #RELEASE NOTES#
