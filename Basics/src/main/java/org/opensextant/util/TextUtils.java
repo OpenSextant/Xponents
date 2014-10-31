@@ -46,17 +46,21 @@ import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.Language;
-import org.supercsv.io.CsvMapReader;
+import org.supercsv.cellprocessor.Optional;
+import org.supercsv.cellprocessor.constraint.NotNull;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
 /**
@@ -152,7 +156,7 @@ public class TextUtils {
             + "OoUu" // double acute
             + "Oo" // Scandanavian o
             + "AaEe" // A/E wiht micron
-            ;
+    ;
 
     private static final String ALPHAMAP_UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" // grave
             + "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD" // acute
@@ -706,7 +710,7 @@ public class TextUtils {
         //
         return squeeze_whitespace(str.substring(s1, s2 + 1));
     }
-    
+
     private final static Pattern tokenizer = Pattern.compile("\\s+");
 
     /**
@@ -716,8 +720,8 @@ public class TextUtils {
      * @param str
      * @return
      */
-    public static String[] tokens(String str){
-       return tokenizer.split(str);
+    public static String[] tokens(String str) {
+        return tokenizer.split(str);
     }
 
     /**
@@ -838,12 +842,14 @@ public class TextUtils {
     public final static String romanianLang = "ro";
     private final static Map<String, Language> LanguageMap_ISO639 = new HashMap<String, Language>();
 
+    /*
+     * Initialize some langauge metadata. 
+     */
     static {
         try {
-            initLanguageData();
-            initLOCLanguageData(); // Only fills in if a language code does not
-                                   // exist.
-            // initICULanguageData();
+            // initLanguageData(); // Barely useful -- this pulls out lang Locales.
+            initLOCLanguageData(); // LOC language data is a list of all known languages w/ISO codes.
+            // initICULanguageData();  ICU did not seem to be the right solution.
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -885,7 +891,6 @@ public class TextUtils {
                     locale.getDisplayLanguage());
             addLanguage(l);
         }
-
     }
 
     /**
@@ -902,25 +907,33 @@ public class TextUtils {
         // DATA FILE: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt
 
         java.io.InputStream io = TextUtils.class.getResourceAsStream("/ISO-639-2_utf-8.txt");
-        java.io.Reader featIO = new InputStreamReader(io);
-        // Pipe-delimited data.
-        CsvMapReader langReader = new CsvMapReader(featIO,
-                new CsvPreference.Builder('"', '|', "\n").build());
+        java.io.Reader featIO = new InputStreamReader(io, "UTF-8");
+        CsvListReader langReader = new CsvListReader(featIO, new CsvPreference.Builder('"', '|',
+                "\n").build());
 
-        String[] columns = langReader.getHeader(true);
+        CellProcessor[] cells = { new Optional(), new Optional(), new Optional(), new Optional(),
+                new NotNull() };
+        List<Object> lang = null;
 
         /*
          * ISO3,XX,ISO2,NAME,NAME_FR
          */
-        Map<String, String> lang;
-        while ((lang = langReader.read(columns)) != null) {
+        while ((lang = langReader.read(cells)) != null) {
             //
-            String names = lang.get("NAME");
-            if (names == null) {
+            String names = (String) lang.get(3);
+            if (StringUtils.isBlank(names)) {
+                continue;
+            }
+            if ("NAME".equals(names)) {
                 continue;
             }
             List<String> namelist = TextUtils.string2list(names, ";");
-            Language l = new Language(lang.get("ISO3"), lang.get("ISO2"), namelist.get(0));
+            String iso3 = (String) lang.get(0);
+            if (iso3.startsWith("#")) {
+                continue;
+            }
+            String iso2 = (String) lang.get(2);
+            Language l = new Language(iso3, iso2, namelist.get(0));
             addLanguage(l);
         }
 

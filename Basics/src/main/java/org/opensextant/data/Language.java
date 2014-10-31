@@ -15,6 +15,8 @@
  */
 package org.opensextant.data;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Simple mapping of ISO 639 id to display name for languages
  *
@@ -33,12 +35,10 @@ public class Language {
      *  @param name of language
      */
     public Language( String id3, String id2, String name) {
-        iso3 = id3;
-        iso2 = id2;
-        if (id3!=null){
+        if (StringUtils.isNotBlank(id3)){
             iso3 = id3.toLowerCase();
         }
-        if (id2!=null){
+        if (StringUtils.isNotBlank(id2)){
             iso2 = id2.toLowerCase();
         }
         this.name = name;
