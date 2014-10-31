@@ -1,5 +1,5 @@
 ﻿ISO3|XX|ISO2|NAME|NAME_FR
-#http://www.loc.gov/standards/iso639-2/ascii_8bits.html||||
+#http://www.loc.gov/standards/iso639-2/ascii_8bits.html||||Comment
 aar||aa|Afar|afar
 abk||ab|Abkhazian|abkhaze
 ace|||Achinese|aceh
