@@ -92,7 +92,6 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 public final class XText implements ExclusionFilter, Converter {
 
     private Logger log = LoggerFactory.getLogger(getClass());
-    private boolean saving = true;
     private boolean scrubHTML = false;
 
     private PathManager paths = new PathManager();
@@ -169,7 +168,6 @@ public final class XText implements ExclusionFilter, Converter {
      * @param b
      */
     public void enableSaving(boolean b) {
-        saving = b;
         paths.enableSaving(b);
     }
 
@@ -302,7 +300,7 @@ public final class XText implements ExclusionFilter, Converter {
 
         stop_time = System.currentTimeMillis();
 
-        if (saving) {
+        if (paths.isSaving()) {
             if (paths.isSaveWithInput()) {
                 log.info(
                         "Output can be accessed at from the input folder {} in 'xtext' sub-folders",
@@ -403,7 +401,7 @@ public final class XText implements ExclusionFilter, Converter {
      * @throws IOException
      */
     public void convertOutlookPST(File input) throws ConfigException, IOException {
-        if (!this.saving) {
+        if (!paths.isSaving()) {
             log.error("Warning -- PST file found, but save = true is required to parse it.  Enable saving and chose a cache folder");
         }
 
@@ -495,7 +493,7 @@ public final class XText implements ExclusionFilter, Converter {
             return null;
         }
 
-        if (saving) {
+        if (paths.isSaving()) {
             if (!paths.isSaveWithInput() && !paths.hasInputRoot()) {
 
                 throw new IOException(
@@ -554,7 +552,7 @@ public final class XText implements ExclusionFilter, Converter {
         // ------------------
         // Retrieve previous conversions
         // ------------------
-        if (cachable && !ConvertedDocument.overwrite && this.saving) {
+        if (cachable && !ConvertedDocument.overwrite && paths.isSaving()) {
             textDoc = paths.getCachedConversion(input);
         }
 
@@ -581,7 +579,7 @@ public final class XText implements ExclusionFilter, Converter {
                 // throw new
                 // IOException("Engineering error: Doc converted, but converter failed to setText()");
                 // }
-                if (this.saving && textDoc.is_converted) {
+                if (paths.isSaving() && textDoc.is_converted) {
                     // Get Parent info in there.
                     if (parent != null) {
                         textDoc.setParent(parent);
@@ -664,13 +662,13 @@ public final class XText implements ExclusionFilter, Converter {
      * @throws IOException
      */
     public void convertChildren(ConvertedDocument parentDoc) throws IOException {
-        
-        if (parentDoc.is_webArchive){
+
+        if (parentDoc.is_webArchive) {
             // Web Archive is a single document.  Only intent here is to convert to a single text document.
             // 
             return;
         }
-        
+
         parentDoc.evalParentChildContainer();
         FileUtility.makeDirectory(parentDoc.parentContainer);
         String targetPath = parentDoc.parentContainer.getAbsolutePath();
@@ -753,7 +751,7 @@ public final class XText implements ExclusionFilter, Converter {
         requestedFileTypes.add("xlsx");
         requestedFileTypes.add("xls");
         requestedFileTypes.add("rtf");
-        
+
         // Testing:
         requestedFileTypes.add("dot");
         requestedFileTypes.add("dotx");
@@ -764,7 +762,6 @@ public final class XText implements ExclusionFilter, Converter {
         // Web Archives.
         requestedFileTypes.add("mht");
         //requestedFileTypes.add("wps");  MS Works?  No tika support really.
-        
 
         // Only Photographic images will be supported by default.
         // BMP, GIF, PNG, ICO, etc. must be added by caller.
@@ -908,14 +905,13 @@ public final class XText implements ExclusionFilter, Converter {
     public static void main(String[] args) {
 
         LongOpt[] options = { new LongOpt("input", LongOpt.REQUIRED_ARGUMENT, null, 'i'),
-                new LongOpt("output", LongOpt.OPTIONAL_ARGUMENT, null, 'o'),
-                new LongOpt("export", LongOpt.OPTIONAL_ARGUMENT, null, 'x'),
-                new LongOpt("strip-prefix", LongOpt.OPTIONAL_ARGUMENT, null, 'p'),
+                new LongOpt("output", LongOpt.REQUIRED_ARGUMENT, null, 'o'),
+                new LongOpt("export", LongOpt.REQUIRED_ARGUMENT, null, 'x'),
+                new LongOpt("strip-prefix", LongOpt.REQUIRED_ARGUMENT, null, 'p'),
                 new LongOpt("clean-html", LongOpt.NO_ARGUMENT, null, 'H'),
                 new LongOpt("embed-conversion", LongOpt.NO_ARGUMENT, null, 'e'),
                 new LongOpt("embed-children", LongOpt.NO_ARGUMENT, null, 'c'),
-                new LongOpt("tika-pst", LongOpt.NO_ARGUMENT, null, 'T')
-                };
+                new LongOpt("tika-pst", LongOpt.NO_ARGUMENT, null, 'T') };
 
         // "hcex:i:o:p:"
         gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XText", args, "", options);
@@ -1010,7 +1006,9 @@ public final class XText implements ExclusionFilter, Converter {
                 System.out.println("Default output folder is $PWD/" + output);
             }
             // Notice this main program requires an output path.
-            xt.getPathManager().setConversionCache(output);
+            if (output != null) {
+                xt.getPathManager().setConversionCache(output);
+            }
             // Set itself to listen, as this is the main program.
             xt.setConversionListener(new MainProgramListener());
 

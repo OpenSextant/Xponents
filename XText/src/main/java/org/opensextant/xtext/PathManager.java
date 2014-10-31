@@ -67,6 +67,9 @@ public class PathManager {
     public void enableSaving(boolean b) {
         saving = b;
     }
+    public boolean isSaving(){
+        return saving;
+    }
 
     public String getConversionCache() {
         return conversionCache;
