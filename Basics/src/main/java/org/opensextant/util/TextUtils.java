@@ -938,28 +938,57 @@ public class TextUtils {
         }
 
         langReader.close();
+
+        // Popular languages that go by other codes.
+        // ISO languages as listed by LOC are listed with Bibliographic vs. Terminological codes.
+        // FRE vs. FRA are subtle difference for French, but important if you cannot find French by lang ID.
+        // 
+        Language fr = new Language("fra", "fr", "French");
+        addLanguage(fr, true);
+        Language zh = new Language("zho", "zh", "Chinese");
+        addLanguage(zh, true);
+        Language zhcn = new Language("zh-cn", "zh", "Chinese");
+        addLanguage(zhcn, true);
+        Language zhtw = new Language("zh-tw", "zt", "Chinese/Taiwain");
+        addLanguage(zhtw, true);
+    }
+
+    public static void addLanguage(Language lg) {
+        addLanguage(lg, false);
     }
 
     /**
      * Extend the basic language dictionary.
+     * Note -- First language is listed in language map by Name, and is not overwritten.
+     * Language objects may be overwritten in map using lang codes.
+     * 
+     * For example, fre = French(fre), fra = French(fra), and french = French(fra) 
+     * 
+     *  the last one, 'french' = could have been the French(fre) or (fra).
+     *  
+     * Example, 'ger' and 'deu' are both valid ISO 3-alpha codes for German. What to do?
+     *  
+     *  TODO:  Create a language object that lists both language biblio/terminology codes.
      * 
      * @param lg language object
      */
-    public static void addLanguage(Language lg) {
+    public static void addLanguage(Language lg, boolean override) {
         if (lg == null) {
             return;
         }
-        if (lg.getCode() != null && !LanguageMap_ISO639.containsKey(lg.getCode())) {
-            LanguageMap_ISO639.put(lg.getCode(), lg);
+        if (lg.getCode() != null) {
+            if (override || !LanguageMap_ISO639.containsKey(lg.getCode())) {
+                LanguageMap_ISO639.put(lg.getCode(), lg);
+            }
         }
-        if (lg.getISO639_1_Code() != null && !LanguageMap_ISO639.containsKey(lg.getISO639_1_Code())) {
-            LanguageMap_ISO639.put(lg.getISO639_1_Code(), lg);
+        if (lg.getISO639_1_Code() != null) {
+            if (override || !LanguageMap_ISO639.containsKey(lg.getISO639_1_Code())) {
+                LanguageMap_ISO639.put(lg.getISO639_1_Code(), lg);
+            }
         }
-        String namekey = lg.getName();
-        if (namekey != null) {
-            namekey = namekey.toLowerCase();
-            if (!LanguageMap_ISO639.containsKey(namekey)) {
-                LanguageMap_ISO639.put(namekey, lg);
+        if (lg.getNameCode() != null) {
+            if (!LanguageMap_ISO639.containsKey(lg.getNameCode())) {
+                LanguageMap_ISO639.put(lg.getNameCode(), lg);
             }
         }
     }

@@ -27,6 +27,7 @@ public class Language {
     private String iso2 = null;
     private String iso3 = null;
     private String name = null;
+    private String namecode = null; 
 
     /** A normalize view of a Language  - ISO 639-2 and -1 codes and display name
      *  codes are lower cased.
@@ -42,11 +43,17 @@ public class Language {
             iso2 = id2.toLowerCase();
         }
         this.name = name;
+        if (name!=null){
+            namecode = name.toLowerCase();
+        }
     }
 
     /** @return display name of language */
     public String getName() {
         return this.name;
+    }
+    public String getNameCode() {
+        return this.namecode;
     }
 
     /** @return ISO 639-2 3-char code
@@ -61,6 +68,6 @@ public class Language {
 
     @Override
     public String toString(){
-        return getName();
+        return String.format("%s (%s)", getName(), getCode());
     }
 }

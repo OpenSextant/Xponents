@@ -27,6 +27,9 @@ public class TestTextUtils {
             }
         }
         System.out.println("Chinese? "+TextUtils.getLanguage("chi"));
+        System.out.println("French(fre)? "+TextUtils.getLanguage("fre"));
+        System.out.println("French(fra)? "+TextUtils.getLanguage("fra"));
+        System.out.println("French(french)? "+TextUtils.getLanguage("FRENCH"));
     }
 
 }
