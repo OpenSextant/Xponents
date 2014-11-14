@@ -942,15 +942,29 @@ public class TextUtils {
         // Popular languages that go by other codes.
         // ISO languages as listed by LOC are listed with Bibliographic vs. Terminological codes.
         // FRE vs. FRA are subtle difference for French, but important if you cannot find French by lang ID.
-        // 
+        //
+        // Fully override French and Trad Chinese:
         Language fr = new Language("fra", "fr", "French");
         addLanguage(fr, true);
-        Language zh = new Language("zho", "zh", "Chinese");
-        addLanguage(zh, true);
-        Language zhcn = new Language("zh-cn", "zh", "Chinese");
-        addLanguage(zhcn, true);
+
         Language zhtw = new Language("zh-tw", "zt", "Chinese/Taiwain");
         addLanguage(zhtw, true);
+
+        // Delicately insert more common names and codes as well as locales here.
+        Language zh = new Language("zho", "zh", "Chinese");
+        LanguageMap_ISO639.put("zho", zh);
+
+        Language zhcn = new Language("chi", "zh", "Chinese");
+        LanguageMap_ISO639.put("zh-cn", zhcn);
+
+        Language fas = new Language("per", "fa", "Farsi");
+        LanguageMap_ISO639.put("farsi", fas);
+
+        // Locales of English -- are still "English"
+        Language en1 = new Language("eng", "en", "English");
+        LanguageMap_ISO639.put("en-gb", en1);
+        LanguageMap_ISO639.put("en-us", en1);
+        LanguageMap_ISO639.put("en-au", en1);
     }
 
     public static void addLanguage(Language lg) {
@@ -1007,11 +1021,8 @@ public class TextUtils {
             return null;
         }
 
-        Language l = LanguageMap_ISO639.get(code.toLowerCase());
-        if (l == null) {
-            return code;
-        }
-        return l.getName();
+        Language L = getLanguage(code);
+        return (L != null ? L.getName() : null);
     }
 
     /**
@@ -1025,7 +1036,20 @@ public class TextUtils {
             return null;
         }
 
-        return LanguageMap_ISO639.get(code.toLowerCase());
+        String lookup = code.toLowerCase();
+        Language l = LanguageMap_ISO639.get(lookup);
+        if (l != null) {
+            return l;
+        }
+        // Keep looking.
+        if (lookup.contains("_")) {
+            lookup = lookup.split("_")[0];
+            l = LanguageMap_ISO639.get(lookup);
+            if (l != null) {
+                return l;
+            }
+        }
+        return null;
     }
 
     /**
@@ -1039,7 +1063,7 @@ public class TextUtils {
             return null;
         }
 
-        Language l = LanguageMap_ISO639.get(code.toLowerCase());
+        Language l = getLanguage(code);
         if (l != null) {
             return l.getCode();
         }
@@ -1211,21 +1235,53 @@ public class TextUtils {
 
     public static boolean isCJK(Character.UnicodeBlock blk) {
         // Chinese/CJK group:
+        return isChinese(blk) || isJapanese(blk) || isKorean(blk);
+    }
+
+    public static boolean isChinese(Character.UnicodeBlock blk) {
         return (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
                 || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
                 || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
+                || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C)
+                || (blk == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D)
                 || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
                 || (blk == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
                 || (blk == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
                 || (blk == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
                 || (blk == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
-                // Korean: Hangul
-                || (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
+                || (blk == Character.UnicodeBlock.KANGXI_RADICALS)
+                || (blk == Character.UnicodeBlock.YI_SYLLABLES)
+                || (blk == Character.UnicodeBlock.YI_RADICALS)
+                || (blk == Character.UnicodeBlock.BOPOMOFO)
+                || (blk == Character.UnicodeBlock.BOPOMOFO_EXTENDED)
+                || (blk == Character.UnicodeBlock.KANBUN);
+    }
+
+    /**
+     * Likely to be uniquely Korean if the character block is in Hangul.
+     * But also, it may be Korean if block is part of the CJK ideographs at large.
+     * User must check if text in its entirety is part of CJK & Hangul, independently.
+     * This method only detects if character block is uniquely Hangul or not. 
+     * @param blk
+     * @return true if char block is Hangul
+     */
+    public static boolean isKorean(Character.UnicodeBlock blk) {
+        return (blk == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
                 || (blk == Character.UnicodeBlock.HANGUL_JAMO)
                 || (blk == Character.UnicodeBlock.HANGUL_SYLLABLES)
-                // Japanese:
-                || (blk == Character.UnicodeBlock.HIRAGANA)
-                || (blk == Character.UnicodeBlock.KATAKANA);
+                || (blk == Character.UnicodeBlock.HANGUL_JAMO_EXTENDED_A)
+                || (blk == Character.UnicodeBlock.HANGUL_JAMO_EXTENDED_B);
+    }
+
+    /**
+     * Checks if char block is uniquely Japanese.  Check other chars isChinese
+     * 
+     * @param blk
+     * @return true if char block is Hiragana or Katakana
+     */
+    public static boolean isJapanese(Character.UnicodeBlock blk) {
+        return (blk == Character.UnicodeBlock.HIRAGANA) || (blk == Character.UnicodeBlock.KATAKANA)
+                || (blk == Character.UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS);
     }
 
     /**
