@@ -66,12 +66,12 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     private static ModifiableSolrParams params;
     static {
         params = new ModifiableSolrParams();
-        params.set(CommonParams.QT, requestHandler);
+        //params.set(CommonParams.QT, requestHandler);
         params.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag");
 
         params.set("tagsLimit", 100000);
         params.set("subTags", false);
-        params.set("matchText", false);
+        params.set("matchText", true);
 
         /*
          * Possible overlaps: ALL, NO_SUB, LONGEST_DOMINANT_RIGHT See Solr Text
