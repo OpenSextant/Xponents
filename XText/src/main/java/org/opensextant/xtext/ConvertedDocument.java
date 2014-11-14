@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import javax.activation.MimeType;
@@ -45,6 +44,9 @@ import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 import org.opensextant.data.DocInput;
@@ -59,7 +61,7 @@ public final class ConvertedDocument extends DocInput {
      */
     public final static char UNIVERSAL_PATH_SEP = '/';
 
-    private static SimpleDateFormat dtfmt = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateTimeFormatter dtfmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     /** 
      * The url where this document (html, image, doc download) was found
@@ -139,7 +141,7 @@ public final class ConvertedDocument extends DocInput {
 
     private boolean isChild = false;
     private boolean isParent = true; // Default
-    
+
     public ConvertedDocument() {
         // Used only for uncaching previously saved converted docs.
         super(null, null);
@@ -170,7 +172,7 @@ public final class ConvertedDocument extends DocInput {
             this.folder = item.getParentFile();
             this.filename = item.getName();
             this.filetime = getFiletime();
-            this.is_plaintext = FileUtility.isPlainText( filename );
+            this.is_plaintext = FileUtility.isPlainText(filename);
             this.filesize = file.length();
             this.extension = FilenameUtils.getExtension(filename);
             this.basename = FilenameUtils.getBaseName(filename);
@@ -178,7 +180,7 @@ public final class ConvertedDocument extends DocInput {
             addProperty("filesize", this.filesize);
             addProperty("filepath", this.filepath);
 
-            addProperty("conversion_date", dtfmt.format(new Date()));
+            addProperty("conversion_date", dtfmt.print(new Date().getTime()));
 
             // Fill out TextInput basics:
             setId(this.filepath);
@@ -457,7 +459,7 @@ public final class ConvertedDocument extends DocInput {
      * @return true if there is text available.  false if the converters have not tried to set text or they tried and found no text.
      */
     public boolean hasText() {
-        return buffer.length()>0;
+        return buffer.length() > 0;
     }
 
     /**
@@ -558,8 +560,8 @@ public final class ConvertedDocument extends DocInput {
             return;
         }
 
-        this.create_date = d.getTime();
-        meta.put("pub_date", dtfmt.format(d.getTime()));
+        create_date = d.getTime();
+        meta.put("pub_date", dtfmt.print(create_date.getTime()));
     }
 
     /**
@@ -571,8 +573,28 @@ public final class ConvertedDocument extends DocInput {
             return;
         }
 
-        this.create_date = d;
-        meta.put("pub_date", dtfmt.format(d.getTime()));
+        create_date = d;
+        meta.put("pub_date", dtfmt.print(create_date.getTime()));
+    }
+
+    public void setCreateDate() {
+        if (getProperty("pub_date") != null) {
+            setCreateDate(getProperty("pub_date"));
+        }
+    }
+
+    /**
+     * string should be valid yyyy-mm-dd
+     * @param ymd
+     */
+    public void setCreateDate(String ymd) {
+        if (StringUtils.isBlank(ymd)) {
+            return;
+        }
+        DateTime joda = dtfmt.parseDateTime(ymd);
+        if (joda != null) {
+            create_date = joda.toDate();
+        }
     }
 
     public void addConverter(Class<?> c) {

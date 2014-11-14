@@ -647,6 +647,7 @@ public class PathManager {
         doc.is_converted = true;
 
         doc.filetime = new Date(Long.parseLong(doc.getProperty("filetime")));
+        doc.setCreateDate();        
 
         // DocInput requirement: provided id + file paths
         // If there is another Identifier to use,... caller will have an opportunity to set it
