@@ -25,11 +25,12 @@ import java.util.regex.Pattern;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.CookiePolicy;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.opensextant.ConfigException;
 import org.opensextant.xtext.collectors.web.WebClient;
 import org.slf4j.Logger;
@@ -51,7 +52,8 @@ public class SharepointClient extends WebClient {
      * @throws MalformedURLException 
      * @throws ConfigException 
      */
-    public SharepointClient(String siteUrl, String archive, String u, String p, String dom) throws MalformedURLException, ConfigException {
+    public SharepointClient(String siteUrl, String archive, String u, String p, String dom)
+            throws MalformedURLException, ConfigException {
         super(siteUrl, archive);
         user = u;
         passwd = p;
@@ -74,24 +76,37 @@ public class SharepointClient extends WebClient {
         domain = dom;
     }
 
+    private HttpClient currentConn = null;
+    
+    public void reset(){
+        currentConn = null;
+    }
+    
     /**
-     * Sharepoint requires NTLM
+     * Sharepoint requires NTLM. This client requires a non-null user/passwd/domain.
+     * 
      */
     @Override
     public HttpClient getClient() {
-        HttpClient httpClient = new DefaultHttpClient();
 
-        ((DefaultHttpClient) httpClient).getCredentialsProvider().setCredentials(AuthScope.ANY,
-                new NTCredentials(user, passwd, server, domain));
+        if (currentConn!=null){
+            return currentConn;
+        }
+        
+        HttpClientBuilder clientHelper = HttpClientBuilder.create();
 
-        /*
-         * 
-         */
         if (proxyHost != null) {
-            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+            clientHelper.setProxy(proxyHost);
         }
 
-        httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+        RequestConfig globalConfig = RequestConfig.custom()
+                .setCookieSpec(CookieSpecs.BROWSER_COMPATIBILITY).build();
+
+        CredentialsProvider creds = new BasicCredentialsProvider();
+        creds.setCredentials(AuthScope.ANY, new NTCredentials(user, passwd, server, domain));
+        clientHelper.setDefaultCredentialsProvider(creds);
+        HttpClient httpClient = clientHelper.setDefaultRequestConfig(globalConfig).build();
+
         return httpClient;
 
     }
@@ -111,8 +126,9 @@ public class SharepointClient extends WebClient {
         while (matches.find()) {
             String link = matches.group(1).trim();
             String link_lc = link.toLowerCase();
-            if ("/".equals(link) || "#".equals(link) || link_lc.endsWith(".aspx") || link_lc.startsWith("javascript")
-                    || link.startsWith("../") || link.contains("/_layouts/")) {
+            if ("/".equals(link) || "#".equals(link) || link_lc.endsWith(".aspx")
+                    || link_lc.startsWith("javascript") || link.startsWith("../")
+                    || link.contains("/_layouts/")) {
                 continue;
             }
             if (link.endsWith("/")) {
