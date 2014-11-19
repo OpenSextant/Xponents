@@ -87,7 +87,14 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         evidence = new ArrayList<PlaceEvidence>();
         rules = new ArrayList<String>();
         placeConfidences = new ArrayList<Double>();
+    }
 
+    /**
+     * If caller is willing to claim an explicit choice, so be it.
+     * Otherwise unchosen places go to disambiguation.
+     */
+    public void choose(Place geo) {
+        chosen = geo;
     }
 
 
@@ -106,6 +113,15 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
 
     // ---- the getters and setters ---------
     //
+
+    /**
+     * Common evidence flags -- isCountry, isPerson, isOrganization, abbreviation, and acronym
+     */
+    public boolean isCountry = false;
+    public boolean isPerson = false;
+    public boolean isOrganization = false;
+    public boolean isAbbreviation = false;
+    public boolean isAcronym = false;
 
     /** After candidate has been scored and all, the final best place is the geocoding result for the given name in context.
      */
