@@ -34,12 +34,10 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.SolrParams;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.opensextant.ConfigException;
 import org.opensextant.util.SolrProxy;
-import org.opensextant.extraction.ExtractionException;
-import org.opensextant.extraction.SolrTaggerRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -60,7 +58,7 @@ public abstract class SolrMatcherSupport {
      */
     protected static String requestHandler = "/tag";
     // protected String coreName = null;
-    private SolrProxy solr = null;
+    protected SolrProxy solr = null;
 
     // updated after each call to getText();
     protected int tagNamesTime = 0;
@@ -107,7 +105,7 @@ public abstract class SolrMatcherSupport {
      */
     public final void initialize() throws ConfigException {
 
-        solr = new SolrProxy(getCoreName());        
+        solr = new SolrProxy(getCoreName());
     }
 
     /**
@@ -183,10 +181,6 @@ public abstract class SolrMatcherSupport {
 
         // see https://issues.apache.org/jira/browse/SOLR-5154
         SolrDocumentList docList = response.getResults();
-        if (docList == null) {
-            // SolrTextTagger v1.x
-            docList = (SolrDocumentList) response.getResponse().get("matchingDocs");
-        }
         if (docList != null) {
             // log.debug("Not streaming docs from Solr (not supported)");
             StreamingResponseCallback callback = tagRequest.getStreamingResponseCallback();
@@ -203,5 +197,4 @@ public abstract class SolrMatcherSupport {
 
         return response;
     }
-
 }

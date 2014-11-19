@@ -28,7 +28,9 @@
 package org.opensextant.extraction;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Set;
+
 import org.opensextant.util.FileUtility;
 
 /**
@@ -39,6 +41,11 @@ public class MatchFilter /*implements Filter*/ {
     /** The tag filter. */
     public Set<String> tagFilter = null;
 
+    /** free-form filter */
+    public MatchFilter(){
+        
+    }
+    
     /**
      * Instantiates a new match filter.
      *
@@ -48,6 +55,9 @@ public class MatchFilter /*implements Filter*/ {
     public MatchFilter(String stopfile) throws IOException {
         tagFilter = FileUtility.loadDictionary(stopfile, false);
     }
+    public MatchFilter(URL stopfile) throws IOException {
+        tagFilter = FileUtility.loadDictionary(stopfile, false);
+    }    
 
     /**
      *  If value is in stop list, then filter it out.
