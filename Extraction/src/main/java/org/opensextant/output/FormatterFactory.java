@@ -28,9 +28,7 @@ package org.opensextant.output;
 
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.opensextant.processing.ProcessingException;
 

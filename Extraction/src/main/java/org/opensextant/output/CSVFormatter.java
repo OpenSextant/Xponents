@@ -11,7 +11,6 @@ import java.util.Map;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.giscore.DocumentType;
 import org.opensextant.processing.ProcessingException;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -61,8 +60,13 @@ public class CSVFormatter extends AbstractFormatter {
 
     @Override
     public void finish() {
-        // TODO Auto-generated method stub
-
+        try {
+            writer.flush();
+            closeOutputStreams();
+        } catch (Exception err) {
+            // error quietly... failed to close.
+            err.printStackTrace();
+        }
     }
 
     private FileWriter fio = null;
@@ -89,7 +93,7 @@ public class CSVFormatter extends AbstractFormatter {
         for (TextMatch m : rowdata.matches) {
 
             values.clear();
-            
+
             if (field_set.contains(OpenSextantSchema.FILEPATH.getName())) {
                 values.put(OpenSextantSchema.FILEPATH.getName(), rowdata.recordFile);
             }
@@ -129,7 +133,7 @@ public class CSVFormatter extends AbstractFormatter {
         if (!this.includeOffsets) {
             //field_order.add("start");
             //field_order.add("end");
-        //} else {
+            //} else {
             field_order.remove("start");
             field_order.remove("end");
         }
