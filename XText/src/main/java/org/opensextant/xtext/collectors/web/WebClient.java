@@ -42,7 +42,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.opensextant.ConfigException;
 import org.opensextant.xtext.XText;
@@ -192,7 +191,7 @@ public class WebClient {
         }
 
         try {
-            HttpResponse page = getPage(site);
+            getPage(site);
             return;
         } catch (Exception err) {
             throw new ConfigException(

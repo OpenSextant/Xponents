@@ -25,7 +25,6 @@ import java.util.Date;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.utils.DateUtils;
-import org.apache.http.impl.cookie.DateParseException;
 import org.opensextant.ConfigException;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
