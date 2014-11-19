@@ -5,11 +5,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+//import org.apache.lucene.analysis.charfilter.MappingCharFilterFactory;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.request.SolrQueryRequest;
@@ -23,8 +25,6 @@ import org.apache.solr.update.processor.StatelessScriptUpdateProcessorFactory;
  */
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
-//import org.opensextant.util.AnyFilenameFilter;
-//import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
     }
 
     protected Set<String> includeCategorySet = null;
+    protected Set<String> includeCountrySet = null;
     protected boolean includeAll = false;
     protected String catField = "SplitCategory";
     protected static Set<String> stopTerms = null;
@@ -61,6 +62,11 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 includeAll = true;
             }
         }
+        String cc = (String) params.get("countries");
+        if (cc != null) {
+            includeCountrySet = new HashSet<>();
+            includeCountrySet.addAll(TextUtils.string2list(cc, ","));
+        }
 
         if (params.get("category_field") != null) {
             catField = (String) params.get("category_field");
@@ -71,24 +77,11 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
          * that will be marked as search_only = true.
          * 
          */
-        try (InputStream io = new FileInputStream(new File(
-                "gazetteer/conf/exclusions/non-placenames.csv"))) {
-            java.io.Reader termsIO = new InputStreamReader(io);
-            CsvMapReader termreader = new CsvMapReader(termsIO, CsvPreference.EXCEL_PREFERENCE);
-            String[] columns = termreader.getHeader(true);
-            Map<String, String> terms = null;
-            stopTerms = new HashSet<String>();
-            while ((terms = termreader.read(columns)) != null) {
-
-                String term = terms.get("exclusion");
-                if (StringUtils.isBlank(term) || term.startsWith("#")) {
-                    continue;
-                }
-                stopTerms.add(term.toLowerCase());
-            }
-        } catch (IOException err) {
-            logger.error("Unable to load exclusion terms");
-            return;
+        try {
+            stopTerms = GazetteerMatcher.loadExclusions(GazetteerMatcher.class
+                    .getResource("/gazetteer/conf/exclusions/non-placenames.csv"));
+        } catch (Exception err) {
+            logger.error("Init failure", err);
         }
     }
 
@@ -110,6 +103,13 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             super(next);
         }
 
+        protected Set<String> excludedTerms = new HashSet<>();
+
+        @Override
+        public void finish() throws IOException {
+            logger.info("Terms marked search_only: {}", excludedTerms);
+        }
+
         /**
          * Adding a gazetteer entry involves looking at a few fields
          *  -- we keep it if its values match the desired "include category"
@@ -123,9 +123,16 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             ++rowCount;
 
             if (rowCount % 100000 == 0) {
-                logger.info("GazURP ## Row {}; Added: {}", rowCount, addCount);
+                logger.info("GazURP ## Row {}; Excluded:{}", rowCount, excludedTerms.size());
             }
 
+            if (includeCountrySet != null) {
+                String cc = (String) doc.getFieldValue("cc");
+                if (!includeCountrySet.contains(cc)) {
+                    logger.debug("Filtered out CC={}", cc);
+                    return;
+                }
+            }
             /* See solrconfig for documentation on gazetteer filtering
              * =======================================================
              */
@@ -136,29 +143,51 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                     cat = "general";
                 }
                 if (!includeCategorySet.contains(cat)) {
-                    logger.info("GazURP ##: Exclude {} {}", cat, nm);
+                    logger.debug("GazURP ##: Exclude {} {}", cat, nm);
                     return;
                 }
             }
+            String nt = (String) doc.getFieldValue("name_type");
+            boolean isName = (nt != null ? "N".equals(nt) : false);
 
             boolean search_only = false;
 
-            /* Trivially short ASCII terms are not good for tagging.
-             * 
+            /* Trivially short ASCII names are not good for tagging.
+             * Do not mark codes as search only.
              */
-            if (nm.length() < 2 && StringUtils.isAsciiPrintable(nm)) {
-                search_only = true;
-                logger.info("GazURP ##: Short name set search only {}", nm);
+            String nm2 = nm.replace(".", "").trim();
+            if (isName) {
+                if ((nm.length() <= 2 || nm2.length() <= 2) && StringUtils.isAsciiPrintable(nm)) {
+                    search_only = true;
+                    logger.debug("GazURP ##: Short name set search only {}", nm);
+                }
             }
 
-            String nameLower = nm.toLowerCase();
-            if (stopTerms.contains(nameLower)) {
-                search_only = true;
-                logger.info("GazURP ## Stop word set search only {}", nm);
+            if (!search_only) {
+                String nameLower = nm2.toLowerCase();
+                if (stopTerms.contains(nameLower)) {
+                    search_only = true;
+                    logger.debug("GazURP ## Stop word set search only {}", nm);
+                }
+            }
+
+            /* For relatively short terms that may also be stopterms, 
+             * first convert to non-diacritic form, then lower case result.
+             * If result is a stop term or exclusion term then it should be tagged search_only
+             * 
+             */
+            if (!search_only && nm.length() < 15) {
+                String nameNonDiacrtic = TextUtils.replaceDiacritics(nm).toLowerCase();
+                nameNonDiacrtic = TextUtils.replaceAny(nameNonDiacrtic, "‘’-", " ").trim();
+                if (stopTerms.contains(nameNonDiacrtic)) {
+                    search_only = true;
+                    logger.info("GazURP ## Stop word set search only {} ({})", nm, nameNonDiacrtic);
+                }
             }
 
             if (search_only) {
                 doc.setField("search_only", "true");
+                excludedTerms.add(nm);
             } else {
                 doc.removeField("search_only");
             }
@@ -172,6 +201,9 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             String lon = (String) doc.getFieldValue("lon");
 
             if (lat != null && lon != null) {
+                // Where  SpatialRecursivePrefixTreeFieldType is used format "LAT LON" is required.
+                // Documentation is not clear on this issue.  Order, LAT LON is right, but use of comma vs. space is uncertain.
+                //
                 doc.setField("geo", lat + "," + lon);
             }
 

@@ -26,14 +26,24 @@
  */
 package org.opensextant.extractors.geo;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.CommonParams;
@@ -41,12 +51,16 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.opensextant.ConfigException;
+import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
+import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.TextUtils;
 import org.opensextant.util.SolrProxy;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.SolrMatcherSupport;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 
 /**
  * 
@@ -68,6 +82,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private TagFilter filter = null;
     private MatchFilter userfilter = null;
     private boolean allowLowercaseAbbrev = false;
+    private boolean allowLowerCase = false; /* enable trure for data such as tweets, blogs, etc. where case varies or does not exist */
+    private ModifiableSolrParams geoLookup = new ModifiableSolrParams();
 
     /**
      * 
@@ -83,12 +99,30 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         //
         try {
             filter = new TagFilter();
+            filter.enableStopwordFilter(true); /* Stop words should be filtered out by tagger/gazetteer filter query */
+            filter.enableCaseSensitive(!allowLowerCase);
             tagText("trivial priming of the solr pump", "__initialization___");
         } catch (ExtractionException initErr) {
             throw new ConfigException("Unable to prime the tagger", initErr);
-        } catch (IOException filterErr) {
-            throw new ConfigException("Default tag filter not found", filterErr);
         }
+
+        /* Basic parameters for geospatial lookup.
+         * These are reused, and only pt and d are set for each lookup.
+         * 
+         */
+        geoLookup.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
+                + "geo,place_id,name_bias,id_bias,name_type");
+        geoLookup.set(CommonParams.ROWS, 10);
+
+        geoLookup.set(CommonParams.Q, "*:*");
+        geoLookup.set(CommonParams.FQ, "{!geofilt}");
+        geoLookup.set("spatial", true);
+        geoLookup.set("sfield", "geo");
+
+        //geoLookup.set("facet", true);
+        //geoLookup.add("facet.field", "cc"); // List found country codes.
+        //geoLookup.add("facet.field", "adm1"); // List found ADM1
+        geoLookup.add("sort geodist asc"); // Find closest places first.
     }
 
     public String getCoreName() {
@@ -144,8 +178,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
     /**
      * Tag a document, returning PlaceCandidates for the mentions in document.
-     * Converts a GATE document to a string and passes it to the Solr server via
-     * HTTP POST. The tokens and featureName parameters are not used.
      * 
      * @param buffer text
      * @param docid  identity of the text
@@ -153,7 +185,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @return place_candidates List of place candidates
      * @throws ExtractionException
      */
-    public List<PlaceCandidate> tagText(String buffer, String docid) throws ExtractionException {
+    public LinkedList<PlaceCandidate> tagText(String buffer, String docid)
+            throws ExtractionException {
         // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
         // "startOffset":38},
         // { "ids":[750308, 2769912, 2770041, 10413973, 10417546],
@@ -192,18 +225,31 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          */
         log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
 
-        List<PlaceCandidate> candidates = new ArrayList<PlaceCandidate>(Math.min(128, tags.size()));
+        TreeMap<Integer, PlaceCandidate> candidates = new TreeMap<Integer, PlaceCandidate>();
+
+        // names matched is used only for debugging, currently.
+        Set<String> namesMatched = new HashSet<>();
+        int docSize = buffer.length();
 
         tagLoop: for (NamedList<?> tag : tags) {
 
             int x1 = (Integer) tag.get("startOffset");
-            int x2 = (Integer) tag.get("endOffset");// +1 char after last
-                                                    // matched
+            int x2 = (Integer) tag.get("endOffset");
+            int len = x2 - x1;
+            if (len == 1) {
+                // Ignoring place names whose length is less than 2 chars 
+                continue;
+            }
+            // +1 char after last  matched
             // Could have enabled the "matchText" option from the tagger to get
             // this, but since we already have the content as a String then
             // we might as well not make the tagger do any more work.
 
-            String matchText = buffer.substring(x1, x2);
+            //String matchText = buffer.substring(x1, x2);
+            String matchText = (String) tag.get("matchText");
+            if (len < 3 && !StringUtils.isAllUpperCase(matchText) && !allowLowercaseAbbrev) {
+                continue;
+            }
 
             /**
              * Filter out trivial tags. Due to normalization, we tend to get
@@ -217,12 +263,16 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             pc.start = x1;
             pc.end = x2;
             pc.setText(matchText);
+            pc.setSurroundingTokens(buffer);
 
             @SuppressWarnings("unchecked")
             List<Integer> placeRecordIds = (List<Integer>) tag.get("ids");
+
+            /* This assertion is helpful in debugging:
             assert placeRecordIds.size() == new HashSet<Integer>(placeRecordIds).size() : "ids should be unique";
+            */
             assert !placeRecordIds.isEmpty();
-            boolean isLower = StringUtils.isAllLowerCase(matchText);
+            namesMatched.clear();
 
             double maxNameBias = 0.0;
             for (Integer solrId : placeRecordIds) {
@@ -234,23 +284,23 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 // Optimization: abbreviation filter.
                 //
                 // Do not add PlaceCandidates for lower case tokens that are
-                // marked as Abbreviations
-                // Unless flagged to do so.
+                // marked as Abbreviations, unless flagged to do so.
+                //
                 // DEFAULT behavior is to avoid lower case text that is tagged
                 // as an abbreviation in gazetteer,
                 //
-                // Common terms: in, or, oh, me, us, we,
-                // etc.
-                // Are all not typically place names or valid abbreviations in
-                // text.
+                // Common terms: in, or, oh, me, us, we, etc. Are all not typically place names or valid abbreviations in text.
                 //
-                if (!allowLowercaseAbbrev && pGeo.isAbbreviation() && isLower) {
+                if (!allowLowercaseAbbrev && pGeo.isAbbreviation() && pc.isLower()) {
                     log.debug("Ignore lower case term={}", pc.getText());
                     // DWS: TODO what if there is another pGeo for this pc that
-                    // isn't an abbrev?
-                    // Therefore shouldn't we continue this loop and not
+                    // isn't an abbrev? Therefore shouldn't we continue this loop and not
                     // tagLoop?
                     continue tagLoop;
+                }
+
+                if (log.isDebugEnabled()) {
+                    namesMatched.add(pGeo.getName());
                 }
 
                 pc.addPlace(pGeo);
@@ -262,6 +312,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             if (!pc.hasPlaces()) {
                 log.debug("Place has no places={}", pc.getText());
                 continue;
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Text {} matched {}", pc.getText(), namesMatched);
+                }
             }
 
             // if the max name bias seen >0, add apriori evidence
@@ -269,7 +323,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 pc.addRuleAndConfidence(APRIORI_NAME_RULE, maxNameBias);
             }
 
-            candidates.add(pc);
+            candidates.put(pc.start, pc);
         }// for tag
         long t3 = System.currentTimeMillis();
 
@@ -278,9 +332,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         this.totalTime = (int) (t3 - t0);
 
         if (log.isDebugEnabled()) {
-            summarizeExtraction(candidates, docid);
+            summarizeExtraction(candidates.values(), docid);
         }
-        return candidates;
+
+        LinkedList<PlaceCandidate> list = new LinkedList<>();
+        list.addAll(candidates.values());
+        return list;
     }
 
     public Object createTag(SolrDocument tag) {
@@ -305,7 +362,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return bean;
     }
 
-    private void summarizeExtraction(List<PlaceCandidate> candidates, String docid) {
+    private void summarizeExtraction(Collection<PlaceCandidate> candidates, String docid) {
         if (candidates == null) {
             log.error("Something is very wrong.");
             return;
@@ -386,28 +443,108 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * data.
          */
         boolean filter_stopwords = true;
+        boolean filter_on_case = true;
+        Set<String> stopTerms = null;
 
-        public TagFilter() throws IOException {
-            super("/place-match-filters.txt");
+        public TagFilter() throws ConfigException {
+            super();
+            stopTerms = GazetteerMatcher.loadExclusions(GazetteerMatcher.class.getResource("/exclusions/non-placenames.csv"));
         }
 
         public void enableStopwordFilter(boolean b) {
             filter_stopwords = b;
         }
 
+        public void enableCaseSensitive(boolean b) {
+            filter_on_case = b;
+        }
+
         @Override
         public boolean filterOut(String t) {
-            if (super.filterOut(t.toLowerCase())) {
+            if (filter_on_case && StringUtils.isAllLowerCase(t) /*&& t.length() < MIN_WORD_LEN*/) {
                 return true;
-            }
-            if (!filter_stopwords) {
-                return false;
             }
 
-            if (StringUtils.isAllLowerCase(t) && t.length() < MIN_WORD_LEN) {
-                return true;
+            if (filter_stopwords) {
+                if (stopTerms.contains(t.toLowerCase())){
+                    return true;
+                }
             }
+
             return false;
         }
+    }
+
+    /**
+     * Find places located at a particular location.
+     * 
+     * @param yx
+     * @return
+     */
+    public List<Place> placesAt(LatLon yx) {
+
+        /* URL as such:
+         * Find just Admin places and country codes for now.
+        /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
+         * 
+         */
+        geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
+        geoLookup.set("d", 50); // Find places within 50 KM, but only first is really used.
+
+        try {
+            List<Place> places = SolrGazetteer.search(this.solr.getInternalSolrServer(), geoLookup);
+            return places;
+        } catch (SolrServerException e) {
+            this.log.error("Failed to search gazetter by location");
+        }
+        return null;
+    }
+
+    /**
+     * Exclusions have two columns in a CSV file.
+     * 'exclusion', 'category'
+     * 
+     * "#" in exclusion column implies a comment.
+     * @param file
+     * @return
+     * @throws ConfigException
+     */
+    public static Set<String> loadExclusions(URL file) throws ConfigException {
+        /* Load the exclusion names -- these are terms that are 
+         * gazeteer entries, e.g., gazetteer.name = <exclusion term>,
+         * that will be marked as search_only = true.
+         * 
+         */
+        InputStream io = null;
+        CsvMapReader termreader = null;
+        try {
+            io = file.openStream();
+            java.io.Reader termsIO = new InputStreamReader(io);
+            termreader = new CsvMapReader(termsIO, CsvPreference.EXCEL_PREFERENCE);
+            String[] columns = termreader.getHeader(true);
+            Map<String, String> terms = null;
+            HashSet<String> stopTerms = new HashSet<String>();
+            while ((terms = termreader.read(columns)) != null) {
+
+                String term = terms.get("exclusion");
+                if (StringUtils.isBlank(term) || term.startsWith("#")) {
+                    continue;
+                }
+                stopTerms.add(term.toLowerCase().trim());
+            }
+            return stopTerms;
+        } catch (Exception err) {
+            throw new ConfigException("Could not load exclusions.", err);
+        } finally {
+            if (termreader != null) {
+                try {
+                    termreader.close();
+                    io.close();
+                } catch (IOException err2) {
+
+                }
+            }
+        }
+
     }
 }
