@@ -33,12 +33,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.SolrParams;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.Place;
@@ -57,8 +60,6 @@ import org.opensextant.util.SolrProxy;
  */
 public class SolrGazetteer {
 
-    //private final Logger log = LoggerFactory.getLogger(this.getClass());
-    //private final boolean debug = log.isDebugEnabled();
     /**
      * In the interest of optimization we made the Solr instance a static class
      * attribute that should be thread safe and shareable across instances of
@@ -67,7 +68,6 @@ public class SolrGazetteer {
     private ModifiableSolrParams params = new ModifiableSolrParams();
     private SolrProxy solr = null;
     private Map<String, Country> country_lookup = null;
-    //private Map<String, String> iso2fips = new HashMap<String, String>();
     /**
      * Default country code in solr gazetteer is ISO, so if given a FIPS code, we need
      * a helpful lookup to get ISO code for lookup.
@@ -83,17 +83,6 @@ public class SolrGazetteer {
         initialize();
     }
 
-    private String solrHome = null;
-
-    /**
-     * Instantiates a new solr gazetteer.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public SolrGazetteer(String solrHomeDir) throws ConfigException {
-        solrHome = solrHomeDir;
-        initialize();
-    }
 
     /**
      *  Returns the SolrProxy used internally.
@@ -318,6 +307,29 @@ public class SolrGazetteer {
             Place bean = SolrProxy.createPlace(gazEntry);
 
             places.add(bean);
+        }
+
+        return places;
+    }
+
+    /**
+     * Make sure you pass in a solr handle to "/gazetteer"
+     * 
+     * @param index
+     * @param params
+     * @return
+     * @throws SolrServerException 
+     */
+    public static List<Place> search(SolrServer index, SolrParams qparams)
+            throws SolrServerException {
+
+        QueryResponse response = index.query(qparams, SolrRequest.METHOD.GET);
+
+        List<Place> places = new ArrayList<>();
+        SolrDocumentList docList = response.getResults();
+
+        for (SolrDocument solrDoc : docList) {
+            places.add(SolrProxy.createPlace(solrDoc));
         }
 
         return places;
