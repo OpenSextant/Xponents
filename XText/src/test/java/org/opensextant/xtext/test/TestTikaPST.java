@@ -7,10 +7,9 @@ import org.opensextant.xtext.XText;
 
 public class TestTikaPST {
 
-    
     /** Compare Tika's PST conversion to XText non-Tika PST conversion.
      */
-    public static main(String args[]) {
+    public static void main(String args[]) {
 
         String input = args[0]; // Path to a PST.  NOTE, java-libpst provides some good test data.
 
@@ -27,12 +26,11 @@ public class TestTikaPST {
             xt.extractText(input);
         } catch (IOException ioerr) {
             ioerr.printStackTrace();
-            fail("IO issue" + ioerr.getMessage());
+            System.err.println("IO issue" + ioerr.getMessage());
 
         } catch (ConfigException cfgerr) {
             cfgerr.printStackTrace();
-            fail("Config issue" + cfgerr.getMessage());
-
+            System.err.println("Config issue" + cfgerr.getMessage());
         }
     }
 
