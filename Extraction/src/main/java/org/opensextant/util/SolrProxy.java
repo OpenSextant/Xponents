@@ -172,7 +172,8 @@ public class SolrProxy extends SolrUtil {
             return new EmbeddedSolrServer(solrContainer, _coreName);
 
         } catch (Exception err) {
-            throw new ConfigException("Failed to set up Embedded Solr at "+_solrHome +" CORE:"+_coreName, err);
+            throw new ConfigException("Failed to set up Embedded Solr at " + _solrHome + " CORE:"
+                    + _coreName, err);
         }
     }
 
@@ -186,7 +187,15 @@ public class SolrProxy extends SolrUtil {
         Place bean = new Place(SolrUtil.getString(gazEntry, "place_id"), SolrProxy.getString(
                 gazEntry, "name"));
 
-        bean.setName_type(SolrUtil.getChar(gazEntry, "name_type"));
+        String nt = SolrUtil.getString(gazEntry, "name_type");
+        if (nt != null) {
+            if ("code".equals(nt)) {
+                bean.setName_type('A');
+            } else {
+                bean.setName_type(nt.charAt(0));
+            }
+        }
+
         bean.setCountryCode(SolrUtil.getString(gazEntry, "cc"));
 
         // Other metadata.
@@ -200,6 +209,9 @@ public class SolrProxy extends SolrUtil {
         double[] xy = SolrUtil.getCoordinate(gazEntry, "geo");
         bean.setLatitude(xy[0]);
         bean.setLongitude(xy[1]);
+
+        bean.setName_bias(SolrUtil.getDouble(gazEntry, "name_bias"));
+        bean.setId_bias(SolrUtil.getDouble(gazEntry, "id_bias"));
 
         return bean;
     }
