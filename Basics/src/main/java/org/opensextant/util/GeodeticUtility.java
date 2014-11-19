@@ -37,9 +37,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.GeoBase;
 import org.opensextant.data.LatLon;
-import org.opensextant.geodesy.Geodetic2DArc;
-import org.opensextant.geodesy.Geodetic2DPoint;
-
 
 /**
  * A collection of geodetic routines used within OpenSextant.
