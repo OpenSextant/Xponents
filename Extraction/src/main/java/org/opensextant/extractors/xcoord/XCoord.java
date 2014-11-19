@@ -40,21 +40,18 @@
 // */
 package org.opensextant.extractors.xcoord;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+
 import org.opensextant.data.TextInput;
-import org.opensextant.extractors.flexpat.AbstractFlexPat;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.flexpat.AbstractFlexPat;
 import org.opensextant.extractors.flexpat.RegexPattern;
-import org.opensextant.extractors.flexpat.TextMatchResult;
-
-import java.io.File;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Matcher;
-
 import org.opensextant.extractors.flexpat.RegexPatternManager;
-import org.opensextant.processing.progress.ProgressMonitor;
+import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
