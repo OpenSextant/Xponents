@@ -121,12 +121,11 @@
    <!-- Tax Node is a distinct taxnode or label -->
    <field name="taxnode" type="string" required="true" stored="true" indexed="true"/>
    <field name="tag"     type="string" required="false" stored="true" indexed="true" multiValued="true"/>
-   <field name="phrase"  type="name_idx2" required="true" stored="true" indexed="true"/>
+   <field name="phrase"  type="name_text" required="true" stored="true" indexed="true"/>
+   <field name="phrase_tag"  type="name_tag" required="true" stored="false" indexed="true"/>
    <field name="valid"   type="boolean" required="true" default="true" stored="true" indexed="true" />
 
-   <!-- "name_idx2 is aggressive tokenization.  For keyword or code word, we should add a generic
-        lower-cased string field.
-    -->
+    <copyField source="phrase" dest="phrase_tag" />
 
    <!--
    <dynamicField name="*" type="string" indexed="true"/>
@@ -315,40 +314,37 @@
          For more info on customizing your analyzer chain, please see
          http://wiki.apache.org/solr/AnalyzersTokenizersTokenFilters
      -->
+        <!-- Looks like we could benefit from a char filter that combines contractions and ASCII folding;
+                 Sure, its more elegant to maintain separate char filters;  Or a char filter and token filter.
+             See also name_idx* fields that have phonetic support
+             SOLR-TEXT-TAGGER v2.0 in effect here:  postingsFormat="Memory"
+          -->
+        <fieldType name="name_tag" class="solr.TextField" positionIncrementGap="100"
+                   postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true">
+            <!-- ?? <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/> -->
+            <analyzer type="index">
+                <charFilter class="solr.MappingCharFilterFactory"
+                            mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
+                <tokenizer class="solr.ClassicTokenizerFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+                <!-- only difference between index & query chains: -->
+                <filter class="org.opensextant.solrtexttagger.ConcatenateFilterFactory" />
+            </analyzer>
+            <analyzer type="query">
+                <charFilter class="solr.MappingCharFilterFactory"
+                            mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
+                <tokenizer class="solr.ClassicTokenizerFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+            </analyzer>
+        </fieldType>
 
-    <!-- One can also specify an existing Analyzer class that has a
-         default constructor via the class attribute on the analyzer element.
-         Example:
-    <fieldType name="text_greek" class="solr.TextField">
-      <analyzer class="org.apache.lucene.analysis.el.GreekAnalyzer"/>
-    </fieldType>
-    -->
-
-    <fieldType name="name_idx0" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <!--
-        a) reduces the input to lower case
-        b) removes puncuation
-        c) reduces all diacritics to the appropriate base character
-        -->
-
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.ASCIIFoldingFilterFactory"/>
-        <filter class="solr.EnglishPossessiveFilterFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-
-      </analyzer>
-    </fieldType>
-
-
-     <fieldType name="name_idx2" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <charFilter class="solr.MappingCharFilterFactory" mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
-        <tokenizer class="solr.ClassicTokenizerFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-      </analyzer>
-    </fieldType>
-
+        <!-- Functionally the same as text_general, but no stop filter -->
+        <fieldType name="name_text" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+            </analyzer>
+        </fieldType>
 
     <!-- A text field that only splits on whitespace for exact matching of words -->
     <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
@@ -574,21 +570,6 @@
          any data added to them will be ignored outright.  -->
     <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
 
-    <!-- This point type indexes the coordinates as separate fields (subFields)
-      If subFieldType is defined, it references a type, and a dynamic field
-      definition is created matching *___<typename>.  Alternately, if
-      subFieldSuffix is defined, that is used to create the subFields.
-      Example: if subFieldType="double", then the coordinates would be
-        indexed in fields myloc_0___double,myloc_1___double.
-      Example: if subFieldSuffix="_d" then the coordinates would be indexed
-        in fields myloc_0_d,myloc_1_d
-      The subFields are an implementation detail of the fieldType, and end
-      users normally should not need to know about them.
-     -->
-    <!-- <fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/> -->
-
-    <!-- A specialized field for geospatial search. If indexed, this fieldType must not be multivalued. -->
-    <fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate"/>
 
  </types>
 
