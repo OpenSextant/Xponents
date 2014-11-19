@@ -366,7 +366,7 @@ public class GeonamesUtility {
      * @return - true if this is a country or "country-like" place
      */
     public static boolean isCountry(String featCode) {
-        return featCode.startsWith("PCL");
+        return (featCode!=null ? featCode.startsWith("PCL") : false);
     }
 
     /**
@@ -432,9 +432,6 @@ public class GeonamesUtility {
      * @return true if is admin
      */
     public static boolean isAdministrative(String featClass) {
-        if (featClass == null) {
-            return false;
-        }
-        return featClass.equalsIgnoreCase("A");
+        return "A".equalsIgnoreCase(featClass);
     }
 }

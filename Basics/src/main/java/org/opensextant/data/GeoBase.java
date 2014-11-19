@@ -73,6 +73,11 @@ public class GeoBase implements LatLon {
         this.name = nm;
     }
 
+    public GeoBase(double lat, double lon) {
+        this.latitude = lat;
+        this.longitude = lon;
+    }
+
     /** 
      * @return place id
      */

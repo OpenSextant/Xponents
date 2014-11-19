@@ -73,6 +73,10 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
         super();
     }
 
+    public Place(double lat, double lon) {
+        super(lat, lon);
+    }
+
     protected char name_type = 0;
 
     public void setName_type(char t) {
@@ -269,8 +273,13 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
 
     @Override
     public String toString() {
-        return this.getName() + "(" + this.getAdmin1() + "," + this.getCountryCode() + ","
-                + this.getFeatureCode() + ")";
+        if (getName() != null) {
+            return this.getName() + "(" + this.getAdmin1() + "," + this.getCountryCode() + ","
+                    + this.getFeatureCode() + ")";
+        } else if (this.latitude != Double.NaN) {
+            return String.format("%2.3f, %3.3f", this.latitude, this.longitude);
+        }
+        return "unset";
     }
 
     /**

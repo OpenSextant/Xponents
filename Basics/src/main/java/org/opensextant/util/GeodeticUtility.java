@@ -37,6 +37,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.GeoBase;
 import org.opensextant.data.LatLon;
+import org.opensextant.geodesy.Geodetic2DArc;
+import org.opensextant.geodesy.Geodetic2DPoint;
+
 
 /**
  * A collection of geodetic routines used within OpenSextant.
@@ -95,6 +98,33 @@ public class GeodeticUtility {
         }
         return Math.sqrt(Math.pow((p1.getLatitude() - p2.getLatitude()), 2)
                 + Math.pow((p1.getLongitude() - p2.getLongitude()), 2));
+    }
+
+
+    public static final long EARTH_RADIUS = 6372800L; // In meters
+
+    /** Haversine distance using LL1 to LL2; 
+     * 
+     * @param p1
+     * @param p2
+     * @return distance in meters.
+     */
+    public static long distanceMeters(LatLon p1, LatLon p2){
+        double lat1 = p1.getLatitude();
+        double lon1 = p1.getLongitude();
+        double lat2 = p2.getLatitude();
+        double lon2 = p2.getLongitude();
+        
+        /* Courtesy of http://rosettacode.org/wiki/Haversine_formula#Java */
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+ 
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        return (long)(EARTH_RADIUS * c);
+                
     }
 
     /**
