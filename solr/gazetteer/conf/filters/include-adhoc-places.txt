@@ -1,0 +1,35 @@
+# Syrian places
+mari
+# Swiss places
+geneva
+# Afghan places
+lashkar
+khan
+spin
+shah
+dara
+parvan
+khyber
+# US Cities
+savannah
+montgomery
+denver
+aurora
+cleveland
+columbus
+richmond
+austin
+durham
+modesto
+charlotte
+salinas
+alexandria
+carolina
+salvador
+# Peru and other countries:
+lima
+# Countries
+georgia
+argentina
+trinidad
+chad

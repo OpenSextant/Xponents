@@ -1,0 +1,12 @@
+# those in the news,... or any names you wish to omit.
+# These are all place names that coincide with celebrity names
+obama
+erdogan
+erdoğan
+francois
+francoise
+françois
+bashar
+bushehr
+assad
+asad
