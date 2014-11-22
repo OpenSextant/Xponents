@@ -1,8 +1,7 @@
 '''
   A simple interface to creating a taxonomic catalog ("taxcat") for OpenSextant TaxMatcher  to use.
-  prerequisites:   You have a taxcat solrhome setup
 
-  TODO: lots to do.
+  prerequisites:    See XTax README
 
 '''
 
@@ -13,8 +12,10 @@ __API_PATH = os.path.realpath( __file__ )
 SOLR_SERVER = "http://localhost:7000/solr/taxcat"
 
 def _scrub_cdata_content(text):
-    # return text.replace('<', '(less than)').replace('>','(greater than)').replace('&', '&amp; ')
-    return text;
+    ''' User should scrub data themselves; but this gives ideas of what goes wrong when adding text to Solr
+       <,>,& all must be escaped.
+    '''
+    return text.replace('<', '(less than)').replace('>','(greater than)').replace('&', '&amp; ')
 
 def get_taxnode(t, val):
     return t.lower() + "." + val.strip()
@@ -36,14 +37,20 @@ def add_bool(dct, f, val, default=None):
     return
 
 def add_text(dct, f, val):
+    ''' add_text offers a basic idea of how to add values to dict 
+        before sending to solr.   TEXT strings may need scrubbing
+        but you just add non-TEXT values.
+    '''
     if (isinstance(val, str) or isinstance(val, unicode)):
-        dct[f] = _scrub_cdata_content(val)
+        dct[f] = val
     else:
         dct[f] = val
 
 
 def add_value(f, val, case=0):
-    ''' trivial wrapper '''
+    ''' add  a value to a given field, f;  And normalize case if non-zero.
+        case = CASE_LOWER | CASE_UPPER | 0(default) no change
+    '''
 
     if val is None:
         f.append(u'')
@@ -90,6 +97,8 @@ class Taxon:
         self.phrase = None
         self.id = None
         self.is_valid = True
+        # An array of additional tags.
+        self.tags = None
 
 class TaxCatalogBuilder:
 
@@ -100,12 +109,14 @@ class TaxCatalogBuilder:
         '''
 
         self.server = server
-        if server is None:
-            self.server = SOLR_SERVER
+        self.server_url = None
+        #if server is None:
+        #    self.server = SOLR_SERVER
 
         self._record_count = 0l
         self._byte_count = 0l
         self._add_byte_count = 0l
+        self.commit_rate = -1
 
         self._records = []
         self.count = 0
@@ -132,8 +143,8 @@ class TaxCatalogBuilder:
 
         return offset
 
-    def set_server(self, server):
-        self.server_url = server
+    def set_server(self, svr):
+        self.server_url = svr
         if not self.server_url:
             return
 
@@ -147,18 +158,46 @@ class TaxCatalogBuilder:
 
 
     def optimize(self):
-        self.server.optimize()
+        if self.server:
+            self.server.optimize()
 
     def save(self, flush=False):
+        if not self.server:
+            return
 
+        if self.commit_rate>0 and len(self._records) % self.commit_rate != 0:
+            return
+            
         self.server.add(self._records,  sanitize=True)
         self.server.commit()
         self._records = []
 
         return
 
+    def add(self, catalog, taxon):
+        ''' 
+        @param catalog ID of catalog where this taxon lives
+        @param taxon   Taxon obj
+        '''
+        self.count = self.count + 1
+        rec = {'catalog':catalog, 'taxnode':taxon.name, 'phrase':taxon.phrase, 'id':taxon.id, 'valid': taxon.is_valid }
+        if taxon.tags:
+            rec['tag'] = taxon.tags
+            
+        self._records.append( rec )
 
     def add_wordlist(self, catalog, datafile, start_id, taxnode=None, minlen=1):
+        ''' Given a simple one column word list file, each row of data is added
+           to catalog as a Taxon; taxnode may be used as a prefix for the words
+
+         Add a series of organized word lists to a single Catalog, but manage 
+         each wordlist with some prefix taxon path.
+
+            add_wordlist('CAT', f1, 400, taxonode='first')
+            add_wordlist('CAT', f2, 500, taxonode='second')
+            add_wordlist('CAT', f3, 600, taxonode='third')
+            add_wordlist('CAT', f4, 700, taxonode='fourth')
+        '''
 
         _name = os.path.basename(datafile)
         if taxnode:
@@ -187,8 +226,13 @@ class TaxCatalogBuilder:
 
             words.add(key)
 
-            rec = {'catalog':catalog, 'taxnode':_name, 'phrase':_phrase, 'id':_id, 'valid': (len(key) >= minlen) }
-            self._records.append( rec )
+            t = Taxon()
+            t.id = _id
+            t.is_valid = len(key) >= minlen
+            t.name = _name
+            t.phrase = _phrase
+            
+            self.add(catalog, t)
 
 
         print "COUNT: %d" %( self.count)
