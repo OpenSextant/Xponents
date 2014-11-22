@@ -397,17 +397,38 @@ public class TextUtils {
      * @return true if text is Upper
      */
     public static boolean isUpper(String dat) {
-        if (dat == null) {
+        return checkCase(dat, 2);
+    }
+    public static boolean isLower(String dat) {
+        return checkCase(dat, 1);
+    }
+
+    /**
+     * detects if string alpha chars are purely lower case.
+     * @param text
+     * @param textcase  1 lower,  2 upper
+     * @return
+     */
+    public static boolean checkCase(String text, int textcase) {
+        if (text == null) {
             return false;
         }
         int letterCount = 0;
-        for (char c : dat.toCharArray()) {
+        for (char c : text.toCharArray()) {
             if (!Character.isLetter(c)) {
                 continue;
             }
             ++letterCount;
-            if (Character.isLowerCase(c)) {
-                return false;
+            if (textcase == 1) {
+                if (Character.isUpperCase(c)) {
+                    // Checking for lower case;  Fail if upper case is found.
+                    return false;
+                }
+            } else if (textcase == 2) {
+                if (Character.isLowerCase(c)) {
+                    // Checking for upper case;  Fail if lower case is found.
+                    return false;
+                }
             }
         }
         // IF at least one Letter found
