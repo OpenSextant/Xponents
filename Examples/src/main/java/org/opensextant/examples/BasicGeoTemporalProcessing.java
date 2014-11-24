@@ -29,29 +29,26 @@ package org.opensextant.examples;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.apache.commons.io.FilenameUtils;
 
+import org.apache.commons.io.FilenameUtils;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionMetrics;
 import org.opensextant.extractors.xcoord.XCoord; // Just coordinates.
 import org.opensextant.extractors.geo.*; // All geo. Encapsulates XCoord, as well.
 import org.opensextant.extractors.xtemporal.XTemporal;
-
 import org.opensextant.processing.XtractorGroup;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
-
+import org.opensextant.output.CSVFormatter;
+import org.opensextant.output.OpenSextantSchema;
 import org.opensextant.output.ResultsFormatter;
 import org.opensextant.output.AbstractFormatter;
 import org.opensextant.output.FormatterFactory;
-
 import org.opensextant.xtext.XText;
 import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.ConversionListener;
-
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
-
 import org.slf4j.LoggerFactory;
 
 //import org.slf4j.Logger;
@@ -129,21 +126,18 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         // If you are dead-sure you want only coordinates from text, then just use XCoord.
         // Otherwise SimpleGeocoder does both coords + names.
         // 
-        XCoord xcoord = new XCoord();
-        xcoord.configure();
-        this.addExtractor(xcoord);
+        //XCoord xcoord = new XCoord();
+        //xcoord.configure();
+        //this.addExtractor(xcoord);
 
         // Testing only
-        /*
-        params.tag_coordinates = false;
         params.tag_places = true;
-        */
+        params.tag_coordinates = true;
 
-        
-        //SimpleGeocoder geocoder = new SimpleGeocoder();
-        //geocoder.setParameters(params);
-        //geocoder.configure();
-        //this.addExtractor(geocoder);
+        PlaceGeocoder geocoder = new PlaceGeocoder();
+        geocoder.setParameters(params);
+        geocoder.configure();
+        this.addExtractor(geocoder);
 
         XTemporal xtemp = new XTemporal();
         xtemp.configure();
@@ -157,9 +151,14 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         converter.setConversionListener(this);
 
         // Complications:  Where do we save converted items?
-        //
+        // Developer should change this based on actual environment, paths, perms, etc.
+        // Using a "temp" folder as XText cache or no cache at all... 
+        // This is for illustration purposes only.
+        // 
         if (tempDir != null) {
             converter.getPathManager().setConversionCache(tempDir);
+        } else {
+            converter.enableSaving(false);
         }
 
         try {
@@ -177,6 +176,11 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
                 AbstractFormatter formatter = createFormatter(fmt, params);
                 formatter.overwrite = overwriteOutput;
                 this.addFormatter(formatter);
+
+                //if (formatter instanceof CSVFormatter) {
+                //    formatter.addField(OpenSextantSchema.FILEPATH.getName());
+                //    formatter.addField(OpenSextantSchema.MATCH_TEXT.getName());
+                // }
                 formatter.start(params.getJobName());
             }
         }

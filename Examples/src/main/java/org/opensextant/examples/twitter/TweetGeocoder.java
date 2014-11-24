@@ -15,7 +15,7 @@ import org.opensextant.data.TextInput;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extractors.geo.SimpleGeocoder;
+import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.xcoord.XConstants;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.output.FormatterFactory;
@@ -39,7 +39,7 @@ public class TweetGeocoder {
     private final boolean debug = log.isDebugEnabled();
     private int recordCount = 0;
     int batch = 10000;
-    private SimpleGeocoder geocoder = null;
+    private PlaceGeocoder geocoder = null;
     XCoord userlocX;
     private static String formatType = null;
     GISDataFormatter tweetOutput;
@@ -77,7 +77,7 @@ public class TweetGeocoder {
         tweet_stop = FileUtility.loadDictionary("/twitter/tweet-not-places.txt", true);
         tweet_pass = FileUtility.loadDictionary("/twitter/tweet-places.txt", true);
 
-        geocoder = new SimpleGeocoder();
+        geocoder = new PlaceGeocoder();
         Parameters tweetJob = new Parameters();
         Parameters userJob = new Parameters();
 
