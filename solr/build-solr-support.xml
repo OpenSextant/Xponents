@@ -2,12 +2,14 @@
 
 <project name="OpenSextant XTax Solr support" >
 
-    <property name="solr.v" value="4.7.2" />
+    <property name="solr.v" value="4.10.1" />
 
     <property name="jetty.v" value="8.1.9.v20130131" />
     <property name="winstone.v" value="0.9.10" />
     <property name="textTagger.v" value="2.0-SNAPSHOT" />
     <property name="slf4j.v" value="1.7.5" />
+    <property name="xponents.v" value="2.7-SNAPSHOT" />
+    <property name="supercsv.v" value="2.2.0" />
 
     <!-- setup proxy -->
     <target name="proxy" >
@@ -38,8 +40,14 @@
 
         <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
         <copy todir="lib" overwrite="false" failonerror="false"
-              file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar"
-                />
+              file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar"/>
+        <copy todir="lib" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents-basics/${xponents.v}/opensextant-xponents-basics-${xponents.v}.jar"/>
+        <copy todir="lib" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents/${xponents.v}/opensextant-xponents-${xponents.v}.jar"/>
+        <copy todir="lib" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar"/>
+
         <get dest="lib" skipexisting="true" ignoreerrors="true">
             <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
             <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
@@ -102,8 +110,8 @@
             <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
         </get>
         <echo message="java
- -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=${solr.solr.home} -Djava.util.logging.config.file=logging.properties
- -jar build/jetty-runner-${jetty.v}.jar --lib build/containerLib --port ${solr.server.port} --path /solr build/solr-${solr.v}.war"/>
+ -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=${solr.solr.home} -Dlog4j.configuration=log4j.properties -Djava.util.logging.config.file=logging.properties
+ -jar build/jetty-runner-${jetty.v}.jar --lib ./build/containerLib  --port ${solr.server.port} --path /solr build/solr-${solr.v}.war"/>
     </target>
 
 </project>

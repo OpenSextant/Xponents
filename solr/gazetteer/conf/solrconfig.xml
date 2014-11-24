@@ -18,7 +18,7 @@
          that you fully re-index after changing this setting as it can
          affect both how text is indexed and queried.
     -->
-    <luceneMatchVersion>LUCENE_47</luceneMatchVersion>
+    <luceneMatchVersion>4.7</luceneMatchVersion>
 
     <!-- lib directives can be used to instruct Solr to load an Jars
          identified and use them to resolve any "plugins" specified in
@@ -47,7 +47,8 @@
          files in that directory which completely match the regex
          (anchored on both ends) will be included.
       -->
-    <!-- <lib dir="../../dist/" regex="apache-solr-cell-\d.*\.jar" />
+    <!-- 
+    <lib dir="../../dist/" regex="apache-solr-cell-\d.*\.jar" />
     <lib dir="../../contrib/extraction/lib" regex=".*\.jar" />
 
     <lib dir="../../dist/" regex="apache-solr-clustering-\d.*\.jar" />
@@ -57,12 +58,14 @@
     <lib dir="../../contrib/langid/lib/" regex=".*\.jar" />
 
     <lib dir="../../dist/" regex="apache-solr-velocity-\d.*\.jar" />
-    <lib dir="../../contrib/velocity/lib" regex=".*\.jar" /> -->
+    <lib dir="../../contrib/velocity/lib" regex=".*\.jar" /> 
+    -->
 
     <!-- If a 'dir' option (with or without a regex) is used and nothing
          is found that matches, it will be ignored
       -->
-    <!--<lib dir="/total/crap/dir/ignored" />-->
+    <!--<lib dir="/total/crap/dir/ignored" />
+     -->
 
     <!-- an exact 'path' can be used instead of a 'dir' to specify a
          specific file.  This will cause a serious error to be logged if
@@ -803,11 +806,11 @@
 
     <requestHandler name="/tag" class="org.opensextant.solrtexttagger.TaggerRequestHandler">
         <str name="field">name_tag</str>
-        <bool name="matchText">false</bool>
-        <str name="fq">name_bias:[0 TO *]</str>
-
+        <bool name="matchText">true</bool>
+        <str name="fq">(+name_bias:[0 TO *] AND -search_only:true AND name_type:N) OR name_type:code OR name_type:A</str>
+        
         <lst name="defaults">
-            <str name="echoParams">none</str>
+            <str name="echoParams">ALL</str>
             <str name="fl">place_id,name,cc</str>
         </lst>
     </requestHandler>
@@ -845,7 +848,7 @@
     <!-- This operation is reserved for the default OpenSextant gazetteer -->
     <requestHandler name="/addGazetteer" class="solr.UpdateRequestHandler">
         <lst name="defaults">
-            <str name="update.chain">script</str>
+            <str name="update.chain">gaz-add-script</str>
             <str name="separator">&#9;</str>
             <bool name="trim">true</bool>
             <int name="skipLines">1</int>
@@ -857,7 +860,7 @@
             Record_ID,PLACE_ID,PLACE_NAME,PLACE_NAME_EXPANDED,LATITUDE,LONGITUDE,FEATURE_CLASS,FEATURE_CODE,FIPS_COUNTRY_CODE,ISO2_COUNTRY_CODE,ISO3_COUNTRY_CODE,ADMIN_LEVEL_1,ADMIN_LEVEL_2,ADMIN_LEVEL_3,ADMIN_LEVEL_4,ADMIN_LEVEL_5,SOURCE,SOURCE_FEATURE_ID,SOURCE_NAME_ID,SCRIPT,PLACE_NAME_BIAS,PLACE_ID_BIAS,NAME_TYPE,NAME_TYPE_SYSTEM,SplitCategory,SEARCH_ONLY
              
             -->
-            <str name="fieldnames">id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,name_bias,id_bias,name_type,,SplitCategory,</str>
+            <str name="fieldnames">id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,name_bias,id_bias,name_type,,SplitCategory,search_only</str>
             <!-- saves space (but not much) -->
             <str name="f.name_type.map">abbrev:A</str>
             <str name="f.name_type.map">name:N</str>
@@ -916,12 +919,29 @@
 
       See more about the script update processor at http://wiki.apache.org/solr/ScriptUpdateProcessor
     -->
-    <updateRequestProcessorChain name="script">
-        <processor class="solr.StatelessScriptUpdateProcessorFactory">
-            <str name="script">update-script.js</str>
+    <updateRequestProcessorChain name="gaz-add-script">
+        <processor class="org.opensextant.extractors.geo.GazetteerUpdateProcessorFactory">
+            <!--
+            <str name="script">add-gazetteer.groovy</str>  
+             -->
             <lst name="params">
                 <!-- Choose from: all, Basic, Wellknown, NonLatin, Rare, general (matches empty SplitCategory field)
+
+                ALL entries, for example:
+                -->
+                <arr name="include_category">
+                    <str>all</str>
+                </arr>
+                <!-- countries is a list of ISO country codes.  matches against 'cc' field.
+                By default all are accepted. 
+                 -->
+                 <!-- 
+                <arr name="countries">
+                    <str>all</str>
+                </arr>
                   -->
+                
+                
 
                 <!-- Full gazetteer without Rare
                 <arr name="include_category">
@@ -930,10 +950,12 @@
                 -->
 
                 <!-- Default: Latin-based names only gazetteer
-                -->
+               
                 <arr name="include_category">
-                    <str>Basic</str><str>Wellknown</str><str>general</str>
+                    <str>Basic</str><str>Wellknown</str><str>general</str> 
                 </arr>
+                 -->
+
                 <!-- Lean: Basic + Well-known places
                 <arr name="include_category">
                     <str>Basic</str><str>Wellknown</str>

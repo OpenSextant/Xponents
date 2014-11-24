@@ -96,6 +96,8 @@
         <field name="lon" type="ignored" />
 
         <!-- see update-script.js -->
+        <field name="search_only" type="boolean" indexed="true" stored="false" />
+
         <field name="SplitCategory" type="ignored" />
 
         <!-- Name and ID bias stats are generated ahead of time and built in using ETL scripts
@@ -325,8 +327,7 @@
         defaultFieldValuesArrayLen, prefixTree, maxLevels, maxDistErr
         -->
         <fieldType name="geo" class="solr.SpatialRecursivePrefixTreeFieldType"
-                   maxDistErr="0.00009" distErrPct="0.025"
-                   units="degrees" />
+                   maxDistErr="0.00009" distErrPct="0.025" geo="true" units="degrees" />
         <!-- spatialContextFactory="com.spatial4j.core.context.jts.JtsSpatialContextFactory" -->
         <!-- maxDistErr="0.00009"/> 10meter accuracy specified in degrees (111.2km/degree)-->
 

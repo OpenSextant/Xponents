@@ -20,7 +20,7 @@
         <available property="csvFile.exists" file="${gazetteer.data.file}" />
         <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
         <get
-            src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?optimize=true&amp;stream.file=${gazetteer.data.file}&amp;update.contentType=text/csv;charset=UTF-8"
+            src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?commit=true&amp;optimize=false&amp;stream.file=${gazetteer.data.file}&amp;update.contentType=text/csv;charset=UTF-8"
             dest="build/update-csv.response.xml" />
     </target>
 
