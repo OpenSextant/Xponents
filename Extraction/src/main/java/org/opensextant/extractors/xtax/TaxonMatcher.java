@@ -241,16 +241,14 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
          * Retrieve all offsets into a long list.
          */
         TaxonMatch m = null;
-        int x1 = -1, x2 = -1;
+        //int x1 = -1, x2 = -1;
         int tag_count = 0;
         String id_prefix = docid + "#";
 
         for (NamedList<?> tag : tags) {
             m = new TaxonMatch();
-            x1 = (Integer) tag.get("startOffset");
-            x2 = (Integer) tag.get("endOffset");// +1 char after last matched
-            m.start = x1;
-            m.end = x2;
+            m.start = (Integer) tag.get("startOffset");
+            m.end = (Integer) tag.get("endOffset");// +1 char after last matched
             m.pattern_id = "taxtag";
             ++tag_count;
             m.match_id = id_prefix + tag_count;
@@ -258,7 +256,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
             // Could have enabled the "matchText" option from the tagger to get
             // this, but since we already have the content as a String then
             // we might as well not make the tagger do any more work.
-            m.setText(buf.substring(x1, x2));
+            m.setText(buf.substring(m.start, m.end));
 
             @SuppressWarnings("unchecked")
             List<Integer> taxonIDs = (List<Integer>) tag.get("ids");
