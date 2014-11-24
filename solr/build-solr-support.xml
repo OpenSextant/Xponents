@@ -59,6 +59,11 @@
             <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
             <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
         </get>
+
+
+        <copy todir="${solr.solr.home}/lib"  overwrite="false" failonerror="false" >
+            <fileset dir="lib"/>
+        </copy>
     </target>
 
     <!-- TARGETS: -->
