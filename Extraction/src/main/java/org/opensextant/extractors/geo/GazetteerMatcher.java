@@ -26,13 +26,10 @@
  */
 package org.opensextant.extractors.geo;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,12 +50,12 @@ import org.apache.solr.common.util.NamedList;
 import org.opensextant.ConfigException;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
-import org.opensextant.util.GeodeticUtility;
-import org.opensextant.util.TextUtils;
-import org.opensextant.util.SolrProxy;
-import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.ExtractionException;
+import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.SolrMatcherSupport;
+import org.opensextant.util.GeodeticUtility;
+import org.opensextant.util.SolrProxy;
+import org.opensextant.util.TextUtils;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
