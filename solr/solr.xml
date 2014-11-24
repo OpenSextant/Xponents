@@ -32,19 +32,20 @@
   persistent: Save changes made via the API to this file
   sharedLib: path to a lib directory that will be shared across all cores
 -->
-<solr persistent="false">
-	<!-- by default, this is 50 @ WARN
+<solr persistent="false" sharedLib="lib">
+  <!-- by default, this is 50 @ WARN -->
   <logging enabled="true">
   	<watcher size="100" threshold="INFO" />
   </logging>
-   -->
 
   <!--
   adminPath: RequestHandler path to manage cores.  
     If 'null' (or absent), cores will not be manageable via request handler
   -->
-  <cores adminPath="/admin/cores" defaultCoreName="gazetteer" host="${host:}" hostPort="${jetty.port:}">
+  <cores adminPath="/admin/cores" host="${host:}" hostPort="${jetty.port:}">
     <core name="gazetteer" instanceDir="./gazetteer" />
     <core name="taxcat" instanceDir="./taxcat" />
   </cores>
+
+
 </solr>

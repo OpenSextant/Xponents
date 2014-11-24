@@ -1,6 +1,7 @@
 /build.properties
-
+/build.log
 /gazetteer/data
 /taxcat/data
-
 /lib
+/gazetteer/conf/exclusions/place-name-filter.txt
+/test
