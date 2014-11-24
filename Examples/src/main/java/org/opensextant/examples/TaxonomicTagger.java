@@ -1,5 +1,6 @@
 package org.opensextant.examples;
 
+import java.io.File;
 import java.util.List;
 
 import org.opensextant.data.TextInput;
@@ -56,6 +57,18 @@ public class TaxonomicTagger {
 			// "Fruits of paradise are like pineapple, guava, passion fruit. "+
 			// " You may abandon the calories by eating fewer than one a day";
 
+		    if (new File(file).isDirectory()){
+		        File[] files = new File(file).listFiles();
+		        for (File f : files){
+		            System.out.println("\n\nFile = "+f+"\n=========MATCHES:=========");
+		            String doc = FileUtility.readFile(f);
+		            testDoc(doc);
+
+		        }
+		        return;
+		    }
+		    
+		    
 			String doc = FileUtility.readFile(file);
 
 			// No filters.
