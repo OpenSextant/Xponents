@@ -108,10 +108,8 @@ class TaxCatalogBuilder:
            @param stopwords: file of stopwords
         '''
 
-        self.server = server
-        self.server_url = None
-        #if server is None:
-        #    self.server = SOLR_SERVER
+        self.server = None
+        self.set_server(server)
 
         self._record_count = 0l
         self._byte_count = 0l
@@ -120,7 +118,6 @@ class TaxCatalogBuilder:
 
         self._records = []
         self.count = 0
-        self.set_server(self.server)
 
         from CommonsUtils import ConfigUtility
         ## Load file
@@ -163,6 +160,7 @@ class TaxCatalogBuilder:
 
     def save(self, flush=False):
         if not self.server:
+            print "No server"
             return
 
         if self.commit_rate>0 and len(self._records) % self.commit_rate != 0:

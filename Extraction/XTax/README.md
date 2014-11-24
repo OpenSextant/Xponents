@@ -22,11 +22,13 @@ Components you will need:
  * SolrTextTagger and Xponents Basics and Extraction JAR
  * OpenSextant taxcat Solr core (Xponents/solr/taxcat)
  ** A basic understanding of org.opensextant.extractors.xtax.TaxonMatcher API
- * Python libs: src/main/python/opensexant;  Open source: pysolr, chardet, Python 2.7+
+ * Python libs: src/main/python/opensexant;  Open source: pysolr 2.x, chardet, Python 2.7+
  ** or the equivalent libraries to create and post data records to Solr.
 
 NOTATION: In these notes, ./ or .\ relative paths refer to the current code base.
 Paths that refer installed or other contexts will be noted explicitly.
+
+NOTE: Pysolr 3.2 has additional dependencies; use Pysolr 2.1 for now.
 
 Recipe:
 * Setup scripts, libs, and Solr
@@ -35,11 +37,22 @@ Recipe:
 * Test using TaxonMatcher or Xponents/Examples code
 * Refine and repeat.
 
+0. Build Xponents, 
+    mvn install 
+    Note the version being used, and verify that is in the Xponents/solr/build*xml scripts
+
+    cd Xponents/solr
+    ant -f build-taxcat.xml init
+
 1. Install  your solr core, e.g.,  
     /my/xponents/solr/solr.xml, 
     /my/xponents/solr/taxcat/, 
 
     JVM var "solr.solr.home" will be set to /my/xponents/solr in this case.
+
+    Also, you then have Xponents/solr/lib/  runtime dependencies
+
+    copy Xponents/solr/lib  --> ${solr.solr.home}/lib
 
 2. Set your scripting environment
 
