@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="OpenSextant-TaxCat" default="index">
+<project name="OpenSextant-TaxCat">
 
     <!-- Solr Home and Gazetteer config data sourced here: -->
     <property file="build.properties" />
@@ -9,11 +9,5 @@
     <property name="solr.solr.home" location="${solr.home}" />
 
     <import file="build-solr-support.xml" />
-
-    <!-- TARGETS: -->
-
-    <target name="clean" description="Delete indexed data">
-        <delete dir="${solr.solr.home}/taxcat/data/" />
-    </target>
 
 </project>

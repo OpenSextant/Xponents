@@ -8,6 +8,7 @@
     <property name="winstone.v" value="0.9.10" />
     <property name="textTagger.v" value="2.0-SNAPSHOT" />
     <property name="slf4j.v" value="1.7.5" />
+    <property name="guava.v" value="14.0.1" />
     <property name="xponents.v" value="2.7-SNAPSHOT" />
     <property name="supercsv.v" value="2.2.0" />
 
@@ -16,7 +17,8 @@
       <property name="proxy.port" value="80"/>
       <property name="proxy.user" value=""/>
       <property name="proxy.pass" value=""/>
-      <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/>
+      <!-- <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/> -->
+      <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
     </target>
 
     <target name="setup">
@@ -36,6 +38,8 @@
             <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/${slf4j.v}/slf4j-api-${slf4j.v}.jar" />
             <url url="http://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/${slf4j.v}/jcl-over-slf4j-${slf4j.v}.jar" />
             <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-jdk14/${slf4j.v}/slf4j-jdk14-${slf4j.v}.jar" />
+            <!-- Somehow proxy failures and impeding...  
+            <url url="http://repo1.maven.org/maven2/com/google/guava/guava/${guava.v}/guava-${guava.v}.jar" /> -->
         </get>
 
         <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
@@ -47,6 +51,9 @@
               file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents/${xponents.v}/opensextant-xponents-${xponents.v}.jar"/>
         <copy todir="lib" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar"/>
+
+        <copy todir="build/containerLib" overwrite="false" failonerror="false"
+            file="${user.home}/.m2/repository/com/google/guava/guava/${guava.v}/guava-${guava.v}.jar" />
 
         <get dest="lib" skipexisting="true" ignoreerrors="true">
             <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
@@ -66,7 +73,7 @@
 
         <echo message="Waiting for Solr to start by checking its URL..." />
         <waitfor maxwait="60" checkevery="200" timeoutproperty="solr.failed">
-            <http url="http://localhost:${solr.server.port}/solr/" />
+            <http url="http://localhost:${solr.server.port}/solr" />
         </waitfor>
         <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
     </target>
@@ -80,9 +87,7 @@
                 <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
                 <sysproperty key="solr.enableRemoteStreaming" value="true" />
                 <sysproperty key="java.util.logging.config.file" value="logging.properties" />
-            	<!-- 
                 <arg value="-controlPort=8081" />
-                -->
                 <arg value="--commonLibFolder=build/containerLib" />
                 <arg value="--httpPort=${solr.server.port}" />
                 <arg value="--warfile=build/solr-${solr.v}.war" />
