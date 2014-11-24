@@ -12,7 +12,8 @@ bin/
 #Eclipse
 .classpath
 .project
-.settings/
+.settings
+.settings/org.eclipse.jdt.core.prefs
 
 #IntelliJ
 /out/
@@ -31,4 +32,5 @@ nbproject/
 *.jar
 *.war
 *.zip
+/target
 /target
