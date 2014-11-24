@@ -1,4 +1,0 @@
-# A list of person names you wish to use to filter out 
-# This is left empty, as you the deployer will decide what list of names to use.
-# Load with any dictionary list loader, or use TextUtils.loadDictionary()
-#
