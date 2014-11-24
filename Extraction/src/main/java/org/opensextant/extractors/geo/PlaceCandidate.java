@@ -27,12 +27,15 @@
 package org.opensextant.extractors.geo;
 
 import org.opensextant.data.Geocoding;
-import java.io.Serializable;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opensextant.data.Place;
 import org.opensextant.data.LatLon;
@@ -52,41 +55,31 @@ import org.opensextant.util.TextUtils;
  * it?
  * </ul>
  */
-public class PlaceCandidate extends TextMatch  /*Serializable*/ {
+public class PlaceCandidate extends TextMatch /*Serializable*/{
 
-    //private static final long serialVersionUID = 1L;
-    // the place name as it appeared in the document
-    private String placeName;
+    private String textnorm = null;
+
     // the location this was found in the document
     //private Long start;
     //private Long end;
     // --------------Place/NotPlace stuff ----------------------
     // which rules have expressed a Place/NotPlace opinion on this PC
-    private List<String> rules;
+    private Set<String> rules = new HashSet<>();
     // the confidence adjustments provided by the Place/NotPlace rules
-    private List<Double> placeConfidences;
+    private List<Double> placeConfidences = new ArrayList<>();
     // --------------Disambiguation stuff ----------------------
     // the places along with their disambiguation scores
-    private Map<Place, Double> scoredPlaces;
+    private Map<Place, Double> scoredPlaces = new HashMap<>();
     // temporary lists to hold the ranked places and scores
-    private List<Place> rankedPlaces;
-    private List<Double> rankedScores;
+    private List<Place> rankedPlaces = new ArrayList<>();
+    private List<Double> rankedScores = new ArrayList<>();
     // the list of PlaceEvidences accumulated from the document about this PC
-    private List<PlaceEvidence> evidence;
+    private List<PlaceEvidence> evidence = new ArrayList<>();
     // The chosen, best place:
     private Place chosen = null;
 
     // basic constructor
     public PlaceCandidate() {
-        this.placeName = "";
-        //start = 0L;
-        //end = 0L;
-        scoredPlaces = new HashMap<Place, Double>();
-        rankedPlaces = new ArrayList<Place>();
-        rankedScores = new ArrayList<Double>();
-        evidence = new ArrayList<PlaceEvidence>();
-        rules = new ArrayList<String>();
-        placeConfidences = new ArrayList<Double>();
     }
 
     /**
@@ -97,22 +90,41 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         chosen = geo;
     }
 
-
-    private String textnorm = null;
-
     /**
      * 
      * @return normalized version of text.
      */
-    public String getTextnorm(){
-        if (textnorm == null){
-            textnorm =  TextUtils.removePunctuation(TextUtils.removeDiacritics(getText())).toLowerCase();
+    public String getTextnorm() {
+        if (textnorm == null) {
+            textnorm = TextUtils.removePunctuation(TextUtils.removeDiacritics(getText()))
+                    .toLowerCase();
         }
         return textnorm;
     }
 
     // ---- the getters and setters ---------
     //
+
+    private String[] preTokens = null;
+    private String[] postTokens = null;
+    private int DEFAULT_TOKEN_SIZE = 40;
+
+    /**
+     * Get some sense of tokens surrounding match. Possibly 
+     * optimize this by getting token list from SolrTextTagger (which provides the lang-specifics) 
+     * 
+     * @param sourceBuffer
+     */
+    protected void setSurroundingTokens(String sourceBuffer) {
+        int[] window = TextUtils.get_text_window(start, end - start, sourceBuffer.length(),
+                DEFAULT_TOKEN_SIZE);
+
+        /* Get right most or left most whole tokens, for now whitespace delimited.
+         * TODO: ensure whole tokens are retrieved. 
+         */
+        setPrematchTokens(TextUtils.tokens(sourceBuffer.substring(window[0], window[1])));
+        setPostmatchTokens(TextUtils.tokens(sourceBuffer.substring(window[2], window[3])));
+    }
 
     /**
      * Common evidence flags -- isCountry, isPerson, isOrganization, abbreviation, and acronym
@@ -125,10 +137,15 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
 
     /** After candidate has been scored and all, the final best place is the geocoding result for the given name in context.
      */
-    public Geocoding getGeocoding(){
+    public Geocoding getGeocoding() {
         getBestPlace();
         return chosen;
     }
+
+    public Place getChosen() {
+        return chosen;
+    }
+
     /**
      * Get the most highly ranked Place, or Null if empty list.
      * @return Place the best choice
@@ -216,8 +233,12 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         this.scoredPlaces.put(place, score);
     }
 
-    public List<String> getRules() {
+    public Collection<String> getRules() {
         return rules;
+    }
+
+    public boolean hasRule(String rule) {
+        return rules.contains(rule);
     }
 
     public List<Double> getConfidences() {
@@ -290,28 +311,20 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         return tmp;
     }
 
-    /**
-     * Set the PlaceConfidence score to a specific value. NOTE: This method is
-     * only intended to be used in calibration/testing, it would not normally be
-     * used in production.Note that it removes any existing rules and
-     * confidences.
-     * @param score confidence score for this place.
-     */
-    public void setPlaceConfidenceScore(Double score) {
-        placeConfidences.clear();
-        rules.clear();
-        if (score != 0.0) { // don't add a 0.0 strength rule
-            this.addRuleAndConfidence("Calibrate", score);
+    public void addEvidence(PlaceEvidence evidence) {
+        this.evidence.add(evidence);
+        if (evidence.getRule() != null) {
+            this.rules.add(evidence.getRule());
         }
     }
 
-    public void addEvidence(PlaceEvidence evidence) {
-        this.evidence.add(evidence);
+    public void addEvidence(String rule, double weight, Place ev) {
+        addEvidence(new PlaceEvidence(ev, rule, weight));
     }
 
     // some convenience methods to add evidence
-    public void addEvidence(String rule, double weight, String cc, String adm1,
-            String fclass, String fcode, LatLon geo) {
+    public void addEvidence(String rule, double weight, String cc, String adm1, String fclass,
+            String fcode, LatLon geo) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
@@ -341,8 +354,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         this.evidence.add(ev);
     }
 
-    public void addAdmin1Evidence(String rule, double weight, String adm1,
-            String cc) {
+    public void addAdmin1Evidence(String rule, double weight, String adm1, String cc) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
@@ -351,8 +363,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
         this.evidence.add(ev);
     }
 
-    public void addFeatureClassEvidence(String rule, double weight,
-            String fclass) {
+    public void addFeatureClassEvidence(String rule, double weight, String fclass) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
@@ -406,7 +417,7 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
     // an overide of toString to get a meaningful representation of this PC
     @Override
     public String toString() {
-        String tmp = placeName + "(" + this.getPlaceConfidenceScore() + "/"
+        String tmp = getText() + "(" + this.getPlaceConfidenceScore() + "/"
                 + this.scoredPlaces.size() + ")" + "\n";
         tmp = tmp + "Rules=" + this.rules.toString() + "\n";
         tmp = tmp + "Evidence=" + this.evidence.toString() + "\n";
@@ -418,5 +429,33 @@ public class PlaceCandidate extends TextMatch  /*Serializable*/ {
                     + this.rankedScores.get(i).toString() + "\n";
         }
         return tmp;
+    }
+
+    /**
+     * @return the preTokens
+     */
+    public String[] getPrematchTokens() {
+        return preTokens;
+    }
+
+    /**
+     * @param preTokens the preTokens to set
+     */
+    public void setPrematchTokens(String[] preTokens) {
+        this.preTokens = preTokens;
+    }
+
+    /**
+     * @return the postTokens
+     */
+    public String[] getPostmatchTokens() {
+        return postTokens;
+    }
+
+    /**
+     * @param postTokens the postTokens to set
+     */
+    public void setPostmatchTokens(String[] postTokens) {
+        this.postTokens = postTokens;
     }
 }

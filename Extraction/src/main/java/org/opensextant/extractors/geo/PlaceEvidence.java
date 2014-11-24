@@ -88,6 +88,21 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
         this.setScope(old.getScope());
         this.setWeight(old.getWeight());
     }
+    
+    public PlaceEvidence(Place old, String rule, double wt) {
+        this();
+        this.setAdmin1(old.getAdmin1());
+        this.setCountryCode(old.getCountryCode());
+        this.setFeatureClass(old.getFeatureClass());
+        this.setFeatureCode(old.getFeatureCode());
+        //this.setGeocoord(old.getGeocoord());
+        this.setLatitude(old.getLatitude());
+        this.setLongitude(old.getLongitude());
+        this.setPlaceName(old.getPlaceName());
+        this.setRule(rule);
+        //this.setScope(scope);
+        this.setWeight(wt);
+    }    
 
     // compare to other evidence by strength
     @Override
