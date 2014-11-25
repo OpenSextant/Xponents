@@ -21,9 +21,9 @@ Components you will need:
 
  * SolrTextTagger and Xponents Basics and Extraction JAR
  * OpenSextant taxcat Solr core (Xponents/solr/taxcat)
- ** A basic understanding of org.opensextant.extractors.xtax.TaxonMatcher API
+   * A basic understanding of org.opensextant.extractors.xtax.TaxonMatcher API
  * Python libs: src/main/python/opensexant;  Open source: pysolr 2.x, chardet, Python 2.7+
- ** or the equivalent libraries to create and post data records to Solr.
+   * or the equivalent libraries to create and post data records to Solr.
 
 NOTATION: In these notes, ./ or .\ relative paths refer to the current code base.
 Paths that refer installed or other contexts will be noted explicitly.
@@ -40,16 +40,18 @@ Recipe:
 0. Build Xponents, 
     mvn install 
     Note the version being used, and verify that is in the Xponents/solr/build*xml scripts
-
+```
     cd Xponents/solr
     ant -f build-taxcat.xml init
+```
 
 1. Install  your solr core, e.g.,  
+```
     /my/xponents/solr/solr.xml, 
     /my/xponents/solr/taxcat/, 
+```
 
     JVM var "solr.solr.home" will be set to /my/xponents/solr in this case.
-
     Also, you then have Xponents/solr/lib/  runtime dependencies
 
     copy Xponents/solr/lib  --> ${solr.solr.home}/lib
@@ -61,26 +63,29 @@ Recipe:
 
     Secondly, start the Solr server that includes the catalog 
     
+```
     cd Xponents/solr
-    # Edit the "build.properties" or copy "build.local.properties" 
-    # Change the solr.home setting to match what you use above in step 1.
 
-    # Using Winstone:  ant -f build-taxcat.xml start-solr
-    #   I found problems making this work reliably.
-    #
-    # Using Jetty:
+    // Edit the "build.properties" or copy "build.local.properties" 
+    // Change the solr.home setting to match what you use above in step 1.
+
+    // Using Winstone:  ant -f build-taxcat.xml start-solr
+    //   I found problems making this work reliably.
+    //
+    // Using Jetty:
     ant  -f  build-taxcat.xml print-start-jetty
-    #
-    #   Run the answer printed to console:
+    //
+    //   Run the answer printed to console:
 
         java  -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=/my/xponents/solr  \
               -Dlog4j.configuration=log4j.properties  \
               -Djava.util.logging.config.file=logging.properties  -jar build/jetty-runner-8.1.9.v20130131.jar \
               --lib ./build/containerLib  --port 7000 --path /solr build/solr-4.10.1.war
+```
 
-    Keep this JVM running the Solr daemon, as you ingest your data.
-    Note, if you use other Solr servers, then you will need to deconflict the "solr.solr.home" variable
-    You can certainly host multiple solr cores there along side taxcat.
+Keep this JVM running the Solr daemon, as you ingest your data.
+Note, if you use other Solr servers, then you will need to deconflict the "solr.solr.home" variable
+You can certainly host multiple solr cores there along side taxcat.
 
 
 3. See Examples/XTax for guidance on creating a working catalog ingest.
@@ -92,7 +97,8 @@ The fundamentals of creating a catalog:
 * use 'valid'=true|false wisely -- mark valid=false phrases you wish to keep in the taxonomy, but do not want to use for tagging/matching
 
 
-Python library, "TaxCat"
+Python library, TaxCat, usage
+```
     builder = TaxCatalogBuilder(server="http://localhost:7000/solr/taxcat")
 
     node = Taxon()
@@ -116,6 +122,7 @@ Python library, "TaxCat"
 
     # optimize only if you have many thousands of records, or if solr core appears not optimized.:
     build.optimize()
+```
 
 
 CAVEATS:
@@ -127,6 +134,7 @@ if catalog A has 100 rows and starts at row 1, and catalog B has 50 rows, then B
 from there.   As you add rows to solr,  map each catalog to a starting ID and allow each block 
 of row ID space to accomodate the data for each catalog. More Examples:
 
+```
  my_catalogs = 
  {
    'A' : 0,       # If A has 100 entries, then it has growing room to 999, inclusive.
@@ -134,6 +142,7 @@ of row ID space to accomodate the data for each catalog. More Examples:
    'C' : 2000,    # has about  a thousand entries?
    'D' : 100000,  # has ~ million rows or less.  Range 1,000,001 to 2 million?
  }
+```
 
 JRC, 2014 has 600K rows;  in 2012 it had 500K.  So growth is expected.
 Choose a catalog/id scheme that is larger than the # of rows of data you have.  
