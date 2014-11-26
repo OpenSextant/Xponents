@@ -13,7 +13,7 @@
     <artifactId>opensextant-xponents</artifactId>
 
     <properties>
-        <solr.version>4.8.1</solr.version>
+        <solr.version>4.10.1</solr.version>
     </properties>
 
     <dependencies>
@@ -255,12 +255,14 @@
             <scope>test</scope>
         </dependency>
 
+ 
         <dependency>
             <groupId>org.restlet.jee</groupId>
             <artifactId>org.restlet</artifactId>
-            <version>2.1.1</version>
+            <version>2.2.2</version>
             <scope>runtime</scope>
         </dependency>
+     
     </dependencies>
 
 
