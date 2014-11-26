@@ -20,15 +20,16 @@ Getting Started
 Components you will need:
 
  * SolrTextTagger and Xponents Basics and Extraction JAR
- * OpenSextant taxcat Solr core (Xponents/solr/taxcat)
    * A basic understanding of org.opensextant.extractors.xtax.TaxonMatcher API
- * Python libs: src/main/python/opensexant;  Open source: pysolr 2.x, chardet, Python 2.7+
+ * OpenSextant taxcat Solr core (Xponents/solr/)
+ * Python libs: src/main/python/, as well as  Open source: pysolr 2.x, chardet, Python 2.7+
    * or the equivalent libraries to create and post data records to Solr.
+
+NOTE: Pysolr 3.2 has additional dependencies; use Pysolr 2.1 for now.
 
 NOTATION: In these notes, ./ or .\ relative paths refer to the current code base.
 Paths that refer installed or other contexts will be noted explicitly.
 
-NOTE: Pysolr 3.2 has additional dependencies; use Pysolr 2.1 for now.
 
 Recipe:
 * Setup scripts, libs, and Solr
@@ -37,47 +38,58 @@ Recipe:
 * Test using TaxonMatcher or Xponents/Examples code
 * Refine and repeat.
 
+Steps
+==============
+
 0. Build Xponents, 
-    mvn install 
-    Note the version being used, and verify that is in the Xponents/solr/build*xml scripts
+    Note the version being used, and verify that is in the Xponents/solr/build-solr-support.xml 
+    script where Xponents version is mentioned.
 ```
+    cd Xponents
+    mvn install 
+    
     cd Xponents/solr
     ant -f build-taxcat.xml init
 ```
 
-1. Install  your solr core, e.g.,  
+1. Install  your solr core, e.g.,
+    Copy Xponents/solr files to your Solr Home:
+      
 ```
     /my/xponents/solr/solr.xml, 
-    /my/xponents/solr/taxcat/, 
+    /my/xponents/solr/taxcat/,
+    /my/xponents/solr/lib
 ```
 
     JVM var "solr.solr.home" will be set to /my/xponents/solr in this case.
-    Also, you then have Xponents/solr/lib/  runtime dependencies
-
-    copy Xponents/solr/lib  --> ${solr.solr.home}/lib
+    Note that Xponents/solr/lib/  (target: $solr.solr.home/lib) will house runtime dependencies
 
 2. Set your scripting environment
 
-    export PYTHONPATH=/my/app/lib
-    # Copy relevant Python libs here; and ensure your scripting/shell sees such variables.
-
-    Secondly, start the Solr server that includes the catalog 
-    
+    First organize the required Python libs for this application and ensure your 
+    scripting/shell sees such variables.
 ```
+    export PYTHONPATH=/my/app/lib;Xponents/Extraction/src/main/python
+
+```
+    Secondly, start the Solr server that includes the catalog 
+    In a different terminal,...
+```
+
     cd Xponents/solr
 
     // Edit the "build.properties" or copy "build.local.properties" 
     // Change the solr.home setting to match what you use above in step 1.
 
-    // Using Winstone:  ant -f build-taxcat.xml start-solr
-    //   I found problems making this work reliably.
-    //
     // Using Jetty:
-    ant  -f  build-taxcat.xml print-start-jetty
-    //
-    //   Run the answer printed to console:
+    ant  -f  build-taxcat.xml start-jetty
+    
+    // Ant 'parallel' task has some issues lately in respecting timeouts, so 
+    // for now these Ant-based server invocations are experimental.
+    // 
+    // Alternatively, use print-start-jetty to just print the Jetty server command.
 
-        java  -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=/my/xponents/solr  \
+    java  -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=/my/xponents/solr  \
               -Dlog4j.configuration=log4j.properties  \
               -Djava.util.logging.config.file=logging.properties  -jar build/jetty-runner-8.1.9.v20130131.jar \
               --lib ./build/containerLib  --port 7000 --path /solr build/solr-4.10.1.war
@@ -94,10 +106,51 @@ The fundamentals of creating a catalog:
 * manage a distinct solr record for each phrase variant
 * taxon nodes, may have multiple variants
 * use 'catalog' wisely -- as you ingest multiple data files, do they all fall under the same catalog?
-* use 'valid'=true|false wisely -- mark valid=false phrases you wish to keep in the taxonomy, but do not want to use for tagging/matching
+* use 'valid'=true|false in a practical fashion -- mark valid=false phrases you 
+wish to keep in the taxonomy, but do not want to use for tagging/matching. Often tagging ambiguous phrases
+leads to false positives.  
+
+False positives:  When to mark records as valid=false.
+Consider the taxon
+```
+   name = 'rank.Commander'
+   phrase = 'CDR'
+   
+```
+Searching for CDR in text may reveal valid matches for a commander or a 
+   critical design review (CDR), or a call data record, or court data recorder, etc. 
+So when to mark such potentially ambiguous phrases as valid=false, is purely 
+heuristics and empirical.
+
+TacCat Schema
+--------------
+
+"taxcat" schema is quite simple, intentionally.
+Your catalog in solr will help you coalesce many differnt taxonomies into one searchable, online catalog.
+Not all entries need to be used for tagging -- that is if you think a phrase is particularly erroneous or will
+produce noise, then set valid=false.  It can remain in your catalog, though.
+
+    catalog  -- a catalog ID that you identifies the source of reference data.
+    taxnode  -- a taxon ID, that helps you associate N phrases with a given taxon
+    phrase   -- a textual phrase in the reference data
+    id       -- catalog row ID
+    valid    -- true = if phrase entry should be used for tagging.
+    tags -- optional.  Any amount of metadata you wish to carry forward with your tagging. This is a string, no format.
+
+Example:
+
+    catalog = "citrus_fruit",
+    taxnode = "tropical.Pineapple"
+    phrase =  "pineapple"
+    id  =  46    # (solr row ID you define and manage. Must be Integer. )
+
+Use of tags and valid=T/F are optimizations.  They are not required to make the XTax tagger work.
 
 
-Python library, TaxCat, usage
+TaxCat.py Library usage
+--------------
+Your main program might look like the following:
+
 ```
     builder = TaxCatalogBuilder(server="http://localhost:7000/solr/taxcat")
 
@@ -144,42 +197,57 @@ of row ID space to accomodate the data for each catalog. More Examples:
  }
 ```
 
-JRC, 2014 has 600K rows;  in 2012 it had 500K.  So growth is expected.
-Choose a catalog/id scheme that is larger than the # of rows of data you have.  
+The "JRCnames" example (./examples/jrcnames.py) for 2014 has 600K rows;  in 2012 it had 500K.  
+So growth is expected. Choose a catalog/id scheme that is larger than the # of rows of data you have.  
 Have 100K rows of data, use 1 million, 2 million, etc as starting IDs.
 Fit your smallest taxonomies in starting at 0.
 
 All of this because row ID is Integer.
 
 
-4. Testing. 
+Testing
+=================
 
-## Schema ##
+Tagging using Java
+```
 
-"taxcat" schema is quite simple, intentionally.
-Your catalog in solr will help you coalesce many differnt taxonomies into one searchable, online catalog.
-Not all entries need to be used for tagging -- that is if you think a phrase is particularly erroneous or will
-produce noise, then set valid=false.  It can remain in your catalog, though.
-
-    catalog  -- a catalog ID that you identifies the source of reference data.
-    taxnode  -- a taxon ID, that helps you associate N phrases with a given taxon
-    phrase   -- a textual phrase in the reference data
-    id       -- catalog row ID
-    valid    -- true = if phrase entry should be used for tagging.
-    tags -- optional.  Any amount of metadata you wish to carry forward with your tagging. This is a string, no format.
-
-Example:
-
-    catalog = "citrus_fruit",
-    taxnode = "tropical.Pineapple"
-    phrase =  "pineapple"
-    id  =  46    # (solr row ID you define and manage. Must be Integer. )
-
-Use of tags and valid=T/F are optimizations.  They are not required to make the XTax tagger work.
-
-## Tagging ##
-
-    TaxMatcher.tagText( "Marc bought eight pineapples given they were on sale.",  "test" )
+  /* Setup
+   */
+  // solr.solr.home or opensextant.solr are required JVM args for tagging
+  TaxonMatcher tagger = new TaxonMatcher(); 
+  tagger.configure()
+  tagger.addCatalogFilter("citrus_fruit");
+  
+  /*
+   * Extract
+   */ 
+  taxons = tagger.extract( "Marc bought eight pineapples given they were on sale.",  "test" )
+```
 
 Should find TaxonMatch, for "pineapples", and associate that as taxon={ "tropical.Pineapple", catalog="citrus_fruit" , attrs=....}
 
+```
+  /* 
+   * Review matches 
+   */
+  for (TextMatch tm : taxons) {
+        TaxonMatch match = (TaxonMatch) tm;
+        // The TaxonMatch holds the core match metadata: id, text, start/end offset
+        //         
+        // you may have various 'filters' to manage your false positives.        
+        if (filterOut(match)) {  continue; }
+
+        for (Taxon n : match.getTaxons()) {
+            // Each taxon declares the taxonomy metadata for each matching node
+        }
+   } 
+   
+   
+   /* Finally, all good Extractors run the .cleanup() method. 
+    * traditionally, the cleanup() for SolrTextTaggers is required to statically 
+    * shutdown Solr server threads, regardless if the server is http or embedded.
+    * the SolrJ client needs to halt.
+    */
+   tagger.cleanup()   
+```
+   
