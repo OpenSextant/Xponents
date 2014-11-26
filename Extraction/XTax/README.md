@@ -52,14 +52,24 @@ Steps
     ant -f build-taxcat.xml init
 ```
 
-1. Install  your solr core, e.g.,
-    Copy Xponents/solr files to your Solr Home:
+1. Install your solr core 
+
+    First time,  copy "build.local.properties" to build.properties.
+    Now choose where you want to store your solr index. 
+    You may want to use "." for solr.solr.home for development, 
+    but a more permanent location for runtime or staging.
+
+    solr home = '.' implies Xponents/solr is the solr server home.
+
+    Otherwise, for working outside of the source tree, 
+    copy Xponents/solr files to your external solr home (Recommended):
       
 ```
     /my/xponents/solr/solr.xml, 
     /my/xponents/solr/taxcat/,
     /my/xponents/solr/lib
 ```
+    You may use the Xponents/solr/ source tree for convenience, and your build.properties must refer to "solr.home=."
 
     JVM var "solr.solr.home" will be set to /my/xponents/solr in this case.
     Note that Xponents/solr/lib/  (target: $solr.solr.home/lib) will house runtime dependencies
@@ -69,7 +79,8 @@ Steps
     First organize the required Python libs for this application and ensure your 
     scripting/shell sees such variables.
 ```
-    export PYTHONPATH=/my/app/lib;Xponents/Extraction/src/main/python
+    export PYTHONPATH=/my/app/lib:/path/to/Xponents/Extraction/src/main/python
+    # alternatively, package and install in your python site-packages.
 
 ```
     Secondly, start the Solr server that includes the catalog 
@@ -78,8 +89,6 @@ Steps
 
     cd Xponents/solr
 
-    // Edit the "build.properties" or copy "build.local.properties" 
-    // Change the solr.home setting to match what you use above in step 1.
 
     // Using Jetty:
     ant  -f  build-taxcat.xml start-jetty
