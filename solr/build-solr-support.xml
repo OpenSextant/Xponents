@@ -33,6 +33,7 @@
         <get dest="build" skipexisting="true">
             <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
             <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
+            <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
         </get>
         <get dest="build/containerLib/" skipexisting="true">
             <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/${slf4j.v}/slf4j-api-${slf4j.v}.jar" />
@@ -67,7 +68,23 @@
     </target>
 
     <!-- TARGETS: -->
-
+    <target name="start-jetty" depends="init">
+                <exec-jetty-solr />
+<!--
+        <parallel >
+            <daemons>
+              <sequential>
+                <exec-jetty-solr />
+              </sequential>
+            </daemons>
+        </parallel>
+        <echo message="Waiting for Solr to start by checking its URL..." />
+        <waitfor maxwait="60" checkevery="15"  checkeveryunit="second" maxwaitunit="second" timeoutproperty="solr.failed">
+            <http url="http://localhost:${solr.server.port}/solr/" />
+        </waitfor>
+        <fail if="solr.failed" message="Jetty Solr did not properly start, probably due to a configuration error. ${solr.failed}" />
+-->
+    </target>
 
     <target name="start-solr-daemon" depends="init">
         <parallel>
@@ -77,7 +94,7 @@
         </parallel>
 
         <echo message="Waiting for Solr to start by checking its URL..." />
-        <waitfor maxwait="60" checkevery="200" timeoutproperty="solr.failed">
+        <waitfor maxwait="60000" checkevery="20000" timeoutproperty="solr.failed">
             <http url="http://localhost:${solr.server.port}/solr" />
         </waitfor>
         <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
@@ -101,6 +118,27 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="exec-jetty-solr">
+        <sequential>
+            <java jar="build/jetty-runner-${jetty.v}.jar" fork="true" clonevm="true" failonerror="true" maxmemory="500m">
+                <sysproperty key="java.awt.headless" value="true" />
+                <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
+                <sysproperty key="solr.enableRemoteStreaming" value="true" />
+                <sysproperty key="java.util.logging.config.file" value="logging.properties" />
+                <sysproperty key="log4j.configuration" value="log4j.properties" />
+
+                <!-- Jetty arguments -->
+                <arg value="--lib"/>
+                <arg value="build/containerLib"/>
+                <arg value="--port"/>
+                <arg value="${solr.server.port}"/>
+                <arg value="--path"/>
+                <arg value="/solr"/>
+                <arg value="build/solr-${solr.v}.war"/>
+            </java>
+        </sequential>
+    </macrodef>
+
     <target name="start-solr" description="Start Solr (Winstone) on value of 'solr.server.port'. Stop it via stop-solr."
             depends="init">
         <echo level="warning" message="Winstone doesn't properly handle HTTP POST chunked Transfer-Encoding" />
@@ -115,12 +153,12 @@
         <!-- FYI I haven't found an equivalent for jetty-runner -->
     </target>
 
-    <target name="print-start-jetty" description="Print instructions to run Solr with Jetty" depends="proxy">
+    <target name="print-start-jetty" description="Print instructions to run Solr with Jetty" depends="init">
         <get dest="build" skipexisting="true">
             <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
         </get>
         <echo message="java
- -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=${solr.solr.home} -Dlog4j.configuration=log4j.properties -Djava.util.logging.config.file=logging.properties
+ -Xmx500m -Djava.awt.headless=true -Dsolr.solr.home=${solr.solr.home} -Dlog4j.configuration=log4j.properties -Djava.util.logging.config.file=logging.properties
  -jar build/jetty-runner-${jetty.v}.jar --lib ./build/containerLib  --port ${solr.server.port} --path /solr build/solr-${solr.v}.war"/>
     </target>
 
