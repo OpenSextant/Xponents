@@ -59,7 +59,8 @@ Steps
     You may want to use "." for solr.solr.home for development, 
     but a more permanent location for runtime or staging.
 
-    solr home = '.' implies Xponents/solr is the solr server home.
+    Solr home = '.' implies Xponents/solr is the solr server home. This is only
+    for convenience and not recommended for deployment.
 
     Otherwise, for working outside of the source tree, 
     copy Xponents/solr files to your external solr home (Recommended):
@@ -69,22 +70,15 @@ Steps
     /my/xponents/solr/taxcat/,
     /my/xponents/solr/lib
 ```
-    You may use the Xponents/solr/ source tree for convenience, and your build.properties must refer to "solr.home=."
 
     JVM var "solr.solr.home" will be set to /my/xponents/solr in this case.
     Note that Xponents/solr/lib/  (target: $solr.solr.home/lib) will house runtime dependencies
 
-2. Set your scripting environment
+2. Start the Solr Server
 
-    First organize the required Python libs for this application and ensure your 
-    scripting/shell sees such variables.
-```
-    export PYTHONPATH=/my/app/lib:/path/to/Xponents/Extraction/src/main/python
-    # alternatively, package and install in your python site-packages.
+In a separate terminal launch the Solr server that provisions the taxcat for your
+python or other ingest scripting.
 
-```
-    Secondly, start the Solr server that includes the catalog 
-    In a different terminal,...
 ```
 
     cd Xponents/solr
@@ -158,6 +152,14 @@ Use of tags and valid=T/F are optimizations.  They are not required to make the 
 
 TaxCat.py Library usage
 --------------
+
+First organize the required Python libs for this application and ensure your 
+scripting/shell/IDE sees such variables.
+```
+    export PYTHONPATH=/my/app/lib:/path/to/Xponents/Extraction/src/main/python
+    # alternatively, package and install in your python site-packages.
+```
+
 Your main program might look like the following:
 
 ```
@@ -218,8 +220,8 @@ Testing
 =================
 
 Tagging using Java
-```
 
+```
   /* Setup
    */
   // solr.solr.home or opensextant.solr are required JVM args for tagging
