@@ -50,6 +50,9 @@ Steps
     
     cd Xponents/solr
     ant -f build-taxcat.xml init
+
+    # Alternatively, use the proxy target to setup proxy as configured in your build.properties
+    ant -f build-taxcat.xml proxy init
 ```
 
 1. Install your solr core 

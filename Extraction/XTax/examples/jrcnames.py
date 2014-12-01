@@ -101,6 +101,14 @@ AMBIGUOUS = set(
          'gross domestic product'
         ])
 
+# Fixes are any entries that need to be remapped to entity type, p, o, etc. 
+#
+FIXES = {
+         # Somehow this entry was marked as a "p" (Person)
+         # So it is remapped to "-" (Thing, default)
+         'Improvised Explosive Device' : '-'
+         }
+
 def check_validity(e):
     '''
     @param e: a JRCEntity 
@@ -118,6 +126,12 @@ class JRCEntity(Taxon):
         # JRC original entity ID and type
         self.entity_id = eid
         self.entity_type = etype.upper()
+        self.lang = lang
+        self.phrase = ename
+        
+        if self.phrase in FIXES:
+            self.entity_type = FIXES.get(self.phrase)
+        
         if self.entity_type in entity_map:
             self.entity_type = entity_map[self.entity_type]
         
@@ -125,10 +139,7 @@ class JRCEntity(Taxon):
         # solr record ID:
         self.id = self._make_id()
         self.is_valid = True
-        
-        self.lang = lang
-        self.phrase = ename
-        
+                
         # taxon ID/name:
         self.name = '%s.%s' % (self.entity_type, primary_name)
         
@@ -159,11 +170,15 @@ entity_map = {
               'T':'Place',
               'E':'Event',
               'O':'Org',
-              'P':'Person'          
+              'P':'Person',
+              '-':'Thing'
               }
 
 def create_entity(line, scan=False):
-    ''' Create a entry for this entity that has the primary name
+    ''' Create a entry for this entity that has the primary name. 
+    @keyword scan: scan=True means we are looking for root entries to which 
+    other variants are associated.  Each variant has an entity ID, but there
+    is no single primary variant to represent the entity, e.g., for presentation purposes.
     '''
     parts = line.split('\t')
     _id = parts[0].strip()
@@ -212,9 +227,7 @@ def create_entity(line, scan=False):
     e = JRCEntity(_id, variant_id, parts[1], lang, primary_name, name)
     check_validity(e)
     return e
-    
-        
-    return e
+
 
 if __name__ == '__main__':
     '''
@@ -227,6 +240,8 @@ if __name__ == '__main__':
 
     import sys
     taxonomy = sys.argv[1]
+    start_id = 3000000
+    catalog_id = 'JRC'
     
     test = False
     builder = None
@@ -246,7 +261,6 @@ if __name__ == '__main__':
     # Manage your own Catalog regsitry for starting rows
     # As solr has no notion of row ID and your uniqueness requirements.
     #
-    start_id = 3000000
     row_id = 0
     fh = open(taxonomy, 'rb')
     for row in fh:
@@ -257,6 +271,8 @@ if __name__ == '__main__':
             
         if row_max > 0 and row_id > row_max:
             break
+        
+    # Done with scan    
     fh.close()
 
     row_id = 0
@@ -268,18 +284,17 @@ if __name__ == '__main__':
             continue
         
         # ".id" must be an Integer for text tagger
-        node.id = row_id
-        
-        builder.add('JRC', node)
-        if row_id % 1000 == 0:
+        node.id = start_id + row_id        
+        builder.add(catalog_id, node)
+        builder.save()
+
+        if row_id % 10000 == 0:
             print "Row # ", row_id
         if test:
             print str(node)
-
         if row_max > 0 and row_id > row_max:
             break
             
-        builder.save()
             
     builder.save(flush=True)
     builder.optimize()
