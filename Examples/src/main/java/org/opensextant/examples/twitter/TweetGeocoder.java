@@ -173,11 +173,11 @@ public class TweetGeocoder {
     }
 
     /**
-     * Batching happens inside -- each tweet is pushed onto batch Every N tweets
-     * is geocoded.
-     *
-     * If user loc.xy: write out( xy ) else if user loc geocode (user loc) write
-     * out ()
+     * If user loc.xy: 
+     *    write out( xy ) 
+     * else if user loc 
+     *    geocode (user loc) 
+     *    write out ()
      *
      * geocode(status) write out ()
      */
@@ -192,28 +192,32 @@ public class TweetGeocoder {
         res.addAttribute("author", tw.author);
         res.addAttribute("tweet", tw.getText());
 
+        /*
+         * If User profile location or geo coord is a Coordinate... parse and add to matched locations
+         */
         if (tw.author_xy_val != null) {
-
             res.matches = userlocX.extract(new TextInput(tw.id, tw.author_xy_val));
         } else if (tw.author_location != null) {
-
             res.matches = userlocX.extract(new TextInput(tw.id, tw.author_location));
-            if (res.matches.isEmpty()) {
-
-                try {
-                    res.matches = geocoder.extract(new TextInput(tw.id, tw.author_location));
-                } catch (Exception userErr) {
-                    log.error("Geocoding error with Users?", userErr);
-                }
+        }
+        
+        /*
+         * If User profile is a place name, attempt to match it and disambiguate. 
+         */
+        if (res.matches.isEmpty()) {
+            try {
+                res.matches = geocoder.extract(new TextInput(tw.id, tw.author_location));
+            } catch (Exception userErr) {
+                log.error("Geocoding error with Users?", userErr);
             }
         }
+
 
         if (res.matches.isEmpty()) {
             return;
         }
 
         userOutput.writeGeocodingResult(res);
-
     }
 
     /**
