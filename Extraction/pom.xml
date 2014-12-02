@@ -7,7 +7,7 @@
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>2.7a</version>
+        <version>2.7b</version>
     </parent>
 
     <artifactId>opensextant-xponents</artifactId>
