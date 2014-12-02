@@ -48,9 +48,14 @@ public class Taxon {
     /** Node root: citrus */
     public String rootid = null;
     /** Terms: "pineapple", "mango", ... */
-    public String[] terms = null;
     public Set<String> termset = null;
     public Set<String> tagset = null;
+    /** Acronyms are assumed to be ALL UPPER CASE; granted this does not
+     * always apply.   But this is used to inform post-processing if a match, such as
+     * 'abc' matched 'ABC' incorrectly.  If the match is lower case, but the Taxon is Acronym, 
+     * then you have a mismatch of case and semantics likley. 
+     */
+    public boolean isAcronym = false;
 
     public Taxon() {
     }
@@ -68,11 +73,14 @@ public class Taxon {
     }
 
     public void setTerms(String[] t) {
-        terms = t;
-        if (terms != null) {
-            termset = new HashSet<String>();
-            termset.addAll(Arrays.asList(terms));
+        if (t==null){
+            return;
         }
+        if (termset == null) {
+            termset = new HashSet<String>();
+        }
+        termset.addAll(Arrays.asList(t));
+        
     }
 
     public void addTags(Collection<Object> tlist) {
