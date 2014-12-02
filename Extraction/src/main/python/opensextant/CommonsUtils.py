@@ -35,6 +35,19 @@ from chardet import detect as detect_charset
 ## ---------------------------------------
 ##
 
+#
+# Acceptable test: http://stackoverflow.com/questions/196345/how-to-check-if-a-string-in-python-is-in-ascii
+def is_ascii(s):
+    if isinstance(s, unicode):
+        return all(ord(c) < 128 for c in s)
+    else:
+        try:
+            return all(ord(c) < 128 for c in s)
+        except:
+            pass
+        
+    return False
+
 
 ## ISO-8859-2 is a common answer, when they really mean ISO-1
 CHARDET_LATIN2_ENCODING = 'ISO-8859-1'

@@ -39,7 +39,7 @@ public class TaxonMatch extends org.opensextant.extraction.TextMatch {
 
     public TaxonMatch(){
         this.type = "taxon";
-        this.producer = "XTax";
+        this.producer = "XTax";        
     }
 
     private List<Taxon> taxons = null;

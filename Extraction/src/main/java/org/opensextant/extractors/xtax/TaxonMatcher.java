@@ -67,11 +67,12 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     static {
         params = new ModifiableSolrParams();
         //params.set(CommonParams.QT, requestHandler);
-        params.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag");
+        params.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag,name_type");
 
         params.set("tagsLimit", 100000);
         params.set("subTags", false);
-        params.set("matchText", true);
+        params.set("matchText", false);
+        params.set(CommonParams.FQ, "valid:true");
 
         /*
          * Possible overlaps: ALL, NO_SUB, LONGEST_DOMINANT_RIGHT See Solr Text
@@ -81,6 +82,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     }
     private boolean tag_all = true;
+    private boolean filterNonAcronyms = true;
     private ProgressMonitor progressMonitor;
 
     /**
@@ -100,11 +102,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Extractor interface.
      */
-    public void cleanup(){
-        this.shutdown();        
+    public void cleanup() {
+        this.shutdown();
     }
-    
-    
+
     /**
      * Be explicit about the solr core to use for tagging
      */
@@ -140,6 +141,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
         label.catalog = _cat;
         label.name = SolrProxy.getString(refData, "taxnode");
+        label.isAcronym = "A".equals(SolrProxy.getString(refData, "name_type"));
+
         label.addTerm(SolrProxy.getString(refData, "phrase"));
         label.addTags(refData.getFieldValues("tag"));
         return label;
@@ -209,14 +212,17 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         catalogs.clear();
         tag_all = true;
     }
-    
+
     /**
      * Light-weight usage: text in, matches out.
+     * Behaviors:
+     *    ACRONYMS matching lower case terms will automatically be omitted from results.
+     *    
      */
     public List<TextMatch> extract(String input_buf) throws ExtractionException {
         return extractorImpl(null, input_buf);
     }
-        
+
     /**
      * Implementation details -- use with or without the formal ID/buffer pairing.
      * 
@@ -227,7 +233,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      */
     private List<TextMatch> extractorImpl(String id, String buf) throws ExtractionException {
         List<TextMatch> matches = new ArrayList<TextMatch>();
-        String docid = (id !=null ? id : NO_DOC_ID );
+        String docid = (id != null ? id : NO_DOC_ID);
 
         Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
         QueryResponse response = tagTextCallSolrTagger(buf, docid, beanMap);
@@ -247,15 +253,12 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
         for (NamedList<?> tag : tags) {
             m = new TaxonMatch();
-            m.start = (Integer) tag.get("startOffset");
-            m.end = (Integer) tag.get("endOffset");// +1 char after last matched
-            m.pattern_id = "taxtag";
+            m.start = ((Integer) tag.get("startOffset")).intValue();
+            m.end = ((Integer) tag.get("endOffset")).intValue();// +1 char after last matched
+            //m.pattern_id = "taxtag";
             ++tag_count;
             m.match_id = id_prefix + tag_count;
-
-            // Could have enabled the "matchText" option from the tagger to get
-            // this, but since we already have the content as a String then
-            // we might as well not make the tagger do any more work.
+            // m.setText((String) tag.get("matchText")); // Not reliable.  matchText can be null.
             m.setText(buf.substring(m.start, m.end));
 
             @SuppressWarnings("unchecked")
@@ -263,8 +266,21 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
             for (Integer solrId : taxonIDs) {
                 Object refData = beanMap.get(solrId);
-                if (refData != null)
-                    m.addTaxon((Taxon) refData);
+                if (refData == null) {
+                    continue;
+                }
+
+                /*
+                 * Filter out non-Acronyms. e.g., 'who' is not a match for 'WHO'
+                 */
+                Taxon tx = (Taxon) refData;
+                if (this.filterNonAcronyms) {
+                    if (tx.isAcronym && !m.isUpper()) {
+                        continue;
+                    }
+                }
+
+                m.addTaxon(tx);
             }
 
             // If the match has valid taxons add the match to the

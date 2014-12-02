@@ -9,7 +9,7 @@
     <property name="textTagger.v" value="2.0-SNAPSHOT" />
     <property name="slf4j.v" value="1.7.5" />
     <property name="guava.v" value="14.0.1" />
-    <property name="xponents.v" value="2.7-SNAPSHOT" />
+    <property name="xponents.v" value="2.7b" />
     <property name="supercsv.v" value="2.2.0" />
 
     <!-- setup proxy -->
@@ -154,9 +154,6 @@
     </target>
 
     <target name="print-start-jetty" description="Print instructions to run Solr with Jetty" depends="init">
-        <get dest="build" skipexisting="true">
-            <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
-        </get>
         <echo message="java
  -Xmx500m -Djava.awt.headless=true -Dsolr.solr.home=${solr.solr.home} -Dlog4j.configuration=log4j.properties -Djava.util.logging.config.file=logging.properties
  -jar build/jetty-runner-${jetty.v}.jar --lib ./build/containerLib  --port ${solr.server.port} --path /solr build/solr-${solr.v}.war"/>

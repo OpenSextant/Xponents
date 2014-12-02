@@ -60,6 +60,7 @@ creating the taxnode value.
 '''
 
 from opensextant.TaxCat import Taxon, TaxCatalogBuilder
+from opensextant.CommonsUtils import is_ascii
 
 # distinct primary names act as a JRC root entry; all others would be variants
 #    That is just the convention here for demo sake.
@@ -98,7 +99,8 @@ AMBIGUOUS = set(
          'nature',
          'status quo',
          'the independent',
-         'gross domestic product'
+         'gross domestic product',
+         'privacy policy'
         ])
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
@@ -139,6 +141,7 @@ class JRCEntity(Taxon):
         # solr record ID:
         self.id = self._make_id()
         self.is_valid = True
+        self.is_acronym = ename.isupper() and is_ascii(ename)
                 
         # taxon ID/name:
         self.name = '%s.%s' % (self.entity_type, primary_name)
@@ -254,7 +257,8 @@ if __name__ == '__main__':
         row_max = 100000 
         builder = TaxCatalogBuilder(server=None)
         
-    builder.commit_rate = 1000
+    # Commit rows every 10,000 entries.
+    builder.commit_rate = 10000
     builder.stopwords = set([])
     
     # Completely arbitrary starting row ID 

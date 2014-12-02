@@ -22,10 +22,9 @@ Components you will need:
  * SolrTextTagger and Xponents Basics and Extraction JAR
    * A basic understanding of org.opensextant.extractors.xtax.TaxonMatcher API
  * OpenSextant taxcat Solr core (Xponents/solr/)
- * Python libs: src/main/python/, as well as  Open source: pysolr 2.x, chardet, Python 2.7+
+ * Python libs: src/main/python/, as well as  Open source: pysolr 3.2, chardet, requests 2.5, Python 2.7+
+   * Available at: https://pypi.python.org/pypi/{chardet, pysolr, requests}
    * or the equivalent libraries to create and post data records to Solr.
-
-NOTE: Pysolr 3.2 has additional dependencies; use Pysolr 2.1 for now.
 
 NOTATION: In these notes, ./ or .\ relative paths refer to the current code base.
 Paths that refer installed or other contexts will be noted explicitly.
@@ -84,17 +83,16 @@ python or other ingest scripting.
 
 ```
 
-    cd Xponents/solr
-
-
     // Using Jetty:
+    // 
+    cd Xponents/solr
     ant  -f  build-taxcat.xml start-jetty
     
+    // Alternatively, use print-start-jetty to just print the Jetty server command.
+    //    
     // Ant 'parallel' task has some issues lately in respecting timeouts, so 
     // for now these Ant-based server invocations are experimental.
     // 
-    // Alternatively, use print-start-jetty to just print the Jetty server command.
-
     java  -Xmx2G -Djava.awt.headless=true -Dsolr.solr.home=/my/xponents/solr  \
               -Dlog4j.configuration=log4j.properties  \
               -Djava.util.logging.config.file=logging.properties  -jar build/jetty-runner-8.1.9.v20130131.jar \

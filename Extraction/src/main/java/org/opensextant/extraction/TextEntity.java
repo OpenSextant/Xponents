@@ -43,6 +43,7 @@
 package org.opensextant.extraction;
 
 import org.apache.commons.lang.StringUtils;
+import org.opensextant.util.TextUtils;
 
 /**
  * A very simple struct to hold data useful for post-processing entities once found.
@@ -92,11 +93,13 @@ public class TextEntity {
     public void setText(String t) {
         text = t;
         if (text!=null){
-            isLower = StringUtils.isAllLowerCase(text);
+            isLower =TextUtils.isLower(text);
+            isUpper = TextUtils.isUpper(text);
         }
     }
     
     private boolean isLower = false;
+    private boolean isUpper = false;
     
     /**
      * test If text is ALL lowercase
@@ -104,6 +107,9 @@ public class TextEntity {
      */
     public boolean isLower(){
         return isLower;
+    }
+    public boolean isUpper(){
+        return isUpper;
     }
 
     /**

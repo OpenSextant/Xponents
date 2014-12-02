@@ -124,8 +124,10 @@
    <field name="phrase"  type="name_text" required="true" stored="true" indexed="true"/>
    <field name="phrase_tag"  type="name_tag" required="true" stored="false" indexed="true"/>
    <field name="valid"   type="boolean" required="true" default="true" stored="true" indexed="true" />
+   <!--  Name Type name = 'N', abbrev/acronym = 'A' -->
+   <field name="name_type"   type="string" required="true" default="N" stored="true" indexed="true" />
 
-    <copyField source="phrase" dest="phrase_tag" />
+   <copyField source="phrase" dest="phrase_tag" />
 
    <!--
    <dynamicField name="*" type="string" indexed="true"/>

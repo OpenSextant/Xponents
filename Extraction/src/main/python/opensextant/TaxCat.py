@@ -114,6 +114,7 @@ class Taxon:
         self.is_valid = True
         # An array of additional tags.
         self.tags = None
+        self.is_acronym = False
 
 class TaxCatalogBuilder:
 
@@ -178,24 +179,28 @@ class TaxCatalogBuilder:
             print "No server"
             return
 
-        if self.commit_rate>0 and len(self._records) % self.commit_rate != 0:
-            return
+        if not flush:
+            if self.commit_rate>0 and len(self._records) % self.commit_rate != 0:
+                return
             
-        self.server.add(self._records,  sanitize=True)
+        self.server.add(self._records)
         self.server.commit()
         self._records = []
 
         return
-
+    
     def add(self, catalog, taxon):
         ''' 
         @param catalog ID of catalog where this taxon lives
         @param taxon   Taxon obj
         '''
         self.count = self.count + 1
-        rec = {'catalog':catalog, 'taxnode':taxon.name, 'phrase':taxon.phrase, 'id':taxon.id, 'valid': taxon.is_valid }
+        rec = {'catalog':catalog, 'taxnode':taxon.name, 'phrase':taxon.phrase, 'id':taxon.id, 'valid': taxon.is_valid, 
+               'name_type':'N' }
         if taxon.tags:
             rec['tag'] = taxon.tags
+        if taxon.is_acronym:
+            rec['name_type']  = 'A'
             
         self._records.append( rec )
 
@@ -244,6 +249,10 @@ class TaxCatalogBuilder:
             t.is_valid = len(key) >= minlen
             t.name = _name
             t.phrase = _phrase
+            # Allow case-sensitve entries.  IFF input text contains UPPER
+            # case data, we'll mark it as acronym.
+            if t.phrase.isupper():
+                t.is_acronym = True
             
             self.add(catalog, t)
 
