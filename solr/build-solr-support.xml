@@ -6,7 +6,7 @@
 
     <property name="jetty.v" value="8.1.9.v20130131" />
     <property name="winstone.v" value="0.9.10" />
-    <property name="textTagger.v" value="2.0-SNAPSHOT" />
+    <property name="textTagger.v" value="${solr.text.tagger.v}" />
     <property name="slf4j.v" value="1.7.5" />
     <property name="guava.v" value="14.0.1" />
     <property name="xponents.v" value="2.7b" />
