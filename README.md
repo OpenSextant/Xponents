@@ -50,7 +50,10 @@ Name Matching depends on:
   * Build  your own using https://github.com/OpenSextant/opensextant/tree/master/Gazetteer, which Depends on Pentaho Kettle for creation
 
   OpenSextant SolrTextTagger
-  https://github.com/OpenSextant/SolrTextTagger
+  https://github.com/OpenSextant/SolrTextTagger, 2.0-SNAPSHOT, currently.
+  ./solr/build.properties (copy of build.local.properties) allows you to set the solr-text-tagger 2.x version of your choice.
+  Solr cores can be specific to the versions of lucene/solr/solrtt
+  
 
 
 #Using#
