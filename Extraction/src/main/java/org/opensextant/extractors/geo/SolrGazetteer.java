@@ -44,7 +44,9 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
+import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
+import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrProxy;
 //import org.slf4j.Logger;
@@ -75,6 +77,11 @@ public class SolrGazetteer {
     private Map<String, String> fips2iso = new HashMap<String, String>();
 
     /**
+     * Geodetic search parameters.
+     */
+    private ModifiableSolrParams geoLookup = new ModifiableSolrParams();
+
+    /**
      * Instantiates a new solr gazetteer.
      *
      * @throws IOException Signals that an I/O exception has occurred.
@@ -82,7 +89,6 @@ public class SolrGazetteer {
     public SolrGazetteer() throws ConfigException {
         initialize();
     }
-
 
     /**
      *  Returns the SolrProxy used internally.
@@ -114,13 +120,24 @@ public class SolrGazetteer {
      */
     private void initialize() throws ConfigException {
 
-        //solrHome = SolrConfiguration.deriveSolrHome(solrHome);
-
         solr = new SolrProxy("gazetteer");
 
         params.set(CommonParams.Q, "*:*");
         params.set(CommonParams.FL,
                 "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+
+        /* Basic parameters for geospatial lookup.
+         * These are reused, and only pt and d are set for each lookup.
+         * 
+         */
+        geoLookup.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
+                + "geo,place_id,name_bias,id_bias,name_type");
+        geoLookup.set(CommonParams.ROWS, 10);
+        geoLookup.set(CommonParams.Q, "*:*");
+        geoLookup.set(CommonParams.FQ, "{!geofilt}");
+        geoLookup.set("spatial", true);
+        geoLookup.set("sfield", "geo");
+        geoLookup.add("sort geodist asc"); // Find closest places first.
 
         try {
             geodataUtil = new GeonamesUtility();
@@ -271,6 +288,7 @@ public class SolrGazetteer {
     }
 
     /**
+     * Instance method that reuses a set of SolrParams for optimized search.
      * <pre>
      * Search the gazetteer using one of the following:
      * 
@@ -290,49 +308,34 @@ public class SolrGazetteer {
      */
     public List<Place> search(String place, boolean as_solr) throws SolrServerException {
 
-        List<Place> places = new ArrayList<Place>();
         if (as_solr) {
             params.set("q", place);
         } else {
             params.set("q", "\"" + place + "\""); // Bare keyword query needs to be quoted as "word word word"
         }
 
-        QueryResponse response = solr.getInternalSolrServer().query(params);
-
-        // -- Process Solr Response;  This for loop matches the one in SolrMatcher
-        //
-        SolrDocumentList docList = response.getResults();
-
-        for (SolrDocument gazEntry : docList) {
-            Place bean = SolrProxy.createPlace(gazEntry);
-
-            places.add(bean);
-        }
-
-        return places;
+        return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), params);
     }
 
+
+
     /**
-     * Make sure you pass in a solr handle to "/gazetteer"
+     * Find places located at a particular location.
      * 
-     * @param index
-     * @param params
+     * @param yx
      * @return
      * @throws SolrServerException 
      */
-    public static List<Place> search(SolrServer index, SolrParams qparams)
-            throws SolrServerException {
+    public List<Place> placesAt(LatLon yx, int withinKM) throws SolrServerException {
 
-        QueryResponse response = index.query(qparams, SolrRequest.METHOD.GET);
-
-        List<Place> places = new ArrayList<>();
-        SolrDocumentList docList = response.getResults();
-
-        for (SolrDocument solrDoc : docList) {
-            places.add(SolrProxy.createPlace(solrDoc));
-        }
-
-        return places;
+        /* URL as such:
+         * Find just Admin places and country codes for now.
+        /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
+         * 
+         */
+        geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
+        geoLookup.set("d", withinKM); // Find places within 50 KM, but only first is really used.
+        return SolrProxy.searchGazetteer(this.solr.getInternalSolrServer(), geoLookup);
     }
 
 }

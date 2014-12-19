@@ -25,12 +25,6 @@ public class TestGazetteer {
      * @throws Exception the exception
      */
     public static void main(String[] args) {
-        //String solrHome = args[0];
-        /*
-        String OPENSEXTANT_HOME = System.getProperty("opensextant.home");
-        String SOLR_HOME = OPENSEXTANT_HOME + File.separator + ".." + File.separator + "opensextant-solr";
-        System.setProperty("solr.solr.home", SOLR_HOME);
-         */
 
         SolrGazetteer gaz = null;
         try {
@@ -46,17 +40,10 @@ public class TestGazetteer {
                         + c.getAliases().toString());
             }
 
-            /* A Solr/lucene style parametric search.  By default, search queries "name" field.
-             *
-             */
             /*
-            List<Place> matches = gaz.search("+Boston +City");
-            for (Place pc : matches) {
-                System.out.println(pc.toString() + " which is categorized as: "
-                        + geodataUtil.getFeatureName(pc.getFeatureClass(), pc.getFeatureCode()));
-            }
-            */
-
+             * This test organizes country names to see if there are any country names
+             * that are unique. 
+             */
             List<String> cnames = new ArrayList<>();
             Map<String, Boolean> done = new TreeMap<>();
             for (Country C : geodataUtil.getCountries().values()) {
@@ -79,7 +66,7 @@ public class TestGazetteer {
 
             //Collections.sort(cnames);
             for (String cname : done.keySet()) {
-                System.out.println(String.format("\"%s\",", cname) + !done.get(cname));
+                System.out.println(String.format("\"%s\", Has Duplicates:", cname) + done.get(cname));
             }
 
         } catch (Exception err) {

@@ -29,14 +29,20 @@ package org.opensextant.util;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.UpdateRequest;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.core.CoreContainer;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
@@ -215,6 +221,29 @@ public class SolrProxy extends SolrUtil {
 
         return bean;
     }
+    
+    /**
+     * Search an OpenSextant solr gazetteer.
+     * 
+     * @param index solr server handle
+     * @param params search parameters
+     * @return
+     * @throws SolrServerException 
+     */
+    public static List<Place> searchGazetteer(SolrServer index, SolrParams qparams)
+            throws SolrServerException {
+
+        QueryResponse response = index.query(qparams, SolrRequest.METHOD.GET);
+
+        List<Place> places = new ArrayList<>();
+        SolrDocumentList docList = response.getResults();
+
+        for (SolrDocument solrDoc : docList) {
+            places.add(SolrProxy.createPlace(solrDoc));
+        }
+
+        return places;
+    }    
 
     /**
      * Add one solr record.

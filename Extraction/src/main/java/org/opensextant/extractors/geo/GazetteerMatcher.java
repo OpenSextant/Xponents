@@ -81,6 +81,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private boolean allowLowercaseAbbrev = false;
     private boolean allowLowerCase = false; /* enable trure for data such as tweets, blogs, etc. where case varies or does not exist */
     private ModifiableSolrParams geoLookup = new ModifiableSolrParams();
+    // All of these Solr-parameters for tagging are not user-tunable.
+    private final ModifiableSolrParams params = new ModifiableSolrParams();
 
     /**
      * 
@@ -102,33 +104,16 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         } catch (ExtractionException initErr) {
             throw new ConfigException("Unable to prime the tagger", initErr);
         }
+    }
 
-        /* Basic parameters for geospatial lookup.
-         * These are reused, and only pt and d are set for each lookup.
-         * 
+    @Override
+    public void initialize() throws ConfigException {
+
+        super.initialize();
+
+        /*
+         * Setup matcher params.
          */
-        geoLookup.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
-                + "geo,place_id,name_bias,id_bias,name_type");
-        geoLookup.set(CommonParams.ROWS, 10);
-
-        geoLookup.set(CommonParams.Q, "*:*");
-        geoLookup.set(CommonParams.FQ, "{!geofilt}");
-        geoLookup.set("spatial", true);
-        geoLookup.set("sfield", "geo");
-
-        //geoLookup.set("facet", true);
-        //geoLookup.add("facet.field", "cc"); // List found country codes.
-        //geoLookup.add("facet.field", "adm1"); // List found ADM1
-        geoLookup.add("sort geodist asc"); // Find closest places first.
-    }
-
-    public String getCoreName() {
-        return "gazetteer";
-    }
-
-    // All of these Solr-parameters for tagging are not user-tunable.
-    private static final ModifiableSolrParams params = new ModifiableSolrParams();
-    static {
         params.set(CommonParams.FL,
                 "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
         params.set("tagsLimit", 100000);
@@ -145,6 +130,23 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          */
         params.set("overlaps", "LONGEST_DOMINANT_RIGHT");
         // params.set("overlaps", "NO_SUB");
+
+        /* Basic parameters for geospatial lookup.
+         * These are reused, and only pt and d are set for each lookup.
+         * 
+         */
+        geoLookup.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
+                + "geo,place_id,name_bias,id_bias,name_type");
+        geoLookup.set(CommonParams.ROWS, 10);
+        geoLookup.set(CommonParams.Q, "*:*");
+        geoLookup.set(CommonParams.FQ, "{!geofilt}");
+        geoLookup.set("spatial", true);
+        geoLookup.set("sfield", "geo");
+        geoLookup.add("sort geodist asc"); // Find closest places first.
+    }
+
+    public String getCoreName() {
+        return "gazetteer";
     }
 
     public SolrParams getMatcherParameters() {
@@ -226,7 +228,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         // names matched is used only for debugging, currently.
         Set<String> namesMatched = new HashSet<>();
-        int docSize = buffer.length();
 
         tagLoop: for (NamedList<?> tag : tags) {
 
@@ -426,9 +427,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * false positives 100% of the time. E.g,. "way", "back", "north" You might
      * consider two different stop filters, Is "North" different than "north"?
      * This first pass filter should really filter out only text we know to be
-     * false positives regardless of case. deprecated: use of filters here.
-     * Filter out unwanted tags via GazetteerETL data model or in Solr index if
-     * you believe certain items will always be filtered. Then set name_bias <
+     * false positives regardless of case. 
+
+     * Filter out unwanted tags via GazetteerETL data model or in Solr index. If
+     * you believe certain items will always be filtered then set name_bias >
      * 0.0
      */
     class TagFilter extends MatchFilter {
@@ -445,7 +447,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         public TagFilter() throws ConfigException {
             super();
-            stopTerms = GazetteerMatcher.loadExclusions(GazetteerMatcher.class.getResource("/exclusions/non-placenames.csv"));
+            stopTerms = GazetteerMatcher.loadExclusions(GazetteerMatcher.class
+                    .getResource("/filters/non-placenames.csv"));
         }
 
         public void enableStopwordFilter(boolean b) {
@@ -463,7 +466,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             }
 
             if (filter_stopwords) {
-                if (stopTerms.contains(t.toLowerCase())){
+                if (stopTerms.contains(t.toLowerCase())) {
                     return true;
                 }
             }
@@ -489,8 +492,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         geoLookup.set("d", 50); // Find places within 50 KM, but only first is really used.
 
         try {
-            List<Place> places = SolrGazetteer.search(this.solr.getInternalSolrServer(), geoLookup);
-            return places;
+            return SolrProxy.searchGazetteer(this.solr.getInternalSolrServer(), geoLookup);
         } catch (SolrServerException e) {
             this.log.error("Failed to search gazetter by location");
         }

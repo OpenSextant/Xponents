@@ -56,7 +56,7 @@ public abstract class SolrMatcherSupport {
 
     /*
      */
-    protected static String requestHandler = "/tag";
+    protected String requestHandler = "/tag";
     // protected String coreName = null;
     protected SolrProxy solr = null;
 
@@ -103,8 +103,7 @@ public abstract class SolrMatcherSupport {
      *
      * @throws IOException if solr server cannot be established from local index or from http server
      */
-    public final void initialize() throws ConfigException {
-
+    public void initialize() throws ConfigException {
         solr = new SolrProxy(getCoreName());
     }
 
