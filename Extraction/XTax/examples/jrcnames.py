@@ -88,6 +88,7 @@ AMBIGUOUS = set(
          'twitter',
          'youtube',
          'they are',
+         'our own',
          'reach',
          'armed forces',
          'canal', 
