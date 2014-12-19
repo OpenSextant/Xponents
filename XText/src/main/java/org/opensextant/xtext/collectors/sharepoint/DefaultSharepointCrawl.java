@@ -174,7 +174,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
 
                     // B. Drop files in archive mirroring the original
                     // Sharepoint site structure.
-                    File itemSaved = createArchiveFile(l.getNormalPath());
+                    File itemSaved = createArchiveFile(l.getNormalPath(), false /*not dir*/);
                     WebClient.downloadFile(itemPage.getEntity(), itemSaved.getAbsolutePath());
 
                     convertContent(itemSaved, l);
