@@ -157,10 +157,15 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         String rawData = WebClient.readTextStream(page.getEntity().getContent());
         HyperLink thisLink = new HyperLink(link, link, site);
         String thisPath = thisLink.getNormalPath();
+        boolean isDir = false;
         if (thisLink.isDynamic()) {
             thisPath = thisPath + ".html";
         }
-        File thisPage = createArchiveFile(thisPath);
+        if (thisPath.endsWith("/")) {
+            // How else to tell if an item is a directory?
+            isDir = true;
+        }
+        File thisPage = createArchiveFile(thisPath, isDir);
         // OVERWRITE:
         if (!thisPage.exists()) {
             FileUtility.writeFile(rawData, thisPage.getAbsolutePath());
@@ -201,13 +206,16 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
 
             // B. Drop files in archive mirroring the original
             // 
-            File itemSaved = createArchiveFile(fpath);
+            File itemSaved = createArchiveFile(fpath, false);
 
             if (saved.contains(itemSaved.getAbsolutePath())) {
                 // in theory this item resolved to an item that was already saved. 
                 // ignore.
                 continue;
             }
+
+            File dir = new File(itemSaved.getParentFile().getAbsolutePath());
+            FileUtility.makeDirectory(dir);
 
             // Download artifacts
             if (l.isFile() || l.isDynamic()) {

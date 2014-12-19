@@ -44,6 +44,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.opensextant.ConfigException;
+import org.opensextant.util.FileUtility;
 import org.opensextant.xtext.XText;
 import org.opensextant.xtext.collectors.Collector;
 import org.slf4j.Logger;
@@ -108,11 +109,16 @@ public class WebClient {
      * 
      * @param relpath
      * @return
+     * @throws IOException 
      */
-    protected File createArchiveFile(String relpath) {
+    protected File createArchiveFile(String relpath, boolean isDir) throws IOException {
         String itemArchivedPath = archiveRoot + Collector.PATH_SEP + relpath;
         File itemSaved = new File(itemArchivedPath.replaceAll("//", "/"));
-        itemSaved.getParentFile().mkdirs();
+        if (isDir){
+            FileUtility.makeDirectory(itemSaved);
+        } else {
+            itemSaved.getParentFile().mkdirs();            
+        }
         return itemSaved;
     }
 
@@ -278,7 +284,7 @@ public class WebClient {
      */
     public Collection<HyperLink> parseContentPage(String html, String pageUrl, String siteUrl) {
         Map<String, HyperLink> contentLinks = new HashMap<String, HyperLink>();
-        Pattern href_matcher = Pattern.compile("href=\"([^\"]+)\"");
+        Pattern href_matcher = Pattern.compile("href=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
         Matcher matches = href_matcher.matcher(html);
         while (matches.find()) {
             String link = matches.group(1).trim();
