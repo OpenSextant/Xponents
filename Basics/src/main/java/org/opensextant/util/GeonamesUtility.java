@@ -223,6 +223,15 @@ public class GeonamesUtility {
         String isocode = fips2iso.get(fips);
         return getCountry(isocode);
     }
+    
+    /**
+     * Find an ISO code for a given FIPS entry.
+     * @param fips
+     * @return null if key does not exist.
+     */
+    public String FIPS2ISO(String fips){
+        return fips2iso.get(fips);        
+    }
 
     /**
      *
