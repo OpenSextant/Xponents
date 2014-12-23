@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.DateUtil;
 
 /**
@@ -121,12 +123,26 @@ public class SolrUtil {
         return result.charAt(0);
     }
 
+
+    /**
+     * Get a String object from a record on input.
+     * @param solrDoc solr Input document
+     */
+    public static String getString(SolrInputDocument solrDoc, String name) {
+        Object result = solrDoc.getFieldValue(name);
+        
+        if (result==null || StringUtils.isBlank((String)result)) {
+            return null;
+        }
+        return result.toString();
+    }
+    
     /**
      * Get a String object from a record
      */
     public static String getString(SolrDocument solrDoc, String name) {
         Object result = solrDoc.getFirstValue(name);
-        if (result == null) {
+        if (result==null || StringUtils.isBlank((String)result)) {
             return null;
         }
         return result.toString();
