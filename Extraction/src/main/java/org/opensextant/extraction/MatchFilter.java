@@ -56,6 +56,9 @@ public class MatchFilter /*implements Filter*/ {
         tagFilter = FileUtility.loadDictionary(stopfile, false);
     }
     public MatchFilter(URL stopfile) throws IOException {
+        if (stopfile==null){
+            throw new IOException("Non-existent resource for URL");
+        }
         tagFilter = FileUtility.loadDictionary(stopfile, false);
     }    
 
