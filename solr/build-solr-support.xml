@@ -7,9 +7,10 @@
     <property name="jetty.v" value="8.1.9.v20130131" />
     <property name="winstone.v" value="0.9.10" />
     <property name="textTagger.v" value="${solr.text.tagger.v}" />
-    <property name="slf4j.v" value="1.7.5" />
+    <property name="slf4j.v" value="1.7.9" />
+    <property name="log4j.v" value="1.2.17" />
     <property name="guava.v" value="14.0.1" />
-    <property name="xponents.v" value="2.7b" />
+    <property name="xponents.v" value="2.7c-SNAPSHOT" />
     <property name="supercsv.v" value="2.2.0" />
 
     <!-- setup proxy -->
@@ -35,13 +36,22 @@
             <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
             <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
         </get>
+
+        <!-- Dependencies specific to the solr runtime here, ie. not referred to in POM  -->
         <get dest="build/containerLib/" skipexisting="true">
-            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/${slf4j.v}/slf4j-api-${slf4j.v}.jar" />
             <url url="http://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/${slf4j.v}/jcl-over-slf4j-${slf4j.v}.jar" />
-            <url url="http://repo1.maven.org/maven2/org/slf4j/slf4j-jdk14/${slf4j.v}/slf4j-jdk14-${slf4j.v}.jar" />
-            <!-- Somehow proxy failures and impeding...  
-            <url url="http://repo1.maven.org/maven2/com/google/guava/guava/${guava.v}/guava-${guava.v}.jar" /> -->
         </get>
+
+        <!-- Existing dependencies  that should be in Maven repo locally due to your Xponents build; e.g., pulled in by POM
+          -->
+        <copy todir="build/containerLib/" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/org/slf4j/slf4j-api/${slf4j.v}/slf4j-api-${slf4j.v}.jar" />
+        <copy todir="build/containerLib/" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/log4j/log4j/${log4j.v}/log4j-${log4j.v}.jar" />
+        <copy todir="build/containerLib/" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/org/slf4j/slf4j-log4j12/${slf4j.v}/slf4j-log4j12-${slf4j.v}.jar" />
+        <copy todir="build/containerLib/" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/com/google/guava/guava/${guava.v}/guava-${guava.v}.jar" />
 
         <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
         <copy todir="lib" overwrite="false" failonerror="false"
@@ -52,9 +62,10 @@
               file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents/${xponents.v}/opensextant-xponents-${xponents.v}.jar"/>
         <copy todir="lib" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar"/>
-
         <copy todir="build/containerLib" overwrite="false" failonerror="false"
             file="${user.home}/.m2/repository/com/google/guava/guava/${guava.v}/guava-${guava.v}.jar" />
+
+        <copy todir="build/containerLib" overwrite="true" failonerror="false" file="log4j.properties"/>
 
         <get dest="lib" skipexisting="true" ignoreerrors="true">
             <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
@@ -120,16 +131,20 @@
 
     <macrodef name="exec-jetty-solr">
         <sequential>
-            <java jar="build/jetty-runner-${jetty.v}.jar" fork="true" clonevm="true" failonerror="true" maxmemory="500m">
+            <java jar="build/jetty-runner-${jetty.v}.jar" fork="true" clonevm="true" failonerror="true" maxmemory="2g">
                 <sysproperty key="java.awt.headless" value="true" />
                 <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
                 <sysproperty key="solr.enableRemoteStreaming" value="true" />
-                <sysproperty key="java.util.logging.config.file" value="logging.properties" />
-                <sysproperty key="log4j.configuration" value="log4j.properties" />
+                <!-- <sysproperty key="java.util.logging.config.file" value="logging.properties" /> -->
+                <sysproperty key="log4j.configuration" value="file://${basedir}/build/containerLib/log4j.properties" />
 
                 <!-- Jetty arguments -->
                 <arg value="--lib"/>
-                <arg value="build/containerLib"/>
+                <arg value="${basedir}/build/containerLib"/>
+                <arg value="--classes"/>
+                <arg value="${basedir}/build/containerLib"/>
+                <arg value="--classes"/>
+                <arg value="${basedir}/gazetteer/conf/"/>
                 <arg value="--port"/>
                 <arg value="${solr.server.port}"/>
                 <arg value="--path"/>
