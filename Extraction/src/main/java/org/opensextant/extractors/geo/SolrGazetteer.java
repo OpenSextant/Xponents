@@ -69,12 +69,22 @@ public class SolrGazetteer {
      */
     private ModifiableSolrParams params = new ModifiableSolrParams();
     private SolrProxy solr = null;
-    private Map<String, Country> country_lookup = null;
+
+    /**
+     * fast lookup by ISO2 country code.
+     */
+    private Map<String, Country> countryCodes = null;
+
+    /**
+     * fast lookup of a country name; this is the full list of all country name variants.
+     */
+    private Map<String, Country> countryNames = null;
+
     /**
      * Default country code in solr gazetteer is ISO, so if given a FIPS code, we need
      * a helpful lookup to get ISO code for lookup.
      */
-    private Map<String, String> fips2iso = new HashMap<String, String>();
+    private Map<String, String> countryFIPS_ISO = new HashMap<String, String>();
 
     /**
      * Geodetic search parameters.
@@ -88,6 +98,22 @@ public class SolrGazetteer {
      */
     public SolrGazetteer() throws ConfigException {
         initialize();
+    }
+
+    public SolrGazetteer(SolrProxy currentIndex) throws ConfigException {
+        //initialize();
+        solr = currentIndex;
+
+        try {
+            this.countryCodes = loadCountries(solr.getInternalSolrServer());
+        } catch (SolrServerException loadErr) {
+            throw new ConfigException(
+                    "SolrGazetteer is unable to load countries due to Solr error", loadErr);
+        } catch (IOException ioErr) {
+            throw new ConfigException(
+                    "SolrGazetteer is unable to load countries due to IO/file error", ioErr);
+        }
+
     }
 
     /**
@@ -108,8 +134,6 @@ public class SolrGazetteer {
     public static String normalizeCountryName(String c) {
         return StringUtils.capitalize(c.toLowerCase());
     }
-
-    private GeonamesUtility geodataUtil = null;
 
     /**
      * Initialize.
@@ -140,8 +164,7 @@ public class SolrGazetteer {
         geoLookup.add("sort geodist asc"); // Find closest places first.
 
         try {
-            geodataUtil = new GeonamesUtility();
-            loadCountries();
+            this.countryCodes = loadCountries(solr.getInternalSolrServer());
         } catch (SolrServerException loadErr) {
             throw new ConfigException(
                     "SolrGazetteer is unable to load countries due to Solr error", loadErr);
@@ -166,7 +189,7 @@ public class SolrGazetteer {
      * @return the countries
      */
     public Map<String, Country> getCountries() {
-        return country_lookup;
+        return countryCodes;
     }
 
     /** The Constant UNK_Country. */
@@ -186,8 +209,8 @@ public class SolrGazetteer {
         if (isocode == null) {
             return null;
         }
-        if (country_lookup.containsKey(isocode)) {
-            return country_lookup.get(isocode);
+        if (countryCodes.containsKey(isocode)) {
+            return countryCodes.get(isocode);
         }
         return UNK_Country;
     }
@@ -199,7 +222,7 @@ public class SolrGazetteer {
      * @return the country by fips
      */
     public Country getCountryByFIPS(String fips) {
-        String isocode = fips2iso.get(fips);
+        String isocode = countryFIPS_ISO.get(fips);
         return getCountry(isocode);
     }
 
@@ -210,9 +233,11 @@ public class SolrGazetteer {
      * TODO: allow caller to get all entries, including abbreviations.
      *
      * @throws SolrServerException the solr server exception
+     * @throws IOException 
      */
-    protected void loadCountries() throws SolrServerException {
-        country_lookup = new HashMap<String, Country>();
+    public static HashMap<String, Country> loadCountries(SolrServer index)
+            throws SolrServerException, IOException {
+        HashMap<String, Country> countryCodeMap = new HashMap<String, Country>();
 
         ModifiableSolrParams ctryparams = new ModifiableSolrParams();
         ctryparams.set(CommonParams.FL,
@@ -221,19 +246,20 @@ public class SolrGazetteer {
         ctryparams.set("q", "+feat_class:A +feat_code:PCL* +name_type:N");
         ctryparams.set("rows", 2000);
 
-        QueryResponse response = solr.getInternalSolrServer().query(ctryparams);
+        QueryResponse response = index.query(ctryparams);
 
         // -- Process Solr Response;  This for loop matches the one in SolrMatcher
         //
         SolrDocumentList docList = response.getResults();
         for (SolrDocument gazEntry : docList) {
             String code = SolrProxy.getString(gazEntry, "cc");
-            //String fips = SolrProxy.getString(solrDoc, "cc_fips");
+            String fips = SolrProxy.getString(gazEntry, "FIPS_cc");
+            String iso3 = SolrProxy.getString(gazEntry, "ISO3_cc");
             String name = SolrProxy.getString(gazEntry, "name");
 
             // NOTE: FIPS could be "*", where ISO2 column is always non-trivial. if ("*".equals(code)){code = fips; }
 
-            Country C = country_lookup.get(code);
+            Country C = countryCodeMap.get(code);
             if (C != null) {
                 C.addAlias(name); // all other metadata is same.
                 continue;
@@ -241,6 +267,8 @@ public class SolrGazetteer {
 
             C = new Country(code, name);
             C.setName_type(SolrProxy.getChar(gazEntry, "name_type"));
+            C.CC_FIPS = fips;
+            C.CC_ISO3 = iso3;
 
             // Geo field is specifically Spatial4J lat,lon format.
             double[] xy = SolrProxy.getCoordinate(gazEntry, "geo");
@@ -249,13 +277,15 @@ public class SolrGazetteer {
 
             C.addAlias(C.getName()); // don't loose this entry as a likely variant.
 
-            country_lookup.put(code, C);
+            countryCodeMap.put(code, C);
         }
+
+        GeonamesUtility geodataUtil = new GeonamesUtility();
 
         /**
          * Finally choose default official names given the map of name:iso2
          */
-        for (Country C : country_lookup.values()) {
+        for (Country C : countryCodeMap.values()) {
             String n = geodataUtil.getDefaultCountryName(C.getCountryCode());
             if (n != null) {
                 for (String alias : C.getAliases()) {
@@ -265,6 +295,7 @@ public class SolrGazetteer {
                 }
             }
         }
+        return countryCodeMap;
     }
 
     /**
@@ -317,8 +348,6 @@ public class SolrGazetteer {
         return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), params);
     }
 
-
-
     /**
      * Find places located at a particular location.
      * 
@@ -335,7 +364,7 @@ public class SolrGazetteer {
          */
         geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
         geoLookup.set("d", withinKM); // Find places within 50 KM, but only first is really used.
-        return SolrProxy.searchGazetteer(this.solr.getInternalSolrServer(), geoLookup);
+        return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), geoLookup);
     }
 
 }
