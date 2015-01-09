@@ -29,6 +29,8 @@ package org.opensextant.util;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -47,15 +49,17 @@ import org.supercsv.prefs.CsvPreference;
  */
 public class GeonamesUtility {
 
-    private Map<String, Country> country_lookup = null;
-    private Map<String, String> iso2fips = new HashMap<String, String>();
-    private Map<String, String> fips2iso = new HashMap<String, String>();
+    private Map<String, Country> isoCountries = new HashMap<>();
+    private Map<String, Country> fipsCountries = new HashMap<>();
+    private Map<String, String> iso2fips = new HashMap<>();
+    private Map<String, String> fips2iso = new HashMap<>();
+    private List<Country> countries = new ArrayList<>();
     /**
      * Feature map is a fast lookup F/CODE ==&gt; description or name
      */
-    private Map<String, String> features = new HashMap<String, String>();
+    private Map<String, String> features = new HashMap<>();
 
-    private Map<String, String> _default_country_names = new HashMap<String, String>();
+    private Map<String, String> _default_country_names = new HashMap<>();
 
     /**
      * A utility class that offers many static routines; If you instantiate this
@@ -123,20 +127,17 @@ public class GeonamesUtility {
     }
 
     private void loadCountryNameMap() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2014.csv");
+        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2015.csv");
         java.io.Reader countryIO = new InputStreamReader(io);
         CsvMapReader countryMap = new CsvMapReader(countryIO, CsvPreference.EXCEL_PREFERENCE);
         String[] columns = countryMap.getHeader(true);
         Map<String, String> country_names = null;
-
-        country_lookup = new HashMap<String, Country>();
-
         while ((country_names = countryMap.read(columns)) != null) {
             String n = country_names.get("country_name");
             String cc = country_names.get("ISO2_cc");
             String iso3 = country_names.get("ISO3_cc");
             String fips = country_names.get("FIPS_cc");
-            iso2fips.put(cc, fips);
+            iso2fips.put(cc, fips); //ISO2
             iso2fips.put(iso3, fips);
             fips2iso.put(fips, cc);
 
@@ -146,10 +147,11 @@ public class GeonamesUtility {
 
             cc = cc.toUpperCase(Locale.ENGLISH);
             fips = fips.toUpperCase(Locale.ENGLISH);
-            
+
             // Unique Name?  E.g., "Georgia" country name is not unique. 
             // This flag helps inform Disambiguation choose countries and places.
             boolean isUniq = Boolean.parseBoolean(country_names.get("is_unique_name"));
+            boolean isTerr = Boolean.parseBoolean(country_names.get("territory"));
 
             // FIPS could be *, but as long as we use ISO2, we're fine. if
             // ("*".equals(cc)){ cc = fips.toUpperCase(); }
@@ -162,14 +164,20 @@ public class GeonamesUtility {
             C.CC_ISO2 = cc;
             C.CC_ISO3 = iso3;
             C.setUniqueName(isUniq);
+            C.isTerritory = isTerr;
 
-            // TOOD: resolve overwriting some key conflicts ISO2 codes may also
-            // be FIPS
-            country_lookup.put(cc, C);
-            country_lookup.put(iso3, C);
-            if (!fips.equals("*")) {
-                country_lookup.put(fips, C);
+            // ISO
+            if (!C.isTerritory) {
+                isoCountries.put(cc, C);
+                isoCountries.put(iso3, C);
             }
+
+            // FIPS  -- mostly unique.
+            if (!fips.equals("*")) {
+                fipsCountries.put(fips, C);
+            }
+
+            countries.add(C);
         }
 
         countryMap.close();
@@ -193,8 +201,11 @@ public class GeonamesUtility {
      * List all country names, official and variant names.
      * @return map of countries, keyed by ISO country code
      */
-    public Map<String, Country> getCountries() {
-        return country_lookup;
+    //public Map<String, Country> getCountries() {
+    //    return country_lookup;
+    //}
+    public List<Country> getCountries() {
+        return countries;
     }
 
     public static final Country UNK_Country = new Country("UNK", "invalid");
@@ -212,7 +223,27 @@ public class GeonamesUtility {
         if (isocode == null) {
             return null;
         }
-        return country_lookup.get(isocode);
+        return isoCountries.get(isocode);
+    }
+
+    /**
+     * Find distinct country object by a code.
+     * Ambiguous codes will not do anything.
+     * @param cc
+     * @return
+     */
+    public Country getCountryByAnyCode(String cc) {
+        if (isoCountries.containsKey(cc) && fipsCountries.containsKey(cc)) {
+            return null;
+        }
+        if (isoCountries.containsKey(cc)) {
+            return isoCountries.get(cc);
+        }
+        if (fipsCountries.containsKey(cc)) {
+            return fipsCountries.get(cc);
+        }
+        // Not a country.
+        return null;
     }
 
     /**
@@ -220,17 +251,19 @@ public class GeonamesUtility {
      * @return Country object
      */
     public Country getCountryByFIPS(String fips) {
-        String isocode = fips2iso.get(fips);
-        return getCountry(isocode);
+        if (fips == null) {
+            return null;
+        }
+        return fipsCountries.get(fips);
     }
-    
+
     /**
      * Find an ISO code for a given FIPS entry.
      * @param fips
      * @return null if key does not exist.
      */
-    public String FIPS2ISO(String fips){
-        return fips2iso.get(fips);        
+    public String FIPS2ISO(String fips) {
+        return fips2iso.get(fips);
     }
 
     /**
@@ -312,7 +345,7 @@ public class GeonamesUtility {
         // Mapping:  A well-known place ===>  country code for country that could be confused with that place name.
         KNOWN_NAME_COLLISIONS.put("new mexico", "MX");
         KNOWN_NAME_COLLISIONS.put("savannah", "GG");
-        KNOWN_NAME_COLLISIONS.put("atlanta", "GG");  // Georgia, USA  ==> Georgia (country)
+        KNOWN_NAME_COLLISIONS.put("atlanta", "GG"); // Georgia, USA  ==> Georgia (country)
         KNOWN_NAME_COLLISIONS.put("new jersey", "JE");
         KNOWN_NAME_COLLISIONS.put("new england", "UK");
         KNOWN_NAME_COLLISIONS.put("british columbia", "UK");
@@ -375,7 +408,7 @@ public class GeonamesUtility {
      * @return - true if this is a country or "country-like" place
      */
     public static boolean isCountry(String featCode) {
-        return (featCode!=null ? featCode.startsWith("PCL") : false);
+        return (featCode != null ? featCode.startsWith("PCL") : false);
     }
 
     /**

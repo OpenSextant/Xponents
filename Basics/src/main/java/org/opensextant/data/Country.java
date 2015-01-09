@@ -112,6 +112,16 @@ public class Country extends Place {
 
     public boolean hasUniqueName() {
         return uniqueName;
+    }
 
+    public boolean isTerritory = false;
+
+    @Override
+    public String toString() {
+        if (!isTerritory) {
+            return String.format("%s (%s,%s,%s)", getName(), CC_ISO3, CC_ISO2, CC_FIPS);
+        } else {
+            return String.format("%s territory of %s", getName(), CC_ISO3);
+        }
     }
 }
