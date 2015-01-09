@@ -1,13 +1,8 @@
 package org.opensextant.extractors.test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.opensextant.data.Country;
@@ -28,10 +23,12 @@ public class TestGazetteer {
 
         SolrGazetteer gaz = null;
         try {
+            GeonamesUtility geodataUtil = new GeonamesUtility();
+
+            Country aus = geodataUtil.getCountry("AUS");
+            System.out.println("Got Australia..."+ aus);
 
             gaz = new SolrGazetteer();
-
-            GeonamesUtility geodataUtil = new GeonamesUtility();
 
             // Try to get countries
             Map<String, Country> countries = gaz.getCountries();
@@ -46,7 +43,8 @@ public class TestGazetteer {
              */
             List<String> cnames = new ArrayList<>();
             Map<String, Boolean> done = new TreeMap<>();
-            for (Country C : geodataUtil.getCountries().values()) {
+            for (Country C : geodataUtil.getCountries()) {
+
                 String q = String.format("name:%s AND -feat_code:PCLI AND -feat_code:TERR",
                         C.getName());
                 List<Place> country_name_matches = gaz.search(q, true);
@@ -66,7 +64,8 @@ public class TestGazetteer {
 
             //Collections.sort(cnames);
             for (String cname : done.keySet()) {
-                System.out.println(String.format("\"%s\", Has Duplicates:", cname) + done.get(cname));
+                System.out.println(String.format("\"%s\", Has Duplicates:", cname)
+                        + done.get(cname));
             }
 
         } catch (Exception err) {
