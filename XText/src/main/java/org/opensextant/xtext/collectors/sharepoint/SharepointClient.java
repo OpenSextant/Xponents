@@ -17,6 +17,7 @@
 package org.opensextant.xtext.collectors.sharepoint;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -119,7 +120,7 @@ public class SharepointClient extends WebClient {
      *            HTML text buffer
      * @return
      */
-    public Collection<SPLink> parseContentPage(String html, String pageUrl) {
+    public Collection<SPLink> parseContentPage(String html, URL pageUrl) {
         Map<String, SPLink> contentLinks = new HashMap<String, SPLink>();
         Pattern href_matcher = Pattern.compile("href=\"([^\"]+)\"");
         Matcher matches = href_matcher.matcher(html);
@@ -135,7 +136,10 @@ public class SharepointClient extends WebClient {
                 link = link.substring(0, link.length() - 1);
             }
             try {
-                SPLink l = new SPLink(link, pageUrl);
+                SPLink l = new SPLink(prepURLPath(link).toString(), pageUrl);
+                if (l.isResource()){
+                    continue;
+                }
                 if (!contentLinks.containsKey(l.toString())) {
                     log.info("Found link {}", link);
                     contentLinks.put(l.toString(), l);

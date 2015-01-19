@@ -19,9 +19,11 @@ package org.opensextant.xtext.collectors.web;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.utils.DateUtils;
@@ -42,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author ubaldino
  *
  */
-public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Collector {
+public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Collector, CrawlFilter {
 
     /**
      * A collection listener to consult as far as how to record the found & converted content
@@ -51,6 +53,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      */
     protected CollectionListener listener = null;
     private Logger log = LoggerFactory.getLogger(getClass());
+    private boolean allowCurrentSiteOnly = true;
+    private boolean allowCurrentDirOnly = false;
 
     /**
      * 
@@ -133,13 +137,13 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * @param site
      * @throws IOException
      */
-    public void collectItems(String _link, String site) throws IOException {
-        String link = site;
+    public void collectItems(String _link, URL startingSite) throws IOException {
+        String link = startingSite.toString();
         if (_link != null) {
             link = _link;
         }
 
-        HttpResponse page = getPage(link);
+        HttpResponse page = getPage(prepURL(link));
 
         /*
          * As of XText 1.4, this HTTP header does not appear to be avaiable often using this http API:
@@ -155,17 +159,15 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
          *     It is saved to  FILE.html
          */
         String rawData = WebClient.readTextStream(page.getEntity().getContent());
-        HyperLink thisLink = new HyperLink(link, link, site);
+        HyperLink thisLink = new HyperLink(link, new URL(link), getSite());
         String thisPath = thisLink.getNormalPath();
-        boolean isDir = false;
+        if (StringUtils.isEmpty(thisPath)) {
+            return;
+        }
         if (thisLink.isDynamic()) {
             thisPath = thisPath + ".html";
         }
-        if (thisPath.endsWith("/")) {
-            // How else to tell if an item is a directory?
-            isDir = true;
-        }
-        File thisPage = createArchiveFile(thisPath, isDir);
+        File thisPage = createArchiveFile(thisPath, thisLink.isFolder());
         // OVERWRITE:
         if (!thisPage.exists()) {
             FileUtility.writeFile(rawData, thisPage.getAbsolutePath());
@@ -175,7 +177,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         log.info("Starting in on {} from {} @ depth=" + depth, link, site);
         pause();
 
-        Collection<HyperLink> items = parseContentPage(rawData, link, site);
+        Collection<HyperLink> items = parseContentPage(rawData, thisLink.getURL(), getSite());
 
         /* 2. Collect items on this page.
          * 
@@ -185,6 +187,24 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                 continue;
             }
 
+            if (this.isAllowCurrentSiteOnly() && !(l.isCurrentSite() || l.isCurrentHost())) {
+                // Page represented by link, l, is on another website.
+                log.info("Not on current site: {}", l);
+                continue;
+            }
+
+            if (this.isAllowCurrentDirOnly() && !l.isCurrentPage()) {
+                // Page represented by link, l, is on another directory on same or site.
+                log.info("Not on current directory: {}", l);
+                continue;
+            }
+
+            /* TODO: fix "key", as it represents not just path, but unique URLs
+             * different URLs with same path would collide.
+             * TODO: in general fix the ability to crawl off requested site. 
+             *  If that is really needed, this is not the crawling capability you want.
+             * 
+             */
             String key = l.getNormalPath();
             if (key == null) {
                 key = l.getAbsoluteURL();
@@ -193,11 +213,6 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                 continue;
             }
             found.put(key, l);
-
-            if (!l.isCurrentPage()) {
-                // Page represented by link, l, is on another website.
-                continue;
-            }
 
             String fpath = l.getNormalPath();
             if (l.isDynamic()) {
@@ -218,7 +233,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             FileUtility.makeDirectory(dir);
 
             // Download artifacts
-            if (l.isFile() || l.isDynamic()) {
+            if (l.isFile() || l.isWebPage()) {
                 pause();
 
                 try {
@@ -238,7 +253,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                     }
 
                     // create URL for link and download artifact.
-                    HttpResponse itemPage = getPage(l.getAbsoluteURL());
+                    HttpResponse itemPage = getPage(l.getURL());
                     // Regardless of the item's discovered path, determine
                     // the relative path.
 
@@ -302,5 +317,37 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                 log.error("Document was not converted, FILE={}", item);
             }
         }
+    }
+
+    /** 
+     * @see org.opensextant.xtext.collectors.web.CrawlFilter#isAllowCurrentDirOnly()
+     */
+    @Override
+    public boolean isAllowCurrentDirOnly() {
+        return allowCurrentDirOnly;
+    }
+
+    /* (non-Javadoc)
+     * @see org.opensextant.xtext.collectors.web.CrawlFilter#setAllowCurrentDirOnly(boolean)
+     */
+    @Override
+    public void setAllowCurrentDirOnly(boolean allowCurrentDirOnly) {
+        this.allowCurrentDirOnly = allowCurrentDirOnly;
+    }
+
+    /* (non-Javadoc)
+     * @see org.opensextant.xtext.collectors.web.CrawlFilter#isAllowCurrentSiteOnly()
+     */
+    @Override
+    public boolean isAllowCurrentSiteOnly() {
+        return allowCurrentSiteOnly;
+    }
+
+    /* (non-Javadoc)
+     * @see org.opensextant.xtext.collectors.web.CrawlFilter#setAllowCurrentSiteOnly(boolean)
+     */
+    @Override
+    public void setAllowCurrentSiteOnly(boolean allowCurrentSiteOnly) {
+        this.allowCurrentSiteOnly = allowCurrentSiteOnly;
     }
 }

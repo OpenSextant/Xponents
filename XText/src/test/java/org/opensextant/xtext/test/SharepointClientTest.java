@@ -3,6 +3,7 @@ package org.opensextant.xtext.test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 
 import org.apache.http.HttpEntity;
@@ -94,19 +95,20 @@ public class SharepointClientTest {
             sp.configure();
 
             Collection<SPLink> items = null;
+            URL siteURL = new URL(spSite);
             if (htmlFile != null) {
                 // Test a previously downloaded HTML page (HTML from a
                 // sharepoint site)
-                items = sp.parseContentPage(FileUtility.readFile(htmlFile), spSite);
+                items = sp.parseContentPage(FileUtility.readFile(htmlFile), siteURL);
 
             } else {
                 // Test a single site page, save contents to an output file.
-                HttpResponse resp = sp.getPage(spSite);
+                HttpResponse resp = sp.getPage(siteURL);
                 htmlFile = "dump-sharepoint.htm";
                 downloadFile(resp.getEntity(), htmlFile);
                 if (getItems) {
                     // FileUtility.readFile(htmlFile);
-                    items = sp.parseContentPage(FileUtility.readFile(htmlFile), spSite);
+                    items = sp.parseContentPage(FileUtility.readFile(htmlFile), siteURL);
                 }
             }
 
@@ -131,7 +133,7 @@ public class SharepointClientTest {
 
                         File f = new File(savePath.replaceAll("//", "/"));
                         f.getParentFile().mkdirs();
-                        HttpResponse itemPage = sp.getPage(url.getAbsoluteURL());
+                        HttpResponse itemPage = sp.getPage(url.getURL());
                         downloadFile(itemPage.getEntity(), f.getAbsolutePath());
                     }
                 } else if (url.isSharepointFolder()) {

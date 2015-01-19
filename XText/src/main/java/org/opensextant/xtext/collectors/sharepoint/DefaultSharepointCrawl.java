@@ -19,6 +19,7 @@ package org.opensextant.xtext.collectors.sharepoint;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 
 import org.apache.http.HttpResponse;
@@ -28,6 +29,7 @@ import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.ExclusionFilter;
 import org.opensextant.xtext.collectors.CollectionListener;
 import org.opensextant.xtext.collectors.Collector;
+import org.opensextant.xtext.collectors.web.CrawlFilter;
 import org.opensextant.xtext.collectors.web.HyperLink;
 import org.opensextant.xtext.collectors.web.WebClient;
 import org.slf4j.Logger;
@@ -41,7 +43,8 @@ import org.slf4j.LoggerFactory;
  * @author ubaldino
  *
  */
-public class DefaultSharepointCrawl extends SharepointClient implements ExclusionFilter, Collector {
+public class DefaultSharepointCrawl extends SharepointClient implements ExclusionFilter, Collector,
+        CrawlFilter {
     /**
      * A collection listener to consult as far as how to record the found & converted content
      * as well as to determine what is worth saving.
@@ -49,6 +52,8 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
      */
     protected CollectionListener listener = null;
     private Logger log = LoggerFactory.getLogger(getClass());
+    private boolean allowCurrentSiteOnly = true;
+    private boolean allowCurrentDirOnly = false;
 
     /**
      * 
@@ -131,7 +136,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
      * @param link
      * @throws IOException
      */
-    public void collectItems(String link) throws IOException {
+    public void collectItems(URL link) throws IOException {
 
         if (depth >= MAX_DEPTH) {
             log.info("Maximum Depth reached with link: {}", link);
@@ -150,6 +155,13 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
                 log.debug("Filtering out {}", l);
                 continue;
             }
+
+            if (this.isAllowCurrentSiteOnly() && !(l.isCurrentSite() || l.isCurrentHost())) {
+                // Page represented by link, l, is on another website.
+                log.info("Not on current site: {}", l);
+                continue;
+            }
+            
 
             // Download artifacts
             if (l.isFile()) {
@@ -170,7 +182,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
                     // create URL for link and download artifact.
                     // encode URL prior to retrieval.
                     // 
-                    HttpResponse itemPage = getPage(l.getAbsoluteURL());
+                    HttpResponse itemPage = getPage(l.getURL());
 
                     // B. Drop files in archive mirroring the original
                     // Sharepoint site structure.
@@ -180,7 +192,8 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
                     convertContent(itemSaved, l);
 
                 } catch (Exception fileErr) {
-                    log.error("Item for URL {} was not saved due to a net or IO issue.", l.getAbsoluteURL(), fileErr);
+                    log.error("Item for URL {} was not saved due to a net or IO issue.",
+                            l.getAbsoluteURL(), fileErr);
 
                 }
             }
@@ -195,8 +208,8 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
                 try {
                     collectItems(l.getSimplifiedFolderURL());
                 } catch (Exception fileErr) {
-                    log.error("Folder URL {} was not saved due to a net or IO issue.", l.getSimplifiedFolderURL(),
-                            fileErr);
+                    log.error("Folder URL {} was not saved due to a net or IO issue.",
+                            l.getSimplifiedFolderURL(), fileErr);
                 }
             }
             // Traverse sub-folders, N-deep?
@@ -248,5 +261,37 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
                 log.error("Document was not converted, FILE={}", item);
             }
         }
+    }
+
+    /** 
+     * @see org.opensextant.xtext.collectors.web.CrawlFilter#isAllowCurrentDirOnly()
+     */
+    @Override
+    public boolean isAllowCurrentDirOnly() {
+        return allowCurrentDirOnly;
+    }
+
+    /* (non-Javadoc)
+     * @see org.opensextant.xtext.collectors.web.CrawlFilter#setAllowCurrentDirOnly(boolean)
+     */
+    @Override
+    public void setAllowCurrentDirOnly(boolean allowCurrentDirOnly) {
+        this.allowCurrentDirOnly = allowCurrentDirOnly;
+    }
+
+    /* (non-Javadoc)
+     * @see org.opensextant.xtext.collectors.web.CrawlFilter#isAllowCurrentSiteOnly()
+     */
+    @Override
+    public boolean isAllowCurrentSiteOnly() {
+        return allowCurrentSiteOnly;
+    }
+
+    /* (non-Javadoc)
+     * @see org.opensextant.xtext.collectors.web.CrawlFilter#setAllowCurrentSiteOnly(boolean)
+     */
+    @Override
+    public void setAllowCurrentSiteOnly(boolean allowCurrentSiteOnly) {
+        this.allowCurrentSiteOnly = allowCurrentSiteOnly;
     }
 }

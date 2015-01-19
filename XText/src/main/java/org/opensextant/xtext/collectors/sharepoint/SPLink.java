@@ -39,7 +39,7 @@ public class SPLink extends HyperLink {
      * @throws MalformedURLException
      * @throws UnsupportedEncodingException
      */
-    public SPLink(String link, String base) throws MalformedURLException, UnsupportedEncodingException {
+    public SPLink(String link, URL base) throws MalformedURLException, UnsupportedEncodingException {
         super(link, base, base);
 
         if (isSharepointFolder()) {
@@ -52,14 +52,14 @@ public class SPLink extends HyperLink {
             if (base == null) {
                 throw new MalformedURLException("Unknown parent URL for arg baseUrl");
             }
-            baseURL = new URL(base); // aka Parent or containing page, folder or
+            referrerURL = base; // aka Parent or containing page, folder or
                                      // other node
-            absoluteURL = new URL(baseURL, urlValue);
+            absoluteURL = new URL(referrerURL, urlValue);
         }
 
         if (isSharepointFolder()) {
             parseURL();
-            simplifiedURL = new URL(baseURL, params.getProperty("RootFolder"));
+            simplifiedURL = new URL(referrerURL, params.getProperty("RootFolder"));
         }
     }
 
@@ -87,12 +87,13 @@ public class SPLink extends HyperLink {
     /**
      * 
      * @return string for url if it could be simplified.
+     * @throws MalformedURLException 
      */
-    public String getSimplifiedFolderURL() {
+    public URL getSimplifiedFolderURL() throws MalformedURLException {
         if (simplifiedURL == null) {
             return null;
         }
-        return simplifiedURL.toString();
+        return new URL(simplifiedURL.toString());
     }
 
     /**

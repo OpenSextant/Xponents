@@ -58,6 +58,23 @@ public class WebClient {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
+    public static URL prepURL(String u) throws MalformedURLException {
+        /**
+         * TODO: require outside caller encode URL properly.
+         * For now, whitespace is only main issue.
+         */
+        String encoded = u.replaceAll(" ", "%20");
+        return new URL(encoded);
+    }
+    public static String prepURLPath(String u) throws MalformedURLException {
+        /**
+         * TODO: require outside caller encode URL properly.
+         * For now, whitespace is only main issue.
+         */
+        return  u.replaceAll(" ", "%20");
+    }
+
+    
     /**  
      * @param siteUrl  the url to collect.
      * @param archive  the destination archive. Keep in mind, this is the location of downloaded originals.
@@ -73,7 +90,7 @@ public class WebClient {
     protected String archiveRoot = null;
     private String proxy = null;
     protected String server = null;
-    protected String site = null;
+    protected URL site = null;
     protected HttpHost proxyHost = null;
     protected int interval = 100; // milliseconds wait between web requests.
     protected XText converter = null;
@@ -114,10 +131,10 @@ public class WebClient {
     protected File createArchiveFile(String relpath, boolean isDir) throws IOException {
         String itemArchivedPath = archiveRoot + Collector.PATH_SEP + relpath;
         File itemSaved = new File(itemArchivedPath.replaceAll("//", "/"));
-        if (isDir){
+        if (isDir) {
             FileUtility.makeDirectory(itemSaved);
         } else {
-            itemSaved.getParentFile().mkdirs();            
+            itemSaved.getParentFile().mkdirs();
         }
         return itemSaved;
     }
@@ -132,7 +149,7 @@ public class WebClient {
 
     /** Maximum number of levels that will be crawled.
      */
-    public final static int MAX_DEPTH = 10;
+    public final static int MAX_DEPTH = 5;
 
     /**
      * Allow a proxy host to be set given the URL.
@@ -153,11 +170,11 @@ public class WebClient {
     }
 
     public void setSite(String url) throws MalformedURLException {
-        site = url;
+        site = new URL(url);
         server = new URL(url).getHost();
     }
 
-    public String getSite() {
+    public URL getSite() {
         return site;
     }
 
@@ -243,17 +260,12 @@ public class WebClient {
      * @return
      * @throws IOException
      */
-    public HttpResponse getPage(String siteURL) throws IOException {
+    public HttpResponse getPage(URL siteURL) throws IOException {
         HttpClient httpClient = getClient();
         HttpGet httpget = new HttpGet();
 
         try {
-            /**
-             * TODO: require outside caller encode URL properly.
-             * For now, whitespace is only main issue.
-             */
-            String encodedURL = siteURL.replaceAll(" ", "%20");
-            URI address = new URI(encodedURL);
+            URI address = siteURL.toURI();
             httpget.setURI(address);
             HttpResponse response = httpClient.execute(httpget);
 
@@ -277,28 +289,42 @@ public class WebClient {
      *  "#"
      *  "javascript:xxxxxx"
      * </pre>
+     * TODO:  pass in or set an allow filter.  sometimes caller knows which content is worth 
+     * following, e.g., ../abc_folder/morecontent.htm  and such URLs should be resolved absolutely to avoid 
+     * recapture repeatedly.
      * 
      * @param html
      *            HTML text buffer
      * @return
      */
-    public Collection<HyperLink> parseContentPage(String html, String pageUrl, String siteUrl) {
+    public Collection<HyperLink> parseContentPage(String html, URL pageUrl, URL siteUrl) {
         Map<String, HyperLink> contentLinks = new HashMap<String, HyperLink>();
         Pattern href_matcher = Pattern.compile("href=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
         Matcher matches = href_matcher.matcher(html);
         while (matches.find()) {
             String link = matches.group(1).trim();
             String link_lc = link.toLowerCase();
-            if ("/".equals(link) || "#".equals(link) || link_lc.startsWith("javascript")
-                    || link.startsWith("../")) {
+
+            if ("/".equals(link) || "#".equals(link)) {
                 continue;
             }
+            if (link_lc.startsWith("#") || link_lc.startsWith("javascript")) {
+                continue;
+            }
+            if (link_lc.startsWith("mailto:")) {
+                log.info("Ignore Mailto {}", link_lc);
+                continue;
+            }
+
             if (link.endsWith("/")) {
                 link = link.substring(0, link.length() - 1);
             }
 
             try {
                 HyperLink l = new HyperLink(link, pageUrl, siteUrl);
+                if (l.isResource()) {
+                    continue;
+                }
                 if (!contentLinks.containsKey(l.toString())) {
                     log.info("Found link {}", link);
                     contentLinks.put(l.toString(), l);

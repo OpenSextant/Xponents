@@ -31,40 +31,118 @@ import org.opensextant.util.TextUtils;
 public class HyperLink {
 
     protected String urlValue = null;
-    protected URL baseURL = null;
+    /** 
+     * the link as found.
+     */
+    protected String urlNominal = null;
+    protected URL referrerURL = null;
     protected URL absoluteURL = null;
+    protected URL siteURL = null;
     protected boolean isAbsolute = false;
     protected Properties params = new Properties();
-    protected boolean isCurrentPage = true;
+    protected boolean isCurrentPage = false;
+    protected boolean isCurrentSite = false;
+    protected boolean isCurrentHost = false;
     protected String siteValue = null;
     protected File archiveFile = null;
+    protected String pathExtension = null;
+    protected boolean isFolder = false;
+    protected String query = null;
+    protected String directory = null;
+    
+    /**
+     * a physical path that represents the URL uniquely. 
+     */
+    protected String normalizedPath = null;
 
-    private String referrer = null;
-
-    public HyperLink(String link, String base, String site) throws MalformedURLException {
+    /**
+     * 
+     * @param link
+     * @param referringLink  - Normalized, absolute URL string
+     * @param site
+     * @throws MalformedURLException
+     */
+    public HyperLink(String link, URL referringLink, URL site) throws MalformedURLException {
         urlValue = link;
-        siteValue = site;
-        String url_lc = urlValue.toLowerCase();
+        urlNominal = link;
+        siteURL = site;
+        siteValue = site.toString();
+        referrerURL = referringLink;
+        String url_lc = urlNominal.toLowerCase();
+        String site_lc = siteValue.toLowerCase();
+        String base_lc = referrerURL.toString().toLowerCase();
+        String urlPath = null;
+
         isAbsolute = (url_lc.startsWith("http:") || url_lc.startsWith("https:"));
 
-        referrer = base;
-
-        if (isAbsolute) {
-            isCurrentPage = url_lc.startsWith(site.toLowerCase());
+        if (!isAbsolute) {
+            absoluteURL = new URL(referrerURL, urlValue);
+            urlValue = absoluteURL.toString();
         } else {
-            isCurrentPage = !url_lc.startsWith("../");
-        }
-
-        if (isAbsolute()) {
             absoluteURL = new URL(urlValue);
-        } else {
-            if (base == null) {
-                throw new MalformedURLException("Unknown parent URL for arg baseUrl");
-            }
-            baseURL = new URL(base); // aka Parent or containing page, folder or
-                                     // other node
-            absoluteURL = new URL(baseURL, urlValue);
         }
+        query = absoluteURL.getQuery();
+
+        urlPath = absoluteURL.getPath().toLowerCase();
+        pathExtension = FilenameUtils.getExtension(urlPath);
+
+        if (url_lc.endsWith(".") || StringUtils.isEmpty(pathExtension)
+                || url_lc.endsWith("/")) {
+            isFolder = true;
+        }
+
+        String abs_lc = absoluteURL.toString().toLowerCase();
+
+        String path = absoluteURL.getPath();
+        if (StringUtils.isBlank(path)) {
+            normalizedPath = null;
+        } else {
+
+            if (path.charAt(0) == '/') {
+                normalizedPath = path.substring(1);
+            }
+            if (normalizedPath.endsWith("/")) {
+                normalizedPath = normalizedPath.substring(0, normalizedPath.length() - 1);
+            }
+            if (StringUtils.isNotBlank(query)) {
+                normalizedPath = String.format("%s/%s.html", normalizedPath,
+                        TextUtils.text_id(query));
+            }
+            
+            if (isFolder){
+                directory = new File(normalizedPath).getPath();
+            } else {
+                directory = new File(normalizedPath).getParent();
+            }
+        }
+
+        // If base/referring page is a directory see if it is in same folder
+        // as current link
+        //
+        int b = base_lc.lastIndexOf('/');
+        String dirB = base_lc.substring(0, b);
+        
+        int s = site_lc.lastIndexOf('/');
+        String siteDir = site_lc.substring(0, s);
+
+        isCurrentSite = abs_lc.startsWith(siteDir);
+        if (isCurrentSite) {
+            if (isFolder) {
+                isCurrentPage = abs_lc.startsWith(dirB);
+            } else {
+                int a = abs_lc.lastIndexOf('/');
+                String dirA = abs_lc.substring(0, a);
+                isCurrentPage = dirA.startsWith(dirB);
+            }
+        }        
+        String linkHost = absoluteURL.getHost();
+        String siteHost = siteURL.getHost();
+        isCurrentHost = linkHost.equalsIgnoreCase(siteHost);
+        
+    }
+
+    public boolean isFolder() {
+        return isFolder;
     }
 
     /**Get the referrer link used at creation time.
@@ -72,7 +150,7 @@ public class HyperLink {
      * @return the referrer
      */
     public String getReferrer() {
-        return referrer;
+        return referrerURL.toString();
     }
 
     //    /**
@@ -97,19 +175,7 @@ public class HyperLink {
      * @return
      */
     public String getNormalPath() {
-        String path = absoluteURL.getPath();
-        if (StringUtils.isBlank(path)) {
-            return null;
-        }
-        String q = absoluteURL.getQuery();
-        if (path.charAt(0) == '/') {
-            path = path.substring(1);
-        }
-        if (StringUtils.isNotBlank(q)) {
-            path = String.format("%s/%s.html", path, TextUtils.text_id(q));
-        }
-
-        return path;
+        return normalizedPath;
     }
 
     /**
@@ -132,13 +198,18 @@ public class HyperLink {
      * @return
      */
     public boolean isDynamic() {
-        return isDynamic(urlValue);
+        return isDynamic(urlValue, pathExtension);
+    }
+
+    public boolean isResource() {
+        return isResource(urlValue, pathExtension);
     }
 
     /**
      * list of dynamic pages, e.g., items to avoid.
      */
     private final static Set<String> dynamicPages = new HashSet<String>();
+    private final static Set<String> resourcePages = new HashSet<String>();
     static {
         dynamicPages.add("asp");
         dynamicPages.add("aspx");
@@ -147,6 +218,12 @@ public class HyperLink {
         dynamicPages.add("php");
         dynamicPages.add("pl");
         dynamicPages.add("dhtml");
+        dynamicPages.add("js");
+    }
+
+    static {
+        resourcePages.add("css");
+        resourcePages.add("ico");
     }
 
     public static boolean isDynamic(String url) {
@@ -155,6 +232,35 @@ public class HyperLink {
         }
         String norm = url.toLowerCase();
         String ext = FilenameUtils.getExtension(norm);
+        return isDynamic(url, ext);
+    }
+
+    public static boolean isResource(String url) {
+        if (StringUtils.isBlank(url)) {
+            return false;
+        }
+        String norm = url.toLowerCase();
+        String ext = FilenameUtils.getExtension(norm);
+        return isResource(norm, ext);
+    }
+
+    /**
+     * 
+     * @param url  -- currently unused.
+     * @param ext lower case.
+     * @return
+     */
+    public static boolean isResource(String url, String ext) {
+        return resourcePages.contains(ext);
+    }
+
+    /**
+     * 
+     * @param url  -- currently unused.
+     * @param ext lower case.
+     * @return
+     */
+    public static boolean isDynamic(String url, String ext) {
         return dynamicPages.contains(ext);
     }
 
@@ -169,7 +275,8 @@ public class HyperLink {
     }
 
     public boolean isFile() {
-        if (FileUtility.getFileDescription(urlValue) == FileUtility.DOC_MIMETYPE || FileUtility.isArchiveFile(urlValue)
+        if (FileUtility.getFileDescription(urlValue) == FileUtility.DOC_MIMETYPE
+                || FileUtility.isArchiveFile(urlValue)
                 || FileUtility.getFileDescription(urlValue) == FileUtility.SPREADSHEET_MIMETYPE
                 || FileUtility.getFileDescription(urlValue) == FileUtility.GIS_MIMETYPE) {
             return true;
@@ -200,7 +307,8 @@ public class HyperLink {
         if (isAbsolute()) {
             return absoluteURL.getPath().contains("#");
         }
-        if (StringUtils.isBlank(absoluteURL.getPath()) || StringUtils.isBlank(baseURL.getPath())) {
+        if (StringUtils.isBlank(absoluteURL.getPath())
+                || StringUtils.isBlank(referrerURL.getPath())) {
             return false;
         }
         String p1 = absoluteURL.getPath();
@@ -208,12 +316,12 @@ public class HyperLink {
             return true;
         }
 
-        if (!p1.startsWith(baseURL.getPath())) {
+        if (!p1.startsWith(referrerURL.getPath())) {
             // Not parent/child relationship here.
             return false;
         }
         // Both paths at this point represent path within the same site
-        int x = baseURL.getPath().length();
+        int x = referrerURL.getPath().length();
         int y = absoluteURL.getPath().length();
         if (x >= y) {
             return false;
@@ -267,9 +375,17 @@ public class HyperLink {
         }
         return test.equalsIgnoreCase(urlValue);
     }
+    
+    public boolean isCurrentHost(){
+        return isCurrentHost;
+    }
 
     public boolean isCurrentPage() {
         return isCurrentPage;
+    }
+
+    public boolean isCurrentSite() {
+        return isCurrentSite;
     }
 
     /**
@@ -281,5 +397,13 @@ public class HyperLink {
      */
     public String getAbsoluteURL() {
         return absoluteURL.toString();
+    }
+
+    /**
+     * 
+     * @return URL object for this link. It is an absolute URL.
+     */
+    public URL getURL() {
+        return absoluteURL;
     }
 }

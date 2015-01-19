@@ -34,14 +34,15 @@ public class WebCrawlTest implements CollectionListener {
     public static void usage() {
         System.out.println("\nUsage\n");
         System.out.println("\nParse HTML file\n");
-        System.out.println("\t WebCrawl  -l <link> -o <output>");
+        System.out.println("\t WebCrawl  -l <link> -o <output> [-d]");
     }
 
     public static void main(String[] args) {
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("WebCrawl", args, "o:l:");
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("WebCrawl", args, "do:l:");
 
         String o = null;
         String webSite = null;
+        boolean currentDirOnly = false;
 
         try {
             int c;
@@ -52,6 +53,10 @@ public class WebCrawlTest implements CollectionListener {
                     break;
                 case 'o':
                     o = opts.getOptarg();
+                    break;
+                    
+                case 'd':
+                    currentDirOnly = true;
                     break;
 
                 default:
@@ -98,6 +103,7 @@ public class WebCrawlTest implements CollectionListener {
             conv.setup();
 
             DefaultWebCrawl crawl = new DefaultWebCrawl(webSite, o);
+            crawl.setAllowCurrentDirOnly(currentDirOnly);
 
             String proxyHost = System.getProperty("http.proxyHost");
             if (proxyHost != null) {

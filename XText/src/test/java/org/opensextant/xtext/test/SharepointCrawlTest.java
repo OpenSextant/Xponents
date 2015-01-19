@@ -93,7 +93,7 @@ public class SharepointCrawlTest implements CollectionListener {
             //conv.getPathManager().setConversionCache(o+File.separator + "xtext");                    
             conv.setup();
 
-            DefaultSharepointCrawl sp = new DefaultSharepointCrawl(spSite, o, u, p, d);
+            DefaultSharepointCrawl sp = new DefaultSharepointCrawl(spSite, o, u, p, d);            
             sp.configure();
 
             // Set these items
