@@ -343,9 +343,13 @@ public class FileUtility {
         if (testDir == null) {
             return false;
         }
-
-        if (testDir.isDirectory()) {
+        
+        if (testDir.isDirectory() && testDir.exists()){
             return true;
+        }
+
+        if (testDir.isFile() && testDir.exists()) {
+            throw new IOException("Cannot overwrite existing file with a directory of the same name.");
         }
         return testDir.mkdirs();
     }
@@ -813,28 +817,53 @@ public class FileUtility {
         if (url == null) {
             return NOT_AVAILABLE;
         }
+        
 
-        if (url.endsWith("/")) {
+        //------------
+        
+        /*  path:   http://a/b.htm
+         * 
+         */
+        final String test = url.toLowerCase();
+
+        /*  path:   /a/b/
+         * 
+         */
+        if (url.endsWith("/") && !test.startsWith("http")) {
             return FOLDER_MIMETYPE;
         }
 
-        // Continue on...
-        //------------
-        final String test = url.toLowerCase();
         final String urlTestExtension = FilenameUtils.getExtension(test);
+        
+        /*
+         * Known file type.
+         */
         final String urlMimeType = filetypeMap.get(urlTestExtension);
         if (urlMimeType != null) {
             return urlMimeType;
         }
 
+        /*
+         * path:  .../abc.rss
+         */
         if (test.contains("rss")) {
             return FEED_MIMETYPE;
         }
 
         if (test.startsWith("http:") || test.startsWith("https:")) {
             return WEBPAGE_MIMETYPE;
+        }        
+
+        /*
+         *   path:   /some/default/path
+         */
+        if (url.contains("/")) {
+            return FOLDER_MIMETYPE;
         }
 
+        /*
+         * Give up.
+         */
         return NOT_AVAILABLE;
     }
     
