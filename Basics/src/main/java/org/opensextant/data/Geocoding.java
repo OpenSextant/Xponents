@@ -68,6 +68,8 @@ public interface Geocoding  extends LatLon {
     public String getAdmin1();
     public String getAdmin2();
     public String getAdminName();
+    public String getAdmin1Name();
+    public String getAdmin2Name();
 
     public String getFeatureClass();
     public String getFeatureCode();

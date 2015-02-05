@@ -170,6 +170,8 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
     private String source = null;
 
     protected String adminName = null;
+    protected String admin1Name = null;
+    protected String admin2Name = null;
 
     /**
      * Get the original source of this information.
@@ -351,5 +353,23 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
      */
     public void setAdminName(String adminName) {
         this.adminName = adminName;
+    }
+
+    @Override
+    public String getAdmin1Name() {
+        return admin1Name;
+    }
+
+    @Override
+    public String getAdmin2Name() {
+        return admin2Name;
+    }
+
+    public void setAdmin1Name(String n) {
+        admin1Name = n;
+    }
+
+    public void setAdmin2Name(String n) {
+        admin2Name = n;
     }
 }
