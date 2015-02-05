@@ -25,7 +25,6 @@ import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
-import org.opensextant.util.UnicodeTextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -308,8 +307,8 @@ public class TweetGeocoder {
      */
     private String scrubText(String x) {
         String _new = TextUtils.fast_replace(x, "\n\r", " ");
-        _new = UnicodeTextUtils.remove_emoticons(_new);
-        _new = UnicodeTextUtils.remove_symbols(_new);
+        _new = TextUtils.removeEmoticons(_new);
+        _new = TextUtils.removeSymbols(_new);
 
         return _new;
     }
