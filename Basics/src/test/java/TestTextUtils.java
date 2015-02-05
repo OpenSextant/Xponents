@@ -5,6 +5,12 @@ import org.opensextant.util.TextUtils;
 
 public class TestTextUtils {
 
+    @Test 
+    public void testRemoveSomeEmoticon(){
+        String result = TextUtils.removeEmoticons("😪😔😱😱😱");
+        System.out.println("Any emojis left? "+result);
+        //assertTrue( TextUtils.removeEmoticons("😪😔😱😱😱").length() == 0);
+    }
     @Test
     public void testRemoveLeft() {
         int count = TextUtils.removeAnyLeft("-+*ABC", "-").length();
