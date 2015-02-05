@@ -595,4 +595,22 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     public void setLongitude(double lon) {
         this.longitude = lon;
     }
+
+    /**
+     * Null implementation -- Geocoding interface.
+     * Coordinates from XCoord do not automatically report name of admin boundaries.
+     */
+    @Override
+    public String getAdmin1Name() {
+        return null;
+    }
+
+    /**
+     * Null implementation -- Geocoding interface
+     * Coordinates from XCoord do not automatically report name of admin boundaries.
+     */
+    @Override
+    public String getAdmin2Name() {
+        return null;
+    }
 }
