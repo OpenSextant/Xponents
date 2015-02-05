@@ -52,12 +52,18 @@ public class TikaHTMLConverter extends ConverterAdapter {
     public static final int MAX_HTML_FILE_SIZE = 0x80000; // 0.5 MB
     HtmlParser parser = new HtmlParser();
     private boolean scrub_article = false;
+    private int maxHTMLDocumentSize = MAX_HTML_FILE_SIZE;
 
     /**
      * Initialize a reusable HTML parser.
      */
     public TikaHTMLConverter(boolean article_only) throws IOException {
         scrub_article = article_only;
+    }
+
+    public TikaHTMLConverter(boolean article_only, int docSize) throws IOException {
+        this(article_only);
+        maxHTMLDocumentSize = docSize;
     }
 
     /**
@@ -76,7 +82,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
         // HTML Conversion here is simply not resetting its internal buffers
         // Its just accumulating and error out when it reaches MAX
-        ContentHandler handler = new BodyContentHandler(MAX_HTML_FILE_SIZE);
+        ContentHandler handler = new BodyContentHandler(maxHTMLDocumentSize);
 
         BoilerpipeContentHandler scrubbingHandler = null;
         if (scrub_article) {

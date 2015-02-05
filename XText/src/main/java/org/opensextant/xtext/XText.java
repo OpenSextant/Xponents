@@ -108,6 +108,12 @@ public final class XText implements ExclusionFilter, Converter {
      * XText default is 1 MB of text
      */
     private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE;
+    /**
+     * Heuristic - HTML content is likely 5x, maybe a lot more, the size of the 
+     * plain text it contains.  So with 1 MB the target max text size, 5 MB would be
+     * the largest HTML document accepted here, by default.
+     */
+    private int maxHTMLBuffer = 5 * maxBuffer;
     private long maxFileSize = FILE_SIZE_LIMIT;
 
     protected Set<String> archiveFileTypes = new HashSet<String>();
@@ -807,7 +813,7 @@ public final class XText implements ExclusionFilter, Converter {
 
         mimetype = "html";
         if (requestedFileTypes.contains(mimetype)) {
-            Converter webConv = new TikaHTMLConverter(this.scrubHTML);
+            Converter webConv = new TikaHTMLConverter(this.scrubHTML, maxHTMLBuffer);
             converters.put(mimetype, webConv);
             converters.put("htm", webConv);
             converters.put("xhtml", webConv);

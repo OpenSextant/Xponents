@@ -49,7 +49,7 @@ public class HyperLink {
     protected boolean isFolder = false;
     protected String query = null;
     protected String directory = null;
-    
+
     /**
      * a physical path that represents the URL uniquely. 
      */
@@ -86,8 +86,7 @@ public class HyperLink {
         urlPath = absoluteURL.getPath().toLowerCase();
         pathExtension = FilenameUtils.getExtension(urlPath);
 
-        if (url_lc.endsWith(".") || StringUtils.isEmpty(pathExtension)
-                || url_lc.endsWith("/")) {
+        if (url_lc.endsWith(".") || StringUtils.isEmpty(pathExtension) || url_lc.endsWith("/")) {
             isFolder = true;
         }
 
@@ -95,12 +94,9 @@ public class HyperLink {
 
         String path = absoluteURL.getPath();
         if (StringUtils.isBlank(path)) {
-            normalizedPath = null;
+            normalizedPath = "";
         } else {
-
-            if (path.charAt(0) == '/') {
-                normalizedPath = path.substring(1);
-            }
+            normalizedPath = path;
             if (normalizedPath.endsWith("/")) {
                 normalizedPath = normalizedPath.substring(0, normalizedPath.length() - 1);
             }
@@ -108,11 +104,21 @@ public class HyperLink {
                 normalizedPath = String.format("%s/%s.html", normalizedPath,
                         TextUtils.text_id(query));
             }
-            
-            if (isFolder){
-                directory = new File(normalizedPath).getPath();
-            } else {
-                directory = new File(normalizedPath).getParent();
+
+            if (StringUtils.isNotBlank(normalizedPath)) {
+
+                String p = FilenameUtils.normalize(normalizedPath);
+                if (p == null) {
+                    throw new MalformedURLException("Unable to parse/normalize path for: "
+                            + normalizedPath);
+                }
+                normalizedPath = p;
+
+                if (isFolder) {
+                    directory = new File(normalizedPath).getPath();
+                } else {
+                    directory = new File(normalizedPath).getParent();
+                }
             }
         }
 
@@ -121,7 +127,7 @@ public class HyperLink {
         //
         int b = base_lc.lastIndexOf('/');
         String dirB = base_lc.substring(0, b);
-        
+
         int s = site_lc.lastIndexOf('/');
         String siteDir = site_lc.substring(0, s);
 
@@ -134,11 +140,11 @@ public class HyperLink {
                 String dirA = abs_lc.substring(0, a);
                 isCurrentPage = dirA.startsWith(dirB);
             }
-        }        
+        }
         String linkHost = absoluteURL.getHost();
         String siteHost = siteURL.getHost();
         isCurrentHost = linkHost.equalsIgnoreCase(siteHost);
-        
+
     }
 
     public boolean isFolder() {
@@ -375,8 +381,8 @@ public class HyperLink {
         }
         return test.equalsIgnoreCase(urlValue);
     }
-    
-    public boolean isCurrentHost(){
+
+    public boolean isCurrentHost() {
         return isCurrentHost;
     }
 
