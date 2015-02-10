@@ -89,7 +89,8 @@ public class SolrGazetteer {
     /**
      * Geodetic search parameters.
      */
-    private ModifiableSolrParams geoLookup = new ModifiableSolrParams();
+    private ModifiableSolrParams geoLookup = createGeodeticLookupParams();
+    private ModifiableSolrParams geoLookup2 = createGeodeticLookupParams();
 
     /**
      * Instantiates a new solr gazetteer.
@@ -135,6 +136,23 @@ public class SolrGazetteer {
         return StringUtils.capitalize(c.toLowerCase());
     }
 
+    private static ModifiableSolrParams createGeodeticLookupParams() {
+        /* Basic parameters for geospatial lookup.
+         * These are reused, and only pt and d are set for each lookup.
+         * 
+         */
+        ModifiableSolrParams p = new ModifiableSolrParams();
+        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
+                + "geo,place_id,name_bias,id_bias,name_type");
+        p.set(CommonParams.ROWS, 10);
+        p.set(CommonParams.Q, "*:*");
+        p.set(CommonParams.FQ, "{!geofilt}");
+        p.set("spatial", true);
+        p.set("sfield", "geo");
+        p.add("sort geodist asc"); // Find closest places first.
+        return p;
+    }
+
     /**
      * Initialize.
      * Cascading env variables:  First use value from constructor, 
@@ -149,20 +167,6 @@ public class SolrGazetteer {
         params.set(CommonParams.Q, "*:*");
         params.set(CommonParams.FL,
                 "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
-
-        /* Basic parameters for geospatial lookup.
-         * These are reused, and only pt and d are set for each lookup.
-         * 
-         */
-        geoLookup.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
-                + "geo,place_id,name_bias,id_bias,name_type");
-        geoLookup.set(CommonParams.ROWS, 10);
-        geoLookup.set(CommonParams.Q, "*:*");
-        geoLookup.set(CommonParams.FQ, "{!geofilt}");
-        geoLookup.set("spatial", true);
-        geoLookup.set("sfield", "geo");
-        geoLookup.add("sort geodist asc"); // Find closest places first.
-
         try {
             this.countryCodes = loadCountries(solr.getInternalSolrServer());
         } catch (SolrServerException loadErr) {
@@ -351,7 +355,8 @@ public class SolrGazetteer {
     /**
      * Find places located at a particular location.
      * 
-     * @param yx
+     * @param yx 
+     * @param d  distance is required.
      * @return
      * @throws SolrServerException 
      */
@@ -363,8 +368,35 @@ public class SolrGazetteer {
          * 
          */
         geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
-        geoLookup.set("d", withinKM); // Find places within 50 KM, but only first is really used.
+        geoLookup.set("d", withinKM);
         return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), geoLookup);
+    }
+
+    /**
+     * Variation on placesAt()
+     * 
+     * @param yx        location
+     * @param withinKM  distance or -1
+     * @param feature   feature class
+     * @return
+     * @throws SolrServerException
+     */
+    public List<Place> placesAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
+
+        /* URL as such:
+         * Find just Admin places and country codes for now.
+        /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
+         * 
+         */
+        geoLookup2.set(CommonParams.Q, String.format("feat_class:%s", feature));
+
+        geoLookup2.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
+        if (withinKM > 0) {
+            geoLookup2.set("d", withinKM); // Example - Find places within 50 KM, but only first is really used.
+        } else {
+            geoLookup2.remove("d");
+        }
+        return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), geoLookup2);
     }
 
 }
