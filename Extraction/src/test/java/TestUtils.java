@@ -1,6 +1,5 @@
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
-import org.opensextant.util.UnicodeTextUtils;
 import org.opensextant.util.AnyFilenameFilter;
 
 import java.io.File;
@@ -38,7 +37,7 @@ public class TestUtils {
 
         String emo = "\ud83d\ude1d";
         System.out.println("What am I? " + emo);
-        System.out.println(UnicodeTextUtils.remove_emoticons("bla blah blahhh ;)  " + emo));
+        System.out.println(TextUtils.removeEmoticons("bla blah blahhh ;)  " + emo));
     }
 
     private boolean testFile(File testfile) {
