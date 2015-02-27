@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -239,7 +239,7 @@ public class SolrGazetteer {
      * @throws SolrServerException the solr server exception
      * @throws IOException 
      */
-    public static HashMap<String, Country> loadCountries(SolrServer index)
+    public static HashMap<String, Country> loadCountries(SolrClient index)
             throws SolrServerException, IOException {
         HashMap<String, Country> countryCodeMap = new HashMap<String, Country>();
 

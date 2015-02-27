@@ -32,11 +32,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -125,7 +125,7 @@ public class SolrProxy extends SolrUtil {
     }
 
     protected Logger logger = LoggerFactory.getLogger(SolrProxy.class);
-    protected SolrServer solrServer = null;
+    protected SolrClient solrServer = null;
     private UpdateRequest solrUpdate = null;
     protected URL server_url = null;
     private boolean writable = false;
@@ -149,9 +149,9 @@ public class SolrProxy extends SolrUtil {
      * @return Instance of a Solr server
      * @throws MalformedURLException
      */
-    public static SolrServer initializeHTTP(URL url) throws MalformedURLException {
+    public static SolrClient initializeHTTP(URL url) throws MalformedURLException {
 
-        HttpSolrServer server = new HttpSolrServer(url.toString());
+        HttpSolrClient server = new HttpSolrClient(url.toString());
         server.setAllowCompression(true);
 
         return server;
@@ -230,7 +230,7 @@ public class SolrProxy extends SolrUtil {
      * @return
      * @throws SolrServerException 
      */
-    public static List<Place> searchGazetteer(SolrServer index, SolrParams qparams)
+    public static List<Place> searchGazetteer(SolrClient index, SolrParams qparams)
             throws SolrServerException {
 
         QueryResponse response = index.query(qparams, SolrRequest.METHOD.GET);
@@ -369,7 +369,7 @@ public class SolrProxy extends SolrUtil {
         }
     }
 
-    public SolrServer getInternalSolrServer() {
+    public SolrClient getInternalSolrServer() {
         return solrServer;
     }
 
