@@ -399,6 +399,7 @@ public class TextUtils {
     public static boolean isUpper(String dat) {
         return checkCase(dat, 2);
     }
+
     public static boolean isLower(String dat) {
         return checkCase(dat, 1);
     }
@@ -1239,7 +1240,9 @@ public class TextUtils {
             return false;
         }
 
-        for (char ch : buf.toCharArray()) {
+        char ch;
+        for (int x = 0; x < buf.length(); ++x) {
+            ch = buf.charAt(x);
             // Ignore ASCII outright.
             // Ignore Latin-1 outright.
             if (ch < 0xFE) {
@@ -1367,7 +1370,7 @@ public class TextUtils {
 
         return new String(out.toByteArray(), charset);
     }
-    
+
     /**
      * Unicode and social media -- We encounter all sorts of hangups when processing
      * modern unicode text.  XML issues, JNI issues, escape utilities, etc.  All sorts 
@@ -1375,13 +1378,18 @@ public class TextUtils {
      * So these utilities are offered to help remove such things prior to data processing.
      */
     // UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS;
-    private static final Pattern scrub_symbols = Pattern.compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
-    private static final Pattern scrub_symbols2 = Pattern.compile("\\p{block=Transport and Map Symbols}+");
+    private static final Pattern scrub_symbols = Pattern
+            .compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
+    private static final Pattern scrub_symbols2 = Pattern
+            .compile("\\p{block=Transport and Map Symbols}+");
     private static final Pattern scrub_emoticon = Pattern.compile("\\p{block=Emoticons}+");
-    private static final Pattern scrub_alphasup = Pattern.compile("\\p{block=Enclosed Alphanumeric Supplement}+");
-    private static final Pattern scrub_symbols_tiles1 = Pattern.compile("\\p{block=Mahjong Tiles}+");
+    private static final Pattern scrub_alphasup = Pattern
+            .compile("\\p{block=Enclosed Alphanumeric Supplement}+");
+    private static final Pattern scrub_symbols_tiles1 = Pattern
+            .compile("\\p{block=Mahjong Tiles}+");
     private static final Pattern scrub_symbols_tiles2 = Pattern.compile("\\p{block=Domino Tiles}+");
-    private static final Pattern scrub_symbols_misc = Pattern.compile("\\p{block=Miscellaneous Symbols}+");
+    private static final Pattern scrub_symbols_misc = Pattern
+            .compile("\\p{block=Miscellaneous Symbols}+");
     private static final Pattern scrub_symbols_cards = Pattern.compile("\\p{block=Playing Cards}+");
 
     /**
@@ -1411,6 +1419,6 @@ public class TextUtils {
         _new = scrub_symbols_cards.matcher(_new).replaceAll("{card}");
 
         return _new;
-    }  
+    }
 
 }
