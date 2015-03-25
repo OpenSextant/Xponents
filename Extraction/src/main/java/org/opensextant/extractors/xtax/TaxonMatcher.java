@@ -1,5 +1,5 @@
 /**
- * Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2012-2015 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,7 +20,7 @@
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
  *
- * (c) 2012 The MITRE Corporation. All Rights Reserved.
+ * (c) 2015 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  *
  */
@@ -39,12 +39,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.apache.solr.client.solrj.SolrRequest;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
+import org.opensextant.data.Place;
 import org.opensextant.data.Taxon;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
@@ -57,8 +62,10 @@ import org.opensextant.extraction.Extractor;
  * The phrases can be from simple word lists or they can connect to a taxonomy of sorts -- 
  * the "taxcat" solr core (see Xponents/solr/taxcat and Xponents/XTax for implementation) 
  * 
- * Set either JVM arg solr.solr.home, solr.url (for server) to point to Solr index 
- * 
+ * JVM arg to use is "opensextant.solr" to point to the local path 
+ * Less tested:   solr.solr.home might conflict with a Solr document server instead of this tagger.
+ *                solr.url  is good for RESTful integration, but not recommended 
+ *                 
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
 public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
@@ -88,15 +95,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * 
      * @throws IOException
+     * @throws ConfigException 
      */
-    public TaxonMatcher() throws IOException {
-        // TaxonMatcher.initialize();
-
-        // Instance variable that will have the transient payload to tag
-        // this is not thread safe and is not static:
-
-        // Pre-loading the Solr FST
-        //
+    public TaxonMatcher() throws IOException, ConfigException {
+        configure();
     }
 
     /**
@@ -123,6 +125,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
+     * Create a Taxon tag, which is filtered based on established catalog filters.
+     * 
      * Caller must implement their domain objects, POJOs... this callback
      * handler only hashes them.
      * 
@@ -137,11 +141,20 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         if (!tag_all && !this.catalogs.contains(_cat)) {
             return null;
         }
+        return createTaxon(refData);
+    }
+
+    /**
+     * Parse the taxon reference data from a solr doc and return Taxon obj.
+     * @param refData
+     * @return
+     */
+    public static Taxon createTaxon(SolrDocument refData) {
         Taxon label = new Taxon();
 
-        label.catalog = _cat;
         label.name = SolrProxy.getString(refData, "taxnode");
         label.isAcronym = "A".equals(SolrProxy.getString(refData, "name_type"));
+        label.catalog = SolrProxy.getString(refData, "catalog");
 
         label.addTerm(SolrProxy.getString(refData, "phrase"));
         label.addTags(refData.getFieldValues("tag"));
@@ -315,6 +328,51 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
         return extractorImpl(input.id, input.buffer);
+    }
+
+    public static List<Taxon> search(SolrServer index, String query) throws SolrServerException {
+        ModifiableSolrParams qp = new ModifiableSolrParams();
+        qp.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag,name_type");
+        qp.set(CommonParams.Q, query);
+        return search(index, qp);
+    }
+
+    /**
+     */
+    public static List<Taxon> search(SolrServer index, SolrParams qparams)
+            throws SolrServerException {
+
+        QueryResponse response = index.query(qparams, SolrRequest.METHOD.GET);
+
+        List<Taxon> taxons = new ArrayList<>();
+        SolrDocumentList docList = response.getResults();
+
+        for (SolrDocument solrDoc : docList) {
+            taxons.add(createTaxon(solrDoc));
+        }
+
+        return taxons;
+    }
+
+    /**
+     * search the current taxonomic catalog.
+     * 
+     * @param query  Solr "q" parameter only
+     * @return
+     * @throws SolrServerException
+     */
+    public List<Taxon> search(String query) throws SolrServerException {
+        return search(this.solr.getInternalSolrServer(), query);
+    }
+
+    /**
+     * search the current taxonomic catalog.
+     * @param qparams  Solr parameters in full.
+     * @return
+     * @throws SolrServerException
+     */
+    public List<Taxon> search(SolrParams qparams) throws SolrServerException {
+        return search(this.solr.getInternalSolrServer(), qparams);
     }
 
     @Override
