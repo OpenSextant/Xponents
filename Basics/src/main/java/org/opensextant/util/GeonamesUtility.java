@@ -1,5 +1,5 @@
 /**
- Copyright 2009-2013 The MITRE Corporation.
+ Copyright 2012-2013 The MITRE Corporation.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
  * and Noncommercial Computer Software Documentation
  * Clause 252.227-7014 (JUN 1995)
  *
- * (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
+ * (c) 2012-2013 The MITRE Corporation. All Rights Reserved.
  **************************************************   */
 package org.opensextant.util;
 
