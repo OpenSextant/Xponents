@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2012-2015 The MITRE Corporation.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -31,21 +31,22 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.opensextant.util.FileUtility;
 
 /**
  * The Class MatchFilter.
  */
-public class MatchFilter /*implements Filter*/ {
+public class MatchFilter /*implements Filter*/{
 
     /** The tag filter. */
     public Set<String> tagFilter = null;
 
     /** free-form filter */
-    public MatchFilter(){
-        
+    public MatchFilter() {
+
     }
-    
+
     /**
      * Instantiates a new match filter.
      *
@@ -55,20 +56,24 @@ public class MatchFilter /*implements Filter*/ {
     public MatchFilter(String stopfile) throws IOException {
         tagFilter = FileUtility.loadDictionary(stopfile, false);
     }
+
     public MatchFilter(URL stopfile) throws IOException {
-        if (stopfile==null){
+        if (stopfile == null) {
             throw new IOException("Non-existent resource for URL");
         }
         tagFilter = FileUtility.loadDictionary(stopfile, false);
-    }    
+    }
 
     /**
      *  If value is in stop list, then filter it out.
      *
      * @param value the value
-     * @return true, if successful
+     * @return true, if successful.  True if the value is null
      */
     public boolean filterOut(String value) {
+        if (StringUtils.isBlank(value)) {
+            return true;
+        }
         return tagFilter.contains(value);
     }
 }
