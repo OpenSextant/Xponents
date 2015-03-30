@@ -1,11 +1,9 @@
 /**
- * Copyright 2012-2015 The MITRE Corporation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *               http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -20,24 +18,38 @@
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
  *
- * (c) 2015 The MITRE Corporation. All Rights Reserved.
+ * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  *
+ * Continue contributions:
+ *    Copyright 2013-2015 The MITRE Corporation.
  */
 package org.opensextant.extractors.xtax;
 
-import org.opensextant.ConfigException;
-import org.opensextant.processing.progress.ProgressMonitor;
-import org.opensextant.util.SolrProxy;
+///** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+//
+//_____                                ____                     __                       __
+///\  __`\                             /\  _`\                  /\ \__                   /\ \__
+//\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
+//\ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
+//\ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
+//\ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
+//\/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
+//        \ \_\
+//         \/_/
+//
+//OpenSextant TaxonMatcher
+//*  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+//*/
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServer;
@@ -49,13 +61,15 @@ import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
-import org.opensextant.data.Place;
+import org.opensextant.ConfigException;
 import org.opensextant.data.Taxon;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
+import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extraction.Extractor;
+import org.opensextant.processing.progress.ProgressMonitor;
+import org.opensextant.util.SolrProxy;
 
 /**
  * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents.
