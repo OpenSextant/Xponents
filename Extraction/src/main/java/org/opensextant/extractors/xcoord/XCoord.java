@@ -1,18 +1,16 @@
 /**
- *
- * Copyright 2009-2013 The MITRE Corporation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *               http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
+ *
  *
  * **************************************************************************
  * NOTICE This software was produced for the U. S. Government under Contract No.
@@ -22,6 +20,9 @@
  *
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
+ *
+ * Continue contributions:
+ *    Copyright 2013-2015 The MITRE Corporation.
  */
 ///** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
@@ -68,7 +69,8 @@ public class XCoord extends AbstractFlexPat {
      * false-positive filters for coordinate types; (b) extract context around
      * coordinate.
      */
-    public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS | XConstants.FLAG_EXTRACT_CONTEXT;
+    public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS
+            | XConstants.FLAG_EXTRACT_CONTEXT;
     protected static String DEFAULT_XCOORD_CFG = "/geocoord_patterns.cfg";
 
     /**
@@ -317,14 +319,16 @@ public class XCoord extends AbstractFlexPat {
 
                 if ((RUNTIME_FLAGS & XConstants.CONTEXT_FILTERS_ON) > 0) {
                     if (this.filterOutContext(text, coord.start)) {
-                        log.debug("Filtered out noisy match, {} found by {}", coord.getText(), pat.id);
+                        log.debug("Filtered out noisy match, {} found by {}", coord.getText(),
+                                pat.id);
                         continue;
                     }
                 }
 
                 // Normalize
                 try {
-                    GeocoordNormalization.normalize_coordinate(coord, patterns.group_matches(pat, match));
+                    GeocoordNormalization.normalize_coordinate(coord,
+                            patterns.group_matches(pat, match));
                 } catch (NormalizationException normErr) {
                     if (debug) {
                         // Quietly ignore
@@ -341,8 +345,8 @@ public class XCoord extends AbstractFlexPat {
                 //
                 if (GeocoordNormalization.filter_out(coord)) {
                     if (debug) {
-                        results.message = "Filtered out coordinate pattern=" + pat.id + " value='" + coord.getText()
-                                + "'";
+                        results.message = "Filtered out coordinate pattern=" + pat.id + " value='"
+                                + coord.getText() + "'";
                         log.info("Normalization Filter fired, MSG=" + results.message);
                     }
                     continue;
@@ -358,17 +362,18 @@ public class XCoord extends AbstractFlexPat {
                  */
                 if ((XCoord.RUNTIME_FLAGS & XConstants.FLAG_EXTRACT_CONTEXT) > 0) {
                     // returns indices for two windows before and after match
-                    int[] slices = TextUtils.get_text_window(coord.start, coord.match_length(), bufsize, match_width);
+                    int[] slices = TextUtils.get_text_window(coord.start, coord.match_length(),
+                            bufsize, match_width);
 
                     // This sets the context window before/after.
                     //
                     coord.setContext(
-                            // left l1 to left l2
+                    // left l1 to left l2
                             TextUtils.delete_eol(text.substring(slices[0], slices[1])),
                             // right r1 to r2
                             TextUtils.delete_eol(text.substring(slices[2], slices[3])));
                 }
-                
+
                 set_match_id(coord, found);
 
                 results.matches.add(coord);
