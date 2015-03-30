@@ -1,11 +1,9 @@
 /**
- * Copyright 2009-2013 The MITRE Corporation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *               http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -23,9 +21,26 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  *
+ * Continue contributions:
+ *    Copyright 2013-2015 The MITRE Corporation.
  */
 package org.opensextant.extractors.geo;
 
+///** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+//
+//_____                                ____                     __                       __
+///\  __`\                             /\  _`\                  /\ \__                   /\ \__
+//\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
+//\ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
+//\ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
+// \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
+//  \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
+//          \ \_\
+//           \/_/
+//
+// OpenSextant GazetteerMatcher
+//*  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+//*/
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -78,6 +93,17 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private static final String APRIORI_NAME_RULE = "AprioriNameBias";
     private TagFilter filter = null;
     private MatchFilter userfilter = null;
+    /**
+     * invocation counts:  default filter count and user filter count
+     */
+    private long defaultFilterCount = 0;
+    private long userFilterCount = 0;
+    /**
+     * lifecycle counts:  default filter and matched counts.
+     * Ratio of filtered to (filter+match) gives an idea of false positive rates.
+     */
+    private long filteredTotal = 0;
+    private long matchedTotal = 0;
     private boolean allowLowercaseAbbrev = false;
     private boolean allowLowerCase = false; /* enable trure for data such as tweets, blogs, etc. where case varies or does not exist */
     private ModifiableSolrParams geoLookup = new ModifiableSolrParams();
@@ -167,8 +193,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     }
 
     /**
-     * Currently unused user filter; default TagFilter is used internally.
-     * 
+     * User-provided filters to filter out matched names immediately.
+     * Avoid filtering out things that are indeed places, but require disambiguation or refinement.
+     *  
      * @param f a match filter
      */
     public void setMatchFilter(MatchFilter f) {
@@ -176,15 +203,30 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     }
 
     /**
-     * Tag a document, returning PlaceCandidates for the mentions in document.
+     * Geotag a buffer and return all candidates of gazetteer entries whose name matches phrases in the buffer.
+     *
+     * @param buffer
+     * @param docid
+     * @return
+     * @throws ExtractionException
+     */
+    public LinkedList<PlaceCandidate> tagText(String buffer, String docid)
+            throws ExtractionException {
+        return tagText(buffer, docid, false);
+    }
+
+    /**
+     * Geotag a document, returning PlaceCandidates for the mentions in document.
+     * Optionally just return the PlaceCandidates with name only and no Place objects attached.
      * 
      * @param buffer text
      * @param docid  identity of the text
+     * @param tagOnly True if you wish to get the matched phrases only. False if you want the full list of Place Candidates.
      * 
      * @return place_candidates List of place candidates
      * @throws ExtractionException
      */
-    public LinkedList<PlaceCandidate> tagText(String buffer, String docid)
+    public LinkedList<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly)
             throws ExtractionException {
         // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
         // "startOffset":38},
@@ -195,6 +237,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // "matchingDocs":{"numFound":75, "start":0, "docs":[ {
         // "place_id":"USGS1992921", "name":"Monterrey", "cc":"PR"}, {
         // "place_id":"USGS1991763", "name":"Monterrey", "cc":"PR"}, ]
+
+        // Reset counts.
+        this.defaultFilterCount = 0;
+        this.userFilterCount = 0;
 
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
@@ -208,6 +254,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         this.tagNamesTime = response.getQTime();
         long t1 = t0 + tagNamesTime;
         long t2 = System.currentTimeMillis();
+        boolean geocode = !tagOnly;
 
         /*
          * Retrieve all offsets into a long list. These offsets will report a
@@ -236,6 +283,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             int len = x2 - x1;
             if (len == 1) {
                 // Ignoring place names whose length is less than 2 chars 
+                ++this.defaultFilterCount;
                 continue;
             }
             // +1 char after last  matched
@@ -243,17 +291,21 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // this, but since we already have the content as a String then
             // we might as well not make the tagger do any more work.
 
-            //String matchText = buffer.substring(x1, x2);
             String matchText = (String) tag.get("matchText");
+            // Then filter out trivial matches.
             if (len < 3 && !StringUtils.isAllUpperCase(matchText) && !allowLowercaseAbbrev) {
+                ++this.defaultFilterCount;
                 continue;
             }
+            // Eliminate any newlines and extra whitespace in match
+            matchText = TextUtils.squeeze_whitespace(matchText);
 
             /**
              * Filter out trivial tags. Due to normalization, we tend to get
              * lots of false positives that can be eliminated early.
              */
             if (filter.filterOut(matchText)) {
+                ++this.defaultFilterCount;
                 continue;
             }
 
@@ -261,6 +313,19 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             pc.start = x1;
             pc.end = x2;
             pc.setText(matchText);
+
+            /* Filter out tags that user determined ahead of time as 
+             * not-places for their context.
+             * 
+             */
+            if (userfilter != null) {
+                if (userfilter.filterOut(pc.getTextnorm())) {
+                    log.debug("User Filter:{}", matchText);
+                    ++this.userFilterCount;
+                    continue;
+                }
+            }
+
             pc.setSurroundingTokens(buffer);
 
             @SuppressWarnings("unchecked")
@@ -277,7 +342,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 // Yes, we must cast here.  
                 // As long as createTag generates the correct type stored in beanMap we are fine.
                 Place pGeo = (Place) beanMap.get(solrId);
-                assert pGeo != null;
+                // assert pGeo != null;
 
                 // Optimization: abbreviation filter.
                 //
@@ -301,13 +366,24 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     namesMatched.add(pGeo.getName());
                 }
 
-                pc.addPlace(pGeo);
+                /**
+                 * Country names are the only names you can reasonably set ahead of time.
+                 * All other names need to be assessed in context.  Negate country names, 
+                 * e.g., "Georgia", by exception.
+                 */
+                if (pGeo.isCountry()) {
+                    pc.isCountry = true;
+                }
+
+                if (geocode) {
+                    pc.addPlace(pGeo);
+                }
 
                 maxNameBias = Math.max(maxNameBias, pGeo.getName_bias());
             }// for place in tag
 
-            // Skip this PlaceCandidate if has no places (e.g. due to filtering)
-            if (!pc.hasPlaces()) {
+            // If geocoding, skip this PlaceCandidate if has no places (e.g. due to filtering)
+            if (geocode && !pc.hasPlaces()) {
                 log.debug("Place has no places={}", pc.getText());
                 continue;
             } else {
@@ -335,7 +411,21 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         LinkedList<PlaceCandidate> list = new LinkedList<>();
         list.addAll(candidates.values());
+
+        this.filteredTotal += this.defaultFilterCount + this.userFilterCount;
+        this.matchedTotal += list.size();
+
         return list;
+    }
+
+    /**
+     * This computes the cumulative filtering rate of user-defined and other non-place name
+     * patterns 
+     * 
+     * @return
+     */
+    public double getFiltrationRatio() {
+        return (double) this.filteredTotal / (filteredTotal + matchedTotal);
     }
 
     public Object createTag(SolrDocument tag) {
@@ -434,9 +524,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * 0.0
      */
     class TagFilter extends MatchFilter {
-
-        static final int MIN_WORD_LEN = 3;
-
         /**
          * This may need to be turned off for processing lower-case or dirty
          * data.
@@ -461,7 +548,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         @Override
         public boolean filterOut(String t) {
-            if (filter_on_case && StringUtils.isAllLowerCase(t) /*&& t.length() < MIN_WORD_LEN*/) {
+            if (filter_on_case && StringUtils.isAllLowerCase(t)) {
                 return true;
             }
 
@@ -514,6 +601,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * that will be marked as search_only = true.
          * 
          */
+        if (file == null) {
+            return null;
+        }
         InputStream io = null;
         CsvMapReader termreader = null;
         try {
