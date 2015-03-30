@@ -10,6 +10,7 @@
 #    Mexico's valiant effort to...    => [ mexico, 's, valiant, effort, to ]
 # etc.
 #
+"\u2019s" => " 's"
 "'s" => " 's"
 "'ve" => " 've"
 "'re" => " 're"
