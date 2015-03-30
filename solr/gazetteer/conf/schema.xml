@@ -279,13 +279,12 @@
 
 
         <!-- Looks like we could benefit from a char filter that combines contractions and ASCII folding;
-                 Sure, its more elegant to maintain separate char filters;  Or a char filter and token filter.
+             Sure, its more elegant to maintain separate char filters;  Or a char filter and token filter.
              See also name_idx* fields that have phonetic support
              SOLR-TEXT-TAGGER v2.0 in effect here:  postingsFormat="Memory"
           -->
         <fieldType name="name_tag" class="solr.TextField" positionIncrementGap="100"
                    postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true">
-            <!-- ?? <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/> -->
             <analyzer type="index">
                 <charFilter class="solr.MappingCharFilterFactory"
                             mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
@@ -302,11 +301,21 @@
             </analyzer>
         </fieldType>
 
-        <!-- Functionally the same as text_general, but no stop filter -->
+        <!-- Functionally the same as text_general, but no stop filter 
+          * Other features:  map 's and other apos+s to standard "'s"
+          * For query time only, parse off 's, as in "Big City's" =&lt; "Big City";  
+            But do not normalize "'s" on indexing.  If apos+s is part of name in gaz leave it.  
+
+          -->
         <fieldType name="name_text" class="solr.TextField" positionIncrementGap="100">
-            <analyzer>
+            <analyzer type="index">
                 <tokenizer class="solr.StandardTokenizerFactory" />
                 <filter class="solr.LowerCaseFilterFactory" />
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.LowerCaseFilterFactory" />
+                <filter class="solr.EnglishPossessiveFilterFactory"/>
             </analyzer>
         </fieldType>
 

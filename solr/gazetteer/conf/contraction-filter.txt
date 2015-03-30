@@ -9,4 +9,6 @@
 # Regardless if the context of the apostrophe is inside a proper name, a contraction, or a possessive
 # the tokenization principle must be the same.
 #
-"'" => " "
+"\u2019s" => "'s"
+"’s" => "'s"
+#"'" => " "
