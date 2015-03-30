@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.7c-SNAPSHOT</version>
+    <version>2.7c</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -71,22 +71,22 @@
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-basics</artifactId>
-                <version>2.7c-SNAPSHOT</version>
+                <version>2.7c</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents</artifactId>
-                <version>2.7c-SNAPSHOT</version>
+                <version>2.7c</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-xtext</artifactId>
-                <version>2.7c-SNAPSHOT</version>
+                <version>2.7c</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-examples</artifactId>
-                <version>2.7c-SNAPSHOT</version>
+                <version>2.7c</version>
             </dependency>
 
             <dependency>
