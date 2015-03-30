@@ -935,13 +935,11 @@
                 <!-- countries is a list of ISO country codes.  matches against 'cc' field.
                 By default all are accepted. 
                  -->
-                 <!-- 
+                 <!--                                
                 <arr name="countries">
-                    <str>all</str>
+                    <str>?</str>
                 </arr>
-                  -->
-                
-                
+                -->
 
                 <!-- Full gazetteer without Rare
                 <arr name="include_category">
