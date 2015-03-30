@@ -11,10 +11,18 @@ import org.opensextant.extractors.geo.SolrGazetteer;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 
+/**
+ * <pre>
+ * 1) GeonamesUtility:  list countries official names and data
+ * 2) SolrGazetteer:    query countries and print
+ * 3) SolrGazetteer:    spatial query to find a place with M meters of a point.
+ * </pre>
+ */
 public class TestGazetteer {
 
     /**
-     * Do a basic test -- This main prog makes use of the default JVM arg for solr:  -Dsolr.solr.home = /path/to/solr
+     * Do a basic test -- This main prog makes use of the default JVM arg for solr:  -Dopensextant.solr=/path/to/solr
+     *
      *
      * @param args the arguments
      * @throws Exception the exception
@@ -66,6 +74,14 @@ public class TestGazetteer {
             for (String cname : done.keySet()) {
                 System.out.println(String.format("\"%s\", Has Duplicates:", cname)
                         + done.get(cname));
+            }
+            
+            Place xy = new Place();
+            xy.setLatitude(44);
+            xy.setLongitude(-118);
+            List<Place> states = gaz.placesAt( xy, 200, "A");
+            if (states!=null){
+                System.out.println(states.toString());
             }
 
         } catch (Exception err) {
