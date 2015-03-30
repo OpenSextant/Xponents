@@ -42,7 +42,6 @@
 
 package org.opensextant.extraction;
 
-import org.apache.commons.lang.StringUtils;
 import org.opensextant.util.TextUtils;
 
 /**
