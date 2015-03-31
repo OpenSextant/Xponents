@@ -68,7 +68,6 @@
         <copy todir="build/containerLib" overwrite="true" failonerror="false" file="log4j.properties"/>
 
         <get dest="lib" skipexisting="true" ignoreerrors="true">
-            <url url="https://oss.sonatype.org/content/repositories/snapshots/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
             <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
         </get>
 
