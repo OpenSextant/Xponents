@@ -127,7 +127,13 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
                     // This creates a new ID out of the parent doc id and the attachment filename.
                     String uniqueValue = String.format("%s,%s", doc.id, child.filename);
-                    child.setId(TextUtils.text_id(uniqueValue));
+                    String _id = uniqueValue;
+                    try {
+                        _id = TextUtils.text_id(uniqueValue);
+                    } catch (Exception err) {
+                        log.error("hashing Error", err);
+                    }
+                    child.setId(_id);
 
                     // Record the child attachment.
                     listener.collected(child, child.filepath);
@@ -229,7 +235,7 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                         continue;
                     }
                     msgId = MessageConverter.getShorterMessageID(msgId);
-                    
+
                     try {
                         if (listener != null && listener.exists(msgId)) {
                             // You already collected this item. Ignoring.
