@@ -43,7 +43,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +57,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Language;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.constraint.NotNull;
@@ -69,23 +71,6 @@ import org.supercsv.prefs.CsvPreference;
  */
 public class TextUtils {
 
-    /**
-     * Reusable MD5 digest; not thread safe 
-     */
-    protected static MessageDigest md5 = null;
-    /**
-     * @threadsafe True; a private instance for use with a TextUtils instance.
-     */
-    private MessageDigest _md5 = null;
-
-    static {
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (Exception err) {
-            System.err.println("MD5 algorighthm could not intitialize");
-        }
-
-    }
     final static Pattern delws = Pattern.compile("\\s+");
     // Match ALL empty lines:
     // \n followed by other ootional whitespace
@@ -95,17 +80,6 @@ public class TextUtils {
     // The intent is to reduce 3 or more EOL to 2. Preserving paragraph breaks.
     //
     final static Pattern multi_eol = Pattern.compile("(\n[ \t\r]*){3,}");
-
-    /**
-     * Convenience constructor -- for thread-safe instances
-     */
-    public TextUtils() {
-        try {
-            _md5 = MessageDigest.getInstance("MD5");
-        } catch (Exception err) {
-            System.err.println("MD5 algorighthm could not intitialize");
-        }
-    }
 
     /**
      * Checks if non-ASCII and non-LATIN characters are present.
@@ -518,33 +492,21 @@ public class TextUtils {
      * 
      * @param text text or data
      * @return identifier for the text, an MD5 hash
+     * @throws NoSuchAlgorithmException 
+     * @throws UnsupportedEncodingException 
      */
-    public static String text_id(String text) {
+    public static String text_id(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         if (text == null) {
             return null;
         }
 
-        md5.reset();
-        md5.update(text.getBytes());
-
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        /* For this to be reproducible on all machines, we cannot rely 
+         * on a default encoding for getBytes. So use getBytes(enc) to be explicit.
+         * 
+         */
+        md5.update(text.getBytes("UTF-8"));
         return md5_id(md5.digest());
-    }
-
-    /**
-     * Generate a Text ID using the raw bytes and MD5 algorithm.
-     * 
-     * @param text text or data
-     * @return identifier for the text, an MD5 hash
-     */
-    public String genTextID(String text) {
-        if (text == null) {
-            return null;
-        }
-
-        _md5.reset();
-        _md5.update(text.getBytes());
-
-        return md5_id(_md5.digest());
     }
 
     /**
