@@ -1,39 +1,38 @@
 Xponents
 ========
-
-   Xponents 2.5 (part of OpenSextant v2.0)
-   Date:     25 JULY 2013
-   Updated:  01 June 2014
+    Xponents 2.7 (part of OpenSextant v2.0)
+    Date:     25 JULY 2013
+    Updated:  01 June 2014   v2.5
+    Updated:  01 April2015   v2.7
 
 Xponents is a set of text extractor libraries with a light veneer of processing control, including:
 
-  * Document conversion using Tika;
-  * Geographic name and coordinate extraction;
-  * Temporal extraction;
-  * Pattern-based extraction
-  * Foundational data model for info extraction and text scrubbing utilities
+* Document conversion using Tika
+* Geographic name and coordinate extraction
+* Temporal extraction
+* Pattern-based extraction
+* Foundational data model for info extraction and text scrubbing utilities
 
 The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.
 
 #Documentation#
 When you build or use a release, see component documentation in ./doc/
- * ./doc/Examples  shows some Examples of geo/temporal extractors and output formatters
- * ./doc/Extraction provides the core library for geo, temporal and other pattern-based extraction
- * ./doc/XText  documents the document conversion, text extraction library
- * ./doc/Basics TBD -- primarily used in Extraction, however there are utilities and reference data useful on its own.
- * Javadoc for each module is provided in each folder
+* ./doc/Examples  shows some Examples of geo/temporal extractors and output formatters
+* ./doc/Extraction provides the core library for geo, temporal and other pattern-based extraction
+* ./doc/XText  documents the document conversion, text extraction library
+* ./doc/Basics TBD -- primarily used in Extraction, however there are utilities and reference data useful on its own.
+* Javadoc for each module is provided in each folder
  
 As well, the documentation for each module is in the respective source tree.
 
 #Dependencies#
 
 ##Java##
-Set JAVA_HOME to your JDK6 or JDK7 installation;  Maven javadoc plugin requires JAVA_HOME set
+Set JAVA_HOME to your JDK7 installation;  Maven javadoc plugin requires JAVA_HOME set
 Minimum Requirement: 
-  - Java 7  (Xponents 2.5 or later)
-  - Java 6  (Xponents 2.4.3 or earlier)
-  - Maven 3.2 to build and develop
-  - Ant 1.9 is useful for running release scripts
+- Java 7  (Xponents 2.5 or later)
+- Maven 3.2 to build and develop
+- Ant 1.9 is useful for running release scripts
  
 FlexPat pattern-based extractors rely on Java 6+ regular expression API
 
@@ -50,9 +49,9 @@ Name Matching depends on:
   * Build  your own using https://github.com/OpenSextant/opensextant/tree/master/Gazetteer, which Depends on Pentaho Kettle for creation
 
   OpenSextant SolrTextTagger
-  https://github.com/OpenSextant/SolrTextTagger, 2.0-SNAPSHOT, currently.
+  https://github.com/OpenSextant/SolrTextTagger v2.0
   ./solr/build.properties (copy of build.local.properties) allows you to set the solr-text-tagger 2.x version of your choice.
-  Solr cores can be specific to the versions of lucene/solr/solrtt
+  Solr cores can be specific to the versions of lucene/solr/solr-text-tagger
   
 
 
