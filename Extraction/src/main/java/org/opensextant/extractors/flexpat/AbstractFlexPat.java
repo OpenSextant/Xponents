@@ -30,7 +30,6 @@ public abstract class AbstractFlexPat implements Extractor {
     protected String patterns_file = null;
     protected URL patterns_url = null;
     protected RegexPatternManager patterns = null;
-    protected final TextUtils textUtility = new TextUtils();
     private ProgressMonitor progressMonitor;
 
     public AbstractFlexPat() {
@@ -128,29 +127,29 @@ public abstract class AbstractFlexPat implements Extractor {
     /**
      * Optional. Assign an identifier to each Text Match found. This is an MD5
      * of the match in-situ. If context is provided, it is used to generate the
-     * identity
+     * identity.  If a count is provided it is used.
      *
      * otherwise make use of just pattern ID + text value.
      *
      * @param m a TextMatch
      */
-    protected void set_match_id(TextMatch m) {
-        if (m.getContextBefore() == null) {
-            m.match_id = textUtility.genTextID(String.format("%s,%s", m.pattern_id, m.getText()));
-        } else {
-            m.match_id = textUtility.genTextID(m.getContextBefore() + m.getText()
-                    + m.getContextAfter());
-        }
-    }
-
-    /**
-     * Optional.  assign ID for the match to pattern, text and a count incrementor 
-     * @param m text match obj
-     * @param count incrementor for this text match within the result set for a given text
-     */
     protected void set_match_id(TextMatch m, int count) {
-        m.match_id = textUtility.genTextID(String.format("%s,%s,%d", m.pattern_id, m.getText(),
-                count));
+        try {
+            if (m.getContextBefore() == null) {
+                m.match_id = TextUtils.text_id(String.format("%s,%s", m.pattern_id, m.getText()));
+            } else if (count >= 0) {
+                m.match_id = TextUtils.text_id(String.format("%s,%s,%d", m.pattern_id, m.getText(),
+                        count));
+            } else {
+                StringBuilder abc = new StringBuilder();
+                abc.append(m.getContextBefore());
+                abc.append(m.getText());
+                abc.append(m.getContextAfter());
+                m.match_id = TextUtils.text_id(abc.toString());
+            }
+        } catch (Exception hashErr) {
+            log.error("Rare Java cryptologic err", hashErr);
+        }
     }
 
     public void enableAll() {
