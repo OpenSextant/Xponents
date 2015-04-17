@@ -87,6 +87,25 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
         return name_type;
     }
 
+    protected Country country  = null;
+    /**
+     * Set the country object and the local country ID code.
+     * @param c
+     */
+    public void setCountry(Country c){
+        country = c;
+        if (country!=null){
+            country_id = country.country_id;
+        }
+    }
+    
+    /**
+     * get the country object; generally optional.
+     * @return
+     */
+    public Country getCountry(){
+        return country;
+    }
     /**
      *
      */
