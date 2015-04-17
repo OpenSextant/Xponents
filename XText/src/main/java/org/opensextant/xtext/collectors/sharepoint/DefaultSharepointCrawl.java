@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 import org.apache.http.HttpResponse;
@@ -227,8 +228,9 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
      * @param item
      * @throws IOException 
      * @throws ConfigException 
+     * @throws NoSuchAlgorithmException 
      */
-    protected void convertContent(File item, HyperLink link) throws IOException, ConfigException {
+    protected void convertContent(File item, HyperLink link) throws IOException, ConfigException, NoSuchAlgorithmException {
 
         if (item == null || link == null) {
             throw new IOException("Bad data - null values for file and link...");

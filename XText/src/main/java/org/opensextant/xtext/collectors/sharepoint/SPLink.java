@@ -21,8 +21,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.opensextant.xtext.collectors.Collector;
 import org.opensextant.xtext.collectors.web.HyperLink;
 
@@ -38,12 +39,13 @@ public class SPLink extends HyperLink {
      * @param base
      * @throws MalformedURLException
      * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException 
      */
-    public SPLink(String link, URL base) throws MalformedURLException, UnsupportedEncodingException {
+    public SPLink(String link, URL base) throws MalformedURLException, UnsupportedEncodingException, NoSuchAlgorithmException {
         super(link, base, base);
 
         if (isSharepointFolder()) {
-            urlValue = StringEscapeUtils.unescapeHtml(URLDecoder.decode(urlValue, "UTF-8"));
+            urlValue = StringEscapeUtils.unescapeHtml4(URLDecoder.decode(urlValue, "UTF-8"));
         }
 
         if (isAbsolute()) {
