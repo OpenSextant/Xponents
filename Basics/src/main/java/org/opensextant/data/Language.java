@@ -15,7 +15,7 @@
  */
 package org.opensextant.data;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Simple mapping of ISO 639 id to display name for languages

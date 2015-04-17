@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Country;
 import org.opensextant.data.Place;
 import org.supercsv.io.CsvMapReader;

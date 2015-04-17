@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -46,8 +46,7 @@ import org.opensextant.data.Place;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrProxy;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The

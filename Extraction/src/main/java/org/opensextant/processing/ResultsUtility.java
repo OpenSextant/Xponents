@@ -30,7 +30,7 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensextant.util.TextUtils;
 import org.opensextant.extraction.TextEntity;
 import org.opensextant.extraction.TextMatch;

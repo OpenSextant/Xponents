@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensextant.util.FileUtility;
 
 /**

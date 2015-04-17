@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensextant.geodesy.Angle;
 import org.opensextant.geodesy.Latitude;
 import org.opensextant.geodesy.Longitude;
@@ -39,6 +39,7 @@ import org.opensextant.extraction.TextEntity;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
+import org.opensextant.data.Place;
 import org.opensextant.util.GeodeticUtility;
 
 /**
@@ -612,5 +613,25 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     @Override
     public String getAdmin2Name() {
         return null;
+    }
+
+    /**
+     * Create a Place version of this coordinate -- that is, once we've found the coordinate match
+     * if the match data is no longer needed we can produce a geodetic Place from the TextMatch.
+     * This is helpful when you are more interested in the Place metadata, e.g. plot the TextMatch; enrich the TextMatch, etc
+     * 
+     * But note, if you need match confidence, match offsets, etc. you retain this TextMatch instance
+     */
+    public Place asPlace() {
+        Place p = new Place(null, getText());
+        if (this.lat_text != null && this.lon_text != null) {
+            p.setPlaceID(String.format("%s,%s", this.lat_text, this.lon_text));
+        }
+        p.setLatLon(this);
+        /* Not check if precision is -1, as this API never sets negative precision. */
+        p.setPrecision(precision.precision < 1 ? 1 : (int) precision.precision);
+        p.setMethod(this.getMethod());        
+
+        return p;
     }
 }
