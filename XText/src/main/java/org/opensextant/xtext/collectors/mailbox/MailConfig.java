@@ -25,7 +25,7 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.sun.mail.util.MailSSLSocketFactory;
 import org.opensextant.ConfigException;

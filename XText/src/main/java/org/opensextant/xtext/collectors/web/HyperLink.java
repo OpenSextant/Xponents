@@ -17,14 +17,16 @@
 package org.opensextant.xtext.collectors.web;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 
@@ -61,8 +63,11 @@ public class HyperLink {
      * @param referringLink  - Normalized, absolute URL string
      * @param site
      * @throws MalformedURLException
+     * @throws UnsupportedEncodingException 
+     * @throws NoSuchAlgorithmException 
      */
-    public HyperLink(String link, URL referringLink, URL site) throws MalformedURLException {
+    public HyperLink(String link, URL referringLink, URL site) throws MalformedURLException,
+            NoSuchAlgorithmException, UnsupportedEncodingException {
         urlValue = link;
         urlNominal = link;
         siteURL = site;

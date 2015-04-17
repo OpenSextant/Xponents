@@ -28,6 +28,7 @@ package org.opensextant.xtext;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -465,14 +466,15 @@ public final class ConvertedDocument extends DocInput {
     /**
      * Set default ID only after all conversion and all metadata has been acquired.
      * MD5 hash of text, if text is available, or of the filepath if file is empty.
+     * @throws NoSuchAlgorithmException 
      * 
      */
-    public void setDefaultID() {
-        if (hasText()) {
-            id = TextUtils.text_id(getText());
-        } else {
-            id = TextUtils.text_id(filepath);
-        }
+    public void setDefaultID() throws IOException, NoSuchAlgorithmException {
+            if (hasText()) {
+                id = TextUtils.text_id(getText());
+            } else {
+                id = TextUtils.text_id(filepath);
+            }
     }
 
     /**

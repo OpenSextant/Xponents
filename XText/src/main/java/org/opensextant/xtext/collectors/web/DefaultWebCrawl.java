@@ -20,10 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.utils.DateUtils;
@@ -109,7 +110,11 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * @throws IOException
      */
     public void collect() throws IOException {
-        collectItems(null, this.getSite());
+        try {
+            collectItems(null, this.getSite());
+        } catch (NoSuchAlgorithmException err) {
+            log.error("Hashing error", err);
+        }
     }
 
     /**
@@ -131,13 +136,16 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
 
     /**
      * recursive folder crawl through a site. This is where docs are
-     * converted and recorded.
+     * converted and recorded.  
+     * As hashing algorithms are used in defining concise output paths, NoSuchAlgorithmException is thrown.
      * 
      * @param link
      * @param site
      * @throws IOException
+     * @throws NoSuchAlgorithmException 
      */
-    public void collectItems(String _link, URL startingSite) throws IOException {
+    public void collectItems(String _link, URL startingSite) throws IOException,
+            NoSuchAlgorithmException {
         String link = startingSite.toString();
         if (_link != null) {
             link = _link;
@@ -160,6 +168,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
          */
         String rawData = WebClient.readTextStream(page.getEntity().getContent());
         HyperLink thisLink = new HyperLink(link, new URL(link), getSite());
+
         String thisPath = thisLink.getNormalPath();
         if (StringUtils.isEmpty(thisPath)) {
             return;
@@ -283,8 +292,9 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * @param item
      * @throws IOException 
      * @throws ConfigException 
+     * @throws NoSuchAlgorithmException 
      */
-    protected void convertContent(File item, HyperLink link) throws IOException, ConfigException {
+    protected void convertContent(File item, HyperLink link) throws IOException, ConfigException, NoSuchAlgorithmException {
 
         if (item == null || link == null) {
             throw new IOException("Bad data - null values for file and link...");

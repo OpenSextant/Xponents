@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.opensextant.ConfigException;
@@ -594,7 +594,11 @@ public class OutlookPSTCrawler implements Collector {
 
         // Message Ids for SMTP can be quite generic.  No good way to find unique value, unless you try a hash/digest of some sort.
         // 
-        msgId = TextUtils.text_id(msgId);
+        try {
+            msgId = TextUtils.text_id(msgId);
+        } catch (Exception err) {
+            log.error("Hashing err - Message ID left as-is.", err);
+        }
 
         // Get first 2 chars of message ID + last 2 chars.
         int l = msgId.length();

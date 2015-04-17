@@ -17,11 +17,12 @@ package org.opensextant.xtext.test;
 
 import java.io.*;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -120,7 +121,13 @@ public class Tests {
                 new ConversionListener() {
             public void handleConversion(ConvertedDocument d, String fpath) {
                 log.info("FILE=" + d.filename + " Converted?=" + d.is_converted + " ID={} PATH={}", d.id, fpath);
-                d.setDefaultID();
+                try {
+                    d.setDefaultID();
+                } catch (NoSuchAlgorithmException e) {
+                    log.error("Hashing error", e);
+                } catch (IOException e) {
+                    log.error("IO error", e);
+                }
                 log.info("\t\tTry resetting Doc ID to default ID = " +d.id);
             }
         });
@@ -143,7 +150,11 @@ public class Tests {
                 new ConversionListener() {
             public void handleConversion(ConvertedDocument d, String fpath) {
                 log.info("FILE=" + d.filename + " Converted?=" + d.is_converted + " ID={} PATH={}", d.id, fpath);
-                d.setDefaultID();
+                try {
+                    d.setDefaultID();
+                } catch (NoSuchAlgorithmException | IOException e) {
+                    log.error("Hashing error", e);
+                }
                 log.info("\t\tTry resetting Doc ID to default ID = " +d.id);
             }
         });
@@ -170,7 +181,7 @@ public class Tests {
     }
     
     public void testHTMLDecode(String f) throws IOException {
-        String out = StringEscapeUtils.unescapeHtml(FileUtility.readFile(f));
+        String out = StringEscapeUtils.unescapeHtml4(FileUtility.readFile(f));
         FileUtility.writeFile(out, f + ".out");
     }
 
