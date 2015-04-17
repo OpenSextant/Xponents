@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.GeoBase;
 import org.opensextant.data.LatLon;
 
@@ -64,7 +64,7 @@ public class GeodeticUtility {
      * @param lon longitude
      * @return if lat/lon is valid
      */
-    public static boolean validateCoordinate(double lat, double lon) {
+    public final static boolean validateCoordinate(double lat, double lon) {
         // Java behavior for NaN -- use object/class routines to compare.
         //
         if (Double.isNaN(lon) || Double.isNaN(lat)) {
@@ -80,6 +80,23 @@ public class GeodeticUtility {
     }
 
     /**
+     * A common check required by practical applications -- 0,0 is not interesting, 
+     * so this is a simple java-based check.  double (and all number) values by 
+     * default have a value = 0.  This appears to be true for class attributes,
+     * but not for locals.  Hence the NaN check in validateCoordinate.
+     * 
+     * @param lat
+     * @param lon
+     * @return
+     */
+    public final static boolean isValidNonZeroCoordinate(double lat, double lon){
+        if (validateCoordinate(lat, lon)){
+            return  (lat!=0 && lon !=0);
+        }
+        return false;
+    }
+    
+    /**
      * This returns distance in degrees, e.g., this is a Cartesian distance.
      * Only to be used for fast comparison of two locations relatively close
      * together, e.g., within the same 1 or 2 degrees of lat or lon. Beyond that
@@ -89,7 +106,7 @@ public class GeodeticUtility {
      *@param p2 point
      * @return distance between p1 and p2 in degrees.
      */
-    public static double distanceDegrees(GeoBase p1, GeoBase p2) {
+    public final static double distanceDegrees(GeoBase p1, GeoBase p2) {
         if (p1 == null || p2 == null) {
             return Double.MAX_VALUE;
         }
@@ -106,7 +123,7 @@ public class GeodeticUtility {
      * @param p2
      * @return distance in meters.
      */
-    public static long distanceMeters(LatLon p1, LatLon p2){
+    public final static long distanceMeters(LatLon p1, LatLon p2){
         double lat1 = p1.getLatitude();
         double lon1 = p1.getLongitude();
         double lat2 = p2.getLatitude();
@@ -120,8 +137,7 @@ public class GeodeticUtility {
  
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
         double c = 2 * Math.asin(Math.sqrt(a));
-        return (long)(EARTH_RADIUS * c);
-                
+        return (long)(EARTH_RADIUS * c);           
     }
 
     /**
