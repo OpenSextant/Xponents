@@ -98,10 +98,9 @@ public class TestXCoord {
 
         xcoord.enableAll();
 
-        String jobid = TextUtils.text_id(buffer);
-
-        log.info("Extract coordinates; All patterns enabled");
         try {
+            String jobid = TextUtils.text_id(buffer);
+            log.info("Extract coordinates; All patterns enabled");
             TextMatchResult results = xcoord.extract_coordinates(buffer, jobid);
             tester.save_result(null, results);
         } catch (Exception err) {
