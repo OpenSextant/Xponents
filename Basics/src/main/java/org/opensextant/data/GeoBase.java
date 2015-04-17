@@ -41,6 +41,8 @@
 
 package org.opensextant.data;
 
+import org.opensextant.util.GeodeticUtility;
+
 /**
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
@@ -176,5 +178,13 @@ public class GeoBase implements LatLon {
     public void setLatLon(LatLon geo) {
         this.latitude = geo.getLatitude();
         this.longitude = geo.getLongitude();
+    }
+    
+    /**
+     * Convenience method for checking if lat/lon was set to other than 0,0 (default)
+     * @return
+     */
+    public boolean hasCoordinate(){
+        return GeodeticUtility.isValidNonZeroCoordinate(latitude, this.longitude);
     }
 }
