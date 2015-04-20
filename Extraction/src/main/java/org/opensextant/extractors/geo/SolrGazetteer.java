@@ -91,10 +91,20 @@ public class SolrGazetteer {
     /**
      * Instantiates a new solr gazetteer.
      *
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws ConfigException Signals that a configuration exception has occurred.
      */
     public SolrGazetteer() throws ConfigException {
-        initialize();
+        this((String) null);
+    }
+    
+    /**
+     * Instantiates a new solr gazetteer with the specified Solr Home location.
+     *
+     * @param solrHome the location of solrHome.
+     * @throws ConfigException Signals that a configuration exception has occurred.
+     */
+    public SolrGazetteer(String solrHome) throws ConfigException {
+        initialize(solrHome);
     }
 
     public SolrGazetteer(SolrProxy currentIndex) throws ConfigException {
@@ -154,11 +164,11 @@ public class SolrGazetteer {
      * Cascading env variables:  First use value from constructor, 
      * then opensextant.solr, then solr.solr.home
      *
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws ConfigException Signals that a configuration exception has occurred.
      */
-    private void initialize() throws ConfigException {
+    private void initialize(String solrHome) throws ConfigException {
 
-        solr = new SolrProxy("gazetteer");
+        solr = solrHome != null ? new SolrProxy(solrHome, "gazetteer") : new SolrProxy("gazetteer");
 
         params.set(CommonParams.Q, "*:*");
         params.set(CommonParams.FL,
