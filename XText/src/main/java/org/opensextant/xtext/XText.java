@@ -57,6 +57,8 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 /**
  * 
  * Traverse a folder and return text versions of the documents found. Archiving
@@ -126,6 +128,7 @@ public final class XText implements ExclusionFilter, Converter {
     private Converter embeddedConversion;
     private Set<String> requestedFileTypes = new HashSet<String>();
     private Set<String> ignoreFileTypes = new HashSet<String>();
+    private boolean allowNoExtension = false;
 
     /**
      */
@@ -148,6 +151,14 @@ public final class XText implements ExclusionFilter, Converter {
 
     public void setMaxFileSize(int sz) {
         maxFileSize = (long) sz;
+    }
+
+    /**
+     * Set if your app requires file extensions or not.
+     * @param b
+     */
+    public void enableNoFileExtension(boolean b) {
+        allowNoExtension = b;
     }
 
     /**
@@ -180,6 +191,9 @@ public final class XText implements ExclusionFilter, Converter {
     /**
      * Add the file extension for the file type you wish to convert. if Tika
      * supports it by default it should be no problem.
+     * Adding requested file types here only allows the API to know by-file extension
+     * what types to filter in and convert.  Without a file extension, the file 
+     * still needs to be ingested and converted to identify the file type.
      */
     public void convertFileType(String ext) {
         requestedFileTypes.add(ext.toLowerCase());
@@ -362,8 +376,14 @@ public final class XText implements ExclusionFilter, Converter {
             return true;
         }
 
-        String ext = FilenameUtils.getExtension(filepath).toLowerCase();
-        return !requestedFileTypes.contains(ext);
+        String ext = FilenameUtils.getExtension(filepath);
+        if (isBlank(ext)) {
+            if (allowNoExtension) {
+                return false;
+            }
+            return true;
+        }
+        return !requestedFileTypes.contains(ext.toLowerCase());
     }
 
     /**
@@ -510,12 +530,14 @@ public final class XText implements ExclusionFilter, Converter {
         String fname = input.getName();
 
         String ext = FilenameUtils.getExtension(fname).toLowerCase();
-        if (ignoreFileTypes.contains(ext)) {
-            return null;
-        }
+        if (!allowNoExtension) {
+            if (ignoreFileTypes.contains(ext)) {
+                return null;
+            }
 
-        if (!requestedFileTypes.contains(ext)) {
-            return null;
+            if (!requestedFileTypes.contains(ext)) {
+                return null;
+            }
         }
 
         log.debug("Converting FILE=" + input.getAbsolutePath());

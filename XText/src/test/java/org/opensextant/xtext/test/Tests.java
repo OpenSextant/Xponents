@@ -135,6 +135,23 @@ public class Tests {
     }
     
     @Test
+    public void parseBareFilename() throws IOException, ConfigException{
+        URL item = Test.class.getResource("/4567891230" /* Copy:"/T-DS_Excel2003-PPT2003_1.xls"*/);
+        String input = item.getFile();
+        File f = new File(input);
+        XText xt = new XText();
+        xt.enableSaving(false);
+        
+        xt.enableNoFileExtension(true);        
+        xt.setup();
+        xt.convertFile(f);
+        xt.enableNoFileExtension(false);        
+        xt.setup();
+        xt.convertFile(f);
+        
+    }   
+    
+    @Test
     public void parseEmbedded() throws IOException, ConfigException{
         URL item = Test.class.getResource("/T-DS_Excel2003-PPT2003_1.xls");
         String input = item.getFile();

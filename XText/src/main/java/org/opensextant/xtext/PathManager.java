@@ -184,7 +184,7 @@ public class PathManager {
         File test = new File(conversionCache);
 
         if (!test.exists() || !test.isDirectory()) {
-            throw new IOException("Archive root directory must exist");
+            throw new IOException("Archive root directory must exist. Non-existant DIR="+test);
         }
 
         conversionCache = test.getAbsolutePath();
