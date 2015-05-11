@@ -1,5 +1,5 @@
 /**
- * Copyright 2009-2013 The MITRE Corporation.
+ * Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -69,7 +69,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     private List<Double> placeConfidences = new ArrayList<>();
     // --------------Disambiguation stuff ----------------------
     // the places along with their disambiguation scores
-    private Map<Place, Double> scoredPlaces = new HashMap<>();
+    private Map<String, ScoredPlace> scoredPlaces = new HashMap<>();
     // temporary lists to hold the ranked places and scores
     private List<Place> rankedPlaces = new ArrayList<>();
     private List<Double> rankedScores = new ArrayList<>();
@@ -186,11 +186,19 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
         return (this.getPlaceConfidenceScore() > 0.0);
     }
 
+    public List<Place> getPlaces() {
+        List<Place> tmp = new ArrayList<>();
+        for (ScoredPlace p : scoredPlaces.values()) {
+            tmp.add(p.place);
+        }
+        return tmp;
+    }
+
     /**
      * Get a ranked list of places
      * @return list of places ranked, sorted.
      */
-    public List<Place> getPlaces() {
+    public List<Place> getRankedPlaces() {
         this.sort();
         return this.rankedPlaces;
     }
@@ -211,26 +219,26 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
 
     // add a new place with a specific score
     public void addPlaceWithScore(Place place, Double score) {
-        this.scoredPlaces.put(place, score);
+        this.scoredPlaces.put(place.getKey(), new ScoredPlace(place, score));
     }
 
     // increment the score of an existing place
     public void incrementPlaceScore(Place place, Double score) {
-        Double currentScore = this.scoredPlaces.get(place);
+        ScoredPlace currentScore = this.scoredPlaces.get(place.getKey());
         if (currentScore != null) {
-            this.scoredPlaces.put(place, currentScore + score);
+            currentScore.incrementScore(score);
         } else {
-            // log.error("Tried to increment a score for a non-existent Place");
+            //logger.error("Tried to increment a score for a non-existent Place");
         }
     }
 
     // set the score of an existing place
     public void setPlaceScore(Place place, Double score) {
-        if (!this.scoredPlaces.containsKey(place)) {
+        if (!this.scoredPlaces.containsKey(place.getKey())) {
             // log.error("Tried to increment a score for a non-existent Place");
             return;
         }
-        this.scoredPlaces.put(place, score);
+        addPlaceWithScore(place, score);
     }
 
     public Collection<String> getRules() {
@@ -399,12 +407,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
         this.rankedPlaces.clear();
         this.rankedScores.clear();
 
-        List<ScoredPlace> tmp = new ArrayList<ScoredPlace>();
-
-        for (Place pl : this.scoredPlaces.keySet()) {
-            tmp.add(new ScoredPlace(pl, scoredPlaces.get(pl)));
-        }
-
+        List<ScoredPlace> tmp = new ArrayList<>();
+        tmp.addAll(scoredPlaces.values());
         Collections.sort(tmp);
 
         for (ScoredPlace spl : tmp) {

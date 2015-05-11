@@ -21,11 +21,16 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 
 public class MajorPlaceRule extends GeocodeRule {
 
-    static {
-        NAME = "MajorPlace";
+
+    private final static String MAJ_PLACE_RULE = "MajorPlace";
+    public final static String CAPITAL= MAJ_PLACE_RULE+".Captial";
+    public final static String ADMIN = MAJ_PLACE_RULE+".Admin";
+
+    public MajorPlaceRule(){
+        NAME = MAJ_PLACE_RULE;
     }
-    public final static String CAPITAL= NAME+".Captial";
-    public final static String ADMIN = NAME+".Admin";
+    
+    
     
     /**
      * attach either a Capital or Admin region ID 

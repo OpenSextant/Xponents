@@ -84,7 +84,7 @@ public class PersonNameFilter extends GeocodeRule {
          *   Euguene, Oregon
          *   etc.
          */
-        if (name.hasRule(NameCodeRule.NAME)){
+        if (name.hasRule(NameCodeRule.NAMECODE_RULE)){
             return;
         }
 

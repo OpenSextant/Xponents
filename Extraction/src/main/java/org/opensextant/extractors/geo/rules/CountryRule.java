@@ -35,7 +35,6 @@ public class CountryRule extends GeocodeRule {
         if (geo.isCountry()) {
             if (name.isAcronym || name.isAbbreviation) {
                 name.addCountryEvidence("CountryCode", 1, geo.getCountryCode());
-                name.choose(geo);
             } else {
                 name.addCountryEvidence(NAME, WEIGHT, geo.getCountryCode());
             }

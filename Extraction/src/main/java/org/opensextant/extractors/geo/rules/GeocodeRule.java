@@ -21,11 +21,19 @@ import java.util.List;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class GeocodeRule {
 
     public int WEIGHT = 0; /* of 100 */
-    public static String NAME = null;
+    public String NAME = null;
+
+    protected Logger log = LoggerFactory.getLogger("geocode-rule");
+
+    protected void log(String msg) {
+        log.debug("{}: {}", NAME, msg);
+    }
 
     /**
      * 

@@ -34,7 +34,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
      */
     public static int DEFAULT_THRESHOLD_METERS = 25000;
     /** Threshold for geohash prefix similarity */
-    public static int DEFAULT_THRESHOLD_DIGITS = 6;
+    public static int DEFAULT_THRESHOLD_DIGITS = 5;
 
     public final static int GEOHASH = 0;
     public final static int HAVERSINE = 1;

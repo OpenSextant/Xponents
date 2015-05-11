@@ -1,5 +1,5 @@
 /**
- Copyright 2009-2013 The MITRE Corporation.
+* Copyright 2012-2013 The MITRE Corporation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.opensextant.data.Place;
 public class ScoredPlace implements Comparable<Object> {
 
     Place place;
-    Double score;
+    double score;
 
     public Place getPlace() {
         return place;
@@ -44,15 +44,19 @@ public class ScoredPlace implements Comparable<Object> {
         this.place = place;
     }
 
-    public Double getScore() {
+    public double getScore() {
         return score;
     }
 
-    public void setScore(Double score) {
+    public void setScore(double score) {
         this.score = score;
     }
 
-    public ScoredPlace(Place pl, Double scr) {
+    public void incrementScore(double d) {
+        score += d;
+    }
+
+    public ScoredPlace(Place pl, double scr) {
         this.place = pl;
         this.score = scr;
     }
@@ -61,10 +65,21 @@ public class ScoredPlace implements Comparable<Object> {
     // compare by score
     public int compareTo(Object o) {
         if (o instanceof ScoredPlace) {
-            return -1 * this.getScore().compareTo(((ScoredPlace) o).getScore());
-        } else {
-            return 0;
+            /* Is there a difference in using Double obj vs. double primitive?
+             * double primitive cannot use compareTo obj methods.
+             */
+            if (getScore() > ((ScoredPlace) o).getScore()) {
+                return 1;
+            }
+            if (getScore() < ((ScoredPlace) o).getScore()) {
+                return -1;
+            }
+            if (getScore() == ((ScoredPlace) o).getScore()) {
+                return 0;
+            }
         }
+        return 0;
+
     }
 
 }

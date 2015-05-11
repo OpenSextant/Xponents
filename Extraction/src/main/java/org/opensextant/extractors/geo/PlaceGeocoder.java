@@ -1,5 +1,5 @@
 /**
- * Copyright 2009-2013 The MITRE Corporation.
+* Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public class PlaceGeocoder implements Extractor {
+public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
 
     /**
      *
@@ -78,7 +78,6 @@ public class PlaceGeocoder implements Extractor {
     //private final TextUtils utility = new TextUtils();
     protected Logger log = LoggerFactory.getLogger(getClass());
     private XCoord xcoord = null;
-    private GazetteerMatcher tagger = null;
     private MatchFilter personFilter = null;
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
     private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
@@ -86,6 +85,7 @@ public class PlaceGeocoder implements Extractor {
     private final ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
     private ProgressMonitor progressMonitor;
 
+    private CountryRule countryRule = null;
     private CoordinateAssociationRule coordRule = null;
     private ProvinceAssociationRule adm1Rule = null;
 
@@ -94,7 +94,8 @@ public class PlaceGeocoder implements Extractor {
      * pipline start to finish.
      *
      */
-    public PlaceGeocoder() {
+    public PlaceGeocoder() throws ConfigException {
+        super();
     }
 
     /*
@@ -161,7 +162,8 @@ public class PlaceGeocoder implements Extractor {
     @Override
     public void configure() throws ConfigException {
 
-        rules.add(new CountryRule()); /* assess country names and codes */
+        countryRule = new CountryRule();
+        // rules.add(countryRule); /* assess country names and codes */
         rules.add(new NameCodeRule()); /* assess NAME, CODE patterns */
 
         if (xcoord == null && (isCoordExtractionEnabled())) {
@@ -175,16 +177,12 @@ public class PlaceGeocoder implements Extractor {
             rules.add(adm1Rule);
         }
 
-        if (tagger == null) {
-            tagger = new GazetteerMatcher();
-        }
-
         /** Files for Place Name filter are editable, as you likely have different ideas of who are "person names" to exclude
          * when they conflict with place names. 
          */
-        URL p1 = PlaceGeocoder.class.getResource("/exclusions/person-name-filter.txt");
-        URL p2 = PlaceGeocoder.class.getResource("/exclusions/person-title-filter.txt");
-        URL p3 = PlaceGeocoder.class.getResource("/exclusions/person-suffix-filter.txt");
+        URL p1 = PlaceGeocoder.class.getResource("/filters/person-name-filter.txt");
+        URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
+        URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
         rules.add(new PersonNameFilter(p1, p2, p3));
     }
 
@@ -192,11 +190,8 @@ public class PlaceGeocoder implements Extractor {
      * Please shutdown the application cleanly when done.
      */
     public void cleanup() {
-
         reportMetrics();
-        if (tagger != null) {
-            tagger.shutdown();
-        }
+        this.shutdown();
     }
 
     private Parameters params = new Parameters();
@@ -211,6 +206,8 @@ public class PlaceGeocoder implements Extractor {
     }
 
     /**
+     * Unfinished Beta; ready for experimentation and improvement on rules.
+     *
      * Extractor.extract() calls first XCoord to get coordinates, then
      * PlacenameMatcher In the end you have all geo entities ranked and scored.
      * <pre>
@@ -226,7 +223,7 @@ public class PlaceGeocoder implements Extractor {
      * </pre>
      *
      * @param input
-     * @return
+     * @return TextMatch instances which are all PlaceCandidates.
      * @throws ExtractionException
      */
     @Override
@@ -238,7 +235,11 @@ public class PlaceGeocoder implements Extractor {
             coordinates = xcoord.extract(input);
         }
 
-        LinkedList<PlaceCandidate> candidates = tagger.tagText(input.buffer, input.id);
+        LinkedList<PlaceCandidate> candidates = tagText(input.buffer, input.id);
+
+        // Tagger has already marked candidates as name of Country or not.
+        // 
+        // countryRule.evaluate(candidates);
 
         if (coordinates != null) {
             matches.addAll(coordinates);
@@ -298,7 +299,7 @@ public class PlaceGeocoder implements Extractor {
 
     @Override
     public List<TextMatch> extract(String input_buf) throws ExtractionException {
-        throw new ExtractionException("Not yet implemented");
+        return extract(new TextInput(null, input_buf));
     }
 
     Map<String, Integer> locationBias = new HashMap<>();
@@ -347,7 +348,7 @@ public class PlaceGeocoder implements Extractor {
         // Solr geospatial lookup required;  we use RPT -- recursive prefix filter field type.
         // TOOD: implement spatial query against gazetter to do XY=>Location(feat_type=*, facet field=adm1)
         //      report Distinct CC.ADM1.ADM2 paths where Geocoding points.
-        List<Place> found = this.tagger.placesAt(g);
+        List<Place> found = placesAt(g);
         if (found == null || found.isEmpty()) {
             return null;
         }

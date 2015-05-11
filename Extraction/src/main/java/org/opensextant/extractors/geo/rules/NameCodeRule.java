@@ -33,8 +33,9 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 public class NameCodeRule extends GeocodeRule {
 
     private static int MAX_CHAR_DIST = 5;
-    
-    static {
+
+    public final static String NAMECODE_RULE = "AdminCode";
+    public NameCodeRule() {
         NAME = "AdminCode";
     }
 
@@ -43,18 +44,24 @@ public class NameCodeRule extends GeocodeRule {
             PlaceCandidate name = names.get(x);
             PlaceCandidate code = names.get(x + 1);
 
-            if ((code.start - name.start) > MAX_CHAR_DIST) {
+            /*
+             * Test if SOMENAME, CODE is the case.
+             *         a1.....a2.b1..,  where b1 > a2 > a1, 
+             * but distance is minimal from end of name to start of code.
+             *         
+             */
+            if ((code.start - name.end) > MAX_CHAR_DIST) {
                 continue;
             }
             /* by this point a place name tag should be marked 
              * as a name or code/abbrev.
              */
+            log.info("{} name, code: {} {}?", NAME, name.getText(), code.getText());
             if (code.isAbbreviation) {
                 for (Place geo : code.getPlaces()) {
                     if (geo.isAdministrative()) {
                         // Associate the CODE to the NAME that precedes it.
-                        name.addAdmin1Evidence(NAME, 1, geo.getAdmin1(),
-                                geo.getCountryCode());
+                        name.addAdmin1Evidence(NAME, 1, geo.getAdmin1(), geo.getCountryCode());
                         break;
                     }
                 }
