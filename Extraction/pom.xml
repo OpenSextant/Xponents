@@ -27,11 +27,6 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>55.1</version>
-        </dependency>
 
         <dependency>
             <groupId>org.opensextant</groupId>
@@ -48,7 +43,18 @@
                     <artifactId>geodesy</artifactId>
                     <groupId>org.opensextant</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>commons-lang</artifactId>
+                    <groupId>commons-lang</groupId>
+                </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Use latest commons lang or update giscore -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
 
         <dependency>
