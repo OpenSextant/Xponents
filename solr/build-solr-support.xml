@@ -5,13 +5,13 @@
     <property name="solr.v" value="4.10.4" />
 
     <property name="jetty.v" value="8.1.9.v20130131" />
-    <property name="winstone.v" value="0.9.10" />
     <property name="textTagger.v" value="${solr.text.tagger.v}" />
     <property name="slf4j.v" value="1.7.10" />
     <property name="log4j.v" value="1.2.17" />
     <property name="guava.v" value="14.0.1" />
-    <property name="xponents.v" value="2.7c" />
+    <property name="xponents.v" value="${xponents.build.v}" />
     <property name="supercsv.v" value="2.2.0" />
+    <property name="lang3.v" value="3.4" />
 
     <!-- setup proxy -->
     <target name="proxy" >
@@ -33,7 +33,6 @@
 
         <get dest="build" skipexisting="true">
             <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
-            <url url="http://repo1.maven.org/maven2/org/jvnet/hudson/winstone/winstone/${winstone.v}/winstone-${winstone.v}.jar" />
             <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
         </get>
 
@@ -60,6 +59,8 @@
               file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents-basics/${xponents.v}/opensextant-xponents-basics-${xponents.v}.jar"/>
         <copy todir="lib" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents/${xponents.v}/opensextant-xponents-${xponents.v}.jar"/>
+        <copy todir="lib" overwrite="false" failonerror="false"
+              file="${user.home}/.m2/repository/org/apache/commons/commons-lang3/${lang3.v}/commons-lang3-${lang3.v}.jar"/>
         <copy todir="lib" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar"/>
         <copy todir="build/containerLib" overwrite="false" failonerror="false"
@@ -110,24 +111,6 @@
         <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
     </target>
 
-    <macrodef name="exec-solr">
-        <sequential>
-            <!-- 1 GB to build current gazetteer with 13 million rows -->
-            <java jar="build/winstone-${winstone.v}.jar" fork="true" clonevm="true" failonerror="true"
-                  maxmemory="1G">
-                <sysproperty key="java.awt.headless" value="true" />
-                <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
-                <sysproperty key="solr.enableRemoteStreaming" value="true" />
-                <sysproperty key="java.util.logging.config.file" value="logging.properties" />
-                <arg value="-controlPort=8081" />
-                <arg value="--commonLibFolder=build/containerLib" />
-                <arg value="--httpPort=${solr.server.port}" />
-                <arg value="--warfile=build/solr-${solr.v}.war" />
-                <arg value="--prefix=/solr" />
-            </java>
-        </sequential>
-    </macrodef>
-
     <macrodef name="exec-jetty-solr">
         <sequential>
             <java jar="build/jetty-runner-${jetty.v}.jar" fork="true" clonevm="true" failonerror="true" maxmemory="2g">
@@ -157,14 +140,6 @@
             depends="init">
         <echo level="warning" message="Winstone doesn't properly handle HTTP POST chunked Transfer-Encoding" />
         <exec-solr />
-    </target>
-
-    <target name="stop-solr" description="Shut down Solr (Winstone)">
-        <java classpath="build/winstone-${winstone.v}.jar" classname="winstone.tools.WinstoneControl">
-            <!-- by default, port 8081 -->
-            <arg value="shutdown" />
-        </java>
-        <!-- FYI I haven't found an equivalent for jetty-runner -->
     </target>
 
     <target name="print-start-jetty" description="Print instructions to run Solr with Jetty" depends="init">

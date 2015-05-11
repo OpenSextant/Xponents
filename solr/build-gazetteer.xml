@@ -24,9 +24,10 @@
             dest="build/update-csv.response.xml" />
     </target>
 
-    <target name="index" depends="start-solr-daemon, _index, stop-solr" description="Starts Solr, indexes data, then stops it">
+    <target name="index" depends="start-solr-daemon, _index" description="Starts Solr, indexes data, then stops it">
     </target>
 
+<!--
     <target name="start-solr-daemon" depends="init">
         <parallel>
             <daemons>
@@ -40,6 +41,7 @@
         </waitfor>
         <fail if="solr.failed" message="Solr did not properly start, probably due to a configuration error." />
     </target>
+-->
 
 
 </project>
