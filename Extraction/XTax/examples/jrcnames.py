@@ -180,6 +180,7 @@ entity_map = {
 
 def create_entity(line, scan=False):
     ''' Create a entry for this entity that has the primary name. 
+    the "line" of data must be already UTF-8 or ASCII.  We avoid using a default encoding.
     @keyword scan: scan=True means we are looking for root entries to which 
     other variants are associated.  Each variant has an entity ID, but there
     is no single primary variant to represent the entity, e.g., for presentation purposes.
@@ -190,7 +191,7 @@ def create_entity(line, scan=False):
         print "Ignore line, ", line
         return None
     
-    name = unicode(parts[3].replace('+', ' ')).strip()
+    name = unicode(parts[3].replace('+', ' '), 'utf-8').strip()
     lang = parts[2]
     etype = parts[1]
     

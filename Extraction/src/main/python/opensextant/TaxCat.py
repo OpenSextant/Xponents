@@ -180,7 +180,10 @@ class TaxCatalogBuilder:
             return
 
         if not flush:
-            if self.commit_rate>0 and len(self._records) % self.commit_rate != 0:
+            qty  = len(self._records)
+            if self.commit_rate>0 and  qty % self.commit_rate != 0:
+                return
+            if qty < self.commit_rate:
                 return
             
         self.server.add(self._records)
