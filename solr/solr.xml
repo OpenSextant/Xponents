@@ -43,7 +43,7 @@
     If 'null' (or absent), cores will not be manageable via request handler
   -->
   <cores adminPath="/admin/cores" host="${host:}" hostPort="${jetty.port:}">
-    <core name="gazetteer" instanceDir="./gazetteer" />
+    <core name="gazetteer" instanceDir="./gazetteer" /> 
     <core name="taxcat" instanceDir="./taxcat" />
   </cores>
 
