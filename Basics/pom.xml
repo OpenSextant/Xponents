@@ -6,10 +6,11 @@
     <parent>
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
-        <version>2.7d</version>
+        <version>2.7.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <name>Basics</name>
     <artifactId>opensextant-xponents-basics</artifactId>
 
     <dependencies>
