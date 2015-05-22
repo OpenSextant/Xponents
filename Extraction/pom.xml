@@ -7,7 +7,7 @@
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>2.7.3</version>
+        <version>2.7.4</version>
     </parent>
 
     <name>Extraction</name>
@@ -294,14 +294,6 @@
                     <version>true</version>
                     <windowtitle>Xponents Extraction Toolkit</windowtitle>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
-        <version>2.7.3</version>
+        <version>2.7.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -50,34 +50,9 @@
                         OpenSextant.org, 2010-2013
                     </header>
                     <version>true</version>
-                    <windowtitle>Xponents Extraction Toolkit</windowtitle>
+                    <windowtitle>Xponents Basics</windowtitle>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
-
         </plugins>
-
     </build>
-
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
 </project>
