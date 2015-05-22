@@ -78,17 +78,65 @@ The choices for this parameter are:
           <str name="include_category">[cat,cat,cat,...]</str>
 
 
-Running Solr
+Running Xponents Solr
 =================================
 
-The build script includes a convenient means of running Solr with the text tagger by running
-"ant start-solr" and is gracefully stopped via "ant stop-solr".  It uses the tiny Winstone servlet
-engine which is downloaded automatically. It downloads a Solr war as well.
+This is a stock instance of Solr 4.x with a number of custom solr cores.
+For now the main cores are:  taxcat and gazetteer.
 
-Alternatively, if you already have Solr deployed or freshly downloaded, you can tell it where its
-"home directory" is by pointing it to this very directory.  For example, from a downloaded Solr
-distribution:
-example %> java -Dsolr.solr.home=/OpenSextant/Xponents/solr -jar start.jar
+To start from raw data for Gazetteer, see gazetteer/README* for those staging details to generate a gazetteer.
+To start from raw data for Taxcat / XTax,  see Extraction/XTax/README.md
+
+These notes here are for the general situation just establishing Solr and iterating through common tasks.
+
+1. Configure 
+=============
+
+   Decide where your final solr server data will be managed, e.g. 
+      /myproject/resources/xponents-solr/      ### &lt;--- resulting ./Xponents/solr solr-home
+
+   This path is referred to as JVM arg "opensextant.solr"
+
+   copy build.local.properties to build.properties
+   follow instructions in that config file.
+
+   You should use Maven and build or checkout Xponents artifacts:  
+    
+       bash$  cd Xponents; mvn install
+
+   The init phase next copies JAR artifacts from your Maven repo, ~/.m2/repository
+
+2. Initialize
+=============
+
+    # If you use a proxy, then include proxy command first in all your Ant invocations.
+    # As well, set proxy.host and proxy.port in your build.properties above.
+    #
+    ant -f build-gazetteer.xml proxy init
+    OR 
+
+    # Otherwise, if you have NO proxy, then simply drop that command from any tasks below.
+    # For example:
+    ant -f build-gazetteer.xml init
+
+
+3. Load Gazetteer 
+=============
+
+In this step 
+ 
+    bash$  ./run.sh 
+
+This step hopefully shows that you are ready to load the gazetteer or a taxcat catalog.
+Note, you need to use the respective Ant script for init and build.  But to just 
+run the solr home either script will do.  First run the Solr server (port is configured in build.properties)
+
+    ant -f build-gazetteer.xml proxy start-jetty
+
+    
+
+  
+
 
 
 Customization
