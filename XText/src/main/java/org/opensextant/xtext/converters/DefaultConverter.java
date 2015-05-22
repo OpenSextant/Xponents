@@ -84,6 +84,8 @@ public class DefaultConverter extends ConverterAdapter {
 
         try {
             parser.parse(input, handler, metadata, ctx);
+        } catch (NoClassDefFoundError classErr){
+            throw new IOException("Unable to parse content due to Tika misconfiguration", classErr);            
         } catch (Exception xerr) {
             throw new IOException("Unable to parse content", xerr);
         } finally {

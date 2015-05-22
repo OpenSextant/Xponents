@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
-        <version>2.7.2</version>
+        <version>2.7.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -14,7 +14,7 @@
     <artifactId>opensextant-xponents-xtext</artifactId>
 
     <properties>
-    <poi.version>3.11</poi.version>
+        <poi.version>3.12</poi.version>
     </properties>
 
     <dependencies>
@@ -29,21 +29,20 @@
             <version>1.0.13</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>${poi.version}</version>
             <scope>runtime</scope>
         </dependency>
-        
-        <!--  Override JSON-lib use of old commons-lang 2.5 -->
+
+        <!-- Override JSON-lib use of old commons-lang 2.5 -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
             <scope>runtime</scope>
-        </dependency>        
+        </dependency>
 
 
         <dependency>
@@ -67,13 +66,24 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.3</version>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
             <version>2.4</version>
             <classifier>jdk15</classifier>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -101,7 +111,7 @@
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>1.6</version>
+            <version>1.8</version>
         </dependency>
 
         <dependency>
@@ -113,7 +123,7 @@
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-parsers</artifactId>
-            <version>1.6</version>
+            <version>1.8</version>
             <exclusions>
                 <exclusion>
                     <artifactId>pdfbox</artifactId>
@@ -131,6 +141,30 @@
                     <artifactId>poi-ooxml</artifactId>
                     <groupId>org.apache.poi</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>httpservices</artifactId>
+                    <groupId>edu.ucar</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>junrar</artifactId>
+                    <groupId>com.github.junrar</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>netcdf4</artifactId>
+                    <groupId>edu.ucar</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>grib</artifactId>
+                    <groupId>edu.ucar</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cdm</artifactId>
+                    <groupId>edu.ucar</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -139,7 +173,7 @@
             <artifactId>xml-apis</artifactId>
             <version>1.3.04</version>
         </dependency>
-        
+
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -171,7 +205,13 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>1.8.8</version>
+            <version>1.8.9</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
@@ -181,17 +221,35 @@
             <artifactId>fluent-hc</artifactId>
             <version>4.3.1</version>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient-cache</artifactId>
             <version>4.3.1</version>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.3.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
