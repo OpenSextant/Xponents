@@ -144,7 +144,13 @@
     </copy>
   </target>
 
-  <target name="copy-docs">
+  <target name="apidocs" >
+        <exec executable="mvn" dir="${xponents.home}" failonerror="true">
+            <arg value="javadoc:jar" />
+        </exec>
+  </target>
+
+  <target name="copy-docs" depends="apidocs">
     <copy todir="${release}/">
         <fileset dir="${xponents.home}/">
            <include name="NOTICE" />
