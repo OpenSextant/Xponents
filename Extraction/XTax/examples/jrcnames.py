@@ -80,9 +80,9 @@ AMBIGUOUS = set(
          'daily news',
          'press agency',
          'military intelligence',
-         'international studies', 
+         'international studies',
          'international trade',
-         'will meet', 
+         'will meet',
          'the nation',
          'facebook',
          'twitter',
@@ -91,11 +91,11 @@ AMBIGUOUS = set(
          'our own',
          'reach',
          'armed forces',
-         'canal', 
+         'canal',
          'the age',
          'read more',
          'presedential office',
-         'set fire', 
+         'set fire',
          'emergency',
          'nature',
          'status quo',
@@ -111,6 +111,8 @@ FIXES = {
          # So it is remapped to "-" (Thing, default)
          'Improvised Explosive Device' : '-'
          }
+
+
 
 def check_validity(e):
     '''
@@ -160,8 +162,8 @@ class JRCEntity(Taxon):
     def _make_tags(self):
         
         return [
-                'jrc_id+' + self.entity_id,
-                'lang_id+' + self.lang,
+                'jrc_id+%d' % (self.entity_id),
+                'lang_id+%s' % (self.lang)
                 ]
         
     def __str__(self):
@@ -198,32 +200,32 @@ def create_entity(line, scan=False):
     if not etype:
         return None
     
+    _id = int(_id)
+    
     if scan:
         # if etype in other_types:
         #    print line
         #    return None
-        lookup_id = lang + _id
+        lookup_id = "%s%d" % (lang, _id)
         if lookup_id not in nameset:
             nameset[lookup_id] = name            
             
         return None
-    else:
-        lookup_id = 'u' + _id
-        if lookup_id in nameset:
-            primary_name = nameset[lookup_id]
-        else:
-            lookup_id = lang + _id
-            if lookup_id in nameset:
-                primary_name = nameset[lookup_id]
-            else:
-                print "Failed to find primary name for ", line
-                primary_name = name
-            
-        count = 1
-        if _id in idset:
-            count = idset.get(_id)
-            count = count + 1
-        idset[_id] = count
+
+    primary_name = None
+    for lookup_id in [ 'u%d' % (_id), "%s%d" % (lang, _id)]:
+        primary_name = nameset.get(lookup_id)
+        if primary_name: break
+        
+    if not primary_name:
+        print "Failed to find primary name for ", line
+        primary_name = name
+        
+    count = 1
+    if _id in idset:
+        count = idset.get(_id)
+        count = count + 1
+    idset[_id] = count
      
     variant_id = count   
     #
@@ -242,7 +244,6 @@ if __name__ == '__main__':
     Actual Usage: All data will be ingested to solr-url
         jrcnames.py   file   solr-url
     '''
-
     import sys
     taxonomy = sys.argv[1]
     start_id = 3000000
@@ -282,13 +283,13 @@ if __name__ == '__main__':
     fh.close()
 
     row_id = 0
-    fh = open(taxonomy, 'rb')    
+    fh = open(taxonomy, 'rb')
     for row in fh:       
         node = create_entity(row)
         row_id = row_id + 1
         if not node:
             continue
-        
+
         # ".id" must be an Integer for text tagger
         node.id = start_id + row_id        
         builder.add(catalog_id, node)
@@ -300,7 +301,6 @@ if __name__ == '__main__':
             print str(node)
         if row_max > 0 and row_id > row_max:
             break
-            
             
     builder.save(flush=True)
     builder.optimize()
