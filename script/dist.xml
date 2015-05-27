@@ -5,7 +5,7 @@
   </description>
 
   <property name="xponents.home" value="${basedir}/../" />
-  <property name="version" value="2.7c"/>
+  <property name="version" value="2.7.5"/>
   <property name="release" location="${xponents.home}/Xponents-${version}" />
 
   <property name="release.xtext" location="${xponents.home}/XText-${version}" />
@@ -105,8 +105,8 @@
         </fileset>
     </copy>
     <copy todir="${release}/lib/python">
-        <fileset dir="${xponents.home}/Extraction/src/main/python">
-           <include name="*" />
+        <fileset dir="${xponents.home}/Extraction/src/main/python" >
+           <exclude name="**/*.pyc"></exclude> 
         </fileset>
     </copy>
   </target>
