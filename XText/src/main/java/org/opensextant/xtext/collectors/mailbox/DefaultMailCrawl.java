@@ -42,10 +42,10 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
     /**
      * A collection listener to consult as far as how to record the found & converted content
      * as well as to determine what is worth saving.
-     * 
+     *
      */
     protected CollectionListener listener = null;
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public DefaultMailCrawl(MailConfig cfg, String archive) {
         super(cfg, archive);
@@ -96,8 +96,8 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
     }
 
     /**
-     * Email 
-     * @throws IOException 
+     * Email
+     * @throws IOException
      */
     @Override
     public void handleConversion(ConvertedDocument doc, String filepath) {
@@ -122,7 +122,7 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
             if (doc.hasChildren()) {
                 // NOTE:  our internal ID for children documents may not match what is preserved on disk in XText metadata.
-                // 
+                //
                 for (ConvertedDocument child : doc.getChildren()) {
 
                     // This creates a new ID out of the parent doc id and the attachment filename.
@@ -148,12 +148,12 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
     /**
      * TODO:
-     * 
-     * pull all mail messages, 
-     * - create reasonable  FILE.msg  file name 
+     *
+     * pull all mail messages,
+     * - create reasonable  FILE.msg  file name
      * - use XText to iterate over each msg file for conversion
-     * - reimplement 
-     * 
+     * - reimplement
+     *
      */
     @Override
     public void collect() throws MessagingException {
@@ -222,7 +222,7 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
                     // 1. Identify the email message.
                     //    and determine if you need to capture it again.
-                    // 
+                    //
                     String messageFilename = MessageConverter.createSafeFilename(subject);
                     if (messageFilename.length() > 60) {
                         messageFilename = messageFilename.substring(0, 60);
@@ -239,7 +239,7 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
                     try {
                         if (listener != null && listener.exists(msgId)) {
                             // You already collected this item. Ignoring.
-                            // 
+                            //
                             continue;
                         }
                     } catch (Exception err1) {
@@ -295,10 +295,10 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
     /**
      * A very specific MESSAGE ->> FILE archiving method.
      * Mail item will end up in:
-     * 
+     *
      *   YYYYMMDD/MSGID/SUBJ.eml  .. the original email.
      *   YYYYMMDD/MSGID/SUBJ_eml/ .. attachments here..
-     *   
+     *
      * @param dateFolder
      * @param msg
      * @param oid
@@ -313,16 +313,16 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
             File msgFolder = createMessageFolder(dateFolder, oid);
 
             // Save the file and do the conversion
-            // 
+            //
             String msgFilepath = String.format("%s/%s.eml", msgFolder, fname);
             File msgFile = new File(msgFilepath);
             msgIO = new FileOutputStream(msgFile);
             // Requirement:  Write data to disk first, saving a ".eml" file.
             msg.writeTo(msgIO);
 
-            // NOTE: here the act of converting the ".eml" file now invokes 
+            // NOTE: here the act of converting the ".eml" file now invokes
             // the default MessageConverter logic and finally calls this as the ConversionListener
-            // 
+            //
             converter.convertFile(msgFile);
             return 0;
 

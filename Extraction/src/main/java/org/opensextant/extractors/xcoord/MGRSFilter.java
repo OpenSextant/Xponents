@@ -133,21 +133,21 @@ public class MGRSFilter implements GeocoordMatchFilter {
     public boolean stop(GeocoordMatch m) {
 
         // Simple case filter.  44ger7780 is not really an MGRS.
-        // 
+        //
         if (!TextUtils.isUpper(m.getText())) {
             return true;
         }
-        
+
         int len = m.coord_text.length();
         if (len < 6) {
             return true;
         }
-        
+
         String eolTest = m.getText().substring(0,5);
         if (eolTest.contains("\n")|| eolTest.contains("\r") ){
             return true;
         }
-        
+
         // IGNORE numeric sequences
         //
         String mgrs_offsets = m.coord_text.substring(5);
@@ -165,11 +165,11 @@ public class MGRSFilter implements GeocoordMatchFilter {
             if ("per".equalsIgnoreCase(found[1])) {
                 return true;
             }
-            
+
             // Units of measure:  'sec' or 'Sec';  the term sec is more a word than an MGRS quad here.
-            // 
-            // 'dd sec ...' fail, filter out.            
-            // 'dd Sec ...' fail, filter out.            
+            //
+            // 'dd sec ...' fail, filter out.
+            // 'dd Sec ...' fail, filter out.
             // 'dd SEC dd ' pass
             // 'ddSEC...' pass
             //
@@ -178,8 +178,8 @@ public class MGRSFilter implements GeocoordMatchFilter {
             }
         }
 
-        // Eliminate easy to match DATE + TIME formats commonly used 
-        // 
+        // Eliminate easy to match DATE + TIME formats commonly used
+        //
         for (DateFormat format : df) {
             if (isValidDate(m.coord_text, len, format)) {
                 return true;
@@ -224,7 +224,7 @@ public class MGRSFilter implements GeocoordMatchFilter {
             }
 
             /* Filter out only recent years, not future years.
-             * 
+             *
              */
             int pastYearDelta = CURRENT_YEAR - yr;
             if (pastYearDelta < MAX_YEARS_AGO && pastYearDelta > 0) {

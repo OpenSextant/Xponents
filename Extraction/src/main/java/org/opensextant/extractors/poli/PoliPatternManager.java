@@ -67,7 +67,7 @@ public final class PoliPatternManager extends RegexPatternManager {
     /**
      * Enable a family of patterns
      * @param fam pat family to disable
-     * 
+     *
      */
     public void disable_patterns(String fam) {
         for (RegexPattern pat : patterns.values()) {
@@ -79,6 +79,7 @@ public final class PoliPatternManager extends RegexPatternManager {
 
     /** You don't really want to enable All patterns... unless you are brute force testing all your patterns.
      */
+    @Override
     public void enableAll() {
         for (RegexPattern pat : patterns.values()) {
             pat.enabled = true;
@@ -97,7 +98,7 @@ public final class PoliPatternManager extends RegexPatternManager {
     /**
      * enable an instance of a pattern based on the global settings.
      *
-     * @param repat regex pattern 
+     * @param repat regex pattern
      */
     @Override
     public void enable_pattern(RegexPattern repat) {
@@ -112,7 +113,7 @@ public final class PoliPatternManager extends RegexPatternManager {
      * #RULE FAMILY RID REGEX PatternManager here adds compiled pattern and
      * DEFINES.
      *
-     * @param fam  pattern family 
+     * @param fam  pattern family
      * @param rule pattern rule ID
      * @param desc optional description
      * @return

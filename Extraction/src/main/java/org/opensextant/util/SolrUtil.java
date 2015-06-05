@@ -12,14 +12,14 @@ import org.apache.solr.common.util.DateUtil;
 
 /**
  * Utility functions better suited in their own class.
- * 
+ *
  * @author ubaldino
  *
  */
 public class SolrUtil {
 
     /**
-     * 
+     *
      * @param d
      * @param f
      * @return  a list of strings for this field from that document.;  Or null if none found.
@@ -41,7 +41,7 @@ public class SolrUtil {
         }
         return vals;
     }
-    
+
     /**
      * Get an integer from a record
      */
@@ -89,7 +89,7 @@ public class SolrUtil {
 
     /**
      * Get a Date object from a record
-     * 
+     *
      * @throws java.text.ParseException
      */
     public static Date getDate(SolrDocument d, String f)
@@ -130,13 +130,13 @@ public class SolrUtil {
      */
     public static String getString(SolrInputDocument solrDoc, String name) {
         Object result = solrDoc.getFieldValue(name);
-        
+
         if (result==null || StringUtils.isBlank((String)result)) {
             return null;
         }
         return result.toString();
     }
-    
+
     /**
      * Get a String object from a record
      */
@@ -149,7 +149,7 @@ public class SolrUtil {
     }
 
     /**
-     * 
+     *
      * Get a double from a record
      */
     public static double getDouble(SolrDocument solrDoc, String name) {
@@ -167,7 +167,7 @@ public class SolrUtil {
 
     /**
      * Parse XY pair stored in Solr Spatial4J record. No validation is done.
-     * 
+     *
      * @return XY double array, [lat, lon]
      */
     public static double[] getCoordinate(SolrDocument solrDoc, String field) {
@@ -187,7 +187,7 @@ public class SolrUtil {
 
     /**
      * Parse XY pair stored in Solr Spatial4J record. No validation is done.
-     * 
+     *
      * @return XY double array, [lat, lon]
      */
     public static double[] getCoordinate(String xy) {

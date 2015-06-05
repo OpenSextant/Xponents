@@ -30,7 +30,7 @@ import com.spatial4j.core.io.GeohashUtils;
 public class CoordinateAssociationRule extends GeocodeRule {
 
     /**
-     * Default threshold distance between a coordinate and a candidate location 
+     * Default threshold distance between a coordinate and a candidate location
      */
     public static int DEFAULT_THRESHOLD_METERS = 25000;
     /** Threshold for geohash prefix similarity */
@@ -65,7 +65,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
     }
 
     /**
-     * If a particular geo is close to a candidate name/location, 
+     * If a particular geo is close to a candidate name/location,
      * then add to the candidate's score for that location.
      */
     @Override
@@ -96,7 +96,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
         default:
         case GEOHASH:
 
-            // if geohash geo matches one ore more coordinates, 
+            // if geohash geo matches one ore more coordinates,
             // score up geo appropriately.
             String geo_gh = GeohashUtils.encodeLatLon(geo.getLatitude(), geo.getLongitude());
             String grid = geo_gh.substring(0, DEFAULT_THRESHOLD_DIGITS);

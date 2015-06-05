@@ -75,13 +75,13 @@ import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
 /**
- * 
+ *
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
  * the Solr server.
  * <p >
  * This class is not thread-safe. It could be made to be with little effort.
- * 
+ *
  * @author David Smiley - dsmiley@mitre.org
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
@@ -111,7 +111,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private final ModifiableSolrParams params = new ModifiableSolrParams();
 
     /**
-     * 
+     *
      * @throws IOException
      */
     public GazetteerMatcher() throws ConfigException {
@@ -159,7 +159,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         /* Basic parameters for geospatial lookup.
          * These are reused, and only pt and d are set for each lookup.
-         * 
+         *
          */
         geoLookup.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
                 + "geo,place_id,name_bias,id_bias,name_type");
@@ -171,10 +171,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         geoLookup.add("sort geodist asc"); // Find closest places first.
     }
 
+    @Override
     public String getCoreName() {
         return "gazetteer";
     }
 
+    @Override
     public SolrParams getMatcherParameters() {
         return params;
     }
@@ -183,10 +185,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * A flag that will allow us to tag "in" or "in." as a possible
      * abbreviation. By default such things are not abbreviations, e.g., Indiana
      * is typically IN or In. or Ind., for example. Oregon, OR or Ore. etc.
-     * 
+     *
      * but almost never 'in' or 'or' for those cases.
      *
-     * @param b flag true = allow lower case abbreviations to be tagged, e.g., as in social media or 
+     * @param b flag true = allow lower case abbreviations to be tagged, e.g., as in social media or
      */
     public void setAllowLowerCaseAbbreviations(boolean b) {
         allowLowercaseAbbrev = b;
@@ -195,7 +197,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * User-provided filters to filter out matched names immediately.
      * Avoid filtering out things that are indeed places, but require disambiguation or refinement.
-     *  
+     *
      * @param f a match filter
      */
     public void setMatchFilter(MatchFilter f) {
@@ -218,11 +220,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Geotag a document, returning PlaceCandidates for the mentions in document.
      * Optionally just return the PlaceCandidates with name only and no Place objects attached.
-     * 
+     *
      * @param buffer text
      * @param docid  identity of the text
      * @param tagOnly True if you wish to get the matched phrases only. False if you want the full list of Place Candidates.
-     * 
+     *
      * @return place_candidates List of place candidates
      * @throws ExtractionException
      */
@@ -261,10 +263,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * text span and all the gazetteer record IDs that are associated to
          * that span. The text could either be a name, a code or some other
          * abbreviation.
-         * 
+         *
          * For practical reasons the default behavior is to filter trivial spans
          * given the gazetteer data that is returned for them.
-         * 
+         *
          * WARNING: lots of optimizations occur here due to the potentially
          * large volume of tags and gazetteer data that is involved. And this is
          * relatively early in the pipline.
@@ -282,7 +284,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             int x2 = (Integer) tag.get("endOffset");
             int len = x2 - x1;
             if (len == 1) {
-                // Ignoring place names whose length is less than 2 chars 
+                // Ignoring place names whose length is less than 2 chars
                 ++this.defaultFilterCount;
                 continue;
             }
@@ -314,9 +316,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             pc.end = x2;
             pc.setText(matchText);
 
-            /* Filter out tags that user determined ahead of time as 
+            /* Filter out tags that user determined ahead of time as
              * not-places for their context.
-             * 
+             *
              */
             if (userfilter != null) {
                 if (userfilter.filterOut(pc.getTextnorm())) {
@@ -339,7 +341,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             double maxNameBias = 0.0;
             for (Integer solrId : placeRecordIds) {
-                // Yes, we must cast here.  
+                // Yes, we must cast here.
                 // As long as createTag generates the correct type stored in beanMap we are fine.
                 Place pGeo = (Place) beanMap.get(solrId);
                 // assert pGeo != null;
@@ -368,7 +370,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
                 /**
                  * Country names are the only names you can reasonably set ahead of time.
-                 * All other names need to be assessed in context.  Negate country names, 
+                 * All other names need to be assessed in context.  Negate country names,
                  * e.g., "Georgia", by exception.
                  */
                 if (pGeo.isCountry()) {
@@ -420,14 +422,15 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
     /**
      * This computes the cumulative filtering rate of user-defined and other non-place name
-     * patterns 
-     * 
+     * patterns
+     *
      * @return
      */
     public double getFiltrationRatio() {
         return (double) this.filteredTotal / (filteredTotal + matchedTotal);
     }
 
+    @Override
     public Object createTag(SolrDocument tag) {
         return createPlace(tag);
     }
@@ -435,7 +438,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Adapt the SolrProxy method for creating a Place object. Here, for
      * disambiguation down stream gazetteer metrics are added.
-     * 
+     *
      * @param gazEntry a solr record from the gazetteer
      * @return Place (Xponents) object
      */
@@ -517,7 +520,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * false positives 100% of the time. E.g,. "way", "back", "north" You might
      * consider two different stop filters, Is "North" different than "north"?
      * This first pass filter should really filter out only text we know to be
-     * false positives regardless of case. 
+     * false positives regardless of case.
 
      * Filter out unwanted tags via GazetteerETL data model or in Solr index. If
      * you believe certain items will always be filtered then set name_bias >
@@ -564,7 +567,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
     /**
      * Find places located at a particular location.
-     * 
+     *
      * @param yx
      * @return
      */
@@ -573,7 +576,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         /* URL as such:
          * Find just Admin places and country codes for now.
         /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
-         * 
+         *
          */
         geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
         geoLookup.set("d", 50); // Find places within 50 KM, but only first is really used.
@@ -589,17 +592,17 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Exclusions have two columns in a CSV file.
      * 'exclusion', 'category'
-     * 
+     *
      * "#" in exclusion column implies a comment.
      * @param file
      * @return
      * @throws ConfigException
      */
     public static Set<String> loadExclusions(URL file) throws ConfigException {
-        /* Load the exclusion names -- these are terms that are 
+        /* Load the exclusion names -- these are terms that are
          * gazeteer entries, e.g., gazetteer.name = <exclusion term>,
          * that will be marked as search_only = true.
-         * 
+         *
          */
         if (file == null) {
             return null;

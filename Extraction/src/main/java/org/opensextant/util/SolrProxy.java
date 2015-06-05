@@ -52,13 +52,13 @@ import org.slf4j.LoggerFactory;
 /**
  * As Xponents is a multi-core instance of Solr, a single default solr home and default solr core
  * does not make sense.  Each wrapper around Solr (via SolrProxy) needs to name the solr home and an explicit core name.
- * 
+ *
  * @author ubaldino
  */
 public class SolrProxy extends SolrUtil {
 
     /**A single method to help find a suitable value for SOLR HOME
-     * 
+     *
      * If given is null, then system variables are checked.
      * @param given solr home.
      */
@@ -92,7 +92,7 @@ public class SolrProxy extends SolrUtil {
 
     /**
      * Initializes a Solr server from a URL
-     * 
+     *
      * @throws IOException
      */
     public SolrProxy(URL url) throws IOException {
@@ -102,7 +102,7 @@ public class SolrProxy extends SolrUtil {
 
     /**
      * Initializes a Solr server from the SOLR_HOME environment variable
-     * 
+     *
      * @throws IOException
      */
     public SolrProxy(String core) throws ConfigException {
@@ -114,7 +114,7 @@ public class SolrProxy extends SolrUtil {
 
     /**
      * Initializes a Solr server from the SOLR_HOME environment variable
-     * 
+     *
      * @throws IOException
      */
     public SolrProxy(String solr_home, String core) throws ConfigException {
@@ -135,7 +135,7 @@ public class SolrProxy extends SolrUtil {
     }
 
     /**
-     * 
+     *
      * Is Solr server instance allowed to write to index?
      */
     public boolean isWritable() {
@@ -144,7 +144,7 @@ public class SolrProxy extends SolrUtil {
 
     /**
      * Get an HTTP server for Solr.
-     * 
+     *
      * @param url
      * @return Instance of a Solr server
      * @throws MalformedURLException
@@ -185,7 +185,7 @@ public class SolrProxy extends SolrUtil {
 
     /**
      * Creates the bare minimum Gazetteer Place record
-     * 
+     *
      * @return Place
      */
     public static Place createPlace(SolrDocument gazEntry) {
@@ -221,14 +221,14 @@ public class SolrProxy extends SolrUtil {
 
         return bean;
     }
-    
+
     /**
      * Search an OpenSextant solr gazetteer.
-     * 
+     *
      * @param index solr server handle
      * @param params search parameters
      * @return
-     * @throws SolrServerException 
+     * @throws SolrServerException
      */
     public static List<Place> searchGazetteer(SolrServer index, SolrParams qparams)
             throws SolrServerException {
@@ -243,11 +243,11 @@ public class SolrProxy extends SolrUtil {
         }
 
         return places;
-    }    
+    }
 
     /**
      * Add one solr record.
-     * 
+     *
      * @param solrRecord
      * @throws Exception
      */
@@ -270,7 +270,7 @@ public class SolrProxy extends SolrUtil {
 
     /**
      * Add many solr records.
-     * 
+     *
      * @param solrRecords
      * @throws Exception
      */
@@ -292,7 +292,7 @@ public class SolrProxy extends SolrUtil {
     }
 
     /** Reopen an existing solr proxy.
-     * 
+     *
      */
     public void openIndex() throws ConfigException, IOException {
         if (solrServer == null) {
@@ -322,7 +322,7 @@ public class SolrProxy extends SolrUtil {
      * Save and optionally records to server or index On failure, current
      * accumulating request is cleared and nullified to avoid retransmitting bad
      * data.
-     * 
+     *
      * In the event of a failure all records since last "saveIndex" would be
      * lost and should be resubmitted.
      */
@@ -347,7 +347,7 @@ public class SolrProxy extends SolrUtil {
     }
 
     /**
-     * 
+     *
      * @throws IOException
      */
     public void saveAndReopen() throws ConfigException, IOException {

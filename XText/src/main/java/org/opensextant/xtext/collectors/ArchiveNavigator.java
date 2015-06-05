@@ -45,7 +45,7 @@ import org.opensextant.xtext.Converter;
 /**
  * Archive is traversed, but no data is written to disk unless XText is in save
  * mode. Conversion listener should be listening for Converted Docs.
- * 
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class ArchiveNavigator implements Collector {
@@ -83,8 +83,9 @@ public class ArchiveNavigator implements Collector {
     /**
      * Unpack any archive. You must provide a converter -- which converts each
      * file.
-     * @throws ConfigException 
+     * @throws ConfigException
      */
+    @Override
     public void collect() throws IOException, ConfigException {
         // Get file extension
         String ext = FilenameUtils.getExtension(currentArchive.getPath());
@@ -111,7 +112,7 @@ public class ArchiveNavigator implements Collector {
 
     /*
      * Un-TAR. Oops. Its just a copy of Un-TAR and I replace tar with zip.
-     * 
+     *
      * so there may be Zip-specific stuff here, ... but the approach is the
      * same.
      */
@@ -159,7 +160,7 @@ public class ArchiveNavigator implements Collector {
     }
 
     /**
-     * 
+     *
      * @param theFile
      * @param fname
      * @return TAR file path for result.
@@ -238,7 +239,7 @@ public class ArchiveNavigator implements Collector {
 
     /**
      * save to root dir
-     * 
+     *
      * @param E
      * @param archiveio
      * @param root
@@ -254,7 +255,7 @@ public class ArchiveNavigator implements Collector {
     private File saveArchiveEntry(ArchiveEntry E, InputStream archiveio, String root)
             throws IOException {
 
-        // Note: using native OS file path is fine here.  As long as you do not 
+        // Note: using native OS file path is fine here.  As long as you do not
         // try any string mechanics on paths.
         //
         String targetPath = FilenameUtils.concat(root, E.getName());

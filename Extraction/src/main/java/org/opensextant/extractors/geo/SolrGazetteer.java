@@ -96,7 +96,7 @@ public class SolrGazetteer {
     public SolrGazetteer() throws ConfigException {
         this((String) null);
     }
-    
+
     /**
      * Instantiates a new solr gazetteer with the specified Solr Home location.
      *
@@ -145,7 +145,7 @@ public class SolrGazetteer {
     private static ModifiableSolrParams createGeodeticLookupParams() {
         /* Basic parameters for geospatial lookup.
          * These are reused, and only pt and d are set for each lookup.
-         * 
+         *
          */
         ModifiableSolrParams p = new ModifiableSolrParams();
         p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
@@ -161,7 +161,7 @@ public class SolrGazetteer {
 
     /**
      * Initialize.
-     * Cascading env variables:  First use value from constructor, 
+     * Cascading env variables:  First use value from constructor,
      * then opensextant.solr, then solr.solr.home
      *
      * @throws ConfigException Signals that a configuration exception has occurred.
@@ -208,7 +208,7 @@ public class SolrGazetteer {
     /**
      * Get Country by the default ISO digraph returns the Unknown country if you
      * are not using an ISO2 code.
-     * 
+     *
      * TODO: throw a GazetteerException of some sort. for null query or invalid
      * code.
      *
@@ -239,11 +239,11 @@ public class SolrGazetteer {
     /**
      * This only returns Country objects that are names; It does not produce any
      * abbreviation variants.
-     * 
+     *
      * TODO: allow caller to get all entries, including abbreviations.
      *
      * @throws SolrServerException the solr server exception
-     * @throws IOException 
+     * @throws IOException
      */
     public static HashMap<String, Country> loadCountries(SolrServer index)
             throws SolrServerException, IOException {
@@ -312,12 +312,12 @@ public class SolrGazetteer {
      * <pre>
      * Search the gazetteer using a phrase.
      * The phrase will be quoted internally as it searches Solr
-     * 
+     *
      *  e.g., search( "\"Boston City\"" )
-     * 
+     *
      * Solr Gazetteer uses OR as default joiner for clauses.  Without quotes
      * the above search would be "Boston" OR "City" effectively.
-     * 
+     *
      * </pre>
      *
      * @param place_string the place_string
@@ -332,14 +332,14 @@ public class SolrGazetteer {
      * Instance method that reuses a set of SolrParams for optimized search.
      * <pre>
      * Search the gazetteer using one of the following:
-     * 
+     *
      *   a name or keyword
      *   a Solr style fielded query, which by default includes bare keyword searches
-     * 
+     *
      *  search( "\"Boston City\"" )
-     * 
+     *
      * Solr Gazetteer uses OR as default joiner for clauses.
-     * 
+     *
      * </pre>
      *
      * @param place the place
@@ -360,18 +360,18 @@ public class SolrGazetteer {
 
     /**
      * Find places located at a particular location.
-     * 
-     * @param yx 
+     *
+     * @param yx
      * @param d  distance is required.
      * @return
-     * @throws SolrServerException 
+     * @throws SolrServerException
      */
     public List<Place> placesAt(LatLon yx, int withinKM) throws SolrServerException {
 
         /* URL as such:
          * Find just Admin places and country codes for now.
         /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
-         * 
+         *
          */
         geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
         geoLookup.set("d", withinKM);
@@ -380,7 +380,7 @@ public class SolrGazetteer {
 
     /**
      * Variation on placesAt()
-     * 
+     *
      * @param yx        location
      * @param withinKM  distance or -1
      * @param feature   feature class
@@ -392,7 +392,7 @@ public class SolrGazetteer {
         /* URL as such:
          * Find just Admin places and country codes for now.
         /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
-         * 
+         *
          */
         geoLookup2.set(CommonParams.Q, String.format("feat_class:%s", feature));
 

@@ -37,7 +37,7 @@
 //             \/_/
 //
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-// 
+//
 
 package org.opensextant.data;
 
@@ -57,9 +57,9 @@ public class Country extends Place {
     public String CC_FIPS = null;
 
     /** Any list of country alias names. */
-    private Set<String> aliases = new HashSet<String>();
+    private final Set<String> aliases = new HashSet<String>();
 
-    private Set<String> regions = new HashSet<String>();
+    private final Set<String> regions = new HashSet<String>();
 
     /**
      * A country abstraction that uses ISO 2-alpha as an ID, and any name given
@@ -98,7 +98,7 @@ public class Country extends Place {
 
     /**
      *
-     * @return  set of regions in which this country belongs. 
+     * @return  set of regions in which this country belongs.
      */
     public Set<String> getRegions() {
         return regions;

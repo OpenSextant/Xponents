@@ -1,6 +1,6 @@
 /**
  *
-* Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,11 +43,11 @@ public interface GeocoordMatchFilter {
      * @param m match
      * @return true if instance m is valid coordinate
      */
-    public boolean pass(GeocoordMatch m);
+    boolean pass(GeocoordMatch m);
 
     /** stop a match
      * @param m match
      * @return true if instance m is NOT valid coordinate
      */
-    public boolean stop(GeocoordMatch m);
+    boolean stop(GeocoordMatch m);
 }

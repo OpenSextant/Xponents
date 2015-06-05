@@ -43,15 +43,15 @@ import org.slf4j.LoggerFactory;
  * This is not a general Sharepoint interface library nor a general Sharepoint crawling tool.
  * This *is* a barebones demonstration of how to interact with a Sharepoint site and capture meaningful content in
  * an SP site and its sub-folders.
- * 
+ *
  */
 public class SharepointClient extends WebClient {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
-    /** For testing: 
-     * @throws MalformedURLException 
-     * @throws ConfigException 
+    /** For testing:
+     * @throws MalformedURLException
+     * @throws ConfigException
      */
     public SharepointClient(String siteUrl, String archive, String u, String p, String dom)
             throws MalformedURLException, ConfigException {
@@ -78,14 +78,15 @@ public class SharepointClient extends WebClient {
     }
 
     private HttpClient currentConn = null;
-    
+
+    @Override
     public void reset(){
         currentConn = null;
     }
-    
+
     /**
      * Sharepoint requires NTLM. This client requires a non-null user/passwd/domain.
-     * 
+     *
      */
     @Override
     public HttpClient getClient() {
@@ -93,7 +94,7 @@ public class SharepointClient extends WebClient {
         if (currentConn!=null){
             return currentConn;
         }
-        
+
         HttpClientBuilder clientHelper = HttpClientBuilder.create();
 
         if (proxyHost != null) {
@@ -115,7 +116,7 @@ public class SharepointClient extends WebClient {
     /**
      * Recursively parse a site page, limiting the crawl to local items
      * contained within the current folder/page
-     * 
+     *
      * @param html
      *            HTML text buffer
      * @return

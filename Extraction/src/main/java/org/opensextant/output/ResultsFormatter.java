@@ -23,7 +23,7 @@
  *
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
-**/
+ **/
 package org.opensextant.output;
 
 import org.opensextant.ConfigException;
@@ -40,36 +40,36 @@ public interface ResultsFormatter {
 
     /** A more convenient way of passing in a list of parameters.
      */
-    public void setParameters(Parameters params);
+    void setParameters(Parameters params);
 
     /**
      * @return
      */
-    public String getJobName();
+    String getJobName();
 
     /**
      * Set the path to the output directory.
      * @param pathname
      */
-    public void setOutputDir(String pathname);
+    void setOutputDir(String pathname);
 
     /**
      * Set the name of the output file.
      * @param filename
      */
-    public void setOutputFilename(String filename);
+    void setOutputFilename(String filename);
 
     /**
      * Get the type of output produced by this formatter.
      * @return
      */
-    public String getOutputType();
+    String getOutputType();
 
     /**
      * Get the path to the output file.
      * @return
      */
-    public String getOutputFilepath();
+    String getOutputFilepath();
 
     /**
      * Formats the results obtained from processing a corpus through OpenSextant.
@@ -80,23 +80,23 @@ public interface ResultsFormatter {
      * @return A message for the user
      * @throws ProcessingException formatting error
      */
-    public String formatResults(ExtractionResult corpus) throws ProcessingException;
+    String formatResults(ExtractionResult corpus) throws ProcessingException;
 
-    public void start(String nm) throws ProcessingException;
+    void start(String nm) throws ProcessingException;
 
-    public void finish();
-
-    /**
-     *
-     * @param f
-     * @throws ConfigException
-     */
-    public void addField(String f) throws ConfigException;
+    void finish();
 
     /**
      *
      * @param f
      * @throws ConfigException
      */
-    public void removeField(String f) throws ConfigException;
+    void addField(String f) throws ConfigException;
+
+    /**
+     *
+     * @param f
+     * @throws ConfigException
+     */
+    void removeField(String f) throws ConfigException;
 }

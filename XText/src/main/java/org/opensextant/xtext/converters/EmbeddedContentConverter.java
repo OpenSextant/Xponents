@@ -61,7 +61,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
         supportedTypes.add("docx");
         supportedTypes.add("doc");
         supportedTypes.add("pdf");
-        // Tika 1.5 test case only - 
+        // Tika 1.5 test case only -
         // supportedTypes.add("xls");
     }
 
@@ -75,9 +75,9 @@ public class EmbeddedContentConverter extends DefaultConverter {
 
     /**
      * If file type is NOT supported, the ConvertedDocument from the DefaultConverter will be returned.
-     * if the file type is supported, the ConvertedDocument from the default is used as the parent to 
+     * if the file type is supported, the ConvertedDocument from the default is used as the parent to
      * organize the embedded items found within.  Embedded items are organized on disk with metadata.
-     * 
+     *
      * Supported = MS PPT/PPTX, DOC/DOCX, PDF
      * @param fileext
      * @return
@@ -92,7 +92,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
     /**
      * Convert Embedded documents in the supported types to a folder of the embedded items.
      * Trivial embedded icons and other components will not be extracted
-     * 
+     *
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream in, File doc)
@@ -102,7 +102,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
         String ext = FilenameUtils.getExtension(doc.getName());
         if (!isSupported(ext)) {
             // We know we don't support textifying compound docs of this type.  DONE!
-            // 
+            //
             return compoundDoc; // Not really compound by our standards here.
         }
 
@@ -139,10 +139,10 @@ public class EmbeddedContentConverter extends DefaultConverter {
         }
     }
 
-    private DefaultConverter conv = new DefaultConverter();
+    private final DefaultConverter conv = new DefaultConverter();
 
     /**
-     * 
+     *
      * @param childObjects
      * @return
      */
@@ -180,7 +180,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
 
     /**
      * Embedded extractor here saves embedded objects to folder structure.
-     * 
+     *
      * @author ubaldino
      *
      */
@@ -197,7 +197,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
 
         /**
          * Certain items are trivial.
-         * 
+         *
          * @param mediaType
          * @return
          */

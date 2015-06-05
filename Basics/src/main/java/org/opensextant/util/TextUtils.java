@@ -24,7 +24,7 @@
  * **************************************************************************
  */
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//  
+//
 // _____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
@@ -36,7 +36,7 @@
 //             \/_/
 //
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-// 
+//
 package org.opensextant.util;
 
 import java.io.ByteArrayInputStream;
@@ -66,7 +66,7 @@ import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
 /**
- * 
+ *
  * @author ubaldino
  */
 public class TextUtils {
@@ -130,7 +130,7 @@ public class TextUtils {
             + "OoUu" // double acute
             + "Oo" // Scandanavian o
             + "AaEe" // A/E wiht micron
-    ;
+            ;
 
     private static final String ALPHAMAP_UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" // grave
             + "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD" // acute
@@ -143,13 +143,13 @@ public class TextUtils {
             + "\u00D8\u00F8" // Scandanavian o  Øø
             + "\u0100\u0101\u0112\u0113" // E-bar, A-bar
 
-    ;
+            ;
 
     /**
      * remove accents from a string and replace with ASCII equivalent
      * Reference: http://www.rgagnon.com/javadetails/java-0456.html
      * Caveat:  This implementation is not exhaustive.
-     * 
+     *
      * @param s the string
      * @return converted string
      */
@@ -176,13 +176,15 @@ public class TextUtils {
     }
 
     /**
-     * 
+     *
      * @param c
      * @return
      */
     public final static boolean isASCII(char c) {
-        return c > 0 && c <= 0x7F;
+        return c > 0 && c <= ASCII_END;
     }
+
+    private final static int ASCII_END = 0x7F;
 
     /**
      * @param data  bytes to test
@@ -190,7 +192,7 @@ public class TextUtils {
      */
     public static boolean isASCII(byte[] data) {
         for (byte b : data) {
-            if (b < 0 || b > 0x7F) {
+            if (b < 0 || b > ASCII_END) {
                 return false;
             }
         }
@@ -199,14 +201,14 @@ public class TextUtils {
 
     /**
      * count the number of ASCII bytes
-     * 
+     *
      * @param data bytes to count
      * @return count of ASCII bytes
      */
     public static int countASCIIChars(byte[] data) {
         int ascii = 0;
         for (byte b : data) {
-            if (b > 0 || b < 0x80) {
+            if (b > 0 || b <= ASCII_END) {
                 ++ascii;
             }
         }
@@ -215,10 +217,10 @@ public class TextUtils {
 
     /**
      * Replaces all 3 or more blank lines with a single paragraph break (\n\n)
-     * 
+     *
      * @param t text
      * @return A string with fewer line breaks;
-     * 
+     *
      */
     public static String reduce_line_breaks(String t) {
 
@@ -231,7 +233,7 @@ public class TextUtils {
 
     /**
      * Delete whitespace of any sort.
-     * 
+     *
      * @param t text
      * @return String, without whitespace.
      */
@@ -245,7 +247,7 @@ public class TextUtils {
 
     /**
      * Minimize whitespace.
-     * 
+     *
      * @param t text
      * @return scrubbed string
      */
@@ -276,7 +278,7 @@ public class TextUtils {
      * Delete control chars from text data; leaving text and whitespace only.
      * Delete char (^?) is also removed. Length may differ if ctl chars are
      * removed.
-     * 
+     *
      * @param t text
      * @return scrubbed buffer
      */
@@ -288,7 +290,7 @@ public class TextUtils {
         StringBuilder tmpCleanBuf = new StringBuilder();
 
         for (char ch : t.toCharArray()) {
-            if ((ch < 0x20 && !(ch == TAB || ch == NL)) || (ch == DEL)) {
+            if ((ch < ' ' && !(ch == TAB || ch == NL)) || (ch == DEL)) {
                 continue;
             }
 
@@ -299,7 +301,7 @@ public class TextUtils {
 
     /**
      * Counts all digits in text.
-     * 
+     *
      * @param txt text to count
      * @return count of digits
      */
@@ -318,7 +320,7 @@ public class TextUtils {
     }
 
     /**
-     * 
+     *
      * @param v text value
      * @return true if text is a number
      */
@@ -344,7 +346,7 @@ public class TextUtils {
 
     /**
      * Counts all whitespace in text.
-     * 
+     *
      * @param txt text
      * @return whitespace count
      */
@@ -366,7 +368,7 @@ public class TextUtils {
     /**
      * For measuring the upper-case-ness of short texts. Returns true if ALL
      * letters in text are UPPERCASE. Allows for non-letters in text.
-     * 
+     *
      * @param dat  text or data
      * @return true if text is Upper
      */
@@ -414,14 +416,14 @@ public class TextUtils {
     /**
      * Find the text window(s) around a match.  Given the size of a buffer, the match and desired width
      * return
-     * 
+     *
      *  <pre>
      * prepreprepre      MATCH        postpostpost
      * ^           ^                  ^          ^
      * l-width     l                 l+len   l+len+width
-     * left1     left2              right1    right2     
+     * left1     left2              right1    right2
      *  </pre>
-     * 
+     *
      * @param offset  offset of match
      * @param width   width of window left and right of match
      * @param textsize  size of buffer containing match; used for boundary conditions
@@ -459,7 +461,7 @@ public class TextUtils {
 
     /**
      * Get a single text window around the offset.
-     * 
+     *
      * @param offset  offset of match
      * @param width   width of window left and right of match
      * @param textsize  size of buffer containing match; used for boundary conditions
@@ -489,11 +491,11 @@ public class TextUtils {
 
     /**
      * Static method -- use only if you are sure of thread-safety.
-     * 
+     *
      * @param text text or data
      * @return identifier for the text, an MD5 hash
-     * @throws NoSuchAlgorithmException 
-     * @throws UnsupportedEncodingException 
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
      */
     public static String text_id(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         if (text == null) {
@@ -501,16 +503,16 @@ public class TextUtils {
         }
 
         MessageDigest md5 = MessageDigest.getInstance("MD5");
-        /* For this to be reproducible on all machines, we cannot rely 
+        /* For this to be reproducible on all machines, we cannot rely
          * on a default encoding for getBytes. So use getBytes(enc) to be explicit.
-         * 
+         *
          */
         md5.update(text.getBytes("UTF-8"));
         return md5_id(md5.digest());
     }
 
     /**
-     * 
+     *
      * @param md5digest byte array
      * @return MD5 hash for the data
      */
@@ -531,9 +533,9 @@ public class TextUtils {
     /**
      * Get a list of values into a nice, scrubbed array of values, no
      * whitespace.
-     * 
+     *
      * a, b, c d e, f =&gt; [ "a", "b", "c d e", "f" ]
-     * 
+     *
      * @param s string to split
      * @param delim delimiter, no default.
      * @return list of split strings, which are also whitespace trimmed
@@ -556,12 +558,12 @@ public class TextUtils {
 
     /**
      * Given a string S and a list of characters to replace with a substitute,
-     * 
+     *
      * return the new string, S'.
-     * 
+     *
      * "-name-with.invalid characters;" // replace "-. ;" with "_"
      * "_name_with_invalid_characters_" //
-     * 
+     *
      * @param buf  buffer
      * @param replace  string of characters to replace with the one substitute char
      * @param substitution string to insert in place of chars
@@ -582,9 +584,9 @@ public class TextUtils {
 
     /**
      * Remove instances of any char in the remove string from buf
-     * 
+     *
      * @param buf text
-     * @param remove   string to remove 
+     * @param remove   string to remove
      * @return scrubbed text
      */
     public static String removeAny(String buf, String remove) {
@@ -621,9 +623,9 @@ public class TextUtils {
 
     /**
      * compare to trim( string, chars ), but you can trim any chars
-     * 
+     *
      * Example: - a b c remove "-" from string above.
-     * 
+     *
      * @param buf text
      * @param remove string to remove
      * @return scrubbed text
@@ -646,12 +648,12 @@ public class TextUtils {
 
     /**
      * Normalization: Clean the ends, Remove Line-endings from middle of entity.
-     * 
+     *
      * <pre>
      *  Example:
      *        TEXT: **The Daily Newsletter of \n\rBarbara, So.**
      *       CLEAN: __The Daily Newsletter of __Barbara, So___
-     * 
+     *
      * Where "__" represents omitted characters.
      * </pre>
      * @param str text
@@ -698,9 +700,8 @@ public class TextUtils {
     private final static Pattern tokenizer = Pattern.compile("\\s+");
 
     /**
-     * Parse a substring snippet of text. Return the left most complete tokens
-     * TODO: reimplement as Lucene analyzer
-     * 
+     * Return just white-space delmited tokens.
+     *
      * @param str
      * @return
      */
@@ -751,7 +752,7 @@ public class TextUtils {
      * we see unicode file names -- Java can list them, but in using the
      * Java-provided version of the filename the OS/FS may not be able to find
      * the file by the name given in a particular normalized form.
-     * 
+     *
      * @param str text
      * @return normalized string, encoded with NFD bytes
      */
@@ -782,7 +783,7 @@ public class TextUtils {
      * punctuation. Internal punctuation which indicates conjunction of two
      * tokens, e.g. a hyphen, should have caused a split into separate tokens at
      * the tokenization stage.
-     * 
+     *
      *  Phoneticizer utility from OpenSextant v1.x Remove punctuation from a phrase
      * @param word text
      * @return scrubbed text
@@ -824,10 +825,10 @@ public class TextUtils {
     public final static String thaiLang = "th";
     public final static String vietnameseLang = "vi";
     public final static String romanianLang = "ro";
-    private final static Map<String, Language> LanguageMap_ISO639 = new HashMap<String, Language>();
+    private final static Map<String, Language> languageMapISO639 = new HashMap<String, Language>();
 
     /*
-     * Initialize some langauge metadata. 
+     * Initialize some langauge metadata.
      */
     static {
         try {
@@ -840,32 +841,31 @@ public class TextUtils {
     }
 
     /**
-     * TODO: should be immutable list. But this is not a security issue; If
-     * caller wants to add language they can.
+     * If caller wants to add language they can.
      * @return map of lang ID to language obj
      */
     public static Map<String, Language> getLanguageMap() {
-        return LanguageMap_ISO639;
+        return languageMapISO639;
     }
 
     /**
      * Initialize language codes and metadata. This establishes a map for the
      * most common language codes/names that exist in at least ISO-639-1 and
      * have a non-zero 2-char ID.
-     * 
+     *
      * <pre>
      * Based on:
      * http://stackoverflow.com/questions/674041/is-there-an-elegant-way
      * -to-convert-iso-639-2-3-letter-language-codes-to-java-lo
-     * 
+     *
      * Actual code mappings: en =&gt; eng eng =&gt; en
-     * 
+     *
      * cel =&gt; '' // Celtic; Avoid this.
-     * 
+     *
      * tr =&gt; tur tur =&gt; tr
-     * 
+     *
      * Names: tr =&gt; turkish tur =&gt; turkish turkish =&gt; tr // ISO2 only
-     * 
+     *
      * </pre>
      */
     public static void initLanguageData() {
@@ -880,10 +880,9 @@ public class TextUtils {
     /**
      * This is Libray of Congress data for language IDs. This is offered as a tool to help downstream language ID
      * and enrich metadata when tagging data from particular countries.
-     * 
-     * TODO: consider whether this should be initialized optionally.
-     * Reference: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt  
-     * 
+     *
+     * Reference: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt
+     *
      * @throws java.io.IOException if resource file is not found
      */
     public static void initLOCLanguageData() throws java.io.IOException {
@@ -936,19 +935,19 @@ public class TextUtils {
 
         // Delicately insert more common names and codes as well as locales here.
         Language zh = new Language("zho", "zh", "Chinese");
-        LanguageMap_ISO639.put("zho", zh);
+        languageMapISO639.put("zho", zh);
 
         Language zhcn = new Language("chi", "zh", "Chinese");
-        LanguageMap_ISO639.put("zh-cn", zhcn);
+        languageMapISO639.put("zh-cn", zhcn);
 
         Language fas = new Language("per", "fa", "Farsi");
-        LanguageMap_ISO639.put("farsi", fas);
+        languageMapISO639.put("farsi", fas);
 
         // Locales of English -- are still "English"
         Language en1 = new Language("eng", "en", "English");
-        LanguageMap_ISO639.put("en-gb", en1);
-        LanguageMap_ISO639.put("en-us", en1);
-        LanguageMap_ISO639.put("en-au", en1);
+        languageMapISO639.put("en-gb", en1);
+        languageMapISO639.put("en-us", en1);
+        languageMapISO639.put("en-au", en1);
     }
 
     public static void addLanguage(Language lg) {
@@ -959,15 +958,15 @@ public class TextUtils {
      * Extend the basic language dictionary.
      * Note -- First language is listed in language map by Name, and is not overwritten.
      * Language objects may be overwritten in map using lang codes.
-     * 
-     * For example, fre = French(fre), fra = French(fra), and french = French(fra) 
-     * 
+     *
+     * For example, fre = French(fre), fra = French(fra), and french = French(fra)
+     *
      *  the last one, 'french' = could have been the French(fre) or (fra).
-     *  
+     *
      * Example, 'ger' and 'deu' are both valid ISO 3-alpha codes for German. What to do?
-     *  
+     *
      *  TODO:  Create a language object that lists both language biblio/terminology codes.
-     * 
+     *
      * @param lg language object
      */
     public static void addLanguage(Language lg, boolean override) {
@@ -975,18 +974,18 @@ public class TextUtils {
             return;
         }
         if (lg.getCode() != null) {
-            if (override || !LanguageMap_ISO639.containsKey(lg.getCode())) {
-                LanguageMap_ISO639.put(lg.getCode(), lg);
+            if (override || !languageMapISO639.containsKey(lg.getCode())) {
+                languageMapISO639.put(lg.getCode(), lg);
             }
         }
         if (lg.getISO639_1_Code() != null) {
-            if (override || !LanguageMap_ISO639.containsKey(lg.getISO639_1_Code())) {
-                LanguageMap_ISO639.put(lg.getISO639_1_Code(), lg);
+            if (override || !languageMapISO639.containsKey(lg.getISO639_1_Code())) {
+                languageMapISO639.put(lg.getISO639_1_Code(), lg);
             }
         }
         if (lg.getNameCode() != null) {
-            if (!LanguageMap_ISO639.containsKey(lg.getNameCode())) {
-                LanguageMap_ISO639.put(lg.getNameCode(), lg);
+            if (!languageMapISO639.containsKey(lg.getNameCode())) {
+                languageMapISO639.put(lg.getNameCode(), lg);
             }
         }
     }
@@ -994,7 +993,7 @@ public class TextUtils {
     /**
      * Given an ISO2 char code (least common denominator) retrieve Language
      * Name.
-     * 
+     *
      * This is best effort, so if your code finds nothing, this returns code
      * normalized to lowercase.
      * @param code lang ID
@@ -1011,7 +1010,7 @@ public class TextUtils {
 
     /**
      * ISO2 and ISO3 char codes for languages are unique.
-     * 
+     *
      * @param code iso2 or iso3 code
      * @return the other code.
      */
@@ -1021,14 +1020,14 @@ public class TextUtils {
         }
 
         String lookup = code.toLowerCase();
-        Language l = LanguageMap_ISO639.get(lookup);
+        Language l = languageMapISO639.get(lookup);
         if (l != null) {
             return l;
         }
         // Keep looking.
         if (lookup.contains("_")) {
             lookup = lookup.split("_")[0];
-            l = LanguageMap_ISO639.get(lookup);
+            l = languageMapISO639.get(lookup);
             if (l != null) {
                 return l;
             }
@@ -1038,7 +1037,7 @@ public class TextUtils {
 
     /**
      * ISO2 and ISO3 char codes for languages are unique.
-     * 
+     *
      * @param code iso2 or iso3 code
      * @return the other code.
      */
@@ -1063,7 +1062,7 @@ public class TextUtils {
      * European languages = Romance + GER + ENG
      * Extend definition as needed.
      * @param l language ID
-     * @return true if language is European in nature 
+     * @return true if language is European in nature
      */
     public static boolean isEuroLanguage(String l) {
         Language lang = getLanguage(l);
@@ -1077,7 +1076,7 @@ public class TextUtils {
 
     /**
      * Romance languages = SPA + POR + ITA + FRA + ROM
-     * 
+     *
      * Extend definition as needed.
      * @param l lang ID
      * @return true if language is a Romance language
@@ -1094,7 +1093,7 @@ public class TextUtils {
 
     /**
      * Utility method to check if lang ID is English...
-     * 
+     *
      * @param x  a langcode
      * @return whether langcode is english
      */
@@ -1111,7 +1110,7 @@ public class TextUtils {
     /**
      * Utility method to check if lang ID is Chinese(Traditional or
      * Simplified)...
-     * 
+     *
      * @param x
      *            a langcode
      * @return whether langcode is chinese
@@ -1128,7 +1127,7 @@ public class TextUtils {
 
     /**
      * Utility method to check if lang ID is Chinese, Korean, or Japanese
-     * 
+     *
      * @param x  a langcode
      * @return whether langcode is a CJK language
      */
@@ -1145,12 +1144,12 @@ public class TextUtils {
 
     /**
      * Returns a ratio of Chinese/Japanese/Korean characters: CJK chars / ALL
-     * 
+     *
      * TODO: needs testing; not sure if this is sustainable if block; or if it
      * is comprehensive. TODO: for performance reasons the internal chain of
      * comparisons is embedded in the method; Otherwise for each char, an
      * external method invocation is required.
-     * 
+     *
      * @param buf  the character to be tested
      * @return true if CJK, false otherwise
      */
@@ -1165,11 +1164,15 @@ public class TextUtils {
         return ((double) cjkCount) / buf.length();
     }
 
+    private final static int LATIN1_END = 0xFE;
+
     /**
+     *
      * Counts the CJK characters in buffer, buf chars Inspiration:
      * http://stackoverflow
      * .com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string
-     * 
+     * Assumption is that the char array is Unicode characters.
+     *
      * @param chars char array for the text in question.
      * @return count of CJK characters
      */
@@ -1178,7 +1181,7 @@ public class TextUtils {
         for (char ch : chars) {
             // Ignore ASCII outright.
             // Ignore Latin-1 outright.
-            if (ch < 0xFE) {
+            if (ch < LATIN1_END) {
                 continue;
             }
             Character.UnicodeBlock blk = Character.UnicodeBlock.of(ch);
@@ -1193,7 +1196,7 @@ public class TextUtils {
     /**
      * A simple test to see if text has any CJK characters at all. It returns
      * after the first such character.
-     * 
+     *
      * @param buf text
      * @return if buf has at least one CJK char.
      */
@@ -1207,7 +1210,7 @@ public class TextUtils {
             ch = buf.charAt(x);
             // Ignore ASCII outright.
             // Ignore Latin-1 outright.
-            if (ch < 0xFE) {
+            if (ch < LATIN1_END) {
                 continue;
             }
             Character.UnicodeBlock blk = Character.UnicodeBlock.of(ch);
@@ -1247,7 +1250,7 @@ public class TextUtils {
      * Likely to be uniquely Korean if the character block is in Hangul.
      * But also, it may be Korean if block is part of the CJK ideographs at large.
      * User must check if text in its entirety is part of CJK & Hangul, independently.
-     * This method only detects if character block is uniquely Hangul or not. 
+     * This method only detects if character block is uniquely Hangul or not.
      * @param blk
      * @return true if char block is Hangul
      */
@@ -1261,7 +1264,7 @@ public class TextUtils {
 
     /**
      * Checks if char block is uniquely Japanese.  Check other chars isChinese
-     * 
+     *
      * @param blk
      * @return true if char block is Hiragana or Katakana
      */
@@ -1273,7 +1276,7 @@ public class TextUtils {
     /**
      * Compress bytes from a Unicode string. Conversion to bytes first to avoid
      * unicode or platform-dependent IO issues.
-     * 
+     *
      * @param buf UTF-8 encoded text
      * @return byte array
      * @throws IOException on error with compression or text encoding
@@ -1283,7 +1286,7 @@ public class TextUtils {
     }
 
     /**
-     * 
+     *
      * @param buf text
      * @param charset character set encoding for text
      * @return byte array for the compressed result
@@ -1300,18 +1303,20 @@ public class TextUtils {
     }
 
     /**
-     * 
+     *
      * @param gzData   byte array containing gzipped buffer
      * @return buffer UTF-8 decoded string
-     * 
+     *
      * @throws IOException  on error with decompression or text encoding
      */
     public static String uncompress(byte[] gzData) throws IOException {
         return uncompress(gzData, "UTF-8");
     }
 
+    private final static int ONEKB = 1024;
+
     /**
-     * 
+     *
      * @param gzData  byte array containing gzipped buffer
      * @param charset character set decoding for text
      * @return buffer of uncompressed, decoded string
@@ -1321,7 +1326,7 @@ public class TextUtils {
         GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(gzData));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[ONEKB];
         int len;
         while ((len = gzipInputStream.read(buf)) > 0) {
             out.write(buf, 0, len);
@@ -1335,24 +1340,24 @@ public class TextUtils {
 
     /**
      * Unicode and social media -- We encounter all sorts of hangups when processing
-     * modern unicode text.  XML issues, JNI issues, escape utilities, etc.  All sorts 
+     * modern unicode text.  XML issues, JNI issues, escape utilities, etc.  All sorts
      * of problems arise with emoticons aka emoji, and other symbols used in online media.
      * So these utilities are offered to help remove such things prior to data processing.
      */
     // UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS;
-    private static final Pattern scrub_symbols = Pattern
+    private static final Pattern SCRUB_SYM = Pattern
             .compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
-    private static final Pattern scrub_symbols2 = Pattern
+    private static final Pattern SCRUB_SYM2 = Pattern
             .compile("\\p{block=Transport and Map Symbols}+");
-    private static final Pattern scrub_emoticon = Pattern.compile("\\p{block=Emoticons}+");
-    private static final Pattern scrub_alphasup = Pattern
+    private static final Pattern SCRUB_EMOTICONS = Pattern.compile("\\p{block=Emoticons}+");
+    private static final Pattern SCRUB_ALPHASUP = Pattern
             .compile("\\p{block=Enclosed Alphanumeric Supplement}+");
-    private static final Pattern scrub_symbols_tiles1 = Pattern
+    private static final Pattern SCRUB_TILES1 = Pattern
             .compile("\\p{block=Mahjong Tiles}+");
-    private static final Pattern scrub_symbols_tiles2 = Pattern.compile("\\p{block=Domino Tiles}+");
-    private static final Pattern scrub_symbols_misc = Pattern
+    private static final Pattern SCRUB_TILES2 = Pattern.compile("\\p{block=Domino Tiles}+");
+    private static final Pattern SCRUB_SYM_MISC = Pattern
             .compile("\\p{block=Miscellaneous Symbols}+");
-    private static final Pattern scrub_symbols_cards = Pattern.compile("\\p{block=Playing Cards}+");
+    private static final Pattern SCRUB_PLAYCARDS = Pattern.compile("\\p{block=Playing Cards}+");
 
     /**
      * replace Emoticons with something less nefarious -- UTF-16 characters do
@@ -1362,23 +1367,23 @@ public class TextUtils {
      * @return scrubbed text
      */
     public static String removeEmoticons(String t) {
-        return scrub_emoticon.matcher(t).replaceAll("{icon}");
+        return SCRUB_EMOTICONS.matcher(t).replaceAll("{icon}");
     }
 
     /**
      * Replace symbology
      *
-     * @param t text 
+     * @param t text
      * @return scrubbed text
      */
     public static String removeSymbols(String t) {
-        String _new = scrub_symbols.matcher(t).replaceAll("{sym}");
-        _new = scrub_symbols2.matcher(_new).replaceAll("{sym2}");
-        _new = scrub_alphasup.matcher(_new).replaceAll("{asup}");
-        _new = scrub_symbols_tiles1.matcher(_new).replaceAll("{tile1}");
-        _new = scrub_symbols_tiles2.matcher(_new).replaceAll("{tile2}");
-        _new = scrub_symbols_misc.matcher(_new).replaceAll("{sym}");
-        _new = scrub_symbols_cards.matcher(_new).replaceAll("{card}");
+        String _new = SCRUB_SYM.matcher(t).replaceAll("{sym}");
+        _new = SCRUB_SYM2.matcher(_new).replaceAll("{sym2}");
+        _new = SCRUB_ALPHASUP.matcher(_new).replaceAll("{asup}");
+        _new = SCRUB_TILES1.matcher(_new).replaceAll("{tile1}");
+        _new = SCRUB_TILES2.matcher(_new).replaceAll("{tile2}");
+        _new = SCRUB_SYM_MISC.matcher(_new).replaceAll("{sym}");
+        _new = SCRUB_PLAYCARDS.matcher(_new).replaceAll("{card}");
 
         return _new;
     }

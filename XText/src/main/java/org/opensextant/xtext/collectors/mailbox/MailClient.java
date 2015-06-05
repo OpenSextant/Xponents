@@ -53,7 +53,7 @@ public class MailClient {
 
     /**
      * Close Mailbox cleanly.
-     * 
+     *
      * @throws MessagingException
      */
     public void disconnect() throws MessagingException {
@@ -73,7 +73,7 @@ public class MailClient {
 
     /**
      * Connect to the mail server and establish the user + folder session.
-     * 
+     *
      * @param properties
      * @throws MessagingException
      */
@@ -109,7 +109,7 @@ public class MailClient {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws MessagingException
      */
@@ -148,7 +148,7 @@ public class MailClient {
             }
         }
     }
-    
+
     private String name = "Unnamed Mail Crawler";
 
     public void setName(String n) {

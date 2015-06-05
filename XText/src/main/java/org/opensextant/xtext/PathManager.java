@@ -14,15 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PathManager -- a group of routines related to caching conversions and archive collections.  
+ * PathManager -- a group of routines related to caching conversions and archive collections.
  * It manages the path decisions given a variety of output parameters and the input object.
- * 
+ *
  * @author ubaldino
  *
  */
 public class PathManager {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * The folder where conversions are saved.
@@ -46,12 +46,12 @@ public class PathManager {
 
     /**
      * saveExtractedChildrenWithOriginals  - determines how embedded items are archived, e.g., Email attachments, or embedded images.
-     * They are children to some parent container -- XText yields two things:  the original child, and the conversion of the child. 
-     * 
+     * They are children to some parent container -- XText yields two things:  the original child, and the conversion of the child.
+     *
      * Example:  a.doc (child) saved from A.eml (parent)
-     * 
-     * saveExtractedChildrenWithOriginals = True;    a is saved in same folder where A exists  
-     * saveExtractedChildrenWithOriginals = False;   a is saved in a separate output archive. 
+     *
+     * saveExtractedChildrenWithOriginals = True;    a is saved in same folder where A exists
+     * saveExtractedChildrenWithOriginals = False;   a is saved in a separate output archive.
      */
     private boolean saveExtractedChildrenWithOriginals = false;
 
@@ -61,7 +61,7 @@ public class PathManager {
      * The overall flag to save converted output or not. DEFAULT: true = save
      * it; provided caller specifies either saveWithInput or provides an
      * archiveRoot
-     * 
+     *
      * @param b
      */
     public void enableSaving(boolean b) {
@@ -79,10 +79,10 @@ public class PathManager {
      * Set the prefix that will be removed from the leading part of paths as conversions are cached.
      * Have a long, long file path?  And want to shorten it in your cache... choose this prefix after thinking about it.
      * If you strip too much you may end up with name conflicts or not enough organization to the cached stuff.
-     * 
-     * NOTE: an error/warning is printed only if the prefix does not exist.  This is not an exception or error, as you 
+     *
+     * NOTE: an error/warning is printed only if the prefix does not exist.  This is not an exception or error, as you
      * might get the paths to items from some other method and they may not actually exist physically on disk.
-     * 
+     *
      * @param p a prefix path that would be found in the absolute path of documents being converted.
      */
     public void setStripPrefixPath(String p) {
@@ -103,9 +103,9 @@ public class PathManager {
     }
 
     /**
-     * From the provided caching parameters set ahead of time, infer the location 
-     * where this input should be located within the archive, relatively.  This 
-     * should only be set once at the top level, that is 
+     * From the provided caching parameters set ahead of time, infer the location
+     * where this input should be located within the archive, relatively.  This
+     * should only be set once at the top level, that is
      * <ul><li>if the call is to convert a single file, set it once for the file.
      * <li>if the call is to convert a folder, set it once.
      * <li>... for archives, etc. set it once!
@@ -113,30 +113,30 @@ public class PathManager {
      * Do not set it for each file when traversing a folder contents.
      * <br>
      * NOTA BENE: Set conversion cache location first.
-     * 
+     *
      * <pre>
      *   cache =  /output/converted/
-     *   
+     *
      *   input =  /my/original/abc.zip  ==> /output/converted/abc_zip
      *   input =  /my/original/abc.doc  ==> /output/converted/abc.doc.txt
      *   input =  /my/original/abc/     ==> /output/converted/abc/
-     *   
-     *   
+     *
+     *
      *   prefix set, as prefix=/my
-     *   
+     *
      *   input =  /my/original/abc.zip  ==> /output/converted/original/abc_zip
      *   input =  /my/original/abc.doc  ==> /output/converted/original/abc.doc.txt
      *   input =  /my/original/abc/     ==> /output/converted/original/abc/
-     *   
-     *  if saved-in-input, none of this applies. 
-     * </pre> 
-     * 
-     * If you are caching conversions in an archive folder, A, then 
+     *
+     *  if saved-in-input, none of this applies.
+     * </pre>
+     *
+     * If you are caching conversions in an archive folder, A, then
      * this generally sets your ouputNode to /A/name/
-     * 
+     *
      * An items saved here will be of the form /A/name/relative/path
      * For an input that came from /some/input/name/relative/path
-          * @throws IOException 
+          * @throws IOException
      */
     public void setInputRoot(File input) throws IOException {
         if (!saving) {
@@ -144,7 +144,7 @@ public class PathManager {
         }
 
         // Reset globals.
-        // 
+        //
         inputRootName = (input.isDirectory() ? input.getName() : input.getParentFile().getName());
 
         outputNode = null;
@@ -213,7 +213,7 @@ public class PathManager {
 
     /**
      * Experimental.
-     * 
+     *
      * ON by default.  If you have email, for example, folder/A.eml
      * then children will appear at folder/A_eml/child.doc  for some child.doc attachment.
      * Behavior may differ in each case.  But essentially, this flag directs XText to write back to inputRoot
@@ -244,7 +244,7 @@ public class PathManager {
 
     /**
      * Caller is responsible for checking null.
-     * 
+     *
      * @param path
      */
     public static String trimLeadingSlash(String path) {
@@ -279,7 +279,7 @@ public class PathManager {
      * "/" as the standard path separator.
      *
      * TODO: commons-io FilenameUtils.normalize()  does not work quite right across platforms. Review, Retest.
-     * 
+     *
      * @param p
      * @return  fixed path
      */
@@ -318,7 +318,7 @@ public class PathManager {
 
     /**
      * Run by XText.setup() to verify path issues.
-     * 
+     *
      * @throws IOException
      */
     public void configure() throws IOException {
@@ -338,7 +338,7 @@ public class PathManager {
 
     /**
      * Wrapper around logic to save a conversion.  Save with input or save in other output folder.
-     * 
+     *
      * @param textDoc
      * @throws IOException
      */
@@ -386,7 +386,7 @@ public class PathManager {
         String aExt = FilenameUtils.getExtension(input.getName());
         String outputName = String.format("%s_%s", aName, aExt.toLowerCase());
 
-        // Set output name to input name.  That is, once we extract A.zip to ./(originals)/A_zip/   this de-archived folder will 
+        // Set output name to input name.  That is, once we extract A.zip to ./(originals)/A_zip/   this de-archived folder will
         // Also exist in ./(converted)/A_zip/  or ./(originals)/A_zip/xtext/ embedded.
         //
         //setOutputNode(inputNode);
@@ -495,10 +495,10 @@ public class PathManager {
 
     /**
      * This provides some means for retrieving previously converted files. ....
-     * to avoid converted them.  This method takes the arguments and tries to infer the 
+     * to avoid converted them.  This method takes the arguments and tries to infer the
      * actual location of a cached item.
      * TODO:  For compound documents this needs more work.
-     * 
+     *
      * @param cacheDir  shadow dir or separate archive path
      * @param inputDir  original input folder where this item came from
      * @param obj  the requested file.
@@ -540,8 +540,8 @@ public class PathManager {
     }
 
     /**
-     * Apache Commons file utils "concat(dir, file)" makes a mess of file names.  
-     * Java can support "/" equally well on all platforms.  
+     * Apache Commons file utils "concat(dir, file)" makes a mess of file names.
+     * Java can support "/" equally well on all platforms.
      * there is no apparent need to use platform specific file separators in this context.
      * @param dir
      * @param fname
@@ -552,8 +552,8 @@ public class PathManager {
     }
 
     /**
-     * Apache Commons file utils "concat(dir, file)" makes a mess of file names.  
-     * Java can support "/" equally well on all platforms.  
+     * Apache Commons file utils "concat(dir, file)" makes a mess of file names.
+     * Java can support "/" equally well on all platforms.
      * there is no apparent need to use platform specific file separators in this context.
      * @param dir
      * @param fname
@@ -598,7 +598,7 @@ public class PathManager {
 
     /**
      * If a File is provided, this only checks the immediate parent folder.
-     *  
+     *
      * @param obj
      * @return  true if file parent is "xtext", case sensitive.
      */
@@ -647,7 +647,7 @@ public class PathManager {
         doc.is_converted = true;
 
         doc.filetime = new Date(Long.parseLong(doc.getProperty("filetime")));
-        doc.setCreateDate();        
+        doc.setCreateDate();
 
         // DocInput requirement: provided id + file paths
         // If there is another Identifier to use,... caller will have an opportunity to set it

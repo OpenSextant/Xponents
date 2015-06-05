@@ -18,6 +18,9 @@ import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+//import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
+import javax.mail.internet.MimeUtility;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,32 +31,29 @@ import org.opensextant.xtext.ConvertedDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
-import javax.mail.internet.MimeUtility;
-
-/* 
- * This Mail Message parser/converter should do its work on *.msg or *.eml files saved to disk as standard RFC822 
+/*
+ * This Mail Message parser/converter should do its work on *.msg or *.eml files saved to disk as standard RFC822
  * documents.   A single message doc may have attachments, nested emails, etc.  The input here is a single message file
- * 
- * The organization of such files is determined by the caller app.  If content is retrieved from an email account, 
- * it could be organized to reflect the account's email folders or not.  One thing is certain:  document count multiplies 
+ *
+ * The organization of such files is determined by the caller app.  If content is retrieved from an email account,
+ * it could be organized to reflect the account's email folders or not.  One thing is certain:  document count multiplies
  * when we try to convert multimedia message into its individual artifacts.
- * 
+ *
  * File.msg
  *  +attached.doc
  *  +imagery.jpg
- * 
+ *
  * This one file (with two attachments) then becomes in "XText" speak:
- * 
+ *
  * xtext/File.msg.txt         text of message, here File.msg.txt backs the original based on file name alone. It contains the parent metadata of the mail msg.
  * File/attached.doc          attachment one
  * File/imagery.jpg           attachment two
- * 
+ *
  * File/xtext/attached.doc.txt    text of one,
  * File/xtext/imagery.jpg.txt     text of two.
- * 
+ *
  *  ... 1 file becomes 5 additional files, in this example.
- * 
+ *
  * Ho hum...
  *  https://issues.apache.org/jira/browse/TIKA-1222 -- Attachments are not parsed.
  */
@@ -62,13 +62,13 @@ import javax.mail.internet.MimeUtility;
 public class MessageConverter extends ConverterAdapter {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    private Session noSession = Session.getDefaultInstance(new Properties());
+    private final Session noSession = Session.getDefaultInstance(new Properties());
     private int attachmentNumber = 0;
-    private List<String> textEncodings = new LinkedList<String>();
+    private final List<String> textEncodings = new LinkedList<String>();
 
     /**
      * @param in stream
-     * @param doc original file 
+     * @param doc original file
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream in, File doc)
@@ -78,7 +78,7 @@ public class MessageConverter extends ConverterAdapter {
         textEncodings.clear();
         try {
             // Connect to the message file
-            // 
+            //
             MimeMessage msg = new MimeMessage(noSession, in);
             return convertMimeMessage(msg, doc);
         } catch (Exception xerr) {
@@ -92,7 +92,7 @@ public class MessageConverter extends ConverterAdapter {
      * Convert the MIME Message with or without the File doc.
      *  -- live email capture from a mailbox:  you have the MimeMessage; there is no File object
      *  -- email capture from a filesystem:   you retrieved the MimeMessage from a File object
-     *  
+     *
      * @param msg
      * @param doc
      * @return doc conversion, likely a parent document with 1 or more child attachments
@@ -100,7 +100,7 @@ public class MessageConverter extends ConverterAdapter {
      * @throws IOException
      */
     public ConvertedDocument convertMimeMessage(Message msg, File doc) throws MessagingException,
-            IOException {
+    IOException {
         ConvertedDocument parentMsgDoc = new ConvertedDocument(doc);
         parentMsgDoc.is_RFC822_attachment = true;
         //parentMsgDoc.setEncoding(parseCharset(msg.getContentType()));
@@ -123,7 +123,7 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * Copy innate Message metadata into the ConvertedDocument properties to save that metadata in the normal place.
      * This metadata will also be replicated down through children items to reflect the fact the attachment was sent via this message.
-     * 
+     *
      * @param msgdoc  doc conversion
      * @param message  original mail message
      * @throws MessagingException
@@ -160,10 +160,10 @@ public class MessageConverter extends ConverterAdapter {
 
     /**
      * Retrieve the Identifier part of a message, that is <id@server> we want the "id" part.
-     * 
+     *
      * @param message mail message
-     * @return ID 
-     * @throws MessagingException 
+     * @return ID
+     * @throws MessagingException
      */
     public static String getMessageID(Message message) throws MessagingException {
         String[] msgIds = message.getHeader("Message-Id");
@@ -185,7 +185,7 @@ public class MessageConverter extends ConverterAdapter {
 
     /**
      * Given a global msg ID, create an ID that should be relatively unique.
-     * 
+     *
      * @param globalId the full SMTP/MIME message ID
      * @return a shorter version of the ID cleaned of special chars
      */
@@ -210,7 +210,7 @@ public class MessageConverter extends ConverterAdapter {
 
     /**
      * Whacky...  each child attachment will have some knowledge about the containing mail messsage which carried it.
-     * 
+     *
      * @param parent parent doc
      * @param child  raw content
      */
@@ -233,7 +233,7 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * This is a recursive parser that pulls off attachments into Child content or saves plain text as main message text.
      * Calendar invites are ignored.
-     * 
+     *
      * @param bodyPart  individual sub-part to append to buffer
      * @param parent parent doc
      * @param buf text to append
@@ -405,12 +405,12 @@ public class MessageConverter extends ConverterAdapter {
     }
 
     /**
-     * Abstract the encoding issue.  
-     * @param data 
+     * Abstract the encoding issue.
+     * @param data
      * @param enc  a transfer encoding named in the multipart header, see MimeUtility.decode() for more detail
      * @return byte data for the stream.  Caller still has to decode to proper charset.
-     * @throws IOException 
-     * @throws Exception 
+     * @throws IOException
+     * @throws Exception
      */
     private static byte[] decodeMIMEText(InputStream data, String enc) throws Exception {
         InputStream decodedContent = null;
@@ -428,8 +428,8 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * More conveniently create Child item. This will attempt to decode the multipart encoding, mainly "quoted-printable" data should be decoded prior to saving.
      * Lastly, the content bytes are always left as their native charset encoding.
-     * Versus, text strings, which will be automatically in parseMessage() and saved as UTF-8 
-     * 
+     * Versus, text strings, which will be automatically in parseMessage() and saved as UTF-8
+     *
      * @param file_id
      * @param input
      * @return content raw child object
@@ -483,14 +483,14 @@ public class MessageConverter extends ConverterAdapter {
         return child;
     }
 
-    /** Parse out charset encoding spec from MIME content-type header 
+    /** Parse out charset encoding spec from MIME content-type header
      */
-    private final static Pattern charsetPat = Pattern.compile("charset=['\"]?([-_\\w]+)['\"]?");
+    private final static Pattern CHARSET_EXTRACTOR = Pattern.compile("charset=['\"]?([-_\\w]+)['\"]?");
 
     /**
      * Help determine charset, object type, filename if any, and file extension
      * Mainly to guide how to parse, filter and employ the text content of this Part.
-     * 
+     *
      * @author ubaldino
      *
      */
@@ -574,7 +574,7 @@ public class MessageConverter extends ConverterAdapter {
             }
         }
 
-        /** is QP encoding 
+        /** is QP encoding
          * @return true if is quoted-printable
          */
         public boolean isQP() {
@@ -634,7 +634,7 @@ public class MessageConverter extends ConverterAdapter {
     }
 
     /**
-     * 
+     *
      * @param mimespec encoding spec
      * @return charset name
      */
@@ -642,9 +642,9 @@ public class MessageConverter extends ConverterAdapter {
         //String cs = MimeUtility.javaCharset(mimespec);
         //if (cs != null) { return cs;}
         // Ah, thanks for nothing, JavaMail.   MIME content-type given is "a/b; charset='c'"  the response should be "c".
-        // JavaMail cannot pull out the char set from content-type header.  
+        // JavaMail cannot pull out the char set from content-type header.
 
-        Matcher m = charsetPat.matcher(mimespec);
+        Matcher m = CHARSET_EXTRACTOR.matcher(mimespec);
         if (m.find()) {
             return m.group(1);
         }
@@ -655,7 +655,7 @@ public class MessageConverter extends ConverterAdapter {
      * Get File Extension for known types. Otherwise MIME part should provide a
      * file name for such things. TODO: possibly switch to MIME4J and Apache
      * James
-     * 
+     *
      * @param mimetype just the mime type, w/out charset
      * @return file extension to map to given MIME
      */
@@ -672,7 +672,7 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * Create a safe filename from arbitrary text. That is no special shell
      * operators $, #, ?, >, <, *, ' ', etc.
-     * 
+     *
      * @param text text of a filename
      * @return file name constructed from input text and underscores in place of
      *         special chars.
@@ -693,7 +693,7 @@ public class MessageConverter extends ConverterAdapter {
         return tmp;
     }
 
-    private static final Pattern ANGLE_EXTRACTOR = Pattern.compile("<(.+)>");
+    private final static Pattern ANGLE_EXTRACTOR = Pattern.compile("<(.+)>");
 
     /**
      * Parse 'value' from '<value>'  Used for pulling emailaddress or msgId value from headers.

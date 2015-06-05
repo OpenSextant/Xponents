@@ -40,8 +40,8 @@ import org.opensextant.util.TextUtils;
 public class MGRSParser {
 
     /**
-     * Given the match parse MGRS as best as can be done. 
-     * TODO: provide level of confidence.  Items that match MGRS scheme perfectly are more likely to be MGRS than those that 
+     * Given the match parse MGRS as best as can be done.
+     * TODO: provide level of confidence.  Items that match MGRS scheme perfectly are more likely to be MGRS than those that
      * are not perfect matches, e.g. typos, inadvertent text wrapping, whitespace etc.
      *
      * @param rawtext the rawtext
@@ -80,7 +80,7 @@ public class MGRSParser {
         }
 
         // If we matched an obvious and invalid month
-        // as an MGRS, then fail early.  Otherwise MGRSFilter 
+        // as an MGRS, then fail early.  Otherwise MGRSFilter
         // will parse out more complex patterns that are date + time
         // NOTE: an MGRS pattern may indeed look like a date+time in some cases but it
         // can actually be a valid MGRS. Take care not to filter out too aggressively.
@@ -89,14 +89,14 @@ public class MGRSParser {
         }
 
         String gzd = elements.get("MGRSZone");
-        
+
         /*
          * Gridzone required.
          */
         if (gzd == null) {
             return null;
         }
-        
+
         // GZD Rule:  00 not allowed in 5-digit GZD
         //             0 not allowed in 4-digit
         int num1 = parseInt(gzd.substring(0, 1));
@@ -248,29 +248,29 @@ public class MGRSParser {
 
     /**
      * A hueuristic from looking at real data, real text artifacts - typos, line endings, whitespace wrapping, etc.
-     * 
+     *
      * Acceptable Northing/Eastings:
      * dd dd
      * dddd dddd
-     * 
+     *
      * typos: (odd number of digits;  whitespace or not.)
      * ddd dd
      * ddddd
-     * 
+     *
      * Not valid:
-     * 
+     *
      * dd dd\nd   odd digits and has line endings
-     * 
+     *
      * @param ne NE string, e.g,. 56789 01234
      * @param oddLength if len is odd
      * @return if easting/northing is valid
      */
     protected static boolean isValidEastingNorthing(String ne, boolean oddLength) {
         // PARSE RULE:  ignore abnormal MGRS patterns with line endings in the match
-        // 
+        //
         //  The MGRS easting/northing is messy and contains line endings.
         //  Abort. This is not likely an MGRS worth anything.
-        // 
+        //
 
         boolean containsEOL = (ne.contains("\n") || ne.contains("\r"));
         boolean containsTAB = ne.contains("\t");
@@ -281,7 +281,7 @@ public class MGRSParser {
         int wsCount = TextUtils.count_ws(ne);
 
         // NO:
-        // dd dd\ndd  
+        // dd dd\ndd
         // YES:  normal text wrap on offset.
         // dd\ndd
         if (wsCount > 1 && containsEOL) {
@@ -308,27 +308,27 @@ public class MGRSParser {
     }
 
     /**
-     * While date/month patterns match the MGRS format, there are certain months that are just too common 
+     * While date/month patterns match the MGRS format, there are certain months that are just too common
      * to believe they are relevant MGRS patterns.
-     * 
+     *
      */
     private static final Set<String> ignoreMonths = new HashSet<String>();
     static {
         ignoreMonths.add("jan");  // Lat band that is mostly water; Southern Africa
         ignoreMonths.add("feb");  // ditto; almost always water.
         //ignoreMonths.add("mar");  // Valid Congo, Brazil.
-        
-        ignoreMonths.add("apr");  // Invalid zone, first letter is C-X; Not likely to ever match 
-        ignoreMonths.add("aug");  // ditto    
-        
-        // Other months, however have to be parsed. If they are dates 
+
+        ignoreMonths.add("apr");  // Invalid zone, first letter is C-X; Not likely to ever match
+        ignoreMonths.add("aug");  // ditto
+
+        // Other months, however have to be parsed. If they are dates
         // AND runtime flags have MGRS Filters enabled, then dates will be filtered out usually.
-        //  
+        //
     }
 
     /**
      * Filter out well-known date patterns that are not valid MGRS;
-     * MGRS Filter may additionally parse out more patterns. But we generate an MGRS object here 
+     * MGRS Filter may additionally parse out more patterns. But we generate an MGRS object here
      * we can filter such things out ahead of time, avoiding the inevitable exception.
      * @param t
      * @return

@@ -33,7 +33,7 @@ import org.opensextant.ConfigException;
 /**
  * See reference property file at src/test/resources/collectors/imap-templ.cfg
  * This IMAP template documents the various parameters for configuring a Java mail client to use IMAP or IMAP/SSL
- * 
+ *
  * @author ubaldino
  * @author b. o'neill
  *
@@ -41,7 +41,7 @@ import org.opensextant.ConfigException;
 public class MailConfig extends Properties {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
@@ -68,7 +68,7 @@ public class MailConfig extends Properties {
     private boolean deleteOnRead = true;
     private int exchangeServer = -1;
 
-    private boolean is_SSL = false;
+    private boolean isSSL = false;
 
     /**
      * Default mail client configuration that inherits System/OS properties
@@ -81,7 +81,7 @@ public class MailConfig extends Properties {
      * Configure from a file or classpath. Mail client configuration that
      * inherits System/OS properties, then overrides defaults from parameters in
      * given confg file.
-     * 
+     *
      * @param propsFilePath
      * @throws IOException
      * @throws CrawlerException
@@ -113,10 +113,10 @@ public class MailConfig extends Properties {
     /**
      * Given this configuration, determine if the messages read so far (curr) is
      * at the total available
-     * 
+     *
      * or if config specified a max read count, then if curr > max read, return
      * true.
-     * 
+     *
      * @param total
      * @param curr
      * @return
@@ -133,7 +133,7 @@ public class MailConfig extends Properties {
      * Set default properties, interpreting System props and any props loaded
      * from config file. Various flags are set as a result of interpreting the
      * key/value pairs.
-     * 
+     *
      * @throws ConfigException
      */
     public void setProperties() throws ConfigException {
@@ -142,7 +142,7 @@ public class MailConfig extends Properties {
 
     /**
      * Set properties from existing Property sheet.
-     * 
+     *
      * @param props
      * @throws ConfigException
      */
@@ -156,9 +156,9 @@ public class MailConfig extends Properties {
         validateBasicSettings();
         setConfiguration();
 
-        is_SSL = getFlagProperty(getProperty("mail.imap.ssl.enable"));
+        isSSL = getFlagProperty(getProperty("mail.imap.ssl.enable"));
 
-        if (is_SSL) {
+        if (isSSL) {
             validateCertificates();
         }
         try {
@@ -170,7 +170,7 @@ public class MailConfig extends Properties {
     }
 
     /**
-     * 
+     *
      * @throws ConfigException
      */
     private void validateCertificates() throws ConfigException {
@@ -204,12 +204,12 @@ public class MailConfig extends Properties {
     }
 
     public boolean isSSLEnabled() {
-        return is_SSL;
+        return isSSL;
     }
 
     /**
      * Parameters supported:
-     * 
+     *
      * <pre>
      * ## Mail client behavior
      * mail.read.count=10
@@ -218,7 +218,7 @@ public class MailConfig extends Properties {
      * mail.read.delete_after=false
      * mail.delete.purge_old=false
      * mail.debug=true
-     * 
+     *
      * ## Connection
      * #####################
      * mail.host=SERVERSERVER
@@ -226,13 +226,13 @@ public class MailConfig extends Properties {
      * mail.password=XXXXXXXX
      * mail.folder=Inbox
      * mail.protocol=imap
-     * 
+     *
      * # SSL, Certificates
      * #####################
      * keystore
      * storepass
      * truststore
-     * 
+     *
      * # Protocol: IMAP
      * #####################
      * mail.imap.starttls.enable=true
@@ -241,11 +241,11 @@ public class MailConfig extends Properties {
      * mail.imap.ssl.enable=true
      * mail.imap.socketFactory.class=javax.net.SocketFactory
      * mail.imaps.class=com.sun.mail.IMAPSSLStore
-     * 
+     *
      * mail.microsoft.exchange.version=2007
      * mail.imap.auth.ntlm.domain=xxxxxDOMAINxxxxx
-     * 
-     * 
+     *
+     *
      * Java Mail params:
      *     mail.imap.auth.ntlm.domain
      *     mail.imap.starttls.enable
@@ -253,9 +253,9 @@ public class MailConfig extends Properties {
      *     mail.imap.socketFactory.port
      *     mail.imap.ssl.enable
      *     mail.imap.socketFactory.class
-     * 
+     *
      * </pre>
-     * 
+     *
      */
     protected boolean setConfiguration() {
         boolean foundParameters = false;
@@ -322,7 +322,7 @@ public class MailConfig extends Properties {
 
     /**
      * Return -1 if unknown or if it does not matter. 2003, 2007, 2010
-     * 
+     *
      * @return
      */
     public int getExchangeServerVersion() {
@@ -331,7 +331,7 @@ public class MailConfig extends Properties {
 
     /**
      * Defaults to -1 if no value found
-     * 
+     *
      * @param val
      * @return
      */
@@ -344,7 +344,7 @@ public class MailConfig extends Properties {
 
     /**
      * get a flag. DEFAULT: false
-     * 
+     *
      * @param val
      * @return
      */

@@ -1,5 +1,5 @@
 /**
-* Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,7 +26,6 @@
  */
 package org.opensextant.extractors.geo;
 
-import java.io.Serializable;
 import org.opensextant.data.Place;
 
 /**
@@ -88,7 +87,7 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
         this.setScope(old.getScope());
         this.setWeight(old.getWeight());
     }
-    
+
     public PlaceEvidence(Place old, String rule, double wt) {
         this();
         this.setAdmin1(old.getAdmin1());
@@ -102,7 +101,7 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
         this.setRule(rule);
         //this.setScope(scope);
         this.setWeight(wt);
-    }    
+    }
 
     // compare to other evidence by strength
     @Override

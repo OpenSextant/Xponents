@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WebClient {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public static URL prepURL(String u) throws MalformedURLException {
         /**
@@ -74,13 +74,13 @@ public class WebClient {
         return  u.replaceAll(" ", "%20");
     }
 
-    
-    /**  
+
+    /**
      * @param siteUrl  the url to collect.
      * @param archive  the destination archive. Keep in mind, this is the location of downloaded originals.
      *        Use Xtext instance to manage where/how you convert those originals.
-     * 
-     * @throws MalformedURLException 
+     *
+     * @throws MalformedURLException
      */
     public WebClient(String siteUrl, String archive) throws MalformedURLException, ConfigException {
         setSite(siteUrl);
@@ -112,10 +112,10 @@ public class WebClient {
     /**
      * Caller should construct their own conversionManager and pass that in.
      * NOTE: since the web client can operate without an instance of XText, e.g., just run a crawl with no conversion
-     * the WebClient constructor takes an archive path.  As you pass in a conversion manager here, make sure that the 
+     * the WebClient constructor takes an archive path.  As you pass in a conversion manager here, make sure that the
      * archive root there matches what is used her in the WebClient.  If you are using Xtext in embedded mode, then do not worry.
      * the archive is ignored.
-     * 
+     *
      * @param conversionManager
      */
     public void setConverter(XText conversionManager) {
@@ -123,10 +123,10 @@ public class WebClient {
     }
 
     /**
-     * 
+     *
      * @param relpath
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     protected File createArchiveFile(String relpath, boolean isDir) throws IOException {
         String itemArchivedPath = archiveRoot + Collector.PATH_SEP + relpath;
@@ -154,7 +154,7 @@ public class WebClient {
     /**
      * Allow a proxy host to be set given the URL.
      * Assumes port 80, no user/password.
-     * 
+     *
      * @param hosturl
      */
     public void setProxy(String hosturl) {
@@ -185,7 +185,7 @@ public class WebClient {
     /**
      * TODO: Update to use HTTP client "HttpClients....build()" method of creating and tailoring HttpClient
      * using the proxy and cookie settings, as well as any other tuning.
-     * 
+     *
      * Override if your context requires a different style of HTTP client.
      * @return
      */
@@ -233,7 +233,7 @@ public class WebClient {
     }
 
     /**
-     * 
+     *
      * @param i
      */
     public void setInterval(int i) {
@@ -241,7 +241,7 @@ public class WebClient {
     }
 
     /**
-     * 
+     *
      */
     protected void pause() {
         if (interval > 0) {
@@ -255,7 +255,7 @@ public class WebClient {
 
     /**
      * Get a web page that requires NTLM authentication
-     * 
+     *
      * @param siteURL
      * @return
      * @throws IOException
@@ -289,10 +289,10 @@ public class WebClient {
      *  "#"
      *  "javascript:xxxxxx"
      * </pre>
-     * TODO:  pass in or set an allow filter.  sometimes caller knows which content is worth 
-     * following, e.g., ../abc_folder/morecontent.htm  and such URLs should be resolved absolutely to avoid 
+     * TODO:  pass in or set an allow filter.  sometimes caller knows which content is worth
+     * following, e.g., ../abc_folder/morecontent.htm  and such URLs should be resolved absolutely to avoid
      * recapture repeatedly.
-     * 
+     *
      * @param html
      *            HTML text buffer
      * @return
@@ -358,8 +358,8 @@ public class WebClient {
     }
 
     /**
-     * Reads an HttpEntity object, saving it to the path 
-     * 
+     * Reads an HttpEntity object, saving it to the path
+     *
      * REF: http://stackoverflow.com/questions/10960409/how-do-i-save-a-file-
      * downloaded-with-httpclient-into-a-specific-folder
      */

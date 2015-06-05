@@ -57,7 +57,7 @@ import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class PatternsOfLife extends AbstractFlexPat {
@@ -86,14 +86,16 @@ public class PatternsOfLife extends AbstractFlexPat {
      * Extractor interface: extractors are responsible for cleaning up after
      * themselves.
      */
+    @Override
     public void cleanup() {
     }
 
     /**
      * Extractor interface: getName
-     * 
+     *
      * @return
      */
+    @Override
     public String getName() {
         return "PoLi";
     }
@@ -119,7 +121,7 @@ public class PatternsOfLife extends AbstractFlexPat {
         TextMatchResult results = extract_patterns(input.buffer, input.id, null);
         return results.matches;
     }
-    
+
     @Override
     public List<TextMatch> extract(String input_buf) {
         TextMatchResult results = extract_patterns(input_buf, NO_DOC_ID, null);
@@ -128,7 +130,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
     /**
      * Extract patterns of a certain family from a block of text.
-     * 
+     *
      * @param text
      *            - data to process
      * @param text_id
@@ -136,7 +138,7 @@ public class PatternsOfLife extends AbstractFlexPat {
      * @param family
      *            - optional filter; to reuse the same PatManager but extract
      *            certain patterns only.
-     * 
+     *
      * @return PoliResult
      */
     public TextMatchResult extract_patterns(String text, String text_id, String family) {

@@ -45,16 +45,16 @@ public abstract class DocInput extends TextInput {
      * @return path to original
      */
     public abstract String getFilepath();
-    
+
     /**
-     * get the optional text version of the document;  
+     * get the optional text version of the document;
      * @return path to a text version or conversion of the original.
      */
     public abstract String getTextpath();
     /**
-     * 
+     *
      * @return string buffer
      */
-    public abstract String getText(); 
+    public abstract String getText();
 
 }

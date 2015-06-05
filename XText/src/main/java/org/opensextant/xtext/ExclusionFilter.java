@@ -32,5 +32,10 @@ package org.opensextant.xtext;
  */
 public interface ExclusionFilter {
 
-    public boolean filterOutFile(String path);
+    /**
+     * Filter out a file given the path
+     * @param path
+     * @return
+     */
+    boolean filterOutFile(String path);
 }

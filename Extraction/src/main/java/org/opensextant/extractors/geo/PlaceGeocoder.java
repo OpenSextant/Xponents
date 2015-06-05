@@ -154,10 +154,10 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
      *
      * Guidelines: this class is custodian of the app controller, Corpus feeder,
      * and any Document instances passed into/out of the feeder.
-     * 
-     * This geocoder requires a default /exclusions/person-name-filter.txt, 
+     *
+     * This geocoder requires a default /exclusions/person-name-filter.txt,
      * which can be empty, but most often it will be a list of person names (which are non-place names)
-     * 
+     *
      */
     @Override
     public void configure() throws ConfigException {
@@ -178,7 +178,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         }
 
         /** Files for Place Name filter are editable, as you likely have different ideas of who are "person names" to exclude
-         * when they conflict with place names. 
+         * when they conflict with place names.
          */
         URL p1 = PlaceGeocoder.class.getResource("/filters/person-name-filter.txt");
         URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
@@ -189,6 +189,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     /**
      * Please shutdown the application cleanly when done.
      */
+    @Override
     public void cleanup() {
         reportMetrics();
         this.shutdown();
@@ -238,7 +239,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         LinkedList<PlaceCandidate> candidates = tagText(input.buffer, input.id);
 
         // Tagger has already marked candidates as name of Country or not.
-        // 
+        //
         // countryRule.evaluate(candidates);
 
         if (coordinates != null) {
@@ -252,7 +253,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
             // 1. Identify all hard geographic entities:  coordinates; coded places (other patterns provided by your domain, etc.)
             // 1a. identify country + AMD1 for each coordinate; summarize distinct country + ADM1 as evidence
             //     XY => geohash, query geohash w/fq.fields = cc,adm1,adm2
-            // 
+            //
             // 2. Tagger Post-processing rules: Generate Country, Nat'l Capitals and Admin names
             List<Place> relevantProvinces = new ArrayList<>();
             if (coordRule != null && coordinates != null) {
@@ -285,11 +286,11 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
          */
         geocode(candidates);
 
-        // For each candidate, if PlaceCandidate.chosen is not null, 
+        // For each candidate, if PlaceCandidate.chosen is not null,
         //    add chosen (Geocoding) to matches
         // Otherwise add PlaceCandidates to matches.
         //    non-geocoded matches will appear in non-GIS formats.
-        // 
+        //
         // Downstream recipients of 'matches' must know how to parse through evaluated
         // place candidates.  We send the candidates and all evidence.
         matches.addAll(candidates);
@@ -306,7 +307,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
 
     /**
      * By now, all raw rules should have fired, adding their most basic metadata to each candidate.
-     * 
+     *
      * @param candidates list of PlaceCandidate (TextMatch + Place list)
      * @param coordinates list of GeoocordMatch (yes, cast of (GeoocordMatch)TextMatch is tested and used).
      */
@@ -340,7 +341,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     /**
      * A method to retrieve one or more distinct admin boundaries containing the coordinate.
      * This depends on resolution of gazetteer at hand.
-     * 
+     *
      * @param g
      * @return
      */
@@ -365,7 +366,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         //
         if (distinctADM1.size() == 1) {
             /* Objective here is to report a single place closest to coordinate
-             * that represents the general boundary that contains the point 
+             * that represents the general boundary that contains the point
              */
             Place p = found.get(0);
             boundary.setCountryCode(p.getCountryCode());

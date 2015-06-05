@@ -39,7 +39,7 @@ import org.opensextant.util.TextUtils;
 /**
  * Text converter that detects original encoding to include pure ASCII, Latin1, UTF-8 etc
  * Whereas Tika does not make a not of pure-ASCII texts.
- *  
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TextTranscodingConverter extends ConverterAdapter {
@@ -106,14 +106,14 @@ public class TextTranscodingConverter extends ConverterAdapter {
     }
 
     /**
-     * If you have a buffer of text for a document and are unable to get a provided charset, 
+     * If you have a buffer of text for a document and are unable to get a provided charset,
      * try this static method.  Better than nothing. This does not imply that the original document is a plain text doc.
-     * It could be an object that was parsed adhoc.  We cannot make any assumption about 
+     * It could be an object that was parsed adhoc.  We cannot make any assumption about
      * the state of the conversion.  This only sets String buffer and charset.
-     * 
+     *
      * @param doc the doc
      * @param data the byte data to test
-     * @throws UnsupportedEncodingException 
+     * @throws UnsupportedEncodingException
      */
     public static void setTextAndEncoding(ConvertedDocument doc, byte[] data) throws UnsupportedEncodingException {
         boolean is_ascii = TextUtils.isASCII(data);

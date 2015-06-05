@@ -48,6 +48,7 @@ public class PersonNameFilter extends GeocodeRule {
 
     private Map<String, String> resolvedPersons = new HashMap<>();
 
+    @Override
     public void reset() {
         resolvedPersons.clear();
     }
@@ -61,26 +62,26 @@ public class PersonNameFilter extends GeocodeRule {
         /* No other existing evidence that we should keep this entry
          * and if the name is a person name --- AS DEFINED BY THE USER --
          * then we mark it filtered out.
-         * 
+         *
          */
         if (name.getChosen() != null) {
             return;
         }
-        
+
         /*
          * This was filtered out already so ignore.
          */
         if (name.isFilteredOut()) {
             return;
         }
-        
+
         /*
          * If you have already associated an Admin code with this name, then do not filter out
-         * 
+         *
          *   Eugene, OR
          *   Jackson, MI
-         *   
-         *   TODO: 
+         *
+         *   TODO:
          *   Euguene, Oregon
          *   etc.
          */
@@ -92,7 +93,7 @@ public class PersonNameFilter extends GeocodeRule {
         if (toks != null) {
             String pre = toks[toks.length - 1].toLowerCase();
             if (titles.contains(pre)) {
-                name.setFilteredOut(true);  
+                name.setFilteredOut(true);
                 resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
             }
         }
@@ -116,7 +117,7 @@ public class PersonNameFilter extends GeocodeRule {
 
     /**
      * Debug support -- formatted value here helps convey the name + title or suffix
-     * 
+     *
      * @param nm1
      * @param nm2
      * @return

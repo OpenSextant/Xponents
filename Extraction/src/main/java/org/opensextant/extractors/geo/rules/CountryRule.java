@@ -22,12 +22,12 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 public class CountryRule extends GeocodeRule {
 
     public CountryRule() {
-        WEIGHT = 2; 
+        WEIGHT = 2;
         NAME = "CountryName";
     }
 
     /**
-     * Assess which candidate tags are references to countries. 
+     * Assess which candidate tags are references to countries.
      * @param names - list of candidates to evaluate for country evidence.
      */
     @Override

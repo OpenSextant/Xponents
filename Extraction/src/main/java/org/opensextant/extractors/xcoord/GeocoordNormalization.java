@@ -32,28 +32,30 @@ import java.util.Map;
 
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextEntity;
-import org.opensextant.util.TextUtils;
+import org.opensextant.geodesy.Geodetic2DPoint;
+import org.opensextant.geodesy.MGRS;
+import org.opensextant.geodesy.UTM;
 import org.opensextant.util.GeodeticUtility;
-import org.opensextant.geodesy.*;
+import org.opensextant.util.TextUtils;
 
 /**
  *
  */
 public final class GeocoordNormalization {
 
-    private static final GeocoordMatchFilter mgrs_filter = new MGRSFilter();
-    private static final GeocoordMatchFilter dms_filter = new DMSFilter();
+    private static final GeocoordMatchFilter MGRS_FILTER = new MGRSFilter();
+    private static final GeocoordMatchFilter DMS_FILTER = new DMSFilter();
 
     private static final boolean DMLAT = true;
     private static final boolean DMLON = false;
-    
+
 
 
     /**
      * The match object is normalized, setting the coord_text and other data
      * from parsing "text" and knowing which pattern family was matched.
-     * 
-     * @param m match 
+     *
+     * @param m match
      * @param groups fields
      * @throws NormalizationException
      */
@@ -61,13 +63,13 @@ public final class GeocoordNormalization {
 
         // Hoaky Java 6 issue:  REGEX does not use named groups, so here we map both the value to
         // a text/offset pair (in groups) and provide just the key/text pairs  (_elements)
-        // 
+        //
         Map<String, String> fieldValues = new HashMap<String,String>();
         for (String name : groups.keySet()){
             TextEntity val = groups.get(name);
             fieldValues.put(name, val.getText());
         }
-        
+
         // Extract m.regex_groups, and ordered list of group names
         // align with matcher.group(N)
         // value = matcher.group(N)
@@ -92,11 +94,11 @@ public final class GeocoordNormalization {
             m.lon_text = ddlon.text;
             m.setSeparator(groups);
             m.setCoordinate(ddlat, ddlon);
-            
+
 
             /**
              * DD filters enabled.
-             * 
+             *
              * To Disable: XCoord.RUNTIME_FLAGS XOR XConstants.DD_FILTERS_ON
              */
             if ((XCoord.RUNTIME_FLAGS & XConstants.DD_FILTERS_ON) > 0) {
@@ -128,7 +130,7 @@ public final class GeocoordNormalization {
 
             m.lat_text = dmlat.text;
             m.lon_text = dmlon.text;
-            m.setSeparator(groups);            
+            m.setSeparator(groups);
             m.setCoordinate(dmlat, dmlon);
 
             if (!m.isFilteredOut()){
@@ -145,9 +147,9 @@ public final class GeocoordNormalization {
 
             m.lat_text = dmlat.text;
             m.lon_text = dmlon.text;
-            m.setSeparator(groups);            
+            m.setSeparator(groups);
             m.setCoordinate(dmlat, dmlon);
-            
+
             if (!m.isFilteredOut()){
                 m.setFilteredOut(m.evaluateInvalidDashes());
             }
@@ -196,7 +198,7 @@ public final class GeocoordNormalization {
                 //.debug("Failed to parse MGRS pattern with text=" + m.getText() + " COORD?:"
                 //        + m.coord_text, parseErr);
                 // No normalization was possible as this match represents an invalid MGRS value
-                //                 
+                //
                 m.setFilteredOut(true);
             } catch (Exception err) {
                 throw new NormalizationException("Failed to parse MGRS", err);
@@ -228,7 +230,7 @@ public final class GeocoordNormalization {
     /**
      * Not all pattens might have filters. This "filter_out" implies you should
      * evaluate the MatchFilter.stop() method on any implementation.
-     * 
+     *
      * @param m the match
      * @return true if match is invalid and should be marked as filtered out
      */
@@ -258,14 +260,14 @@ public final class GeocoordNormalization {
         // Apply MGRS filter -- IF static RUNTIME_FLAGS say it is enabled
         if (m.cce_family_id == XConstants.MGRS_PATTERN) {
             if ((XCoord.RUNTIME_FLAGS & XConstants.MGRS_FILTERS_ON) > 0) {
-                return mgrs_filter.stop(m);
+                return MGRS_FILTER.stop(m);
             }
         }/**
          * Apply DMS filter also only if static flags say it is enabled.
          */
         else if (m.cce_family_id == XConstants.DMS_PATTERN) {
             if ((XCoord.RUNTIME_FLAGS & XConstants.DMS_FILTERS_ON) > 0) {
-                return dms_filter.stop(m);
+                return DMS_FILTER.stop(m);
             }
         }
         // possibly others.
@@ -276,7 +278,7 @@ public final class GeocoordNormalization {
      * Hueuristic for what style of fields are allowed in valid DD or DM/DMS coordinates.
      * This evaluates if a lat/lon pair have disparate field specificity.  A lat with Deg:Min
      * should not be paired with a lon with Deg:Min:Sec:Subsec  for example.
-     * 
+     *
      * @param lat
      * @param lon
      * @return true if specifity of lat and lon are reasonable.
@@ -284,7 +286,7 @@ public final class GeocoordNormalization {
     public static boolean evaluateSpecificity(DMSOrdinate lat, DMSOrdinate lon) {
 
         // Assess if matched pair has comparable field specificity
-        // 
+        //
         if (lat.hasSeconds() && lon.hasSeconds()){
             return true;
         }
@@ -294,30 +296,30 @@ public final class GeocoordNormalization {
         if (lat.hasDegrees() && lon.hasDegrees()){
             return true;
         }
-      
+
         // Mismatched.  Degrees or subdegree fields may not be paired up with Second and/or subsecond fields.
-        // 
+        //
         if (lat.hasDegrees() && lon.hasSeconds() || lon.hasSeconds() && lat.hasDegrees()){
             return false;
         }
-        
+
         // This would be non-sensical
         //  DD.dd  DDD MM.m
         if (lat.hasSubDegrees() && lon.hasSubMinutes()){
-            return false;            
+            return false;
         }
         if (lon.hasSubDegrees() && lat.hasSubMinutes()){
             return false;
         }
-        
+
         // Okay, you got here,  you have possible SUBDEGRE
-        
+
         return true;
     }
 
     /**
      * set the precision on a match based on the situation (match + pattern)
-     * 
+     *
      * @param m match
      */
     public static void set_precision(GeocoordMatch m) {

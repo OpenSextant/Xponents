@@ -22,11 +22,9 @@
  *
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
-*
+ *
  */
 package org.opensextant.extractors.geo;
-
-import org.opensextant.data.Geocoding;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,8 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opensextant.data.Place;
+import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
+import org.opensextant.data.Place;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.util.TextUtils;
 
@@ -64,17 +63,17 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     //private Long end;
     // --------------Place/NotPlace stuff ----------------------
     // which rules have expressed a Place/NotPlace opinion on this PC
-    private Set<String> rules = new HashSet<>();
+    private final Set<String> rules = new HashSet<>();
     // the confidence adjustments provided by the Place/NotPlace rules
-    private List<Double> placeConfidences = new ArrayList<>();
+    private final List<Double> placeConfidences = new ArrayList<>();
     // --------------Disambiguation stuff ----------------------
     // the places along with their disambiguation scores
-    private Map<String, ScoredPlace> scoredPlaces = new HashMap<>();
+    private final Map<String, ScoredPlace> scoredPlaces = new HashMap<>();
     // temporary lists to hold the ranked places and scores
-    private List<Place> rankedPlaces = new ArrayList<>();
-    private List<Double> rankedScores = new ArrayList<>();
+    private final List<Place> rankedPlaces = new ArrayList<>();
+    private final List<Double> rankedScores = new ArrayList<>();
     // the list of PlaceEvidences accumulated from the document about this PC
-    private List<PlaceEvidence> evidence = new ArrayList<>();
+    private final List<PlaceEvidence> evidence = new ArrayList<>();
     // The chosen, best place:
     private Place chosen = null;
 
@@ -91,7 +90,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     }
 
     /**
-     * 
+     *
      * @return normalized version of text.
      */
     public String getTextnorm() {
@@ -107,12 +106,12 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
 
     private String[] preTokens = null;
     private String[] postTokens = null;
-    private int DEFAULT_TOKEN_SIZE = 40;
+    private final int DEFAULT_TOKEN_SIZE = 40;
 
     /**
-     * Get some sense of tokens surrounding match. Possibly 
-     * optimize this by getting token list from SolrTextTagger (which provides the lang-specifics) 
-     * 
+     * Get some sense of tokens surrounding match. Possibly
+     * optimize this by getting token list from SolrTextTagger (which provides the lang-specifics)
+     *
      * @param sourceBuffer
      */
     protected void setSurroundingTokens(String sourceBuffer) {
@@ -120,7 +119,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
                 DEFAULT_TOKEN_SIZE);
 
         /* Get right most or left most whole tokens, for now whitespace delimited.
-         * TODO: ensure whole tokens are retrieved. 
+         * TODO: ensure whole tokens are retrieved.
          */
         setPrematchTokens(TextUtils.tokens(sourceBuffer.substring(window[0], window[1])));
         setPostmatchTokens(TextUtils.tokens(sourceBuffer.substring(window[2], window[3])));
@@ -445,8 +444,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     /**
      * @param preTokens the preTokens to set
      */
-    public void setPrematchTokens(String[] preTokens) {
-        this.preTokens = preTokens;
+    public void setPrematchTokens(String[] tok) {
+        this.preTokens = tok;
     }
 
     /**
@@ -459,7 +458,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     /**
      * @param postTokens the postTokens to set
      */
-    public void setPostmatchTokens(String[] postTokens) {
-        this.postTokens = postTokens;
+    public void setPostmatchTokens(String[] tok) {
+        this.postTokens = tok;
     }
 }

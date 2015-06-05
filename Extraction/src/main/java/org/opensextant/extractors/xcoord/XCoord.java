@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Use this XCoord class for both test and development of patterns, as well as
  * to extract coordinates at runtime.
- * 
+ *
  * @author ubaldino
  */
 public class XCoord extends AbstractFlexPat {
@@ -76,7 +76,7 @@ public class XCoord extends AbstractFlexPat {
     /**
      * Debugging constructor -- if debugmode = True, enable debugging else if
      * log4j debug mode is enabled, respect that.
-     * 
+     *
      * @param debugmode
      */
     public XCoord(boolean debugmode) {
@@ -100,14 +100,16 @@ public class XCoord extends AbstractFlexPat {
      * Extractor interface: extractors are responsible for cleaning up after
      * themselves.
      */
+    @Override
     public void cleanup() {
     }
 
     /**
      * Extractor interface: getName
-     * 
+     *
      * @return name of extractor
      */
+    @Override
     public String getName() {
         return "XCoord";
     }
@@ -176,7 +178,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of DMS patterns
-     * 
+     *
      * @param flag on/off
      */
     public void match_DMS(boolean flag) {
@@ -185,7 +187,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of DM patterns
-     * 
+     *
      * @param flag on/off
      */
     public void match_DM(boolean flag) {
@@ -194,7 +196,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of DD patterns
-     * 
+     *
      * @param flag on/off
      */
     public void match_DD(boolean flag) {
@@ -203,7 +205,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of MGRS patterns
-     * 
+     *
      * @param flag on/off
      */
     public void match_MGRS(boolean flag) {
@@ -212,7 +214,7 @@ public class XCoord extends AbstractFlexPat {
 
     /**
      * Enable matching of UTM patterns
-     * 
+     *
      * @param flag on/off
      */
     public void match_UTM(boolean flag) {
@@ -222,7 +224,7 @@ public class XCoord extends AbstractFlexPat {
     /**
      * Assess all enabled patterns against the given text. Resulting TextMatch
      * objects carry both the original text ID and their own match ID
-     * 
+     *
      * @param text text to match against
      * @param text_id identifier for text.
      * @return
@@ -247,7 +249,7 @@ public class XCoord extends AbstractFlexPat {
 
         // Character preceeding this offset is Alphanumeric.
         // In that context, this is likely a false positive.
-        // 
+        //
         char c1 = buf.charAt(offset);
         if (Character.isWhitespace(c1)) {
             // word break; -- Pattern must have matched word boundary or optional WS.
@@ -260,7 +262,7 @@ public class XCoord extends AbstractFlexPat {
     /**
      * Limit the extraction to a particular family of coordinates. Diagnostic
      * messages appear in TextMatchResultSet only when debug = ON.
-     * 
+     *
      * @param text text to match
      * @param text_id id for text
      * @param family pattern family or  XConstants.ALL_PATTERNS

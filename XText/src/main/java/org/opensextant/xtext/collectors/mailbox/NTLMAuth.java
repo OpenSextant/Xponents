@@ -20,9 +20,9 @@ import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 
 /**
- * 
+ *
  * @author ubaldino
- * 
+ *
  */
 public class NTLMAuth extends Authenticator {
     String username = null;
@@ -33,8 +33,8 @@ public class NTLMAuth extends Authenticator {
         password = p;
     }
 
+    @Override
     public PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(username, password);
     }
-
 }

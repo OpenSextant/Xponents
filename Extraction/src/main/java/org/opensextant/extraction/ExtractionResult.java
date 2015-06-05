@@ -77,7 +77,7 @@ public class ExtractionResult {
     /**
      * Add some piece of amplifying metadata about the record which may be
      * carried through to output format in some way
-     * @param f field 
+     * @param f field
      * @param v value
      */
     public void addAttribute(String f, Object v) {

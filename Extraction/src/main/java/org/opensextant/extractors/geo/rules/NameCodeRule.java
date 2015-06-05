@@ -24,9 +24,9 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 
 /**
  * A rule that associates a CODE with a NAME, when the pattern
- * 
+ *
  * "NAME, CODE" appears within N characters.
- * 
+ *
  * @author ubaldino
  *
  */
@@ -39,6 +39,7 @@ public class NameCodeRule extends GeocodeRule {
         NAME = "AdminCode";
     }
 
+    @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (int x = 0; x < names.size() - 1; ++x) {
             PlaceCandidate name = names.get(x);
@@ -46,14 +47,14 @@ public class NameCodeRule extends GeocodeRule {
 
             /*
              * Test if SOMENAME, CODE is the case.
-             *         a1.....a2.b1..,  where b1 > a2 > a1, 
+             *         a1.....a2.b1..,  where b1 > a2 > a1,
              * but distance is minimal from end of name to start of code.
-             *         
+             *
              */
             if ((code.start - name.end) > MAX_CHAR_DIST) {
                 continue;
             }
-            /* by this point a place name tag should be marked 
+            /* by this point a place name tag should be marked
              * as a name or code/abbrev.
              */
             log.info("{} name, code: {} {}?", NAME, name.getText(), code.getText());
@@ -71,7 +72,7 @@ public class NameCodeRule extends GeocodeRule {
     }
 
     /**
-     * No-op. 
+     * No-op.
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {

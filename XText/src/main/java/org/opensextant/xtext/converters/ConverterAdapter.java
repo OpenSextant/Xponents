@@ -25,7 +25,7 @@ import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.Converter;
 
 /**
- * 
+ *
  * @author ubaldino
  */
 public abstract class ConverterAdapter implements Converter {
@@ -41,7 +41,7 @@ public abstract class ConverterAdapter implements Converter {
     public ConvertedDocument convert(InputStream data) throws IOException {
         return conversionImplementation(data, null);
     }
-    
+
     /**
      * Yield a ConvertedDocument with no File metadata. Underlying
      * implementation opens and closes a stream to read the string. Metadata is

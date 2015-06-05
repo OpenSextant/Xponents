@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A demonstration of how to use the WebClient to crawl a site and convert it as you go.
  * An optional collection listener is settable to let you do something with each item collected/converted.
- * 
+ *
  * @author ubaldino
  *
  */
@@ -50,15 +50,15 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     /**
      * A collection listener to consult as far as how to record the found & converted content
      * as well as to determine what is worth saving.
-     * 
+     *
      */
     protected CollectionListener listener = null;
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private boolean allowCurrentSiteOnly = true;
     private boolean allowCurrentDirOnly = false;
 
     /**
-     * 
+     *
      * @param srcSite
      * @param destFolder
      * @throws MalformedURLException
@@ -103,12 +103,13 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * Run the collection.
      * Make sure you have set your converter and collection listener
      * If you have a converter that also has a conversion listener, whoa!!  good luck.
-     * This web crawl example is meant to provide the mechanics of the conversion listener 
-     * as implemented by the collection listener.  
+     * This web crawl example is meant to provide the mechanics of the conversion listener
+     * as implemented by the collection listener.
      * The details on how actions at collection time differ from conversion time are TBD.
-     * 
+     *
      * @throws IOException
      */
+    @Override
     public void collect() throws IOException {
         try {
             collectItems(null, this.getSite());
@@ -136,13 +137,13 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
 
     /**
      * recursive folder crawl through a site. This is where docs are
-     * converted and recorded.  
+     * converted and recorded.
      * As hashing algorithms are used in defining concise output paths, NoSuchAlgorithmException is thrown.
-     * 
+     *
      * @param link
      * @param site
      * @throws IOException
-     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchAlgorithmException
      */
     public void collectItems(String _link, URL startingSite) throws IOException,
             NoSuchAlgorithmException {
@@ -189,7 +190,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         Collection<HyperLink> items = parseContentPage(rawData, thisLink.getURL(), getSite());
 
         /* 2. Collect items on this page.
-         * 
+         *
          */
         for (HyperLink l : items) {
             if (filterOut(l)) {
@@ -210,9 +211,9 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
 
             /* TODO: fix "key", as it represents not just path, but unique URLs
              * different URLs with same path would collide.
-             * TODO: in general fix the ability to crawl off requested site. 
+             * TODO: in general fix the ability to crawl off requested site.
              *  If that is really needed, this is not the crawling capability you want.
-             * 
+             *
              */
             String key = l.getNormalPath();
             if (key == null) {
@@ -229,11 +230,11 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             }
 
             // B. Drop files in archive mirroring the original
-            // 
+            //
             File itemSaved = createArchiveFile(fpath, false);
 
             if (saved.contains(itemSaved.getAbsolutePath())) {
-                // in theory this item resolved to an item that was already saved. 
+                // in theory this item resolved to an item that was already saved.
                 // ignore.
                 continue;
             }
@@ -248,7 +249,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                 try {
                     // The default document ID will be an MD5 hash ID of the URL.
                     // This may differ for other collectors/harvesters/listeners
-                    // 
+                    //
                     String oid = TextUtils.text_id(l.getAbsoluteURL());
 
                     try {
@@ -290,9 +291,9 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     /**
      * convert and record a downloaded item, given the item and its source URL.
      * @param item
-     * @throws IOException 
-     * @throws ConfigException 
-     * @throws NoSuchAlgorithmException 
+     * @throws IOException
+     * @throws ConfigException
+     * @throws NoSuchAlgorithmException
      */
     protected void convertContent(File item, HyperLink link) throws IOException, ConfigException, NoSuchAlgorithmException {
 
@@ -329,7 +330,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         }
     }
 
-    /** 
+    /**
      * @see org.opensextant.xtext.collectors.web.CrawlFilter#isAllowCurrentDirOnly()
      */
     @Override

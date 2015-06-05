@@ -44,21 +44,21 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Group of Xponent Extractors. An Extractor has a simple interface:
- * 
+ *
  * <pre>
  * +configure() + extract()
  * </pre>
- * 
+ *
  * Configure any Extractor; add it to the stack here;
- * 
+ *
  * Once you have added Extractors to your XtractorGroup, call
  * XtractorGroup.setup()
- * 
+ *
  * Since a single processor of several may throw an exception, while others
  * succeed, The API does not throw exceptions failing a document completely. If
  * you need access to exceptions thrown by each processor or formatter, then you
  * would adapt the XtractorGroup here, but re-implementing the internal loops.
- * 
+ *
  * @author ubaldino
  */
 public class XtractorGroup {
@@ -175,7 +175,7 @@ public class XtractorGroup {
      * does not throw exceptions, as some processing may fail, while others
      * succeed. TODO: Processing/Formatting details would have to be retrieved
      * by calling some other method that is statefully tracking such things.
-     * 
+     *
      * @param input
      * @return status -1 failure, 0 nothing found, 1 found matches and
      *         formatted; 2 found content but nothing formatted. them.

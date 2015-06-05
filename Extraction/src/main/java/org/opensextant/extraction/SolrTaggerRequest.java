@@ -28,6 +28,7 @@ package org.opensextant.extraction;
 
 import java.util.Collection;
 import java.util.Collections;
+
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.common.params.SolrParams;
@@ -35,18 +36,18 @@ import org.apache.solr.common.util.ContentStream;
 import org.apache.solr.common.util.ContentStreamBase;
 
 /**
-*
-* @author dsmiley
-* @author ubaldino
-*/
+ *
+ * @author dsmiley
+ * @author ubaldino
+ */
 @SuppressWarnings("serial")
 public class SolrTaggerRequest extends QueryRequest {
 
     private final String input;
 
-    public SolrTaggerRequest(SolrParams params, String input) {
+    public SolrTaggerRequest(SolrParams params, String text) {
         super(params, SolrRequest.METHOD.POST);
-        this.input = input;
+        this.input = text;
     }
 
     @Override

@@ -26,12 +26,11 @@
  */
 package org.opensextant.xtext;
 
-
 /**
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public interface ConversionListener {
 
-    public void handleConversion( ConvertedDocument doc, String path );
+    void handleConversion(ConvertedDocument doc, String path);
 }

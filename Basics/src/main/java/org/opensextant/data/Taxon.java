@@ -26,10 +26,10 @@
  */
 package org.opensextant.data;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Collection;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * For now, what seems useful are catalog, name, terms.
@@ -52,8 +52,8 @@ public class Taxon {
     public Set<String> tagset = null;
     /** Acronyms are assumed to be ALL UPPER CASE; granted this does not
      * always apply.   But this is used to inform post-processing if a match, such as
-     * 'abc' matched 'ABC' incorrectly.  If the match is lower case, but the Taxon is Acronym, 
-     * then you have a mismatch of case and semantics likley. 
+     * 'abc' matched 'ABC' incorrectly.  If the match is lower case, but the Taxon is Acronym,
+     * then you have a mismatch of case and semantics likley.
      */
     public boolean isAcronym = false;
 
@@ -73,28 +73,28 @@ public class Taxon {
     }
 
     public void setTerms(String[] t) {
-        if (t==null){
+        if (t == null) {
             return;
         }
         if (termset == null) {
             termset = new HashSet<String>();
         }
         termset.addAll(Arrays.asList(t));
-        
+
     }
 
     public void addTags(Collection<Object> tlist) {
-        if (tlist==null){
+        if (tlist == null) {
             return;
         }
 
-        for (Object o : tlist){
-            addTag((String)o);
+        for (Object o : tlist) {
+            addTag((String) o);
         }
     }
 
     public void addTag(String t) {
-        if (t==null){
+        if (t == null) {
             return;
         }
 
@@ -103,7 +103,6 @@ public class Taxon {
         }
         tagset.add(t);
     }
-
 
     public void addTerm(String t) {
         if (termset == null) {

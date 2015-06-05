@@ -39,7 +39,7 @@ public class SPLink extends HyperLink {
      * @param base
      * @throws MalformedURLException
      * @throws UnsupportedEncodingException
-     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchAlgorithmException
      */
     public SPLink(String link, URL base) throws MalformedURLException, UnsupportedEncodingException, NoSuchAlgorithmException {
         super(link, base, base);
@@ -69,7 +69,7 @@ public class SPLink extends HyperLink {
     /**
      * Converts an obfuscated Sharepoint folder URL or view into a normal path
      * name.
-     * 
+     *
      * @return a normal looking Unix/URL path; or null if not possible.
      */
     @Override
@@ -87,9 +87,9 @@ public class SPLink extends HyperLink {
     }
 
     /**
-     * 
+     *
      * @return string for url if it could be simplified.
-     * @throws MalformedURLException 
+     * @throws MalformedURLException
      */
     public URL getSimplifiedFolderURL() throws MalformedURLException {
         if (simplifiedURL == null) {
@@ -100,7 +100,7 @@ public class SPLink extends HyperLink {
 
     /**
      * parses out the RootFolder or returns the parent path part of the URL.
-     * 
+     *
      * @return
      */
     public String getSharepointFolder() {

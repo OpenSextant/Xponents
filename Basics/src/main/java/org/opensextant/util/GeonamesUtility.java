@@ -44,22 +44,22 @@ import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
 /**
- * 
+ *
  * @author ubaldino
  */
 public class GeonamesUtility {
 
-    private Map<String, Country> isoCountries = new HashMap<>();
-    private Map<String, Country> fipsCountries = new HashMap<>();
-    private Map<String, String> iso2fips = new HashMap<>();
-    private Map<String, String> fips2iso = new HashMap<>();
-    private List<Country> countries = new ArrayList<>();
+    private final Map<String, Country> isoCountries = new HashMap<>();
+    private final Map<String, Country> fipsCountries = new HashMap<>();
+    private final Map<String, String> iso2fips = new HashMap<>();
+    private final Map<String, String> fips2iso = new HashMap<>();
+    private final List<Country> countries = new ArrayList<>();
     /**
      * Feature map is a fast lookup F/CODE ==&gt; description or name
      */
-    private Map<String, String> features = new HashMap<>();
+    private final Map<String, String> features = new HashMap<>();
 
-    private Map<String, String> _default_country_names = new HashMap<>();
+    private final Map<String, String> defaultCountryNames = new HashMap<>();
 
     /**
      * A utility class that offers many static routines; If you instantiate this
@@ -85,7 +85,7 @@ public class GeonamesUtility {
 
     /**
      * Find a readable name or description of a class/code
-     * 
+     *
      * @param cls  feature class, e.g., P
      * @param code feature code, e.g., PPL
      * @return name for a feature/code pair
@@ -148,7 +148,7 @@ public class GeonamesUtility {
             cc = cc.toUpperCase(Locale.ENGLISH);
             fips = fips.toUpperCase(Locale.ENGLISH);
 
-            // Unique Name?  E.g., "Georgia" country name is not unique. 
+            // Unique Name?  E.g., "Georgia" country name is not unique.
             // This flag helps inform Disambiguation choose countries and places.
             boolean isUniq = Boolean.parseBoolean(country_names.get("is_unique_name"));
             boolean isTerr = Boolean.parseBoolean(country_names.get("territory"));
@@ -157,7 +157,7 @@ public class GeonamesUtility {
             // ("*".equals(cc)){ cc = fips.toUpperCase(); }
 
             // Normalize: "US" =&gt; "united states of america"
-            _default_country_names.put(cc, n.toLowerCase(Locale.ENGLISH));
+            defaultCountryNames.put(cc, n.toLowerCase(Locale.ENGLISH));
 
             Country C = new Country(cc, n);
             C.CC_FIPS = fips;
@@ -182,19 +182,19 @@ public class GeonamesUtility {
 
         countryMap.close();
 
-        if (_default_country_names.isEmpty()) {
+        if (defaultCountryNames.isEmpty()) {
             throw new IOException("No data found in country name map");
         }
     }
 
     /**
      * Finds a default country name for a CC if one exists.
-     * 
+     *
      * @param cc_iso2  country code.
      * @return name of country
      */
     public String getDefaultCountryName(String cc_iso2) {
-        return _default_country_names.get(cc_iso2);
+        return defaultCountryNames.get(cc_iso2);
     }
 
     /**
@@ -213,7 +213,7 @@ public class GeonamesUtility {
     /**
      * Get Country by the default ISO digraph returns the Unknown country if you
      * are not using an ISO2 code.
-     * 
+     *
      * TODO: throw a GazetteerException of some sort. for null query or invalid
      * code.
      * @param isocode ISO code
@@ -286,7 +286,7 @@ public class GeonamesUtility {
      * you 44 or 00 for id part. In this case upper case code is returned. if
      * code is a number alone, "0" is returned for "00", "000", etc. And other
      * numbers are 0-padded as 2-digits
-     * 
+     *
      * @param v admin code
      * @return fixed admin code
      */
@@ -321,11 +321,11 @@ public class GeonamesUtility {
      * This presumes you have already normalized these values.
      * <pre>
      *    CC.ADM1.ADM2.ADM3... etc. for example:
-     *    
+     *
      *    'US.48.201'  ... some county in Texas.
-     *    
+     *
      * </pre>
-     * 
+     *
      * @param c  country code
      * @param adm1 ADM1 code
      * @return HASC path
@@ -352,24 +352,24 @@ public class GeonamesUtility {
     }
 
     /**
-     * Experimental. 
+     * Experimental.
      * Given a normalized name phrase, does it collide with country name?
-     * 
+     *
      * Usage: Savannah is a great city. Georgia is lucky it has 10 Chic-fil-a
      * restraunts in that metro area.
-     * 
+     *
      * Georgia is not a country, but a US State. So the logic caller might take:
      * If "savannah" is found, then ignore georgia("GG") as a possible country
-     * 
+     *
      * isCountryNameCollision -- is intending to be objective. If you choose to
      * ignore the country or not is up to caller. Hence this function is not
      * "ignoreCountry(placenm)"
-     * 
+     *
      * TODO: replace with simple config file of such rules that are objective
      * and can be generalized
-     * 
+     *
      * @param nm  country name
-     * @return if country name is ambiguous and collides with other name  
+     * @return if country name is ambiguous and collides with other name
      */
     public static boolean isCountryNameCollision(String nm) {
 
@@ -384,7 +384,7 @@ public class GeonamesUtility {
 
     /**
      * Check if name type is an Abbreviation
-     * 
+     *
      * @param name_type code
      * @return true if code is abbreviation
      */
@@ -394,7 +394,7 @@ public class GeonamesUtility {
 
     /**
      * Check if name type is an Abbreviation
-     * 
+     *
      * @param name_type  OpenSextant code
      * @return true if code is abbreviation
      */
@@ -431,9 +431,9 @@ public class GeonamesUtility {
 
     /**
      * Wrapper for isAbbreviation(name type)
-     * 
+     *
      * @param p place
-     * @return true if is coded as abbreviation 
+     * @return true if is coded as abbreviation
      */
     public static boolean isAbbreviation(Place p) {
         return isAbbreviation(p.getName_type());
@@ -441,7 +441,7 @@ public class GeonamesUtility {
 
     /**
      * Wrapper for isCountry(feat code)
-     * 
+     *
      * @param p  place
      * @return true if is Country, e.g., PCLI
      */
@@ -451,7 +451,7 @@ public class GeonamesUtility {
 
     /**
      * wrapper for isNationalCaptial( feat code )
-     * 
+     *
      * @param p place
      * @return true if is PPLC or similar
      */
@@ -469,7 +469,7 @@ public class GeonamesUtility {
 
     /**
      * if a place or feature represents an administrative boundary.
-     * 
+     *
      * @param featClass feature type in question
      * @return true if is admin
      */

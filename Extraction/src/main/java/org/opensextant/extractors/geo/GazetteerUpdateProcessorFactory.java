@@ -30,7 +30,7 @@ import org.apache.solr.update.AddUpdateCommand;
 /* JS and Groovy scripts worked out well... to an extent.
  * But adding global parameters to those stateless scripts was not possible.
 import org.apache.solr.update.processor.StatelessScriptUpdateProcessorFactory;
- * 
+ *
  * And so this URP was created to do finer tuning of the solr data.
  */
 import org.apache.solr.update.processor.UpdateRequestProcessor;
@@ -58,22 +58,22 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
     protected static GeonamesUtility helper = null;
 
     /**
-     * NamedList? in Solr.  What a horror. Okay, they work, but... 
-     * 
+     * NamedList? in Solr.  What a horror. Okay, they work, but...
+     *
      * items found in solrconfig under the gaz update processor script:
-     * 
+     *
      * include_category   -- Tells the update processor which flavors of data to keep
      * category_field     -- the field name where a row of data is categorized.
      * countries -- a list of countries to use.
      * stopterms -- a list of terms used to mark rows of data as "search_only"
-     * 
+     *
      */
     @Override
     public void init(NamedList params) {
-        /* Load the exclusion names -- these are terms that are 
+        /* Load the exclusion names -- these are terms that are
          * gazeteer entries, e.g., gazetteer.name = <exclusion term>,
          * that will be marked as search_only = true.
-         * 
+         *
          */
         try {
             stopTerms = GazetteerMatcher.loadExclusions(GazetteerMatcher.class
@@ -219,10 +219,10 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 }
             }
 
-            /* For relatively short terms that may also be stopterms, 
+            /* For relatively short terms that may also be stopterms,
              * first convert to non-diacritic form, then lower case result.
              * If result is a stop term or exclusion term then it should be tagged search_only
-             * 
+             *
              */
             if (!search_only && nm.length() < 15) {
                 String nameNonDiacrtic = TextUtils.replaceDiacritics(nm).toLowerCase();
@@ -266,21 +266,21 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
         /**
          * Parse off country codes that duplicate information in ADM boundary code.
-         * 
+         *
          * MX19 => '19', is sufficient.
          * In cases where FIPS/ISO codes differ (almost all!), then this is significant.
-         * 
+         *
          * Searchability:   use has to know that ADM1 code is using a given standard.
          *   e.g., adm1 = 'IZ08', instead of the more flexible, cc='IQ', adm1='08'
-         *   
+         *
          * Hiearchical/Lexical organization:  CC.ADM1 is useful to organize data, but
          * without this normalization, you might have 'IQ.IZ08' -- which is not wrong, just confusing.
-         * IQ.08 is a little easier to parse. 
-         * 
+         * IQ.08 is a little easier to parse.
+         *
          * So for now, the given Gazetteer entries are remapped to ISO coding.
-         * 
+         *
          * Recommendation:  we standardize on ISO country codes where possible.
-         * 
+         *
          * @param d the gazetteer solr document.
          * @param field  name of an ADMn field, ADM1, ADM2...etc.
          * @param cc  ISO country code
@@ -305,7 +305,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             }
 
             /* Strip off FIPS.ADM1
-             * 
+             *
              */
             if (adm.startsWith(fips)) {
                 d.setField(field, adm.substring(fips.length()));
@@ -313,8 +313,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             }
 
             /*
-             * In this situation, the ADM1 code does not contain the given 
-             * CC or FIPS code;  it refers to a different country so find that 
+             * In this situation, the ADM1 code does not contain the given
+             * CC or FIPS code;  it refers to a different country so find that
              * country code and replace it with ISO if possible.
              */
             if (adm.length() > 2) {

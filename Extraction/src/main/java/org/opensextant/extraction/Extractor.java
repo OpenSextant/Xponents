@@ -24,11 +24,11 @@
  * Clause 252.227-7014 (JUN 1995)
  *
  * (c) 2009-2013 The MITRE Corporation. All Rights Reserved.
- **************************************************   
+ **************************************************
  */
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//  
+//
 // _____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
@@ -40,7 +40,7 @@
 //             \/_/
 //
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-// 
+//
 package org.opensextant.extraction;
 
 import java.util.List;
@@ -60,16 +60,16 @@ import org.opensextant.processing.progress.ProgressMonitor;
 public interface Extractor {
 
     /** optional constant - a universal doc ID holder*/
-    public static final String NO_DOC_ID = "no-docid";
+    String NO_DOC_ID = "no-docid";
 
-    public String getName();
+    String getName();
 
     /**
      *  Configure an Extractor using defaults for that extractor.
      *
      * @throws ConfigException the config exception
      */
-    public void configure() throws ConfigException;
+    void configure() throws ConfigException;
 
     /**
      *  Configure an Extractor using a config file named by a path.
@@ -77,7 +77,7 @@ public interface Extractor {
      * @param patfile configuration file path
      * @throws ConfigException the config exception
      */
-    public void configure(String patfile) throws ConfigException;
+    void configure(String patfile) throws ConfigException;
 
     /**
      *  Configure an Extractor using a config file named by a URL.
@@ -85,7 +85,7 @@ public interface Extractor {
      * @param patfile configuration URL
      * @throws ConfigException the config exception
      */
-    public void configure(java.net.URL patfile) throws ConfigException;
+    void configure(java.net.URL patfile) throws ConfigException;
 
     /**
      *  Useuful for working with batches of inputs that have an innate row ID + buffer pairing.
@@ -94,8 +94,8 @@ public interface Extractor {
      * @return the list of TextMatch
      * @throws ExtractionException error if underlying extractor(s) fail
      */
-    public List<TextMatch> extract(TextInput input) throws ExtractionException;
-    
+    List<TextMatch> extract(TextInput input) throws ExtractionException;
+
     /**
      *  Useful for working with text buffers adhoc. Fewer assumptions about input data here.
      *
@@ -103,12 +103,14 @@ public interface Extractor {
      * @return the list of TextMatch
      * @throws ExtractionException error if underlying extractor(s) fail
      */
-    public List<TextMatch> extract(String input) throws ExtractionException;
+    List<TextMatch> extract(String input) throws ExtractionException;
 
-    public void setProgressMonitor(ProgressMonitor progressMonitor);
-    public void updateProgress(double progress);
-    public void markComplete();
-    
-    public void cleanup();
+    void setProgressMonitor(ProgressMonitor progressMonitor);
+
+    void updateProgress(double progress);
+
+    void markComplete();
+
+    void cleanup();
 
 }

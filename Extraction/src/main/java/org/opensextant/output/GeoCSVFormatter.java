@@ -39,9 +39,9 @@ import org.opensextant.processing.ProcessingException;
  * @author Rich Markeloff, MITRE Corp. Initial version created on Jan 6, 2012
  * history
  * -------
- * - Changed this variety of CSV to be Geo-specific; Other non-geo data could be 
+ * - Changed this variety of CSV to be Geo-specific; Other non-geo data could be
  *   written to CSV easily.
- *   
+ *
  */
 public final class GeoCSVFormatter extends GISDataFormatter {
 
@@ -56,7 +56,7 @@ public final class GeoCSVFormatter extends GISDataFormatter {
         this.outputType = "CSV";
         this.includeOffsets = true;
         this.includeCoordinate = true;
-        this.allowNonGeo = false; 
+        this.allowNonGeo = false;
     }
 
     /**

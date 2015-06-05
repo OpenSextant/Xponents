@@ -65,15 +65,15 @@ public class TextMatchResult {
     public TextMatchResult() {
     }
 
-    private StringBuilder _msg_trace = new StringBuilder();
+    private StringBuilder msgTrace = new StringBuilder();
 
     /**
      *
      * @param msg processing/matching message
      */
     public void add_trace(String msg) {
-        _msg_trace.append(msg);
-        _msg_trace.append("; ");
+        msgTrace.append(msg);
+        msgTrace.append("; ");
     }
 
     /**
@@ -81,6 +81,6 @@ public class TextMatchResult {
      * @return message buffer for matching
      */
     public String get_trace() {
-        return _msg_trace.toString();
+        return msgTrace.toString();
     }
 }

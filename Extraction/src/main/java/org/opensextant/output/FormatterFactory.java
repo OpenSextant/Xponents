@@ -81,9 +81,9 @@ public class FormatterFactory {
 
         String formatterClass = OUTPUT_FORMATS_LOOKUP.get(fmt.toLowerCase());
         if (formatterClass==null){
-            throw new ProcessingException("Unsupported Formatter: " + fmt);            
+            throw new ProcessingException("Unsupported Formatter: " + fmt);
         }
-        
+
         formatterClass = PKG + "." + formatterClass + "Formatter";
 
         try {

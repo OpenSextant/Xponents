@@ -40,13 +40,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
  * the Solr server.
  * <p >
  * This class is not thread-safe. It could be made to be with little effort.
- * 
+ *
  * @author David Smiley - dsmiley@mitre.org
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
@@ -66,11 +66,11 @@ public abstract class SolrMatcherSupport {
     protected int totalTime = 0;
 
     /**
-     * Use this if you intend to set a non-default tagger path. E.g., 
+     * Use this if you intend to set a non-default tagger path. E.g.,
      * /tag1
      * /tag-lang1
      * etc.
-     * 
+     *
      * @param nonDefault  path of tagger.
      */
     public void setTaggerHandler(String nonDefault) {
@@ -95,15 +95,15 @@ public abstract class SolrMatcherSupport {
 
     /**
      * Return the Solr Parameters for the tagger op.
-     * 
-     * @return SolrParams 
+     *
+     * @return SolrParams
      */
     public abstract SolrParams getMatcherParameters();
 
     /**
      * Caller must implement their domain objects, POJOs... this callback
      * handler only hashes them.
-     * 
+     *
      * @param doc record to convert to Place record
      * @return object representing a Place
      */
@@ -122,7 +122,7 @@ public abstract class SolrMatcherSupport {
     /**
      * Emphemeral metric for the current tagText() call. Caller must get these
      * numbers immediately after call.
-     * 
+     *
      * @return time to tag
      */
     public int getTaggingNamesTime() {
@@ -146,7 +146,7 @@ public abstract class SolrMatcherSupport {
     /**
      * Solr call: tag input buffer, returning all candiate reference data that
      * matched during tagging.
-     * 
+     *
      * @param buffer text to tag
      * @param docid  id for text, only for tracking purposes
      * @param refDataMap

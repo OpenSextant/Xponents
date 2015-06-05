@@ -44,16 +44,16 @@ import org.opensextant.xtext.ConvertedDocument;
  * Default conversion is almost a pass through from Tika's auto parser and BodyContentHandler.
  * Encoding, author, create date and title are saved to ConvertedDoc.  The text of the document
  * is stripped of extra blank lines.
- * 
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class DefaultConverter extends ConverterAdapter {
 
     /* 1 MB of text from a given document */
     public final static int MAX_TEXT_SIZE = 0x100000;
-    private Detector detector = new DefaultDetector();
-    private Parser parser = new AutoDetectParser(detector);
-    private ParseContext ctx = new ParseContext();
+    private final Detector detector = new DefaultDetector();
+    private final Parser parser = new AutoDetectParser(detector);
+    private final ParseContext ctx = new ParseContext();
 
     private int maxBuffer = MAX_TEXT_SIZE;
 
@@ -68,7 +68,7 @@ public class DefaultConverter extends ConverterAdapter {
 
     /**
      * Common implementation -- take an input stream and return a ConvertedDoc;
-     * 
+     *
      * @param input
      * @param doc
      * @return
@@ -85,7 +85,7 @@ public class DefaultConverter extends ConverterAdapter {
         try {
             parser.parse(input, handler, metadata, ctx);
         } catch (NoClassDefFoundError classErr){
-            throw new IOException("Unable to parse content due to Tika misconfiguration", classErr);            
+            throw new IOException("Unable to parse content due to Tika misconfiguration", classErr);
         } catch (Exception xerr) {
             throw new IOException("Unable to parse content", xerr);
         } finally {
@@ -98,7 +98,7 @@ public class DefaultConverter extends ConverterAdapter {
         textdoc.addCreateDate(metadata.getDate(TikaCoreProperties.CREATED));
         textdoc.addAuthor(metadata.get(TikaCoreProperties.CREATOR));
 
-        // v1.5:  until this version this blank line reducer was in place.  
+        // v1.5:  until this version this blank line reducer was in place.
         //     Using Java6 it appeared to cause StackOverflow when it encountered a document hundreds of \n in a row.
         //     Eg.., a Spreadsheet doc converted to text may have thousands of empty lines following the last data row.
         // TextUtils.reduce_line_breaks(txt)

@@ -52,6 +52,7 @@ public class TelephoneNumber extends PoliMatch {
         this.match_groups = elements;
     }
 
+    @Override
     public void normalize() {
         super.normalize();
 

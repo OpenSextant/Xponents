@@ -33,7 +33,7 @@ import org.opensextant.util.TextUtils;
 public class HyperLink {
 
     protected String urlValue = null;
-    /** 
+    /**
      * the link as found.
      */
     protected String urlNominal = null;
@@ -53,18 +53,18 @@ public class HyperLink {
     protected String directory = null;
 
     /**
-     * a physical path that represents the URL uniquely. 
+     * a physical path that represents the URL uniquely.
      */
     protected String normalizedPath = null;
 
     /**
-     * 
+     *
      * @param link
      * @param referringLink  - Normalized, absolute URL string
      * @param site
      * @throws MalformedURLException
-     * @throws UnsupportedEncodingException 
-     * @throws NoSuchAlgorithmException 
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
      */
     public HyperLink(String link, URL referringLink, URL site) throws MalformedURLException,
             NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -157,7 +157,7 @@ public class HyperLink {
     }
 
     /**Get the referrer link used at creation time.
-     * 
+     *
      * @return the referrer
      */
     public String getReferrer() {
@@ -182,7 +182,7 @@ public class HyperLink {
 
     /**
      * Get the relative path of the URL within the site hierarchy if possible.
-     * 
+     *
      * @return
      */
     public String getNormalPath() {
@@ -192,20 +192,21 @@ public class HyperLink {
     /**
      * tests if URL API detected a path, e.g., non-zero string following
      * host:port/(path)
-     * 
+     *
      * @return
      */
     public boolean hasPath() {
         return absoluteURL.getPath().length() > 0;
     }
 
+    @Override
     public String toString() {
         return absoluteURL.toString();
     }
 
     /**
      * trivial test for dynamic content.
-     * 
+     *
      * @return
      */
     public boolean isDynamic() {
@@ -256,7 +257,7 @@ public class HyperLink {
     }
 
     /**
-     * 
+     *
      * @param url  -- currently unused.
      * @param ext lower case.
      * @return
@@ -266,7 +267,7 @@ public class HyperLink {
     }
 
     /**
-     * 
+     *
      * @param url  -- currently unused.
      * @param ext lower case.
      * @return
@@ -300,18 +301,18 @@ public class HyperLink {
     /**
      * Given this URL, a, found on page, p, determine if a is a local anchor to
      * p itself.
-     * 
+     *
      * <pre>
      *  /x/y.html     a page.
      *  /x/y.html#tag anchor to y.html
      *  abc.html      link to other page
-     *  
+     *
      *  http://z.z.z/z.html#tag      Hmmm, this is a page anchor to the absolute page in the URL, z.html.
-     * 
+     *
      * </pre>
-     * 
+     *
      * TODO: possibly use the isLocalAnchor() vs. isAnchor() metaphor.
-     * 
+     *
      * @return
      */
     public boolean isPageAnchor() {
@@ -403,7 +404,7 @@ public class HyperLink {
      * Get absolute URL; limitations -- this is not intended for general use It
      * is a mere concatenation of parent + rel path. "../../....." paths are not
      * supported fully.
-     * 
+     *
      * @return
      */
     public String getAbsoluteURL() {
@@ -411,7 +412,7 @@ public class HyperLink {
     }
 
     /**
-     * 
+     *
      * @return URL object for this link. It is an absolute URL.
      */
     public URL getURL() {

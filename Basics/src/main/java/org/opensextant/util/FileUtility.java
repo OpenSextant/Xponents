@@ -39,11 +39,25 @@
 //
 package org.opensextant.util;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.zip.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -201,7 +215,7 @@ public class FileUtility {
      * Test is a path or file extension ends with .txt
      * NPE if null is passed in.
      * @param filepath path or extension, including "."
-     * 
+     *
      * @return true if is .txt or .TXT
      */
     public static boolean isPlainText(String filepath) {
@@ -231,11 +245,11 @@ public class FileUtility {
     /**
      *
      */
-    public static String default_encoding = "UTF-8";
+    public final static String default_encoding = "UTF-8";
     /**
      *
      */
-    public static int default_buffer = 0x800;
+    private final static int ioBufferSize = 0x800;
 
     /**
      * Slurps a text file into a string and returns the string.
@@ -243,7 +257,7 @@ public class FileUtility {
      * @param fileinput file object
      * @param enc text encoding
      * @return buffer from file
-     * @throws IOException on error 
+     * @throws IOException on error
      */
     public static String readFile(File fileinput, String enc) throws IOException {
         if (fileinput == null) {
@@ -289,13 +303,13 @@ public class FileUtility {
 
         final FileInputStream instream = new FileInputStream(filepath);
         final GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream),
-                default_buffer);
+                ioBufferSize);
 
-        final byte[] inputBytes = new byte[default_buffer];
+        final byte[] inputBytes = new byte[ioBufferSize];
         final StringBuilder buf = new StringBuilder();
 
         int readcount = 0;
-        while ((readcount = gzin.read(inputBytes, 0, default_buffer)) != -1) {
+        while ((readcount = gzin.read(inputBytes, 0, ioBufferSize)) != -1) {
             buf.append(new String(inputBytes, 0, readcount, default_encoding));
         }
         instream.close();
@@ -319,7 +333,7 @@ public class FileUtility {
 
         final FileOutputStream outstream = new FileOutputStream(filepath);
         final GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream),
-                default_buffer);
+                ioBufferSize);
 
         gzout.write(text.getBytes(default_encoding));
 
@@ -343,8 +357,8 @@ public class FileUtility {
         if (testDir == null) {
             return false;
         }
-        
-        if (testDir.isDirectory() && testDir.exists()){
+
+        if (testDir.isDirectory() && testDir.exists()) {
             return true;
         }
 
@@ -437,7 +451,7 @@ public class FileUtility {
     }
 
     /**
-     * 
+     *
      * @param f the file in question.
      * @return  the parent File of a given file.
      */
@@ -524,7 +538,7 @@ public class FileUtility {
      * @param dir directory
      * @param dupeMarker incrementor
      * @param maxDups max incrementor
-     * @return file object 
+     * @return file object
      * @author T. Allison NOT THREAD SAFE!
      */
     public static File getSafeDir(File dir, String dupeMarker, int maxDups) {
@@ -558,19 +572,19 @@ public class FileUtility {
         final String base = f.getName().substring(0, suffixInd);
         final String suffix = (suffixInd + 1 <= f.getName().length()) ? f.getName().substring(
                 suffixInd + 1) : "";
-        for (int i = 1; i < maxDups; i++) {
-            final File tmp = new File(f.getParentFile(), base + dupeMarker + i + "." + suffix);
-            if (!tmp.exists()) {
-                return tmp;
-            }
-        }
-        return null;
+                for (int i = 1; i < maxDups; i++) {
+                    final File tmp = new File(f.getParentFile(), base + dupeMarker + i + "." + suffix);
+                    if (!tmp.exists()) {
+                        return tmp;
+                    }
+                }
+                return null;
     }
 
     /**
      * Char to use in place of special chars when scrubbing filenames.
      */
-    public static char FILENAME_REPLACE_CHAR = '_';
+    public final static char FILENAME_REPLACE_CHAR = '_';
 
     /**
      *  Tests for valid filename chars for simple normalization
@@ -599,7 +613,7 @@ public class FileUtility {
     /**
      * A way of determining OS
      * Beware, OS X has Darwin in its full OS name.
-     * 
+     *
      * @return if OS is windows-based
      */
     public static boolean isWindowsSystem() {
@@ -618,7 +632,7 @@ public class FileUtility {
     public static final String COMMENT_CHAR = "#";
 
     /**
-     * A generic word list loader. 
+     * A generic word list loader.
      *
      * @param resourcepath  classpath location of a resource
      * @param case_sensitive if terms are loaded with case preserved or not.
@@ -630,14 +644,14 @@ public class FileUtility {
             throws IOException {
 
         URL resource = FileUtility.class.getResource(resourcepath);
-        if (resource!=null){
+        if (resource != null) {
             return loadDictionary(resource, case_sensitive);
         }
-        throw new IOException("Item not found: "+resourcepath);
+        throw new IOException("Item not found: " + resourcepath);
     }
 
     /**
-     * A generic word list loader. 
+     * A generic word list loader.
      *
      * @param resourcepath  classpath location of a resource
      * @param case_sensitive if terms are loaded with case preserved or not.
@@ -649,17 +663,17 @@ public class FileUtility {
             throws IOException {
 
         InputStream io = null;
-        try { 
-            io = resource.openStream(); 
+        try {
+            io = resource.openStream();
             return loadDict(io, case_sensitive);
         } finally {
             io.close();
         }
     }
-    
-    private static Set<String> loadDict(InputStream io, boolean case_sensitive) throws IOException{
-        
-         BufferedReader reader = new BufferedReader(new InputStreamReader(io,
+
+    private static Set<String> loadDict(InputStream io, boolean case_sensitive) throws IOException {
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(io,
                 default_encoding));
 
         final Set<String> dict = new HashSet<String>();
@@ -678,10 +692,10 @@ public class FileUtility {
         }
         return dict;
     }
-    
+
     /**
      * Load a word list from a file path.
-     * 
+     *
      * @param resource
      * @param case_sensitive
      * @return
@@ -690,8 +704,8 @@ public class FileUtility {
     public static Set<String> loadDictionary(File resource, boolean case_sensitive)
             throws IOException {
         InputStream io = null;
-        try { 
-            io = new FileInputStream(resource); 
+        try {
+            io = new FileInputStream(resource);
             return loadDict(io, case_sensitive);
         } finally {
             io.close();
@@ -817,24 +831,23 @@ public class FileUtility {
         if (url == null) {
             return NOT_AVAILABLE;
         }
-        
 
         //------------
-        
+
         /*  path:   http://a/b.htm
-         * 
+         *
          */
         final String test = url.toLowerCase();
 
         /*  path:   /a/b/
-         * 
+         *
          */
         if (url.endsWith("/") && !test.startsWith("http")) {
             return FOLDER_MIMETYPE;
         }
 
         final String urlTestExtension = FilenameUtils.getExtension(test);
-        
+
         /*
          * Known file type.
          */
@@ -852,7 +865,7 @@ public class FileUtility {
 
         if (test.startsWith("http:") || test.startsWith("https:")) {
             return WEBPAGE_MIMETYPE;
-        }        
+        }
 
         /*
          *   path:   /some/default/path
@@ -866,10 +879,10 @@ public class FileUtility {
          */
         return NOT_AVAILABLE;
     }
-    
+
     /**
      * Check if path or URL is a webpage.
-     * 
+     *
      * @param link
      * @return
      */

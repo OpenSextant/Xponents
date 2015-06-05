@@ -74,8 +74,8 @@ public class RegexPattern {
 
     /**
      * Metadata for a Regular Expression pattern
-     * 
-     * @param _family  name of family 
+     *
+     * @param _family  name of family
      * @param _id   pattern id within family
      * @param _description  optional description of pattern
      */
@@ -89,6 +89,7 @@ public class RegexPattern {
      *
      * @return string representation of the pattern
      */
+    @Override
     public String toString() {
         return id + ", Pattern:" + regex.pattern().toString();
     }

@@ -37,8 +37,8 @@ public class TextMatch extends TextEntity {
      * the ID of the pattern that extracted this
      */
     public String pattern_id = null;
-    
-    /** 
+
+    /**
      * A short label or tag representing the matcher, extractor, tagger, etc. that produced this match.
      */
     public String producer = null;
@@ -50,7 +50,7 @@ public class TextMatch extends TextEntity {
     public String getType(){
         return type;
     }
-    
+
     /**
      * Allow matchers and taggers to set a type label, e.g., pattern family or other string.
      * @param t type
@@ -82,13 +82,13 @@ public class TextMatch extends TextEntity {
         this.pattern_id = m.pattern_id;
     }
 
-    private boolean filtered_out_state = false;
+    private boolean filteredOut = false;
 
     public boolean isFilteredOut() {
-        return filtered_out_state;
+        return filteredOut;
     }
 
     public void setFilteredOut(boolean b) {
-        filtered_out_state = b;
+        filteredOut = b;
     }
 }

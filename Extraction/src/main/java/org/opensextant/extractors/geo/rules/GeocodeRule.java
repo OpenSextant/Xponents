@@ -36,14 +36,14 @@ public abstract class GeocodeRule {
     }
 
     /**
-     * 
+     *
      * @param nameList
      */
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
-            // Each rule must decide if iterating over name/geo combinations contributes 
+            // Each rule must decide if iterating over name/geo combinations contributes
             // evidence.   But can just as easily see if name.chosen is already set and exit early.
-            // 
+            //
             /*
              * This was filtered out already so ignore.
              */

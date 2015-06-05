@@ -29,6 +29,6 @@
 <suppressions>
   <!-- header's shouldn't count -->
   <suppress checks="StrictDuplicateCode"
-            files=".*"
+            files=".+\\.java"
             lines="1-60"/><!-- Allow for ASCII art in headers.-->
 </suppressions>

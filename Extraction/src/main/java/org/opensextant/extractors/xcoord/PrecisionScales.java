@@ -53,31 +53,31 @@ public class PrecisionScales {
      * decimal places.
      */
     public static final double[] DD_precision_list = {
-            // 
+            //
             LAT_DEGREE_PRECISION, // 0
-            // 
+            //
             LAT_DEGREE_PRECISION / 10, // 1
-            // 
+            //
             LAT_DEGREE_PRECISION / 100, // 2, ... etc.
-            // 
+            //
             LAT_DEGREE_PRECISION / 1000,
-            // 
+            //
             LAT_DEGREE_PRECISION / 10000,
             // Approx 1m precision at equator:
             LAT_DEGREE_PRECISION / 100000,
-            // 
+            //
             LAT_DEGREE_PRECISION / 1000000,
-            // 
+            //
             LAT_DEGREE_PRECISION / 10000000,
-            // 
+            //
             LAT_DEGREE_PRECISION / 100000000,
-            // 
+            //
             LAT_DEGREE_PRECISION / 1000000000,
-            // 
+            //
             LAT_DEGREE_PRECISION / 10000000000L,
-            // 
+            //
             LAT_DEGREE_PRECISION / 100000000000L,
-            // 
+            //
             LAT_DEGREE_PRECISION / 1000000000000L };
 
     // Last entry above.

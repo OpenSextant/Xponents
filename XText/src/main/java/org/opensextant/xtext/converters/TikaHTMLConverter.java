@@ -44,21 +44,21 @@ import org.opensextant.util.TextUtils;
 /**
  * A Tika HTML parser that reduces large amounts of empty lines in converted
  * HTML text.
- * 
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TikaHTMLConverter extends ConverterAdapter {
 
     public static final int MAX_HTML_FILE_SIZE = 0x80000; // 0.5 MB
     HtmlParser parser = new HtmlParser();
-    private boolean scrub_article = false;
+    private boolean scrubHTMLArticle = false;
     private int maxHTMLDocumentSize = MAX_HTML_FILE_SIZE;
 
     /**
      * Initialize a reusable HTML parser.
      */
     public TikaHTMLConverter(boolean article_only) throws IOException {
-        scrub_article = article_only;
+        scrubHTMLArticle = article_only;
     }
 
     public TikaHTMLConverter(boolean article_only, int docSize) throws IOException {
@@ -68,7 +68,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
     /**
      * a barebones HTML parser.
-     * 
+     *
      * <pre>
      * TODO: mis-encoded HTML entities are not decoded
      * properly. E.g., finding "&#8211;" (82xx range is dashes, quotes) for
@@ -85,12 +85,12 @@ public class TikaHTMLConverter extends ConverterAdapter {
         ContentHandler handler = new BodyContentHandler(maxHTMLDocumentSize);
 
         BoilerpipeContentHandler scrubbingHandler = null;
-        if (scrub_article) {
+        if (scrubHTMLArticle) {
             scrubbingHandler = new BoilerpipeContentHandler(handler);
         }
 
         try {
-            parser.parse(input, (scrub_article ? scrubbingHandler : handler), metadata,
+            parser.parse(input, (scrubHTMLArticle ? scrubbingHandler : handler), metadata,
                     new ParseContext());
         } catch (Exception xerr) {
             throw new IOException("Unable to parse content", xerr);
@@ -102,7 +102,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
         textdoc.addTitle(metadata.get(TikaCoreProperties.TITLE));
 
         String text = null;
-        if (scrub_article) {
+        if (scrubHTMLArticle) {
             text = scrubbingHandler.getTextDocument().getText(true, false);
         } else {
             text = handler.toString();
@@ -122,7 +122,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
         // Indicate if we tried to filter the article at all.
         //
-        textdoc.addProperty("filtered", scrub_article);
+        textdoc.addProperty("filtered", scrubHTMLArticle);
         textdoc.addProperty("converter", TikaHTMLConverter.class.getName());
 
         return textdoc;

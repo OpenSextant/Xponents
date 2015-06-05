@@ -42,6 +42,7 @@ public class MACAddress extends PoliMatch {
         normal_case = PoliMatch.LOWER_CASE;
     }
 
+    @Override
     public void normalize(){
         super.normalize();
         this.textnorm = this.textnorm.replace('-', ':');

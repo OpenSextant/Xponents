@@ -91,23 +91,24 @@ public class TextEntity {
      */
     public void setText(String t) {
         text = t;
-        if (text!=null){
-            isLower =TextUtils.isLower(text);
+        if (text != null) {
+            isLower = TextUtils.isLower(text);
             isUpper = TextUtils.isUpper(text);
         }
     }
-    
+
     private boolean isLower = false;
     private boolean isUpper = false;
-    
+
     /**
      * test If text is ALL lowercase
      * @return true if all lower.
      */
-    public boolean isLower(){
+    public boolean isLower() {
         return isLower;
     }
-    public boolean isUpper(){
+
+    public boolean isUpper() {
         return isUpper;
     }
 
@@ -156,7 +157,7 @@ public class TextEntity {
 
     /**
      *
-     * @return context buffer regardless if it is singular context or separate pre/post match 
+     * @return context buffer regardless if it is singular context or separate pre/post match
      */
     public String getContext() {
         return this.context;
@@ -189,7 +190,7 @@ public class TextEntity {
 
     /**
      *
-     * @param m match/entity object to copy  
+     * @param m match/entity object to copy
      */
     public void copy(TextEntity m) {
 

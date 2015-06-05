@@ -27,7 +27,7 @@ public class Language {
     private String iso2 = null;
     private String iso3 = null;
     private String name = null;
-    private String namecode = null; 
+    private String namecode = null;
 
     /** A normalize view of a Language  - ISO 639-2 and -1 codes and display name
      *  codes are lower cased.
@@ -35,15 +35,15 @@ public class Language {
      *  @param id2 ISO 639-2 2-alpha code
      *  @param name of language
      */
-    public Language( String id3, String id2, String name) {
-        if (StringUtils.isNotBlank(id3)){
+    public Language(String id3, String id2, String n) {
+        if (StringUtils.isNotBlank(id3)) {
             iso3 = id3.toLowerCase();
         }
-        if (StringUtils.isNotBlank(id2)){
+        if (StringUtils.isNotBlank(id2)) {
             iso2 = id2.toLowerCase();
         }
-        this.name = name;
-        if (name!=null){
+        this.name = n;
+        if (name != null) {
             namecode = name.toLowerCase();
         }
     }
@@ -52,6 +52,7 @@ public class Language {
     public String getName() {
         return this.name;
     }
+
     public String getNameCode() {
         return this.namecode;
     }
@@ -62,12 +63,12 @@ public class Language {
         return this.iso3;
     }
 
-    public String getISO639_1_Code(){
+    public String getISO639_1_Code() {
         return this.iso2;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("%s (%s)", getName(), getCode());
     }
 }

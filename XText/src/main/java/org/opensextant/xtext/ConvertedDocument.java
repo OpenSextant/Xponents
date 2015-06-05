@@ -64,7 +64,7 @@ public final class ConvertedDocument extends DocInput {
 
     private static final DateTimeFormatter dtfmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 
-    /** 
+    /**
      * The url where this document (html, image, doc download) was found
      * The url-referrer the page containing the url.
      */
@@ -87,13 +87,13 @@ public final class ConvertedDocument extends DocInput {
             URL_FIELD, URL_REFERRER_FIELD };
 
     /**
-     * Converters will populate metadatata. If the entry is an object or a file, its name will reflect that. 
-     * Interpreting the entry name as a file name on a file system is up to the recipient.  E.g., Mail attachments 
+     * Converters will populate metadatata. If the entry is an object or a file, its name will reflect that.
+     * Interpreting the entry name as a file name on a file system is up to the recipient.  E.g., Mail attachments
      * might be file names;  Embedded objects may be object IDs.
      */
     public final static String CHILD_ENTRY_KEY = "entry.name";
     /**
-     * if you are a child document/object, then 
+     * if you are a child document/object, then
      */
     public ConvertedDocument parent = null;
     private List<ConvertedDocument> children = null;
@@ -190,7 +190,7 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * Record a URL that represents the source of the document.
-     * 
+     *
      * @param url  the url to the item, e.g., http:/a.b.com/folder/my.doc
      * @param referringURL  the url where the doc was found, e.g., http:/a.b.com/folder/
      */
@@ -236,9 +236,9 @@ public final class ConvertedDocument extends DocInput {
         if (parent != null) {
             meta.put("xtext_parent_id", this.parent.id);
             meta.put("xtext_parent_path", this.parent.filepath);
-            // Currently, Parent must be alread converted; and if any text output exists 
+            // Currently, Parent must be alread converted; and if any text output exists
             // and was cached, then park children in the same parent folder.
-            // 
+            //
             parentContainer = parent.parentContainer;
         }
     }
@@ -267,7 +267,7 @@ public final class ConvertedDocument extends DocInput {
             // parent obj is at Parent.xyz
             // parent textpath is at xtext/Parent.xyz.txt
             // create  ./xtext/../Parent
-            // child is at      
+            // child is at
             // parent textpath ../../Parent/
             parPath = new File(textpath).getParentFile().getParent();
         } else {
@@ -303,7 +303,7 @@ public final class ConvertedDocument extends DocInput {
             children = new ArrayList<ConvertedDocument>();
         }
         /** You are adding a child item to a parent that is marked as an RFC822 document, so naturally the
-         * child is now an RFC822 attachment. 
+         * child is now an RFC822 attachment.
          */
         if (is_RFC822_attachment) {
             ch.is_RFC822_attachment = true;
@@ -312,7 +312,7 @@ public final class ConvertedDocument extends DocInput {
     }
 
     /**
-     * 
+     *
      * @return true if this is a parent and has ConvertedDocument children.
      */
     public boolean hasChildren() {
@@ -329,7 +329,7 @@ public final class ConvertedDocument extends DocInput {
     /**
      * true if this is a parent and has raw Content children, e.g., raw bytes + metadata
      * which can in turn be saved as Files and then Converted to children
-     * 
+     *
      * @return true if instance is a parent and it has non-trivial children
      */
     public boolean hasRawChildren() {
@@ -360,14 +360,14 @@ public final class ConvertedDocument extends DocInput {
     /**
      * DocInput abstraction.  "Identity" of a document is subjective. By default it is the
      * filepath, but could easily be set to MD5 digest, UUID, or some external record ID for this item.
-     * @param ident id of this instance. 
+     * @param ident id of this instance.
      */
     public void setId(String ident) {
         this.id = ident;
     }
 
     /**
-     * @param enc text encoding 
+     * @param enc text encoding
      */
     public void setEncoding(String enc) {
         this.encoding = enc;
@@ -376,7 +376,7 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * get the charset encoding.
-     * 
+     *
      * @return the character set encoding set by metadata discovery or by the setEncoding() method.
      */
     public String getEncoding() {
@@ -456,7 +456,7 @@ public final class ConvertedDocument extends DocInput {
     /**
      * Reports if the doc has text available, after it was converted.
      * NOTE: this is false if you ask before it is converted.
-     * 
+     *
      * @return true if there is text available.  false if the converters have not tried to set text or they tried and found no text.
      */
     public boolean hasText() {
@@ -466,8 +466,8 @@ public final class ConvertedDocument extends DocInput {
     /**
      * Set default ID only after all conversion and all metadata has been acquired.
      * MD5 hash of text, if text is available, or of the filepath if file is empty.
-     * @throws NoSuchAlgorithmException 
-     * 
+     * @throws NoSuchAlgorithmException
+     *
      */
     public void setDefaultID() throws IOException, NoSuchAlgorithmException {
             if (hasText()) {
@@ -523,7 +523,7 @@ public final class ConvertedDocument extends DocInput {
 
     /*
      * Add a custom property of your own. No validation here.
-     * Use addProperty to add only valid core fields. 
+     * Use addProperty to add only valid core fields.
      */
     public void addUserProperty(String k, String v) {
         meta.put(k, v);
@@ -687,9 +687,9 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * Internal function for saving buffer in the XText format.
-     * IF the converted original file as a date/time later than that of the cached conversion, 
+     * IF the converted original file as a date/time later than that of the cached conversion,
      * this conversion cache will be overwritten.
-     * 
+     *
      */
     protected void _saveConversion(File target) throws IOException {
 
@@ -717,15 +717,15 @@ public final class ConvertedDocument extends DocInput {
     }
 
     /**
-     * 
-     * @return id of parent document. 
+     *
+     * @return id of parent document.
      */
     public String getParentID() {
         return meta.optString("xtext_parent_id");
     }
 
     /**
-     * 
+     *
      * @return path of parent document
      */
     public String getParentPath() {

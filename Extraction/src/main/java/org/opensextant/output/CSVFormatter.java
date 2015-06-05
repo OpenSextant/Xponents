@@ -37,7 +37,7 @@ public class CSVFormatter extends AbstractFormatter {
 
     private CsvMapWriter writer = null;
 
-    private HashSet<String> field_set = new HashSet<String>();
+    private HashSet<String> fieldSet = new HashSet<String>();
 
     public CSVFormatter() {
         this.outputExtension = ".csv";
@@ -48,15 +48,15 @@ public class CSVFormatter extends AbstractFormatter {
 
     @Override
     public void addField(String f) throws ConfigException {
-        field_order.add(f);
-        field_set.add(f);
+        fieldOrder.add(f);
+        fieldSet.add(f);
 
     }
 
     @Override
     public void removeField(String f) throws ConfigException {
-        field_order.remove(f);
-        field_set.remove(f);
+        fieldOrder.remove(f);
+        fieldSet.remove(f);
     }
 
     CellProcessor[] outputSchema = null;
@@ -110,7 +110,7 @@ public class CSVFormatter extends AbstractFormatter {
 
             values.clear();
 
-            if (field_set.contains(OpenSextantSchema.FILEPATH.getName())) {
+            if (fieldSet.contains(OpenSextantSchema.FILEPATH.getName())) {
                 values.put(OpenSextantSchema.FILEPATH.getName(), rowdata.recordFile);
             }
 
@@ -125,7 +125,7 @@ public class CSVFormatter extends AbstractFormatter {
     }
 
     /**
-     * 
+     *
      * @param row
      * @param m
      */
@@ -150,19 +150,19 @@ public class CSVFormatter extends AbstractFormatter {
             //field_order.add("start");
             //field_order.add("end");
             //} else {
-            field_order.remove("start");
-            field_order.remove("end");
+            fieldOrder.remove("start");
+            fieldOrder.remove("end");
         }
 
-        outputSchema = new CellProcessor[field_order.size()];
-        header = new String[field_order.size()];
-        field_order.toArray(header);
+        outputSchema = new CellProcessor[fieldOrder.size()];
+        header = new String[fieldOrder.size()];
+        fieldOrder.toArray(header);
 
-        for (int x = 0; x < field_order.size(); ++x) {
+        for (int x = 0; x < fieldOrder.size(); ++x) {
             outputSchema[x] = new Optional();
         }
 
-        this.field_set.addAll(field_order);
+        this.fieldSet.addAll(fieldOrder);
     }
 
     /**
@@ -171,7 +171,7 @@ public class CSVFormatter extends AbstractFormatter {
         if (f == null) {
             return false;
         }
-        return field_set.contains(f);
+        return fieldSet.contains(f);
     }
 
     /**
@@ -193,18 +193,18 @@ public class CSVFormatter extends AbstractFormatter {
         }
     }
 
-    protected List<String> field_order = new ArrayList<String>();
+    protected List<String> fieldOrder = new ArrayList<String>();
 
     /**
      * Default fields for generic CSV output. If GIS output is desired, then use GeoCSV formatter.
      */
     protected final void defaultFields() {
 
-        field_order.add("matchtext");
-        field_order.add("context");
-        field_order.add("filepath");
-        field_order.add("method");
-        field_order.add("start");
-        field_order.add("end");
+        fieldOrder.add("matchtext");
+        fieldOrder.add("context");
+        fieldOrder.add("filepath");
+        fieldOrder.add("method");
+        fieldOrder.add("start");
+        fieldOrder.add("end");
     }
 }

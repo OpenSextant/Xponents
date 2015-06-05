@@ -25,7 +25,7 @@
  * **************************************************************************
  */
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//  
+//
 // _____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
@@ -37,7 +37,7 @@
 //             \/_/
 //
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-// 
+//
 
 package org.opensextant.data;
 
@@ -80,7 +80,7 @@ public class GeoBase implements LatLon {
         this.longitude = lon;
     }
 
-    /** 
+    /**
      * @return place id
      */
     public String getKey() {
@@ -95,7 +95,7 @@ public class GeoBase implements LatLon {
         key = k;
     }
 
-    /** 
+    /**
      * @param nm name for this location
      */
     public final void setName(String nm) {
@@ -134,8 +134,8 @@ public class GeoBase implements LatLon {
      * @param latitude in degrees
      */
     @Override
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setLatitude(double lat) {
+        this.latitude = lat;
     }
 
     /**
@@ -150,8 +150,8 @@ public class GeoBase implements LatLon {
      * @param longitude in degrees
      */
     @Override
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLongitude(double lon) {
+        this.longitude = lon;
     }
 
     private String geohash;
@@ -166,7 +166,7 @@ public class GeoBase implements LatLon {
 
     /**
      *
-     * @return geohash 
+     * @return geohash
      */
     public String getGeohash() {
         return geohash;
@@ -179,7 +179,7 @@ public class GeoBase implements LatLon {
         this.latitude = geo.getLatitude();
         this.longitude = geo.getLongitude();
     }
-    
+
     /**
      * Convenience method for checking if lat/lon was set to other than 0,0 (default)
      * @return

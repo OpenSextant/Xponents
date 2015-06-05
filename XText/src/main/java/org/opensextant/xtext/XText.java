@@ -23,80 +23,96 @@
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  */
+///** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+//
+// _____                                ____                     __                       __
+///\  __`\                             /\  _`\                  /\ \__                   /\ \__
+//\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
+// \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
+//  \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
+//   \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
+//    \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
+//            \ \_\
+//             \/_/
+//
+//   OpenSextant XText
+// *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+// */
 package org.opensextant.xtext;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import gnu.getopt.LongOpt;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.tika.io.IOUtils;
 import org.opensextant.ConfigException;
 import org.opensextant.util.FileUtility;
+import org.opensextant.xtext.collectors.ArchiveNavigator;
+import org.opensextant.xtext.collectors.mailbox.OutlookPSTCrawler;
+import org.opensextant.xtext.converters.DefaultConverter;
 import org.opensextant.xtext.converters.EmbeddedContentConverter;
 import org.opensextant.xtext.converters.ImageMetadataConverter;
 import org.opensextant.xtext.converters.MessageConverter;
 import org.opensextant.xtext.converters.TextTranscodingConverter;
 import org.opensextant.xtext.converters.TikaHTMLConverter;
-import org.opensextant.xtext.converters.DefaultConverter;
 import org.opensextant.xtext.converters.WebArchiveConverter;
-import org.opensextant.xtext.collectors.ArchiveNavigator;
-import org.opensextant.xtext.collectors.mailbox.OutlookPSTCrawler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gnu.getopt.LongOpt;
-
-import java.io.*;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
-import org.apache.tika.io.IOUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 /**
- * 
+ *
  * Traverse a folder and return text versions of the documents found. Archiving
  * the text only copies at an output location of your choice.
- * 
+ *
  * <pre>
- * 
+ *
  * if input is a file, convert. Done.
- * 
+ *
  * if input is an archive, unpack in temp space, iterate over dir, convert each.
  * Done
- * 
+ *
  * if input is a folder iterate over dir, convert each. Done
  * </pre>
- * 
+ *
  * TEXT OUTPUT form includes a JSON document header with metadata properties
  * from the original item. These are valid elements of the conversion process.
  * We try to maintain them apart from the true, readable text of the document.
- * 
- * 
+ *
+ *
  * Add a ConversiontListener to XText instance to capture the converted document
  * as it comes out of the main loop for converting archives and folders.
- * 
+ *
  * extractText() runs over any file type and extracts text, saving it pushing
  * events to one optional listener
- * 
+ *
  * convertFile(File) will convert a single file, returning a ConvertedDocument
- * 
- * 
- * 
+ *
+ *
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public final class XText implements ExclusionFilter, Converter {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private boolean scrubHTML = false;
 
-    private PathManager paths = new PathManager();
+    private final PathManager paths = new PathManager();
 
     public PathManager getPathManager() {
         return paths;
@@ -111,11 +127,11 @@ public final class XText implements ExclusionFilter, Converter {
      */
     private int maxBuffer = DefaultConverter.MAX_TEXT_SIZE;
     /**
-     * Heuristic - HTML content is likely 5x, maybe a lot more, the size of the 
+     * Heuristic - HTML content is likely 5x, maybe a lot more, the size of the
      * plain text it contains.  So with 1 MB the target max text size, 5 MB would be
      * the largest HTML document accepted here, by default.
      */
-    private int maxHTMLBuffer = 5 * maxBuffer;
+    private final int maxHTMLBuffer = 5 * maxBuffer;
     private long maxFileSize = FILE_SIZE_LIMIT;
 
     protected Set<String> archiveFileTypes = new HashSet<String>();
@@ -126,8 +142,8 @@ public final class XText implements ExclusionFilter, Converter {
     public static Map<String, Converter> converters = new HashMap<String, Converter>();
     private Converter defaultConversion;
     private Converter embeddedConversion;
-    private Set<String> requestedFileTypes = new HashSet<String>();
-    private Set<String> ignoreFileTypes = new HashSet<String>();
+    private final Set<String> requestedFileTypes = new HashSet<String>();
+    private final Set<String> ignoreFileTypes = new HashSet<String>();
     private boolean allowNoExtension = false;
 
     /**
@@ -141,6 +157,7 @@ public final class XText implements ExclusionFilter, Converter {
     }
 
     /** @deprecated  use getPathManager().setConversionRoot( path ) */
+    @Deprecated
     public void setArchiveDir(String root) throws IOException {
         paths.setConversionCache(root);
     }
@@ -150,7 +167,7 @@ public final class XText implements ExclusionFilter, Converter {
     }
 
     public void setMaxFileSize(int sz) {
-        maxFileSize = (long) sz;
+        maxFileSize = sz;
     }
 
     /**
@@ -181,7 +198,7 @@ public final class XText implements ExclusionFilter, Converter {
      * The overall flag to save converted output or not. DEFAULT: true = save
      * it; provided caller specifies either saveWithInput or provides an
      * archiveRoot
-     * 
+     *
      * @param b
      */
     public void enableSaving(boolean b) {
@@ -192,7 +209,7 @@ public final class XText implements ExclusionFilter, Converter {
      * Add the file extension for the file type you wish to convert. if Tika
      * supports it by default it should be no problem.
      * Adding requested file types here only allows the API to know by-file extension
-     * what types to filter in and convert.  Without a file extension, the file 
+     * what types to filter in and convert.  Without a file extension, the file
      * still needs to be ingested and converted to identify the file type.
      */
     public void convertFileType(String ext) {
@@ -254,7 +271,7 @@ public final class XText implements ExclusionFilter, Converter {
     /**
      * Records overall counts and conversion times for documents converted.
      * This may not account for error'd documents.
-     * 
+     *
      * @param d
      */
     protected void trackStatistics(ConvertedDocument d) {
@@ -275,9 +292,9 @@ public final class XText implements ExclusionFilter, Converter {
 
     /**
      * Optional API routine.  If XText is used as a main program, this is the entry point for extraction/collection.
-     * If XText is used as an API, caller may use convertFile() directly without engaging in the setup and assumptions behind this convenience method. 
+     * If XText is used as an API, caller may use convertFile() directly without engaging in the setup and assumptions behind this convenience method.
      * The main entry point to converting compound documents and folders.
-     * @throws ConfigException 
+     * @throws ConfigException
      */
     public void extractText(String filepath) throws IOException, ConfigException {
 
@@ -302,7 +319,7 @@ public final class XText implements ExclusionFilter, Converter {
         }
 
         if (isArchive(input.getName())) {
-            // Archive will collect originals to "export" 
+            // Archive will collect originals to "export"
             // Archive will save conversions to "output"
             // PathManager is STATEFUL for as long as this archive is processing
             // If an archive is uncovered while traversing files, its contents can be dumped to the child export folder.
@@ -334,9 +351,9 @@ public final class XText implements ExclusionFilter, Converter {
     }
 
     /**
-     * Filter out File object if it is an XText conversion of some sort. That is, if 
+     * Filter out File object if it is an XText conversion of some sort. That is, if
      * file "./a/b/c/xtext/file.doc.txt  is found, it is omitted because it is contained in "./xtext"
-     * 
+     *
      * @param input file obj
      * @return true if file's immediate parent is named 'xtext'
      */
@@ -356,7 +373,7 @@ public final class XText implements ExclusionFilter, Converter {
     @Override
     public boolean filterOutFile(String filepath) {
 
-        // Filter out any of our own xtext caches 
+        // Filter out any of our own xtext caches
         //
         if (PathManager.isXTextCache(filepath)) {
             return true;
@@ -389,13 +406,13 @@ public final class XText implements ExclusionFilter, Converter {
     /**
      * Unpack an archive and convert items found.
      * Given (input)/A.zip
-     * The zip is dearchived to 
-     *    (input)/A_zip/     
+     * The zip is dearchived to
+     *    (input)/A_zip/
      * or (archive)/(input)/A_zip
-     * 
+     *
      * Items are then converted in either folder for the conversion archiving; depending on your choice of embedded vs. non-embedded
-     * @throws ConfigException 
-     * 
+     * @throws ConfigException
+     *
      */
     public void convertArchive(File input) throws IOException, ConfigException {
 
@@ -422,7 +439,7 @@ public final class XText implements ExclusionFilter, Converter {
     }
 
     /**
-     * 
+     *
      * @param input
      * @throws IOException
      */
@@ -460,20 +477,20 @@ public final class XText implements ExclusionFilter, Converter {
      * Arbitrary 32 MB limit on file size. Maybe this should be dependent on the
      * file type.
      */
-    public final static long FILE_SIZE_LIMIT = 0x2000000;
+    public static final long FILE_SIZE_LIMIT = 0x2000000;
 
     /**
      * This is the proxy interface for traversing archives.
-     * 
+     *
      * Archive Navigator will call this interface to convert and post-process So
      * XText itself is a super-converter, whereas the items in the converter pkg
      * are stateless, simple conversions.
-     * 
+     *
      * this interface implementation calls XText.convertFile() which in turn
      * deals with the details of saving and archiving items
-     * 
+     *
      * Items retrieved from Archive Navigator are deleted from their temp space.
-     * @throws ConfigException 
+     * @throws ConfigException
      */
     @Override
     public ConvertedDocument convert(File input) throws IOException, ConfigException {
@@ -486,7 +503,7 @@ public final class XText implements ExclusionFilter, Converter {
      * for the data you think you are converting. E.g., if you know you have a
      * buffer of HTML content and want to save it as text, call
      * TikaHTMLConverter().convert( buffer ) directly.
-     * 
+     *
      */
     @Override
     public ConvertedDocument convert(String data) throws IOException {
@@ -501,19 +518,19 @@ public final class XText implements ExclusionFilter, Converter {
     /**
      * Convert one file and save it off. We ignore hidden files and files in
      * hidden folders, e.g., .cvs_ignore, mycode/.svn/abc.txt
-     * 
+     *
      * This is the end of the line for the conversion logic; convertFile figures
      * out if it should return the cached version or attempt a conversion; it
      * also tries to save children items As children items may require special
      * attention they are not converted -- caller can pass in ConversionListener
      * and can deal with children file objects on their end.
-     * 
+     *
      * @param input
      * @return converted document object
      * @throws java.io.IOException
      */
     public ConvertedDocument convertFile(File input, ConvertedDocument parent) throws IOException,
-            ConfigException {
+    ConfigException {
 
         if (parent == null && filterOutFile(input)) {
             return null;
@@ -569,7 +586,7 @@ public final class XText implements ExclusionFilter, Converter {
         if (converter == null) {
             if (extractEmbedded && EmbeddedContentConverter.isSupported(ext)) {
                 converter = embeddedConversion;
-                cachable = false; // Such content is processed every time.  Oh well... 
+                cachable = false; // Such content is processed every time.  Oh well...
             } else {
                 converter = defaultConversion;
             }
@@ -652,7 +669,7 @@ public final class XText implements ExclusionFilter, Converter {
          * metadata) and Converted Children (ConvertedDocument obj) Caller will
          * have to detect if returned item via listener is a Parent with
          * Children.
-         * 
+         *
          * Behavior here is TBD.
          */
         if (postProcessor != null && parent == null) {
@@ -667,11 +684,11 @@ public final class XText implements ExclusionFilter, Converter {
      * Navigate a folder trying to convert each file and return something to the
      * listener. Do not sacrifice the entire job if one file fails, so exception
      * is trapped in loop
-     * 
+     *
      */
     public void convertFolder(File input) throws IOException {
         java.util.Collection<File> files = FileUtils.listFiles(input, new SuffixFileFilter(
-                FILE_FILTER, IOCase.INSENSITIVE), FileFilterUtils.trueFileFilter());
+                fileFilters, IOCase.INSENSITIVE), FileFilterUtils.trueFileFilter());
         for (File f : files) {
             try {
                 convertFile(f);
@@ -685,7 +702,7 @@ public final class XText implements ExclusionFilter, Converter {
      * Save children objects for a given ConvertedDocument to a location....
      * convert those items immediately, saving the Parent metadata along with
      * them. You should have setParent already
-     * 
+     *
      * @param parentDoc
      * @throws IOException
      */
@@ -693,7 +710,7 @@ public final class XText implements ExclusionFilter, Converter {
 
         if (parentDoc.is_webArchive) {
             // Web Archive is a single document.  Only intent here is to convert to a single text document.
-            // 
+            //
             return;
         }
 
@@ -877,13 +894,13 @@ public final class XText implements ExclusionFilter, Converter {
             ignoreFileType(t + ".txt");
         }
 
-        FILE_FILTER = requestedFileTypes.toArray(new String[requestedFileTypes.size()]);
+        fileFilters = requestedFileTypes.toArray(new String[requestedFileTypes.size()]);
     }
 
     /**
      *
      */
-    private String[] FILE_FILTER = null;
+    private String[] fileFilters = null;
 
     /**
      * Call after setup() has run to add all supported/requested file types
@@ -896,8 +913,8 @@ public final class XText implements ExclusionFilter, Converter {
         System.out.println();
         System.out.println("==========XText Usage=============");
         System.out
-                .println("XText --input input  [--output output]|[--embed-conversion]    "
-                        + "\n\t[--embed-children]|[--export folder]     [--clean-html]   [--strip-prefix path]");
+        .println("XText --input input  [--output output]|[--embed-conversion]    "
+                + "\n\t[--embed-children]|[--export folder]     [--clean-html]   [--strip-prefix path]");
         System.out.println("  input is file or folder");
         System.out.println("  output is a folder where you want to archive converted docs");
         System.out.println("  -e embeds the saved conversions in the input folder under 'xtext/'");
@@ -912,13 +929,13 @@ public final class XText implements ExclusionFilter, Converter {
 
     /**
      * Purely for logging when using the cmd line variation.
-     * 
+     * *
      * @author ubaldino
      *
      */
     static class MainProgramListener implements ConversionListener {
 
-        private Logger log = LoggerFactory.getLogger(getClass());
+        private final Logger log = LoggerFactory.getLogger(getClass());
 
         @Override
         public void handleConversion(ConvertedDocument doc, String path) {
@@ -985,7 +1002,7 @@ public final class XText implements ExclusionFilter, Converter {
                 case 'e':
                     embed = true;
                     System.out
-                            .println("Saving conversions to Input folder.  Output folder will be ignored.");
+                    .println("Saving conversions to Input folder.  Output folder will be ignored.");
                     break;
                 case 'T':
                     xt.enableTikaPST(true);
@@ -1010,7 +1027,7 @@ public final class XText implements ExclusionFilter, Converter {
         // System.setProperty("LANG", "en_US");
 
         xt.enableOverwrite(true); // Given this is a test application, we will
-                                  // overwrite every time XText is called.
+        // overwrite every time XText is called.
         xt.enableSaving(embed || output != null);
         xt.getPathManager().enableSaveWithInput(embed); // creates a ./text/ Folder locally in
         // directory.

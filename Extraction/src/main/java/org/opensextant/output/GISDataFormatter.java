@@ -47,9 +47,9 @@ import org.opensextant.processing.ProcessingException;
  * sentence containing the annotation is a good choice, but for other types
  * (e.g., spreadsheets) sentence splitting may not be successful and the line of
  * text containing the annotation is a better choice.
- * 
+ *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Dec 20, 2011
- * 
+ *
  * @author Marc C. Ubaldino, MITRE Corp. Refactored, redesigned package, 2013.
  */
 public abstract class GISDataFormatter extends AbstractFormatter {
@@ -141,7 +141,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     }
 
     /**
-     * 
+     *
      * @throws Exception
      */
     @Override
@@ -180,7 +180,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     /**
      * This allows you to add either output of a Corpus processor
      * (gate.Document, gate.Corpus) or to add a Geocoding Result directly
-     * 
+     *
      */
     @Override
     public void writeGeocodingResult(ExtractionResult rowdata) {
@@ -227,7 +227,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     }
 
     /**
-     * 
+     *
      * @param fld
      */
     @Override

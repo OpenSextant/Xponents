@@ -161,8 +161,8 @@ public abstract class AbstractFlexPat implements Extractor {
     }
 
     @Override
-    public void setProgressMonitor(ProgressMonitor progressMonitor) {
-        this.progressMonitor = progressMonitor;
+    public void setProgressMonitor(ProgressMonitor monitor) {
+        this.progressMonitor = monitor;
     }
 
     @Override

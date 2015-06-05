@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * TODO: generalize this so there is a single web crawler and the site implementation might be
- * sharepoint, generic HTTP, or other.  The objective of this crawler is to collect documents from 
+ * sharepoint, generic HTTP, or other.  The objective of this crawler is to collect documents from
  * sharepoint.  Landing pages, e.g. HTML for sites and sub-sites,  themselves will not be harvested.
- * 
+ *
  * @author ubaldino
  *
  */
@@ -49,15 +49,15 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
     /**
      * A collection listener to consult as far as how to record the found & converted content
      * as well as to determine what is worth saving.
-     * 
+     *
      */
     protected CollectionListener listener = null;
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private boolean allowCurrentSiteOnly = true;
     private boolean allowCurrentDirOnly = false;
 
     /**
-     * 
+     *
      * @param srcSite
      * @param destFolder
      * @throws MalformedURLException
@@ -102,12 +102,13 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
      * Run the collection.
      * Make sure you have set your converter and collection listener
      * If you have a converter that also has a conversion listener, whoa!!  good luck.
-     * This web crawl example is meant to provide the mechanics of the conversion listener 
-     * as implemented by the collection listener.  
+     * This web crawl example is meant to provide the mechanics of the conversion listener
+     * as implemented by the collection listener.
      * The details on how actions at collection time differ from conversion time are TBD.
-     * 
+     *
      * @throws IOException
      */
+    @Override
     public void collect() throws IOException {
         collectItems(this.getSite());
     }
@@ -131,9 +132,9 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
 
     /**
      * recursive folder crawl through sharepoint site. This is where docs are
-     * converted and recorded.  
+     * converted and recorded.
      * TODO: test more completely the depths of recursive folders this supports.
-     * 
+     *
      * @param link
      * @throws IOException
      */
@@ -162,7 +163,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
                 log.info("Not on current site: {}", l);
                 continue;
             }
-            
+
 
             // Download artifacts
             if (l.isFile()) {
@@ -182,7 +183,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
 
                     // create URL for link and download artifact.
                     // encode URL prior to retrieval.
-                    // 
+                    //
                     HttpResponse itemPage = getPage(l.getURL());
 
                     // B. Drop files in archive mirroring the original
@@ -222,13 +223,13 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
 
     /**
      * TODO: redesign so both Web crawl and Sharepoint crawl share this common routine:
-     * copy copy copy -- see DefaultWebCrawl 
-     * 
+     * copy copy copy -- see DefaultWebCrawl
+     *
      * convert and record a downloaded item, given the item and its source URL.
      * @param item
-     * @throws IOException 
-     * @throws ConfigException 
-     * @throws NoSuchAlgorithmException 
+     * @throws IOException
+     * @throws ConfigException
+     * @throws NoSuchAlgorithmException
      */
     protected void convertContent(File item, HyperLink link) throws IOException, ConfigException, NoSuchAlgorithmException {
 
@@ -265,7 +266,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
         }
     }
 
-    /** 
+    /**
      * @see org.opensextant.xtext.collectors.web.CrawlFilter#isAllowCurrentDirOnly()
      */
     @Override

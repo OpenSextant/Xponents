@@ -43,7 +43,8 @@ import org.opensextant.ConfigException;
 public interface Converter {
 
     /** */
-    public ConvertedDocument convert(java.io.File doc) throws java.io.IOException, ConfigException;
+    ConvertedDocument convert(java.io.File doc) throws java.io.IOException, ConfigException;
+
     /** */
-    public ConvertedDocument convert(String data) throws java.io.IOException, ConfigException;
+    ConvertedDocument convert(String data) throws java.io.IOException, ConfigException;
 }

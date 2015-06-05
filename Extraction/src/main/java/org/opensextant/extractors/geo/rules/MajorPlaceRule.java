@@ -29,19 +29,19 @@ public class MajorPlaceRule extends GeocodeRule {
     public MajorPlaceRule(){
         NAME = MAJ_PLACE_RULE;
     }
-    
-    
-    
+
+
+
     /**
-     * attach either a Capital or Admin region ID 
+     * attach either a Capital or Admin region ID
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
         if (geo.isNationalCapital()){
             name.addEvidence(CAPITAL, 1, geo);
-            
+
         } else if (geo.isAdministrative()){
-            name.addEvidence(ADMIN, 1, geo);            
+            name.addEvidence(ADMIN, 1, geo);
         }
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//  
+//
 // _____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
@@ -26,7 +26,7 @@
 //             \/_/
 //
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-// 
+//
 package org.opensextant.util;
 
 import java.text.ParseException;
@@ -48,8 +48,8 @@ import org.opensextant.data.LatLon;
 public class GeodeticUtility {
 
     /**
-    *
-    */
+     *
+     */
     public static final int LAT_MAX = 90;
     /**
      *
@@ -80,29 +80,29 @@ public class GeodeticUtility {
     }
 
     /**
-     * A common check required by practical applications -- 0,0 is not interesting, 
-     * so this is a simple java-based check.  double (and all number) values by 
+     * A common check required by practical applications -- 0,0 is not interesting,
+     * so this is a simple java-based check.  double (and all number) values by
      * default have a value = 0.  This appears to be true for class attributes,
      * but not for locals.  Hence the NaN check in validateCoordinate.
-     * 
+     *
      * @param lat
      * @param lon
      * @return
      */
-    public final static boolean isValidNonZeroCoordinate(double lat, double lon){
-        if (validateCoordinate(lat, lon)){
-            return  (lat!=0 && lon !=0);
+    public final static boolean isValidNonZeroCoordinate(double lat, double lon) {
+        if (validateCoordinate(lat, lon)) {
+            return (lat != 0 && lon != 0);
         }
         return false;
     }
-    
+
     /**
      * This returns distance in degrees, e.g., this is a Cartesian distance.
      * Only to be used for fast comparison of two locations relatively close
      * together, e.g., within the same 1 or 2 degrees of lat or lon. Beyond that
      * there can be a lot of distortion in the physical distance.
      *
-     *@param p1 point 
+     *@param p1 point
      *@param p2 point
      * @return distance between p1 and p2 in degrees.
      */
@@ -114,30 +114,30 @@ public class GeodeticUtility {
                 + Math.pow((p1.getLongitude() - p2.getLongitude()), 2));
     }
 
-
     public static final long EARTH_RADIUS = 6372800L; // In meters
 
-    /** Haversine distance using LL1 to LL2; 
-     * 
+    /** Haversine distance using LL1 to LL2;
+     *
      * @param p1
      * @param p2
      * @return distance in meters.
      */
-    public final static long distanceMeters(LatLon p1, LatLon p2){
+    public final static long distanceMeters(LatLon p1, LatLon p2) {
         double lat1 = p1.getLatitude();
         double lon1 = p1.getLongitude();
         double lat2 = p2.getLatitude();
         double lon2 = p2.getLongitude();
-        
+
         /* Courtesy of http://rosettacode.org/wiki/Haversine_formula#Java */
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
         lat1 = Math.toRadians(lat1);
         lat2 = Math.toRadians(lat2);
- 
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1)
+                * Math.cos(lat2);
         double c = 2 * Math.asin(Math.sqrt(a));
-        return (long)(EARTH_RADIUS * c);           
+        return (long) (EARTH_RADIUS * c);
     }
 
     /**
@@ -226,7 +226,7 @@ public class GeodeticUtility {
     }
 
     /** For a given Geonames feature class/designation provide a guess about how long
-     * geohash should be.  Geohash in this use is very approximate 
+     * geohash should be.  Geohash in this use is very approximate
      * @param feat_type major feature type
      * @param feat_code minor feature type or designation
      * @return prefix length for a geohash, e.g., for a province in general is 3 chars of geohash sufficient?
@@ -256,7 +256,7 @@ public class GeodeticUtility {
     /**
      * The most simplistic parsing and validation of "lat lon" or "lat, lon"
      * any amount of whitespace is allowed, provided the lat lon order is there.
-     * @param lat_lon string form of a simple lat/lon, e.g.,  "Y X";  No symbols 
+     * @param lat_lon string form of a simple lat/lon, e.g.,  "Y X";  No symbols
      * @return LatLon object
      * @throws ParseException if string is unparsable
      */

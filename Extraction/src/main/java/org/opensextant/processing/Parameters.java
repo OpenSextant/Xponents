@@ -44,7 +44,7 @@ import org.opensextant.util.TextUtils;
 public class Parameters extends java.util.Properties {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 

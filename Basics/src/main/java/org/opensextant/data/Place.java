@@ -24,7 +24,7 @@
  * **************************************************************************
  */
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//  
+//
 // _____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
@@ -36,14 +36,14 @@
 //             \/_/
 //
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-// 
+//
 package org.opensextant.data;
 
-import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.GeodeticUtility;
+import org.opensextant.util.GeonamesUtility;
 
 /**
- * 
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  * @author David P. Lutz, MITRE, dlutz at mitre dot org
  */
@@ -53,7 +53,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
      * For normalization purposes tracking the Province may be helpful.
      * Coordinate and Place both share this common field. However no need to
      * create an intermediate parent-class yet.
-     * 
+     *
      * Province is termed ADM1 -- or the first level of administrative boundary
      */
     protected String admin1 = null;
@@ -61,8 +61,8 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
 
     /**
      * Creates a new instance of Geobase
-     * 
-     * @param placeId  primary key or ID for this place 
+     *
+     * @param placeId  primary key or ID for this place
      * @param nm  place name
      */
     public Place(String placeId, String nm) {
@@ -98,7 +98,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
             country_id = country.country_id;
         }
     }
-    
+
     /**
      * get the country object; generally optional.
      * @return
@@ -131,8 +131,8 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
         return featureClass;
     }
 
-    public void setFeatureClass(String featureClass) {
-        this.featureClass = featureClass;
+    public void setFeatureClass(String cls) {
+        this.featureClass = cls;
     }
 
     private String featureCode = null;
@@ -142,8 +142,8 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
         return featureCode;
     }
 
-    public void setFeatureCode(String featureCode) {
-        this.featureCode = featureCode;
+    public void setFeatureCode(String featCode) {
+        this.featureCode = featCode;
     }
 
     /**
@@ -212,7 +212,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
 
     /**
      * Is this Place a Country?
-     * 
+     *
      * @return true if this is a country or "country-like" place
      */
     @Override
@@ -237,7 +237,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
 
     /**
      * Is this Place a State or Province?
-     * 
+     *
      * @return - true if this is a State, Province or other first level admin
      *         area
      */
@@ -247,7 +247,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
 
     /**
      * Is this Place a National Capital?
-     * 
+     *
      * @return - true if this is a a national Capital area
      */
     public boolean isNationalCapital() {
@@ -268,7 +268,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
     }
 
     /**
-     * 
+     *
      * @param bias name bias, float
      */
     public void setName_bias(Double bias) {
@@ -285,7 +285,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
     }
 
     /**
-     * 
+     *
      * @param bias identity bias
      */
     public void setId_bias(Double bias) {
@@ -322,7 +322,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
     /**
      * Xponents version of precision is number of meters of error, approximately.
      * precision = 15 means the lat/lon on this Place object is within 15 m of the true location.
-     * 
+     *
      * @param prec, meters of error
      */
     public void setPrecision(int prec) {
@@ -353,7 +353,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
      * The method by which the geolocation was determined; GAZ, COUNTRY, etc.
      * are typical methods for reference data XCoord or other tools can parse;
      * so the exact method for such patterns should be revealed here.
-     * 
+     *
      * @return method of geocoding;
      */
     @Override
@@ -367,11 +367,11 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
     }
 
     /**
-     * 
+     *
      * @param adminName name of the administrative boundary that contains this place.
      */
-    public void setAdminName(String adminName) {
-        this.adminName = adminName;
+    public void setAdminName(String admnm) {
+        this.adminName = admnm;
     }
 
     @Override

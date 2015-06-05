@@ -23,7 +23,7 @@
  *
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
-**/
+ **/
 
 package org.opensextant.data;
 
@@ -42,8 +42,8 @@ public class TextInput {
      * @param id any identifier for the text buffer
      * @param buf any textual content; any format or encoding.
      */
-    public TextInput(String id, String buf){
-        this.id = id;
+    public TextInput(String tid, String buf){
+        this.id = tid;
         this.buffer = buf;
     }
 }

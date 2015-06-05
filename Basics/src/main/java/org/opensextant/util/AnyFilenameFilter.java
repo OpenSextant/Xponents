@@ -14,7 +14,7 @@ public class AnyFilenameFilter implements FilenameFilter {
      * @param ext file extension
      */
     public AnyFilenameFilter(String ext){ extension = ext; }
-    
+
     /**
      * FilenameFilter implementation for XML files
      *
@@ -22,6 +22,7 @@ public class AnyFilenameFilter implements FilenameFilter {
      * @param fname file name to test
      * @return if file is accepted by this filter
      */
+    @Override
     public boolean accept(File dir, String fname) {
         if (dir == null || fname == null) {
             return false;

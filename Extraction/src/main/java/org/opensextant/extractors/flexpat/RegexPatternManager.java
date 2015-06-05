@@ -46,15 +46,15 @@ import java.util.regex.Pattern;
 
 /**
  * <p > This is the culmination of various date/time extraction efforts in python
- * and Java. This API poses no assumptions on input data or on execution. 
+ * and Java. This API poses no assumptions on input data or on execution.
  * Features of REGEX patterns file:
  * <ul>
- *  <li>DEFINE - a component of a pattern to match</li> 
+ *  <li>DEFINE - a component of a pattern to match</li>
  * <li>RULE - a complete pattern to match</li>
  * </ul>
  * This work started in Java 6 and has the limitation of Java 6 Regex, mainly that there are no named groups available in matching.
- * 
- * <p >See XCoord PatternManager for a good example implementation. 
+ *
+ * <p >See XCoord PatternManager for a good example implementation.
  *
  */
 public abstract class RegexPatternManager {
@@ -152,7 +152,7 @@ public abstract class RegexPatternManager {
      * TID TEXT
      *
      * @param id  pattern id
-     * @param fam pattern family 
+     * @param fam pattern family
      * @param text text for test case
      * @return test case object
      */
@@ -168,7 +168,7 @@ public abstract class RegexPatternManager {
     /**
      * default adapter -- you must override. This should be abstract, but not
      * all pattern managers are required to support this.
-     * 
+     *
      * @param name pattern name to enable.
      */
     public void enable_patterns(String name) {
@@ -190,7 +190,7 @@ public abstract class RegexPatternManager {
         }
     }
 
-    private StringBuilder _config_messages = new StringBuilder();
+    private StringBuilder configMessages = new StringBuilder();
 
     /**
      * Initializes the pattern manager implementations. Reads the DEFINEs and
@@ -306,8 +306,8 @@ public abstract class RegexPatternManager {
             int groupNum = 1;
 
             if (debug) {
-                _config_messages.append("\nrulename=" + tmpRuleName);
-                _config_messages.append(", rulepattern=" + tmpRulePattern);
+                configMessages.append("\nrulename=" + tmpRuleName);
+                configMessages.append(", rulepattern=" + tmpRulePattern);
             }
 
             RegexPattern pat = create_pattern(tmpFam, tmpRuleName, "No Description yet...");
@@ -331,8 +331,8 @@ public abstract class RegexPatternManager {
                 //groupNames.put(tmpRuleName + "-" + groupNum, elementName);
                 if (debug) {
                     String subelementPattern = defines.get(elementName);
-                    _config_messages.append("\n\t");
-                    _config_messages.append(groupNum + " " + elementName + " = " + subelementPattern);
+                    configMessages.append("\n\t");
+                    configMessages.append(groupNum + " " + elementName + " = " + subelementPattern);
                 }
                 groupNum++;
             }
@@ -347,7 +347,7 @@ public abstract class RegexPatternManager {
             }
 
             if (debug) {
-                _config_messages.append("\nrulepattern=" + tmpRulePattern);
+                configMessages.append("\nrulepattern=" + tmpRulePattern);
             }
 
             //MCU: slash simplified.
@@ -368,11 +368,11 @@ public abstract class RegexPatternManager {
         }
 
         if (debug) {
-            _config_messages.append("\nFound # of PATTERNS=" + patterns.values().size());
+            configMessages.append("\nFound # of PATTERNS=" + patterns.values().size());
 
             for (RegexPattern pat : patterns_list) {
-                _config_messages.append("\n");
-                _config_messages.append(pat.id + "\t" + pat.regex.pattern());
+                configMessages.append("\n");
+                configMessages.append(pat.id + "\t" + pat.regex.pattern());
             }
         }
 
@@ -389,12 +389,12 @@ public abstract class RegexPatternManager {
         if (!debug) {
             return "Debug not enabled; Try again, set .debug  = true";
         }
-        return _config_messages.toString();
+        return configMessages.toString();
     }
 
     /**
-     * NOTE: We're dealing with Java6's inability to use named groups.  So we have to 
-     * track FlexPat slots in line with Matcher fields matched.  Essentially this comes down to 
+     * NOTE: We're dealing with Java6's inability to use named groups.  So we have to
+     * track FlexPat slots in line with Matcher fields matched.  Essentially this comes down to
      * a simple Name:Offset pairing;  our limitation here is no nesting.
      *
      * @param p pattern

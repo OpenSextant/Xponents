@@ -54,6 +54,7 @@ public class Money extends PoliMatch {
     public float value = -1;
     public String currency = null;
 
+    @Override
     public void normalize() {
         super.normalize();
 

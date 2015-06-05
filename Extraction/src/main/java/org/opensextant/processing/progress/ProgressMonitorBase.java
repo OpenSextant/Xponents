@@ -10,7 +10,7 @@ public class ProgressMonitorBase implements ProgressMonitor {
     private double totalProgress = 0;
     private int completedSteps = 0;
     private List<ProgressListener> listeners = new ArrayList<ProgressListener>();
-    
+
     public ProgressMonitorBase() {
         super();
     }
@@ -60,7 +60,7 @@ public class ProgressMonitorBase implements ProgressMonitor {
     public void removeProgressListener(ProgressListener listener) {
         this.listeners.remove(listener);
     }
-    
+
     private void fireProgressChanged() {
         for (ProgressListener listener : listeners) {
             listener.updateProgress(this.totalProgress);

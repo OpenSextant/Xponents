@@ -30,15 +30,15 @@ import org.slf4j.LoggerFactory;
  * Parse mainly JPEG images or any others that have significant metadata headers
  * headers are tabulated and put into doc conversion as the text buffer (possibly not desirable).
  * And of course if there are loc/time info in the image, such things are pulled out.
- * 
+ *
  * @author ubaldino
  *
  */
 public class ImageMetadataConverter extends ConverterAdapter {
-    private Detector detector = new DefaultDetector();
-    private Parser parser = new AutoDetectParser(detector);
-    private ParseContext ctx = new ParseContext();
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Detector detector = new DefaultDetector();
+    private final Parser parser = new AutoDetectParser(detector);
+    private final ParseContext ctx = new ParseContext();
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private boolean emitMinimalText = true;
 
     private final static String[] usefulFields = { "geo", "gps", "creation", "date", "model" };
@@ -80,7 +80,7 @@ public class ImageMetadataConverter extends ConverterAdapter {
     }
 
     /**
-     * Could pull in geodesy to do an Angle(lat,lon).toString() ... 
+     * Could pull in geodesy to do an Angle(lat,lon).toString() ...
      * @param lat
      * @param lon
      * @return
@@ -134,7 +134,7 @@ public class ImageMetadataConverter extends ConverterAdapter {
 
             // What is the signal to generate any text buffer at all?
             // Is it worth puttting out a full EXIF dump for a JPEG?
-            // 
+            //
             int mdCount = metadata.names().length;
             if (mdCount == 0) {
                 // No meaningful text or other metadata.
@@ -179,7 +179,7 @@ public class ImageMetadataConverter extends ConverterAdapter {
                     LatLon yx = GeodeticUtility.parseLatLon(lat, lon);
                     buf.append("Location:\t" + formatCoord(yx) + "\n");
                 } catch (ParseException parseErr) {
-                    // 
+                    //
                 }
             }
 

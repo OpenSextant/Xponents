@@ -12,12 +12,12 @@ import org.opensextant.xtext.ConvertedDocument;
 public class WebArchiveConverter extends MessageConverter {
 
     /**
-     * Convert MHT or .webarchive file to pure text.  
+     * Convert MHT or .webarchive file to pure text.
      * Alternatively, export "archive" exploded on disk and then convert all children items.
      * See MessageConverter base and ArchiveNavigator solutions for that.
-     *  
+     *
      * @param in stream
-     * @param doc original file 
+     * @param doc original file
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream in, File doc)
@@ -67,7 +67,7 @@ public class WebArchiveConverter extends MessageConverter {
 
     /**
      *  JavaScript or any script detection.
-     *  
+     *
      * @param data
      * @return
      */
@@ -78,7 +78,7 @@ public class WebArchiveConverter extends MessageConverter {
 
         int sub = Math.min(4000, data.length());
         String test = data.substring(0, sub - 1).toLowerCase().trim();
-        
+
         // Typically the term 'script' does not actually appear in these octet-streams.
         if (test.contains("javascript") || test.contains("document.write(") || test.contains("xmlhttp")){
             return true;
