@@ -1,6 +1,6 @@
 /**
  *
-* Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@
  */
 package org.opensextant.extractors.xtemporal;
 
-import java.util.*;
-
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -38,11 +38,11 @@ public class XTConstants {
     /**
      *
      */
-    public static final int MDY_FAMILY  = 0;
+    public static final int MDY_FAMILY = 0;
     /**
      *
      */
-    public static final int DATETIME_FAMILY  = 1;
+    public static final int DATETIME_FAMILY = 1;
     /**
      *
      */
@@ -51,16 +51,16 @@ public class XTConstants {
     /**
      *
      */
-    public static final int ALL_PATTERNS=-1;
+    public static final int ALL_PATTERNS = -1;
 
     /**
      *
      */
-    protected static final Map<String,Integer> familyInt = new HashMap<String,Integer>();
+    protected static final Map<String, Integer> familyInt = new HashMap<String, Integer>();
     /**
      *
      */
-    protected static final Map<Integer,String> familyLabel = new HashMap<Integer,String>();
+    protected static final Map<Integer, String> familyLabel = new HashMap<Integer, String>();
 
     static {
 
@@ -73,29 +73,27 @@ public class XTConstants {
         familyInt.put("MDY", MDY_FAMILY);
     }
 
-
     /**
      *
      * @param key
      * @return
      */
-    public static int getPatternFamily(String key){
+    public static int getPatternFamily(String key) {
         Integer i = familyInt.get(key);
-        if (i != null){
+        if (i != null) {
             return i.intValue();
         }
         return UNK_PATTERN;
     }
-
 
     /**
      *
      * @param id
      * @return
      */
-    public static String getPatternFamily(int id){
+    public static String getPatternFamily(int id) {
         String key = familyLabel.get(id);
-        if (key != null){
+        if (key != null) {
             return key;
         }
         return "UNK";

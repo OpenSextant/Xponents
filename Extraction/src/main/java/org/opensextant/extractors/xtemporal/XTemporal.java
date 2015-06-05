@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import org.joda.time.DateTime;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
@@ -55,7 +56,7 @@ import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author ubaldino
  */
 public class XTemporal extends AbstractFlexPat {
@@ -64,7 +65,7 @@ public class XTemporal extends AbstractFlexPat {
 
     /** Application constants -- note the notion of TODAY is relative to the caller's notion of TODAY.
      * If you are processing data from the past but have a sense of what TODAY is, then when found dates fall on either side of that
-     * they will be relative PAST and relative FUTURE. 
+     * they will be relative PAST and relative FUTURE.
      */
     public static Date TODAY = new Date();
     public static long TODAY_EPOCH = TODAY.getTime();
@@ -74,9 +75,10 @@ public class XTemporal extends AbstractFlexPat {
 
     /**
      * Extractor interface: getName
-     * 
+     *
      * @return
      */
+    @Override
     public String getName() {
         return "XTemporal";
     }
@@ -84,11 +86,12 @@ public class XTemporal extends AbstractFlexPat {
     /**
      * Extractor interface: extractors are responsible for cleaning up after themselves.
      */
+    @Override
     public void cleanup() {
     }
 
     /**
-     * 
+     *
      * @param debugmode
      */
     public XTemporal(boolean debugmode) {
@@ -129,9 +132,9 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-    * Support the standard Extractor interface. This provides access to the
-    * most common extraction;
-    */
+     * Support the standard Extractor interface. This provides access to the
+     * most common extraction;
+     */
     @Override
     public List<TextMatch> extract(String input_buf) {
         TextMatchResult results = extract_dates(input_buf, NO_DOC_ID);
@@ -141,7 +144,7 @@ public class XTemporal extends AbstractFlexPat {
     /**
      * A direct call to extract dates; which is useful for diagnostics and
      * development/testing.
-     * 
+     *
      * @param text
      * @param text_id
      * @return
@@ -183,6 +186,11 @@ public class XTemporal extends AbstractFlexPat {
                     if (dt.datenorm == null) {
                         continue;
                     }
+                    if ("YMD".equalsIgnoreCase(pat.family)){
+                        if (this.isDistantPastYMD(dt.datenorm)){
+                            continue;
+                        }
+                    }
 
                     dt.datenorm_text = DateNormalization.format_date(dt.datenorm);
 
@@ -214,7 +222,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * 
+     *
      * @param flag
      */
     public void match_DateTime(boolean flag) {
@@ -222,7 +230,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * 
+     *
      * @param flag
      */
     public void match_MonDayYear(boolean flag) {
@@ -241,7 +249,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-    ** Application thresholds -- chosen by the user 
+     ** Application thresholds -- chosen by the user
      * @param y
      */
     public void setDistantPastYear(int y) {
@@ -254,6 +262,9 @@ public class XTemporal extends AbstractFlexPat {
      */
     private static int DISTANT_PAST_YEAR = 1950;
     private static long DISTANT_PAST_THRESHOLD = (DISTANT_PAST_YEAR - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
+
+    private static final int MINIMUM_YEAR_YMD = 1800;
+    private static long DISTANT_PAST_YMD_THRESHOLD = (MINIMUM_YEAR_YMD - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
 
     /**
      * Given the set MAX_DATE_CUTOFF_YEAR, determine if the date epoch is earlier than this.
@@ -272,7 +283,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * 
+     *
      * @param epoch
      * @return
      */
@@ -285,6 +296,16 @@ public class XTemporal extends AbstractFlexPat {
             return true;
         }
         return isDistantPast(dt.getTime());
+    }
+
+
+    /**
+     * if a date is too far in past to likley be a date of the format YYYY-MM-DD
+     */
+    public boolean isDistantPastYMD(Date dt){
+        //return dt.getTime() < DISTANT_PAST_YMD_THRESHOLD;
+        DateTime jodadt = new DateTime(dt);
+        return jodadt.getYear() < MINIMUM_YEAR_YMD;
     }
 
 }

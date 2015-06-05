@@ -1,6 +1,6 @@
 /**
  *
-* Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -29,8 +29,8 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -45,6 +45,7 @@ public class DateNormalization {
     ;
     static final int FUTURE_YY_THRESHOLD = CURRENT_YY + 2;
     static final int MAXIMUM_YEAR = 2020;
+
     // Use of year "15" would imply 1915 in this case.
     // Adjust 2-digit year threshold as needed.
     // Java default is 80/20.  2000 - 2032 is the assumed year for "00" through "32"
@@ -107,7 +108,7 @@ public class DateNormalization {
      * @throws java.text.ParseException
      */
     public static void normalize_date(java.util.Map<String, String> elements, DateMatch dt) throws
-            java.text.ParseException {
+    java.text.ParseException {
 
         // Parse years.
         int year = normalize_year(elements);
@@ -251,7 +252,7 @@ public class DateNormalization {
 
     /**
      *
-     * @param elements all matched fields 
+     * @param elements all matched fields
      * @return year fixed if possible, otherwise INVALID_DATE
      */
     public static int normalize_year(java.util.Map<String, String> elements) {
