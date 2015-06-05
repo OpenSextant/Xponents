@@ -4,12 +4,12 @@ import org.opensextant.ConfigException;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.extractors.xtemporal.XTemporal;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestXTemporal {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public TestXTemporal() {
     }
@@ -26,11 +26,12 @@ public class TestXTemporal {
      */
     public void adhocTests() {
         log.info("=== SYSTEM TESTS START ===");
+        xdt.enableAll();
 
-        xdt.match_MonDayYear(true);
-        xdt.match_DateTime(false);
+        //xdt.match_MonDayYear(true);
+        //xdt.match_DateTime(false);
 
-        String[] tests = { "12/13/1900", "11/12/1817", "12/30/90", "JUN 00", "JUN '13", "JUN '12", "JUN '17",
+        String[] tests = { "2010-04-13", "1111-11-11","12/13/1900", "11/12/1817", "12/30/90", "JUN 00", "JUN '13", "JUN '12", "JUN '17",
                 "JUN '33", "JUN 2017", "JUN 1917" };
 
         try {

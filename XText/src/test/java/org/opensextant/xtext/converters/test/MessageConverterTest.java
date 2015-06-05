@@ -18,13 +18,12 @@ package org.opensextant.xtext.converters.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+
 import javax.activation.MimeType;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -55,7 +54,7 @@ public class MessageConverterTest {
     }
 
     @Test
-    public void complexEmailTest() throws IOException, Exception {
+    public void complexEmailTest() throws Exception {
         MessageConverter conv = new MessageConverter();
         ConvertedDocument doc = conv.convert(TEST_FILE);
         Assert.assertEquals((MESSAGE_BODY + MESSAGE_BOUNDARY).trim(), doc.getText());
