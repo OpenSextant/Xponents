@@ -21,15 +21,34 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 
+/**
+ * A representation of a harvested hyperlink.  Normalization of found URL attempts to derive:
+ * <ul>
+ * <li>is item a file or dynamic, generated HTML?</li>
+ * <li>is item a folder or a page?</li>
+ * <li>what is the relation between this page and its containing folder and hosting site?  Is this link
+ * resident hosted on the originally crawled site?</li>
+ * <li>What is the proper file extension for a found link?  A link itself does not always reflect the MIME Type and file "save-as" filename...
+ * </li>
+ * 
+ * </ul>
+ * @author ubaldino
+ *
+ */
 public class HyperLink {
 
     protected String urlValue = null;
@@ -48,9 +67,13 @@ public class HyperLink {
     protected String siteValue = null;
     protected File archiveFile = null;
     protected String pathExtension = null;
+    protected String archiveFileExtension = null;
+    protected String mimeType = null;
     protected boolean isFolder = false;
     protected String query = null;
     protected String directory = null;
+    private boolean isDynamic = false;
+    private String linkId = null;
 
     /**
      * a physical path that represents the URL uniquely.
@@ -58,7 +81,8 @@ public class HyperLink {
     protected String normalizedPath = null;
 
     /**
-     *
+     * URL wrangling, mainly to take a found URL and adapt it so it looks like a file path safe for a file system.
+     * 
      * @param link
      * @param referringLink  - Normalized, absolute URL string
      * @param site
@@ -67,7 +91,7 @@ public class HyperLink {
      * @throws NoSuchAlgorithmException
      */
     public HyperLink(String link, URL referringLink, URL site) throws MalformedURLException,
-            NoSuchAlgorithmException, UnsupportedEncodingException {
+    NoSuchAlgorithmException, UnsupportedEncodingException {
         urlValue = link;
         urlNominal = link;
         siteURL = site;
@@ -86,6 +110,9 @@ public class HyperLink {
         } else {
             absoluteURL = new URL(urlValue);
         }
+
+        // Use this to represent the object identity.
+        linkId = TextUtils.text_id(getAbsoluteURL());
         query = absoluteURL.getQuery();
 
         urlPath = absoluteURL.getPath().toLowerCase();
@@ -99,32 +126,39 @@ public class HyperLink {
 
         String path = absoluteURL.getPath();
         if (StringUtils.isBlank(path)) {
-            normalizedPath = "";
+            normalizedPath = "./";
+            isFolder = true;
         } else {
             normalizedPath = path;
             if (normalizedPath.endsWith("/")) {
                 normalizedPath = normalizedPath.substring(0, normalizedPath.length() - 1);
             }
-            if (StringUtils.isNotBlank(query)) {
-                normalizedPath = String.format("%s/%s.html", normalizedPath,
-                        TextUtils.text_id(query));
+        }
+
+        // Optional
+        boolean derivedPath = deriveFilepathFromQuery();
+
+        if (!derivedPath) {
+            String p = FilenameUtils.normalize(normalizedPath);
+            if (p == null) {
+                throw new MalformedURLException("Unable to parse/normalize path for: "
+                        + normalizedPath);
             }
+            normalizedPath = p;
+        }
 
-            if (StringUtils.isNotBlank(normalizedPath)) {
+        if (isFolder) {
+            directory = new File(normalizedPath).getPath();
+        } else {
+            directory = new File(normalizedPath).getParent();
+        }
 
-                String p = FilenameUtils.normalize(normalizedPath);
-                if (p == null) {
-                    throw new MalformedURLException("Unable to parse/normalize path for: "
-                            + normalizedPath);
-                }
-                normalizedPath = p;
+        if (directory == null) {
+            directory = path;
+        }
 
-                if (isFolder) {
-                    directory = new File(normalizedPath).getPath();
-                } else {
-                    directory = new File(normalizedPath).getParent();
-                }
-            }
+        if (!isFolder) {
+            archiveFileExtension = FilenameUtils.getExtension(normalizedPath);
         }
 
         // If base/referring page is a directory see if it is in same folder
@@ -149,7 +183,155 @@ public class HyperLink {
         String linkHost = absoluteURL.getHost();
         String siteHost = siteURL.getHost();
         isCurrentHost = linkHost.equalsIgnoreCase(siteHost);
+    }
 
+    public String getId() {
+        return linkId;
+    }
+
+    /**
+     * Given a URL  a.b/path?param=val&param=val....
+     * Derive any meaningful filename from param values in the query.
+     * 
+     */
+    private boolean deriveFilepathFromQuery() {
+        if (StringUtils.isBlank(query)) {
+            return false;
+        }
+
+        /*
+         * Obscure means for identifying a better file name + extension
+         * under which we save this content.
+         */
+        isDynamic = true;
+        parseURL();
+        for (Object p : params.keySet()) {
+            String val = params.getProperty(p.toString());
+            if (val.length() > 8 && isCommonFile(val)) {
+                normalizedPath = String.format("%s/%s", normalizedPath,
+                        val);
+                isDynamic = false;
+                isFolder = false;
+                return true;
+            }
+        }
+
+        /* We have a query, but other means of naming the file, so we'll use
+         * current path + MD5 file name +'.html'
+         * */
+        try {
+            normalizedPath = String.format("%s/%s.html", normalizedPath,
+                    TextUtils.text_id(query));
+            isFolder = false;
+            return true;
+        } catch (Exception ignore) {
+            // NOTE: this never happens.
+        }
+
+        // And this would also never happen.
+        return false;
+
+    }
+
+    private static MimeTypes defaultMIME = TikaConfig.getDefaultConfig().getMimeRepository();
+
+    /**
+     * Set the MIME type of a found link, i.e., once you'ved downloaded the content you then know the ContentType possibly.
+     * Which may differ from your perception of the URL path
+     * 
+     * - reset the file extension,
+     * - reset the path
+     * - folder vs. file
+     * 
+     * Set the MIME Type, file type, path, etc... prior to saving content to disk.
+     * 
+     * @param t
+     */
+    public void setMIMEType(String t) {
+        mimeType = t;
+        if (mimeType == null) {
+            return;
+        }
+
+        try {
+            MimeType mt;
+            /* Isolate the MIME type without parameters.
+             * 
+             */
+            mt = defaultMIME.forName(t.split(";", 2)[0]);
+            if (mt != null) {
+                fixPathExtension(mt.getExtension());
+            }
+        } catch (MimeTypeException ignore) {
+            // Hmm.
+        }
+    }
+
+    private static HashMap<String, String> mimeEquivalences = new HashMap<>();
+    static {
+        mimeEquivalences.put("htm", "html");
+        mimeEquivalences.put("html", "htm");
+        mimeEquivalences.put("jpg", "jpeg");
+        mimeEquivalences.put("jpeg", "jpg");
+    }
+
+    /**
+     * Not comparing any null values.
+     * 
+     * Consider if b='x' and a='y', are a and b like MIME types.
+     * example: .html ?= .htm
+     * 
+     * @param a
+     * @param b
+     * @return
+     */
+    private static boolean equivalentFileType(String a, String b) {
+        if (StringUtils.isBlank(a)) {
+            return false;
+        }
+        if (a.equals(b)) {
+            return true;
+        }
+        String a1 = mimeEquivalences.get(a);
+        if (a1 != null) {
+            return a1.equals(b);
+        }
+
+        String b1 = mimeEquivalences.get(b);
+        if (b1 != null) {
+            return b1.equals(a);
+        }
+        return false;
+    }
+
+    /**
+     * set the path extension, IFF it is significantly different
+     * @param ext
+     */
+    private void fixPathExtension(String mimeExt) {
+
+        if (StringUtils.isBlank(mimeExt)) {
+            return;
+        }
+        String ext = mimeExt.replace(".", "");
+        if (equivalentFileType(archiveFileExtension, ext)) {
+            // Do nothing.  new file extension is nothing new.
+            return;
+        }
+        /*
+         * Replace the new mime-based file extension
+         */
+        if (archiveFileExtension == null) {
+            archiveFileExtension = ext;
+            normalizedPath = String.format("%s.%s", normalizedPath, ext);
+            isFolder = false;
+        } else {
+            int x = normalizedPath.lastIndexOf(archiveFileExtension);
+            String p = normalizedPath.substring(0, x);
+            archiveFileExtension = ext;
+            normalizedPath = String.format("%s%s", p, ext);
+            isFolder = false;
+        }
     }
 
     public boolean isFolder() {
@@ -163,13 +345,6 @@ public class HyperLink {
     public String getReferrer() {
         return referrerURL.toString();
     }
-
-    //    /**
-    //     * @param referrer the referrer to set
-    //     */
-    //    public void setReferrer(String referrer) {
-    //        this.referrer = referrer;
-    //    }
 
     public void setFilepath(File p) {
         archiveFile = p;
@@ -210,6 +385,12 @@ public class HyperLink {
      * @return
      */
     public boolean isDynamic() {
+        // Page is NOT dynamic content as determined by other methods
+        if (!isDynamic) {
+            return false;
+        }
+
+        // Page is Dynamic - yes or no - by look up alone.
         return isDynamic(urlValue, pathExtension);
     }
 
@@ -287,15 +468,25 @@ public class HyperLink {
     }
 
     public boolean isFile() {
-        if (FileUtility.getFileDescription(urlValue) == FileUtility.DOC_MIMETYPE
-                || FileUtility.isArchiveFile(urlValue)
-                || FileUtility.getFileDescription(urlValue) == FileUtility.SPREADSHEET_MIMETYPE
-                || FileUtility.getFileDescription(urlValue) == FileUtility.GIS_MIMETYPE) {
+        return isCommonFile(urlValue);
+    }
+
+    /**
+     * 
+     * @param v a path
+     * @return if path is a common type of file.
+     */
+    public static boolean isCommonFile(String v) {
+        if (FileUtility.getFileDescription(v) == FileUtility.DOC_MIMETYPE
+                || FileUtility.isArchiveFile(v)
+                || FileUtility.getFileDescription(v) == FileUtility.SPREADSHEET_MIMETYPE
+                || FileUtility.getFileDescription(v) == FileUtility.GIS_MIMETYPE) {
             return true;
         }
         // Other conditions?
 
         return false;
+
     }
 
     /**
@@ -417,5 +608,9 @@ public class HyperLink {
      */
     public URL getURL() {
         return absoluteURL;
+    }
+
+    public String getDirectory() {
+        return directory;
     }
 }

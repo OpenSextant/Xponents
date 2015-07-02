@@ -31,8 +31,6 @@ public class SPLink extends HyperLink {
 
     private URL simplifiedURL = null;
 
-    // private String serverURL = null;
-
     /**
      * TODO: fix site vs. base link
      * @param link
@@ -55,7 +53,7 @@ public class SPLink extends HyperLink {
                 throw new MalformedURLException("Unknown parent URL for arg baseUrl");
             }
             referrerURL = base; // aka Parent or containing page, folder or
-                                     // other node
+            // other node
             absoluteURL = new URL(referrerURL, urlValue);
         }
 
@@ -105,7 +103,7 @@ public class SPLink extends HyperLink {
      */
     public String getSharepointFolder() {
         if (isSharepointFolder()) {
-            if (params.contains("RootFolder")) {
+            if (params.containsKey("RootFolder")) {
                 return params.getProperty("RootFolder");
             }
 

@@ -65,7 +65,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * @throws ConfigException
      */
     public DefaultWebCrawl(String srcSite, String destFolder) throws MalformedURLException,
-            ConfigException {
+    ConfigException {
         super(srcSite, destFolder);
     }
 
@@ -146,7 +146,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * @throws NoSuchAlgorithmException
      */
     public void collectItems(String _link, URL startingSite) throws IOException,
-            NoSuchAlgorithmException {
+    NoSuchAlgorithmException {
         String link = startingSite.toString();
         if (_link != null) {
             link = _link;
@@ -174,8 +174,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         if (StringUtils.isEmpty(thisPath)) {
             return;
         }
-        if (thisLink.isDynamic()) {
-            thisPath = thisPath + ".html";
+        if (thisLink.isDynamic() && (!thisPath.endsWith("html"))) {
+            thisPath = String.format( "%s.html", thisPath);
         }
         File thisPage = createArchiveFile(thisPath, thisLink.isFolder());
         // OVERWRITE:
@@ -224,23 +224,15 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             }
             found.put(key, l);
 
-            String fpath = l.getNormalPath();
-            if (l.isDynamic()) {
-                fpath = fpath + ".html";
-            }
 
             // B. Drop files in archive mirroring the original
             //
-            File itemSaved = createArchiveFile(fpath, false);
 
-            if (saved.contains(itemSaved.getAbsolutePath())) {
+            if (saved.contains(l.getId())) {
                 // in theory this item resolved to an item that was already saved.
                 // ignore.
                 continue;
             }
-
-            File dir = new File(itemSaved.getParentFile().getAbsolutePath());
-            FileUtility.makeDirectory(dir);
 
             // Download artifacts
             if (l.isFile() || l.isWebPage()) {
@@ -250,10 +242,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                     // The default document ID will be an MD5 hash ID of the URL.
                     // This may differ for other collectors/harvesters/listeners
                     //
-                    String oid = TextUtils.text_id(l.getAbsoluteURL());
-
                     try {
-                        if (listener != null && listener.exists(oid)) {
+                        if (listener != null && listener.exists(l.getId())) {
                             // You already collected this. So it will be ignored.
                             continue;
                         }
@@ -266,9 +256,33 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                     HttpResponse itemPage = getPage(l.getURL());
                     // Regardless of the item's discovered path, determine
                     // the relative path.
+                    if (itemPage.getStatusLine().getStatusCode() >= 400) {
+                        log.error("Failing on this request, HTTP status>=400, LINK={}", l.getURL() );
+                        continue;
+                    }
 
+                    /*
+                     * Identify the correct type of file this item is, from HTTP headers & MIME, not just the link
+                     */
+                    Header contentType = itemPage.getEntity().getContentType();
+                    if (contentType!=null){
+                        l.setMIMEType(contentType.getValue());
+                    }
+
+                    /*
+                     * Create a non-trivial path for the item.
+                     * 
+                     */
+                    String fpath = l.getNormalPath();
+                    if (l.isDynamic()) {
+                        fpath = fpath + ".html";
+                    }
+                    File itemSaved = createArchiveFile(fpath, false);
+                    File dir = new File(itemSaved.getParentFile().getAbsolutePath());
+                    FileUtility.makeDirectory(dir);
                     l.setFilepath(itemSaved);
-                    saved.add(itemSaved.getAbsolutePath());
+                    // CACHE the identify of this URL.
+                    saved.add(l.getId());
 
                     WebClient.downloadFile(itemPage.getEntity(), itemSaved.getAbsolutePath());
 
@@ -316,7 +330,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             doc = converter.convert(item);
 
             if (doc != null) {
-                doc.setDefaultID();
+                //doc.setDefaultID();
+                doc.setId(link.getId());
                 doc.addSourceURL(link.getAbsoluteURL(), link.getReferrer());
                 // This path must already exist
                 doc.saveBuffer(new File(doc.textpath));
