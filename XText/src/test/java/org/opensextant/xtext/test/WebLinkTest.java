@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.Test;
+import org.opensextant.xtext.collectors.sharepoint.SPLink;
 import org.opensextant.xtext.collectors.web.HyperLink;
 
 public class WebLinkTest {
@@ -14,12 +15,26 @@ public class WebLinkTest {
         System.err.println(msg);
     }
 
+    public static void print(String msg) {
+        System.out.println(msg);
+    }
+
+    /**
+     * Tests to see how URLs are mapped to files on disk.  That is, without special chars
+     * and choosing best MIME type and file ext.
+     */
     @Test
     public void test() {
         try {
             HyperLink hl = null;
             URL someSite = new URL("http://abc.com/");
             URL pageOnSite = new URL("http://abc.com/abc/xyz.htm");
+            hl = new HyperLink("http://abc.com/page.aspx?download=MyHappyFamily.pdf", pageOnSite, someSite);
+            print("Found=" + hl.getNormalPath() + " In " + hl.getDirectory());
+            hl = new HyperLink("http://abc.com/page.aspx?download=MyHappyFamily.pdf&item=Blue", pageOnSite, someSite);
+            print("Found=" + hl.getNormalPath() + " In " + hl.getDirectory());
+            hl = new HyperLink("http://abc.com/page.aspx?download=MyHappyFamily.xxz", pageOnSite, someSite);
+            print("Found=" + hl.getNormalPath() + " In " + hl.getDirectory());
 
             hl = new HyperLink("../", pageOnSite, someSite);
             assert (!hl.isCurrentPage());
