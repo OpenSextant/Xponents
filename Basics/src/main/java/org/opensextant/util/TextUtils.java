@@ -57,7 +57,8 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.opensextant.data.Language;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.constraint.NotNull;
@@ -320,11 +321,11 @@ public class TextUtils {
     }
 
     /**
-     *
-     * @param v text value
-     * @return true if text is a number
+     * StringUtils in commons isNumeric("1.234") is NOT numeric. Here "1.234" is
+     * numeric.
+     * 
      */
-    public static boolean is_numeric(String v) {
+    public final static boolean isNumeric(final String v) {
 
         if (v == null) {
             return false;
@@ -332,7 +333,10 @@ public class TextUtils {
 
         for (char ch : v.toCharArray()) {
 
-            if (ch == '.' || ch == '-' || ch == '+') {
+            /*
+             * Is the character in .-+Ee ?
+             */
+            if (ch == '.' || ch == '-' || ch == '+' || ch == 'e' || ch == 'E') {
                 continue;
             }
 
@@ -660,7 +664,7 @@ public class TextUtils {
      * @return scrubbed text
      */
     public static String normalizeTextEntity(String str) {
-        if (StringUtils.isBlank(str)) {
+        if (isBlank(str)) {
             return "";
         }
 
@@ -904,7 +908,7 @@ public class TextUtils {
         while ((lang = langReader.read(cells)) != null) {
             //
             String names = (String) lang.get(3);
-            if (StringUtils.isBlank(names)) {
+            if (isBlank(names)) {
                 continue;
             }
             if ("NAME".equals(names)) {
@@ -1138,6 +1142,8 @@ public class TextUtils {
             return false;
         }
         String id = lang.getISO639_1_Code();
+        if (isBlank(id)){ return false; }
+
         return (id.equals(koreanLang) || id.equals(japaneseLang) || id.equals(chineseLang) || id
                 .equals(chineseTradLang));
     }
