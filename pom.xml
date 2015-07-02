@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.7.6</version>
+    <version>2.7.7</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -56,6 +56,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.10</slf4j.version>
+        <xponents.v>2.7.7</xponents.v>
     </properties>
 
     <modules>
@@ -71,22 +72,22 @@
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-basics</artifactId>
-                <version>2.7.6</version>
+                <version>${xponents.v}</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents</artifactId>
-                <version>2.7.6</version>
+                <version>${xponents.v}</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-xtext</artifactId>
-                <version>2.7.6</version>
+                <version>${xponents.v}</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-examples</artifactId>
-                <version>2.7.6</version>
+                <version>${xponents.v}</version>
             </dependency>
 
             <dependency>
@@ -103,7 +104,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.7</version>
+                <version>2.8.1</version>
             </dependency>
 
             <!-- JUnit -->
@@ -141,11 +142,11 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.0</version>
+                    <version>3.3</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
+                    <version>2.10.3</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
@@ -153,16 +154,16 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.8.2</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.6</version>
                 </plugin>
 
                 <plugin>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>2.15</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
