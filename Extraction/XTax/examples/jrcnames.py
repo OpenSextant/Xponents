@@ -71,10 +71,12 @@ idset = {}
 
 # Ambiguous phrases or noisy ones I would prefer not to tag, so
 # they are marked valid=false, but retained in the names taxonomy.
-#
-AMBIGUOUS = set(
+# These are all valid JRC entities, however they do not seem to add value due to their
+# popular use or ambiguity
+NOISE = set(
         [
          'times',
+         'the sun',
          'the times',
          'news agency',
          'daily news',
@@ -101,7 +103,10 @@ AMBIGUOUS = set(
          'status quo',
          'the independent',
          'gross domestic product',
-         'privacy policy'
+         'privacy policy',
+         'adobe reader',
+         'guiding principles',
+         'lessons learned'
         ])
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
@@ -119,7 +124,7 @@ def check_validity(e):
     @param e: a JRCEntity 
     '''
     phr = e.phrase.lower().replace(',', ' ')
-    if phr in AMBIGUOUS:
+    if phr in NOISE:
         e.is_valid = False
     return
 
