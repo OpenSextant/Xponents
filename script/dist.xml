@@ -57,6 +57,7 @@
            <include name="*.*" />
         </fileset>
     </copy>
+
   </target>
 
  
@@ -109,6 +110,17 @@
            <exclude name="**/*.pyc"></exclude> 
         </fileset>
     </copy>
+  </target>
+  <target name="copy-solr">
+    <subant >
+       <fileset dir="${xponents.home}/solr" includes="build-gazetteer.xml"/>
+       <target name="proxy" />
+       <target name="init" />
+    </subant>
+    <copy todir="${release}/solr/">
+        <fileset dir="${xponents.home}/solr" />
+    </copy>
+    <delete file="${release}/solr/build.properties" />
   </target>
 
   <target name="copy-data">
