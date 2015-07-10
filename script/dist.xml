@@ -196,7 +196,7 @@
     </copy>
   </target>
 
-  <target name="dist" depends="copy-libs, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
+  <target name="dist" depends="copy-libs, copy-script, copy-data, copy-solr, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
 
    <!-- Zip it .-->
   </target>
