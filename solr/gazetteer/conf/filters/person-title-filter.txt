@@ -25,6 +25,7 @@ prof
 reverend
 rev
 priest
+prophet
 aka
 a.k.a
 father
@@ -86,6 +87,10 @@ senator
 sen
 general
 gen
+lt-gen
+lt gen
+brig gen
+brig. gen.
 admiral
 adm
 captain

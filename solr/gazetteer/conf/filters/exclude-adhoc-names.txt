@@ -1,6 +1,8 @@
 # those in the news,... or any names you wish to omit.
 # These are all place names that coincide with celebrity names
 obama
+putin
+medvedev
 erdogan
 erdoğan
 francois
@@ -10,3 +12,15 @@ bashar
 bushehr
 assad
 asad
+oleg
+abd
+ahmad
+ahmed
+dimitry
+dmitriy
+abdul
+walid
+fernando
+felicity
+luiz
+luis

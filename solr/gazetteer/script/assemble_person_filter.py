@@ -53,10 +53,11 @@ if os.path.exists(f1):
             k = unicode(row).strip().lower()
             if k in names: names.remove(k)
     fh.close()
-    
+
 #
 if names:
     fh = open(output, 'wb')
+    fh.write('# Generated File:  census surnames + exclusions - inclusions\n')
     name_list = sorted(list(names))
     for n in name_list:
         fh.write(n)

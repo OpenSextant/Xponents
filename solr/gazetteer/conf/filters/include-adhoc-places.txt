@@ -26,9 +26,17 @@ salinas
 alexandria
 carolina
 salvador
-# Peru and other countries:
+washington
+warren
+jackson
+holland
+santiago
+santos
+cruz
+houston
+hampton
+# other countries:
 lima
-# Countries
 georgia
 argentina
 trinidad
