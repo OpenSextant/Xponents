@@ -1,5 +1,5 @@
 /**
-* Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -162,6 +162,16 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     @Override
     public void configure() throws ConfigException {
 
+        /** Files for Place Name filter are editable, as you likely have different ideas of who are "person names" to exclude
+         * when they conflict with place names.  If you are filtering out such things,
+         * then it makes sense to filter them out earliest and not incorporate them in geocoding.
+         * 
+         */
+        URL p1 = PlaceGeocoder.class.getResource("/filters/person-name-filter.txt");
+        URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
+        URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
+        rules.add(new PersonNameFilter(p1, p2, p3));
+
         countryRule = new CountryRule();
         // rules.add(countryRule); /* assess country names and codes */
         rules.add(new NameCodeRule()); /* assess NAME, CODE patterns */
@@ -176,14 +186,6 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
             rules.add(coordRule);
             rules.add(adm1Rule);
         }
-
-        /** Files for Place Name filter are editable, as you likely have different ideas of who are "person names" to exclude
-         * when they conflict with place names.
-         */
-        URL p1 = PlaceGeocoder.class.getResource("/filters/person-name-filter.txt");
-        URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
-        URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
-        rules.add(new PersonNameFilter(p1, p2, p3));
     }
 
     /**
