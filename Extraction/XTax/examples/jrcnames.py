@@ -106,7 +106,8 @@ NOISE = set(
          'privacy policy',
          'adobe reader',
          'guiding principles',
-         'lessons learned'
+         'lessons learned',
+         'better life'
         ])
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
