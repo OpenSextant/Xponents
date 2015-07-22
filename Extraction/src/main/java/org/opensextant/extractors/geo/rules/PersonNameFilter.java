@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
@@ -47,6 +48,14 @@ public class PersonNameFilter extends GeocodeRule {
     }
 
     private Map<String, String> resolvedPersons = new HashMap<>();
+    private final static Pattern delPeriod = Pattern.compile("\\.+$"); // Delete ending "." or "..."
+
+    private final static String withoutPeriod(String s) {
+        if (s.endsWith(".")) {
+            return delPeriod.matcher(s).replaceAll("");
+        }
+        return s;
+    }
 
     @Override
     public void reset() {
@@ -85,14 +94,15 @@ public class PersonNameFilter extends GeocodeRule {
          *   Euguene, Oregon
          *   etc.
          */
-        if (name.hasRule(NameCodeRule.NAMECODE_RULE)){
+        if (name.hasRule(NameCodeRule.NAMECODE_RULE)) {
             return;
         }
 
         String[] toks = name.getPrematchTokens();
-        if (toks != null) {
+        if (toks != null && toks.length > 0) {
             String pre = toks[toks.length - 1].toLowerCase();
-            if (titles.contains(pre)) {
+            //pre = delPeriod.matcher(pre).replaceAll("");
+            if (titles.contains(withoutPeriod(pre))) {
                 name.setFilteredOut(true);
                 resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
             }
@@ -105,9 +115,9 @@ public class PersonNameFilter extends GeocodeRule {
         }
 
         toks = name.getPostmatchTokens();
-        if (toks != null) {
+        if (toks != null && toks.length > 0) {
             String post = toks[0].toLowerCase();
-            if (suffixes.contains(post)) {
+            if (suffixes.contains(withoutPeriod(post))) {
                 name.setFilteredOut(true);
                 resolvedPersons.put(val(name.getTextnorm(), post), name.getText());
                 return;

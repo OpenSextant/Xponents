@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.7.7</version>
+    <version>2.7.8</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -160,10 +160,13 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.6</version>
                 </plugin>
-
                 <plugin>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>2.15</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.18.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -211,6 +214,15 @@
                 <configuration>
                     <xmlOutput>true</xmlOutput>
                     <!--<threshold>High</threshold> -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>solr/gazetteer/conf</additionalClasspathElement>
+                    </additionalClasspathElements>
                 </configuration>
             </plugin>
             <plugin>
