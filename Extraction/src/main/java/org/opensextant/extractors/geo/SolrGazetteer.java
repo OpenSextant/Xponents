@@ -150,12 +150,12 @@ public class SolrGazetteer {
         ModifiableSolrParams p = new ModifiableSolrParams();
         p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
                 + "geo,place_id,name_bias,id_bias,name_type");
-        p.set(CommonParams.ROWS, 10);
+        p.set(CommonParams.ROWS, 25);
         p.set(CommonParams.Q, "*:*");
         p.set(CommonParams.FQ, "{!geofilt}");
         p.set("spatial", true);
         p.set("sfield", "geo");
-        p.add("sort geodist asc"); // Find closest places first.
+        p.add("sort","geodist() asc"); // Find closest places first.
         return p;
     }
 
