@@ -941,10 +941,10 @@
                 By default all are accepted. 
                  -->
                  <!--                                
-                -->
                 <arr name="countries">
-                    <str>FR,UK</str>
+                    <str>?</str>
                 </arr>
+                -->
 
                 <!-- Full gazetteer without Rare
                 <arr name="include_category">
