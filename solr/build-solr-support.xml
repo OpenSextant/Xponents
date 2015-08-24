@@ -41,6 +41,12 @@
             <url url="http://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/${slf4j.v}/jcl-over-slf4j-${slf4j.v}.jar" />
         </get>
 
+        <!-- Spatial dependencies must go into JRE CLASSPATH, not solr ./lib -->
+        <get dest="build/containerLib/" skipexisting="true">
+            <url url="http://repo1.maven.org/maven2/com/vividsolutions/jts/1.13/jts-1.13.jar" />
+            <url url="http://repo1.maven.org/maven2/com/spatial4j/spatial4j/0.4.1/spatial4j-0.4.1.jar"/>
+        </get>
+
         <!-- Existing dependencies  that should be in Maven repo locally due to your Xponents build; e.g., pulled in by POM
           -->
         <copy todir="build/containerLib/" overwrite="false" failonerror="false"
@@ -113,12 +119,14 @@
 
     <macrodef name="exec-jetty-solr">
         <sequential>
-            <java jar="build/jetty-runner-${jetty.v}.jar" fork="true" clonevm="true" failonerror="true" maxmemory="2g">
+            <java jar="build/jetty-runner-${jetty.v}.jar" fork="true" clonevm="true" failonerror="true" >
                 <sysproperty key="java.awt.headless" value="true" />
                 <sysproperty key="solr.solr.home" value="${solr.solr.home}" />
                 <sysproperty key="solr.enableRemoteStreaming" value="true" />
                 <!-- <sysproperty key="java.util.logging.config.file" value="logging.properties" /> -->
                 <sysproperty key="log4j.configuration" value="file://${basedir}/build/containerLib/log4j.properties" />
+                <jvmarg value="-Xmx3g"/>
+                <jvmarg value="-Xms3g"/>
 
                 <!-- Jetty arguments -->
                 <arg value="--lib"/>

@@ -336,8 +336,8 @@
         defaultFieldValuesArrayLen, prefixTree, maxLevels, maxDistErr
         -->
         <fieldType name="geo" class="solr.SpatialRecursivePrefixTreeFieldType"
+                   spatialContextFactory="com.spatial4j.core.context.jts.JtsSpatialContextFactory" 
                    maxDistErr="0.00009" distErrPct="0.025" geo="true" units="degrees" />
-        <!-- spatialContextFactory="com.spatial4j.core.context.jts.JtsSpatialContextFactory" -->
         <!-- maxDistErr="0.00009"/> 10meter accuracy specified in degrees (111.2km/degree)-->
 
     </types>

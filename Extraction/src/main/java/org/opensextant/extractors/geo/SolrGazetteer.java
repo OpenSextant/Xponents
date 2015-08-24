@@ -27,9 +27,11 @@
 package org.opensextant.extractors.geo;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
@@ -46,7 +48,6 @@ import org.opensextant.data.Place;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrProxy;
-
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The
@@ -72,11 +73,6 @@ public class SolrGazetteer {
     private Map<String, Country> countryCodes = null;
 
     /**
-     * fast lookup of a country name; this is the full list of all country name variants.
-     */
-    private Map<String, Country> countryNames = null;
-
-    /**
      * Default country code in solr gazetteer is ISO, so if given a FIPS code, we need
      * a helpful lookup to get ISO code for lookup.
      */
@@ -86,7 +82,6 @@ public class SolrGazetteer {
      * Geodetic search parameters.
      */
     private ModifiableSolrParams geoLookup = createGeodeticLookupParams();
-    private ModifiableSolrParams geoLookup2 = createGeodeticLookupParams();
 
     /**
      * Instantiates a new solr gazetteer.
@@ -142,7 +137,14 @@ public class SolrGazetteer {
         return StringUtils.capitalize(c.toLowerCase());
     }
 
-    private static ModifiableSolrParams createGeodeticLookupParams() {
+    /**
+     * 
+     * @return
+     * @deprecated DO NOT USE.  Keeping this as a reminder of what not to do.
+     * This will load entire index into memory.
+     */
+    @Deprecated
+    private static ModifiableSolrParams createGeodeticLookupParamsXX() {
         /* Basic parameters for geospatial lookup.
          * These are reused, and only pt and d are set for each lookup.
          *
@@ -155,7 +157,39 @@ public class SolrGazetteer {
         p.set(CommonParams.FQ, "{!geofilt}");
         p.set("spatial", true);
         p.set("sfield", "geo");
-        p.add("sort","geodist() asc"); // Find closest places first.
+        p.set(CommonParams.SORT, "geodist() asc"); // Find closest places first.
+        return p;
+    }
+
+    /**
+     * Creates a generic spatial query for up to first 25 rows.
+     * @return
+     */
+    protected static ModifiableSolrParams createGeodeticLookupParams() {
+        return createGeodeticLookupParams(25);
+    }
+
+    /**
+     * For larger areas choose a higher number of Rows to return.
+     * If you choose to use  Solr spatial score-by-distance for sorting or anything, then
+     * Solr appears to want to load entire index into memory.  So this sort mechanism is off by default.
+     * 
+     * @param rows
+     * @return
+     */
+    protected static ModifiableSolrParams createGeodeticLookupParams(int rows) {
+        /* Basic parameters for geospatial lookup.
+         * These are reused, and only pt and d are set for each lookup.
+         *
+         */
+        ModifiableSolrParams p = new ModifiableSolrParams();
+        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
+                + "geo,place_id,name_bias,id_bias,name_type");
+        p.set(CommonParams.ROWS, rows);
+        p.set(CommonParams.Q, "{!geofilt sfield=geo}");
+        //p.set(CommonParams.SORT, "score desc");
+        p.set("spatial", "true");
+
         return p;
     }
 
@@ -359,50 +393,78 @@ public class SolrGazetteer {
     }
 
     /**
-     * Find places located at a particular location.
+     * Find places located at a particular location.  UNSORTED!
      *
      * @param yx
-     * @param d  distance is required.
+     * @param d  positive distance radius is required.
      * @return
      * @throws SolrServerException
      */
     public List<Place> placesAt(LatLon yx, int withinKM) throws SolrServerException {
 
-        /* URL as such:
-         * Find just Admin places and country codes for now.
-        /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
-         *
-         */
+        /*          */
         geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
         geoLookup.set("d", withinKM);
         return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), geoLookup);
     }
 
     /**
-     * Variation on placesAt()
+     * Variation on placesAt().  UNSORTED!
      *
      * @param yx        location
-     * @param withinKM  distance or -1
+     * @param withinKM  distance - required.
      * @param feature   feature class
      * @return
      * @throws SolrServerException
      */
     public List<Place> placesAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
 
-        /* URL as such:
-         * Find just Admin places and country codes for now.
-        /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
-         *
+        /*
          */
-        geoLookup2.set(CommonParams.Q, String.format("feat_class:%s", feature));
+        ModifiableSolrParams spatialQuery = createGeodeticLookupParams();
+        spatialQuery.set(CommonParams.FQ, String.format("feat_class:%s", feature));
 
-        geoLookup2.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
-        if (withinKM > 0) {
-            geoLookup2.set("d", withinKM); // Example - Find places within 50 KM, but only first is really used.
-        } else {
-            geoLookup2.remove("d");
+        spatialQuery.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
+        spatialQuery.set("d", withinKM); // Example - Find places within 50 KM, but only first N rows are returned.
+        return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), spatialQuery);
+    }
+
+    /**
+     * Iterate through a list and choose a place closest to the given point
+     * @param yx point of interest
+     * @param places list of places
+     * @return closest place
+     */
+    public static final Place closest(LatLon yx, List<Place> places) {
+
+        long dist = 10000000L;
+        Place chosen = null;
+        for (Place p : places) {
+            long currentDist = GeodeticUtility.distanceMeters(yx, p);
+            if (currentDist < dist) {
+                dist = currentDist;
+                chosen = p;
+            }
         }
-        return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), geoLookup2);
+        return chosen;  // Is not null.
+    }
+
+    /**
+     * This is a reasonable guess.
+     * CAVEAT:  This does not use Solr Spatial location sorting.
+     * 
+     * @param yx
+     * @param withinKM
+     * @param feature
+     * @return
+     * @throws SolrServerException
+     */
+    public Place placeAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
+        List<Place> candidates = placesAt(yx, withinKM, feature);
+        if (candidates == null || candidates.isEmpty()) {
+            return null;
+        }
+        return closest(yx, candidates);
     }
 
 }

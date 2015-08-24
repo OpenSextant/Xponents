@@ -18,7 +18,7 @@
          that you fully re-index after changing this setting as it can
          affect both how text is indexed and queried.
     -->
-    <luceneMatchVersion>4.10</luceneMatchVersion>
+    <luceneMatchVersion>4.10.4</luceneMatchVersion>
 
     <!-- lib directives can be used to instruct Solr to load an Jars
          identified and use them to resolve any "plugins" specified in
@@ -495,9 +495,10 @@
                             showItems="32" />
           -->
 
-        <!-- A field value cache to support geodist sorting -->
+        <!-- A field value cache to support geodist sorting 
         <cache name="fieldValueCache" class="solr.FastLRUCache" 
             size="10" initialSize="1" autowarmCount="1"/>
+        -->
 
         <!-- Custom Cache
 
@@ -940,10 +941,10 @@
                 By default all are accepted. 
                  -->
                  <!--                                
-                <arr name="countries">
-                    <str>?</str>
-                </arr>
                 -->
+                <arr name="countries">
+                    <str>FR,UK</str>
+                </arr>
 
                 <!-- Full gazetteer without Rare
                 <arr name="include_category">
