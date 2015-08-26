@@ -940,7 +940,7 @@
                 <!-- countries is a list of ISO country codes.  matches against 'cc' field.
                 By default all are accepted. 
                  -->
-                 <!-- Testing
+                 <!-- Testing other languages from major countries
                 <arr name="countries">
                     <str>SY,CN,JP</str>
                 </arr>
