@@ -69,6 +69,16 @@
         <field name="name_tag" type="name_tag" stored="false"/>
         <copyField source="name" dest="name_tag" />
 
+        <!-- Record names in CJK script only -->
+        <field name="name_cjk" type="name_text_cjk"  />
+        <field name="name_tag_cjk" type="name_tag_cjk" stored="false"/>
+        <copyField source="name_cjk" dest="name_tag_cjk" />
+
+        <!-- Record names in ARABIC script only -->
+        <field name="name_ar" type="name_text_ar"  />
+        <field name="name_tag_ar" type="name_tag_ar" stored="false"/>
+        <copyField source="name_ar" dest="name_tag_ar" />
+
         <!-- phonetic variant for FST -->
         <!--
         <field name="name_idx" type="name_idx"                    stored="false"  omitTermFreqAndPositions="true" omitNorms="true"/>
@@ -87,11 +97,7 @@
              lat,lon are now ignored
          -->
         <field name="geo" type="geo" />
-        <!--
-         @deprecation
-         Optimizations:  we do not store lat,lon separately as of OpSx v1.5
-        <field name="lat" type="tdouble" />
-        <field name="lon" type="tdouble" /> -->
+        <!-- Optimizations:  we do not store lat,lon separately as of OpSx v1.5 ; 'geo' field stores location -->
         <field name="lat" type="ignored" />
         <field name="lon" type="ignored" />
 
@@ -131,9 +137,11 @@
         <field name="name_type" type="string" />
 
         <!--  TODO: Make use of Currently unused fields, e.g., source is source of gazetteer records, e.g., NGA, user, USGS, etc.
-        <field name="script"       type="string" />
          -->
         <field name="source" type="string" />
+
+        <!-- Script of name, CJK, ARABIC, LATIN, ARMENIAN, CYRILLIC, etc. -->
+        <field name="script" type="string" stored="false" multiValued="true"/>
 
         <!--
 
@@ -319,6 +327,76 @@
             </analyzer>
         </fieldType>
 
+        <!-- CJK bigram (see text_ja for a Japanese configuration using morphological analysis) -->
+        <fieldType name="name_text_cjk" class="solr.TextField" positionIncrementGap="100">
+          <analyzer>
+          <tokenizer class="solr.StandardTokenizerFactory"/>
+          <!-- normalize width before bigram, as e.g. half-width dakuten combine  -->
+          <filter class="solr.CJKWidthFilterFactory"/>
+          <!-- for any non-CJK -->
+          <filter class="solr.LowerCaseFilterFactory"/>
+          <filter class="solr.CJKBigramFilterFactory"/>
+          </analyzer>
+      </fieldType>
+
+        <!-- Chinese/Japanese/Korean name_tag and name_text  -->
+        <fieldType name="name_tag_cjk" class="solr.TextField" positionIncrementGap="100"
+                   postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true">
+            <analyzer type="index">
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.CJKWidthFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory" />
+                <filter class="solr.CJKBigramFilterFactory"/>
+
+                <!-- only difference between index & query chains: -->
+                <filter class="org.opensextant.solrtexttagger.ConcatenateFilterFactory" />
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.CJKWidthFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory" />
+                <filter class="solr.CJKBigramFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+
+    <!-- Arabic -->
+    <fieldType name="name_text_ar" class="solr.TextField" positionIncrementGap="100">
+      <analyzer> 
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- for any non-arabic -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ar.txt" />
+        <!-- normalizes ﻯ to ﻱ, etc -->
+        <filter class="solr.ArabicNormalizationFilterFactory"/>
+        <filter class="solr.ArabicStemFilterFactory"/>
+      </analyzer>
+    </fieldType>
+    <!-- Arabic -->
+    <fieldType name="name_tag_ar" class="solr.TextField" positionIncrementGap="100" 
+      postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true" >
+      <analyzer type="index"> 
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- for any non-arabic -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ar.txt" />
+        <!-- normalizes ﻯ to ﻱ, etc -->
+        <filter class="solr.ArabicNormalizationFilterFactory"/>
+        <filter class="solr.ArabicStemFilterFactory"/>
+        <!-- only difference between index & query chains: -->
+        <filter class="org.opensextant.solrtexttagger.ConcatenateFilterFactory" />
+      </analyzer>
+      <analyzer type="query"> 
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- for any non-arabic -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ar.txt" />
+        <!-- normalizes ﻯ to ﻱ, etc -->
+        <filter class="solr.ArabicNormalizationFilterFactory"/>
+        <filter class="solr.ArabicStemFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
         <!-- since fields of this type are by default not stored or indexed,
              any data added to them will be ignored outright.  -->
         <fieldtype name="ignored" stored="false" indexed="false" multiValued="true"
@@ -334,11 +412,11 @@
         spatialContextFactory, geo, distCalculator, worldbounds,
         distErrPct,
         defaultFieldValuesArrayLen, prefixTree, maxLevels, maxDistErr
+         0.00009 = 10meter accuracy specified in degrees (111.2km/degree)
         -->
         <fieldType name="geo" class="solr.SpatialRecursivePrefixTreeFieldType"
                    spatialContextFactory="com.spatial4j.core.context.jts.JtsSpatialContextFactory" 
                    maxDistErr="0.00009" distErrPct="0.025" geo="true" units="degrees" />
-        <!-- maxDistErr="0.00009"/> 10meter accuracy specified in degrees (111.2km/degree)-->
 
     </types>
 

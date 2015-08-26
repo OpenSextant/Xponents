@@ -181,6 +181,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                     return;
                 }
             }
+
             /* See solrconfig for documentation on gazetteer filtering
              * =======================================================
              */
@@ -197,6 +198,30 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             }
             String nt = SolrProxy.getString(doc, "name_type");
             boolean isName = (nt != null ? "N".equals(nt) : false);
+
+            /**
+             * Cleanup scripts.
+             */
+            String nameScript = SolrProxy.getString(doc, "script");
+
+            if (StringUtils.isNotBlank(nameScript)) {
+                doc.removeField("script");
+                List<String> nameScripts = TextUtils.string2list(TextUtils.removeAny(nameScript, "[]"), ",");
+                logger.debug("Scripts = {}", nameScripts);
+                for (String scr : nameScripts) {
+                    doc.addField("script", scr);
+                    switch (scr) {
+                    case "ARABIC":
+                        doc.setField("name_ar", nm);
+                        break;
+                    case "CJK":
+                        doc.setField("name_cjk", nm);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
 
             boolean search_only = false;
 
@@ -241,8 +266,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             }
 
             /* End Filtering
-            * =======================================================
-            */
+             * =======================================================
+             */
 
             // CREATE searchable lat lon
             String lat = SolrProxy.getString(doc, "lat");

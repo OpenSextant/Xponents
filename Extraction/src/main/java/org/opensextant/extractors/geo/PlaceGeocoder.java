@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
@@ -260,14 +261,18 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
             List<Place> relevantProvinces = new ArrayList<>();
             if (coordRule != null && coordinates != null) {
                 coordRule.reset();
-                for (TextMatch g : coordinates) {
-                    if (g instanceof Geocoding) {
-                        Place province = evaluateCoordinate((Geocoding) g);
-                        if (province != null) {
-                            relevantProvinces.add(province);
+                try {
+                    for (TextMatch g : coordinates) {
+                        if (g instanceof Geocoding) {
+                            Place province = evaluateCoordinate((Geocoding) g);
+                            if (province != null) {
+                                relevantProvinces.add(province);
+                            }
                         }
+                        coordRule.addCoordinate((Geocoding) g);
                     }
-                    coordRule.addCoordinate((Geocoding) g);
+                } catch (Exception err) {
+                    log.error("Problem doing spatial lookup", err);
                 }
 
                 if (adm1Rule != null && !relevantProvinces.isEmpty()) {
@@ -346,8 +351,9 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
      *
      * @param g
      * @return
+     * @throws SolrServerException   a query against the Solr index may throw a Solr error.
      */
-    public Place evaluateCoordinate(Geocoding g) {
+    public Place evaluateCoordinate(Geocoding g) throws SolrServerException {
         // Solr geospatial lookup required;  we use RPT -- recursive prefix filter field type.
         // TOOD: implement spatial query against gazetter to do XY=>Location(feat_type=*, facet field=adm1)
         //      report Distinct CC.ADM1.ADM2 paths where Geocoding points.

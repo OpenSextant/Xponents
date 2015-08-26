@@ -865,7 +865,7 @@
             Record_ID,PLACE_ID,PLACE_NAME,PLACE_NAME_EXPANDED,LATITUDE,LONGITUDE,FEATURE_CLASS,FEATURE_CODE,FIPS_COUNTRY_CODE,ISO2_COUNTRY_CODE,ISO3_COUNTRY_CODE,ADMIN_LEVEL_1,ADMIN_LEVEL_2,ADMIN_LEVEL_3,ADMIN_LEVEL_4,ADMIN_LEVEL_5,SOURCE,SOURCE_FEATURE_ID,SOURCE_NAME_ID,SCRIPT,PLACE_NAME_BIAS,PLACE_ID_BIAS,NAME_TYPE,NAME_TYPE_SYSTEM,SplitCategory,SEARCH_ONLY
              
             -->
-            <str name="fieldnames">id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,,name_bias,id_bias,name_type,,SplitCategory,search_only</str>
+            <str name="fieldnames">id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,script,name_bias,id_bias,name_type,,SplitCategory,search_only</str>
             <!-- saves space (but not much) -->
             <str name="f.name_type.map">abbrev:A</str>
             <str name="f.name_type.map">name:N</str>
@@ -940,11 +940,11 @@
                 <!-- countries is a list of ISO country codes.  matches against 'cc' field.
                 By default all are accepted. 
                  -->
-                 <!--                                
-                -->
+                 <!-- Testing
                 <arr name="countries">
-                    <str>FR,UK</str>
+                    <str>SY,CN,JP</str>
                 </arr>
+                -->
 
                 <!-- Full gazetteer without Rare
                 <arr name="include_category">

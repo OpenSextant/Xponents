@@ -106,9 +106,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private long matchedTotal = 0;
     private boolean allowLowercaseAbbrev = false;
     private boolean allowLowerCase = false; /* enable trure for data such as tweets, blogs, etc. where case varies or does not exist */
-    private ModifiableSolrParams geoLookup = new ModifiableSolrParams();
     // All of these Solr-parameters for tagging are not user-tunable.
     private final ModifiableSolrParams params = new ModifiableSolrParams();
+    private SolrGazetteer gazetteer = null;
 
     /**
      *
@@ -157,18 +157,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         params.set("overlaps", "LONGEST_DOMINANT_RIGHT");
         // params.set("overlaps", "NO_SUB");
 
-        /* Basic parameters for geospatial lookup.
-         * These are reused, and only pt and d are set for each lookup.
-         *
-         */
-        geoLookup.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
-                + "geo,place_id,name_bias,id_bias,name_type");
-        geoLookup.set(CommonParams.ROWS, 10);
-        geoLookup.set(CommonParams.Q, "*:*");
-        geoLookup.set(CommonParams.FQ, "{!geofilt}");
-        geoLookup.set("spatial", true);
-        geoLookup.set("sfield", "geo");
-        geoLookup.add("sort geodist asc"); // Find closest places first.
+        gazetteer = new SolrGazetteer(this.solr);
+
     }
 
     @Override
@@ -218,6 +208,48 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     }
 
     /**
+     * Tag names specifically with Chinese tokenizaiton
+     * 
+     * @param buffer
+     * @param docid
+     * @return
+     * @since 2.7.11
+     * @throws ExtractionException
+     * 
+     */
+    public LinkedList<PlaceCandidate> tagCJKText(String buffer, String docid)
+            throws ExtractionException {
+        return tagText(buffer, docid, false, CJK_TAG_FIELD);
+    }
+
+    /**
+     * Tag place names in arabic.
+     * 
+     * @param buffer
+     * @param docid
+     * @return
+     * @throws ExtractionException
+     */
+    public LinkedList<PlaceCandidate> tagArabicText(String buffer, String docid)
+            throws ExtractionException {
+        return tagText(buffer, docid, false, AR_TAG_FIELD);
+    }
+    /** Most languages */
+    public static final String DEFAULT_TAG_FIELD = "name_tag";
+
+    /** Use /tag ? field = name_tag_cjk to tag in Asian scripts.
+     * 
+     */
+    public static final String CJK_TAG_FIELD = "name_tag_cjk";
+
+    public static final String AR_TAG_FIELD = "name_tag_ar";
+
+    public LinkedList<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly)
+            throws ExtractionException {
+        return tagText(buffer, docid, tagOnly, DEFAULT_TAG_FIELD);
+    }
+
+    /**
      * Geotag a document, returning PlaceCandidates for the mentions in document.
      * Optionally just return the PlaceCandidates with name only and no Place objects attached.
      *
@@ -228,7 +260,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @return place_candidates List of place candidates
      * @throws ExtractionException
      */
-    public LinkedList<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly)
+    public LinkedList<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld)
             throws ExtractionException {
         // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
         // "startOffset":38},
@@ -247,6 +279,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
 
+        params.set("field", fld);
         Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
         QueryResponse response = tagTextCallSolrTagger(buffer, docid, beanMap);
 
@@ -335,7 +368,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             /* This assertion is helpful in debugging:
             assert placeRecordIds.size() == new HashSet<Integer>(placeRecordIds).size() : "ids should be unique";
-            */
+             */
             assert !placeRecordIds.isEmpty();
             namesMatched.clear();
 
@@ -570,23 +603,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *
      * @param yx
      * @return
+     * @throws SolrServerException
+     * @deprecated  Use SolrGazetteer directly
      */
-    public List<Place> placesAt(LatLon yx) {
-
-        /* URL as such:
-         * Find just Admin places and country codes for now.
-        /solr/gazetteer/select?q=*%3A*&fq=%7B!geofilt%7D&rows=100&wt=json&indent=true&facet=true&facet.field=cc&facet.mincount=1&facet.field=adm1&spatial=true&pt=41%2C-71.5&sfield=geo&d=100&sort geodist asc
-         *
-         */
-        geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
-        geoLookup.set("d", 50); // Find places within 50 KM, but only first is really used.
-
-        try {
-            return SolrProxy.searchGazetteer(this.solr.getInternalSolrServer(), geoLookup);
-        } catch (SolrServerException e) {
-            this.log.error("Failed to search gazetter by location");
-        }
-        return null;
+    @Deprecated
+    public List<Place> placesAt(LatLon yx) throws SolrServerException {
+        return gazetteer.placesAt(yx, 50);
     }
 
     /**

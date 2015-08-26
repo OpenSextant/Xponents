@@ -20,7 +20,7 @@ import org.opensextant.util.FileUtility;
  * - run this test main,
  *    -Dopensextant.solr=<path to gazetteer solr home>
  *    one argument, then input file to test.
- *    
+ * 
  * @author ubaldino
  *
  */
@@ -75,7 +75,7 @@ public class TestGazMatcher {
      * USAGE:
      * 
      *      TestGazMatcher  file
-     *      
+     * 
      * Prints:
      *      all matched, filtered place mentions
      *      distinct places
@@ -87,8 +87,8 @@ public class TestGazMatcher {
         URL filterFile = TestGazMatcher.class.getResource("/test-filter.txt");
         if (filterFile == null) {
             System.err
-                    .println("This test requires a 'test-filter.txt' file with non-place names in it."
-                            + "\nThese filters should match up with your test documents");
+            .println("This test requires a 'test-filter.txt' file with non-place names in it."
+                    + "\nThese filters should match up with your test documents");
         }
         MatchFilter filt = new MatchFilter(filterFile);
         sm.setMatchFilter(filt);
@@ -99,6 +99,13 @@ public class TestGazMatcher {
             System.out.println(docContent);
 
             List<PlaceCandidate> matches = sm.tagText(docContent, "main-test");
+            for (PlaceCandidate pc : matches) {
+                printGeoTags(pc);
+            }
+
+
+            docContent = "Is there some city in 刘家埝 written in Chinese?";
+            matches = sm.tagCJKText(docContent, "main-test");
             for (PlaceCandidate pc : matches) {
                 printGeoTags(pc);
             }
