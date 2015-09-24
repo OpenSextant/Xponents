@@ -83,7 +83,7 @@ public class TestGazMatcher {
      */
     public static void main(String[] args) throws Exception {
 
-        GazetteerMatcher sm = new GazetteerMatcher();
+        GazetteerMatcher sm = new GazetteerMatcher(true /*allow lowercase */);
         URL filterFile = TestGazMatcher.class.getResource("/test-filter.txt");
         if (filterFile == null) {
             System.err
@@ -110,6 +110,11 @@ public class TestGazMatcher {
                 printGeoTags(pc);
             }
 
+            docContent = "Where is seoul?";
+            matches = sm.tagText(docContent, "main-test");
+            for (PlaceCandidate pc : matches) {
+                printGeoTags(pc);
+            }
             String buf = FileUtility.readFile(args[0]);
             matches = sm.tagText(buf, "main-test", true);
 
