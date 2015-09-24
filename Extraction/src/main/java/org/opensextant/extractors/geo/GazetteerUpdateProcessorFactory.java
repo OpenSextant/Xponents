@@ -215,6 +215,9 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                         doc.setField("name_ar", nm);
                         break;
                     case "CJK":
+                    case "HANGUL":
+                    case "KATAKANA":
+                    case "HIRAGANA":
                         doc.setField("name_cjk", nm);
                         break;
                     default:
