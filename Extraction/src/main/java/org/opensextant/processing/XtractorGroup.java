@@ -89,7 +89,7 @@ public class XtractorGroup {
     }
 
     public void addExtractor(Extractor xprocessor) {
-        xprocessor.setProgressMonitor(progressMonitor);
+        // xprocessor.setProgressMonitor(progressMonitor);
         extractors.add(xprocessor);
     }
 

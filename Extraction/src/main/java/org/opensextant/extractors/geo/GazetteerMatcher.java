@@ -68,7 +68,6 @@ import org.opensextant.data.Place;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.SolrMatcherSupport;
-import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.SolrProxy;
 import org.opensextant.util.TextUtils;
 import org.supercsv.io.CsvMapReader;
@@ -110,12 +109,19 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private final ModifiableSolrParams params = new ModifiableSolrParams();
     private SolrGazetteer gazetteer = null;
 
-    /**
-     *
-     * @throws IOException
-     */
     public GazetteerMatcher() throws ConfigException {
+        this(false);
+    }
+
+    /**
+     * 
+     * @param lowercaseAllowed  variant is case insensitive.
+     * 
+     * @throws ConfigException
+     */
+    public GazetteerMatcher(boolean lowercaseAllowed) throws ConfigException {
         initialize();
+        allowLowerCase = lowercaseAllowed;
 
         // Instance variable that will have the transient payload to tag
         // this is not thread safe and is not static:

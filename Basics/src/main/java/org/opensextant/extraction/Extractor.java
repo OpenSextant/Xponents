@@ -47,7 +47,7 @@ import java.util.List;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
-import org.opensextant.processing.progress.ProgressMonitor;
+//import org.opensextant.processing.progress.ProgressMonitor;
 
 /**
  * For now, this interface is closer to an AbstractExtractor
@@ -105,7 +105,7 @@ public interface Extractor {
      */
     List<TextMatch> extract(String input) throws ExtractionException;
 
-    void setProgressMonitor(ProgressMonitor progressMonitor);
+    //void setProgressMonitor(ProgressMonitor progressMonitor);
 
     void updateProgress(double progress);
 

@@ -53,7 +53,6 @@ import org.opensextant.extractors.geo.rules.PersonNameFilter;
 import org.opensextant.extractors.geo.rules.ProvinceAssociationRule;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.processing.Parameters;
-import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +83,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
     private final ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
-    private ProgressMonitor progressMonitor;
+    //private ProgressMonitor progressMonitor;
 
     private CountryRule countryRule = null;
     private CoordinateAssociationRule coordRule = null;
@@ -385,22 +384,22 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         return found.get(0);
     }
 
-    @Override
-    public void setProgressMonitor(ProgressMonitor progressMonitor) {
-        this.progressMonitor = progressMonitor;
-    }
+    //    @Override
+    //    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+    //        this.progressMonitor = progressMonitor;
+    //    }
 
     @Override
     public void updateProgress(double progress) {
-        if (this.progressMonitor != null) {
-            progressMonitor.updateStepProgress(progress);
-        }
+        //        if (this.progressMonitor != null) {
+        //            progressMonitor.updateStepProgress(progress);
+        //        }
     }
 
     @Override
     public void markComplete() {
-        if (this.progressMonitor != null) {
-            progressMonitor.completeStep();
-        }
+        //        if (this.progressMonitor != null) {
+        //            progressMonitor.completeStep();
+        //        }
     }
 }

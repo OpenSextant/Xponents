@@ -68,7 +68,6 @@ import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.processing.progress.ProgressMonitor;
 import org.opensextant.util.SolrProxy;
 
 /**
@@ -104,7 +103,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
     private boolean tagAll = true;
     private boolean filterNonAcronyms = true;
-    private ProgressMonitor progressMonitor;
+    //private ProgressMonitor progressMonitor;
 
     /**
      *
@@ -395,21 +394,21 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         return search(this.solr.getInternalSolrServer(), qparams);
     }
 
-    @Override
-    public void setProgressMonitor(ProgressMonitor progressMonitor) {
-        this.progressMonitor = progressMonitor;
-    }
+    //    @Override
+    //    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+    //        this.progressMonitor = progressMonitor;
+    //    }
 
     @Override
     public void updateProgress(double progress) {
-        if (this.progressMonitor != null)
-            progressMonitor.updateStepProgress(progress);
+        //        if (this.progressMonitor != null)
+        //            progressMonitor.updateStepProgress(progress);
     }
 
     @Override
     public void markComplete() {
-        if (this.progressMonitor != null)
-            progressMonitor.completeStep();
+        //        if (this.progressMonitor != null)
+        //            progressMonitor.completeStep();
     }
 
 }

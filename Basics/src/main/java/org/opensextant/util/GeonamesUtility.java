@@ -392,6 +392,10 @@ public class GeonamesUtility {
         return name_type == ABBREVIATION_TYPE;
     }
 
+    public static final boolean isCode(String name_type){
+        return "code".equals(name_type);
+    }
+
     /**
      * Check if name type is an Abbreviation
      *
