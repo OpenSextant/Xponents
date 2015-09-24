@@ -13,7 +13,7 @@
         "source": "Xponents/USGS",
         "name_bias": 0,
         "id_bias": 0.775,
-        "name_type": "code",
+        "name_type": "A",
         "geo": "34.05223,-118.24368"
       },
       {
@@ -30,7 +30,7 @@
         "source": "Xponents/USGS",
         "name_bias": 0,
         "id_bias": 0.775,
-        "name_type": "name",
+        "name_type": "N",
         "geo": "34.05223,-118.24368"
       },
       {
@@ -47,7 +47,7 @@
         "source": "Xponents/USGS",
         "name_bias": 0,
         "id_bias": 0.265,
-        "name_type": "code",
+        "name_type": "A",
         "geo": "40.71427,-74.00597"
       }, 
       {
@@ -132,7 +132,7 @@
         "source": "Xponents/USGS",
         "name_bias": 0.49988,
         "id_bias": 0.775,
-        "name_type": "code",
+        "name_type": "A",
         "geo": "37.77493,-122.41942"
       }, 
      {
