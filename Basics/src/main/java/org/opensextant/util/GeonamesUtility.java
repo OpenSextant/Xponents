@@ -126,6 +126,37 @@ public class GeonamesUtility {
         featreader.close();
     }
 
+    /**
+     * Pase geonames.org TZ table.
+     * 
+     * @throws IOException
+     */
+    private void loadCountryTimezones() throws IOException {
+        java.io.InputStream io = getClass().getResourceAsStream("/timeZones.txt");
+        java.io.Reader tz = new InputStreamReader(io);
+        CsvMapReader tzMap = new CsvMapReader(tz, CsvPreference.TAB_PREFERENCE);
+        String[] columns = tzMap.getHeader(true);
+        Map<String, String> tzdata = null;
+        while ((tzdata = tzMap.read(columns)) != null) {
+            String cc = tzdata.get("CC");
+            if (cc.trim().startsWith("#")) {
+                continue;
+            }
+
+            Country C = getCountry(cc);
+            if (C == null) {
+                continue;
+            }
+            String utc = tzdata.get("UTC_OFFSET");
+            double offset = -100;
+            if (utc != null) {
+                offset = Double.parseDouble(utc);
+            }
+            C.addTimezone(tzdata.get("TZ"), offset);
+        }
+        tzMap.close();
+    }
+
     private void loadCountryNameMap() throws IOException {
         java.io.InputStream io = getClass().getResourceAsStream("/country-names-2015.csv");
         java.io.Reader countryIO = new InputStreamReader(io);
@@ -185,6 +216,11 @@ public class GeonamesUtility {
         if (defaultCountryNames.isEmpty()) {
             throw new IOException("No data found in country name map");
         }
+
+        /**
+         * Important data for many tools where time-of-day or other metadata is meaningful.
+         */
+        loadCountryTimezones();
     }
 
     /**
@@ -392,7 +428,7 @@ public class GeonamesUtility {
         return name_type == ABBREVIATION_TYPE;
     }
 
-    public static final boolean isCode(String name_type){
+    public static final boolean isCode(String name_type) {
         return "code".equals(name_type);
     }
 

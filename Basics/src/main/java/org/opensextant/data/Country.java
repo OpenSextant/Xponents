@@ -41,6 +41,8 @@
 
 package org.opensextant.data;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -57,9 +59,13 @@ public class Country extends Place {
     public String CC_FIPS = null;
 
     /** Any list of country alias names. */
-    private final Set<String> aliases = new HashSet<String>();
+    private final Set<String> aliases = new HashSet<>();
 
-    private final Set<String> regions = new HashSet<String>();
+    private final Set<String> regions = new HashSet<>();
+
+    /** Map of Geonames.org TZ and UTC offsets per country */
+    private final Map<String, Double> timezones = new HashMap<>();
+    private final Map<String, Double> timezonesVariants = new HashMap<>();
 
     /**
      * A country abstraction that uses ISO 2-alpha as an ID, and any name given
@@ -87,6 +93,49 @@ public class Country extends Place {
      */
     public Set<String> getAliases() {
         return aliases;
+    }
+
+    /**
+     * Add a timezone and its offset.  TZ labels vary, so variant labels are tracked as well.
+     * uppercase, lowercase
+     * @param label TZ label
+     * @param utcOffset  floating point UTC offset in decimal hours.  e.g., 7.5, -3.0 = (GMT-0300), etc.
+     */
+    public void addTimezone(String label, double utcOffset) {
+        timezones.put(label, utcOffset);
+        timezonesVariants.put(label.toLowerCase(), utcOffset);
+        if (label.contains("/")) {
+            String tz = label.split("/", 2)[1];
+            timezonesVariants.put(tz.toLowerCase(), utcOffset);
+        }
+    }
+
+    /**
+     * 
+     * @param tz   any reasonable TZ label. Case-insensitive.
+     * @return  true if Country has this TZ
+     */
+    public boolean containsTimezone(String tz) {
+        if (tz == null) {
+            return false;
+        }
+        return timezonesVariants.containsKey(tz.toLowerCase());
+    }
+
+    /**
+     * 
+     * @param offset
+     * @return
+     */
+    public boolean containsUTCOffset(double offset) {
+        for (double off : timezones.values()) {
+            // What is a good way to evaluate 0.00 - 0.00 == 0? in Java. We see too many rounding errors in Java.
+            // Python: >>> (0.000  - 0) == 0    is True.  No floating point rounding errors.
+            if (Math.abs(off - offset) < 0.10) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Country is also known as some list of aliases

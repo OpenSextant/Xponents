@@ -27,7 +27,16 @@ public class TestGeoUtils {
         if (util.getCountryByAnyCode("IV") == null) {
             fail("IV - Cote D'Ivoire not found");
         }
-        
+
+        Country C = util.getCountry("USA");
+        if (! C.containsUTCOffset(-5.0)){
+            fail("USA contains GMT-0500");
+        }
+        C = util.getCountry("JP");
+        if (! C.containsUTCOffset(9.0)){
+            fail("Japan contains GMT+0900");
+        }
+
     }
 
     private void print(String m) {
