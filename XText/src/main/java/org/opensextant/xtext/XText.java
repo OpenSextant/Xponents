@@ -156,7 +156,13 @@ public final class XText implements ExclusionFilter, Converter {
         ConvertedDocument.overwrite = b;
     }
 
-    /** @deprecated  use getPathManager().setConversionRoot( path ) */
+    /**
+     * Sets the archive dir.
+     *
+     * @param root the new archive dir
+     * @throws IOException on err
+     * @deprecated  use getPathManager().setConversionRoot( path )
+     */
     @Deprecated
     public void setArchiveDir(String root) throws IOException {
         paths.setConversionCache(root);
@@ -172,7 +178,7 @@ public final class XText implements ExclusionFilter, Converter {
 
     /**
      * Set if your app requires file extensions or not.
-     * @param b
+     * @param b true to enable
      */
     public void enableNoFileExtension(boolean b) {
         allowNoExtension = b;
@@ -180,6 +186,8 @@ public final class XText implements ExclusionFilter, Converter {
 
     /**
      * Use Tika HTML de-crapifier. Default: No scrubbing.
+     *
+     * @param b true if you wish to de-crapify, I mean scrape HTML content
      */
     public void enableHTMLScrubber(boolean b) {
         scrubHTML = b;
@@ -188,7 +196,7 @@ public final class XText implements ExclusionFilter, Converter {
     /**
      * enable/disable the extraction of embedded child documents in found documents.
      * Using embedded extraction may yield many small sub documents, aka children.
-     * @param b
+     * @param b true to enable
      */
     public void enableEmbeddedExtraction(boolean b) {
         extractEmbedded = b;
@@ -199,7 +207,7 @@ public final class XText implements ExclusionFilter, Converter {
      * it; provided caller specifies either saveWithInput or provides an
      * archiveRoot
      *
-     * @param b
+     * @param b true to enable
      */
     public void enableSaving(boolean b) {
         paths.enableSaving(b);
@@ -211,6 +219,7 @@ public final class XText implements ExclusionFilter, Converter {
      * Adding requested file types here only allows the API to know by-file extension
      * what types to filter in and convert.  Without a file extension, the file
      * still needs to be ingested and converted to identify the file type.
+     * @param ext a file extension to convert
      */
     public void convertFileType(String ext) {
         requestedFileTypes.add(ext.toLowerCase());
@@ -219,6 +228,7 @@ public final class XText implements ExclusionFilter, Converter {
     /**
      * Ignore files ending with.... or of type ext. No assumption of case is
      * made. This is case sensitive.
+     * @param ext a file extension to NOT convert
      */
     public void ignoreFileType(String ext) {
         if (ext != null) {
@@ -231,6 +241,7 @@ public final class XText implements ExclusionFilter, Converter {
     /**
      * A conversion listener is any outside application or routine that will do
      * something more with the converted document. If unset nothing happens. ;)
+     * @param processor a lisenter that handles the documents that have been found
      */
     public void setConversionListener(ConversionListener processor) {
         postProcessor = processor;
@@ -243,7 +254,10 @@ public final class XText implements ExclusionFilter, Converter {
     }
 
     /**
-     * is the input an archive?
+     * is the input an archive?.
+     *
+     * @param fpath the fpath
+     * @return true, if is archive
      */
     public boolean isArchive(String fpath) {
         String ext = FilenameUtils.getExtension(fpath);
@@ -272,7 +286,7 @@ public final class XText implements ExclusionFilter, Converter {
      * Records overall counts and conversion times for documents converted.
      * This may not account for error'd documents.
      *
-     * @param d
+     * @param d ConvertedDocument
      */
     protected void trackStatistics(ConvertedDocument d) {
         if (d != null) {
@@ -294,7 +308,9 @@ public final class XText implements ExclusionFilter, Converter {
      * Optional API routine.  If XText is used as a main program, this is the entry point for extraction/collection.
      * If XText is used as an API, caller may use convertFile() directly without engaging in the setup and assumptions behind this convenience method.
      * The main entry point to converting compound documents and folders.
-     * @throws ConfigException
+     * @param filepath item from which we extract text
+     * @throws IOException err
+     * @throws ConfigException err
      */
     public void extractText(String filepath) throws IOException, ConfigException {
 
@@ -411,7 +427,9 @@ public final class XText implements ExclusionFilter, Converter {
      * or (archive)/(input)/A_zip
      *
      * Items are then converted in either folder for the conversion archiving; depending on your choice of embedded vs. non-embedded
-     * @throws ConfigException
+     * @param input archive file object
+     * @throws IOException on err
+     * @throws ConfigException on err
      *
      */
     public void convertArchive(File input) throws IOException, ConfigException {
@@ -440,8 +458,9 @@ public final class XText implements ExclusionFilter, Converter {
 
     /**
      *
-     * @param input
-     * @throws IOException
+     * @param input input PST object
+     * @throws IOException on err
+     * @throws ConfigException on err
      */
     public void convertOutlookPST(File input) throws ConfigException, IOException {
         if (!paths.isSaving()) {
@@ -490,7 +509,9 @@ public final class XText implements ExclusionFilter, Converter {
      * deals with the details of saving and archiving items
      *
      * Items retrieved from Archive Navigator are deleted from their temp space.
-     * @throws ConfigException
+     * @param input file
+     * @throws ConfigException on err
+     * @throws IOException on err
      */
     @Override
     public ConvertedDocument convert(File input) throws IOException, ConfigException {
@@ -504,6 +525,9 @@ public final class XText implements ExclusionFilter, Converter {
      * buffer of HTML content and want to save it as text, call
      * TikaHTMLConverter().convert( buffer ) directly.
      *
+     * @param data raw data
+     * @return the converted document
+     * @throws IOException on err
      */
     @Override
     public ConvertedDocument convert(String data) throws IOException {
@@ -511,6 +535,14 @@ public final class XText implements ExclusionFilter, Converter {
                 + "you must use an instance of a XText converter, e.g., TikaHTMLConverter");
     }
 
+    /**
+     * Convert file.
+     *
+     * @param input the input
+     * @return the converted document
+     * @throws IOException on err
+     * @throws ConfigException on err
+     */
     public ConvertedDocument convertFile(File input) throws IOException, ConfigException {
         return convertFile(input, null);
     }
@@ -525,9 +557,11 @@ public final class XText implements ExclusionFilter, Converter {
      * attention they are not converted -- caller can pass in ConversionListener
      * and can deal with children file objects on their end.
      *
-     * @param input
+     * @param input child input obj to convert
+     * @param parent parent in which child was found
      * @return converted document object
-     * @throws java.io.IOException
+     * @throws IOException on err
+     * @throws ConfigException on err
      */
     public ConvertedDocument convertFile(File input, ConvertedDocument parent) throws IOException,
     ConfigException {
@@ -685,6 +719,8 @@ public final class XText implements ExclusionFilter, Converter {
      * listener. Do not sacrifice the entire job if one file fails, so exception
      * is trapped in loop
      *
+     * @param input the input
+     * @throws IOException on err
      */
     public void convertFolder(File input) throws IOException {
         java.util.Collection<File> files = FileUtils.listFiles(input, new SuffixFileFilter(
@@ -703,8 +739,8 @@ public final class XText implements ExclusionFilter, Converter {
      * convert those items immediately, saving the Parent metadata along with
      * them. You should have setParent already
      *
-     * @param parentDoc
-     * @throws IOException
+     * @param parentDoc parent conversion
+     * @throws IOException on err
      */
     public void convertChildren(ConvertedDocument parentDoc) throws IOException {
 
@@ -834,6 +870,7 @@ public final class XText implements ExclusionFilter, Converter {
      * If by this point you have taken items out of the requested types the
      * converters will not be setup. E.g., if you don't want PDF or HTML
      * conversion - those resources will not be initialized.
+     * @throws IOException on err
      */
     public void setup() throws IOException {
 
@@ -904,6 +941,7 @@ public final class XText implements ExclusionFilter, Converter {
 
     /**
      * Call after setup() has run to add all supported/requested file types
+     * @return file types as a set
      */
     public Set<String> getFileTypes() {
         return requestedFileTypes;

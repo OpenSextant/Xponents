@@ -131,7 +131,7 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     * @param latitude in degrees
+     * @param lat in degrees
      */
     @Override
     public void setLatitude(double lat) {
@@ -147,7 +147,7 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     * @param longitude in degrees
+     * @param lon in degrees
      */
     @Override
     public void setLongitude(double lon) {
@@ -182,7 +182,7 @@ public class GeoBase implements LatLon {
 
     /**
      * Convenience method for checking if lat/lon was set to other than 0,0 (default)
-     * @return
+     * @return true if instance has non-zero coordinates.
      */
     public boolean hasCoordinate(){
         return GeodeticUtility.isValidNonZeroCoordinate(latitude, this.longitude);

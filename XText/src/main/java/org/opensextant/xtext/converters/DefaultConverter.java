@@ -69,11 +69,10 @@ public class DefaultConverter extends ConverterAdapter {
     /**
      * Common implementation -- take an input stream and return a ConvertedDoc;
      *
-     * @param input
-     * @param doc
-     * @return
-     * @throws IOException
-     *             if underlying Tika parser/writer had an IO problem, an parser
+     * @param input stream for raw file
+     * @param doc raw file
+     * @return converted doc
+     * @throws IOException if underlying Tika parser/writer had an IO problem, an parser
      *             problem, or MAX_TEXT_SIZE is reached.
      */
     @Override

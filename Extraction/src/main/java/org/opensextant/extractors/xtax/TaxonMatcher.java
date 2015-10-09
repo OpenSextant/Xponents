@@ -133,7 +133,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Return the Solr Parameters for the tagger op.
      *
-     * @return
+     * @return solr params
      */
     @Override
     public SolrParams getMatcherParameters() {
@@ -146,8 +146,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * Caller must implement their domain objects, POJOs... this callback
      * handler only hashes them.
      *
-     * @param doc
-     * @return
+     * @param refData solr doc
+     * @return tag data
      */
     @Override
     public Object createTag(SolrDocument refData) {
@@ -163,8 +163,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     /**
      * Parse the taxon reference data from a solr doc and return Taxon obj.
-     * @param refData
-     * @return
+     * @param refData solr doc
+     * @return  taxon obj
      */
     public static Taxon createTaxon(SolrDocument refData) {
         Taxon label = new Taxon();
@@ -201,8 +201,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Configure an Extractor using a config file named by a path
      *
-     * @param patfile
-     *            configuration file path
+     * @param patfile configuration file path
      */
     @Override
     public void configure(String patfile) throws ConfigException {
@@ -212,8 +211,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Configure an Extractor using a config file named by a URL
      *
-     * @param patfile
-     *            configuration URL
+     * @param patfile configuration URL
      */
     @Override
     public void configure(java.net.URL patfile) throws ConfigException {
@@ -258,9 +256,9 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Implementation details -- use with or without the formal ID/buffer pairing.
      *
-     * @param id
-     * @param buf
-     * @return
+     * @param id doc id
+     * @param buf input text
+     * @return list of matches
      * @throws ExtractionException
      */
     private List<TextMatch> extractorImpl(String id, String buf) throws ExtractionException {
@@ -356,8 +354,6 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         return search(index, qp);
     }
 
-    /**
-     */
     public static List<Taxon> search(SolrServer index, SolrParams qparams)
             throws SolrServerException {
 
@@ -377,8 +373,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * search the current taxonomic catalog.
      *
      * @param query  Solr "q" parameter only
-     * @return
-     * @throws SolrServerException
+     * @return list of taxons
+     * @throws SolrServerException on err
      */
     public List<Taxon> search(String query) throws SolrServerException {
         return search(this.solr.getInternalSolrServer(), query);
@@ -387,8 +383,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * search the current taxonomic catalog.
      * @param qparams  Solr parameters in full.
-     * @return
-     * @throws SolrServerException
+     * @return list of taxons
+     * @throws SolrServerException on err
      */
     public List<Taxon> search(SolrParams qparams) throws SolrServerException {
         return search(this.solr.getInternalSolrServer(), qparams);

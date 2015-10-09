@@ -68,6 +68,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
      * stopterms -- a list of terms used to mark rows of data as "search_only"
      *
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void init(NamedList params) {
         /* Load the exclusion names -- these are terms that are

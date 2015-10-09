@@ -125,9 +125,9 @@ public class CSVFormatter extends AbstractFormatter {
     }
 
     /**
-     *
-     * @param row
-     * @param m
+     * Pull in data from match into the output schema (map)
+     * @param row input row to write
+     * @param m  given match has more metadata
      */
     public void buildRow(Map<String, String> row, TextMatch m) {
 
@@ -141,7 +141,6 @@ public class CSVFormatter extends AbstractFormatter {
     /**
      * Create a schema instance with the fields properly typed and ordered
      *
-     * @return
      * @throws ConfigException schema configuration error
      */
     protected void buildSchema() throws ConfigException {

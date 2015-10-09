@@ -56,11 +56,19 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
     /**
      * Initialize a reusable HTML parser.
+     * @param article_only true if you want to scrub HTML
+     * @throws IOException on err
      */
     public TikaHTMLConverter(boolean article_only) throws IOException {
         scrubHTMLArticle = article_only;
     }
 
+    /**
+     * Initialize a reusable HTML parser.
+     * @param article_only true if you want to scrub HTML
+     * @param docSize a maximum raw HTML document size
+     * @throws IOException on err
+     */
     public TikaHTMLConverter(boolean article_only, int docSize) throws IOException {
         this(article_only);
         maxHTMLDocumentSize = docSize;

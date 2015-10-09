@@ -52,8 +52,7 @@ public final class ShapefileFormatter extends GISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
-     * @param outFilename
-     * @throws Exception
+     * @throws Exception on err
      */
     @Override
     protected void createOutputStreams() throws Exception {

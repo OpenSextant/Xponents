@@ -27,6 +27,8 @@
 
 package org.opensextant.xtext;
 
+import java.io.IOException;
+
 import org.opensextant.ConfigException;
 
 /**
@@ -42,9 +44,23 @@ import org.opensextant.ConfigException;
  */
 public interface Converter {
 
-    /** */
-    ConvertedDocument convert(java.io.File doc) throws java.io.IOException, ConfigException;
+    /**
+     * Convert.
+     *
+     * @param doc file object to convert
+     * @return the converted document
+     * @throws IOException i/o error
+     * @throws ConfigException cfg err
+     */
+    ConvertedDocument convert(java.io.File doc) throws IOException, ConfigException;
 
-    /** */
-    ConvertedDocument convert(String data) throws java.io.IOException, ConfigException;
+    /**
+     * Convert.
+     *
+     * @param data file path to convert
+     * @return the converted document
+     * @throws IOException i/o error
+     * @throws ConfigException cfg err
+     */
+    ConvertedDocument convert(String data) throws IOException, ConfigException;
 }

@@ -27,6 +27,7 @@ import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import org.opensextant.ConfigException;
 import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.ConversionListener;
 import org.opensextant.xtext.ConvertedDocument;
@@ -37,22 +38,38 @@ import org.opensextant.xtext.converters.MessageConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The Class DefaultMailCrawl.
+ */
 public class DefaultMailCrawl extends MailClient implements ConversionListener, Collector {
 
     /**
-     * A collection listener to consult as far as how to record the found & converted content
+     * A collection listener to consult as far as how to record the found &amp; converted content
      * as well as to determine what is worth saving.
      *
      */
     protected CollectionListener listener = null;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Instantiates a new default mail crawl.
+     *
+     * @param cfg the cfg
+     * @param archive the archive
+     */
     public DefaultMailCrawl(MailConfig cfg, String archive) {
         super(cfg, archive);
     }
 
+    /** The Constant dateKeyFormat. */
     final static SimpleDateFormat dateKeyFormat = new SimpleDateFormat("yyyyMMdd");
 
+    /**
+     * Creates the date folder.
+     *
+     * @param d date
+     * @return folder representing the date (e.g., collection date)
+     */
     protected File createDateFolder(Date d) {
         String dateKey = dateKeyFormat.format(d.getTime());
         String path = String.format("%s%s%s", archiveRoot, Collector.PATH_SEP, dateKey);
@@ -66,6 +83,13 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
         return dateFolder;
     }
 
+    /**
+     * Creates the message folder.
+     *
+     * @param parent  parent container
+     * @param msgid message ID
+     * @return created folder that will contain the message and any related attachments.
+     */
     protected File createMessageFolder(File parent, String msgid) {
 
         String path = String.format("%s%s%s", parent.getAbsolutePath(), Collector.PATH_SEP, msgid);
@@ -81,12 +105,16 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
     /**
      * Important that you set a listener if you want to see what was captured.
      * As well as optimize future harvests.  Listener tells the collector if the item in question was harvested or not.
-     * @param l
+     * @param l listener to use
      */
     public void setListener(CollectionListener l) {
         listener = l;
     }
 
+
+    /* (non-Javadoc)
+     * @see org.opensextant.xtext.collectors.mailbox.MailClient#setConverter(org.opensextant.xtext.XText)
+     */
     @Override
     public void setConverter(XText conversionManager) {
         converter = conversionManager;
@@ -96,8 +124,14 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
     }
 
     /**
-     * Email
-     * @throws IOException
+     * Email parser, converter, recorder.  This routine handles one message that
+     * may have a number of attachments (children)
+     * 
+     * IOException is logged if handling of children documents+conversions fails.
+     * TODO: handleConversion should throw IOException or use listener to report errors for this document
+     *
+     * @param doc the doc
+     * @param filepath the filepath
      */
     @Override
     public void handleConversion(ConvertedDocument doc, String filepath) {
@@ -148,28 +182,33 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
 
     /**
      * TODO:
-     *
+     * 
      * pull all mail messages,
      * - create reasonable  FILE.msg  file name
      * - use XText to iterate over each msg file for conversion
      * - reimplement
      *
+     * @throws IOException on failure to connect or collect.
      */
     @Override
-    public void collect() throws MessagingException {
+    public void collect() throws IOException, ConfigException {
 
         File dateFolder = createDateFolder(new Date());
         if (dateFolder == null) {
             log.error("Unable to create directory: " + dateFolder);
             return;
         }
-
-        connect();
-        Message[] messages = getMessages();
-        if (messages == null) {
-            log.info("No messages available - Exiting MailClient now");
-            disconnect();
-            return;
+        Message[] messages = null;
+        try {
+            connect();
+            messages = getMessages();
+            if (messages == null) {
+                log.info("No messages available - Exiting MailClient now");
+                disconnect();
+                return;
+            }
+        } catch (MessagingException javaMailErr) {
+            throw new IOException("Unable to connect or get messages", javaMailErr);
         }
 
         int readCount = 0;
@@ -289,22 +328,30 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
             }
         }
 
-        disconnect();
+        // Well, if work was actually done but you fail to close the connection
+        // Its not a failure ... just make sure you figure out how to close cleanly.
+        // Error on close is likely rare.
+        try {
+            disconnect();
+        } catch (Exception javaMailErrOnClose) {
+            log.error("Unkosher disconnect", javaMailErrOnClose);
+        }
     }
 
     /**
-     * A very specific MESSAGE ->> FILE archiving method.
+     * A very specific MESSAGE -&gt;&gt; FILE archiving method.
      * Mail item will end up in:
-     *
+     * 
      *   YYYYMMDD/MSGID/SUBJ.eml  .. the original email.
      *   YYYYMMDD/MSGID/SUBJ_eml/ .. attachments here..
      *
-     * @param dateFolder
-     * @param msg
-     * @param oid
-     * @param fname
-     * @throws IOException
-     * @throws MessagingException
+     * @param dateFolder the date folder
+     * @param msg javamail message
+     * @param oid  message ID
+     * @param fname file name to save message
+     * @return 0 on success, -1 on error
+     * @throws IOException unknown I/O error.
+     * @throws MessagingException the messaging exception
      */
     protected int saveMessageToFile(File dateFolder, Message msg, String oid, String fname)
             throws IOException, MessagingException {

@@ -24,18 +24,32 @@ import org.apache.commons.io.IOUtils;
 import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.Converter;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ConverterAdapter.
  *
  * @author ubaldino
  */
 public abstract class ConverterAdapter implements Converter {
 
+    /**
+     * Conversion implementation.
+     *
+     * @param in the in
+     * @param doc the doc
+     * @return the converted document
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     protected abstract ConvertedDocument conversionImplementation(InputStream in, File doc) throws IOException;
 
     /**
      * Not an iConvert interface, yet.
      * This would take great care in all implementations to ensure the converters do not rely on
      * the "File doc" argument.
+     *
+     * @param data stream
+     * @return the converted document
+     * @throws IOException on err
      */
     //@Override
     public ConvertedDocument convert(InputStream data) throws IOException {
@@ -47,6 +61,10 @@ public abstract class ConverterAdapter implements Converter {
      * implementation opens and closes a stream to read the string. Metadata is
      * derived solely from the text provided, e.g., length, conversion time,
      * encoding.
+     *
+     * @param data stream
+     * @return the converted document
+     * @throws IOException on err
      */
     @Override
     public ConvertedDocument convert(String data) throws IOException {
@@ -58,6 +76,10 @@ public abstract class ConverterAdapter implements Converter {
      * the greatest degree possible. Underlying implementation opens and closes
      * a stream to read the file. In other words implementation of converters
      * should close the given input stream.
+     *
+     * @param doc  raw file
+     * @return the converted document
+     * @throws IOException on err
      */
     @Override
     public ConvertedDocument convert(java.io.File doc) throws IOException {

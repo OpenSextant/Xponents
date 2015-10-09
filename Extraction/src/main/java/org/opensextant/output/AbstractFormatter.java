@@ -99,9 +99,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     }
 
     /**
-     * @param fname
-     * @see
-     * org.opensextant.processing.output.ResultsFormatter#setJobName(java.lang.String)
+     * @param fname file name of output
      */
     @Override
     public void setOutputFilename(String fname) {
@@ -109,9 +107,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     }
 
     /**
-     * @param path
-     * @see
-     * org.opensextant.processing.output.ResultsFormatter#setOutputDir(java.lang.String)
+     * @param path output dir path
      */
     @Override
     public void setOutputDir(String path) {
@@ -127,7 +123,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
 
     /**
      * Write to a file and return HTML containing a link to the file.
-     * @param corpusList
+     * @param res result to write
      * @throws ProcessingException processing or formatting error
      */
     @Override
@@ -147,16 +143,14 @@ abstract public class AbstractFormatter implements ResultsFormatter {
 
     /**
      *
-     * @return
+     * @return file name with extension
      */
     protected String createOutputFileName() {
         return this.filename + this.outputExtension;
     }
 
     /**
-     * @return
-     * @see
-     * org.opensextant.processing.output.ResultsFormatter#getOutputType()
+     * @return type of output
      */
     @Override
     public String getOutputType() {

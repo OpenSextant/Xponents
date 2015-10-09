@@ -28,7 +28,8 @@ public class CountryRule extends GeocodeRule {
 
     /**
      * Assess which candidate tags are references to countries.
-     * @param names - list of candidates to evaluate for country evidence.
+     * @param name list of candidates to evaluate for country evidence.
+     * @param geo  country/geo to evaluate
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {

@@ -41,7 +41,7 @@ public class ImageMetadataConverter extends ConverterAdapter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private boolean emitMinimalText = true;
 
-    private final static String[] usefulFields = { "geo", "gps", "creation", "date", "model" };
+    public final static String[] usefulFields = { "geo", "gps", "creation", "date", "model" };
 
     private final static Set<String> usefulFieldsSet = new HashSet<String>();
     static {
@@ -54,7 +54,7 @@ public class ImageMetadataConverter extends ConverterAdapter {
 
     /**
      * This form generates a TEXT version of the JPEG that has the minimal amount of text - GPS*, geo*, model, and creation (date).
-     * @param mimimalText
+     * @param mimimalText true if you wish to save minimal text with conversions; Otherwise default is to format all EXIF or other metadata properties as text
      */
     public ImageMetadataConverter(boolean mimimalText) {
         this();
@@ -63,8 +63,8 @@ public class ImageMetadataConverter extends ConverterAdapter {
 
     /**
      * filter out irrelevant metadata for text.
-     * @param metakey
-     * @return
+     * @param metakey property name
+     * @return if property is useful by our standards; see usefulfields
      */
     private static boolean isUseful(String metakey) {
         if (metakey == null) {
@@ -81,9 +81,8 @@ public class ImageMetadataConverter extends ConverterAdapter {
 
     /**
      * Could pull in geodesy to do an Angle(lat,lon).toString() ...
-     * @param lat
-     * @param lon
-     * @return
+     * @param yx  LatLon object 
+     * @return formatted string of LL
      */
     private String formatCoord(LatLon yx) {
 

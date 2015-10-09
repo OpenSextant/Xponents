@@ -264,9 +264,12 @@ public class GeonamesUtility {
 
     /**
      * Find distinct country object by a code.
-     * Ambiguous codes will not do anything.
-     * @param cc
-     * @return
+     * Ambiguous codes will not do anything.  This is really useful only if you
+     * have no idea what standard your data uses -- FIPS or ISO2/ISO3.  If you know
+     * then use the API method corresponding to that standard. getCountry() is ISO by default.
+     *
+     * @param cc  country code from any standard.
+     * @return found country object
      */
     public Country getCountryByAnyCode(String cc) {
         if (isoCountries.containsKey(cc) && fipsCountries.containsKey(cc)) {
@@ -295,7 +298,7 @@ public class GeonamesUtility {
 
     /**
      * Find an ISO code for a given FIPS entry.
-     * @param fips
+     * @param fips FIPS code
      * @return null if key does not exist.
      */
     public String FIPS2ISO(String fips) {

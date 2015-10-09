@@ -59,6 +59,12 @@ public class ArchiveNavigator implements Collector {
     /**
      * Given a working temp folder and a file filter unpack archives.  Teh working dir, saveTo, is not created.
      * It must exist ahead of time;
+     *
+     * @param inputFile  input archive
+     * @param saveTo output dir where entries are saved.
+     * @param fileFilter  file exension filter
+     * @param fileConv  conversion resource, e.g. instance of XText
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public ArchiveNavigator(File inputFile, String saveTo, ExclusionFilter fileFilter,
             Converter fileConv) throws IOException {
@@ -83,7 +89,8 @@ public class ArchiveNavigator implements Collector {
     /**
      * Unpack any archive. You must provide a converter -- which converts each
      * file.
-     * @throws ConfigException
+     * @throws ConfigException if archive output dirs were requested but unsettable or non-existant
+     * @throws IOException if archive had I/O issues or is invalid type of archive
      */
     @Override
     public void collect() throws IOException, ConfigException {
@@ -164,7 +171,7 @@ public class ArchiveNavigator implements Collector {
      * @param theFile
      * @param fname
      * @return TAR file path for result.
-     * @throws IOException
+     * @throws IOException on I/O failure
      */
     private File gunzipAsTAR(File theFile, String fname) throws IOException {
 
@@ -244,7 +251,7 @@ public class ArchiveNavigator implements Collector {
      * @param archiveio
      * @param root
      * @return
-     * @throws IOException
+     * @throws IOException if entry could not be saved to disk, e.g., outputDir
      */
     private File saveArchiveEntry(ArchiveEntry E, InputStream archiveio, File root)
             throws IOException {

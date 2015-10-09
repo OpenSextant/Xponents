@@ -43,7 +43,7 @@ public interface ResultsFormatter {
     void setParameters(Parameters params);
 
     /**
-     * @return
+     * @return name of job
      */
     String getJobName();
 
@@ -61,13 +61,13 @@ public interface ResultsFormatter {
 
     /**
      * Get the type of output produced by this formatter.
-     * @return
+     * @return type of output
      */
     String getOutputType();
 
     /**
      * Get the path to the output file.
-     * @return
+     * @return file path of output
      */
     String getOutputFilepath();
 
@@ -76,11 +76,11 @@ public interface ResultsFormatter {
      * Returns a string to display to the user. Typically this will be HTML to be
      * shown in a browser.
      *
-     * @param corpusList
+     * @param result
      * @return A message for the user
      * @throws ProcessingException formatting error
      */
-    String formatResults(ExtractionResult corpus) throws ProcessingException;
+    String formatResults(ExtractionResult result) throws ProcessingException;
 
     void start(String nm) throws ProcessingException;
 
@@ -88,15 +88,15 @@ public interface ResultsFormatter {
 
     /**
      *
-     * @param f
-     * @throws ConfigException
+     * @param f field 
+     * @throws ConfigException if not consistent with schema
      */
     void addField(String f) throws ConfigException;
 
     /**
      *
-     * @param f
-     * @throws ConfigException
+     * @param f field
+     * @throws ConfigException if not consistent with schema
      */
     void removeField(String f) throws ConfigException;
 }

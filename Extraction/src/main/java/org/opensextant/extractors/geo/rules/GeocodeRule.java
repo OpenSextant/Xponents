@@ -37,7 +37,7 @@ public abstract class GeocodeRule {
 
     /**
      *
-     * @param nameList
+     * @param names list of found place names
      */
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {

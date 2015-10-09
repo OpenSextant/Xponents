@@ -136,8 +136,8 @@ public class SolrGazetteer {
     }
 
     /**
-     * 
-     * @return
+     * Do Not use.
+     * @return  solr params
      * @deprecated DO NOT USE.  Keeping this as a reminder of what not to do.
      * This will load entire index into memory.
      */
@@ -161,7 +161,7 @@ public class SolrGazetteer {
 
     /**
      * Creates a generic spatial query for up to first 25 rows.
-     * @return
+     * @return default params
      */
     protected static ModifiableSolrParams createGeodeticLookupParams() {
         return createGeodeticLookupParams(25);
@@ -172,8 +172,8 @@ public class SolrGazetteer {
      * If you choose to use  Solr spatial score-by-distance for sorting or anything, then
      * Solr appears to want to load entire index into memory.  So this sort mechanism is off by default.
      * 
-     * @param rows
-     * @return
+     * @param rows rows to include in spatial lookups
+     * @return solr params
      */
     protected static ModifiableSolrParams createGeodeticLookupParams(int rows) {
         /* Basic parameters for geospatial lookup.
@@ -271,11 +271,13 @@ public class SolrGazetteer {
     /**
      * This only returns Country objects that are names; It does not produce any
      * abbreviation variants.
-     *
+     * 
      * TODO: allow caller to get all entries, including abbreviations.
      *
+     * @param index solr instance to query
+     * @return country data hash
      * @throws SolrServerException the solr server exception
-     * @throws IOException
+     * @throws IOException on err, if country metadata file is not found in classpath
      */
     public static HashMap<String, Country> loadCountries(SolrServer index)
             throws SolrServerException, IOException {
@@ -393,10 +395,10 @@ public class SolrGazetteer {
     /**
      * Find places located at a particular location.  UNSORTED!
      *
-     * @param yx
-     * @param d  positive distance radius is required.
-     * @return
-     * @throws SolrServerException
+     * @param yx location
+     * @param withinKM  positive distance radius is required.
+     * @return list of places near location
+     * @throws SolrServerException on err
      */
     public List<Place> placesAt(LatLon yx, int withinKM) throws SolrServerException {
 
@@ -412,8 +414,8 @@ public class SolrGazetteer {
      * @param yx        location
      * @param withinKM  distance - required.
      * @param feature   feature class
-     * @return
-     * @throws SolrServerException
+     * @return list of places near location
+     * @throws SolrServerException on err
      */
     public List<Place> placesAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
 
@@ -451,11 +453,11 @@ public class SolrGazetteer {
      * This is a reasonable guess.
      * CAVEAT:  This does not use Solr Spatial location sorting.
      * 
-     * @param yx
-     * @param withinKM
-     * @param feature
-     * @return
-     * @throws SolrServerException
+     * @param yx location
+     * @param withinKM distance in KM
+     * @param feature feature type
+     * @return list of places near location
+     * @throws SolrServerException on err
      */
     public Place placeAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
         List<Place> candidates = placesAt(yx, withinKM, feature);

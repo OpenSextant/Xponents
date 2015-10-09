@@ -403,7 +403,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      * The current instance is the main match. But should you be able to parse
      * out additional interpretations, add them
      *
-     * @param m2 the m2
+     * @param m2 secondary match
      */
     public void addOtherInterpretation(GeocoordMatch m2) {
         if (interpretations == null) {
@@ -582,7 +582,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * @param latitude dec lat
+     * @param y  decimal latitude
      */
     @Override
     public void setLatitude(double y) {
@@ -590,7 +590,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * @param longitude dec lon
+     * @param x, decimal longitude
      */
     @Override
     public void setLongitude(double x) {

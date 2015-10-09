@@ -33,7 +33,7 @@ public class Language {
      *  codes are lower cased.
      *  @param id3 ISO 639-2 3-alpha code
      *  @param id2 ISO 639-2 2-alpha code
-     *  @param name of language
+     *  @param n name of language
      */
     public Language(String id3, String id2, String n) {
         if (StringUtils.isNotBlank(id3)) {

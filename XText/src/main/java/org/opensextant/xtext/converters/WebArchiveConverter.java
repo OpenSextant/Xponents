@@ -68,8 +68,8 @@ public class WebArchiveConverter extends MessageConverter {
     /**
      *  JavaScript or any script detection.
      *
-     * @param data
-     * @return
+     * @param data data
+     * @return if data is a script
      */
     public static boolean isWebScript(final String data) {
         if (StringUtils.isBlank(data)) {

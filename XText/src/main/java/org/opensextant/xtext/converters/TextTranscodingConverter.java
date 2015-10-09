@@ -113,7 +113,7 @@ public class TextTranscodingConverter extends ConverterAdapter {
      *
      * @param doc the doc
      * @param data the byte data to test
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException on err
      */
     public static void setTextAndEncoding(ConvertedDocument doc, byte[] data) throws UnsupportedEncodingException {
         boolean is_ascii = TextUtils.isASCII(data);

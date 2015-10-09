@@ -113,7 +113,7 @@ public abstract class SolrMatcherSupport {
      * Initialize. This capability is not supporting taggers/matchers using HTTP server.
      * For now it is intedended to be in-memory, local embedded solr server.
      *
-     * @throws IOException if solr server cannot be established from local index or from http server
+     * @throws ConfigException if solr server cannot be established from local index or from http server
      */
     public void initialize() throws ConfigException {
         solr = new SolrProxy(getCoreName());

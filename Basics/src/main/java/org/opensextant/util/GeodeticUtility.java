@@ -85,9 +85,9 @@ public class GeodeticUtility {
      * default have a value = 0.  This appears to be true for class attributes,
      * but not for locals.  Hence the NaN check in validateCoordinate.
      *
-     * @param lat
-     * @param lon
-     * @return
+     * @param lat in degrees
+     * @param lon in degress
+     * @return true if coordinate is non-zero (0.000, 0.000) AND is valid abs(lon) &lt; 180.0, etc.
      */
     public final static boolean isValidNonZeroCoordinate(double lat, double lon) {
         if (validateCoordinate(lat, lon)) {
@@ -118,8 +118,8 @@ public class GeodeticUtility {
 
     /** Haversine distance using LL1 to LL2;
      *
-     * @param p1
-     * @param p2
+     * @param p1  geodesy API LatLon
+     * @param p2  geodesy API LatLon
      * @return distance in meters.
      */
     public final static long distanceMeters(LatLon p1, LatLon p2) {
@@ -306,8 +306,8 @@ public class GeodeticUtility {
 
     /**
      * Create a string representation of a decimal lat/lon.
-     * @param yx
-     * @return  "lat, lon" formatted with 4 decimal places; that is an average amount of precision for common XY=>String uses.
+     * @param yx LatLon object
+     * @return  "lat, lon" formatted with 4 decimal places; that is an average amount of precision for common XY=&gt; String uses.
      */
     public final static String formatLatLon(final LatLon yx) {
         return String.format("%2.4f,%3.4f", yx.getLatitude(), yx.getLongitude());

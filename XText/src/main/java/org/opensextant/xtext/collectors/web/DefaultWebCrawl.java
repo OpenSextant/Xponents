@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Collector, CrawlFilter {
 
     /**
-     * A collection listener to consult as far as how to record the found & converted content
+     * A collection listener to consult as far as how to record the found &amp; converted content
      * as well as to determine what is worth saving.
      *
      */
@@ -59,10 +59,10 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
 
     /**
      *
-     * @param srcSite
-     * @param destFolder
-     * @throws MalformedURLException
-     * @throws ConfigException
+     * @param srcSite top level site
+     * @param destFolder output folder
+     * @throws MalformedURLException if srcSite is invalid format
+     * @throws ConfigException if other setup error
      */
     public DefaultWebCrawl(String srcSite, String destFolder) throws MalformedURLException,
     ConfigException {
@@ -72,7 +72,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     /**
      * Important that you set a listener if you want to see what was captured.
      * As well as optimize future harvests.  Listener tells the collector if the item in question was harvested or not.
-     * @param l
+     * @param l listener to use
      */
     public void setListener(CollectionListener l) {
         listener = l;
@@ -107,7 +107,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * as implemented by the collection listener.
      * The details on how actions at collection time differ from conversion time are TBD.
      *
-     * @throws IOException
+     * @throws IOException on collection err
      */
     @Override
     public void collect() throws IOException {
@@ -121,8 +121,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     /**
      * Override this if you have differnt ideas about what URL patterns are of interest.
      * DEFAULT FILTER OUT:  video files, page anchors, mailto links
-     * @param link
-     * @return
+     * @param link a URL
+     * @return true if link  should be ignored.
      */
     public boolean filterOut(HyperLink link) {
         if (filterOutFile(link.getAbsoluteURL())) {
@@ -140,10 +140,10 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
      * converted and recorded.
      * As hashing algorithms are used in defining concise output paths, NoSuchAlgorithmException is thrown.
      *
-     * @param link
-     * @param site
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
+     * @param _link a URL
+     * @param startingSite the top level site
+     * @throws IOException on err
+     * @throws NoSuchAlgorithmException error that never happens
      */
     public void collectItems(String _link, URL startingSite) throws IOException,
     NoSuchAlgorithmException {
@@ -262,7 +262,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                     }
 
                     /*
-                     * Identify the correct type of file this item is, from HTTP headers & MIME, not just the link
+                     * Identify the correct type of file this item is, from HTTP headers &amp; MIME, not just the link
                      */
                     Header contentType = itemPage.getEntity().getContentType();
                     if (contentType!=null){
@@ -304,10 +304,11 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
 
     /**
      * convert and record a downloaded item, given the item and its source URL.
-     * @param item
-     * @throws IOException
-     * @throws ConfigException
-     * @throws NoSuchAlgorithmException
+     * @param item item to convert
+     * @param link link representing the original/source
+     * @throws IOException on err
+     * @throws ConfigException on err
+     * @throws NoSuchAlgorithmException an error that never happens
      */
     protected void convertContent(File item, HyperLink link) throws IOException, ConfigException, NoSuchAlgorithmException {
 
@@ -353,7 +354,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         return allowCurrentDirOnly;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.opensextant.xtext.collectors.web.CrawlFilter#setAllowCurrentDirOnly(boolean)
      */
     @Override
@@ -361,7 +362,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         this.allowCurrentDirOnly = allowCurrentDirOnly;
     }
 
-    /* (non-Javadoc)
+    /** (non-Javadoc)
      * @see org.opensextant.xtext.collectors.web.CrawlFilter#isAllowCurrentSiteOnly()
      */
     @Override
@@ -369,7 +370,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         return allowCurrentSiteOnly;
     }
 
-    /* (non-Javadoc)
+    /** (non-Javadoc)
      * @see org.opensextant.xtext.collectors.web.CrawlFilter#setAllowCurrentSiteOnly(boolean)
      */
     @Override

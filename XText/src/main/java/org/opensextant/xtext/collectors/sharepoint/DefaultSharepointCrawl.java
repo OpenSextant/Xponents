@@ -45,9 +45,9 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class DefaultSharepointCrawl extends SharepointClient implements ExclusionFilter, Collector,
-        CrawlFilter {
+CrawlFilter {
     /**
-     * A collection listener to consult as far as how to record the found & converted content
+     * A collection listener to consult as far as how to record the found &amp; converted content
      * as well as to determine what is worth saving.
      *
      */
@@ -57,11 +57,15 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
     private boolean allowCurrentDirOnly = false;
 
     /**
+     * Instantiates a new default sharepoint crawl.
      *
-     * @param srcSite
-     * @param destFolder
-     * @throws MalformedURLException
-     * @throws ConfigException
+     * @param srcSite site url
+     * @param destFolder output folder
+     * @param u user ID
+     * @param p password
+     * @param dom domain
+     * @throws MalformedURLException on err
+     * @throws ConfigException on err
      */
     public DefaultSharepointCrawl(String srcSite, String destFolder, String u, String p, String dom)
             throws MalformedURLException, ConfigException {
@@ -71,7 +75,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
     /**
      * Important that you set a listener if you want to see what was captured.
      * As well as optimize future harvests.  Listener tells the collector if the item in question was harvested or not.
-     * @param l
+     * @param l listener to use
      */
     public void setListener(CollectionListener l) {
         listener = l;
@@ -106,7 +110,7 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
      * as implemented by the collection listener.
      * The details on how actions at collection time differ from conversion time are TBD.
      *
-     * @throws IOException
+     * @throws IOException on err
      */
     @Override
     public void collect() throws IOException {
@@ -116,8 +120,8 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
     /**
      * Override this if you have differnt ideas about what URL patterns are of interest.
      * DEFAULT FILTER OUT:  video files, page anchors, mailto links
-     * @param link
-     * @return
+     * @param link found link
+     * @return true if link should be ignored.
      */
     public boolean filterOut(HyperLink link) {
         if (filterOutFile(link.getAbsoluteURL())) {
@@ -135,8 +139,8 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
      * converted and recorded.
      * TODO: test more completely the depths of recursive folders this supports.
      *
-     * @param link
-     * @throws IOException
+     * @param link URL to collect
+     * @throws IOException on err
      */
     public void collectItems(URL link) throws IOException {
 
@@ -163,7 +167,6 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
                 log.info("Not on current site: {}", l);
                 continue;
             }
-
 
             // Download artifacts
             if (l.isFile()) {
@@ -226,12 +229,14 @@ public class DefaultSharepointCrawl extends SharepointClient implements Exclusio
      * copy copy copy -- see DefaultWebCrawl
      *
      * convert and record a downloaded item, given the item and its source URL.
-     * @param item
-     * @throws IOException
-     * @throws ConfigException
-     * @throws NoSuchAlgorithmException
+     * @param item item
+     * @param link original URL where item was found
+     * @throws IOException on err
+     * @throws ConfigException on err
+     * @throws NoSuchAlgorithmException on err
      */
-    protected void convertContent(File item, HyperLink link) throws IOException, ConfigException, NoSuchAlgorithmException {
+    protected void convertContent(File item, HyperLink link) throws IOException, ConfigException,
+    NoSuchAlgorithmException {
 
         if (item == null || link == null) {
             throw new IOException("Bad data - null values for file and link...");

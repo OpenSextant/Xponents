@@ -62,12 +62,13 @@ public class PathManager {
      * it; provided caller specifies either saveWithInput or provides an
      * archiveRoot
      *
-     * @param b
+     * @param b true to allow saving/caching conversions
      */
     public void enableSaving(boolean b) {
         saving = b;
     }
-    public boolean isSaving(){
+
+    public boolean isSaving() {
         return saving;
     }
 
@@ -117,16 +118,16 @@ public class PathManager {
      * <pre>
      *   cache =  /output/converted/
      *
-     *   input =  /my/original/abc.zip  ==> /output/converted/abc_zip
-     *   input =  /my/original/abc.doc  ==> /output/converted/abc.doc.txt
-     *   input =  /my/original/abc/     ==> /output/converted/abc/
+     *   input =  /my/original/abc.zip  ==&gt; /output/converted/abc_zip
+     *   input =  /my/original/abc.doc  ==&gt; /output/converted/abc.doc.txt
+     *   input =  /my/original/abc/     ==&gt; /output/converted/abc/
      *
      *
      *   prefix set, as prefix=/my
      *
-     *   input =  /my/original/abc.zip  ==> /output/converted/original/abc_zip
-     *   input =  /my/original/abc.doc  ==> /output/converted/original/abc.doc.txt
-     *   input =  /my/original/abc/     ==> /output/converted/original/abc/
+     *   input =  /my/original/abc.zip  ==&gt; /output/converted/original/abc_zip
+     *   input =  /my/original/abc.doc  ==&gt; /output/converted/original/abc.doc.txt
+     *   input =  /my/original/abc/     ==&gt; /output/converted/original/abc/
      *
      *  if saved-in-input, none of this applies.
      * </pre>
@@ -136,7 +137,8 @@ public class PathManager {
      *
      * An items saved here will be of the form /A/name/relative/path
      * For an input that came from /some/input/name/relative/path
-          * @throws IOException
+     * @param input  root of your input which will be crawled
+     * @throws IOException if path does not exist or is not a directory
      */
     public void setInputRoot(File input) throws IOException {
         if (!saving) {
@@ -166,8 +168,8 @@ public class PathManager {
     /**
      * This enables saving in an archive and disables saving with input.
      *
-     * @param root
-     * @throws IOException
+     * @param root  container where conversions will be cached.
+     * @throws IOException  on err
      * @see #enableSaveInCache(boolean)
      * @see #enableSaveWithInput(boolean)
      */
@@ -184,7 +186,7 @@ public class PathManager {
         File test = new File(conversionCache);
 
         if (!test.exists() || !test.isDirectory()) {
-            throw new IOException("Archive root directory must exist. Non-existant DIR="+test);
+            throw new IOException("Archive root directory must exist. Non-existant DIR=" + test);
         }
 
         conversionCache = test.getAbsolutePath();
@@ -194,13 +196,15 @@ public class PathManager {
      * Save converted content with input. Xtext creates a new "xtext" folder in
      * the containing folder of the current file. This is disabled if a
      * non-null, pre-existing archive root is set.
-     *
+     * 
      * <pre>
      * input is:     a/b/c.doc
      * saved as:     a/b/xtext/c.doc.txt
-     *
+     * 
      * DEFAULT: do not save in input folder
      * </pre>
+     *
+     * @param b flag, true = save conversions close to given input
      * @see #setConversionCache(java.lang.String)
      */
     public void enableSaveWithInput(boolean b) {
@@ -219,7 +223,7 @@ public class PathManager {
      * Behavior may differ in each case.  But essentially, this flag directs XText to write back to inputRoot
      *
      * Embedded parent/child docs (email, compound docs, etc) are special cases,
-     * @param b
+     * @param b true if children objects should be extracted and save near input
      */
     public void enableSaveChildrenWithInput(boolean b) {
         saveExtractedChildrenWithOriginals = b;
@@ -229,11 +233,13 @@ public class PathManager {
      * Saving to an archive specified by the caller; This is inferred if a
      * non-null, pre-existing archive root is set; DEFAULT: do not save in
      * archive.
-     *
+     * 
      * <pre>
      * input is:   a/b/c.doc
      * output is:  archiveRoot/a/b/c.doc.txt
      * </pre>
+     *
+     * @param b true if save in cache, not with input.
      * @see #setConversionCache(java.lang.String)
      */
     public void enableSaveInCache(boolean b) {
@@ -245,7 +251,8 @@ public class PathManager {
     /**
      * Caller is responsible for checking null.
      *
-     * @param path
+     * @param path a path
+     * @return trimmed path
      */
     public static String trimLeadingSlash(String path) {
         if (path.length() == 0) {
@@ -260,7 +267,7 @@ public class PathManager {
     /**
      * Prepares a relative path, stripped of the prefix if one is provided.
      * Otherwise, the input path is returned less a leading slash.
-     * @param obj
+     * @param obj a file.
      * @return stripped path
      */
     public String getStrippedInputPath(File obj) {
@@ -280,7 +287,7 @@ public class PathManager {
      *
      * TODO: commons-io FilenameUtils.normalize()  does not work quite right across platforms. Review, Retest.
      *
-     * @param p
+     * @param p path
      * @return  fixed path
      */
     protected static String fixPath(String p) {
@@ -296,13 +303,13 @@ public class PathManager {
      * NOTE: Use of File() or FilenameUtils.concat() are OS dependent, here
      * what we want is more like a URL string representation always using /a/b/c/
      * Instead of potentially \ and/or / mixed.
-     * @param dir
-     * @param item
-     * @return  path
-     * @throws IOException
+     * @param dir  containing dir
+     * @param item  item to save in subfolder
+     * @return  path resulting path
+     * @throws IOException on err, e.g. permissions or disk full, etc.
      */
     protected static String createPath(String dir, String item) throws IOException {
-        File f = new File( String.format("%s/%s", dir, item) );
+        File f = new File(String.format("%s/%s", dir, item));
         return fixPath(f.getAbsolutePath());
     }
 
@@ -319,7 +326,7 @@ public class PathManager {
     /**
      * Run by XText.setup() to verify path issues.
      *
-     * @throws IOException
+     * @throws IOException on err
      */
     public void configure() throws IOException {
         if (saving && !this.saveConversionsWithOriginals && this.conversionCache == null) {
@@ -339,8 +346,8 @@ public class PathManager {
     /**
      * Wrapper around logic to save a conversion.  Save with input or save in other output folder.
      *
-     * @param textDoc
-     * @throws IOException
+     * @param textDoc converted doc to save
+     * @throws IOException on err
      */
     public void saveConversion(ConvertedDocument textDoc) throws IOException {
 
@@ -420,7 +427,7 @@ public class PathManager {
             log.error(
                     "Sorry -- if not saving in input folder, you must provide a separate "
                             + "archive to contain ZIP and other archives that are extracted.  Ignoring FILE={}",
-                    input);
+                            input);
             return false;
         }
 
@@ -434,7 +441,9 @@ public class PathManager {
      * This provides some means for retrieving previously converted files. ....
      * to avoid converted them.
      *
+     * @param obj item to retrieve from cache
      * @return doc ConvertedDocument from cache, otherwise null
+     * @throws IOException  on err
      */
     public static ConvertedDocument getEmbeddedConversion(File obj) throws IOException {
 
@@ -503,7 +512,7 @@ public class PathManager {
      * @param inputDir  original input folder where this item came from
      * @param obj  the requested file.
      * @return the cached version of the conversion; null if not found or if no conversion was made.
-     * @throws IOException
+     * @throws IOException on err
      */
     public static ConvertedDocument getCachedConversion(String cacheDir, String inputDir, File obj)
             throws IOException {
@@ -543,8 +552,8 @@ public class PathManager {
      * Apache Commons file utils "concat(dir, file)" makes a mess of file names.
      * Java can support "/" equally well on all platforms.
      * there is no apparent need to use platform specific file separators in this context.
-     * @param dir
-     * @param fname
+     * @param dir containing dir
+     * @param fname file name
      * @return full path.
      */
     protected static String makePath(File dir, String fname) {
@@ -555,8 +564,8 @@ public class PathManager {
      * Apache Commons file utils "concat(dir, file)" makes a mess of file names.
      * Java can support "/" equally well on all platforms.
      * there is no apparent need to use platform specific file separators in this context.
-     * @param dir
-     * @param fname
+     * @param dir containing dir
+     * @param fname file name
      * @return full path.
      */
     protected static String makePath(String dir, String fname) {
@@ -582,7 +591,7 @@ public class PathManager {
 
     /**
      * Simple test to see if filepath contains "./xtext/" for windows path or unix path.
-     * @param filepath
+     * @param filepath path to test
      * @return true if file parent is "/xtext/" or "\xtext\, case sensitive is found anywhere in path.
      */
     public final static boolean isXTextCache(String filepath) {
@@ -599,7 +608,7 @@ public class PathManager {
     /**
      * If a File is provided, this only checks the immediate parent folder.
      *
-     * @param obj
+     * @param obj path to test.
      * @return  true if file parent is "xtext", case sensitive.
      */
     public final static boolean isXTextCache(File obj) {
@@ -608,6 +617,10 @@ public class PathManager {
 
     /**
      * Given a path, retrieve a document.
+     *
+     * @param filepath file to retireve.
+     * @return the cached document
+     * @throws IOException on err
      */
     public static ConvertedDocument getCachedDocument(String filepath) throws IOException {
         return getCachedDocument(new File(filepath));
@@ -615,6 +628,10 @@ public class PathManager {
 
     /**
      * Given a path, retrieve a document parsing out the XText format.
+     *
+     * @param fconv file conversion path to check
+     * @return the cached document, if exists
+     * @throws IOException on err
      */
     public static ConvertedDocument getCachedDocument(File fconv) throws IOException {
         String buf = FileUtility.readFile(fconv);

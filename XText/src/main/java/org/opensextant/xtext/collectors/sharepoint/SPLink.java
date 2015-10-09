@@ -33,11 +33,11 @@ public class SPLink extends HyperLink {
 
     /**
      * TODO: fix site vs. base link
-     * @param link
-     * @param base
-     * @throws MalformedURLException
-     * @throws UnsupportedEncodingException
-     * @throws NoSuchAlgorithmException
+     * @param link a URL
+     * @param base where the URL was found
+     * @throws MalformedURLException  err that happens if URLs are poorly formatted.
+     * @throws UnsupportedEncodingException err that happens occasionally
+     * @throws NoSuchAlgorithmException err that never happens
      */
     public SPLink(String link, URL base) throws MalformedURLException, UnsupportedEncodingException, NoSuchAlgorithmException {
         super(link, base, base);
@@ -87,8 +87,8 @@ public class SPLink extends HyperLink {
     /**
      *
      * @return string for url if it could be simplified.
-     * @throws MalformedURLException
-     */
+     * @throws MalformedURLException on err
+     */ 
     public URL getSimplifiedFolderURL() throws MalformedURLException {
         if (simplifiedURL == null) {
             return null;
@@ -99,7 +99,7 @@ public class SPLink extends HyperLink {
     /**
      * parses out the RootFolder or returns the parent path part of the URL.
      *
-     * @return
+     * @return cleaner version of a folder
      */
     public String getSharepointFolder() {
         if (isSharepointFolder()) {

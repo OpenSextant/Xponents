@@ -69,6 +69,7 @@ public class MessageConverter extends ConverterAdapter {
     /**
      * @param in stream
      * @param doc original file
+     * @throws IOException on err
      */
     @Override
     protected ConvertedDocument conversionImplementation(InputStream in, File doc)
@@ -93,11 +94,11 @@ public class MessageConverter extends ConverterAdapter {
      *  -- live email capture from a mailbox:  you have the MimeMessage; there is no File object
      *  -- email capture from a filesystem:   you retrieved the MimeMessage from a File object
      *
-     * @param msg
-     * @param doc
+     * @param msg javamail Message obj
+     * @param doc converted doc for given message
      * @return doc conversion, likely a parent document with 1 or more child attachments
-     * @throws MessagingException
-     * @throws IOException
+     * @throws MessagingException on err
+     * @throws IOException on err
      */
     public ConvertedDocument convertMimeMessage(Message msg, File doc) throws MessagingException,
     IOException {
@@ -126,10 +127,9 @@ public class MessageConverter extends ConverterAdapter {
      *
      * @param msgdoc  doc conversion
      * @param message  original mail message
-     * @throws MessagingException
+     * @throws MessagingException on err
      */
-    private void setMailAttributes(ConvertedDocument msgdoc, Message message)
-            throws MessagingException {
+    private void setMailAttributes(ConvertedDocument msgdoc, Message message) throws MessagingException {
         String msg_id = getMessageID(message);
         if (msg_id == null) {
             return;
@@ -159,11 +159,11 @@ public class MessageConverter extends ConverterAdapter {
     }
 
     /**
-     * Retrieve the Identifier part of a message, that is <id@server> we want the "id" part.
+     * Retrieve the Identifier part of a message, that is &lt;id@server&gt; we want the "id" part.
      *
      * @param message mail message
-     * @return ID
-     * @throws MessagingException
+     * @return ID for message 
+     * @throws MessagingException on err
      */
     public static String getMessageID(Message message) throws MessagingException {
         String[] msgIds = message.getHeader("Message-Id");
@@ -237,6 +237,7 @@ public class MessageConverter extends ConverterAdapter {
      * @param bodyPart  individual sub-part to append to buffer
      * @param parent parent doc
      * @param buf text to append
+     * @param msgPrefixId msgId prefix
      * @throws IOException on error
      */
     public void parseMessage(Part bodyPart, ConvertedDocument parent, StringBuilder buf,
@@ -406,16 +407,15 @@ public class MessageConverter extends ConverterAdapter {
 
     /**
      * Abstract the encoding issue.
-     * @param data
+     * @param stm raw stream
      * @param enc  a transfer encoding named in the multipart header, see MimeUtility.decode() for more detail
      * @return byte data for the stream.  Caller still has to decode to proper charset.
-     * @throws IOException
-     * @throws Exception
+     * @throws Exception on error
      */
-    private static byte[] decodeMIMEText(InputStream data, String enc) throws Exception {
+    private static byte[] decodeMIMEText(InputStream stm, String enc) throws Exception {
         InputStream decodedContent = null;
         try {
-            decodedContent = MimeUtility.decode(data, enc);
+            decodedContent = MimeUtility.decode(stm, enc);
             return IOUtils.toByteArray(decodedContent);
         } finally {
             if (decodedContent != null) {
@@ -430,10 +430,10 @@ public class MessageConverter extends ConverterAdapter {
      * Lastly, the content bytes are always left as their native charset encoding.
      * Versus, text strings, which will be automatically in parseMessage() and saved as UTF-8
      *
-     * @param file_id
-     * @param input
+     * @param file_id file ID
+     * @param input stream
      * @return content raw child object
-     * @throws IOException
+     * @throws IOException on err
      */
     private Content createChildContent(String file_id, InputStream input, PartMetadata meta)
             throws IOException {
@@ -491,10 +491,6 @@ public class MessageConverter extends ConverterAdapter {
      * Help determine charset, object type, filename if any, and file extension
      * Mainly to guide how to parse, filter and employ the text content of this Part.
      *
-     * @author ubaldino
-     *
-     */
-    /**
      * @author ubaldino
      *
      */
@@ -671,7 +667,7 @@ public class MessageConverter extends ConverterAdapter {
 
     /**
      * Create a safe filename from arbitrary text. That is no special shell
-     * operators $, #, ?, >, <, *, ' ', etc.
+     * operators $, #, ?, &gt;, &lt;, *, ' ', etc.
      *
      * @param text text of a filename
      * @return file name constructed from input text and underscores in place of

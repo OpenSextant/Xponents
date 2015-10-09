@@ -1,6 +1,6 @@
 /**
  *
-* Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,38 +53,40 @@ public class PrecisionScales {
      * decimal places.
      */
     public static final double[] DD_precision_list = {
-            //
-            LAT_DEGREE_PRECISION, // 0
-            //
-            LAT_DEGREE_PRECISION / 10, // 1
-            //
-            LAT_DEGREE_PRECISION / 100, // 2, ... etc.
-            //
-            LAT_DEGREE_PRECISION / 1000,
-            //
-            LAT_DEGREE_PRECISION / 10000,
-            // Approx 1m precision at equator:
-            LAT_DEGREE_PRECISION / 100000,
-            //
-            LAT_DEGREE_PRECISION / 1000000,
-            //
-            LAT_DEGREE_PRECISION / 10000000,
-            //
-            LAT_DEGREE_PRECISION / 100000000,
-            //
-            LAT_DEGREE_PRECISION / 1000000000,
-            //
-            LAT_DEGREE_PRECISION / 10000000000L,
-            //
-            LAT_DEGREE_PRECISION / 100000000000L,
-            //
-            LAT_DEGREE_PRECISION / 1000000000000L };
+        //
+        LAT_DEGREE_PRECISION, // 0
+        //
+        LAT_DEGREE_PRECISION / 10, // 1
+        //
+        LAT_DEGREE_PRECISION / 100, // 2, ... etc.
+        //
+        LAT_DEGREE_PRECISION / 1000,
+        //
+        LAT_DEGREE_PRECISION / 10000,
+        // Approx 1m precision at equator:
+        LAT_DEGREE_PRECISION / 100000,
+        //
+        LAT_DEGREE_PRECISION / 1000000,
+        //
+        LAT_DEGREE_PRECISION / 10000000,
+        //
+        LAT_DEGREE_PRECISION / 100000000,
+        //
+        LAT_DEGREE_PRECISION / 1000000000,
+        //
+        LAT_DEGREE_PRECISION / 10000000000L,
+        //
+        LAT_DEGREE_PRECISION / 100000000000L,
+        //
+        LAT_DEGREE_PRECISION / 1000000000000L };
 
     // Last entry above.
     static final double FINEST_DD_PRECISION = LAT_DEGREE_PRECISION / 1000000000000L;
 
     /**
-     * @param m
+     * Sets the precision on a decimal degrees match
+     *
+     * @param m given match
      */
     public static void setDDPrecision(GeocoordMatch m) {
         m.precision.setDigits(count_DD_digits(m.lat_text));
@@ -101,8 +103,8 @@ public class PrecisionScales {
 
     /**
      * Return XCoord precision (+/- meters) in latitude.
-     * @param lat
-     * @return
+     * @param lat string representing latitude
+     * @return precision
      */
     public static GeocoordPrecision getDDPrecision(String lat) {
         GeocoordPrecision prec = new GeocoordPrecision();
@@ -123,8 +125,8 @@ public class PrecisionScales {
 
     /**
      * Count the number of decimal places in a lat or lon text string.
-     * @param lat
-     * @return
+     * @param lat string representing latitude
+     * @return  number of digits in lat, as a proxy for precision
      */
     public static int count_DD_digits(String lat) {
         if (lat == null) {
@@ -142,8 +144,8 @@ public class PrecisionScales {
     /**
      * Counts all digits in latitude.
      *
-     * @param lat
-     * @return
+     * @param lat string representing latitude
+     * @return number of digits in lat as a proxy for precision
      */
     public static int count_DMS_digits(String lat) {
         return TextUtils.count_digits(lat);
@@ -161,7 +163,7 @@ public class PrecisionScales {
     /**
      * set precision on a DMS text coordinate
      *
-     * @param m
+     * @param m DMS match
      */
     public static void setDMSPrecision(GeocoordMatch m) {
         m.precision.precision = LAT_DEGREE_PRECISION;
@@ -198,7 +200,7 @@ public class PrecisionScales {
 
     /**
      *
-     * @param m
+     * @param m MGRS match
      */
     public static void setMGRSPrecision(GeocoordMatch m) {
 
@@ -218,7 +220,7 @@ public class PrecisionScales {
 
     /**
      *
-     * @param m
+     * @param m UTM match
      */
     public static void setUTMPrecision(GeocoordMatch m) {
         m.precision.precision = UTM_precision(m.getText());
@@ -230,47 +232,47 @@ public class PrecisionScales {
      *
      */
     public static float[] MGRS_precision_list = { 100000, // 1  GZD
-            100000, // 2  GZD
-            100000, // 3  GZD
-            100000, // 4  Q
-            100000, // 5  Q
-            100000, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
-            // ---------------------------
-            10000, //  DEC PREC:  1 digit
-            10000, //
-            1000, //             3 digits
-            1000, // MINUTES PREC 3 digits
-            100, //              4 digits
-            100, //              4
-            10, // SECONDS PREC 6 digits
-            10, 1, 1, 0.1f, // 16
-            0.1f // 17
+        100000, // 2  GZD
+        100000, // 3  GZD
+        100000, // 4  Q
+        100000, // 5  Q
+        100000, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
+        // ---------------------------
+        10000, //  DEC PREC:  1 digit
+        10000, //
+        1000, //             3 digits
+        1000, // MINUTES PREC 3 digits
+        100, //              4 digits
+        100, //              4
+        10, // SECONDS PREC 6 digits
+        10, 1, 1, 0.1f, // 16
+        0.1f // 17
     };
     /**
      *
      */
     public static int[] MGRS2DEC_digits = { 0, // 1  GZD
-            0, // 2  GZD
-            0, // 3  GZD
-            0, // 4  Q
-            0, // 5  Q
-            0, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
-               // ---------------------------
-            1, //  DEC PREC:  1 digit
-            1, //
-            3, //             3 digits
-            3, // MINUTES PREC 3 digits
-            4, //              4 digits
-            4, //              4
-            6, // SECONDS PREC 6 digits
-            6, 7, 7, 8, // 16
-            8 // 17
+        0, // 2  GZD
+        0, // 3  GZD
+        0, // 4  Q
+        0, // 5  Q
+        0, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
+        // ---------------------------
+        1, //  DEC PREC:  1 digit
+        1, //
+        3, //             3 digits
+        3, // MINUTES PREC 3 digits
+        4, //              4 digits
+        4, //              4
+        6, // SECONDS PREC 6 digits
+        6, 7, 7, 8, // 16
+        8 // 17
     };
 
     /**
      * For now default UTM precision to +/- 100m
-     * @param utm
-     * @return
+     * @param utm UTM string
+     * @return precision
      */
     public static float UTM_precision(String utm) {
         return 100f;
@@ -299,9 +301,9 @@ public class PrecisionScales {
     /**
      * This was deemed to be more Java like, however performs 10x slower than
      * format2() -- which unfortunately rounds too early.
-     * @param f
-     * @param digits
-     * @return
+     * @param f  value
+     * @param digits digits to include in format
+     * @return formatted value.
      */
     public static String format(double f, int digits) {
         if (digits >= formatters.length) {

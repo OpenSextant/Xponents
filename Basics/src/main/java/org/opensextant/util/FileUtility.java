@@ -72,7 +72,7 @@ public class FileUtility {
      *
      * @param buffer  text to save
      * @param fname   name of file to save
-     * @return status
+     * @return status true if file was written
      * @throws IOException  if file had IO errors.
      */
     public static boolean writeFile(String buffer, String fname) throws IOException {
@@ -659,12 +659,12 @@ public class FileUtility {
      * @return Set containing unique words found in resourcepath
      * @throws IOException on error, resource does not exist
      */
-    public static Set<String> loadDictionary(URL resource, boolean case_sensitive)
+    public static Set<String> loadDictionary(URL resourcepath, boolean case_sensitive)
             throws IOException {
 
         InputStream io = null;
         try {
-            io = resource.openStream();
+            io = resourcepath.openStream();
             return loadDict(io, case_sensitive);
         } finally {
             io.close();
@@ -696,16 +696,16 @@ public class FileUtility {
     /**
      * Load a word list from a file path.
      *
-     * @param resource
-     * @param case_sensitive
-     * @return
-     * @throws IOException
+     * @param resourcepath  File object to load
+     * @param case_sensitive  if dictionary is loaded with case or not.
+     * @return a Set object containing distinct dictionary terms
+     * @throws IOException if load fails
      */
-    public static Set<String> loadDictionary(File resource, boolean case_sensitive)
+    public static Set<String> loadDictionary(File resourcepath, boolean case_sensitive)
             throws IOException {
         InputStream io = null;
         try {
-            io = new FileInputStream(resource);
+            io = new FileInputStream(resourcepath);
             return loadDict(io, case_sensitive);
         } finally {
             io.close();
@@ -881,10 +881,11 @@ public class FileUtility {
     }
 
     /**
-     * Check if path or URL is a webpage.
+     * Check if path or URL is a webpage.  This is helpful for looking at found URLs
+     * in unstructured data.
      *
-     * @param link
-     * @return
+     * @param link a URL
+     * @return  true if link looks like a URL (ie., if it starts with http: or https:)
      */
     public static boolean isWebURL(String link) {
         if (link == null) {

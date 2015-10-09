@@ -49,9 +49,16 @@ public class SharepointClient extends WebClient {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    /** For testing:
-     * @throws MalformedURLException
-     * @throws ConfigException
+    /**
+     *  For testing:.
+     *
+     * @param siteUrl the site url
+     * @param archive the archive
+     * @param u user name
+     * @param p password
+     * @param dom domain
+     * @throws MalformedURLException on err
+     * @throws ConfigException on err
      */
     public SharepointClient(String siteUrl, String archive, String u, String p, String dom)
             throws MalformedURLException, ConfigException {
@@ -115,11 +122,11 @@ public class SharepointClient extends WebClient {
 
     /**
      * Recursively parse a site page, limiting the crawl to local items
-     * contained within the current folder/page
+     * contained within the current folder/page.
      *
-     * @param html
-     *            HTML text buffer
-     * @return
+     * @param html HTML text buffer
+     * @param pageUrl the page url
+     * @return list of found sharepoint links
      */
     public Collection<SPLink> parseContentPage(String html, URL pageUrl) {
         Map<String, SPLink> contentLinks = new HashMap<String, SPLink>();

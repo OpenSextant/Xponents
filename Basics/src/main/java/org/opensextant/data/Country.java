@@ -123,9 +123,12 @@ public class Country extends Place {
     }
 
     /**
+     * Test if this Country contains the UTC offset.  Make sure you never
+     * pass a default of 0 (GMT+0) in, unless you really mean GMT0.
+     * No validation on your offset parameter is done.
      * 
-     * @param offset
-     * @return
+     * @param offset  UTC offset in hours.  Valid values are -12.0 to 12.0
+     * @return true if this Country contains the UTC offset.
      */
     public boolean containsUTCOffset(double offset) {
         for (double off : timezones.values()) {

@@ -23,7 +23,7 @@
  *
  * (c) 2012 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
-**/
+ **/
 package org.opensextant.processing;
 
 import java.util.Date;
@@ -84,6 +84,7 @@ public class Parameters extends java.util.Properties {
     public static int RUNTIME_FLAGS = FLAG_EXTRACT_CONTEXT;
 
     /** Processing will support multiple output formats
+     * @param fmt requested format
      */
     public void addOutputFormat(String fmt) {
         formats.add(fmt);
@@ -108,6 +109,7 @@ public class Parameters extends java.util.Properties {
 
     /**
      * Generates a simple job date/time key for the job
+     * @return 12-digit processing date format date+time
      */
     public static String getJobTimestamp() {
         return procdate_fmt.print(new Date().getTime());

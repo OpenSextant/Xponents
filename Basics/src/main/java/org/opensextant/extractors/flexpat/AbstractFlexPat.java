@@ -132,6 +132,7 @@ public abstract class AbstractFlexPat implements Extractor {
      * otherwise make use of just pattern ID + text value.
      *
      * @param m a TextMatch
+     * @param count incrementor used for uniqueness
      */
     protected void set_match_id(TextMatch m, int count) {
         try {

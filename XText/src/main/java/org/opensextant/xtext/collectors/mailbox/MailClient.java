@@ -54,7 +54,7 @@ public class MailClient {
     /**
      * Close Mailbox cleanly.
      *
-     * @throws MessagingException
+     * @throws MessagingException javamail error
      */
     public void disconnect() throws MessagingException {
 
@@ -73,9 +73,7 @@ public class MailClient {
 
     /**
      * Connect to the mail server and establish the user + folder session.
-     *
-     * @param properties
-     * @throws MessagingException
+     * @throws MessagingException javamail error
      */
     public void connect() throws MessagingException {
         logger.debug("host: {}, user: {}", config.getHost(), config.getUsername());
@@ -109,9 +107,9 @@ public class MailClient {
     }
 
     /**
-     *
-     * @return
-     * @throws MessagingException
+     * Retrieve messages from the configured folder/inbox
+     * @return array of messages
+     * @throws MessagingException javamail error
      */
     public Message[] getMessages() throws MessagingException {
         if (folder != null) {
@@ -122,8 +120,8 @@ public class MailClient {
 
     /**
      * Tests the availability of the currently configured source.
+     * @throws ConfigException err when testing indicates resource is not available
      */
-
     public void testAvailability() throws ConfigException {
 
         try {

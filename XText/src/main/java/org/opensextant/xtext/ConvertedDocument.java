@@ -72,19 +72,19 @@ public final class ConvertedDocument extends DocInput {
     public final static String URL_REFERRER_FIELD = "url-referrer";
 
     public final static String[] fields = {
-            // Dublin Core style metadata fields
-            "title", "author", "creator_tool", "pub_date", "keywords", "subject", "filepath",
-            "encoding",
-            //
-            // XText metadata.
-            "filtered", "converter", "conversion_date", "encrypted", "filesize", "textsize",
+        // Dublin Core style metadata fields
+        "title", "author", "creator_tool", "pub_date", "keywords", "subject", "filepath",
+        "encoding",
+        //
+        // XText metadata.
+        "filtered", "converter", "conversion_date", "encrypted", "filesize", "textsize",
 
-            // Consideration for compound documents; if this instance is a child doc then what is the parent?
-            "xtext_id", // REQUIRED -- the current document ID.
-            "xtext_parent_id", "xtext_parent_path",
+        // Consideration for compound documents; if this instance is a child doc then what is the parent?
+        "xtext_id", // REQUIRED -- the current document ID.
+        "xtext_parent_id", "xtext_parent_path",
 
-            // Additional metadata for web content.
-            URL_FIELD, URL_REFERRER_FIELD };
+        // Additional metadata for web content.
+        URL_FIELD, URL_REFERRER_FIELD };
 
     /**
      * Converters will populate metadatata. If the entry is an object or a file, its name will reflect that.
@@ -403,6 +403,8 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * get Filetime from original file.
+     *
+     * @return the filetime date obj
      */
     public Date getFiletime() {
         if (filetime != null) {
@@ -466,19 +468,23 @@ public final class ConvertedDocument extends DocInput {
     /**
      * Set default ID only after all conversion and all metadata has been acquired.
      * MD5 hash of text, if text is available, or of the filepath if file is empty.
-     * @throws NoSuchAlgorithmException
      *
+     * @throws IOException on err
+     * @throws NoSuchAlgorithmException on err
      */
     public void setDefaultID() throws IOException, NoSuchAlgorithmException {
-            if (hasText()) {
-                id = TextUtils.text_id(getText());
-            } else {
-                id = TextUtils.text_id(filepath);
-            }
+        if (hasText()) {
+            id = TextUtils.text_id(getText());
+        } else {
+            id = TextUtils.text_id(filepath);
+        }
     }
 
     /**
      * The whole point of this mess:  get the text from the original. It is set here and line endings normalized to unix line endings, \n
+     *
+     * @param buf textual data for this document object
+     * @throws UnsupportedEncodingException on err
      */
     public void setText(String buf) throws UnsupportedEncodingException {
         this.buffer = buf;
@@ -547,6 +553,8 @@ public final class ConvertedDocument extends DocInput {
     /**
      * Create date text is added only on conversion. If doc conversion is
      * retrieved from cache, caller should rely more on the "pub_date" property.
+     *
+     * @param d  date string
      */
     public void addCreateDate(String d) {
         this.create_date_text = d;
@@ -556,6 +564,8 @@ public final class ConvertedDocument extends DocInput {
     /**
      * Create date obj is added only on conversion. If doc conversion is
      * retrieved from cache, caller should rely more on the "pub_date" property.
+     *
+     * @param d date object
      */
     public void addCreateDate(java.util.Calendar d) {
         if (d == null) {
@@ -568,7 +578,7 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * For convenience,... add using Date obj
-     * @param d
+     * @param d publication or creation date
      */
     public void addCreateDate(java.util.Date d) {
         if (d == null) {
@@ -587,7 +597,7 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * string should be valid yyyy-mm-dd
-     * @param ymd
+     * @param ymd date string
      */
     public void setCreateDate(String ymd) {
         if (StringUtils.isBlank(ymd)) {
@@ -618,7 +628,9 @@ public final class ConvertedDocument extends DocInput {
      *   where will reside in archive?    /archive/.../source/a/b/c.xyz
      *   </pre>
      * Parent/Child relationship is complicated still.
+     *
      * @param container folder that represents the parent document
+     * @param childrenWithParent true if you want to save child near parent.
      */
     public void setPathRelativeTo(String container, boolean childrenWithParent) {
         String relPath = container;
@@ -652,11 +664,14 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      * Save buffer to a folder, outputDir;
-     *
+     * 
      * {HEADER_META}\n \n Buffer
-     *
+     * 
      * Text File is saved to your desintation output folder Files that are UTF-8
      * already will not be saved, copied or moved.
+     *
+     * @param outputDir the output dir
+     * @throws IOException on err
      */
     public void save(String outputDir) throws IOException {
         if (outputDir == null) {
@@ -672,6 +687,8 @@ public final class ConvertedDocument extends DocInput {
      * Similar to save(), but forces the output folder to be ./xtext/ in the
      * same folder as the input archive. a/b/c/file.xxx to
      * a/b/c/xtext/file.xxx.txt
+     *
+     * @throws IOException on err
      */
     public void saveEmbedded() throws IOException {
         if (is_converted) {
@@ -690,6 +707,8 @@ public final class ConvertedDocument extends DocInput {
      * IF the converted original file as a date/time later than that of the cached conversion,
      * this conversion cache will be overwritten.
      *
+     * @param target cache path
+     * @throws IOException on err
      */
     protected void _saveConversion(File target) throws IOException {
 
@@ -740,7 +759,7 @@ public final class ConvertedDocument extends DocInput {
      *    You can add additional metadata to the meta sheet using addProperty()
      *    Then overwrite existing doc conversions
      * @param target cached file to save a conversion.
-     * @throws IOException
+     * @throws IOException on error saving content
      */
     public void saveBuffer(File target) throws IOException {
         StringBuilder buf = new StringBuilder();

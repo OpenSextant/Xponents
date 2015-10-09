@@ -82,9 +82,9 @@ public class MailConfig extends Properties {
      * inherits System/OS properties, then overrides defaults from parameters in
      * given confg file.
      *
-     * @param propsFilePath
-     * @throws IOException
-     * @throws CrawlerException
+     * @param propsFilePath path to property sheet
+     * @throws IOException on err, likely SSL 
+     * @throws ConfigException on err
      */
     public MailConfig(String propsFilePath) throws IOException, ConfigException {
         super(System.getProperties());
@@ -114,12 +114,12 @@ public class MailConfig extends Properties {
      * Given this configuration, determine if the messages read so far (curr) is
      * at the total available
      *
-     * or if config specified a max read count, then if curr > max read, return
+     * or if config specified a max read count, then if curr &gt; max read, return
      * true.
      *
-     * @param total
-     * @param curr
-     * @return
+     * @param total  total available.
+     * @param curr  current incrementor.
+     * @return true if client/session is done reading available msgs
      */
     public boolean doneReading(int total, int curr) {
         if (this.getMaxMessagesToRead() < 0) {
@@ -134,7 +134,7 @@ public class MailConfig extends Properties {
      * from config file. Various flags are set as a result of interpreting the
      * key/value pairs.
      *
-     * @throws ConfigException
+     * @throws ConfigException on err
      */
     public void setProperties() throws ConfigException {
         setProperties(null);
@@ -143,8 +143,8 @@ public class MailConfig extends Properties {
     /**
      * Set properties from existing Property sheet.
      *
-     * @param props
-     * @throws ConfigException
+     * @param props javamail props
+     * @throws ConfigException  SSL or other property error
      */
     public void setProperties(Properties props) throws ConfigException {
 
@@ -171,7 +171,7 @@ public class MailConfig extends Properties {
 
     /**
      *
-     * @throws ConfigException
+     * @throws ConfigException SSL-related problem, e.g., keystore does not exist.
      */
     private void validateCertificates() throws ConfigException {
         if (StringUtils.isBlank(getKeyStore())) {
@@ -255,7 +255,7 @@ public class MailConfig extends Properties {
      *     mail.imap.socketFactory.class
      *
      * </pre>
-     *
+     * @return if relevant javamail properties were set.
      */
     protected boolean setConfiguration() {
         boolean foundParameters = false;
@@ -302,7 +302,7 @@ public class MailConfig extends Properties {
 
     /**
      * A conveneince wrapper around setting the SSL socket factory and other parameters.
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException  error related to mail/socket factory or other issue
      */
     public void setAdvancedSettings() throws GeneralSecurityException {
 
@@ -323,7 +323,7 @@ public class MailConfig extends Properties {
     /**
      * Return -1 if unknown or if it does not matter. 2003, 2007, 2010
      *
-     * @return
+     * @return  int representing year/version of MS Exchange
      */
     public int getExchangeServerVersion() {
         return exchangeServer;
@@ -332,8 +332,8 @@ public class MailConfig extends Properties {
     /**
      * Defaults to -1 if no value found
      *
-     * @param val
-     * @return
+     * @param val property
+     * @return parsed int
      */
     protected static int getIntegerProperty(Object val) {
         if (val == null) {
@@ -345,8 +345,8 @@ public class MailConfig extends Properties {
     /**
      * get a flag. DEFAULT: false
      *
-     * @param val
-     * @return
+     * @param val property value
+     * @return parsed boolean
      */
     protected static boolean getFlagProperty(Object val) {
         if (val == null) {

@@ -88,9 +88,10 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
     }
 
     protected Country country  = null;
+
     /**
      * Set the country object and the local country ID code.
-     * @param c
+     * @param c Country object which contains or is associated with this Place.
      */
     public void setCountry(Country c){
         country = c;
@@ -101,7 +102,7 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
 
     /**
      * get the country object; generally optional.
-     * @return
+     * @return the country object.
      */
     public Country getCountry(){
         return country;
@@ -368,10 +369,10 @@ public class Place extends GeoBase implements Comparable<Object>, Geocoding {
 
     /**
      *
-     * @param adminName name of the administrative boundary that contains this place.
+     * @param admName name of the administrative boundary that contains this place.
      */
-    public void setAdminName(String admnm) {
-        this.adminName = admnm;
+    public void setAdminName(String admName) {
+        this.adminName = admName;
     }
 
     @Override

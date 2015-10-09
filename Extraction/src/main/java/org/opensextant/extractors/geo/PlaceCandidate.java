@@ -442,7 +442,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     }
 
     /**
-     * @param preTokens the preTokens to set
+     * @param tok the preTokens to set
      */
     public void setPrematchTokens(String[] tok) {
         this.preTokens = tok;
@@ -456,7 +456,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     }
 
     /**
-     * @param postTokens the postTokens to set
+     * @param tok the postTokens to set
      */
     public void setPostmatchTokens(String[] tok) {
         this.postTokens = tok;

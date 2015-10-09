@@ -34,8 +34,8 @@ public interface ExclusionFilter {
 
     /**
      * Filter out a file given the path
-     * @param path
-     * @return
+     * @param path a file path
+     * @return if file should be ignored
      */
     boolean filterOutFile(String path);
 }

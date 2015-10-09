@@ -117,7 +117,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * 
      * @param lowercaseAllowed  variant is case insensitive.
      * 
-     * @throws ConfigException
+     * @throws ConfigException on err
      */
     public GazetteerMatcher(boolean lowercaseAllowed) throws ConfigException {
         initialize();
@@ -203,10 +203,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Geotag a buffer and return all candidates of gazetteer entries whose name matches phrases in the buffer.
      *
-     * @param buffer
-     * @param docid
-     * @return
-     * @throws ExtractionException
+     * @param buffer text
+     * @param docid ID
+     * @return list of place candidates
+     * @throws ExtractionException on err
      */
     public LinkedList<PlaceCandidate> tagText(String buffer, String docid)
             throws ExtractionException {
@@ -216,11 +216,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Tag names specifically with Chinese tokenizaiton
      * 
-     * @param buffer
-     * @param docid
-     * @return
+     * @param buffer text
+     * @param docid  ID
+     * @return list of place candidates
      * @since 2.7.11
-     * @throws ExtractionException
+     * @throws ExtractionException on err
      * 
      */
     public LinkedList<PlaceCandidate> tagCJKText(String buffer, String docid)
@@ -231,10 +231,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Tag place names in arabic.
      * 
-     * @param buffer
-     * @param docid
-     * @return
-     * @throws ExtractionException
+     * @param buffer text
+     * @param docid ID
+     * @since 2.7.11
+     * @return list of place candidates
+     * @throws ExtractionException on err
      */
     public LinkedList<PlaceCandidate> tagArabicText(String buffer, String docid)
             throws ExtractionException {
@@ -262,9 +263,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @param buffer text
      * @param docid  identity of the text
      * @param tagOnly True if you wish to get the matched phrases only. False if you want the full list of Place Candidates.
-     *
+     * @param fld gazetteer field to use for tagging
      * @return place_candidates List of place candidates
-     * @throws ExtractionException
+     * @throws ExtractionException on err
      */
     public LinkedList<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld)
             throws ExtractionException {
@@ -463,7 +464,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * This computes the cumulative filtering rate of user-defined and other non-place name
      * patterns
      *
-     * @return
+     * @return filtration ratio
      */
     public double getFiltrationRatio() {
         return (double) this.filteredTotal / (filteredTotal + matchedTotal);
@@ -607,9 +608,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Find places located at a particular location.
      *
-     * @param yx
-     * @return
-     * @throws SolrServerException
+     * @param yx location
+     * @return list of places near location
+     * @throws SolrServerException on err
      * @deprecated  Use SolrGazetteer directly
      */
     @Deprecated
@@ -622,9 +623,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * 'exclusion', 'category'
      *
      * "#" in exclusion column implies a comment.
-     * @param file
-     * @return
-     * @throws ConfigException
+     * @param file URL/file with exclusion terms
+     * @return set of filter terms
+     * @throws ConfigException if filter is not found
      */
     public static Set<String> loadExclusions(URL file) throws ConfigException {
         /* Load the exclusion names -- these are terms that are

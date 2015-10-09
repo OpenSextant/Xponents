@@ -79,8 +79,8 @@ public class EmbeddedContentConverter extends DefaultConverter {
      * organize the embedded items found within.  Embedded items are organized on disk with metadata.
      *
      * Supported = MS PPT/PPTX, DOC/DOCX, PDF
-     * @param fileext
-     * @return
+     * @param fileext ext
+     * @return  true if file extension is supported.
      */
     public static boolean isSupported(String fileext) {
         if (StringUtils.isBlank(fileext)) {
@@ -143,8 +143,8 @@ public class EmbeddedContentConverter extends DefaultConverter {
 
     /**
      *
-     * @param childObjects
-     * @return
+     * @param childObjects children
+     * @return text assembled from children
      */
     private String renderText(List<Content> childObjects) {
         StringBuilder buf = new StringBuilder();
@@ -198,8 +198,8 @@ public class EmbeddedContentConverter extends DefaultConverter {
         /**
          * Certain items are trivial.
          *
-         * @param mediaType
-         * @return
+         * @param mediaType media/MIME type
+         * @return true if object type should be filtered
          */
         public boolean filterOutTrivialObjects(String mediaType) {
             if (filterableMeta.contains(mediaType)) {

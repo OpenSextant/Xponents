@@ -93,6 +93,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
      * A default Geocoding app that demonstrates how to invoke the geocoding
      * pipline start to finish.
      *
+     * @throws ConfigException on err
      */
     public PlaceGeocoder() throws ConfigException {
         super();
@@ -109,9 +110,10 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     }
 
     /**
-     * Configure an Extractor using a config file named by a path
+     * Configure an Extractor using a config file named by a path.
      *
      * @param patfile configuration file path
+     * @throws ConfigException on err
      */
     @Override
     public void configure(String patfile) throws ConfigException {
@@ -151,13 +153,14 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     /**
      * We do whatever is needed to init resources... that varies depending on
      * the use case.
-     *
+     * 
      * Guidelines: this class is custodian of the app controller, Corpus feeder,
      * and any Document instances passed into/out of the feeder.
-     *
+     * 
      * This geocoder requires a default /exclusions/person-name-filter.txt,
      * which can be empty, but most often it will be a list of person names (which are non-place names)
      *
+     * @throws ConfigException on err
      */
     @Override
     public void configure() throws ConfigException {
@@ -225,9 +228,9 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
      * Both methods yield a geocoding.
      * </pre>
      *
-     * @param input
+     * @param input input buffer
      * @return TextMatch instances which are all PlaceCandidates.
-     * @throws ExtractionException
+     * @throws ExtractionException on err
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
@@ -348,8 +351,8 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
      * A method to retrieve one or more distinct admin boundaries containing the coordinate.
      * This depends on resolution of gazetteer at hand.
      *
-     * @param g
-     * @return
+     * @param g geocoding
+     * @return Place object near the geocoding.
      * @throws SolrServerException   a query against the Solr index may throw a Solr error.
      */
     public Place evaluateCoordinate(Geocoding g) throws SolrServerException {

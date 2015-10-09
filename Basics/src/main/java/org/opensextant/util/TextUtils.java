@@ -84,8 +84,8 @@ public class TextUtils {
 
     /**
      * Checks if non-ASCII and non-LATIN characters are present.
-     * @param data
-     * @return
+     * @param data any textual data
+     * @return true if content is strictly ASCII or Latin1 extended.
      */
     public final static boolean isLatin(String data) {
         char[] ch = data.toCharArray();
@@ -105,7 +105,6 @@ public class TextUtils {
                     || blk == Character.UnicodeBlock.LATIN_EXTENDED_D
                     || blk == Character.UnicodeBlock.LATIN_EXTENDED_ADDITIONAL) {
                 continue;
-
             }
 
             isLatin = false;
@@ -178,8 +177,8 @@ public class TextUtils {
 
     /**
      *
-     * @param c
-     * @return
+     * @param c a character
+     * @return true if c is ASCII
      */
     public final static boolean isASCII(char c) {
         return c > 0 && c <= ASCII_END;
@@ -323,7 +322,8 @@ public class TextUtils {
     /**
      * StringUtils in commons isNumeric("1.234") is NOT numeric. Here "1.234" is
      * numeric.
-     * 
+     * @param v val to parse
+     * @return true if val is a number
      */
     public final static boolean isNumeric(final String v) {
 
@@ -386,9 +386,9 @@ public class TextUtils {
 
     /**
      * detects if string alpha chars are purely lower case.
-     * @param text
+     * @param text text
      * @param textcase  1 lower,  2 upper
-     * @return
+     * @return if case  matches given textcase param
      */
     public static boolean checkCase(String text, int textcase) {
         if (text == null) {
@@ -498,8 +498,8 @@ public class TextUtils {
      *
      * @param text text or data
      * @return identifier for the text, an MD5 hash
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException on err
+     * @throws UnsupportedEncodingException on err
      */
     public static String text_id(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         if (text == null) {
@@ -706,8 +706,8 @@ public class TextUtils {
     /**
      * Return just white-space delmited tokens.
      *
-     * @param str
-     * @return
+     * @param str text
+     * @return tokens
      */
     public static String[] tokens(String str) {
         return tokenizer.split(str);
@@ -972,6 +972,7 @@ public class TextUtils {
      *  TODO:  Create a language object that lists both language biblio/terminology codes.
      *
      * @param lg language object
+     * @param override if this value should overwrite an existing one.
      */
     public static void addLanguage(Language lg, boolean override) {
         if (lg == null) {
@@ -1142,7 +1143,9 @@ public class TextUtils {
             return false;
         }
         String id = lang.getISO639_1_Code();
-        if (isBlank(id)){ return false; }
+        if (isBlank(id)) {
+            return false;
+        }
 
         return (id.equals(koreanLang) || id.equals(japaneseLang) || id.equals(chineseLang) || id
                 .equals(chineseTradLang));
@@ -1255,9 +1258,9 @@ public class TextUtils {
     /**
      * Likely to be uniquely Korean if the character block is in Hangul.
      * But also, it may be Korean if block is part of the CJK ideographs at large.
-     * User must check if text in its entirety is part of CJK & Hangul, independently.
+     * User must check if text in its entirety is part of CJK &amp; Hangul, independently.
      * This method only detects if character block is uniquely Hangul or not.
-     * @param blk
+     * @param blk a Java Unicode block
      * @return true if char block is Hangul
      */
     public static boolean isKorean(Character.UnicodeBlock blk) {
@@ -1271,7 +1274,7 @@ public class TextUtils {
     /**
      * Checks if char block is uniquely Japanese.  Check other chars isChinese
      *
-     * @param blk
+     * @param blk a Java Unicode block
      * @return true if char block is Hiragana or Katakana
      */
     public static boolean isJapanese(Character.UnicodeBlock blk) {
