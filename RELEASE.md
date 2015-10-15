@@ -1,5 +1,13 @@
 
 #2015#
+* Xponents 2.7.15 - october 2015
+ - Java 8: tested strict javadoc compilation and fixed errors.  Warnings remain
+ - Basics: added timezone/UTC offset table to country objects (courtesty of geonames.org)
+ - packaging: removed deprecated code such as progress listeners
+ - Extraction: Retested Gazetteer spatial query, as certain standard solr spatial mechanisms force index to load into RAM, e.g., sort-by-dist
+ - Extraction: lower-case and case-insensitive matching enabled in GazetteerMatcher for odd cases like working with social media
+ - Extraction/Gazetteer:   added abillity to upload JSON form of gazetteer records, e.g. aliases for existing known gazetter entries
+   
 * Xponents 2.7.8 - july 2015
  - Java 7 is the norm, but tested compilation and running on Java 8.
  - XText: improved semantics for found hyperlinks in web crawls
