@@ -35,7 +35,23 @@ santos
 cruz
 houston
 hampton
+roma
+selma
+jefferson
+dallas
+paris
+granville
+# US states
+virginia
+maryland
+georgia
+florida
+nevada
 # other countries:
+india
+china
+america
+jordan
 lima
 georgia
 argentina

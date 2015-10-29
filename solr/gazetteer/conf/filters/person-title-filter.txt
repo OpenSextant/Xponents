@@ -40,6 +40,8 @@ king
 queen
 prince
 princess
+lord
+lords
 duke
 duchess
 mayor

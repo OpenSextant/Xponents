@@ -20,7 +20,7 @@ def is_comment(s):
 # USGS/Census top 1000 surnames
 #  To counter-act these names, add entries to  conf/inclusions/adhoc-places.txt
 #
-f1 =  os.path.abspath( 'conf/filters/census-gov-top1000-surnames-cy2010.csv' )
+f1 =  os.path.abspath( 'conf/filters/census/top1000-surnames-cy2010.csv' )
 if os.path.exists(f1):
     print "\tParse ", f1
     fh = open(f1, 'rb')
@@ -28,6 +28,33 @@ if os.path.exists(f1):
     for row in csvh:
         if not is_comment(row[0]):
             names.add(unicode(row[0]).strip().lower())
+    fh.close()
+
+#
+f1 =  os.path.abspath( 'conf/filters/census/dist.male.first')
+if os.path.exists(f1):
+    print "\tParse ", f1
+    fh = open(f1, 'rb')
+    # csvh = csv.reader(fh, delimiter='')
+    for line in fh:
+        row = line.split() 
+        name = row[0].lower()
+        if not is_comment(name) and len(name)>2:
+            names.add(unicode(name))
+
+    fh.close()
+
+f1 =  os.path.abspath( 'conf/filters/census/dist.female.first')
+if os.path.exists(f1):
+    print "\tParse ", f1
+    fh = open(f1, 'rb')
+    # csvh = csv.reader(fh, delimiter='')
+    for line in fh:
+        row = line.split() 
+        name = row[0].lower()
+        if not is_comment(name) and len(name)>2:
+            names.add(unicode(name))
+
     fh.close()
     
 # Other useful names to use as not-place entries.
