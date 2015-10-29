@@ -58,27 +58,28 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
     protected static GeonamesUtility helper = null;
 
     /**
-     * NamedList? in Solr.  What a horror. Okay, they work, but...
+     * NamedList? in Solr. What a horror. Okay, they work, but...
      *
      * items found in solrconfig under the gaz update processor script:
      *
-     * include_category   -- Tells the update processor which flavors of data to keep
-     * category_field     -- the field name where a row of data is categorized.
-     * countries -- a list of countries to use.
-     * stopterms -- a list of terms used to mark rows of data as "search_only"
+     * include_category -- Tells the update processor which flavors of data to
+     * keep category_field -- the field name where a row of data is categorized.
+     * countries -- a list of countries to use. stopterms -- a list of terms
+     * used to mark rows of data as "search_only"
      *
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public void init(NamedList params) {
-        /* Load the exclusion names -- these are terms that are
-         * gazeteer entries, e.g., gazetteer.name = <exclusion term>,
-         * that will be marked as search_only = true.
+        /*
+         * Load the exclusion names -- these are terms that are gazeteer
+         * entries, e.g., gazetteer.name = <exclusion term>, that will be marked
+         * as search_only = true.
          *
          */
         try {
-            stopTerms = GazetteerMatcher.loadExclusions(GazetteerMatcher.class
-                    .getResource("/filters/non-placenames.csv"));
+            stopTerms = GazetteerMatcher
+                    .loadExclusions(GazetteerMatcher.class.getResource("/filters/non-placenames.csv"));
             if (stopTerms == null) {
                 logger.error("Init failure:  Did not find 'non-placenames' file in CLASSPATH."
                         + "\nThis will not work properly with out such data.");
@@ -91,8 +92,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
         String logTag = "GAZ UPR////////////// ";
 
-        logger.info("Parameters for Gaz Updater {}, size={}, CO?{}", params, params.size(),
-                params.getAll("countries"));
+        logger.info("Parameters for Gaz Updater {}, size={}, CO?{}", params, params.size(), params.getAll("countries"));
         if (params.size() == 0) {
             logger.info(logTag + "Zero parameters found.");
             return;
@@ -101,7 +101,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
         logger.debug(logTag + "Found p={}", p);
         logger.debug(logTag + "P={}, V={}", p.getName(0), p.getVal(0));
 
-        List<String> ic = (List<String>) p.get("include_category"); //array of String
+        List<String> ic = (List<String>) p.get("include_category"); // array of
+                                                                    // String
         if (ic != null) {
             logger.debug(logTag + "Found CAT={}", ic);
             includeCategorySet = new HashSet<String>();
@@ -133,7 +134,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
     }
 
     /**
-     * Returns null if the factory is not setup properly, e.g., stopTerms not found.
+     * Returns null if the factory is not setup properly, e.g., stopTerms not
+     * found.
      */
     @Override
     public UpdateRequestProcessor getInstance(SolrQueryRequest req, SolrQueryResponse rsp,
@@ -158,10 +160,10 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
         }
 
         /**
-         * Adding a gazetteer entry involves looking at a few fields
-         *  -- we keep it if its values match the desired "include category"
-         *  -- if we keep it, we filter it and mark "search_only" if needed.
-         *  -- finally, ensure geo = lat,lon format
+         * Adding a gazetteer entry involves looking at a few fields -- we keep
+         * it if its values match the desired "include category" -- if we keep
+         * it, we filter it and mark "search_only" if needed. -- finally, ensure
+         * geo = lat,lon format
          */
         @Override
         public void processAdd(AddUpdateCommand cmd) throws IOException {
@@ -183,7 +185,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 }
             }
 
-            /* See solrconfig for documentation on gazetteer filtering
+            /*
+             * See solrconfig for documentation on gazetteer filtering
              * =======================================================
              */
             String nm = SolrProxy.getString(doc, "name");
@@ -229,8 +232,9 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
             boolean search_only = false;
 
-            /* Trivially short ASCII names are not good for tagging.
-             * Do not mark codes as search only.
+            /*
+             * Trivially short ASCII names are not good for tagging. Do not mark
+             * codes as search only.
              */
             String nm2 = nm.replace(".", "").trim();
             if (isName) {
@@ -240,17 +244,31 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 }
             }
 
+            String nameLower = nm2.toLowerCase();
             if (!search_only) {
-                String nameLower = nm2.toLowerCase();
                 if (stopTerms.contains(nameLower)) {
                     search_only = true;
                     logger.debug("GazURP ## Stop word set search only {}", nm);
                 }
             }
 
-            /* For relatively short terms that may also be stopterms,
-             * first convert to non-diacritic form, then lower case result.
-             * If result is a stop term or exclusion term then it should be tagged search_only
+            // Unfortunate data rule checks: Place name contains a country name
+            // alias and wins based on longest match. If we saw "USA 1" or "usa
+            // 1" or "USA [1...",
+            // etc.
+            // The longest match appears to be "Usa 1 (Indonesia)". As this is
+            // very rare and not something that should confound tagger/matching
+            // rules, such oddities are marked search_only here in gaz.
+            //
+            if ("usa 1".equals(nameLower) || ("usa 2").equals(nameLower)) {
+                search_only = true;
+            }
+
+            /*
+             * For relatively short terms that may also be stopterms, first
+             * convert to non-diacritic form, then lower case result. If result
+             * is a stop term or exclusion term then it should be tagged
+             * search_only
              *
              */
             if (!search_only && nm.length() < 15) {
@@ -269,7 +287,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 doc.removeField("search_only");
             }
 
-            /* End Filtering
+            /*
+             * End Filtering
              * =======================================================
              */
 
@@ -278,8 +297,10 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             String lon = SolrProxy.getString(doc, "lon");
 
             if (lat != null && lon != null) {
-                // Where  SpatialRecursivePrefixTreeFieldType is used format "LAT LON" is required.
-                // Documentation is not clear on this issue.  Order, LAT LON is right, but use of comma vs. space is uncertain.
+                // Where SpatialRecursivePrefixTreeFieldType is used format "LAT
+                // LON" is required.
+                // Documentation is not clear on this issue. Order, LAT LON is
+                // right, but use of comma vs. space is uncertain.
                 //
                 doc.setField("geo", lat + "," + lon);
             }
@@ -294,26 +315,32 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
         }
 
         /**
-         * Parse off country codes that duplicate information in ADM boundary code.
+         * Parse off country codes that duplicate information in ADM boundary
+         * code.
          *
-         * MX19 => '19', is sufficient.
-         * In cases where FIPS/ISO codes differ (almost all!), then this is significant.
+         * MX19 => '19', is sufficient. In cases where FIPS/ISO codes differ
+         * (almost all!), then this is significant.
          *
-         * Searchability:   use has to know that ADM1 code is using a given standard.
-         *   e.g., adm1 = 'IZ08', instead of the more flexible, cc='IQ', adm1='08'
+         * Searchability: use has to know that ADM1 code is using a given
+         * standard. e.g., adm1 = 'IZ08', instead of the more flexible, cc='IQ',
+         * adm1='08'
          *
-         * Hiearchical/Lexical organization:  CC.ADM1 is useful to organize data, but
-         * without this normalization, you might have 'IQ.IZ08' -- which is not wrong, just confusing.
-         * IQ.08 is a little easier to parse.
+         * Hiearchical/Lexical organization: CC.ADM1 is useful to organize data,
+         * but without this normalization, you might have 'IQ.IZ08' -- which is
+         * not wrong, just confusing. IQ.08 is a little easier to parse.
          *
          * So for now, the given Gazetteer entries are remapped to ISO coding.
          *
-         * Recommendation:  we standardize on ISO country codes where possible.
+         * Recommendation: we standardize on ISO country codes where possible.
          *
-         * @param d the gazetteer solr document.
-         * @param field  name of an ADMn field, ADM1, ADM2...etc.
-         * @param cc  ISO country code
-         * @param fips FIPS country code
+         * @param d
+         *            the gazetteer solr document.
+         * @param field
+         *            name of an ADMn field, ADM1, ADM2...etc.
+         * @param cc
+         *            ISO country code
+         * @param fips
+         *            FIPS country code
          */
         private void scrubCountryCode(SolrInputDocument d, String field, String cc, String fips) {
             String adm = SolrProxy.getString(d, field);
@@ -333,7 +360,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 return;
             }
 
-            /* Strip off FIPS.ADM1
+            /*
+             * Strip off FIPS.ADM1
              *
              */
             if (adm.startsWith(fips)) {
@@ -342,9 +370,9 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             }
 
             /*
-             * In this situation, the ADM1 code does not contain the given
-             * CC or FIPS code;  it refers to a different country so find that
-             * country code and replace it with ISO if possible.
+             * In this situation, the ADM1 code does not contain the given CC or
+             * FIPS code; it refers to a different country so find that country
+             * code and replace it with ISO if possible.
              */
             if (adm.length() > 2) {
                 String cc2 = adm.substring(0, 2);
