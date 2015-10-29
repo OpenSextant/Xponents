@@ -69,24 +69,27 @@ import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.util.SolrProxy;
+import org.opensextant.util.TextUtils;
 
 /**
- * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents.
- * The phrases can be from simple word lists or they can connect to a taxonomy of sorts --
- * the "taxcat" solr core (see Xponents/solr/taxcat and Xponents/XTax for implementation)
+ * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents. The
+ * phrases can be from simple word lists or they can connect to a taxonomy of
+ * sorts -- the "taxcat" solr core (see Xponents/solr/taxcat and Xponents/XTax
+ * for implementation)
  *
- * JVM arg to use is "opensextant.solr" to point to the local path
- * Less tested:   solr.solr.home might conflict with a Solr document server instead of this tagger.
- *                solr.url  is good for RESTful integration, but not recommended
+ * JVM arg to use is "opensextant.solr" to point to the local path Less tested:
+ * solr.solr.home might conflict with a Solr document server instead of this
+ * tagger. solr.url is good for RESTful integration, but not recommended
  *
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
 public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     private static ModifiableSolrParams params;
+
     static {
         params = new ModifiableSolrParams();
-        //params.set(CommonParams.QT, requestHandler);
+        // params.set(CommonParams.QT, requestHandler);
         params.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag,name_type");
 
         params.set("tagsLimit", 100000);
@@ -101,9 +104,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         params.set("overlaps", "NO_SUB");
 
     }
+
     private boolean tagAll = true;
     private boolean filterNonAcronyms = true;
-    //private ProgressMonitor progressMonitor;
+    // private ProgressMonitor progressMonitor;
 
     /**
      *
@@ -141,12 +145,14 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Create a Taxon tag, which is filtered based on established catalog filters.
+     * Create a Taxon tag, which is filtered based on established catalog
+     * filters.
      *
      * Caller must implement their domain objects, POJOs... this callback
      * handler only hashes them.
      *
-     * @param refData solr doc
+     * @param refData
+     *            solr doc
      * @return tag data
      */
     @Override
@@ -163,8 +169,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     /**
      * Parse the taxon reference data from a solr doc and return Taxon obj.
-     * @param refData solr doc
-     * @return  taxon obj
+     * 
+     * @param refData
+     *            solr doc
+     * @return taxon obj
      */
     public static Taxon createTaxon(SolrDocument refData) {
         Taxon label = new Taxon();
@@ -201,7 +209,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Configure an Extractor using a config file named by a path
      *
-     * @param patfile configuration file path
+     * @param patfile
+     *            configuration file path
      */
     @Override
     public void configure(String patfile) throws ConfigException {
@@ -211,7 +220,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Configure an Extractor using a config file named by a URL
      *
-     * @param patfile configuration URL
+     * @param patfile
+     *            configuration URL
      */
     @Override
     public void configure(java.net.URL patfile) throws ConfigException {
@@ -243,9 +253,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Light-weight usage: text in, matches out.
-     * Behaviors:
-     *    ACRONYMS matching lower case terms will automatically be omitted from results.
+     * Light-weight usage: text in, matches out. Behaviors: ACRONYMS matching
+     * lower case terms will automatically be omitted from results.
      *
      */
     @Override
@@ -254,10 +263,13 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Implementation details -- use with or without the formal ID/buffer pairing.
+     * Implementation details -- use with or without the formal ID/buffer
+     * pairing.
      *
-     * @param id doc id
-     * @param buf input text
+     * @param id
+     *            doc id
+     * @param buf
+     *            input text
      * @return list of matches
      * @throws ExtractionException
      */
@@ -277,20 +289,27 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
          * Retrieve all offsets into a long list.
          */
         TaxonMatch m = null;
-        //int x1 = -1, x2 = -1;
+        // int x1 = -1, x2 = -1;
         int tag_count = 0;
         String id_prefix = docid + "#";
 
         for (NamedList<?> tag : tags) {
             m = new TaxonMatch();
             m.start = ((Integer) tag.get("startOffset")).intValue();
-            m.end = ((Integer) tag.get("endOffset")).intValue();// +1 char after last matched
-            //m.pattern_id = "taxtag";
+            m.end = ((Integer) tag.get("endOffset")).intValue();// +1 char after
+                                                                // last matched
+            // m.pattern_id = "taxtag";
             ++tag_count;
             m.match_id = id_prefix + tag_count;
-            // m.setText((String) tag.get("matchText")); // Not reliable.  matchText can be null.
+            // m.setText((String) tag.get("matchText")); // Not reliable.
+            // matchText can be null.
             m.setText(buf.substring(m.start, m.end));
-
+            if (TextUtils.countFormattingSpace(m.getText()) > 1) {
+                // Phrases with words broken across more than one line are not
+                // valid matches.
+                // Phrase with a single TAB is okay
+                continue;
+            }
             @SuppressWarnings("unchecked")
             List<Integer> taxonIDs = (List<Integer>) tag.get("ids");
 
@@ -354,8 +373,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         return search(index, qp);
     }
 
-    public static List<Taxon> search(SolrServer index, SolrParams qparams)
-            throws SolrServerException {
+    public static List<Taxon> search(SolrServer index, SolrParams qparams) throws SolrServerException {
 
         QueryResponse response = index.query(qparams, SolrRequest.METHOD.GET);
 
@@ -372,9 +390,11 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * search the current taxonomic catalog.
      *
-     * @param query  Solr "q" parameter only
+     * @param query
+     *            Solr "q" parameter only
      * @return list of taxons
-     * @throws SolrServerException on err
+     * @throws SolrServerException
+     *             on err
      */
     public List<Taxon> search(String query) throws SolrServerException {
         return search(this.solr.getInternalSolrServer(), query);
@@ -382,29 +402,32 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     /**
      * search the current taxonomic catalog.
-     * @param qparams  Solr parameters in full.
+     * 
+     * @param qparams
+     *            Solr parameters in full.
      * @return list of taxons
-     * @throws SolrServerException on err
+     * @throws SolrServerException
+     *             on err
      */
     public List<Taxon> search(SolrParams qparams) throws SolrServerException {
         return search(this.solr.getInternalSolrServer(), qparams);
     }
 
-    //    @Override
-    //    public void setProgressMonitor(ProgressMonitor progressMonitor) {
-    //        this.progressMonitor = progressMonitor;
-    //    }
+    // @Override
+    // public void setProgressMonitor(ProgressMonitor progressMonitor) {
+    // this.progressMonitor = progressMonitor;
+    // }
 
     @Override
     public void updateProgress(double progress) {
-        //        if (this.progressMonitor != null)
-        //            progressMonitor.updateStepProgress(progress);
+        // if (this.progressMonitor != null)
+        // progressMonitor.updateStepProgress(progress);
     }
 
     @Override
     public void markComplete() {
-        //        if (this.progressMonitor != null)
-        //            progressMonitor.completeStep();
+        // if (this.progressMonitor != null)
+        // progressMonitor.completeStep();
     }
 
 }
