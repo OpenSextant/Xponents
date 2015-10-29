@@ -72,7 +72,8 @@ idset = {}
 # Ambiguous phrases or noisy ones I would prefer not to tag, so
 # they are marked valid=false, but retained in the names taxonomy.
 # These are all valid JRC entities, however they do not seem to add value due to their
-# popular use or ambiguity
+# popular use or ambiguity.  On very rare occasions there are instances of person names
+# That coincide with popular place names.  The person name is marked is not valid for tagging.
 NOISE = set(
         [
          'times',
@@ -110,7 +111,16 @@ NOISE = set(
          'adobe reader',
          'guiding principles',
          'lessons learned',
-         'better life'
+         'better life',
+         'san diegó',  # not San Diego
+         'san diego',  # not San Diego
+         'san franciscó',
+         'san francisco',
+         'corpus christi',
+         'nuevo león',
+         'nuevo leon',
+         'san pedro',
+         'umm qasr'
         ])
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
@@ -132,6 +142,11 @@ def check_validity(e):
         e.is_valid = False
     return
 
+
+PLACE_ENDING_FIXES = set(['province', 'island', 'islands', 'district', 'peninsula',
+                          'territory', 'county', 'city', 'state', 'township', 'village',
+                          'roads', 'avenue', 'avenida', 'prefecture', 'heights'])
+PLACE_STARTING_FIXES = set(['city', 'spin', 'town' ])
     
 class JRCEntity(Taxon):
     def __init__(self, eid, variant_id, etype, lang, primary_name, ename):
@@ -142,9 +157,17 @@ class JRCEntity(Taxon):
         self.entity_type = etype.upper()
         self.lang = lang
         self.phrase = ename
+        self.phrasenorm = ename.lower()
         
         if self.phrase in FIXES:
             self.entity_type = FIXES.get(self.phrase)
+
+        tokens = self.phrasenorm.split()
+        if tokens[-1] in PLACE_ENDING_FIXES:
+            # Place (T=terrain)
+            self.entity_type = 'T'
+        elif tokens[0] in PLACE_STARTING_FIXES:
+            self.entity_type = 'T'
         
         if self.entity_type in entity_map:
             self.entity_type = entity_map[self.entity_type]
@@ -252,22 +275,29 @@ if __name__ == '__main__':
 
     Actual Usage: All data will be ingested to solr-url
         jrcnames.py   file   solr-url
+
+    To just update entries to mark as invalid for tagging:
+        jrcnames.py   file   solr-url   "invalid-only"
     '''
     import sys
     taxonomy = sys.argv[1]
     start_id = 3000000
     catalog_id = 'JRC'
     
+    only_mark_invalid=False
     test = False
     builder = None
     row_max = -1
-    if len(sys.argv) == 3:
+    if len(sys.argv) >= 3:
         solr_url = sys.argv[2]
         builder = TaxCatalogBuilder(server=solr_url)
     else:
         test = True
         row_max = 100000 
         builder = TaxCatalogBuilder(server=None)
+
+    if len(sys.argv) == 4:
+        only_mark_invalid=True
         
     # Commit rows every 10,000 entries.
     builder.commit_rate = 10000
@@ -280,6 +310,8 @@ if __name__ == '__main__':
     row_id = 0
     fh = open(taxonomy, 'rb')
     for row in fh:
+        if row.startswith("#"): continue
+
         row_id = row_id + 1
         create_entity(row, scan=True)
         if row_id % 100000 == 0:
@@ -294,6 +326,8 @@ if __name__ == '__main__':
     row_id = 0
     fh = open(taxonomy, 'rb')
     for row in fh:       
+        if row.startswith("#"): continue
+
         node = create_entity(row)
         row_id = row_id + 1
         if not node:
@@ -301,6 +335,10 @@ if __name__ == '__main__':
 
         # ".id" must be an Integer for text tagger
         node.id = start_id + row_id        
+
+        if only_mark_invalid and node.is_valid:
+            continue
+
         builder.add(catalog_id, node)
         builder.save()
 
