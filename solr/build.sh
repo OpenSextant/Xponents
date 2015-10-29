@@ -11,7 +11,9 @@ SERVER=localhost:7000
 # This could be: http://ant-contrib.sourceforge.net/tasks/tasks/post_task.html
 #
 curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \
-   -H Content-type:application/json --data-binary @./adhoc-US-city-nicknames.json
+   -H Content-type:application/json --data-binary @./gazetteer/conf/additions/adhoc-US-city-nicknames.json
+curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \
+   -H Content-type:application/json --data-binary @./gazetteer/conf/additions/adhoc-country-names.json
 
 
 # When done for the day,  optimize
