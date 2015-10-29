@@ -33,22 +33,20 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionMetrics;
-import org.opensextant.extractors.xcoord.XCoord; // Just coordinates.
-import org.opensextant.extractors.geo.*; // All geo. Encapsulates XCoord, as well.
+// All geo. Encapsulates XCoord, as well.
+import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.xtemporal.XTemporal;
-import org.opensextant.processing.XtractorGroup;
-import org.opensextant.processing.Parameters;
-import org.opensextant.processing.ProcessingException;
-import org.opensextant.output.CSVFormatter;
-import org.opensextant.output.OpenSextantSchema;
-import org.opensextant.output.ResultsFormatter;
 import org.opensextant.output.AbstractFormatter;
 import org.opensextant.output.FormatterFactory;
-import org.opensextant.xtext.XText;
-import org.opensextant.xtext.ConvertedDocument;
-import org.opensextant.xtext.ConversionListener;
+import org.opensextant.output.ResultsFormatter;
+import org.opensextant.processing.Parameters;
+import org.opensextant.processing.ProcessingException;
+import org.opensextant.processing.XtractorGroup;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
+import org.opensextant.xtext.ConversionListener;
+import org.opensextant.xtext.ConvertedDocument;
+import org.opensextant.xtext.XText;
 import org.slf4j.LoggerFactory;
 
 //import org.slf4j.Logger;
