@@ -112,12 +112,13 @@ NOISE = set(
          'guiding principles',
          'lessons learned',
          'better life',
-         'san diegó',  # not San Diego
+         u'san diegó',  # not San Diego
          'san diego',  # not San Diego
-         'san franciscó',
+         u'san franciscó',
          'san francisco',
          'corpus christi',
-         'nuevo león',
+         u'nuevo león',
+         u'nuevo léon',
          'nuevo leon',
          'san pedro',
          'umm qasr'
@@ -143,10 +144,16 @@ def check_validity(e):
     return
 
 
-PLACE_ENDING_FIXES = set(['province', 'island', 'islands', 'district', 'peninsula',
+PLACE_ENDING_FIXES = set(['province', 'island', 'islands', 'district', 'peninsula','valley',
                           'territory', 'county', 'city', 'state', 'township', 'village',
                           'roads', 'avenue', 'avenida', 'prefecture', 'heights'])
 PLACE_STARTING_FIXES = set(['city', 'spin', 'town' ])
+
+# A large number of entities are marked as Person unnecessarily.
+# Org fixes: find any of these terms in a phrase and declare the phrase an org, if not already.
+ORG_FIXES = set(['tribunal', 'council', 'shura', 'group', 'committee', 'senate', 
+                 'departamento', 'department', 'transport', 'transit', 'musee', 'museum', 
+                 'museums', 'organization', 'authority', 'enterprise', 'institute', 'inc', 'llc'])
     
 class JRCEntity(Taxon):
     def __init__(self, eid, variant_id, etype, lang, primary_name, ename):
@@ -168,6 +175,11 @@ class JRCEntity(Taxon):
             self.entity_type = 'T'
         elif tokens[0] in PLACE_STARTING_FIXES:
             self.entity_type = 'T'
+        elif self.entity_type == 'P':
+            for tok in tokens:
+                if tok in ORG_FIXES: 
+                    self.entity_type = 'O'
+                    break;
         
         if self.entity_type in entity_map:
             self.entity_type = entity_map[self.entity_type]
@@ -300,7 +312,7 @@ if __name__ == '__main__':
         only_mark_invalid=True
         
     # Commit rows every 10,000 entries.
-    builder.commit_rate = 10000
+    builder.commit_rate = 50000
     builder.stopwords = set([])
     
     # Completely arbitrary starting row ID 
@@ -342,7 +354,7 @@ if __name__ == '__main__':
         builder.add(catalog_id, node)
         builder.save()
 
-        if row_id % 10000 == 0:
+        if row_id % 100000 == 0:
             print "Row # ", row_id
         if test:
             print str(node)
