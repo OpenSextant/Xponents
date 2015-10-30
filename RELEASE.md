@@ -1,5 +1,11 @@
 
 #2015#
+* Xponents 2.7.16 - october 2015
+ - Extraction: 'PlaceGeocoder' saw a focsed effort on improving how popular well-known 
+   entities can be used to negate gazetteer tagging. This solution makes better use of XTax as a naiive entity tagger.
+   Overall, recall is maximized at the same time geo-tagging precision is maximized.
+   As well, the foundation of "Geocode Rules" is established but needs further documentation.
+
 * Xponents 2.7.15 - october 2015
  - Java 8: tested strict javadoc compilation and fixed errors.  Warnings remain
  - Basics: added timezone/UTC offset table to country objects (courtesty of geonames.org)

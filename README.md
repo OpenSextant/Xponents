@@ -4,6 +4,7 @@ Xponents
     Date:     25 JULY 2013
     Updated:  01 June 2014   v2.5
     Updated:  01 April2015   v2.7
+    Updated:  30 Oct  2015   v2.7.16
 
 Xponents is a set of text extractor libraries with a light veneer of processing control, including:
 
