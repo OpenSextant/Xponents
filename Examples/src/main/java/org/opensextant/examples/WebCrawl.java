@@ -1,4 +1,4 @@
-package org.opensextant.xtext.test;
+package org.opensextant.examples;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,13 +13,13 @@ import org.opensextant.xtext.collectors.web.DefaultWebCrawl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* 
+/*  
  */
-public class WebCrawlTest implements CollectionListener {
+public class WebCrawl implements CollectionListener {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    public WebCrawlTest() {
+    public WebCrawl() {
 
     }
 
@@ -71,7 +71,7 @@ public class WebCrawlTest implements CollectionListener {
             System.exit(-1);
         }
 
-        WebCrawlTest me = new WebCrawlTest();
+        WebCrawl me = new WebCrawl();
 
         try {
             FileUtility.makeDirectory(o);
