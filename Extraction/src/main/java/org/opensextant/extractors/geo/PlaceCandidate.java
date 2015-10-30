@@ -54,13 +54,13 @@ import org.opensextant.util.TextUtils;
  * it?
  * </ul>
  */
-public class PlaceCandidate extends TextMatch /*Serializable*/{
+public class PlaceCandidate extends TextMatch /* Serializable */ {
 
     private String textnorm = null;
 
     // the location this was found in the document
-    //private Long start;
-    //private Long end;
+    // private Long start;
+    // private Long end;
     // --------------Place/NotPlace stuff ----------------------
     // which rules have expressed a Place/NotPlace opinion on this PC
     private final Set<String> rules = new HashSet<>();
@@ -82,8 +82,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     }
 
     /**
-     * If caller is willing to claim an explicit choice, so be it.
-     * Otherwise unchosen places go to disambiguation.
+     * If caller is willing to claim an explicit choice, so be it. Otherwise
+     * unchosen places go to disambiguation.
      */
     public void choose(Place geo) {
         chosen = geo;
@@ -95,8 +95,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
      */
     public String getTextnorm() {
         if (textnorm == null) {
-            textnorm = TextUtils.removePunctuation(TextUtils.removeDiacritics(getText()))
-                    .toLowerCase();
+            textnorm = TextUtils.removePunctuation(TextUtils.removeDiacritics(getText())).toLowerCase();
         }
         return textnorm;
     }
@@ -109,24 +108,26 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     private final int DEFAULT_TOKEN_SIZE = 40;
 
     /**
-     * Get some sense of tokens surrounding match. Possibly
-     * optimize this by getting token list from SolrTextTagger (which provides the lang-specifics)
+     * Get some sense of tokens surrounding match. Possibly optimize this by
+     * getting token list from SolrTextTagger (which provides the
+     * lang-specifics)
      *
      * @param sourceBuffer
      */
     protected void setSurroundingTokens(String sourceBuffer) {
-        int[] window = TextUtils.get_text_window(start, end - start, sourceBuffer.length(),
-                DEFAULT_TOKEN_SIZE);
+        int[] window = TextUtils.get_text_window(start, end - start, sourceBuffer.length(), DEFAULT_TOKEN_SIZE);
 
-        /* Get right most or left most whole tokens, for now whitespace delimited.
-         * TODO: ensure whole tokens are retrieved.
+        /*
+         * Get right most or left most whole tokens, for now whitespace
+         * delimited. TODO: ensure whole tokens are retrieved.
          */
-        setPrematchTokens(TextUtils.tokens(sourceBuffer.substring(window[0], window[1])));
-        setPostmatchTokens(TextUtils.tokens(sourceBuffer.substring(window[2], window[3])));
+        setPrematchTokens(TextUtils.tokensRight(sourceBuffer.substring(window[0], window[1])));
+        setPostmatchTokens(TextUtils.tokensLeft(sourceBuffer.substring(window[2], window[3])));
     }
 
     /**
-     * Common evidence flags -- isCountry, isPerson, isOrganization, abbreviation, and acronym
+     * Common evidence flags -- isCountry, isPerson, isOrganization,
+     * abbreviation, and acronym
      */
     public boolean isCountry = false;
     public boolean isPerson = false;
@@ -134,7 +135,9 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     public boolean isAbbreviation = false;
     public boolean isAcronym = false;
 
-    /** After candidate has been scored and all, the final best place is the geocoding result for the given name in context.
+    /**
+     * After candidate has been scored and all, the final best place is the
+     * geocoding result for the given name in context.
      */
     public Geocoding getGeocoding() {
         getBestPlace();
@@ -147,6 +150,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
 
     /**
      * Get the most highly ranked Place, or Null if empty list.
+     * 
      * @return Place the best choice
      */
     public Place getBestPlace() {
@@ -168,6 +172,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     /**
      * Get the disambiguation score of the most highly ranked Place, or 0.0 if
      * empty list.
+     * 
      * @return score of best place
      */
     public Double getBestPlaceScore() {
@@ -179,7 +184,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     }
 
     /**
-     * @return true = if a Place.  Does our confidence indicate that this is actually a place?
+     * @return true = if a Place. Does our confidence indicate that this is
+     *         actually a place?
      */
     public boolean isPlace() {
         return (this.getPlaceConfidenceScore() > 0.0);
@@ -195,6 +201,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
 
     /**
      * Get a ranked list of places
+     * 
      * @return list of places ranked, sorted.
      */
     public List<Place> getRankedPlaces() {
@@ -204,6 +211,7 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
 
     /**
      * Get a ranked list of scores
+     * 
      * @return list of scores
      */
     public List<Double> getScores() {
@@ -227,7 +235,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
         if (currentScore != null) {
             currentScore.incrementScore(score);
         } else {
-            //logger.error("Tried to increment a score for a non-existent Place");
+            // logger.error("Tried to increment a score for a non-existent
+            // Place");
         }
     }
 
@@ -272,7 +281,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
             }
         }
 
-        // some adm1codes are null, a null admin of the correct country could be possible match
+        // some adm1codes are null, a null admin of the correct country could be
+        // possible match
         for (Place p : rankedPlaces) {
             if (p.getAdmin1() == null && p.getCountryCode().equalsIgnoreCase(cc)) {
                 return true;
@@ -330,8 +340,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     }
 
     // some convenience methods to add evidence
-    public void addEvidence(String rule, double weight, String cc, String adm1, String fclass,
-            String fcode, LatLon geo) {
+    public void addEvidence(String rule, double weight, String cc, String adm1, String fclass, String fcode,
+            LatLon geo) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
@@ -420,16 +430,14 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     // an overide of toString to get a meaningful representation of this PC
     @Override
     public String toString() {
-        String tmp = getText() + "(" + this.getPlaceConfidenceScore() + "/"
-                + this.scoredPlaces.size() + ")" + "\n";
+        String tmp = getText() + "(" + this.getPlaceConfidenceScore() + "/" + this.scoredPlaces.size() + ")" + "\n";
         tmp = tmp + "Rules=" + this.rules.toString() + "\n";
         tmp = tmp + "Evidence=" + this.evidence.toString() + "\n";
 
         this.sort();
         tmp = tmp + "Places=";
         for (int i = 0; i < this.rankedPlaces.size(); i++) {
-            tmp = tmp + this.rankedPlaces.get(i).toString() + "="
-                    + this.rankedScores.get(i).toString() + "\n";
+            tmp = tmp + this.rankedPlaces.get(i).toString() + "=" + this.rankedScores.get(i).toString() + "\n";
         }
         return tmp;
     }
@@ -442,7 +450,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     }
 
     /**
-     * @param tok the preTokens to set
+     * @param tok
+     *            the preTokens to set
      */
     public void setPrematchTokens(String[] tok) {
         this.preTokens = tok;
@@ -456,7 +465,8 @@ public class PlaceCandidate extends TextMatch /*Serializable*/{
     }
 
     /**
-     * @param tok the postTokens to set
+     * @param tok
+     *            the postTokens to set
      */
     public void setPostmatchTokens(String[] tok) {
         this.postTokens = tok;

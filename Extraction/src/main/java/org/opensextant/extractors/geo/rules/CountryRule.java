@@ -28,17 +28,33 @@ public class CountryRule extends GeocodeRule {
 
     /**
      * Assess which candidate tags are references to countries.
-     * @param name list of candidates to evaluate for country evidence.
-     * @param geo  country/geo to evaluate
+     * 
+     * @param name
+     *            list of candidates to evaluate for country evidence.
+     * @param geo
+     *            country/geo to evaluate
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
+
         if (geo.isCountry()) {
             if (name.isAcronym || name.isAbbreviation) {
                 name.addCountryEvidence("CountryCode", 1, geo.getCountryCode());
             } else {
                 name.addCountryEvidence(NAME, WEIGHT, geo.getCountryCode());
             }
+            // We have the liberty to choose a best name variant/location at
+            // this point.
+            // But since this is just country, then choosing a plain language
+            // version of the gazetteer
+            // entry is desirable.
+            // TODO: Choose Place whose name most closely resembles the matched
+            // item
+            // TODO: consider returning the same gazetteer entry consistently
+            // TODO: Choose Place that is not the full diacritics variant, if
+            // possible.
+            name.choose(geo);
+            log("Chose Country", name.getText());
         }
     }
 }

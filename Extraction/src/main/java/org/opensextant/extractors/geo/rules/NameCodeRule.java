@@ -35,10 +35,14 @@ public class NameCodeRule extends GeocodeRule {
     private static int MAX_CHAR_DIST = 5;
 
     public final static String NAMECODE_RULE = "AdminCode";
+
     public NameCodeRule() {
         NAME = "AdminCode";
     }
 
+    /**
+     * Requirement: List of place candidate is a linked list.
+     */
     @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (int x = 0; x < names.size() - 1; ++x) {
@@ -46,19 +50,20 @@ public class NameCodeRule extends GeocodeRule {
             PlaceCandidate code = names.get(x + 1);
 
             /*
-             * Test if SOMENAME, CODE is the case.
-             *         a1.....a2.b1..,  where b1 > a2 > a1,
-             * but distance is minimal from end of name to start of code.
+             * Test if SOMENAME, CODE is the case. a1.....a2.b1.., where b1 > a2
+             * > a1, but distance is minimal from end of name to start of code.
              *
              */
             if ((code.start - name.end) > MAX_CHAR_DIST) {
                 continue;
             }
-            /* by this point a place name tag should be marked
-             * as a name or code/abbrev.
+            /*
+             * by this point a place name tag should be marked as a name or
+             * code/abbrev. Match the abbreviation with a geographic location
+             * that is a state, county, district, etc.
              */
-            log.info("{} name, code: {} {}?", NAME, name.getText(), code.getText());
             if (code.isAbbreviation) {
+                log.debug("{} name, code: {} {}?", NAME, name.getText(), code.getText());
                 for (Place geo : code.getPlaces()) {
                     if (geo.isAdministrative()) {
                         // Associate the CODE to the NAME that precedes it.

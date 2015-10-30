@@ -26,43 +26,69 @@ import org.slf4j.LoggerFactory;
 
 public abstract class GeocodeRule {
 
-    public int WEIGHT = 0; /* of 100 */
-    public String NAME = null;
+	public int WEIGHT = 0; /* of 100 */
+	public String NAME = null;
 
-    protected Logger log = LoggerFactory.getLogger("geocode-rule");
+	protected Logger log = LoggerFactory.getLogger("geocode-rule");
 
-    protected void log(String msg) {
-        log.debug("{}: {}", NAME, msg);
-    }
+	protected void log(String msg) {
+		log.debug("{}: {}", NAME, msg);
+	}
 
-    /**
-     *
-     * @param names list of found place names
-     */
-    public void evaluate(List<PlaceCandidate> names) {
-        for (PlaceCandidate name : names) {
-            // Each rule must decide if iterating over name/geo combinations contributes
-            // evidence.   But can just as easily see if name.chosen is already set and exit early.
-            //
-            /*
-             * This was filtered out already so ignore.
-             */
-            if (name.isFilteredOut()) {
-                return;
-            }
-            for (Place geo : name.getPlaces()) {
-                evaluate(name, geo);
-            }
-        }
+	protected void log(String msg, String val) {
+		log.debug("{}: {} / value={}", NAME, msg, val);
+	}
 
-    }
+	/**
+	 *
+	 * @param names
+	 *            list of found place names
+	 */
+	public void evaluate(List<PlaceCandidate> names) {
+		for (PlaceCandidate name : names) {
+			// Each rule must decide if iterating over name/geo combinations
+			// contributes
+			// evidence. But can just as easily see if name.chosen is already
+			// set and exit early.
+			//
+			/*
+			 * This was filtered out already so ignore.
+			 */
+			if (name.isFilteredOut()) {
+				continue;
+			}
+			// Some rules may choose early -- and that would prevent other rules
+			// from adding evidence
+			// In this scheme.
+			if (name.getChosen() != null) {
+				// DONE
+				continue;
+			}
 
-    public abstract void evaluate(PlaceCandidate name, Place geo);
+			for (Place geo : name.getPlaces()) {
+				evaluate(name, geo);
+				if (name.getChosen() != null) {
+					// DONE
+					break;
+				}
+			}
+		}
 
-    /**
-     * no-op, unless overriden.
-     */
-    public void reset() {
+	}
 
-    }
+	/**
+	 * The one evaluation scheme that all rules must implement.
+	 * Given a single text match and a location, consider if the geo is a good geocoding
+	 * for the match.
+	 * @param name matched name in text
+	 * @param geo gazetteer entry or location
+	 */
+	public abstract void evaluate(PlaceCandidate name, Place geo);
+
+	/**
+	 * no-op, unless overriden.
+	 */
+	public void reset() {
+
+	}
 }

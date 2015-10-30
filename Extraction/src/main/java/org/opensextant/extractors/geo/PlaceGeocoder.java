@@ -26,19 +26,19 @@
  */
 package org.opensextant.extractors.geo;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
+import org.opensextant.data.Taxon;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.ExtractionMetrics;
@@ -51,7 +51,10 @@ import org.opensextant.extractors.geo.rules.GeocodeRule;
 import org.opensextant.extractors.geo.rules.NameCodeRule;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
 import org.opensextant.extractors.geo.rules.ProvinceAssociationRule;
+import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xcoord.XCoord;
+import org.opensextant.extractors.xtax.TaxonMatch;
+import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
@@ -72,337 +75,436 @@ import org.slf4j.LoggerFactory;
  */
 public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
 
-    /**
-     *
-     */
-    //private final TextUtils utility = new TextUtils();
-    protected Logger log = LoggerFactory.getLogger(getClass());
-    private XCoord xcoord = null;
-    private MatchFilter personFilter = null;
-    private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
-    private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
-    private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
-    private final ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
-    //private ProgressMonitor progressMonitor;
+	/**
+	 *
+	 */
+	// private final TextUtils utility = new TextUtils();
+	protected Logger log = LoggerFactory.getLogger(getClass());
+	private XCoord xcoord = null;
+	private PersonNameFilter personNameRule = null;
+	private TaxonMatcher personMatcher = null;
+	private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
+	private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
+	private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
+	private final ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
+	// private ProgressMonitor progressMonitor;
 
-    private CountryRule countryRule = null;
-    private CoordinateAssociationRule coordRule = null;
-    private ProvinceAssociationRule adm1Rule = null;
+	private CountryRule countryRule = null;
+	private CoordinateAssociationRule coordRule = null;
+	private ProvinceAssociationRule adm1Rule = null;
 
-    /**
-     * A default Geocoding app that demonstrates how to invoke the geocoding
-     * pipline start to finish.
-     *
-     * @throws ConfigException on err
-     */
-    public PlaceGeocoder() throws ConfigException {
-        super();
-    }
+	/**
+	 * A default Geocoding app that demonstrates how to invoke the geocoding
+	 * pipline start to finish. It makes use of XCoord to parse/geocode
+	 * coordinates, SolrGazetteer/GazetteerMatcher to match named places, XTax
+	 * to tag person names. Match Filters and rules work in conjunction to
+	 * filter and tag further any candidates.
+	 * 
+	 *
+	 * @throws ConfigException
+	 *             on err
+	 */
+	public PlaceGeocoder() throws ConfigException {
+		super();
+	}
 
-    /*
-     * ordered list of rules.
-     */
-    private List<GeocodeRule> rules = new ArrayList<>();
+	/*
+	 * ordered list of rules.
+	 */
+	private List<GeocodeRule> rules = new ArrayList<>();
 
-    @Override
-    public String getName() {
-        return "SimpleGeocoder";
-    }
+	@Override
+	public String getName() {
+		return "Advanced PlaceGeocoder";
+	}
 
-    /**
-     * Configure an Extractor using a config file named by a path.
-     *
-     * @param patfile configuration file path
-     * @throws ConfigException on err
-     */
-    @Override
-    public void configure(String patfile) throws ConfigException {
-        throw new ConfigException("Configure by path Not available");
-    }
+	/**
+	 * Configure an Extractor using a config file named by a path.
+	 *
+	 * @param patfile
+	 *            configuration file path
+	 * @throws ConfigException
+	 *             on err
+	 */
+	@Override
+	public void configure(String patfile) throws ConfigException {
+		throw new ConfigException("Configure by path Not available");
+	}
 
-    /**
-     * Configure an Extractor using a config file named by a URL
-     *
-     * @param patfile configuration URL
-     */
-    @Override
-    public void configure(java.net.URL patfile) throws ConfigException {
-        throw new ConfigException("Configure by URL Not available");
-    }
+	/**
+	 * Configure an Extractor using a config file named by a URL
+	 *
+	 * @param patfile
+	 *            configuration URL
+	 */
+	@Override
+	public void configure(java.net.URL patfile) throws ConfigException {
+		throw new ConfigException("Configure by URL Not available");
+	}
 
-    public void reportMemory() {
-        Runtime R = Runtime.getRuntime();
-        long usedMemory = R.totalMemory() - R.freeMemory();
-        log.info("CURRENT MEM USAGE(K)=" + (int) (usedMemory / 1024));
-    }
+	public void reportMemory() {
+		Runtime R = Runtime.getRuntime();
+		long usedMemory = R.totalMemory() - R.freeMemory();
+		log.info("CURRENT MEM USAGE(K)=" + (int) (usedMemory / 1024));
+	}
 
-    /**
-     * We have some emerging metrics to report out... As these metrics are
-     * volatile, I'm not changing imports.
-     */
-    public void reportMetrics() {
-        log.info("=======================\nTAGGING METRICS");
-        log.info(taggingTimes.toString());
-        log.info(retrievalTimes.toString());
-        log.info(matcherTotalTimes.toString());
-        log.info("=================\nSimple Geocoder");
-        log.info(this.processingMetric.toString());
+	/**
+	 * We have some emerging metrics to report out... As these metrics are
+	 * volatile, I'm not changing imports.
+	 */
+	public void reportMetrics() {
+		log.info("=======================\nTAGGING METRICS");
+		log.info(taggingTimes.toString());
+		log.info(retrievalTimes.toString());
+		log.info(matcherTotalTimes.toString());
+		log.info("=================\nSimple Geocoder");
+		log.info(this.processingMetric.toString());
 
-    }
+	}
 
-    /**
-     * We do whatever is needed to init resources... that varies depending on
-     * the use case.
-     * 
-     * Guidelines: this class is custodian of the app controller, Corpus feeder,
-     * and any Document instances passed into/out of the feeder.
-     * 
-     * This geocoder requires a default /exclusions/person-name-filter.txt,
-     * which can be empty, but most often it will be a list of person names (which are non-place names)
-     *
-     * @throws ConfigException on err
-     */
-    @Override
-    public void configure() throws ConfigException {
+	/**
+	 * We do whatever is needed to init resources... that varies depending on
+	 * the use case.
+	 * 
+	 * Guidelines: this class is custodian of the app controller, Corpus feeder,
+	 * and any Document instances passed into/out of the feeder.
+	 * 
+	 * This geocoder requires a default /exclusions/person-name-filter.txt,
+	 * which can be empty, but most often it will be a list of person names
+	 * (which are non-place names)
+	 *
+	 * @throws ConfigException
+	 *             on err
+	 */
+	@Override
+	public void configure() throws ConfigException {
 
-        /** Files for Place Name filter are editable, as you likely have different ideas of who are "person names" to exclude
-         * when they conflict with place names.  If you are filtering out such things,
-         * then it makes sense to filter them out earliest and not incorporate them in geocoding.
-         * 
-         */
-        URL p1 = PlaceGeocoder.class.getResource("/filters/person-name-filter.txt");
-        URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
-        URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
-        rules.add(new PersonNameFilter(p1, p2, p3));
+		/**
+		 * Files for Place Name filter are editable, as you likely have
+		 * different ideas of who are "person names" to exclude when they
+		 * conflict with place names. If you are filtering out such things, then
+		 * it makes sense to filter them out earliest and not incorporate them
+		 * in geocoding.
+		 * 
+		 */
+		URL p1 = PlaceGeocoder.class.getResource("/filters/person-name-filter.txt");
+		URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
+		URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
+		personNameRule = new PersonNameFilter(p1, p2, p3);
+		// rules.add();
 
-        countryRule = new CountryRule();
-        // rules.add(countryRule); /* assess country names and codes */
-        rules.add(new NameCodeRule()); /* assess NAME, CODE patterns */
+		countryRule = new CountryRule();
+		//rules.add(countryRule); /* assess country names and codes */
+		rules.add(new NameCodeRule()); /* assess NAME, CODE patterns */
 
-        if (xcoord == null && (isCoordExtractionEnabled())) {
-            xcoord = new XCoord();
-            xcoord.configure();
+		if (xcoord == null && (isCoordExtractionEnabled())) {
+			xcoord = new XCoord();
+			xcoord.configure();
 
-            coordRule = new CoordinateAssociationRule(); /* assess coordinates related to ADM1, CC; Haversine is default. */
-            adm1Rule = new ProvinceAssociationRule(); /* assess ADM1 related to found NAMES as a result of coordinates */
+			/*
+			 * assess coordinates related to ADM1, CC
+			 */
+			coordRule = new CoordinateAssociationRule();
+			/*
+			 * assess ADM1 related to found NAMES as a result of coordinates
+			 */
+			adm1Rule = new ProvinceAssociationRule();
 
-            rules.add(coordRule);
-            rules.add(adm1Rule);
-        }
-    }
+			rules.add(coordRule);
+			rules.add(adm1Rule);
+		}
 
-    /**
-     * Please shutdown the application cleanly when done.
-     */
-    @Override
-    public void cleanup() {
-        reportMetrics();
-        this.shutdown();
-    }
+		if (isPersonNameMatchingEnabled()) {
+			try {
+				personMatcher = new TaxonMatcher();
+				personMatcher.configure();
+				/*
+				 * Default catalog must be built. Extraction ./XTax folder has
+				 * script for populating a catalog.
+				 */
+				personMatcher.addCatalogFilter("JRC");
 
-    private Parameters params = new Parameters();
+			} catch (IOException err) {
+				throw new ConfigException("XTax resource not available.");
+			}
+		}
+	}
 
-    public void setParameters(Parameters p) {
-        params = p;
-        params.isdefault = false;
-    }
+	/**
+	 * Please shutdown the application cleanly when done.
+	 */
+	@Override
+	public void cleanup() {
+		reportMetrics();
+		this.shutdown();
+		if (personMatcher != null) {
+			personMatcher.shutdown();
+		}
+	}
 
-    public boolean isCoordExtractionEnabled() {
-        return params.tag_coordinates;
-    }
+	private Parameters params = new Parameters();
 
-    /**
-     * Unfinished Beta; ready for experimentation and improvement on rules.
-     *
-     * Extractor.extract() calls first XCoord to get coordinates, then
-     * PlacenameMatcher In the end you have all geo entities ranked and scored.
-     * <pre>
-     * Use TextMatch.getType()
-     * to determine how to interpret TextMatch / Geocoding results:
-     *
-     * Given TextMatch match
-     *
-     *    Place tag:   ((PlaceCandiate)match).getGeocoding()
-     *    Coord tag:   (Geocoding)match
-     *
-     * Both methods yield a geocoding.
-     * </pre>
-     *
-     * @param input input buffer
-     * @return TextMatch instances which are all PlaceCandidates.
-     * @throws ExtractionException on err
-     */
-    @Override
-    public List<TextMatch> extract(TextInput input) throws ExtractionException {
-        List<TextMatch> matches = new ArrayList<TextMatch>();
+	public void setParameters(Parameters p) {
+		params = p;
+		params.isdefault = false;
+	}
 
-        List<TextMatch> coordinates = null;
-        if (isCoordExtractionEnabled()) {
-            coordinates = xcoord.extract(input);
-        }
+	public boolean isCoordExtractionEnabled() {
+		return params.tag_coordinates;
+	}
 
-        LinkedList<PlaceCandidate> candidates = tagText(input.buffer, input.id);
+	boolean tagPersonNames = false;
 
-        // Tagger has already marked candidates as name of Country or not.
-        //
-        // countryRule.evaluate(candidates);
+	public boolean isPersonNameMatchingEnabled() {
+		return tagPersonNames;
+	}
 
-        if (coordinates != null) {
-            matches.addAll(coordinates);
+	public void enablePersonNameMatching(boolean b) {
+		tagPersonNames = b;
+	}
 
-            // First assess names matched
-            // If names are to be completely filtered out, filter them out first or remove from candiate list.
-            // Then apply rules.
+	private void reset() {
+		this.locationBias.clear();
+		this.personNameRule.reset();
+	}
 
-            // IFF you have coordinates extracted or given:
-            // 1. Identify all hard geographic entities:  coordinates; coded places (other patterns provided by your domain, etc.)
-            // 1a. identify country + AMD1 for each coordinate; summarize distinct country + ADM1 as evidence
-            //     XY => geohash, query geohash w/fq.fields = cc,adm1,adm2
-            //
-            // 2. Tagger Post-processing rules: Generate Country, Nat'l Capitals and Admin names
-            List<Place> relevantProvinces = new ArrayList<>();
-            if (coordRule != null && coordinates != null) {
-                coordRule.reset();
-                try {
-                    for (TextMatch g : coordinates) {
-                        if (g instanceof Geocoding) {
-                            Place province = evaluateCoordinate((Geocoding) g);
-                            if (province != null) {
-                                relevantProvinces.add(province);
-                            }
-                        }
-                        coordRule.addCoordinate((Geocoding) g);
-                    }
-                } catch (Exception err) {
-                    log.error("Problem doing spatial lookup", err);
-                }
+	/**
+	 * Unfinished Beta; ready for experimentation and improvement on rules.
+	 *
+	 * Extractor.extract() calls first XCoord to get coordinates, then
+	 * PlacenameMatcher In the end you have all geo entities ranked and scored.
+	 * 
+	 * <pre>
+	 * Use TextMatch.getType()
+	 * to determine how to interpret TextMatch / Geocoding results:
+	 *
+	 * Given TextMatch match
+	 *
+	 *    Place tag:   ((PlaceCandiate)match).getGeocoding()
+	 *    Coord tag:   (Geocoding)match
+	 *
+	 * Both methods yield a geocoding.
+	 * </pre>
+	 *
+	 * @param input
+	 *            input buffer
+	 * @return TextMatch instances which are all PlaceCandidates.
+	 * @throws ExtractionException
+	 *             on err
+	 */
+	@Override
+	public List<TextMatch> extract(TextInput input) throws ExtractionException {
+		reset();
+		List<TextMatch> matches = new ArrayList<TextMatch>();
 
-                if (adm1Rule != null && !relevantProvinces.isEmpty()) {
-                    adm1Rule.setProvinces(relevantProvinces);
-                }
-            }
-        }
+		List<TextMatch> coordinates = null;
+		if (isCoordExtractionEnabled()) {
+			coordinates = xcoord.extract(input);
+		}
 
-        /*
-         * Rule evaluation: accumulate all the evidence.
-         */
-        for (GeocodeRule r : rules) {
-            r.evaluate(candidates);
-        }
+		LinkedList<PlaceCandidate> candidates = tagText(input.buffer, input.id);
 
-        /*
-         * Knit it all together.
-         */
-        geocode(candidates);
+		// Tagger has already marked candidates as name of Country or not.
+		//
+		// countryRule.evaluate(candidates);
 
-        // For each candidate, if PlaceCandidate.chosen is not null,
-        //    add chosen (Geocoding) to matches
-        // Otherwise add PlaceCandidates to matches.
-        //    non-geocoded matches will appear in non-GIS formats.
-        //
-        // Downstream recipients of 'matches' must know how to parse through evaluated
-        // place candidates.  We send the candidates and all evidence.
-        matches.addAll(candidates);
+		if (coordinates != null) {
+			matches.addAll(coordinates);
 
-        return matches;
-    }
+			// First assess names matched
+			// If names are to be completely filtered out, filter them out first
+			// or remove from candiate list.
+			// Then apply rules.
 
-    @Override
-    public List<TextMatch> extract(String input_buf) throws ExtractionException {
-        return extract(new TextInput(null, input_buf));
-    }
+			// IFF you have coordinates extracted or given:
+			// 1. Identify all hard geographic entities: coordinates; coded
+			// places (other patterns provided by your domain, etc.)
+			// 1a. identify country + AMD1 for each coordinate; summarize
+			// distinct country + ADM1 as evidence
+			// XY => geohash, query geohash w/fq.fields = cc,adm1,adm2
+			//
+			// 2. Tagger Post-processing rules: Generate Country, Nat'l Capitals
+			// and Admin names
+			List<Place> relevantProvinces = new ArrayList<>();
+			if (coordRule != null && coordinates != null) {
+				coordRule.reset();
+				try {
+					for (TextMatch g : coordinates) {
+						if (g instanceof GeocoordMatch) {
+							Place province = evaluateCoordinate((GeocoordMatch) g);
+							if (province != null) {
+								relevantProvinces.add(province);
+							}
+						}
+						coordRule.addCoordinate((Geocoding) g);
+					}
+				} catch (Exception err) {
+					log.error("Problem doing spatial lookup", err);
+				}
 
-    Map<String, Integer> locationBias = new HashMap<>();
+				if (adm1Rule != null && !relevantProvinces.isEmpty()) {
+					adm1Rule.setProvinces(relevantProvinces);
+				}
+			}
+		}
 
-    /**
-     * By now, all raw rules should have fired, adding their most basic metadata to each candidate.
-     *
-     * @param candidates list of PlaceCandidate (TextMatch + Place list)
-     * @param coordinates list of GeoocordMatch (yes, cast of (GeoocordMatch)TextMatch is tested and used).
-     */
-    private void geocode(List<PlaceCandidate> candidates) {
+		// 3. Tag person and org names to negate celebrity names or well-known
+		// individuals who share a city name. "Tom Jackson", "Bill Clinton"
+		//
+		if (isPersonNameMatchingEnabled()) {
+			List<TextMatch> nonPlaces = personMatcher.extract(input.buffer);
+			if (!nonPlaces.isEmpty()) {
+				List<TaxonMatch> persons = new ArrayList<>();
+				List<TaxonMatch> orgs = new ArrayList<>();
+				for (TextMatch tm : nonPlaces) {
+					if (!(tm instanceof TaxonMatch)) {
+						continue;
+					}
 
-        /*
-         * Count all entries of evidence.
-         */
-        for (PlaceCandidate pc : candidates) {
-            for (PlaceEvidence ev : pc.getEvidence()) {
-                String key = null;
-                if (ev.isCountry()) {
-                    key = ev.getCountryCode();
-                } else if (ev.isAdministrative()) {
-                    key = GeonamesUtility.getHASC(ev.getCountryCode(), ev.getAdmin1());
-                }
-                if (key != null) {
-                    Integer count = locationBias.get(key);
-                    if (count == null) {
-                        count = new Integer(0);
-                    }
-                    locationBias.put(key, count + 1);
-                }
-            }
-        }
-        // 3. Disambiguation
-        // 4. Geocoding -- choosing and setting final entry data.
+					TaxonMatch tag = (TaxonMatch) tm;
+					//
+					// For the purposes of geocoding/geoparsing filter out
+					// ALL
+					// TaxonMatches. Any place names should reside back in
+					// gazetteer.
+					// If XTax does have place or location data, that would
+					// be new.
+					//
+					tm.setFilteredOut(true);
+					for (Taxon taxon : tag.getTaxons()) {
+						String node = taxon.name.toLowerCase();
+						// If you matched a Person name or an Organization
+						// ACRONYM
+						// add the TaxonMatch (TextMatch) to negate place
+						// name spans
+						// that are not places.
+						if (node.startsWith("person.")) {
+							persons.add(tag);
+							break;
+						}
+						if (node.startsWith("org.") && tm.isUpper()) {
+							orgs.add(tag);
+							break;
+						}
+					}
+				}
+				personNameRule.evaluateNamedEntities(candidates, persons, orgs);
+				matches.addAll(persons);
+				matches.addAll(orgs);				
+			}
+		}
 
-    }
+		countryRule.evaluate(candidates);
+		personNameRule.evaluate(candidates);
 
-    /**
-     * A method to retrieve one or more distinct admin boundaries containing the coordinate.
-     * This depends on resolution of gazetteer at hand.
-     *
-     * @param g geocoding
-     * @return Place object near the geocoding.
-     * @throws SolrServerException   a query against the Solr index may throw a Solr error.
-     */
-    public Place evaluateCoordinate(Geocoding g) throws SolrServerException {
-        // Solr geospatial lookup required;  we use RPT -- recursive prefix filter field type.
-        // TOOD: implement spatial query against gazetter to do XY=>Location(feat_type=*, facet field=adm1)
-        //      report Distinct CC.ADM1.ADM2 paths where Geocoding points.
-        List<Place> found = placesAt(g);
-        if (found == null || found.isEmpty()) {
-            return null;
-        }
+		/*
+		 * Rule evaluation: accumulate all the evidence.
+		 */
+		for (GeocodeRule r : rules) {
+			r.evaluate(candidates);
+		}
 
-        Set<String> distinctADM1 = new HashSet<>();
-        Set<String> distinctCC = new HashSet<>();
+		/*
+		 * Knit it all together.
+		 */
+		geocode(candidates);
 
-        for (Place p : found) {
-            distinctADM1.add(GeonamesUtility.getHASC(p.getCountryCode(), p.getAdmin1()));
-            distinctCC.add(p.getCountryCode());
-        }
+		// For each candidate, if PlaceCandidate.chosen is not null,
+		// add chosen (Geocoding) to matches
+		// Otherwise add PlaceCandidates to matches.
+		// non-geocoded matches will appear in non-GIS formats.
+		//
+		// Downstream recipients of 'matches' must know how to parse through
+		// evaluated
+		// place candidates. We send the candidates and all evidence.
+		matches.addAll(candidates);
 
-        Place boundary = new Place();
-        //
-        if (distinctADM1.size() == 1) {
-            /* Objective here is to report a single place closest to coordinate
-             * that represents the general boundary that contains the point
-             */
-            Place p = found.get(0);
-            boundary.setCountryCode(p.getCountryCode());
-            boundary.setAdmin1(p.getAdmin1());
-            return boundary;
-        }
-        // TODO: return admin code for best match for the given coord.
-        return found.get(0);
-    }
+		return matches;
+	}
 
-    //    @Override
-    //    public void setProgressMonitor(ProgressMonitor progressMonitor) {
-    //        this.progressMonitor = progressMonitor;
-    //    }
+	@Override
+	public List<TextMatch> extract(String input_buf) throws ExtractionException {
+		return extract(new TextInput(null, input_buf));
+	}
 
-    @Override
-    public void updateProgress(double progress) {
-        //        if (this.progressMonitor != null) {
-        //            progressMonitor.updateStepProgress(progress);
-        //        }
-    }
+	Map<String, Integer> locationBias = new HashMap<>();
 
-    @Override
-    public void markComplete() {
-        //        if (this.progressMonitor != null) {
-        //            progressMonitor.completeStep();
-        //        }
-    }
+	/**
+	 * By now, all raw rules should have fired, adding their most basic metadata
+	 * to each candidate.
+	 *
+	 * @param candidates
+	 *            list of PlaceCandidate (TextMatch + Place list)
+	 * @param coordinates
+	 *            list of GeoocordMatch (yes, cast of (GeoocordMatch)TextMatch
+	 *            is tested and used).
+	 */
+	private void geocode(List<PlaceCandidate> candidates) {
+
+		/*
+		 * Count all entries of evidence.
+		 */
+		for (PlaceCandidate pc : candidates) {
+			if (pc.isFilteredOut()) {
+				continue;
+			}
+
+			for (PlaceEvidence ev : pc.getEvidence()) {
+				String key = null;
+				if (ev.isCountry()) {
+					key = ev.getCountryCode();
+				} else if (ev.isAdministrative()) {
+					key = GeonamesUtility.getHASC(ev.getCountryCode(), ev.getAdmin1());
+				}
+				if (key != null) {
+					Integer count = locationBias.get(key);
+					if (count == null) {
+						count = new Integer(0);
+					}
+					locationBias.put(key, count + 1);
+				}
+			}
+		}
+		// 3. Disambiguation
+		// 4. Geocoding -- choosing and setting final entry data.
+
+	}
+
+	/**
+	 * A method to retrieve one or more distinct admin boundaries containing the
+	 * coordinate. This depends on resolution of gazetteer at hand.
+	 *
+	 * @param g
+	 *            geocoordinate found in text.
+	 * @return Place object near the geocoding.
+	 * @throws SolrServerException
+	 *             a query against the Solr index may throw a Solr error.
+	 */
+	public Place evaluateCoordinate(GeocoordMatch g) throws SolrServerException {
+		Place found = getGazetteer().placeAt(g, 25, "P");
+		if (found == null) {
+			found = getGazetteer().placeAt(g, 50, "A");
+			if (found == null) {
+				return null;
+			}
+		}
+
+		g.setRelatedPlace(found);
+
+		return found;
+	}
+
+	@Override
+	public void updateProgress(double progress) {
+		// if (this.progressMonitor != null) {
+		// progressMonitor.updateStepProgress(progress);
+		// }
+	}
+
+	@Override
+	public void markComplete() {
+		// if (this.progressMonitor != null) {
+		// progressMonitor.completeStep();
+		// }
+	}
 }

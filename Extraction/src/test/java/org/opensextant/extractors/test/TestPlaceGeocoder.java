@@ -18,6 +18,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         try {
             // INIT once.
             PlaceGeocoder geocoder = new PlaceGeocoder();
+            geocoder.enablePersonNameMatching(true);
             geocoder.configure();
 
             // Call as many times as you have documents...
@@ -32,6 +33,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
 
             // CALL only when you are done for good.
             geocoder.cleanup();
+            System.exit(0);
 
         } catch (Exception err) {
             err.printStackTrace();

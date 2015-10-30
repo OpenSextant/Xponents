@@ -65,8 +65,8 @@ public class CoordinateAssociationRule extends GeocodeRule {
     }
 
     /**
-     * If a particular geo is close to a candidate name/location,
-     * then add to the candidate's score for that location.
+     * If a particular geo is close to a candidate name/location, then add to
+     * the candidate's score for that location.
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {

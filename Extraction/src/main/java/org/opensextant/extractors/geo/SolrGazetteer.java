@@ -71,8 +71,8 @@ public class SolrGazetteer {
     private Map<String, Country> countryCodes = null;
 
     /**
-     * Default country code in solr gazetteer is ISO, so if given a FIPS code, we need
-     * a helpful lookup to get ISO code for lookup.
+     * Default country code in solr gazetteer is ISO, so if given a FIPS code,
+     * we need a helpful lookup to get ISO code for lookup.
      */
     private Map<String, String> countryFIPS_ISO = new HashMap<String, String>();
 
@@ -84,7 +84,8 @@ public class SolrGazetteer {
     /**
      * Instantiates a new solr gazetteer.
      *
-     * @throws ConfigException Signals that a configuration exception has occurred.
+     * @throws ConfigException
+     *             Signals that a configuration exception has occurred.
      */
     public SolrGazetteer() throws ConfigException {
         this((String) null);
@@ -93,31 +94,31 @@ public class SolrGazetteer {
     /**
      * Instantiates a new solr gazetteer with the specified Solr Home location.
      *
-     * @param solrHome the location of solrHome.
-     * @throws ConfigException Signals that a configuration exception has occurred.
+     * @param solrHome
+     *            the location of solrHome.
+     * @throws ConfigException
+     *             Signals that a configuration exception has occurred.
      */
     public SolrGazetteer(String solrHome) throws ConfigException {
         initialize(solrHome);
     }
 
     public SolrGazetteer(SolrProxy currentIndex) throws ConfigException {
-        //initialize();
+        // initialize();
         solr = currentIndex;
 
         try {
             this.countryCodes = loadCountries(solr.getInternalSolrServer());
         } catch (SolrServerException loadErr) {
-            throw new ConfigException(
-                    "SolrGazetteer is unable to load countries due to Solr error", loadErr);
+            throw new ConfigException("SolrGazetteer is unable to load countries due to Solr error", loadErr);
         } catch (IOException ioErr) {
-            throw new ConfigException(
-                    "SolrGazetteer is unable to load countries due to IO/file error", ioErr);
+            throw new ConfigException("SolrGazetteer is unable to load countries due to IO/file error", ioErr);
         }
 
     }
 
     /**
-     *  Returns the SolrProxy used internally.
+     * Returns the SolrProxy used internally.
      *
      * @return the solr proxy
      */
@@ -128,7 +129,8 @@ public class SolrGazetteer {
     /**
      * Normalize country name.
      *
-     * @param c the c
+     * @param c
+     *            the c
      * @return the string
      */
     public static String normalizeCountryName(String c) {
@@ -137,19 +139,21 @@ public class SolrGazetteer {
 
     /**
      * Do Not use.
-     * @return  solr params
-     * @deprecated DO NOT USE.  Keeping this as a reminder of what not to do.
-     * This will load entire index into memory.
+     * 
+     * @return solr params
+     * @deprecated DO NOT USE. Keeping this as a reminder of what not to do.
+     *             This will load entire index into memory.
      */
     @Deprecated
     private static ModifiableSolrParams createGeodeticLookupParamsXX() {
-        /* Basic parameters for geospatial lookup.
-         * These are reused, and only pt and d are set for each lookup.
+        /*
+         * Basic parameters for geospatial lookup. These are reused, and only pt
+         * and d are set for each lookup.
          *
          */
         ModifiableSolrParams p = new ModifiableSolrParams();
-        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
-                + "geo,place_id,name_bias,id_bias,name_type");
+        p.set(CommonParams.FL,
+                "id,name,cc,adm1,adm2,feat_class,feat_code," + "geo,place_id,name_bias,id_bias,name_type");
         p.set(CommonParams.ROWS, 25);
         p.set(CommonParams.Q, "*:*");
         p.set(CommonParams.FQ, "{!geofilt}");
@@ -161,6 +165,7 @@ public class SolrGazetteer {
 
     /**
      * Creates a generic spatial query for up to first 25 rows.
+     * 
      * @return default params
      */
     protected static ModifiableSolrParams createGeodeticLookupParams() {
@@ -168,35 +173,38 @@ public class SolrGazetteer {
     }
 
     /**
-     * For larger areas choose a higher number of Rows to return.
-     * If you choose to use  Solr spatial score-by-distance for sorting or anything, then
-     * Solr appears to want to load entire index into memory.  So this sort mechanism is off by default.
+     * For larger areas choose a higher number of Rows to return. If you choose
+     * to use Solr spatial score-by-distance for sorting or anything, then Solr
+     * appears to want to load entire index into memory. So this sort mechanism
+     * is off by default.
      * 
-     * @param rows rows to include in spatial lookups
+     * @param rows
+     *            rows to include in spatial lookups
      * @return solr params
      */
     protected static ModifiableSolrParams createGeodeticLookupParams(int rows) {
-        /* Basic parameters for geospatial lookup.
-         * These are reused, and only pt and d are set for each lookup.
+        /*
+         * Basic parameters for geospatial lookup. These are reused, and only pt
+         * and d are set for each lookup.
          *
          */
         ModifiableSolrParams p = new ModifiableSolrParams();
-        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,"
-                + "geo,place_id,name_bias,id_bias,name_type");
+        p.set(CommonParams.FL,
+                "id,name,cc,adm1,adm2,feat_class,feat_code," + "geo,place_id,name_bias,id_bias,name_type");
         p.set(CommonParams.ROWS, rows);
         p.set(CommonParams.Q, "{!geofilt sfield=geo}");
-        //p.set(CommonParams.SORT, "score desc");
+        // p.set(CommonParams.SORT, "score desc");
         p.set("spatial", "true");
 
         return p;
     }
 
     /**
-     * Initialize.
-     * Cascading env variables:  First use value from constructor,
+     * Initialize. Cascading env variables: First use value from constructor,
      * then opensextant.solr, then solr.solr.home
      *
-     * @throws ConfigException Signals that a configuration exception has occurred.
+     * @throws ConfigException
+     *             Signals that a configuration exception has occurred.
      */
     private void initialize(String solrHome) throws ConfigException {
 
@@ -208,11 +216,9 @@ public class SolrGazetteer {
         try {
             this.countryCodes = loadCountries(solr.getInternalSolrServer());
         } catch (SolrServerException loadErr) {
-            throw new ConfigException(
-                    "SolrGazetteer is unable to load countries due to Solr error", loadErr);
+            throw new ConfigException("SolrGazetteer is unable to load countries due to Solr error", loadErr);
         } catch (IOException ioErr) {
-            throw new ConfigException(
-                    "SolrGazetteer is unable to load countries due to IO/file error", ioErr);
+            throw new ConfigException("SolrGazetteer is unable to load countries due to IO/file error", ioErr);
         }
     }
 
@@ -244,7 +250,8 @@ public class SolrGazetteer {
      * TODO: throw a GazetteerException of some sort. for null query or invalid
      * code.
      *
-     * @param isocode the isocode
+     * @param isocode
+     *            the isocode
      * @return the country
      */
     public Country getCountry(String isocode) {
@@ -260,7 +267,8 @@ public class SolrGazetteer {
     /**
      * Gets the country by fips.
      *
-     * @param fips the fips
+     * @param fips
+     *            the fips
      * @return the country by fips
      */
     public Country getCountryByFIPS(String fips) {
@@ -274,25 +282,27 @@ public class SolrGazetteer {
      * 
      * TODO: allow caller to get all entries, including abbreviations.
      *
-     * @param index solr instance to query
+     * @param index
+     *            solr instance to query
      * @return country data hash
-     * @throws SolrServerException the solr server exception
-     * @throws IOException on err, if country metadata file is not found in classpath
+     * @throws SolrServerException
+     *             the solr server exception
+     * @throws IOException
+     *             on err, if country metadata file is not found in classpath
      */
-    public static HashMap<String, Country> loadCountries(SolrServer index)
-            throws SolrServerException, IOException {
+    public static HashMap<String, Country> loadCountries(SolrServer index) throws SolrServerException, IOException {
         HashMap<String, Country> countryCodeMap = new HashMap<String, Country>();
 
         ModifiableSolrParams ctryparams = new ModifiableSolrParams();
-        ctryparams.set(CommonParams.FL,
-                "id,name,cc,FIPS_cc,ISO3_cc,adm1,adm2,feat_class,feat_code,geo,name_type");
+        ctryparams.set(CommonParams.FL, "id,name,cc,FIPS_cc,ISO3_cc,adm1,adm2,feat_class,feat_code,geo,name_type");
 
         ctryparams.set("q", "+feat_class:A +feat_code:PCL* +name_type:N");
         ctryparams.set("rows", 2000);
 
         QueryResponse response = index.query(ctryparams);
 
-        // -- Process Solr Response;  This for loop matches the one in SolrMatcher
+        // -- Process Solr Response; This for loop matches the one in
+        // SolrMatcher
         //
         SolrDocumentList docList = response.getResults();
         for (SolrDocument gazEntry : docList) {
@@ -301,7 +311,8 @@ public class SolrGazetteer {
             String iso3 = SolrProxy.getString(gazEntry, "ISO3_cc");
             String name = SolrProxy.getString(gazEntry, "name");
 
-            // NOTE: FIPS could be "*", where ISO2 column is always non-trivial. if ("*".equals(code)){code = fips; }
+            // NOTE: FIPS could be "*", where ISO2 column is always non-trivial.
+            // if ("*".equals(code)){code = fips; }
 
             Country C = countryCodeMap.get(code);
             if (C != null) {
@@ -319,7 +330,8 @@ public class SolrGazetteer {
             C.setLatitude(xy[0]);
             C.setLongitude(xy[1]);
 
-            C.addAlias(C.getName()); // don't loose this entry as a likely variant.
+            C.addAlias(C.getName()); // don't loose this entry as a likely
+                                     // variant.
 
             countryCodeMap.put(code, C);
         }
@@ -354,9 +366,11 @@ public class SolrGazetteer {
      *
      * </pre>
      *
-     * @param place_string the place_string
+     * @param place_string
+     *            the place_string
      * @return places List of place entries
-     * @throws SolrServerException the solr server exception
+     * @throws SolrServerException
+     *             the solr server exception
      */
     public List<Place> search(String place_string) throws SolrServerException {
         return search(place_string, false);
@@ -364,6 +378,7 @@ public class SolrGazetteer {
 
     /**
      * Instance method that reuses a set of SolrParams for optimized search.
+     * 
      * <pre>
      * Search the gazetteer using one of the following:
      *
@@ -376,46 +391,57 @@ public class SolrGazetteer {
      *
      * </pre>
      *
-     * @param place the place
-     * @param as_solr the as_solr
+     * @param place
+     *            the place
+     * @param as_solr
+     *            the as_solr
      * @return places List of place entries
-     * @throws SolrServerException the solr server exception
+     * @throws SolrServerException
+     *             the solr server exception
      */
     public List<Place> search(String place, boolean as_solr) throws SolrServerException {
 
         if (as_solr) {
             params.set("q", place);
         } else {
-            params.set("q", "\"" + place + "\""); // Bare keyword query needs to be quoted as "word word word"
+            params.set("q", "\"" + place + "\""); // Bare keyword query needs to
+                                                  // be quoted as "word word
+                                                  // word"
         }
 
         return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), params);
     }
 
     /**
-     * Find places located at a particular location.  UNSORTED!
+     * Find places located at a particular location.
      *
-     * @param yx location
-     * @param withinKM  positive distance radius is required.
-     * @return list of places near location
-     * @throws SolrServerException on err
+     * @param yx
+     *            location
+     * @param withinKM
+     *            positive distance radius is required.
+     * @return unsorted list of places near location
+     * @throws SolrServerException
+     *             on err
      */
     public List<Place> placesAt(LatLon yx, int withinKM) throws SolrServerException {
 
-        /*          */
-        geoLookup.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
+        geoLookup.set("pt", GeodeticUtility.formatLatLon(yx));
         geoLookup.set("d", withinKM);
         return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), geoLookup);
     }
 
     /**
-     * Variation on placesAt().  UNSORTED!
+     * Variation on placesAt().
      *
-     * @param yx        location
-     * @param withinKM  distance - required.
-     * @param feature   feature class
-     * @return list of places near location
-     * @throws SolrServerException on err
+     * @param yx
+     *            location
+     * @param withinKM
+     *            distance - required.
+     * @param feature
+     *            feature class
+     * @return unsorted list of places near location
+     * @throws SolrServerException
+     *             on err
      */
     public List<Place> placesAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
 
@@ -424,15 +450,20 @@ public class SolrGazetteer {
         ModifiableSolrParams spatialQuery = createGeodeticLookupParams();
         spatialQuery.set(CommonParams.FQ, String.format("feat_class:%s", feature));
 
-        spatialQuery.set("pt", GeodeticUtility.formatLatLon(yx)); // The point in question.
-        spatialQuery.set("d", withinKM); // Example - Find places within 50 KM, but only first N rows are returned.
+        // The point in question.
+        spatialQuery.set("pt", GeodeticUtility.formatLatLon(yx));
+        // Example: Find places within 50KM, but only first N rows returned.
+        spatialQuery.set("d", withinKM);
         return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), spatialQuery);
     }
 
     /**
      * Iterate through a list and choose a place closest to the given point
-     * @param yx point of interest
-     * @param places list of places
+     * 
+     * @param yx
+     *            point of interest
+     * @param places
+     *            list of places
      * @return closest place
      */
     public static final Place closest(LatLon yx, List<Place> places) {
@@ -446,18 +477,22 @@ public class SolrGazetteer {
                 chosen = p;
             }
         }
-        return chosen;  // Is not null.
+        return chosen; // Is not null.
     }
 
     /**
-     * This is a reasonable guess.
-     * CAVEAT:  This does not use Solr Spatial location sorting.
+     * This is a reasonable guess. CAVEAT: This does not use Solr Spatial
+     * location sorting.
      * 
-     * @param yx location
-     * @param withinKM distance in KM
-     * @param feature feature type
-     * @return list of places near location
-     * @throws SolrServerException on err
+     * @param yx
+     *            location
+     * @param withinKM
+     *            distance in KM
+     * @param feature
+     *            feature type
+     * @return closest place to given location.
+     * @throws SolrServerException
+     *             on err
      */
     public Place placeAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
         List<Place> candidates = placesAt(yx, withinKM, feature);
