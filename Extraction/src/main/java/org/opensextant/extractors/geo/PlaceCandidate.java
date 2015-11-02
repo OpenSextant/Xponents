@@ -130,6 +130,7 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
      * abbreviation, and acronym
      */
     public boolean isCountry = false;
+    public boolean isContient = false;
     public boolean isPerson = false;
     public boolean isOrganization = false;
     public boolean isAbbreviation = false;
