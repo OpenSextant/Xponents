@@ -51,6 +51,10 @@ Basic Usage
        ./script/README_convert.txt
        ./script/convert.sh or convert.bat script
 
+       USAGE: 
+       ./script/convert.sh 
+       
+       
     //compile:
     
     mvn install

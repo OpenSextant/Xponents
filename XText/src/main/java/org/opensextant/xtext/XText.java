@@ -951,17 +951,20 @@ public final class XText implements ExclusionFilter, Converter {
         System.out.println();
         System.out.println("==========XText Usage=============");
         System.out
-        .println("XText --input input  [--output output]|[--embed-conversion]    "
-                + "\n\t[--embed-children]|[--export folder]     [--clean-html]   [--strip-prefix path]");
-        System.out.println("  input is file or folder");
-        System.out.println("  output is a folder where you want to archive converted docs");
-        System.out.println("  -e embeds the saved conversions in the input folder under 'xtext/'");
-        System.out.println("  -c embeds the extracted children binaries in the input folder");
+        .println("XText --input input  [--help] "
+                + "\n\t[--embed-conversion | --output folder ]   "
+                + "\n\t[--embed-children   | --export folder] "
+                + "\n\t[--clean-html]   [--strip-prefix path]");
+        System.out.println(" --help  print this message");
+        System.out.println(" --input  where <input> is file or folder");
+        System.out.println(" --output  where <folder> is output is a folder where you want to archive converted docs");
+        System.out.println(" --embed-children embeds the saved conversions in the input folder under 'xtext/'");
+        System.out.println(" --embed-conversion embeds the extracted children binaries in the input folder");
         System.out.println("     (NOT the conversions, the binaries from Archives, PST, etc)");
         System.out.println("     Default behavior is to extract originals to output archive.");
-        System.out.println("  -x folder\tOpposite of -c. Extract children and save to <folder>");
-        System.out.println("  NOTE: -e has same effect as setting output to input");
-        System.out.println("  -H enables HTML scrubbing");
+        System.out.println(" --export folder\tOpposite of -c. Extract children and save to <folder>");
+        System.out.println("     NOTE: -e has same effect as setting output to input");
+        System.out.println(" -clean-html enables HTML scrubbing");
         System.out.println("========================");
     }
 
@@ -991,6 +994,7 @@ public final class XText implements ExclusionFilter, Converter {
                 new LongOpt("output", LongOpt.REQUIRED_ARGUMENT, null, 'o'),
                 new LongOpt("export", LongOpt.REQUIRED_ARGUMENT, null, 'x'),
                 new LongOpt("strip-prefix", LongOpt.REQUIRED_ARGUMENT, null, 'p'),
+                new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
                 new LongOpt("clean-html", LongOpt.NO_ARGUMENT, null, 'H'),
                 new LongOpt("embed-conversion", LongOpt.NO_ARGUMENT, null, 'e'),
                 new LongOpt("embed-children", LongOpt.NO_ARGUMENT, null, 'c'),
@@ -1020,7 +1024,7 @@ public final class XText implements ExclusionFilter, Converter {
                     break;
 
                 case 'i':
-                    input = opts.getOptarg();
+                    input = opts.getOptarg();                    
                     break;
                 case 'o':
                     output = opts.getOptarg();
@@ -1045,6 +1049,7 @@ public final class XText implements ExclusionFilter, Converter {
                 case 'T':
                     xt.enableTikaPST(true);
                     break;
+                case 'h':
                 default:
                     XText.usage();
                     System.exit(1);
@@ -1084,7 +1089,8 @@ public final class XText implements ExclusionFilter, Converter {
 
         try {
             if (output == null && !embed) {
-                output = "xtext-output";
+                output = "output";
+                xt.enableSaving(true); // Will save to output dir.
                 FileUtility.makeDirectory(output);
                 System.out.println("Default output folder is $PWD/" + output);
             }
