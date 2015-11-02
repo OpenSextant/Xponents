@@ -431,7 +431,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * 
              */
             if (continents.filterOut(pc.getTextnorm())) {
-                pc.isContient = true;
+                pc.isContinent = true;
                 pc.setFilteredOut(true);
             }
 
