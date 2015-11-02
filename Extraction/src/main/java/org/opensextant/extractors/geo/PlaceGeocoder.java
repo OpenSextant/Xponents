@@ -116,10 +116,19 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
      * 
      *
      * @throws ConfigException
-     *             on err
+     *             if resource files could not be found in CLASSPATH
      */
     public PlaceGeocoder() throws ConfigException {
         super();
+    }
+
+    /**
+     * 
+     * @param lowercaseAllowed if lower case abbreviations are allowed. See GazetteerMatcher
+     * @throws ConfigException if resource files could not be found in CLASSPATH
+     */
+    public PlaceGeocoder(boolean lowercaseAllowed) throws ConfigException {
+        super(lowercaseAllowed);
     }
 
     /*
@@ -322,7 +331,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         //
         // countryRule.evaluate(candidates);
 
-        if (coordinates != null) {
+        if (coordinates != null && !coordinates.isEmpty()) {
             matches.addAll(coordinates);
 
             // First assess names matched

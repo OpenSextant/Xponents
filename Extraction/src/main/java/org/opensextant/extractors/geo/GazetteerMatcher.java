@@ -92,6 +92,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private static final String APRIORI_NAME_RULE = "AprioriNameBias";
     private TagFilter filter = null;
     private MatchFilter userfilter = null;
+    private MatchFilter continents = null;
+
     /**
      * invocation counts: default filter count and user filter count
      */
@@ -129,6 +131,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         initialize();
         allowLowerCase = lowercaseAllowed;
 
+        try {
+            continents = new MatchFilter("/filters/continent-filter.txt");
+        } catch (IOException err) {
+            throw new ConfigException("Could not find continent list.", err);
+        }
         // Instance variable that will have the transient payload to tag
         // this is not thread safe and is not static:
         // tag_request = new SolrTaggerRequest(params, SolrRequest.METHOD.POST);
@@ -141,6 +148,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              */
             filter.enableStopwordFilter(true);
             filter.enableCaseSensitive(!allowLowerCase);
+
             tagText("trivial priming of the solr pump", "__initialization___");
         } catch (ExtractionException initErr) {
             throw new ConfigException("Unable to prime the tagger", initErr);
@@ -289,7 +297,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Geotag a document, returning PlaceCandidates for the mentions in
      * document. Optionally just return the PlaceCandidates with name only and
-     * no Place objects attached.
+     * no Place objects attached. Names of contients are passed back as matches,
+     * with geo matches. Continents are filtered out by default.
      *
      * @param buffer
      *            text
@@ -371,7 +380,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // we might as well not make the tagger do any more work.
 
             String matchText = (String) tag.get("matchText");
-            // Then filter out trivial matches.
+            // Then filter out trivial matches. E.g., Us is filtered out. vs. US
+            // would be allowed.
+            // If lowercase abbreviations are allowed, then all matches are
+            // passed.
             if (len < 3 && !StringUtils.isAllUpperCase(matchText) && !allowLowercaseAbbrev) {
                 ++this.defaultFilterCount;
                 continue;
@@ -413,6 +425,16 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 }
             }
 
+            /*
+             * Continent filter is needed, as many mentions of contients confuse
+             * real geotagging/geocoding.
+             * 
+             */
+            if (continents.filterOut(pc.getTextnorm())) {
+                pc.isContient = true;
+                pc.setFilteredOut(true);
+            }
+
             pc.setSurroundingTokens(buffer);
 
             @SuppressWarnings("unchecked")
@@ -452,6 +474,29 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     // loop and not
                     // tagLoop?
                     continue tagLoop;
+                }
+
+                /*
+                 * If text match contains "." and it matches any abbreviation,
+                 * mark the candidate as an abbrev. TODO: Possibly best confirm
+                 * this by sentence detection, as well. However, this pertains
+                 * to text spans that contain "." within the bounds, and not
+                 * likely an ending. E.g., "U.S." or "U.S" are trivial examples;
+                 * "US" is more ambiguous, as we need to know if document is
+                 * upperCase.
+                 * 
+                 * Any place abbreviation will trigger isAbbreviation = true
+                 */
+                if (len < 10 && pGeo.isAbbreviation()) {
+                    if (pc.getText().contains(".")) {
+                        pc.isAbbreviation = true;
+                    } else if (pc.isUpper()) {
+                        // Upper case place matched
+                        pc.isAbbreviation = true;
+                    }
+                    // Lower or mixed-case abbreviations without "." are not
+                    // tagged
+                    // Mr, Us, etc.
                 }
 
                 if (log.isDebugEnabled()) {
