@@ -29,3 +29,8 @@ http://www.census.gov/topics/population/genealogy/data/1990_census/1990_census_n
 First names are located at:
   http://www2.census.gov/topics/genealogy/1990surnames/dist.male.first
   http://www2.census.gov/topics/genealogy/1990surnames/dist.female.first
+
+
+Build script (build.sh) is default build for gazetteer.  Put US Census files above  in 
+./conf/filters/census/ .  The Python script ./script/assemble_person_filter.py handles
+these files to put together a final name list.
