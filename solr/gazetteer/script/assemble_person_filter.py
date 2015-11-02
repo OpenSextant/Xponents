@@ -20,7 +20,8 @@ def is_comment(s):
 # USGS/Census top 1000 surnames
 #  To counter-act these names, add entries to  conf/inclusions/adhoc-places.txt
 #
-f1 =  os.path.abspath( 'conf/filters/census/top1000-surnames-cy2010.csv' )
+fpath =   'conf/filters/census/top1000-surnames-cy2010.csv' 
+f1 =  os.path.abspath( fpath )
 if os.path.exists(f1):
     print "\tParse ", f1
     fh = open(f1, 'rb')
@@ -29,9 +30,12 @@ if os.path.exists(f1):
         if not is_comment(row[0]):
             names.add(unicode(row[0]).strip().lower())
     fh.close()
+else:
+   print "Census data not present:", fpath
 
 #
-f1 =  os.path.abspath( 'conf/filters/census/dist.male.first')
+fpath = 'conf/filters/census/dist.male.first'
+f1 =  os.path.abspath( fpath )
 if os.path.exists(f1):
     print "\tParse ", f1
     fh = open(f1, 'rb')
@@ -43,8 +47,11 @@ if os.path.exists(f1):
             names.add(unicode(name))
 
     fh.close()
+else:
+   print "Census data not present:", fpath
 
-f1 =  os.path.abspath( 'conf/filters/census/dist.female.first')
+fpath = 'conf/filters/census/dist.female.first'
+f1 =  os.path.abspath( fpath )
 if os.path.exists(f1):
     print "\tParse ", f1
     fh = open(f1, 'rb')
@@ -56,6 +63,8 @@ if os.path.exists(f1):
             names.add(unicode(name))
 
     fh.close()
+else:
+   print "Census data not present:", fpath
     
 # Other useful names to use as not-place entries.
 #
