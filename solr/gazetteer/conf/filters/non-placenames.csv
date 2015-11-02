@@ -31,6 +31,7 @@
 "amazon","stopword.web"
 "adobe","stopword.web"
 "flash","stopword.web"
+"info","stopword.web"
 "pointer","stopword.web"
 "new way",phrase
 hello,phrase
