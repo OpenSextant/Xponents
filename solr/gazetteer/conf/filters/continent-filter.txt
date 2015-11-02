@@ -1,0 +1,25 @@
+# Names of contients.  They're common enough you will want to add language-specific versions of contients
+arctic
+antarctica
+africa
+asia
+europe
+oceania
+north america
+south america
+# Sub-contients
+north africa
+east asia
+se asia
+southeast asia
+southern asia
+eastern europe
+western europe
+eurasia
+mediterranean
+middle east
+mideast
+mid-east
+americas
+latin america
+central america

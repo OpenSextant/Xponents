@@ -576,6 +576,8 @@ yes,phrase
 "mother","person.label"
 "brother","person.label"
 "sister","person.label"
+"brothers","person.label"
+"sisters","person.label"
 "cousin","person.label"
 "child","person.label"
 "son","person.label"
