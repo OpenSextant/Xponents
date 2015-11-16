@@ -10,6 +10,7 @@ shah
 dara
 parvan
 khyber
+qom
 # US Cities
 savannah
 montgomery
