@@ -4,6 +4,7 @@ mrs
 miss
 sir
 sr
+senior
 srs
 sra
 msr
@@ -12,6 +13,8 @@ secretary
 undersecretary
 sec
 scy
+speaker
+spkr
 dr
 drs
 doctor
@@ -33,6 +36,8 @@ mother
 brother
 sister
 cousin
+aunt
+uncle
 child
 son
 daughter
@@ -45,6 +50,8 @@ lords
 duke
 duchess
 mayor
+master
+manager
 attorney
 attorney general
 ag
@@ -87,6 +94,8 @@ commis
 comm
 senator
 sen
+congressman
+congresswoman
 general
 gen
 lt-gen
@@ -174,6 +183,7 @@ inmate
 prisoner
 resident
 student
+singer
 protester
 protesters
 celebrant
