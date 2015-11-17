@@ -101,13 +101,17 @@ public class TextEntity {
     private boolean isUpper = false;
 
     /**
-     * test If text is ALL lowercase
+     * test If text (that has a case sense) is ALL lower case
      * @return true if all lower.
      */
     public boolean isLower() {
         return isLower;
     }
-
+    
+    /**
+     * test If text (that has a case sense) is ALL upper case
+     * @return true if all upper.
+     */
     public boolean isUpper() {
         return isUpper;
     }

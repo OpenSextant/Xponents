@@ -88,6 +88,10 @@ public class TestTextUtils {
         assertTrue(TextUtils.isLower(chineseText));
         chineseText = "A 杨寨";
         assertTrue(TextUtils.isUpper(chineseText));
+        String latinText = "ø Ø";
+        // Neither upper or lower. Mixed.
+        assertTrue(!TextUtils.isUpper(latinText) && !TextUtils.isLower(latinText));
+        assertTrue(TextUtils.isLower("øh baby") && TextUtils.isUpper("ØH BABY"));
     }
 
 }
