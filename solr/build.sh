@@ -1,7 +1,13 @@
 if [ ! -d ./log ] ;  then
   mkdir log
 fi
-ant -f build-gazetteer.xml _index > log/build.log  
+
+pushd gazetteer/
+echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
+python ./script/assemble_person_filter.py 
+popd
+
+ant -f build-gazetteer.xml _index 
 
 SERVER=localhost:7000
 
