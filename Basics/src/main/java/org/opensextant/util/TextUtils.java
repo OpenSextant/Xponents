@@ -437,27 +437,36 @@ public class TextUtils {
         if (text == null) {
             return false;
         }
-        int letterCount = 0;
+        int caseCount = 0;
+        
         for (char c : text.toCharArray()) {
             if (!Character.isLetter(c)) {
                 continue;
             }
-            ++letterCount;
             if (textcase == 1) {
                 if (Character.isUpperCase(c)) {
                     // Checking for lower case; Fail if upper case is found.
                     return false;
+                } else if (Character.isLowerCase(c)){
+                    ++caseCount;
                 }
             } else if (textcase == 2) {
                 if (Character.isLowerCase(c)) {
                     // Checking for upper case; Fail if lower case is found.
                     return false;
+                } else if (Character.isUpperCase(c)){
+                    ++caseCount;
                 }
             }
         }
-        // IF at least one Letter found
-        // then
-        return letterCount > 0;
+        // IF at least one letter found in the case, return true.
+        // It is possible that mixed-language text that has no case-sense 
+        // is mixed up with ASCII or Romance language text. 
+        //   test     LOWER   UPPER
+        //   A b  ==>  no      no
+        //   A 寨 ==>  no      yes
+        //   a 寨 ==>  yes      no
+        return caseCount > 0;
     }
 
     /**

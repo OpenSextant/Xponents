@@ -79,6 +79,15 @@ public class TestTextUtils {
         assertTrue(!TextUtils.isUpper("abc"));
         assertTrue(TextUtils.isUpper("A B C  9 1$% Ö"));
         assertTrue(!TextUtils.isUpper("A B C 9 1$% ø"));
+
+        String arabicText = "المناطق:";
+        assertTrue(!TextUtils.isUpper(arabicText));
+        String chineseText = "杨寨";
+        assertTrue(!TextUtils.isUpper(chineseText));
+        chineseText = "a 杨寨";
+        assertTrue(TextUtils.isLower(chineseText));
+        chineseText = "A 杨寨";
+        assertTrue(TextUtils.isUpper(chineseText));
     }
 
 }
