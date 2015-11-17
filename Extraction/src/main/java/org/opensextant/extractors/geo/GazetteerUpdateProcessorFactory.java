@@ -92,9 +92,9 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
         String logTag = "GAZ UPR////////////// ";
 
-        logger.info("Parameters for Gaz Updater {}, size={}, CO?{}", params, params.size(), params.getAll("countries"));
+        logger.debug("Parameters for Gaz Updater {}, size={}, Country Filter?{}", params, params.size(), params.getAll("countries"));
         if (params.size() == 0) {
-            logger.info(logTag + "Zero parameters found.");
+            logger.debug(logTag + "Zero parameters found.");
             return;
         }
         NamedList p = (NamedList) params.getVal(0);
@@ -129,8 +129,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             catField = (String) p.get("category_field");
         }
 
-        logger.info(logTag + " DONE.   CAT={}, CO={}", includeCategorySet, includeCountrySet);
-
+        logger.debug(logTag + " DONE.   CAT={}, CO={}", includeCategorySet, includeCountrySet);
     }
 
     /**
