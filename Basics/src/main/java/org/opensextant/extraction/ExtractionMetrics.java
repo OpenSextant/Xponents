@@ -28,13 +28,16 @@
 package org.opensextant.extraction;
 
 /**
- *
+ * This is a holder for tracking various common measures: No. of Calls, Amount of time, No. of bytes
+ * Delta quantities (addBytes, addTime, addTimeSince), etc. cannot represent negative quantities.
+ * 
  * @author ubaldino
  */
 public class ExtractionMetrics {
 
     private String name = null;
     private int callCount = 0;
+    private long byteCount = 0L;
     /**
      * total time spent for this metric in milliseconds
      */
@@ -42,7 +45,9 @@ public class ExtractionMetrics {
 
     /**
      * A named metric
-     * @param nm name of metric
+     * 
+     * @param nm
+     *            name of metric
      */
     public ExtractionMetrics(String nm) {
         this.name = nm;
@@ -50,28 +55,62 @@ public class ExtractionMetrics {
 
     @Override
     public String toString() {
-        return "Metric " + this.name + " Calls:" + this.getCallCount()
-                + " Average time(ms):" + this.getAverageTime()
-                + " with Total time(ms):" + this.getTotalTime();
+        return String.format("Metric %s calls=%d,  avg time=%3d (ms), tot time=%d (ms), tot bytes=%d",
+                name, getCallCount(), getAverageTime(), getTotalTime(), getByteCount());
     }
 
     /**
      * avg time spent for this metric in milliseconds
+     * 
      * @return average time
      */
     public int getAverageTime() {
-        if (callCount == 0) return 0;
+        if (callCount == 0)
+            return 0;
         return (int) (totalTime / callCount);
     }
 
-    public void addTime(long time) {
-        totalTime += time;
-        ++callCount;
+    /**
+     * Add just a time delta.
+     * 
+     * @param delta
+     *            milliseconds span
+     */
+    public void addTime(long delta) {
+        if (delta >= 0) {
+            totalTime += delta;
+            ++callCount;
+        }
     }
 
-    public void addTime(long time, int calls) {
-        totalTime += time;
-        callCount += calls;
+    /**
+     * Add time delta using NOW - time.
+     * 
+     * @param epoch
+     *            milliseconds epoch
+     */
+    public void addTimeSince(long epoch) {
+        long delta = System.currentTimeMillis() - epoch;
+        if (delta > 0) {
+            totalTime += delta;
+            ++callCount;
+        }
+    }
+
+    /**
+     * Add just a time delta.
+     * 
+     * @param delta
+     *            milliseconds span
+     * @param calls
+     *            number of calls for this metric that occured over delta
+     */
+
+    public void addTime(long delta, int calls) {
+        if (delta >= 0) {
+            totalTime += delta;
+            callCount += calls;
+        }
     }
 
     public long getTotalTime() {
@@ -80,5 +119,19 @@ public class ExtractionMetrics {
 
     public int getCallCount() {
         return callCount;
+    }
+
+    public void addBytes(long delta) {
+        if (delta > 0) {
+            byteCount += delta;
+        }
+    }
+
+    public long getByteCount() {
+        return byteCount;
+    }
+
+    public void setByteCount(long c) {
+        this.byteCount = c;
     }
 }

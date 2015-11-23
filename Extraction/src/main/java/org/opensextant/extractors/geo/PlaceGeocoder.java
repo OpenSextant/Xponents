@@ -43,6 +43,7 @@ package org.opensextant.extractors.geo;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -100,7 +101,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
     private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
-    private final ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
+//     private final ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
     // private ProgressMonitor progressMonitor;
 
     private CountryRule countryRule = null;
@@ -180,9 +181,6 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         log.info(taggingTimes.toString());
         log.info(retrievalTimes.toString());
         log.info(matcherTotalTimes.toString());
-        log.info("=================\nSimple Geocoder");
-        log.info(this.processingMetric.toString());
-
     }
 
     /**
@@ -259,10 +257,15 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     @Override
     public void cleanup() {
         reportMetrics();
-        this.shutdown();
+        shutdown();
+    }
+    
+    @Override
+    public void shutdown(){
+        super.shutdown();
         if (personMatcher != null) {
             personMatcher.shutdown();
-        }
+        }        
     }
 
     private Parameters params = new Parameters();
@@ -317,6 +320,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
+        long t1 = System.currentTimeMillis();
         reset();
         List<TextMatch> matches = new ArrayList<TextMatch>();
 
@@ -416,6 +420,9 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
                 matches.addAll(orgs);
             }
         }
+        
+        // Measure duration of tagging.
+        this.taggingTimes.addTimeSince(t1);
 
         countryRule.evaluate(candidates);
         personNameRule.evaluate(candidates);
@@ -441,6 +448,10 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         // evaluated
         // place candidates. We send the candidates and all evidence.
         matches.addAll(candidates);
+
+        // Measure full processing duration for this doc.
+        this.matcherTotalTimes.addBytes(input.buffer.length());
+        this.matcherTotalTimes.addTimeSince(t1);
 
         return matches;
     }
