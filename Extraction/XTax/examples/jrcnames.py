@@ -361,8 +361,11 @@ if __name__ == '__main__':
         if row_max > 0 and row_id > row_max:
             break
             
-    builder.save(flush=True)
-    builder.optimize()
+    try:
+        builder.save(flush=True)
+        builder.optimize()
+    except Exception, err:
+        print err
     
     fh.close()
             
