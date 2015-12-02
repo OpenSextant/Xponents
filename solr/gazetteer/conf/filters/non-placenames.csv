@@ -13,6 +13,7 @@
 "tell","verb"
 "reform","verb"
 "will","verb"
+"hurt","verb"
 "wake","verb"
 "to do","verb"
 "research","verb"
@@ -46,6 +47,7 @@ select,stopword.web
 "python","stopword.web"
 "excel","stopword.web"
 "word","stopword.web"
+"os","stopword.web"
 "bing","stopword.web"
 "safari","stopword.web"
 "ebay","stopword.web"
@@ -80,6 +82,7 @@ telecom,"stopword.web"
 "new way",phrase
 "easy way",phrase
 "by chance",phrase
+"a peak",phrase
 hello,phrase
 yes,phrase
 "or a","phrase"
@@ -90,6 +93,7 @@ yes,phrase
 "long way","phrase"
 "last chance","phrase"
 "olive branch","phrase"
+"rendezvous point","phrase"
 "good point","phrase"
 "main point","phrase"
 "zero point","phrase"
@@ -97,6 +101,8 @@ yes,phrase
 "first point","phrase"
 "second point","phrase"
 "tipping point","phrase"
+"western point","phrase"
+"eastern point","phrase"
 "point of view","phrase"
 "low bar","phrase"
 "high bar","phrase"
@@ -117,6 +123,8 @@ yes,phrase
 "fish","noun"
 "trout","noun"
 "total","noun"
+eagle,noun
+shell,noun
 "chance","noun"
 "let","verb"
 "car","noun"
@@ -145,6 +153,7 @@ yes,phrase
 "defence","noun"
 "civil defence","noun"
 "defense","noun"
+"health services",noun
 "asylum","noun"
 "revolution","noun"
 "gang","noun"
@@ -156,6 +165,7 @@ yes,phrase
 "alliance","noun"
 "inter","adjective"
 "quick","adjective"
+"rapid","adjective"
 "early","adjective"
 "hasty","adjective"
 "vintage","adjective"
@@ -164,6 +174,7 @@ yes,phrase
 "indo","adjective"
 "civil","adjective"
 "marine","adjective"
+"mariner",noun
 "state-run","adjective"
 "bland","adjective"
 "blank","adjective"
@@ -472,6 +483,8 @@ kiss,noun
 "land","place.general"
 "real-estate","place.civil"
 "real estate","place.civil"
+office,"place.civil"
+casino,"place.civil"
 "island","place.general"
 "valley","place.general"
 "ridge","place.general"
@@ -483,6 +496,7 @@ kiss,noun
 "quarry","place.civil"
 "tower","place.civil"
 "fortress","place.civil"
+"airport","place.civil"
 "quad","place.civil"
 "square","place.civil"
 "manor","place.civil"
@@ -684,6 +698,9 @@ atlantis,place.legend
 vip,person.label
 patriot,person.label
 male,person.label
+mom,person.label
+dad,person.label
+daddy,person.label
 manager,person.label
 master,person.label
 senior,person.label
@@ -1150,6 +1167,7 @@ coke,well-known.org
 "einstein","well-known.person"
 "yoda","well-known.person"
 moto,noun
+administration,noun
 nope,phrase
 pasta,noun
 treat,noun
@@ -1172,6 +1190,7 @@ tales,noun
 patent,noun
 panel,noun
 pack,noun
+scout,noun
 opera,noun
 math,noun
 crown,noun
@@ -1180,6 +1199,7 @@ conquest,noun
 mono,adjective
 solar,adjective
 shorter,adjective
+lucky,adjective
 papal,adjective
 oral,adjective
 olympic,adjective
@@ -1193,3 +1213,8 @@ nda,noun
 gop,"well-known.org"
 usaid,"well-known.org"
 dod,"well-known.org"
+irs,"well-known.org"
+tsa,"well-known.org"
+puerto,noun.es
+cruise,noun
+ace,noun
