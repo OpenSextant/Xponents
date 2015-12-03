@@ -20,6 +20,7 @@ vintage,adjective
 experimental,adjective
 trojan,adjective
 indo,adjective
+baltic,adjective
 civil,adjective
 marine,adjective
 state-run,adjective
@@ -848,6 +849,7 @@ park,place.general
 hill,place.general
 mount,place.general
 peak,place.general
+summit,place.general
 mountain,place.general
 a mountain,place.general
 gulf,place.general
@@ -1297,8 +1299,10 @@ uncle sam,well-known.person
 ringo,well-known.person
 shaq,well-known.person
 yoda,well-known.person
+cab,noun
 bear,noun
 crocodile,noun
+viper,noun
 belt buckle,noun
 craft,noun
 coward,noun
