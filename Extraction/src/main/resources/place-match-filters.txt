@@ -1,5 +1,8 @@
 # OPENSEXTANT
 # (c)2013
+#  
+# OBE - superceded by Xponents/solr/gazetteer/conf/filters,  a number of flat files for this purpose of filtering matches.
+# This remains here close to the code for reference.
 #
 # This is a Place Name Matcher optimization
 # It contains terms that 99.9% of the time are not actual names of places.
