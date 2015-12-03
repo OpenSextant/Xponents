@@ -1,0 +1,23 @@
+exclusion,category
+#,Add here any term or phrase you wish to eliminate from geotagging because it 
+#,is a well known or not-so-well known acronym. 
+ACA,
+ACS,
+AIG,
+AMA,
+AOR,
+ARS,
+AWOL,
+CIS,
+FOB,
+ITAR,
+IM,
+INS,
+PAO,
+PAP,
+PALS,
+TASS,
+RET,
+SAMS,
+SNL,
+UPI,

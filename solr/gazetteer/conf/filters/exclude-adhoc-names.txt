@@ -1,5 +1,6 @@
 # those in the news,... or any names you wish to omit.
 # These are all place names that coincide with celebrity names
+# Some of these are common, short names from various cultures.
 obama
 putin
 medvedev
@@ -14,6 +15,8 @@ assad
 asad
 oleg
 abd
+abu
+abi
 ahmad
 ahmed
 dimitry
@@ -24,5 +27,6 @@ fernando
 felicity
 luiz
 luis
+nat
 nate
 matty
