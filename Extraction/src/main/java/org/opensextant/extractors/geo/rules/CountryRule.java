@@ -22,7 +22,7 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 public class CountryRule extends GeocodeRule {
 
     public CountryRule() {
-        WEIGHT = 2;
+        weight = 1;
         NAME = "CountryName";
     }
 
@@ -39,22 +39,16 @@ public class CountryRule extends GeocodeRule {
 
         if (geo.isCountry()) {
             if (name.isAcronym || name.isAbbreviation) {
-                name.addCountryEvidence("CountryCode", 1, geo.getCountryCode());
+                name.addCountryEvidence("CountryCode", weight, geo.getCountryCode(), geo);
             } else {
-                name.addCountryEvidence(NAME, WEIGHT, geo.getCountryCode());
+                name.addCountryEvidence(NAME, weight+2, geo.getCountryCode(), geo);
             }
-            // We have the liberty to choose a best name variant/location at
-            // this point.
-            // But since this is just country, then choosing a plain language
-            // version of the gazetteer
-            // entry is desirable.
-            // TODO: Choose Place whose name most closely resembles the matched
-            // item
-            // TODO: consider returning the same gazetteer entry consistently
-            // TODO: Choose Place that is not the full diacritics variant, if
-            // possible.
             name.choose(geo);
             log("Chose Country", name.getText());
+
+            if (countryObserver!=null){
+                countryObserver.countryInScope(geo.getCountryCode());
+            }
         }
     }
 }

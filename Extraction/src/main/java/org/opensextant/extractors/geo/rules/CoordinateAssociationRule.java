@@ -22,7 +22,9 @@ import java.util.List;
 
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
+import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.util.GeodeticUtility;
 
 import com.spatial4j.core.io.GeohashUtils;
@@ -32,7 +34,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
     /**
      * Default threshold distance between a coordinate and a candidate location
      */
-    public static int DEFAULT_THRESHOLD_METERS = 25000;
+    public static int DEFAULT_THRESHOLD_METERS = 10000;
     /** Threshold for geohash prefix similarity */
     public static int DEFAULT_THRESHOLD_DIGITS = 5;
 
@@ -43,6 +45,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
     private List<Geocoding> coordinates = new ArrayList<>();
 
     public CoordinateAssociationRule() {
+        weight = 5;
     }
 
     public CoordinateAssociationRule(int distScheme) {
@@ -55,6 +58,17 @@ public class CoordinateAssociationRule extends GeocodeRule {
 
     public void addCoordinate(Geocoding geo) {
         coordinates.add(geo);
+    }
+
+    public void addCoordinates(List<TextMatch> found) {
+        for (TextMatch g : found) {
+            if (g instanceof GeocoordMatch) {
+                this.addCoordinate((GeocoordMatch) g);
+                if (this.coordObserver != null) {
+                    this.coordObserver.locationInScope((GeocoordMatch) g);
+                }
+            }
+        }
     }
 
     @Override
@@ -88,7 +102,8 @@ public class CoordinateAssociationRule extends GeocodeRule {
 
                 // is within
                 if (meters < DEFAULT_THRESHOLD_METERS) {
-                    name.addGeocoordEvidence("Coordinate", 1, ll);
+                    double proximityScore = (float) (DEFAULT_THRESHOLD_METERS - meters) / DEFAULT_THRESHOLD_METERS;
+                    name.addGeocoordEvidence("Coordinate", weight, ll, geo, proximityScore);                    
                 }
             }
             break;
@@ -107,7 +122,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
 
                 // is within
                 if (gh.startsWith(grid)) {
-                    name.addGeocoordEvidence("Geohash", 1, ll);
+                    name.addGeocoordEvidence("Geohash", weight, ll, geo, 1.0);
                 }
             }
             break;

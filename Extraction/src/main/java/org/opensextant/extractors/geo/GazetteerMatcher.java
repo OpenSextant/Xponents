@@ -69,6 +69,7 @@ import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.util.SolrProxy;
+import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
@@ -89,7 +90,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /*
      * Gazetteer specific stuff:
      */
-    private static final String APRIORI_NAME_RULE = "AprioriNameBias";
     private TagFilter filter = null;
     private MatchFilter userfilter = null;
     private MatchFilter continents = null;
@@ -331,6 +331,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
+        int[] textMetrics = TextUtils.measureCase(buffer);
+        boolean isUpperCase = TextUtils.isUpperCaseDocument(textMetrics);
 
         params.set("field", fld);
         Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
@@ -433,8 +435,26 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             if (continents.filterOut(pc.getTextnorm())) {
                 pc.isContinent = true;
                 pc.setFilteredOut(true);
+                candidates.put(pc.start, pc);
+                continue;
+            }
+            /*
+             * Found UPPER CASE text in a mixed-cased document.
+             * Conservatively, this is likely an acronym or some heading.
+             * But possibly still a valid place name.
+             * HEURISTIC: acronyms are relatively short. 
+             * HEURISTIC: region codes can be acronyms and are valid places
+             * 
+             * using such place candidates you may score short acronym matches lower than fully named ones.
+             * when inferring boundaries (states, provinces, etc)
+             */
+            if (!isUpperCase && pc.isUpper() && len < 5) {
+                pc.isAcronym = true;
             }
 
+            /*
+             * Everything Else.
+             */
             pc.setSurroundingTokens(buffer);
 
             @SuppressWarnings("unchecked")
@@ -445,15 +465,15 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * placeRecordIds.size() == new
              * HashSet<Integer>(placeRecordIds).size() : "ids should be unique";
              */
-            assert!placeRecordIds.isEmpty();
+            // assert!placeRecordIds.isEmpty();
             namesMatched.clear();
 
-            double maxNameBias = 0.0;
+            //double maxNameBias = 0.0;
             for (Integer solrId : placeRecordIds) {
                 // Yes, we must cast here.
                 // As long as createTag generates the correct type stored in
                 // beanMap we are fine.
-                Place pGeo = (Place) beanMap.get(solrId);
+                ScoredPlace pGeo = (ScoredPlace) beanMap.get(solrId);
                 // assert pGeo != null;
 
                 // Optimization: abbreviation filter.
@@ -471,8 +491,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     log.debug("Ignore lower case term={}", pc.getText());
                     // DWS: TODO what if there is another pGeo for this pc that
                     // isn't an abbrev? Therefore shouldn't we continue this
-                    // loop and not
-                    // tagLoop?
+                    // loop and not tagLoop?
                     continue tagLoop;
                 }
 
@@ -486,17 +505,24 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * upperCase.
                  * 
                  * Any place abbreviation will trigger isAbbreviation = true
+                 * 
+                 * "IF YOU FIND US HERE"  the term 'US' is ambiguous here, so 
+                 * it is not classified as an abbreviation. Otherwise if you have
+                 * "My organization YAK happens to coincide with a place named Yak.
+                 * But we first must determine if 'YAK' is a valid abbreviation for an actual place.
+                 * HEURISTIC: place abbreviations are relatively short, e.g. one word(LEN=7 or less)
                  */
-                if (len < 10 && pGeo.isAbbreviation()) {
+                if (len < 8 && pGeo.isAbbreviation()) {
                     if (pc.getText().contains(".")) {
                         pc.isAbbreviation = true;
-                    } else if (pc.isUpper()) {
+                    } else if (!isUpperCase && pc.isUpper()) {
                         // Upper case place matched
                         pc.isAbbreviation = true;
+                        // Matched text is UPPER in a non-upper case document                        
+                        pc.isAcronym = true;
                     }
                     // Lower or mixed-case abbreviations without "." are not
-                    // tagged
-                    // Mr, Us, etc.
+                    // tagged Mr, Us, etc.
                 }
 
                 if (log.isDebugEnabled()) {
@@ -513,11 +539,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 }
 
                 if (geocode) {
+                    pGeo.defaultHierarchicalPath();
+                    // Default score for geo will be calculated in PlaceCandidate
                     pc.addPlace(pGeo);
                 }
-
-                maxNameBias = Math.max(maxNameBias, pGeo.getName_bias());
-            } // for place in tag
+            }
 
             // If geocoding, skip this PlaceCandidate if has no places (e.g. due
             // to filtering)
@@ -528,11 +554,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 if (log.isDebugEnabled()) {
                     log.debug("Text {} matched {}", pc.getText(), namesMatched);
                 }
-            }
-
-            // if the max name bias seen >0, add apriori evidence
-            if (maxNameBias > 0) {
-                pc.addRuleAndConfidence(APRIORI_NAME_RULE, maxNameBias);
             }
 
             candidates.put(pc.start, pc);
@@ -582,10 +603,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public static Place createPlace(SolrDocument gazEntry) {
 
         // Creates for now org.opensextant.placedata.Place
-        Place bean = SolrProxy.createPlace(gazEntry);
-
-        bean.setName_bias(SolrProxy.getDouble(gazEntry, "name_bias"));
-        bean.setId_bias(SolrProxy.getDouble(gazEntry, "id_bias"));
+        //Place bean = SolrProxy.createPlace(gazEntry);
+        String plid = SolrUtil.getString(gazEntry, "place_id");
+        String nm = SolrProxy.getString(gazEntry, "name");
+        ScoredPlace bean = new ScoredPlace(plid, nm);
+        SolrProxy.populatePlace(gazEntry, bean);
 
         return bean;
     }
@@ -674,8 +696,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         public TagFilter() throws ConfigException {
             super();
-            stopTerms = GazetteerMatcher
-                    .loadExclusions(GazetteerMatcher.class.getResource("/filters/non-placenames.csv"));
+            stopTerms = new HashSet<>();
+            String[] defaultNonPlaceFilters = {
+                    "/filters/non-placenames.csv",
+                    "/filters/non-placenames,acronym.csv"
+            };
+            for (String f : defaultNonPlaceFilters) {
+                stopTerms.addAll(GazetteerMatcher.loadExclusions(GazetteerMatcher.class.getResource(f)));
+            }
         }
 
         public void enableStopwordFilter(boolean b) {

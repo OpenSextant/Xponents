@@ -342,8 +342,6 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
         log.debug("FOUND LABELS count={}", matches.size());
 
-        markComplete();
-
         return matches;
 
     }
@@ -412,22 +410,4 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     public List<Taxon> search(SolrParams qparams) throws SolrServerException {
         return search(this.solr.getInternalSolrServer(), qparams);
     }
-
-    // @Override
-    // public void setProgressMonitor(ProgressMonitor progressMonitor) {
-    // this.progressMonitor = progressMonitor;
-    // }
-
-    @Override
-    public void updateProgress(double progress) {
-        // if (this.progressMonitor != null)
-        // progressMonitor.updateStepProgress(progress);
-    }
-
-    @Override
-    public void markComplete() {
-        // if (this.progressMonitor != null)
-        // progressMonitor.completeStep();
-    }
-
 }

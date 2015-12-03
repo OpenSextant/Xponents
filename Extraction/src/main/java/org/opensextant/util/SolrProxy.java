@@ -201,7 +201,16 @@ public class SolrProxy extends SolrUtil {
 
         Place bean = new Place(SolrUtil.getString(gazEntry, "place_id"), SolrProxy.getString(
                 gazEntry, "name"));
-
+        populatePlace(gazEntry, bean);
+        return bean;
+    }
+    
+    /**
+     * Populate the data card.
+     * @param gazEntry
+     * @param bean
+     */
+    public static void populatePlace(SolrDocument gazEntry, Place bean){
         String nt = SolrUtil.getString(gazEntry, "name_type");
         if (nt != null) {
             if ("code".equals(nt)) {
@@ -226,9 +235,7 @@ public class SolrProxy extends SolrUtil {
         bean.setLongitude(xy[1]);
 
         bean.setName_bias(SolrUtil.getDouble(gazEntry, "name_bias"));
-        bean.setId_bias(SolrUtil.getDouble(gazEntry, "id_bias"));
-
-        return bean;
+        bean.setId_bias(SolrUtil.getDouble(gazEntry, "id_bias"));        
     }
 
     /**

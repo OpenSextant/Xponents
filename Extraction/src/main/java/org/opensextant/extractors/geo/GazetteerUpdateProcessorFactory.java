@@ -102,7 +102,11 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
         logger.debug(logTag + "P={}, V={}", p.getName(0), p.getVal(0));
 
         List<String> ic = (List<String>) p.get("include_category"); // array of
-                                                                    // String
+    
+        /* Optional: filter entries with a category list
+        *
+        */
+        // String
         if (ic != null) {
             logger.debug(logTag + "Found CAT={}", ic);
             includeCategorySet = new HashSet<String>();
@@ -115,6 +119,9 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             logger.error(logTag + "No category found.");
         }
 
+        /* Optional: filter entries with a country list
+         *
+         */
         List<String> cc = (List<String>) p.get("countries");
         if (cc != null) {
             logger.debug("Found CO={}", ic);
@@ -122,7 +129,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             List<String> val = TextUtils.string2list(cc.get(0), ",");
             includeCountrySet.addAll(val);
         } else {
-            logger.error("No country filter found");
+            logger.debug("No country filter found");
         }
 
         if (params.get("category_field") != null) {

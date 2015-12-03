@@ -119,8 +119,7 @@ public class XtractorGroup {
          */
         for (Extractor x : extractors) {
             try {
-                List<TextMatch> results = x.extract(input);
-                x.markComplete();
+                List<TextMatch> results = x.extract(input);                
                 if (results != null && !results.isEmpty()) {
                     oneResultSet.addAll(results);
                 }

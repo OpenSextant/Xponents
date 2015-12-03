@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.7.19</version>
+    <version>2.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -56,11 +56,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.10</slf4j.version>
-        <xponents.v>2.7.19</xponents.v>
+        <xponents.v>2.8.0-SNAPSHOT</xponents.v>
     </properties>
 
     <modules>
         <module>Basics</module>
+        <module>Patterns</module>
         <module>Extraction</module>
         <module>XText</module>
         <module>Examples</module>
@@ -82,6 +83,11 @@
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-xtext</artifactId>
+                <version>${xponents.v}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensextant</groupId>
+                <artifactId>opensextant-xponents-patterns</artifactId>
                 <version>${xponents.v}</version>
             </dependency>
             <dependency>
@@ -182,7 +188,7 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
-                    <compilerVersion>1.7</compilerVersion>
+                    <compilerVersion>1.8</compilerVersion>
                     <compilerArgument>-Xlint:all,-path</compilerArgument>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>

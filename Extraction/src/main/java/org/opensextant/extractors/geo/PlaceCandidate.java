@@ -34,7 +34,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
@@ -54,7 +56,7 @@ import org.opensextant.util.TextUtils;
  * it?
  * </ul>
  */
-public class PlaceCandidate extends TextMatch /* Serializable */ {
+public class PlaceCandidate extends TextMatch {
 
     private String textnorm = null;
 
@@ -69,13 +71,11 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
     // --------------Disambiguation stuff ----------------------
     // the places along with their disambiguation scores
     private final Map<String, ScoredPlace> scoredPlaces = new HashMap<>();
-    // temporary lists to hold the ranked places and scores
-    private final List<Place> rankedPlaces = new ArrayList<>();
-    private final List<Double> rankedScores = new ArrayList<>();
     // the list of PlaceEvidences accumulated from the document about this PC
     private final List<PlaceEvidence> evidence = new ArrayList<>();
     // The chosen, best place:
-    private Place chosen = null;
+    private ScoredPlace chosen = null;
+    private Set<String> hierarchicalPaths = new HashSet<>();
 
     // basic constructor
     public PlaceCandidate() {
@@ -86,7 +86,27 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
      * unchosen places go to disambiguation.
      */
     public void choose(Place geo) {
-        chosen = geo;
+        if (geo instanceof ScoredPlace) {
+            chosen = (ScoredPlace) geo;
+        } else if (scoredPlaces.containsKey(geo.getKey())) {
+            chosen = scoredPlaces.get(geo.getKey());
+        } else {
+            //             
+        }
+    }
+
+    /**
+     * Default chooser routine. Wrapper around getBestPlace()
+     * choose() takes an action, which incurs some performance cost.
+     * getChosen() is a getter to give you the result, without invoking the action.
+     * 
+     * <pre>
+     * chose()
+     * geo = getChosen()
+     * </pre>
+     */
+    public void choose() {
+        getBestPlace();
     }
 
     /**
@@ -159,17 +179,15 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
             return chosen;
         }
 
-        List<Place> l = this.getPlaces();
-        if (l.isEmpty()) {
-            chosen = null; // ensure null.
-            return null;
-        }
-        chosen = l.get(0);
-        return chosen;
+        List<ScoredPlace> tmp = new ArrayList<>();
+        tmp.addAll(scoredPlaces.values());
+        Collections.sort(tmp);
 
+
+        chosen = tmp.get(0);
+        return chosen;
     }
 
-    //
     /**
      * Get the disambiguation score of the most highly ranked Place, or 0.0 if
      * empty list.
@@ -177,11 +195,10 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
      * @return score of best place
      */
     public Double getBestPlaceScore() {
-        List<Double> l = this.getScores();
-        if (l.isEmpty()) {
-            return 0.0;
+        if (chosen != null) {
+            return chosen.getScore();
         }
-        return l.get(0);
+        return 0.0;
     }
 
     /**
@@ -192,42 +209,95 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
         return (this.getPlaceConfidenceScore() > 0.0);
     }
 
-    public List<Place> getPlaces() {
-        List<Place> tmp = new ArrayList<>();
-        for (ScoredPlace p : scoredPlaces.values()) {
-            tmp.add(p.place);
-        }
-        return tmp;
-    }
-
-    /**
-     * Get a ranked list of places
-     * 
-     * @return list of places ranked, sorted.
-     */
-    public List<Place> getRankedPlaces() {
-        this.sort();
-        return this.rankedPlaces;
-    }
-
-    /**
-     * Get a ranked list of scores
-     * 
-     * @return list of scores
-     */
-    public List<Double> getScores() {
-        this.sort();
-        return this.rankedScores;
+    public Collection<ScoredPlace> getPlaces() {
+        return scoredPlaces.values();
     }
 
     // add a new place with a default score
-    public void addPlace(Place place) {
-        this.addPlaceWithScore(place, 0.0);
+    public void addPlace(ScoredPlace place) {
+        this.addPlace(place, defaultScore(place));
+        this.rules.add("DefaultScore");
     }
 
     // add a new place with a specific score
-    public void addPlaceWithScore(Place place, Double score) {
-        this.scoredPlaces.put(place.getKey(), new ScoredPlace(place, score));
+    public void addPlace(ScoredPlace place, Double score) {
+        place.setScore(score);
+        this.scoredPlaces.put(place.getKey(), place);
+        this.hierarchicalPaths.add(place.getHierarchicalPath());
+    }
+
+    public static final double NAME_WEIGHT = 0.1;
+    public static final double FEAT_WEIGHT = 0.2;
+    public static final double LOCATION_BIAS_WEIGHT = 0.1;
+
+    /**
+     * Given this candidate, how do you score the provided place
+     * just based on those place properties (and not on context, document properties,
+     * or other evidence)?
+     * 
+     * This 'should' produce a base score of something between 0 and 1.0, or 0..10.
+     * These scores do not necessarily need to stay in that range, as they are all relative.
+     * However, as rules fire and compare location data it is better to stay in a known range
+     * for sanity sake.
+     * 
+     * @param g
+     * @return
+     */
+    public double defaultScore(Place g) {
+        double sn = scoreName(g);
+        double sf = scoreFeature(g);
+        double sb = g.getId_bias();
+
+        double baseScore = (NAME_WEIGHT * sn) + (FEAT_WEIGHT * sf) + (LOCATION_BIAS_WEIGHT * sb);
+        return 10 * baseScore;
+    }
+
+    /**
+     * Produce a goodness score of 0..1
+     * 
+     * Trivial examples of name matching:
+     * 
+     * <pre>
+     *  given some patterns, 'geo' match Text
+     * 
+     *   case 1. 'Alberta' matches ALBERTA or alberta just fine. 
+     *   case 2. 'La' matches LA, however, knowing "LA" is a acronym/abbreviation 
+     *       adds to the score of any geo that actually is "LA"
+     *   case 3. 'Afghanestan' matches Afghanistan, but decrement because it is not perfectly spelled.
+     * 
+     * </pre>
+     * 
+     * @param g
+     * @return
+     */
+    protected double scoreName(Place g) {
+        int startingScore = getTextnorm().length();
+        int editDist = StringUtils.getLevenshteinDistance(getTextnorm(), g.getNamenorm());
+        int score = startingScore - editDist;
+        if (isUpper() && (g.isAbbreviation() || TextUtils.isUpper(g.getName()))) {
+            ++score;
+        }
+        return (float) score / startingScore;
+    }
+
+    /**
+     * A preference for features that are major places or boundaries.
+     * 
+     * @param g
+     * @return
+     */
+    protected double scoreFeature(Place g) {
+        int score = 0;
+
+        // Major Place Rule covers 'A' and 'P' feature types, as such things require more context
+        //
+        if ("P".equals(g.getFeatureClass())) {
+            score += 2;
+        } else if ("S".equals(g.getFeatureClass())) {
+            score += 1;
+        }
+
+        return (float) score / 2;
     }
 
     // increment the score of an existing place
@@ -242,12 +312,12 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
     }
 
     // set the score of an existing place
-    public void setPlaceScore(Place place, Double score) {
+    public void setPlaceScore(ScoredPlace place, Double score) {
         if (!this.scoredPlaces.containsKey(place.getKey())) {
             // log.error("Tried to increment a score for a non-existent Place");
             return;
         }
-        addPlaceWithScore(place, score);
+        addPlace(place, score);
     }
 
     public Collection<String> getRules() {
@@ -264,7 +334,7 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
 
     // check if at least one of the Places has the given country code
     public boolean possibleCountry(String cc) {
-        for (Place p : rankedPlaces) {
+        for (Place p : scoredPlaces.values()) {
             if (p.getCountryCode() != null && p.getCountryCode().equalsIgnoreCase(cc)) {
                 return true;
             }
@@ -276,7 +346,7 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
     public boolean possibleAdmin(String adm, String cc) {
 
         // check the non-null admins first
-        for (Place p : rankedPlaces) {
+        for (Place p : scoredPlaces.values()) {
             if (p.getAdmin1() != null && p.getAdmin1().equalsIgnoreCase(adm)) {
                 return true;
             }
@@ -284,7 +354,7 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
 
         // some adm1codes are null, a null admin of the correct country could be
         // possible match
-        for (Place p : rankedPlaces) {
+        for (Place p : scoredPlaces.values()) {
             if (p.getAdmin1() == null && p.getCountryCode().equalsIgnoreCase(cc)) {
                 return true;
             }
@@ -364,12 +434,15 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
         this.evidence.add(ev);
     }
 
-    public void addCountryEvidence(String rule, double weight, String cc) {
+    public void addCountryEvidence(String rule, double weight, String cc, Place geo) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
         ev.setCountryCode(cc);
         this.evidence.add(ev);
+
+        ev.setEvaluated(true);
+        this.incrementPlaceScore(geo, /*1 x */ weight);
     }
 
     public void addAdmin1Evidence(String rule, double weight, String adm1, String cc) {
@@ -397,12 +470,17 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
         this.evidence.add(ev);
     }
 
-    public void addGeocoordEvidence(String rule, double weight, LatLon coord) {
+    public void addGeocoordEvidence(String rule, double weight, LatLon coord, Place geo, double proximityScore) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
         ev.setLatLon(coord);
         this.evidence.add(ev);
+        //
+        ev.setEvaluated(true);
+        this.incrementPlaceScore(geo, weight * proximityScore);
+        // The indirect connection between found coord and closest geo candidate 
+        // is assessed here.  The score for geo has already be incremented.
     }
 
     public List<PlaceEvidence> getEvidence() {
@@ -413,34 +491,28 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
         return !this.scoredPlaces.isEmpty();
     }
 
-    private void sort() {
-        this.rankedPlaces.clear();
-        this.rankedScores.clear();
-
-        List<ScoredPlace> tmp = new ArrayList<>();
-        tmp.addAll(scoredPlaces.values());
-        Collections.sort(tmp);
-
-        for (ScoredPlace spl : tmp) {
-            this.rankedPlaces.add(spl.getPlace());
-            this.rankedScores.add(spl.getScore());
-        }
-
-    }
-
     // an overide of toString to get a meaningful representation of this PC
     @Override
     public String toString() {
-        String tmp = getText() + "(" + this.getPlaceConfidenceScore() + "/" + this.scoredPlaces.size() + ")" + "\n";
-        tmp = tmp + "Rules=" + this.rules.toString() + "\n";
-        tmp = tmp + "Evidence=" + this.evidence.toString() + "\n";
+        StringBuilder tmp = new StringBuilder(getText());
+        tmp.append("(");
+        tmp.append(String.format("(%02.1f/%d)", this.getPlaceConfidenceScore(), this.scoredPlaces.size()));
+        tmp.append("\nRules=");
+        tmp.append(rules.toString());
+        tmp.append("\nEvidence=");
+        tmp.append(evidence.toString());
 
-        this.sort();
-        tmp = tmp + "Places=";
-        for (int i = 0; i < this.rankedPlaces.size(); i++) {
-            tmp = tmp + this.rankedPlaces.get(i).toString() + "=" + this.rankedScores.get(i).toString() + "\n";
+        //this.sort();
+        tmp.append("\nPlaces=\n");
+        //for (int i = scoredPlaces.size() - 1; i >= 0; --i) {
+        for (ScoredPlace p : scoredPlaces.values()) {
+            tmp.append("\t");
+            tmp.append(p.toString());
+            tmp.append(" = ");
+            tmp.append(String.format("%04.4f", p.getScore()));
+            tmp.append("\n");
         }
-        return tmp;
+        return tmp.toString();
     }
 
     /**
@@ -471,5 +543,16 @@ public class PlaceCandidate extends TextMatch /* Serializable */ {
      */
     public void setPostmatchTokens(String[] tok) {
         this.postTokens = tok;
+    }
+
+    /**
+     * Given a path, 'a.b' ( province b in country a),
+     * see if this name is present there.
+     * 
+     * @param path
+     * @return
+     */
+    public boolean presentInHierarchy(String path) {
+        return this.hierarchicalPaths.contains(path);
     }
 }

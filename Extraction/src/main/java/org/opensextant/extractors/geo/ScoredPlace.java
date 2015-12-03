@@ -31,17 +31,12 @@ import org.opensextant.data.Place;
 /**
  * A class to hold a Place and a score together. Used by PlaceCandidate to rank places.
  */
-public class ScoredPlace implements Comparable<Object> {
+public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
 
-    Place place;
-    double score;
+    private double score = 0.0;
 
-    public Place getPlace() {
-        return place;
-    }
-
-    public void setPlace(Place place) {
-        this.place = place;
+    public ScoredPlace(String plid, String nm) {
+        super(plid, nm);
     }
 
     public double getScore() {
@@ -56,27 +51,20 @@ public class ScoredPlace implements Comparable<Object> {
         score += d;
     }
 
-    public ScoredPlace(Place pl, double scr) {
-        this.place = pl;
-        this.score = scr;
-    }
-
+    /**
+     * Ordering: higher score comes first in our sortable lists. So A.score &gt; B.score yields -1, so A is ordered
+     * first.
+     */
     @Override
-    // compare by score
-    public int compareTo(Object o) {
-        if (o instanceof ScoredPlace) {
-            /* Is there a difference in using Double obj vs. double primitive?
-             * double primitive cannot use compareTo obj methods.
-             */
-            if (getScore() > ((ScoredPlace) o).getScore()) {
-                return 1;
-            }
-            if (getScore() < ((ScoredPlace) o).getScore()) {
-                return -1;
-            }
-            if (getScore() == ((ScoredPlace) o).getScore()) {
-                return 0;
-            }
+    public int compareTo(ScoredPlace o) {
+        /* Is there a difference in using Double obj vs. double primitive?
+         * double primitive cannot use compareTo obj methods.
+         */
+        if (getScore() > o.getScore()) {
+            return -1;
+        }
+        if (getScore() < o.getScore()) {
+            return 1;
         }
         return 0;
 

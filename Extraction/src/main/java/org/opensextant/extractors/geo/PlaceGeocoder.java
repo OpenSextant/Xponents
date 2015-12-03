@@ -43,7 +43,6 @@ package org.opensextant.extractors.geo;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,6 +50,7 @@ import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
+import org.opensextant.data.Country;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
 import org.opensextant.data.Taxon;
@@ -58,11 +58,12 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.ExtractionMetrics;
 import org.opensextant.extraction.Extractor;
-import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.rules.CoordinateAssociationRule;
 import org.opensextant.extractors.geo.rules.CountryRule;
 import org.opensextant.extractors.geo.rules.GeocodeRule;
+import org.opensextant.extractors.geo.rules.LocationChooserRule;
+import org.opensextant.extractors.geo.rules.MajorPlaceRule;
 import org.opensextant.extractors.geo.rules.NameCodeRule;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
 import org.opensextant.extractors.geo.rules.ProvinceAssociationRule;
@@ -71,7 +72,6 @@ import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.processing.Parameters;
-import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,12 +88,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
+public class PlaceGeocoder extends GazetteerMatcher
+        implements Extractor, CountryObserver, BoundaryObserver, CoordinateObserver {
 
     /**
      *
      */
-    // private final TextUtils utility = new TextUtils();
     protected Logger log = LoggerFactory.getLogger(getClass());
     private XCoord xcoord = null;
     private PersonNameFilter personNameRule = null;
@@ -101,12 +101,12 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
     private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
-//     private final ExtractionMetrics processingMetric = new ExtractionMetrics("processing");
-    // private ProgressMonitor progressMonitor;
 
     private CountryRule countryRule = null;
     private CoordinateAssociationRule coordRule = null;
     private ProvinceAssociationRule adm1Rule = null;
+    private static Map<String, Country> countryCatalog = null;
+    private MajorPlaceRule majorPlaceRule = null;
 
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding
@@ -125,8 +125,10 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
 
     /**
      * 
-     * @param lowercaseAllowed if lower case abbreviations are allowed. See GazetteerMatcher
-     * @throws ConfigException if resource files could not be found in CLASSPATH
+     * @param lowercaseAllowed
+     *            if lower case abbreviations are allowed. See GazetteerMatcher
+     * @throws ConfigException
+     *             if resource files could not be found in CLASSPATH
      */
     public PlaceGeocoder(boolean lowercaseAllowed) throws ConfigException {
         super(lowercaseAllowed);
@@ -173,8 +175,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     }
 
     /**
-     * We have some emerging metrics to report out... As these metrics are
-     * volatile, I'm not changing imports.
+     * We have some emerging metrics to report out...
      */
     public void reportMetrics() {
         log.info("=======================\nTAGGING METRICS");
@@ -200,6 +201,11 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     @Override
     public void configure() throws ConfigException {
 
+        // ==============
+        // Rule setup:  Create GeocodeRules, add them to this.rules if they can be evaluated generically
+        // on a list of place tags.
+        // Otherwise such rules are configured, set during the request, and evaluated adhoc as you need.
+        // 
         /**
          * Files for Place Name filter are editable, as you likely have
          * different ideas of who are "person names" to exclude when they
@@ -212,24 +218,32 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
         URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
         personNameRule = new PersonNameFilter(p1, p2, p3);
-        // rules.add();
 
+        /* assess country names and codes */
         countryRule = new CountryRule();
-        // rules.add(countryRule); /* assess country names and codes */
-        rules.add(new NameCodeRule()); /* assess NAME, CODE patterns */
+        countryRule.setCountryObserver(this);
+
+        /* assess NAME, CODE patterns */
+        NameCodeRule nameWithAdminRule = new NameCodeRule();
+        nameWithAdminRule.setBoundaryObserver(this);
+        rules.add(nameWithAdminRule);
+
+        /*
+         * assess coordinates related to ADM1, CC
+         */
+        coordRule = new CoordinateAssociationRule();
+        coordRule.setCountryObserver(this);
+        coordRule.setCoordinateObserver(this);
 
         if (xcoord == null && (isCoordExtractionEnabled())) {
             xcoord = new XCoord();
             xcoord.configure();
 
             /*
-             * assess coordinates related to ADM1, CC
-             */
-            coordRule = new CoordinateAssociationRule();
-            /*
              * assess ADM1 related to found NAMES as a result of coordinates
              */
             adm1Rule = new ProvinceAssociationRule();
+            adm1Rule.setCountryObserver(this);
 
             rules.add(coordRule);
             rules.add(adm1Rule);
@@ -249,6 +263,17 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
                 throw new ConfigException("XTax resource not available.");
             }
         }
+
+        // Major Places
+        majorPlaceRule = new MajorPlaceRule();
+        majorPlaceRule.setCountryObserver(this);
+        rules.add(majorPlaceRule);
+
+        LocationChooserRule chooser = new LocationChooserRule();
+        chooser.setCountryObserver(this);
+        chooser.setBoundaryObserver(this);
+        rules.add(chooser);
+        countryCatalog = this.getGazetteer().getCountries();
     }
 
     /**
@@ -259,13 +284,13 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         reportMetrics();
         shutdown();
     }
-    
+
     @Override
-    public void shutdown(){
+    public void shutdown() {
         super.shutdown();
         if (personMatcher != null) {
             personMatcher.shutdown();
-        }        
+        }
     }
 
     private Parameters params = new Parameters();
@@ -290,9 +315,32 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     }
 
     private void reset() {
-        this.locationBias.clear();
-        this.personNameRule.reset();
+        //this.locationBias.clear();
+        this.relevantCountries.clear();
+        this.relevantProvinces.clear();
+
+        personNameRule.reset();
+        coordRule.reset();
+        countryRule.reset();
+        adm1Rule.reset();
+        majorPlaceRule.reset();
+        for (GeocodeRule r : rules) {
+            r.reset();
+        }
     }
+
+    /**
+     * Countries mentioned, inferred, or otherwise relevant
+     */
+    private Map<String, CountryCount> relevantCountries = new HashMap<>();
+    /**
+     * Provinces mentioned, inferred or otherwise relevant.
+     */
+    private Map<String, PlaceCount> relevantProvinces = new HashMap<>();
+    /**
+     * Places inferred by their proximity to concrete coordinate references.
+     */
+    private Map<String, Place> relevantLocations = new HashMap<>();
 
     /**
      * Unfinished Beta; ready for experimentation and improvement on rules.
@@ -322,122 +370,48 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
         long t1 = System.currentTimeMillis();
         reset();
+
         List<TextMatch> matches = new ArrayList<TextMatch>();
-
         List<TextMatch> coordinates = null;
-        if (isCoordExtractionEnabled()) {
-            coordinates = xcoord.extract(input);
-        }
 
-        LinkedList<PlaceCandidate> candidates = tagText(input.buffer, input.id);
+        // 0. GEOTAG raw text
+        LinkedList<PlaceCandidate> candidates = tagText(input.buffer, input.id,
+                false /*  Do full geocoding prep, so tag-only = false */);
 
-        // Tagger has already marked candidates as name of Country or not.
+        // 1. COORDINATES. If caller thinks their data may have coordinates, then attempt to parse
+        // lat/lon.  Any coordinates found fire rules for resolve lat/lon to a Province/Country if possible.
         //
-        // countryRule.evaluate(candidates);
-
-        if (coordinates != null && !coordinates.isEmpty()) {
+        coordinates = parseGeoCoordinates(input);
+        if (coordinates != null) {
             matches.addAll(coordinates);
-
-            // First assess names matched
-            // If names are to be completely filtered out, filter them out first
-            // or remove from candiate list.
-            // Then apply rules.
-
-            // IFF you have coordinates extracted or given:
-            // 1. Identify all hard geographic entities: coordinates; coded
-            // places (other patterns provided by your domain, etc.)
-            // 1a. identify country + AMD1 for each coordinate; summarize
-            // distinct country + ADM1 as evidence
-            // XY => geohash, query geohash w/fq.fields = cc,adm1,adm2
-            //
-            // 2. Tagger Post-processing rules: Generate Country, Nat'l Capitals
-            // and Admin names
-            List<Place> relevantProvinces = new ArrayList<>();
-            if (coordRule != null && coordinates != null) {
-                coordRule.reset();
-                try {
-                    for (TextMatch g : coordinates) {
-                        if (g instanceof GeocoordMatch) {
-                            Place province = evaluateCoordinate((GeocoordMatch) g);
-                            if (province != null) {
-                                relevantProvinces.add(province);
-                            }
-                        }
-                        coordRule.addCoordinate((Geocoding) g);
-                    }
-                } catch (Exception err) {
-                    log.error("Problem doing spatial lookup", err);
-                }
-
-                if (adm1Rule != null && !relevantProvinces.isEmpty()) {
-                    adm1Rule.setProvinces(relevantProvinces);
-                }
-            }
         }
 
-        // 3. Tag person and org names to negate celebrity names or well-known
+        // 2. NON-PLACE ID. Tag person and org names to negate celebrity names or well-known
         // individuals who share a city name. "Tom Jackson", "Bill Clinton"
         //
-        if (isPersonNameMatchingEnabled()) {
-            List<TextMatch> nonPlaces = personMatcher.extract(input.buffer);
-            if (!nonPlaces.isEmpty()) {
-                List<TaxonMatch> persons = new ArrayList<>();
-                List<TaxonMatch> orgs = new ArrayList<>();
-                for (TextMatch tm : nonPlaces) {
-                    if (!(tm instanceof TaxonMatch)) {
-                        continue;
-                    }
+        parseKnownNonPlaces(input, candidates, matches);
 
-                    TaxonMatch tag = (TaxonMatch) tm;
-                    //
-                    // For the purposes of geocoding/geoparsing filter out
-                    // ALL
-                    // TaxonMatches. Any place names should reside back in
-                    // gazetteer.
-                    // If XTax does have place or location data, that would
-                    // be new.
-                    //
-                    tm.setFilteredOut(true);
-                    for (Taxon taxon : tag.getTaxons()) {
-                        String node = taxon.name.toLowerCase();
-                        // If you matched a Person name or an Organization
-                        // ACRONYM
-                        // add the TaxonMatch (TextMatch) to negate place
-                        // name spans
-                        // that are not places.
-                        if (node.startsWith("person.")) {
-                            persons.add(tag);
-                            break;
-                        }
-                        if (node.startsWith("org.") && tm.isUpper()) {
-                            orgs.add(tag);
-                            break;
-                        }
-                    }
-                }
-                personNameRule.evaluateNamedEntities(candidates, persons, orgs);
-                matches.addAll(persons);
-                matches.addAll(orgs);
-            }
-        }
-        
         // Measure duration of tagging.
         this.taggingTimes.addTimeSince(t1);
 
+        /*
+         * 3.RULE EVALUATION: accumulate all the evidence from everything found so far.
+         * Assemble some histograms to support some basic counts, weighting and sorting.
+         * 
+         * Rules: 
+         * a.  Country - named country weighs heavily; 
+         * b.  Person name rule - filters out heavily.
+         * c.  Coordinate rule -- coordinates emit Province ID and Country ID if possible. So inferred Provinces are weighted heavily.
+         * d.  Major Places rule -- well-known large cities, capitals or provinces are weighted moderately.
+         * e.  Province association rule -- for each found place, weight geos falling in Provinces positively ID'd.
+         * f.  Location Chooser rule -- assemble all evidence and account for weights.
+         */
         countryRule.evaluate(candidates);
         personNameRule.evaluate(candidates);
 
-        /*
-         * Rule evaluation: accumulate all the evidence.
-         */
         for (GeocodeRule r : rules) {
             r.evaluate(candidates);
         }
-
-        /*
-         * Knit it all together.
-         */
-        geocode(candidates);
 
         // For each candidate, if PlaceCandidate.chosen is not null,
         // add chosen (Geocoding) to matches
@@ -445,8 +419,7 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         // non-geocoded matches will appear in non-GIS formats.
         //
         // Downstream recipients of 'matches' must know how to parse through
-        // evaluated
-        // place candidates. We send the candidates and all evidence.
+        // evaluated place candidates. We send the candidates and all evidence.
         matches.addAll(candidates);
 
         // Measure full processing duration for this doc.
@@ -454,6 +427,226 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
         this.matcherTotalTimes.addTimeSince(t1);
 
         return matches;
+    }
+
+    /**
+     * If no geo matches are found, we still parse the data if person name matching is enabled.
+     * Poor-man's named-entity extraction
+     * 
+     * @throws ExtractionException
+     * 
+     */
+    private void parseKnownNonPlaces(TextInput input, List<PlaceCandidate> candidates, List<TextMatch> matches) {
+
+        if (!isPersonNameMatchingEnabled()) {
+            return;
+        }
+
+        // If this step fails miserably, do not raise error. Log the error and return nothing found.
+        // 
+        List<TextMatch> nonPlaces = null;
+        try {
+            nonPlaces = personMatcher.extract(input.buffer);
+            if (nonPlaces.isEmpty()) {
+                return;
+            }
+        } catch (Exception err) {
+            log.error(err.getMessage());
+            return;
+        }
+
+        List<TaxonMatch> persons = new ArrayList<>();
+        List<TaxonMatch> orgs = new ArrayList<>();
+        for (TextMatch tm : nonPlaces) {
+            if (!(tm instanceof TaxonMatch)) {
+                continue;
+            }
+
+            TaxonMatch tag = (TaxonMatch) tm;
+            //
+            // For the purposes of geocoding/geoparsing filter out ALL
+            // TaxonMatches. Any place names should reside back in
+            // gazetteer. If XTax does have place or location data, that would be new.
+            //
+            tm.setFilteredOut(true);
+            for (Taxon taxon : tag.getTaxons()) {
+                String node = taxon.name.toLowerCase();
+                // If you matched a Person name or an Organization ACRONYM
+                // add the TaxonMatch (TextMatch) to negate place
+                // name spans that are not places.
+                if (node.startsWith("person.")) {
+                    persons.add(tag);
+                    break;
+                }
+                if (node.startsWith("org.") && tm.isUpper()) {
+                    orgs.add(tag);
+                    break;
+                }
+            }
+        }
+        personNameRule.evaluateNamedEntities(candidates, persons, orgs);
+        matches.addAll(persons);
+        matches.addAll(orgs);
+    }
+
+    /**
+     * Concrete lat/lon or MGRS grid locations infer location, city, province, country
+     */
+    private List<TextMatch> parseGeoCoordinates(TextInput input) {
+        if (!isCoordExtractionEnabled()) {
+            return null;
+        }
+
+        List<TextMatch> coords = xcoord.extract(input);
+        if (!coords.isEmpty()) {
+            coordRule.addCoordinates(coords);
+            adm1Rule.setProvinces(relevantProvinces.values());
+            return coords;
+        }
+        return null;
+    }
+
+    /**
+     * Record how often country references are made.
+     * 
+     * @param c
+     *            country obj
+     */
+    @Override
+    public void countryInScope(Country c) {
+        if (c == null) {
+            return;
+        }
+        CountryCount counter = relevantCountries.get(c.getCountryCode());
+        if (counter == null) {
+            counter = new CountryCount();
+            counter.country = c;
+            relevantCountries.put(c.getCountryCode(), counter);
+        } else {
+            ++counter.count;
+        }
+    }
+
+    public int countryCount() {
+        return relevantCountries.size();
+    }
+
+    /**
+     * Calculate country mention totals and ratios. These ratios help qualify
+     * what the document is about. These may be mentions in text or inferred mentions to
+     * the countries listed, e.g., a coord infers a particular country.
+     */
+    public Map<String, CountryCount> countryMentionCount() {
+        int total = 0;
+        for (CountryCount cnt : relevantCountries.values()) {
+            total += cnt.count;
+        }
+        for (CountryCount cnt : relevantCountries.values()) {
+            cnt.total = total;
+        }
+        return relevantCountries;
+    }
+
+    /**
+     * Weight mentions or indirect references to Provinces in the document
+     * 
+     * @return
+     */
+    public Map<String, PlaceCount> placeMentionCount() {
+        int total = 0;
+        // Accumulate total.
+        for (PlaceCount cnt : relevantProvinces.values()) {
+            total += cnt.count;
+        }
+
+        // One more time to set totals.
+        for (PlaceCount cnt : relevantProvinces.values()) {
+            cnt.total = total;
+        }
+        return relevantProvinces;
+    }
+
+    /**
+     * Record how often country references are made.
+     * 
+     * @param cc
+     */
+    @Override
+    public void countryInScope(String cc) {
+        CountryCount counter = relevantCountries.get(cc);
+        if (counter == null) {
+            Country C = countryCatalog.get(cc);
+            counter = new CountryCount();
+            // Well, we must deal with a potential unknown country.  
+            // Historical differences, XK = Kosovo, YU = Yugoslavia; 
+            // FIPS vs. ISO differences, etc.  Some country codes may not resolve cleanly.
+            if (C != null) {
+                counter.country = C;
+            }
+            relevantCountries.put(cc, counter);
+        } else {
+            ++counter.count;
+        }
+    }
+
+    public boolean countryObserved(String cc) {
+        if (cc == null) {
+            return false;
+        }
+        return relevantCountries.containsKey(cc);
+    }
+
+    public boolean countryObserved(Country C) {
+        if (C == null) {
+            return false;
+        }
+        return relevantCountries.containsKey(C.getCountryCode());
+    }
+
+    /**
+     * When coordinates are found track them. A coordinate is critical -- it informs us
+     * of city, province, and country. If the location is off shore or in no-mans' land,
+     * these chains of observers should respect that and fail quietly.
+     */
+    @Override
+    public void locationInScope(Geocoding geo) {
+        try {
+            Place cityOrProv = evaluateCoordinate(geo);
+            if (cityOrProv != null) {
+                // TODO: for provinces found by proximity here
+                // play off distinct province vs. city features.  relevantProvinces allows overwriting existing key.
+                // We may need to track all key/value pairs.
+                cityOrProv.defaultHierarchicalPath();
+                relevantLocations.put(cityOrProv.getPlaceID(), cityOrProv);
+                boundaryLevel1InScope(cityOrProv);
+                countryInScope(cityOrProv.getCountryCode());
+            }
+        } catch (Exception err) {
+            log.error("Spatial search error", err);
+        }
+    }
+
+    /**
+     * Observer pattern that sees any time a possible boundary (state, province, district, etc) is mentioned.
+     * 
+     * @param p
+     *            ID of a boundary.
+     */
+    @Override
+    public void boundaryLevel1InScope(Place p) {
+        PlaceCount counter = relevantProvinces.get(p.getHierarchicalPath());
+        if (counter == null) {
+            counter = new PlaceCount();
+            counter.place = p;
+            relevantProvinces.put(p.getHierarchicalPath(), counter);
+        } else {
+            ++counter.count;
+        }
+    }
+
+    @Override
+    public void boundaryLevel2InScope(Place p) {
+        // NOT Implmemented.
     }
 
     @Override
@@ -464,45 +657,11 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
     Map<String, Integer> locationBias = new HashMap<>();
 
     /**
-     * By now, all raw rules should have fired, adding their most basic metadata
-     * to each candidate.
-     *
-     * @param candidates
-     *            list of PlaceCandidate (TextMatch + Place list)
-     * @param coordinates
-     *            list of GeoocordMatch (yes, cast of (GeoocordMatch)TextMatch
-     *            is tested and used).
+     * Find nearest city within r=25 KM to infer geography of a given coordinate, e.g.,
+     * What state is (x,y) in? Found locations are sorted by distance to point.
      */
-    private void geocode(List<PlaceCandidate> candidates) {
-
-        /*
-         * Count all entries of evidence.
-         */
-        for (PlaceCandidate pc : candidates) {
-            if (pc.isFilteredOut()) {
-                continue;
-            }
-
-            for (PlaceEvidence ev : pc.getEvidence()) {
-                String key = null;
-                if (ev.isCountry()) {
-                    key = ev.getCountryCode();
-                } else if (ev.isAdministrative()) {
-                    key = GeonamesUtility.getHASC(ev.getCountryCode(), ev.getAdmin1());
-                }
-                if (key != null) {
-                    Integer count = locationBias.get(key);
-                    if (count == null) {
-                        count = new Integer(0);
-                    }
-                    locationBias.put(key, count + 1);
-                }
-            }
-        }
-        // 3. Disambiguation
-        // 4. Geocoding -- choosing and setting final entry data.
-
-    }
+    public static int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /*km*/ ;
+    public static int COORDINATE_PROXIMITY_ADM1_THRESHOLD = 50 /*km*/;
 
     /**
      * A method to retrieve one or more distinct admin boundaries containing the
@@ -514,31 +673,23 @@ public class PlaceGeocoder extends GazetteerMatcher implements Extractor {
      * @throws SolrServerException
      *             a query against the Solr index may throw a Solr error.
      */
-    public Place evaluateCoordinate(GeocoordMatch g) throws SolrServerException {
-        Place found = getGazetteer().placeAt(g, 25, "P");
-        if (found == null) {
-            found = getGazetteer().placeAt(g, 50, "A");
-            if (found == null) {
-                return null;
+    public Place evaluateCoordinate(Geocoding g) throws SolrServerException {
+        Place found = getGazetteer().placeAt(g, COORDINATE_PROXIMITY_CITY_THRESHOLD, "P");
+        if (found != null) {
+            if (g instanceof GeocoordMatch) {
+                ((GeocoordMatch) g).setRelatedPlace(found);
             }
+            return found;
         }
 
-        g.setRelatedPlace(found);
+        found = getGazetteer().placeAt(g, COORDINATE_PROXIMITY_ADM1_THRESHOLD, "A");
+        if (found != null) {
+            if (g instanceof GeocoordMatch) {
+                ((GeocoordMatch) g).setRelatedPlace(found);
+            }
+            return found;
+        }
 
-        return found;
-    }
-
-    @Override
-    public void updateProgress(double progress) {
-        // if (this.progressMonitor != null) {
-        // progressMonitor.updateStepProgress(progress);
-        // }
-    }
-
-    @Override
-    public void markComplete() {
-        // if (this.progressMonitor != null) {
-        // progressMonitor.completeStep();
-        // }
+        return null;
     }
 }

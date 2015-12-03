@@ -17,13 +17,14 @@
 
 package org.opensextant.extractors.geo.rules;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.util.GeonamesUtility;
+import org.opensextant.extractors.geo.PlaceCount;
 
 /**
  * Give a list of province metadata that scopes the document, mark the list of
@@ -36,29 +37,67 @@ import org.opensextant.util.GeonamesUtility;
  */
 public class ProvinceAssociationRule extends GeocodeRule {
 
-    private Set<String> relevantProvinceID = new HashSet<String>();
+    private Map<String, Place> relevantProvinceID = new HashMap<>();
+
+    public ProvinceAssociationRule() {
+        weight = 5;
+    }
 
     @Override
     public void reset() {
         relevantProvinceID.clear();
     }
 
-    public void setProvinces(List<Place> p) {
-        relevantProvinceID.clear();
-        for (Place adm1 : p) {
-            relevantProvinceID.add(GeonamesUtility.getHASC(adm1.getCountryCode(), adm1.getAdmin1()));
+    public void setProvinces(Collection<PlaceCount> p) {
+        if (p == null) {
+            return;
+        }
+        for (PlaceCount count : p) {
+            Place adm1 = count.place;
+            relevantProvinceID.put(adm1.getHierarchicalPath(), adm1);
+        }
+
+    }
+
+    /**
+     * Evaluate all candidate place mentions by seeing if any resolved Province
+     * contains any geo locations with the mentioned name.
+     * 
+     * <pre>
+     * given Bala (adm1=XU.45) province is in scope.
+     * 
+     * assess the list of names = [Name1(@geo1, @geo2, @geo3)], Name2(,etc), etc];
+     * if any geo locations for Name1 occur also within the province of XU.45, raise the weighting of the location 
+     * as a better answer to "where is Name1?"
+     * 
+     * </pre>
+     */
+    public void evaluate(List<PlaceCandidate> names) {
+        for (PlaceCandidate name : names) {
+            /*
+             * This was filtered out already so ignore.
+             */
+            if (name.isFilteredOut()) {
+                continue;
+            }
+            if (name.getChosen() != null) {
+                // DONE
+                continue;
+            }
+
+            // All or any of these Geos for a name could be in scope.
+            // Assess all of them.
+            for (Place adm1 : relevantProvinceID.values()) {
+                if (name.presentInHierarchy(adm1.getHierarchicalPath())) {
+                    name.addAdmin1Evidence("InferredAdmin1", weight, adm1.getAdmin1(), adm1.getCountryCode());
+                }
+            }
         }
     }
 
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
-        String hiearchicalKey = GeonamesUtility.getHASC(geo.getCountryCode(), geo.getAdmin1());
-        if (relevantProvinceID.contains(hiearchicalKey)) {
-            // Mark as in-scope if geo.ADM1 is in list of relevant provinces.
-            //
-            // Add to score for geo instance.
-            name.addAdmin1Evidence("InferredAdmin1", 1, geo.getAdmin1(), geo.getCountryCode());
-        }
+        // Don't evaluate individual Geos -- too many.
     }
 
 }

@@ -94,8 +94,8 @@ public class PersonNameFilter extends GeocodeRule {
      * @param orgs
      *            named orgs in doc
      */
-    public void evaluateNamedEntities(List<PlaceCandidate> placeNames, List<TaxonMatch> persons,
-            List<TaxonMatch> orgs) {
+    public void evaluateNamedEntities(final List<PlaceCandidate> placeNames, final List<TaxonMatch> persons,
+            final List<TaxonMatch> orgs) {
 
         for (PlaceCandidate pc : placeNames) {
             if (pc.isFilteredOut()) {
@@ -132,7 +132,7 @@ public class PersonNameFilter extends GeocodeRule {
     }
 
     @Override
-    public void evaluate(PlaceCandidate name, Place geo) {
+    public void evaluate(final PlaceCandidate name, final Place geo) {
         /*
          * No other existing evidence that we should keep this entry and if the
          * name is a person name --- AS DEFINED BY THE USER -- then we mark it
@@ -158,7 +158,7 @@ public class PersonNameFilter extends GeocodeRule {
          *
          * TODO: Euguene, Oregon etc.
          */
-        if (name.hasRule(NameCodeRule.NAMECODE_RULE)) {
+        if (name.hasRule(NameCodeRule.NAME_ADMCODE_RULE) || name.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
             return;
         }
 

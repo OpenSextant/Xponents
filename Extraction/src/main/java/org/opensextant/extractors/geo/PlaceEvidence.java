@@ -48,18 +48,24 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
      * <ul>
      * <li>APRIORI - derived from the gazetteer only, not from any information
      * in the document
-     * </li><li>LOCAL - directly associated with this instance of PC
-     * </li><li>COREF - associated with another (related) PC in the document
-     * </li><li>MERGED - came from the merger of multiple PlaceEvidences (future
+     * </li>
+     * <li>LOCAL - directly associated with this instance of PC
+     * </li>
+     * <li>COREF - associated with another (related) PC in the document
+     * </li>
+     * <li>MERGED - came from the merger of multiple PlaceEvidences (future
      * use)
-     * </li><li>DOCUMENT - in the same document but has no other direct
+     * </li>
+     * <li>DOCUMENT - in the same document but has no other direct
      * association
-     * </li></ul>
+     * </li>
+     * </ul>
      */
     public enum Scope {
 
         APRIORI, LOCAL, COREF, MERGED, DOCUMENT
     };
+
     // private static final long serialVersionUID = 2389068067890L;
     // The rule which found the evidence
     private String rule = null;
@@ -68,39 +74,49 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
     // The strength of the evidence
     private double weight = 0;
 
+    private boolean evaluated = false;
+
     public PlaceEvidence() {
         super(null, null);
     }
 
     // copy constructor
-    public PlaceEvidence(PlaceEvidence old) {
+    public PlaceEvidence(PlaceEvidence ev) {
         this();
-        this.setAdmin1(old.getAdmin1());
-        this.setCountryCode(old.getCountryCode());
-        this.setFeatureClass(old.getFeatureClass());
-        this.setFeatureCode(old.getFeatureCode());
+        this.setAdmin1(ev.getAdmin1());
+        this.setCountryCode(ev.getCountryCode());
+        this.setFeatureClass(ev.getFeatureClass());
+        this.setFeatureCode(ev.getFeatureCode());
         //this.setGeocoord(old.getGeocoord());
-        this.setLatitude(old.getLatitude());
-        this.setLongitude(old.getLongitude());
-        this.setPlaceName(old.getPlaceName());
-        this.setRule(old.getRule());
-        this.setScope(old.getScope());
-        this.setWeight(old.getWeight());
+        this.setLatitude(ev.getLatitude());
+        this.setLongitude(ev.getLongitude());
+        this.setPlaceName(ev.getPlaceName());
+        this.setRule(ev.getRule());
+        this.setScope(ev.getScope());
+        this.setWeight(ev.getWeight());
     }
 
-    public PlaceEvidence(Place old, String rule, double wt) {
+    public PlaceEvidence(Place ev, String rule, double wt) {
         this();
-        this.setAdmin1(old.getAdmin1());
-        this.setCountryCode(old.getCountryCode());
-        this.setFeatureClass(old.getFeatureClass());
-        this.setFeatureCode(old.getFeatureCode());
+        this.setAdmin1(ev.getAdmin1());
+        this.setCountryCode(ev.getCountryCode());
+        this.setFeatureClass(ev.getFeatureClass());
+        this.setFeatureCode(ev.getFeatureCode());
         //this.setGeocoord(old.getGeocoord());
-        this.setLatitude(old.getLatitude());
-        this.setLongitude(old.getLongitude());
-        this.setPlaceName(old.getPlaceName());
+        this.setLatitude(ev.getLatitude());
+        this.setLongitude(ev.getLongitude());
+        this.setPlaceName(ev.getPlaceName());
         this.setRule(rule);
         //this.setScope(scope);
         this.setWeight(wt);
+    }
+
+    public boolean wasEvaluated() {
+        return evaluated;
+    }
+
+    public void setEvaluated(boolean b) {
+        evaluated = b;
     }
 
     // compare to other evidence by strength
@@ -144,10 +160,11 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
         this.weight = weight;
     }
 
-    /** if Place given has same feature class and code as the current evidence
+    /**
+     * if Place given has same feature class and code as the current evidence
      */
-    public boolean isSameFeature(Place geo){
-        if (this.getFeatureClass() == null){
+    public boolean isSameFeature(Place geo) {
+        if (this.getFeatureClass() == null) {
             return false;
         }
         return (this.getFeatureClass().equals(geo.getFeatureClass()) &&
@@ -157,7 +174,7 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
     // Override toString to get a reasonable string label for this PlaceEvidence
     @Override
     public String toString() {
-        String output = this.rule + "-" + this.scope + "/" + this.weight + "(" + this.getPlaceName() + "," + this.admin1 + "," + this.getCountryCode() + ")";
-        return output;
+        return String.format("%s - %s/%03.2f (%s, %s, %s)", rule, scope, weight, this.getPlaceName(), this.getAdmin1(),
+                this.getCountryCode());
     }
 }
