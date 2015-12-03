@@ -216,6 +216,15 @@ Fit your smallest taxonomies in starting at 0.
 
 All of this because row ID is Integer.
 
+Invoke the example on JRCNames 'entities.txt' file as:
+```
+ 
+   python ./XTax/examples/jrcnames.py --starting-id 1000000 \
+      --taxonomy ./entities.txt --solr http://localhost:7000/solr/taxcat
+
+   # I changed the starting id just to show it as a argument you control.
+```
+
 
 Testing
 =================

@@ -292,23 +292,43 @@ if __name__ == '__main__':
         jrcnames.py   file   solr-url   "invalid-only"
     '''
     import sys
-    taxonomy = sys.argv[1]
+    taxonomy = None
     start_id = 3000000
     catalog_id = 'JRC'
+
+
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--taxonomy')
+    ap.add_argument('--starting-id')
+    ap.add_argument('--solr')
+    ap.add_argument('--max')
+    ap.add_argument('--invalidate')
+
+    args = ap.parse_args()
+
+    taxonomy = args.taxonomy
+    if args.starting_id:
+        start_id = int(args.starting_id)
     
     only_mark_invalid=False
     test = False
     builder = None
     row_max = -1
-    if len(sys.argv) >= 3:
-        solr_url = sys.argv[2]
+
+    if args.solr:
+        solr_url = args.solr
         builder = TaxCatalogBuilder(server=solr_url)
     else:
         test = True
         row_max = 100000 
         builder = TaxCatalogBuilder(server=None)
 
-    if len(sys.argv) == 4:
+    if args.max:
+        row_max = int(args.max)
+
+    if args.invalidate:
         only_mark_invalid=True
         
     # Commit rows every 10,000 entries.
