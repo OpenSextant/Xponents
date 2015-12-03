@@ -1,23 +1,27 @@
 package org.opensextant.extractors.test;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
 import org.opensextant.data.Taxon;
+import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtax.TaxonMatcher;
+import org.opensextant.util.FileUtility;
 
 /**
- * Demonstration of XTax 
+ * Demonstration of XTax
  * - search the 'taxcat' catalog
  * - tag data using the 'taxcat' catalog
  * 
- * Prerequisite -- Build the JRC example catalog per Extraction/XTax/  notes
+ * Prerequisite -- Build the JRC example catalog per Extraction/XTax/ notes
  * 
  * Run with JVM arg:
- *   -Dopensextant.solr=/path/to/your/xponents-solr
- *   
- *   where that solr contains the taxcat core
- *   
+ * -Dopensextant.solr=/path/to/your/xponents-solr
+ * 
+ * where that solr contains the taxcat core
+ * 
  * @author ubaldino
  *
  */
@@ -26,8 +30,10 @@ public class TestXTax {
     /**
      * 
      *
-     * @param args the arguments
-     * @throws Exception the exception
+     * @param args
+     *            the arguments
+     * @throws Exception
+     *             the exception
      */
     public static void main(String[] args) {
 
@@ -42,6 +48,17 @@ public class TestXTax {
             for (Taxon tx : results) {
 
                 System.out.println("Found: " + getJRCTag(tx.tagset) + " = " + tx);
+            }
+
+            if (args.length > 0) {
+                File f = new File(args[0]);
+                String content = FileUtility.readFile(f,
+                        "UTF-8");
+                List<TextMatch> findings = tax.extract(content);
+                for (TextMatch tm : findings) {
+                    String type = "" + ((TaxonMatch) tm).getTaxons();
+                    System.out.println("Found: " + tm + "\n\t\t" + type);
+                }
             }
 
         } catch (Exception err) {
