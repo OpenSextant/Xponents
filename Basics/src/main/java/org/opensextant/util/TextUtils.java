@@ -438,7 +438,7 @@ public class TextUtils {
             return false;
         }
         int caseCount = 0;
-        
+
         for (char c : text.toCharArray()) {
             if (!Character.isLetter(c)) {
                 continue;
@@ -447,14 +447,14 @@ public class TextUtils {
                 if (Character.isUpperCase(c)) {
                     // Checking for lower case; Fail if upper case is found.
                     return false;
-                } else if (Character.isLowerCase(c)){
+                } else if (Character.isLowerCase(c)) {
                     ++caseCount;
                 }
             } else if (textcase == 2) {
                 if (Character.isLowerCase(c)) {
                     // Checking for upper case; Fail if lower case is found.
                     return false;
-                } else if (Character.isUpperCase(c)){
+                } else if (Character.isUpperCase(c)) {
                     ++caseCount;
                 }
             }
@@ -467,6 +467,93 @@ public class TextUtils {
         //   A 寨 ==>  no      yes
         //   a 寨 ==>  yes      no
         return caseCount > 0;
+    }
+
+    /**
+     * Measure character count, upper, lower, non-Character, whitespace
+     * 
+     * @param text
+     * @return int array with counts.
+     */
+    public static int[] measureCase(String text) {
+        if (text == null) {
+            return null;
+        }
+        int u = 0, l = 0, ch = 0, nonCh = 0, ws = 0;
+        int[] counts = new int[5];
+
+        for (char c : text.toCharArray()) {
+            if (Character.isLetter(c)) {
+                ++ch;
+                if (Character.isUpperCase(c)) {
+                    ++u;
+                } else if (Character.isLowerCase(c)) {
+                    ++l;
+                }
+            } else if (Character.isWhitespace(c)) {
+                ++ws;
+            } else {
+                ++nonCh; // Other content?
+            }
+        }
+
+        counts[0] = ch;
+        counts[1] = u;
+        counts[2] = l;
+        counts[3] = nonCh;
+        counts[4] = ws;
+        return counts;
+    }
+
+    /**
+     * a threshold for determining if character content in a document is upper case enough that the entire document can
+     * be considered upper case. These are constants you can override, since these thresholds are just heuristics. We
+     * don't expect you would pass in such things as arguments
+     * as they don't change from doc to doc much; they do change from domain to domain.
+     * 
+     * IFF you are hitting these thresholds too closely, then you have to adapt these to your own data.  These are 
+     * meant to be very, very general. They would best apply to documents on the order of 200 to 10,000 bytes.  Beyond that
+     * we don't find many texts that are that size and all lower or all upper where these heuristics are helpful. 
+     * E.g., tweets in English -- these thresholds are easily influenced by a difference of one or two characters.
+     */
+    public static double UPPER_CASE_THRESHOLD = 0.75;
+    /**
+     * Since we live in a world that has made use of first-letter capital for a number of languages, this threshold is
+     * very high.
+     * "IS THIS UPPER CASE?, I WILL USE eBAY TODAY"
+     * "by the same convention, this is largely lower case; I will use eBay today."
+     */
+    public static double LOWER_CASE_THRESHOLD = 0.95;
+
+    /**
+     * First measureCase(Text) to acquire counts, then call this routine for a heuristic
+     * that suggests the text is mainly upper case. These routines may not work well on languages that are not
+     * Latin-alphabet.
+     * 
+     * @param counts
+     * @return
+     */
+    public static boolean isUpperCaseDocument(final int[] counts) {
+        // Method 1:  Content = chars + non-chars (not whitespace)
+        //            measure upper case against ALL content.
+        // Method 2:  measure upper case against just char content.
+        // 
+        // Method 2 seems best.
+        int content = counts[0] /* + counts[3]*/ ;
+        return ((float) counts[1] / content) > UPPER_CASE_THRESHOLD;
+    }
+
+    /**
+     * This measures the amount of upper case
+     * See Upper Case. Two methods to measure -- lower case count compared to all content (char+non-char)
+     * or compared to just char content.
+     * 
+     * @param counts
+     * @return
+     */
+    public static boolean isLowerCaseDocument(final int[] counts) {
+        int content = counts[0] /*+ counts[3]*/;
+        return ((float) counts[2] / content) > LOWER_CASE_THRESHOLD;
     }
 
     /**
@@ -966,7 +1053,7 @@ public class TextUtils {
             // Locales.
             initLOCLanguageData(); // LOC language data is a list of all known
                                    // languages w/ISO codes.
-            // initICULanguageData(); ICU did not seem to be the right solution.
+                                   // initICULanguageData(); ICU did not seem to be the right solution.
         } catch (Exception err) {
             err.printStackTrace();
         }
