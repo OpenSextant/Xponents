@@ -539,6 +539,7 @@ arab,person.label
 christian,person.label
 vp,person.label
 ceo,person.label
+ceos,person.label
 person,person.label
 chairman,person.label
 fugitive,person.label
@@ -966,6 +967,7 @@ summer,season
 winter,season
 select,stopword.web
 explorer,stopword.web
+outlook,stopword.web
 atlas,stopword.web
 apache,stopword.web
 ajax,stopword.web
@@ -1329,3 +1331,9 @@ gul,person.label
 satellite channel,noun
 roundup,phrase
 round-up,phrase
+memo,noun
+forestry,noun
+belt,noun
+ferry,noun
+shrine,place.civil
+govenors,person.label
