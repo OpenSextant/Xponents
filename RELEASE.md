@@ -1,7 +1,18 @@
 
 #2015#
+* Xponents 2.8.x - november 2015: Long over due refactor
+ - Extraction/Geo: PlaceGeocoder now emitting reasonable choice for location of names; Still initial draft. Heavily involved in rules development in Java here.  Evaluation of these features is still very much a personal/internal thing. 
+   -- TODO: document rules in plain language
+   -- TOOD: someday opensource evaluation tools
+ - Patterns (*new*): Splintered off FlexPat-based libraries into this new module. If all a user wants is regex style patterns, they do not need Tika or Solr or any of that.
+ - Basics: TextUtils now has more text case checking tools
+ - MOVES:
+   --  Basics 'flexpat' ---> Patterns
+   --  Extraction 'xcoord','xtemporal','poli' --> Patterns
+ 
+* Xponents 2.7.19 - november 2015, bug fixes and fine tuning .16 patches
 * Xponents 2.7.16 - october 2015
- - Extraction: 'PlaceGeocoder' saw a focsed effort on improving how popular well-known 
+ - Extraction: 'PlaceGeocoder' saw a focused effort on improving how popular well-known 
    entities can be used to negate gazetteer tagging. This solution makes better use of XTax as a naiive entity tagger.
    Overall, recall is maximized at the same time geo-tagging precision is maximized.
    As well, the foundation of "Geocode Rules" is established but needs further documentation.

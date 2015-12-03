@@ -5,6 +5,8 @@ Xponents
     Updated:  01 June 2014   v2.5
     Updated:  01 April2015   v2.7
     Updated:  30 Oct  2015   v2.7.16
+    Updated:  30 Nov  2015   v2.7.19
+    Updated:  05 Dec  2015   v2.8
 
 Xponents is a set of text extractor libraries with a light veneer of processing control, including:
 
@@ -38,9 +40,9 @@ Minimum Requirement:
 FlexPat pattern-based extractors rely on Java 6+ regular expression API
 
 ##Other Libraries##
-XText depends on Tika 1.5+
-XCoord depends on Geodesy (OpenSextant) for geodetic parsing and validation 
-Extraction makes usef of GISCore (OpenSextant) for output file formatting
+- XText depends on Tika 1.8+
+- XCoord depends on Geodesy (OpenSextant) for geodetic parsing and validation 
+- Extraction makes usef of GISCore (OpenSextant) for output file formatting
 
 Name Matching depends on:
 
@@ -80,7 +82,7 @@ From source:
   ## Create the distribution
   ant -f ./script/dist.xml
 
-  ## Now ./release/  contains a built version of XPonents that will run off of Ant from there on.
+  ## Now ./Xponents-VER  contains a built version of XPonents that will run off of Ant from there on; Where VER=X.x
 
 #Misc#
 
