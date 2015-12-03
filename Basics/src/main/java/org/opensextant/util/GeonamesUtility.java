@@ -372,6 +372,9 @@ public class GeonamesUtility {
     public static String getHASC(String c, String adm1) {
         return String.format("%s.%s", c, adm1);
     }
+    public static String getHASC(String c, String adm1, String adm2) {
+        return String.format("%s.%s.%s", c, adm1, adm2);
+    }
 
     /**
      * Experimental. A trivial way of looking at mapping well-known name

@@ -52,65 +52,71 @@ import org.opensextant.data.TextInput;
 /**
  * For now, this interface is closer to an AbstractExtractor
  * where a clean interface might be
- *   output = Extractor.extract(input)
+ * output = Extractor.extract(input)
  * This interface specifies more
  *
  * @author ubaldino
  */
 public interface Extractor {
 
-    /** optional constant - a universal doc ID holder*/
+    /** optional constant - a universal doc ID holder */
     String NO_DOC_ID = "no-docid";
 
     String getName();
 
     /**
-     *  Configure an Extractor using defaults for that extractor.
+     * Configure an Extractor using defaults for that extractor.
      *
-     * @throws ConfigException the config exception
+     * @throws ConfigException
+     *             the config exception
      */
     void configure() throws ConfigException;
 
     /**
-     *  Configure an Extractor using a config file named by a path.
+     * Configure an Extractor using a config file named by a path.
      *
-     * @param patfile configuration file path
-     * @throws ConfigException the config exception
+     * @param patfile
+     *            configuration file path
+     * @throws ConfigException
+     *             the config exception
      */
     void configure(String patfile) throws ConfigException;
 
     /**
-     *  Configure an Extractor using a config file named by a URL.
+     * Configure an Extractor using a config file named by a URL.
      *
-     * @param patfile configuration URL
-     * @throws ConfigException the config exception
+     * @param patfile
+     *            configuration URL
+     * @throws ConfigException
+     *             the config exception
      */
     void configure(java.net.URL patfile) throws ConfigException;
 
     /**
-     *  Useuful for working with batches of inputs that have an innate row ID + buffer pairing.
+     * Useuful for working with batches of inputs that have an innate row ID + buffer pairing.
      *
-     * @param input text input
+     * @param input
+     *            text input
      * @return the list of TextMatch
-     * @throws ExtractionException error if underlying extractor(s) fail
+     * @throws ExtractionException
+     *             error if underlying extractor(s) fail
      */
     List<TextMatch> extract(TextInput input) throws ExtractionException;
 
     /**
-     *  Useful for working with text buffers adhoc. Fewer assumptions about input data here.
+     * Useful for working with text buffers adhoc. Fewer assumptions about input data here.
      *
-     * @param input text input, as a string
+     * @param input
+     *            text input, as a string
      * @return the list of TextMatch
-     * @throws ExtractionException error if underlying extractor(s) fail
+     * @throws ExtractionException
+     *             error if underlying extractor(s) fail
      */
     List<TextMatch> extract(String input) throws ExtractionException;
 
-    //void setProgressMonitor(ProgressMonitor progressMonitor);
-
-    void updateProgress(double progress);
-
-    void markComplete();
-
+    /**
+     * Resource management. This cleanup routine usually in turn calls some shutdown, disconnect, etc.
+     */
     void cleanup();
 
 }
