@@ -31,3 +31,6 @@ nbproject/
 *.jar
 *.war
 *.zip
+
+# Run test files/folders:
+output/
