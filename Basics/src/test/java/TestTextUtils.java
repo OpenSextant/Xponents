@@ -70,6 +70,38 @@ public class TestTextUtils {
 
     @Test
     public void testCase() {
+
+        String UPPER = "This IS MOSTLY 898 UPPER Case data $%%";
+        String LOWER = "This is mostly lower cased data çx®tÇ 512131";
+
+        /**
+         * UPPER CASE tests. Mostly upper case vs. all upper case.
+         */
+        int[] checkCase = TextUtils.measureCase(UPPER);
+        if (checkCase != null) {
+            print("NOT uppercase\t" + UPPER);
+            assertFalse(TextUtils.isUpperCaseDocument(checkCase));
+        }
+        checkCase = TextUtils.measureCase(UPPER.toUpperCase());
+        if (checkCase != null) {
+            print("IS uppercase\t" + UPPER.toUpperCase());
+            assertTrue(TextUtils.isUpperCaseDocument(checkCase));
+        }
+
+        /**
+         * LOWER CASE tests. Mostly lower case vs. all lower case.
+         */
+        checkCase = TextUtils.measureCase(LOWER);
+        if (checkCase != null) {
+            print("NOT lower\t" + LOWER);
+            assertFalse(TextUtils.isLowerCaseDocument(checkCase));
+        }
+        checkCase = TextUtils.measureCase(LOWER.toLowerCase());
+        if (checkCase != null) {
+            print("IS lower\t" + LOWER.toLowerCase());
+            assertTrue(TextUtils.isLowerCaseDocument(checkCase));
+        }
+
         assertTrue(!TextUtils.isLower("Abc"));
         assertTrue(TextUtils.isLower("abc"));
         assertTrue(!TextUtils.isLower("a b c 9 1$% Ö"));
