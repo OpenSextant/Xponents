@@ -58,6 +58,7 @@ public class GeoBase implements LatLon {
      * any name associated with this place
      */
     public String name = null;
+    private String namenorm = null;
 
     /**
      * Creates an empty GeoBase location object
@@ -108,6 +109,15 @@ public class GeoBase implements LatLon {
     public String getName() {
         return name;
     }
+    public String getNamenorm(){
+        if (namenorm==null){
+            if (name!=null){
+                namenorm = name.toLowerCase();
+            }
+        }
+        return namenorm;
+    }
+    
 
     /** Generic label -- anything more sophisticated needs attention
      * E.g. to use Key + Name or just Key for a label would be very specific
