@@ -151,6 +151,57 @@
         "id_bias": 0.64,
         "name_type": "N",
         "geo": "40.11013,-74.65561"
+      },
+      {
+        "id": 214334612,
+        "place_id": "USGS531871",
+        "name": "Washington",
+        "feat_class": "P",
+        "feat_code": "PPLC",
+        "FIPS_cc": "US",
+        "cc": "US",
+        "ISO3_cc": "USA",
+        "adm1": "11",
+        "adm2": "11.0001",
+        "source": "Xponents/USGS",
+        "name_bias": 0,
+        "id_bias": 0.775,
+        "name_type": "N",
+        "geo": "38.89511,-77.03637"
+      },
+      {
+        "id": 214334613,
+        "place_id": "USGS531871",
+        "name": "DC",
+        "feat_class": "P",
+        "feat_code": "PPLC",
+        "FIPS_cc": "US",
+        "cc": "US",
+        "ISO3_cc": "USA",
+        "adm1": "11",
+        "adm2": "11.0001",
+        "source": "Xponents/USGS",
+        "name_bias": 0,
+        "id_bias": 0.775,
+        "name_type": "A",
+        "geo": "38.89511,-77.03637"
+      },
+      {
+        "id": 214334613,
+        "place_id": "USGS531871",
+        "name": "Washington DC",
+        "feat_class": "P",
+        "feat_code": "PPLC",
+        "FIPS_cc": "US",
+        "cc": "US",
+        "ISO3_cc": "USA",
+        "adm1": "11",
+        "adm2": "11.0001",
+        "source": "Xponents/USGS",
+        "name_bias": 0,
+        "id_bias": 0.775,
+        "name_type": "A",
+        "geo": "38.89511,-77.03637"
       }
 ] 
 
