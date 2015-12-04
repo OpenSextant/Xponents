@@ -106,7 +106,7 @@ public class PersonNameFilter extends GeocodeRule {
             // person/celebrity
             if (resolvedPersons.containsKey(pc.getTextnorm()) || resolvedOrgs.containsKey(pc.getTextnorm())) {
                 pc.setFilteredOut(true);
-                filterEvidence(pc, "ResolvedPerson", PlaceEvidence.Scope.COREF);
+                pc.addRule("ResolvedPerson");
                 continue;
             }
 
@@ -118,14 +118,14 @@ public class PersonNameFilter extends GeocodeRule {
                 if (pc.isWithin(name)) {
                     pc.setFilteredOut(true);
                     resolvedPersons.put(pc.getTextnorm(), name.getText());
-                    filterEvidence(pc, "ResolvedPerson", PlaceEvidence.Scope.DOCUMENT);
+                    pc.addRule("ResolvedPerson");
                 }
             }
             for (TaxonMatch name : orgs) {
                 if (pc.isSameMatch(name)) {
                     pc.setFilteredOut(true);
                     resolvedOrgs.put(pc.getTextnorm(), name.getText());
-                    filterEvidence(pc, "ResolvedOrg", PlaceEvidence.Scope.DOCUMENT);
+                    pc.addRule("ResolvedOrg");
                 }
             }
         }
@@ -169,12 +169,12 @@ public class PersonNameFilter extends GeocodeRule {
          */
         if (resolvedPersons.containsKey(name.getTextnorm())) {
             name.setFilteredOut(true);
-            filterEvidence(name, "ResolvedPerson", PlaceEvidence.Scope.COREF);
+            name.addRule("ResolvedPerson.CoRef");
             return;
         }
         if (resolvedOrgs.containsKey(name.getTextnorm())) {
             name.setFilteredOut(true);
-            filterEvidence(name, "ResolvedOrg", PlaceEvidence.Scope.COREF);
+            name.addRule("ResolvedOrg.CoRef");
             return;
         }
 
@@ -185,7 +185,7 @@ public class PersonNameFilter extends GeocodeRule {
             if (titles.contains(withoutPeriod(pre))) {
                 name.setFilteredOut(true);
                 resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
-                filterEvidence(name, "PersonTitle", PlaceEvidence.Scope.DOCUMENT);
+                name.addRule("PersonTitle");
                 return;
             }
         }
@@ -193,7 +193,7 @@ public class PersonNameFilter extends GeocodeRule {
         if (filter.filterOut(name.getTextnorm())) {
             name.setFilteredOut(true);
             resolvedPersons.put(name.getTextnorm(), name.getText());
-            filterEvidence(name, "PersonName", PlaceEvidence.Scope.DOCUMENT);
+            name.addRule("PersonName");
             return;
         }
 
@@ -203,7 +203,7 @@ public class PersonNameFilter extends GeocodeRule {
             if (suffixes.contains(withoutPeriod(post))) {
                 name.setFilteredOut(true);
                 resolvedPersons.put(val(name.getTextnorm(), post), name.getText());
-                filterEvidence(name, "PersonSuffix", PlaceEvidence.Scope.DOCUMENT);
+                name.addRule("PersonSuffix");
                 return;
             }
         }

@@ -81,10 +81,10 @@ public class NameCodeRule extends GeocodeRule {
              * code/abbrev. Match the abbreviation with a geographic location
              * that is a state, county, district, etc.
              */
-
+            Place country = code.isCountry ? code.getChosen() : null;
             log.debug("{} name, code: {} in {}?", NAME, name.getText(), code.getText());
             for (Place geo : code.getPlaces()) {
-                if (!geo.isAdministrative()) {
+                if (!geo.isAdministrative() || geo.getCountryCode() == null) {
                     continue;
                 }
                 // Provinces, states, districts, etc. Only. 
@@ -106,44 +106,56 @@ public class NameCodeRule extends GeocodeRule {
                 }
 
                 String adm1 = geo.getHierarchicalPath();
-                if (adm1 == null) {
-                    log.info("ADM1 hierarchical path should not be null");
+                if (adm1 == null && !code.isCountry) {
+                    log.debug("ADM1 hierarchical path should not be null");
                     continue;
                 }
 
-                if (name.presentInHierarchy(adm1)) {
-                    // Associate the CODE to the NAME that precedes it.
-                    // 
-                    PlaceEvidence ev = new PlaceEvidence();
-                    ev.setCountryCode(geo.getCountryCode());
-                    ev.setAdmin1(geo.getAdmin1());
-                    ev.setEvaluated(true); // Shunt. Evaluate this rule here.
+                // Quick determination if these two places have a containment or geopolitical connection
+                //                 
+                boolean contains = name.presentInHierarchy(adm1)
+                        || (country != null ? name.presentInCountry(country.getCountryCode()) : false);
 
-                    if (geo.isAbbreviation() && (code.isAbbreviation || code.isAcronym)) {
-                        ev.setRule(NAME_ADMCODE_RULE);
-                        ev.setWeight(weight);
-
-                    } else {
-                        ev.setRule(NAME_ADMNAME_RULE);
-                        ev.setWeight(weight + 1);
-                    }
-                    name.addEvidence(ev);
-
-                    if (boundaryObserver != null) {
-                        boundaryObserver.boundaryLevel1InScope(geo);
-                    }
-
-                    //
-                    // 
-                    for (Place nameGeo : name.getPlaces()) {
-                        if (adm1.equals(nameGeo.getHierarchicalPath())) {
-                            name.incrementPlaceScore(nameGeo, ev.getWeight());
-                            break;
-                        }
-                    }
-
-                    break;
+                if (!contains) {
+                    continue;
                 }
+
+                /*   CITY, STATE
+                 *   CITY, COUNTRY
+                 */
+                // Associate the CODE to the NAME that precedes it.
+                // 
+                PlaceEvidence ev = new PlaceEvidence();
+                ev.setCountryCode(geo.getCountryCode());
+                ev.setAdmin1(geo.getAdmin1());
+                ev.setEvaluated(true); // Shunt. Evaluate this rule here.
+
+                if (geo.isAbbreviation() && (code.isAbbreviation || code.isAcronym)) {
+                    ev.setRule(NAME_ADMCODE_RULE);
+                    ev.setWeight(weight);
+
+                } else {
+                    ev.setRule(NAME_ADMNAME_RULE);
+                    ev.setWeight(weight + 1);
+                }
+                name.addEvidence(ev);
+
+                if (boundaryObserver != null) {
+                    boundaryObserver.boundaryLevel1InScope(geo);
+                }
+
+                // Now choose which location for CITY (name) best suits this.
+                // Actually increase score for all geos that match the criteria.
+                // 
+                for (Place nameGeo : name.getPlaces()) {
+                    if (adm1 != null && adm1.equals(nameGeo.getHierarchicalPath())) {
+                        name.incrementPlaceScore(nameGeo, ev.getWeight());
+                    } else if (sameCountry(nameGeo, country)) {
+                        name.incrementPlaceScore(nameGeo, ev.getWeight());
+                    }
+                }
+
+                break;
             }
         }
     }

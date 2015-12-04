@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.BoundaryObserver;
-import org.opensextant.extractors.geo.CoordinateObserver;
+import org.opensextant.extractors.geo.LocationObserver;
 import org.opensextant.extractors.geo.CountryObserver;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public abstract class GeocodeRule {
     public String NAME = null;
 
     protected CountryObserver countryObserver = null;
-    protected CoordinateObserver coordObserver = null;
+    protected LocationObserver coordObserver = null;
     protected BoundaryObserver boundaryObserver = null;
     protected Logger log = LoggerFactory.getLogger("geocode-rule");
 
@@ -49,12 +49,22 @@ public abstract class GeocodeRule {
         countryObserver = o;
     }
 
-    public void setCoordinateObserver(CoordinateObserver o) {
+    public void setLocationObserver(LocationObserver o) {
         coordObserver = o;
     }
 
     public void setBoundaryObserver(BoundaryObserver o) {
         boundaryObserver = o;
+    }
+
+    public boolean sameCountry(Place p1, Place p2) {
+        if (p1 == null || p2 == null) {
+            return false;
+        }
+        if (p1.getCountryCode() == null || p2.getCountryCode() == null) {
+            return false;
+        }
+        return p1.getCountryCode().equals(p2.getCountryCode());
     }
 
     /**

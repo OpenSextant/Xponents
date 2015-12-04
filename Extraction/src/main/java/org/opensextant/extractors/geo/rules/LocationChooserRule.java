@@ -125,10 +125,12 @@ public class LocationChooserRule extends GeocodeRule {
             for (Place geo : name.getPlaces()) {
                 evaluate(name, geo);
             }
-            if (name.getBestPlace() != null) {
+            name.choose();
+            if (name.getChosen() != null) {
+                this.assessConfidence(name);
                 documentResolvedLocations.put(name.getTextnorm(), name.getChosen());
             } else {
-                log.info("Place name is ambiguous: {}", name.getText());
+                log.info("Place name is ambiguous: {} in N={} places", name.getText(), name.distinctLocationCount());
             }
         }
     }
@@ -217,4 +219,120 @@ public class LocationChooserRule extends GeocodeRule {
 
         return bs;
     }
+
+    /**
+     * Absolute Confidence: Many Locations matched a single name.
+     * No country is in scope; No country mentioned in document, so this is very low confidence.
+     */
+    public static final int MATCHCONF_MANY_LOC = 20;
+
+    /**
+     * Absolute Confidence: Many locations matched, with multiple countries in scope
+     * So, Many countries mentioned in document
+     */
+    public static final int MATCHCONF_MANY_COUNTRIES = 40;
+    /**
+     * Absolute Confidence: Many locations matched, but one country in scope.
+     * So, 1 country mentioned in document
+     */
+    public static final int MATCHCONF_MANY_COUNTRY = 50;
+
+    /**
+     * Absolute Confidence: Name, Region; City, State; Capital, Country; etc.
+     * Patterns of qualified places.
+     */
+    public static final int MATCHCONF_NAME_REGION = 60;
+
+    /**
+     * Absolute Confidence: Unique name in gazetteer.
+     */
+    public static final int MATCHCONF_ONE_LOC = 80;
+
+    /** Absolute Confidence: Geographic location of a named place lines up with a coordinate in-scope */
+    public static final int MATCHCONF_GEODETIC = 90;
+
+    /** Confidence Qualifier: The chosen place happens to be a major place, e.g., large city. */
+    public static final int MATCHCONF_QUALIFIER_MAJOR_PLACE = 5;
+
+    /** Confidence Qualifier: The chosen place happens to be in a country mentioned in the document */
+    public static final int MATCHCONF_QUALIFIER_COUNTRY_MENTIONED = 5;
+
+    /** Confidence Qualifier: The chosen place scored high compared to the runner up */
+    public static final int MATCHCONF_QUALIFIER_HIGH_SCORE = 5;
+    /**
+     * Confidence Qualifier: Start here if you have a lower case term that may be a place.
+     */
+    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -15;
+
+    /**
+     * Confidence of your final chosen location for a given name is assembled as the sum of some absolute metric
+     * plus some additional qualifiers. The absolute provides some context at the document level, whereas the
+     * qualifiers are refinements.
+     * 
+     * <pre>
+     *  conf = A + Q1 + Q2...  // this may change.
+     * </pre>
+     * 
+     * @param pc
+     */
+    public void assessConfidence(PlaceCandidate pc) {
+
+        if (pc.getChosen() == null && pc.distinctLocationCount() > 0) {
+            // Either not evaluated yet or no good choice could be made.
+            // Ambiguous location name.
+            pc.setConfidence(MATCHCONF_MANY_LOC);
+            return;
+        }
+        int points = 0;
+
+        // This place candidate instance:
+        // - total # of instances in gazetteer, e.g., getPlaces()
+        // - distinct countries for those places, e.g.,       
+        // 
+        // Mutually Exclusive conditions:
+        //======================
+        if (pc.hasRule(CoordinateAssociationRule.COORD_PROXIMITY_RULE)) {
+            points = MATCHCONF_GEODETIC;
+        } else if (pc.distinctLocationCount() == 1) {
+            points = MATCHCONF_ONE_LOC;
+        } else if (pc.hasRule(NameCodeRule.NAME_ADMCODE_RULE)
+                || pc.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
+            points = MATCHCONF_NAME_REGION;
+        } else if (countryObserver.countryCount() == 1) {
+            points = MATCHCONF_MANY_COUNTRY;
+        } else if (countryObserver.countryCount() > 0) {
+            points = MATCHCONF_MANY_COUNTRIES;
+        } else {
+            points = MATCHCONF_MANY_LOC;
+        }
+
+        // Any of these may occur.
+        //======================
+        //
+        // Lower case?  Eh... language dependent.
+        if (pc.isLower()) {
+            points += MATCHCONF_QUALIFIER_LOWERCASE;
+        }
+        // Is Major place?
+        if (pc.hasRule(MajorPlaceRule.ADMIN) || pc.hasRule(MajorPlaceRule.CAPITAL)) {
+            points += MATCHCONF_QUALIFIER_MAJOR_PLACE;
+        }
+        // 
+
+        if (pc.getSecondBestPlaceScore() > 0) {
+            double a = pc.getChosen().getScore();
+            double b = pc.getSecondBestPlaceScore();
+            double scoreRatio = a / b; // Top score = 40, second score = 25
+            if (scoreRatio > 1.2) { // 20% better
+                points += MATCHCONF_QUALIFIER_HIGH_SCORE;
+            }
+        }
+
+        if (this.countryObserver.countryObserved(pc.getChosen().getCountryCode())) {
+            points += MATCHCONF_QUALIFIER_COUNTRY_MENTIONED;
+        }
+
+        pc.setConfidence(points);
+    }
+
 }

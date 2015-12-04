@@ -89,23 +89,29 @@ import org.slf4j.LoggerFactory;
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class PlaceGeocoder extends GazetteerMatcher
-        implements Extractor, CountryObserver, BoundaryObserver, CoordinateObserver {
+        implements Extractor, CountryObserver, BoundaryObserver, LocationObserver {
 
     /**
-     *
+     * Resources and Taggers
      */
     protected Logger log = LoggerFactory.getLogger(getClass());
     private XCoord xcoord = null;
     private PersonNameFilter personNameRule = null;
     private TaxonMatcher personMatcher = null;
+    private static Map<String, Country> countryCatalog = null;
+
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
     private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
 
+    /**
+     * Rules -- specific ones that are globals.
+     * Generic rules that have no state or order are added to this.rules array
+     */
     private CountryRule countryRule = null;
     private CoordinateAssociationRule coordRule = null;
     private ProvinceAssociationRule adm1Rule = null;
-    private static Map<String, Country> countryCatalog = null;
+    private NameCodeRule nameWithAdminRule = null;
     private MajorPlaceRule majorPlaceRule = null;
 
     /**
@@ -206,6 +212,14 @@ public class PlaceGeocoder extends GazetteerMatcher
         // on a list of place tags.
         // Otherwise such rules are configured, set during the request, and evaluated adhoc as you need.
         // 
+        /* assess country names and codes */
+        countryRule = new CountryRule();
+        countryRule.setCountryObserver(this);
+
+        /* assess NAME, CODE patterns */
+        nameWithAdminRule = new NameCodeRule();
+        nameWithAdminRule.setBoundaryObserver(this);
+
         /**
          * Files for Place Name filter are editable, as you likely have
          * different ideas of who are "person names" to exclude when they
@@ -218,22 +232,14 @@ public class PlaceGeocoder extends GazetteerMatcher
         URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
         URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
         personNameRule = new PersonNameFilter(p1, p2, p3);
-
-        /* assess country names and codes */
-        countryRule = new CountryRule();
-        countryRule.setCountryObserver(this);
-
-        /* assess NAME, CODE patterns */
-        NameCodeRule nameWithAdminRule = new NameCodeRule();
-        nameWithAdminRule.setBoundaryObserver(this);
-        rules.add(nameWithAdminRule);
+        rules.add(personNameRule);
 
         /*
          * assess coordinates related to ADM1, CC
          */
         coordRule = new CoordinateAssociationRule();
         coordRule.setCountryObserver(this);
-        coordRule.setCoordinateObserver(this);
+        coordRule.setLocationObserver(this);
 
         if (xcoord == null && (isCoordExtractionEnabled())) {
             xcoord = new XCoord();
@@ -272,6 +278,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         LocationChooserRule chooser = new LocationChooserRule();
         chooser.setCountryObserver(this);
         chooser.setBoundaryObserver(this);
+        chooser.setLocationObserver(this);
         rules.add(chooser);
         countryCatalog = this.getGazetteer().getCountries();
     }
@@ -315,9 +322,9 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     private void reset() {
-        //this.locationBias.clear();
         this.relevantCountries.clear();
         this.relevantProvinces.clear();
+        this.relevantLocations.clear();
 
         personNameRule.reset();
         coordRule.reset();
@@ -374,9 +381,10 @@ public class PlaceGeocoder extends GazetteerMatcher
         List<TextMatch> matches = new ArrayList<TextMatch>();
         List<TextMatch> coordinates = null;
 
-        // 0. GEOTAG raw text
+        // 0. GEOTAG raw text. Flag tag-only = false, in otherwords do extra work for geocoding.
+        //
         LinkedList<PlaceCandidate> candidates = tagText(input.buffer, input.id,
-                false /*  Do full geocoding prep, so tag-only = false */);
+                false);
 
         // 1. COORDINATES. If caller thinks their data may have coordinates, then attempt to parse
         // lat/lon.  Any coordinates found fire rules for resolve lat/lon to a Province/Country if possible.
@@ -386,6 +394,22 @@ public class PlaceGeocoder extends GazetteerMatcher
             matches.addAll(coordinates);
         }
 
+        /*
+         * 3.RULE EVALUATION: accumulate all the evidence from everything found so far.
+         * Assemble some histograms to support some basic counts, weighting and sorting.
+         * 
+         * Rules:  Work with observables first, then move onto associations between candidates and more obscure fine tuning. 
+         * 1a.  Country - named country weighs heavily; 
+         * 1b.  Place, Boundary -- a city or location, followed/qualified by a geopolitical boundary name or code. Paris, France; Paris, Texas.
+         * 1c.  Coordinate rule -- coordinates emit Province ID and Country ID if possible. So inferred Provinces are weighted heavily.
+         * b.  Person name rule - filters out heavily, making use of JRC Names and your own data sets as a TaxCat catalog/tagger.
+         * d.  Major Places rule -- well-known large cities, capitals or provinces are weighted moderately.
+         * e.  Province association rule -- for each found place, weight geos falling in Provinces positively ID'd.
+         * f.  Location Chooser rule -- assemble all evidence and account for weights.
+         */
+        countryRule.evaluate(candidates);
+        nameWithAdminRule.evaluate(candidates);
+
         // 2. NON-PLACE ID. Tag person and org names to negate celebrity names or well-known
         // individuals who share a city name. "Tom Jackson", "Bill Clinton"
         //
@@ -393,21 +417,6 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         // Measure duration of tagging.
         this.taggingTimes.addTimeSince(t1);
-
-        /*
-         * 3.RULE EVALUATION: accumulate all the evidence from everything found so far.
-         * Assemble some histograms to support some basic counts, weighting and sorting.
-         * 
-         * Rules: 
-         * a.  Country - named country weighs heavily; 
-         * b.  Person name rule - filters out heavily.
-         * c.  Coordinate rule -- coordinates emit Province ID and Country ID if possible. So inferred Provinces are weighted heavily.
-         * d.  Major Places rule -- well-known large cities, capitals or provinces are weighted moderately.
-         * e.  Province association rule -- for each found place, weight geos falling in Provinces positively ID'd.
-         * f.  Location Chooser rule -- assemble all evidence and account for weights.
-         */
-        countryRule.evaluate(candidates);
-        personNameRule.evaluate(candidates);
 
         for (GeocodeRule r : rules) {
             r.evaluate(candidates);
@@ -457,6 +466,8 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         List<TaxonMatch> persons = new ArrayList<>();
         List<TaxonMatch> orgs = new ArrayList<>();
+        log.debug("Matched {}", nonPlaces.size());
+
         for (TextMatch tm : nonPlaces) {
             if (!(tm instanceof TaxonMatch)) {
                 continue;
@@ -478,7 +489,10 @@ public class PlaceGeocoder extends GazetteerMatcher
                     persons.add(tag);
                     break;
                 }
-                if (node.startsWith("org.") && tm.isUpper()) {
+                if (node.startsWith("org.")) {
+                    if (taxon.isAcronym && !tm.isUpper()) {
+                        continue;
+                    }
                     orgs.add(tag);
                     break;
                 }
@@ -691,5 +705,14 @@ public class PlaceGeocoder extends GazetteerMatcher
         }
 
         return null;
+    }
+
+    /**
+     * Tell us if this place P was inferred by hard location mentions
+     * 
+     */
+    @Override
+    public boolean placeObserved(Place p) {
+        return this.relevantLocations.containsKey(p.getKey());
     }
 }

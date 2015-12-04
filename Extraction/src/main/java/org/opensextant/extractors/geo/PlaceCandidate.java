@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.Geocoding;
@@ -50,8 +49,6 @@ import org.opensextant.util.TextUtils;
  * geographic locations it could represent (the Places ). It also contains the
  * results of the final decision to include:
  * <ul>
- * <li>placeConfidenceScore - Confidence that this is actually a place and not a
- * person, organization, or other type of entity.
  * <li>bestPlace - Of all the places with the same/similar names, which place is
  * it?
  * </ul>
@@ -66,8 +63,6 @@ public class PlaceCandidate extends TextMatch {
     // --------------Place/NotPlace stuff ----------------------
     // which rules have expressed a Place/NotPlace opinion on this PC
     private final Set<String> rules = new HashSet<>();
-    // the confidence adjustments provided by the Place/NotPlace rules
-    private final List<Double> placeConfidences = new ArrayList<>();
     // --------------Disambiguation stuff ----------------------
     // the places along with their disambiguation scores
     private final Map<String, ScoredPlace> scoredPlaces = new HashMap<>();
@@ -75,10 +70,56 @@ public class PlaceCandidate extends TextMatch {
     private final List<PlaceEvidence> evidence = new ArrayList<>();
     // The chosen, best place:
     private ScoredPlace chosen = null;
+    private int confidence = 0;
     private Set<String> hierarchicalPaths = new HashSet<>();
+    private Set<String> countries = new HashSet<>();
+
+    private static final String[] DESIGNATION_SCALE = {
+            /* Places: cities, villages, ruins, etc.*/
+            "PPLC:12",
+            "PPLA:8",
+            "PPLG:7",
+            "PPL:5",
+            "PPLQ:2",
+            /* Administrative regions */
+            "ADM1:9",
+            "ADM2:8",
+            "ADM3:7",
+            /* Other geographic features */
+            "ISL:4",
+            "ISLS:3"
+    };
+
+    private static final Map<String, Integer> designationWeight = new HashMap<>();
+    private static final int DEFAULT_DESIGNATION_WT = 3;
+
+    static {
+        for (String entry : DESIGNATION_SCALE) {
+            String[] parts = entry.split(":");
+            designationWeight.put(parts[0], Integer.parseInt(parts[1]));
+        }
+    }
 
     // basic constructor
     public PlaceCandidate() {
+    }
+
+    /**
+     * Using a scale of 0 to 100, indicate how confident we are that the chosen place is best.
+     * Note this is different than the individual score assigned to each candidate place.
+     * We just need one final confidence measure for this place mention.
+     */
+    public void setConfidence(int c) {
+        confidence = c;
+    }
+
+    /**
+     * see setConfidence
+     * 
+     * @return
+     */
+    public int getConfidence() {
+        return confidence;
     }
 
     /**
@@ -93,20 +134,6 @@ public class PlaceCandidate extends TextMatch {
         } else {
             //             
         }
-    }
-
-    /**
-     * Default chooser routine. Wrapper around getBestPlace()
-     * choose() takes an action, which incurs some performance cost.
-     * getChosen() is a getter to give you the result, without invoking the action.
-     * 
-     * <pre>
-     * chose()
-     * geo = getChosen()
-     * </pre>
-     */
-    public void choose() {
-        getBestPlace();
     }
 
     /**
@@ -161,52 +188,46 @@ public class PlaceCandidate extends TextMatch {
      * geocoding result for the given name in context.
      */
     public Geocoding getGeocoding() {
-        getBestPlace();
-        return chosen;
+        choose();
+        return getChosen();
     }
 
-    public Place getChosen() {
+    public ScoredPlace getChosen() {
         return chosen;
     }
 
     /**
      * Get the most highly ranked Place, or Null if empty list.
+     * Typical usage:
      * 
-     * @return Place the best choice
+     * choose() // this does work. performance cost.
+     * getChosen() // this is a getter; no performance cost
      */
-    public Place getBestPlace() {
+    public void choose() {
         if (chosen != null) {
-            return chosen;
+            // return chosen;
+            return;
         }
 
         List<ScoredPlace> tmp = new ArrayList<>();
         tmp.addAll(scoredPlaces.values());
         Collections.sort(tmp);
 
-
         chosen = tmp.get(0);
-        return chosen;
-    }
-
-    /**
-     * Get the disambiguation score of the most highly ranked Place, or 0.0 if
-     * empty list.
-     * 
-     * @return score of best place
-     */
-    public Double getBestPlaceScore() {
-        if (chosen != null) {
-            return chosen.getScore();
+        if (tmp.size() > 1) {
+            secondPlaceScore = tmp.get(1).getScore();
         }
-        return 0.0;
     }
 
+    private double secondPlaceScore = -1;
+
     /**
-     * @return true = if a Place. Does our confidence indicate that this is
-     *         actually a place?
+     * Only call after choose() operation.
+     * 
+     * @return
      */
-    public boolean isPlace() {
-        return (this.getPlaceConfidenceScore() > 0.0);
+    public double getSecondBestPlaceScore() {
+        return secondPlaceScore;
     }
 
     public Collection<ScoredPlace> getPlaces() {
@@ -223,12 +244,18 @@ public class PlaceCandidate extends TextMatch {
     public void addPlace(ScoredPlace place, Double score) {
         place.setScore(score);
         this.scoredPlaces.put(place.getKey(), place);
+
+        // 'US.CA'
         this.hierarchicalPaths.add(place.getHierarchicalPath());
+        // 'US'
+        if (place.getCountryCode() != null) {
+            this.countries.add(place.getCountryCode());
+        }
     }
 
     public static final double NAME_WEIGHT = 0.1;
     public static final double FEAT_WEIGHT = 0.2;
-    public static final double LOCATION_BIAS_WEIGHT = 0.1;
+    public static final double LOCATION_BIAS_WEIGHT = 0.5;
 
     /**
      * Given this candidate, how do you score the provided place
@@ -253,7 +280,7 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * Produce a goodness score of 0..1
+     * Produce a goodness score in the range 0 to 1.0
      * 
      * Trivial examples of name matching:
      * 
@@ -282,12 +309,18 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * A preference for features that are major places or boundaries.
+     * This yields a feature score on a 0 to 1.0 point scale.
      * 
      * @param g
      * @return
      */
     protected double scoreFeature(Place g) {
-        int score = 0;
+
+        Integer wt = designationWeight.get(g.getFeatureCode());
+        if (wt != null) {
+            return (float) wt / 10;
+        }
+        int score = DEFAULT_DESIGNATION_WT;
 
         // Major Place Rule covers 'A' and 'P' feature types, as such things require more context
         //
@@ -297,7 +330,7 @@ public class PlaceCandidate extends TextMatch {
             score += 1;
         }
 
-        return (float) score / 2;
+        return (float) score / 10;
     }
 
     // increment the score of an existing place
@@ -328,75 +361,8 @@ public class PlaceCandidate extends TextMatch {
         return rules.contains(rule);
     }
 
-    public List<Double> getConfidences() {
-        return placeConfidences;
-    }
-
-    // check if at least one of the Places has the given country code
-    public boolean possibleCountry(String cc) {
-        for (Place p : scoredPlaces.values()) {
-            if (p.getCountryCode() != null && p.getCountryCode().equalsIgnoreCase(cc)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check if at least one of the Places has the given admin code
-    public boolean possibleAdmin(String adm, String cc) {
-
-        // check the non-null admins first
-        for (Place p : scoredPlaces.values()) {
-            if (p.getAdmin1() != null && p.getAdmin1().equalsIgnoreCase(adm)) {
-                return true;
-            }
-        }
-
-        // some adm1codes are null, a null admin of the correct country could be
-        // possible match
-        for (Place p : scoredPlaces.values()) {
-            if (p.getAdmin1() == null && p.getCountryCode().equalsIgnoreCase(cc)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public void addRuleAndConfidence(String rule, Double conf) {
+    public void addRule(String rule) {
         rules.add(rule);
-        placeConfidences.add(conf);
-    }
-
-    /**
-     * Get the PlaceConfidence score. This is the confidence that this
-     * PlaceCandidate represents a named place and not a person,organization or
-     * other entity.
-     *
-     * @return the place confidence score
-     */
-    public Double getPlaceConfidenceScore() {
-        if (placeConfidences.size() == 0) {
-            return 0.0;
-        }
-
-        // average of placeConfidences
-        Double total = 0.0;
-        for (Double tmpScore : placeConfidences) {
-            total = total + tmpScore;
-        }
-        Double tmp = total / placeConfidences.size();
-
-        // ensure the final score is within +-1.0
-        if (tmp > 1.0) {
-            tmp = 1.0;
-        }
-
-        if (tmp < -1.0) {
-            tmp = -1.0;
-        }
-
-        return tmp;
     }
 
     public void addEvidence(PlaceEvidence evidence) {
@@ -434,6 +400,14 @@ public class PlaceCandidate extends TextMatch {
         this.evidence.add(ev);
     }
 
+    /**
+     * Add country evidence and increment score immediately.
+     * 
+     * @param rule
+     * @param weight
+     * @param cc
+     * @param geo
+     */
     public void addCountryEvidence(String rule, double weight, String cc, Place geo) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
@@ -470,6 +444,15 @@ public class PlaceCandidate extends TextMatch {
         this.evidence.add(ev);
     }
 
+    /**
+     * Add evidence and increment score immediately.
+     * 
+     * @param rule
+     * @param weight
+     * @param coord
+     * @param geo
+     * @param proximityScore
+     */
     public void addGeocoordEvidence(String rule, double weight, LatLon coord, Place geo, double proximityScore) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
@@ -494,23 +477,31 @@ public class PlaceCandidate extends TextMatch {
     // an overide of toString to get a meaningful representation of this PC
     @Override
     public String toString() {
+        return summarize(false);
+    }
+
+    /**
+     * If you need a full print out of the data, use summarize(true);
+     * 
+     * @param dumpAll
+     * @return
+     */
+    public String summarize(boolean dumpAll) {
         StringBuilder tmp = new StringBuilder(getText());
-        tmp.append("(");
-        tmp.append(String.format("(%02.1f/%d)", this.getPlaceConfidenceScore(), this.scoredPlaces.size()));
+        tmp.append(String.format("(C=%d, N=%d)", this.getConfidence(), this.scoredPlaces.size()));
         tmp.append("\nRules=");
         tmp.append(rules.toString());
         tmp.append("\nEvidence=");
         tmp.append(evidence.toString());
-
-        //this.sort();
-        tmp.append("\nPlaces=\n");
-        //for (int i = scoredPlaces.size() - 1; i >= 0; --i) {
-        for (ScoredPlace p : scoredPlaces.values()) {
-            tmp.append("\t");
-            tmp.append(p.toString());
-            tmp.append(" = ");
-            tmp.append(String.format("%04.4f", p.getScore()));
-            tmp.append("\n");
+        if (dumpAll) {
+            tmp.append("\nPlaces=\n");
+            for (ScoredPlace p : scoredPlaces.values()) {
+                tmp.append("\t");
+                tmp.append(p.toString());
+                tmp.append(" = ");
+                tmp.append(String.format("%04.4f", p.getScore()));
+                tmp.append("\n");
+            }
         }
         return tmp.toString();
     }
@@ -555,4 +546,22 @@ public class PlaceCandidate extends TextMatch {
     public boolean presentInHierarchy(String path) {
         return this.hierarchicalPaths.contains(path);
     }
+
+    public boolean presentInCountry(String cc) {
+        return this.countries.contains(cc);
+    }
+
+    /**
+     * How many different countries contain this name?
+     * 
+     * @return
+     */
+    public int distinctCountryCount() {
+        return this.countries.size();
+    }
+
+    public int distinctLocationCount() {
+        return this.scoredPlaces.size(); // These are keyed by PLACE ID, essentially location.
+    }
+
 }

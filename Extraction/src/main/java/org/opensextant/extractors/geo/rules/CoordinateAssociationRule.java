@@ -38,9 +38,12 @@ public class CoordinateAssociationRule extends GeocodeRule {
     /** Threshold for geohash prefix similarity */
     public static int DEFAULT_THRESHOLD_DIGITS = 5;
 
-    public final static int GEOHASH = 0;
-    public final static int HAVERSINE = 1;
+    public static final int GEOHASH = 0;
+    public static final int HAVERSINE = 1;
     private int associationScheme = HAVERSINE;
+    
+    public static final String COORD_PROXIMITY_RULE = "Coordinate";
+    public static final String GEOHASH_CONTAINS_RULE = "Geohash";
 
     private List<Geocoding> coordinates = new ArrayList<>();
 
@@ -103,7 +106,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
                 // is within
                 if (meters < DEFAULT_THRESHOLD_METERS) {
                     double proximityScore = (float) (DEFAULT_THRESHOLD_METERS - meters) / DEFAULT_THRESHOLD_METERS;
-                    name.addGeocoordEvidence("Coordinate", weight, ll, geo, proximityScore);                    
+                    name.addGeocoordEvidence(COORD_PROXIMITY_RULE, weight, ll, geo, proximityScore);                    
                 }
             }
             break;
@@ -122,7 +125,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
 
                 // is within
                 if (gh.startsWith(grid)) {
-                    name.addGeocoordEvidence("Geohash", weight, ll, geo, 1.0);
+                    name.addGeocoordEvidence(GEOHASH_CONTAINS_RULE, weight, ll, geo, 1.0);
                 }
             }
             break;
