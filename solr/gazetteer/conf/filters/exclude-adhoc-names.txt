@@ -19,6 +19,7 @@ abu
 abi
 ahmad
 ahmed
+chip
 dimitry
 dmitriy
 abdul
@@ -28,6 +29,7 @@ fernando
 felicity
 luiz
 luis
+matty
+mick
 nat
 nate
-matty

@@ -397,6 +397,7 @@ ace,noun
 seal,noun
 seals,noun
 puerto,noun.es
+building a,phrase
 rican,phrase
 casa,noun.spa
 grupo,noun.spa
@@ -697,6 +698,7 @@ olive branch,phrase
 rendezvous point,phrase
 good point,phrase
 main point,phrase
+one point,phrase
 zero point,phrase
 final point,phrase
 first point,phrase
@@ -734,6 +736,8 @@ palace,place.civil
 castle,place.civil
 hotel,place.civil
 school,place.civil
+middle school,place.civil
+high school,place.civil
 academy,place.civil
 real-estate,place.civil
 real estate,place.civil
@@ -1337,3 +1341,47 @@ belt,noun
 ferry,noun
 shrine,place.civil
 govenors,person.label
+beam,noun
+bliss,noun
+garden,noun
+gateway,noun
+district court,place.civil
+district courts,place.civil
+court of appeal,place.civil
+court of appeals,place.civil
+hey,phrase
+gag,verb
+end of the world,phrase
+farms,place.civil
+far north,phrase
+goodnight,phrase
+gallery,noun
+guru,stopword.web
+groves,place.civil
+hospital,place.civil
+holiday,noun
+hornet,noun
+inner city,place.civil
+insurance,noun
+el centro,place.civil
+liberal,adjective
+knife point,phrase
+knights,noun
+last hope,phrase
+left hand,phrase
+log jam,phrase
+mart,place.civil
+may day,phrase
+# Not Mobile:, but mobil
+mobil,adjective
+micro,adjective
+millenium,noun
+millennium,noun
+mines,place.civil
+monitoring station,place.civil
+monk,person.label
+west coast,place.general
+the west coast,place.general
+east coast,place.general
+the east coast,place.general
+
