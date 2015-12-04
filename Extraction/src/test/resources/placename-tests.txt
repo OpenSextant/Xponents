@@ -1,17 +1,24 @@
 # US State patterns:  state, country;  city, state;  city, state postal code.
-#from atop the hill in Vermont, USA you can see far
+from atop the hill in Vermont, USA you can see far
 from the bridge in Burlington, Vermont you can see far
 from the bridge in Burlington, VT you can see far
+Washington said they would have peace. But it was not clear if that applied in or around DC.
+Washington State has phenomonal apples
+
+Here in Andrew, Alberta we hope we have a good snow pack. Skiing is big. Dog sledding is bigger.
+Georgia peaches are special.
+In downtown Tblisi you can get Georgia peaches
+
 
 # Coordinate<>ADM1 association rule
-#Can you see 44.5N 73.2W  from there?  Is that near Buffalo or Boston?   United States for sure.
-#Can you see 44.5N 73.2W  from there?  Is that near Buffalo or Boston?  USA for sure.
+Can you see 44.5N 73.2W  from there?  Is that near Buffalo or Boston?   United States for sure.
+Can you see 44.5N 73.2W  from there?  Is that near Buffalo or Boston?  USA for sure.
 
 # Country or Province?
 Is Lebanon near there?  I mean Lebanon, New Hampshire ... aka Lebanon, NH
 
 # Major place rule.  "Paris, Texas"?  Will this yield a location?
-#Paris, Texas is a 1984 drama film directed by Wim Wenders and starring Harry Dean Stanton, Dean Stockwell, Nastassja Kinski, and Hunter Carson.
+Paris, Texas is a 1984 drama film directed by Wim Wenders and starring Harry Dean Stanton, Dean Stockwell, Nastassja Kinski, and Hunter Carson.
 
 # social media test: lower case 'us' found?
 # why would the us do that?  what's up #chicago
