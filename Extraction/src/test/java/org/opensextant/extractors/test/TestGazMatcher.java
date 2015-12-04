@@ -61,7 +61,7 @@ public class TestGazMatcher {
                 if (p.isCountry) {
                     countryNames.add(p.getText());
                 } else if (p.getChosen() != null) {
-                    System.out.println("\tgeocoded @ " + p.getChosen());
+                    System.out.println(String.format("\tgeocoded @ %s with conf=%d", p.getChosen(), p.getConfidence()));
                     placeNames.add(p.getText());
                 } else {
                     placeNames.add(p.getText());
