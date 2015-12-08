@@ -46,7 +46,7 @@ public class MajorPlaceRule extends GeocodeRule {
     public final static String POP = "MajorPlace.Population";
     private Map<String, Integer> popStats = null;
     private static final int GEOHASH_RESOLUTION = 5;
-    private static final int POP_MIN = 50000;
+    private static final int POP_MIN = 60000;
 
     /**
      * Major Place assigns a score to places that are national capitals, provinces, or cities with sizable population.
@@ -74,34 +74,38 @@ public class MajorPlaceRule extends GeocodeRule {
             ev = new PlaceEvidence(geo, CAPITAL, weight(weight + 2, geo));
         } else if (geo.isAdmin1()) {
             ev = new PlaceEvidence(geo, ADMIN, weight(weight, geo));
-        } else if (popStats != null && geo.isPopulated() && geo.getPopulation() > POP_MIN) {
+        } else if (popStats != null && geo.isPopulated()) {
             String gh = geohash(geo);
             geo.setGeohash(gh);
             String prefix = gh.substring(0, GEOHASH_RESOLUTION);
             if (popStats.containsKey(prefix)) {
-                // 
-                // Natural log gives a better, slower curve for population weights.
-                // ln(POP_MIN=25000) = 10.1
-                // 
-                // ln(22,000) = 0.0     wt=0  e^10 = 22,000
-                // ln(60,000) = 11.x    wt=1
-                // ln(165,000) = 12.x   wt=2
-                // ln(444,000) = 13.x   wt=3       
-                // Etc.
-                // And to make scale even more gradual, wt - 1
-                // 
-                int wt = (int) (Math.log(geo.getPopulation()) - 10) - 1;
-                ev = new PlaceEvidence(geo, POP, weight(wt, geo));
+
+                int pop = popStats.get(prefix);
+                if (pop > POP_MIN) {
+                    geo.setPopulation(pop);
+                    // 
+                    // Natural log gives a better, slower curve for population weights.
+                    // ln(POP_MIN=25000) = 10.1
+                    // 
+                    // ln(22,000) = 0.0     wt=0  e^10 = 22,000
+                    // ln(60,000) = 11.x    wt=1
+                    // ln(165,000) = 12.x   wt=2
+                    // ln(444,000) = 13.x   wt=3       
+                    // Etc.
+                    // And to make scale even more gradual, wt - 1  or wt/2, wt/3
+                    // These population stats cannot overtake all other rules entirely.
+                    // 
+                    int wt = (int) ((Math.log(geo.getPopulation()) - 10))/3;
+                    ev = new PlaceEvidence(geo, POP, weight(wt, geo));
+                }
             }
         }
+        
         if (ev != null) {
             ev.setEvaluated(true);
             name.addEvidence(ev);
             name.incrementPlaceScore(geo, ev.getWeight() * 0.1);
         }
-        //else if (geo.isAdministrative()) {
-        //    name.addEvidence(ADMIN, weight(weight - 1, geo), geo);
-        //}
     }
 
     /**

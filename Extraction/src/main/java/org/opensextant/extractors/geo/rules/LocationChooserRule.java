@@ -155,7 +155,7 @@ public class LocationChooserRule extends GeocodeRule {
 
     }
 
-    protected static final double ADMIN_CONTAINS_PLACE_WT = 4.0;
+    protected static final double ADMIN_CONTAINS_PLACE_WT = 3.0;
     protected static final double COUNTRY_CONTAINS_PLACE_WT = 2.0;
 
     /**
@@ -187,11 +187,11 @@ public class LocationChooserRule extends GeocodeRule {
             // Evaluate evidence
             if ((ev.getAdmin1() != null && geo.getAdmin1() != null)) {
                 if (geo.getHierarchicalPath().equals(ev.getHierarchicalPath())) {
-                    name.incrementPlaceScore(geo, 3.0);
+                    name.incrementPlaceScore(geo, ADMIN_CONTAINS_PLACE_WT);
                 }
             } else {
                 if (geo.getCountryCode().equals(ev.getCountryCode())) {
-                    name.incrementPlaceScore(geo, 1.0);
+                    name.incrementPlaceScore(geo, COUNTRY_CONTAINS_PLACE_WT);
                 }
             }
 

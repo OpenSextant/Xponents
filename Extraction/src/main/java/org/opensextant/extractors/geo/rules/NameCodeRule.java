@@ -37,7 +37,7 @@ import org.opensextant.extractors.geo.PlaceEvidence;
  */
 public class NameCodeRule extends GeocodeRule {
 
-    private static int MAX_CHAR_DIST = 5;
+    private static int MAX_CHAR_DIST = 4;
 
     public final static String NAME_ADMCODE_RULE = "AdminCode";
     public final static String NAME_ADMNAME_RULE = "AdminName";
@@ -149,7 +149,7 @@ public class NameCodeRule extends GeocodeRule {
                 ev.setAdmin1(geo.getAdmin1());
                 ev.setEvaluated(true); // Shunt. Evaluate this rule here.
 
-                int wt = weight + (comma ? 1 : 0);
+                int wt = weight + (comma ? 2 : 0);
                 if (geo.isAbbreviation() && (code.isAbbreviation || code.isAcronym)) {
                     ev.setRule(NAME_ADMCODE_RULE);
                     ev.setWeight(wt + 1);

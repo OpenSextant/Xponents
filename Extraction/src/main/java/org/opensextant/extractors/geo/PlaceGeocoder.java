@@ -65,6 +65,7 @@ import org.opensextant.extractors.geo.rules.GeocodeRule;
 import org.opensextant.extractors.geo.rules.LocationChooserRule;
 import org.opensextant.extractors.geo.rules.MajorPlaceRule;
 import org.opensextant.extractors.geo.rules.NameCodeRule;
+import org.opensextant.extractors.geo.rules.NameRule;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
 import org.opensextant.extractors.geo.rules.ProvinceAssociationRule;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
@@ -283,12 +284,16 @@ public class PlaceGeocoder extends GazetteerMatcher
         }
         majorPlaceRule.setCountryObserver(this);
         rules.add(majorPlaceRule);
+        // Simple patterns such as city of x or  abc county.
+        // 
+        rules.add(new NameRule());
 
         LocationChooserRule chooser = new LocationChooserRule();
         chooser.setCountryObserver(this);
         chooser.setBoundaryObserver(this);
         chooser.setLocationObserver(this);
         rules.add(chooser);
+
         countryCatalog = this.getGazetteer().getCountries();
     }
 

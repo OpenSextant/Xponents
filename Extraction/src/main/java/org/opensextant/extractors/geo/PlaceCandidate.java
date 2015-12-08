@@ -95,6 +95,7 @@ public class PlaceCandidate extends TextMatch {
             "PPL:5",
             "PPLL:2",
             "PPLQ:2",
+            "PPLX:2",
             /* Administrative regions */
             "ADM1:9",
             "ADM2:8",
@@ -281,8 +282,8 @@ public class PlaceCandidate extends TextMatch {
         }
     }
 
-    public static final double NAME_WEIGHT = 0.1;
-    public static final double FEAT_WEIGHT = 0.2;
+    public static final double NAME_WEIGHT = 0.2;
+    public static final double FEAT_WEIGHT = 0.1;
     public static final double LOCATION_BIAS_WEIGHT = 0.7;
 
     /**
