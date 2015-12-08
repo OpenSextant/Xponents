@@ -1,4 +1,19 @@
 # US State patterns:  state, country;  city, state;  city, state postal code.
+# TEST: Well-known city (high ID bias) confused with Major Place due to presence of country name.  
+The man flew from San Francisco to Bolivia that day.
+The man flew from San Francisco to another local airport that day.
+The man flew from San Francisco to the southern tip of Bolivia that day.
+The man flew from San Francisco to the southern tip of Colombia that day.
+The man flew from San Francisco to the southern tip of Colombia that day. He spent his whole life in the US
+The man flew from Florida to Uruguay that day.
+The man flew from Florida, Uruguay that day.
+The man flew from Florida to another local airport that day.
+The man flew from Florida to the southern tip of Uruguay that day.
+The man flew from Flórida to the southern tip of Brazil that day.
+The man flew from Flórida, Brazil 
+Los Angeles, CA
+Los Angeles is far from Colombia geographically, but close in spirit
+
 from atop the hill in Vermont, USA you can see far
 from the bridge in Burlington, Vermont you can see far
 from the bridge in Burlington, VT you can see far
@@ -7,8 +22,8 @@ Washington State has phenomonal apples
 
 Here in Andrew, Alberta we hope we have a good snow pack. Skiing is big. Dog sledding is bigger.
 Georgia peaches are special.
+Is there a peach farm around Atlanta where you can get Georgia's peaches?
 In downtown Tblisi you can get Georgia peaches
-
 
 # Coordinate<>ADM1 association rule
 Can you see 44.5N 73.2W  from there?  Is that near Buffalo or Boston?   United States for sure.
@@ -17,8 +32,8 @@ Can you see 44.5N 73.2W  from there?  Is that near Buffalo or Boston?  USA for s
 # Country or Province?
 Is Lebanon near there?  I mean Lebanon, New Hampshire ... aka Lebanon, NH
 
-# Major place rule.  "Paris, Texas"?  Will this yield a location?
+# Major place rule.  "Paris, Texas"?  Will this yield a location?  Source: ImDB:
 Paris, Texas is a 1984 drama film directed by Wim Wenders and starring Harry Dean Stanton, Dean Stockwell, Nastassja Kinski, and Hunter Carson.
 
 # social media test: lower case 'us' found?
-# why would the us do that?  what's up #chicago
+why would the us do that?  what's up #chicago

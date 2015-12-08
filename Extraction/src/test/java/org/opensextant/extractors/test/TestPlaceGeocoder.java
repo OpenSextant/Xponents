@@ -45,9 +45,10 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         //
         try {
             for (String t : texts) {
-                print("TEST:\t" + t);
+                print("TEST:\t" + t+"\n=====================");
                 List<TextMatch> matches = geocoder.extract(t);
                 summarizeFindings(matches);
+                print("\n");
             }
         } catch (Exception procErr) {
             procErr.printStackTrace();
