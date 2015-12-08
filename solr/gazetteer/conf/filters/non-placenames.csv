@@ -810,6 +810,7 @@ aquarius,place.astro
 palace,place.civil
 castle,place.civil
 hotel,place.civil
+hamlet,place.civil
 school,place.civil
 middle school,place.civil
 high school,place.civil
@@ -877,6 +878,7 @@ mart,place.civil
 mines,place.civil
 monitoring station,place.civil
 resovoir,place.civil
+reservoir,place.civil
 parkway,place.civil
 country,place.general
 land,place.general
