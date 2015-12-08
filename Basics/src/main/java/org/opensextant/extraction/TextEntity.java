@@ -72,11 +72,11 @@ public class TextEntity {
     private String postmatch = null;
     /** */
     public String match_id = null;
-    /** If this entity is contained completely within some other     */
+    /** If this entity is contained completely within some other */
     public boolean is_submatch = false;
-    /** If this entity is a overlaps with some other     */
+    /** If this entity is a overlaps with some other */
     public boolean is_overlap = false;
-    /** If this entity is a duplicate of some other     */
+    /** If this entity is a duplicate of some other */
     public boolean is_duplicate = false;
 
     /**
@@ -87,29 +87,52 @@ public class TextEntity {
 
     /**
      * sets the value of the TextEntity
-     * @param t text
+     * 
+     * @param t
+     *            text
      */
     public void setText(String t) {
         text = t;
         if (text != null) {
             isLower = TextUtils.isLower(text);
             isUpper = TextUtils.isUpper(text);
+
+            // Worth tracking if matched text is ASCII only. If name or entity has diacritics then
+            // you may look at it differently.  
+            //
+            try {
+                isASCII = TextUtils.isASCII(TextUtils.removePunctuation(text));
+            } catch (Exception err) {
+                isASCII = false;
+            }
         }
     }
 
     private boolean isLower = false;
     private boolean isUpper = false;
+    private boolean isASCII = false;
+
+    /**
+     * If non-punctuation content is purely ASCII vs. Latin1 vs. unicode.
+     * 
+     * @return
+     */
+    public boolean isASCII() {
+        return isASCII;
+    }
 
     /**
      * test If text (that has a case sense) is ALL lower case
+     * 
      * @return true if all lower.
      */
     public boolean isLower() {
         return isLower;
     }
-    
+
     /**
      * test If text (that has a case sense) is ALL upper case
+     * 
      * @return true if all upper.
      */
     public boolean isUpper() {
@@ -124,7 +147,9 @@ public class TextEntity {
         return text;
     }
 
-    /** get the length of the matched text
+    /**
+     * get the length of the matched text
+     * 
      * @return int, length
      */
     public int match_length() {
@@ -136,9 +161,13 @@ public class TextEntity {
     }
 
     /** Convenience methods for carrying the context through the output processing */
-    /** Set the context with before and after windows
-     * @param before text before match
-     * @param after text after match
+    /**
+     * Set the context with before and after windows
+     * 
+     * @param before
+     *            text before match
+     * @param after
+     *            text after match
      */
     public void setContext(String before, String after) {
         this.prematch = before;
@@ -152,8 +181,11 @@ public class TextEntity {
         this.context = buf.toString();
     }
 
-    /** Set the context buffer from a single window
-     * @param window - textual window
+    /**
+     * Set the context buffer from a single window
+     * 
+     * @param window
+     *            textual window
      */
     public void setContext(String window) {
         this.context = window;
@@ -185,7 +217,7 @@ public class TextEntity {
 
     /**
      *
-     * @return  string representation of entity
+     * @return string representation of entity
      */
     @Override
     public String toString() {
@@ -194,7 +226,8 @@ public class TextEntity {
 
     /**
      *
-     * @param m match/entity object to copy
+     * @param m
+     *            match/entity object to copy
      */
     public void copy(TextEntity m) {
 
