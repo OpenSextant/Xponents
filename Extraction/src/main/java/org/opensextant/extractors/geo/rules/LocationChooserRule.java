@@ -168,6 +168,10 @@ public class LocationChooserRule extends GeocodeRule {
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
 
+        if (boundaryContext.isEmpty() || countryContext.isEmpty()) {
+            return;
+        }
+
         // Choose either boundary or country context to add in for this location.
         // This is inferred stuff from the document at large.
         if (geo.getHierarchicalPath() != null && boundaryContext.containsKey(geo.getHierarchicalPath())) {
@@ -198,38 +202,6 @@ public class LocationChooserRule extends GeocodeRule {
             ev.setEvaluated(true);
             log.debug("\tEvidence: {} {}", ev, ev.getAdmin1());
         }
-    }
-
-    /**
-     * 
-     * @param ev
-     * @param geo
-     * @return
-     * @deprecated Unused.
-     */
-    protected double scoreBoundary(Place ev, Place geo) {
-        if (ev.getCountryCode() == null) {
-            // Resolve this to a country. Sorry no known boundary.
-            log.debug("Ignored Evidence:{}", ev);
-            return 0;
-        }
-        int bs = 0;
-        if (ev.getAdmin2() != null) {
-            String evPath = GeonamesUtility.getHASC(ev.getCountryCode(), ev.getAdmin1(), ev.getAdmin2());
-            String geoPath = GeonamesUtility.getHASC(geo.getCountryCode(), geo.getAdmin1(), geo.getAdmin2());
-            if (evPath.equals(geoPath)) {
-                ++bs;
-            }
-        } else if (ev.getAdmin1() != null) {
-            ev.defaultHierarchicalPath();
-            if (geo.getHierarchicalPath().equals(ev.getHierarchicalPath())) {
-                ++bs;
-            }
-        } else if (ev.getCountryCode().equals(geo.getCountryCode())) {
-            ++bs;
-        }
-
-        return bs;
     }
 
     /**
@@ -278,7 +250,7 @@ public class LocationChooserRule extends GeocodeRule {
     /**
      * Confidence Qualifier: Ambiguous
      */
-    public static final int MATCHCONF_QUALIFIER_AMBIGUOUS_NAME = -12;
+    public static final int MATCHCONF_QUALIFIER_AMBIGUOUS_NAME = -7;
 
     /**
      * Confidence Qualifier: Name appears in only one country.
@@ -293,7 +265,7 @@ public class LocationChooserRule extends GeocodeRule {
      * -20 points or more for lower case matches, however feat_class P and A win back 5 points; others are
      * less likely places.
      */
-    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -25;
+    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -15;
 
     /**
      * Confidence of your final chosen location for a given name is assembled as the sum of some absolute metric
@@ -352,9 +324,13 @@ public class LocationChooserRule extends GeocodeRule {
             }
         }
 
-        // 
+        // TODO: work through ambiguities -- true ties.
         if (pc.isAmbiguous()) {
-            points += MATCHCONF_QUALIFIER_AMBIGUOUS_NAME;
+            if (pc.getChosen().isSame(pc.getSecondChoice())) {
+                points += 2;
+            } else {
+                points += MATCHCONF_QUALIFIER_AMBIGUOUS_NAME;
+            }
         }
         if (pc.distinctCountryCount() == 1) {
             points += MATCHCONF_QUALIFIER_UNIQUE_COUNTRY;

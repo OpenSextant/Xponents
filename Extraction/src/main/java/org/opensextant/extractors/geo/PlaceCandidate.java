@@ -546,8 +546,6 @@ public class PlaceCandidate extends TextMatch {
             for (ScoredPlace p : scoredPlaces.values()) {
                 tmp.append("\t");
                 tmp.append(p.toString());
-                tmp.append(" = ");
-                tmp.append(String.format("%04.4f", p.getScore()));
                 tmp.append("\n");
             }
         }
