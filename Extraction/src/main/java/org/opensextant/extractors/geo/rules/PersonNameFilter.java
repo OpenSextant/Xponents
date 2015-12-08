@@ -188,6 +188,13 @@ public class PersonNameFilter extends GeocodeRule {
                 name.addRule("PersonTitle");
                 return;
             }
+
+            if (filter.filterOut(pre)) {
+                name.setFilteredOut(true);
+                resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
+                name.addRule("PersonName");
+                return;
+            }
         }
 
         if (filter.filterOut(name.getTextnorm())) {
