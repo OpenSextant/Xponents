@@ -243,6 +243,22 @@ public class PlaceCandidate extends TextMatch {
             secondPlaceScore = tmp.get(1).getScore();
         }
     }
+    
+    /**
+     * This only makes sense if you tried choose() first 
+     * to sort scored places.
+     * 
+     * @return
+     */
+    public boolean isAmbiguous(){
+        if (choice2!=null && choice1!=null){
+            // float == float  does this work in Java?  7.125 == 7.125 ? 
+            // 
+            // first place Not better than second place?
+            return !(choice1.getScore()>choice2.getScore());
+        }
+        return false;
+    }
 
     private double secondPlaceScore = -1;
 

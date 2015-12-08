@@ -233,10 +233,16 @@ public class LocationChooserRule extends GeocodeRule {
     }
 
     /**
+     * The bare minimum confidence -- if rules negate confidence points,
+     * confidence may go below 20.
+     */
+    public static final int MATCHCONF_MINIMUM = 20;
+
+    /**
      * Absolute Confidence: Many Locations matched a single name.
      * No country is in scope; No country mentioned in document, so this is very low confidence.
      */
-    public static final int MATCHCONF_MANY_LOC = 20;
+    public static final int MATCHCONF_MANY_LOC = MATCHCONF_MINIMUM;
 
     /**
      * Absolute Confidence: Many locations matched, with multiple countries in scope
@@ -269,14 +275,25 @@ public class LocationChooserRule extends GeocodeRule {
     /** Confidence Qualifier: The chosen place happens to be in a country mentioned in the document */
     public static final int MATCHCONF_QUALIFIER_COUNTRY_MENTIONED = 5;
 
+    /**
+     * Confidence Qualifier: Ambiguous
+     */
+    public static final int MATCHCONF_QUALIFIER_AMBIGUOUS_NAME = -12;
+
+    /**
+     * Confidence Qualifier: Name appears in only one country.
+     * 
+     */
+    public static final int MATCHCONF_QUALIFIER_UNIQUE_COUNTRY = 8;
+
     /** Confidence Qualifier: The chosen place scored high compared to the runner up */
     public static final int MATCHCONF_QUALIFIER_HIGH_SCORE = 5;
     /**
      * Confidence Qualifier: Start here if you have a lower case term that may be a place.
-     * -20 points for lower case matches, however feat_class P and A win back 5 points; others are
+     * -20 points or more for lower case matches, however feat_class P and A win back 5 points; others are
      * less likely places.
      */
-    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -20;
+    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -25;
 
     /**
      * Confidence of your final chosen location for a given name is assembled as the sum of some absolute metric
@@ -334,6 +351,15 @@ public class LocationChooserRule extends GeocodeRule {
                 points += 5;
             }
         }
+
+        // 
+        if (pc.isAmbiguous()) {
+            points += MATCHCONF_QUALIFIER_AMBIGUOUS_NAME;
+        }
+        if (pc.distinctCountryCount() == 1) {
+            points += MATCHCONF_QUALIFIER_UNIQUE_COUNTRY;
+        }
+
         // Is Major place?
         if (pc.hasRule(MajorPlaceRule.ADMIN) || pc.hasRule(MajorPlaceRule.CAPITAL)) {
             points += MATCHCONF_QUALIFIER_MAJOR_PLACE;
