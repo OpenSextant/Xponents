@@ -10,6 +10,7 @@ import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.GazetteerMatcher;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.util.FileUtility;
 
@@ -58,10 +59,18 @@ public class TestGazMatcher {
             }
             if (tm instanceof PlaceCandidate) {
                 PlaceCandidate p = (PlaceCandidate) tm;
+                if (!p.getRules().isEmpty()) {
+                    print("Rules = " + p.getRules());
+                }
                 if (p.isCountry) {
                     countryNames.add(p.getText());
                 } else if (p.getChosen() != null) {
-                    System.out.println(String.format("\tgeocoded @ %s with conf=%d", p.getChosen(), p.getConfidence()));
+                    print(String.format("\tgeocoded (score=%f)@ %s with conf=%d", p.getChosen().getScore(),
+                            p.getChosen(), p.getConfidence()));
+                    ScoredPlace alt = p.getSecondChoice();
+                    if (alt != null) {
+                        print(String.format("\tgeocoded (score=%f)@ %s second place", alt.getScore(), alt));
+                    }
                     placeNames.add(p.getText());
                 } else {
                     placeNames.add(p.getText());
