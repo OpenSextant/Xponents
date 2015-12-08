@@ -359,7 +359,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * large volume of tags and gazetteer data that is involved. And this is
          * relatively early in the pipline.
          */
-        log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
+        log.debug("DOC={} TAGS SIZE={}", docid, tags.size());        
 
         TreeMap<Integer, PlaceCandidate> candidates = new TreeMap<Integer, PlaceCandidate>();
 
