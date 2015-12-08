@@ -38,6 +38,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.GeoBase;
 import org.opensextant.data.LatLon;
 
+import com.spatial4j.core.io.GeohashUtils;
+
 /**
  * A collection of geodetic routines used within OpenSextant.
  * This is a light wrapper around the most common routines - a full API exists
@@ -312,4 +314,17 @@ public class GeodeticUtility {
     public final static String formatLatLon(final LatLon yx) {
         return String.format("%2.4f,%3.4f", yx.getLatitude(), yx.getLongitude());
     }
+    
+    /**
+     * 
+     * @param yx lat,lon obj
+     * @return geohash representation of the lat,lon
+     */
+    public final static String geohash(final LatLon yx){
+        return  GeohashUtils.encodeLatLon(yx.getLatitude(), yx.getLongitude());
+    }
+    public final static String geohash(double lat, double lon){
+        return  GeohashUtils.encodeLatLon(lat, lon);
+    }
+    
 }

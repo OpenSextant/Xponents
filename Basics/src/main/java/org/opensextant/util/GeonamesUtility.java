@@ -27,18 +27,25 @@
  **************************************************   */
 package org.opensextant.util;
 
+import static org.opensextant.util.GeodeticUtility.geohash;
+
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Country;
+import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
@@ -65,7 +72,9 @@ public class GeonamesUtility {
      * A utility class that offers many static routines; If you instantiate this
      * class it will require metadata files for country-names and feature-codes
      * in your classpath
-     * @throws IOException if metadata files are not found or do not load.
+     * 
+     * @throws IOException
+     *             if metadata files are not found or do not load.
      */
     public GeonamesUtility() throws IOException {
 
@@ -74,9 +83,12 @@ public class GeonamesUtility {
     }
 
     /**
-     * This may help revert to a more readable country name, e.g., if you are given upper case name and you want some version of it as a proper name
+     * This may help revert to a more readable country name, e.g., if you are given upper case name and you want some
+     * version of it as a proper name
      * But no need to use this if you have good reference data.
-     * @param c country name
+     * 
+     * @param c
+     *            country name
      * @return capitalize the name of a country
      */
     public static String normalizeCountryName(String c) {
@@ -86,8 +98,10 @@ public class GeonamesUtility {
     /**
      * Find a readable name or description of a class/code
      *
-     * @param cls  feature class, e.g., P
-     * @param code feature code, e.g., PPL
+     * @param cls
+     *            feature class, e.g., P
+     * @param code
+     *            feature code, e.g., PPL
      * @return name for a feature/code pair
      */
     public String getFeatureName(String cls, String code) {
@@ -129,7 +143,7 @@ public class GeonamesUtility {
     /**
      * Pase geonames.org TZ table.
      * 
-     * @throws IOException
+     * @throws IOException if timeZones.txt is not found or has an issue.
      */
     private void loadCountryTimezones() throws IOException {
         java.io.InputStream io = getClass().getResourceAsStream("/timeZones.txt");
@@ -155,6 +169,179 @@ public class GeonamesUtility {
             C.addTimezone(tzdata.get("TZ"), offset);
         }
         tzMap.close();
+    }
+
+    public static final boolean isValue(final String s) {
+        return StringUtils.isNotBlank(s);
+    }
+
+    /**
+     * Geonames.org data set: citiesN.txt
+     * 
+     * @param resourcePath
+     *            CLASSPATH location of a resource.
+     * @return list of places
+     * @throws IOException
+     */
+    public static List<Place> loadMajorCities(String resourcePath) throws IOException {
+        URL f = GeonamesUtility.class.getResource(resourcePath);
+        if (f == null) {
+            throw new IOException("Major cities data not found for " + resourcePath);
+        }
+        try {
+            return loadMajorCities(new File(f.toURI()));
+        } catch (Exception rareErr) {
+            throw new IOException(rareErr);
+        }
+    }
+
+    /**
+     * Convenience: prepare a map for lookup by ID. If these are geonames.org place objects
+     * then the geonames IDs do not line up with those curated within OpenSextant Gazetteer
+     * 
+     * geonames.org cities data is usually unique by row, so if you provide 1000 cities in a list
+     * your map will have 1000 city place IDs in the map. No duplicates expected.
+     * 
+     * @param cities
+     * @return
+     */
+    public static Map<String, Place> mapMajorCityIDs(List<Place> cities) {
+        Map<String, Place> mapped = new HashMap<>();
+        for (Place geo : cities) {
+            mapped.put(geo.getPlaceID(), geo);
+        }
+        return mapped;
+    }
+
+    /**
+     * See mapPopulationByLocation(list, int). Default geohash prefix length is 5, which
+     * yields about 6km grids or so.
+     * 
+     * @param cities
+     * @return
+     */
+    public static Map<String, Integer> mapPopulationByLocation(List<Place> cities) {
+        return mapPopulationByLocation(cities, 5);
+    }
+
+    /**
+     * This organizes population data by geohash. Geohash of N-char prefixes.
+     * If multiple cities are located on top of that grid, then the populations
+     * Geohash prefix = 4, yields about 30 KM, and 5 yields 6 KM.
+     * 
+     * @param cities
+     * @param ghResolution
+     *            number of geohash chars in prefix, for keys in map. Higher resolution means finer geohash grid
+     * 
+     * @return map of population summation over geohash grids.
+     */
+    public static Map<String, Integer> mapPopulationByLocation(List<Place> cities, int ghResolution) {
+        Map<String, Integer> populationGrid = new HashMap<>();
+        for (Place geo : cities) {
+            if (geo.getPopulation() <= 0) {
+                continue;
+            }
+            if (geo.getGeohash() == null) {
+                continue;
+            }
+
+            // Build up the population raster.
+            // 
+            String gh = geo.getGeohash().substring(0, ghResolution);
+            Integer pop = populationGrid.get(gh);
+            if (pop == null) {
+                pop = geo.getPopulation();
+            } else {
+                pop += geo.getPopulation();
+            }
+            populationGrid.put(gh, pop);
+        }
+        return populationGrid;
+    }
+
+    /**
+     * Load the Geonames.org majorcities data file.
+     * Mainly to acquire population and other metrics.
+     * 
+     * <pre>
+     * Schema: http://download.geonames.org/export/dump/
+     * pass in the files formatted in geonames.org format, and named citiesNNNN.zip (.txt)
+     * where NNNN is the population threshold.
+     * </pre>
+     * 
+     * @param f geonames.org cities file
+     * @return list of xponents Place obj
+     * @throws IOException if given file does not exist or is unreadable.
+     */
+    public static List<Place> loadMajorCities(File f) throws IOException {
+        java.io.Reader citiesIO = FileUtility.getInputStream(f, "UTF-8");
+
+        // IMPLEMENTATION QUIRK:  SuperCSV failed to parse the rows of data
+        // as they contain unescaped " chars.  TAB delimited file, but cells contain ".
+        // Hmm.
+        List<Place> cities = new ArrayList<>();
+        int lineCount = 0;
+        BufferedReader reader = new BufferedReader(citiesIO);
+        String line;
+        while ((line = reader.readLine()) != null) {
+
+            ++lineCount;
+
+            String[] cells = line.split("\t");
+            if (cells.length < 19) {
+                continue;
+            }
+
+            // ID, Name
+            Place p = new Place(cells[0], cells[1]);
+
+            // Population
+            String pop = cells[14];
+            if (StringUtils.isNotBlank(pop)) {
+                p.setPopulation(Integer.parseInt(pop));
+            }
+
+            if (isValue(cells[4])) {
+                try {
+                    LatLon xy = GeodeticUtility.parseLatLon(cells[4], cells[5]);
+                    p.setLatLon(xy);
+                } catch (ParseException e) {
+                    // TODO Auto-generated catch block
+                    //e.printStackTrace();
+                }
+            }
+            // Feature Class
+            if (isValue(cells[6])) {
+                p.setFeatureClass(cells[6]);
+            }
+            // Feature Code
+            if (isValue(cells[7])) {
+                p.setFeatureCode(cells[7]);
+            }
+
+            // Feature Code
+            if (isValue(cells[8])) {
+                p.setCountryCode(cells[8]);
+            }
+
+            // ADM1
+            if (isValue(cells[10])) {
+                p.setAdmin1(cells[10]);
+            }
+            // ADM2
+            if (isValue(cells[11])) {
+                p.setAdmin2(cells[11]);
+            }
+
+            if (p.hasCoordinate()) {
+                // Performance issue -- geohash has limited use, so this is done only for specific use cases.
+                // Place.geohash is not always set, even if lat/lon is.
+                p.setGeohash(geohash(p));
+            }
+            cities.add(p);
+        }
+        citiesIO.close();
+        return cities;
     }
 
     private void loadCountryNameMap() throws IOException {
@@ -226,7 +413,8 @@ public class GeonamesUtility {
     /**
      * Finds a default country name for a CC if one exists.
      *
-     * @param cc_iso2  country code.
+     * @param cc_iso2
+     *            country code.
      * @return name of country
      */
     public String getDefaultCountryName(String cc_iso2) {
@@ -235,6 +423,7 @@ public class GeonamesUtility {
 
     /**
      * List all country names, official and variant names.
+     * 
      * @return map of countries, keyed by ISO country code
      */
     //public Map<String, Country> getCountries() {
@@ -252,7 +441,9 @@ public class GeonamesUtility {
      *
      * TODO: throw a GazetteerException of some sort. for null query or invalid
      * code.
-     * @param isocode ISO code
+     * 
+     * @param isocode
+     *            ISO code
      * @return Country object
      */
     public Country getCountry(String isocode) {
@@ -264,11 +455,12 @@ public class GeonamesUtility {
 
     /**
      * Find distinct country object by a code.
-     * Ambiguous codes will not do anything.  This is really useful only if you
-     * have no idea what standard your data uses -- FIPS or ISO2/ISO3.  If you know
+     * Ambiguous codes will not do anything. This is really useful only if you
+     * have no idea what standard your data uses -- FIPS or ISO2/ISO3. If you know
      * then use the API method corresponding to that standard. getCountry() is ISO by default.
      *
-     * @param cc  country code from any standard.
+     * @param cc
+     *            country code from any standard.
      * @return found country object
      */
     public Country getCountryByAnyCode(String cc) {
@@ -286,7 +478,8 @@ public class GeonamesUtility {
     }
 
     /**
-     * @param fips FIPS code
+     * @param fips
+     *            FIPS code
      * @return Country object
      */
     public Country getCountryByFIPS(String fips) {
@@ -298,7 +491,9 @@ public class GeonamesUtility {
 
     /**
      * Find an ISO code for a given FIPS entry.
-     * @param fips FIPS code
+     * 
+     * @param fips
+     *            FIPS code
      * @return null if key does not exist.
      */
     public String FIPS2ISO(String fips) {
@@ -326,7 +521,8 @@ public class GeonamesUtility {
      * code is a number alone, "0" is returned for "00", "000", etc. And other
      * numbers are 0-padded as 2-digits
      *
-     * @param v admin code
+     * @param v
+     *            admin code
      * @return fixed admin code
      */
     public static String normalizeAdminCode(String v) {
@@ -358,6 +554,7 @@ public class GeonamesUtility {
     /**
      * Get a hiearchical path for a boundar or a place.
      * This presumes you have already normalized these values.
+     * 
      * <pre>
      *    CC.ADM1.ADM2.ADM3... etc. for example:
      *
@@ -365,20 +562,23 @@ public class GeonamesUtility {
      *
      * </pre>
      *
-     * @param c  country code
-     * @param adm1 ADM1 code
+     * @param c
+     *            country code
+     * @param adm1
+     *            ADM1 code
      * @return HASC path
      */
     public static String getHASC(String c, String adm1) {
         return String.format("%s.%s", c, adm1);
     }
+
     public static String getHASC(String c, String adm1, String adm2) {
         return String.format("%s.%s.%s", c, adm1, adm2);
     }
 
     /**
      * Experimental. A trivial way of looking at mapping well-known name
-     *               collisions to country codes
+     * collisions to country codes
      */
     public static final Map<String, String> KNOWN_NAME_COLLISIONS = new HashMap<String, String>();
 
@@ -410,7 +610,8 @@ public class GeonamesUtility {
      * TODO: replace with simple config file of such rules that are objective
      * and can be generalized
      *
-     * @param nm  country name
+     * @param nm
+     *            country name
      * @return if country name is ambiguous and collides with other name
      */
     public static boolean isCountryNameCollision(String nm) {
@@ -427,7 +628,8 @@ public class GeonamesUtility {
     /**
      * Check if name type is an Abbreviation
      *
-     * @param name_type code
+     * @param name_type
+     *            code
      * @return true if code is abbreviation
      */
     public static boolean isAbbreviation(char name_type) {
@@ -441,7 +643,8 @@ public class GeonamesUtility {
     /**
      * Check if name type is an Abbreviation
      *
-     * @param name_type  OpenSextant code
+     * @param name_type
+     *            OpenSextant code
      * @return true if code is abbreviation
      */
     public static boolean isAbbreviation(String name_type) {
@@ -450,7 +653,9 @@ public class GeonamesUtility {
 
     /**
      * Is this Place a Country?
-     * @param featCode feat code or designation
+     * 
+     * @param featCode
+     *            feat code or designation
      * @return - true if this is a country or "country-like" place
      */
     public static boolean isCountry(String featCode) {
@@ -459,7 +664,9 @@ public class GeonamesUtility {
 
     /**
      * Is this Place a State or Province?
-     * @param featCode feature code
+     * 
+     * @param featCode
+     *            feature code
      * @return - true if this is a State, Province or other first level admin area
      */
     public static boolean isAdmin1(String featCode) {
@@ -468,7 +675,9 @@ public class GeonamesUtility {
 
     /**
      * Is this Place a National Capital?
-     * @param featCode feature code
+     * 
+     * @param featCode
+     *            feature code
      * @return - true if this is a a national Capital area
      */
     public static boolean isNationalCapital(String featCode) {
@@ -478,7 +687,8 @@ public class GeonamesUtility {
     /**
      * Wrapper for isAbbreviation(name type)
      *
-     * @param p place
+     * @param p
+     *            place
      * @return true if is coded as abbreviation
      */
     public static boolean isAbbreviation(Place p) {
@@ -488,7 +698,8 @@ public class GeonamesUtility {
     /**
      * Wrapper for isCountry(feat code)
      *
-     * @param p  place
+     * @param p
+     *            place
      * @return true if is Country, e.g., PCLI
      */
     public static boolean isCountry(Place p) {
@@ -498,28 +709,49 @@ public class GeonamesUtility {
     /**
      * wrapper for isNationalCaptial( feat code )
      *
-     * @param p place
+     * @param p
+     *            place
      * @return true if is PPLC or similar
      */
-    public static boolean isNationalCapital(Place p) {
+    public static boolean isNationalCapital(final Place p) {
         return isNationalCapital(p.getFeatureCode());
     }
 
     /**
-     * @param p place
+     * @param p
+     *            place
      * @return true if is ADM1
      */
-    public static boolean isAdmin1(Place p) {
+    public static boolean isAdmin1(final Place p) {
         return "ADM1".equalsIgnoreCase(p.getFeatureCode());
     }
 
     /**
      * if a place or feature represents an administrative boundary.
      *
-     * @param featClass feature type in question
+     * @param featClass
+     *            feature type in question
      * @return true if is admin
      */
-    public static boolean isAdministrative(String featClass) {
+    public static boolean isAdministrative(final String featClass) {
         return "A".equalsIgnoreCase(featClass);
+    }
+
+    /**
+     * 
+     * @param featClass
+     *            geonames feature class, e.g., A, P, H, L, V, T, R
+     * @return true if P.
+     */
+    public static boolean isPopulated(final String featClass) {
+        return "P".equalsIgnoreCase(featClass);
+    }
+
+    public static boolean isSpot(String fc) {
+        return "S".equalsIgnoreCase(fc);
+    }
+
+    public static boolean isLand(String fc) {
+        return "L".equalsIgnoreCase(fc);
     }
 }

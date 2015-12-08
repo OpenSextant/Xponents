@@ -39,6 +39,8 @@
 //
 package org.opensextant.util;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -56,8 +58,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.opensextant.data.Language;
 import org.supercsv.cellprocessor.Optional;
@@ -197,6 +197,23 @@ public class TextUtils {
     public static boolean isASCII(byte[] data) {
         for (byte b : data) {
             if (b < 0 || b > ASCII_END) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Early exit test -- return false on first non-ASCII character found.
+     * 
+     * @param t buffer of text
+     * @return true only if every char is in ASCII table.
+     */
+    public static boolean isASCII(String t) {
+        char c;
+        for (int x = 0; x < t.length(); ++x) {
+            c = t.charAt(x);
+            if (c > ASCII_END) {
                 return false;
             }
         }
@@ -472,7 +489,7 @@ public class TextUtils {
     /**
      * Measure character count, upper, lower, non-Character, whitespace
      * 
-     * @param text
+     * @param text text
      * @return int array with counts.
      */
     public static int[] measureCase(String text) {
@@ -511,9 +528,10 @@ public class TextUtils {
      * don't expect you would pass in such things as arguments
      * as they don't change from doc to doc much; they do change from domain to domain.
      * 
-     * IFF you are hitting these thresholds too closely, then you have to adapt these to your own data.  These are 
-     * meant to be very, very general. They would best apply to documents on the order of 200 to 10,000 bytes.  Beyond that
-     * we don't find many texts that are that size and all lower or all upper where these heuristics are helpful. 
+     * IFF you are hitting these thresholds too closely, then you have to adapt these to your own data. These are
+     * meant to be very, very general. They would best apply to documents on the order of 200 to 10,000 bytes. Beyond
+     * that
+     * we don't find many texts that are that size and all lower or all upper where these heuristics are helpful.
      * E.g., tweets in English -- these thresholds are easily influenced by a difference of one or two characters.
      */
     public static double UPPER_CASE_THRESHOLD = 0.75;
@@ -530,7 +548,7 @@ public class TextUtils {
      * that suggests the text is mainly upper case. These routines may not work well on languages that are not
      * Latin-alphabet.
      * 
-     * @param counts
+     * @param counts word stats from measureCase()
      * @return
      */
     public static boolean isUpperCaseDocument(final int[] counts) {
@@ -548,7 +566,7 @@ public class TextUtils {
      * See Upper Case. Two methods to measure -- lower case count compared to all content (char+non-char)
      * or compared to just char content.
      * 
-     * @param counts
+     * @param counts word stats from measureCase()
      * @return
      */
     public static boolean isLowerCaseDocument(final int[] counts) {
