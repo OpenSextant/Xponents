@@ -52,14 +52,13 @@ import org.opensextant.util.TextUtils;
  * <li>bestPlace - Of all the places with the same/similar names, which place is
  * it?
  * </ul>
+ * @author ubaldino
+ * @author dlutz, based on OpenSextant Toolbox
  */
 public class PlaceCandidate extends TextMatch {
 
     private String textnorm = null;
 
-    // the location this was found in the document
-    // private Long start;
-    // private Long end;
     // --------------Place/NotPlace stuff ----------------------
     // which rules have expressed a Place/NotPlace opinion on this PC
     private final Set<String> rules = new HashSet<>();
@@ -69,10 +68,24 @@ public class PlaceCandidate extends TextMatch {
     // the list of PlaceEvidences accumulated from the document about this PC
     private final List<PlaceEvidence> evidence = new ArrayList<>();
     // The chosen, best place:
-    private ScoredPlace chosen = null;
+    private ScoredPlace choice1 = null;
+    private ScoredPlace choice2 = null;
     private int confidence = 0;
     private Set<String> hierarchicalPaths = new HashSet<>();
     private Set<String> countries = new HashSet<>();
+
+    /**
+     * Default weighting increments.
+     */
+    private static final String[] CLASS_SCALE = {
+            "A:3",
+            "P:2",
+            "L:1",
+            "R:0",
+            "H:1",
+            "V:0",
+            "T:1"
+    };
 
     private static final String[] DESIGNATION_SCALE = {
             /* Places: cities, villages, ruins, etc.*/
@@ -80,6 +93,7 @@ public class PlaceCandidate extends TextMatch {
             "PPLA:8",
             "PPLG:7",
             "PPL:5",
+            "PPLL:2",
             "PPLQ:2",
             /* Administrative regions */
             "ADM1:9",
@@ -90,13 +104,18 @@ public class PlaceCandidate extends TextMatch {
             "ISLS:3"
     };
 
+    private static final Map<String, Integer> classWeight = new HashMap<>();
     private static final Map<String, Integer> designationWeight = new HashMap<>();
-    private static final int DEFAULT_DESIGNATION_WT = 3;
+    private static final int DEFAULT_DESIGNATION_WT = 2;
 
     static {
         for (String entry : DESIGNATION_SCALE) {
             String[] parts = entry.split(":");
             designationWeight.put(parts[0], Integer.parseInt(parts[1]));
+        }
+        for (String entry : CLASS_SCALE) {
+            String[] parts = entry.split(":");
+            classWeight.put(parts[0], Integer.parseInt(parts[1]));
         }
     }
 
@@ -128,9 +147,9 @@ public class PlaceCandidate extends TextMatch {
      */
     public void choose(Place geo) {
         if (geo instanceof ScoredPlace) {
-            chosen = (ScoredPlace) geo;
+            choice1 = (ScoredPlace) geo;
         } else if (scoredPlaces.containsKey(geo.getKey())) {
-            chosen = scoredPlaces.get(geo.getKey());
+            choice1 = scoredPlaces.get(geo.getKey());
         } else {
             //             
         }
@@ -193,7 +212,11 @@ public class PlaceCandidate extends TextMatch {
     }
 
     public ScoredPlace getChosen() {
-        return chosen;
+        return choice1;
+    }
+
+    public ScoredPlace getFirstChoice() {
+        return getChosen();
     }
 
     /**
@@ -204,7 +227,7 @@ public class PlaceCandidate extends TextMatch {
      * getChosen() // this is a getter; no performance cost
      */
     public void choose() {
-        if (chosen != null) {
+        if (choice1 != null) {
             // return chosen;
             return;
         }
@@ -213,8 +236,9 @@ public class PlaceCandidate extends TextMatch {
         tmp.addAll(scoredPlaces.values());
         Collections.sort(tmp);
 
-        chosen = tmp.get(0);
+        choice1 = tmp.get(0);
         if (tmp.size() > 1) {
+            choice2 = tmp.get(1);
             secondPlaceScore = tmp.get(1).getScore();
         }
     }
@@ -226,8 +250,12 @@ public class PlaceCandidate extends TextMatch {
      * 
      * @return
      */
-    public double getSecondBestPlaceScore() {
+    public double getSecondChoiceScore() {
         return secondPlaceScore;
+    }
+
+    public ScoredPlace getSecondChoice() {
+        return choice2;
     }
 
     public Collection<ScoredPlace> getPlaces() {
@@ -245,7 +273,7 @@ public class PlaceCandidate extends TextMatch {
         place.setScore(score);
         this.scoredPlaces.put(place.getKey(), place);
 
-        // 'US.CA'
+        // 'US.CA' or 'US.06', etc.
         this.hierarchicalPaths.add(place.getHierarchicalPath());
         // 'US'
         if (place.getCountryCode() != null) {
@@ -255,7 +283,7 @@ public class PlaceCandidate extends TextMatch {
 
     public static final double NAME_WEIGHT = 0.1;
     public static final double FEAT_WEIGHT = 0.2;
-    public static final double LOCATION_BIAS_WEIGHT = 0.5;
+    public static final double LOCATION_BIAS_WEIGHT = 0.7;
 
     /**
      * Given this candidate, how do you score the provided place
@@ -304,6 +332,13 @@ public class PlaceCandidate extends TextMatch {
         if (isUpper() && (g.isAbbreviation() || TextUtils.isUpper(g.getName()))) {
             ++score;
         }
+        // Mismatch in name diacritics downgrads name score here.
+        if ((isASCII() && !g.isASCIIName()) || (!isASCII() && g.isASCIIName())) {
+            --score;
+        }
+        if (isASCII() && g.isASCIIName()) {
+            ++score;
+        }
         return (float) score / startingScore;
     }
 
@@ -321,13 +356,9 @@ public class PlaceCandidate extends TextMatch {
             return (float) wt / 10;
         }
         int score = DEFAULT_DESIGNATION_WT;
-
-        // Major Place Rule covers 'A' and 'P' feature types, as such things require more context
-        //
-        if ("P".equals(g.getFeatureClass())) {
-            score += 2;
-        } else if ("S".equals(g.getFeatureClass())) {
-            score += 1;
+        wt = classWeight.get(g.getFeatureClass());
+        if (wt!=null){
+            score += wt.intValue();    
         }
 
         return (float) score / 10;
