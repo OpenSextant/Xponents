@@ -40,6 +40,7 @@
 package org.opensextant.data;
 
 import org.opensextant.util.GeodeticUtility;
+import static org.opensextant.util.GeodeticUtility.geohash;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 
@@ -356,16 +357,39 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
         return "unset";
     }
 
+    public boolean isSame(Place other){
+        return compareTo(other)==0;
+    }
+    
     /**
-     * two Places with the same PlaceID are the same "place" two Places with
-     * different PlaceIDs ARE PROBABLY different "places"
-     * 
+     * With multiple data sources there is no standard way of saying this place == that place.
+     * So we compare features, locations, Ids, etc. 
      * @param other
      *            another Place
      */
-    //@Override
     public int compareTo(Place other) {
-        return this.getKey().compareTo(other.getKey());
+        // Identity Matches?
+        if (getKey() != null && getKey().equals(other.getKey())) {
+            return 0;
+        }
+
+        if (!getFeatureClass().equals(other.getFeatureClass())) {
+            return -1;
+        }
+
+        // Geohash: Same general location?  Use 6 chars of geohash to get 2-3 KM resolution.
+        if (other.hasCoordinate() && hasCoordinate()) {
+            String g1 = geohash(other);
+            String g2 = getGeohash();
+            if (g2 == null) {
+                g2 = geohash(this);
+            }
+            if (g2.startsWith(g1.substring(0, 6))) {
+                return 0;
+            }
+        }
+
+        return -1;
     }
 
     private int precision = -1;
