@@ -182,21 +182,21 @@ public class PersonNameFilter extends GeocodeRule {
         String[] toks = name.getPrematchTokens();
         if (toks != null && toks.length > 0) {
             String pre = toks[toks.length - 1].toLowerCase();
-            if (isNotBlank(pre)){
-            // pre = delPeriod.matcher(pre).replaceAll("");
-            if (titles.contains(withoutPeriod(pre))) {
-                name.setFilteredOut(true);
-                resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
-                name.addRule("PersonTitle");
-                return;
-            }
+            if (isNotBlank(pre)) {
+                // pre = delPeriod.matcher(pre).replaceAll("");
+                if (titles.contains(withoutPeriod(pre))) {
+                    name.setFilteredOut(true);
+                    resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
+                    name.addRule("PersonTitle");
+                    return;
+                }
 
-            if (filter.filterOut(pre)) {
-                name.setFilteredOut(true);
-                resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
-                name.addRule("PersonName");
-                return;
-            }
+                if (filter.filterOut(pre)) {
+                    name.setFilteredOut(true);
+                    resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
+                    name.addRule("PersonName");
+                    return;
+                }
             }
         }
 
