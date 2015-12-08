@@ -65,11 +65,11 @@ public class TestGazMatcher {
                 if (p.isCountry) {
                     countryNames.add(p.getText());
                 } else if (p.getChosen() != null) {
-                    print(String.format("\tgeocoded (score=%f)@ %s with conf=%d", p.getChosen().getScore(),
-                            p.getChosen(), p.getConfidence()));
+                    print(String.format("\tgeocoded @ %s with conf=%d", p.getChosen(),
+                            p.getConfidence()));
                     ScoredPlace alt = p.getSecondChoice();
                     if (alt != null) {
-                        print(String.format("\tgeocoded (score=%f)@ %s second place", alt.getScore(), alt));
+                        print(String.format("\tgeocoded @ %s second place", alt));
                     }
                     placeNames.add(p.getText());
                 } else {

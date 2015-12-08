@@ -67,7 +67,14 @@ public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
             return 1;
         }
         return 0;
-
+    }
+    
+    @Override
+    public String toString(){
+        if (getName() != null) {
+            return String.format("%s (%s, %s, %s), score=%03.2f", getName(), getAdmin1(), this.getCountryCode(), getFeatureCode(), getScore());
+        }
+        return "No Name";
     }
 
 }
