@@ -41,6 +41,7 @@ package org.opensextant.data;
 
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
+import org.opensextant.util.TextUtils;
 
 /**
  *
@@ -59,6 +60,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     protected String admin1 = null;
     protected String admin2 = null;
 
+    private boolean isASCIIName = false;
+
     /**
      * Creates a new instance of Geobase
      *
@@ -68,7 +71,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
      *            place name
      */
     public Place(String placeId, String nm) {
-        super(placeId, nm);
+        super(placeId, null);
+        this.setPlaceName(nm);
     }
 
     public Place() {
@@ -77,6 +81,15 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     public Place(double lat, double lon) {
         super(lat, lon);
+    }
+
+    /**
+     * If the name has been set you c
+     * 
+     * @return
+     */
+    public boolean isASCIIName() {
+        return this.isASCIIName;
     }
 
     protected char name_type = 0;
@@ -172,6 +185,15 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     public final void setPlaceName(String nm) {
         setName(nm);
+        if (this.name != null) {
+            try {
+                isASCIIName = TextUtils.isASCII(TextUtils.removePunctuation(getName()));
+            } catch (Exception err) {
+                // Prefer not to silence errors here
+                // TODO: throw exception for name normalization and related name parsing. 
+                isASCIIName = false;
+            }
+        }
     }
 
     @Override
@@ -251,6 +273,16 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     @Override
     public boolean isAdministrative() {
         return GeonamesUtility.isAdministrative(featureClass);
+    }
+
+    /**
+     * if feature class for this location is 'P' for populated place.
+     * TODO: Not sure if this is part of Geocoding interface.
+     * 
+     * @return
+     */
+    public boolean isPopulated() {
+        return GeonamesUtility.isPopulated(featureClass);
     }
 
     /**
@@ -426,5 +458,19 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
         if (country_id != null && admin1 != null) {
             this.hierarchicalPath = GeonamesUtility.getHASC(this.country_id, this.admin1);
         }
+    }
+
+    public boolean isSpot() {
+        return GeonamesUtility.isSpot(this.featureClass);
+    }
+
+    private int population = -1;
+
+    public void setPopulation(int p) {
+        population = p;
+    }
+
+    public int getPopulation() {
+        return population;
     }
 }
