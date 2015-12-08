@@ -6,7 +6,6 @@ eta,abbrev
 tel,abbrev
 lat,abbrev
 lon,abbrev
-muerte,adjective.spa
 supreme,adjective
 alpine,adjective
 urban,adjective
@@ -34,7 +33,6 @@ annual,adjective
 united,adjective
 royal,adjective
 main,adjective
-mobile,adjective
 vice,adjective
 industrial,adjective
 free,adjective
@@ -89,6 +87,13 @@ confederate,adjective
 cirrus,adjective
 done,adjective
 auto,adjective
+corporal,adjective
+liberal,adjective
+# Not Mobile:, but mobil
+# mobile,adjective
+mobil,adjective
+micro,adjective
+muerte,adjective.spa
 shortly,adverb
 the,article
 black,color
@@ -188,12 +193,12 @@ feb,month
 february,month
 jan,month
 january,month
+box,noun
 cult,noun
 fresh water,noun
 welfare,noun
 band,noun
-banda,noun.spa
-banco,noun.spa
+laboratory,noun
 chamber,noun
 accounting,noun
 exodus,noun
@@ -396,9 +401,48 @@ cruise,noun
 ace,noun
 seal,noun
 seals,noun
+cab,noun
+bear,noun
+crocodile,noun
+viper,noun
+belt buckle,noun
+craft,noun
+coward,noun
+covenant,noun
+courier,noun
+bacon,noun
+backer,noun
+ash,noun
+oracle,noun
+photo,noun
+rover,noun
+sands,noun
+shura,noun
+slack,noun
+satellite channel,noun
+memo,noun
+forestry,noun
+belt,noun
+ferry,noun
+beam,noun
+bliss,noun
+garden,noun
+gateway,noun
+gallery,noun
+holiday,noun
+hornet,noun
+insurance,noun
+knights,noun
+millenium,noun
+millennium,noun
+childs,noun
+cat,noun
+vet,noun
+rabbit,noun
+charter,noun
 puerto,noun.es
-building a,phrase
-rican,phrase
+banda,noun.spa
+banco,noun.spa
 casa,noun.spa
 grupo,noun.spa
 golf,noun.sport
@@ -564,6 +608,14 @@ celebrant,person.label
 star,person.label
 guy,person.label
 celebrity,person.label
+corporal,person.label
+nco,person.label
+nazi,person.label
+sergeant,person.label
+grad,person.label
+gul,person.label
+govenors,person.label
+monk,person.label
 pir,person.label.mideast
 rabbi,person.label.mideast
 imam,person.label.mideast
@@ -660,6 +712,8 @@ po2,person.label.rank
 po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
+building a,phrase
+rican,phrase
 pro,phrase
 rep,phrase
 reps,phrase
@@ -682,8 +736,12 @@ a peak,phrase
 hello,phrase
 duh,phrase
 ditto,phrase
+ha,phrase
+dis,phrase
 yes,phrase
 yup,phrase
+yea,phrase
+yeah,phrase
 un to,phrase
 us a,phrase
 or a,phrase
@@ -721,6 +779,23 @@ heck,phrase
 imho,phrase
 hehe,phrase
 nope,phrase
+din,phrase
+roundup,phrase
+round-up,phrase
+hey,phrase
+end of the world,phrase
+far north,phrase
+goodnight,phrase
+knife point,phrase
+last hope,phrase
+left hand,phrase
+log jam,phrase
+may day,phrase
+med,phrase
+ba,phrase
+je,phrase
+tis,phrase
+ta,phrase
 mars,place.astro
 comet,place.astro
 galaxy,place.astro
@@ -788,6 +863,21 @@ farm,place.civil
 ranch,place.civil
 store,place.civil
 pub,place.civil
+shrine,place.civil
+district court,place.civil
+district courts,place.civil
+court of appeal,place.civil
+court of appeals,place.civil
+farms,place.civil
+groves,place.civil
+hospital,place.civil
+inner city,place.civil
+el centro,place.civil
+mart,place.civil
+mines,place.civil
+monitoring station,place.civil
+resovoir,place.civil
+parkway,place.civil
 country,place.general
 land,place.general
 island,place.general
@@ -915,6 +1005,11 @@ hollow,place.general
 falls,place.general
 branch,place.general
 spring,place.general
+plains,place.general
+west coast,place.general
+the west coast,place.general
+east coast,place.general
+the east coast,place.general
 cita,place.general.non-english
 oblast,place.general.non-english
 voblast,place.general.non-english
@@ -1016,6 +1111,8 @@ français,stopword.web
 deutsch,stopword.web
 русский,stopword.web
 italiano,stopword.web
+guru,stopword.web
+div,stopword.web
 I,stopword.wordnet
 a,stopword.wordnet
 an,stopword.wordnet
@@ -1257,6 +1354,9 @@ trump,verb
 delete,verb
 beware,verb
 let,verb
+gag,verb
+bluff,verb
+jab,verb
 mon,weekday
 tue,weekday
 tues,weekday
@@ -1278,6 +1378,8 @@ sunday,weekday
 foia,well-known.concept
 pepsi,well-known.concept
 coca-cola,well-known.concept
+coca,well-known.concept
+cola,well-known.concept
 coca cola,well-known.concept
 sears,well-known.org
 reuters,well-known.org
@@ -1305,83 +1407,3 @@ uncle sam,well-known.person
 ringo,well-known.person
 shaq,well-known.person
 yoda,well-known.person
-cab,noun
-bear,noun
-crocodile,noun
-viper,noun
-belt buckle,noun
-craft,noun
-coward,noun
-covenant,noun
-courier,noun
-corporal,adjective
-corporal,person.label
-nco,person.label
-nazi,person.label
-bacon,noun
-backer,noun
-ash,noun
-oracle,noun
-photo,noun
-plains,place.general
-rover,noun
-sands,noun
-sergeant,person.label
-shura,noun
-slack,noun
-din,phrase
-grad,person.label
-gul,person.label
-satellite channel,noun
-roundup,phrase
-round-up,phrase
-memo,noun
-forestry,noun
-belt,noun
-ferry,noun
-shrine,place.civil
-govenors,person.label
-beam,noun
-bliss,noun
-garden,noun
-gateway,noun
-district court,place.civil
-district courts,place.civil
-court of appeal,place.civil
-court of appeals,place.civil
-hey,phrase
-gag,verb
-end of the world,phrase
-farms,place.civil
-far north,phrase
-goodnight,phrase
-gallery,noun
-guru,stopword.web
-groves,place.civil
-hospital,place.civil
-holiday,noun
-hornet,noun
-inner city,place.civil
-insurance,noun
-el centro,place.civil
-liberal,adjective
-knife point,phrase
-knights,noun
-last hope,phrase
-left hand,phrase
-log jam,phrase
-mart,place.civil
-may day,phrase
-# Not Mobile:, but mobil
-mobil,adjective
-micro,adjective
-millenium,noun
-millennium,noun
-mines,place.civil
-monitoring station,place.civil
-monk,person.label
-west coast,place.general
-the west coast,place.general
-east coast,place.general
-the east coast,place.general
-
