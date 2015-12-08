@@ -30,6 +30,9 @@ import org.opensextant.data.Place;
 
 /**
  * A class to hold a Place and a score together. Used by PlaceCandidate to rank places.
+ * 
+ * @author dlutz
+ * @author ubaldino
  */
 public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
 
@@ -57,9 +60,6 @@ public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
      */
     @Override
     public int compareTo(ScoredPlace o) {
-        /* Is there a difference in using Double obj vs. double primitive?
-         * double primitive cannot use compareTo obj methods.
-         */
         if (getScore() > o.getScore()) {
             return -1;
         }
