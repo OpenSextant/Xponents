@@ -17,6 +17,11 @@ public class TestTextUtils {
     }
 
     @Test
+    public void testTokens() {
+        print(StringUtils.join(TextUtils.tokensRight("\n     "), ","));
+    }
+
+    @Test
     public void testEOL() {
         String buf = "\t ABC\r\n\r\n123 x y z ";
         print(StringUtils.join(TextUtils.tokens(buf), ","));
@@ -60,7 +65,7 @@ public class TestTextUtils {
         }
         assertTrue(!TextUtils.isASCII("xÖx"));
         assertTrue(TextUtils.isLatin("O a b c d O"));
-        
+
     }
 
     @Test

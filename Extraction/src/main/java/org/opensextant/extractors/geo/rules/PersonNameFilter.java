@@ -32,6 +32,7 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.util.FileUtility;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class PersonNameFilter extends GeocodeRule {
 
@@ -181,6 +182,7 @@ public class PersonNameFilter extends GeocodeRule {
         String[] toks = name.getPrematchTokens();
         if (toks != null && toks.length > 0) {
             String pre = toks[toks.length - 1].toLowerCase();
+            if (isNotBlank(pre)){
             // pre = delPeriod.matcher(pre).replaceAll("");
             if (titles.contains(withoutPeriod(pre))) {
                 name.setFilteredOut(true);
@@ -194,6 +196,7 @@ public class PersonNameFilter extends GeocodeRule {
                 resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
                 name.addRule("PersonName");
                 return;
+            }
             }
         }
 
