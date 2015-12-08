@@ -44,7 +44,7 @@ public class NameCodeRule extends GeocodeRule {
 
     public NameCodeRule() {
         NAME = "AdminCodeOrName";
-        weight = 4;
+        weight = 3;
     }
 
     /**
@@ -57,6 +57,15 @@ public class NameCodeRule extends GeocodeRule {
             PlaceCandidate code = names.get(x + 1); /* code or name of admin area*/
 
             if (name.isFilteredOut() || code.isFilteredOut()) {
+                continue;
+            }
+            /*
+             * COUNTRY, STATE is not supported under this rule.
+             * E.g., Uruguay, Argentina ... This looks like a list of countries
+             * However Uruguay is a district in Argentina; Just as Georgia is a state in US
+             * and also a country name.
+             */
+            if (name.isCountry) {
                 continue;
             }
 
@@ -76,6 +85,15 @@ public class NameCodeRule extends GeocodeRule {
                 continue;
             }
 
+            boolean comma = false;
+            if (name.getPostmatchTokens() != null) {
+                // Parse tokens or text following NAME.... CODE
+                // Proximity is one factor, but conventional format should weigh more.
+                if (",".equals(name.getPostmatchTokens()[0])) {
+                    comma = true;
+                }
+            }
+
             /*
              * by this point a place name tag should be marked as a name or
              * code/abbrev. Match the abbreviation with a geographic location
@@ -87,6 +105,7 @@ public class NameCodeRule extends GeocodeRule {
                 if (!geo.isAdministrative() || geo.getCountryCode() == null) {
                     continue;
                 }
+
                 // Provinces, states, districts, etc. Only. 
                 //
                 // Make sure you can match an province name or code with the gazetteer entries found:
@@ -130,13 +149,14 @@ public class NameCodeRule extends GeocodeRule {
                 ev.setAdmin1(geo.getAdmin1());
                 ev.setEvaluated(true); // Shunt. Evaluate this rule here.
 
+                int wt = weight + (comma ? 1 : 0);
                 if (geo.isAbbreviation() && (code.isAbbreviation || code.isAcronym)) {
                     ev.setRule(NAME_ADMCODE_RULE);
-                    ev.setWeight(weight);
+                    ev.setWeight(wt + 1);
 
                 } else {
                     ev.setRule(NAME_ADMNAME_RULE);
-                    ev.setWeight(weight + 1);
+                    ev.setWeight(wt);
                 }
                 name.addEvidence(ev);
 
@@ -148,14 +168,16 @@ public class NameCodeRule extends GeocodeRule {
                 // Actually increase score for all geos that match the criteria.
                 // 
                 for (Place nameGeo : name.getPlaces()) {
+
+                    if (!(nameGeo.isPopulated() || nameGeo.isAdministrative() || nameGeo.isSpot())) {
+                        continue;
+                    }
                     if (adm1 != null && adm1.equals(nameGeo.getHierarchicalPath())) {
                         name.incrementPlaceScore(nameGeo, ev.getWeight());
                     } else if (sameCountry(nameGeo, country)) {
                         name.incrementPlaceScore(nameGeo, ev.getWeight());
                     }
                 }
-
-                break;
             }
         }
     }

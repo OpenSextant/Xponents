@@ -16,9 +16,13 @@
  */
 package org.opensextant.extractors.geo.rules;
 
+import java.util.Map;
+
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
+import static org.opensextant.util.GeodeticUtility.geohash;
+import java.lang.Math;
 
 /**
  * Major Place rule -- fire this rule after Country rule.
@@ -39,10 +43,23 @@ public class MajorPlaceRule extends GeocodeRule {
     private final static String MAJ_PLACE_RULE = "MajorPlace";
     public final static String CAPITAL = "MajorPlace.Captial";
     public final static String ADMIN = "MajorPlace.Admin";
+    public final static String POP = "MajorPlace.Population";
+    private Map<String, Integer> popStats = null;
+    private static final int GEOHASH_RESOLUTION = 5;
+    private static final int POP_MIN = 50000;
 
-    public MajorPlaceRule() {
+    /**
+     * Major Place assigns a score to places that are national capitals, provinces, or cities with sizable population.
+     * Log(population) adds up to one point to place weight. Population data is indexed by location/grid using geohash.
+     * Source:geonames.org
+     * 
+     * @param populationStats
+     *            optional population stats.
+     */
+    public MajorPlaceRule(Map<String, Integer> populationStats) {
         NAME = MAJ_PLACE_RULE;
-        weight = 1;
+        weight = 2;
+        popStats = populationStats;
     }
 
     /**
@@ -54,9 +71,28 @@ public class MajorPlaceRule extends GeocodeRule {
         if (geo.isNationalCapital()) {
             // IFF no countries are mentioned, Capitals are good proxies for country.
             inferCountry(geo);
-            ev = new PlaceEvidence(geo, CAPITAL, weight(weight + 1, geo));
+            ev = new PlaceEvidence(geo, CAPITAL, weight(weight + 2, geo));
         } else if (geo.isAdmin1()) {
             ev = new PlaceEvidence(geo, ADMIN, weight(weight, geo));
+        } else if (popStats != null && geo.isPopulated() && geo.getPopulation() > POP_MIN) {
+            String gh = geohash(geo);
+            geo.setGeohash(gh);
+            String prefix = gh.substring(0, GEOHASH_RESOLUTION);
+            if (popStats.containsKey(prefix)) {
+                // 
+                // Natural log gives a better, slower curve for population weights.
+                // ln(POP_MIN=25000) = 10.1
+                // 
+                // ln(22,000) = 0.0     wt=0  e^10 = 22,000
+                // ln(60,000) = 11.x    wt=1
+                // ln(165,000) = 12.x   wt=2
+                // ln(444,000) = 13.x   wt=3       
+                // Etc.
+                // And to make scale even more gradual, wt - 1
+                // 
+                int wt = (int) (Math.log(geo.getPopulation()) - 10) - 1;
+                ev = new PlaceEvidence(geo, POP, weight(wt, geo));
+            }
         }
         if (ev != null) {
             ev.setEvaluated(true);

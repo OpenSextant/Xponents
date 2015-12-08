@@ -41,7 +41,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
     public static final int GEOHASH = 0;
     public static final int HAVERSINE = 1;
     private int associationScheme = HAVERSINE;
-    
+
     public static final String COORD_PROXIMITY_RULE = "Coordinate";
     public static final String GEOHASH_CONTAINS_RULE = "Geohash";
 
@@ -106,7 +106,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
                 // is within
                 if (meters < DEFAULT_THRESHOLD_METERS) {
                     double proximityScore = (float) (DEFAULT_THRESHOLD_METERS - meters) / DEFAULT_THRESHOLD_METERS;
-                    name.addGeocoordEvidence(COORD_PROXIMITY_RULE, weight, ll, geo, proximityScore);                    
+                    name.addGeocoordEvidence(COORD_PROXIMITY_RULE, weight, ll, geo, proximityScore);
                 }
             }
             break;

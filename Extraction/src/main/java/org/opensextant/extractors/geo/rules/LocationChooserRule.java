@@ -1,16 +1,15 @@
 package org.opensextant.extractors.geo.rules;
 
-//import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opensextant.data.Country;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.CountryCount;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceCount;
 import org.opensextant.extractors.geo.PlaceEvidence;
-import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.util.GeonamesUtility;
 
 /**
@@ -33,6 +32,7 @@ public class LocationChooserRule extends GeocodeRule {
     private Map<String, CountryCount> countryContext = null;
     private Map<String, PlaceCount> boundaryContext = null;
     private Map<String, PlaceCount> namespace = new HashMap<>();
+    private HashMap<String, CountryCount> inferredCountries = new HashMap<>();
 
     /**
      * These are accumulated.
@@ -45,6 +45,7 @@ public class LocationChooserRule extends GeocodeRule {
         documentResolvedLocations.clear();
         documentCandidates.clear();
         namespace.clear();
+        inferredCountries.clear();
     }
 
     /**
@@ -64,42 +65,12 @@ public class LocationChooserRule extends GeocodeRule {
         countryContext = countryObserver.countryMentionCount();
         boundaryContext = boundaryObserver.placeMentionCount();
 
-        /*
-         * TODO:  Is this histogram helpful.?
-         * 
-         * Uniqueness or popularity of a given name.
-         */
-        for (PlaceCandidate name : names) {
-            if (name.isFilteredOut()) {
-                continue;
-            }
-            PlaceCount x = namespace.get(name.getTextnorm());
-            if (x == null) {
-                x = new PlaceCount();
-                x.place = new Place(name.getTextnorm(), name.getTextnorm());
-                x.total = names.size();
-                namespace.put(name.getTextnorm(), x);
-            } else {
-                ++x.count;
-            }
-        }
-
-        /* TODO:  Is this histogram helpful.?
+        /* TODO:  DEBUG through location chooser using histograms 
+         * of found and resolved place metadata.
          * 
          */
         if (log.isDebugEnabled()) {
-            for (String cc : countryContext.keySet()) {
-                CountryCount count = countryContext.get(cc);
-                //log.debug("Country: {}/{} ({})", cc, count.country, count.count);
-                log.debug("Country: {}", count);
-            }
-
-            for (PlaceCount count : boundaryContext.values()) {
-                //log.debug("Boundary: {} ({})", count.place, count.count);
-                log.debug("Boundary: {}", count);
-            }
-
-            log.debug("Places: {}/{}", namespace.size(), namespace);
+            debuggingHistograms(names);
         }
 
         for (PlaceCandidate name : names) {
@@ -113,8 +84,6 @@ public class LocationChooserRule extends GeocodeRule {
                 // DONE
                 continue;
             }
-
-            log.debug("Place: {}", name);
 
             // + For each Name, stack evidence for a given geo or a class of geo (evidence applies to multiple candidate geos)
             // + Assign a weight for each geo based on innate features and evidence.
@@ -136,15 +105,58 @@ public class LocationChooserRule extends GeocodeRule {
     }
 
     /**
-     * Comparator for scored place.
-     * Scores equal or not? Is p1 score greater than p2?
+     * What can we learn from assembling better stats at the document level?
+     * Evidence breaks down into concrete locations vs. inferred.
+     * 
+     * @param names
      */
-    public int compare(ScoredPlace p1, ScoredPlace p2) {
-        if (p1.getScore() == p2.getScore()) {
-            return 0;
+    private void debuggingHistograms(List<PlaceCandidate> names) {
+        /*
+         * TODO:  Is this histogram helpful.?
+         * 
+         * Uniqueness or popularity of a given name.
+         */
+        for (PlaceCandidate name : names) {
+            if (name.isFilteredOut()) {
+                continue;
+            }
+            PlaceCount x = namespace.get(name.getTextnorm());
+            if (x == null) {
+                x = new PlaceCount();
+                x.place = new Place(name.getTextnorm(), name.getTextnorm());
+                x.total = names.size();
+                namespace.put(name.getTextnorm(), x);
+            } else {
+                ++x.count;
+            }
         }
-        return p1.getScore() - p2.getScore() > 0 ? 1 : -1;
+
+        for (String cc : countryContext.keySet()) {
+            CountryCount count = countryContext.get(cc);
+            //log.debug("Country: {}/{} ({})", cc, count.country, count.count);
+            log.debug("Country: {}", count);
+        }
+
+        for (PlaceCount count : boundaryContext.values()) {
+            //log.debug("Boundary: {} ({})", count.place, count.count);
+            log.debug("Boundary: {}", count);
+            String cc = count.place.getCountryCode();
+            CountryCount Ccnt = inferredCountries.get(cc);
+            if (Ccnt == null) {
+                Ccnt = new CountryCount();
+                Ccnt.country = new Country(cc, cc);
+                inferredCountries.put(cc, Ccnt);
+            } else {
+                ++Ccnt.count;
+            }
+        }
+
+        log.debug("Places: {}/{}", namespace.size(), namespace);
+
     }
+
+    protected static final double ADMIN_CONTAINS_PLACE_WT = 4.0;
+    protected static final double COUNTRY_CONTAINS_PLACE_WT = 2.0;
 
     /**
      * Yet unchosen location.
@@ -158,10 +170,10 @@ public class LocationChooserRule extends GeocodeRule {
 
         // Choose either boundary or country context to add in for this location.
         // This is inferred stuff from the document at large.
-        if (boundaryContext.containsKey(geo.getHierarchicalPath())) {
-            name.incrementPlaceScore(geo, 5.0);
+        if (geo.getHierarchicalPath() != null && boundaryContext.containsKey(geo.getHierarchicalPath())) {
+            name.incrementPlaceScore(geo, ADMIN_CONTAINS_PLACE_WT);
         } else if (countryContext.containsKey(geo.getCountryCode())) {
-            name.incrementPlaceScore(geo, 2.0);
+            name.incrementPlaceScore(geo, COUNTRY_CONTAINS_PLACE_WT);
         }
 
         // Other local evidence.  
@@ -261,8 +273,10 @@ public class LocationChooserRule extends GeocodeRule {
     public static final int MATCHCONF_QUALIFIER_HIGH_SCORE = 5;
     /**
      * Confidence Qualifier: Start here if you have a lower case term that may be a place.
+     * -20 points for lower case matches, however feat_class P and A win back 5 points; others are
+     * less likely places.
      */
-    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -15;
+    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -20;
 
     /**
      * Confidence of your final chosen location for a given name is assembled as the sum of some absolute metric
@@ -309,9 +323,16 @@ public class LocationChooserRule extends GeocodeRule {
         // Any of these may occur.
         //======================
         //
-        // Lower case?  Eh... language dependent.
+        // Lower case?  Eh... language dependent.  
+        // If you have mixed case documents, then lower case matches
+        // immediately get low-confidence.
         if (pc.isLower()) {
             points += MATCHCONF_QUALIFIER_LOWERCASE;
+            if (pc.getChosen().isAdministrative()) {
+                points += 10;
+            } else if (pc.getChosen().isPopulated()) {
+                points += 5;
+            }
         }
         // Is Major place?
         if (pc.hasRule(MajorPlaceRule.ADMIN) || pc.hasRule(MajorPlaceRule.CAPITAL)) {
@@ -319,9 +340,9 @@ public class LocationChooserRule extends GeocodeRule {
         }
         // 
 
-        if (pc.getSecondBestPlaceScore() > 0) {
+        if (pc.getSecondChoiceScore() > 0) {
             double a = pc.getChosen().getScore();
-            double b = pc.getSecondBestPlaceScore();
+            double b = pc.getSecondChoiceScore();
             double scoreRatio = a / b; // Top score = 40, second score = 25
             if (scoreRatio > 1.2) { // 20% better
                 points += MATCHCONF_QUALIFIER_HIGH_SCORE;

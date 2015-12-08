@@ -73,6 +73,10 @@ public class ProvinceAssociationRule extends GeocodeRule {
      * </pre>
      */
     public void evaluate(List<PlaceCandidate> names) {
+        if (relevantProvinceID.isEmpty()) {
+            return;
+        }
+
         for (PlaceCandidate name : names) {
             /*
              * This was filtered out already so ignore.

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class GeocodeRule {
 
-    public int weight = 0; /* of 10 */
+    public int weight = 0; /* of 10, approximately */
     public String NAME = null;
 
     protected CountryObserver countryObserver = null;
@@ -93,6 +93,9 @@ public abstract class GeocodeRule {
             }
 
             for (Place geo : name.getPlaces()) {
+                if (filterOutBySize(name, geo)) {
+                    continue;
+                }
                 evaluate(name, geo);
                 if (name.getChosen() != null) {
                     // DONE
@@ -100,6 +103,30 @@ public abstract class GeocodeRule {
                 }
             }
         }
+    }
+
+    /**
+     * Certain names appear often around the world... in such cases
+     * we can pare back and evaluate only significant places (e.g., cities and states)
+     * and avoid say streams and roadways by the same name.
+     * 
+     * If a name, N, occurs in more than 250 places, then consider only feature classes A and P.
+     * 
+     * @param name
+     * @param geo
+     * @return
+     */
+    protected boolean filterOutBySize(PlaceCandidate name, Place geo) {
+        if (name.distinctLocationCount() > 250) {
+            if (geo.isPopulated() || geo.isAdministrative()) {
+                // allow P places and A boundaries to pass through.
+                return false;
+            }
+            return true; // Filter out everything else.
+        }
+
+        // Okay, no optimization needed.
+        return false;
     }
 
     /**

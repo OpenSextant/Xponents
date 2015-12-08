@@ -37,18 +37,23 @@ public class CountryRule extends GeocodeRule {
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
 
-        if (geo.isCountry()) {
-            if (name.isAcronym || name.isAbbreviation) {
-                name.addCountryEvidence("CountryCode", weight, geo.getCountryCode(), geo);
-            } else {
-                name.addCountryEvidence(NAME, weight+2, geo.getCountryCode(), geo);
-            }
-            name.choose(geo);
-            log("Chose Country", name.getText());
-
-            if (countryObserver!=null){
-                countryObserver.countryInScope(geo.getCountryCode());
-            }
+        if (!geo.isCountry()) {
+            return;
         }
+
+        // Otherwise this is some country name or reference.
+        // 
+        if (name.isAcronym || name.isAbbreviation) {
+            name.addCountryEvidence("CountryCode", weight, geo.getCountryCode(), geo);
+        } else {
+            name.addCountryEvidence(NAME, weight + 2, geo.getCountryCode(), geo);
+        }
+        name.choose(geo);
+        log("Chose Country", name.getText());
+
+        if (countryObserver != null) {
+            countryObserver.countryInScope(geo.getCountryCode());
+        }
+
     }
 }
