@@ -70,22 +70,30 @@ public class FileUtility {
     /**
      * Write file, UTF-8 is default charset here.
      *
-     * @param buffer  text to save
-     * @param fname   name of file to save
+     * @param buffer
+     *            text to save
+     * @param fname
+     *            name of file to save
      * @return status true if file was written
-     * @throws IOException  if file had IO errors.
+     * @throws IOException
+     *             if file had IO errors.
      */
     public static boolean writeFile(String buffer, String fname) throws IOException {
         return writeFile(buffer, fname, "UTF-8", false);
     }
 
     /**
-     * @param buffer  text to save
-     * @param fname   name of file to save
-     * @param enc  text encoding
-     * @param append if you wish to add to existing file.
+     * @param buffer
+     *            text to save
+     * @param fname
+     *            name of file to save
+     * @param enc
+     *            text encoding
+     * @param append
+     *            if you wish to add to existing file.
      * @return status if written
-     * @throws IOException if file had IO errors.
+     * @throws IOException
+     *             if file had IO errors.
      */
     public static boolean writeFile(String buffer, String fname, String enc, boolean append)
             throws IOException {
@@ -104,11 +112,15 @@ public class FileUtility {
     /**
      * Caller is responsible for write flush, close, etc.
      *
-     * @param fname file path
-     * @param enc encoding
-     * @param append true = append data to existing file.
+     * @param fname
+     *            file path
+     * @param enc
+     *            encoding
+     * @param append
+     *            true = append data to existing file.
      * @return stream writer
-     * @throws IOException if stream could not be opened
+     * @throws IOException
+     *             if stream could not be opened
      */
     public static OutputStreamWriter getOutputStream(String fname, String enc, boolean append)
             throws IOException {
@@ -118,10 +130,13 @@ public class FileUtility {
     /**
      * Caller is responsible for write flush, close, etc.
      *
-     * @param fname file name
-     * @param enc text encoding
+     * @param fname
+     *            file name
+     * @param enc
+     *            text encoding
      * @return stream writer
-     * @throws IOException if stream could not be openeed
+     * @throws IOException
+     *             if stream could not be openeed
      */
     public static OutputStreamWriter getOutputStream(String fname, String enc) throws IOException {
         return getOutputStream(fname, enc, false);
@@ -130,20 +145,29 @@ public class FileUtility {
     /**
      * Getting an input stream from a file.
      *
-     * @param fname file name
-     * @param enc text encoding
+     * @param fname
+     *            file name
+     * @param enc
+     *            text encoding
      * @return reader the java.io reader
-     * @throws IOException if file could not be opened
+     * @throws IOException
+     *             if file could not be opened
      */
     public static InputStreamReader getInputStream(String fname, String enc) throws IOException {
         return new InputStreamReader(new FileInputStream(fname), enc);
+    }
+
+    public static InputStreamReader getInputStream(File f, String enc) throws IOException {
+        return new InputStreamReader(new FileInputStream(f), enc);
     }
 
     /**
      * Simple check if a file is typed as a Spreadsheet Tab-delimited .txt files
      * or .dat files may be valid spreadsheets, however this method does not
      * look inside files.
-     * @param filepath path to file
+     * 
+     * @param filepath
+     *            path to file
      * @return true if file represents one of the various spreadsheet file formats
      */
     public static boolean isSpreadsheet(String filepath) {
@@ -154,7 +178,9 @@ public class FileUtility {
 
     /**
      * Using Commons getExtension(), determine if the filename represents an image media type.
-     * @param filepath path to file
+     * 
+     * @param filepath
+     *            path to file
      * @return if file represents any type of image
      */
     public static boolean isImage(String filepath) {
@@ -167,7 +193,9 @@ public class FileUtility {
 
     /**
      * Checks file extension of given filepath to see if the format is a known video type.
-     * @param filepath file name or path
+     * 
+     * @param filepath
+     *            file name or path
      * @return true if file is likely an video file format.
      */
     public static boolean isVideo(String filepath) {
@@ -180,7 +208,9 @@ public class FileUtility {
 
     /**
      * Checks file extension of given filepath to see if the format is a known audio type.
-     * @param filepath file name or path
+     * 
+     * @param filepath
+     *            file name or path
      * @return true if file is likely an audio file format.
      */
     public static boolean isAudio(String filepath) {
@@ -191,8 +221,11 @@ public class FileUtility {
         return AUD_MIMETYPE.equals(filetypeMap.get(ext));
     }
 
-    /** Check if a file is an archive
-     * @param filepath path to file
+    /**
+     * Check if a file is an archive
+     * 
+     * @param filepath
+     *            path to file
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
      */
     public static boolean isArchiveFile(String filepath) {
@@ -201,8 +234,11 @@ public class FileUtility {
                 || testpath.endsWith(".gz"); // || testpath.endsWith(".tar.gz");
     }
 
-    /** Allow checking of a file extention; NO prefix "."
-     * @param ext extension to test
+    /**
+     * Allow checking of a file extention; NO prefix "."
+     * 
+     * @param ext
+     *            extension to test
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
      */
     public static boolean isArchiveFileType(String ext) {
@@ -214,7 +250,9 @@ public class FileUtility {
     /**
      * Test is a path or file extension ends with .txt
      * NPE if null is passed in.
-     * @param filepath path or extension, including "."
+     * 
+     * @param filepath
+     *            path or extension, including "."
      *
      * @return true if is .txt or .TXT
      */
@@ -224,9 +262,11 @@ public class FileUtility {
 
     /**
      *
-     * @param filepath path to file
+     * @param filepath
+     *            path to file
      * @return buffer from file
-     * @throws IOException on error
+     * @throws IOException
+     *             on error
      */
     public static String readFile(String filepath) throws IOException {
         return readFile(new File(filepath), default_encoding);
@@ -234,9 +274,11 @@ public class FileUtility {
 
     /**
      *
-     * @param filepath path to file
+     * @param filepath
+     *            path to file
      * @return buffer from file
-     * @throws IOException on error
+     * @throws IOException
+     *             on error
      */
     public static String readFile(File filepath) throws IOException {
         return readFile(filepath, default_encoding);
@@ -254,10 +296,13 @@ public class FileUtility {
     /**
      * Slurps a text file into a string and returns the string.
      *
-     * @param fileinput file object
-     * @param enc text encoding
+     * @param fileinput
+     *            file object
+     * @param enc
+     *            text encoding
      * @return buffer from file
-     * @throws IOException on error
+     * @throws IOException
+     *             on error
      */
     public static String readFile(File fileinput, String enc) throws IOException {
         if (fileinput == null) {
@@ -274,9 +319,11 @@ public class FileUtility {
     /**
      * Given a file get the byte array
      *
-     * @param fileinput file object
+     * @param fileinput
+     *            file object
      * @return byte array
-     * @throws IOException on error
+     * @throws IOException
+     *             on error
      */
     public static byte[] readBytesFrom(File fileinput) throws IOException {
         if (fileinput == null) {
@@ -292,9 +339,11 @@ public class FileUtility {
 
     /**
      *
-     * @param filepath path to file
+     * @param filepath
+     *            path to file
      * @return text buffer, UTF-8 decoded
-     * @throws IOException on error
+     * @throws IOException
+     *             on error
      */
     public static String readGzipFile(String filepath) throws IOException {
         if (filepath == null) {
@@ -321,10 +370,13 @@ public class FileUtility {
 
     /**
      *
-     * @param text buffer to write
-     * @param filepath path to file
+     * @param text
+     *            buffer to write
+     * @param filepath
+     *            path to file
      * @return status true if file was written
-     * @throws IOException on error
+     * @throws IOException
+     *             on error
      */
     public static boolean writeGzipFile(String text, String filepath) throws IOException {
         if (filepath == null || text == null) {
@@ -349,9 +401,11 @@ public class FileUtility {
     /**
      * Utility for making dirs
      *
-     * @param testDir dir to test
+     * @param testDir
+     *            dir to test
      * @return if directory was created or if it already exists
-     * @throws IOException if testDir was not created
+     * @throws IOException
+     *             if testDir was not created
      */
     public static boolean makeDirectory(File testDir) throws IOException {
         if (testDir == null) {
@@ -371,9 +425,11 @@ public class FileUtility {
     /**
      * Utility for making dirs
      *
-     * @param dir  dirPath
+     * @param dir
+     *            dirPath
      * @return if directory was created or if it already exists
-     * @throws IOException if testDir was not created
+     * @throws IOException
+     *             if testDir was not created
      */
     public static boolean makeDirectory(String dir) throws IOException {
         if (dir == null) {
@@ -385,7 +441,9 @@ public class FileUtility {
 
     /**
      * Java oddity - recursive removal of a directory
-     * @param directory dir to remove
+     * 
+     * @param directory
+     *            dir to remove
      * @return if all contents and dir itself was removed.
      * @author T. Allison, MITRE
      */
@@ -427,10 +485,13 @@ public class FileUtility {
     /**
      * Generate some path with a unique date/time stamp
      *
-     * @param D directory
-     * @param F filename
-     * @param Ext file extension
-     * @return  unique path
+     * @param D
+     *            directory
+     * @param F
+     *            filename
+     * @param Ext
+     *            file extension
+     * @return unique path
      */
     public static String generateUniquePath(String D, String F, String Ext) {
         return D + File.separator + generateUniqueFilename(F, Ext);
@@ -439,8 +500,10 @@ public class FileUtility {
     /**
      * Generate some filename with a unique date/time stamp
      *
-     * @param F filename
-     * @param Ext file extension
+     * @param F
+     *            filename
+     * @param Ext
+     *            file extension
      * @return unique filename
      */
     public static String generateUniqueFilename(String F, String Ext) {
@@ -452,8 +515,9 @@ public class FileUtility {
 
     /**
      *
-     * @param f the file in question.
-     * @return  the parent File of a given file.
+     * @param f
+     *            the file in question.
+     * @return the parent File of a given file.
      */
     public static File getParent(File f) {
         return new File(f.getAbsolutePath()).getParentFile();
@@ -462,7 +526,8 @@ public class FileUtility {
     /**
      * Simple filter
      *
-     * @param ext the extension to filter on
+     * @param ext
+     *            the extension to filter on
      * @return filename filter
      */
     public static FilenameFilter getFilenameFilter(String ext) {
@@ -477,8 +542,10 @@ public class FileUtility {
      * commons io FilenameUtils says nothing about arbitrarily long file
      * extensions, e.g., file.a.b.c.txt split into ("file" + "a.b.c.txt")
      *
-     * @param p path
-     * @param ext extension
+     * @param p
+     *            path
+     * @param ext
+     *            extension
      * @return basename of path, less the extension
      */
     public static String getBasename(String p, String ext) {
@@ -500,7 +567,8 @@ public class FileUtility {
      * On occasion file path may contain unicode chars, however as the is
      * encoded, it may not be decodable by OS/FS.
      *
-     * @param path path to normalize
+     * @param path
+     *            path to normalize
      * @return filename
      */
     public static String getValidFilename(String path) {
@@ -509,7 +577,9 @@ public class FileUtility {
 
     /**
      * Another utility to deal with unicode in filenames
-     * @param fname name to clean
+     * 
+     * @param fname
+     *            name to clean
      * @return cleaner filenname
      */
     public static String filenameCleaner(String fname) {
@@ -535,9 +605,12 @@ public class FileUtility {
      * Get a directory that does not conflict with an existing directory.
      * Returns null if that is not possible within the maxDups.
      *
-     * @param dir directory
-     * @param dupeMarker incrementor
-     * @param maxDups max incrementor
+     * @param dir
+     *            directory
+     * @param dupeMarker
+     *            incrementor
+     * @param maxDups
+     *            max incrementor
      * @return file object
      * @author T. Allison NOT THREAD SAFE!
      */
@@ -558,9 +631,12 @@ public class FileUtility {
 
     /**
      * @author T. Allison
-     * @param f file obj
-     * @param dupeMarker incrementor
-     * @param maxDups max incrementor
+     * @param f
+     *            file obj
+     * @param dupeMarker
+     *            incrementor
+     * @param maxDups
+     *            max incrementor
      * @return new file
      */
     public static File getSafeFile(File f, String dupeMarker, int maxDups) {
@@ -572,13 +648,13 @@ public class FileUtility {
         final String base = f.getName().substring(0, suffixInd);
         final String suffix = (suffixInd + 1 <= f.getName().length()) ? f.getName().substring(
                 suffixInd + 1) : "";
-                for (int i = 1; i < maxDups; i++) {
-                    final File tmp = new File(f.getParentFile(), base + dupeMarker + i + "." + suffix);
-                    if (!tmp.exists()) {
-                        return tmp;
-                    }
-                }
-                return null;
+        for (int i = 1; i < maxDups; i++) {
+            final File tmp = new File(f.getParentFile(), base + dupeMarker + i + "." + suffix);
+            if (!tmp.exists()) {
+                return tmp;
+            }
+        }
+        return null;
     }
 
     /**
@@ -587,9 +663,11 @@ public class FileUtility {
     public final static char FILENAME_REPLACE_CHAR = '_';
 
     /**
-     *  Tests for valid filename chars for simple normalization
+     * Tests for valid filename chars for simple normalization
      * A-Z, a-z, _-, 0-9,
-     * @param c character to allow
+     * 
+     * @param c
+     *            character to allow
      * @return given character or replacement char
      */
     protected static char normalizeFilenameChar(char c) {
@@ -634,11 +712,14 @@ public class FileUtility {
     /**
      * A generic word list loader.
      *
-     * @param resourcepath  classpath location of a resource
-     * @param case_sensitive if terms are loaded with case preserved or not.
+     * @param resourcepath
+     *            classpath location of a resource
+     * @param case_sensitive
+     *            if terms are loaded with case preserved or not.
      * @author ubaldino, MITRE Corp
      * @return Set containing unique words found in resourcepath
-     * @throws IOException on error, resource does not exist
+     * @throws IOException
+     *             on error, resource does not exist
      */
     public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive)
             throws IOException {
@@ -653,11 +734,14 @@ public class FileUtility {
     /**
      * A generic word list loader.
      *
-     * @param resourcepath  classpath location of a resource
-     * @param case_sensitive if terms are loaded with case preserved or not.
+     * @param resourcepath
+     *            classpath location of a resource
+     * @param case_sensitive
+     *            if terms are loaded with case preserved or not.
      * @author ubaldino, MITRE Corp
      * @return Set containing unique words found in resourcepath
-     * @throws IOException on error, resource does not exist
+     * @throws IOException
+     *             on error, resource does not exist
      */
     public static Set<String> loadDictionary(URL resourcepath, boolean case_sensitive)
             throws IOException {
@@ -696,10 +780,13 @@ public class FileUtility {
     /**
      * Load a word list from a file path.
      *
-     * @param resourcepath  File object to load
-     * @param case_sensitive  if dictionary is loaded with case or not.
+     * @param resourcepath
+     *            File object to load
+     * @param case_sensitive
+     *            if dictionary is loaded with case or not.
      * @return a Set object containing distinct dictionary terms
-     * @throws IOException if load fails
+     * @throws IOException
+     *             if load fails
      */
     public static Set<String> loadDictionary(File resourcepath, boolean case_sensitive)
             throws IOException {
@@ -824,7 +911,9 @@ public class FileUtility {
     /**
      * Get a plain language name of the type of file. E.g., document, image,
      * spreadsheet, web page. Rather than the MIME type technical descriptor.
-     * @param url item to describe
+     * 
+     * @param url
+     *            item to describe
      * @return plain language description of the URL
      */
     public static String getFileDescription(String url) {
@@ -881,11 +970,12 @@ public class FileUtility {
     }
 
     /**
-     * Check if path or URL is a webpage.  This is helpful for looking at found URLs
+     * Check if path or URL is a webpage. This is helpful for looking at found URLs
      * in unstructured data.
      *
-     * @param link a URL
-     * @return  true if link looks like a URL (ie., if it starts with http: or https:)
+     * @param link
+     *            a URL
+     * @return true if link looks like a URL (ie., if it starts with http: or https:)
      */
     public static boolean isWebURL(String link) {
         if (link == null) {
