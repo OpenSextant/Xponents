@@ -72,6 +72,7 @@ import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.processing.Parameters;
+import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -271,7 +272,15 @@ public class PlaceGeocoder extends GazetteerMatcher
         }
 
         // Major Places
-        majorPlaceRule = new MajorPlaceRule();
+        //
+        try {
+            Map<String, Integer> popstats = GeonamesUtility
+                    .mapPopulationByLocation(GeonamesUtility.loadMajorCities("/geonames.org/cities15000.txt"));
+            majorPlaceRule = new MajorPlaceRule(popstats);
+        } catch (IOException err) {
+            log.error("Xponents 2.8: cities population data is used for geocoding. Will continue without it.");
+            majorPlaceRule = new MajorPlaceRule(null);
+        }
         majorPlaceRule.setCountryObserver(this);
         rules.add(majorPlaceRule);
 
@@ -531,6 +540,8 @@ public class PlaceGeocoder extends GazetteerMatcher
         if (c == null) {
             return;
         }
+        // Null country code? TODO: test for more nulls.
+        // 
         CountryCount counter = relevantCountries.get(c.getCountryCode());
         if (counter == null) {
             counter = new CountryCount();
@@ -648,6 +659,10 @@ public class PlaceGeocoder extends GazetteerMatcher
      */
     @Override
     public void boundaryLevel1InScope(Place p) {
+        if (p.getHierarchicalPath() == null) {
+            return;
+        }
+
         PlaceCount counter = relevantProvinces.get(p.getHierarchicalPath());
         if (counter == null) {
             counter = new PlaceCount();
