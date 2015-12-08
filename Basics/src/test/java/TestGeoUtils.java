@@ -1,9 +1,11 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
-
-import java.io.IOException;
-
 import org.opensextant.data.Country;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
@@ -20,7 +22,7 @@ public class TestGeoUtils {
     public void testResources() throws IOException {
         GeonamesUtility util = new GeonamesUtility();
         // About 280 entries in CSV flat file.
-        assert (util.getCountries().size() > 280);
+        assert(util.getCountries().size() > 280);
         for (Country c : util.getCountries()) {
             print(String.format("%s, %s", c.getName(), c.getCountryCode()));
         }
@@ -29,14 +31,41 @@ public class TestGeoUtils {
         }
 
         Country C = util.getCountry("USA");
-        if (! C.containsUTCOffset(-5.0)){
+        if (!C.containsUTCOffset(-5.0)) {
             fail("USA contains GMT-0500");
         }
         C = util.getCountry("JP");
-        if (! C.containsUTCOffset(9.0)){
+        if (!C.containsUTCOffset(9.0)) {
             fail("Japan contains GMT+0900");
         }
+    }
 
+    @Test
+    public void testCitiesPopulation() throws IOException {
+        //GeonamesUtility.loadMajorCities(getZipContent(new File("./src/test/resources/cities15000.zip")));
+        List<Place> cities = GeonamesUtility.loadMajorCities(new File("./src/test/resources/cities15000.txt"));
+
+        print("Cities with pop = " + cities.size());
+        int x = 0;
+        for (Place p : cities) {
+            print(String.format("(ID=%s) %s %d, %s", p.getPlaceID(), p, p.getPopulation(), p.getGeohash()));
+            ++x;
+            if (x > 100) {
+                break;
+            }
+        }
+
+        Map<String, Place> mapped = GeonamesUtility.mapMajorCityIDs(cities);
+        print("Cities distinct, size=" + mapped.size());
+
+        Map<String, Integer> popGrid = null;
+        // RECOMMENDED: Use geohash resolution 5.
+        popGrid = GeonamesUtility.mapPopulationByLocation(cities); 
+        print("Population =" + popGrid.size());
+        // This makes more sense for a regional accumulation of population geohash prefix = 4 or 3.
+        popGrid = GeonamesUtility.mapPopulationByLocation(cities, 4);
+        print("Population =" + popGrid.size());
+        print("Grid = " +popGrid);
     }
 
     private void print(String m) {
@@ -71,7 +100,7 @@ public class TestGeoUtils {
             System.out.println("METERS from point to point " + eq1 + " to " + eq2 + " = "
                     + GeodeticUtility.distanceMeters(eq1, eq2));
 
-            assert (true);
+            assert(true);
 
         } catch (Exception err) {
             fail("Could not parse");
@@ -87,7 +116,7 @@ public class TestGeoUtils {
             System.out.println("Pass: invalid coordinate, " + test + " fails to parse; ERR="
                     + err.getMessage());
 
-            assert (true);
+            assert(true);
         }
     }
 }

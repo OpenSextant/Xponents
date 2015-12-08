@@ -58,6 +58,9 @@ public class TestTextUtils {
         if (!t.equals("a O o O e a A 杨寨 5 ! e M e a")) {
             fail("Diacritics not replaced!");
         }
+        assertTrue(!TextUtils.isASCII("xÖx"));
+        assertTrue(TextUtils.isLatin("O a b c d O"));
+        
     }
 
     @Test
