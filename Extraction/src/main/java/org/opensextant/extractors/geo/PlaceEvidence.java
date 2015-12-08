@@ -39,6 +39,7 @@ import org.opensextant.data.Place;
  * intentionally very similar to the Place class to facilitate comparisons with
  * that class.
  *
+ *@author dlutz
  */
 public final class PlaceEvidence extends Place implements Comparable<Object> /*, Serializable */ {
 
@@ -172,6 +173,9 @@ public final class PlaceEvidence extends Place implements Comparable<Object> /*,
     }
 
     // Override toString to get a reasonable string label for this PlaceEvidence
+    /**
+     * @author ubaldino
+     */
     @Override
     public String toString() {
         return String.format("%s - %s/%03.2f (%s, %s, %s)", rule, scope, weight, this.getPlaceName(), this.getAdmin1(),
