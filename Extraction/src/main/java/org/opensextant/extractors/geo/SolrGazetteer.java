@@ -137,13 +137,12 @@ public class SolrGazetteer {
         return StringUtils.capitalize(c.toLowerCase());
     }
 
-    /**
-     * Do Not use.
-     * 
-     * @return solr params
-     * @deprecated DO NOT USE. Keeping this as a reminder of what not to do.
-     *             This will load entire index into memory.
-     */
+//   * Do Not use.
+//   * 
+//   * return solr params
+//   * deprecated DO NOT USE. Keeping this as a reminder of what not to do.
+//   *             This will load entire index into memory.
+//   *
 //    @Deprecated
 //    private static ModifiableSolrParams createGeodeticLookupParamsXX() {
 //        /*

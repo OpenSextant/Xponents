@@ -10,7 +10,7 @@
     <property name="log4j.v" value="1.2.17" />
     <property name="guava.v" value="14.0.1" />
     <property name="xponents.v" value="${xponents.build.v}" />
-    <property name="supercsv.v" value="2.2.0" />
+    <property name="supercsv.v" value="2.4.0" />
     <property name="lang3.v" value="3.4" />
 
     <!-- setup proxy -->
