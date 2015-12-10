@@ -102,7 +102,7 @@ public class PlaceCandidate extends TextMatch {
             "ADM3:7",
             /* Other geographic features */
             "ISL:4",
-            "ISLS:3"
+            "ISLS:5"
     };
 
     private static final Map<String, Integer> classWeight = new HashMap<>();
@@ -283,6 +283,10 @@ public class PlaceCandidate extends TextMatch {
     public void addPlace(ScoredPlace place) {
         this.addPlace(place, defaultScore(place));
         this.rules.add("DefaultScore");
+    }
+    
+    public boolean hasDefaultRuleOnly(){
+        return rules.contains("DefaultScore") && rules.size()==1;
     }
 
     // add a new place with a specific score

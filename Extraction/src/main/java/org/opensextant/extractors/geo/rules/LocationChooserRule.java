@@ -168,7 +168,7 @@ public class LocationChooserRule extends GeocodeRule {
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
 
-        if (boundaryContext.isEmpty() || countryContext.isEmpty()) {
+        if (boundaryContext.isEmpty() && countryContext.isEmpty()) {
             return;
         }
 
@@ -203,6 +203,11 @@ public class LocationChooserRule extends GeocodeRule {
             log.debug("\tEvidence: {} {}", ev, ev.getAdmin1());
         }
     }
+
+    /**
+     * 
+     */
+    public static final int MATCHCONF_BARE_ACRONYM = 10;
 
     /**
      * The bare minimum confidence -- if rules negate confidence points,
@@ -250,7 +255,7 @@ public class LocationChooserRule extends GeocodeRule {
     /**
      * Confidence Qualifier: Ambiguous
      */
-    public static final int MATCHCONF_QUALIFIER_AMBIGUOUS_NAME = -7;
+    public static final int MATCHCONF_QUALIFIER_AMBIGUOUS_NAME = -5;
 
     /**
      * Confidence Qualifier: Name appears in only one country.
@@ -303,6 +308,8 @@ public class LocationChooserRule extends GeocodeRule {
             points = MATCHCONF_NAME_REGION;
         } else if (countryObserver.countryCount() == 1) {
             points = MATCHCONF_MANY_COUNTRY;
+        } else if (pc.getEvidence().isEmpty()) {
+            points = assessLowConfidence(pc);
         } else if (countryObserver.countryCount() > 0) {
             points = MATCHCONF_MANY_COUNTRIES;
         } else {
@@ -356,6 +363,37 @@ public class LocationChooserRule extends GeocodeRule {
         }
 
         pc.setConfidence(points);
+    }
+
+    private int assessLowConfidence(PlaceCandidate pc) {
+        /*
+         * False positive tuning -- working with something that has only a default score.
+         * Acronyms, No Evidence, default score. All pretty much the same amount of confidence.
+         *
+         * <pre>
+         * TEXT   GEO MATCHED
+         * ----   ----------
+         * ABS    Abs          low confidence.  Acronym is intended. Mismatch.  If No other evidence, really low confidence
+         * Abs    Abs          good match
+         * Abs    ABS          not bad.  Id. matches ID for Idaho, for example.
+         * Abs.   Abs.         good match.  Abbreviation matched abbreviation.  TODO.
+         * Abs.   ABS          good match.  Abbreviation matched abbreviation or code.  TODO.
+         * </pre>
+         */
+        //boolean noEvidence = pc.getEvidence().isEmpty();
+        boolean isAcronym = pc.isUpper();
+        boolean isMisMatchedAcronym = (pc.isUpper() && !pc.getChosen().isUppercaseName())
+                || (!pc.isUpper() && pc.getChosen().isUppercaseName());
+
+        int points = MATCHCONF_MINIMUM;
+
+        if (pc.hasDefaultRuleOnly() && isMisMatchedAcronym) {
+            points = MATCHCONF_BARE_ACRONYM ;
+        } else if (isAcronym) {
+            // Acronym with some evidence.
+            points = MATCHCONF_BARE_ACRONYM + 3;
+        }
+        return points;
     }
 
 }
