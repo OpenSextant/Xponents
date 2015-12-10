@@ -115,6 +115,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private ProvinceAssociationRule adm1Rule = null;
     private NameCodeRule nameWithAdminRule = null;
     private MajorPlaceRule majorPlaceRule = null;
+    private LocationChooserRule chooser = null;
 
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding
@@ -202,6 +203,19 @@ public class PlaceGeocoder extends GazetteerMatcher
      * This geocoder requires a default /exclusions/person-name-filter.txt,
      * which can be empty, but most often it will be a list of person names
      * (which are non-place names)
+     * 
+     * Rules Configured in approximate order:
+     * 
+     * <pre>
+     * CountryRule    -- tag all country names
+     * NameCodeRule   -- parse any Name, CODE, or Name1, Name2 patterns for "Place, AdminPlace" evidence
+     * PersonNameRule -- annotate, negate any patterns or matches that appear to be known celebrity persons or organizations.
+     *                   Qualified places are not negated, e.g., "Euguene, Oregon" is a place;  "Euguene" with no other evidence is a person name.  
+     * CoordRule      -- if requested, parse any coordinate patterns;  Reverse geocode Country + Province.
+     * ProvinceAssociationRule  -- associate places with Province inferred by coordinates.
+     * MajorPlaceRule -- identify major places by feature type, class or location population.
+     * LocationChooserRule    -- final rule that assigns confidence and chooses best location(s)
+     * </pre>
      *
      * @throws ConfigException
      *             on err
@@ -288,13 +302,34 @@ public class PlaceGeocoder extends GazetteerMatcher
         // 
         rules.add(new NameRule());
 
-        LocationChooserRule chooser = new LocationChooserRule();
+        chooser = new LocationChooserRule();
         chooser.setCountryObserver(this);
         chooser.setBoundaryObserver(this);
         chooser.setLocationObserver(this);
-        rules.add(chooser);
+        //rules.add(chooser);
 
         countryCatalog = this.getGazetteer().getCountries();
+    }
+
+    /**
+     * Add your own geocode rules to enable you to add evidence, adjust score, outright choose Place instances on
+     * PlaceCandidates, etc.
+     * As long as your rule implements or overrides GeocodeRule.evaluate() methods candidate tags will be fully
+     * evaluated.
+     * 
+     * @param r
+     *            a rule
+     */
+    public void addRule(GeocodeRule r) {
+        rules.add(r);
+    }
+
+    /**
+     * You don't like the default rule set,.. add your own
+     */
+    public void setRules(List<GeocodeRule> rlist) {
+        rules.clear();
+        rules.addAll(rlist);
     }
 
     /**
@@ -432,9 +467,15 @@ public class PlaceGeocoder extends GazetteerMatcher
         // Measure duration of tagging.
         this.taggingTimes.addTimeSince(t1);
 
+        // Evaluate independent rules, and any that user has added.
+        // 
         for (GeocodeRule r : rules) {
             r.evaluate(candidates);
         }
+        
+        // Last rule: score, choose, add confidence.
+        // 
+        chooser.evaluate(candidates);
 
         // For each candidate, if PlaceCandidate.chosen is not null,
         // add chosen (Geocoding) to matches

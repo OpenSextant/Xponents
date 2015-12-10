@@ -388,7 +388,7 @@ public class LocationChooserRule extends GeocodeRule {
         int points = MATCHCONF_MINIMUM;
 
         if (pc.hasDefaultRuleOnly() && isMisMatchedAcronym) {
-            points = MATCHCONF_BARE_ACRONYM ;
+            points = MATCHCONF_BARE_ACRONYM;
         } else if (isAcronym) {
             // Acronym with some evidence.
             points = MATCHCONF_BARE_ACRONYM + 3;
