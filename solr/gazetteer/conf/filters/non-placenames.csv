@@ -194,6 +194,7 @@ february,month
 jan,month
 january,month
 box,noun
+edge,noun
 cult,noun
 fresh water,noun
 welfare,noun
@@ -209,6 +210,7 @@ code,noun
 workshop,noun
 hair,noun
 hammer,noun
+ham,noun
 guideline,noun
 guide,noun
 book,noun
@@ -420,6 +422,7 @@ sands,noun
 shura,noun
 slack,noun
 satellite channel,noun
+observatory,noun
 memo,noun
 forestry,noun
 belt,noun
@@ -717,6 +720,7 @@ rican,phrase
 pro,phrase
 rep,phrase
 reps,phrase
+state run,phrase
 reg,phrase
 amen,phrase
 a bad,phrase
@@ -809,6 +813,7 @@ pluto,place.astro
 aquarius,place.astro
 palace,place.civil
 castle,place.civil
+depot,place.civil
 hotel,place.civil
 hamlet,place.civil
 school,place.civil
@@ -817,6 +822,7 @@ high school,place.civil
 academy,place.civil
 real-estate,place.civil
 real estate,place.civil
+estates,place.civil
 state line,place.civil
 dam,place.civil
 office,place.civil
@@ -1057,7 +1063,7 @@ in,preposition
 de,preposition.spa
 des,preposition.spa
 du,preposition.spa
-la,preposition.spa
+# la,preposition.spa
 las,preposition.spa
 los,preposition.spa
 en,preposition.spa
@@ -1067,6 +1073,7 @@ spring,season
 summer,season
 winter,season
 select,stopword.web
+printer,stopword.web
 explorer,stopword.web
 outlook,stopword.web
 atlas,stopword.web
@@ -1331,6 +1338,7 @@ carry,verb
 see,verb
 sell,verb
 tell,verb
+punch,verb
 reform,verb
 will,verb
 wash,verb
@@ -1338,6 +1346,7 @@ hurt,verb
 wake,verb
 to do,verb
 so do,verb
+settle,verb
 research,verb
 press,verb
 heard,verb
@@ -1407,5 +1416,7 @@ modi,well-known.person
 einstein,well-known.person
 uncle sam,well-known.person
 ringo,well-known.person
-shaq,well-known.person
 yoda,well-known.person
+ghandi,well-known.person
+gandhi,well-known.person
+shaq,well-known.person
