@@ -62,6 +62,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     protected String admin2 = null;
 
     private boolean isASCIIName = false;
+    private boolean isUppercaseName = false;
 
     /**
      * Creates a new instance of Geobase
@@ -91,6 +92,10 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
      */
     public boolean isASCIIName() {
         return this.isASCIIName;
+    }
+
+    public boolean isUppercaseName() {
+        return this.isUppercaseName;
     }
 
     protected char name_type = 0;
@@ -194,6 +199,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
                 // TODO: throw exception for name normalization and related name parsing. 
                 isASCIIName = false;
             }
+
+            isUppercaseName = TextUtils.isUpper(this.name);
         }
     }
 
@@ -357,13 +364,14 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
         return "unset";
     }
 
-    public boolean isSame(Place other){
-        return compareTo(other)==0;
+    public boolean isSame(Place other) {
+        return compareTo(other) == 0;
     }
-    
+
     /**
      * With multiple data sources there is no standard way of saying this place == that place.
-     * So we compare features, locations, Ids, etc. 
+     * So we compare features, locations, Ids, etc.
+     * 
      * @param other
      *            another Place
      */
