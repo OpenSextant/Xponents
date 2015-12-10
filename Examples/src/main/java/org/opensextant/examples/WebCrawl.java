@@ -34,15 +34,20 @@ public class WebCrawl implements CollectionListener {
     public static void usage() {
         System.out.println("\nUsage\n");
         System.out.println("\nParse HTML file\n");
-        System.out.println("\t WebCrawl  -l <link> -o <output> [-d]");
+        System.out.println("\t WebCrawl   -l <link>  [ -f <file> ] -o <output> [-d]");
+        System.out.println(
+                "\t  -l link:  connect to website link and crawl.  -d keeps crawl contained to that page/folder");
+        System.out.println(
+                "\t  -f file:  parse and crawl the given HTML file, as if you captured it from the given link.");
     }
 
     public static void main(String[] args) {
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("WebCrawl", args, "do:l:");
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("WebCrawl", args, "do:l:f:");
 
         String o = null;
         String webSite = null;
         boolean currentDirOnly = false;
+        String inputFile = null;
 
         try {
             int c;
@@ -51,10 +56,15 @@ public class WebCrawl implements CollectionListener {
                 case 'l':
                     webSite = opts.getOptarg();
                     break;
+
+                case 'f':
+                    inputFile = opts.getOptarg();
+                    break;
+
                 case 'o':
                     o = opts.getOptarg();
                     break;
-                    
+
                 case 'd':
                     currentDirOnly = true;
                     break;
@@ -94,7 +104,7 @@ public class WebCrawl implements CollectionListener {
              */
             File cacheDir = new File(o);
             conv.enableSaving(true);
-            
+
             // Order of setting is important.  Since cacheDir == input & saving with input, 
             // Then no need to set a separate cacheDir.
             //conv.getPathManager().setConversionCache(cacheDir.getAbsolutePath());
@@ -116,7 +126,16 @@ public class WebCrawl implements CollectionListener {
             crawl.setListener(me);
 
             // Go do it.
-            crawl.collect();
+            if (inputFile != null) {
+                File f = new File(inputFile);
+                if (f.exists()) {
+                    crawl.collect(f); // parse links from file as if the file was pulled from website -l link. 
+                } else {
+                    System.err.println("File does not exist F=" + inputFile);
+                }
+            } else {
+                crawl.collect();
+            }
 
         } catch (Exception err) {
             err.printStackTrace();
