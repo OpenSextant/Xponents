@@ -27,7 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
@@ -37,16 +37,18 @@ import org.opensextant.util.TextUtils;
 
 // TODO: Auto-generated Javadoc
 /**
- * A representation of a harvested hyperlink.  Normalization of found URL attempts to derive:
+ * A representation of a harvested hyperlink. Normalization of found URL attempts to derive:
  * <ul>
  * <li>is item a file or dynamic, generated HTML?</li>
  * <li>is item a folder or a page?</li>
- * <li>what is the relation between this page and its containing folder and hosting site?  Is this link
+ * <li>what is the relation between this page and its containing folder and hosting site? Is this link
  * resident hosted on the originally crawled site?</li>
- * <li>What is the proper file extension for a found link?  A link itself does not always reflect the MIME Type and file "save-as" filename...
+ * <li>What is the proper file extension for a found link? A link itself does not always reflect the MIME Type and file
+ * "save-as" filename...
  * </li>
  * 
  * </ul>
+ * 
  * @author ubaldino
  *
  */
@@ -121,15 +123,21 @@ public class HyperLink {
     /**
      * URL wrangling, mainly to take a found URL and adapt it so it looks like a file path safe for a file system.
      *
-     * @param link found link
-     * @param referringLink  - Normalized, absolute URL string
-     * @param site top level site
-     * @throws MalformedURLException on err
-     * @throws NoSuchAlgorithmException on err
-     * @throws UnsupportedEncodingException on err, when URL contains poorly encoded characters
+     * @param link
+     *            found link
+     * @param referringLink
+     *            - Normalized, absolute URL string
+     * @param site
+     *            top level site
+     * @throws MalformedURLException
+     *             on err
+     * @throws NoSuchAlgorithmException
+     *             on err
+     * @throws UnsupportedEncodingException
+     *             on err, when URL contains poorly encoded characters
      */
     public HyperLink(String link, URL referringLink, URL site) throws MalformedURLException,
-    NoSuchAlgorithmException, UnsupportedEncodingException {
+            NoSuchAlgorithmException, UnsupportedEncodingException {
         urlValue = link;
         urlNominal = link;
         siteURL = site;
@@ -137,7 +145,11 @@ public class HyperLink {
         referrerURL = referringLink;
         String url_lc = urlNominal.toLowerCase();
         String site_lc = siteValue.toLowerCase();
+        // If referrer, e.g. page containing this link is a folder or file, detect that.
+        //   "/a/b/c"  is a folder but ensure referrer is tracked as "/a/b/c/" with trailing slash here.
+        //  Otherwise, url is a page.
         String base_lc = referrerURL.toString().toLowerCase();
+        boolean isReferrerFolder = false;
         String urlPath = null;
 
         isAbsolute = (url_lc.startsWith("http:") || url_lc.startsWith("https:"));
@@ -155,15 +167,15 @@ public class HyperLink {
 
         urlPath = absoluteURL.getPath().toLowerCase();
         pathExtension = FilenameUtils.getExtension(urlPath);
+        String referrerExt = FilenameUtils.getExtension(base_lc);
 
-        if (url_lc.endsWith(".") || StringUtils.isEmpty(pathExtension) || url_lc.endsWith("/")) {
-            isFolder = true;
-        }
+        isFolder = isFolder(url_lc, pathExtension);
+        isReferrerFolder = isFolder(referrerURL.getPath(), referrerExt);
 
         String abs_lc = absoluteURL.toString().toLowerCase();
 
         String path = absoluteURL.getPath();
-        if (StringUtils.isBlank(path)) {
+        if (isBlank(path)) {
             normalizedPath = "./";
             isFolder = true;
         } else {
@@ -202,8 +214,13 @@ public class HyperLink {
         // If base/referring page is a directory see if it is in same folder
         // as current link
         //
-        int b = base_lc.lastIndexOf('/');
-        String dirB = base_lc.substring(0, b);
+        String dirB = base_lc;
+        if (isReferrerFolder && !dirB.endsWith("/")) {
+            dirB = dirB + "/";
+        } else if (!isReferrerFolder) {
+            int b = base_lc.lastIndexOf('/');
+            dirB = base_lc.substring(0, b);
+        }
 
         int s = site_lc.lastIndexOf('/');
         String siteDir = site_lc.substring(0, s);
@@ -214,7 +231,7 @@ public class HyperLink {
                 isCurrentPage = abs_lc.startsWith(dirB);
             } else {
                 int a = abs_lc.lastIndexOf('/');
-                String dirA = abs_lc.substring(0, a);
+                String dirA = abs_lc.substring(0, a) + "/";
                 isCurrentPage = dirA.startsWith(dirB);
             }
         }
@@ -232,14 +249,24 @@ public class HyperLink {
         return linkId;
     }
 
+    private boolean isFolder(String url, String ext) {
+        if (url.endsWith(".") || url.endsWith("/")) {
+            return true;
+        }
+        if (isBlank(ext)) {
+            return true;
+        }
+        return false;
+    }
+
     /**
-     * Given a URL  a.b/path?param=val&param=val....
+     * Given a URL a.b/path?param=val&param=val....
      * Derive any meaningful filename from param values in the query.
      *
      * @return true, if successful
      */
     private boolean deriveFilepathFromQuery() {
-        if (StringUtils.isBlank(query)) {
+        if (isBlank(query)) {
             return false;
         }
 
@@ -281,7 +308,8 @@ public class HyperLink {
     private static MimeTypes defaultMIME = TikaConfig.getDefaultConfig().getMimeRepository();
 
     /**
-     * Set the MIME type of a found link, i.e., once you'ved downloaded the content you then know the ContentType possibly.
+     * Set the MIME type of a found link, i.e., once you'ved downloaded the content you then know the ContentType
+     * possibly.
      * Which may differ from your perception of the URL path
      * 
      * - reset the file extension,
@@ -290,7 +318,8 @@ public class HyperLink {
      * 
      * Set the MIME Type, file type, path, etc... prior to saving content to disk.
      *
-     * @param t the new MIME type
+     * @param t
+     *            the new MIME type
      */
     public void setMIMEType(String t) {
         mimeType = t;
@@ -314,6 +343,7 @@ public class HyperLink {
 
     /** The mime equivalences. */
     private static HashMap<String, String> mimeEquivalences = new HashMap<>();
+
     static {
         mimeEquivalences.put("htm", "html");
         mimeEquivalences.put("html", "htm");
@@ -327,12 +357,14 @@ public class HyperLink {
      * Consider if b='x' and a='y', are a and b like MIME types.
      * example: .html ?= .htm
      *
-     * @param a a string
-     * @param b a string
+     * @param a
+     *            a string
+     * @param b
+     *            a string
      * @return true, if successful
      */
     private static boolean equivalentFileType(String a, String b) {
-        if (StringUtils.isBlank(a)) {
+        if (isBlank(a)) {
             return false;
         }
         if (a.equals(b)) {
@@ -353,11 +385,12 @@ public class HyperLink {
     /**
      * set the path extension, IFF it is significantly different.
      *
-     * @param mimeExt the mime extension
+     * @param mimeExt
+     *            the mime extension
      */
     private void fixPathExtension(String mimeExt) {
 
-        if (StringUtils.isBlank(mimeExt)) {
+        if (isBlank(mimeExt)) {
             return;
         }
         String ext = mimeExt.replace(".", "");
@@ -390,7 +423,8 @@ public class HyperLink {
         return isFolder;
     }
 
-    /**Get the referrer link used at creation time.
+    /**
+     * Get the referrer link used at creation time.
      *
      * @return the referrer
      */
@@ -401,7 +435,8 @@ public class HyperLink {
     /**
      * Sets the filepath.
      *
-     * @param p the new filepath
+     * @param p
+     *            the new filepath
      */
     public void setFilepath(File p) {
         archiveFile = p;
@@ -475,6 +510,7 @@ public class HyperLink {
 
     /** The Constant resourcePages. */
     private final static Set<String> resourcePages = new HashSet<String>();
+
     static {
         dynamicPages.add("asp");
         dynamicPages.add("aspx");
@@ -494,11 +530,12 @@ public class HyperLink {
     /**
      * Checks if is dynamic.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return true, if is dynamic
      */
     public static boolean isDynamic(String url) {
-        if (StringUtils.isBlank(url)) {
+        if (isBlank(url)) {
             return false;
         }
         String norm = url.toLowerCase();
@@ -509,11 +546,12 @@ public class HyperLink {
     /**
      * Checks if is resource.
      *
-     * @param url the url
+     * @param url
+     *            the url
      * @return true, if is resource
      */
     public static boolean isResource(String url) {
-        if (StringUtils.isBlank(url)) {
+        if (isBlank(url)) {
             return false;
         }
         String norm = url.toLowerCase();
@@ -524,8 +562,10 @@ public class HyperLink {
     /**
      * Checks if is resource.
      *
-     * @param url  -- currently unused.
-     * @param ext lower case.
+     * @param url
+     *            -- currently unused.
+     * @param ext
+     *            lower case.
      * @return true, if is resource
      */
     public static boolean isResource(String url, String ext) {
@@ -535,8 +575,10 @@ public class HyperLink {
     /**
      * Checks if is dynamic.
      *
-     * @param url  -- currently unused.
-     * @param ext lower case.
+     * @param url
+     *            -- currently unused.
+     * @param ext
+     *            lower case.
      * @return true, if is dynamic
      */
     public static boolean isDynamic(String url, String ext) {
@@ -570,7 +612,8 @@ public class HyperLink {
     /**
      * Checks if is common file.
      *
-     * @param v a path
+     * @param v
+     *            a path
      * @return if path is a common type of file.
      */
     public static boolean isCommonFile(String v) {
@@ -607,8 +650,8 @@ public class HyperLink {
         if (isAbsolute()) {
             return absoluteURL.getPath().contains("#");
         }
-        if (StringUtils.isBlank(absoluteURL.getPath())
-                || StringUtils.isBlank(referrerURL.getPath())) {
+        if (isBlank(absoluteURL.getPath())
+                || isBlank(referrerURL.getPath())) {
             return false;
         }
         String p1 = absoluteURL.getPath();
@@ -644,7 +687,7 @@ public class HyperLink {
         String qry = absoluteURL.getQuery();
         String[] kvlist = qry.split("&");
         for (String param : kvlist) {
-            if (StringUtils.isBlank(param)) {
+            if (isBlank(param)) {
                 continue;
             }
             if (!param.contains("=")) {
@@ -679,7 +722,8 @@ public class HyperLink {
      * came. That is, we want to know if the page contains a relative link to
      * itself.
      *
-     * @param test a URL
+     * @param test
+     *            a URL
      * @return true, if is current page
      */
     public boolean isCurrentPage(String test) {
