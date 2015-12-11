@@ -18,7 +18,7 @@
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
  *
- * (c) 2012 The MITRE Corporation. All Rights Reserved.
+ * (c) 2012-2015 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  *
  * Continue contributions:

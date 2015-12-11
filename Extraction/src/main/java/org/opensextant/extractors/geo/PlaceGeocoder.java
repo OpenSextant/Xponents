@@ -20,7 +20,7 @@
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
  *
- * (c) 2012 The MITRE Corporation. All Rights Reserved.
+ * (c) 2012-2015 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
  *
 ///** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
@@ -74,6 +74,7 @@ import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
+import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -380,6 +381,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         countryRule.reset();
         adm1Rule.reset();
         majorPlaceRule.reset();
+        chooser.reset();
         for (GeocodeRule r : rules) {
             r.reset();
         }
@@ -399,10 +401,24 @@ public class PlaceGeocoder extends GazetteerMatcher
     private Map<String, Place> relevantLocations = new HashMap<>();
 
     /**
+     * If all you are doing is geotagging (just identifying places), then enableGeocoding = false;
+     * Otherwise the default here is geocoding (identify and geolocate) places.
+     * This is not a public API attribute.
+     * 
+     * @since 2.8.3
+     */
+    private boolean geocode = true;
+    private boolean tagOnly = !geocode;
+
+    /**
      * Unfinished Beta; ready for experimentation and improvement on rules.
      *
      * Extractor.extract() calls first XCoord to get coordinates, then
      * PlacenameMatcher In the end you have all geo entities ranked and scored.
+     * 
+     * LangID can be set on TextInput input.langid.  Only lowercase langIDs please:
+     * 'zh', 'ar', tag text for those languages in particular. Null and Other values
+     * are treated as generic as of v2.8.
      * 
      * <pre>
      * Use TextMatch.getType()
@@ -417,7 +433,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      * </pre>
      *
      * @param input
-     *            input buffer
+     *            input buffer, doc ID, and optional langID. 
      * @return TextMatch instances which are all PlaceCandidates.
      * @throws ExtractionException
      *             on err
@@ -432,8 +448,18 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         // 0. GEOTAG raw text. Flag tag-only = false, in otherwords do extra work for geocoding.
         //
-        LinkedList<PlaceCandidate> candidates = tagText(input.buffer, input.id,
-                false);
+        LinkedList<PlaceCandidate> candidates = null;
+        if (input.langid == null) {
+            candidates = tagText(input.buffer, input.id, tagOnly);
+        } else if (TextUtils.isCJK(input.langid)) {
+            candidates = this.tagCJKText(input.buffer, input.id, tagOnly);
+        } else if (TextUtils.arabicLang.equals(input.langid)) {
+            candidates = this.tagArabicText(input.buffer, input.id, tagOnly);
+        } else {
+            // Default - unknown language.
+            log.info("Unknown Language {}. Treating as Generic.", input.langid);
+            candidates = tagText(input.buffer, input.id, tagOnly);
+        }
 
         // 1. COORDINATES. If caller thinks their data may have coordinates, then attempt to parse
         // lat/lon.  Any coordinates found fire rules for resolve lat/lon to a Province/Country if possible.
@@ -472,7 +498,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         for (GeocodeRule r : rules) {
             r.evaluate(candidates);
         }
-        
+
         // Last rule: score, choose, add confidence.
         // 
         chooser.evaluate(candidates);
@@ -724,6 +750,10 @@ public class PlaceGeocoder extends GazetteerMatcher
         // NOT Implmemented.
     }
 
+    /**
+     * Generic tagging. No doc ID or language ID given.
+     * Nothing language specific will be done here.
+     */
     @Override
     public List<TextMatch> extract(String input_buf) throws ExtractionException {
         return extract(new TextInput(null, input_buf));

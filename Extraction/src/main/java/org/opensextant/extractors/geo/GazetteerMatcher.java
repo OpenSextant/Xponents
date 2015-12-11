@@ -263,6 +263,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return tagText(buffer, docid, false, CJK_TAG_FIELD);
     }
 
+    public LinkedList<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
+        return tagText(buffer, docid, tagOnly, CJK_TAG_FIELD);
+    }
+    
     /**
      * Tag place names in arabic.
      * 
@@ -277,6 +281,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      */
     public LinkedList<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
         return tagText(buffer, docid, false, AR_TAG_FIELD);
+    }
+
+    public LinkedList<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
+        return tagText(buffer, docid, tagOnly, AR_TAG_FIELD);
     }
 
     /** Most languages */
