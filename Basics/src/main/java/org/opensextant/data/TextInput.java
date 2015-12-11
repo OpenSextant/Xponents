@@ -34,6 +34,7 @@ package org.opensextant.data;
 public class TextInput {
     public String buffer = null;
     public String id = null;
+    public String langid = null;
 
     /** A simple input.
      * If this input is to be used with the normal OpenSextant pipelines, the caller
