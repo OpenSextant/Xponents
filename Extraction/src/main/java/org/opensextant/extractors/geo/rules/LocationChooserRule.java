@@ -10,7 +10,6 @@ import org.opensextant.extractors.geo.CountryCount;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceCount;
 import org.opensextant.extractors.geo.PlaceEvidence;
-import org.opensextant.util.GeonamesUtility;
 
 /**
  * A final geocoding pass or two. Loop through candidates and choose
