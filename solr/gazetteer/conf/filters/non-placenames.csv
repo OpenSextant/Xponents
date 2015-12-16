@@ -93,6 +93,7 @@ liberal,adjective
 # mobile,adjective
 mobil,adjective
 micro,adjective
+prospective,adjective
 muerte,adjective.spa
 shortly,adverb
 the,article
@@ -443,6 +444,11 @@ cat,noun
 vet,noun
 rabbit,noun
 charter,noun
+bulletin,noun
+shooting,noun
+panel,noun
+reception,noun
+soil,noun
 puerto,noun.es
 banda,noun.spa
 banco,noun.spa
@@ -619,6 +625,8 @@ grad,person.label
 gul,person.label
 govenors,person.label
 monk,person.label
+teen,person.label
+citizen,person.label
 pir,person.label.mideast
 rabbi,person.label.mideast
 imam,person.label.mideast
@@ -802,6 +810,7 @@ ba,phrase
 je,phrase
 tis,phrase
 ta,phrase
+the city,phrase
 mars,place.astro
 comet,place.astro
 galaxy,place.astro
@@ -1370,6 +1379,9 @@ let,verb
 gag,verb
 bluff,verb
 jab,verb
+blow,verb
+create,verb
+ruled,verb
 mon,weekday
 tue,weekday
 tues,weekday
