@@ -1,16 +1,23 @@
 exclusion,category
 id,abbrev
+ibid,abbrev
 imo,abbrev
 asap,abbrev
+bio,abbrev
 eta,abbrev
 tel,abbrev
 lat,abbrev
 lon,abbrev
 supreme,adjective
+keen,adjective
+excelsior,adjective
 alpine,adjective
+harder,adjective
 urban,adjective
 allied,adjective
 inter,adjective
+mini,adjective
+covert,adjective
 quick,adjective
 rapid,adjective
 early,adjective
@@ -20,6 +27,7 @@ experimental,adjective
 trojan,adjective
 indo,adjective
 baltic,adjective
+oceanic,adjective
 civil,adjective
 marine,adjective
 state-run,adjective
@@ -168,6 +176,7 @@ vi,enum
 vii,enum
 viii,enum
 ix,enum
+primer,noun
 primero,enum.spa
 secondo,enum.spa
 christmas,holiday
@@ -195,15 +204,40 @@ february,month
 jan,month
 january,month
 box,noun
+triple,noun
+burger,noun
+grant,noun
+weasel,noun
+rash,noun
+row,noun
+fir,noun
+rift,noun
+sample,noun
+burden,noun
+gap,noun
+speed,noun
+weeks,noun
+round,noun
+mirror,noun
 edge,noun
+bang,noun
 cult,noun
+joy,noun
+pact,noun
 fresh water,noun
+nuke,noun
+puke,noun
+strain,noun
+biology,noun
 welfare,noun
+shadow,noun
 band,noun
 laboratory,noun
 chamber,noun
 accounting,noun
 exodus,noun
+grave,noun
+apology,noun
 rogue,noun
 phantom,noun
 magazine,noun
@@ -235,8 +269,11 @@ marks,noun
 board,noun
 bunch,noun
 bin,noun
+airline,noun
+gazette,noun
 arch,noun
 mass,noun
+massacre,noun
 calendar,noun
 comedy,noun
 count,noun
@@ -250,7 +287,9 @@ asylum,noun
 revolution,noun
 gang,noun
 war,noun
+scud,noun
 sides,noun
+sextet,noun
 allies,noun
 alliance,noun
 mariner,noun
@@ -265,6 +304,7 @@ tank,noun
 cache,noun
 map,noun
 review,noun
+overview,noun
 manual,noun
 false,noun
 true,noun
@@ -444,6 +484,7 @@ cat,noun
 vet,noun
 rabbit,noun
 charter,noun
+chart,noun
 bulletin,noun
 shooting,noun
 panel,noun
@@ -461,6 +502,7 @@ sports,noun.sport
 cricket,noun.sport
 marshal,person.label
 foreman,person.label
+lone wolf,person.label
 vip,person.label
 patriot,person.label
 male,person.label
@@ -558,8 +600,9 @@ president,person.label
 chancellor,person.label
 presidente,person.label
 pres,person.label
-governor,person.label
 govenor,person.label
+governor,person.label
+governors,person.label
 gov,person.label
 marshall,person.label
 director,person.label
@@ -727,11 +770,14 @@ building a,phrase
 rican,phrase
 pro,phrase
 rep,phrase
+doo,phrase
+a camp,phrase
 int,phrase
 reps,phrase
 state run,phrase
 reg,phrase
 amen,phrase
+as self,phrase
 a bad,phrase
 snafu,phrase
 small town,phrase
@@ -746,6 +792,7 @@ back way,phrase
 easy way,phrase
 by chance,phrase
 a peak,phrase
+top two,phrase
 hello,phrase
 duh,phrase
 ditto,phrase
@@ -773,6 +820,8 @@ main point,phrase
 one point,phrase
 zero point,phrase
 final point,phrase
+boiling point,phrase
+turning point,phrase
 first point,phrase
 second point,phrase
 tipping point,phrase
@@ -803,6 +852,7 @@ goodnight,phrase
 knife point,phrase
 last hope,phrase
 left hand,phrase
+upper hand,phrase
 log jam,phrase
 may day,phrase
 med,phrase
@@ -825,6 +875,7 @@ aquarius,place.astro
 palace,place.civil
 castle,place.civil
 depot,place.civil
+basin,place.civil
 hotel,place.civil
 hamlet,place.civil
 school,place.civil
@@ -842,6 +893,8 @@ quarry,place.civil
 tower,place.civil
 bridge,place.civil
 fortress,place.civil
+passage,place.civil
+tunnel,place.civil
 airport,place.civil
 quad,place.civil
 square,place.civil
@@ -915,6 +968,8 @@ township,place.general
 a village,place.general
 village,place.general
 municipality,place.general
+municipal,adjective
+lone,adjective
 suburb,place.general
 region,place.general
 geo,place.general
@@ -1339,6 +1394,7 @@ able,verb
 ban,verb
 ban on,verb
 bash,verb
+budge,verb
 be,verb
 be in,verb
 do,verb
@@ -1346,6 +1402,11 @@ bid,verb
 bloom,verb
 call,verb
 carry,verb
+knew,verb
+cope,verb
+hail,verb
+ponder,verb
+harden,verb
 see,verb
 sell,verb
 tell,verb
@@ -1355,6 +1416,7 @@ will,verb
 wash,verb
 hurt,verb
 wake,verb
+stoke,verb
 to do,verb
 so do,verb
 settle,verb
@@ -1401,8 +1463,10 @@ friday,weekday
 saturday,weekday
 sunday,weekday
 foia,well-known.concept
+american flag,well-known.concept
 pepsi,well-known.concept
 coca-cola,well-known.concept
+martini,well-known.concept
 coca,well-known.concept
 cola,well-known.concept
 coca cola,well-known.concept
