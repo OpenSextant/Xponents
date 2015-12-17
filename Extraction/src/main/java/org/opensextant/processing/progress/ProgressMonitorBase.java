@@ -69,7 +69,7 @@ public class ProgressMonitorBase implements ProgressMonitor {
 
     private void fireComplete() {
         for (ProgressListener listener : listeners) {
-            listener.markComplte();
+            listener.markComplete();
         }
     }
 

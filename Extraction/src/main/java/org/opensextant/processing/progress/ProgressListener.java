@@ -4,6 +4,6 @@ public interface ProgressListener {
 
     void updateProgress(double progress);
 
-    void markComplte();
+    void markComplete();
 
 }
