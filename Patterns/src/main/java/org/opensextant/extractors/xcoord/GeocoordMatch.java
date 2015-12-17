@@ -707,4 +707,9 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
         return p;
     }
+    
+    public boolean hasCoordinate(){
+        return GeodeticUtility.isValidNonZeroCoordinate(this.latitude, this.longitude);
+    }
+
 }
