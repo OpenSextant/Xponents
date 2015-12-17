@@ -52,7 +52,16 @@ public interface Geocoding  extends LatLon {
     // High level flags: What is the geo entity?
     //-------------------
     public boolean isPlace();
+    /**
+     * isCoordinate: if this object represents a coordinate
+     * @return
+     */
     public boolean isCoordinate();
+    /**
+     * has Coordinate: if this named place object has a coordinate. 
+     * @return
+     */
+    public boolean hasCoordinate();
     public boolean isCountry();
     public boolean isAdministrative();
     public int getPrecision();

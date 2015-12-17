@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opensextant.data.TextInput;
 import org.opensextant.processing.Parameters;
 
 /**
@@ -42,6 +43,7 @@ import org.opensextant.processing.Parameters;
 public class ExtractionResult {
 
     protected static final Parameters DEFAULT_FILTERS = new Parameters();
+    public TextInput input = null;
     public Map<String, Object> attributes = null;
     /**
      * Original file for record
