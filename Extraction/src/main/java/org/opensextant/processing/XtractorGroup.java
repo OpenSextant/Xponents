@@ -189,6 +189,7 @@ public class XtractorGroup {
             compilation.recordTextFile = ((DocInput) input).getTextpath();
         }
         compilation.matches = process(input);
+        compilation.input = input;
 
         if (compilation.matches.isEmpty()) {
             return 0; // nothing found

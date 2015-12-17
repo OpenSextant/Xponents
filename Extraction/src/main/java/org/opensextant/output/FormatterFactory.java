@@ -41,7 +41,7 @@ public class FormatterFactory {
     /**
      *
      */
-    private static final String[] OUTPUT_FORMATS = {"CSV", "GeoCSV", "GDB", "JSON", "KML", "WKT", "Shapefile", "SHP"};
+    private static final String[] OUTPUT_FORMATS = {"CSV", "GeoCSV", "FileGDB", "GDB", "JSON", "KML", "WKT", "Shapefile", "SHP"};
     private static final Map<String,String> OUTPUT_FORMATS_LOOKUP = new HashMap<String,String>();
 
     static {
@@ -49,6 +49,7 @@ public class FormatterFactory {
             OUTPUT_FORMATS_LOOKUP.put(fmt.toLowerCase(), fmt);
         }
         OUTPUT_FORMATS_LOOKUP.put("shp", "Shapefile");
+        OUTPUT_FORMATS_LOOKUP.put("filegdb", "GDB");
 
     }
 

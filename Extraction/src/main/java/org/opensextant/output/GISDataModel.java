@@ -41,6 +41,7 @@ import org.opensextant.giscore.events.Feature;
 import org.opensextant.giscore.events.Schema;
 import org.opensextant.giscore.events.SimpleField;
 import org.opensextant.giscore.geometry.Point;
+import org.opensextant.processing.ResultsUtility;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.data.Geocoding;
@@ -112,8 +113,14 @@ public class GISDataModel {
         addColumn(row, OpenSextantSchema.FEATURE_CLASS, g.getFeatureClass());
         addColumn(row, OpenSextantSchema.FEATURE_CODE, g.getFeatureCode());
         addColumn(row, OpenSextantSchema.PLACE_NAME, g.getPlaceName());
-        // Set the geometry to be a point, and add the feature to the list
-        row.setGeometry(new Point(g.getLatitude(), g.getLongitude()));
+
+        if (includeCoordinate) {
+            if (g.hasCoordinate()) {
+                // Set the geometry to be a point, and add the feature to the list
+                row.setGeometry(new Point(g.getLatitude(), g.getLongitude()));
+                addLatLon(row, g);
+            }
+        }
     }
 
     /**
@@ -276,7 +283,12 @@ public class GISDataModel {
 
     /**
      * Builds a GISCore feature array (rows) from a given array of TextMatches; Enrich
-     * the features with record-level attributes (columns).
+     * the features with record-level attributes (columns).  If provided result has .input set, 
+     * then conext and other metadata for this match will be pulled from it.  Context is not 
+     * pulled at match time, as it is not used by most processing -- it tends to be more 
+     * of an output/formatting issue.  And only matches that pass any filters are enriched with 
+     * context and other metadaa.
+     *
      *
      * @param id
      *            the id
@@ -310,11 +322,11 @@ public class GISDataModel {
         addPrecision(row, g);
         //addConfidence(row, g.getConfidence());
 
-        addContext(row, m);
-
-        if (includeCoordinate) {
-            addLatLon(row, g);
+        if (m.getContext() == null && res.input!=null){
+            int len = res.input.buffer.length();
+            ResultsUtility.setContextFor(res.input.buffer, m, m.start, m.match_length(), len);
         }
+        addContext(row, m);
 
         addMatchText(row, m);
         addMatchMethod(row, g.getMethod());

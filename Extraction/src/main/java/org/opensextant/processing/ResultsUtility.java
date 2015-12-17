@@ -27,13 +27,12 @@
 package org.opensextant.processing;
 
 import java.text.DecimalFormat;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensextant.util.TextUtils;
+import org.opensextant.data.Geocoding;
 import org.opensextant.extraction.TextEntity;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.util.TextUtils;
 
 /**
  * Abstract class encapsulating basic results formatter functionality.
@@ -41,17 +40,6 @@ import org.opensextant.extraction.TextMatch;
  */
 public class ResultsUtility {
 
-    // -------------
-    public static final String PLACE_ANNOTATION = "PLACE";
-    public static final String PLACE_CANDIDATE_ANNOTATION = "placeCandidate";
-    public static final String GEOCOORD_ANNOTATION = "geocoord";
-    public static final Set<String> GATE_GEOCODE_ANNOTATIONS = new HashSet<String>();
-
-    static {
-        // This annot set matches "isLocation(annotType)"
-        GATE_GEOCODE_ANNOTATIONS.add(GEOCOORD_ANNOTATION);
-        GATE_GEOCODE_ANNOTATIONS.add(PLACE_ANNOTATION);
-    }
     /**
      * The default TEXT WIDTH. ~75 chars per line yields 2 lines of text.
      */
@@ -72,7 +60,7 @@ public class ResultsUtility {
     }
 
     /**
-     * Given the GATE annotation set the context on the TextEntity object.
+     * Given the annotation or match, set the context on the TextEntity object.
      */
     public static void setContextFor(String content, TextEntity t, int offset, int match_size, int doc_size) {
 
@@ -91,6 +79,9 @@ public class ResultsUtility {
      * @return
      */
     public static boolean isLocation(TextMatch m) {
+        if (m instanceof Geocoding){
+            return true;
+        }
         if (StringUtils.isBlank(m.getType())) {
             return false;
         }
@@ -109,27 +100,6 @@ public class ResultsUtility {
         }
         String test = m.getType().toLowerCase();
         return "datetime".equals(test);
-    }
-
-    /**
-     * Is this a Location annotation type?
-     */
-    public static boolean isLocation(String a) {
-        return GEOCOORD_ANNOTATION.equals(a) || PLACE_ANNOTATION.equals(a);
-    }
-
-    /**
-     * Is this a Location geocoordinate annotation type?
-     */
-    public static boolean isCoordinate(String a) {
-        return GEOCOORD_ANNOTATION.equals(a);
-    }
-
-    /**
-     * Is this a Location placename annotation type?
-     */
-    public static boolean isPlaceName(String a) {
-        return PLACE_ANNOTATION.equals(a);
     }
 
     /**

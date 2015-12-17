@@ -38,6 +38,7 @@ import org.opensextant.giscore.output.IGISOutputStream;
 import org.opensextant.data.Geocoding;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.processing.ProcessingException;
 
 /**
@@ -162,9 +163,10 @@ public abstract class GISDataFormatter extends AbstractFormatter {
         if (this.allowNonGeo) {
             return false;
         }
-        if (geo instanceof Geocoding) {
-            Geocoding geocoding = (Geocoding) geo;
 
+        Geocoding geocoding = getGeocoding(geo);
+
+        if (geocoding != null) {
             if (!outputParams.output_coordinates && geocoding.isCoordinate()) {
                 return true;
             } else if (!outputParams.output_countries && geocoding.isCountry()) {
@@ -174,7 +176,19 @@ public abstract class GISDataFormatter extends AbstractFormatter {
             }
         }
 
+        // Not Geo, but also not filtered out.
         return false;
+    }
+
+    private Geocoding getGeocoding(TextMatch m) {
+        Geocoding geocoding = null;
+        if (m instanceof Geocoding) {
+            geocoding = (Geocoding) m;
+        } else if (m instanceof PlaceCandidate) {
+            geocoding = ((PlaceCandidate) m).getChosen();
+        }
+        return geocoding;
+
     }
 
     /**
@@ -196,14 +210,17 @@ public abstract class GISDataFormatter extends AbstractFormatter {
             // Increment ID
             id++;
 
-            log.debug("Add {}#{}", id, g);
-
             // Only TextMatches that implement the Geocoding interface are
             // allowed here:
+            Geocoding geocoding = getGeocoding(g);
+            if (geocoding == null){
+                log.debug("Non-geo will be ignored: {}", g);
+                continue;
+            }
+            log.debug("Add {}#{}", id, g);
 
             try {
-                for (Feature row : gisDataModel.buildRows(id, (Geocoding) g, g, rowdata.attributes,
-                        rowdata)) {
+                for (Feature row : gisDataModel.buildRows(id, geocoding, g, rowdata.attributes, rowdata)) {
                     log.debug("FEATURE: {}", row);
                     this.os.write(row);
                 }
