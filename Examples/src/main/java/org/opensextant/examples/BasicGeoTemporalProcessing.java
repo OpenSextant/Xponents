@@ -131,8 +131,10 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         // Testing only
         params.tag_places = true;
         params.tag_coordinates = true;
+        params.output_countries = false;
 
         PlaceGeocoder geocoder = new PlaceGeocoder();
+        geocoder.enablePersonNameMatching(true);
         geocoder.setParameters(params);
         geocoder.configure();
         this.addExtractor(geocoder);
