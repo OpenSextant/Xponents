@@ -199,7 +199,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * 
      * @return internal gazetteer instance
      */
-    protected SolrGazetteer getGazetteer() {
+    public SolrGazetteer getGazetteer() {
         return this.gazetteer;
     }
 

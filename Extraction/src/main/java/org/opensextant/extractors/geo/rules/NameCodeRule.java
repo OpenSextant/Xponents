@@ -81,7 +81,7 @@ public class NameCodeRule extends GeocodeRule {
             /*
              * Not supporting lowercase codes/abbreviations.  'la', 'is', 'un', etc.
              */
-            if (code.isLower()) {
+            if (code.isLower() && code.getText().length()<4) {
                 continue;
             }
 

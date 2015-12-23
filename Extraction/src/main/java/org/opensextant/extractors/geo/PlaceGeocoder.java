@@ -377,9 +377,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         this.relevantLocations.clear();
 
         personNameRule.reset();
-        coordRule.reset();
         countryRule.reset();
-        adm1Rule.reset();
         majorPlaceRule.reset();
         chooser.reset();
         for (GeocodeRule r : rules) {
