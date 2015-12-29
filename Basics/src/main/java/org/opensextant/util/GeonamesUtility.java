@@ -27,6 +27,7 @@
  **************************************************   */
 package org.opensextant.util;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.opensextant.util.GeodeticUtility.geohash;
 
 import java.io.BufferedReader;
@@ -36,15 +37,18 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Country;
+import org.opensextant.data.Language;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
 import org.supercsv.io.CsvMapReader;
@@ -143,7 +147,8 @@ public class GeonamesUtility {
     /**
      * Pase geonames.org TZ table.
      * 
-     * @throws IOException if timeZones.txt is not found or has an issue.
+     * @throws IOException
+     *             if timeZones.txt is not found or has an issue.
      */
     private void loadCountryTimezones() throws IOException {
         java.io.InputStream io = getClass().getResourceAsStream("/timeZones.txt");
@@ -169,6 +174,85 @@ public class GeonamesUtility {
             C.addTimezone(tzdata.get("TZ"), offset);
         }
         tzMap.close();
+
+        // Add all TZ to countries;
+        for (String cc : isoCountries.keySet()) {
+            if (cc.length() > 2) {
+                continue;
+            }
+            Country C = isoCountries.get(cc);
+            for (String tmzn : C.getAllTimezones().keySet()) {
+                Double utc = C.getAllTimezones().get(tmzn);
+                addTimezone(tmzn, cc);
+                addUTCOffset(utc, cc);
+            }
+        }
+    }
+
+    /**
+     * Build out a global map of TZ to CC to find which countries are in a particular TZ quickly
+     * 
+     * @param tz
+     * @param cc
+     */
+    private void addTimezone(String tz, String cc) {
+        Set<String> ccset = tz2cc.get(tz);
+        if (ccset == null) {
+            ccset = new HashSet<>();
+            tz2cc.put(tz, ccset);
+        }
+        ccset.add(cc);
+    }
+
+    private static final int ONE_HR = 3600; /*seconds*/
+
+    /**
+     * Build out a global map of UTC offset to CC to find which countries are in a particular TZ+UTC offset quickly
+     * 
+     * 
+     * @param utc
+     *            query in hours (-12.0 to 12.0) or seconds (-43,200 to 43,200) in the respective 30 or 15 minute
+     *            increments.
+     * @param cc
+     *            country
+     */
+    private void addUTCOffset(Double utc, String cc) {
+        Set<String> ccset = utc2cc.get(utc);
+        if (ccset == null) {
+            ccset = new HashSet<>();
+            utc2cc.put(utc, ccset);
+
+            /* if offset is is less than 12
+             * then assume it is hours;  Otherwise add the value in seconds as well.
+             */
+            if (Math.abs(utc) <= 12.0) {
+                utc2cc.put(utc * ONE_HR, ccset);
+            }
+        }
+        ccset.add(cc);
+    }
+
+    private Map<String, Set<String>> tz2cc = new HashMap<>();
+    private Map<Double, Set<String>> utc2cc = new HashMap<>();
+
+    /**
+     * List all countries in a particular TZ
+     * 
+     * @param tz
+     * @return
+     */
+    public Collection<String> countriesInTimezone(String tz) {
+        return tz2cc.get(tz.toLowerCase());
+    }
+
+    /**
+     * List all countries in a particular UTC offset; These are usuually -12.0 to 12.0 every 0.5 hrs.
+     * 
+     * @param utc
+     * @return
+     */
+    public Collection<String> countriesInUTCOffset(double utc) {
+        return utc2cc.get(utc);
     }
 
     public static final boolean isValue(final String s) {
@@ -269,9 +353,11 @@ public class GeonamesUtility {
      * where NNNN is the population threshold.
      * </pre>
      * 
-     * @param f geonames.org cities file
+     * @param f
+     *            geonames.org cities file
      * @return list of xponents Place obj
-     * @throws IOException if given file does not exist or is unreadable.
+     * @throws IOException
+     *             if given file does not exist or is unreadable.
      */
     public static List<Place> loadMajorCities(File f) throws IOException {
         java.io.Reader citiesIO = FileUtility.getInputStream(f, "UTF-8");
@@ -753,5 +839,273 @@ public class GeonamesUtility {
 
     public static boolean isLand(String fc) {
         return "L".equalsIgnoreCase(fc);
+    }
+
+    /*
+     * 
+     * 
+     *  Language Support
+     * 
+     * 
+     */
+
+    /**
+     * Given key LangID, list all countries that speak that language.
+     * langID's are locales and reduced primary language without locale.
+     * 
+     * MAP: lang_id | locale_id ===&gt; set( cc1, cc2, cc3,...)
+     * KEYS: lowercase, ie. 'fr' or 'fr-fr'
+     */
+    private final HashMap<String, Set<String>> languageInCountries = new HashMap<>();
+    //private final HashMap<String, Set<String>> primaryLanguageInCountries = new HashMap<>();
+
+    /**
+     * Given Country code (ISO2) list all language locales and primary languages spoken there.
+     * E.g., If 'en-AU' is spoken in Sydney Australia, then they at least speak some form of English ('en')
+     * as well as the local australian dialect.
+     * 
+     * MAP: cc ===&gt; set( l1, l2, l3...)
+     * KEYS: uppercase
+     */
+    //private final HashMap<String, Set<String>> countrySpeaks = new HashMap<>();
+    //private final HashMap<String, String> countryPrimarilySpeaks = new HashMap<>();
+
+    public final HashSet<String> unknownLanguages = new HashSet<>();
+
+    /**
+     * Is language spoken in country ID'd by cc?
+     * See TextUtils for list of langauges provided by Library of Congress.
+     * 
+     * @param lang
+     *            mixed case langID or langID+Locale.
+     * @param cc
+     *            UPPERCASE country code.
+     * @return false if language is not known or not spoken in that country.
+     * 
+     */
+    public boolean countrySpeaks(String lang, String cc) {
+        if (lang == null) {
+            return false;
+        }
+        Country C = isoCountries.get(cc);
+        if (C != null) {
+            return C.isSpoken(lang);
+        }
+        return false;
+    }
+
+    /**
+     * If lang is primary lang.
+     * 
+     * @param lang
+     * @param cc
+     * @return
+     */
+    public boolean isPrimaryLanguage(String lang, String cc) {
+        if (lang == null) {
+            return false;
+        }
+        Country C = isoCountries.get(cc);
+        if (C != null) {
+            return C.isPrimaryLanguage(lang);
+        }
+        return false;
+    }
+
+    /**
+     * When lang ID will do. see primaryLanguage() if Language object is desired.
+     * 
+     * @param cc
+     * @return
+     */
+    public String primaryLangID(String cc) {
+        Country C = isoCountries.get(cc);
+        if (C == null) {
+            return null;
+        }
+
+        return C.getPrimaryLanguage();
+    }
+
+    /**
+     * Primary language for a given country. By our convention, this will be the major language family, not the locale.
+     * E.g.,
+     * primary language of Australia? 'en', not 'en_AU'; The hashmap records the first entry only which is language.
+     * 
+     * @param cc
+     * @return
+     */
+    public Language primaryLanguage(String cc) {
+        Country C = isoCountries.get(cc);
+        if (C == null) {
+            return null;
+        }
+
+        String lid = C.getPrimaryLanguage();
+        if (lid == null) {
+            return null;
+        }
+        Language L = TextUtils.getLanguage(lid);
+        if (L != null) {
+            return L;
+        }
+        return new Language(lid, lid, lid); // What language?
+    }
+
+    /**
+     * Examples:
+     * 
+     * what countries speak french (fr)?
+     * what countries speak Rwandan French? (fr-RW)?
+     * 
+     * @param lang
+     * @return list of country codes speaking lang
+     */
+    public Collection<String> countriesSpeaking(String lang) {
+        if (lang == null) {
+            return null;
+        }
+        Set<String> set = languageInCountries.get(lang.toLowerCase());
+        return set;
+    }
+
+    /**
+     * 
+     * @param cc
+     *            UPPERCASE country code.
+     * @return
+     */
+    public Collection<String> languagesInCountry(String cc) {
+        if (cc == null) {
+            return null;
+        }
+
+        Country C = isoCountries.get(cc);
+        if (C != null) {
+            return C.getLanguages();
+        }
+        return null;
+    }
+
+    /**
+     * Parse metadata from geonames.org (file in CLASSPATH @ /geonames.org/countryInfo.txt)
+     * and populate existing Country objects with language metadata.
+     * By the time you call this method Countries have names, codes, regions, aliases, timezones.
+     * 
+     * @throws IOException
+     */
+    public void loadCountryLanguages() throws IOException {
+        URL f = GeonamesUtility.class.getResource("/geonames.org/countryInfo.txt");
+        if (f == null) {
+            throw new IOException("Did not find Language metadata for geonames countryInfo.txt");
+        }
+        java.io.Reader metaIO;
+        try {
+            metaIO = FileUtility.getInputStream(new File(f.toURI()), "UTF-8");
+        } catch (Exception err) {
+            throw new IOException("Stream failure with geonames file.", err);
+        }
+        // 0-9
+        // #ISO ISO3    ISO-Numeric fips    Country Capital Area(in sq km)  Population  Continent   tld
+        // 10-18
+        // CurrencyCode    CurrencyName    Phone   Postal Code Format  Postal Code Regex   Languages   geonameid   neighbours  EquivalentFipsCode
+
+        int lineCount = 0;
+
+        try (BufferedReader reader = new BufferedReader(metaIO)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+                ++lineCount;
+
+                if (line.trim().startsWith("#")) {
+                    continue;
+                }
+                String[] cells = line.split("\t");
+                if (cells.length < 16) {
+                    continue;
+                }
+
+                String langs = cells[15];
+                if (isBlank(langs) || isBlank(cells[0])) {
+                    continue;
+                }
+                String cc = cells[0].toUpperCase().trim();
+                String[] langIDs = langs.toLowerCase().trim().split(",");
+
+                // log.info("Country is {}", cc);
+
+                for (String l : langIDs) {
+                    String lid = getLang(l);
+
+                    // Push primary language family as first.
+                    // e.g. 'es-ES' is primary locale for Spain, but we want to say primary language for Spain is Spanish('es').
+                    // For simplicity sake.
+                    // TODO: If we want also the primary Locale, then we would track primary locales separately.
+                    if (!l.equals(lid)) {
+
+                        // Adding lang-ID as first and primary for a given country.
+                        addLang(lid, cc);
+                    }
+                    addLang(l, cc);
+                }
+            }
+
+            for (String cc : isoCountries.keySet()) {
+                if (cc.length() > 2) {
+                    continue;
+                }
+                Country C = isoCountries.get(cc);
+                for (String lang : C.getLanguages()) {
+                    Set<String> ccset = languageInCountries.get(lang);
+                    if (ccset == null) {
+                        ccset = new HashSet<>();
+                        languageInCountries.put(lang, ccset);
+                    }
+                    ccset.add(cc);
+                }
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param langOrLocale
+     * @param cc
+     */
+    private void addLang(String langOrLocale, String cc) {
+
+        String lid = langOrLocale;
+        if (lid.length() == 3) {
+            Language L = TextUtils.getLanguage(langOrLocale);
+
+            if (L == null) {
+                unknownLanguages.add(lid);
+            }
+        }
+
+        /**
+         * Special case: First language / country pairs seen, denote those as PRIMARY language.
+         * As geonames.org lists languages spoken by order of population of speakers.
+         * 
+         */
+        Country C = this.isoCountries.get(cc);
+        if (C != null) {
+            C.addLanguage(lid);
+        }
+    }
+
+    private static final Pattern langidSplit = Pattern.compile("[-_]");
+
+    /**
+     * Parse lang ID from Locale.
+     * Internal method; Ensure argument is not null;
+     * 
+     * @param langid
+     * @return language ID.
+     */
+    private static String getLang(final String langid) {
+        String l = langidSplit.split(langid)[0];
+        return l;
     }
 }

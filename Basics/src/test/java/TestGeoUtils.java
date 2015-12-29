@@ -38,6 +38,12 @@ public class TestGeoUtils {
         if (!C.containsUTCOffset(9.0)) {
             fail("Japan contains GMT+0900");
         }
+
+        print("" + util.countriesInTimezone("Mountain")); // TODO: discover full list of TZ e.g., EDT, BST, CST, MT "Mountain Time", etc.
+        print("" + util.countriesInUTCOffset(-7.0)); // Same or similar to Mountain TZ, GMT-0500 but -0200 more.
+
+        print("" + util.countriesInUTCOffset(9.0)); // 
+        print("" + util.countriesInUTCOffset(9.0 * 3600)); // SAME as above.
     }
 
     @Test
@@ -60,12 +66,12 @@ public class TestGeoUtils {
 
         Map<String, Integer> popGrid = null;
         // RECOMMENDED: Use geohash resolution 5.
-        popGrid = GeonamesUtility.mapPopulationByLocation(cities); 
+        popGrid = GeonamesUtility.mapPopulationByLocation(cities);
         print("Population =" + popGrid.size());
         // This makes more sense for a regional accumulation of population geohash prefix = 4 or 3.
         popGrid = GeonamesUtility.mapPopulationByLocation(cities, 4);
         print("Population =" + popGrid.size());
-        print("Grid = " +popGrid);
+        print("Grid = " + popGrid);
     }
 
     private void print(String m) {

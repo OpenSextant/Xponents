@@ -41,6 +41,8 @@
 
 package org.opensextant.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -67,12 +69,17 @@ public class Country extends Place {
     private final Map<String, Double> timezones = new HashMap<>();
     private final Map<String, Double> timezonesVariants = new HashMap<>();
 
+    private final ArrayList<String> languages = new ArrayList<>();
+    private final Set<String> languagesSet = new HashSet<>();
+
     /**
      * A country abstraction that uses ISO 2-alpha as an ID, and any name given
      * as the Place.name
      *
-     * @param iso2  ISO 2-alpha code for this country
-     * @param nm    Country name
+     * @param iso2
+     *            ISO 2-alpha code for this country
+     * @param nm
+     *            Country name
      */
     public Country(String iso2, String nm) {
         super(iso2, nm);
@@ -80,8 +87,11 @@ public class Country extends Place {
         this.country_id = this.key;
     }
 
-    /** Country is also known as some list of aliases
-     * @param nm  Country name/alias
+    /**
+     * Country is also known as some list of aliases
+     * 
+     * @param nm
+     *            Country name/alias
      */
     public void addAlias(String nm) {
         aliases.add(nm);
@@ -89,17 +99,20 @@ public class Country extends Place {
 
     /**
      *
-     * @return  set of aliases
+     * @return set of aliases
      */
     public Set<String> getAliases() {
         return aliases;
     }
 
     /**
-     * Add a timezone and its offset.  TZ labels vary, so variant labels are tracked as well.
+     * Add a timezone and its offset. TZ labels vary, so variant labels are tracked as well.
      * uppercase, lowercase
-     * @param label TZ label
-     * @param utcOffset  floating point UTC offset in decimal hours.  e.g., 7.5, -3.0 = (GMT-0300), etc.
+     * 
+     * @param label
+     *            TZ label
+     * @param utcOffset
+     *            floating point UTC offset in decimal hours. e.g., 7.5, -3.0 = (GMT-0300), etc.
      */
     public void addTimezone(String label, double utcOffset) {
         timezones.put(label, utcOffset);
@@ -112,8 +125,9 @@ public class Country extends Place {
 
     /**
      * 
-     * @param tz   any reasonable TZ label. Case-insensitive.
-     * @return  true if Country has this TZ
+     * @param tz
+     *            any reasonable TZ label. Case-insensitive.
+     * @return true if Country has this TZ
      */
     public boolean containsTimezone(String tz) {
         if (tz == null) {
@@ -123,11 +137,12 @@ public class Country extends Place {
     }
 
     /**
-     * Test if this Country contains the UTC offset.  Make sure you never
+     * Test if this Country contains the UTC offset. Make sure you never
      * pass a default of 0 (GMT+0) in, unless you really mean GMT0.
      * No validation on your offset parameter is done.
      * 
-     * @param offset  UTC offset in hours.  Valid values are -12.0 to 12.0
+     * @param offset
+     *            UTC offset in hours. Valid values are -12.0 to 12.0
      * @return true if this Country contains the UTC offset.
      */
     public boolean containsUTCOffset(double offset) {
@@ -141,8 +156,11 @@ public class Country extends Place {
         return false;
     }
 
-    /** Country is also known as some list of aliases
-     * @param regionid  Region identifier or name.
+    /**
+     * Country is also known as some list of aliases
+     * 
+     * @param regionid
+     *            Region identifier or name.
      */
     public void addRegion(String regionid) {
         regions.add(regionid);
@@ -150,7 +168,7 @@ public class Country extends Place {
 
     /**
      *
-     * @return  set of regions in which this country belongs.
+     * @return set of regions in which this country belongs.
      */
     public Set<String> getRegions() {
         return regions;
@@ -175,5 +193,77 @@ public class Country extends Place {
         } else {
             return String.format("%s territory of %s", getName(), CC_ISO3);
         }
+    }
+
+    /**
+     * When adding languages, please add the primary language FIRST.
+     * Languages may be langID or langID+locale. TODO: add separate attributes for locales.
+     * 
+     * @param langid
+     *            language
+     */
+    public void addLanguage(String langid) {
+        if (!languagesSet.contains(langid)) {
+            languages.add(langid);
+            languagesSet.add(langid);
+        }
+    }
+
+    /**
+     * 
+     * @param langid
+     *            language ID
+     * @return if language (identified by ID l) is spoken
+     */
+    public boolean isSpoken(String langid) {
+        if (langid == null) {
+            return false;
+        }
+        return languagesSet.contains(langid.toLowerCase());
+    }
+
+    /**
+     * Certain island nations, areas, and territories that have ISO country codes may not have a language.
+     * 
+     * @return first language in languages list (per addLanguage()); null if no languages present.
+     */
+    public String getPrimaryLanguage() {
+        if (languages.size() > 0) {
+            return languages.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param langid
+     * @return true if language given matches primary language
+     */
+    public boolean isPrimaryLanguage(String langid) {
+
+        if (langid != null && languages.size() > 0) {
+            return langid.equalsIgnoreCase(languages.get(0));
+        }
+        return false;
+    }
+
+    /**
+     * 
+     * @return collection of language IDs -- some may be unknown langIDs.
+     */
+    public Collection<String> getLanguages() {
+        return languages;
+    }
+
+    /**
+     * A full list/map of all timezone labels mapped to UTC offsets present in this country.
+     * 
+     * Reference: geonames.org timezone table has timezones.txt; See our GeonamesUtility for how
+     * data is populated here on Country object.
+     * 
+     * @return map of TZ labels to UTC offsets.
+     */
+    public Map<String, Double> getAllTimezones() {
+        return timezonesVariants;
     }
 }
