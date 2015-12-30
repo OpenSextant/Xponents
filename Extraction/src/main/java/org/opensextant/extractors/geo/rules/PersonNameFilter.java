@@ -122,11 +122,28 @@ public class PersonNameFilter extends GeocodeRule {
                     pc.addRule("ResolvedPerson");
                 }
             }
+
             for (TaxonMatch name : orgs) {
                 if (pc.isSameMatch(name)) {
+                    // Org is 'name'
+                    //  where  name is a city 
                     pc.setFilteredOut(true);
                     resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule("ResolvedOrg");
+                } else {
+                    if (pc.isWithin(name)) {
+                        // Special conditions:
+                        //    City name in the name of a Building or Landmark is worth saving as a location.
+                        // But short one-word names appearing in organization names, may be false positives
+                        //
+                        if (!pc.getTextnorm().contains(" ")) {
+                            //  Org is 'text name text'
+                            //  where  name is a city, and 'name' is a single word.
+                            pc.setFilteredOut(true);
+                            resolvedOrgs.put(pc.getTextnorm(), name.getText());
+                            pc.addRule("NameInOrg");
+                        }
+                    }
                 }
             }
         }
