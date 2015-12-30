@@ -16,7 +16,7 @@ echo "Populate nationalities taxonomy in XTax"
 python  ./script/nationalities.py  --taxonomy ./conf/filters/nationalities.csv --solr http://$SERVER/solr/taxcat --starting-id 0
 popd
 
-ant -f build-gazetteer.xml _index 
+ant index-gazetteer
 
 
 # Finally add adhoc entries from JSON formatted files.
