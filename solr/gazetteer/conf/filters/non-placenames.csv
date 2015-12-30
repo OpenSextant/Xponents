@@ -111,6 +111,7 @@ black,color
 blue,color
 green,color
 red,color
+rouge,color
 white,color
 yellow,color
 brown,color
@@ -226,6 +227,7 @@ bang,noun
 cult,noun
 joy,noun
 pact,noun
+yule,noun
 fresh water,noun
 nuke,noun
 puke,noun
@@ -302,6 +304,7 @@ co-operative,noun
 cooperative,noun
 ops,noun
 battle,noun
+battles,noun
 tank,noun
 cache,noun
 map,noun
@@ -369,6 +372,7 @@ dollar,noun
 cash,noun
 money,noun
 gold,noun
+yuan,noun
 gold star,noun
 medal,noun
 memorial,noun
@@ -582,6 +586,7 @@ mayor,person.label
 attorney,person.label
 attorney general,person.label
 ag,person.label
+quartermaster,person.label
 barrister,person.label
 lawyer,person.label
 register,person.label
@@ -779,6 +784,7 @@ reps,phrase
 state run,phrase
 reg,phrase
 amen,phrase
+nota bene,phrase
 as self,phrase
 a bad,phrase
 snafu,phrase
@@ -876,6 +882,8 @@ pluto,place.astro
 aquarius,place.astro
 palace,place.civil
 castle,place.civil
+plaza,place.civil
+city hall,place.civil
 depot,place.civil
 basin,place.civil
 hotel,place.civil
@@ -898,6 +906,7 @@ fortress,place.civil
 passage,place.civil
 tunnel,place.civil
 airport,place.civil
+shipyard,place.civil
 quad,place.civil
 square,place.civil
 manor,place.civil
@@ -1139,7 +1148,9 @@ autumn,season
 fall,season
 spring,season
 summer,season
+midsummer,season
 winter,season
+midwinter,season
 select,stopword.web
 printer,stopword.web
 explorer,stopword.web
@@ -1408,6 +1419,7 @@ knew,verb
 cope,verb
 hail,verb
 ponder,verb
+retreat,verb
 harden,verb
 see,verb
 sell,verb
@@ -1428,6 +1440,7 @@ heard,verb
 mark,verb
 skip,verb
 orient,verb
+rid,verb
 pop,verb
 pan,verb
 held,verb
@@ -1472,6 +1485,7 @@ martini,well-known.concept
 coca,well-known.concept
 cola,well-known.concept
 coca cola,well-known.concept
+disney,well-known.concept
 sears,well-known.org
 reuters,well-known.org
 coke,well-known.org
