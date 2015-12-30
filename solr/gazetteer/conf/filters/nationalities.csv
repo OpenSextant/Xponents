@@ -1,0 +1,553 @@
+#Nationality listing from OpenSextant v1.1,ISO3
+abkhaz,TUR
+abkhazian,TUR
+abkhazians,TUR
+afghan,AFG
+afghani,AFG
+afghans,AFG
+albanian,ALB
+albanians,ALB
+algerian,DZA
+algerians,DZA
+#american,USA
+american samoan,ASM
+american samoans,ASM
+#americans,USA
+andorran,AND
+andorrans,AND
+angolan,AGO
+angolans,AGO
+anguillan,AIA
+anguillans,AIA
+antiguan,ATG
+antiguans,ATG
+argentine,ARG
+argentinean,ARG
+argentineans,ARG
+argentines,ARG
+argentinian,ARG
+argentinians,ARG
+armenian,ARM
+armenians,ARM
+aruban,ABW
+arubans,ABW
+aussie,AUS
+australian,AUS
+australians,AUS
+austrian,AUT
+austrians,AUT
+azerbaijani,AZE
+azerbaijanis,AZE
+azeri,
+azeris,
+bahamian,BHS
+bahamians,BHS
+bahraini,BHR
+bahrainis,BHR
+bajuns,
+bamar,
+bangladeshi,BGD
+bangladeshis,BGD
+barbadian,BRB
+barbadians,BRB
+barbudan,ATG
+barbudans,ATG
+basotho,
+batswana,BWA
+belarusian,BLR
+belarusians,BLR
+belgian,BEL
+belgians,BEL
+belizean,BLZ
+belizeans,BLZ
+beninese,BEN
+beninois,BEN
+bermudan,BMU
+bermudans,BMU
+bermudian,BMU
+bermudians,BMU
+bhutanese,BTN
+bolivian,BOL
+bolivians,BOL
+boricuas,
+bosniak,BIH
+bosniaks,BIH
+bosnian,BIH
+bosnians,BIH
+botswanan,BWA
+botswanans,BWA
+brazilian,BRA
+brazilians,BRA
+british,GBR
+british virgin island,VGB
+british virgin islanders,VGB
+britons,GBR
+britons,GBR
+bruneian,BRN
+bruneians,BRN
+bulgarian,BGR
+bulgarians,BGR
+burkinabe,BFA
+burmese,MMR
+burundian,BDI
+burundians,BDI
+cambodian,KHM
+cambodians,KHM
+cameroonian,CMR
+cameroonians,CMR
+canadian,CAN
+canadians,CAN
+cape verdean,CPV
+cape verdeans,CPV
+cape verdian,CPV
+cayman,CYM
+caymanian,CYM
+caymanians,CYM
+central african,CAF
+central africans,CAF
+chadian,TCD
+chadians,TCD
+chilean,CHL
+chileans,CHL
+chinese,CHN
+#christmas island,
+christmas islanders,CXR
+citizen of the holy see,
+cocos island,
+cocos islanders,
+colombian,COL
+colombians,COL
+comoran,COM
+comorian,COM
+comorians,COM
+congo,COD;COG
+congolese,COD;COG
+cook island,
+cook islanders,
+costa rican,CRI
+costa ricans,CRI
+croat,HRV
+croatian,HRV
+croatians,HRV
+croats,HRV
+cuban,CUB
+cubans,CUB
+cypriot,CYP
+cypriots,CYP
+czech,CZE
+czechs,CZE
+dane,DNK
+danes,DNK
+danish,DNK
+djibouti,DJI
+djiboutian,DJI
+djiboutians,DJI
+dominican,DOM;DMA
+dominicans,DOM;DMA
+dutch,NLD
+dutch antillean,ANT
+dutch antilleans,ANT
+east timorese,TLS
+ecuadorean,ECU
+ecuadorian,ECU
+ecuadorians,ECU
+egyptian,EGY
+egyptians,EGY
+emirati,ARE
+emiratis,ARE
+emirian,ARE
+emirians,ARE
+#english,
+equatoguinean,GNQ
+equatoguineans,GNQ
+equatorial guinean,GNQ
+equatorial guineans,GNQ
+eritrean,ERI
+eritreans,ERI
+estonian,EST
+estonians,EST
+ethiopian,ETH
+ethiopians,ETH
+falkland island,FLK
+falkland islanders,FLK
+faroese,FRO
+fijian,FJI
+fijians,FJI
+filipina,PHL
+filipino,PHL
+filipinos,PHL
+finn,FIN
+finnish,FIN
+finns,FIN
+french,FRA
+french guianese,GUF
+french polynesian,PYF
+french polynesians,PYF
+frenchman,FRA
+frenchwoman,FRA
+futunan,WLF
+futunans,WLF
+gazan,GAZ
+gabonese,GAB
+gambian,GMB
+gambians,GMB
+georgian,GEO
+georgians,GEO
+german,DEU
+germans,DEU
+ghanaian,GHA
+ghanaians,GHA
+gibraltar,GIB
+gibraltarians,GIB
+grecian,GRC
+grecians,GRC
+greek,GRC
+greeks,GRC
+greenlanders,GRL
+greenlandic,GRL
+grenadan,GRD
+grenadian,GRD
+grenadians,GRD
+guadeloupe,GLP
+guadeloupians,GLP
+guamanian,GUM
+guamanians,GUM
+guatemalan,GTM
+guatemalans,GTM
+guinea-bissauan,GNB
+guinean,GIN
+guineans,GIN
+guyanese,GUY
+haitian,HTI
+haitians,HTI
+hellenes,SHN
+hellenic,SHN
+herzegovinian,BIH
+herzegovinians,BIH
+honduran,HND
+hondurans,HND
+#hong kong,
+hongkongers,HKG
+hongkongese,HKG
+hungarian,HUN
+hungarians,HUN
+icelander,ISL
+icelanders,ISL
+icelandic,ISL
+i-kiribati,KIR
+indo,IND
+indian,IND
+indians,IND
+indonesian,IDN
+indonesians,IDN
+iranian,IRN
+iranians,IRN
+baghdadi,IRQ
+iraqi,IRQ
+iraqis,IRQ
+irish,IRL
+irishman,IRL
+israeli,ISR
+israelis,ISR
+italian,ITA
+italians,ITA
+#italic,
+#italics,
+ivorian,CIV
+ivorians,CIV
+jamaican,JAM
+jamaicans,JAM
+japanese,JPN
+jordanian,JOR
+jordanians,JOR
+kazakh,KAZ
+kazakhs,KAZ
+kazakhstani,KAZ
+kazakhstanis,KAZ
+kenyan,KEN
+kenyans,KEN
+kirghiz,KGZ
+kirgiz,KGZ
+kiribati,KIR
+kittian and nevisian,KNA
+kittitian,KNA
+kittitians,KNA
+#kiwi,
+kosovar,XKX
+kosovars,XKX
+kuwaiti,KWT
+kuwaitis,KWT
+kyrgyz,KGZ
+kyrgyzstani,KGZ
+kyrgyzstanis,KGZ
+lao,LAO
+#laos,
+laotian,LAO
+laotians,LAO
+latvian,LVA
+latvians,LVA
+lebanese,LBN
+letts,
+liberian,LBR
+liberians,LBR
+libyan,LBY
+libyans,LBY
+liechtenstein,LIE
+liechtensteiner,LIE
+liechtensteiners,LIE
+lithuanian,LTU
+lithuanians,LTU
+luxembourger,LUX
+luxembourgers,LUX
+macanese,MAC
+macedonian,MKD
+macedonians,MKD
+magyar,
+magyars,
+mahorais,
+mahoran,
+malagasy,
+malawian,MWI
+malawians,MWI
+malaysian,MYS
+malaysians,MYS
+maldivan,MDV
+maldivian,MDV
+maldivians,MDV
+malian,MLI
+malians,MLI
+maltese,MLT
+manx,
+marshallese,MHL
+martinican,MTQ
+martiniquais,MTQ
+mauritanian,MRT
+mauritanians,MRT
+mauritian,MUS
+mauritians,MUS
+mexican,MEX
+mexicans,MEX
+micronesian,FSM
+micronesians,FSM
+miquelonnais,SPM
+moldovan,MDA
+moldovans,MDA
+monacan,MCO
+monacans,MCO
+monegasque,
+monégasque,
+monégasques,
+mongolian,MNG
+mongolians,MNG
+mongols,MNG
+montenegrin,MNE
+montenegrins,MNE
+montserratian,MSR
+montserratians,MSR
+moroccan,MAR
+moroccans,MAR
+mosotho,
+motswana,
+motswana,
+mozambican,MOZ
+mozambicans,MOZ
+myanmarese,MMR
+namibian,NAM
+namibians,NAM
+nauruan,NRU
+nauruans,NRU
+nepalese,NPL
+nepali,NPL
+netherlander,NLD
+nevisian,KNA
+nevisians,KNA
+new caledonian,NCL
+new caledonians,NCL
+new zealander,NZL
+new zealanders,NZL
+nicaraguan,NIC
+nicaraguans,NIC
+nigerian,NGA
+nigerians,NGA
+nigerien,NGA
+nigeriens,NGA
+niuean,NIU
+niueans,NIU
+ni-vanuatu,VUT
+north korean,PRK
+north koreans,PRK
+northern irish,IRL
+northern marianan,MNP
+northern marianans,MNP
+norwegian,NOR
+norwegians,NOR
+omani,OMN
+omanis,OMN
+pakistani,PAK
+pakistanis,PAK
+palauan,PLW
+palauans,PLW
+palestinian,PSE
+palestinians,PSE
+panamanian,PAN
+panamanians,PAN
+papua new guinean,PNG
+papua new guineans,PNG
+papuan,PNG
+papuans,PNG
+paraguayan,PRY
+paraguayans,PRY
+peruvian,PER
+peruvians,PER
+philippine,PHL
+#pitcairn island,PCN
+pitcairn islanders,PCN
+#pole,
+#poles,
+polish,POL
+portuguese,PRT
+puerto rican,PRI
+puerto ricans,PRI
+qatari,QAT
+qataris,QAT
+réunionese,REU
+réunionnais,REU
+romanian,ROU
+romanians,ROU
+russian,RUS
+russians,RUS
+rwandan,RWA
+rwandans,RWA
+sahraouian,ESH
+sahraouis,ESH
+sahraw,ESH
+sahrawian,ESH
+sahrawis,ESH
+saint lucian,LCA
+saint-pierrais,SPM
+salvadoran,SLV
+salvadorans,SLV
+sammarinese,
+samoan,WSM
+samoans,WSM
+san marinese,SMR
+sao tomean,STP
+são toméan,STP
+são toméans,STP
+saudi,SAU
+saudi arabian,SAU
+saudi arabians,SAU
+saudis,SAU
+scotch,GBR
+scots,GBR
+scottish,GBR
+senegalese,SEN
+serbian,SRB
+serbians,SRB
+serbs,SRB
+seychellois,SYC
+sino,CHN
+sierra leonean,SLE
+sierra leoneans,SLE
+#singapore,SGP
+singaporean,SGP
+singaporeans,SGP
+slovak,SVK
+slovaks,SVK
+slovene,SVN
+slovenes,SVN
+slovenian,SVN
+slovenians,SVN
+#solomon island,
+solomon islander,SLB
+solomon islanders,SLB
+somali,SOM
+somalis,SOM
+soviet,RUS
+south african,ZAF
+south africans,ZAF
+south korean,KOR
+south koreans,KOR
+south ossetian,GEO
+south ossetians,GEO
+southern irish,IRL
+spaniard,ESP
+spaniards,ESP
+spanish,ESP
+sri lankan,LKA
+sri lankans,LKA
+st. helenian,SHN
+st. helenians,SHN
+st. lucian,LCA
+st. lucians,LCA
+st. vincentian,VCT
+st. vincentians,VCT
+sudanese,SUR
+surinamer,SUR
+surinamers,SUR
+surinamese,SUR
+swazi,SWZ
+swazis,SWZ
+swede,SWE
+swedes,SWE
+swedish,SWE
+swiss,CHE
+syrian,SYR
+syrians,SYR
+tadzhik,
+tahitians,
+taiwanese,TWN
+tajik,TJK
+tajikistani,TJK
+tajikistanis,TJK
+tajiks,TJK
+tanzanian,TZA
+tanzanians,TZA
+thai,THA
+timorese,TLS
+tobagonian,TTO
+tobagonians,TTO
+togolese,TGO
+tongan,TON
+tongans,TON
+trinidadian,TTO
+trinidadians,TTO
+tunisian,TUN
+tunisians,TUN
+turk,TUR
+turkish,TUR
+turkmen,TUR
+turkmens,TKM
+turks,TKM
+#turks and caicos islanders,
+tuvaluan,TUV
+tuvaluans,TUV
+ugandan,UGA
+ugandans,UGA
+ukrainian,UKR
+ukrainians,URY
+uruguayan,URY
+uruguayans,URY
+#u.s.,
+uzbek,UZB
+uzbekistani,UZB
+uzbekistanis,UZB
+uzbeks,UZB
+vanuatuan,VUT
+venezuelan,VEN
+venezuelans,VEN
+vietnamese,VNM
+vincentian,VCT
+vincentians,VCT
+#virgin island,
+virgin islanders,VIR
+wallisian,WLF
+wallisians,WLF
+welsh,BGR
+yemeni,YEM
+yemenis,YEM
+yemenite,YEM
+zambian,ZMB
+zambians,ZMB
+zimbabwean,ZWE
+zimbabweans,ZWE

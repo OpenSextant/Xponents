@@ -216,6 +216,9 @@ public class PlaceGeocoder extends GazetteerMatcher
      * ProvinceAssociationRule  -- associate places with Province inferred by coordinates.
      * MajorPlaceRule -- identify major places by feature type, class or location population.
      * LocationChooserRule    -- final rule that assigns confidence and chooses best location(s)
+     * 
+     * Your Rule Here -- use addRule( GeocodeRule ) to add a rule on the stack.  It will be evaluated just before the final LocationChooserRule.
+     * your rule should improve Place scores on PlaceCandidates and name the rules that fire.
      * </pre>
      *
      * @throws ConfigException
@@ -281,6 +284,7 @@ public class PlaceGeocoder extends GazetteerMatcher
                  * script for populating a catalog.
                  */
                 personMatcher.addCatalogFilter("JRC");
+                personMatcher.addCatalogFilter("nationality");
 
             } catch (IOException err) {
                 throw new ConfigException("XTax resource not available.");
@@ -375,6 +379,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         this.relevantCountries.clear();
         this.relevantProvinces.clear();
         this.relevantLocations.clear();
+        this.nationalities.clear();
 
         personNameRule.reset();
         countryRule.reset();
@@ -399,6 +404,11 @@ public class PlaceGeocoder extends GazetteerMatcher
     private Map<String, Place> relevantLocations = new HashMap<>();
 
     /**
+     * Mentions of nationalities or cultures that indicate specific countries.
+     */
+    private Map<String, String> nationalities = new HashMap<>();
+
+    /**
      * If all you are doing is geotagging (just identifying places), then enableGeocoding = false;
      * Otherwise the default here is geocoding (identify and geolocate) places.
      * This is not a public API attribute.
@@ -414,7 +424,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      * Extractor.extract() calls first XCoord to get coordinates, then
      * PlacenameMatcher In the end you have all geo entities ranked and scored.
      * 
-     * LangID can be set on TextInput input.langid.  Only lowercase langIDs please:
+     * LangID can be set on TextInput input.langid. Only lowercase langIDs please:
      * 'zh', 'ar', tag text for those languages in particular. Null and Other values
      * are treated as generic as of v2.8.
      * 
@@ -431,7 +441,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      * </pre>
      *
      * @param input
-     *            input buffer, doc ID, and optional langID. 
+     *            input buffer, doc ID, and optional langID.
      * @return TextMatch instances which are all PlaceCandidates.
      * @throws ExtractionException
      *             on err
@@ -455,7 +465,7 @@ public class PlaceGeocoder extends GazetteerMatcher
             candidates = this.tagArabicText(input.buffer, input.id, tagOnly);
         } else {
             // Default - unknown language.
-            log.info("Unknown Language {}. Treating as Generic.", input.langid);
+            log.debug("Default Language {}. Treating as Generic.", input.langid);
             candidates = tagText(input.buffer, input.id, tagOnly);
         }
 
@@ -545,6 +555,7 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         List<TaxonMatch> persons = new ArrayList<>();
         List<TaxonMatch> orgs = new ArrayList<>();
+
         log.debug("Matched {}", nonPlaces.size());
 
         for (TextMatch tm : nonPlaces) {
@@ -567,16 +578,29 @@ public class PlaceGeocoder extends GazetteerMatcher
                 if (node.startsWith("person.")) {
                     persons.add(tag);
                     break;
-                }
-                if (node.startsWith("org.")) {
+                } else if (node.startsWith("org.")) {
                     if (taxon.isAcronym && !tm.isUpper()) {
                         continue;
                     }
                     orgs.add(tag);
                     break;
+                } else if (node.startsWith("nationality.")) {
+                    persons.add(tag);
+                    // If you matched any nationalities they usually have a tag set of the form:
+                    //    cc+XXX, where XXX is a ISO country code.
+                    // The tag may be absent as some ethnicities may be mixed in and indicate no country.
+                    for (String t : taxon.tagset) {
+                        int x = t.indexOf("cc+");
+                        if (x >= 0) {
+                            String isocode = t.substring(x + 3);
+                            this.countryInScope(isocode);
+                            nationalities.put(tag.getText(), isocode);
+                        }
+                    }
                 }
             }
         }
+
         personNameRule.evaluateNamedEntities(candidates, persons, orgs);
         matches.addAll(persons);
         matches.addAll(orgs);
@@ -677,6 +701,8 @@ public class PlaceGeocoder extends GazetteerMatcher
             // FIPS vs. ISO differences, etc.  Some country codes may not resolve cleanly.
             if (C != null) {
                 counter.country = C;
+            } else {
+                log.error("Encountered null country for {}", cc);
             }
             relevantCountries.put(cc, counter);
         } else {

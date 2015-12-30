@@ -28,6 +28,7 @@ trojan,adjective
 indo,adjective
 baltic,adjective
 oceanic,adjective
+trans,adjective
 civil,adjective
 marine,adjective
 state-run,adjective
@@ -68,6 +69,7 @@ medical,adjective
 congressional,adjective
 english,adjective
 french,adjective
+malay,adjective
 anglo,adjective
 sino,adjective
 serial,adjective
@@ -1479,6 +1481,7 @@ united nations,well-known.org
 nato,well-known.org
 nobel,well-known.org
 toyota,well-known.org
+chevrolet,well-known.org
 gallup,well-known.org
 red cross,well-known.org
 ngo,well-known.org
@@ -1497,4 +1500,5 @@ ringo,well-known.person
 yoda,well-known.person
 ghandi,well-known.person
 gandhi,well-known.person
+dengue,well-known.thing
 shaq,well-known.person
