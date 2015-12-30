@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="OpenSextant-Gazetteer" default="index">
+<project name="OpenSextant-Xponents-Gazetteer" >
 
     <!-- Solr Home and Gazetteer config data sourced here: -->
     <property file="build.properties" />
@@ -16,7 +16,7 @@
         <delete dir="${solr.solr.home}/gazetteer/data/" />
     </target>
 
-    <target name="_index">
+    <target name="index-gazetteer">
         <available property="csvFile.exists" file="${gazetteer.data.file}" />
         <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
         <get
@@ -24,10 +24,10 @@
             dest="build/update-csv.response.xml" />
     </target>
 
-    <target name="index" depends="start-solr-daemon, _index" description="Starts Solr, indexes data, then stops it">
-    </target>
 
 <!--
+    <target name="index" depends="start-solr-daemon, index-gazetteer" description="Starts Solr, indexes data, then stops it">
+    </target>
     <target name="start-solr-daemon" depends="init">
         <parallel>
             <daemons>
