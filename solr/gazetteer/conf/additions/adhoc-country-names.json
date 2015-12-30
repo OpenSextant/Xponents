@@ -133,5 +133,20 @@
         "id_bias": 1,
         "name_type": "A",
         "geo": "35,105"
+      },
+      {
+        "id": 20000216,
+        "place_id": "NGA-716590",
+        "name": "ROK",
+        "feat_class": "A",
+        "feat_code": "PCLI",
+        "FIPS_cc": "KS",
+        "cc": "KR",
+        "ISO3_cc": "KOR",
+        "source": "ADHOC",
+        "name_bias": 0.25,
+        "id_bias": 0.49,
+        "name_type": "A",
+        "geo": "37,127.5"
       }
 ]
