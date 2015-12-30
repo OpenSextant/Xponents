@@ -1,6 +1,9 @@
 
 #2015#
-* Xponents 2.8.5 - december 2015: adding timezone and language metadata; PlaceGeocoder rules and tracing improved.
+* Xponents 2.8.5 - december 2015: 
+ - adding timezone and language metadata; 
+ - PlaceGeocoder: rules and tracing improved.
+ - PlaceGeocoder: Added nationality detection using XTax; inferred countries lightly rank candidates higher.
 * Xponents 2.8.x - november 2015: Long over due refactor
  - Extraction/Geo: PlaceGeocoder now emitting reasonable choice for location of names; Still initial draft. Heavily involved in rules development in Java here.  Evaluation of these features is still very much a personal/internal thing. 
    -- TODO: document rules in plain language
