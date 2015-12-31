@@ -79,21 +79,21 @@ def create_entities(line):
     # done with aliasing.
     #            
     is_valid = len(cc)>0
-    nodes = []
+    taxons = []
     if not is_valid:
-      nodes.append( 'nationality.%s' %(name) )
+      n = 'nationality.%s' %(name) 
+      taxons.append( Nationality(n, name, None, is_valid) )
     else:
       if ';' in cc:
           codes = cc.split(';')
           for c in codes:
-              nodes.append('nationality.%s' %(c))
+            n = 'nationality.%s' %(c) 
+            taxons.append( Nationality(n, name, c, is_valid) )
       else:
-          nodes.append('nationality.%s' %(cc))
+        n = 'nationality.%s' %(cc)
+        taxons.append( Nationality(n, name, cc, is_valid) )
 
-    taxons = []
-    for n in nodes:
-       taxons.append( Nationality(n, name, cc, is_valid) )
-    return taxons 
+    return taxons
 
 
 if __name__ == '__main__':

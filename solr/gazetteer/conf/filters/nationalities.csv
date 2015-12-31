@@ -120,9 +120,8 @@ colombians,COL
 comoran,COM
 comorian,COM
 comorians,COM
-congo,COD;COG
 congolese,COD;COG
-cook island,
+#cook island,
 cook islanders,
 costa rican,CRI
 costa ricans,CRI
@@ -544,7 +543,7 @@ vincentians,VCT
 virgin islanders,VIR
 wallisian,WLF
 wallisians,WLF
-welsh,BGR
+welsh,GBR
 yemeni,YEM
 yemenis,YEM
 yemenite,YEM
