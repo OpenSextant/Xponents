@@ -148,5 +148,52 @@
         "id_bias": 0.49,
         "name_type": "A",
         "geo": "37,127.5"
+      },
+      {
+        "id": 35928546,
+        "place_id": "USGS1779808",
+        "name": "Puerto Rico",
+        "feat_class": "A",
+        "feat_code": "TERR",
+        "FIPS_cc": "RQ",
+        "cc": "PR",
+        "ISO3_cc": "PRI",
+        "adm1": "72",
+        "adm2": "72.0107",
+        "source": "USGS",
+        "name_bias": 0.5,
+        "id_bias": 0.13,
+        "name_type": "N",
+        "geo": "18.2157,-66.41467"
+      },
+      {
+        "id": 28120057,
+        "place_id": "NGA415322",
+        "name": "Kosovo and Metohija",
+        "feat_class": "A",
+        "feat_code": "PCLI",
+        "FIPS_cc": "KV",
+        "cc": "XK",
+        "ISO3_cc": "XKX",
+        "source": "ADHOC",
+        "name_bias": 0.05,
+        "id_bias": 0.49,
+        "name_type": "N",
+        "geo": "42.58333,20.91667"
+      },
+      {
+        "id": 28120058,
+        "place_id": "NGA415322",
+        "name": "Kosovo",
+        "feat_class": "A",
+        "feat_code": "PCLI",
+        "FIPS_cc": "KV",
+        "cc": "XK",
+        "ISO3_cc": "XKX",
+        "source": "ADHOC",
+        "name_bias": 0.05,
+        "id_bias": 0.49,
+        "name_type": "N",
+        "geo": "42.58333,20.91667"
       }
 ]

@@ -490,6 +490,24 @@ public class GeonamesUtility {
             throw new IOException("No data found in country name map");
         }
 
+        // Less standard country/territory codes:
+        //
+        // Gaza Strip, GAZ is occassionally used.
+        isoCountries.put("GAZ", isoCountries.get("PS"));
+        // East Timor-Leste; 
+        isoCountries.put("TMP", isoCountries.get("TLS"));
+
+        // Missing Country. 
+        // Valid value for country code, just means no geo-political affiliation.
+        // Note, Undersea Features and International waters are mapped to ZZ. 
+        // This overrides those settings.
+        Country noCountryAffiliation = new Country("ZZ", "(No Country)");
+        noCountryAffiliation.CC_FIPS = "ZZ";
+        noCountryAffiliation.CC_ISO3 = "ZZZ";
+
+        isoCountries.put(noCountryAffiliation.CC_ISO2, noCountryAffiliation);
+        isoCountries.put(noCountryAffiliation.CC_ISO3, noCountryAffiliation);
+
         /**
          * Important data for many tools where time-of-day or other metadata is meaningful.
          */

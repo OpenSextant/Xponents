@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.8.8</version>
+    <version>2.8.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -56,7 +56,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.10</slf4j.version>
-        <xponents.v>2.8.8</xponents.v>
+        <xponents.v>2.8.9-SNAPSHOT</xponents.v>
     </properties>
 
     <modules>
@@ -285,7 +285,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
