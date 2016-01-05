@@ -33,6 +33,7 @@ jackson
 holland
 santiago
 santos
+tijuana
 cruz
 houston
 hampton

@@ -104,6 +104,11 @@ liberal,adjective
 mobil,adjective
 micro,adjective
 prospective,adjective
+municipal,adjective
+lone,adjective
+consolidated,adjective
+penal,adjective
+consular,adjective
 muerte,adjective.spa
 shortly,adverb
 the,article
@@ -179,7 +184,6 @@ vi,enum
 vii,enum
 viii,enum
 ix,enum
-primer,noun
 primero,enum.spa
 secondo,enum.spa
 christmas,holiday
@@ -206,6 +210,7 @@ feb,month
 february,month
 jan,month
 january,month
+primer,noun
 box,noun
 triple,noun
 burger,noun
@@ -285,6 +290,7 @@ index,noun
 counts,noun
 defence,noun
 civil defence,noun
+civil servants,noun
 defense,noun
 health services,noun
 asylum,noun
@@ -496,9 +502,18 @@ shooting,noun
 panel,noun
 reception,noun
 soil,noun
-puerto,noun.es
+cop,noun
+duo,noun
+bull,noun
+forge,noun
+cafe,noun
+canon,noun
+cannon,noun
+falcon,noun
+puerto,noun.spa
 banda,noun.spa
 banco,noun.spa
+hacienda,noun.spa
 casa,noun.spa
 grupo,noun.spa
 golf,noun.sport
@@ -508,6 +523,8 @@ sports,noun.sport
 cricket,noun.sport
 marshal,person.label
 foreman,person.label
+bachelor,person.label
+friar,person.label
 lone wolf,person.label
 vip,person.label
 patriot,person.label
@@ -774,6 +791,8 @@ po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
 building a,phrase
+old west,phrase
+a school,phrase
 rican,phrase
 pro,phrase
 rep,phrase
@@ -869,6 +888,7 @@ je,phrase
 tis,phrase
 ta,phrase
 the city,phrase
+rock bottom,phrase
 mars,place.astro
 comet,place.astro
 galaxy,place.astro
@@ -881,6 +901,7 @@ uranus,place.astro
 pluto,place.astro
 aquarius,place.astro
 palace,place.civil
+jail,place.civil
 castle,place.civil
 plaza,place.civil
 city hall,place.civil
@@ -962,6 +983,7 @@ resovoir,place.civil
 reservoir,place.civil
 parkway,place.civil
 country,place.general
+desert,place.general
 land,place.general
 island,place.general
 valley,place.general
@@ -979,8 +1001,6 @@ township,place.general
 a village,place.general
 village,place.general
 municipality,place.general
-municipal,adjective
-lone,adjective
 suburb,place.general
 region,place.general
 geo,place.general
@@ -1461,6 +1481,7 @@ jab,verb
 blow,verb
 create,verb
 ruled,verb
+rap,verb
 mon,weekday
 tue,weekday
 tues,weekday
@@ -1488,6 +1509,7 @@ coca,well-known.concept
 cola,well-known.concept
 coca cola,well-known.concept
 disney,well-known.concept
+zodiac,well-known.concept
 sears,well-known.org
 reuters,well-known.org
 coke,well-known.org
@@ -1516,9 +1538,5 @@ ringo,well-known.person
 yoda,well-known.person
 ghandi,well-known.person
 gandhi,well-known.person
-dengue,well-known.thing
 shaq,well-known.person
-consolidated,adjective
-cop,noun
-rap,verb
-duo,noun
+dengue,well-known.thing
