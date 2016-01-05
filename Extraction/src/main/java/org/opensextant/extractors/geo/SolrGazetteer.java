@@ -46,6 +46,8 @@ import org.opensextant.data.Place;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The
@@ -232,6 +234,14 @@ public class SolrGazetteer {
 
     /**
      * List all country names, official and variant names.
+     * Distinct territories (whose own ISO codes are unique) are listed as well.
+     * Territories owned by other countries -- their ISO code is their owning nation -- are attached
+     * as Country.territory  (call Country.getTerritories() to list them).
+     * 
+     * Name aliases are listed as Country.getAliases()
+     * 
+     * The hash map returned contains all 260+ country listings keyed by ISO2 and ISO3.
+     * Odd commonly used variant codes are added as well.
      *
      * @return the countries
      */
@@ -289,70 +299,76 @@ public class SolrGazetteer {
      * @throws IOException
      *             on err, if country metadata file is not found in classpath
      */
-    public static HashMap<String, Country> loadCountries(SolrServer index) throws SolrServerException, IOException {
-        HashMap<String, Country> countryCodeMap = new HashMap<String, Country>();
+    public static Map<String, Country> loadCountries(SolrServer index) throws SolrServerException, IOException {
 
+        GeonamesUtility geodataUtil = new GeonamesUtility();
+        Map<String, Country> countryCodeMap = geodataUtil.getISOCountries();
+
+        Logger log = LoggerFactory.getLogger(SolrGazetteer.class);
         ModifiableSolrParams ctryparams = new ModifiableSolrParams();
         ctryparams.set(CommonParams.FL, "id,name,cc,FIPS_cc,ISO3_cc,adm1,adm2,feat_class,feat_code,geo,name_type");
 
         ctryparams.set("q", "+feat_class:A +feat_code:(PCL* OR TERR) +name_type:N");
-        /* As of 2015 we have 2300 name variants for countries */
+        /* As of 2015 we have 2300+ name variants for countries and territories */
         ctryparams.set("rows", 5000);
 
         QueryResponse response = index.query(ctryparams);
 
-        // -- Process Solr Response; This for loop matches the one in
-        // SolrMatcher
+        // Process Solr Response
         //
         SolrDocumentList docList = response.getResults();
         for (SolrDocument gazEntry : docList) {
-            String code = SolrProxy.getString(gazEntry, "cc");
-            String fips = SolrProxy.getString(gazEntry, "FIPS_cc");
-            String iso3 = SolrProxy.getString(gazEntry, "ISO3_cc");
-            String name = SolrProxy.getString(gazEntry, "name");
 
-            // NOTE: FIPS could be "*", where ISO2 column is always non-trivial.
-            // if ("*".equals(code)){code = fips; }
+            Country C = createCountry(gazEntry);
 
-            Country C = countryCodeMap.get(code);
-            if (C != null) {
-                C.addAlias(name); // all other metadata is same.
+            Country existingCountry = countryCodeMap.get(C.getCountryCode());
+            if (existingCountry != null) {
+                if (existingCountry.ownsTerritory(C.getName())){
+                    // do nothing.
+                }
+                else if (C.isTerritory) {
+                    log.debug("{} territory of {}", C, existingCountry);
+                    existingCountry.addTerritory(C);
+                } else {
+                    log.debug("{} alias of {}", C, existingCountry);
+                    existingCountry.addAlias(C.getName()); // all other metadata is same.
+                }
                 continue;
             }
 
-            C = new Country(code, name);
-            C.setName_type(SolrProxy.getChar(gazEntry, "name_type"));
-            C.CC_FIPS = fips;
-            C.CC_ISO3 = iso3;
+            log.info("Unknown country in gazetteer, that is not in flat files. C={}", C);
 
-            // Geo field is specifically Spatial4J lat,lon format.
-            double[] xy = SolrProxy.getCoordinate(gazEntry, "geo");
-            C.setLatitude(xy[0]);
-            C.setLongitude(xy[1]);
-
-            // don't loose this entry as a likely variant.
-            C.addAlias(C.getName());
-
-            countryCodeMap.put(code, C);
-            countryCodeMap.put(iso3, C);
+            countryCodeMap.put(C.getCountryCode(), C);
+            countryCodeMap.put(C.CC_ISO3, C);
         }
 
-        GeonamesUtility geodataUtil = new GeonamesUtility();
-
-        /**
-         * Finally choose default official names given the map of name:iso2
-         */
-        for (Country C : countryCodeMap.values()) {
-            String n = geodataUtil.getDefaultCountryName(C.getCountryCode());
-            if (n != null) {
-                for (String alias : C.getAliases()) {
-                    if (n.equalsIgnoreCase(alias)) {
-                        C.setName(alias);
-                    }
-                }
-            }
-        }
         return countryCodeMap;
+    }
+
+    private static final Country createCountry(SolrDocument gazEntry) {
+        String code = SolrProxy.getString(gazEntry, "cc");
+        String name = SolrProxy.getString(gazEntry, "name");
+        String featCode = SolrProxy.getString(gazEntry, "feat_code");
+
+        Country C = new Country(code, name);
+        if ("TERR".equals(featCode)) {
+            C.isTerritory = true;
+            // Other conditions?
+        }
+        // Set this once.  Yes, indeed we would see this metadata repeated for every country entry.
+        // Geo field is specifically Spatial4J lat,lon format.
+        double[] xy = SolrProxy.getCoordinate(gazEntry, "geo");
+        C.setLatitude(xy[0]);
+        C.setLongitude(xy[1]);
+
+        String fips = SolrProxy.getString(gazEntry, "FIPS_cc");
+        String iso3 = SolrProxy.getString(gazEntry, "ISO3_cc");
+        C.CC_FIPS = fips;
+        C.CC_ISO3 = iso3;
+
+        C.setName_type(SolrProxy.getChar(gazEntry, "name_type"));
+
+        return C;
     }
 
     /**
