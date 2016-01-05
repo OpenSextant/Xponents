@@ -140,7 +140,12 @@ public class PersonNameFilter extends GeocodeRule {
                             //  Org is 'text name text'
                             //  where  name is a city, and 'name' is a single word.
                             pc.setFilteredOut(true);
-                            resolvedOrgs.put(pc.getTextnorm(), name.getText());
+                            // Do not record such instances as resolved orgs, because if the name occurs on its own
+                            // then it is likely the locality/city in which that organization exists.
+                            // "Detroit City Council" -- an org.  Filter out just hit instance.
+                            // "Detroit"   -- mentioned later in the same doc, not an org.
+                            // 
+                            //resolvedOrgs.put(pc.getTextnorm(), name.getText());
                             pc.addRule("NameInOrg");
                         }
                     }
