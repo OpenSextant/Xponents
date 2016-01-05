@@ -57,7 +57,7 @@ public class TestGazetteer {
             Map<String, Boolean> done = new TreeMap<>();
             for (Country C : geodataUtil.getCountries()) {
 
-                String q = String.format("name:%s AND -feat_code:PCLI AND -feat_code:TERR",
+                String q = String.format("name:%s AND -feat_code:PCL* AND -feat_code:TERR",
                         C.getName());
                 List<Place> country_name_matches = gaz.search(q, true);
                 //System.out.println("Matched names for " + C.getName() + ":\t");
