@@ -10,6 +10,7 @@ import org.opensextant.extractors.geo.CountryCount;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceCount;
 import org.opensextant.extractors.geo.PlaceEvidence;
+import org.opensextant.util.GeodeticUtility;
 
 /**
  * A final geocoding pass or two. Loop through candidates and choose
@@ -331,24 +332,24 @@ public class LocationChooserRule extends GeocodeRule {
         }
 
         // TODO: work through ambiguities -- true ties.
+        // AMBIGUOUS TIE:
         if (pc.isAmbiguous()) {
-            if (pc.getChosen().isSame(pc.getSecondChoice())) {
+            Place p1 = pc.getChosen();
+            Place p2 = pc.getSecondChoice();
+            if (GeodeticUtility.distanceMeters(p1, p2) < SAME_LOCALITY_RADIUS) {
+                points += 6;
+            } else if (p1.isSame(p2)) {
+                points += 4;
+            } else if (sameBoundary(p1, p2)) {
+                points += 3;
+            } else if (sameCountry(p1, p2)) {
                 points += 2;
             } else {
                 points += MATCHCONF_QUALIFIER_AMBIGUOUS_NAME;
             }
-        }
-        if (pc.distinctCountryCount() == 1) {
-            points += MATCHCONF_QUALIFIER_UNIQUE_COUNTRY;
-        }
-
-        // Is Major place?
-        if (pc.hasRule(MajorPlaceRule.ADMIN) || pc.hasRule(MajorPlaceRule.CAPITAL)) {
-            points += MATCHCONF_QUALIFIER_MAJOR_PLACE;
-        }
-        // 
-
-        if (pc.getSecondChoiceScore() > 0) {
+        } else if (pc.getSecondChoiceScore() > 0) {
+            // NOT AMBIGUOUS, but is first score much higher than all others?
+            // That makes first choice more confident, especially in low-evidence situations.
             double a = pc.getChosen().getScore();
             double b = pc.getSecondChoiceScore();
             double scoreRatio = a / b; // Top score = 40, second score = 25
@@ -357,12 +358,27 @@ public class LocationChooserRule extends GeocodeRule {
             }
         }
 
+        if (pc.distinctCountryCount() == 1) {
+            points += MATCHCONF_QUALIFIER_UNIQUE_COUNTRY;
+        }
+
+        // Is Major place?  Account for major place population separate from its designation.
+        if (pc.hasRule(MajorPlaceRule.POP)){
+            points += MATCHCONF_QUALIFIER_MAJOR_PLACE;
+        }
+        if (pc.hasRule(MajorPlaceRule.ADMIN) || pc.hasRule(MajorPlaceRule.CAPITAL)) {
+            points += MATCHCONF_QUALIFIER_MAJOR_PLACE;
+        }
+        // 
+
         if (this.countryObserver.countryObserved(pc.getChosen().getCountryCode())) {
             points += MATCHCONF_QUALIFIER_COUNTRY_MENTIONED;
         }
 
         pc.setConfidence(points);
     }
+
+    private static final int SAME_LOCALITY_RADIUS = 10000; /* Meters */
 
     private int assessLowConfidence(PlaceCandidate pc) {
         /*

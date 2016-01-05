@@ -68,6 +68,26 @@ public abstract class GeocodeRule {
     }
 
     /**
+     * Quick test to see if two places are contained within the same boundary.
+     * 
+     * @param p1
+     * @param p2
+     * @return
+     */
+    public boolean sameBoundary(Place p1, Place p2) {
+        if (p1 == null || p2 == null) {
+            return false;
+        }
+        if (p1.getAdmin2() != null) {
+            if (p1.getAdmin2().equals(p2.getAdmin2())) {
+                return true;
+            }
+        }
+        return p1.getHierarchicalPath() != null ? p1.getHierarchicalPath().equals(p2.getHierarchicalPath()) : false;
+        // return p1.getAdmin1() != null ? p1.getAdmin1().equalsIgnoreCase(p2.getAdmin1()) : false;
+    }
+
+    /**
      *
      * @param names
      *            list of found place names

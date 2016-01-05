@@ -131,11 +131,14 @@ public class PersonNameFilter extends GeocodeRule {
                     resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule("ResolvedOrg");
                 } else {
-                    if (pc.isWithin(name)) {
+                    if (pc.isWithin(name) && !pc.isCountry) {
                         // Special conditions:
                         //    City name in the name of a Building or Landmark is worth saving as a location.
                         // But short one-word names appearing in organization names, may be false positives
                         //
+                        // Ignore situation where country name appears in organization name. 
+                        // Country is still relevant and provides context to other geographic names.
+                        // 
                         if (!pc.getTextnorm().contains(" ")) {
                             //  Org is 'text name text'
                             //  where  name is a city, and 'name' is a single word.
