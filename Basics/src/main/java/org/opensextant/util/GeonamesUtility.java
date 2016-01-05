@@ -508,6 +508,23 @@ public class GeonamesUtility {
         isoCountries.put(noCountryAffiliation.CC_ISO2, noCountryAffiliation);
         isoCountries.put(noCountryAffiliation.CC_ISO3, noCountryAffiliation);
 
+        /* Once all country data is known, associate territories appropriately.
+         * 
+         */
+        for (Country C : countries) {
+            if (C.isTerritory) {
+                Country owningCountry = isoCountries.get(C.getCountryCode());
+                if (owningCountry != null) {
+                    owningCountry.addTerritory(C);
+                } else {
+                    // This territory is unique, and country code does not conflict with anything else.
+                    // 
+                    isoCountries.put(C.getCountryCode(), C);
+                    isoCountries.put(C.CC_ISO3, C);
+                }
+            }
+        }
+
         /**
          * Important data for many tools where time-of-day or other metadata is meaningful.
          */
@@ -527,12 +544,16 @@ public class GeonamesUtility {
 
     /**
      * List all country names, official and variant names.
+     * This does not key any Territories.
+     * Territories that carry another nation's country code are attached
+     * to that country. Territories assigned their own ISO code are listed/keyed as Countries here.
      * 
      * @return map of countries, keyed by ISO country code
      */
-    //public Map<String, Country> getCountries() {
-    //    return country_lookup;
-    //}
+    public Map<String, Country> getISOCountries() {
+        return isoCountries;
+    }
+
     public List<Country> getCountries() {
         return countries;
     }

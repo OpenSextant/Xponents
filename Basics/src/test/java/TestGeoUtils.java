@@ -29,11 +29,16 @@ public class TestGeoUtils {
         if (util.getCountryByAnyCode("IV") == null) {
             fail("IV - Cote D'Ivoire not found");
         }
+        
         print ("Gaza also known as 'GAZ'");
         Country C; 
         C= util.getCountry("GAZ");
         assert(C!=null);
 
+        print ("Spratly's is designated territory of China -- Ensure CHN != Spratly's though.");
+        C= util.getCountry("CHN");
+        assert(C!=null && C.getName().equalsIgnoreCase("china"));
+        
         C = util.getCountry("USA");
         if (!C.containsUTCOffset(-5.0)) {
             fail("USA contains GMT-0500");

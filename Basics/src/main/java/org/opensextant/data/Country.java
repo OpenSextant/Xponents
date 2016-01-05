@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,11 +60,13 @@ public class Country extends Place {
     public String CC_ISO3 = null;
     /** FIPS 10-4 2-character country code */
     public String CC_FIPS = null;
+    private String namenorm = null;
 
     /** Any list of country alias names. */
     private final Set<String> aliases = new HashSet<>();
 
     private final Set<String> regions = new HashSet<>();
+    private final List<Country> territories = new ArrayList<>();
 
     /** Map of Geonames.org TZ and UTC offsets per country */
     private final Map<String, Double> timezones = new HashMap<>();
@@ -85,6 +88,17 @@ public class Country extends Place {
         super(iso2, nm);
         CC_ISO2 = this.key;
         this.country_id = this.key;
+        if (this.name != null) {
+            namenorm = name.toLowerCase();
+            addAlias(name);
+        }
+    }
+
+    /**
+     * Return name normalized, e.g., lowercase, w/out diacritics. 's, etc.
+     */
+    public String getNamenorm() {
+        return namenorm;
     }
 
     /**
@@ -188,9 +202,10 @@ public class Country extends Place {
 
     @Override
     public String toString() {
-        if (!isTerritory) {
+        if (!isTerritory && !hasTerritories()) {
             return String.format("%s (%s,%s,%s)", getName(), CC_ISO3, CC_ISO2, CC_FIPS);
         } else {
+            // Some other country claims this land as a territory.
             return String.format("%s territory of %s", getName(), CC_ISO3);
         }
     }
@@ -265,5 +280,42 @@ public class Country extends Place {
      */
     public Map<String, Double> getAllTimezones() {
         return timezonesVariants;
+    }
+
+    public boolean hasTerritories() {
+        return !territories.isEmpty();
+    }
+
+    public void addTerritory(Country terr) {
+        territories.add(terr);
+    }
+
+    /**
+     * Territory ownership is defined only by the data fed to this API;
+     * We do not make any political statements here. You can change the underlying flat file data
+     * country-names-xxxx.csv anyway you want.
+     * 
+     * @param n
+     * @return true if this country owns the named territory.
+     */
+    public boolean ownsTerritory(String n) {
+        if (hasTerritories()) {
+            for (Country C : territories) {
+                if (n.equalsIgnoreCase(C.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * List the territories for this country.
+     * Returns an empty list if no territories associated.
+     * 
+     * @return
+     */
+    public Collection<Country> getTerritories() {
+        return territories;
     }
 }
