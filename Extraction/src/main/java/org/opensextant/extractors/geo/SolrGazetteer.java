@@ -308,7 +308,8 @@ public class SolrGazetteer {
         ModifiableSolrParams ctryparams = new ModifiableSolrParams();
         ctryparams.set(CommonParams.FL, "id,name,cc,FIPS_cc,ISO3_cc,adm1,adm2,feat_class,feat_code,geo,name_type");
 
-        ctryparams.set("q", "+feat_class:A +feat_code:(PCL* OR TERR) +name_type:N");
+        /* TODO: Consider different behaviors for PCLI vs. PCL[DFS] */
+        ctryparams.set("q", "+feat_class:A +feat_code:(PCLI OR PCLIX OR TERR) +name_type:N");
         /* As of 2015 we have 2300+ name variants for countries and territories */
         ctryparams.set("rows", 5000);
 
