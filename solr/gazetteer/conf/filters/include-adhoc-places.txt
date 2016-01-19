@@ -1,3 +1,5 @@
+# Last names, that are ordinals -- do not filter out items based on last name, e.g., West Texas or "West, Texas"
+west
 # Syrian places
 mari
 # Swiss places
@@ -50,6 +52,7 @@ georgia
 florida
 nevada
 # other countries:
+alberta
 india
 china
 america

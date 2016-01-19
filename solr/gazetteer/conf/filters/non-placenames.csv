@@ -360,6 +360,7 @@ crystal,noun
 ring,noun
 wall,noun
 wood,noun
+wooden,adjective
 coal,noun
 rice,noun
 noodle,noun
@@ -1546,4 +1547,6 @@ yoda,well-known.person
 ghandi,well-known.person
 gandhi,well-known.person
 shaq,well-known.person
-dengue,well-known.thing
+dengue,well-known.disease
+lyme,well-known.disease
+ebola,well-known.disease
