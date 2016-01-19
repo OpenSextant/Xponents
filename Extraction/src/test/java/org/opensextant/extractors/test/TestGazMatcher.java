@@ -53,12 +53,12 @@ public class TestGazMatcher {
         System.out.println("MENTIONS ALL == " + matches.size());
         for (TextMatch tm : matches) {
             printGeoTags(tm);
-            if (tm.isFilteredOut()) {
-                System.out.println("\t(filtered out: " + tm.getText() + ")");
-                continue;
-            }
             if (tm instanceof PlaceCandidate) {
                 PlaceCandidate p = (PlaceCandidate) tm;
+                if (tm.isFilteredOut()) {
+                    print("Filtered Out.  Rules = " + p.getRules());
+                    continue;
+                }
                 if (!p.getRules().isEmpty()) {
                     print("Rules = " + p.getRules());
                 }
@@ -75,7 +75,11 @@ public class TestGazMatcher {
                 } else {
                     placeNames.add(p.getText());
                 }
+            } else if (tm.isFilteredOut()) {
+                System.out.println("\t(filtered out: " + tm.getText() + ")");
+                continue;
             }
+
             if (tm instanceof GeocoordMatch) {
                 GeocoordMatch geo = (GeocoordMatch) tm;
                 coordinates.add(geo.getText());
@@ -83,6 +87,7 @@ public class TestGazMatcher {
                     System.out.println("Coordinate at place named " + geo.getRelatedPlace());
                 }
             }
+
         }
 
         System.out.println("MENTIONS DISTINCT PLACES == " + placeNames.size());
