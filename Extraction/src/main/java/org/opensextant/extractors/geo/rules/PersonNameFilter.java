@@ -99,7 +99,7 @@ public class PersonNameFilter extends GeocodeRule {
             final List<TaxonMatch> orgs) {
 
         for (PlaceCandidate pc : placeNames) {
-            if (pc.isFilteredOut()) {
+            if (pc.isFilteredOut() || pc.isCountry) {
                 continue;
             }
 
@@ -167,6 +167,11 @@ public class PersonNameFilter extends GeocodeRule {
      */
     @Override
     public boolean evaluateNameFilterOnly(PlaceCandidate name) {
+
+        if (name.isCountry) {
+            return true;
+        }
+
         /*
          * If you have already associated an Admin code with this name, then do
          * not filter out
@@ -186,12 +191,6 @@ public class PersonNameFilter extends GeocodeRule {
             return true;
         }
 
-        return false;
-    }
-
-    @Override
-    public void evaluate(final PlaceCandidate name, final Place geo) {
-
         /**
          * Name matches not yet filtered out, but may be co-referrenced to prior
          * mention
@@ -200,12 +199,12 @@ public class PersonNameFilter extends GeocodeRule {
         if (resolvedPersons.containsKey(name.getTextnorm())) {
             name.setFilteredOut(true);
             name.addRule("ResolvedPerson.CoRef");
-            return;
+            return true;
         }
         if (resolvedOrgs.containsKey(name.getTextnorm())) {
             name.setFilteredOut(true);
             name.addRule("ResolvedOrg.CoRef");
-            return;
+            return true;
         }
 
         String[] toks = name.getPrematchTokens();
@@ -217,14 +216,14 @@ public class PersonNameFilter extends GeocodeRule {
                     name.setFilteredOut(true);
                     resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
                     name.addRule("PersonTitle");
-                    return;
+                    return true;
                 }
 
                 if (filter.filterOut(pre)) {
                     name.setFilteredOut(true);
                     resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
                     name.addRule("PersonName");
-                    return;
+                    return true;
                 }
             }
         }
@@ -233,7 +232,7 @@ public class PersonNameFilter extends GeocodeRule {
             name.setFilteredOut(true);
             resolvedPersons.put(name.getTextnorm(), name.getText());
             name.addRule("PersonName");
-            return;
+            return true;
         }
 
         toks = name.getPostmatchTokens();
@@ -243,9 +242,18 @@ public class PersonNameFilter extends GeocodeRule {
                 name.setFilteredOut(true);
                 resolvedPersons.put(val(name.getTextnorm(), post), name.getText());
                 name.addRule("PersonSuffix");
-                return;
+                return true;
             }
         }
+
+        /* return false; */
+        /* THERE ARE NO Geo-specific evaluation rules */
+        return true;
+    }
+
+    @Override
+    public void evaluate(final PlaceCandidate name, final Place xgeo) {
+        /* No Op */
     }
 
     /**
