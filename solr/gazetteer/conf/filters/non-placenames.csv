@@ -211,8 +211,10 @@ february,month
 jan,month
 january,month
 primer,noun
+champion,noun
 box,noun
 triple,noun
+tri,adjective
 burger,noun
 grant,noun
 weasel,noun
@@ -494,6 +496,7 @@ millennium,noun
 childs,noun
 cat,noun
 vet,noun
+veterans,noun
 rabbit,noun
 charter,noun
 chart,noun
@@ -507,6 +510,7 @@ duo,noun
 bull,noun
 forge,noun
 cafe,noun
+bistro,noun
 canon,noun
 cannon,noun
 falcon,noun
@@ -910,9 +914,11 @@ basin,place.civil
 hotel,place.civil
 hamlet,place.civil
 school,place.civil
+schools,place.civil
 middle school,place.civil
 high school,place.civil
 academy,place.civil
+nursing home,place.civil
 real-estate,place.civil
 real estate,place.civil
 estates,place.civil
@@ -1110,6 +1116,7 @@ hollow,place.general
 falls,place.general
 branch,place.general
 spring,place.general
+plain,place.general
 plains,place.general
 west coast,place.general
 midwest,place.general
