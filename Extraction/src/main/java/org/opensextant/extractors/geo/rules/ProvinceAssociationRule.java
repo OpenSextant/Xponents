@@ -60,6 +60,14 @@ public class ProvinceAssociationRule extends GeocodeRule {
     }
 
     /**
+     * 
+     */
+    @Override
+    public boolean isRelevant(){
+        return !relevantProvinceID.isEmpty();
+    }
+    
+    /**
      * Evaluate all candidate place mentions by seeing if any resolved Province
      * contains any geo locations with the mentioned name.
      * 
@@ -73,7 +81,7 @@ public class ProvinceAssociationRule extends GeocodeRule {
      * </pre>
      */
     public void evaluate(List<PlaceCandidate> names) {
-        if (relevantProvinceID.isEmpty()) {
+        if (!isRelevant()) {
             return;
         }
 
@@ -81,11 +89,7 @@ public class ProvinceAssociationRule extends GeocodeRule {
             /*
              * This was filtered out already so ignore.
              */
-            if (name.isFilteredOut()) {
-                continue;
-            }
-            if (name.getChosen() != null) {
-                // DONE
+            if (this.evaluateNameFilterOnly(name)){
                 continue;
             }
 

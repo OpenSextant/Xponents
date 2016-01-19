@@ -149,7 +149,7 @@ public class PersonNameFilter extends GeocodeRule {
                             // "Detroit"   -- mentioned later in the same doc, not an org.
                             // 
                             //resolvedOrgs.put(pc.getTextnorm(), name.getText());
-                            pc.addRule("NameInOrg");
+                            pc.addRule(NAME_IN_ORG_RULE);
                         }
                     }
                 }
@@ -157,25 +157,16 @@ public class PersonNameFilter extends GeocodeRule {
         }
     }
 
+    /**
+     * Rule fired if a location is found in an organization name; Only organization should be filtered out.
+     */
+    public static final String NAME_IN_ORG_RULE = "NameInOrg";
+
+    /**
+     * 
+     */
     @Override
-    public void evaluate(final PlaceCandidate name, final Place geo) {
-        /*
-         * No other existing evidence that we should keep this entry and if the
-         * name is a person name --- AS DEFINED BY THE USER -- then we mark it
-         * filtered out.
-         *
-         */
-        if (name.getChosen() != null) {
-            return;
-        }
-
-        /*
-         * This was filtered out already so ignore.
-         */
-        if (name.isFilteredOut()) {
-            return;
-        }
-
+    public boolean evaluateNameFilterOnly(PlaceCandidate name) {
         /*
          * If you have already associated an Admin code with this name, then do
          * not filter out
@@ -185,8 +176,21 @@ public class PersonNameFilter extends GeocodeRule {
          * TODO: Euguene, Oregon etc.
          */
         if (name.hasRule(NameCodeRule.NAME_ADMCODE_RULE) || name.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
-            return;
+            name.setFilteredOut(false);
+            // Filter = True means, stop evaluating
+            return true;
         }
+        if (MajorPlaceRule.isRuleFor(name)) {
+            name.setFilteredOut(false);
+            // Filter = True means, stop evaluating
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void evaluate(final PlaceCandidate name, final Place geo) {
 
         /**
          * Name matches not yet filtered out, but may be co-referrenced to prior

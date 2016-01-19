@@ -63,6 +63,19 @@ public class MajorPlaceRule extends GeocodeRule {
     }
 
     /**
+     * Determine if this rule was applied to the candidate.
+     * 
+     * @param pc
+     * @return
+     */
+    public static boolean isRuleFor(PlaceCandidate pc) {
+        if (pc.hasRule(ADMIN) || pc.hasRule(POP) || pc.hasRule(CAPITAL)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * attach either a Capital or Admin region ID, giving it some weight based on various properties or context.
      */
     @Override
@@ -74,6 +87,7 @@ public class MajorPlaceRule extends GeocodeRule {
             ev = new PlaceEvidence(geo, CAPITAL, weight(weight + 2, geo));
         } else if (geo.isAdmin1()) {
             ev = new PlaceEvidence(geo, ADMIN, weight(weight, geo));
+            inferBoundary(geo);
         } else if (popStats != null && geo.isPopulated()) {
             String gh = geohash(geo);
             geo.setGeohash(gh);
@@ -95,12 +109,12 @@ public class MajorPlaceRule extends GeocodeRule {
                     // And to make scale even more gradual, wt - 1  or wt/2, wt/3
                     // These population stats cannot overtake all other rules entirely.
                     // 
-                    int wt = (int) ((Math.log(geo.getPopulation()) - 10))/3;
+                    int wt = (int) ((Math.log(geo.getPopulation()) - 10)) / 3;
                     ev = new PlaceEvidence(geo, POP, weight(wt, geo));
                 }
             }
         }
-        
+
         if (ev != null) {
             ev.setEvaluated(true);
             name.addEvidence(ev);
@@ -119,6 +133,12 @@ public class MajorPlaceRule extends GeocodeRule {
         }
         if (countryObserver.countryCount() == 0) {
             this.countryObserver.countryInScope(capital.getCountryCode());
+        }
+    }
+
+    public void inferBoundary(final Place prov) {
+        if (this.boundaryObserver != null) {
+            this.boundaryObserver.boundaryLevel1InScope(prov);
         }
     }
 

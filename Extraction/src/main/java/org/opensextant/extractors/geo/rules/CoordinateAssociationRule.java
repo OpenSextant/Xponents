@@ -81,14 +81,20 @@ public class CoordinateAssociationRule extends GeocodeRule {
         }
     }
 
+    public boolean isRelevant() {
+        if (coordinates != null) {
+            return !coordinates.isEmpty();
+        }
+        return false;
+    }
+
     /**
      * If a particular geo is close to a candidate name/location, then add to
      * the candidate's score for that location.
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
-        if (coordinates == null || coordinates.isEmpty()) {
-            // Perfectly allowable to be null.
+        if (!isRelevant()) {
             return;
         }
         if (name.isCountry) {

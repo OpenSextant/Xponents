@@ -57,6 +57,27 @@ public abstract class GeocodeRule {
         boundaryObserver = o;
     }
 
+    /**
+     * Override if rule instance has another view of relevance, e.g.
+     * coordinate rule: no coords found, so rule.isRelevant() is FALSE.
+     * 
+     * @return
+     */
+    public boolean isRelevant() {
+        return true;
+    }
+
+    /*
+     * Override as needed. static method, because caller need not have an instance of rule
+     * to determine if rule was applied to the candidate.
+     * Child rules cannot override static method here, so by convention, rules can implement isRuleFor as needed. 
+     * @param pc
+     * @return
+     */
+    //public static boolean isRuleFor(PlaceCandidate pc) {
+    //    return false;
+    //}
+
     public boolean sameCountry(Place p1, Place p2) {
         if (p1 == null || p2 == null) {
             return false;
@@ -88,11 +109,35 @@ public abstract class GeocodeRule {
     }
 
     /**
+     * Override here as needed.
+     * 
+     * @param name
+     * @return
+     */
+    public boolean evaluateNameFilterOnly(PlaceCandidate name) {
+        if (name.isFilteredOut()) {
+            return true;
+        }
+        // Some rules may choose early -- and that would prevent other rules
+        // from adding evidence
+        // In this scheme.
+        if (name.getChosen() != null) {
+            // DONE
+            return true;
+        }
+        return false;
+    }
+
+    /**
      *
      * @param names
      *            list of found place names
      */
     public void evaluate(List<PlaceCandidate> names) {
+        if (!isRelevant()) {
+            return;
+        }
+
         for (PlaceCandidate name : names) {
             // Each rule must decide if iterating over name/geo combinations
             // contributes evidence. But can just as easily see if name.chosen is already
@@ -101,14 +146,7 @@ public abstract class GeocodeRule {
             /*
              * This was filtered out already so ignore.
              */
-            if (name.isFilteredOut()) {
-                continue;
-            }
-            // Some rules may choose early -- and that would prevent other rules
-            // from adding evidence
-            // In this scheme.
-            if (name.getChosen() != null) {
-                // DONE
+            if (evaluateNameFilterOnly(name)) {
                 continue;
             }
 

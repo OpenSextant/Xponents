@@ -59,6 +59,7 @@ import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.ExtractionMetrics;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.geo.rules.ContextualOrganizationRule;
 import org.opensextant.extractors.geo.rules.CoordinateAssociationRule;
 import org.opensextant.extractors.geo.rules.CountryRule;
 import org.opensextant.extractors.geo.rules.GeocodeRule;
@@ -117,6 +118,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private NameCodeRule nameWithAdminRule = null;
     private MajorPlaceRule majorPlaceRule = null;
     private LocationChooserRule chooser = null;
+    private ContextualOrganizationRule placeInOrgRule = null;
 
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding
@@ -275,6 +277,22 @@ public class PlaceGeocoder extends GazetteerMatcher
             rules.add(adm1Rule);
         }
 
+        // Major Places
+        //
+        try {
+            Map<String, Integer> popstats = GeonamesUtility
+                    .mapPopulationByLocation(GeonamesUtility.loadMajorCities("/geonames.org/cities15000.txt"));
+            majorPlaceRule = new MajorPlaceRule(popstats);
+        } catch (IOException err) {
+            log.error("Xponents 2.8: cities population data is used for geocoding. Will continue without it.");
+            majorPlaceRule = new MajorPlaceRule(null);
+        }
+        majorPlaceRule.setCountryObserver(this);
+        majorPlaceRule.setBoundaryObserver(this);
+        rules.add(majorPlaceRule);
+
+        // Names of Orgs and Persons.
+        // 
         if (isPersonNameMatchingEnabled()) {
             try {
                 personMatcher = new TaxonMatcher();
@@ -291,18 +309,16 @@ public class PlaceGeocoder extends GazetteerMatcher
             }
         }
 
-        // Major Places
-        //
-        try {
-            Map<String, Integer> popstats = GeonamesUtility
-                    .mapPopulationByLocation(GeonamesUtility.loadMajorCities("/geonames.org/cities15000.txt"));
-            majorPlaceRule = new MajorPlaceRule(popstats);
-        } catch (IOException err) {
-            log.error("Xponents 2.8: cities population data is used for geocoding. Will continue without it.");
-            majorPlaceRule = new MajorPlaceRule(null);
-        }
-        majorPlaceRule.setCountryObserver(this);
-        rules.add(majorPlaceRule);
+        // Un-filter city names that can be resolved if other ADMIN places line up.
+        // E.g., "Cleveland Caveliers" filters out Cleveland, but if Cleveland is mentioned alone
+        // then Cleveland itself will be promoted to a location.  E.g., sports teams travel
+        // so mention of "Cleveland Caveliers visiting Seattle" would not geolocate this to Ohio
+        // unless the city or state was mentioned separately.  
+        // 
+        placeInOrgRule = new ContextualOrganizationRule();
+        placeInOrgRule.setBoundaryObserver(this);
+        rules.add(placeInOrgRule);
+
         // Simple patterns such as city of x or  abc county.
         // 
         rules.add(new NameRule());
