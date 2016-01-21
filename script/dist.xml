@@ -1,4 +1,4 @@
-<project default="dist" name="Xponents Distribution">
+<project default="build" name="Xponents Distribution">
 
   <description>
     Builds a version of Xponents that runs out of the box.
@@ -7,9 +7,41 @@
   <property name="xponents.home" value="${basedir}/../" />
   <property name="version" value="2.8"/>
   <property name="release" location="${xponents.home}/Xponents-${version}" />
-
   <property name="release.xtext" location="${xponents.home}/XText-${version}" />
 
+
+  <target name="build">
+    <exec executable="mvn" dir="${xponents.home}" failonerror="true">
+      <arg value="-DincludeScope=test"/>
+      <arg value="-DincludeScope=runtime"/>
+      <arg value="-DincludeScope=compile"/>
+      <arg value="-DskipTests=true"/>
+      <arg value="clean"/>
+      <arg value="install"/>
+      <arg value="javadoc:javadoc"/>
+      <arg value="dependency:copy-dependencies"/>
+    </exec>
+
+    <exec executable="mvn" dir="${xponents.home}/XText" failonerror="true">
+      <arg value="-DincludeScope=test"/>
+      <arg value="-DincludeScope=runtime"/>
+      <arg value="-DincludeScope=compile"/>
+      <arg value="-DskipTests=true"/>
+      <arg value="clean"/>
+      <arg value="install"/>
+      <arg value="javadoc:javadoc"/>
+      <arg value="dependency:copy-dependencies"/>
+    </exec>
+
+    <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
+      <arg value="-DincludeScope=test"/>
+      <arg value="-DincludeScope=runtime"/>
+      <arg value="-DincludeScope=compile"/>
+      <arg value="clean"/>
+      <arg value="install"/>
+      <arg value="dependency:copy-dependencies"/>
+    </exec>
+   </target>
 
   <!--  Consolidate XText items to their own release app
     -->
@@ -29,6 +61,7 @@
       <arg value="-DincludeScope=compile"/>
       <arg value="dependency:copy-dependencies"/>
     </exec>
+
 
     <copy todir="${release.xtext}/lib/">
         <fileset dir="${xponents.home}/XText/target">
@@ -64,10 +97,12 @@
   <!-- Release script for Xponents complete. -->
 
   <target name="copy-libs" >
+    <!--
     <delete dir="${xponents.home}/Examples/lib"/>
     <delete dir="${xponents.home}/Extraction/lib"/>
     <delete dir="${xponents.home}/XText/lib"/>
     <delete dir="${xponents.home}/Basics/lib"/>
+    -->
 
     <delete dir="${release}"/>
 
@@ -199,7 +234,7 @@
     </copy>
   </target>
 
-  <target name="dist" depends="copy-libs, copy-script, copy-data, copy-solr, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
+  <target name="dist" depends="build, copy-libs, copy-script, copy-data, copy-solr, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
 
    <!-- Zip it .-->
   </target>
