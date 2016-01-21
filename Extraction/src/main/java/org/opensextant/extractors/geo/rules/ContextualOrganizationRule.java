@@ -26,7 +26,7 @@ public class ContextualOrganizationRule extends GeocodeRule {
             if (!name.hasRule(PersonNameFilter.NAME_IN_ORG_RULE)) {
                 continue;
             }
-            log.info(" Name ? {}", name);
+            log.debug(" City Name in Org Name? {}", name);
             if (!name.isFilteredOut()) {
                 continue;
             }
