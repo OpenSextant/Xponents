@@ -594,7 +594,14 @@ public class HyperLink {
         if (isDynamic()) {
             return true;
         }
-        if (FileUtility.getFileDescription(urlValue) == FileUtility.WEBPAGE_MIMETYPE) {
+        final String desc = FileUtility.getFileDescription(urlValue);
+        if (desc == FileUtility.WEBPAGE_MIMETYPE) {
+            return true;
+        }
+        // Test case: http://a.b.com/my/page
+        //  Not query, no file extension.
+        // 
+        if (urlValue.contains("/") && !urlValue.contains("?") && desc == FileUtility.NOT_AVAILABLE) {
             return true;
         }
         return isDynamic(absoluteURL.getPath());
@@ -647,30 +654,26 @@ public class HyperLink {
      * @return true, if is page anchor
      */
     public boolean isPageAnchor() {
+        String p = absoluteURL.getPath();
         if (isAbsolute()) {
-            return absoluteURL.getPath().contains("#");
+            return p.contains("#");
         }
-        if (isBlank(absoluteURL.getPath())
-                || isBlank(referrerURL.getPath())) {
+        if (isBlank(p)|| isBlank(referrerURL.getPath())) {
             return false;
         }
-        String p1 = absoluteURL.getPath();
-        if (p1.startsWith("#")) {
+        String file = FileUtility.getBasename(p, "");
+        /* 
+         * Traditional anchors, but also scripting IDs.
+         */
+        if (file.startsWith("#") || file.startsWith("%")) {
             return true;
         }
 
-        if (!p1.startsWith(referrerURL.getPath())) {
+        if (!p.startsWith(referrerURL.getPath())) {
             // Not parent/child relationship here.
             return false;
         }
-        // Both paths at this point represent path within the same site
-        int x = referrerURL.getPath().length();
-        int y = absoluteURL.getPath().length();
-        if (x >= y) {
-            return false;
-        }
-        char ch = absoluteURL.getPath().charAt(x + 1);
-        return ('#' == ch);
+        return false;
     }
 
     /**
@@ -691,7 +694,7 @@ public class HyperLink {
                 continue;
             }
             if (!param.contains("=")) {
-                params.put(param, null);
+                params.put(param, ""); // empty value.
                 continue;
             }
             String[] kv = param.split("=", 2);

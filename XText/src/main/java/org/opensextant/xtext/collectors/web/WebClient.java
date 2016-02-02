@@ -53,19 +53,22 @@ import org.slf4j.LoggerFactory;
 // TODO: Auto-generated Javadoc
 /**
  * Simple client that pulls down HTML from a web site, acquire files and crawl sub-folders.
- * This is not a generalize web crawler.  It specifically looks for meaningful content, such as HTML pages, document downloads, etc.
+ * This is not a generalize web crawler. It specifically looks for meaningful content, such as HTML pages, document
+ * downloads, etc.
  */
 public class WebClient {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
-     * Prep url.  This ensures that found URLs that may contain whitespace
+     * Prep url. This ensures that found URLs that may contain whitespace
      * are properly converted to proper URL format/escaping.
      *
-     * @param u URL string
+     * @param u
+     *            URL string
      * @return URL object
-     * @throws MalformedURLException the malformed url exception
+     * @throws MalformedURLException
+     *             the malformed url exception
      */
     public static URL prepURL(String u) throws MalformedURLException {
         /**
@@ -79,27 +82,32 @@ public class WebClient {
     /**
      * Prep url path.
      *
-     * @param u the u
+     * @param u
+     *            the u
      * @return the string
-     * @throws MalformedURLException the malformed url exception
+     * @throws MalformedURLException
+     *             the malformed url exception
      */
     public static String prepURLPath(String u) throws MalformedURLException {
         /**
          * TODO: require outside caller encode URL properly.
          * For now, whitespace is only main issue.
          */
-        return  u.replaceAll(" ", "%20");
+        return u.replaceAll(" ", "%20");
     }
-
 
     /**
      * Instantiates a new web client.
      *
-     * @param siteUrl  the url to collect.
-     * @param archive  the destination archive. Keep in mind, this is the location of downloaded originals.
-     *        Use Xtext instance to manage where/how you convert those originals.
-     * @throws MalformedURLException if URL given is bad
-     * @throws ConfigException the config exception
+     * @param siteUrl
+     *            the url to collect.
+     * @param archive
+     *            the destination archive. Keep in mind, this is the location of downloaded originals.
+     *            Use Xtext instance to manage where/how you convert those originals.
+     * @throws MalformedURLException
+     *             if URL given is bad
+     * @throws ConfigException
+     *             the config exception
      */
     public WebClient(String siteUrl, String archive) throws MalformedURLException, ConfigException {
         setSite(siteUrl);
@@ -128,7 +136,8 @@ public class WebClient {
     /**
      * Configure.
      *
-     * @throws ConfigException the config exception
+     * @throws ConfigException
+     *             the config exception
      */
     public void configure() throws ConfigException {
         // Test if the site exists and is reachable
@@ -147,11 +156,13 @@ public class WebClient {
     /**
      * Caller should construct their own conversionManager and pass that in.
      * NOTE: since the web client can operate without an instance of XText, e.g., just run a crawl with no conversion
-     * the WebClient constructor takes an archive path.  As you pass in a conversion manager here, make sure that the
-     * archive root there matches what is used her in the WebClient.  If you are using Xtext in embedded mode, then do not worry.
+     * the WebClient constructor takes an archive path. As you pass in a conversion manager here, make sure that the
+     * archive root there matches what is used her in the WebClient. If you are using Xtext in embedded mode, then do
+     * not worry.
      * the archive is ignored.
      *
-     * @param conversionManager converter, an XText instance
+     * @param conversionManager
+     *            converter, an XText instance
      */
     public void setConverter(XText conversionManager) {
         converter = conversionManager;
@@ -160,10 +171,13 @@ public class WebClient {
     /**
      * Creates the archive file.
      *
-     * @param relpath  relative path for this object
-     * @param isDir the is dir
+     * @param relpath
+     *            relative path for this object
+     * @param isDir
+     *            the is dir
      * @return full path
-     * @throws IOException on I/O error
+     * @throws IOException
+     *             on I/O error
      */
     protected File createArchiveFile(String relpath, boolean isDir) throws IOException {
         String itemArchivedPath = archiveRoot + Collector.PATH_SEP + relpath;
@@ -187,7 +201,8 @@ public class WebClient {
      */
     protected int depth = 0;
 
-    /** Maximum number of levels that will be crawled.
+    /**
+     * Maximum number of levels that will be crawled.
      */
     public final static int MAX_DEPTH = 5;
 
@@ -195,7 +210,8 @@ public class WebClient {
      * Allow a proxy host to be set given the URL.
      * Assumes port 80, no user/password.
      *
-     * @param hosturl proxy URL
+     * @param hosturl
+     *            proxy URL
      */
     public void setProxy(String hosturl) {
         proxy = hosturl;
@@ -209,11 +225,25 @@ public class WebClient {
         proxyHost = new HttpHost(host, port);
     }
 
+    public void setProxy(String h, int port) {
+        proxyHost = new HttpHost(h, port);
+    }
+
+    boolean useSystemProperties = false;
+
+    /**
+     */
+    public void enableSystemProperties(boolean b) {
+        this.useSystemProperties = b;
+    }
+
     /**
      * Sets the site.
      *
-     * @param url the new site
-     * @throws MalformedURLException the malformed url exception
+     * @param url
+     *            the new site
+     * @throws MalformedURLException
+     *             the malformed url exception
      */
     public void setSite(String url) throws MalformedURLException {
         site = new URL(url);
@@ -243,13 +273,19 @@ public class WebClient {
      * using the proxy and cookie settings, as well as any other tuning.
      *
      * Override if your context requires a different style of HTTP client.
+     * 
      * @return HttpClient 4.x object
      */
     public HttpClient getClient() {
-        HttpClientBuilder clientHelper = HttpClientBuilder.create();
+        HttpClientBuilder clientHelper = null;
 
-        if (proxyHost != null) {
-            clientHelper.setProxy(proxyHost);
+        if (this.useSystemProperties) {
+            clientHelper = HttpClientBuilder.create().useSystemProperties();
+        } else {
+            clientHelper = HttpClientBuilder.create();
+            if (proxyHost != null) {
+                clientHelper.setProxy(proxyHost);
+            }
         }
 
         RequestConfig globalConfig = RequestConfig.custom()
@@ -263,7 +299,8 @@ public class WebClient {
     /**
      * Tests the availability of the currently configured source.
      *
-     * @throws ConfigException error which means resource is unavailable.
+     * @throws ConfigException
+     *             error which means resource is unavailable.
      */
     public void testAvailability() throws ConfigException {
 
@@ -293,7 +330,8 @@ public class WebClient {
     /**
      * Sets the interval.
      *
-     * @param i interval
+     * @param i
+     *            interval
      */
     public void setInterval(int i) {
         interval = i;
@@ -315,9 +353,11 @@ public class WebClient {
     /**
      * Get a web page that requires NTLM authentication.
      *
-     * @param siteURL URL
+     * @param siteURL
+     *            URL
      * @return response for the URL
-     * @throws IOException on error
+     * @throws IOException
+     *             on error
      */
     public HttpResponse getPage(URL siteURL) throws IOException {
         HttpClient httpClient = getClient();
@@ -338,29 +378,35 @@ public class WebClient {
         }
     }
 
+    private static final Pattern HREF_MATCH = Pattern.compile("href=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
+
     /**
      * Recursively parse a site page, limiting the crawl to local items
      * contained within the current folder/page
      * This finds only obvious HREF anchors and filters out problematic ones:
+     * 
      * <pre>
      *  "/"
      *  "../xxxxxxx/"
      *  "#"
      *  "javascript:xxxxxx"
      * </pre>
-     * TODO:  pass in or set an allow filter.  sometimes caller knows which content is worth
-     * following, e.g., ../abc_folder/morecontent.htm  and such URLs should be resolved absolutely to avoid
+     * 
+     * TODO: pass in or set an allow filter. sometimes caller knows which content is worth
+     * following, e.g., ../abc_folder/morecontent.htm and such URLs should be resolved absolutely to avoid
      * recapture repeatedly.
      *
-     * @param html HTML text buffer
-     * @param pageUrl the page url
-     * @param siteUrl the site url
+     * @param html
+     *            HTML text buffer
+     * @param pageUrl
+     *            the page url
+     * @param siteUrl
+     *            the site url
      * @return a list of found links
      */
     public Collection<HyperLink> parseContentPage(String html, URL pageUrl, URL siteUrl) {
         Map<String, HyperLink> contentLinks = new HashMap<String, HyperLink>();
-        Pattern href_matcher = Pattern.compile("href=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
-        Matcher matches = href_matcher.matcher(html);
+        Matcher matches = HREF_MATCH.matcher(html);
         while (matches.find()) {
             String link = matches.group(1).trim();
             String link_lc = link.toLowerCase();
@@ -386,7 +432,7 @@ public class WebClient {
                     continue;
                 }
                 if (!contentLinks.containsKey(l.toString())) {
-                    log.info("Found link {}", link);
+                    log.debug("Found link {}", link);
                     contentLinks.put(l.toString(), l);
                 }
             } catch (Exception err) {
@@ -400,12 +446,14 @@ public class WebClient {
 
     /**
      * Reads a data stream as text as the default encoding.
-     * TODO:  test reading website content with different charset encodings to see if the resulting String
+     * TODO: test reading website content with different charset encodings to see if the resulting String
      * is properly decoded.
      *
-     * @param io  IO stream
+     * @param io
+     *            IO stream
      * @return content of the stream
-     * @throws IOException I/O error
+     * @throws IOException
+     *             I/O error
      */
     public static String readTextStream(InputStream io) throws IOException {
         Reader reader = new InputStreamReader(io);
@@ -427,9 +475,12 @@ public class WebClient {
      * REF: http://stackoverflow.com/questions/10960409/how-do-i-save-a-file-
      * downloaded-with-httpclient-into-a-specific-folder
      *
-     * @param entity http entity obj
-     * @param destPath output path
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param entity
+     *            http entity obj
+     * @param destPath
+     *            output path
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     public static void downloadFile(HttpEntity entity, String destPath) throws IOException {
         org.apache.commons.io.IOUtils.copy(entity.getContent(), new FileOutputStream(destPath));
@@ -440,7 +491,8 @@ public class WebClient {
     /**
      * Set a name of this client for tracking puropses, e.g., in multiple threads
      *
-     * @param n the new name
+     * @param n
+     *            the new name
      */
     public void setName(String n) {
         name = n;

@@ -21,8 +21,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -55,6 +58,9 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     private final Logger log = LoggerFactory.getLogger(getClass());
     private boolean allowCurrentSiteOnly = true;
     private boolean allowCurrentDirOnly = false;
+    private HashSet<String> errorPages = new HashSet<>();
+    private List<String> prefixFilters = new ArrayList<>();
+    private List<String> prefixIgnore = new ArrayList<>();
 
     /**
      *
@@ -83,6 +89,30 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         listener = l;
     }
 
+    public void addPrefixFilter(String u) {
+        if (StringUtils.isNotBlank(u)) {
+            this.prefixFilters.add(u);
+        }
+    }
+
+    public void addPrefixFilters(Collection<String> arr) {
+        if (arr != null) {
+            this.prefixFilters.addAll(arr);
+        }
+    }
+
+    public void addIgnoreFilter(String u) {
+        if (StringUtils.isNotBlank(u)) {
+            this.prefixIgnore.add(u);
+        }
+    }
+
+    public void addIgnoreFilters(Collection<String> arr) {
+        if (arr != null) {
+            this.prefixIgnore.addAll(arr);
+        }
+    }
+
     /**
      * For web crawl, this default crawler considers flash, video media, etc. to be out of scope.
      * Other HREF links, like mailto:xyz@me.com are also items to avoid.
@@ -101,6 +131,9 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             return true;
         }
         if (url.startsWith("mailto:")) {
+            return true;
+        }
+        if (url.contains("xmlrpc")) {
             return true;
         }
         return false;
@@ -142,6 +175,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             log.debug("Filter out anchor link {}", link);
             return true;
         }
+        
         return false;
     }
 
@@ -166,6 +200,13 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             link = _link;
         }
 
+        HyperLink thisLink = new HyperLink(link, new URL(link), getSite());
+
+        if (errorPages.contains(thisLink.getAbsoluteURL())) {
+            log.debug("Do not visit error pages tracked in this session; link: {}", link);
+            return;
+        }
+
         HttpResponse page = getPage(prepURL(link));
 
         /*
@@ -182,7 +223,6 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
          *     It is saved to  FILE.html
          */
         String rawData = WebClient.readTextStream(page.getEntity().getContent());
-        HyperLink thisLink = new HyperLink(link, new URL(link), getSite());
 
         String thisPath = thisLink.getNormalPath();
         if (StringUtils.isEmpty(thisPath)) {
@@ -212,6 +252,46 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     public void collect(File f) throws IOException {
         String pageContent = FileUtility.readFile(f, "UTF-8");
         collectItemsOnPage(pageContent, getSite(), getSite());
+    }
+
+    /**
+     * User filters are likely to be more general ALLOW, but specific DENIES within what is allowed.
+     * 
+     * @param path
+     * @return
+     */
+    protected boolean userFilteredOut(final String path) {
+        /*
+         * Caller URL filters. Filter In.
+         */
+        boolean allow = true;
+        if (this.prefixFilters.size() > 0) {
+            allow = false;
+            for (String filt : prefixFilters) {
+                if (path.startsWith(filt)) {
+                    allow = true;
+                    break;
+                }
+            }
+        }
+
+        if (!allow) {
+            return true;
+        }
+
+        /*
+         * Okay, url was allowed, but does it fit a pattern that is to be filtered out?
+         */
+        if (this.prefixIgnore.size() > 0) {
+            for (String filt : prefixIgnore) {
+                if (path.startsWith(filt)) {
+                    allow = false;
+                    break;
+                }
+            }
+        }
+
+        return !allow;
     }
 
     /**
@@ -255,9 +335,18 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             if (key == null) {
                 key = l.getAbsoluteURL();
             }
+
             if (found.containsKey(key)) {
+                // We already did this.
                 continue;
             }
+
+            if (userFilteredOut(key)) {
+                // We don't want to do this.
+                log.debug("Filtered Out by User: {}", key);
+                continue;
+            }
+
             found.put(key, l);
 
             // B. Drop files in archive mirroring the original
@@ -272,6 +361,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             // Download artifacts
             if (l.isFile() || l.isWebPage()) {
                 pause();
+
+                log.info("Pulling page {}", l);
 
                 try {
                     // The default document ID will be an MD5 hash ID of the URL.
@@ -292,6 +383,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                     // Regardless of the item's discovered path, determine
                     // the relative path.
                     if (itemPage.getStatusLine().getStatusCode() >= 400) {
+                        this.errorPages.add(l.getAbsoluteURL());
                         log.error("Failing on this request, HTTP status>=400, LINK={}", l.getURL());
                         continue;
                     }
@@ -373,7 +465,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             doc = converter.convert(item);
 
             if (doc != null) {
-                if (doc.textpath==null){
+                if (doc.textpath == null) {
                     log.error("Expecting the content to be non-null for {}", doc.getFilepath());
                     return;
                 }
