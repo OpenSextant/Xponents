@@ -39,6 +39,8 @@ public class XTConstants {
      *
      */
     public static final int MDY_FAMILY = 0;
+    
+    public static final int DMY_FAMILY = 2;
     /**
      *
      */
@@ -67,10 +69,12 @@ public class XTConstants {
         familyLabel.put(UNK_PATTERN, "UNK");
         familyLabel.put(MDY_FAMILY, "MDY");
         familyLabel.put(DATETIME_FAMILY, "DTM");
+        familyLabel.put(DMY_FAMILY, "DMY");
 
         familyInt.put("UNK", UNK_PATTERN);
         familyInt.put("DTM", DATETIME_FAMILY);
         familyInt.put("MDY", MDY_FAMILY);
+        familyInt.put("DMY", DMY_FAMILY);
     }
 
     /**

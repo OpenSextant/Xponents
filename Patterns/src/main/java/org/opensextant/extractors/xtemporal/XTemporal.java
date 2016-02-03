@@ -63,8 +63,10 @@ public class XTemporal extends AbstractFlexPat {
 
     public static final String DEFAULT_XTEMP_CFG = "/datetime_patterns.cfg";
 
-    /** Application constants -- note the notion of TODAY is relative to the caller's notion of TODAY.
-     * If you are processing data from the past but have a sense of what TODAY is, then when found dates fall on either side of that
+    /**
+     * Application constants -- note the notion of TODAY is relative to the caller's notion of TODAY.
+     * If you are processing data from the past but have a sense of what TODAY is, then when found dates fall on either
+     * side of that
      * they will be relative PAST and relative FUTURE.
      */
     public static Date TODAY = new Date();
@@ -186,8 +188,8 @@ public class XTemporal extends AbstractFlexPat {
                     if (dt.datenorm == null) {
                         continue;
                     }
-                    if ("YMD".equalsIgnoreCase(pat.family)){
-                        if (this.isDistantPastYMD(dt.datenorm)){
+                    if ("YMD".equalsIgnoreCase(pat.family)) {
+                        if (this.isDistantPastYMD(dt.datenorm)) {
                             continue;
                         }
                     }
@@ -237,8 +239,13 @@ public class XTemporal extends AbstractFlexPat {
         ((PatternManager) patterns).enable_pattern_family(XTConstants.MDY_FAMILY, flag);
     }
 
+    public void match_DayMonYear(boolean flag) {
+        ((PatternManager) patterns).enable_pattern_family(XTConstants.DMY_FAMILY, flag);
+    }
+
     /**
      * Optionally reset your context... what is TODAY with respect to your data?
+     * 
      * @param d
      */
     public void setToday(Date d) {
@@ -250,6 +257,7 @@ public class XTemporal extends AbstractFlexPat {
 
     /**
      ** Application thresholds -- chosen by the user
+     * 
      * @param y
      */
     public void setDistantPastYear(int y) {
@@ -257,8 +265,10 @@ public class XTemporal extends AbstractFlexPat {
         DISTANT_PAST_THRESHOLD = (DISTANT_PAST_YEAR - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
     }
 
-    /** This is a very subjective topic -- if a date is distant past or not is relative to your context
-     * If you use the DateMatch flags for distant past and future, then you are likely going to want to set Today and Distant Past Year
+    /**
+     * This is a very subjective topic -- if a date is distant past or not is relative to your context
+     * If you use the DateMatch flags for distant past and future, then you are likely going to want to set Today and
+     * Distant Past Year
      */
     private static int DISTANT_PAST_YEAR = 1950;
     private static long DISTANT_PAST_THRESHOLD = (DISTANT_PAST_YEAR - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
@@ -268,6 +278,7 @@ public class XTemporal extends AbstractFlexPat {
 
     /**
      * Given the set MAX_DATE_CUTOFF_YEAR, determine if the date epoch is earlier than this.
+     * 
      * @param epoch
      * @return
      */
@@ -298,11 +309,10 @@ public class XTemporal extends AbstractFlexPat {
         return isDistantPast(dt.getTime());
     }
 
-
     /**
      * if a date is too far in past to likley be a date of the format YYYY-MM-DD
      */
-    public boolean isDistantPastYMD(Date dt){
+    public boolean isDistantPastYMD(Date dt) {
         //return dt.getTime() < DISTANT_PAST_YMD_THRESHOLD;
         DateTime jodadt = new DateTime(dt);
         return jodadt.getYear() < MINIMUM_YEAR_YMD;

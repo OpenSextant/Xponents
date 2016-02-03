@@ -68,8 +68,12 @@ public class TestXTemporal {
     public void systemTests() {
         log.info("=== SYSTEM TESTS START ===");
 
-        xdt.match_MonDayYear(true);
-        xdt.match_DateTime(true);
+        // Enable select patterns:  disable all first, then enable pattern families.
+        // xdt.disableAll();
+        // xdt.match_MonDayYear(true);
+        // xdt.match_DateTime(true);
+        // xdt.match_MonDayYear(true);
+        xdt.enableAll();
 
         try {
             TestXTemporalReporter tester = new TestXTemporalReporter("./results/xtemp_System.csv");
