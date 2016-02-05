@@ -27,9 +27,16 @@ Utilities that facilitate extraction applications include these:
 The most common resources used are the language name mappings, Geonames features, and Geonames country list (curated by OpenSextant.org)
 Staticly these files are loaded from the resource classpath (Basics JAR file):
 
-  * ./src/main/resources/country-names-2013.csv  // OpenSextant.org gazetteer 
+  * ./src/main/resources/country-names-2015.csv  // Original version: OpenSextant.org gazetteer ; updated here to reflect territories and other flags
   * ./src/main/resources/feature-metadata-2013.csv // OpenSextant.org gazetteer
   * ./src/main/resources/ISO-639-2_utf-8.txt  // Library of Congress (LoC) language listing 
+
+Items moved to CLASSATH:
+These are being refactored.  Geonames.org has files used in the build.
+Yes, we can automate pulling these files in.  For now download them and put them in the designated location:
+  * For build and test, make Basics/src/test/resources/geonames.org/
+  * copy in cities15000.txt and countryInfo.txt
+  * For production, also copy these items into ./solr/gazetteer/conf/geonames.org/
 
 
 #Pairings with Extraction Tools#
