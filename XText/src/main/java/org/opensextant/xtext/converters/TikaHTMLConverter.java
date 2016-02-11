@@ -25,21 +25,26 @@
  */
 package org.opensextant.xtext.converters;
 
-import org.xml.sax.ContentHandler;
-
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.tika.parser.html.HtmlParser;
-import org.apache.tika.parser.ParseContext;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
-import org.apache.tika.sax.BodyContentHandler;
+import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.html.BoilerpipeContentHandler;
-
-import org.opensextant.xtext.ConvertedDocument;
+import org.apache.tika.parser.html.HtmlParser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.opensextant.util.TextUtils;
+import org.opensextant.xtext.ConvertedDocument;
+import org.xml.sax.ContentHandler;
+
+import net.htmlparser.jericho.StartTag;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * A Tika HTML parser that reduces large amounts of empty lines in converted
@@ -53,11 +58,45 @@ public class TikaHTMLConverter extends ConverterAdapter {
     HtmlParser parser = new HtmlParser();
     private boolean scrubHTMLArticle = false;
     private int maxHTMLDocumentSize = MAX_HTML_FILE_SIZE;
+    private static Logger log = LoggerFactory.getLogger(TikaHTMLConverter.class);
+
+    /**
+     * Initially useuful metadata is just date and times pushed through meta tags or meta-equiv tags
+     * 
+     * @param m
+     * @return
+     */
+    public static boolean isUsefulMeta(String m) {
+        String tag = m.toLowerCase();
+        if (tag.contains("date") || tag.contains("time")) {
+            return true;
+        }
+        /* Ignore duplicative tags */
+        if (tag.startsWith("twitter:") || tag.startsWith("fb:")) {
+            return false;
+        }
+        /* Other generic metadata worth tracking: 
+         * 
+         */
+        if (tag.contains("description") || tag.contains("subject") || tag.contains("keywords")) {
+            return true;
+        }
+        if (tag.startsWith("article:")) {
+            return true;
+        }
+        log.debug("HTTP meta tag found meta={}", m);
+        // NOTE: http-equiv, and certain other RDF/tagging mechanisms will be dropped here.
+        // For the same reason Tika does not support them.  Too many wild metadata schemes.
+        return false;
+    }
 
     /**
      * Initialize a reusable HTML parser.
-     * @param article_only true if you want to scrub HTML
-     * @throws IOException on err
+     * 
+     * @param article_only
+     *            true if you want to scrub HTML
+     * @throws IOException
+     *             on err
      */
     public TikaHTMLConverter(boolean article_only) throws IOException {
         scrubHTMLArticle = article_only;
@@ -65,9 +104,13 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
     /**
      * Initialize a reusable HTML parser.
-     * @param article_only true if you want to scrub HTML
-     * @param docSize a maximum raw HTML document size
-     * @throws IOException on err
+     * 
+     * @param article_only
+     *            true if you want to scrub HTML
+     * @param docSize
+     *            a maximum raw HTML document size
+     * @throws IOException
+     *             on err
      */
     public TikaHTMLConverter(boolean article_only, int docSize) throws IOException {
         this(article_only);
@@ -87,6 +130,7 @@ public class TikaHTMLConverter extends ConverterAdapter {
     protected ConvertedDocument conversionImplementation(InputStream input, File doc)
             throws IOException {
         Metadata metadata = new Metadata();
+        HashMap<String, String> moreMetadata = new HashMap<>();
 
         // HTML Conversion here is simply not resetting its internal buffers
         // Its just accumulating and error out when it reaches MAX
@@ -100,11 +144,17 @@ public class TikaHTMLConverter extends ConverterAdapter {
         try {
             parser.parse(input, (scrubHTMLArticle ? scrubbingHandler : handler), metadata,
                     new ParseContext());
+
+            if (doc != null) {
+                parseHTMLMetadata(doc, moreMetadata);
+            }
+
         } catch (Exception xerr) {
             throw new IOException("Unable to parse content", xerr);
         } finally {
             input.close();
         }
+
         ConvertedDocument textdoc = new ConvertedDocument(doc);
 
         textdoc.addTitle(metadata.get(TikaCoreProperties.TITLE));
@@ -133,6 +183,48 @@ public class TikaHTMLConverter extends ConverterAdapter {
         textdoc.addProperty("filtered", scrubHTMLArticle);
         textdoc.addProperty("converter", TikaHTMLConverter.class.getName());
 
+        if (!moreMetadata.isEmpty()) {
+            for (String k : moreMetadata.keySet()) {
+                textdoc.addUserProperty(k, moreMetadata.get(k));
+            }
+        }
+
         return textdoc;
+    }
+
+    /**
+     * Heuristics for pulling in metadata that Tika neglects for various reasons.
+     * This adds found meta tags to given metadata.
+     * 
+     * TODO: InputStream is difficult to reset after tika parser reads it. So just using the file object,
+     * Jericho reads the raw file again.
+     * 
+     * @param doc
+     * @param metadata
+     * @throws IOException
+     */
+    private void parseHTMLMetadata(File doc, Map<String, String> md) throws IOException {
+        net.htmlparser.jericho.Source htmlDoc = new net.htmlparser.jericho.Source(doc);
+        List<net.htmlparser.jericho.StartTag> tags = htmlDoc.getAllStartTags("meta");
+        for (StartTag t : tags) {
+            String n = t.getAttributeValue("name");
+            String p = t.getAttributeValue("property");
+
+            if (p == null && n == null) {
+                log.debug("Unmatched metadata in HTML {}", t.toString());
+                continue;
+            }
+            String key = p != null ? p : n;
+            if (!isUsefulMeta(key)) {
+                continue;
+            }
+            /* hopefully value is in content field */
+            String v = t.getAttributeValue("content");
+            if (v == null) {
+                continue;
+            }
+            md.put(key, v);
+        }
+
     }
 }

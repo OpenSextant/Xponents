@@ -149,6 +149,7 @@ public class PathManager {
         //
         inputRootName = (input.isDirectory() ? input.getName() : input.getParentFile().getName());
 
+        String appendRoot = (input.isDirectory() ? "." : input.getParentFile().getName());
         outputNode = null;
 
         if (conversionCache != null) {
@@ -160,7 +161,7 @@ public class PathManager {
                 File testDir = input.isDirectory() ? input : input.getParentFile();
                 outputNode = createPath(conversionCache, this.getStrippedInputPath(testDir));
             } else if (input.isDirectory()) {
-                outputNode = createPath(conversionCache, inputRootName);
+                outputNode = createPath(conversionCache, appendRoot);
             }
         }
     }

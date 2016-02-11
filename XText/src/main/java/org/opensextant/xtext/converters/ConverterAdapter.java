@@ -15,12 +15,12 @@
  */
 package org.opensextant.xtext.converters;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.File;
 
-import org.apache.tika.io.TikaInputStream;
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.io.TikaInputStream;
 import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.Converter;
 
@@ -83,7 +83,7 @@ public abstract class ConverterAdapter implements Converter {
      */
     @Override
     public ConvertedDocument convert(java.io.File doc) throws IOException {
-        InputStream input = TikaInputStream.get(doc);
+        InputStream input = TikaInputStream.get(doc.toURI().toURL());
         return conversionImplementation(input, doc);
     }
 }

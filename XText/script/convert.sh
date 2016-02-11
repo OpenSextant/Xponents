@@ -1,7 +1,5 @@
 export LANG=en_US
 
-# ant -f ./xtext-test.xml -Dinput=$1 -Doutput=$2 convert
-
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
@@ -9,19 +7,15 @@ basedir=`cd -P $script/..; echo $PWD`
 echo JAVA_HOME =  $JAVA_HOME
 echo See README_convert.txt  for more detail.
 
-#input=$1
-#output=$2
-#crawl_output=$3
-#shift
-#shift
 echo $*
-logfile=$basedir/logs/xtext-stderr.log
 
 # Debug logging: -Dlog4j.debug
 #java  -Dlog4j.configuration="file:${basedir}/script/log4j.properties" -Dxtext.home="${basedir}" -Xmx512m  \
 #   -classpath "$basedir/lib/*" org.opensextant.xtext.XText  --input="$input" --output="$output" --export="$crawl_output" > $logfile 2>&1
 
-java  -Dlog4j.configuration="file:${basedir}/script/log4j.properties" -Dxtext.home="${basedir}" -Xmx512m  \
-   -classpath "$basedir/lib/*" org.opensextant.xtext.XText   $* 
+#java  -Dlog4j.configuration="file:${basedir}/script/log4j.properties" -Dxtext.home="${basedir}" -Xmx512m  \
+#   -classpath "$basedir/lib/*" org.opensextant.xtext.XText   $* 
+
+java  -Dxtext.home="${basedir}" -Xmx512m  -classpath "$basedir/etc:$basedir/lib/*" org.opensextant.xtext.XText   $* 
 
 
