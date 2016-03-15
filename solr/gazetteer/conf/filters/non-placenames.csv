@@ -142,6 +142,7 @@ rectors,concept.religion
 north,directional
 northern,directional
 north-east,directional
+north-eastern,directional
 north east,directional
 northeast,directional
 north-west,directional
@@ -153,8 +154,10 @@ south-east,directional
 south east,directional
 southeast,directional
 south-west,directional
+south-western,directional
 south west,directional
 southwest,directional
+southwestern,directional
 southern,directional
 west,directional
 western,directional
@@ -236,6 +239,7 @@ joy,noun
 pact,noun
 yule,noun
 fresh water,noun
+cloud,noun
 nuke,noun
 puke,noun
 strain,noun
@@ -830,6 +834,7 @@ duh,phrase
 ditto,phrase
 ha,phrase
 dis,phrase
+def,phrase
 yes,phrase
 doh,phrase
 yup,phrase
@@ -860,6 +865,8 @@ tipping point,phrase
 western point,phrase
 eastern point,phrase
 point of view,phrase
+point a,phrase
+point b,phrase
 low bar,phrase
 high bar,phrase
 let alone,phrase
@@ -1057,6 +1064,7 @@ hill,place.general
 mount,place.general
 peak,place.general
 summit,place.general
+the summit,place.general
 mountain,place.general
 a mountain,place.general
 gulf,place.general
