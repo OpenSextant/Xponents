@@ -136,7 +136,7 @@ public class Tests {
     
     @Test
     public void parseBareFilename() throws IOException, ConfigException{
-        URL item = Test.class.getResource("/4567891230" /* Copy:"/T-DS_Excel2003-PPT2003_1.xls"*/);
+        URL item = Test.class.getResource("/4567891230" /* Copy:Headers PPT file*/);
         String input = item.getFile();
         File f = new File(input);
         XText xt = new XText();

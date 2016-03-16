@@ -513,7 +513,7 @@ public final class ConvertedDocument extends DocInput {
      * @return metadata value for k
      */
     public String getProperty(String k) {
-        return meta.optString(k);
+        return meta.optString(k, null);
     }
 
     private boolean checkField(String k) {
@@ -740,7 +740,7 @@ public final class ConvertedDocument extends DocInput {
      * @return id of parent document.
      */
     public String getParentID() {
-        return meta.optString("xtext_parent_id");
+        return getProperty("xtext_parent_id");
     }
 
     /**
@@ -748,7 +748,7 @@ public final class ConvertedDocument extends DocInput {
      * @return path of parent document
      */
     public String getParentPath() {
-        return meta.optString("xtext_parent_path");
+        return getProperty("xtext_parent_path");
     }
 
     public static String XT_LABEL = "XT:";
