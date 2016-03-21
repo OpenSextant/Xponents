@@ -342,7 +342,7 @@ public class XponentsGeotagger extends ServerResource {
         o.put("offset", m.start);
         o.put("length", len);
         //String matchText = TextUtils.squeeze_whitespace(name.getText());        
-        o.put("text", m.getText());
+        o.put("matchtext", m.getText());
         return o;
     }
 

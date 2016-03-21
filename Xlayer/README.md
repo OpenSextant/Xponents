@@ -59,7 +59,7 @@ OUTPUT:
 * 'annotations'  - an array  of objects. 
 
 Annotation schema 
-* text           - text span matched
+* matchtext      - text span matched
 * type           - type of annotation, one of 'place', 'country', 'coordinate', 'org', 'person'
 * offset         - character offset into text buffer where text span starts
 * length         - length of text span.  end offset = offset + length
@@ -72,10 +72,11 @@ Geographic annotations additionally have:
 * adm1           - ADM1 boundary code, ideally ISO nomenclature, but still often FIPS
 * feat_class     - Geonames class. One of A, P, H, R, T, S, L, V.  
 * feat_code      - Geonames designation code. This is more specific than the class.
+* confidence     - A relative level of confidence.  Subject to change; A scale of 0 to 100, where confidence < 20 is not reliable or lacks evidence.
 
 Non-Geographic annotations have:
 * catalog        - attribution to a data source or catalog containing the reference data
-* taxon          - the ID of a normalized catalog entry for the match, e.g., person =  { text:'Rick Springfield', taxon:'person.Richard Springfield', catalog:'Rock-Legends'}
+* taxon          - the ID of a normalized catalog entry for the match, e.g., `person = { text:'Rick Springfield', taxon:'person.Richard Springfield', catalog:'Rock-Legends'}`
 
 
 References:
