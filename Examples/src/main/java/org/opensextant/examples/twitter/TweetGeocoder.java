@@ -47,9 +47,9 @@ public class TweetGeocoder {
     private static Set<String> tweet_pass;
 
     public TweetGeocoder(String job) throws IOException, ConfigException, ProcessingException {
-        // This is to bypass XCoord processing within GATE
-        // Although we still want to use XCoord for some adhoc processing.
-        // This is not internal to XCoord.  It is internal to the PR that uses XCoord: GeocoordFinderPR
+        // 
+        // These static parameter/flags inform XCoord API how to detect and return coordinates.
+        //
         Parameters.RUNTIME_FLAGS = Parameters.FLAG_NO_COORDINATES;//| Parameters.FLAG_ALLOW_LOWERCASE_ABBREV;
         Parameters.RUNTIME_FLAGS ^= Parameters.FLAG_EXTRACT_CONTEXT;
 

@@ -33,7 +33,6 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionMetrics;
-// All geo. Encapsulates XCoord, as well.
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.AbstractFormatter;
@@ -48,8 +47,6 @@ import org.opensextant.xtext.ConversionListener;
 import org.opensextant.xtext.ConvertedDocument;
 import org.opensextant.xtext.XText;
 import org.slf4j.LoggerFactory;
-
-//import org.slf4j.Logger;
 
 /**
  * <pre>
@@ -266,7 +263,6 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
      * Processor design should account for how to partition the problem -
      * ingest, conversion, geocoding, persistence, output format generation.
      *
-     *
      * This implements the XText conversion listener -- when a document is found
      * it is reported here. We add it to the corpus prior to executing the
      * application on the corpus.
@@ -274,16 +270,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
      * The preferred mode is to take the list of document URLs and process them
      * as a batch.
      *
-     * Alternatively if XText was set in "do not save" mode, the Converted
-     * Documents could be processed by adding their buffer to as Documents to
-     * the corpus as buffers (not URLs). This will certainly result in memory
-     * bloat, although it might be faster.
-     *
-     * Tips: Add features to the GATE Document object, e.g., paths, IDs, etc.
-     * that are givens or things that GATE/Opsx pipeline cannot determine Such
-     * features will be consumed by downstream processing
      */
-    @Override
     public void handleConversion(ConvertedDocument txtdoc, String fpath) {
         if (txtdoc == null) {
             log.error("NOTE: Document could not be converted FILE={}", fpath);

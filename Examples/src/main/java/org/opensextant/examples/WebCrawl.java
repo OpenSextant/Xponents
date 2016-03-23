@@ -12,10 +12,15 @@ import org.opensextant.xtext.collectors.CollectionListener;
 import org.opensextant.xtext.collectors.web.DefaultWebCrawl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static net.htmlparser.jericho.Config.LoggerProvider;
 
 /*  
  */
 public class WebCrawl implements CollectionListener {
+    
+    static {
+        LoggerProvider = LoggerProvider.SLF4J;
+    }
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -142,17 +147,17 @@ public class WebCrawl implements CollectionListener {
         }
     }
 
-    @Override
+    //@Override
     public void collected(ConvertedDocument doc, String fpath) throws IOException {
         log.info("Got doc with {} = {}", doc.id, doc.filepath);
     }
 
-    @Override
+    //@Override
     public void collected(File doc) throws IOException {
         log.info("Got file with  {}", doc);
     }
 
-    @Override
+    //@Override
     public boolean exists(String oid) {
         log.info("Got object with  {}", oid);
         return false;
