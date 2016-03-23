@@ -202,8 +202,8 @@ abstract public class AbstractFormatter implements ResultsFormatter {
      */
     //abstract public void writeRowsFor(Document doc) throws IOException;
 
-    /** Write your geocoding result directly to output, instead of passing GATE objects.
-     * Result should carry GeocodingResult.recordFile as a URI for original.
+    /** Write your geocoding result directly to output
+     * Result should carry ExtractionResult.recordFile as a URI for original.
      *
      * @param rowdata the data to write out
      */

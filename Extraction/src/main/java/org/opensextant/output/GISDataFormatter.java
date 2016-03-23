@@ -192,9 +192,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     }
 
     /**
-     * This allows you to add either output of a Corpus processor
-     * (gate.Document, gate.Corpus) or to add a Geocoding Result directly
-     *
+     * Implementation of adding info extraction/geocoding restults to GIS outputs.
      */
     @Override
     public void writeGeocodingResult(ExtractionResult rowdata) {

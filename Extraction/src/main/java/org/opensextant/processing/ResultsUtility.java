@@ -46,7 +46,7 @@ public class ResultsUtility {
     public static int TEXT_WIDTH = 150;
 
     /**
-     * Given the GATE annotation set the context on the TextEntity object.
+     * Given the TextEntity, set the context on that object.
      */
     public static void setPrePostContextFor(String content, TextEntity t, int offset, int match_size, int doc_size) {
         if (t.getContextAfter() != null) {
