@@ -124,13 +124,16 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     @Override
     public boolean filterOutFile(String path) {
         String url = path.toLowerCase();
+        if (url.startsWith("mailto:")) {
+            return true;
+        }
+        if (url.endsWith(".atom") || url.endsWith(".rss")) {
+            return true;
+        }
         if (url.endsWith(".flv")) {
             return true;
         }
         if (url.endsWith(".mp4")) {
-            return true;
-        }
-        if (url.startsWith("mailto:")) {
             return true;
         }
         if (url.contains("xmlrpc")) {
@@ -175,7 +178,7 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
             log.debug("Filter out anchor link {}", link);
             return true;
         }
-        
+
         return false;
     }
 
@@ -402,7 +405,9 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
                      */
                     String fpath = l.getNormalPath();
                     if (l.isDynamic()) {
-                        fpath = fpath + ".html";
+                        if (!fpath.endsWith(".html")) {
+                            fpath = fpath + ".html";
+                        }
                     }
                     File itemSaved = createArchiveFile(fpath, false);
                     File dir = new File(itemSaved.getParentFile().getAbsolutePath());
