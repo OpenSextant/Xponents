@@ -236,6 +236,10 @@ def create_entity(line, scan=False):
     if _id == '0':
         print "Ignore line, ", line
         return None
+
+    if len(parts)!=4:
+        print "Must be TAB separated fields '%s'" %( line )
+        return None
     
     name = unicode(parts[3].replace('+', ' '), 'utf-8').strip()
     lang = parts[2]
@@ -342,7 +346,7 @@ if __name__ == '__main__':
     row_id = 0
     fh = open(taxonomy, 'rb')
     for row in fh:
-        if row.startswith("#"): continue
+        if row.startswith("#") or len(row.strip()) == 0: continue
 
         row_id = row_id + 1
         create_entity(row, scan=True)
