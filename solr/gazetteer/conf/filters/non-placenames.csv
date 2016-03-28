@@ -9,7 +9,9 @@ eta,abbrev
 tel,abbrev
 lat,abbrev
 lon,abbrev
+res,abbrev
 sub,abbrev
+conop,abbrev
 supreme,adjective
 keen,adjective
 excelsior,adjective
@@ -30,6 +32,9 @@ trojan,adjective
 indo,adjective
 baltic,adjective
 oceanic,adjective
+pan american,adjective
+panamerican,adjective
+pan-american,adjective
 trans,adjective
 civil,adjective
 marine,adjective
@@ -217,6 +222,7 @@ jan,month
 january,month
 primer,noun
 champion,noun
+aces,noun
 box,noun
 triple,noun
 tri,adjective
@@ -227,6 +233,7 @@ rash,noun
 row,noun
 fir,noun
 rift,noun
+carrier,noun
 sample,noun
 burden,noun
 gap,noun
@@ -811,6 +818,7 @@ rican,phrase
 pro,phrase
 rad,phrase
 rep,phrase
+pep,phrase
 doo,phrase
 a camp,phrase
 int,phrase
@@ -925,6 +933,7 @@ jail,place.civil
 rotary,place.civil
 castle,place.civil
 plaza,place.civil
+annex,place.civil
 dock,place.civil
 suite,place.civil
 city hall,place.civil
@@ -936,6 +945,7 @@ school,place.civil
 schools,place.civil
 middle school,place.civil
 high school,place.civil
+headquarters,place.civil
 academy,place.civil
 nursing home,place.civil
 science foundation,place.civil
