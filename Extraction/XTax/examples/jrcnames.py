@@ -132,6 +132,7 @@ FIXES = {
          'Improvised Explosive Device' : '-'
          }
 
+apply_default_fixes = True
 
 
 def check_validity(e):
@@ -151,7 +152,7 @@ PLACE_STARTING_FIXES = set(['city', 'spin', 'town' ])
 
 # A large number of entities are marked as Person unnecessarily.
 # Org fixes: find any of these terms in a phrase and declare the phrase an org, if not already.
-ORG_FIXES = set(['tribunal', 'council', 'shura', 'group', 'committee', 'senate', 
+ORG_FIXES = set(['tribunal', 'council', 'shura', 'group', 'committee', 'senate',  ' of state',
                  'departamento', 'department', 'transport', 'transit', 'musee', 'museum', 
                  'museums', 'organization', 'authority', 'enterprise', 'institute', 'inc', 'llc'])
     
@@ -169,13 +170,15 @@ class JRCEntity(Taxon):
         if self.phrase in FIXES:
             self.entity_type = FIXES.get(self.phrase)
 
-        tokens = self.phrasenorm.split()
-        if tokens[-1] in PLACE_ENDING_FIXES:
+        if apply_default_fixes:
+          tokens = self.phrasenorm.split()
+          if tokens[-1] in PLACE_ENDING_FIXES:
             # Place (T=terrain)
             self.entity_type = 'T'
-        elif tokens[0] in PLACE_STARTING_FIXES:
+          elif tokens[0] in PLACE_STARTING_FIXES:
             self.entity_type = 'T'
-        elif self.entity_type == 'P':
+
+          if self.entity_type == 'P':
             for tok in tokens:
                 if tok in ORG_FIXES: 
                     self.entity_type = 'O'
@@ -246,6 +249,7 @@ def create_entity(line, scan=False):
     etype = parts[1]
     
     if not etype:
+        print "No valid type; Ignoring line, ", line
         return None
     
     _id = int(_id)
@@ -308,7 +312,8 @@ if __name__ == '__main__':
     ap.add_argument('--starting-id')
     ap.add_argument('--solr')
     ap.add_argument('--max')
-    ap.add_argument('--invalidate')
+    ap.add_argument('--invalidate', action='store_true', default=False)
+    ap.add_argument('--no-fixes', action='store_true', default=True)
 
     args = ap.parse_args()
 
@@ -316,10 +321,13 @@ if __name__ == '__main__':
     if args.starting_id:
         start_id = int(args.starting_id)
     
-    only_mark_invalid=False
+    only_mark_invalid = args.invalidate
+    apply_default_fixes = not args.no_fixes
+
     test = False
     builder = None
     row_max = -1
+
 
     if args.solr:
         solr_url = args.solr
@@ -332,9 +340,6 @@ if __name__ == '__main__':
     if args.max:
         row_max = int(args.max)
 
-    if args.invalidate:
-        only_mark_invalid=True
-        
     # Commit rows every 10,000 entries.
     builder.commit_rate = 50000
     builder.stopwords = set([])
@@ -376,6 +381,7 @@ if __name__ == '__main__':
             continue
 
         builder.add(catalog_id, node)
+        print catalog_id, node
         builder.save()
 
         if row_id % 100000 == 0:
@@ -392,4 +398,3 @@ if __name__ == '__main__':
         print err
     
     fh.close()
-            
