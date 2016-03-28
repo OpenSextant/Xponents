@@ -381,7 +381,7 @@ if __name__ == '__main__':
             continue
 
         builder.add(catalog_id, node)
-        print catalog_id, node
+        # print catalog_id, node
         builder.save()
 
         if row_id % 100000 == 0:
