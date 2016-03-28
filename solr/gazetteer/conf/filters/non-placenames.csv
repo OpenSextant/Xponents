@@ -1,4 +1,5 @@
 exclusion,category
+doc,abbrev
 id,abbrev
 ibid,abbrev
 imo,abbrev
@@ -8,6 +9,7 @@ eta,abbrev
 tel,abbrev
 lat,abbrev
 lon,abbrev
+sub,abbrev
 supreme,adjective
 keen,adjective
 excelsior,adjective
@@ -504,6 +506,7 @@ cat,noun
 vet,noun
 veterans,noun
 rabbit,noun
+doe,noun
 charter,noun
 chart,noun
 bulletin,noun
@@ -803,8 +806,10 @@ a1c,person.label.rank
 building a,phrase
 old west,phrase
 a school,phrase
+milestone,phrase
 rican,phrase
 pro,phrase
+rad,phrase
 rep,phrase
 doo,phrase
 a camp,phrase
@@ -813,6 +818,8 @@ reps,phrase
 state run,phrase
 reg,phrase
 amen,phrase
+two states,phrase
+three states,phrase
 nota bene,phrase
 as self,phrase
 a bad,phrase
@@ -915,8 +922,11 @@ pluto,place.astro
 aquarius,place.astro
 palace,place.civil
 jail,place.civil
+rotary,place.civil
 castle,place.civil
 plaza,place.civil
+dock,place.civil
+suite,place.civil
 city hall,place.civil
 depot,place.civil
 basin,place.civil
@@ -928,6 +938,7 @@ middle school,place.civil
 high school,place.civil
 academy,place.civil
 nursing home,place.civil
+science foundation,place.civil
 real-estate,place.civil
 real estate,place.civil
 estates,place.civil
@@ -1200,6 +1211,7 @@ ajax,stopword.web
 demo,stopword.web
 stat,stopword.web
 rfc,stopword.web
+seminar,stopword.web
 perf,stopword.web
 null,stopword.web
 web,stopword.web
@@ -1213,6 +1225,7 @@ ebay,stopword.web
 xbox,stopword.web
 cookie,stopword.web
 beta,stopword.web
+gamma,stopword.web
 click,stopword.web
 link,stopword.web
 lol,stopword.web
@@ -1465,6 +1478,7 @@ sell,verb
 tell,verb
 punch,verb
 reform,verb
+fielding,verb
 will,verb
 wash,verb
 hurt,verb
