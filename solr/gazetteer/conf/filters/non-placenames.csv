@@ -800,6 +800,7 @@ po2,person.label.rank
 po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
+story building,phrase
 building a,phrase
 old west,phrase
 a school,phrase
@@ -1001,6 +1002,7 @@ country,place.general
 desert,place.general
 land,place.general
 island,place.general
+islet,place.general
 valley,place.general
 ridge,place.general
 route,place.general
