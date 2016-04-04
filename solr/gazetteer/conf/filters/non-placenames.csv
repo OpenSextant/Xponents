@@ -542,6 +542,7 @@ sprint,noun.sport
 sports,noun.sport
 cricket,noun.sport
 marshal,person.label
+comrade,person.label
 foreman,person.label
 bachelor,person.label
 friar,person.label
@@ -843,6 +844,7 @@ new deal,phrase
 new way,phrase
 back way,phrase
 easy way,phrase
+happy new year,phrase
 by chance,phrase
 a peak,phrase
 top two,phrase
@@ -918,6 +920,7 @@ tis,phrase
 ta,phrase
 the city,phrase
 rock bottom,phrase
+lunar,adjective
 mars,place.astro
 comet,place.astro
 galaxy,place.astro
@@ -931,6 +934,8 @@ pluto,place.astro
 aquarius,place.astro
 palace,place.civil
 jail,place.civil
+stadium,place.civil
+zoo,place.civil
 rotary,place.civil
 castle,place.civil
 plaza,place.civil
@@ -1086,6 +1091,7 @@ site,place.general
 park,place.general
 hill,place.general
 mount,place.general
+alps,place.general
 peak,place.general
 summit,place.general
 the summit,place.general
@@ -1104,8 +1110,9 @@ crossroads,place.general
 interstate,place.general
 nation,place.general
 sector,place.general
-motel,place.general
-house,place.general
+motel,place.civil
+house,place.civil
+greenhouse,place.civil
 bar,place.general
 bank,place.general
 case,place.general
