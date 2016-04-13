@@ -14,7 +14,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='opensextant',
-    version='1.0b',
+    version='1.0',
 
     description='OpenSextant APIs and Utilities',
     long_description=long_description,
@@ -54,5 +54,5 @@ setup(
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 
-    install_requires=['pysolr', 'chardet']
+    install_requires=['pysolr>=3.2.0', 'chardet>=2.3.0']
 )
