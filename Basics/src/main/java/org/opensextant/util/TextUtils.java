@@ -407,7 +407,7 @@ public class TextUtils {
      * control character contributes to formatting in some way. DEL, VT, HT,
      * etc. So all control characters ( c &lt; ' ') are counted.
      * 
-     * @param txt
+     * @param txt input string
      * @return count of format chars
      */
     public static int countFormattingSpace(String txt) {
@@ -549,7 +549,7 @@ public class TextUtils {
      * Latin-alphabet.
      * 
      * @param counts word stats from measureCase()
-     * @return
+     * @return true if counts represent text that exceeds the "UPPER CASE" threshold
      */
     public static boolean isUpperCaseDocument(final int[] counts) {
         // Method 1:  Content = chars + non-chars (not whitespace)
@@ -567,7 +567,7 @@ public class TextUtils {
      * or compared to just char content.
      * 
      * @param counts word stats from measureCase()
-     * @return
+     * @return true if counts represent text that exceeds the "lower case" threshold
      */
     public static boolean isLowerCaseDocument(final int[] counts) {
         int content = counts[0] /*+ counts[3]*/;

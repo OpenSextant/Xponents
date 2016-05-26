@@ -324,7 +324,7 @@ public class GISDataModel {
 
         if (m.getContext() == null && res.input!=null){
             int len = res.input.buffer.length();
-            ResultsUtility.setContextFor(res.input.buffer, m, m.start, m.match_length(), len);
+            ResultsUtility.setContextFor(res.input.buffer, m, len);
         }
         addContext(row, m);
 

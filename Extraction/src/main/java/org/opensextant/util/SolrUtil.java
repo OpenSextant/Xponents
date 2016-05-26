@@ -20,8 +20,8 @@ public class SolrUtil {
 
     /**
      *
-     * @param d
-     * @param f
+     * @param d solr doc
+     * @param f field name
      * @return  a list of strings for this field from that document.;  Or null if none found.
      */
     public static List<String> getStrings(SolrDocument d, String f) {
@@ -90,7 +90,7 @@ public class SolrUtil {
     /**
      * Get a Date object from a record
      *
-     * @throws java.text.ParseException
+     * @throws java.text.ParseException if DateUtil fails to parse date str
      */
     public static Date getDate(SolrDocument d, String f)
             throws java.text.ParseException {

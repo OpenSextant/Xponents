@@ -34,6 +34,7 @@ import org.opensextant.extraction.TextEntity;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.util.TextUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * Abstract class encapsulating basic results formatter functionality.
  *
@@ -47,13 +48,21 @@ public class ResultsUtility {
 
     /**
      * Given the TextEntity, set the context on that object.
+     * The text entity must have span (start, end attributes) set.
+     * 
+     * @param content
+     *            entire text from which entity came from
+     * @param t
+     *            the entity
+     * @param doc_size
+     *            the doc_size
      */
-    public static void setPrePostContextFor(String content, TextEntity t, int offset, int match_size, int doc_size) {
+    public static void setPrePostContextFor(String content, TextEntity t, int doc_size) {
         if (t.getContextAfter() != null) {
             return;
         }
 
-        int[] bounds = TextUtils.get_text_window(offset, match_size, doc_size, TEXT_WIDTH);
+        int[] bounds = TextUtils.get_text_window(t.start, t.getLength(), doc_size, TEXT_WIDTH);
 
         t.setContext(content.substring(bounds[0], bounds[1]), // text before match
                 content.substring(bounds[2], bounds[3])); // text after match
@@ -61,25 +70,35 @@ public class ResultsUtility {
 
     /**
      * Given the annotation or match, set the context on the TextEntity object.
+     * The text entity must have span (start, end attributes) set.
+     *
+     * @param content
+     *            the content
+     * @param t
+     *            the t
+     * @param doc_size
+     *            the doc_size
      */
-    public static void setContextFor(String content, TextEntity t, int offset, int match_size, int doc_size) {
+    public static void setContextFor(String content, TextEntity t, int doc_size) {
 
         if (t.getContext() != null) {
             return;
         }
 
-        int[] bounds = TextUtils.get_text_window(offset, doc_size, TEXT_WIDTH);
+        int[] bounds = TextUtils.get_text_window(t.start, doc_size, TEXT_WIDTH);
 
         t.setContext(TextUtils.squeeze_whitespace(content.substring(bounds[0], bounds[1]))); // text after match
     }
 
     /**
-     * Testers for TextMatch: isLocation macro
+     * Testers for TextMatch: isLocation macro.
+     *
      * @param m
-     * @return
+     *            the m
+     * @return true, if is location
      */
     public static boolean isLocation(TextMatch m) {
-        if (m instanceof Geocoding){
+        if (m instanceof Geocoding) {
             return true;
         }
         if (StringUtils.isBlank(m.getType())) {
@@ -90,9 +109,11 @@ public class ResultsUtility {
     }
 
     /**
-     * Testers for TextMatch: isDatetime macro
+     * Testers for TextMatch: isDatetime macro.
+     *
      * @param m
-     * @return
+     *            the m
+     * @return true, if is datetime
      */
     public static boolean isDatetime(TextMatch m) {
         if (StringUtils.isBlank(m.getType())) {
@@ -106,10 +127,17 @@ public class ResultsUtility {
      * Control floating point accuracy on any results.
      *
      * @return A string representation of a double with a fixed number of digits
-     * to the right of the decimal point.
+     *         to the right of the decimal point.
      */
     static final DecimalFormat confFmt = new DecimalFormat("0.000");
 
+    /**
+     * Format confidence.
+     *
+     * @param d
+     *            the d
+     * @return the string
+     */
     public static String formatConfidence(double d) {
         return confFmt.format(d);
     }

@@ -85,11 +85,6 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
         super(lat, lon);
     }
 
-    /**
-     * If the name has been set you c
-     * 
-     * @return
-     */
     public boolean isASCIIName() {
         return this.isASCIIName;
     }
@@ -287,7 +282,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
      * if feature class for this location is 'P' for populated place.
      * TODO: Not sure if this is part of Geocoding interface.
      * 
-     * @return
+     * @return true if feature class is typically populated
      */
     public boolean isPopulated() {
         return GeonamesUtility.isPopulated(featureClass);
