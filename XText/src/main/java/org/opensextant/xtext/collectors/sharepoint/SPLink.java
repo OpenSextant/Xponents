@@ -21,9 +21,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.collectors.Collector;
 import org.opensextant.xtext.collectors.web.HyperLink;
 
@@ -33,13 +36,20 @@ public class SPLink extends HyperLink {
 
     /**
      * TODO: fix site vs. base link
-     * @param link a URL
-     * @param base where the URL was found
-     * @throws MalformedURLException  err that happens if URLs are poorly formatted.
-     * @throws UnsupportedEncodingException err that happens occasionally
-     * @throws NoSuchAlgorithmException err that never happens
+     * 
+     * @param link
+     *            a URL
+     * @param base
+     *            where the URL was found
+     * @throws MalformedURLException
+     *             err that happens if URLs are poorly formatted.
+     * @throws UnsupportedEncodingException
+     *             err that happens occasionally
+     * @throws NoSuchAlgorithmException
+     *             err that never happens
      */
-    public SPLink(String link, URL base) throws MalformedURLException, UnsupportedEncodingException, NoSuchAlgorithmException {
+    public SPLink(String link, URL base)
+            throws MalformedURLException, UnsupportedEncodingException, NoSuchAlgorithmException {
         super(link, base, base);
 
         if (isSharepointFolder()) {
@@ -60,9 +70,50 @@ public class SPLink extends HyperLink {
         if (isSharepointFolder()) {
             parseURL();
             simplifiedURL = new URL(referrerURL, params.getProperty("RootFolder"));
+
+            String[] pathParts = simplifiedURL.getPath().split("/");
+            StringBuilder buf = new StringBuilder();
+            for (String p : pathParts) {
+                if (p.length() > 0) {
+                    buf.append('/');
+                    buf.append(encodePathSegment(p));
+                }
+            }
+            simplifiedURL = new URL(simplifiedURL, buf.toString());
         }
     }
 
+    public final String encodePathSegment(String s) throws UnsupportedEncodingException {
+        StringBuilder buf = new StringBuilder();
+        byte[] b = s.getBytes("UTF-8");
+        for (byte bt : b) {
+            if (isAlphanum(bt)) {
+                buf.append((char)bt);
+            } else {
+                buf.append(escapeByte(bt));
+            }
+        }
+        return buf.toString();
+
+    }
+
+    public static String escapeByte(byte b) {
+        return String.format("%%%x", b);
+    }
+
+    public static boolean isAlphanum(byte b) {
+        if (0x30 <= b && b <= 0x39) {
+            return true;
+        }
+        if (0x40 < b && b < 0x5b) {
+            return true;
+        }
+        if (0x60 < b && b < 0x7b) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Converts an obfuscated Sharepoint folder URL or view into a normal path
@@ -79,7 +130,6 @@ public class SPLink extends HyperLink {
         return null;
     }
 
-
     public boolean isSharepointFolder() {
         return urlValue.contains("FolderCTID");
     }
@@ -87,13 +137,14 @@ public class SPLink extends HyperLink {
     /**
      *
      * @return string for url if it could be simplified.
-     * @throws MalformedURLException on err
-     */ 
+     * @throws MalformedURLException
+     *             on err
+     */
     public URL getSimplifiedFolderURL() throws MalformedURLException {
         if (simplifiedURL == null) {
             return null;
         }
-        return new URL(simplifiedURL.toString());
+        return simplifiedURL;
     }
 
     /**
@@ -115,6 +166,5 @@ public class SPLink extends HyperLink {
         }
         return null;
     }
-
 
 }
