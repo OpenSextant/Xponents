@@ -228,9 +228,9 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         String rawData = WebClient.readTextStream(page.getEntity().getContent());
 
         String thisPath = thisLink.getNormalPath();
-        if (StringUtils.isEmpty(thisPath)) {
-            return;
-        }
+        //if (StringUtils.isEmpty(thisPath)) {
+        //    return;
+        //}
         if (thisLink.isDynamic() && (!thisPath.endsWith("html"))) {
             thisPath = String.format("%s.html", thisPath);
         }
@@ -239,18 +239,18 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
         if (!thisPage.exists()) {
             FileUtility.writeFile(rawData, thisPage.getAbsolutePath());
         }
-        ++depth;
-
         log.info("Starting in on {} from {} @ depth=" + depth, link, site);
         pause();
+
+        ++depth;
 
         collectItemsOnPage(rawData, thisLink.getURL(), getSite());
     }
 
     /**
      * 
-     * @param f
-     * @throws IOException
+     * @param f file object
+     * @throws IOException on err
      */
     public void collect(File f) throws IOException {
         String pageContent = FileUtility.readFile(f, "UTF-8");
@@ -260,8 +260,8 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     /**
      * User filters are likely to be more general ALLOW, but specific DENIES within what is allowed.
      * 
-     * @param path
-     * @return
+     * @param path filepath
+     * @return if user options filter out the given path
      */
     protected boolean userFilteredOut(final String path) {
         /*
@@ -300,9 +300,9 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     /**
      * Internal method for parsing and harvesting from a single page and then crawling deeper, if instructed to do so.
      * 
-     * @param pageContent
-     * @param url
-     * @param site
+     * @param pageContent raw HTML
+     * @param url  url for HTML
+     * @param site  top level url for site
      */
     protected void collectItemsOnPage(String pageContent, URL url, URL site) {
 
@@ -506,8 +506,6 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     }
 
     /**
-     * (non-Javadoc)
-     * 
      * @see org.opensextant.xtext.collectors.web.CrawlFilter#isAllowCurrentSiteOnly()
      */
     @Override
@@ -516,8 +514,6 @@ public class DefaultWebCrawl extends WebClient implements ExclusionFilter, Colle
     }
 
     /**
-     * (non-Javadoc)
-     * 
      * @see org.opensextant.xtext.collectors.web.CrawlFilter#setAllowCurrentSiteOnly(boolean)
      */
     @Override
