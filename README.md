@@ -1,12 +1,14 @@
 Xponents
 ========
-    Xponents 2.7 (part of OpenSextant v2.0)
+    Xponents 2.8, Mar 2016  v2.8.13
+
     Date:     25 JULY 2013
-    Updated:  01 June 2014   v2.5
-    Updated:  01 April2015   v2.7
-    Updated:  30 Oct  2015   v2.7.16
-    Updated:  30 Nov  2015   v2.7.19
+
     Updated:  05 Dec  2015   v2.8
+    Updated:  30 Nov  2015   v2.7.19
+    Updated:  30 Oct  2015   v2.7.16
+    Updated:  01 April2015   v2.7
+    Updated:  01 June 2014   v2.5
 
 Xponents is a set of text extractor libraries with a light veneer of processing control, including:
 

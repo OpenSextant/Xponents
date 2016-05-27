@@ -149,7 +149,7 @@ public class SolrProxy extends SolrUtil {
     /**
      * Get an HTTP server for Solr.
      *
-     * @param url
+     * @param url server represented by URL
      * @return Instance of a Solr server
      * @throws MalformedURLException
      */
@@ -207,8 +207,8 @@ public class SolrProxy extends SolrUtil {
     
     /**
      * Populate the data card.
-     * @param gazEntry
-     * @param bean
+     * @param gazEntry solr doc
+     * @param bean place obj to populate
      */
     public static void populatePlace(SolrDocument gazEntry, Place bean){
         String nt = SolrUtil.getString(gazEntry, "name_type");

@@ -74,9 +74,9 @@ public class FormatterFactory {
     /**
      * Supported formats are CSV, WKT, HTML, KML, Shapefile, GDB, JSON
      *
-     * @param fmt
-     * @return
-     * @throws ProcessingException
+     * @param fmt format name
+     * @return Implentation of ResultsFormatter
+     * @throws ProcessingException if Java class for formatter is not found
      */
     public static ResultsFormatter getInstance(String fmt) throws ProcessingException {
 

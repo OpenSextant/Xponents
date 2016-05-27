@@ -62,9 +62,10 @@ public class TikaHTMLConverter extends ConverterAdapter {
 
     /**
      * Initially useuful metadata is just date and times pushed through meta tags or meta-equiv tags
+     * Override as needed.
      * 
-     * @param m
-     * @return
+     * @param m metadata key
+     * @return if field is generally useful. 
      */
     public static boolean isUsefulMeta(String m) {
         String tag = m.toLowerCase();
@@ -199,8 +200,8 @@ public class TikaHTMLConverter extends ConverterAdapter {
      * TODO: InputStream is difficult to reset after tika parser reads it. So just using the file object,
      * Jericho reads the raw file again.
      * 
-     * @param doc
-     * @param metadata
+     * @param doc file object for document
+     * @param metadata metadata map to backfill
      * @throws IOException
      */
     private void parseHTMLMetadata(File doc, Map<String, String> md) throws IOException {

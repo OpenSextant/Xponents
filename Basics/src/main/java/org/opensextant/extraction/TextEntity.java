@@ -115,7 +115,7 @@ public class TextEntity {
     /**
      * If non-punctuation content is purely ASCII vs. Latin1 vs. unicode.
      * 
-     * @return
+     * @return true if text value is purely ASCII
      */
     public boolean isASCII() {
         return isASCII;
@@ -152,7 +152,7 @@ public class TextEntity {
      * 
      * @return int, length
      */
-    public int match_length() {
+    public int getLength() {
         if (start < 0) {
             // Match not initialized
             return 0;

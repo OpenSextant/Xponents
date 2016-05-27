@@ -44,9 +44,8 @@ public class GDBFormatter extends GISDataFormatter {
 
     /**
      *
-     * @throws ProcessingException
      */
-    public GDBFormatter() throws ProcessingException {
+    public GDBFormatter() {
         this.outputExtension = ".gdb";
         this.doc_type = DocumentType.FileGDB;
         this.outputType = "FileGDB";

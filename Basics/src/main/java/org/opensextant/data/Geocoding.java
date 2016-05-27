@@ -49,17 +49,23 @@ package org.opensextant.data;
 public interface Geocoding  extends LatLon {
 
     //-------------------
-    // High level flags: What is the geo entity?
+    // High level flags: These attributes outline what this geocoding represents - a place, landmark, site, coordinate, etc.
     //-------------------
+    /**
+     * 
+     * @return true if geocoding represents a named place 
+     */
     public boolean isPlace();
+
     /**
      * isCoordinate: if this object represents a coordinate
-     * @return
+     * @return true if geocoding represents a coordinate
      */
     public boolean isCoordinate();
+
     /**
      * has Coordinate: if this named place object has a coordinate. 
-     * @return
+     * @return true if geocoding represents has a valid lat, lon
      */
     public boolean hasCoordinate();
     public boolean isCountry();

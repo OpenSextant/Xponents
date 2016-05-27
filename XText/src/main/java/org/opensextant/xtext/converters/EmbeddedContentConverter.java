@@ -111,7 +111,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
 
         TikaInputStream tikaStream = null;
         try {
-            tikaStream = TikaInputStream.get(doc);
+            tikaStream = TikaInputStream.get(doc.toPath());
             extractor.extract(tikaStream, extractor, objExtractor);
             compoundDoc.is_converted = true;
             if (compoundDoc.hasRawChildren()) {

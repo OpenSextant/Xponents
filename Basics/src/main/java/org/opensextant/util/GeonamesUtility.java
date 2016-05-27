@@ -192,8 +192,8 @@ public class GeonamesUtility {
     /**
      * Build out a global map of TZ to CC to find which countries are in a particular TZ quickly
      * 
-     * @param tz
-     * @param cc
+     * @param tz TZ name
+     * @param cc ISO country code for lookup
      */
     private void addTimezone(String tz, String cc) {
         Set<String> ccset = tz2cc.get(tz);
@@ -214,7 +214,7 @@ public class GeonamesUtility {
      *            query in hours (-12.0 to 12.0) or seconds (-43,200 to 43,200) in the respective 30 or 15 minute
      *            increments.
      * @param cc
-     *            country
+     *            ISO country code
      */
     private void addUTCOffset(Double utc, String cc) {
         Set<String> ccset = utc2cc.get(utc);
@@ -238,8 +238,8 @@ public class GeonamesUtility {
     /**
      * List all countries in a particular TZ
      * 
-     * @param tz
-     * @return
+     * @param tz TZ name
+     * @return list of country codes
      */
     public Collection<String> countriesInTimezone(String tz) {
         return tz2cc.get(tz.toLowerCase());
@@ -248,8 +248,8 @@ public class GeonamesUtility {
     /**
      * List all countries in a particular UTC offset; These are usuually -12.0 to 12.0 every 0.5 hrs.
      * 
-     * @param utc
-     * @return
+     * @param utc  offset in decimal hours
+     * @return list of country codes found with the offset
      */
     public Collection<String> countriesInUTCOffset(double utc) {
         return utc2cc.get(utc);
@@ -265,7 +265,7 @@ public class GeonamesUtility {
      * @param resourcePath
      *            CLASSPATH location of a resource.
      * @return list of places
-     * @throws IOException
+     * @throws IOException if resource file is not found
      */
     public static List<Place> loadMajorCities(String resourcePath) throws IOException {
         URL f = GeonamesUtility.class.getResource(resourcePath);
@@ -286,8 +286,8 @@ public class GeonamesUtility {
      * geonames.org cities data is usually unique by row, so if you provide 1000 cities in a list
      * your map will have 1000 city place IDs in the map. No duplicates expected.
      * 
-     * @param cities
-     * @return
+     * @param cities arra of Place objects
+     * @return map of place ID to Place object
      */
     public static Map<String, Place> mapMajorCityIDs(List<Place> cities) {
         Map<String, Place> mapped = new HashMap<>();
@@ -301,8 +301,8 @@ public class GeonamesUtility {
      * See mapPopulationByLocation(list, int). Default geohash prefix length is 5, which
      * yields about 6km grids or so.
      * 
-     * @param cities
-     * @return
+     * @param cities list of major cities
+     * @return map of population summation over geohash grids.
      */
     public static Map<String, Integer> mapPopulationByLocation(List<Place> cities) {
         return mapPopulationByLocation(cities, 5);
@@ -313,7 +313,7 @@ public class GeonamesUtility {
      * If multiple cities are located on top of that grid, then the populations
      * Geohash prefix = 4, yields about 30 KM, and 5 yields 6 KM.
      * 
-     * @param cities
+     * @param cities list of major cities
      * @param ghResolution
      *            number of geohash chars in prefix, for keys in map. Higher resolution means finer geohash grid
      * 
@@ -936,9 +936,9 @@ public class GeonamesUtility {
     /**
      * If lang is primary lang.
      * 
-     * @param lang
-     * @param cc
-     * @return
+     * @param lang Lang ID
+     * @param cc Country code
+     * @return true if lang is the primary language of country named by cc
      */
     public boolean isPrimaryLanguage(String lang, String cc) {
         if (lang == null) {
@@ -954,8 +954,8 @@ public class GeonamesUtility {
     /**
      * When lang ID will do. see primaryLanguage() if Language object is desired.
      * 
-     * @param cc
-     * @return
+     * @param cc Country code
+     * @return Lang ID
      */
     public String primaryLangID(String cc) {
         Country C = isoCountries.get(cc);
@@ -971,8 +971,8 @@ public class GeonamesUtility {
      * E.g.,
      * primary language of Australia? 'en', not 'en_AU'; The hashmap records the first entry only which is language.
      * 
-     * @param cc
-     * @return
+     * @param cc Country code
+     * @return Language object
      */
     public Language primaryLanguage(String cc) {
         Country C = isoCountries.get(cc);
@@ -997,7 +997,7 @@ public class GeonamesUtility {
      * what countries speak french (fr)?
      * what countries speak Rwandan French? (fr-RW)?
      * 
-     * @param lang
+     * @param lang lang ID
      * @return list of country codes speaking lang
      */
     public Collection<String> countriesSpeaking(String lang) {
@@ -1031,7 +1031,7 @@ public class GeonamesUtility {
      * and populate existing Country objects with language metadata.
      * By the time you call this method Countries have names, codes, regions, aliases, timezones.
      * 
-     * @throws IOException
+     * @throws IOException if geonames.org resource file is not found
      */
     public void loadCountryLanguages() throws IOException {
         URL f = GeonamesUtility.class.getResource("/geonames.org/countryInfo.txt");
@@ -1109,8 +1109,8 @@ public class GeonamesUtility {
 
     /**
      * 
-     * @param langOrLocale
-     * @param cc
+     * @param langOrLocale lang code
+     * @param cc country code
      */
     private void addLang(String langOrLocale, String cc) {
 
@@ -1140,8 +1140,8 @@ public class GeonamesUtility {
      * Parse lang ID from Locale.
      * Internal method; Ensure argument is not null;
      * 
-     * @param langid
-     * @return language ID.
+     * @param langid lang ID
+     * @return language family
      */
     private static String getLang(final String langid) {
         String l = langidSplit.split(langid)[0];
