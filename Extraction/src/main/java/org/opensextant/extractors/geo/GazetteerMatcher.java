@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,9 +56,11 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -229,6 +232,46 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public void setMatchFilter(MatchFilter f) {
         userfilter = f;
     }
+    
+    /**
+     * This is a variation on SolrGazetteer.search(), just this creates ScoredPlace which is 
+     * immediately usable with scoring and ranking matches.  The score for a ScoredPlace is 
+     * created when added to PlaceCandidate: a default score is created for the place.
+     *  
+     * <pre>
+     *    Usage:
+     *    pc = PlaceCandidate();
+     *    list = gaz.searchAdvanced("name:Boston", true)  // solr fielded query used as-is.
+     *    for ScoredPlace p: list:
+     *        pc.addPlace( p )  
+     * </pre> 
+     * @param place
+     *            the place string or text;  or a Solr query
+     * @param as_solr
+     *            the as_solr
+     * @return places List of scoreable place entries
+     * @throws SolrServerException
+     *             the solr server exception
+     */
+    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr) throws SolrServerException {
+
+        if (as_solr) {
+            params.set("q", place);
+        } else {
+            // Bare keyword query needs to be quoted as "word word word"
+            params.set("q", "\"" + place + "\""); 
+        }
+
+        QueryResponse response = solr.getInternalSolrServer().query(params, SolrRequest.METHOD.GET);
+
+        List<ScoredPlace> places = new ArrayList<>();
+        for (SolrDocument solrDoc : response.getResults()) {
+            places.add(createPlace(solrDoc));
+        }
+
+        return places;
+    }
+    
 
     /**
      * Geotag a buffer and return all candidates of gazetteer entries whose name
@@ -608,7 +651,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *            a solr record from the gazetteer
      * @return Place (Xponents) object
      */
-    public static Place createPlace(SolrDocument gazEntry) {
+    public static ScoredPlace createPlace(SolrDocument gazEntry) {
 
         // Creates for now org.opensextant.placedata.Place
         //Place bean = SolrProxy.createPlace(gazEntry);
