@@ -9,16 +9,12 @@ import java.util.Collection;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.opensextant.util.FileUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.opensextant.xtext.collectors.sharepoint.SPLink;
 import org.opensextant.xtext.collectors.sharepoint.SharepointClient;
 
 /* 
  */
 public class SharepointClientTest {
-
-    private Logger log = LoggerFactory.getLogger(getClass());
 
     public SharepointClientTest() {
 
