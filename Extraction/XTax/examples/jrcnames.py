@@ -147,8 +147,10 @@ def check_validity(e):
 
 PLACE_ENDING_FIXES = set(['province', 'island', 'islands', 'district', 'peninsula','valley',
                           'territory', 'county', 'city', 'state', 'township', 'village',
-                          'roads', 'avenue', 'avenida', 'prefecture', 'heights'])
-PLACE_STARTING_FIXES = set(['city', 'spin', 'town' ])
+                          'roads', 'avenue', 'avenida', 'prefecture', 'heights', 'springs', 'spring',
+                          'airport', 'aeropuerto', 'aeroporto', 'station' ])
+
+PLACE_STARTING_FIXES = set(['city', 'spin', 'town', 'fort'])
 
 # A large number of entities are marked as Person unnecessarily.
 # Org fixes: find any of these terms in a phrase and declare the phrase an org, if not already.
