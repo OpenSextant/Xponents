@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensextant.data.Country;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
@@ -92,6 +93,11 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     /** count dashes other than hemispheres, +/- */
     protected int dashCount = 0;
+
+    /**
+     * Optional: country metadata.
+     */
+    private String countryCode = null;
 
     /**
      * a TextMatch that represents a coordinate found in free text.
@@ -393,6 +399,10 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     public int getPrecision() {
         return (int) precision.precision;
     }
+    public void setPrecision(int m)
+    {
+        precision.precision = m;
+    }
 
     /**
      * Convert the current coordinate to MGRS
@@ -507,6 +517,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      * 
      */
     private Place relatedPlace = null;
+    private Country country = null;
 
     public void setRelatedPlace(Place location) {
         relatedPlace = location;
@@ -525,7 +536,21 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         if (relatedPlace != null) {
             return relatedPlace.getCountryCode();
         }
+        if (countryCode!=null){
+            return countryCode;
+        }
+        if (country!=null){
+            return country.getCountryCode();
+        }
         return null;
+    }
+
+    public void setCountryCode(String cc) {
+        this.countryCode = cc;
+    }
+
+    public void setCountry(Country c) {
+        this.country = c;
     }
 
     /**
@@ -581,7 +606,20 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      */
     @Override
     public String getPlaceName() {
+        if (name != null) {
+            return name;
+        }
+
         return getText();
+    }
+
+    /**
+     * name - an alternate name for this coordinate
+     */
+    private String name = null;
+
+    public void setPlaceName(String n) {
+        name = n;
     }
 
     /**
@@ -707,8 +745,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
         return p;
     }
-    
-    public boolean hasCoordinate(){
+
+    public boolean hasCoordinate() {
         return GeodeticUtility.isValidNonZeroCoordinate(this.latitude, this.longitude);
     }
 
