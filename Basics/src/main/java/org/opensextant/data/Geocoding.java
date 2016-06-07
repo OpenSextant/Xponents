@@ -46,31 +46,44 @@ package org.opensextant.data;
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public interface Geocoding  extends LatLon {
+public interface Geocoding extends LatLon {
 
     //-------------------
     // High level flags: These attributes outline what this geocoding represents - a place, landmark, site, coordinate, etc.
     //-------------------
     /**
      * 
-     * @return true if geocoding represents a named place 
+     * @return true if geocoding represents a named place
      */
     public boolean isPlace();
 
     /**
      * isCoordinate: if this object represents a coordinate
+     * 
      * @return true if geocoding represents a coordinate
      */
     public boolean isCoordinate();
 
     /**
-     * has Coordinate: if this named place object has a coordinate. 
+     * has Coordinate: if this named place object has a coordinate.
+     * 
      * @return true if geocoding represents has a valid lat, lon
      */
     public boolean hasCoordinate();
+
     public boolean isCountry();
+
     public boolean isAdministrative();
+
+    /**
+     * Precision - radius in meters of possible error
+     */
     public int getPrecision();
+
+    /**
+     * Precision - radius in meters of possible error
+     */
+    public void setPrecision(int m);
 
     /*
     public double getConfidence();
@@ -80,20 +93,36 @@ public interface Geocoding  extends LatLon {
     // entity metadata:
     //---------------------
     public String getCountryCode();
+
+    public void setCountryCode(String cc);
+
+    public void setCountry(Country c);
+
     public String getAdmin1();
+
     public String getAdmin2();
+
     public String getAdminName();
+
     public String getAdmin1Name();
+
     public String getAdmin2Name();
 
     public String getFeatureClass();
+
     public String getFeatureCode();
 
     public String getPlaceID();
+
     public String getPlaceName();
 
-    /** @return Method for determining geocoding
+    public void setPlaceName(String n);
+
+    /**
+     * @return Method for determining geocoding
      */
     public String getMethod();
+
+    public void setMethod(String m);
 
 }
