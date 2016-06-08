@@ -147,7 +147,7 @@ def check_validity(e):
 
 PLACE_ENDING_FIXES = set(['province', 'island', 'islands', 'district', 'peninsula','valley',
                           'territory', 'county', 'city', 'state', 'township', 'village',
-                          'roads', 'avenue', 'avenida', 'prefecture', 'heights', 'springs', 'spring',
+                          'roads', 'avenue', 'avenida', 'prefecture', 'heights', 'springs', 'falls',
                           'airport', 'aeropuerto', 'aeroporto', 'station' ])
 
 PLACE_STARTING_FIXES = set(['city', 'spin', 'town', 'fort'])
@@ -177,13 +177,16 @@ class JRCEntity(Taxon):
           if tokens[-1] in PLACE_ENDING_FIXES:
             # Place (T=terrain)
             self.entity_type = 'T'
+            print "Place Phrase fixed", self.phrase
           elif tokens[0] in PLACE_STARTING_FIXES:
             self.entity_type = 'T'
+            print "Place Phrase fixed", self.phrase
 
           if self.entity_type == 'P':
             for tok in tokens:
                 if tok in ORG_FIXES: 
                     self.entity_type = 'O'
+                    print "Org Phrase fixed", self.phrase
                     break;
         
         if self.entity_type in entity_map:
@@ -315,7 +318,7 @@ if __name__ == '__main__':
     ap.add_argument('--solr')
     ap.add_argument('--max')
     ap.add_argument('--invalidate', action='store_true', default=False)
-    ap.add_argument('--no-fixes', action='store_true', default=True)
+    ap.add_argument('--no-fixes', action='store_true', default=False)
 
     args = ap.parse_args()
 
@@ -343,7 +346,7 @@ if __name__ == '__main__':
         row_max = int(args.max)
 
     # Commit rows every 10,000 entries.
-    builder.commit_rate = 50000
+    builder.commit_rate = 10000
     builder.stopwords = set([])
     
     # Completely arbitrary starting row ID 
