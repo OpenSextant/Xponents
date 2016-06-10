@@ -242,7 +242,7 @@ public class GeonamesUtility {
      * Each offset hour covers about 15deg. Any answer you get here is likely best used with a
      * range of fuziness, e.g., +/- 5deg.
      * 
-     * @see https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
+     * REFERENCE: https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
      * @param utc
      * @return
      */
