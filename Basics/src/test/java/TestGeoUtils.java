@@ -43,10 +43,26 @@ public class TestGeoUtils {
         if (!C.containsUTCOffset(-5.0)) {
             fail("USA contains GMT-0500");
         }
+        if (!C.containsDSTOffset(-4.0)) {
+            fail("USA contains GMT-0400, e.g., EDT for east coast.");
+        }
         C = util.getCountry("JP");
         if (!C.containsUTCOffset(9.0)) {
             fail("Japan contains GMT+0900");
         }
+        
+        /*
+         * Test beyond 12h.
+         * Test negative offsets.
+         */
+        C = util.getCountry("KI");
+        if (!C.containsUTCOffset(14.0)) {
+            fail("Kiritimati contains GMT+1400");
+        }
+        if (C.containsUTCOffset(-9.0)) {
+            fail("Kiritimati does not contain GMT-0900");
+        }
+        
 
         print("" + util.countriesInTimezone("Mountain")); // TODO: discover full list of TZ e.g., EDT, BST, CST, MT "Mountain Time", etc.
         print("" + util.countriesInUTCOffset(-7.0)); // Same or similar to Mountain TZ, GMT-0500 but -0200 more.

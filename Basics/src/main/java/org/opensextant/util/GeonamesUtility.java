@@ -152,8 +152,8 @@ public class GeonamesUtility {
      */
     private void loadCountryTimezones() throws IOException {
         java.io.InputStream io = getClass().getResourceAsStream("/timeZones.txt");
-        java.io.Reader tz = new InputStreamReader(io);
-        CsvMapReader tzMap = new CsvMapReader(tz, CsvPreference.TAB_PREFERENCE);
+        java.io.Reader tzReader = new InputStreamReader(io);
+        CsvMapReader tzMap = new CsvMapReader(tzReader, CsvPreference.TAB_PREFERENCE);
         String[] columns = tzMap.getHeader(true);
         Map<String, String> tzdata = null;
         while ((tzdata = tzMap.read(columns)) != null) {
@@ -166,12 +166,12 @@ public class GeonamesUtility {
             if (C == null) {
                 continue;
             }
-            String utc = tzdata.get("UTC_OFFSET");
-            double offset = -100;
-            if (utc != null) {
-                offset = Double.parseDouble(utc);
-            }
-            C.addTimezone(tzdata.get("TZ"), offset);
+
+            Country.TZ tz = new Country.TZ(tzdata.get("TZ"),
+                    Double.parseDouble(tzdata.get("UTC_OFFSET")),
+                    Double.parseDouble(tzdata.get("DST_OFFSET")),
+                    Double.parseDouble(tzdata.get("RAW_OFFSET")));
+            C.addTimezone(tz);
         }
         tzMap.close();
 
@@ -182,9 +182,11 @@ public class GeonamesUtility {
             }
             Country C = isoCountries.get(cc);
             for (String tmzn : C.getAllTimezones().keySet()) {
-                Double utc = C.getAllTimezones().get(tmzn);
                 addTimezone(tmzn, cc);
-                addUTCOffset(utc, cc);
+            }
+            for (Country.TZ tz : C.getTZDatabase().values()) {
+                addTZOffset(utc2cc, tz.utcOffset, cc);
+                addTZOffset(dst2cc, tz.dstOffset, cc);
             }
         }
     }
@@ -192,8 +194,10 @@ public class GeonamesUtility {
     /**
      * Build out a global map of TZ to CC to find which countries are in a particular TZ quickly
      * 
-     * @param tz TZ name
-     * @param cc ISO country code for lookup
+     * @param tz
+     *            TZ name
+     * @param cc
+     *            ISO country code for lookup
      */
     private void addTimezone(String tz, String cc) {
         Set<String> ccset = tz2cc.get(tz);
@@ -212,33 +216,60 @@ public class GeonamesUtility {
      * 
      * @param utc
      *            query in hours (-12.0 to 12.0) or seconds (-43,200 to 43,200) in the respective 30 or 15 minute
-     *            increments.
+     *            increments. Caveat -- some timezones are up to +14h, e.g., Pacific islands.
      * @param cc
      *            ISO country code
      */
-    private void addUTCOffset(Double utc, String cc) {
-        Set<String> ccset = utc2cc.get(utc);
+    private void addTZOffset(Map<Double, Set<String>> offset2cc, Double utc, String cc) {
+        Set<String> ccset = offset2cc.get(utc);
         if (ccset == null) {
             ccset = new HashSet<>();
-            utc2cc.put(utc, ccset);
+            offset2cc.put(utc, ccset);
 
-            /* if offset is is less than 12
+            /* if offset is is less than 15h
              * then assume it is hours;  Otherwise add the value in seconds as well.
              */
-            if (Math.abs(utc) <= 12.0) {
-                utc2cc.put(utc * ONE_HR, ccset);
+            if (Math.abs(utc) <= 15.0) {
+                offset2cc.put(utc * ONE_HR, ccset);
             }
         }
         ccset.add(cc);
     }
 
+    /**
+     * This helps get the general area +/-5 degrees for a given UTC offset.
+     * UTC offsets range from -12.00 to +14.00. This covers 360deg of planet over a 24 hour day.
+     * Each offset hour covers about 15deg. Any answer you get here is likely best used with a
+     * range of fuziness, e.g., +/- 5deg.
+     * 
+     * @see https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
+     * @param utc
+     * @return
+     */
+    public final static int approximateLongitudeForUTCOffset(final int utc) {
+        int normalized = (utc > 12 ? utc - 24 : utc);
+
+        return 15 * normalized; /* 360 deg / 24 hr  = 15deg per UTC offset hour */
+    }
+
+    /**
+     * Fast TZ/Country lookup by label
+     */
     private Map<String, Set<String>> tz2cc = new HashMap<>();
+    /**
+     * Fast TZ/Country lookup by UTC offset
+     */
     private Map<Double, Set<String>> utc2cc = new HashMap<>();
+    /**
+     * Fast TZ/Country lookup by DST offset.
+     */
+    private Map<Double, Set<String>> dst2cc = new HashMap<>();
 
     /**
      * List all countries in a particular TZ
      * 
-     * @param tz TZ name
+     * @param tz
+     *            TZ name
      * @return list of country codes
      */
     public Collection<String> countriesInTimezone(String tz) {
@@ -246,13 +277,28 @@ public class GeonamesUtility {
     }
 
     /**
-     * List all countries in a particular UTC offset; These are usuually -12.0 to 12.0 every 0.5 hrs.
+     * List all countries in a particular UTC offset; These are usually -15.0 to 15.0 every 0.5 or 0.25 hrs.
      * 
-     * @param utc  offset in decimal hours
+     * @param utc
+     *            offset in decimal hours
      * @return list of country codes found with the offset
      */
     public Collection<String> countriesInUTCOffset(double utc) {
         return utc2cc.get(utc);
+    }
+
+    /**
+     * This check only makes sense if you have date/time which is in a period of daylight savings.
+     * Then the UTC offset for that period can be used to see which countries adhere to that DST convention.
+     * 
+     * E.g., Boston and New York US standard time: GMT-0500, DST: GMT-0400
+     * 
+     * @see #countriesInUTCOffset(double)
+     * @param dst
+     * @return
+     */
+    public Collection<String> countriesInDSTOffset(double dst) {
+        return dst2cc.get(dst);
     }
 
     public static final boolean isValue(final String s) {
@@ -265,7 +311,8 @@ public class GeonamesUtility {
      * @param resourcePath
      *            CLASSPATH location of a resource.
      * @return list of places
-     * @throws IOException if resource file is not found
+     * @throws IOException
+     *             if resource file is not found
      */
     public static List<Place> loadMajorCities(String resourcePath) throws IOException {
         URL f = GeonamesUtility.class.getResource(resourcePath);
@@ -286,7 +333,8 @@ public class GeonamesUtility {
      * geonames.org cities data is usually unique by row, so if you provide 1000 cities in a list
      * your map will have 1000 city place IDs in the map. No duplicates expected.
      * 
-     * @param cities arra of Place objects
+     * @param cities
+     *            arra of Place objects
      * @return map of place ID to Place object
      */
     public static Map<String, Place> mapMajorCityIDs(List<Place> cities) {
@@ -301,7 +349,8 @@ public class GeonamesUtility {
      * See mapPopulationByLocation(list, int). Default geohash prefix length is 5, which
      * yields about 6km grids or so.
      * 
-     * @param cities list of major cities
+     * @param cities
+     *            list of major cities
      * @return map of population summation over geohash grids.
      */
     public static Map<String, Integer> mapPopulationByLocation(List<Place> cities) {
@@ -313,7 +362,8 @@ public class GeonamesUtility {
      * If multiple cities are located on top of that grid, then the populations
      * Geohash prefix = 4, yields about 30 KM, and 5 yields 6 KM.
      * 
-     * @param cities list of major cities
+     * @param cities
+     *            list of major cities
      * @param ghResolution
      *            number of geohash chars in prefix, for keys in map. Higher resolution means finer geohash grid
      * 
@@ -366,12 +416,9 @@ public class GeonamesUtility {
         // as they contain unescaped " chars.  TAB delimited file, but cells contain ".
         // Hmm.
         List<Place> cities = new ArrayList<>();
-        int lineCount = 0;
         BufferedReader reader = new BufferedReader(citiesIO);
         String line;
         while ((line = reader.readLine()) != null) {
-
-            ++lineCount;
 
             String[] cells = line.split("\t");
             if (cells.length < 19) {
@@ -936,8 +983,10 @@ public class GeonamesUtility {
     /**
      * If lang is primary lang.
      * 
-     * @param lang Lang ID
-     * @param cc Country code
+     * @param lang
+     *            Lang ID
+     * @param cc
+     *            Country code
      * @return true if lang is the primary language of country named by cc
      */
     public boolean isPrimaryLanguage(String lang, String cc) {
@@ -954,7 +1003,8 @@ public class GeonamesUtility {
     /**
      * When lang ID will do. see primaryLanguage() if Language object is desired.
      * 
-     * @param cc Country code
+     * @param cc
+     *            Country code
      * @return Lang ID
      */
     public String primaryLangID(String cc) {
@@ -971,7 +1021,8 @@ public class GeonamesUtility {
      * E.g.,
      * primary language of Australia? 'en', not 'en_AU'; The hashmap records the first entry only which is language.
      * 
-     * @param cc Country code
+     * @param cc
+     *            Country code
      * @return Language object
      */
     public Language primaryLanguage(String cc) {
@@ -997,7 +1048,8 @@ public class GeonamesUtility {
      * what countries speak french (fr)?
      * what countries speak Rwandan French? (fr-RW)?
      * 
-     * @param lang lang ID
+     * @param lang
+     *            lang ID
      * @return list of country codes speaking lang
      */
     public Collection<String> countriesSpeaking(String lang) {
@@ -1031,7 +1083,8 @@ public class GeonamesUtility {
      * and populate existing Country objects with language metadata.
      * By the time you call this method Countries have names, codes, regions, aliases, timezones.
      * 
-     * @throws IOException if geonames.org resource file is not found
+     * @throws IOException
+     *             if geonames.org resource file is not found
      */
     public void loadCountryLanguages() throws IOException {
         URL f = GeonamesUtility.class.getResource("/geonames.org/countryInfo.txt");
@@ -1048,15 +1101,9 @@ public class GeonamesUtility {
         // #ISO ISO3    ISO-Numeric fips    Country Capital Area(in sq km)  Population  Continent   tld
         // 10-18
         // CurrencyCode    CurrencyName    Phone   Postal Code Format  Postal Code Regex   Languages   geonameid   neighbours  EquivalentFipsCode
-
-        int lineCount = 0;
-
         try (BufferedReader reader = new BufferedReader(metaIO)) {
             String line;
             while ((line = reader.readLine()) != null) {
-
-                ++lineCount;
-
                 if (line.trim().startsWith("#")) {
                     continue;
                 }
@@ -1109,8 +1156,10 @@ public class GeonamesUtility {
 
     /**
      * 
-     * @param langOrLocale lang code
-     * @param cc country code
+     * @param langOrLocale
+     *            lang code
+     * @param cc
+     *            country code
      */
     private void addLang(String langOrLocale, String cc) {
 
@@ -1140,7 +1189,8 @@ public class GeonamesUtility {
      * Parse lang ID from Locale.
      * Internal method; Ensure argument is not null;
      * 
-     * @param langid lang ID
+     * @param langid
+     *            lang ID
      * @return language family
      */
     private static String getLang(final String langid) {
