@@ -353,7 +353,7 @@ public class PlaceCandidate extends TextMatch {
         if (isUpper() && (g.isAbbreviation() || TextUtils.isUpper(g.getName()))) {
             ++score;
         }
-        // Mismatch in name diacritics downgrads name score here.
+        // Mismatch in name diacritics downgrades name score here.
         if ((isASCII() && !g.isASCIIName()) || (!isASCII() && g.isASCIIName())) {
             --score;
         }

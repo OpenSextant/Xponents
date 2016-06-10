@@ -69,7 +69,7 @@ public class RegexPattern {
     /** Name of a Java class that extends TextMatch and implements user's normalization routines.
      */
     public String match_classname = null;
-    public Class match_class = null;
+    public Class<?> match_class = null;
     public String family = null;
 
     /**

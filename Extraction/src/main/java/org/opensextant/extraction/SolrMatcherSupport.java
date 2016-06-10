@@ -26,7 +26,6 @@
  */
 package org.opensextant.extraction;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.StreamingResponseCallback;

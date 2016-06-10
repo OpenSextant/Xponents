@@ -206,7 +206,8 @@ public class TextUtils {
     /**
      * Early exit test -- return false on first non-ASCII character found.
      * 
-     * @param t buffer of text
+     * @param t
+     *            buffer of text
      * @return true only if every char is in ASCII table.
      */
     public static boolean isASCII(String t) {
@@ -327,6 +328,14 @@ public class TextUtils {
         return tmpCleanBuf.toString();
     }
 
+    public static boolean hasDigits(String txt) {
+        return (countDigits(txt) > 0);
+    }
+
+    public static int countDigits(String txt) {
+        return count_digits(txt);
+    }
+
     /**
      * Counts all digits in text.
      *
@@ -407,7 +416,8 @@ public class TextUtils {
      * control character contributes to formatting in some way. DEL, VT, HT,
      * etc. So all control characters ( c &lt; ' ') are counted.
      * 
-     * @param txt input string
+     * @param txt
+     *            input string
      * @return count of format chars
      */
     public static int countFormattingSpace(String txt) {
@@ -489,7 +499,8 @@ public class TextUtils {
     /**
      * Measure character count, upper, lower, non-Character, whitespace
      * 
-     * @param text text
+     * @param text
+     *            text
      * @return int array with counts.
      */
     public static int[] measureCase(String text) {
@@ -548,7 +559,8 @@ public class TextUtils {
      * that suggests the text is mainly upper case. These routines may not work well on languages that are not
      * Latin-alphabet.
      * 
-     * @param counts word stats from measureCase()
+     * @param counts
+     *            word stats from measureCase()
      * @return true if counts represent text that exceeds the "UPPER CASE" threshold
      */
     public static boolean isUpperCaseDocument(final int[] counts) {
@@ -566,7 +578,8 @@ public class TextUtils {
      * See Upper Case. Two methods to measure -- lower case count compared to all content (char+non-char)
      * or compared to just char content.
      * 
-     * @param counts word stats from measureCase()
+     * @param counts
+     *            word stats from measureCase()
      * @return true if counts represent text that exceeds the "lower case" threshold
      */
     public static boolean isLowerCaseDocument(final int[] counts) {

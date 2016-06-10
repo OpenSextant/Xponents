@@ -69,6 +69,7 @@ public class Country extends Place {
     private final List<Country> territories = new ArrayList<>();
 
     /** Map of Geonames.org TZ and UTC offsets per country */
+    private final Map<String, TZ> tzdb = new HashMap<>();
     private final Map<String, Double> timezones = new HashMap<>();
     private final Map<String, Double> timezonesVariants = new HashMap<>();
 
@@ -130,10 +131,52 @@ public class Country extends Place {
      */
     public void addTimezone(String label, double utcOffset) {
         timezones.put(label, utcOffset);
-        timezonesVariants.put(label.toLowerCase(), utcOffset);
+        String l = label.toLowerCase();
+        timezonesVariants.put(l, utcOffset);
         if (label.contains("/")) {
-            String tz = label.split("/", 2)[1];
-            timezonesVariants.put(tz.toLowerCase(), utcOffset);
+            String tz = l.split("/", 2)[1];
+            timezonesVariants.put(tz, utcOffset);
+        }
+    }
+
+    /**
+     * Refactor -- use JodaTime and the TZDB more formally. For now, tzdb tracks the timezone metadata.
+     * 
+     * @param tz
+     */
+    public void addTimezone(TZ tz) {
+        String l = tz.label.toLowerCase();
+        timezones.put(tz.label, tz.utcOffset);
+        timezonesVariants.put(l, tz.utcOffset);
+        tzdb.put(tz.label, tz);
+        tzdb.put(l, tz);
+
+        if (tz.label.contains("/")) {
+            String labelPart = l.split("/", 2)[1];
+            timezonesVariants.put(labelPart, tz.utcOffset);
+            tzdb.put(labelPart, tz);
+        }
+    }
+
+    public final static class TZ {
+        public String label = null;
+        public double utcOffset = Double.NaN;
+        public double dstOffset = Double.NaN;
+        public double rawOffset = Double.NaN;
+        public boolean usesDST = false;
+        public double dstDelta = 0;
+
+        public TZ(String l, double utc, double dst, double raw) {
+            label = l;
+            utcOffset = utc;
+            dstOffset = dst;
+            rawOffset = raw;
+            dstDelta = utcOffset - dstOffset;
+            usesDST = dstDelta != 0;
+        }
+        
+        public String toString(){
+            return String.format("%s %d, %d", label, utcOffset, dstOffset);
         }
     }
 
@@ -160,10 +203,17 @@ public class Country extends Place {
      * @return true if this Country contains the UTC offset.
      */
     public boolean containsUTCOffset(double offset) {
-        for (double off : timezones.values()) {
-            // What is a good way to evaluate 0.00 - 0.00 == 0? in Java. We see too many rounding errors in Java.
-            // Python: >>> (0.000  - 0) == 0    is True.  No floating point rounding errors.
-            if (Math.abs(off - offset) < 0.10) {
+        for (TZ tz : tzdb.values()) {
+            if (Math.abs(tz.utcOffset - offset) < 0.10) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsDSTOffset(double offset) {
+        for (TZ tz : tzdb.values()) {
+            if (Math.abs(tz.dstOffset - offset) < 0.10) {
                 return true;
             }
         }
@@ -280,6 +330,14 @@ public class Country extends Place {
      */
     public Map<String, Double> getAllTimezones() {
         return timezonesVariants;
+    }
+    
+    /**
+     * Return the full list of TZ.
+     * @return
+     */
+    public Map<String, TZ> getTZDatabase(){
+        return tzdb;        
     }
 
     public boolean hasTerritories() {

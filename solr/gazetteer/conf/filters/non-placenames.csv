@@ -200,8 +200,12 @@ vii,enum
 viii,enum
 ix,enum
 primero,enum.spa
+primera,enum.spa
 secondo,enum.ita
+segundo,enum.spa
 segunda,enum.spa
+uno,enum.spa
+dos,enum.spa
 christmas,holiday
 december,month
 dec,month

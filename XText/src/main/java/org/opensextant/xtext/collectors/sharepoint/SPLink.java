@@ -21,12 +21,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.opensextant.util.TextUtils;
 import org.opensextant.xtext.collectors.Collector;
 import org.opensextant.xtext.collectors.web.HyperLink;
 

@@ -422,9 +422,8 @@ public class SolrGazetteer {
         if (as_solr) {
             params.set("q", place);
         } else {
-            params.set("q", "\"" + place + "\""); // Bare keyword query needs to
-                                                  // be quoted as "word word
-                                                  // word"
+            // Bare keyword query needs to be quoted as "word word word"
+            params.set("q", "\"" + place + "\""); 
         }
 
         return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), params);
