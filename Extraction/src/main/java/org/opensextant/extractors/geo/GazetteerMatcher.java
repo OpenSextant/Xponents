@@ -232,46 +232,72 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public void setMatchFilter(MatchFilter f) {
         userfilter = f;
     }
-    
+
     /**
-     * This is a variation on SolrGazetteer.search(), just this creates ScoredPlace which is 
-     * immediately usable with scoring and ranking matches.  The score for a ScoredPlace is 
+     * Default advanced search.
+     * 
+     * @see #searchAdvanced(String, boolean, int)
+     * 
+     * @param place
+     * @param as_solr
+     * @return
+     * @throws SolrServerException
+     */
+    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr) throws SolrServerException {
+        return searchAdvanced(place, as_solr, -1);
+    }
+
+    /**
+     * This is a variation on SolrGazetteer.search(), just this creates ScoredPlace which is
+     * immediately usable with scoring and ranking matches. The score for a ScoredPlace is
      * created when added to PlaceCandidate: a default score is created for the place.
-     *  
+     * 
      * <pre>
      *    Usage:
      *    pc = PlaceCandidate();
      *    list = gaz.searchAdvanced("name:Boston", true)  // solr fielded query used as-is.
      *    for ScoredPlace p: list:
-     *        pc.addPlace( p )  
-     * </pre> 
+     *        pc.addPlace( p )
+     * </pre>
+     * 
      * @param place
-     *            the place string or text;  or a Solr query
+     *            the place string or text; or a Solr query
      * @param as_solr
      *            the as_solr
+     * @param maxLen
+     *            max length of gazetteer place names.
      * @return places List of scoreable place entries
      * @throws SolrServerException
      *             the solr server exception
      */
-    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr) throws SolrServerException {
+    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr, int maxLen) throws SolrServerException {
 
         if (as_solr) {
             params.set("q", place);
         } else {
             // Bare keyword query needs to be quoted as "word word word"
-            params.set("q", "\"" + place + "\""); 
+            params.set("q", "\"" + place + "\"");
         }
 
         QueryResponse response = solr.getInternalSolrServer().query(params, SolrRequest.METHOD.GET);
 
         List<ScoredPlace> places = new ArrayList<>();
         for (SolrDocument solrDoc : response.getResults()) {
+            /*
+             * Length Filter.  Alternative: store name as string in solr, vice full text field 
+             */
+            if (maxLen > 0) {
+                String nm = SolrProxy.getString(solrDoc, "name");
+                if (nm.length() > maxLen) {
+                    continue;
+                }
+            }
+
             places.add(createPlace(solrDoc));
         }
 
         return places;
     }
-    
 
     /**
      * Geotag a buffer and return all candidates of gazetteer entries whose name
@@ -306,10 +332,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return tagText(buffer, docid, false, CJK_TAG_FIELD);
     }
 
-    public LinkedList<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
+    public LinkedList<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly)
+            throws ExtractionException {
         return tagText(buffer, docid, tagOnly, CJK_TAG_FIELD);
     }
-    
+
     /**
      * Tag place names in arabic.
      * 
@@ -326,7 +353,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return tagText(buffer, docid, false, AR_TAG_FIELD);
     }
 
-    public LinkedList<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
+    public LinkedList<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly)
+            throws ExtractionException {
         return tagText(buffer, docid, tagOnly, AR_TAG_FIELD);
     }
 
@@ -410,7 +438,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * large volume of tags and gazetteer data that is involved. And this is
          * relatively early in the pipline.
          */
-        log.debug("DOC={} TAGS SIZE={}", docid, tags.size());        
+        log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
 
         TreeMap<Integer, PlaceCandidate> candidates = new TreeMap<Integer, PlaceCandidate>();
 
