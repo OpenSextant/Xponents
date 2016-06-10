@@ -195,5 +195,20 @@
         "id_bias": 0.49,
         "name_type": "N",
         "geo": "42.58333,20.91667"
+      },
+      {
+        "id": 211744225,
+        "place_id": "NGA-3099121",
+        "name": "KSA",
+        "feat_class": "A",
+        "feat_code": "PCLI",
+        "FIPS_cc": "SA",
+        "cc": "SA",
+        "ISO3_cc": "SAU",
+        "source": "ADHOC",
+        "name_bias": 0.01,
+        "id_bias": 0.49,
+        "name_type": "A",
+        "geo": "25,45"
       }
 ]

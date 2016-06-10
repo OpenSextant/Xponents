@@ -30,6 +30,10 @@ vintage,adjective
 experimental,adjective
 trojan,adjective
 indo,adjective
+jew,adjective
+jewish,adjective
+latino,adjective
+amish,adjective
 baltic,adjective
 oceanic,adjective
 pan american,adjective
@@ -146,6 +150,7 @@ spirit,concept.religion
 holy,concept.religion
 jihad,concept.religion
 rectors,concept.religion
+lent,concept.religion
 north,directional
 northern,directional
 north-east,directional
@@ -195,7 +200,8 @@ vii,enum
 viii,enum
 ix,enum
 primero,enum.spa
-secondo,enum.spa
+secondo,enum.ita
+segunda,enum.spa
 christmas,holiday
 december,month
 dec,month
@@ -221,6 +227,8 @@ february,month
 jan,month
 january,month
 primer,noun
+brink,noun
+trades,noun
 champion,noun
 aces,noun
 box,noun
@@ -259,6 +267,7 @@ band,noun
 laboratory,noun
 chamber,noun
 accounting,noun
+ledger,noun
 exodus,noun
 grave,noun
 apology,noun
@@ -311,6 +320,7 @@ health services,noun
 asylum,noun
 revolution,noun
 gang,noun
+angst,noun
 war,noun
 scud,noun
 sides,noun
@@ -368,6 +378,7 @@ device,noun
 science,noun
 engineering,noun
 physics,noun
+petro,noun
 petroleum,noun
 telegraph,noun
 crystal,noun
@@ -395,6 +406,9 @@ dollar,noun
 cash,noun
 money,noun
 gold,noun
+bling,noun
+silver,noun
+finale,noun
 yuan,noun
 gold star,noun
 medal,noun
@@ -445,6 +459,7 @@ pasta,noun
 treat,noun
 toon,noun
 tour,noun
+tours,noun
 tram,noun
 sound,noun
 slate,noun
@@ -510,6 +525,7 @@ millenium,noun
 millennium,noun
 childs,noun
 cat,noun
+colt,noun
 vet,noun
 veterans,noun
 rabbit,noun
@@ -549,6 +565,7 @@ friar,person.label
 lone wolf,person.label
 vip,person.label
 patriot,person.label
+gender,noun
 male,person.label
 mom,person.label
 dad,person.label
@@ -556,6 +573,7 @@ daddy,person.label
 manager,person.label
 master,person.label
 senior,person.label
+junior,person.label
 congressman,person.label
 singer,person.label
 race,person.label
@@ -815,14 +833,21 @@ story building,phrase
 building a,phrase
 old west,phrase
 a school,phrase
+a al,phrase.spa
 milestone,phrase
+miles,noun
 rican,phrase
 pro,phrase
 rad,phrase
+zip,phrase
+rip,verb
+hop,verb
 rep,phrase
 pep,phrase
 doo,phrase
+gold rush,phrase
 a camp,phrase
+commando,phrase
 int,phrase
 reps,phrase
 state run,phrase
@@ -922,6 +947,7 @@ the city,phrase
 rock bottom,phrase
 lunar,adjective
 mars,place.astro
+orion,place.astro
 comet,place.astro
 galaxy,place.astro
 mercury,place.astro
@@ -1007,6 +1033,7 @@ lab,place.civil
 farm,place.civil
 ranch,place.civil
 store,place.civil
+auditorium,place.civil
 pub,place.civil
 shrine,place.civil
 district court,place.civil
@@ -1024,6 +1051,8 @@ monitoring station,place.civil
 resovoir,place.civil
 reservoir,place.civil
 parkway,place.civil
+las zonas,place.civil.spa
+el territorio,place.civil.spa
 country,place.general
 desert,place.general
 land,place.general
@@ -1112,6 +1141,7 @@ nation,place.general
 sector,place.general
 motel,place.civil
 house,place.civil
+lodge,place.civil
 greenhouse,place.civil
 bar,place.general
 bank,place.general
@@ -1138,6 +1168,7 @@ stream,place.general
 lake,place.general
 lakes,place.general
 river,place.general
+rio,place.general.spa
 shore,place.general
 straits,place.general
 water,place.general
@@ -1161,6 +1192,7 @@ plains,place.general
 west coast,place.general
 midwest,place.general
 mideast,place.general
+far east,place.general
 the west coast,place.general
 east coast,place.general
 the east coast,place.general
@@ -1593,3 +1625,19 @@ dengue,well-known.disease
 lyme,well-known.disease
 ebola,well-known.disease
 han,well-known.person
+mundial,adjective.spa
+small,adjective
+jubilee,noun
+chapel,place.civil
+swift,adjective
+miner,noun
+mining,noun
+avnil,noun
+gold mine,noun
+goldmine,noun
+virgin,adjective
+fox,noun
+diploma,noun
+cactus,noun
+maker,noun
+martial,adjective
