@@ -69,8 +69,6 @@
               file="${user.home}/.m2/repository/org/apache/commons/commons-lang3/${lang3.v}/commons-lang3-${lang3.v}.jar"/>
         <copy todir="lib" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar"/>
-        <copy todir="build/containerLib" overwrite="false" failonerror="false"
-            file="${user.home}/.m2/repository/com/google/guava/guava/${guava.v}/guava-${guava.v}.jar" />
 
         <copy todir="build/containerLib" overwrite="true" failonerror="false" file="log4j.properties"/>
 
