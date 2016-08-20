@@ -7,6 +7,29 @@ unset http_proxy
 unset https_proxy
 export noproxy=localhost,127.0.0.1
 
+cur=`dirname $0 `
+XPONENTS=`cd -P $cur/..; echo $PWD`
+
+if [ ! -d $XPONENTS/python ] ; then
+   echo "install python first"
+   echo "see README"
+   exit 1
+fi
+
+export PYTHONPATH=$XPONENTS/python
+
+for core in gazetteer taxcat ; do 
+  if [ -d $core/data/index ] ; then
+    rm ./$core/data/index/*
+  else 
+    mkdir -p $core/data/index
+  fi
+done
+
+echo "Starting Solr http/7000"
+nohup ./run.sh  & 
+
+
 pushd gazetteer/
 echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
 python ./script/assemble_person_filter.py 
@@ -32,3 +55,6 @@ curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \
 
 # When done for the day,  optimize
 curl --noproxy localhost "http://$SERVER/solr/gazetteer/update?stream.body=<optimize/>"
+
+
+echo "Gazetteer and TaxCat built, however Solr http/7000 is still running...." 

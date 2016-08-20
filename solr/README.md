@@ -89,6 +89,18 @@ To start from raw data for Taxcat / XTax,  see Extraction/XTax/README.md
 
 These notes here are for the general situation just establishing Solr and iterating through common tasks.
 
+0. Build Some Prequisite Libs
+-----------------------------
+
+    pushd Extraction/src/main/python
+    python ./setup.py bdist_wheel --universal
+    popd
+    # Install built lib with dependencies to ./python
+    pip install Extraction/src/main/python/dist/*whl --target ./python
+
+
+  
+
 1. Configure 
 =============
 
