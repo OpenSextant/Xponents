@@ -67,6 +67,7 @@ import org.opensextant.extractors.geo.rules.LocationChooserRule;
 import org.opensextant.extractors.geo.rules.MajorPlaceRule;
 import org.opensextant.extractors.geo.rules.NameCodeRule;
 import org.opensextant.extractors.geo.rules.NameRule;
+import org.opensextant.extractors.geo.rules.NonsenseFilter;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
 import org.opensextant.extractors.geo.rules.ProvinceAssociationRule;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
@@ -119,6 +120,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private MajorPlaceRule majorPlaceRule = null;
     private LocationChooserRule chooser = null;
     private ContextualOrganizationRule placeInOrgRule = null;
+    private NonsenseFilter nonsenseFilter = null;
 
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding
@@ -242,6 +244,10 @@ public class PlaceGeocoder extends GazetteerMatcher
         nameWithAdminRule = new NameCodeRule();
         nameWithAdminRule.setBoundaryObserver(this);
 
+        // Nonsense is filtered out, rather than scored and ranked low.
+        nonsenseFilter = new NonsenseFilter();
+        rules.add(nonsenseFilter);
+        
         /**
          * Files for Place Name filter are editable, as you likely have
          * different ideas of who are "person names" to exclude when they
