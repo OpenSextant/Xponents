@@ -8,12 +8,24 @@ import org.junit.Test;
 import org.opensextant.ConfigException;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.extractors.geo.rules.NonsenseFilter;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
 
 public class TestPersonFilter {
 
     private final static void print(String msg) {
         System.out.println(msg);
+    }
+
+    @Test
+    public void testNonsensePhrases() {
+        print ("Test punctuation in names");
+        assertTrue(!NonsenseFilter.irregularPunctPatterns("St. Paul"));
+        assertTrue(NonsenseFilter.irregularPunctPatterns("south\", bend"));
+        assertTrue(!NonsenseFilter.irregularPunctPatterns("to-to"));
+        assertTrue(NonsenseFilter.irregularPunctPatterns("To-  To- To-"));
+        assertTrue(NonsenseFilter.irregularPunctPatterns("U. S. A."));
+        assertTrue(NonsenseFilter.irregularPunctPatterns("L` Oreal"));
     }
 
     @Test
@@ -36,7 +48,6 @@ public class TestPersonFilter {
             p.setPostmatchTokens("             ".split(" "));
             filt.evaluate(p, null);
             print(p.getText() + " pass? " + p.isFilteredOut());
-
 
             p.setPrematchTokens("this is Mr. ".split(" "));
             p.setPostmatchTokens(null);
