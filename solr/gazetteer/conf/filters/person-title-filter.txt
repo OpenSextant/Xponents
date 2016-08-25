@@ -178,6 +178,10 @@ a1c
 nco
 vp
 ceo
+cio
+coo
+cto
+cfo
 chairman
 hostage
 guard

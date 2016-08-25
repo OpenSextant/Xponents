@@ -6,8 +6,12 @@
 
   <property name="xponents.home" value="${basedir}/../" />
   <property name="version" value="2.8"/>
-  <property name="release" location="${xponents.home}/Xponents-${version}" />
-  <property name="release.xtext" location="${xponents.home}/XText-${version}" />
+  <property name="xtext.version" value="2.9"/>
+  <property name="xlayer.version" value="0.1"/>
+
+  <property name="release" location="${xponents.home}/dist/Xponents-${version}" />
+  <property name="xtext.release" location="${xponents.home}/dist/XText-${xtext.version}" />
+  <property name="xlayer.release" location="${xponents.home}/dist/Xlayer-${xlayer.version}" />
 
 
   <target name="build">
@@ -33,6 +37,19 @@
       <arg value="dependency:copy-dependencies"/>
     </exec>
 
+<!--
+    <exec executable="mvn" dir="${xponents.home}/Xlayer" failonerror="true">
+      <arg value="-DincludeScope=test"/>
+      <arg value="-DincludeScope=runtime"/>
+      <arg value="-DincludeScope=compile"/>
+      <arg value="-DskipTests=true"/>
+      <arg value="clean"/>
+      <arg value="install"/>
+      <arg value="javadoc:javadoc"/>
+      <arg value="dependency:copy-dependencies"/>
+    </exec>
+-->
+
     <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
       <arg value="-DincludeScope=test"/>
       <arg value="-DincludeScope=runtime"/>
@@ -46,16 +63,16 @@
   <!--  Consolidate XText items to their own release app
     -->
   <target name="rel.xtext">
-    <delete dir="${release.xtext}"/>
+    <delete dir="${xtext.release}"/>
 
-    <mkdir dir="${release.xtext}"/>
-    <mkdir dir="${release.xtext}/lib"/>
-    <mkdir dir="${release.xtext}/logs"/>
-    <mkdir dir="${release.xtext}/test"/>
-    <mkdir dir="${release.xtext}/script"/>
+    <mkdir dir="${xtext.release}"/>
+    <mkdir dir="${xtext.release}/lib"/>
+    <mkdir dir="${xtext.release}/logs"/>
+    <mkdir dir="${xtext.release}/test"/>
+    <mkdir dir="${xtext.release}/script"/>
 
     <exec executable="mvn" dir="${xponents.home}/XText" failonerror="true">
-      <arg value="-DoutputDirectory=${release.xtext}/lib"/>
+      <arg value="-DoutputDirectory=${xtext.release}/lib"/>
       <arg value="-DincludeScope=test"/>
       <arg value="-DincludeScope=runtime"/>
       <arg value="-DincludeScope=compile"/>
@@ -63,7 +80,7 @@
     </exec>
 
 
-    <copy todir="${release.xtext}/lib/">
+    <copy todir="${xtext.release}/lib/">
         <fileset dir="${xponents.home}/XText/target">
            <include name="*.jar" />
         </fileset>
@@ -72,20 +89,20 @@
         </fileset>
     </copy>
 
-    <copy todir="${release.xtext}">
+    <copy todir="${xtext.release}">
         <fileset dir="${xponents.home}/XText/">
            <include name="*.htm*" />
            <include name="*.md" />
         </fileset>
     </copy>
 
-    <copy todir="${release.xtext}/script/">
+    <copy todir="${xtext.release}/script/">
         <fileset dir="${xponents.home}/XText/script">
            <include name="*.*" />
         </fileset>
     </copy>
 
-    <copy todir="${release.xtext}/test/">
+    <copy todir="${xtext.release}/test/">
         <fileset dir="${xponents.home}/XText/src/test/resources/">
            <include name="*.*" />
         </fileset>

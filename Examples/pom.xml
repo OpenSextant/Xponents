@@ -71,6 +71,33 @@
           <windowtitle>Xponents Examples</windowtitle>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase></phase> <!-- Only execute from the command line. -->
+                        <configuration>
+                            <outputDirectory>lib</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <includeScope>test</includeScope>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>dependency-analysis</id>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                        </configuration>
+                    </execution>
+                </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
