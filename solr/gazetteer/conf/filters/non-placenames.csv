@@ -852,12 +852,9 @@ story building,phrase
 building a,phrase
 old west,phrase
 a school,phrase
-<<<<<<< HEAD
 our school,phrase
 our house,phrase
-=======
 a al,phrase.spa
->>>>>>> d2045a4bf17c5e765cfda3891455caaed4dd78f3
 milestone,phrase
 miles,noun
 rican,phrase
@@ -1660,14 +1657,12 @@ dengue,well-known.disease
 lyme,well-known.disease
 ebola,well-known.disease
 han,well-known.person
-<<<<<<< HEAD
 three-way,place.general
 four-way,place.general
 three way,place.general
 four way,place.general
 major bank,place.civil
 theme park,place.civil
-=======
 mundial,adjective.spa
 small,adjective
 jubilee,noun
@@ -1684,4 +1679,3 @@ diploma,noun
 cactus,noun
 maker,noun
 martial,adjective
->>>>>>> d2045a4bf17c5e765cfda3891455caaed4dd78f3
