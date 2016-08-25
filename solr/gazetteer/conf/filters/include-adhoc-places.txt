@@ -53,6 +53,9 @@ maryland
 georgia
 florida
 nevada
+homer
+orlando
+augusta
 # other countries:
 alberta
 india
@@ -64,3 +67,4 @@ georgia
 argentina
 trinidad
 chad
+sydney
