@@ -92,6 +92,14 @@ if os.path.exists(f1):
 
 #
 if names:
+
+    # manual deletes, while these signify Person names, they also collide with general geographic cues
+    # not enough terms that are both locations, person names, and confounded terms to warrant separate data sets.
+
+    names.remove('hall')
+    names.remove('many')
+    names.remove('zona')
+
     fh = open(output, 'wb')
     fh.write('# Generated File:  census surnames + exclusions - inclusions\n')
     name_list = sorted(list(names))

@@ -61,6 +61,13 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     protected String admin1 = null;
     protected String admin2 = null;
 
+    /**
+     * optional postal code, usually associated with ADM1 code.
+     * Typical not the same value, but may correspond
+     */
+    private String admin1PostalCode = null;
+    private String placePostalCode = null;
+
     private boolean isASCIIName = false;
     private boolean isUppercaseName = false;
 
@@ -499,5 +506,28 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     public int getPopulation() {
         return population;
+    }
+
+    /**
+     * State-level postal code, the corresponds usually to ADM1
+     */
+    public String getAdmin1PostalCode() {
+        return admin1PostalCode;
+    }
+
+    /**
+     * City-level postal code, that may be something like a zip.
+     * Thinking world-wide, not everyone calls these zipcodes, as in the US.
+     */
+    public String getPlacePostalCode() {
+        return placePostalCode;
+    }
+
+    public void setAdmin1PostalCode(String c) {
+        this.admin1PostalCode = c;
+    }
+
+    public void setPlacePostalCode(String c) {
+        this.placePostalCode = c;
     }
 }

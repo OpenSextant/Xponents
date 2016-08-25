@@ -399,8 +399,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     public int getPrecision() {
         return (int) precision.precision;
     }
-    public void setPrecision(int m)
-    {
+
+    public void setPrecision(int m) {
         precision.precision = m;
     }
 
@@ -536,10 +536,10 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         if (relatedPlace != null) {
             return relatedPlace.getCountryCode();
         }
-        if (countryCode!=null){
+        if (countryCode != null) {
             return countryCode;
         }
-        if (country!=null){
+        if (country != null) {
             return country.getCountryCode();
         }
         return null;
@@ -748,6 +748,32 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     public boolean hasCoordinate() {
         return GeodeticUtility.isValidNonZeroCoordinate(this.latitude, this.longitude);
+    }
+
+    private String admin1PostalCode = null;
+    private String placePostalCode = null;
+
+    /**
+     * State-level postal code, the corresponds usually to ADM1
+     */
+    public String getAdmin1PostalCode() {
+        return admin1PostalCode;
+    }
+
+    /**
+     * City-level postal code, that may be something like a zip.
+     * Thinking world-wide, not everyone calls these zipcodes, as in the US.
+     */
+    public String getPlacePostalCode() {
+        return placePostalCode;
+    }
+
+    public void setAdmin1PostalCode(String c) {
+        this.admin1PostalCode = c;
+    }
+
+    public void setPlacePostalCode(String c) {
+        this.placePostalCode = c;
     }
 
 }

@@ -32,6 +32,7 @@ import static org.opensextant.util.GeodeticUtility.geohash;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -47,6 +48,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.Language;
 import org.opensextant.data.LatLon;
@@ -84,6 +86,7 @@ public class GeonamesUtility {
 
         this.loadCountryNameMap();
         this.loadFeatureMetaMap();
+        this.loadAdmin1Metadata();
     }
 
     /**
@@ -243,6 +246,7 @@ public class GeonamesUtility {
      * range of fuziness, e.g., +/- 5deg.
      * 
      * REFERENCE: https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
+     * 
      * @param utc
      * @return
      */
@@ -576,6 +580,72 @@ public class GeonamesUtility {
          * Important data for many tools where time-of-day or other metadata is meaningful.
          */
         loadCountryTimezones();
+    }
+
+    /**
+     * Provides access to a array of ADM1 metadata.
+     * This is a mutable list -- if you want to add MORE admin metadata (entries, postal code mappings, etc)
+     * then have at it. For now this is US + territories only (as of v2.8.17)
+     * 
+     * @return
+     * @since 2.8.17
+     */
+    public List<Place> getAdmin1Metadata() {
+        return admin1Metadata;
+    }
+
+    private List<Place> admin1Metadata = new ArrayList<>();
+
+    /**
+     * <pre>
+     * TODO: This is mildly informed by geonames.org, however even there we are still missing
+     * a mapping between ADM1 FIPS/ISO codes for a state and the Postal codes/abbreviations.
+     * 
+     * Aliases for the same US province:
+     * "US.25" = "MA" = "US.MA" = "Massachussetts" = "the Bay State"
+     * 
+     * Easily mapping the coded data (e.g., 'MA' = '25') worldwide would be helpful.
+     * 
+     * TODO: Make use of geonames.org or other sources for ADM1 postal code listings at top level.
+     * </pre>
+     * 
+     * 
+     * @throws ConfigException
+     */
+    public void loadAdmin1Metadata() throws IOException {
+        URL adm1File = getClass().getResource("/country-adm1-codes.csv");
+        if (adm1File == null) {
+            throw new FileNotFoundException("Missing File for ADM1 code/meta data");
+        }
+        try (java.io.InputStream io = adm1File.openStream()) {
+
+            java.io.Reader fio = new InputStreamReader(io);
+            CsvMapReader adm1CSV = new CsvMapReader(fio, CsvPreference.EXCEL_PREFERENCE);
+            String[] columns = adm1CSV.getHeader(true);
+            Map<String, String> stateRow = null;
+
+            // -----------------------------------
+            // "POSTAL_CODE","ADM1_CODE","STATE","LAT","LON","FIPS_CC","ISO2_CC"
+            //
+            while ((stateRow = adm1CSV.read(columns)) != null) {
+
+                String roughID = String.format("%s.%s", stateRow.get("ISO2_CC"), stateRow.get("POSTAL_CODE"));
+                Place s = new Place(roughID, stateRow.get("STATE"));
+                s.setFeatureClass("A");
+                s.setFeatureCode("ADM1");
+                s.setAdmin1(stateRow.get("ADM1_CODE").substring(2));
+                s.setCountryCode(stateRow.get("ISO2_CC"));
+                s.defaultHierarchicalPath();
+                LatLon yx = GeodeticUtility.parseLatLon(stateRow.get("LAT"), stateRow.get("LON"));
+                s.setLatLon(yx);
+
+                s.setAdmin1PostalCode(stateRow.get("POSTAL_CODE"));
+                admin1Metadata.add(s);
+            }
+            adm1CSV.close();
+        } catch (Exception err) {
+            throw new IOException("Could not load US State data", err);
+        }
     }
 
     /**
