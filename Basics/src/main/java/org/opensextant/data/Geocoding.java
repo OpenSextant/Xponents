@@ -117,6 +117,14 @@ public interface Geocoding extends LatLon {
     public String getPlaceName();
 
     public void setPlaceName(String n);
+    
+    /** State-level postal code, the corresponds usually to ADM1 */
+    public String getAdmin1PostalCode();
+    
+    /** City-level postal code, that may be something like a zip. 
+     * Thinking world-wide, not everyone calls these zipcodes, as in the US. 
+     */
+    public String getPlacePostalCode();
 
     /**
      * @return Method for determining geocoding
