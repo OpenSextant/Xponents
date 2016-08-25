@@ -2,6 +2,7 @@ package org.opensextant.extractors.geo.rules;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.opensextant.data.Place;
@@ -29,6 +30,12 @@ public class NonsenseFilter extends GeocodeRule {
 
     /**
      * Evaluate the name in each list of names.
+     * 
+     * <pre>
+     * doo doo      - FAIL
+     * St. Paul     - PASS
+     * south"  bend - FAIL
+     * </pre>
      */
     @Override
     public void evaluate(List<PlaceCandidate> names) {
@@ -49,9 +56,8 @@ public class NonsenseFilter extends GeocodeRule {
             if (p.getLength() > MAX_NONSENSE_PHRASE_LEN) {
                 continue;
             }
-            int[] stats = irregularPunct(p.getText());
-            
-            if (stats[1]>0){
+
+            if (irregularPunctPatterns(p.getText())) {
                 p.setFilteredOut(true);
                 p.addRule("Nonsense,Punct");
                 continue;
@@ -59,10 +65,10 @@ public class NonsenseFilter extends GeocodeRule {
             if (p.isLower()) {
                 String[] wds = tokenizer.split(p.getTextnorm());
                 HashSet<String> set = new HashSet<>();
-                for (String w : wds){
-                    if (set.contains(w)){
+                for (String w : wds) {
+                    if (set.contains(w)) {
                         p.setFilteredOut(true);
-                        p.addRule("Nonsense,RepeatedLowerCase");
+                        p.addRule("Nonsense,Repeated,Lower");
                         break;
                     }
                     set.add(w);
@@ -72,10 +78,44 @@ public class NonsenseFilter extends GeocodeRule {
         }
     }
 
+    //Abbreviated word:  WWW. SSSSS   word, period, single space, text
+    static Pattern validAbbrev = Pattern.compile("\\w+[.][ \n][\\w\\d]+");
+    // Punctuation abounds:  WWWWPPPP+  SSSS     word, punct, multiple spaces, text 
+    static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+");
+
+    /**
+     * Find odd patterns of punctuation in names.
+     * // Note we have to do this becuase we have over-matched in our tagger or used aggressive tokenizer.
+     * // Which lets in all sorts of odd punctuation false-pos.
+     * 
+     * @param t
+     * @return
+     */
+    public static boolean irregularPunctPatterns(final String t) {
+        Matcher abbr = validAbbrev.matcher(t);
+        Matcher punct = invalidPunct.matcher(t);
+        int a = 0;
+        int p = 0;
+        while (abbr.find()) {
+            ++a;
+        }
+        while (punct.find()) {
+            ++p;
+        }
+        if (a >= 0 && p == 0 || (a == p)) {
+            return false;
+        }
+        return (p > 0);
+    }
+
     /**
      * for each letter that occurs, look at the one before it.
      * Track how many times multiple non-text chars appear in a row
      * after a alphanum char.
+     * 
+     * 'abc- xx123' FAIL: odd hyphenation
+     * 'St. Paul' PASS: valid use of abbrev.
+     * 
      * 
      * @param t
      * @return
@@ -102,8 +142,7 @@ public class NonsenseFilter extends GeocodeRule {
 
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
-        // TODO Auto-generated method stub
-
+        // no op
     }
 
 }
