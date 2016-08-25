@@ -79,7 +79,7 @@ public class NonsenseFilter extends GeocodeRule {
     }
 
     //Abbreviated word:  WWW. SSSSS   word, period, single space, text
-    static Pattern validAbbrev = Pattern.compile("\\w+[.][ \n][\\w\\d]+");
+    static Pattern validAbbrev = Pattern.compile("\\w+[.] \\S+");
     // Punctuation abounds:  WWWWPPPP+  SSSS     word, punct, multiple spaces, text 
     static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+");
 
@@ -92,6 +92,8 @@ public class NonsenseFilter extends GeocodeRule {
      * @return
      */
     public static boolean irregularPunctPatterns(final String t) {
+        // Edge case "A. B. C." is a valid match, but the last "." is not followed but space. So 
+        // Add a single trailing space.
         Matcher abbr = validAbbrev.matcher(t);
         Matcher punct = invalidPunct.matcher(t);
         int a = 0;
@@ -99,10 +101,14 @@ public class NonsenseFilter extends GeocodeRule {
         while (abbr.find()) {
             ++a;
         }
+        if (t.endsWith(".")) {
+            ++a;
+        }
+
         while (punct.find()) {
             ++p;
         }
-        if (a >= 0 && p == 0 || (a == p)) {
+        if (a >= 0 && p == 0 || (a >= p)) {
             return false;
         }
         return (p > 0);

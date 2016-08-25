@@ -24,8 +24,10 @@ public class TestPersonFilter {
         assertTrue(NonsenseFilter.irregularPunctPatterns("south\", bend"));
         assertTrue(!NonsenseFilter.irregularPunctPatterns("to-to"));
         assertTrue(NonsenseFilter.irregularPunctPatterns("To-  To- To-"));
-        assertTrue(NonsenseFilter.irregularPunctPatterns("U. S. A."));
-        assertTrue(NonsenseFilter.irregularPunctPatterns("L` Oreal"));
+        assertTrue(!NonsenseFilter.irregularPunctPatterns("U. S. A."));
+        assertTrue(!NonsenseFilter.irregularPunctPatterns("U.S.A."));
+        assertTrue(!NonsenseFilter.irregularPunctPatterns("L` Oreal"));
+        assertTrue(!NonsenseFilter.irregularPunctPatterns("L`Oreal"));
     }
 
     @Test
