@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 //import org.apache.lucene.analysis.charfilter.MappingCharFilterFactory;
@@ -56,6 +57,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
     protected static long rowCount = 0;
     protected static long addCount = 0;
     protected static GeonamesUtility helper = null;
+    protected static final Pattern shortAlphanum = Pattern.compile("\\w+.+\\d+");
 
     /**
      * NamedList? in Solr. What a horror. Okay, they work, but...
@@ -92,7 +94,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
         String logTag = "GAZ UPR////////////// ";
 
-        logger.debug("Parameters for Gaz Updater {}, size={}, Country Filter?{}", params, params.size(), params.getAll("countries"));
+        logger.debug("Parameters for Gaz Updater {}, size={}, Country Filter?{}", params, params.size(),
+                params.getAll("countries"));
         if (params.size() == 0) {
             logger.debug(logTag + "Zero parameters found.");
             return;
@@ -102,7 +105,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
         logger.debug(logTag + "P={}, V={}", p.getName(0), p.getVal(0));
 
         List<String> ic = (List<String>) p.get("include_category"); // array of
-    
+
         /* Optional: filter entries with a category list
         *
         */
@@ -150,6 +153,19 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             return null;
         }
         return new GazetteerUpdateProcessor(next);
+    }
+    
+    /**
+     * Test for short WWWW NNNN alphanumeric coded stuff.
+     * @param nm
+     * @param feat
+     * @return
+     */
+    public static boolean ignoreShortAlphanumeric(String nm, String feat) {
+        if (GeonamesUtility.isAdministrative(feat) || GeonamesUtility.isPopulated(feat)) {
+            return false;
+        }
+        return shortAlphanum.matcher(nm).matches();
     }
 
     class GazetteerUpdateProcessor extends UpdateRequestProcessor {
@@ -258,16 +274,10 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 }
             }
 
-            // Unfortunate data rule checks: Place name contains a country name
-            // alias and wins based on longest match. If we saw "USA 1" or "usa
-            // 1" or "USA [1...",
-            // etc.
-            // The longest match appears to be "Usa 1 (Indonesia)". As this is
-            // very rare and not something that should confound tagger/matching
-            // rules, such oddities are marked search_only here in gaz.
-            //
-            if ("usa 1".equals(nameLower) || ("usa 2").equals(nameLower)) {
-                search_only = true;
+            /* Pattern: Short word followed by digit. XXXX NNN
+             * Approximately one word of text  Ignore things that are not major places - adm or ppl */
+            if (!search_only && nm2.length() <= 8) {
+                search_only = ignoreShortAlphanumeric(nm2, SolrProxy.getString(doc, "feat_class"));
             }
 
             /*
@@ -319,6 +329,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             // pass it up the chain
             super.processAdd(cmd);
         }
+
 
         /**
          * Parse off country codes that duplicate information in ADM boundary

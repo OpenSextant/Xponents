@@ -13,7 +13,10 @@ res,abbrev
 sub,abbrev
 conop,abbrev
 supreme,adjective
+imperial,adjective
+pinnacle,noun
 keen,adjective
+graphic,adjective
 excelsior,adjective
 alpine,adjective
 harder,adjective
@@ -231,9 +234,12 @@ february,month
 jan,month
 january,month
 primer,noun
+loyalist,noun
+guess,noun
 brink,noun
 trades,noun
 champion,noun
+chess board,noun
 aces,noun
 box,noun
 triple,noun
@@ -287,6 +293,7 @@ guideline,noun
 guide,noun
 book,noun
 fish,noun
+dolphin,noun
 trout,noun
 total,noun
 eagle,noun
@@ -389,6 +396,7 @@ crystal,noun
 ring,noun
 wall,noun
 wood,noun
+oak,noun
 wooden,adjective
 coal,noun
 rice,noun
@@ -549,6 +557,7 @@ cafe,noun
 bistro,noun
 canon,noun
 cannon,noun
+clearinghouse,noun
 falcon,noun
 puerto,noun.spa
 banda,noun.spa
@@ -833,11 +842,22 @@ po2,person.label.rank
 po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
+end of the road,phrase
+up and down,phrase
+a small world,phrase
+small town,phrase
+tiny town,phrase
+bah bah,phrase
 story building,phrase
 building a,phrase
 old west,phrase
 a school,phrase
+<<<<<<< HEAD
+our school,phrase
+our house,phrase
+=======
 a al,phrase.spa
+>>>>>>> d2045a4bf17c5e765cfda3891455caaed4dd78f3
 milestone,phrase
 miles,noun
 rican,phrase
@@ -912,6 +932,7 @@ second point,phrase
 tipping point,phrase
 western point,phrase
 eastern point,phrase
+points of view,phrase
 point of view,phrase
 point a,phrase
 point b,phrase
@@ -963,13 +984,17 @@ uranus,place.astro
 pluto,place.astro
 aquarius,place.astro
 palace,place.civil
+pipeline,place.civil
 jail,place.civil
+holy ground,place.civil
 stadium,place.civil
+community center,place.civil
 zoo,place.civil
 rotary,place.civil
 castle,place.civil
 plaza,place.civil
 annex,place.civil
+fountain,place.civil
 dock,place.civil
 suite,place.civil
 city hall,place.civil
@@ -1113,6 +1138,7 @@ estate,place.general
 prefecture,place.general
 federation,place.general
 federal,place.general
+federal building,place.civil
 zone,place.general
 tract,place.general
 canton,place.general
@@ -1166,6 +1192,10 @@ channel,place.general
 centre,place.general
 delta,place.general
 border,place.general
+northern city,place.general
+southern city,place.general
+northern border,place.general
+southern border,place.general
 borders,place.general
 turnpike,place.general
 stream,place.general
@@ -1209,13 +1239,13 @@ kray,place.general.non-english
 burg,place.general.non-english
 distrito,place.general.non-english
 gouvernorat,place.general.non-english
-estado,place.general.non-english
+estado,place.general.spa
 estao,place.general.non-english
 commune,place.general.non-english
 cercle,place.general.non-english
 partido,place.general.non-english
-municipio,place.general.non-english
-territorio,place.general.non-english
+municipio,place.general.spa
+territorio,place.general.spa
 mintaqat,place.general.non-english
 tinh,place.general.non-english
 republica,place.general.non-english
@@ -1228,16 +1258,17 @@ veleyat,place.general.non-english
 wilayat,place.general.non-english
 sitio,place.general.non-english
 locacion,place.general.non-english
-cine,place.general.non-english
-lugar,place.general.non-english
-mundo,place.general.non-english
-monde,place.general.non-english
-provincia,place.general.non-english
-departement,place.general.non-english
-departmento,place.general.non-english
-nacional,place.general.non-english
-la zona,place.general.non-english
-la provincia,place.general.non-english
+cine,place.general.spa
+lugar,place.general.spa
+mundo,place.general.spa
+monde,place.general.fra
+provincia,place.general.spa
+departement,place.general.fra
+departmento,place.general.spa
+nacional,place.general.spa
+la zona,place.general.spa
+la provincia,place.general.spa
+la ciudad,place.general.spa
 atlantis,place.legend
 pacific,place.ocean
 atlantic,place.ocean
@@ -1629,6 +1660,14 @@ dengue,well-known.disease
 lyme,well-known.disease
 ebola,well-known.disease
 han,well-known.person
+<<<<<<< HEAD
+three-way,place.general
+four-way,place.general
+three way,place.general
+four way,place.general
+major bank,place.civil
+theme park,place.civil
+=======
 mundial,adjective.spa
 small,adjective
 jubilee,noun
@@ -1645,3 +1684,4 @@ diploma,noun
 cactus,noun
 maker,noun
 martial,adjective
+>>>>>>> d2045a4bf17c5e765cfda3891455caaed4dd78f3

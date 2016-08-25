@@ -1,4 +1,16 @@
+#2016#
+* Xponents 2.8.16
+ - Basics:  Country data improvements include territories, timezones, languages spoken, etc; Backed by GeonamesUtility and GeodeticUtility
+ - Basics:  Place object is fleshed out more with population data, when available;  ASCII and other name hueristic flags; Geohash options; 
+   overall improved Geocoding interface; Backed by techniques in TexUtils
+ - Patterns: XCoord and GeocoordMatch reimplement Geocoding interface; Date/Time pattern fixes
+ - Extraction: PlaceGeocoder added support for Arabic and CJK text parsing if given a language ID; 
+   Refactored rules stack and performance on scoring candidate names.  Overall improvement in default score for a place match;
+   Tweaked JRCNames to allow for better false-positive negation.
+ - XText 2.9.x:  Tika 1.13 upgrade; Improved Web/Sharepoint crawling logic (not perfect). Allows user to filter links worth capturing and converting
+ - XText 2.9.x:  TikaHTML parser/converter was not yielding reasonably obvious metadata tags (title, org, author, etc.) so I pulled in JerichoHTML to get tags.
 
+   
 #2015#
 * Xponents 2.8.5 - december 2015: 
  - adding timezone and language metadata; 

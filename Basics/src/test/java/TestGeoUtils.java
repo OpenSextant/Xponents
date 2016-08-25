@@ -96,7 +96,7 @@ public class TestGeoUtils {
         // This makes more sense for a regional accumulation of population geohash prefix = 4 or 3.
         popGrid = GeonamesUtility.mapPopulationByLocation(cities, 4);
         print("Population =" + popGrid.size());
-        print("Grid = " + popGrid);
+        print("Grid = " + popGrid.toString().substring(0,500) + "....");
     }
 
     private void print(String m) {
