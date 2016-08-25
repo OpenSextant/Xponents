@@ -1,3 +1,4 @@
+package org.opensextant.extractors.test;
 /*
  * Copyright 2013 ubaldino.
  *

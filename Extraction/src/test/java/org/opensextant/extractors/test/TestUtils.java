@@ -1,3 +1,4 @@
+package org.opensextant.extractors.test;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 import org.opensextant.util.AnyFilenameFilter;
