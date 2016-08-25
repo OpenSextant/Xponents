@@ -487,7 +487,6 @@ wick,noun
 tray,noun
 tales,noun
 patent,noun
-panel,noun
 pack,noun
 scout,noun
 opera,noun
@@ -812,7 +811,6 @@ ltgen,person.label.rank
 cpl,person.label.rank
 lcpl,person.label.rank
 ltc,person.label.rank
-lt,person.label.rank
 1lt,person.label.rank
 2lt,person.label.rank
 sgt,person.label.rank
@@ -845,8 +843,6 @@ a1c,person.label.rank
 end of the road,phrase
 up and down,phrase
 a small world,phrase
-small town,phrase
-tiny town,phrase
 bah bah,phrase
 story building,phrase
 building a,phrase
@@ -881,6 +877,7 @@ as self,phrase
 a bad,phrase
 snafu,phrase
 small town,phrase
+tiny town,phrase
 big town,phrase
 new one,phrase
 new state,phrase
@@ -976,7 +973,6 @@ mercury,place.astro
 venus,place.astro
 jupiter,place.astro
 saturn,place.astro
-venus,place.astro
 uranus,place.astro
 pluto,place.astro
 aquarius,place.astro
