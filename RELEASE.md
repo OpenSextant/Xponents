@@ -1,4 +1,8 @@
 #2016#
+* Xponents 2.8.17
+ - Basics:  US State metadata for mapping FIPS/ISO and ADM1/Postal code pairings
+ - Extraction: NonsenseFilter added to deal with odd punctuation situations as a result of over-tagging or deep tokenization.
+
 * Xponents 2.8.16
  - Basics:  Country data improvements include territories, timezones, languages spoken, etc; Backed by GeonamesUtility and GeodeticUtility
  - Basics:  Place object is fleshed out more with population data, when available;  ASCII and other name hueristic flags; Geohash options; 
