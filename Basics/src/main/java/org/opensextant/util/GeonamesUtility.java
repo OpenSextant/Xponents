@@ -609,8 +609,7 @@ public class GeonamesUtility {
      * TODO: Make use of geonames.org or other sources for ADM1 postal code listings at top level.
      * </pre>
      * 
-     * 
-     * @throws ConfigException
+     * @throws IOException if CSV file not found in classpath
      */
     public void loadAdmin1Metadata() throws IOException {
         URL adm1File = getClass().getResource("/country-adm1-codes.csv");
