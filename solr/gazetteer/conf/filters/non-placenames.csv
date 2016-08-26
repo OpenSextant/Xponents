@@ -11,6 +11,8 @@ lat,abbrev
 lon,abbrev
 res,abbrev
 sub,abbrev
+fig,abbrev
+ref,abbrev
 conop,abbrev
 supreme,adjective
 imperial,adjective
@@ -396,6 +398,7 @@ crystal,noun
 ring,noun
 wall,noun
 wood,noun
+firewood,noun
 oak,noun
 wooden,adjective
 coal,noun
@@ -1091,7 +1094,9 @@ area,place.general
 state,place.general
 city,place.general
 town,place.general
+towns,place.general
 township,place.general
+settlement,place.general
 a village,place.general
 village,place.general
 municipality,place.general

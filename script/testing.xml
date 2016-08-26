@@ -10,6 +10,7 @@
   <property file="runtime.cfg" />
 
   <path id="runtime.classpath">
+    <pathelement location="${solr.home}/gazetteer/conf" />
     <pathelement location="${xponents}/etc" />
     <fileset dir="${xponents}/lib" includes="**/*.jar" />
   </path>

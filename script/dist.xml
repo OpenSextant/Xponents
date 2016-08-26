@@ -62,7 +62,7 @@
 
   <!--  Consolidate XText items to their own release app
     -->
-  <target name="rel.xtext">
+  <target name="dist.xtext">
     <delete dir="${xtext.release}"/>
 
     <mkdir dir="${xtext.release}"/>
@@ -200,7 +200,7 @@
     </copy>
     <copy todir="${release}/etc/">
         <fileset dir="${xponents.home}/Extraction/src/test/resources">
-           <include name="log4j.*" />
+           <include name="logback.*" />
         </fileset>
         <fileset dir="${xponents.home}/Extraction/src/test/resources">
            <include name="Coord_Patterns*.*" />
@@ -246,9 +246,11 @@
            <include name="*.md" />
         </fileset>
     </copy>
+<!--
     <copy todir="${release}/doc/Examples/apidocs">
         <fileset dir="${xponents.home}/Examples/target/apidocs" />
     </copy>
+  -->
   </target>
 
   <target name="dist" depends="build, copy-libs, copy-script, copy-data, copy-solr, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
