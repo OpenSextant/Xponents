@@ -27,6 +27,7 @@ public class NonsenseFilter extends GeocodeRule {
     public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
 
     private static int MAX_NONSENSE_PHRASE_LEN = 15;
+    private static int GENERIC_ONE_WORD = 8; // Chars in average word.
 
     /**
      * Evaluate the name in each list of names.
@@ -57,6 +58,16 @@ public class NonsenseFilter extends GeocodeRule {
                 continue;
             }
 
+            /*
+             * Short words, with numerics. Approximately one word.
+             */
+            if (p.getLength() < GENERIC_ONE_WORD) {
+                if (trivialNumerics.matcher(p.getText()).matches()) {
+                    p.setFilteredOut(true);
+                    p.addRule("Nonsense,Numbers");
+                    continue;
+                }
+            }
             if (irregularPunctPatterns(p.getText())) {
                 p.setFilteredOut(true);
                 p.addRule("Nonsense,Punct");
@@ -82,6 +93,7 @@ public class NonsenseFilter extends GeocodeRule {
     static Pattern validAbbrev = Pattern.compile("\\w+[.] \\S+");
     // Punctuation abounds:  WWWWPPPP+  SSSS     word, punct, multiple spaces, text 
     static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+");
+    static Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
 
     /**
      * Find odd patterns of punctuation in names.
@@ -137,8 +149,8 @@ public class NonsenseFilter extends GeocodeRule {
             if (Character.isWhitespace(c)) {
                 ++ws;
             }
-            if ((Character.isWhitespace(c) || !Character.isLetterOrDigit(c))
-                    && !Character.isLetterOrDigit(prev) && prev != 0) {
+            if ((Character.isWhitespace(c) || !Character.isLetterOrDigit(c)) && !Character.isLetterOrDigit(prev)
+                    && prev != 0) {
                 ++irregular;
             }
             prev = c;

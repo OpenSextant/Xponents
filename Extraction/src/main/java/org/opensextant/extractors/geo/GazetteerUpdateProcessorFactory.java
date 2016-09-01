@@ -254,9 +254,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
             boolean search_only = false;
 
-            /*
-             * Trivially short ASCII names are not good for tagging. Do not mark
-             * codes as search only.
+            /* Trivially short ASCII names are not good for tagging. 
+             * But do not mark codes as search only.
              */
             String nm2 = nm.replace(".", "").trim();
             if (isName) {
