@@ -81,17 +81,17 @@ def create_entities(line):
     is_valid = len(cc)>0
     taxons = []
     if not is_valid:
-      n = 'nationality.%s' %(name) 
-      taxons.append( Nationality(n, name, None, is_valid) )
+        n = 'nationality.%s' %(name) 
+        taxons.append( Nationality(n, name, None, is_valid) )
     else:
-      if ';' in cc:
-          codes = cc.split(';')
-          for c in codes:
-            n = 'nationality.%s' %(c) 
-            taxons.append( Nationality(n, name, c, is_valid) )
-      else:
-        n = 'nationality.%s' %(cc)
-        taxons.append( Nationality(n, name, cc, is_valid) )
+        if ';' in cc:
+            codes = cc.split(';')
+            for c in codes:
+                n = 'nationality.%s' %(c) 
+                taxons.append( Nationality(n, name, c, is_valid) )
+        else:
+            n = 'nationality.%s' %(cc)
+            taxons.append( Nationality(n, name, cc, is_valid) )
 
     return taxons
 
@@ -99,7 +99,6 @@ def create_entities(line):
 if __name__ == '__main__':
     '''
     '''
-    import sys
     taxonomy = None
     start_id = 0
     catalog_id = 'nationality'

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os, sys,csv
 reload(sys)
 sys.setdefaultencoding('utf-8')
