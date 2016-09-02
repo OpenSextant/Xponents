@@ -37,6 +37,11 @@ python ./script/assemble_person_filter.py
 echo "Populate nationalities taxonomy in XTax"
 # you must set your PYTHONPATH to include Extraction/XTax required libraries.
 python  ./script/nationalities.py  --taxonomy ./conf/filters/nationalities.csv --solr http://$SERVER/solr/taxcat --starting-id 0
+
+
+echo "Generate Name Variants"
+python ./script/generate_variants.py  --solr http://$SERVER/solr/gazetteer --output ./conf/additions/generated-variants.json
+
 popd
 
 ant index-gazetteer
@@ -50,7 +55,14 @@ ant index-gazetteer
 curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \
    -H Content-type:application/json --data-binary @./gazetteer/conf/additions/adhoc-US-city-nicknames.json
 curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \
+   -H Content-type:application/json --data-binary @./gazetteer/conf/additions/adhoc-world-city-nicknames.json
+curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \
    -H Content-type:application/json --data-binary @./gazetteer/conf/additions/adhoc-country-names.json
+
+for f in ./gazetteer/conf/additions/generated*json ; do
+    curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \
+       -H Content-type:application/json --data-binary @$f
+done
 
 
 # When done for the day,  optimize

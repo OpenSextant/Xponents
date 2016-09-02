@@ -2,31 +2,55 @@
 import re
 import simplejson as json
 
+'''
+Name Variant Generator:  create as many valid name variants for popular 
+abbreviated phrases in names.
+
+    "S. Pedro"   (instead of San Pedro)
+    "Sta Maria"  (instead of Santa Maria)
+    
+Seems trivial, however we miss lots of potential mentions because 
+many times only the short form is used:  St. Louis,...
+
+'''
+
 saint_repl = {
     #'santos' : 'sto',  have not found good variation on 'santos'
-    'sant' : 's',
-    'santa' : 'sta',
-    'santo' : 'st',
-    'saint' : 'st',
-    'sainte' : 'ste',
-    'san' : 's'    
+    'sant' : 's. ',
+    'santa' : 'sta. ',
+    'santo' : 'st. ',
+    'saint' : 'st. ',
+    'sainte' : 'ste. ',
+    'san' : 's. '    
      }
 
 general_repl = {
-    'fort': 'ft',
-    'north': 'n',
-    'south': 's' 
+    'fort': 'ft. ',
+    'north': 'n. ',
+    'south': 's. ' 
     }
 
 splitter = re.compile(u"[-.`'\u2019\s]+", re.UNICODE|re.IGNORECASE)
 
+debug = False
+first = True
 def save_result(pl, nameVar, out):
+    global first
     # print "\tADD", n, "=>", nVar
+    if first:
+        out.write('[')
+    else:
+        out.write(',')        
+        out.write('\n')
+        
     pl['name'] = nameVar
     pl['source'] = 'XpGen'
     pl['id'] = 20000000L + long(pl['id'])
     out.write(json.dumps(pl))
-    out.write(',\n')
+    
+    if first:
+        first = False
+    
     
 def generate_GENERAL_variants(gaz, output):
     '''
@@ -34,12 +58,15 @@ def generate_GENERAL_variants(gaz, output):
     N. Hampstead <<== North Hampstead
     W. Bedford Falls   <<== West Bedford Falls
     
+    We generate variants that do not already exist.
     
     Almost as exact as SAINT replacements... 
     ''' 
     for term in general_repl:
         results = gaz.search("name:%s* AND feat_class:(A P) AND id:[ * TO 20000000]" % (term), rows=1000000)
         print "PREFIX", term, results.hits
+        pat = u"(%s\s+)" % (term)
+        regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
         for place in results.docs:
             n = place.get('name')
             norm = n.lower()
@@ -51,40 +78,37 @@ def generate_GENERAL_variants(gaz, output):
             if not norm.startswith(term):
                 continue
             
-            toks = splitter.split(n, 1)
-            if len(toks) == 1:
-                continue
-            
-            variant = []
-            for t in toks:
-                if t.lower() == term:
-                    repl = general_repl[term]
-                    variant.append("%s." % (repl.capitalize()))                
-                else:
-                    variant.append(t)
-                    
+            repl = general_repl[term].capitalize()
+            nVar = regex.sub(repl, n)
+            nVar = nVar.replace('-', ' ').strip()
+            nVar = nVar.replace('  ',' ')  
+
             pid = place.get('place_id')
-            # print n, "|", toks
     
-            nVar = ' '.join(variant)        
             existing = solrGaz.search(u'place_id:%s AND name:"%s"' % (pid, nVar), rows=1)
-            
             if existing.hits == 0:
                 save_result(place, nVar, output)
         
         
+
 def generate_SAINT_variants(gaz, output):
     '''
     Valid French village abbreviations:
         St Pryvé St Mesmin   <<<--- Saint-Pryvé-Saint-Mesmin)
     
         Sta Maria           <<---Santa Maria 
+        
+        Because 'San' is a typical syllable in Asian languages, we'll ignore certain countries
     
     '''
     
+    ignore_countries = set("TW CN JP LA VN ML PA KR KP".split())
     for saintly in saint_repl:
         results = gaz.search("name:%s AND id:[ * TO 20000000]" % (saintly), rows=200000)
         print "PREFIX", saintly, results.hits
+        
+        pat = u"(%s[-`'\u2019\s]+)" % (saintly)
+        regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
         for place in results.docs:
             n = place.get('name')
             norm = n.lower()
@@ -96,30 +120,20 @@ def generate_SAINT_variants(gaz, output):
             if not norm.startswith(saintly):
                 continue
             
-            # Splitter not quite working for trailing "'s"
-            toks = splitter.split(n, 3)
-            if len(toks) == 1:
+            cc = place.get('cc')
+            if cc in ignore_countries and saintly == 'san':
                 continue
             
-            variant = []
-            for t in toks:
-                if t.lower() == saintly:
-                    repl = saint_repl[saintly]
-                    variant.append("%s." % (repl.capitalize()))
-                    variant.append(' ')
-                elif t.lower() == 's':  
-                    # Inferring this was an apos s.... TODO:.              
-                    variant.append("'s")
-                else:
-                    variant.append(' ')
-                    variant.append(t)
-                    
+            repl = saint_repl[saintly].capitalize()
+            nVar = regex.sub(repl, n)
+            nVar = nVar.replace('-', ' ').strip()
+            nVar = nVar.replace('  ',' ')  
+
             pid = place.get('place_id')
-            # print n, "|", toks
     
-            nVar = ''.join(variant).strip()        
             existing = solrGaz.search(u'place_id:%s AND name:"%s"' % (pid, nVar), rows=1)
             if existing.hits == 0:
+                if debug: print n, "==>", nVar
                 save_result(place, nVar, output)
         
         
@@ -129,11 +143,29 @@ def tester():
     res = splitter.split("Sant' Bob Pond")
     print res
     
+    replacements = {}
+    
+    term = 'saint'
+    replacements[term] = 'st. '
+    pat = u"(%s[-`'\u2019\s]+)" % (term)
+    regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
+            
+    test = 'Saint-Pryvé-Saint-Mesmin'
+    repl = replacements[term].capitalize()
+    nVar = regex.sub(repl, test)
+    nVar = nVar.replace('-', ' ').strip()
+    nVar = nVar.replace('  ',' ')  
+    print nVar
+
+
+    
 if __name__ == "__main__":
+    
+    # tester()
+    
     import pysolr
     import codecs
     import argparse
-    import os
     
     ap = argparse.ArgumentParser()
     ap.add_argument('--solr')
@@ -145,12 +177,9 @@ if __name__ == "__main__":
     # added_variants = os.path.join('..', 'conf', 'additions', 'generated-variants.json')
     added_variants = args.output
     fh = codecs.open(added_variants, 'wb', encoding="utf-8")
-    fh.write('[\n')
 
     generate_SAINT_variants(solrGaz, fh)
     generate_GENERAL_variants(solrGaz, fh)
 
-    fh.seek(-1, os.SEEK_END)
-    fh.truncate()
     fh.write(']')
     fh.close()

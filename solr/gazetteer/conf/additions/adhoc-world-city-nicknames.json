@@ -1,0 +1,34 @@
+[
+  {
+        "id": 20850864,
+        "place_id": "NGA-979186",
+        "name": "Bs. As.",
+        "feat_class": "P",
+        "feat_code": "PPLC",
+        "FIPS_cc": "AR",
+        "cc": "AR",
+        "ISO3_cc": "ARG",
+        "adm1": "07",
+        "source": "Xponents",
+        "name_bias": 0.38461,
+        "id_bias": 0.955,
+        "name_type": "A",
+        "geo": "-34.60639,-58.43528"
+      },
+  {
+        "id": 20850864,
+        "place_id": "NGA-979186",
+        "name": "BsAs",
+        "feat_class": "P",
+        "feat_code": "PPLC",
+        "FIPS_cc": "AR",
+        "cc": "AR",
+        "ISO3_cc": "ARG",
+        "adm1": "07",
+        "source": "Xponents",
+        "name_bias": 0.38461,
+        "id_bias": 0.955,
+        "name_type": "A",
+        "geo": "-34.60639,-58.43528"
+      }
+]
