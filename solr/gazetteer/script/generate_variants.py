@@ -45,7 +45,7 @@ def save_result(pl, nameVar, out):
         
     pl['name'] = nameVar
     pl['source'] = 'XpGen'
-    pl['id'] = 20000000L + long(pl['id'])
+    pl['id'] = 30000000L + long(pl['id'])
     out.write(json.dumps(pl))
     
     if first:
