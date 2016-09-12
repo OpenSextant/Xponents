@@ -1,4 +1,9 @@
 #2016#
+
+* Xponents 2.8.18
+ - Extraction: NonsenseFilter added short name + number pattern to filter out unlikely name match, 
+   that is aimed at rare gazetteer entries. Alternatively, mark such things in Gazetteer as SearchOnly = true (to avoid tagging at all, by default)
+
 * Xponents 2.8.17
  - Basics:  US State metadata for mapping FIPS/ISO and ADM1/Postal code pairings
  - Extraction: NonsenseFilter added to deal with odd punctuation situations as a result of over-tagging or deep tokenization.
