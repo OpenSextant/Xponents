@@ -86,6 +86,7 @@ congressional,adjective
 english,adjective
 french,adjective
 malay,adjective
+mal,adjective.spa
 anglo,adjective
 sino,adjective
 serial,adjective
@@ -128,6 +129,7 @@ consular,adjective
 muerte,adjective.spa
 shortly,adverb
 the,article
+lo,article.spa
 black,color
 blue,color
 green,color
@@ -244,6 +246,7 @@ champion,noun
 chess board,noun
 aces,noun
 box,noun
+ant,noun
 triple,noun
 tri,adjective
 burger,noun
@@ -366,6 +369,8 @@ health,noun
 pizza,noun
 lack,noun
 love,noun
+bride,noun
+darling,noun
 mind,noun
 labor,noun
 law,noun
@@ -479,6 +484,8 @@ tram,noun
 sound,noun
 slate,noun
 rock,noun
+rocks,noun
+cave,noun
 root,noun
 rainbow,noun
 railway,noun
@@ -500,6 +507,7 @@ conquest,noun
 nda,noun
 cruise,noun
 ace,noun
+pie,noun
 seal,noun
 seals,noun
 cab,noun
@@ -1081,6 +1089,7 @@ el territorio,place.civil.spa
 country,place.general
 desert,place.general
 land,place.general
+landing,place.civil
 island,place.general
 islet,place.general
 valley,place.general
@@ -1205,6 +1214,7 @@ shore,place.general
 straits,place.general
 water,place.general
 waterway,place.general
+waterfall,place.general
 waterways,place.general
 coast,place.general
 horn,place.general
@@ -1427,6 +1437,7 @@ with,stopword.wordnet
 without,stopword.wordnet
 ye,stopword.wordnet
 you,stopword.wordnet
+yo,stopword.spa
 you-all,stopword.wordnet
 yours,stopword.wordnet
 yourself,stopword.wordnet
@@ -1680,3 +1691,11 @@ diploma,noun
 cactus,noun
 maker,noun
 martial,adjective
+poly,adjective
+mint,noun
+lite,phrase
+romance,noun
+tag,noun
+hoy,noun.spa
+nino,noun.spa
+nina,noun.spa
