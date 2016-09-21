@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.opensextant.ConfigException;
+import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceGeocoder;
@@ -74,7 +75,9 @@ public class TestPlaceGeocoder extends TestGazMatcher {
                 if (args.length == 1) {
                     tester.tagFile(new File(args[0]));
                 } else if (args.length == 2) {
-                    tester.tagText(args[1]);
+                    TextInput t = new TextInput("test", args[1]);
+                    t.langid = args[0];
+                    tester.tagText(t);
                 } else {
                     tester.tagEvaluation();
                 }
@@ -90,7 +93,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         }
     }
 
-    private void tagText(String t) throws ExtractionException {
+    private void tagText(TextInput t) throws ExtractionException {
         print("TEST:\t" + t + "\n=====================");
         List<TextMatch> matches = geocoder.extract(t);
         summarizeFindings(matches);

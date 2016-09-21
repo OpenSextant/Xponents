@@ -362,11 +362,13 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public static final String DEFAULT_TAG_FIELD = "name_tag";
 
     /**
-     * Use /tag ? field = name_tag_cjk to tag in Asian scripts.
-     * 
+     * Use Solr param 'field' = name_tag_cjk to tag in Asian scripts.
      */
     public static final String CJK_TAG_FIELD = "name_tag_cjk";
 
+    /**
+     * Use Solr param 'field = name_tag_ar for Arabic.
+     */
     public static final String AR_TAG_FIELD = "name_tag_ar";
 
     public LinkedList<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
@@ -407,6 +409,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // Reset counts.
         this.defaultFilterCount = 0;
         this.userFilterCount = 0;
+        // during post-processing tags we may have to distinguish between tagging/tokenizing 
+        // general vs. cjk vs. ar. But not yet though.
+        // boolean useGeneralMode = DEFAULT_TAG_FIELD.equals(fld);
 
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
@@ -461,14 +466,15 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // we might as well not make the tagger do any more work.
 
             String matchText = (String) tag.get("matchText");
-            // Then filter out trivial matches. E.g., Us is filtered out. vs. US
-            // would be allowed.
-            // If lowercase abbreviations are allowed, then all matches are
-            // passed.
-            if (len < 3 && !StringUtils.isAllUpperCase(matchText) && !allowLowercaseAbbrev) {
-                ++this.defaultFilterCount;
-                continue;
+            // Then filter out trivial matches. E.g., Us is filtered out. vs. US would
+            // be allowed. If lowercase abbreviations are allowed, then all matches are passed.               
+            if (len < 3) {
+                if (TextUtils.isASCII(matchText) && !StringUtils.isAllUpperCase(matchText) && !allowLowercaseAbbrev) {
+                    ++this.defaultFilterCount;
+                    continue;
+                }
             }
+            
             if (TextUtils.countFormattingSpace(matchText) > 1) {
                 // Phrases with words broken across more than one line are not
                 // valid matches.
@@ -776,10 +782,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         public TagFilter() throws ConfigException {
             super();
             stopTerms = new HashSet<>();
-            String[] defaultNonPlaceFilters = {
-                    "/filters/non-placenames.csv",
-                    "/filters/non-placenames,acronym.csv"
-            };
+            String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", "/filters/non-placenames,acronym.csv" };
             for (String f : defaultNonPlaceFilters) {
                 stopTerms.addAll(GazetteerMatcher.loadExclusions(GazetteerMatcher.class.getResource(f)));
             }
