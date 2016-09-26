@@ -70,7 +70,7 @@ public class TextTranscodingConverter extends ConverterAdapter {
             if (doc != null) {
                 data = FileUtility.readBytesFrom(doc);
             } else {
-                IOUtils.readFully(in, data);
+                data = IOUtils.toByteArray(in);
             }
             in.close();
         }
