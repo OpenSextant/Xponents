@@ -1044,6 +1044,7 @@ plant,place.civil
 factory,place.civil
 college,place.civil
 university,place.civil
+national university,place.civil
 campus,place.civil
 company,place.civil
 organization,place.civil
@@ -1089,6 +1090,7 @@ el territorio,place.civil.spa
 country,place.general
 desert,place.general
 land,place.general
+state land,place.civil
 landing,place.civil
 island,place.general
 islet,place.general
