@@ -202,6 +202,23 @@
         "id_bias": 0.775,
         "name_type": "A",
         "geo": "38.89511,-77.03637"
+      },
+      {
+        "id": 26325564,
+        "place_id": "USGS1779778",
+        "name": "Calif.",
+        "feat_class": "A",
+        "feat_code": "ADM1",
+        "FIPS_cc": "US",
+        "cc": "US",
+        "ISO3_cc": "USA",
+        "adm1": "06",
+        "adm2": "06.0039",
+        "source": "Xponents/USGS",
+        "name_bias": 0.05,
+        "id_bias": 0.13,
+        "name_type": "A",
+        "geo": "37.2153,-119.66384"
       }
 ] 
 

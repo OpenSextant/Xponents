@@ -5,3 +5,7 @@
 /lib
 /gazetteer/conf/filters/non-placenames,user.csv
 /test
+jetty9
+webapps
+lib/ext
+generated-*json

@@ -23,39 +23,54 @@
     </target>
 
     <target name="setup">
-        <mkdir dir="build" />
-        <mkdir dir="build/containerLib" />
+        <mkdir dir="log" />
+        <mkdir dir="lib/ext" />
+        <mkdir dir="webapps" />
     </target>
 
 
-    <!-- get some dependencies 'proxy' -->
-    <target name="init" depends="setup">
-
+    <target name="jetty9" > 
         <get dest="build" skipexisting="true">
-            <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
-            <url url="http://repo2.maven.org/maven2/org/mortbay/jetty/jetty-runner/${jetty.v}/jetty-runner-${jetty.v}.jar" />
+            <url url="http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.3.12.v20160915/jetty-distribution-9.3.12.v20160915.zip" />
         </get>
 
+        <unzip src="${basedir}/build/jetty-distribution-9.3.12.v20160915.zip" dest="${basedir} skipexisting="true""/>
+        <move todir="${basedir}/jetty9">
+            <fileset dir="${basedir}/jetty-distribution-9.3.12.v20160915"/>
+        </move>
+    </target>
+
+    <target name="solr4">
+        <get dest="webapps" skipexisting="true">
+            <url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
+        </get>
+        <move file="${basedir}/webapps/solr-${solr.v}.war" tofile="${basedir}/webapps/solr.war" skipexisting="true"/>
+    </target>
+
+    <!-- get some dependencies 'proxy' -->
+    <target name="init" depends="setup,jetty9,solr4">
+
+
         <!-- Dependencies specific to the solr runtime here, ie. not referred to in POM  -->
-        <get dest="build/containerLib/" skipexisting="true">
+        <get dest="lib/ext" skipexisting="true">
             <url url="http://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/${slf4j.v}/jcl-over-slf4j-${slf4j.v}.jar" />
         </get>
 
         <!-- Spatial dependencies must go into JRE CLASSPATH, not solr ./lib -->
-        <get dest="build/containerLib/" skipexisting="true">
+        <get dest="lib/ext" skipexisting="true">
             <url url="http://repo1.maven.org/maven2/com/vividsolutions/jts/1.13/jts-1.13.jar" />
             <url url="http://repo1.maven.org/maven2/com/spatial4j/spatial4j/0.5/spatial4j-0.5.jar"/>
         </get>
 
         <!-- Existing dependencies  that should be in Maven repo locally due to your Xponents build; e.g., pulled in by POM
           -->
-        <copy todir="build/containerLib/" overwrite="false" failonerror="false"
+        <copy todir="lib/ext" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/org/slf4j/slf4j-api/${slf4j.v}/slf4j-api-${slf4j.v}.jar" />
-        <copy todir="build/containerLib/" overwrite="false" failonerror="false"
+        <copy todir="lib/ext" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/log4j/log4j/${log4j.v}/log4j-${log4j.v}.jar" />
-        <copy todir="build/containerLib/" overwrite="false" failonerror="false"
+        <copy todir="lib/ext" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/org/slf4j/slf4j-log4j12/${slf4j.v}/slf4j-log4j12-${slf4j.v}.jar" />
-        <copy todir="build/containerLib/" overwrite="false" failonerror="false"
+        <copy todir="lib/ext" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/com/google/guava/guava/${guava.v}/guava-${guava.v}.jar" />
 
         <!-- get text tagger in first available of local maven repo, snapshot repo, maven central -->
@@ -70,10 +85,10 @@
         <copy todir="lib" overwrite="false" failonerror="false"
               file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar"/>
 
-        <copy todir="build/containerLib" overwrite="true" failonerror="false" file="log4j.properties"/>
+        <!-- <copy todir="resources" overwrite="true" failonerror="false" file="log4j.properties"/> -->
 
         <get dest="lib" skipexisting="true" ignoreerrors="true">
-            <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+            <url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar"/>
         </get>
 
 

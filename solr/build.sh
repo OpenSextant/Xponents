@@ -52,6 +52,11 @@ ant index-gazetteer
 # Yes, this depends on curl. Could re-implement as Ant call.
 # This could be: http://ant-contrib.sourceforge.net/tasks/tasks/post_task.html
 #
+echo REMOVES
+# custom fixes: 'Calif.' abbreviation is not coded properly.
+curl --noproxy localhost "http://$SERVER/solr/gazetteer/update?stream.body=<delete><query>name_tag:calif+AND+cc:US+AND+adm1:06</query></delete>"
+curl --noproxy localhost "http://$SERVER/solr/gazetteer/update?stream.body=<commit/>"
+
 curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \
    -H Content-type:application/json --data-binary @./gazetteer/conf/additions/adhoc-US-city-nicknames.json
 curl --noproxy localhost  "http://$SERVER/solr/gazetteer/update?commit=true" \

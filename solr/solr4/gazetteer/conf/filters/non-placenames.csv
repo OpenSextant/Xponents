@@ -13,6 +13,7 @@ res,abbrev
 sub,abbrev
 fig,abbrev
 ref,abbrev
+bros,abbrev
 conop,abbrev
 supreme,adjective
 imperial,adjective
@@ -856,6 +857,8 @@ cpo,person.label.rank
 a1c,person.label.rank
 end of the road,phrase
 up and down,phrase
+up-to-date,phrase
+up to date,phrase
 a small world,phrase
 bah bah,phrase
 story building,phrase
@@ -1051,6 +1054,10 @@ factory,place.civil
 college,place.civil
 university,place.civil
 national university,place.civil
+university school,place.civil
+state school,place.civil
+primary school,place.civil
+secondary school,place.civil
 campus,place.civil
 company,place.civil
 organization,place.civil
