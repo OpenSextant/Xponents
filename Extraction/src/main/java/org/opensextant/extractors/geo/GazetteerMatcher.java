@@ -47,6 +47,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -311,7 +312,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @throws ExtractionException
      *             on err
      */
-    public LinkedList<PlaceCandidate> tagText(String buffer, String docid) throws ExtractionException {
+    public List<PlaceCandidate> tagText(String buffer, String docid) throws ExtractionException {
         return tagText(buffer, docid, false);
     }
 
@@ -328,11 +329,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *             on err
      * 
      */
-    public LinkedList<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
+    public List<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
         return tagText(buffer, docid, false, CJK_TAG_FIELD);
     }
 
-    public LinkedList<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly)
+    public List<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly)
             throws ExtractionException {
         return tagText(buffer, docid, tagOnly, CJK_TAG_FIELD);
     }
@@ -349,11 +350,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @throws ExtractionException
      *             on err
      */
-    public LinkedList<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
+    public List<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
         return tagText(buffer, docid, false, AR_TAG_FIELD);
     }
 
-    public LinkedList<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly)
+    public List<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly)
             throws ExtractionException {
         return tagText(buffer, docid, tagOnly, AR_TAG_FIELD);
     }
@@ -371,7 +372,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      */
     public static final String AR_TAG_FIELD = "name_tag_ar";
 
-    public LinkedList<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
+    public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
         return tagText(buffer, docid, tagOnly, DEFAULT_TAG_FIELD);
     }
 
@@ -394,7 +395,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @throws ExtractionException
      *             on err
      */
-    public LinkedList<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld)
+    public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld)
             throws ExtractionException {
         // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
         // "startOffset":38},
@@ -653,13 +654,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             summarizeExtraction(candidates.values(), docid);
         }
 
-        LinkedList<PlaceCandidate> list = new LinkedList<>();
-        list.addAll(candidates.values());
-
         this.filteredTotal += this.defaultFilterCount + this.userFilterCount;
-        this.matchedTotal += list.size();
+        this.matchedTotal += candidates.size();
 
-        return list;
+        return new ArrayList<PlaceCandidate>(candidates.values());
     }
 
     /**

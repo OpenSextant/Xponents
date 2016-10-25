@@ -156,7 +156,22 @@ public class LocationChooserRule extends GeocodeRule {
     }
 
     protected static final double ADMIN_CONTAINS_PLACE_WT = 3.0;
-    protected static final double COUNTRY_CONTAINS_PLACE_WT = 2.0;
+    protected static final double COUNTRY_CONTAINS_PLACE_WT = 1.0;
+
+    /**
+     * An amount of points that would be distributed amongst feature types
+     * at each level, e.g., Country names, ADM1, ADM2, PPL names.
+     * 
+     * If you have 2 different countries, one mentioned 4 times and the other mentioned 10 times
+     * you might say the latter is more relevant regarding any ambiguous geography. 
+     * With 14 mentions, that second country is weighted 10/14 = 0.71 of the GLOBAL_POINTS for disambiguation.
+     * 
+     * Note, that if only one country appears in context, then it is very possible 
+     * that these global points will outweigh other over arching connections, such as rules for 
+     * CITY,STATE or MAJOR PLACE (POPULATION).  That is okay -- if one single country is mentioned at all, 
+     * then that seems to be a big anchoring point for lots of ambiguities. 
+     */
+    private static final int GLOBAL_POINTS = 5;
 
     /**
      * Yet unchosen location.
@@ -172,12 +187,18 @@ public class LocationChooserRule extends GeocodeRule {
             return;
         }
 
+        double countryScalar = 1.0;
+        CountryCount ccnt = countryContext.get(geo.getCountryCode());
+        if (ccnt != null) {
+            countryScalar = GLOBAL_POINTS * ccnt.getRatio();
+        }
+
         // Choose either boundary or country context to add in for this location.
         // This is inferred stuff from the document at large.
         if (geo.getHierarchicalPath() != null && boundaryContext.containsKey(geo.getHierarchicalPath())) {
-            name.incrementPlaceScore(geo, ADMIN_CONTAINS_PLACE_WT);
+            name.incrementPlaceScore(geo, countryScalar * ADMIN_CONTAINS_PLACE_WT);
         } else if (countryContext.containsKey(geo.getCountryCode())) {
-            name.incrementPlaceScore(geo, COUNTRY_CONTAINS_PLACE_WT);
+            name.incrementPlaceScore(geo, countryScalar * COUNTRY_CONTAINS_PLACE_WT);
         }
 
         // Other local evidence.  
@@ -363,7 +384,7 @@ public class LocationChooserRule extends GeocodeRule {
         }
 
         // Is Major place?  Account for major place population separate from its designation.
-        if (pc.hasRule(MajorPlaceRule.POP)){
+        if (pc.hasRule(MajorPlaceRule.POP)) {
             points += MATCHCONF_QUALIFIER_MAJOR_PLACE;
         }
         if (pc.hasRule(MajorPlaceRule.ADMIN) || pc.hasRule(MajorPlaceRule.CAPITAL)) {
