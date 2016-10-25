@@ -26,9 +26,8 @@ for core in gazetteer taxcat ; do
   fi
 done
 
-echo "Starting Solr http/7000"
-nohup ./run.sh  & 
-
+echo "Starting Solr $SERVER"
+nohup ./myjetty.sh  start & 
 
 pushd gazetteer/
 echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
@@ -73,5 +72,6 @@ done
 # When done for the day,  optimize
 curl --noproxy localhost "http://$SERVER/solr/gazetteer/update?stream.body=<optimize/>"
 
-
-echo "Gazetteer and TaxCat built, however Solr http/7000 is still running...." 
+echo "Gazetteer and TaxCat built, however Solr $SERVER is still running...." 
+echo
+echo "Use 'myjetty.sh stop'"

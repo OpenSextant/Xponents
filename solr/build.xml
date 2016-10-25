@@ -33,11 +33,11 @@
 	</target>
 
 	<target name="jetty9">
-		<get dest="build" skipexisting="true">
+		<get dest="download" skipexisting="true">
 			<url url="http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty.v}/jetty-distribution-${jetty.v}.zip" />
 		</get>
 
-		<unzip src="${basedir}/build/jetty-distribution-${jetty.v}.zip" dest="${basedir}" skipexisting="true"/>
+		<unzip src="${basedir}/download/jetty-distribution-${jetty.v}.zip" dest="${basedir}" skipexisting="true"/>
 		<move todir="${basedir}/jetty9">
 			<fileset dir="${basedir}/jetty-distribution-${jetty.v}" />
 		</move>
