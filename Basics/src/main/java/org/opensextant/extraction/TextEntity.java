@@ -107,6 +107,14 @@ public class TextEntity {
             }
         }
     }
+    /**
+     * Set just the value, without incurring the cost of other
+     * metrics or flags about the text that likely are unchanged.
+     * @param t
+     */
+    public void setTextOnly(String t){
+        text = t;
+    }
 
     private boolean isLower = false;
     private boolean isUpper = false;
