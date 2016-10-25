@@ -31,6 +31,21 @@ Staticly these files are loaded from the resource classpath (Basics JAR file):
   * ./src/main/resources/feature-metadata-2013.csv // OpenSextant.org gazetteer
   * ./src/main/resources/ISO-639-2_utf-8.txt  // Library of Congress (LoC) language listing 
 
+#Install#
+
+Because this utility library uses freely available metadata from other providers, such as Geonames.org and LOC
+
+    # Note -- I tried Maven, then Antrun task in Maven.  Now I'm just using an Ant script to download files: 
+    # Crap, this was painful: mvn -Dhttp.proxyHost=MyProxy -Dhttp.proxyPort=MyProxyPort test
+
+    # Behind a firewall or proxy?
+    # edit ../build.properties setting your proxy host. Default port is 80
+    ant proxy get-meta
+
+    # No proxy:
+    ant get-meta
+    mvn install
+
 Items moved to CLASSATH:
 These are being refactored.  Geonames.org has files used in the build.
 Yes, we can automate pulling these files in.  For now download them and put them in the designated location:
