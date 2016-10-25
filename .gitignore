@@ -11,6 +11,7 @@ log
 logs
 export
 results
+build.properties
 
 #Build files
 #Eclipse

@@ -8,8 +8,9 @@
     <name>Xlayer Restlet</name>
 
     <properties>
-        <restlet.version>2.3.4</restlet.version>
+        <restlet.version>2.3.7</restlet.version>
         <slf4j.version>1.7.21</slf4j.version>
+        <xponents.v>2.8.20</xponents.v>
     </properties>
     <dependencies>
         <dependency>
@@ -20,7 +21,7 @@
         <dependency>
             <groupId>org.restlet.jee</groupId>
             <artifactId>org.restlet.ext.servlet</artifactId>
-            <version>2.3.0</version>
+            <version>${restlet.version}</version>
         </dependency>
         <dependency>
             <groupId>org.restlet.jse</groupId>
@@ -35,17 +36,17 @@
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents</artifactId>
-            <version>2.8.19</version>
+            <version>${xponents.v}</version>
         </dependency>
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents-basics</artifactId>
-            <version>2.8.19</version>
+            <version>${xponents.v}</version>
         </dependency>
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents-patterns</artifactId>
-            <version>2.8.19</version>
+            <version>${xponents.v}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
