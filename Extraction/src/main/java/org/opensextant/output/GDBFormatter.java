@@ -33,8 +33,6 @@ import java.util.zip.ZipOutputStream;
 import org.opensextant.giscore.DocumentType;
 import org.opensextant.giscore.output.gdb.FileGdbOutputStream;
 
-import org.opensextant.processing.ProcessingException;
-
 /**
  * A results formatter for FileGDB output.
  *

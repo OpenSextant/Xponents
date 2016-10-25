@@ -47,10 +47,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +59,6 @@ import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
@@ -185,7 +182,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // params.set("overlaps", "NO_SUB");
 
         gazetteer = new SolrGazetteer(this.solr);
-
     }
 
     @Override
@@ -467,6 +463,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // we might as well not make the tagger do any more work.
 
             String matchText = (String) tag.get("matchText");
+            // Get char immediately following match, for light NLP rules.
+            char postChar = buffer.charAt(x2);
+
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would
             // be allowed. If lowercase abbreviations are allowed, then all matches are passed.               
             if (len < 3) {
@@ -475,7 +474,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     continue;
                 }
             }
-            
+
             if (TextUtils.countFormattingSpace(matchText) > 1) {
                 // Phrases with words broken across more than one line are not
                 // valid matches.
@@ -598,17 +597,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * But we first must determine if 'YAK' is a valid abbreviation for an actual place.
                  * HEURISTIC: place abbreviations are relatively short, e.g. one word(LEN=7 or less)
                  */
-                if (len < 8 && pGeo.isAbbreviation()) {
-                    if (pc.getText().contains(".")) {
-                        pc.isAbbreviation = true;
-                    } else if (!isUpperCase && pc.isUpper()) {
-                        // Upper case place matched
-                        pc.isAbbreviation = true;
-                        // Matched text is UPPER in a non-upper case document                        
-                        pc.isAcronym = true;
-                    }
-                    // Lower or mixed-case abbreviations without "." are not
-                    // tagged Mr, Us, etc.
+                if (len < 8 && !pc.isAbbreviation) {
+                    assessAbbreviation(pc, pGeo, postChar, isUpperCase);
                 }
 
                 if (log.isDebugEnabled()) {
@@ -658,6 +648,40 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         this.matchedTotal += candidates.size();
 
         return new ArrayList<PlaceCandidate>(candidates.values());
+    }
+
+    private void assessAbbreviation(PlaceCandidate pc, ScoredPlace pGeo, char postChar, boolean docIsUPPER) {
+        /* - Block re-entry to this logic. If Match is already marked as ABBREV, 
+         * then no need to review
+         * - We don't consider abbreviations longer than N=7 chars.
+         * - If matched geo-location does not represent an abbreviation than this does not apply.
+         */
+        if (!pGeo.isAbbreviation()) {
+            return;
+        }
+
+        if (postChar == '.') {
+            // Add the post-punctuation to the match ONLY if a potential GEO matches. 
+            pc.isAbbreviation = true;
+            pc.end += 1;
+            pc.setTextOnly(String.format("%s.", pc.getText()));
+        } else if (pc.getText().contains(".")) {
+            /* TODO: contains abbreviation. E.g. ,'St. Paul' is not fully 
+             * an abbreviation.
+             */
+            pc.isAbbreviation = true;
+        } else if (!docIsUPPER && pc.isUpper()) {
+            /* Hack Warning: NOT everything UPPERCASE in a document
+             * is an abbrev. 
+             */
+            // Upper case place matched
+            pc.isAbbreviation = true;
+            // Matched text is UPPER in a non-upper case document                        
+            pc.isAcronym = true;
+        }
+        // Lower or mixed-case abbreviations without "." are not
+        // tagged Mr, Us, etc.
+
     }
 
     /**
