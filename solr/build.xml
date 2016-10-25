@@ -4,9 +4,6 @@
 
 	<!-- Solr Home and Gazetteer config data sourced here: -->
 	<property file="${basedir}/../build.properties" />
-
-	<!-- Solr config & data (this is the standard System property name Solr uses) -->
-	<property name="solr.solr.home" location="${solr.home}" />
 	
 	<property name="jetty.v" value="9.3.12.v20160915" />
 	<property name="solr.v" value="4.10.4" />
@@ -29,7 +26,7 @@
 		<mkdir dir="log" />
 		<mkdir dir="lib/ext" />
 		<mkdir dir="webapps" />
-		<mkdir dir="${solr.solr.home}/lib" />
+		<mkdir dir="${solr.home}/lib" />
 	</target>
 
 	<target name="jetty9">
@@ -37,17 +34,17 @@
 			<url url="http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty.v}/jetty-distribution-${jetty.v}.zip" />
 		</get>
 
-		<unzip src="${basedir}/download/jetty-distribution-${jetty.v}.zip" dest="${basedir}" skipexisting="true"/>
+		<unzip src="${basedir}/download/jetty-distribution-${jetty.v}.zip" dest="${basedir}" overwrite="false"/>
 		<move todir="${basedir}/jetty9">
 			<fileset dir="${basedir}/jetty-distribution-${jetty.v}" />
 		</move>
 	</target>
 
 	<target name="solr4">
-		<get dest="webapps" skipexisting="true">
+		<get dest="webapps/solr.war" skipexisting="true">
 			<url url="http://repo1.maven.org/maven2/org/apache/solr/solr/${solr.v}/solr-${solr.v}.war" />
 		</get>
-		<move file="${basedir}/webapps/solr-${solr.v}.war" tofile="${basedir}/webapps/solr.war" skipexisting="true" />
+		<!-- <move file="${basedir}/webapps/solr-${solr.v}.war" tofile="${basedir}/webapps/solr.war" overwrite="false" /> -->
 	</target>
 
 	<target name="init" depends="setup,jetty9,solr4">
@@ -81,14 +78,14 @@
 			<url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
 		</get>
 
-		<copy todir="${solr.solr.home}/lib" overwrite="false" failonerror="false">
+		<copy todir="${solr.home}/lib" overwrite="false" failonerror="false">
 			<fileset dir="lib" />
 		</copy>
 	</target>
 
 	<target name="clean" description="Delete indexed data">
-		<delete dir="${solr.solr.home}/gazetteer/data/index" />
-		<delete dir="${solr.solr.home}/lib" />
+		<delete dir="${solr.home}/gazetteer/data/index" />
+		<delete dir="${solr.home}/lib" />
 	</target>
 
 	<target name="index-gazetteer">
