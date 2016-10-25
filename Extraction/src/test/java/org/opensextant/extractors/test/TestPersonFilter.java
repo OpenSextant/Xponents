@@ -19,11 +19,19 @@ public class TestPersonFilter {
 
     @Test
     public void testNonsensePhrases() {
-        print ("Test punctuation in names");
-        assertTrue(!NonsenseFilter.irregularPunctPatterns("St. Paul"));
+        print("Test punctuation in names");
+
+        /* Invalid names due to punctuation oddities. */
+        assertTrue(NonsenseFilter.irregularPunctPatterns("”")); /* Double quotes - fail automatically */
+        assertTrue(NonsenseFilter.irregularPunctPatterns("bust”—a-move")); /* Double quotes - fail automatically */
+        assertTrue(NonsenseFilter.irregularPunctPatterns("bust— a-move")); /* Unicode Dash with spaces */
         assertTrue(NonsenseFilter.irregularPunctPatterns("south\", bend"));
-        assertTrue(!NonsenseFilter.irregularPunctPatterns("to-to"));
+        assertTrue(NonsenseFilter.irregularPunctPatterns("south\",bend")); /* No space? but has double quotes */
         assertTrue(NonsenseFilter.irregularPunctPatterns("To-  To- To-"));
+
+        /* Valid names. */
+        assertTrue(!NonsenseFilter.irregularPunctPatterns("St. Paul"));
+        assertTrue(!NonsenseFilter.irregularPunctPatterns("to-to"));
         assertTrue(!NonsenseFilter.irregularPunctPatterns("U. S. A."));
         assertTrue(!NonsenseFilter.irregularPunctPatterns("U.S.A."));
         assertTrue(!NonsenseFilter.irregularPunctPatterns("L` Oreal"));
