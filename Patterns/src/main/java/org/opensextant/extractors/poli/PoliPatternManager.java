@@ -27,41 +27,20 @@
  */
 package org.opensextant.extractors.poli;
 
-import org.opensextant.extractors.flexpat.RegexPattern;
-import org.opensextant.extractors.flexpat.PatternTestCase;
-import org.opensextant.extractors.flexpat.RegexPatternManager;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+
+import org.opensextant.extractors.flexpat.PatternTestCase;
+import org.opensextant.extractors.flexpat.RegexPattern;
+import org.opensextant.extractors.flexpat.RegexPatternManager;
 
 /**
  */
 public final class PoliPatternManager extends RegexPatternManager {
 
-    Logger log = LoggerFactory.getLogger(getClass());
-
-    /**
-     *
-     * @param _patternfile patterns file
-     * @throws MalformedURLException config err
-     */
-    public PoliPatternManager(File _patternfile) throws MalformedURLException {
-        super(_patternfile);
-        log = LoggerFactory.getLogger(getClass());
-        this.debug = log.isDebugEnabled();
-    }
-
-    /**
-     *
-     * @param _patternfile patterns file URL
-     */
-    public PoliPatternManager(URL _patternfile) {
-        super(_patternfile);
-        log = LoggerFactory.getLogger(getClass());
-        this.debug = log.isDebugEnabled();
+    public PoliPatternManager(InputStream s, String n) throws IOException {
+        super(s, n);
     }
 
     /**

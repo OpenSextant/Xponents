@@ -31,18 +31,14 @@
  */
 package org.opensextant.extractors.xcoord;
 
-import org.opensextant.extractors.flexpat.RegexPattern;
-import org.opensextant.extractors.flexpat.PatternTestCase;
-import org.opensextant.extractors.flexpat.RegexPatternManager;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.opensextant.extractors.flexpat.PatternTestCase;
+import org.opensextant.extractors.flexpat.RegexPattern;
+import org.opensextant.extractors.flexpat.RegexPatternManager;
 
 /**
  * <p>
@@ -95,23 +91,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class PatternManager extends RegexPatternManager {
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
-
-    /**
-     *
-     * @param _patternfile
-     * @throws MalformedURLException
-     */
-    public PatternManager(String _patternfile) throws MalformedURLException {
-        super(_patternfile);
-    }
-
-    /**
-     *
-     * @param _patternfile
-     */
-    public PatternManager(URL _patternfile) {
-        super(_patternfile);
+    public PatternManager(InputStream s, String n) throws IOException {
+        super(s, n);
     }
 
     /**
@@ -123,8 +104,10 @@ public final class PatternManager extends RegexPatternManager {
      *
      * @throws IOException
      */
-    public void initialization() throws IOException {
-        super.initialize();
+    @Override
+    public void initialize(InputStream io) throws IOException {
+        CCE_family_state = new HashMap<Integer, Boolean>();
+        super.initialize(io);
         log.debug(this.getConfigurationDebug());
     }
 

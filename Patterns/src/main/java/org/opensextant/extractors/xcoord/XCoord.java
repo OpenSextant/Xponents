@@ -41,6 +41,8 @@
 // */
 package org.opensextant.extractors.xcoord;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -80,13 +82,8 @@ public class XCoord extends AbstractFlexPat {
      * @param debugmode
      */
     public XCoord(boolean debugmode) {
+        super(debugmode);
         this.patterns_file = DEFAULT_XCOORD_CFG;
-        log = LoggerFactory.getLogger(getClass());
-        if (debugmode) {
-            debug = true;
-        } else {
-            debug = log.isDebugEnabled();
-        }
     }
 
     /**
@@ -115,12 +112,8 @@ public class XCoord extends AbstractFlexPat {
     }
 
     @Override
-    protected RegexPatternManager createPatternManager() throws java.net.MalformedURLException {
-        if (this.patterns_url != null) {
-            return new PatternManager(patterns_url);
-        } else {
-            return new PatternManager(patterns_file);
-        }
+    protected RegexPatternManager createPatternManager(InputStream s, String n) throws IOException {
+        return new PatternManager(s, n);
     }
 
     /**

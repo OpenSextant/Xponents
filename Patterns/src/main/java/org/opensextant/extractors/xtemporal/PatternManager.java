@@ -27,23 +27,19 @@
 package org.opensextant.extractors.xtemporal;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author ubaldino
  */
 public class PatternManager extends RegexPatternManager {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      *
@@ -51,28 +47,23 @@ public class PatternManager extends RegexPatternManager {
     public Map<Integer, Boolean> pattern_family_state = new HashMap<Integer, Boolean>();
 
     /**
-     *
-     * @param _patternfile
-     * @throws MalformedURLException
+     * Pass in InputStream to provide yourself the most flexibility.
+     * @param s
+     * @param n
+     * @throws IOException
      */
-    public PatternManager(String _patternfile) throws MalformedURLException {
-        super(_patternfile);
-    }
-
-    /**
-     *
-     * @param _patternfile
-     */
-    public PatternManager(URL _patternfile) {
-        super(_patternfile);
+    public PatternManager(InputStream s, String n) throws IOException {
+        super(s, n);
     }
 
     /**
      *
      * @throws IOException
      */
-    public void initialization() throws IOException {
-        super.initialize();
+    @Override
+    public void initialize(InputStream io) throws IOException {
+        pattern_family_state = new HashMap<Integer, Boolean>();        
+        super.initialize(io);
         enable_pattern_family(XTConstants.DATETIME_FAMILY, true);
         enable_pattern_family(XTConstants.MDY_FAMILY, true);
         log.debug(this.getConfigurationDebug());

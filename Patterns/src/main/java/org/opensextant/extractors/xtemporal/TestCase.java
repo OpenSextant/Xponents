@@ -26,8 +26,9 @@
  */
 package org.opensextant.extractors.xtemporal;
 
-import org.opensextant.extractors.flexpat.PatternTestCase;
 import java.util.Date;
+
+import org.opensextant.extractors.flexpat.PatternTestCase;
 
 /**
  *

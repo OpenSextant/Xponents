@@ -26,6 +26,7 @@
 package org.opensextant.extractors.xtemporal;
 
 import java.util.Date;
+
 import org.opensextant.extraction.TextMatch;
 
 /**
