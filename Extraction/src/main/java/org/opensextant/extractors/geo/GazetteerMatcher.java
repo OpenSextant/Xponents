@@ -861,7 +861,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * "#" in exclusion column implies a comment.
      * Call is responsible for getting I/O stream.
      *  
-     * @param file
+     * @param filestream
      *            URL/file with exclusion terms
      * @return set of filter terms
      * @throws ConfigException
