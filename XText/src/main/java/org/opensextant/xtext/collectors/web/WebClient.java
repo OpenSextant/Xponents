@@ -232,6 +232,7 @@ public class WebClient {
     boolean useSystemProperties = false;
 
     /**
+     * @param b flag to enable use of System Properties to get proxy settings, etc.
      */
     public void enableSystemProperties(boolean b) {
         this.useSystemProperties = b;
