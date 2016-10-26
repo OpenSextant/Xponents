@@ -80,8 +80,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
          *
          */
         try {
-            stopTerms = GazetteerMatcher
-                    .loadExclusions(GazetteerMatcher.class.getResource("/filters/non-placenames.csv"));
+            stopTerms = GazetteerMatcher.loadExclusions(
+                    GazetteerMatcher.class.getResourceAsStream("/filters/non-placenames.csv"));
             if (stopTerms == null) {
                 logger.error("Init failure:  Did not find 'non-placenames' file in CLASSPATH."
                         + "\nThis will not work properly with out such data.");
@@ -154,7 +154,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
         }
         return new GazetteerUpdateProcessor(next);
     }
-    
+
     /**
      * Test for short WWWW NNNN alphanumeric coded stuff.
      * @param nm
@@ -328,7 +328,6 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             // pass it up the chain
             super.processAdd(cmd);
         }
-
 
         /**
          * Parse off country codes that duplicate information in ADM boundary

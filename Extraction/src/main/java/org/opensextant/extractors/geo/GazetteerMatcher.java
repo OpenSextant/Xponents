@@ -43,6 +43,7 @@ package org.opensextant.extractors.geo;
 //*/
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -801,12 +802,17 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         boolean filter_on_case = true;
         Set<String> stopTerms = null;
 
+        /**
+         * NOTE:  This expects the files are all available. This fails if resource files are missing.
+         * 
+         * @throws ConfigException if any file has a problem. 
+         */
         public TagFilter() throws ConfigException {
             super();
             stopTerms = new HashSet<>();
             String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", "/filters/non-placenames,acronym.csv" };
             for (String f : defaultNonPlaceFilters) {
-                stopTerms.addAll(GazetteerMatcher.loadExclusions(GazetteerMatcher.class.getResource(f)));
+                stopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
             }
         }
 
@@ -853,53 +859,36 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * Exclusions have two columns in a CSV file. 'exclusion', 'category'
      *
      * "#" in exclusion column implies a comment.
-     * 
+     * Call is responsible for getting I/O stream.
+     *  
      * @param file
      *            URL/file with exclusion terms
      * @return set of filter terms
      * @throws ConfigException
      *             if filter is not found
      */
-    public static Set<String> loadExclusions(URL file) throws ConfigException {
+    public static Set<String> loadExclusions(InputStream filestream) throws ConfigException {
         /*
          * Load the exclusion names -- these are terms that are gazeteer
          * entries, e.g., gazetteer.name = <exclusion term>, that will be marked
          * as search_only = true.
-         *
          */
-        if (file == null) {
-            return null;
-        }
-        InputStream io = null;
-        CsvMapReader termreader = null;
-        try {
-            io = file.openStream();
-            java.io.Reader termsIO = new InputStreamReader(io);
-            termreader = new CsvMapReader(termsIO, CsvPreference.EXCEL_PREFERENCE);
+        try (Reader termsIO = new InputStreamReader(filestream)) {
+            CsvMapReader termreader = new CsvMapReader(termsIO, CsvPreference.EXCEL_PREFERENCE);
             String[] columns = termreader.getHeader(true);
             Map<String, String> terms = null;
             HashSet<String> stopTerms = new HashSet<String>();
             while ((terms = termreader.read(columns)) != null) {
-
                 String term = terms.get("exclusion");
                 if (StringUtils.isBlank(term) || term.startsWith("#")) {
                     continue;
                 }
                 stopTerms.add(term.toLowerCase().trim());
             }
+            termreader.close();
             return stopTerms;
         } catch (Exception err) {
             throw new ConfigException("Could not load exclusions.", err);
-        } finally {
-            if (termreader != null) {
-                try {
-                    termreader.close();
-                    io.close();
-                } catch (IOException err2) {
-
-                }
-            }
         }
-
     }
 }

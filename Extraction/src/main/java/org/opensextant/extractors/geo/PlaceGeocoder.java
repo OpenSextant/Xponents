@@ -246,7 +246,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         // Nonsense is filtered out, rather than scored and ranked low.
         nonsenseFilter = new NonsenseFilter();
         rules.add(nonsenseFilter);
-        
+
         /**
          * Files for Place Name filter are editable, as you likely have
          * different ideas of who are "person names" to exclude when they
@@ -255,10 +255,10 @@ public class PlaceGeocoder extends GazetteerMatcher
          * in geocoding.
          * 
          */
-        URL p1 = PlaceGeocoder.class.getResource("/filters/person-name-filter.txt");
-        URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
-        URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
-        personNameRule = new PersonNameFilter(p1, p2, p3);
+        personNameRule = new PersonNameFilter(
+                "/filters/person-name-filter.txt",
+                "/filters/person-title-filter.txt",
+                "/filters/person-suffix-filter.txt");
         rules.add(personNameRule);
 
         /*
@@ -714,7 +714,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     @Override
     public void countryInScope(String cc) {
         Country C = countryCatalog.get(cc);
-        if (C==null){
+        if (C == null) {
             log.debug("Unknown country code {}", cc);
             return;
         }
