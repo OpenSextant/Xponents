@@ -166,7 +166,7 @@ public class GeonamesUtility {
         String[] columns = tzMap.getHeader(true);
         Map<String, String> tzdata = null;
         while ((tzdata = tzMap.read(columns)) != null) {
-            String cc = tzdata.get("CC");
+            String cc = tzdata.get("CountryCode");
             if (cc.trim().startsWith("#")) {
                 continue;
             }
@@ -176,10 +176,10 @@ public class GeonamesUtility {
                 continue;
             }
 
-            Country.TZ tz = new Country.TZ(tzdata.get("TZ"),
-                    Double.parseDouble(tzdata.get("UTC_OFFSET")),
-                    Double.parseDouble(tzdata.get("DST_OFFSET")),
-                    Double.parseDouble(tzdata.get("RAW_OFFSET")));
+            Country.TZ tz = new Country.TZ(tzdata.get("TimeZoneId"),
+                    tzdata.get("GMT offset 1. Jan 2016"),
+                    tzdata.get("DST offset 1. Jul 2016"),
+                    tzdata.get("rawOffset (independant of DST)"));
             C.addTimezone(tz);
         }
         tzMap.close();
@@ -409,11 +409,11 @@ public class GeonamesUtility {
      * where NNNN is the population threshold.
      * </pre>
      * 
-     * @param f
-     *            geonames.org cities file
+     * @param strm 
+     *            input stream for geonames.org cities file
      * @return list of xponents Place obj
      * @throws IOException
-     *             if given file does not exist or is unreadable.
+     *             if parsing goes wrong.
      */
     public static List<Place> loadMajorCities(InputStream strm) throws IOException {
 
