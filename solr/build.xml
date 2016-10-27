@@ -28,6 +28,7 @@
 	<target name="setup">
 		<mkdir dir="log" />
 		<mkdir dir="lib/ext" />
+		<mkdir dir="download" />
 		<mkdir dir="webapps" />
                 <!-- Same as solr.runtime.lib -->
 		<mkdir dir="${solr.home}/lib" />
