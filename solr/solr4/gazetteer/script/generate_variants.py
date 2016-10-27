@@ -18,7 +18,7 @@ saint_repl = {
     #'santos' : 'sto',  have not found good variation on 'santos'
     'sant' : 's. ',
     'santa' : 'sta. ',
-    'santo' : 'st. ',
+    'santo' : 'sto. ',
     'saint' : 'st. ',
     'sainte' : 'ste. ',
     'san' : 's. '    

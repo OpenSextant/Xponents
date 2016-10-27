@@ -11,10 +11,10 @@ JAR=$JETTY_HOME/start.jar
 case "$1" in
   'start')
 
-       $JAVA_HOME/bin/java -Xmx3g -Xms3g -Djava.awt.headless=true \
+       nohup $JAVA_HOME/bin/java -Xmx3g -Xms3g -Djava.awt.headless=true \
              -Dsolr.solr.home=${SOLR_HOME} -Dsolr.enableRemoteStreaming=true  -jar $JAR \
              STOP.PORT=${STOP_PORT} STOP.KEY=xponents-solr  \
-             jetty.home=$JETTY_HOME jetty.base=$JETTY_BASE  -daemon  
+             jetty.home=$JETTY_HOME jetty.base=$JETTY_BASE  -daemon   > ./log/jetty-server.log & 
         ;;
 
    'stop')

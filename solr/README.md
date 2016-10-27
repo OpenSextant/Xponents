@@ -106,11 +106,16 @@ From Source:
     # Install built lib with dependencies to ./python
     pip install --target ./piplib Extraction/src/main/python/dist/opensextant-VERSION.whl 
 
+
 From Distribution:
     pushd lib/python/
     python ./setup.py bdist_wheel --universal
     popd
     pip install --target piplib lib/python/dist/opensextant-VERSION.whl
+
+
+Additionally, add JSON support:
+    pip install --target ./piplib simplejson
 
 In Python Development mode where the opensextant libs are in development:
     export PYTHONPATH=/path/to/lib/python   or /path/to/Xponents/Extraction/src/main/python
