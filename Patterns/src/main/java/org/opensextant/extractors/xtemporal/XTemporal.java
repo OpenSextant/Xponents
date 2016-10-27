@@ -41,6 +41,8 @@
 //*/
 package org.opensextant.extractors.xtemporal;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +55,6 @@ import org.opensextant.extractors.flexpat.AbstractFlexPat;
 import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -97,14 +98,8 @@ public class XTemporal extends AbstractFlexPat {
      * @param debugmode
      */
     public XTemporal(boolean debugmode) {
+        super(debugmode);
         this.patterns_file = DEFAULT_XTEMP_CFG;
-        log = LoggerFactory.getLogger(getClass());
-
-        if (debugmode) {
-            debug = true;
-        } else {
-            debug = log.isDebugEnabled();
-        }
     }
 
     /**
@@ -115,12 +110,12 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     @Override
-    protected RegexPatternManager createPatternManager() throws java.net.MalformedURLException {
-        if (this.patterns_url != null) {
-            return new PatternManager(patterns_url);
-        } else {
-            return new PatternManager(patterns_file);
-        }
+    protected RegexPatternManager createPatternManager(InputStream strm, String name)
+            throws IOException {
+        patterns_file = name;
+        PatternManager mgr =  new PatternManager(strm, patterns_file);
+        mgr.testing  = debug;
+        return mgr;
     }
 
     /**

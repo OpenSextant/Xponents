@@ -1,6 +1,7 @@
 #Misc:
 .DS_Store
 release
+src/main/resources/geonames.org
 
 #Maven output
 target/

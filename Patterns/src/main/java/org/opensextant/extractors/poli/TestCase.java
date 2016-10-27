@@ -28,8 +28,8 @@
 
 package org.opensextant.extractors.poli;
 
-import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.flexpat.PatternTestCase;
 
 /**
  *

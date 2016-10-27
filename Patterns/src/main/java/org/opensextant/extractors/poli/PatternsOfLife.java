@@ -41,7 +41,8 @@
 //*/
 package org.opensextant.extractors.poli;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,6 @@ import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.util.TextUtils;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -65,14 +65,8 @@ public class PatternsOfLife extends AbstractFlexPat {
     public static final String DEFAULT_POLI_CFG = "/poli_patterns.cfg";
 
     public PatternsOfLife(boolean debugmode) {
+        super(debugmode);
         patterns_file = DEFAULT_POLI_CFG;
-        log = LoggerFactory.getLogger(getClass());
-
-        if (debugmode) {
-            debug = true;
-        } else {
-            debug = log.isDebugEnabled();
-        }
     }
 
     /**
@@ -101,12 +95,8 @@ public class PatternsOfLife extends AbstractFlexPat {
     }
 
     @Override
-    protected RegexPatternManager createPatternManager() throws java.net.MalformedURLException {
-        if (this.patterns_url != null) {
-            return new PoliPatternManager(patterns_url);
-        } else {
-            return new PoliPatternManager(new File(patterns_file));
-        }
+    protected RegexPatternManager createPatternManager(InputStream s, String n) throws IOException {
+        return new PoliPatternManager(s, n);
     }
 
     /**
@@ -150,7 +140,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
         PoliMatch poliMatch = null;
 
-        int found=0;
+        int found = 0;
         int patternsComplete = 0;
         for (RegexPattern repat : patterns.get_patterns()) {
             if (!repat.enabled) {

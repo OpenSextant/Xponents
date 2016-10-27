@@ -4,6 +4,9 @@
  */
 package org.opensextant.extractors.flexpat;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import org.opensextant.ConfigException;
@@ -11,6 +14,7 @@ import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -24,30 +28,27 @@ public abstract class AbstractFlexPat implements Extractor {
      * useful has typically been about 200-250 characters.
      */
     protected int match_width = 100;
-    protected Logger log = null;
+    protected Logger log = LoggerFactory.getLogger(getClass());
     protected boolean debug = false;
-    protected String patterns_file = null;
-    protected URL patterns_url = null;
     protected RegexPatternManager patterns = null;
-
-    // private ProgressMonitor progressMonitor;
+    protected String patterns_file = null;
 
     public AbstractFlexPat() {
+        debug = log.isDebugEnabled();
     }
 
     public AbstractFlexPat(boolean b) {
+        this();
         debug = b;
     }
 
     /**
-     * Create Patterns Manager given the result of configure(?) which is a URL
-     * (preferred) or a path; If a URL is set it is used.
-     *
+     * Create a pattern manager given the input stream and the file name.
      * @return the regex pattern manager
      * @throws java.net.MalformedURLException config error
      */
-    protected abstract RegexPatternManager createPatternManager()
-            throws java.net.MalformedURLException;
+    protected abstract RegexPatternManager createPatternManager(InputStream s, String name)
+            throws IOException;
 
     public RegexPatternManager getPatternManager() {
         return patterns;
@@ -59,12 +60,11 @@ public abstract class AbstractFlexPat implements Extractor {
      */
     @Override
     public void configure() throws ConfigException {
-        // Default behavior - get the default patterns file.
-        patterns_url = getClass().getResource(patterns_file);
-        if (patterns_url == null) {
-            throw new ConfigException("Did not find your configuration file=" + patterns_file);
+        if (patterns_file == null) {
+            throw new ConfigException(
+                    "Default configure() requires you set .patterns_file with a resource path to the item");
         }
-        configure(patterns_url);
+        configure(getClass().getResourceAsStream(patterns_file), patterns_file);
     }
 
     /**
@@ -75,16 +75,13 @@ public abstract class AbstractFlexPat implements Extractor {
      */
     @Override
     public void configure(String patfile) throws ConfigException {
-        if (patfile != null) {
-            patterns_file = patfile;
+        if (patfile == null) {
+            throw new ConfigException("Null path not allowed. no defaults.");
         }
         try {
-            patterns = createPatternManager();// new PatternManager(patterns_file.trim());
-            patterns.testing = debug;
-            patterns.initialize();
+            patterns = createPatternManager(new FileInputStream(patfile), patfile);
         } catch (Exception loaderr) {
-            String msg = "Could not load patterns file FILE=" + patterns_file;
-            //log.error(msg, loaderr);
+            String msg = "Could not load patterns file FILE=" + patfile;
             throw new ConfigException(msg, loaderr);
         }
     }
@@ -98,19 +95,20 @@ public abstract class AbstractFlexPat implements Extractor {
     @Override
     public void configure(URL patfile) throws ConfigException {
         if (patfile == null) {
-            configure();
-        } else {
-            try {
-                patterns_url = patfile;
-                patterns_file = patfile.getFile();
-                patterns = createPatternManager();
-                patterns.testing = debug;
-                patterns.initialize();
-            } catch (Exception loaderr) {
-                String msg = "Could not load patterns file URL=" + patfile;
-                //log.error(msg, loaderr);
-                throw new ConfigException(msg, loaderr);
-            }
+            throw new ConfigException("URL for pattern defs not found. ");
+        }
+        try {
+            patterns = createPatternManager(patfile.openStream(), patfile.getFile());
+        } catch (Exception loaderr) {
+            throw new ConfigException("Could not load patterns file URL=" + patfile, loaderr);
+        }
+    }
+
+    public void configure(InputStream strm, String name) throws ConfigException {
+        try {
+            patterns = createPatternManager(strm, name);
+        } catch (Exception loaderr) {
+            throw new ConfigException("Could not load patterns file =" + name, loaderr);
         }
     }
 
@@ -160,23 +158,6 @@ public abstract class AbstractFlexPat implements Extractor {
     public void disableAll() {
         patterns.disableAll();
     }
-
-    //    @Override
-    //    public void setProgressMonitor(ProgressMonitor monitor) {
-    //        this.progressMonitor = monitor;
-    //    }
-    //
-    //    @Override
-    //    public void updateProgress(double progress) {
-    //        if (this.progressMonitor != null)
-    //            progressMonitor.updateStepProgress(progress);
-    //    }
-    //
-    //    @Override
-    //    public void markComplete() {
-    //        if (this.progressMonitor != null)
-    //            progressMonitor.completeStep();
-    //    }
 
     public void updateProgress(double progress) {
     }

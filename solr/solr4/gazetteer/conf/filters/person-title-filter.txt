@@ -201,7 +201,6 @@ imam
 mullah
 mulla
 caliph
-calif
 kaliph
 kalif
 khalif

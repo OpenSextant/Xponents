@@ -27,8 +27,9 @@
  */
 package org.opensextant.extractors.poli;
 
-import org.opensextant.extraction.TextMatch;
 import java.util.Map;
+
+import org.opensextant.extraction.TextMatch;
 
 /**
  *

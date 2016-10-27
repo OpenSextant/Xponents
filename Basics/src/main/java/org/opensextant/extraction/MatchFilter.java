@@ -37,7 +37,7 @@ import org.opensextant.util.FileUtility;
 /**
  * The Class MatchFilter.
  */
-public class MatchFilter /*implements Filter*/{
+public class MatchFilter {
 
     /** The tag filter. */
     public Set<String> tagFilter = null;
@@ -50,7 +50,7 @@ public class MatchFilter /*implements Filter*/{
     /**
      * Instantiates a new match filter.
      *
-     * @param stopfile the stopfile
+     * @param stopfile    path to stopfile resource as it appears in CLASSPATH
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public MatchFilter(String stopfile) throws IOException {

@@ -25,8 +25,8 @@
  */
 package org.opensextant.extractors.xtemporal;
 
-import java.util.Date;
 import java.text.ParseException;
+import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

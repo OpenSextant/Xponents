@@ -35,7 +35,7 @@ public abstract class GeocodeRule {
     protected CountryObserver countryObserver = null;
     protected LocationObserver coordObserver = null;
     protected BoundaryObserver boundaryObserver = null;
-    protected Logger log = LoggerFactory.getLogger("geocode-rule");
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected void log(String msg) {
         log.debug("{}: {}", NAME, msg);
@@ -105,7 +105,6 @@ public abstract class GeocodeRule {
             }
         }
         return p1.getHierarchicalPath() != null ? p1.getHierarchicalPath().equals(p2.getHierarchicalPath()) : false;
-        // return p1.getAdmin1() != null ? p1.getAdmin1().equalsIgnoreCase(p2.getAdmin1()) : false;
     }
 
     /**

@@ -13,6 +13,7 @@ res,abbrev
 sub,abbrev
 fig,abbrev
 ref,abbrev
+bros,abbrev
 conop,abbrev
 supreme,adjective
 imperial,adjective
@@ -198,6 +199,8 @@ ninth,enum
 tenth,enum
 primary,enum
 secondary,enum
+number #1,enum
+number #2,enum
 ii,enum
 iii,enum
 iv,enum
@@ -435,6 +438,7 @@ medal,noun
 memorial,noun
 service,noun
 trip,noun
+moron,noun
 visa,noun
 telephone,noun
 peace,noun
@@ -762,7 +766,6 @@ imam,person.label.mideast
 mullah,person.label.mideast
 mulla,person.label.mideast
 caliph,person.label.mideast
-calif,person.label.mideast
 kaliph,person.label.mideast
 kalif,person.label.mideast
 khalif,person.label.mideast
@@ -853,6 +856,8 @@ cpo,person.label.rank
 a1c,person.label.rank
 end of the road,phrase
 up and down,phrase
+up-to-date,phrase
+up to date,phrase
 a small world,phrase
 bah bah,phrase
 story building,phrase
@@ -874,6 +879,8 @@ rep,phrase
 pep,phrase
 doo,phrase
 gold rush,phrase
+a la,phrase
+a-la,phrase
 a camp,phrase
 commando,phrase
 int,phrase
@@ -1007,6 +1014,7 @@ basin,place.civil
 hotel,place.civil
 hamlet,place.civil
 school,place.civil
+trade school,place.civil
 schools,place.civil
 middle school,place.civil
 high school,place.civil
@@ -1044,6 +1052,11 @@ plant,place.civil
 factory,place.civil
 college,place.civil
 university,place.civil
+national university,place.civil
+university school,place.civil
+state school,place.civil
+primary school,place.civil
+secondary school,place.civil
 campus,place.civil
 company,place.civil
 organization,place.civil
@@ -1089,6 +1102,7 @@ el territorio,place.civil.spa
 country,place.general
 desert,place.general
 land,place.general
+state land,place.civil
 landing,place.civil
 island,place.general
 islet,place.general
@@ -1154,7 +1168,8 @@ division,place.general
 quarter,place.general
 republic,place.general
 site,place.general
-park,place.general
+park,place.civil
+public park,place.civil
 hill,place.general
 mount,place.general
 alps,place.general

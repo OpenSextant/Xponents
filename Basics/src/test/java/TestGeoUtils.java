@@ -74,7 +74,7 @@ public class TestGeoUtils {
     @Test
     public void testCitiesPopulation() throws IOException {
         //GeonamesUtility.loadMajorCities(getZipContent(new File("./src/test/resources/cities15000.zip")));
-        List<Place> cities = GeonamesUtility.loadMajorCities(new File("./src/test/resources/geonames.org/cities15000.txt"));
+        List<Place> cities = GeonamesUtility.loadMajorCities("/geonames.org/cities15000.txt");
 
         print("Cities with pop = " + cities.size());
         int x = 0;

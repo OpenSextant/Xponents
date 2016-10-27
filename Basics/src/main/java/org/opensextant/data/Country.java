@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
@@ -174,8 +176,32 @@ public class Country extends Place {
             dstDelta = utcOffset - dstOffset;
             usesDST = dstDelta != 0;
         }
-        
-        public String toString(){
+
+        /**
+         * Parse error will be thrown on invalid data.
+         * Nulls or empty fields are allowable.  
+         * @param l
+         * @param utc
+         * @param dst
+         * @param raw
+         */
+        public TZ(String l, String utc, String dst, String raw) {
+            label = l;
+            utcOffset = getValue(utc);
+            dstOffset = getValue(dst);
+            rawOffset = getValue(raw);
+            dstDelta = utcOffset - dstOffset;
+            usesDST = dstDelta != 0;
+        }
+
+        private Double getValue(String v) {
+            if (StringUtils.isEmpty(v)) {
+                return Double.NaN;
+            }
+            return Double.parseDouble(v);
+        }
+
+        public String toString() {
             return String.format("%s %d, %d", label, utcOffset, dstOffset);
         }
     }
@@ -331,13 +357,13 @@ public class Country extends Place {
     public Map<String, Double> getAllTimezones() {
         return timezonesVariants;
     }
-    
+
     /**
      * Return the full list of TZ.
      * @return
      */
-    public Map<String, TZ> getTZDatabase(){
-        return tzdb;        
+    public Map<String, TZ> getTZDatabase() {
+        return tzdb;
     }
 
     public boolean hasTerritories() {

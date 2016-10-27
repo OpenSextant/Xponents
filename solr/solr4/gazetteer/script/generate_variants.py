@@ -25,6 +25,7 @@ saint_repl = {
      }
 
 general_repl = {
+    'mount': 'mt. ',
     'fort': 'ft. ',
     'north': 'n. ',
     'south': 's. ' 

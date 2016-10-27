@@ -92,13 +92,14 @@ public class NonsenseFilter extends GeocodeRule {
     //Abbreviated word:  WWW. SSSSS   word, period, single space, text
     static Pattern validAbbrev = Pattern.compile("\\w+[.] \\S+");
     // Punctuation abounds:  WWWWPPPP+  SSSS     word, punct, multiple spaces, text 
-    static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+");
+    //                       Any phrase containing double quotes or long dashes.
+    static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+|[\"\u2014\u2015\u201C\u201D\u2033]");
     static Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
 
     /**
      * Find odd patterns of punctuation in names.
-     * // Note we have to do this becuase we have over-matched in our tagger or used aggressive tokenizer.
-     * // Which lets in all sorts of odd punctuation false-pos.
+     * We have to do this because we have over-matched in our tagger or 
+     * used aggressive tokenizer, which lets in all sorts of odd punctuation false-pos.
      * 
      * @param t
      * @return

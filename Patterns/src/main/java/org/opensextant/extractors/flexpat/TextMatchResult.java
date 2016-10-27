@@ -26,8 +26,9 @@
  */
 package org.opensextant.extractors.flexpat;
 
-import org.opensextant.extraction.TextMatch;
 import java.util.List;
+
+import org.opensextant.extraction.TextMatch;
 
 /**
  * This result class holds all the results for a given text block.

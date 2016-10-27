@@ -1,7 +1,13 @@
 /build.properties
-/build.log
-/gazetteer/data
-/taxcat/data
-/lib
+log
+/solr4/gazetteer/data
+/solr4/taxcat/data
+/solr4/lib
 /gazetteer/conf/filters/non-placenames,user.csv
 /test
+jetty9
+webapps
+lib/ext
+generated-*json
+build
+download

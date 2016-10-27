@@ -26,7 +26,8 @@
  */
 package org.opensextant.extractors.xcoord;
 
-import java.util.*;
+import java.util.Map;
+
 import org.opensextant.geodesy.UTM;
 
 /**

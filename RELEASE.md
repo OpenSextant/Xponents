@@ -1,5 +1,17 @@
 #2016#
 
+* Xponents 2.9.0 
+ - Fresh look at how resource files are pulled from CLASSPATH:  InputStream (getResourceAsStream()) is the primary entry point to 
+   pulling in any sort of config file or data resource.  Getting File or URL should be left to the caller of APIs. If such things
+   are offered in these APIs it is for mere convenience.  Pulling items from JAR, file system, CLASSPATH, etc. seem to behave differently
+   in different environemnts: e.g., HDFS, Server vs. Client Applications, etc.
+
+ - Solr 4.x refactoring:  Provision Solr from Jetty v9; No longer using the crippled jetty-runner v8 JAR.
+
+ - Patterns: Streamlined constructors given the resource file issue at top
+
+ - Extraction: PlaceGeocoder now weights findings against explictly mentioned countries to improve disambiguation.  About 1% improvement in F-score.
+
 * Xponents 2.8.18
  - Extraction: NonsenseFilter added short name + number pattern to filter out unlikely name match, 
    that is aimed at rare gazetteer entries. Alternatively, mark such things in Gazetteer as SearchOnly = true (to avoid tagging at all, by default)

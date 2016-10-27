@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -247,7 +246,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         // Nonsense is filtered out, rather than scored and ranked low.
         nonsenseFilter = new NonsenseFilter();
         rules.add(nonsenseFilter);
-        
+
         /**
          * Files for Place Name filter are editable, as you likely have
          * different ideas of who are "person names" to exclude when they
@@ -256,10 +255,10 @@ public class PlaceGeocoder extends GazetteerMatcher
          * in geocoding.
          * 
          */
-        URL p1 = PlaceGeocoder.class.getResource("/filters/person-name-filter.txt");
-        URL p2 = PlaceGeocoder.class.getResource("/filters/person-title-filter.txt");
-        URL p3 = PlaceGeocoder.class.getResource("/filters/person-suffix-filter.txt");
-        personNameRule = new PersonNameFilter(p1, p2, p3);
+        personNameRule = new PersonNameFilter(
+                "/filters/person-name-filter.txt",
+                "/filters/person-title-filter.txt",
+                "/filters/person-suffix-filter.txt");
         rules.add(personNameRule);
 
         /*
@@ -478,7 +477,7 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         // 0. GEOTAG raw text. Flag tag-only = false, in otherwords do extra work for geocoding.
         //
-        LinkedList<PlaceCandidate> candidates = null;
+        List<PlaceCandidate> candidates = null;
         if (input.langid == null) {
             candidates = tagText(input.buffer, input.id, tagOnly);
         } else if (TextUtils.isCJK(input.langid)) {
@@ -714,19 +713,19 @@ public class PlaceGeocoder extends GazetteerMatcher
      */
     @Override
     public void countryInScope(String cc) {
-        CountryCount counter = relevantCountries.get(cc);
+        Country C = countryCatalog.get(cc);
+        if (C == null) {
+            log.debug("Unknown country code {}", cc);
+            return;
+        }
+        CountryCount counter = relevantCountries.get(C.getCountryCode());
         if (counter == null) {
-            Country C = countryCatalog.get(cc);
             counter = new CountryCount();
             // Well, we must deal with a potential unknown country.  
             // Historical differences, XK = Kosovo, YU = Yugoslavia; 
             // FIPS vs. ISO differences, etc.  Some country codes may not resolve cleanly.
-            if (C != null) {
-                counter.country = C;
-            } else {
-                log.error("Encountered null country for {}", cc);
-            }
-            relevantCountries.put(cc, counter);
+            counter.country = C;
+            relevantCountries.put(C.getCountryCode(), counter);
         } else {
             ++counter.count;
         }

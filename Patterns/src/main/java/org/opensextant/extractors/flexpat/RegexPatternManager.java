@@ -28,14 +28,10 @@
  */
 package org.opensextant.extractors.flexpat;
 
-import org.opensextant.extraction.TextEntity;
-import org.opensextant.extraction.TextMatch;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,6 +39,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.opensextant.extraction.TextEntity;
+import org.opensextant.extraction.TextMatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p > This is the culmination of various date/time extraction efforts in python
@@ -59,6 +60,8 @@ import java.util.regex.Pattern;
  */
 public abstract class RegexPatternManager {
 
+    protected Logger log = LoggerFactory.getLogger(getClass());
+
     /**
      *
      */
@@ -67,12 +70,12 @@ public abstract class RegexPatternManager {
      *
      */
     protected List<RegexPattern> patterns_list = null;
-    private URL patternFile = null;
+    protected String patternFile = null;
 
     /**
      *
      */
-    public boolean debug = false;
+    public boolean debug = log.isDebugEnabled();
     /**
      *
      */
@@ -82,30 +85,9 @@ public abstract class RegexPatternManager {
      */
     public List<PatternTestCase> testcases = new ArrayList<PatternTestCase>();
 
-    /**
-     *
-     * @param _patternfile patterns file
-     * @throws java.net.MalformedURLException configuration error or resource not found.
-     */
-    public RegexPatternManager(String _patternfile) throws java.net.MalformedURLException {
-        patternFile = new URL(_patternfile);
-    }
-
-    /**
-     *
-     * @param _patternfile patterns file URL
-     */
-    public RegexPatternManager(URL _patternfile) {
-        patternFile = _patternfile;
-    }
-
-    /**
-     *
-     * @param _patternfile patterns file obj
-     * @throws java.net.MalformedURLException configuration error or resource not found.
-     */
-    public RegexPatternManager(File _patternfile) throws java.net.MalformedURLException {
-        patternFile = _patternfile.toURI().toURL();
+    public RegexPatternManager(InputStream s, String n) throws IOException {
+        this.patternFile = n;
+        initialize(s);
     }
 
     /**
@@ -199,7 +181,7 @@ public abstract class RegexPatternManager {
      *
      * @throws IOException if patterns file can not be loaded and parsed
      */
-    public void initialize() throws IOException {
+    public void initialize(InputStream io) throws IOException {
 
         patterns = new HashMap<String, RegexPattern>();
         patterns_list = new ArrayList<RegexPattern>();
@@ -212,75 +194,66 @@ public abstract class RegexPatternManager {
         HashMap<String, String> matcherClasses = new HashMap<String, String>();
         List<String> rule_order = new ArrayList<String>();
 
-        BufferedReader reader = null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, "UTF-8"))) {
 
-        // check if pattern file has been set
-        assert (null != patternFile);
+            String _line = null;
+            String[] fields;
+            int testcount = 0;
+            while ((_line = reader.readLine()) != null) {
 
-        // read the pattern file, populating "defines" and "rules" Maps
+                String line = _line.trim();
 
-        //reader = new BufferedReader((new InputStreamReader(getClass().getResourceAsStream(patternFile))));
-        reader = new BufferedReader((new InputStreamReader(patternFile.openStream(), "UTF-8")));
+                // Is it a define statement?
+                if (line.startsWith("#DEFINE")) {
+                    // line should be
+                    // #DEFINE<tab><defineName><tab><definePattern>
+                    fields = line.split("[\t ]+", 3);
+                    defines.put(fields[1].trim(), fields[2].trim());
+                } // Is it a rule statement?
+                else if (line.startsWith("#RULE")) {
+                    // line should be
+                    // #RULE<tab><rule_fam><tab><rule_id><tab><pattern>
+                    fields = line.split("[\t ]+", 4);
 
-        String _line = null;
-        String[] fields;
-        int testcount = 0;
-        while ((_line = reader.readLine()) != null) {
+                    String fam = fields[1].trim();
+                    String ruleName = fields[2].trim();
+                    String rulePattern = fields[3].trim();
 
-            String line = _line.trim();
+                    // geoform + ruleName should be unique, use as key in rules
+                    // table
+                    String ruleKey = fam + "-" + ruleName;
 
-            // Is it a define statement?
-            if (line.startsWith("#DEFINE")) {
-                // line should be
-                // #DEFINE<tab><defineName><tab><definePattern>
-                fields = line.split("[\t ]+", 3);
-                defines.put(fields[1].trim(), fields[2].trim());
-            } // Is it a rule statement?
-            else if (line.startsWith("#RULE")) {
-                // line should be
-                // #RULE<tab><rule_fam><tab><rule_id><tab><pattern>
-                fields = line.split("[\t ]+", 4);
+                    // if already a rule by that name, error
+                    if (rules.containsKey(ruleKey)) {
+                        // log.error("Duplicate rule name " + ruleName);
+                        throw new IOException("FlexPat Config Error - Duplicate rule name " + ruleName);
+                    } else {
+                        rules.put(ruleKey, rulePattern);
+                        rule_order.add(ruleKey);
+                    }
+                } else if (testing & line.startsWith("#TEST")) {
+                    fields = line.split("[\t ]+", 4);
+                    ++testcount;
 
-                String fam = fields[1].trim();
-                String ruleName = fields[2].trim();
-                String rulePattern = fields[3].trim();
+                    String fam = fields[1].trim();
+                    String ruleName = fields[2].trim();
+                    String testtext = fields[3].trim().replace("$NL", "\n");
 
-                // geoform + ruleName should be unique, use as key in rules
-                // table
-                String ruleKey = fam + "-" + ruleName;
+                    String ruleKey = fam + "-" + ruleName;
 
-                // if already a rule by that name, error
-                if (rules.containsKey(ruleKey)) {
-                    // log.error("Duplicate rule name " + ruleName);
-                    throw new IOException("FlexPat Config Error - Duplicate rule name " + ruleName);
-                } else {
-                    rules.put(ruleKey, rulePattern);
-                    rule_order.add(ruleKey);
+                    // testcount is a count of all tests, not just test within a rule family
+                    //testcases.add(new PatternTestCase(ruleKey + "#" + testcount, fam, testtext));
+                    testcases.add(create_testcase(ruleKey + "#" + testcount, fam, testtext));
+                } else if (line.startsWith("#CLASS")) {
+                    fields = line.split("[\t ]+", 3);
+
+                    String fam = fields[1].trim();
+                    matcherClasses.put(fam, fields[2].trim());
                 }
-            } else if (testing & line.startsWith("#TEST")) {
-                fields = line.split("[\t ]+", 4);
-                ++testcount;
+                // Ignore everything else
 
-                String fam = fields[1].trim();
-                String ruleName = fields[2].trim();
-                String testtext = fields[3].trim().replace("$NL", "\n");
-
-                String ruleKey = fam + "-" + ruleName;
-
-                // testcount is a count of all tests, not just test within a rule family
-                //testcases.add(new PatternTestCase(ruleKey + "#" + testcount, fam, testtext));
-                testcases.add(create_testcase(ruleKey + "#" + testcount, fam, testtext));
-            } else if (line.startsWith("#CLASS")) {
-                fields = line.split("[\t ]+", 3);
-
-                String fam = fields[1].trim();
-                matcherClasses.put(fam, fields[2].trim());
-            }
-
-            // Ignore everything else
-
-        }// end file read loop
-        reader.close();
+            } // end file read loop
+        } // try-finally closes reader.
 
         // defines and rules should be completely populated
 

@@ -1,8 +1,6 @@
 Xponents
 ========
-    Xponents 2.8, Mar 2016  v2.8.13
-
-    Date:     25 JULY 2013
+    Xponents 2.9, Oct 2016  v2.9.0
 
     Updated:  05 Dec  2015   v2.8
     Updated:  30 Nov  2015   v2.7.19

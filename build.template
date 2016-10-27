@@ -1,0 +1,18 @@
+# COPY COPY COPY
+# Please copy this to "build.properties"  which will provide settings for your workspace.
+# 
+xponents.build.v=2.9.0
+#
+# Gazetteer catalog.  Specify the path to the merged file.  
+# Merged.txt is usually the file name in OpenSextant/Gazetteer
+gazetteer.data.file=/path/to/merged.csv
+
+# Solr Home. This is where all reference data is indexed into.
+# Can be "." current dir.
+solr.text.tagger.v=2.0
+solr.home=/path/to/opensextant-solr/solr4
+solr.server.port=7000
+
+# Set your proxy host below.
+proxy.host=
+

@@ -723,12 +723,7 @@ public class FileUtility {
      */
     public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive)
             throws IOException {
-
-        URL resource = FileUtility.class.getResource(resourcepath);
-        if (resource != null) {
-            return loadDictionary(resource, case_sensitive);
-        }
-        throw new IOException("Item not found: " + resourcepath);
+        return loadDict(FileUtility.class.getResourceAsStream(resourcepath), case_sensitive);
     }
 
     /**
@@ -745,36 +740,39 @@ public class FileUtility {
      */
     public static Set<String> loadDictionary(URL resourcepath, boolean case_sensitive)
             throws IOException {
-
-        InputStream io = null;
-        try {
-            io = resourcepath.openStream();
-            return loadDict(io, case_sensitive);
-        } finally {
-            io.close();
-        }
+        return loadDict(resourcepath.openStream(), case_sensitive);
     }
 
-    private static Set<String> loadDict(InputStream io, boolean case_sensitive) throws IOException {
+    /**
+     * The do all method.  Load the dictionary from stream
+     * This closes the stream when done.
+     * 
+     * @param io
+     * @param case_sensitive
+     * @return set of phrases from file.  
+     * @throws IOException
+     */
+    public static Set<String> loadDict(InputStream io, boolean case_sensitive) throws IOException {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(io,
-                default_encoding));
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(io, default_encoding))) {
 
-        final Set<String> dict = new HashSet<String>();
-        String newline = null;
-        String test = null;
-        while ((newline = reader.readLine()) != null) {
-            test = newline.trim();
-            if (test.startsWith(COMMENT_CHAR) || test.length() == 0) {
-                continue;
+            final Set<String> dict = new HashSet<String>();
+            String newline = null;
+            String test = null;
+            while ((newline = reader.readLine()) != null) {
+                test = newline.trim();
+                if (test.startsWith(COMMENT_CHAR) || test.length() == 0) {
+                    continue;
+                }
+                if (case_sensitive) {
+                    dict.add(test);
+                } else {
+                    dict.add(test.toLowerCase());
+                }
             }
-            if (case_sensitive) {
-                dict.add(test);
-            } else {
-                dict.add(test.toLowerCase());
-            }
+            return dict;
         }
-        return dict;
     }
 
     /**

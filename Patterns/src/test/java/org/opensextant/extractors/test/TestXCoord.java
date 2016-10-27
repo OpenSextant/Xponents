@@ -383,7 +383,7 @@ public class TestXCoord {
 
         log.info("Trying some specific DD tests now:\n=========================");
         xcoord.match_DD(false);
-        xcoord.match_DMS(false);
+        xcoord.match_DMS(true);
         xcoord.match_DM(false);
         xcoord.match_MGRS(false);
         xcoord.match_UTM(false);
@@ -391,7 +391,7 @@ public class TestXCoord {
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
         boolean dd = false;
-        boolean dms = false;
+        boolean dms = true;
         boolean dm = false;
         boolean mgrs = true;
         boolean utm = false;

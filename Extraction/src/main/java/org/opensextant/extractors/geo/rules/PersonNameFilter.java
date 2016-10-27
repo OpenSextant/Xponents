@@ -40,11 +40,39 @@ public class PersonNameFilter extends GeocodeRule {
     private Set<String> titles = null;
     private Set<String> suffixes = null;
 
+    /**
+     * Constructor for general usage if you know your files might come from file system
+     * or JAR.
+     * @param names
+     * @param persTitles
+     * @param persSuffixes
+     * @throws ConfigException
+     */
     public PersonNameFilter(URL names, URL persTitles, URL persSuffixes) throws ConfigException {
         try {
             filter = new MatchFilter(names);
             titles = FileUtility.loadDictionary(persTitles, false);
             suffixes = FileUtility.loadDictionary(persSuffixes, false);
+        } catch (IOException filterErr) {
+            throw new ConfigException("Default filter not found", filterErr);
+        }
+    }
+
+    /**
+     * Default constructor here used resource paths (which are retrieved as getResourceAsStream()
+     * Instead of retrieving resource URLs or files.  This works best if you know your 
+     * resource files will come from JAR only.
+     *  
+     * @param namesPath
+     * @param persTitlesPath
+     * @param persSuffixesPath
+     * @throws ConfigException
+     */
+    public PersonNameFilter(String namesPath, String persTitlesPath, String persSuffixesPath) throws ConfigException {
+        try {
+            filter = new MatchFilter(namesPath);
+            titles = FileUtility.loadDictionary(persTitlesPath, false);
+            suffixes = FileUtility.loadDictionary(persSuffixesPath, false);
         } catch (IOException filterErr) {
             throw new ConfigException("Default filter not found", filterErr);
         }

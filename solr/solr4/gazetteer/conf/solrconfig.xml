@@ -196,7 +196,7 @@
           CAVEAT: When you create your text tagger you must ensure that you have exactly one process 
           updating the core records, and NO other processes are trying to use it. 
      -->
-    <lockType>native</lockType>
+    <lockType>none</lockType>
 
         <!-- Unlock On Startup
 

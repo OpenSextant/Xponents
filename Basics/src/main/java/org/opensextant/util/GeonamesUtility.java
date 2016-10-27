@@ -34,6 +34,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.ParseException;
@@ -48,7 +50,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.Language;
 import org.opensextant.data.LatLon;
@@ -116,35 +117,40 @@ public class GeonamesUtility {
         return features.get(lookup);
     }
 
+    /**
+     * Load "feature-metadata" CSV
+     * @throws IOException
+     */
     private void loadFeatureMetaMap() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/feature-metadata-2013.csv");
-        java.io.Reader featIO = new InputStreamReader(io);
-        CsvMapReader featreader = new CsvMapReader(featIO, CsvPreference.EXCEL_PREFERENCE);
-        String[] columns = featreader.getHeader(true);
-        Map<String, String> featMap = null;
+        String uri = "/feature-metadata-2013.csv";
+        try (Reader featIO = new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri))) {
+            CsvMapReader featreader = new CsvMapReader(featIO, CsvPreference.EXCEL_PREFERENCE);
+            String[] columns = featreader.getHeader(true);
+            Map<String, String> featMap = null;
 
-        // Feature Metadata is from Universal Gazetteer
-        // -----------------------------------
-        // Feature Designation Code, CODE
-        // Feature Designation Name, DESC
-        // Feature Designation Text, -
-        // Feature Class CLASS
-        //
-        while ((featMap = featreader.read(columns)) != null) {
-            String feat_code = featMap.get("Feature Designation Code");
-            String desc = featMap.get("Feature Designation Name");
-            String feat_class = featMap.get("Feature Class");
+            // Feature Metadata is from Universal Gazetteer
+            // -----------------------------------
+            // Feature Designation Code, CODE
+            // Feature Designation Name, DESC
+            // Feature Designation Text, -
+            // Feature Class CLASS
+            //
+            while ((featMap = featreader.read(columns)) != null) {
+                String feat_code = featMap.get("Feature Designation Code");
+                String desc = featMap.get("Feature Designation Name");
+                String feat_class = featMap.get("Feature Class");
 
-            if (feat_code == null) {
-                continue;
+                if (feat_code == null) {
+                    continue;
+                }
+
+                if (feat_code.startsWith("#")) {
+                    continue;
+                }
+                features.put(String.format("%s/%s", feat_class, feat_code), desc);
             }
-
-            if (feat_code.startsWith("#")) {
-                continue;
-            }
-            features.put(String.format("%s/%s", feat_class, feat_code), desc);
+            featreader.close();
         }
-        featreader.close();
     }
 
     /**
@@ -154,13 +160,13 @@ public class GeonamesUtility {
      *             if timeZones.txt is not found or has an issue.
      */
     private void loadCountryTimezones() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/timeZones.txt");
+        java.io.InputStream io = getClass().getResourceAsStream("/geonames.org/timeZones.txt");
         java.io.Reader tzReader = new InputStreamReader(io);
         CsvMapReader tzMap = new CsvMapReader(tzReader, CsvPreference.TAB_PREFERENCE);
         String[] columns = tzMap.getHeader(true);
         Map<String, String> tzdata = null;
         while ((tzdata = tzMap.read(columns)) != null) {
-            String cc = tzdata.get("CC");
+            String cc = tzdata.get("CountryCode");
             if (cc.trim().startsWith("#")) {
                 continue;
             }
@@ -170,10 +176,10 @@ public class GeonamesUtility {
                 continue;
             }
 
-            Country.TZ tz = new Country.TZ(tzdata.get("TZ"),
-                    Double.parseDouble(tzdata.get("UTC_OFFSET")),
-                    Double.parseDouble(tzdata.get("DST_OFFSET")),
-                    Double.parseDouble(tzdata.get("RAW_OFFSET")));
+            Country.TZ tz = new Country.TZ(tzdata.get("TimeZoneId"),
+                    tzdata.get("GMT offset 1. Jan 2016"),
+                    tzdata.get("DST offset 1. Jul 2016"),
+                    tzdata.get("rawOffset (independant of DST)"));
             C.addTimezone(tz);
         }
         tzMap.close();
@@ -319,14 +325,10 @@ public class GeonamesUtility {
      *             if resource file is not found
      */
     public static List<Place> loadMajorCities(String resourcePath) throws IOException {
-        URL f = GeonamesUtility.class.getResource(resourcePath);
-        if (f == null) {
-            throw new IOException("Major cities data not found for " + resourcePath);
-        }
         try {
-            return loadMajorCities(new File(f.toURI()));
+            return loadMajorCities(GeonamesUtility.class.getResourceAsStream(resourcePath));
         } catch (Exception rareErr) {
-            throw new IOException(rareErr);
+            throw new IOException("Major cities data not found for " + resourcePath, rareErr);
         }
     }
 
@@ -407,77 +409,78 @@ public class GeonamesUtility {
      * where NNNN is the population threshold.
      * </pre>
      * 
-     * @param f
-     *            geonames.org cities file
+     * @param strm 
+     *            input stream for geonames.org cities file
      * @return list of xponents Place obj
      * @throws IOException
-     *             if given file does not exist or is unreadable.
+     *             if parsing goes wrong.
      */
-    public static List<Place> loadMajorCities(File f) throws IOException {
-        java.io.Reader citiesIO = FileUtility.getInputStream(f, "UTF-8");
+    public static List<Place> loadMajorCities(InputStream strm) throws IOException {
 
         // IMPLEMENTATION QUIRK:  SuperCSV failed to parse the rows of data
         // as they contain unescaped " chars.  TAB delimited file, but cells contain ".
         // Hmm.
         List<Place> cities = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(citiesIO);
-        String line;
-        while ((line = reader.readLine()) != null) {
 
-            String[] cells = line.split("\t");
-            if (cells.length < 19) {
-                continue;
-            }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(strm, "UTF-8"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
 
-            // ID, Name
-            Place p = new Place(cells[0], cells[1]);
-
-            // Population
-            String pop = cells[14];
-            if (StringUtils.isNotBlank(pop)) {
-                p.setPopulation(Integer.parseInt(pop));
-            }
-
-            if (isValue(cells[4])) {
-                try {
-                    LatLon xy = GeodeticUtility.parseLatLon(cells[4], cells[5]);
-                    p.setLatLon(xy);
-                } catch (ParseException e) {
-                    // TODO Auto-generated catch block
-                    //e.printStackTrace();
+                String[] cells = line.split("\t");
+                if (cells.length < 19) {
+                    continue;
                 }
-            }
-            // Feature Class
-            if (isValue(cells[6])) {
-                p.setFeatureClass(cells[6]);
-            }
-            // Feature Code
-            if (isValue(cells[7])) {
-                p.setFeatureCode(cells[7]);
-            }
 
-            // Feature Code
-            if (isValue(cells[8])) {
-                p.setCountryCode(cells[8]);
-            }
+                // ID, Name
+                Place p = new Place(cells[0], cells[1]);
 
-            // ADM1
-            if (isValue(cells[10])) {
-                p.setAdmin1(cells[10]);
-            }
-            // ADM2
-            if (isValue(cells[11])) {
-                p.setAdmin2(cells[11]);
-            }
+                // Population
+                String pop = cells[14];
+                if (StringUtils.isNotBlank(pop)) {
+                    p.setPopulation(Integer.parseInt(pop));
+                }
 
-            if (p.hasCoordinate()) {
-                // Performance issue -- geohash has limited use, so this is done only for specific use cases.
-                // Place.geohash is not always set, even if lat/lon is.
-                p.setGeohash(geohash(p));
+                if (isValue(cells[4])) {
+                    try {
+                        LatLon xy = GeodeticUtility.parseLatLon(cells[4], cells[5]);
+                        p.setLatLon(xy);
+                    } catch (ParseException e) {
+                        // TODO Auto-generated catch block
+                        //e.printStackTrace();
+                    }
+                }
+                // Feature Class
+                if (isValue(cells[6])) {
+                    p.setFeatureClass(cells[6]);
+                }
+                // Feature Code
+                if (isValue(cells[7])) {
+                    p.setFeatureCode(cells[7]);
+                }
+
+                // Feature Code
+                if (isValue(cells[8])) {
+                    p.setCountryCode(cells[8]);
+                }
+
+                // ADM1
+                if (isValue(cells[10])) {
+                    p.setAdmin1(cells[10]);
+                }
+                // ADM2
+                if (isValue(cells[11])) {
+                    p.setAdmin2(cells[11]);
+                }
+
+                if (p.hasCoordinate()) {
+                    // Performance issue -- geohash has limited use, so this is done only for specific use cases.
+                    // Place.geohash is not always set, even if lat/lon is.
+                    p.setGeohash(geohash(p));
+                }
+                cities.add(p);
             }
-            cities.add(p);
+            reader.close();
         }
-        citiesIO.close();
         return cities;
     }
 
@@ -612,13 +615,8 @@ public class GeonamesUtility {
      * @throws IOException if CSV file not found in classpath
      */
     public void loadAdmin1Metadata() throws IOException {
-        URL adm1File = getClass().getResource("/country-adm1-codes.csv");
-        if (adm1File == null) {
-            throw new FileNotFoundException("Missing File for ADM1 code/meta data");
-        }
-        try (java.io.InputStream io = adm1File.openStream()) {
-
-            java.io.Reader fio = new InputStreamReader(io);
+        String uri = "/country-adm1-codes.csv";
+        try (Reader fio = new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri))) {
             CsvMapReader adm1CSV = new CsvMapReader(fio, CsvPreference.EXCEL_PREFERENCE);
             String[] columns = adm1CSV.getHeader(true);
             Map<String, String> stateRow = null;
@@ -643,7 +641,7 @@ public class GeonamesUtility {
             }
             adm1CSV.close();
         } catch (Exception err) {
-            throw new IOException("Could not load US State data", err);
+            throw new IOException("Could not load US State data" + uri, err);
         }
     }
 
@@ -1156,21 +1154,14 @@ public class GeonamesUtility {
      *             if geonames.org resource file is not found
      */
     public void loadCountryLanguages() throws IOException {
-        URL f = GeonamesUtility.class.getResource("/geonames.org/countryInfo.txt");
-        if (f == null) {
-            throw new IOException("Did not find Language metadata for geonames countryInfo.txt");
-        }
-        java.io.Reader metaIO;
-        try {
-            metaIO = FileUtility.getInputStream(new File(f.toURI()), "UTF-8");
-        } catch (Exception err) {
-            throw new IOException("Stream failure with geonames file.", err);
-        }
+        final String uri = "/geonames.org/countryInfo.txt";
         // 0-9
         // #ISO ISO3    ISO-Numeric fips    Country Capital Area(in sq km)  Population  Continent   tld
         // 10-18
         // CurrencyCode    CurrencyName    Phone   Postal Code Format  Postal Code Regex   Languages   geonameid   neighbours  EquivalentFipsCode
-        try (BufferedReader reader = new BufferedReader(metaIO)) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        GeonamesUtility.class.getResourceAsStream(uri), "UTF-8"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().startsWith("#")) {
@@ -1220,6 +1211,8 @@ public class GeonamesUtility {
                     ccset.add(cc);
                 }
             }
+        } catch (Exception err) {
+            throw new IOException("Did not find Country Metadata at " + uri, err);
         }
     }
 
