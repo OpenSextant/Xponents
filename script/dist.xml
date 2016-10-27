@@ -164,15 +164,24 @@
     </copy>
   </target>
   <target name="copy-solr">
+<!--
     <subant >
-       <fileset dir="${xponents.home}/solr" includes="build-gazetteer.xml"/>
+       <fileset dir="${xponents.home}/solr" includes="build.xml"/>
        <target name="proxy" />
        <target name="init" />
     </subant>
+-->
     <copy todir="${release}/solr/">
-        <fileset dir="${xponents.home}/solr" />
+        <fileset dir="${xponents.home}/solr" >
+           <exclude name="webapps" />
+           <exclude name="download" />
+           <exclude name="jetty9" />
+           <exclude name="lib" />
+           <exclude name="solr4/gazetteer/data/**" />
+           <exclude name="solr4/taxcat/data/**" />
+        </fileset>
     </copy>
-    <delete file="${release}/solr/build.properties" />
+    <delete file="${release}/build.properties" />
   </target>
 
   <target name="copy-data">

@@ -16,6 +16,14 @@ if [ ! -d $XPONENTS/piplib ] ; then
    exit 1
 fi
 
+if [ ! -e ./resources/filters ] ; then 
+   # Keep link relative.
+   pushd ./resources/
+   ln -s ../solr4/gazetteer/conf/filters .
+   popd
+fi
+
+
 export PYTHONPATH=$XPONENTS/piplib
 
 for core in gazetteer taxcat ; do 

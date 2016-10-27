@@ -162,6 +162,27 @@ And then interact with the Solr server from Python, Curl, Java, or your browser.
 in the various scripts,  default Solr URL is http://localhost:7000/solr
 
 
+CLASSPATH NOTE: "Filters" are important to gazetteer tuning.   I refer to "/filters/"  resources in taggers
+and data processing.  The filters are kept close by to the ./gazetteer index for now.  They could be
+packed in their own JAR or with the Extractors JAR.   And then that JAR would be put in Jetty CLASSPATH
+or your application CLASSPATH.
+
+   JETTY9 USAGE - Make a symbolic link
+   cd ./resources/
+   ln -s ../solr4/gazetteer/conf/filters .
+
+   GENERAL JAVA USAGE: 
+   cd solr4/gazetteer/conf/
+   jar cf xponents-gazetteer-meta.jar ./filters .....  # Other stuff?
+
+   # Push resulting JAR to ./lib/ext/ for Jetty, or add to Xponents/lib or wherever .jar files are referenced in your CLASSPATH
+
+WHY?  These filters are data sets like source code. They are used 
+by client side code or server side code;  Inside Solr processors/taggers and outside. 
+So there is no single best place to locate them, and there is no single best answer for putting them in your CLASSPATH.
+JAR is more portable, but for development, we just add the folder "...gazetteer/conf/"  to the CLASSPATH.
+
+
 4.  Load TaxCat 
 ===============
 This step falls under the category of geotagger tuning.  E.g., see Extraction PlaceGeocoder class
