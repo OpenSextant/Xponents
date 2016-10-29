@@ -465,7 +465,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             String matchText = (String) tag.get("matchText");
             // Get char immediately following match, for light NLP rules.
-            char postChar = buffer.charAt(x2);
+            char postChar = 0;
+            if ( x2 < buffer.length()) { postChar = buffer.charAt(x2); }
 
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would
             // be allowed. If lowercase abbreviations are allowed, then all matches are passed.               
@@ -596,7 +597,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * it is not classified as an abbreviation. Otherwise if you have
                  * "My organization YAK happens to coincide with a place named Yak.
                  * But we first must determine if 'YAK' is a valid abbreviation for an actual place.
-                 * HEURISTIC: place abbreviations are relatively short, e.g. one word(LEN=7 or less)
+                 * HEURISTIC: place abbreviations are relatively short, e.g. one word(len=7 or less)
                  */
                 if (len < 8 && !pc.isAbbreviation) {
                     assessAbbreviation(pc, pGeo, postChar, isUpperCase);
@@ -656,8 +657,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * then no need to review
          * - We don't consider abbreviations longer than N=7 chars.
          * - If matched geo-location does not represent an abbreviation than this does not apply.
+         * 
+         * - postchar = 0 (null) means there is no chars after the match because Match is at end of text buffer.
          */
-        if (!pGeo.isAbbreviation()) {
+        if (!pGeo.isAbbreviation() || postChar == 0) {
             return;
         }
 
