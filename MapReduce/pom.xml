@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <version>0.1-SNAPSHOT</version>
-    <artifactId>xponents-mapreduce</artifactId>
+    <artifactId>opensextant-xponents-mapreduce</artifactId>
     <name>MapReduce</name>
     <properties>
        <xponents.v>2.9.1</xponents.v>
@@ -91,6 +91,18 @@
             <artifactId>joda-time</artifactId>
             <version>2.9.4</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>        
     </dependencies>
     <build>
         <plugins>
