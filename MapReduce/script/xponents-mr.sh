@@ -9,7 +9,7 @@ date1=20160101
 date2=20161231
 
 YEAR=2016
-str=`ls  jars/*jar`
+str=`ls  libjars/*jar`
 JARS=`echo $str | sed -e 's: :,:g;'`
 echo $JARS
 
