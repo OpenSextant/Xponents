@@ -72,7 +72,6 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, NullWritabl
         log.info("DONE");
     }
 
-    static long MAX_SHUTOFF = 10000;
     long counter = 0;
 
     /**
@@ -81,13 +80,6 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, NullWritabl
     @Override
     public void map(BytesWritable key, Text textRecord, Context context)
             throws IOException, InterruptedException {
-        /*
-         * 
-         */
-        if (counter >= MAX_SHUTOFF) {
-            //System.exit(-1);
-            throw new IOException("Testing only hit max records.");
-        }
         ++counter;
         String text = null;
         HashSet<String> dedup = new HashSet<>();
