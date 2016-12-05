@@ -62,6 +62,8 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, NullWritabl
      */
     @Override
     public void setup(Context c) throws IOException {
+        LoggingUtilities.configureLogging(c.getConfiguration());
+
         try {
             xtax = new TaxonMatcher();
         } catch (ConfigException e) {
