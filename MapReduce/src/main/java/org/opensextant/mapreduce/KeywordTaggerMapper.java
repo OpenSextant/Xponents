@@ -23,6 +23,7 @@
 package org.opensextant.mapreduce;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 
@@ -117,17 +118,24 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, NullWritabl
              * Reduce all matches, minimizing duplicates, removing whitespace, etc.
              * 
              */
+            int filtered = 0, duplicates = 0;
             for (TextMatch tm : matches) {
                 if (filterCrap(tm.getText())) {
+                    filtered += 1;
                     continue;
                 }
                 if (dedup.contains(tm.getText())) {
+                    duplicates += 1;
                     continue;
                 }
                 dedup.add(tm.getText());
                 JSONObject o = match2JSON(tm);
                 Text matchOutput = new Text(o.toString());
                 context.write(NullWritable.get(), matchOutput);
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("For key " + new String(key.getBytes(), StandardCharsets.UTF_8) +
+                        " found " + matches.size() + ", filtered: " + filtered + " as junk, " + duplicates +" duplicates.");
             }
         } catch (Exception err) {
             log.error("\t\t\t", err.getMessage());
