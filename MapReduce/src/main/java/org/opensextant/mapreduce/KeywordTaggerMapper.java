@@ -137,7 +137,7 @@ public class KeywordTaggerMapper extends AbstractMapper {
                         " found " + matches.size() + ", filtered: " + filtered + " as junk, " + duplicates +" duplicates.");
             }
         } catch (Exception err) {
-            log.error("\t\t\t", err.getMessage());
+            log.error("Error running xtax", err);
             // System.exit(-1);
         }
     }
