@@ -20,6 +20,11 @@
         </dependency>
         <dependency>
             <groupId>org.opensextant</groupId>
+            <artifactId>opensextant-xponents-patterns</artifactId>
+            <version>${xponents.v}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents</artifactId>
             <version>${xponents.v}</version>
         </dependency>

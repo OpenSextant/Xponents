@@ -31,8 +31,8 @@ SOLR_ARCHIVE=hdfs:///data/resources/xponents-solr.zip
 # CLASS:
 hadoop jar ./xponents-mapreduce-0.1-SNAPSHOT.jar \
        -Dmapreduce.job.classloader=true \
-       -Dmapreduce.map.java.opts="-Dsolr.solr.home=./xponents-solr.zip -Xmx512m -Dverbose:class -Xms256m -Djava.net.preferIPv4Stack=true -Dlog4j.debug=true -Dlog4j.configuration=file:log4j.properties" \
-       -Dmapreduce.map.memory.mb=512 \
+       -Dmapreduce.map.java.opts="-Dsolr.solr.home=./xponents-solr.zip -Xmx1024m -Dverbose:class -Xms256m -Djava.net.preferIPv4Stack=true -Dlog4j.debug=true -Dlog4j.configuration=file:log4j.properties" \
+       -Dmapreduce.map.memory.mb=1024 \
        -Dmapreduce.job.cache.archives=$SOLR_ARCHIVE \
        -Dlog4j.configuration=./log4j.properties \
        -Dlog4j.debug \
