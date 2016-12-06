@@ -30,7 +30,6 @@ import java.util.List;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Taxon;
 import org.opensextant.data.TextInput;
@@ -52,7 +51,7 @@ import net.sf.json.JSONObject;
  *  k2,{ "type":"taxon", "value":"Mother Goose", "offset":87, ...}
  *  
  */
-public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, NullWritable, Text> {
+public class KeywordTaggerMapper extends AbstractMapper {
     private TaxonMatcher xtax = null;
     private Logger log = LoggerFactory.getLogger(KeywordTaggerMapper.class);
 
@@ -68,7 +67,7 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, NullWritabl
      */
     @Override
     public void setup(Context c) throws IOException {
-        LoggingUtilities.configureLogging(c.getConfiguration());
+        super.setup(c);
 
         try {
             xtax = new TaxonMatcher();
