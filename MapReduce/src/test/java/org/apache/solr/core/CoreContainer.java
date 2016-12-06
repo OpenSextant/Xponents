@@ -22,14 +22,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.solr.cloud.ZkController;
 import org.apache.solr.common.SolrException;
@@ -52,6 +55,9 @@ import com.google.common.collect.Maps;
 
 
 /**
+ * Minor customizations by OpenSextant to properly log core startup failures. Will not be necessary once we've
+ * upgraded to Solr 6.x. This is in the test area as an example, to actually use it you'd need to include it on
+ * your classpath before the standard 4.10.4 solr-core jar.
  *
  * @since solr 1.3
  */
@@ -235,6 +241,7 @@ public class CoreContainer {
         ( zkSys.getZkController() == null ? cfg.getCoreLoadThreadCount() : Integer.MAX_VALUE ),
         new DefaultSolrThreadFactory("coreLoadExecutor") );
 
+    List<Future<SolrCore>> startupResults = Collections.emptyList(); // OpenSextant
     try {
 
       List<CoreDescriptor> cds = coresLocator.discover(this);
@@ -259,7 +266,7 @@ public class CoreContainer {
       }
 
       try {
-        coreLoadExecutor.invokeAll(creators);
+        startupResults = coreLoadExecutor.invokeAll(creators); // changed by OpenSextant
       }
       catch (InterruptedException e) {
         throw new SolrException(SolrException.ErrorCode.SERVICE_UNAVAILABLE, "Interrupted while loading cores");
@@ -271,6 +278,18 @@ public class CoreContainer {
 
     } finally {
       ExecutorUtil.shutdownNowAndAwaitTermination(coreLoadExecutor);
+      // OpenSextant custom
+      for (Future<SolrCore> core : startupResults) {
+        try {
+          core.get();
+          log.info("Successfully loaded a core.");
+        } catch (InterruptedException e) {
+          // ignore, we've been cancelled
+        } catch (ExecutionException e) {
+          log.error("Error starting solr core.", e);
+        }
+      }
+      // OpenSextant custom
     }
     
     if (isZooKeeperAware()) {
