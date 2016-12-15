@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!-- Note the use of reset here to avoid undoing the Hadoop enviroment's
+     logging configuration. -->
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" reset="false">
+    <logger name="org.apache.solr.core.SolrCore">
+        <level value="WARN" />
+    </logger>
+    <logger name="org.apache.solr.core.SolrResourceLoader">
+        <level value="TRACE" />
+    </logger>
+</log4j:configuration>
