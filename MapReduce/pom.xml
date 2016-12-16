@@ -10,6 +10,7 @@
     <properties>
        <xponents.v>2.9.1</xponents.v>
        <hadoop.v>2.6.2</hadoop.v>
+       <solr.version>4.10.4</solr.version>
     </properties>
     <dependencies>
         <dependency>
@@ -19,8 +20,26 @@
         </dependency>
         <dependency>
             <groupId>org.opensextant</groupId>
+            <artifactId>opensextant-xponents-patterns</artifactId>
+            <version>${xponents.v}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents</artifactId>
             <version>${xponents.v}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>${solr.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${solr.version}</version>
+            <!-- Needs to be provided to override the CoreContainer implementation when used in main source code. -->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -32,6 +51,7 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
             <version>${hadoop.v}</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-log4j12</artifactId>
@@ -59,6 +79,7 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-common</artifactId>
             <version>${hadoop.v}</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-log4j12</artifactId>
@@ -74,6 +95,7 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-core</artifactId>
             <version>${hadoop.v}</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-log4j12</artifactId>

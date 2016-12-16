@@ -1,6 +1,12 @@
-/**
+/*
+ * This software was produced for the U. S. Government
+ * under Basic Contract No. W15P7T-13-C-A802, and is
+ * subject to the Rights in Noncommercial Computer Software
+ * and Noncommercial Computer Software Documentation
+ * Clause 252.227-7014 (FEB 2012)
  *
- * Copyright 2016 The MITRE Corporation.
+ * Copyright (C) 2016 The MITRE Corporation.
+ * Copyright (C) 2016 OpenSextant.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,17 +19,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *
  */
 package org.opensextant.mapreduce;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 
 import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Taxon;
 import org.opensextant.data.TextInput;
@@ -45,7 +51,7 @@ import net.sf.json.JSONObject;
  *  k2,{ "type":"taxon", "value":"Mother Goose", "offset":87, ...}
  *  
  */
-public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, BytesWritable, Text> {
+public class KeywordTaggerMapper extends AbstractMapper {
     private TaxonMatcher xtax = null;
     private Logger log = LoggerFactory.getLogger(KeywordTaggerMapper.class);
 
@@ -61,6 +67,8 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, BytesWritab
      */
     @Override
     public void setup(Context c) throws IOException {
+        super.setup(c);
+
         try {
             xtax = new TaxonMatcher();
         } catch (ConfigException e) {
@@ -71,7 +79,6 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, BytesWritab
         log.info("DONE");
     }
 
-    static long MAX_SHUTOFF = 10000;
     long counter = 0;
 
     /**
@@ -80,13 +87,6 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, BytesWritab
     @Override
     public void map(BytesWritable key, Text textRecord, Context context)
             throws IOException, InterruptedException {
-        /*
-         * 
-         */
-        if (counter >= MAX_SHUTOFF) {
-            //System.exit(-1);
-            throw new IOException("Testing only hit max records.");
-        }
         ++counter;
         String text = null;
         HashSet<String> dedup = new HashSet<>();
@@ -117,20 +117,27 @@ public class KeywordTaggerMapper extends Mapper<BytesWritable, Text, BytesWritab
              * Reduce all matches, minimizing duplicates, removing whitespace, etc.
              * 
              */
+            int filtered = 0, duplicates = 0;
             for (TextMatch tm : matches) {
                 if (filterCrap(tm.getText())) {
+                    filtered += 1;
                     continue;
                 }
                 if (dedup.contains(tm.getText())) {
+                    duplicates += 1;
                     continue;
                 }
                 dedup.add(tm.getText());
                 JSONObject o = match2JSON(tm);
                 Text matchOutput = new Text(o.toString());
-                context.write(key, matchOutput);
+                context.write(NullWritable.get(), matchOutput);
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("For key " + new String(key.getBytes(), StandardCharsets.UTF_8) +
+                        " found " + matches.size() + ", filtered: " + filtered + " as junk, " + duplicates +" duplicates.");
             }
         } catch (Exception err) {
-            log.error("\t\t\t", err.getMessage());
+            log.error("Error running xtax", err);
             // System.exit(-1);
         }
     }

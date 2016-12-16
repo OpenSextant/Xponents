@@ -24,15 +24,20 @@ hdfs dfs -rm -r $JOB_OUT
 
 SOLR_ARCHIVE=hdfs:///data/resources/xponents-solr.zip
 
+# Note that log4j.properties can be overridden by the hadoop environment.
+# The supplemental Log4J configuration file can be used to augment the
+# logging configuration directly by our mapper implementations.
+
 # CLASS:
 hadoop jar ./xponents-mapreduce-0.1-SNAPSHOT.jar \
        -Dmapreduce.job.classloader=true \
-       -Dmapreduce.map.java.opts="-Dsolr.solr.home=./xponents-solr.zip -Xmx512m -Dverbose:class -Xms256m -Djava.net.preferIPv4Stack=true" \
-       -Dmapreduce.map.memory.mb=512 \
+       -Dmapreduce.map.java.opts="-Dsolr.solr.home=./xponents-solr.zip -Xmx1024m -Dverbose:class -Xms256m -Djava.net.preferIPv4Stack=true -Dlog4j.debug=true -Dlog4j.configuration=file:log4j.properties" \
+       -Dmapreduce.map.memory.mb=1024 \
        -Dmapreduce.job.cache.archives=$SOLR_ARCHIVE \
        -Dlog4j.configuration=./log4j.properties \
+       -Dlog4j.debug \
        -libjars $JARS \
-       -files=./log4j.properties \
+       -files=./log4j.properties,./log4jsupplemental.xml \
        $*
 
 #  Application args could be of the form:
@@ -41,4 +46,5 @@ hadoop jar ./xponents-mapreduce-0.1-SNAPSHOT.jar \
 #       --phase xtax \            // Runs XTax TaxonMatcher
 #       --phase geotag  \         // Runs PlaceGeocoder
 #       --cc $country  \
-#i      --date-range $date1:$date2  
+#       --date-range $date1:$date2 \
+#       --log4j-extra-config file:log4jsupplemental.xml
