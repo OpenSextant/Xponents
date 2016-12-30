@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opensextant</groupId>
-    <version>0.1-SNAPSHOT</version>
-    <artifactId>opensextant-xponents-mapreduce</artifactId>
+    <version>0.1</version>
+    <artifactId>xponents-mapreduce</artifactId>
     <name>MapReduce</name>
     <properties>
        <xponents.v>2.9.1</xponents.v>
@@ -150,7 +150,7 @@
                             <filters>
                                 <filter>
                                     <!-- Apply filter to all resources, omit 
-                                        signed resources: -->
+                                        signed resources in all artifacts: -->
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*.SF</exclude>
@@ -166,15 +166,20 @@
                                          Other JARS will be provided on Job CLASSPATH
                                      -->
                                     <include>org.opensextant</include>
-                                    <include>joda-time</include>
                                     <include>gnu.getopt</include>
+                                    <include>log4j</include>
+                                    <!--
+                                    <include>org.apache.commons</include>
+                                    <include>commons-lang</include>
+                                    <include>joda-time</include>
                                     <include>net.sf.json-lib</include>
                                     <include>net.sf.ezmorph</include>
                                     <include>net.sf.supercsv</include>
-                                    <include>org.apache.commons</include>
-                                    <include>commons-lang</include>
+                                    -->
                                 </includes>
-
+                                <excludes>
+                                    <exclude>org.opensextant:giscore</exclude>
+                                </excludes>
                             </artifactSet>
                             <transformers>
                                 <!-- This bit sets the main class for the 

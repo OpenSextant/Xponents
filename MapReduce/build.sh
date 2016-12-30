@@ -7,7 +7,7 @@ MR=`cd -P $MR; echo $PWD`
 # Build project
 echo "Building Project"
 mvn install
-cp target/opensextant-xponents-mapreduce-0.1-SNAPSHOT.jar xponents-mapreduce.jar
+cp target/xponents-mapreduce-0.1.jar xponents-mapreduce.jar
 
 echo "Packaging JARs for Solr, Xponents, Gazetteer resources..." 
 # Collect LIBJARs
@@ -15,19 +15,6 @@ echo "Packaging JARs for Solr, Xponents, Gazetteer resources..."
 # ----------------------------------
 mkdir -p $MR/libjars
 rm  $MR/libjars/*
-
-# Alternatively get all base JARS from Solr 4.10 WAR
-# mkdir -p /tmp/solr-webapp/
-# rm -rf /tmp/solr-webapp/*
-# pushd /tmp/solr-webapp; 
-# jar xf $MR/../solr/webapps/solr.war 
-#
-# SOLR WAR JARs
-# cp ./WEB-INF/lib/*jar $MR/libjars
-# REMOVE Hadoop, Joda and other conflicting libs found in Solr 4.x
-# rm  libjars/hadoop*jar
-# rm  libjars/org.restlet*
-# rm  libjars/joda*jar
 
 # RUNTIME JARS:  JTS, Spatial4J, Logging
 cp $MR/../solr/lib/ext/*jar $MR/libjars
@@ -45,8 +32,15 @@ pushd $MR/../solr/solr4/gazetteer/conf;
 jar cf $MR/libjars/xponents-gazetteer-meta.jar ./filters/*.* 
 
 cd $MR
+# Conflict with Solr servlet API:
 rm libjars/javax.servlet-api-3.0.1.jar
+# GISCore not used; It supports formatting output and since we output only JSON, its not needed here.
+rm libjars/giscore*jar 
 
+mvn dependency:copy-dependencies
+for LIB in json-lib ezmorph commons-beanutils; do 
+  cp target/dependency/$LIB*.jar ./libjars/
+done
 # ----------------------------------
 
 echo "Zipping Final Distribution, in ./dist"

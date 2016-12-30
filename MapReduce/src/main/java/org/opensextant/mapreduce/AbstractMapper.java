@@ -26,19 +26,68 @@ import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.opensextant.data.TextInput;
+import org.opensextant.extraction.TextMatch;
+import org.opensextant.util.TextUtils;
+
+import net.sf.json.JSONObject;
 
 import java.io.IOException;
 
 /**
  * Common configuration for the mappers.
  */
-public abstract class AbstractMapper extends Mapper<BytesWritable, Text, NullWritable, Text> {
+public abstract class AbstractMapper extends Mapper<BytesWritable, Text, Text, Text> {
+
+    protected long counter = 0;
 
     /**
      * Configures logging.
      */
     @Override
-    public void setup(Context c) throws IOException{
+    public void setup(Context c) throws IOException {
         LoggingUtilities.configureLogging(c.getConfiguration());
     }
+
+    /**
+     * A common method for converting a Text object into an Xponents TextInput tuple.
+     * The assumptions for this demonstration method are:
+     * <ul>
+     * <li>input is JSON data and can be parsed as such</li>
+     * <li>JSON data contains a top level "text" field, which will be used for extraction.</li>
+     * <li>record ID is the result of key.toString(), or if key is null, then use JSON get('id') </li>
+     * </ul>
+     * Caller can optionally set Language ID of text.
+     * @param key record ID, optionally null.
+     * @param textRecord a JSON formatted object.
+     * @return TextInput pair.  
+     */
+    protected static TextInput prepareInput(final Object key, final Text textRecord) {
+        JSONObject obj = JSONObject.fromObject(textRecord.toString());
+        if (!obj.containsKey("text")) {
+            return null;
+        }
+        String text_id = null;
+        if (key != null) {
+            text_id = key.toString();
+        } else {
+            text_id = obj.getString("id");
+        }
+        String text = obj.getString("text");
+        return new TextInput(text_id, text);
+    }
+
+    /**
+     * Given an Xponents match, produce a common JSON output.
+     * @param tm
+     * @return
+     */
+    protected static JSONObject prepareOutput(final TextMatch tm) {
+        JSONObject j = new JSONObject();
+        j.put("type", tm.getType());
+        j.put("value", TextUtils.squeeze_whitespace(tm.getText()));
+        j.put("offset", tm.start);
+        return j;
+    }
+
 }

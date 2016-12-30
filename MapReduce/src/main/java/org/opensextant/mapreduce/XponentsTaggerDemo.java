@@ -24,119 +24,41 @@ package org.opensextant.mapreduce;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Date;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.opensextant.util.GeonamesUtility;
+//import org.opensextant.util.GeonamesUtility;
 
 import gnu.getopt.LongOpt;
 
-public class XponentsTaggerDemo  extends Configured implements Tool {
-    public static final String LOG4J_SUPPLEMENTARY_CONFIGURATION = "opensextantLog4jSupplementaryConfiguration";
-    
+public class XponentsTaggerDemo extends Configured implements Tool {
+    public static final String LOG4J_SUPPLEMENTAL_CONFIGURATION = "hadoop.Log4j.SupplementalConfiguration";
+
+    //public static GeonamesUtility geonames = null;
+
     /**
+     * Currently a no-op; 
      * 
-     * @param key
-     * @param cfg
-     * @return
-     * @throws IOException
-     */
-    public static DateRange parseDateRange(String key, Configuration cfg) throws IOException {
-        String d = cfg.get(key);
-        if (d == null) {
-            return null;
-        }
-        String[] dates = d.split(":");
-        DateTimeFormatter DATEFMT = DateTimeFormat.forPattern("yyyyMMdd");
-        DateRange r = new DateRange();
-        r.startDate = DATEFMT.parseDateTime(dates[0]).getMillis();
-        r.endDate = DATEFMT.parseDateTime(dates[1]).getMillis();
-        if (r.isValid()) {
-            return r;
-        }
-        throw new IOException("Date Range is incorrect");
-    }
-    
-    /**
-     * 
-     * @param key
-     * @param cfg
-     * @return
-     * @throws IOException
-     */
-    public static UTCRange parseUTCRange(String key, Configuration cfg) throws IOException {
-        String u = cfg.get(key);
-        if (u == null) {
-            return null;
-        }
-
-        String[] u1u2 = u.split(":");
-        UTCRange range = new UTCRange();
-        range.startUTC = Integer.parseInt(u1u2[0]);
-        range.endUTC = Integer.parseInt(u1u2[1]);
-        return range;
-    }
-
-    public static class UTCRange {
-
-        public int startUTC = 0;
-        public int endUTC = 0;
-
-        public boolean isValid() {
-            return startUTC <= endUTC;
-        }
-
-        public boolean isWithin(int utc) {
-            return (utc >= startUTC && utc <= endUTC);
-        }
-    }
-    
-    /*
-     * Note with these epochs, 1970-01-01 is 0seconds.  epoch can be negative or positive.
-     * Value of 0 generally means not set.
-     */
-    public static class DateRange {
-        public long startDate = 0;
-        public long endDate = 0;
-
-        public boolean isValid() {
-            return endDate > startDate & startDate != 0;
-        }
-
-        public boolean isWithin(long epoch) {
-            return epoch >= startDate && epoch <= endDate;
-        }
-
-        public String toString() {
-            return String.format("%s to %s", new Date(startDate), new Date(endDate));
-        }
-    }
-
-    public static GeonamesUtility geonames = null;
-    
-    /**
-     * 
+     * If our input arguments were more involved
+     * and required some validation, such as validating a country code for filtering
+     * we might employ GeonamesUtility on startup.
+     *  
      * @throws IOException
      */
     public static void initResources() throws IOException {
         /*
          * load country metadata - codes, names, timezones.
          */
-        geonames = new GeonamesUtility();
+        // geonames = new GeonamesUtility();
     }
-
 
     /**
      * Returns 0 = SUCCESS, other than 0 is a FAILURE mode.
@@ -150,7 +72,7 @@ public class XponentsTaggerDemo  extends Configured implements Tool {
 
         /*
          * Run:
-         *    /input/path  /output/path  phase CC  yyyymmdd:yyyymmdd
+         *    /input/path  /output/path  phase
          *    
          *    phase = geotag | xtax
          */
@@ -158,20 +80,13 @@ public class XponentsTaggerDemo  extends Configured implements Tool {
                 new LongOpt("in", LongOpt.REQUIRED_ARGUMENT, null, 'i'),
                 new LongOpt("out", LongOpt.REQUIRED_ARGUMENT, null, 'o'),
                 new LongOpt("phase", LongOpt.REQUIRED_ARGUMENT, null, 'p'),
-                new LongOpt("cc", LongOpt.REQUIRED_ARGUMENT, null, 'c'),
-                new LongOpt("date-range", LongOpt.REQUIRED_ARGUMENT, null, 'd'),
-                new LongOpt("utc-range", LongOpt.REQUIRED_ARGUMENT, null, 'u'),
                 new LongOpt("log4j-extra-config", LongOpt.REQUIRED_ARGUMENT, null, 'L')
         };
 
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("socgeo", args, "", options);
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("xponents-mr", args, "", options);
         String inPath = null;
         String outPath = null;
         String phase = null;
-        String cc = null;
-        String dateRange = null;
-        String utcRange = null;
-        String xponentsArchive = null;
         String log4jExtraConfig = null;
 
         System.out.println(Arrays.toString(args));
@@ -195,18 +110,6 @@ public class XponentsTaggerDemo  extends Configured implements Tool {
                 phase = opts.getOptarg();
                 break;
 
-            case 'c':
-                cc = opts.getOptarg();
-                break;
-
-            case 'd':
-                dateRange = opts.getOptarg();
-                break;
-
-            case 'u':
-                utcRange = opts.getOptarg();
-                break;
-
             case 'L':
                 log4jExtraConfig = opts.getOptarg();
                 break;
@@ -226,20 +129,15 @@ public class XponentsTaggerDemo  extends Configured implements Tool {
         Job job = Job.getInstance(getConf(), "Xponents-Tagging");
         job.setJarByClass(XponentsTaggerDemo.class);
 
-
         // REQUIRED:
-        if (cc == null || phase == null) {
-            System.err.println("Phase and CC must be set");
+        if (phase == null) {
+            System.err.println("Phase and must be set");
+            usage();
             return -2;
         }
         job.getConfiguration().set("phase", phase);
-        job.getConfiguration().set("country", cc);
-        if (dateRange != null) {
-            job.getConfiguration().set("date-range", dateRange);
-        }
-        if (utcRange != null) {
-            job.getConfiguration().set("utc-range", utcRange);
-        }
+        // job.getConfiguration().set("country", cc);
+
         /* Mapper */
         if (phase.equalsIgnoreCase("geotag")) {
             job.setMapperClass(GeoTaggerMapper.class);
@@ -248,7 +146,7 @@ public class XponentsTaggerDemo  extends Configured implements Tool {
         }
 
         if (log4jExtraConfig != null) {
-            job.getConfiguration().set(LOG4J_SUPPLEMENTARY_CONFIGURATION, log4jExtraConfig);
+            job.getConfiguration().set(LOG4J_SUPPLEMENTAL_CONFIGURATION, log4jExtraConfig);
         }
 
         /* No Reduce step */
@@ -259,7 +157,7 @@ public class XponentsTaggerDemo  extends Configured implements Tool {
 
         /* Map Phase ouptut */
         SequenceFileInputFormat.addInputPaths(job, inPath);
-        job.setMapOutputKeyClass(NullWritable.class);
+        job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
 
         /* Job Output */
@@ -276,7 +174,8 @@ public class XponentsTaggerDemo  extends Configured implements Tool {
                 "mapreduce.output.fileoutputformat.compress.codec",
                 "org.apache.hadoop.io.compress.SnappyCodec");
 
-        job.setOutputKeyClass(NullWritable.class);
+        /* Note that Job Output and Mapper Output should be in sync, if you have only Mapper Output */
+        job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
         return job.waitForCompletion(true) ? 0 : 1;
@@ -289,10 +188,9 @@ public class XponentsTaggerDemo  extends Configured implements Tool {
     public static void usage() {
         System.err.println(
                 "XponentsTaggerDemo --in HDFSPATH --out HDFSPATH --phase [ geotag | xtax ] \n"
-                        + "              --cc COUNTRYCODE [--date-range yyyymmdd:yyyymmdd] [--utc-range h:h] [--extra-log4j-config file:///path/to/config]"
+                        + "              [--extra-log4j-config file:///path/to/config]"
                         + "\nExample:\n\n"
-                        + "XponentsTaggerDemo --in /data/some/thing  --out /user/ubbs/output/some-thing-tagged --phase proploc"
-                        + "              --date-range 20150101:20150301  --utc-range -12:-7");
+                        + "XponentsTaggerDemo --in /data/some/thing  --out /user/ubbs/output/some-thing-tagged --phase geotag");
 
     }
 

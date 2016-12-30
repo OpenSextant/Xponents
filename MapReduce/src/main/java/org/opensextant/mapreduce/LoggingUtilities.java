@@ -37,7 +37,7 @@ public class LoggingUtilities {
             return;
         }
         try {
-            String log4JUrl = conf.get(XponentsTaggerDemo.LOG4J_SUPPLEMENTARY_CONFIGURATION);
+            String log4JUrl = conf.get(XponentsTaggerDemo.LOG4J_SUPPLEMENTAL_CONFIGURATION);
             if (log4JUrl == null) {
                 System.err.println("No supplementary Log4J configuration provided.");
             } else {

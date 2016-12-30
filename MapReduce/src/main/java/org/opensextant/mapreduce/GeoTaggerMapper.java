@@ -23,31 +23,26 @@
 package org.opensextant.mapreduce;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.opensextant.ConfigException;
-import org.opensextant.data.Place;
+import org.opensextant.data.Geocoding;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
-import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
-import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sf.json.JSONObject;
 
 public class GeoTaggerMapper extends AbstractMapper {
     private PlaceGeocoder geocoder = null;
     private Logger log = LoggerFactory.getLogger(GeoTaggerMapper.class);
-
 
     @Override
     public void cleanup(Context c) {
@@ -80,21 +75,19 @@ public class GeoTaggerMapper extends AbstractMapper {
     @Override
     public void map(BytesWritable key, Text textRecord, Context context)
             throws IOException, InterruptedException {
-        String text = null;
-        HashSet<String> dedup = new HashSet<>();
 
+        ++counter;
+        TextInput textObj = prepareInput(null, textRecord);
+        if (textObj == null) {
+            return;
+        }
+
+        /* LANG ID = 'ENGLISH',
+         * If this is not true, then you need to add LangID to your metadata or detect it live
+         */
+        textObj.langid = "en";
+        HashSet<String> dedup = new HashSet<>();
         try {
-            JSONObject obj = JSONObject.fromObject(textRecord.toString());
-            if (!obj.containsKey("text")) {
-                return;
-            }
-            String text_id = key.toString();
-            text = obj.getString("text");
-            TextInput textObj = new TextInput(text_id, text);
-            textObj.langid = "en";
-            /* LANG ID = 'ENGLISH',
-             * If this is not true, then you need to add LangID to your metadata or detect it live
-             */
 
             List<TextMatch> matches = geocoder.extract(textObj);
 
@@ -102,17 +95,14 @@ public class GeoTaggerMapper extends AbstractMapper {
                 return;
             }
 
+            Text oid = new Text(textObj.id);
+
             /* NORMALIZE findings.
              * Reduce all matches, minimizing duplicates, removing whitespace, etc.
              *
              */
             int filtered = 0, duplicates = 0;
             for (TextMatch tm : matches) {
-
-//                if (filterCrap(tm.getText())) {
-//                    filtered += 1;
-//                    continue;
-//                }
                 if (dedup.contains(tm.getText())) {
                     duplicates += 1;
                     continue;
@@ -120,11 +110,11 @@ public class GeoTaggerMapper extends AbstractMapper {
                 dedup.add(tm.getText());
                 JSONObject o = match2JSON(tm);
                 Text matchOutput = new Text(o.toString());
-                context.write(NullWritable.get(), matchOutput);
+                context.write(oid, matchOutput);
             }
             if (log.isTraceEnabled()) {
-                log.trace("For key " + new String(key.getBytes(), StandardCharsets.UTF_8) +
-                        " found " + matches.size() + ", filtered: " + filtered + " as junk, " + duplicates +" duplicates.");
+                log.trace("For key {}, found={}, junk filtered={}, duplicates={}",
+                        key.toString(), matches.size(), filtered, duplicates);
             }
         } catch (Exception err) {
             log.error("Error running geotagger", err);
@@ -133,76 +123,70 @@ public class GeoTaggerMapper extends AbstractMapper {
 
     /**
      * Convert a TextMatch (Place, Taxon, Pattern, etc.) and convert to JSON.
+     * This outputs only geocoding objects -- PlaceCandidate or GeocoordMatch. 
+     * Attributes reported are gazetteer metadata, precision, country code, confidence of match, etc.
+     * 
      * @param tm
      * @return
      */
     public static final JSONObject match2JSON(TextMatch tm) {
-        JSONObject j = new JSONObject();
-        j.put("type", tm.getType());
-        j.put("value", TextUtils.squeeze_whitespace(tm.getText()));
-        j.put("offset", tm.start);
+        JSONObject j = prepareOutput(tm);
+
         if (tm instanceof PlaceCandidate) {
             PlaceCandidate candidate = (PlaceCandidate) tm;
-            if (!candidate.getPlaces().isEmpty()) {
-                candidate.choose();
-                JSONObject obj = parsePlace(candidate.getFirstChoice());
-                if (obj != null) {
-                    JSONArray places = new JSONArray();
-                    places.add(obj);
-                    obj = parsePlace(candidate.getSecondChoice());
-                    if (obj != null) {
-                        places.add(obj);
-                    }
-                    j.put("places", places);
+            if (candidate.isCountry) {
+                j.put("type", "country");
+            } else {
+                j.put("type", "place");
+            }
+            j.put("confidence", 0);
+
+            if (candidate.getFirstChoice() != null) {
+                addPlaceData(candidate.getFirstChoice(), j);
+                j.put("confidence", candidate.getConfidence());
+
+                if (candidate.getSecondChoice() != null) {
+                    JSONObject alt = new JSONObject();
+                    addPlaceData(candidate.getSecondChoice(), alt);
+                    alt.put("score", candidate.getSecondChoice().getScore());
+                    j.put("alt-place", alt);
                 }
             }
         } else if (tm instanceof GeocoordMatch) {
             GeocoordMatch geo = (GeocoordMatch) tm;
-            j.put("latitude", geo.getLatitude());
-            j.put("longitude", geo.getLongitude());
+            addPlaceData(geo, j);
+            j.put("type", "coordinate");
+            j.put("method", geo.getMethod());
+            j.put("confidence", geo.getConfidence());
             if (geo.getRelatedPlace() != null) {
-                addPlaceData(geo.getRelatedPlace(), j);
+                JSONObject alt = new JSONObject();
+                addPlaceData(geo.getRelatedPlace(), alt);
+                j.put("related-place", alt);
             }
         }
         return j;
     }
 
-    private static final JSONObject parsePlace(ScoredPlace place) {
-        if (place == null) {
-            return null;
-        }
-
-        JSONObject j = new JSONObject();
-        j.put("score", place.getScore());
-        addPlaceData(place, j);
-        return j;
-    }
-
-    private static final void addPlaceData(Place place, JSONObject j) {
-        j.put("name", place.getName());
-        j.put("adm1", place.getAdmin1());
-        j.put("adm2", place.getAdmin2());
-        j.put("cc", place.getCountryCode());
-        j.put("featureCode", place.getFeatureCode());
-    }
-
     /**
-     * Filtration rules -- what is worth reporting in your output?  You decide.
-     *
-     * @param t
-     * @return
+     * A very indiscriminate mapping of Geocoding to JSON.  This output schema does not 
+     * distinguish much between coordinates, country names/codes, cities, etc.  EVERYTHING
+     * has a lat/lon, gazetteer metadata, confidence, name, etc.
+     * 
+     * @param place
+     * @param j
      */
-    private static final boolean filterCrap(final String t) {
-        if (t.length() <= 3) {
-            return true;
+    protected static final void addPlaceData(Geocoding place, JSONObject j) {
+        j.put("name", place.getPlaceName());
+        j.put("cc", place.getCountryCode());
+        j.put("feat_code", place.getFeatureCode());
+        j.put("lat", place.getLatitude());
+        j.put("lon", place.getLongitude());
+        j.put("precision", place.getPrecision());
+        if (place.getAdmin1() != null) {
+            j.put("adm1", place.getAdmin1());
         }
-        final char c = t.charAt(0);
-        if (c == '@') {
-            return true;
+        if (place.getAdmin2() != null) {
+            j.put("adm2", place.getAdmin2());
         }
-        if (t.startsWith("http")) {
-            return true;
-        }
-        return false;
     }
 }

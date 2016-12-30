@@ -23,12 +23,10 @@
 package org.opensextant.mapreduce;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Taxon;
@@ -36,7 +34,6 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtax.TaxonMatcher;
-import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,8 +76,6 @@ public class KeywordTaggerMapper extends AbstractMapper {
         log.info("DONE");
     }
 
-    long counter = 0;
-
     /**
      * 
      */
@@ -88,21 +83,21 @@ public class KeywordTaggerMapper extends AbstractMapper {
     public void map(BytesWritable key, Text textRecord, Context context)
             throws IOException, InterruptedException {
         ++counter;
-        String text = null;
+        TextInput textObj = prepareInput(null, textRecord);
+        if (textObj == null) {
+            return;
+        }
+
+        textObj.langid = "en";
+        Text oid = new Text(textObj.id);
+
+        /* LANG ID = 'ENGLISH', 
+         * If this is not true, then you need to add LangID to your metadata or detect it live 
+         */
+
         HashSet<String> dedup = new HashSet<>();
 
         try {
-            JSONObject obj = JSONObject.fromObject(textRecord.toString());
-            if (!obj.containsKey("text")) {
-                return;
-            }
-            String text_id = key.toString();
-            text = obj.getString("text");
-            TextInput textObj = new TextInput(text_id, text);
-            textObj.langid = "en";
-            /* LANG ID = 'ENGLISH', 
-             * If this is not true, then you need to add LangID to your metadata or detect it live 
-             */
 
             /*
              * Testing to see if XTax tagger operates in Hadoop job
@@ -130,15 +125,14 @@ public class KeywordTaggerMapper extends AbstractMapper {
                 dedup.add(tm.getText());
                 JSONObject o = match2JSON(tm);
                 Text matchOutput = new Text(o.toString());
-                context.write(NullWritable.get(), matchOutput);
+                context.write(oid, matchOutput);
             }
             if (log.isTraceEnabled()) {
-                log.trace("For key " + new String(key.getBytes(), StandardCharsets.UTF_8) +
-                        " found " + matches.size() + ", filtered: " + filtered + " as junk, " + duplicates +" duplicates.");
+                log.trace("For key {}, found={}, junk filtered={}, duplicates={}",
+                        key.toString(), matches.size(), filtered, duplicates);
             }
         } catch (Exception err) {
             log.error("Error running xtax", err);
-            // System.exit(-1);
         }
     }
 
@@ -148,18 +142,28 @@ public class KeywordTaggerMapper extends AbstractMapper {
      * @return
      */
     public static final JSONObject match2JSON(TextMatch tm) {
-        JSONObject j = new JSONObject();
-        j.put("type", tm.getType());
-        j.put("value", TextUtils.squeeze_whitespace(tm.getText()));
-        j.put("offset", tm.start);
+        JSONObject j = prepareOutput(tm);
         if (tm instanceof TaxonMatch) {
             for (Taxon tx : ((TaxonMatch) tm).getTaxons()) {
                 j.put("name", tx.name);
                 j.put("cat", tx.catalog);
+                j.put("type", getTypeLabel(tx));
                 break; /* Demo: we only capture the first Taxon Match */
             }
         }
         return j;
+    }
+    
+    protected static String getTypeLabel(final Taxon tx){
+        String t= tx.name.toLowerCase();
+        if (t.startsWith("org")){
+            return "org";
+        }
+        if (t.startsWith("person")){
+            return "person";
+        }
+            
+        return "taxon";
     }
 
     /**
