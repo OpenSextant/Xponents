@@ -44,6 +44,9 @@ public class GeoTaggerMapper extends AbstractMapper {
     private PlaceGeocoder geocoder = null;
     private Logger log = LoggerFactory.getLogger(GeoTaggerMapper.class);
 
+    public static int MIN_CONFIDENCE = 15; /* 0..100 scale for confidence of IS_A_PLACE AND IS_CORRECT_LOCATION */
+    public static int MAX_PRECISION_ERROR = 10000; /* METERS of error in precision */
+
     @Override
     public void cleanup(Context c) {
         if (geocoder != null) {
@@ -103,13 +106,21 @@ public class GeoTaggerMapper extends AbstractMapper {
              */
             int filtered = 0, duplicates = 0;
             for (TextMatch tm : matches) {
+                /* DEDUPLICATE */
                 if (dedup.contains(tm.getText())) {
                     duplicates += 1;
                     continue;
                 }
-                dedup.add(tm.getText());
+
+                /* FILTER OUT NOISE */
+                if (filterOutMatch(tm)) {
+                    continue;
+                }
+                /* FORMAT */
                 JSONObject o = match2JSON(tm);
+                dedup.add(tm.getText());
                 Text matchOutput = new Text(o.toString());
+                /* SERIALIZE GEOCODING */
                 context.write(oid, matchOutput);
             }
             if (log.isTraceEnabled()) {
@@ -119,6 +130,27 @@ public class GeoTaggerMapper extends AbstractMapper {
         } catch (Exception err) {
             log.error("Error running geotagger", err);
         }
+    }
+
+    /**
+     * Determine if you want to keep this or not.
+     * @param tm
+     * @return
+     */
+    public boolean filterOutMatch(final TextMatch tm) {
+        if (tm instanceof PlaceCandidate) {
+            if (((PlaceCandidate) tm).getConfidence() < MIN_CONFIDENCE) {
+                return true;
+            }
+        } else if (tm instanceof GeocoordMatch) {
+
+            /* Geocoding coordinates can also be noisy.  Accept only high precision matches.
+             * E.g., +/- 10KM
+             */
+            GeocoordMatch geo = (GeocoordMatch) tm;
+            return (geo.getPrecision() > MAX_PRECISION_ERROR);
+        }
+        return false;
     }
 
     /**
@@ -139,8 +171,10 @@ public class GeoTaggerMapper extends AbstractMapper {
             } else {
                 j.put("type", "place");
             }
-            j.put("confidence", 0);
 
+            /* Geotagging can be noisy -- accept only highest confidence matches.
+             * 
+             */
             if (candidate.getFirstChoice() != null) {
                 addPlaceData(candidate.getFirstChoice(), j);
                 j.put("confidence", candidate.getConfidence());
@@ -153,6 +187,10 @@ public class GeoTaggerMapper extends AbstractMapper {
                 }
             }
         } else if (tm instanceof GeocoordMatch) {
+
+            /* Geocoding coordinates can also be noisy.  Accept only high precision matches.
+             * E.g., +/- 10KM
+             */
             GeocoordMatch geo = (GeocoordMatch) tm;
             addPlaceData(geo, j);
             j.put("type", "coordinate");

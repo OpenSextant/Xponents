@@ -8,7 +8,7 @@ fi
 
 str=`ls  libjars/*jar`
 JARS=`echo $str | sed -e 's: :,:g;'`
-echo $JARS
+# echo $JARS
 
 phase=$1
 input=$2

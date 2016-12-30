@@ -36,6 +36,8 @@ cd $MR
 rm libjars/javax.servlet-api-3.0.1.jar
 # GISCore not used; It supports formatting output and since we output only JSON, its not needed here.
 rm libjars/giscore*jar 
+# Logback for now interferes with choice of Logging package
+rm libjars/logback*jar 
 
 mvn dependency:copy-dependencies
 for LIB in json-lib ezmorph commons-beanutils; do 
