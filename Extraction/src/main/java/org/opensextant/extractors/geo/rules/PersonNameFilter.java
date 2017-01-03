@@ -132,12 +132,17 @@ public class PersonNameFilter extends GeocodeRule {
 
             // We already resolved this first or last name to a known
             // person/celebrity
-            if (resolvedPersons.containsKey(pc.getTextnorm()) || resolvedOrgs.containsKey(pc.getTextnorm())) {
+            if (resolvedPersons.containsKey(pc.getTextnorm())) {
                 pc.setFilteredOut(true);
                 pc.addRule("ResolvedPerson");
                 continue;
             }
-
+            if (resolvedOrgs.containsKey(pc.getTextnorm())) {
+                pc.setFilteredOut(true);
+                pc.addRule("ResolvedOrg");
+                continue;
+            }                    
+                    
             for (TaxonMatch name : persons) {
                 // "General Murtagh" PLACE=murtagh within PERSON (not a valid
                 // place name)

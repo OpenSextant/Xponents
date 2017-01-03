@@ -96,12 +96,20 @@ public class NonsenseFilter extends GeocodeRule {
                 boolean hasValidGeo = false;
                 for (Place geo : p.getPlaces()) {
                     boolean geoDiacritics = TextUtils.hasDiacritics(geo.getPlaceName());
-                    if (geoDiacritics == p.hasDiacritics){
-                        hasValidGeo= true;
+                    if (geoDiacritics == p.hasDiacritics) {
+                        hasValidGeo = true;
+                        break;
+                    }
+                    /* Pattern: Official name has accented/emphasis markings on the name, such as:
+                     *     `NAME   or NAME`
+                     * Where NAME is some Latin transliteration of non-Latin script    
+                     */
+                    if (geo.getNamenorm().contains(p.getTextnorm())) {
+                        hasValidGeo = true;
                         break;
                     }
                 }
-                if (!hasValidGeo){
+                if (!hasValidGeo) {
                     p.setFilteredOut(true);
                     p.addRule("Nonsense,Mismatched,Diacritic");
                 }
