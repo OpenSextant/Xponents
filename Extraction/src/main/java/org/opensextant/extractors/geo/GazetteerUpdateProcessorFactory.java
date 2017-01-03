@@ -52,12 +52,13 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
     protected static Set<String> includeCountrySet = null;
     protected static boolean includeAll = false;
     protected static String catField = "SplitCategory";
-    protected static Set<String> stopTerms = null;
+    //protected static Set<String> stopTerms = null;
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected static long rowCount = 0;
     protected static long addCount = 0;
     protected static GeonamesUtility helper = null;
     protected static final Pattern shortAlphanum = Pattern.compile("\\w+.+\\d+");
+    protected TagFilter termFilter = null;
 
     /**
      * NamedList? in Solr. What a horror. Okay, they work, but...
@@ -80,13 +81,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
          *
          */
         try {
-            stopTerms = GazetteerMatcher.loadExclusions(
-                    GazetteerMatcher.class.getResourceAsStream("/filters/non-placenames.csv"));
-            if (stopTerms == null) {
-                logger.error("Init failure:  Did not find 'non-placenames' file in CLASSPATH."
-                        + "\nThis will not work properly with out such data.");
-            }
-
+            termFilter = new TagFilter();
+            termFilter.enableCaseSensitive(false);
             helper = new GeonamesUtility();
         } catch (Exception err) {
             logger.error("Init failure", err);
@@ -149,9 +145,6 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
     @Override
     public UpdateRequestProcessor getInstance(SolrQueryRequest req, SolrQueryResponse rsp,
             UpdateRequestProcessor next) {
-        if (stopTerms == null) {
-            return null;
-        }
         return new GazetteerUpdateProcessor(next);
     }
 
@@ -267,7 +260,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
             String nameLower = nm2.toLowerCase();
             if (!search_only) {
-                if (stopTerms.contains(nameLower)) {
+                if (termFilter.filterOut(nameLower)) {
                     search_only = true;
                     logger.debug("GazURP ## Stop word set search only {}", nm);
                 }
@@ -289,7 +282,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             if (!search_only && nm.length() < 15) {
                 String nameNonDiacrtic = TextUtils.replaceDiacritics(nm).toLowerCase();
                 nameNonDiacrtic = TextUtils.replaceAny(nameNonDiacrtic, "‘’-", " ").trim();
-                if (stopTerms.contains(nameNonDiacrtic)) {
+                if (termFilter.filterOut(nameNonDiacrtic)) {
                     search_only = true;
                     logger.info("GazURP ## Stop word set search only {} ({})", nm, nameNonDiacrtic);
                 }
