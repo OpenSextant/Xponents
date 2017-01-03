@@ -56,7 +56,6 @@ import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.util.TextUtils;
-import org.slf4j.LoggerFactory;
 
 /**
  * Use this XCoord class for both test and development of patterns, as well as

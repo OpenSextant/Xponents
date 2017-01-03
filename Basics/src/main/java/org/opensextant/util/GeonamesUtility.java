@@ -31,13 +31,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.opensextant.util.GeodeticUtility.geohash;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.io.Reader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
