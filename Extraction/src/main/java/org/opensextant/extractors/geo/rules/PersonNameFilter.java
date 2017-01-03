@@ -29,7 +29,6 @@ import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.util.FileUtility;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -282,22 +281,6 @@ public class PersonNameFilter extends GeocodeRule {
     @Override
     public void evaluate(final PlaceCandidate name, final Place xgeo) {
         /* No Op */
-    }
-
-    /**
-     * Simple wrapper around filter rules. Later this could be just using rule
-     * string IDs, if the full weight/scope/etc. concepts are not used.
-     * 
-     * @param match
-     * @param rule
-     * @param scope
-     */
-    private void filterEvidence(PlaceCandidate match, String rule, PlaceEvidence.Scope scope) {
-        PlaceEvidence notPlace = new PlaceEvidence();
-        notPlace.setRule(rule);
-        notPlace.setScope(scope);
-        notPlace.setWeight(-1.0);
-        match.addEvidence(notPlace);
     }
 
     /**

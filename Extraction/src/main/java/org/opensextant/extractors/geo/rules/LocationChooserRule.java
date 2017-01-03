@@ -293,6 +293,10 @@ public class LocationChooserRule extends GeocodeRule {
      */
     public static final int MATCHCONF_QUALIFIER_LOWERCASE = -15;
 
+    private static boolean isShort(int matchLen) {
+        return matchLen <= NonsenseFilter.GENERIC_ONE_WORD;
+    }
+
     /**
      * Confidence of your final chosen location for a given name is assembled as the sum of some absolute metric
      * plus some additional qualifiers. The absolute provides some context at the document level, whereas the
@@ -322,8 +326,10 @@ public class LocationChooserRule extends GeocodeRule {
         //======================
         if (pc.hasRule(CoordinateAssociationRule.COORD_PROXIMITY_RULE)) {
             points = MATCHCONF_GEODETIC;
-        } else if (pc.distinctLocationCount() == 1) {
+        } else if (pc.distinctLocationCount() == 1 && countryObserver.countryCount() > 0) {
             points = MATCHCONF_ONE_LOC;
+        } else if (countryObserver.countryCount() == 0 && pc.hasDiacritics && isShort(pc.getLength())) {
+            points = MATCHCONF_MINIMUM;
         } else if (pc.hasRule(NameCodeRule.NAME_ADMCODE_RULE)
                 || pc.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
             points = MATCHCONF_NAME_REGION;

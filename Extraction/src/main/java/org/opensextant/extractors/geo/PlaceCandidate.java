@@ -202,6 +202,7 @@ public class PlaceCandidate extends TextMatch {
     public boolean isOrganization = false;
     public boolean isAbbreviation = false;
     public boolean isAcronym = false;
+    public boolean hasDiacritics = false;
 
     /**
      * After candidate has been scored and all, the final best place is the

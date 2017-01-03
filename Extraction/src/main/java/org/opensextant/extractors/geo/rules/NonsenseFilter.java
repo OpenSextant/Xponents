@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.util.TextUtils;
 
 /**
  * Filter out nonsense tokens that match some city or state name.
@@ -27,7 +28,7 @@ public class NonsenseFilter extends GeocodeRule {
     public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
 
     private static int MAX_NONSENSE_PHRASE_LEN = 15;
-    private static int GENERIC_ONE_WORD = 8; // Chars in average word.
+    public static final int GENERIC_ONE_WORD = 8; // Chars in average word.
 
     /**
      * Evaluate the name in each list of names.
@@ -51,8 +52,6 @@ public class NonsenseFilter extends GeocodeRule {
              *  
              * + does it contain a repeated syllable or word?:
              *   // "doo doo", "bah bah" "to to"
-             *   
-             * 
              */
             if (p.getLength() > MAX_NONSENSE_PHRASE_LEN) {
                 continue;
@@ -85,6 +84,27 @@ public class NonsenseFilter extends GeocodeRule {
                     set.add(w);
                 }
                 continue;
+            }
+
+            /*
+             * Still here? Check for short obscure matches where diacritics mismatch.
+             * Cannot eliminate a candidate based on a single location. But reduce score for those that 
+             * mismatch severely.  
+             * NOTE: Score on each geo location is accounted for in default score. I.E., edit distance between text match and geo name. 
+             */
+            if (p.getLength() < GENERIC_ONE_WORD) {
+                boolean hasValidGeo = false;
+                for (Place geo : p.getPlaces()) {
+                    boolean geoDiacritics = TextUtils.hasDiacritics(geo.getPlaceName());
+                    if (geoDiacritics == p.hasDiacritics){
+                        hasValidGeo= true;
+                        break;
+                    }
+                }
+                if (!hasValidGeo){
+                    p.setFilteredOut(true);
+                    p.addRule("Nonsense,Mismatched,Diacritic");
+                }
             }
         }
     }
@@ -163,5 +183,4 @@ public class NonsenseFilter extends GeocodeRule {
     public void evaluate(PlaceCandidate name, Place geo) {
         // no op
     }
-
 }
