@@ -889,6 +889,7 @@ rugby,noun.sport
 sprint,noun.sport
 sports,noun.sport
 cricket,noun.sport
+tycoon,person.label
 marshal,person.label
 comrade,person.label
 foreman,person.label
@@ -1363,9 +1364,11 @@ pluto,place.astro
 palace,place.civil
 pipeline,place.civil
 jail,place.civil
+checkpoint,place.civil
 holy ground,place.civil
 stadium,place.civil
 community center,place.civil
+media center,place.civil
 zoo,place.civil
 rotary,place.civil
 castle,place.civil
