@@ -18,7 +18,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
 
     public TestPlaceGeocoder() throws ConfigException {
         // INIT once.
-        geocoder = new PlaceGeocoder();
+        geocoder = new PlaceGeocoder(true);
         geocoder.enablePersonNameMatching(true);
         geocoder.configure();
     }

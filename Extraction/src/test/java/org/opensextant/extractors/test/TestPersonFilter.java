@@ -10,12 +10,39 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.geo.rules.NonsenseFilter;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
+import org.opensextant.util.TextUtils;
 
 public class TestPersonFilter {
 
     private final static void print(String msg) {
         System.out.println(msg);
     }
+
+    @Test
+    public void testNonsenseShortPhrases() {
+        assertTrue(isMismatchedShortName("Eï", "ei"));
+        assertTrue(isMismatchedShortName("Eï", "Ei"));
+        assertTrue(isMismatchedShortName("S A", "S. a'"));
+        assertTrue(!isMismatchedShortName("In", "In."));
+    }
+    
+    /**
+     * Call if you have a short name. This method does not have a length filter assumed.
+     * 
+     * @param matched  entry or official name matched
+     * @param signal   raw input 
+     * @return
+     */
+    public static boolean isMismatchedShortName(String matched, String signal) {
+        boolean isShort = signal.length()<8;
+        boolean badMatch = NonsenseFilter.irregularPunctPatterns(signal);
+        boolean hasDiacritics = TextUtils.hasDiacritics(matched);
+        boolean signalDiacrtics = TextUtils.hasDiacritics(signal);
+        boolean misMatchDiacritics = signalDiacrtics != hasDiacritics;
+        
+        return isShort && (badMatch || misMatchDiacritics);
+    }
+
 
     @Test
     public void testNonsensePhrases() {

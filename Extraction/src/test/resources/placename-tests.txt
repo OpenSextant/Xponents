@@ -1,3 +1,7 @@
+# Test for diacritics in short names, where the diacritic marks on gazetteer entries do not match the input text.
+Eh? Was Eï his home city? Or was that Ei eï?
+Méssi - where is this? ... or is it Messi, the beach in Greece?
+cé is a stream and also a common article in latin-based languages. 
 # US State patterns:  state, country;  city, state;  city, state postal code.
 # TEST: Well-known city (high ID bias) confused with Major Place due to presence of country name.  
 The man flew from San Francisco to Bolivia that day.
