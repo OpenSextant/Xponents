@@ -30,6 +30,25 @@ public class NonsenseFilter extends GeocodeRule {
     private static int MAX_NONSENSE_PHRASE_LEN = 15;
     public static final int GENERIC_ONE_WORD = 8; // Chars in average word.
 
+    private static Pattern wsRedux = Pattern.compile("[-\\s+`]");
+
+    protected static final String phoneticRedux(final String n) {
+        return wsRedux.matcher(n).replaceAll("");
+    }
+
+    /** 
+     * See if name n2 is a phonetic match for a relative constant ph1.
+     * phonetic(n2) = ph1 ?
+     * 
+     * @param ph1 - phonetic redux of a name.
+     * @param n2 - a test name.
+     * @return
+     */
+    protected static final boolean isPhoneticMatch(final String ph1, final String n2) {
+        final String ph2 = phoneticRedux(n2); 
+        return ph2.equalsIgnoreCase(ph1);
+    }
+
     /**
      * Evaluate the name in each list of names.
      * 
@@ -94,6 +113,7 @@ public class NonsenseFilter extends GeocodeRule {
              */
             if (p.getLength() < GENERIC_ONE_WORD) {
                 boolean hasValidGeo = false;
+                String ph1 = phoneticRedux(p.getTextnorm());
                 for (Place geo : p.getPlaces()) {
                     boolean geoDiacritics = TextUtils.hasDiacritics(geo.getPlaceName());
                     if (geoDiacritics == p.hasDiacritics) {
@@ -105,6 +125,10 @@ public class NonsenseFilter extends GeocodeRule {
                      * Where NAME is some Latin transliteration of non-Latin script    
                      */
                     if (geo.getNamenorm().contains(p.getTextnorm())) {
+                        hasValidGeo = true;
+                        break;
+                    }
+                    if (isPhoneticMatch(ph1, geo.getNamenorm())) {
                         hasValidGeo = true;
                         break;
                     }
