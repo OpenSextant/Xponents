@@ -45,7 +45,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -466,14 +465,18 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             String matchText = (String) tag.get("matchText");
             // Get char immediately following match, for light NLP rules.
             char postChar = 0;
-            if ( x2 < buffer.length()) { postChar = buffer.charAt(x2); }
+            if (x2 < buffer.length()) {
+                postChar = buffer.charAt(x2);
+            }
 
-            // Then filter out trivial matches. E.g., Us is filtered out. vs. US would
+            // Then filter out trivial matches. E.g., Us is filtered out. vs. US would. 
             // be allowed. If lowercase abbreviations are allowed, then all matches are passed.               
             if (len < 3) {
-                if (TextUtils.isASCII(matchText) && !StringUtils.isAllUpperCase(matchText) && !allowLowercaseAbbrev) {
-                    ++this.defaultFilterCount;
-                    continue;
+                if (!allowLowercaseAbbrev) {
+                    if (TextUtils.isASCII(matchText) && !StringUtils.isAllUpperCase(matchText)) {
+                        ++this.defaultFilterCount;
+                        continue;
+                    }
                 }
             }
 
@@ -526,6 +529,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 continue;
             }
             /*
+             * Everything Else.
+             * ============================
+             */
+            /*
              * Found UPPER CASE text in a mixed-cased document.
              * Conservatively, this is likely an acronym or some heading.
              * But possibly still a valid place name.
@@ -538,10 +545,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             if (!isUpperCase && pc.isUpper() && len < 5) {
                 pc.isAcronym = true;
             }
+            pc.hasDiacritics = TextUtils.hasDiacritics(pc.getText());
 
-            /*
-             * Everything Else.
-             */
             pc.setSurroundingTokens(buffer);
 
             @SuppressWarnings("unchecked")
@@ -813,7 +818,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         public TagFilter() throws ConfigException {
             super();
             stopTerms = new HashSet<>();
-            String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", "/filters/non-placenames,acronym.csv" };
+            String[] defaultNonPlaceFilters = { 
+                    "/filters/non-placenames.csv",  // GENERAL
+                    "/filters/non-placenames,spa.csv", // SPANISH 
+                    "/filters/non-placenames,acronym.csv"  // ACRONYMS
+                    };
             for (String f : defaultNonPlaceFilters) {
                 stopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
             }

@@ -15,9 +15,27 @@ fig,abbrev
 ref,abbrev
 bros,abbrev
 conop,abbrev
+temp,abbrev
+eng,abbrev
+fam,abbrev
+lil,abbrev
+sim,abbrev
+demi,abbrev
+biz,abbrev
+bro,abbrev
+mag,abbrev
+siz,abbrev
+tix,abbrev
+expo,abbrev
+recap,abbrev
+tot,abbrev
+mod,abbrev
+pros,abbrev
+tum,abbrev
+glo,abbrev
+acme,abbrev
 supreme,adjective
 imperial,adjective
-pinnacle,noun
 keen,adjective
 graphic,adjective
 excelsior,adjective
@@ -87,7 +105,6 @@ congressional,adjective
 english,adjective
 french,adjective
 malay,adjective
-mal,adjective.spa
 anglo,adjective
 sino,adjective
 serial,adjective
@@ -127,10 +144,83 @@ lone,adjective
 consolidated,adjective
 penal,adjective
 consular,adjective
-muerte,adjective.spa
+tri,adjective
+wooden,adjective
+lunar,adjective
+small,adjective
+swift,adjective
+virgin,adjective
+martial,adjective
+poly,adjective
+anal,adjective
+slim,adjective
+fancy,adjective
+titanic,adjective
+divine,adjective
+lenten,adjective
+meek,adjective
+fried,adjective
+chic,adjective
+red hot,adjective
+petite,adjective
+hippy,adjective
+faux,adjective
+corny,adjective
+crisp,adjective
+californian,adjective
+cornish,adjective
+buff,adjective
+bon,adjective.fre
+nouveau,adjective.fre
+de novo,adjective.ita
+santi,adjective.ita
+dolce,adjective.ita
+buona,adjective.ita
+novo,adjective.ita
+bello,adjective.ita
+forte,adjective.ita
+bom,adjective.por
 shortly,adverb
+eagles,animal
+spider,animal
+tiger,animal
+lion,animal
+ahi,animal
+hawks,animal
+butterfly,animal
+snake,animal
+ram,animal
+shark,animal
+duck,animal
+dove,animal
+penguin,animal
+panther,animal
+turtle,animal
+frog,animal
+coyote,animal
+anaconda,animal
 the,article
-lo,article.spa
+moi,article.fre
+qui,article.fre
+sans,article.fre
+che,article.ita
+cé,article.ita
+tras,article.ita
+uni,article.ita
+gli,article.ita
+tra,article.ita
+aquarius,astrology
+acuario,astrology
+aries,astrology
+libra,astrology
+gemini,astrology
+scorpio,astrology
+pisces,astrology
+taurus,astrology
+sagittarius,astrology
+capricorn,astrology
+capricornio,astrology
+tauro,astrology
 black,color
 blue,color
 green,color
@@ -144,8 +234,9 @@ gray,color
 grey,color
 bronze,color
 tan,color
+cobalt,color
 blanc,color.fra
-blanco,color.spa
+nero,color.ita
 democracy,concept.politics
 kingdom,concept.politics
 christ,concept.religion
@@ -159,6 +250,9 @@ holy,concept.religion
 jihad,concept.religion
 rectors,concept.religion
 lent,concept.religion
+adam and eve,concept.religion
+allah,concept.religion
+ala,concept.religion
 north,directional
 northern,directional
 north-east,directional
@@ -209,14 +303,54 @@ vi,enum
 vii,enum
 viii,enum
 ix,enum
-primero,enum.spa
-primera,enum.spa
 secondo,enum.ita
-segundo,enum.spa
-segunda,enum.spa
-uno,enum.spa
-dos,enum.spa
+fries,food
+taco,food
+strawberry,food
+burgers,food
+sushi,food
+spice,food
+peanut,food
+lemon,food
+peach,food
+pita,food
+raspberry,food
+chili,food
+pepper,food
+panini,food
+cinnamon,food
+mango,food
+angus,food
+cocoa,food
+blueberry,food
+chai,food
+almond,food
+citrus,food
+cracker,food
+crawfish,food
+corndog,food
+butternut,food
 christmas,holiday
+good friday,holiday
+valentine's,holiday
+pic,internet
+cam,internet
+wireless,internet
+weibo,internet
+gamer,internet
+siri,internet
+java,internet
+blackberry,internet
+fico,internet
+vid,internet
+naver,internet
+hacker,internet
+tor,internet
+hulu,internet
+vines,internet
+var,internet
+arg,internet
+dev,internet
 december,month
 dec,month
 november,month
@@ -240,6 +374,12 @@ feb,month
 february,month
 jan,month
 january,month
+dragon,myth
+gotham,myth
+thor,myth
+nirvana,myth
+bigfoot,myth
+pinnacle,noun
 primer,noun
 loyalist,noun
 guess,noun
@@ -251,7 +391,6 @@ aces,noun
 box,noun
 ant,noun
 triple,noun
-tri,adjective
 burger,noun
 grant,noun
 weasel,noun
@@ -408,7 +547,6 @@ wall,noun
 wood,noun
 firewood,noun
 oak,noun
-wooden,adjective
 coal,noun
 rice,noun
 noodle,noun
@@ -573,12 +711,179 @@ canon,noun
 cannon,noun
 clearinghouse,noun
 falcon,noun
-puerto,noun.spa
-banda,noun.spa
-banco,noun.spa
-hacienda,noun.spa
-casa,noun.spa
-grupo,noun.spa
+gender,noun
+miles,noun
+jubilee,noun
+miner,noun
+mining,noun
+avnil,noun
+gold mine,noun
+goldmine,noun
+fox,noun
+diploma,noun
+cactus,noun
+maker,noun
+mint,noun
+romance,noun
+tag,noun
+bicentennial,noun
+brand,noun
+cap,noun
+beach,noun
+flower,noun
+steel,noun
+arena,noun
+babe,noun
+boss,noun
+spree,noun
+pet,noun
+yoga,noun
+kings,noun
+buzz,noun
+bikini,noun
+kitchen,noun
+maiden,noun
+salon,noun
+ghost,noun
+chef,noun
+logo,noun
+blues,noun
+dame,noun
+doll,noun
+cotton,noun
+derby,noun
+bra,noun
+pastor,noun
+paradise,noun
+hoe,noun
+gob,noun
+tee,noun
+ćafe,noun
+Ćafe,noun
+elf,noun
+bath,noun
+button,noun
+jag,noun
+spa,noun
+resort,noun
+nail,noun
+bench,noun
+yard,noun
+la radio,noun
+keys,noun
+mat,noun
+lock,noun
+bale,noun
+kinder,noun
+azalea,noun
+disco,noun
+mill,noun
+funk,noun
+dish,noun
+mafia,noun
+sweepstakes,noun
+turbo,noun
+pad,noun
+joker,noun
+hook,noun
+tab,noun
+tiempo,noun
+zona,noun
+la nueva,noun
+weed,noun
+champs,noun
+bone,noun
+frame,noun
+sprite,noun
+rider,noun
+corner,noun
+sapphire,noun
+blackhead,noun
+saga,noun
+flood,noun
+plate,noun
+bingo,noun
+vibe,noun
+champ,noun
+pinky,noun
+zen,noun
+usher,noun
+grill,noun
+palm,noun
+marble,noun
+dew,noun
+armada,noun
+yankee,noun
+fatih,noun
+parent,noun
+titan,noun
+tsunami,noun
+sand,noun
+resurrection,noun
+dial,noun
+sessions,noun
+blacks,noun
+gem,noun
+combo,noun
+comandante,noun
+stamp,noun
+bum,noun
+banner,noun
+spike,noun
+dammit,noun
+harness,noun
+cage,noun
+muse,noun
+tees,noun
+ballet,noun
+stud,noun
+thong,noun
+cowboy,noun
+mut,noun
+cottage,noun
+cheek,noun
+basel,noun
+bane,noun
+bib,noun
+castaway,noun
+crest,noun
+ceres,noun
+cameo,noun
+bog,noun
+coronation,noun
+black gold,noun
+black diamond,noun
+acorn,noun
+caster,noun
+clipper,noun
+coats,noun
+boing,noun
+bluegrass,noun
+catnip,noun
+coal mine,noun
+bigot,noun
+black belt,noun
+ceramics,noun
+cobblestone,noun
+achilles,noun
+basher,noun
+cornerstone,noun
+buttermilk,noun
+cabaret,noun
+l'heure,noun.fre
+ligue,noun.fre
+la maison,noun.fre
+amor,noun.ita
+la liga,noun.ita
+amore,noun.ita
+volta,noun.ita
+la vita,noun.ita
+domani,noun.ita
+maestro,noun.ita
+het,noun.nld
+minha,noun.por
+minha,noun.por
+aeroport,noun.por
 golf,noun.sport
 rugby,noun.sport
 sprint,noun.sport
@@ -592,7 +897,6 @@ friar,person.label
 lone wolf,person.label
 vip,person.label
 patriot,person.label
-gender,noun
 male,person.label
 mom,person.label
 dad,person.label
@@ -760,6 +1064,10 @@ govenors,person.label
 monk,person.label
 teen,person.label
 citizen,person.label
+mum,person.label
+sis,person.label
+prez,person.label
+bubba,person.label
 pir,person.label.mideast
 rabbi,person.label.mideast
 imam,person.label.mideast
@@ -866,15 +1174,11 @@ old west,phrase
 a school,phrase
 our school,phrase
 our house,phrase
-a al,phrase.spa
 milestone,phrase
-miles,noun
 rican,phrase
 pro,phrase
 rad,phrase
 zip,phrase
-rip,verb
-hop,verb
 rep,phrase
 pep,phrase
 doo,phrase
@@ -927,6 +1231,7 @@ at a,phrase
 i do,phrase
 to a point,phrase
 to to,phrase
+home city,phrase
 home town,phrase
 long way,phrase
 last chance,phrase
@@ -982,7 +1287,69 @@ tis,phrase
 ta,phrase
 the city,phrase
 rock bottom,phrase
-lunar,adjective
+lite,phrase
+breaking point,phrase
+damn,phrase
+haha,phrase
+nah,phrase
+yay,phrase
+np,phrase
+on point,phrase
+sos,phrase
+oye,phrase
+dah,phrase
+aye,phrase
+a young,phrase
+boo,phrase
+number 1,enum
+bah,phrase
+bam,phrase
+goodluck,phrase
+dab,phrase
+gee,phrase
+alo,phrase
+wah,phrase
+dang,phrase
+lov,phrase
+one man,phrase
+yeh,phrase
+my cam,phrase
+ole,phrase
+yah,phrase
+yum,phrase
+chillin,phrase
+til,phrase
+pooh,phrase
+naw,phrase
+half way,phrase
+welcome home,phrase
+home run,phrase
+at church,phrase
+bub,phrase
+brightside,phrase
+a better view,phrase
+bright star,phrase
+hum,phrase
+else's,phrase
+merci,phrase.fre
+basta,phrase.ita
+ce,phrase.ita
+grazie,phrase.ita
+pronto,phrase.ita
+buon,phrase.ita
+bene,phrase.ita
+pra,phrase.ita
+fa,phrase.ita
+nao,phrase.por
+bom dia,phrase.por
+sem,phrase.por
+nao,phrase.por
+bom dia,phrase.por
+espero,phrase.por
+sem,phrase.por
+bom,phrase.por
+falar,phrase.por
+cosmos,place.astro
 mars,place.astro
 orion,place.astro
 comet,place.astro
@@ -993,7 +1360,6 @@ jupiter,place.astro
 saturn,place.astro
 uranus,place.astro
 pluto,place.astro
-aquarius,place.astro
 palace,place.civil
 pipeline,place.civil
 jail,place.civil
@@ -1097,13 +1463,45 @@ monitoring station,place.civil
 resovoir,place.civil
 reservoir,place.civil
 parkway,place.civil
-las zonas,place.civil.spa
-el territorio,place.civil.spa
+state land,place.civil
+landing,place.civil
+downtown,place.civil
+federal building,place.civil
+park,place.civil
+public park,place.civil
+motel,place.civil
+house,place.civil
+lodge,place.civil
+greenhouse,place.civil
+major bank,place.civil
+theme park,place.civil
+chapel,place.civil
+brewery,place.civil
+activity center,place.civil
+supreme court,place.civil
+canal,place.civil
+library,place.civil
+broadway,place.civil
+downtown,place.civil
+town hall,place.civil
+warehouse,place.civil
+uptown,place.civil
+elementary school,place.civil
+cathedral,place.civil
+alley,place.civil
+city centre,place.civil
+basilica,place.civil
+club house,place.civil
+city center,place.civil
+causeway,place.civil
+amphitheater,place.civil
+corner store,place.civil
+courthouse,place.civil
+convent,place.civil
+corner shop,place.civil
 country,place.general
 desert,place.general
 land,place.general
-state land,place.civil
-landing,place.civil
 island,place.general
 islet,place.general
 valley,place.general
@@ -1159,7 +1557,6 @@ estate,place.general
 prefecture,place.general
 federation,place.general
 federal,place.general
-federal building,place.civil
 zone,place.general
 tract,place.general
 canton,place.general
@@ -1168,8 +1565,6 @@ division,place.general
 quarter,place.general
 republic,place.general
 site,place.general
-park,place.civil
-public park,place.civil
 hill,place.general
 mount,place.general
 alps,place.general
@@ -1191,10 +1586,6 @@ crossroads,place.general
 interstate,place.general
 nation,place.general
 sector,place.general
-motel,place.civil
-house,place.civil
-lodge,place.civil
-greenhouse,place.civil
 bar,place.general
 bank,place.general
 case,place.general
@@ -1224,7 +1615,6 @@ stream,place.general
 lake,place.general
 lakes,place.general
 river,place.general
-rio,place.general.spa
 shore,place.general
 straits,place.general
 water,place.general
@@ -1253,22 +1643,28 @@ far east,place.general
 the west coast,place.general
 east coast,place.general
 the east coast,place.general
-cita,place.general.non-english
-oblast,place.general.non-english
-voblast,place.general.non-english
+three-way,place.general
+four-way,place.general
+three way,place.general
+four way,place.general
+a river,place.general
+hills,place.general
+continent,place.general
+monde,place.general.fra
+departement,place.general.fra
+cita,place.general.ita
+oblast,place.general.rus
+voblast,place.general.rus
 krai,place.general.non-english
 kraj,place.general.non-english
 kray,place.general.non-english
-burg,place.general.non-english
-distrito,place.general.non-english
+burg,place.general
+distrito,place.general.ita
 gouvernorat,place.general.non-english
-estado,place.general.spa
-estao,place.general.non-english
+estao,place.general.por
 commune,place.general.non-english
 cercle,place.general.non-english
-partido,place.general.non-english
-municipio,place.general.spa
-territorio,place.general.spa
+partido,place.general.spa
 mintaqat,place.general.non-english
 tinh,place.general.non-english
 republica,place.general.non-english
@@ -1281,28 +1677,10 @@ veleyat,place.general.non-english
 wilayat,place.general.non-english
 sitio,place.general.non-english
 locacion,place.general.non-english
-cine,place.general.spa
-lugar,place.general.spa
-mundo,place.general.spa
-monde,place.general.fra
-provincia,place.general.spa
-departement,place.general.fra
-departmento,place.general.spa
-nacional,place.general.spa
-la zona,place.general.spa
-la provincia,place.general.spa
-la ciudad,place.general.spa
 atlantis,place.legend
 pacific,place.ocean
 atlantic,place.ocean
 in,preposition
-de,preposition.spa
-des,preposition.spa
-du,preposition.spa
-# la,preposition.spa
-las,preposition.spa
-los,preposition.spa
-en,preposition.spa
 autumn,season
 fall,season
 spring,season
@@ -1310,6 +1688,26 @@ summer,season
 midsummer,season
 winter,season
 midwinter,season
+pussy,slang
+dat,slang
+porno,slang
+la copa,sport
+masters,sport
+polo,sport
+mets,sport
+marathon,sport
+celtic,sport
+bowling,sport
+dodgers,sport
+bills,sport
+bucks,sport
+colts,sport
+rams,sport
+padres,sport
+bruins,sport
+cavaliers,sport
+ski,sport
+browns,sport
 select,stopword.web
 printer,stopword.web
 explorer,stopword.web
@@ -1452,7 +1850,6 @@ with,stopword.wordnet
 without,stopword.wordnet
 ye,stopword.wordnet
 you,stopword.wordnet
-yo,stopword.spa
 you-all,stopword.wordnet
 yours,stopword.wordnet
 yourself,stopword.wordnet
@@ -1565,6 +1962,8 @@ worth,stopword.wordnet
 yet,stopword.wordnet
 yon,stopword.wordnet
 yonder,stopword.wordnet
+rip,verb
+hop,verb
 able,verb
 ban,verb
 ban on,verb
@@ -1623,6 +2022,23 @@ blow,verb
 create,verb
 ruled,verb
 rap,verb
+woke,verb
+lay,verb
+sit,verb
+zoom,verb
+nag,verb
+wale,verb
+tote,verb
+snipe,verb
+woo,verb
+peep,verb
+dodge,verb
+dunk,verb
+troll,verb
+slaughter,verb
+clinch,verb
+espero,verb.por
+falar,verb.por
 mon,weekday
 tue,weekday
 tues,weekday
@@ -1641,6 +2057,41 @@ thursday,weekday
 friday,weekday
 saturday,weekday
 sunday,weekday
+buick,well-known.brand
+nike,well-known.brand
+samsung,well-known.brand
+uber,well-known.brand
+über,well-known.brand
+kobe,well-known.brand
+elle,well-known.brand
+honda,well-known.brand
+ferrari,well-known.brand
+audi,well-known.brand
+oreo,well-known.brand
+gaga,well-known.brand
+mcdonalds,well-known.brand
+nissan,well-known.brand
+lego,well-known.brand
+boeing,well-known.brand
+volkswagen,well-known.brand
+shakespeare,well-known.brand
+lenovo,well-known.brand
+puma,well-known.brand
+dior,well-known.brand
+kodak,well-known.brand
+bloomberg,well-known.brand
+nokia,well-known.brand
+doppler,well-known.brand
+olympus,well-known.brand
+rolling stone,well-known.brand
+rollingstone,well-known.brand
+suzuki,well-known.brand
+rolex,well-known.brand
+reebok,well-known.brand
+mustang,well-known.brand
+cadillac,well-known.brand
+camaro,well-known.brand
+monsanto,well-known.brand
 foia,well-known.concept
 american flag,well-known.concept
 pepsi,well-known.concept
@@ -1651,6 +2102,18 @@ cola,well-known.concept
 coca cola,well-known.concept
 disney,well-known.concept
 zodiac,well-known.concept
+dengue,well-known.disease
+lyme,well-known.disease
+ebola,well-known.disease
+zika,well-known.disease
+alaaddin,well-known.fiction
+aladin,well-known.fiction
+aladdin,well-known.fiction
+batman,well-known.fiction
+darth,well-known.fiction
+vader,well-known.fiction
+sherlock,well-known.fiction
+simpsons,well-known.fiction
 sears,well-known.org
 reuters,well-known.org
 coke,well-known.org
@@ -1680,37 +2143,5 @@ yoda,well-known.person
 ghandi,well-known.person
 gandhi,well-known.person
 shaq,well-known.person
-dengue,well-known.disease
-lyme,well-known.disease
-ebola,well-known.disease
 han,well-known.person
-three-way,place.general
-four-way,place.general
-three way,place.general
-four way,place.general
-major bank,place.civil
-theme park,place.civil
-mundial,adjective.spa
-small,adjective
-jubilee,noun
-chapel,place.civil
-swift,adjective
-miner,noun
-mining,noun
-avnil,noun
-gold mine,noun
-goldmine,noun
-virgin,adjective
-fox,noun
-diploma,noun
-cactus,noun
-maker,noun
-martial,adjective
-poly,adjective
-mint,noun
-lite,phrase
-romance,noun
-tag,noun
-hoy,noun.spa
-nino,noun.spa
-nina,noun.spa
+ali,well-known.person

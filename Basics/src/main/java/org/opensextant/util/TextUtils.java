@@ -143,8 +143,26 @@ public class TextUtils {
             + "\u0150\u0151\u0170\u0171" // double acute
             + "\u00D8\u00F8" // Scandanavian o Øø
             + "\u0100\u0101\u0112\u0113" // E-bar, A-bar
-
     ;
+    
+    private static final String COMMON_DIACRITC_HASHMARKS = "\"'`\u00B4\u2018\u2019";
+    /**
+     * If a string has extended latin diacritics.
+     * @param s
+     * @return true if a single diacritic is found.
+     */
+    public final static boolean hasDiacritics(final String s){
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (ALPHAMAP_UNICODE.indexOf(c)>=0){
+                return true;
+            }
+            if (COMMON_DIACRITC_HASHMARKS.indexOf(c)>=0){
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * remove accents from a string and replace with ASCII equivalent Reference:

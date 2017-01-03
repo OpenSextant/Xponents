@@ -1,0 +1,454 @@
+exclusion,category
+#la,article
+a al,phrase
+a la,phrase
+a mi,phrase
+abajo,direction
+abuela,noun
+abuelo,noun
+aca,pronoun
+ača,pronoun
+academia,noun
+acuario,myth.spa
+adios,phrase
+adiós,phrase
+administración,noun
+aero,noun
+aeroporto,place.civil.spa
+aeropuerto,place.civil.spa
+agua,noun
+ahora,noun
+al fin,phrase
+alerta,noun
+algún día,phrase
+algunas,noun
+alto,adjective.spa
+amigo,noun
+amigos,noun
+amo,noun
+amores,noun
+anda,verb
+año,noun
+ano,noun
+antes,preposition.spa
+aqua,noun
+aqui esta,phrase
+arte,noun
+asi,article
+ayer,noun
+ayuda,noun
+azul,color.spa
+baja,preposition.spa
+banca,noun
+banco,noun.spa
+banda,noun.spa
+bando,noun
+barrios,place.civil.spa
+besar,verb
+bienvenido,phrase
+blanco,color.spa
+boca,noun
+bravo,phrase
+brillante,adjective.spa
+buen,adjective.spa
+buen día,phrase
+buenas noches,phrase
+buenas tardes,phrase
+bueno,adjective.spa
+buenos,adjective.spa
+buenos días,phrase
+busca,verb
+calles,noun
+calma,noun
+cambio,noun
+canciones,noun
+cantina,noun
+carne,noun
+carta,noun
+ças,noun
+casa,noun.spa
+casada,adjective.spa
+casado,adjective.spa
+casados,adjective.spa
+casi,phrase
+caso,noun
+catedral,noun
+catorce,noun
+cerrada,noun
+cerrado,noun
+chico,noun
+chicos,noun
+chino,noun
+cien,noun
+cine,place.general.spa
+cinta,noun
+ciudad,noun
+claro,adjective.spa
+comer,verb
+como,phrase
+con quien,phrase
+con su,phrase
+con tu,phrase
+congreso,noun
+constitución,noun
+contra,preposition.spa
+copa,noun
+cosa,noun
+creo,noun
+cuadrado,noun
+cuadro,noun
+cuando,noun
+cuarto,noun
+cultura,noun
+de,preposition.spa
+de lo,phrase
+de luz,phrase
+del norte,phrase
+democracia,noun
+departmento,place.general.spa
+derechos humanos,noun
+des,preposition.spa
+dias,noun
+dio,noun
+dios mio,phrase
+dios,noun
+dios mío,phrase
+dolor de cabeza,noun
+dos,enum.spa
+drogas,noun
+du,preposition.spa
+economía,noun
+educación,noun
+el acuerdo,noun
+el aire,noun
+el amor,noun
+el arte,noun
+el cáncer,noun
+el congreso,noun
+el derecho,noun
+el fin,noun
+el gobierno,noun
+el lado,noun
+el libro,noun
+el mal,noun
+el mar,noun
+el mas,noun
+el metro,noun
+el mundo,noun
+el niño,noun
+el nuevo,noun
+el país,noun
+el partido,noun
+el piso,noun
+el premio,noun
+el presidente,noun
+el primero,noun
+el problema,noun
+el pueblo,noun
+el punto,noun
+el sector,noun
+el segundo,noun
+el señor,noun
+el telefono,noun
+el territorio,place.civil.spa
+el tiempo,noun
+el unico,noun
+el uso,noun
+el verde,noun
+emergencia,noun
+en,preposition.spa
+en medio,noun
+encuentro,noun
+eres,verb
+es,verb
+esa,article
+esas,article
+esās,article
+escucha,verb
+ese,article
+eso,article
+estado,place.general.spa
+esto,article
+estudiantes,noun
+euro,noun
+europa,noun
+felicidades,noun
+feliz,noun
+fiesta,noun
+fin,noun
+fotos,noun
+fuerte,adjective.spa
+ghetto,noun
+globo,noun
+gobernador,noun
+gobierno,noun
+gracias,phrase
+gracias a dios,phrase
+gran,adjective.spa
+grande,adjective.spa
+grandes,adjective.spa
+grupo,noun.spa
+guarda,noun
+habla,verb
+hacienda,noun.spa
+hay,article
+hermano,noun
+hermoso,noun
+historia,noun
+hola,phrase
+hora,phrase
+hoy,noun.spa
+huracán,spa
+independiente,spa
+internacional,spa
+jamas,spa
+jefe,spa
+joven,spa
+juega,spa
+junto,spa
+justicia,spa
+justo,spa
+la calle,noun
+la cama,noun
+la campana,noun
+la cara,noun
+la carta,noun
+la casa,noun
+la ciudad,place.general.spa
+la constitución,noun
+la familia,noun
+la felicidad,noun
+la fiesta,noun
+la guerra,noun
+la historia,noun
+la hora,noun
+la izquierda,noun
+la justicia,noun
+la juventud,noun
+la letra,noun
+la libertad,noun
+la luz,noun
+la mama,noun
+la mañana,noun
+la marcha,noun
+la memoria,noun
+la mesa,noun
+la mia,noun
+la mujer,noun
+la musica,noun
+la nacion,noun
+la noche,noun
+la película,noun
+la pobreza,noun
+la premiere,noun
+la presentacion,noun
+la presidencia,noun
+la primera,noun
+la provincia,place.general.spa
+la region,noun
+la relacion,noun
+la respuesta,noun
+la revolucion,noun
+la ruta,noun
+la salida,noun
+la salud,noun
+la semana,noun
+la soledad,noun
+la unica,noun
+la unidad,noun
+la unión,noun
+la venta,noun
+la verdad,noun
+la victoria,noun
+la vida,noun
+la vista,noun
+la zona,place.general.spa
+las,preposition.spa
+las canciones,noun
+las chicas,noun
+las mujeres,noun
+las nuevas,noun
+las pelotas,noun
+las primeras,noun
+las zonas,place.civil.spa
+leer,verb
+ley,noun
+libertad,noun
+libertadores,noun
+lista,adjective.spa
+lo,article.spa
+los,preposition.spa
+los buenos,noun
+los niños,noun
+los partidos,noun
+los problemas,noun
+los sueños,noun
+lugar,place.general.spa
+madre,spa
+madre mia,spa
+maduro,spa
+mais,spa
+mal,adjective.spa
+mama,spa
+manāna,spa
+mano,spa
+martes,spa
+marzo,spa
+mas,spa
+mas nunca,spa
+memória,spa
+mes,spa
+mesa,spa
+mi sueño,spa
+militar,spa
+ministerio,spa
+ministro,spa
+mio,spa
+mis,spa
+mis amores,spa
+moda,spa
+morena,spa
+mucha,spa
+muerte,adjective.spa
+mūjer,spa
+mujeres,spa
+mundial,adjective.spa
+mundo,place.general.spa
+municipio,place.general.spa
+museo,spa
+musica,spa
+nacho,spa
+nacional,place.general.spa
+nadie,spa
+niña,
+nina,noun.spa
+niño,noun.spa
+niños,spa
+no tengo,spa
+no se,phrase
+no-se,spa
+noche,spa
+nos,spa
+nota,spa
+notícia,spa
+noticia,
+nuestro,spa
+nueva,spa
+nuevo,spa
+odio,spa
+ojo,spa
+onde,spa
+oro,spa
+otro lado,spa
+pápa,spa
+parque,spa
+pasa,spa
+pasar,spa
+paso,spa
+pero,spa
+planeta,spa
+playa,spa
+pobre,spa
+policía,spa
+por fin,spa
+premio,
+premió,spa
+primavera,spa
+primera,enum.spa
+primero,enum.spa
+projeto,spa
+provincia,place.general.spa
+proyecto,spa
+publico,
+público,spa
+puebla,spa
+pueblo,spa
+puede ser,spa
+puedes,spa
+puerto,noun.spa
+punto,spa
+puta,spa
+que grande,spa
+que veo,spa
+quêremos,spa
+quiero,spa
+quimica,spa
+rapido,spa
+rápido,spa
+realidad,spa
+recuerda,spa
+reforma,spa
+revista,spa
+rio,place.general.spa
+rojo,spa
+s an,spa
+sabe,spa
+sabes,spa
+salud,spa
+segunda,enum.spa
+segundo,enum.spa
+seguridad,spa
+seguro,spa
+semana santa,spa
+senor,spa
+ser,spa
+seria,spa
+serio,spa
+sério,spa
+sexo,spa
+si te gusta,spa
+sistema,spa
+somos,spa
+soy,spa
+su,spa
+su casa,spa
+t’as,spa
+tal,spa
+tanta,spa
+te espero,spa
+tema,spa
+tengo,spa
+territorio,place.general.spa
+tio,spa
+tito,spa
+toda,spa
+todo el día,spa
+todo mundo,spa
+todos los días,spa
+tomar,spa
+trabajo,spa
+tranquilo,spa
+tu,spa
+tu te,spa
+tus,spa
+ultima,spa
+unica,spa
+universidad,spa
+uno,enum.spa
+uso,spa
+vacaciones,spa
+vamos,phrase.spa
+vámos,spa
+vaya,spa
+veo,spa
+ver,spa
+verdad,spa
+verde,spa
+vino,spa
+visita,spa
+vista,spa
+vive,spa
+voces,spa
+vota,spa
+voz,spa
+y lo,spa
+y tu,spa
+ya lo,phrase.spa
+ya ló,spa
+yo,stopword.spa
+caliente,
+caballeros,
+caballo,
+caballito,
+continente,
+cabana,
