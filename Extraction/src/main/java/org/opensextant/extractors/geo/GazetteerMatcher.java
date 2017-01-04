@@ -42,9 +42,6 @@ package org.opensextant.extractors.geo;
 //*  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //*/
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -72,8 +69,6 @@ import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.util.SolrProxy;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
-import org.supercsv.io.CsvMapReader;
-import org.supercsv.prefs.CsvPreference;
 
 /**
  *
