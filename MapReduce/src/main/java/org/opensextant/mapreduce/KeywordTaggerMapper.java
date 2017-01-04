@@ -83,7 +83,12 @@ public class KeywordTaggerMapper extends AbstractMapper {
     public void map(BytesWritable key, Text textRecord, Context context)
             throws IOException, InterruptedException {
         ++counter;
-        TextInput textObj = prepareInput(null, textRecord);
+        TextInput textObj = null;
+        try {
+            textObj = prepareInput(null, textRecord);
+        } catch (java.lang.NullPointerException npe) {
+            log.error("Failed on record {}", textRecord.toString().substring(0, 50));
+        }
         if (textObj == null) {
             return;
         }
