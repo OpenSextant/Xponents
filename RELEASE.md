@@ -1,7 +1,9 @@
 #2017#
-* Xponents 2.9.2
+* Xponents 2.9.3
  - Solr Gazetteer: non-places split into general and spanish as the major groupings.
  - PlaceGeocoder: nonsense filter handles short matches for diacritic mismatch
+ - Filters:  CLASSPATH order is important, gazetteer/conf must appear first in classpath to override anything else.  
+   Do NOT include test JARs in production setting or in evaluation -- If you do, then be aware of CLASSPATH.
 
 #2016#
 * Xponents 2.9.0 

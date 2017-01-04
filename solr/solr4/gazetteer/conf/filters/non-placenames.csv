@@ -380,6 +380,7 @@ thor,myth
 nirvana,myth
 bigfoot,myth
 pinnacle,noun
+marker,noun
 primer,noun
 loyalist,noun
 guess,noun
@@ -1362,6 +1363,10 @@ saturn,place.astro
 uranus,place.astro
 pluto,place.astro
 palace,place.civil
+mosque,place.civil
+bunker,place.civil
+harbour,place.civil
+harbor,place.civil
 pipeline,place.civil
 jail,place.civil
 checkpoint,place.civil
@@ -1506,6 +1511,7 @@ country,place.general
 desert,place.general
 land,place.general
 island,place.general
+islands,place.general
 islet,place.general
 valley,place.general
 ridge,place.general
@@ -2148,3 +2154,6 @@ gandhi,well-known.person
 shaq,well-known.person
 han,well-known.person
 ali,well-known.person
+secession,noun
+rich,adjective
+rife,adjective

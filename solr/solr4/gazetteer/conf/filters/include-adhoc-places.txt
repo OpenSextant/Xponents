@@ -40,6 +40,7 @@ santos
 tijuana
 cruz
 houston
+compton
 hampton
 roma
 selma

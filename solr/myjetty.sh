@@ -2,7 +2,6 @@
 
 JETTY_BASE=$PWD
 SOLR_HOME=$PWD/solr4
-PORT=7000
 STOP_PORT=7007
 basedir=$JETTY_BASE
 export JETTY_HOME=$basedir/jetty9

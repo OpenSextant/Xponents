@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
-import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.util.FileUtility;
@@ -35,7 +34,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class PersonNameFilter extends GeocodeRule {
 
-    private MatchFilter filter = null;
+    private Set<String> nameFilter = null;
     private Set<String> titles = null;
     private Set<String> suffixes = null;
 
@@ -49,14 +48,22 @@ public class PersonNameFilter extends GeocodeRule {
      */
     public PersonNameFilter(URL names, URL persTitles, URL persSuffixes) throws ConfigException {
         try {
-            filter = new MatchFilter(names);
+            nameFilter = FileUtility.loadDictionary(names, false);
             titles = FileUtility.loadDictionary(persTitles, false);
             suffixes = FileUtility.loadDictionary(persSuffixes, false);
+            debug();
         } catch (IOException filterErr) {
             throw new ConfigException("Default filter not found", filterErr);
         }
     }
 
+    private void debug(){
+        if (log.isDebugEnabled()){
+            log.debug("NAME FILTER\n\t{}", nameFilter);
+            log.debug("TITLE FILTER\n\t{}", titles);
+            log.debug("SUFFIX FILTER\n\t{}", suffixes);
+        }
+    }
     /**
      * Default constructor here used resource paths (which are retrieved as getResourceAsStream()
      * Instead of retrieving resource URLs or files.  This works best if you know your 
@@ -69,9 +76,10 @@ public class PersonNameFilter extends GeocodeRule {
      */
     public PersonNameFilter(String namesPath, String persTitlesPath, String persSuffixesPath) throws ConfigException {
         try {
-            filter = new MatchFilter(namesPath);
+            nameFilter = FileUtility.loadDictionary(namesPath, false);
             titles = FileUtility.loadDictionary(persTitlesPath, false);
             suffixes = FileUtility.loadDictionary(persSuffixesPath, false);
+            debug();            
         } catch (IOException filterErr) {
             throw new ConfigException("Default filter not found", filterErr);
         }
@@ -248,19 +256,21 @@ public class PersonNameFilter extends GeocodeRule {
                     name.setFilteredOut(true);
                     resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
                     name.addRule("PersonTitle");
+                    name.addRule("Prefix="+pre);                    
                     return true;
                 }
 
-                if (filter.filterOut(pre)) {
+                if (nameFilter.contains(pre)) {
                     name.setFilteredOut(true);
                     resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
                     name.addRule("PersonName");
+                    name.addRule("Prefix="+pre);
                     return true;
                 }
             }
         }
 
-        if (filter.filterOut(name.getTextnorm())) {
+        if (nameFilter.contains(name.getTextnorm())) {
             name.setFilteredOut(true);
             resolvedPersons.put(name.getTextnorm(), name.getText());
             name.addRule("PersonName");
