@@ -1,5 +1,9 @@
-#2016#
+#2017#
+* Xponents 2.9.2
+ - Solr Gazetteer: non-places split into general and spanish as the major groupings.
+ - PlaceGeocoder: nonsense filter handles short matches for diacritic mismatch
 
+#2016#
 * Xponents 2.9.0 
  - Fresh look at how resource files are pulled from CLASSPATH:  InputStream (getResourceAsStream()) is the primary entry point to 
    pulling in any sort of config file or data resource.  Getting File or URL should be left to the caller of APIs. If such things
