@@ -45,7 +45,7 @@ public class NonsenseFilter extends GeocodeRule {
      * @return
      */
     protected static final boolean isPhoneticMatch(final String ph1, final String n2) {
-        final String ph2 = phoneticRedux(n2); 
+        final String ph2 = phoneticRedux(n2);
         return ph2.equalsIgnoreCase(ph1);
     }
 
@@ -114,28 +114,41 @@ public class NonsenseFilter extends GeocodeRule {
             if (p.getLength() < GENERIC_ONE_WORD) {
                 boolean hasValidGeo = false;
                 String ph1 = phoneticRedux(p.getTextnorm());
+                String diacriticRule = null;
                 for (Place geo : p.getPlaces()) {
                     boolean geoDiacritics = TextUtils.hasDiacritics(geo.getPlaceName());
-                    if (geoDiacritics == p.hasDiacritics) {
+                    if (geoDiacritics && p.hasDiacritics) {
                         hasValidGeo = true;
+                        diacriticRule = "Matched-Diacritics";
                         break;
                     }
+                    if (!geoDiacritics && !p.hasDiacritics) {
+                        hasValidGeo = true;
+                        // both ASCII? not worth tracking.
+                        break;
+                    }
+                    
                     /* Pattern: Official name has accented/emphasis markings on the name, such as:
                      *     `NAME   or NAME`
                      * Where NAME is some Latin transliteration of non-Latin script    
                      */
                     if (geo.getNamenorm().contains(p.getTextnorm())) {
                         hasValidGeo = true;
+                        diacriticRule = "Location-Contains-Name";
                         break;
                     }
                     if (isPhoneticMatch(ph1, geo.getNamenorm())) {
                         hasValidGeo = true;
+                        diacriticRule = "Matched-Phonetic";
                         break;
                     }
+                    log.debug("\t{} != {}", p.getTextnorm(), geo.getNamenorm());
                 }
                 if (!hasValidGeo) {
                     p.setFilteredOut(true);
                     p.addRule("Nonsense,Mismatched,Diacritic");
+                } else if (diacriticRule!=null) {
+                    p.addRule(diacriticRule);
                 }
             }
         }
