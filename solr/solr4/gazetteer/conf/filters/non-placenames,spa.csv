@@ -425,6 +425,7 @@ ultima,spa
 unica,spa
 universidad,spa
 uno,enum.spa
+una,enum.spa
 uso,spa
 vacaciones,spa
 vamos,phrase.spa
@@ -446,9 +447,10 @@ y tu,spa
 ya lo,phrase.spa
 ya ló,spa
 yo,stopword.spa
-caliente,
-caballeros,
-caballo,
-caballito,
-continente,
-cabana,
+caliente,adjective.spa
+caballeros,noun.spa
+caballo,noun.spa
+caballito,noun.spa
+continente,noun.spa
+cabana,noun.spa
+esquinas,noun.spa

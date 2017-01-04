@@ -765,8 +765,9 @@ elf,noun
 bath,noun
 button,noun
 jag,noun
-spa,noun
-resort,noun
+spa,place.civil
+resort,place.civil
+resort island,place.civil
 nail,noun
 bench,noun
 yard,noun
@@ -2157,3 +2158,139 @@ ali,well-known.person
 secession,noun
 rich,adjective
 rife,adjective
+brit,adjective
+arsenal,place.civil
+airfield,place.civil
+cascades,place.general
+corners,noun
+crews,noun
+generals,noun
+hopper,noun
+hull,noun
+mock,verb
+paramount,adjective
+parachute,noun
+polaris,place.astro
+ransom,noun
+samples,noun
+trace,noun
+worthy,adjective
+a do,phrase
+ages,noun
+aging,verb
+antiquities,noun
+arcade,place.civil
+battlefield,place.civil
+beers,noun
+bonds,noun
+bounds,noun
+bury,verb
+butcher,noun
+cabin,noun
+colony,noun
+compound,noun
+cooks,noun
+coop,noun
+couch,noun
+cousins,noun
+creek,place.general
+dandy,adjective
+dig,verb
+dinosaur,noun
+demos,noun
+diva,noun
+dixie,noun
+dole,noun
+drain,noun
+gist,noun
+handy,adjective
+hometown,place.civil
+holy city,noun
+hoo,phrase
+hen,noun
+hospice,noun
+lick,noun
+main stream,adjective
+medic,noun
+oilfield,noun
+outlaw,noun
+pall,noun
+parse,verb
+pup,noun
+pursuer,noun
+purser,noun
+public library,place.civil
+public school,place.civil
+rapport,noun
+reset,verb
+red line,noun
+shook,verb
+shores,noun
+shun,verb
+simmers,verb
+siren,noun
+sells,verb
+seminary,place.civil
+spear,noun
+small point,phrase
+shallow water,phrase
+sonar,noun
+stamps,noun
+stern,noun
+sum,noun
+sys,abbrev
+verge,noun
+vest,noun
+xin,abbrev
+arcangel,noun
+billing,noun
+quadrangle,place.civil
+port of entry,place.civil
+port authority,noun
+residency,noun
+sic,abbrev
+carton,noun
+ape,animal
+avian,adjective
+bug,animal
+bat,animal
+char,internet
+cold water,noun
+dairy,noun
+errata,noun
+foxes,animal
+gram,noun
+gopher,animal
+hatch,noun
+hygiene,noun
+institut,place.civil
+little red,well-known.fiction
+mink,animal
+neg,phrase
+narco,noun
+mosquito,animal
+ortho,abbrev
+panda,animal
+pleasant,adjective
+refs,noun
+rain forest,place.general
+raccoon,animal
+quarantine,place.civil
+proc,internet
+rains,verb
+seabird,animal
+serenade,verb
+setup,verb
+summer home,place.civil
+viking,noun
+wolfs,animal
+cuz,slang
+essay,noun
+frisbee,sport
+jam,food
+overlook,place.civil
+rec,abbrev
+rushing,verb
+tuna,animal
+tux,noun
+port city,place.civil
