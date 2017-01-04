@@ -149,10 +149,11 @@ public class PlaceCandidate extends TextMatch {
     public void choose(Place geo) {
         if (geo instanceof ScoredPlace) {
             choice1 = (ScoredPlace) geo;
-        } else if (scoredPlaces.containsKey(geo.getKey())) {
-            choice1 = scoredPlaces.get(geo.getKey());
         } else {
-            //             
+            String k = makeKey(geo);
+            if (scoredPlaces.containsKey(k)) {
+                choice1 = scoredPlaces.get(k);
+            }
         }
     }
 
@@ -244,19 +245,19 @@ public class PlaceCandidate extends TextMatch {
             secondPlaceScore = tmp.get(1).getScore();
         }
     }
-    
+
     /**
      * This only makes sense if you tried choose() first 
      * to sort scored places.
      * 
      * @return
      */
-    public boolean isAmbiguous(){
-        if (choice2!=null && choice1!=null){
+    public boolean isAmbiguous() {
+        if (choice2 != null && choice1 != null) {
             // float == float  does this work in Java?  7.125 == 7.125 ? 
             // 
             // first place Not better than second place?
-            return !(choice1.getScore()>choice2.getScore());
+            return !(choice1.getScore() > choice2.getScore());
         }
         return false;
     }
@@ -285,15 +286,26 @@ public class PlaceCandidate extends TextMatch {
         this.addPlace(place, defaultScore(place));
         this.rules.add("DefaultScore");
     }
-    
-    public boolean hasDefaultRuleOnly(){
-        return rules.contains("DefaultScore") && rules.size()==1;
+
+    public boolean hasDefaultRuleOnly() {
+        return rules.contains("DefaultScore") && rules.size() == 1;
+    }
+
+    /**
+     * Each place has an ID, but this candidate scoring mechanism must score
+     * distinct ID+NAME tuples.  As name variances play into scoring and choosing.
+     * 
+     * @param p
+     * @return
+     */
+    public String makeKey(Place p) {
+        return String.format("%s~%s", p.getKey(), p.getNamenorm());
     }
 
     // add a new place with a specific score
     public void addPlace(ScoredPlace place, Double score) {
         place.setScore(score);
-        this.scoredPlaces.put(place.getKey(), place);
+        this.scoredPlaces.put(makeKey(place), place);
 
         // 'US.CA' or 'US.06', etc.
         this.hierarchicalPaths.add(place.getHierarchicalPath());
@@ -379,8 +391,8 @@ public class PlaceCandidate extends TextMatch {
         }
         int score = DEFAULT_DESIGNATION_WT;
         wt = classWeight.get(g.getFeatureClass());
-        if (wt!=null){
-            score += wt.intValue();    
+        if (wt != null) {
+            score += wt.intValue();
         }
 
         return (float) score / 10;
@@ -388,7 +400,7 @@ public class PlaceCandidate extends TextMatch {
 
     // increment the score of an existing place
     public void incrementPlaceScore(Place place, Double score) {
-        ScoredPlace currentScore = this.scoredPlaces.get(place.getKey());
+        ScoredPlace currentScore = this.scoredPlaces.get(makeKey(place));
         if (currentScore != null) {
             currentScore.incrementScore(score);
         } else {
@@ -399,7 +411,7 @@ public class PlaceCandidate extends TextMatch {
 
     // set the score of an existing place
     public void setPlaceScore(ScoredPlace place, Double score) {
-        if (!this.scoredPlaces.containsKey(place.getKey())) {
+        if (!this.scoredPlaces.containsKey(makeKey(place))) {
             // log.error("Tried to increment a score for a non-existent Place");
             return;
         }
