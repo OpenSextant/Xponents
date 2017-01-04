@@ -115,7 +115,9 @@ public class NonsenseFilter extends GeocodeRule {
                 boolean hasValidGeo = false;
                 String ph1 = phoneticRedux(p.getTextnorm());
                 String diacriticRule = null;
+                log.debug("Testing phrase {} phonetic:{}", p.getTextnorm(), ph1);
                 for (Place geo : p.getPlaces()) {
+                    log.debug("\tPLACE={}, {}", geo, geo.getNamenorm());
                     boolean geoDiacritics = TextUtils.hasDiacritics(geo.getPlaceName());
                     if (geoDiacritics && p.hasDiacritics) {
                         hasValidGeo = true;
