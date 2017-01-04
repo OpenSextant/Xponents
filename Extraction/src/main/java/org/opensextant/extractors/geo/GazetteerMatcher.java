@@ -463,9 +463,18 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             String matchText = (String) tag.get("matchText");
             // Get char immediately following match, for light NLP rules.
             char postChar = 0;
+            char preChar = 0;
             if (x2 < buffer.length()) {
                 postChar = buffer.charAt(x2);
             }
+            if (x1 > 0) {
+                preChar = buffer.charAt(x1 - 1);
+                if (assessApostrophe(preChar, matchText)) {
+                    ++this.defaultFilterCount;
+                    continue;
+                }
+            }
+
 
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would. 
             // be allowed. If lowercase abbreviations are allowed, then all matches are passed.               
@@ -654,6 +663,24 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         this.matchedTotal += candidates.size();
 
         return new ArrayList<PlaceCandidate>(candidates.values());
+    }
+
+    private static final String CONTRACTIONS="SsTtDd";
+
+    /**
+     * Context: if pattern appears to be in context " ....'s NAME..."
+     * Trivial:  If apos preceeds a MATCH, e.g. 'MATCH, then check if MATCH is "s xxxxx"
+     * NOTE: looking for a fast character check without too much String operations.
+     * @param c
+     * @param t
+     * @return true this starts with the 'S,'T, 'D in a contraction.
+     */
+    private static boolean assessApostrophe(final char c, final String t) {
+        if (c == '\'' || c == '\u2019') {
+            char c0 = t.charAt(0);
+            return (CONTRACTIONS.indexOf(c0)>=0 && t.charAt(1) == ' ');
+        }
+        return false;
     }
 
     private void assessAbbreviation(PlaceCandidate pc, ScoredPlace pGeo, char postChar, boolean docIsUPPER) {
