@@ -69,6 +69,8 @@ import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.util.SolrProxy;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
+// import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -124,6 +126,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *             on err
      */
     public GazetteerMatcher(boolean lowercaseAllowed) throws ConfigException {
+        log = LoggerFactory.getLogger(GazetteerMatcher.class);
         initialize();
         allowLowerCase = lowercaseAllowed;
 
@@ -557,6 +560,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             //double maxNameBias = 0.0;
             for (Integer solrId : placeRecordIds) {
+                log.debug("{} = {}", pc.getText(), beanMap.get(solrId));
                 // Yes, we must cast here.
                 // As long as createTag generates the correct type stored in
                 // beanMap we are fine.
