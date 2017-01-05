@@ -34,6 +34,14 @@ pros,abbrev
 tum,abbrev
 glo,abbrev
 acme,abbrev
+sys,abbrev
+xin,abbrev
+sic,abbrev
+ortho,abbrev
+rec,abbrev
+alt,abbrev
+astro,abbrev
+chem,abbrev
 supreme,adjective
 imperial,adjective
 keen,adjective
@@ -170,6 +178,16 @@ crisp,adjective
 californian,adjective
 cornish,adjective
 buff,adjective
+rich,adjective
+rife,adjective
+paramount,adjective
+worthy,adjective
+dandy,adjective
+handy,adjective
+main stream,adjective
+avian,adjective
+pleasant,adjective
+vegan,adjective
 bon,adjective.fre
 nouveau,adjective.fre
 de novo,adjective.ita
@@ -180,6 +198,7 @@ novo,adjective.ita
 bello,adjective.ita
 forte,adjective.ita
 bom,adjective.por
+boa,adjective.por
 shortly,adverb
 eagles,animal
 spider,animal
@@ -199,6 +218,22 @@ turtle,animal
 frog,animal
 coyote,animal
 anaconda,animal
+ape,animal
+bug,animal
+bat,animal
+foxes,animal
+gopher,animal
+mink,animal
+mosquito,animal
+panda,animal
+raccoon,animal
+seabird,animal
+wolfs,animal
+tuna,animal
+camel,animal
+cougar,animal
+crab,animal
+crow,animal
 the,article
 moi,article.fre
 qui,article.fre
@@ -209,6 +244,7 @@ tras,article.ita
 uni,article.ita
 gli,article.ita
 tra,article.ita
+tudo,article.por
 aquarius,astrology
 acuario,astrology
 aries,astrology
@@ -253,6 +289,8 @@ lent,concept.religion
 adam and eve,concept.religion
 allah,concept.religion
 ala,concept.religion
+quran,concept.religion
+koran,concept.religion
 north,directional
 northern,directional
 north-east,directional
@@ -303,7 +341,9 @@ vi,enum
 vii,enum
 viii,enum
 ix,enum
+number 1,enum
 secondo,enum.ita
+sei,enum.ita
 fries,food
 taco,food
 strawberry,food
@@ -330,9 +370,16 @@ cracker,food
 crawfish,food
 corndog,food
 butternut,food
+jam,food
+ale,food
+avocado,food
+cucumber,food
+pancake,food
 christmas,holiday
 good friday,holiday
+valentines,holiday
 valentine's,holiday
+mardi gras,holiday
 pic,internet
 cam,internet
 wireless,internet
@@ -351,6 +398,10 @@ vines,internet
 var,internet
 arg,internet
 dev,internet
+char,internet
+proc,internet
+apps,internet
+deus,latin
 december,month
 dec,month
 november,month
@@ -379,6 +430,7 @@ gotham,myth
 thor,myth
 nirvana,myth
 bigfoot,myth
+papa,noun
 pinnacle,noun
 marker,noun
 primer,noun
@@ -765,9 +817,6 @@ elf,noun
 bath,noun
 button,noun
 jag,noun
-spa,place.civil
-resort,place.civil
-resort island,place.civil
 nail,noun
 bench,noun
 yard,noun
@@ -872,10 +921,99 @@ basher,noun
 cornerstone,noun
 buttermilk,noun
 cabaret,noun
+secession,noun
+corners,noun
+crews,noun
+generals,noun
+hopper,noun
+hull,noun
+parachute,noun
+ransom,noun
+samples,noun
+trace,noun
+ages,noun
+antiquities,noun
+beers,noun
+bonds,noun
+bounds,noun
+butcher,noun
+cabin,noun
+colony,noun
+compound,noun
+cooks,noun
+coop,noun
+couch,noun
+cousins,noun
+dinosaur,noun
+demos,noun
+diva,noun
+dixie,noun
+dole,noun
+drain,noun
+gist,noun
+holy city,noun
+hen,noun
+hospice,noun
+lick,noun
+medic,noun
+oilfield,noun
+outlaw,noun
+pall,noun
+pup,noun
+pursuer,noun
+purser,noun
+rapport,noun
+red line,noun
+shores,noun
+siren,noun
+spear,noun
+sonar,noun
+stamps,noun
+stern,noun
+sum,noun
+verge,noun
+vest,noun
+arcangel,noun
+billing,noun
+port authority,noun
+residency,noun
+carton,noun
+cold water,noun
+dairy,noun
+errata,noun
+gram,noun
+hatch,noun
+hygiene,noun
+narco,noun
+refs,noun
+viking,noun
+essay,noun
+tux,noun
+charity,noun
+mercy,noun
+visa,noun
+credit card,noun
+haven,noun
+man,noun
+men,noun
+mens,noun
+atlas,noun
+anthem,noun
+aquarium,noun
+bolt,noun
+clinic,noun
+clover,noun
+courtesy,noun
+cork,noun
+coupe,noun
+credo,noun
+crafts,noun
+mach,noun
 l'heure,noun.fre
 ligue,noun.fre
 la maison,noun.fre
 amor,noun.ita
+liga,noun.ita
 la liga,noun.ita
 amore,noun.ita
 volta,noun.ita
@@ -1071,6 +1209,13 @@ mum,person.label
 sis,person.label
 prez,person.label
 bubba,person.label
+brit,person.label
+brits,person.label
+ass,person.label
+cardinal,person.label
+collector,person.label
+ma am,person.label
+ma'am,person.label
 pir,person.label.mideast
 rabbi,person.label.mideast
 imam,person.label.mideast
@@ -1304,7 +1449,6 @@ dah,phrase
 aye,phrase
 a young,phrase
 boo,phrase
-number 1,enum
 bah,phrase
 bam,phrase
 goodluck,phrase
@@ -1334,6 +1478,16 @@ a better view,phrase
 bright star,phrase
 hum,phrase
 else's,phrase
+a do,phrase
+hoo,phrase
+small point,phrase
+shallow water,phrase
+neg,phrase
+new post,phrase
+alas,phrase
+aha,phrase
+aloha,phrase
+voila,phrase
 merci,phrase.fre
 basta,phrase.ita
 ce,phrase.ita
@@ -1363,6 +1517,10 @@ jupiter,place.astro
 saturn,place.astro
 uranus,place.astro
 pluto,place.astro
+polaris,place.astro
+spa,place.civil
+resort,place.civil
+resort island,place.civil
 palace,place.civil
 mosque,place.civil
 bunker,place.civil
@@ -1508,6 +1666,23 @@ corner store,place.civil
 courthouse,place.civil
 convent,place.civil
 corner shop,place.civil
+arsenal,place.civil
+airfield,place.civil
+arcade,place.civil
+battlefield,place.civil
+hometown,place.civil
+public library,place.civil
+public school,place.civil
+seminary,place.civil
+quadrangle,place.civil
+port of entry,place.civil
+institut,place.civil
+quarantine,place.civil
+summer home,place.civil
+overlook,place.civil
+port city,place.civil
+boulevard,place.civil
+capitol,place.civil
 country,place.general
 desert,place.general
 land,place.general
@@ -1660,21 +1835,21 @@ four way,place.general
 a river,place.general
 hills,place.general
 continent,place.general
+burg,place.general
+cascades,place.general
+creek,place.general
+rain forest,place.general
+cay,place.general
 monde,place.general.fra
 departement,place.general.fra
 cita,place.general.ita
-oblast,place.general.rus
-voblast,place.general.rus
+distrito,place.general.ita
 krai,place.general.non-english
 kraj,place.general.non-english
 kray,place.general.non-english
-burg,place.general
-distrito,place.general.ita
 gouvernorat,place.general.non-english
-estao,place.general.por
 commune,place.general.non-english
 cercle,place.general.non-english
-partido,place.general.spa
 mintaqat,place.general.non-english
 tinh,place.general.non-english
 republica,place.general.non-english
@@ -1687,6 +1862,10 @@ veleyat,place.general.non-english
 wilayat,place.general.non-english
 sitio,place.general.non-english
 locacion,place.general.non-english
+estao,place.general.por
+oblast,place.general.rus
+voblast,place.general.rus
+partido,place.general.spa
 atlantis,place.legend
 pacific,place.ocean
 atlantic,place.ocean
@@ -1701,6 +1880,10 @@ midwinter,season
 pussy,slang
 dat,slang
 porno,slang
+cuz,slang
+yall,slang
+y'all,slang
+lemme,slang
 la copa,sport
 masters,sport
 polo,sport
@@ -1718,6 +1901,7 @@ bruins,sport
 cavaliers,sport
 ski,sport
 browns,sport
+frisbee,sport
 select,stopword.web
 printer,stopword.web
 explorer,stopword.web
@@ -2047,8 +2231,31 @@ dunk,verb
 troll,verb
 slaughter,verb
 clinch,verb
+mock,verb
+aging,verb
+bury,verb
+dig,verb
+parse,verb
+reset,verb
+shook,verb
+shun,verb
+simmers,verb
+sells,verb
+rains,verb
+serenade,verb
+setup,verb
+rushing,verb
+chase,verb
+prod,verb
+cus,verb
+cuss,verb
 espero,verb.por
 falar,verb.por
+quer,verb.por
+quero,verb.por
+queremos,verb.por
+veja,verb.por
+vem,verb.por
 mon,weekday
 tue,weekday
 tues,weekday
@@ -2124,6 +2331,9 @@ darth,well-known.fiction
 vader,well-known.fiction
 sherlock,well-known.fiction
 simpsons,well-known.fiction
+little red,well-known.fiction
+apollo,well-known.mythology
+aslan,well-known.mythology
 sears,well-known.org
 reuters,well-known.org
 coke,well-known.org
@@ -2155,148 +2365,3 @@ gandhi,well-known.person
 shaq,well-known.person
 han,well-known.person
 ali,well-known.person
-secession,noun
-rich,adjective
-rife,adjective
-brit,adjective
-arsenal,place.civil
-airfield,place.civil
-cascades,place.general
-corners,noun
-crews,noun
-generals,noun
-hopper,noun
-hull,noun
-mock,verb
-paramount,adjective
-parachute,noun
-polaris,place.astro
-ransom,noun
-samples,noun
-trace,noun
-worthy,adjective
-a do,phrase
-ages,noun
-aging,verb
-antiquities,noun
-arcade,place.civil
-battlefield,place.civil
-beers,noun
-bonds,noun
-bounds,noun
-bury,verb
-butcher,noun
-cabin,noun
-colony,noun
-compound,noun
-cooks,noun
-coop,noun
-couch,noun
-cousins,noun
-creek,place.general
-dandy,adjective
-dig,verb
-dinosaur,noun
-demos,noun
-diva,noun
-dixie,noun
-dole,noun
-drain,noun
-gist,noun
-handy,adjective
-hometown,place.civil
-holy city,noun
-hoo,phrase
-hen,noun
-hospice,noun
-lick,noun
-main stream,adjective
-medic,noun
-oilfield,noun
-outlaw,noun
-pall,noun
-parse,verb
-pup,noun
-pursuer,noun
-purser,noun
-public library,place.civil
-public school,place.civil
-rapport,noun
-reset,verb
-red line,noun
-shook,verb
-shores,noun
-shun,verb
-simmers,verb
-siren,noun
-sells,verb
-seminary,place.civil
-spear,noun
-small point,phrase
-shallow water,phrase
-sonar,noun
-stamps,noun
-stern,noun
-sum,noun
-sys,abbrev
-verge,noun
-vest,noun
-xin,abbrev
-arcangel,noun
-billing,noun
-quadrangle,place.civil
-port of entry,place.civil
-port authority,noun
-residency,noun
-sic,abbrev
-carton,noun
-ape,animal
-avian,adjective
-bug,animal
-bat,animal
-char,internet
-cold water,noun
-dairy,noun
-errata,noun
-foxes,animal
-gram,noun
-gopher,animal
-hatch,noun
-hygiene,noun
-institut,place.civil
-little red,well-known.fiction
-mink,animal
-neg,phrase
-narco,noun
-mosquito,animal
-ortho,abbrev
-panda,animal
-pleasant,adjective
-refs,noun
-rain forest,place.general
-raccoon,animal
-quarantine,place.civil
-proc,internet
-rains,verb
-seabird,animal
-serenade,verb
-setup,verb
-summer home,place.civil
-viking,noun
-wolfs,animal
-cuz,slang
-essay,noun
-frisbee,sport
-jam,food
-overlook,place.civil
-rec,abbrev
-rushing,verb
-tuna,animal
-tux,noun
-port city,place.civil
-charity,noun
-mercy,noun
-visa,noun
-credit card,noun
-chase,verb
-haven,noun
