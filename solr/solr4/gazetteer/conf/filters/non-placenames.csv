@@ -42,6 +42,7 @@ rec,abbrev
 alt,abbrev
 astro,abbrev
 chem,abbrev
+slick,adjective
 supreme,adjective
 imperial,adjective
 keen,adjective
@@ -200,6 +201,7 @@ forte,adjective.ita
 bom,adjective.por
 boa,adjective.por
 shortly,adverb
+kangaroo,animal
 eagles,animal
 spider,animal
 tiger,animal
@@ -345,6 +347,8 @@ number 1,enum
 secondo,enum.ita
 sei,enum.ita
 fries,food
+latte,food
+lattes,food
 taco,food
 strawberry,food
 burgers,food
@@ -430,8 +434,17 @@ gotham,myth
 thor,myth
 nirvana,myth
 bigfoot,myth
-papa,noun
+papa,person.label
+gal,person.label
+maternity,noun
+woe,noun
+crook,noun
+crooks,noun
+helm,noun
+fiat,noun
+steward,noun
 pinnacle,noun
+paragon,noun
 marker,noun
 primer,noun
 loyalist,noun
@@ -460,7 +473,9 @@ weeks,noun
 round,noun
 mirror,noun
 edge,noun
-bang,noun
+bang,verb
+bangs,verb
+provost,noun
 cult,noun
 joy,noun
 pact,noun
@@ -1009,6 +1024,8 @@ coupe,noun
 credo,noun
 crafts,noun
 mach,noun
+barrell,noun
+barrel,noun
 l'heure,noun.fre
 ligue,noun.fre
 la maison,noun.fre
@@ -1025,6 +1042,7 @@ minha,noun.por
 minha,noun.por
 aeroport,noun.por
 golf,noun.sport
+skeet,noun.sport
 rugby,noun.sport
 sprint,noun.sport
 sports,noun.sport
@@ -1090,6 +1108,7 @@ prof,person.label
 reverend,person.label
 rev,person.label
 priest,person.label
+nun,person.label
 prophet,person.label
 aka,person.label
 a.k.a,person.label
@@ -1216,6 +1235,7 @@ cardinal,person.label
 collector,person.label
 ma am,person.label
 ma'am,person.label
+madam,person.label
 pir,person.label.mideast
 rabbi,person.label.mideast
 imam,person.label.mideast
@@ -1270,6 +1290,7 @@ cmd,person.label.rank
 cdr,person.label.rank
 lcdr,person.label.rank
 major,person.label.rank
+majors,person.label.rank
 maj,person.label.rank
 mg,person.label.rank
 bg,person.label.rank
@@ -1310,6 +1331,7 @@ po2,person.label.rank
 po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
+goto,phrase
 end of the road,phrase
 up and down,phrase
 up-to-date,phrase
@@ -1365,9 +1387,11 @@ hello,phrase
 duh,phrase
 ditto,phrase
 ha,phrase
+hah,phrase
 dis,phrase
 def,phrase
 yes,phrase
+oui,phrase.fre
 doh,phrase
 yup,phrase
 yea,phrase
@@ -1519,6 +1543,8 @@ uranus,place.astro
 pluto,place.astro
 polaris,place.astro
 spa,place.civil
+boutique,place.civil
+brig,place.civil
 resort,place.civil
 resort island,place.civil
 palace,place.civil
@@ -1684,6 +1710,7 @@ port city,place.civil
 boulevard,place.civil
 capitol,place.civil
 country,place.general
+reef,place.general
 desert,place.general
 land,place.general
 island,place.general
@@ -1879,6 +1906,7 @@ winter,season
 midwinter,season
 pussy,slang
 dat,slang
+wha,slang
 porno,slang
 cuz,slang
 yall,slang
@@ -1894,6 +1922,7 @@ bowling,sport
 dodgers,sport
 bills,sport
 bucks,sport
+packers,sport
 colts,sport
 rams,sport
 padres,sport
@@ -2157,6 +2186,7 @@ yet,stopword.wordnet
 yon,stopword.wordnet
 yonder,stopword.wordnet
 rip,verb
+punt,verb
 hop,verb
 able,verb
 ban,verb
@@ -2365,3 +2395,27 @@ gandhi,well-known.person
 shaq,well-known.person
 han,well-known.person
 ali,well-known.person
+crescent,noun
+chew,verb
+monument,noun
+farewell,noun
+ditch,noun
+fork,noun
+junction,place.civil
+burrow,noun
+shale,noun
+salmon,food
+sap,noun
+czar,person.label
+csar,person.label
+ceasar,person.label
+ruin,place.general
+ruins,place.general
+akin,phrase
+bankers,noun
+vie,verb
+deli,place.civil
+ball field,place.civil
+girls school,place.civil
+boys school,place.civil
+tomahawk,noun
