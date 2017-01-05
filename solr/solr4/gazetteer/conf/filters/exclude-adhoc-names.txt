@@ -6,6 +6,7 @@ putin
 medvedev
 erdogan
 erdoğan
+cristiano
 francois
 francoise
 françois
@@ -36,6 +37,7 @@ luis
 matty
 mick
 sri
+kath
 nat
 nate
 cosby

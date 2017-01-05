@@ -34,6 +34,7 @@ antes,preposition.spa
 aqua,noun
 aqui esta,phrase
 arte,noun
+si,phrase
 asi,article
 ayer,noun
 ayuda,noun
@@ -51,13 +52,18 @@ boca,noun
 bravo,phrase
 brillante,adjective.spa
 buen,adjective.spa
+buen dia,phrase
 buen día,phrase
 buenas noches,phrase
 buenas tardes,phrase
 bueno,adjective.spa
 buenos,adjective.spa
 buenos días,phrase
+busco,verb
 busca,verb
+buscas,verb
+buscan,verb
+calle,noun
 calles,noun
 calma,noun
 cambio,noun
@@ -120,6 +126,7 @@ du,preposition.spa
 economía,noun
 educación,noun
 el acuerdo,noun
+aire,noun
 el aire,noun
 el amor,noun
 el arte,noun
@@ -208,6 +215,8 @@ juega,spa
 junto,spa
 justicia,spa
 justo,spa
+manana,noun.spa
+mañana,noun.spa
 la calle,noun
 la cama,noun
 la campana,noun
@@ -293,11 +302,14 @@ mama,spa
 manāna,spa
 mano,spa
 martes,spa
-marzo,spa
 mas,spa
 mas nunca,spa
 memória,spa
 mes,spa
+enero,month.spa
+febrero,month.spa
+marzo,month.spa
+abril,month.spa
 mesa,spa
 mi sueño,spa
 militar,spa
@@ -325,6 +337,7 @@ nina,noun.spa
 niño,noun.spa
 niños,spa
 no tengo,spa
+se,verb
 no se,phrase
 no-se,spa
 noche,spa
@@ -455,3 +468,25 @@ caballito,noun.spa
 continente,noun.spa
 cabana,noun.spa
 esquinas,noun.spa
+cruz,noun.spa
+gol,noun
+la ley,noun
+abre,adjective
+arriba,phrase
+camino,verb
+campana,noun
+cero,enum.spa
+cento,enum.spa
+cena,noun.spa
+corre,verb
+corte,adjective.spa
+corrientes,noun
+dar,verb
+digo,verb
+gana,verb
+haber,verb
+le dan,verb
+le voy,verb
+crea,verb
+policia,noun
+revolucion,noun
