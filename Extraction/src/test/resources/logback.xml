@@ -28,5 +28,7 @@
     </logger>
     <logger name="org.opensextant.extractors.geo.rules" level="debug">
     </logger>
+    <logger name="org.opensextant.extractors.geo.GazetteerMatcher" level="debug">
+    </logger>
 
 </configuration>

@@ -129,7 +129,7 @@ public class NonsenseFilter extends GeocodeRule {
                         // both ASCII? not worth tracking.
                         break;
                     }
-                    
+
                     /* Pattern: Official name has accented/emphasis markings on the name, such as:
                      *     `NAME   or NAME`
                      * Where NAME is some Latin transliteration of non-Latin script    
@@ -149,7 +149,7 @@ public class NonsenseFilter extends GeocodeRule {
                 if (!hasValidGeo) {
                     p.setFilteredOut(true);
                     p.addRule("Nonsense,Mismatched,Diacritic");
-                } else if (diacriticRule!=null) {
+                } else if (diacriticRule != null) {
                     p.addRule(diacriticRule);
                 }
             }
@@ -172,6 +172,10 @@ public class NonsenseFilter extends GeocodeRule {
      * @return
      */
     public static boolean irregularPunctPatterns(final String t) {
+        // HTML, Internet trash: <,>
+        if (t.indexOf('<') >= 0 || t.indexOf('>') >= 0) {
+            return true;
+        }
         // Edge case "A. B. C." is a valid match, but the last "." is not followed but space. So 
         // Add a single trailing space.
         Matcher abbr = validAbbrev.matcher(t);
