@@ -1,15 +1,25 @@
 package org.opensextant.extractors.geo;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.MatchFilter;
+import org.opensextant.util.TextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 /*
  * We can filter out trivial place name matches that we know to be close to
  * false positives 100% of the time. E.g,. "way", "back", "north" You might
@@ -21,8 +31,6 @@ import org.opensextant.extraction.MatchFilter;
  * you believe certain items will always be filtered then set name_bias >
  * 0.0
  */
-import org.supercsv.io.CsvMapReader;
-import org.supercsv.prefs.CsvPreference;
 
 public class TagFilter extends MatchFilter {
     /**
@@ -32,13 +40,21 @@ public class TagFilter extends MatchFilter {
     boolean filter_stopwords = true;
     boolean filter_on_case = true;
     Set<String> stopTerms = null;
+    Logger log = LoggerFactory.getLogger(TagFilter.class);
+
+    /*
+     * Select languages for experimentation.
+     */
+    private Map<String, Set<String>> langStopFilters = new HashMap<>();
+
+    private Set<String> generalLangId = new HashSet<>();
 
     /**
      * NOTE:  This expects the files are all available. This fails if resource files are missing.
      * 
      * @throws ConfigException if any file has a problem. 
      */
-    public TagFilter() throws ConfigException {
+    public TagFilter() throws IOException, ConfigException {
         super();
         stopTerms = new HashSet<>();
         String[] defaultNonPlaceFilters = {
@@ -48,6 +64,72 @@ public class TagFilter extends MatchFilter {
         };
         for (String f : defaultNonPlaceFilters) {
             stopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
+        }
+        generalLangId.add(TextUtils.englishLang);
+        generalLangId.add(TextUtils.spanishLang);
+
+        String[] langSet = { "ja", "th", "tr", "id", "ar" };
+        loadLanguageStopwords(langSet);
+    }
+
+    /**
+     * Load default Lucene stop words to aid in language specific filtration.
+     * @param langids
+     * @throws IOException
+     * @throws ConfigException
+     */
+    private void loadLanguageStopwords(String[] langids) throws IOException, ConfigException {
+
+        for (String lg : langids) {
+            String url = String.format("/org/apache/lucene/analysis/%s/stopwords.txt", lg);
+            URL obj = URL.class.getResource(url);
+            if (obj == null) {
+                throw new IOException("No such stop filter file " + url);
+            }
+            loadStopSet(obj, lg);
+        }
+
+        /*
+         * More optional lists.
+         */
+        // KOREAN
+        String url = "/filters/carrot2-stopwords.ko";
+        String lg = "ko";
+        URL obj = URL.class.getResource(url);
+        if (obj != null) {
+            loadStopSet(obj, lg);
+        }
+        // CHINESE
+        url = "/filters/carrot2-stopwords.zh";
+        lg = "zh";
+        obj = URL.class.getResource(url);
+        if (obj != null) {
+            loadStopSet(obj, lg);
+        }
+
+        // VIETNAMESE
+        url = "/filters/vietnamese-stopwords.txt";
+        lg = "vn";
+        obj = URL.class.getResource(url);
+        if (obj != null) {
+            loadStopSet(obj, lg);
+        }
+
+    }
+
+    private void loadStopSet(URL url, String langid) throws IOException, ConfigException {
+        try (InputStream strm = url.openStream()) {
+            HashSet<String> stopTerms = new HashSet<>();
+            for (String line : IOUtils.readLines(strm, Charset.forName("UTF-8"))) {
+                if (line.trim().startsWith("#")) {
+                    continue;
+                }
+                stopTerms.add(line.trim().toLowerCase());
+            }
+            if (stopTerms.isEmpty()) {
+                throw new ConfigException("No terms found in stop filter file " + url.toString());
+            }
+            langStopFilters.put(langid, stopTerms);
         }
     }
 
@@ -71,6 +153,100 @@ public class TagFilter extends MatchFilter {
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Experimental.
+     * 
+     * Using proper Language ID (ISO 2-char for now), determine if the 
+     * given term, t, is a stop term in that language.
+     * 
+     * @param t
+     * @param langId
+     * @return
+     */
+    public boolean filterOut(PlaceCandidate t, String langId) {
+        /*
+         * Consider no given language ID -- only short, non-ASCII terms should be filtered out 
+         * against all stop filters; Otherwise there is some performance issues.
+         */
+        if (langId == null) {
+            if (t.isASCII()) {
+                return false; /* Not filtering out short crap, right now. */
+            } else if (t.getLength() < 4) {
+                return assessAllFilters(t.getTextnorm());
+            }
+        }
+        /*
+         * IGNORE languages already filtered out by the general filter above.
+         */
+        if (generalLangId.contains(langId)) {
+            return false;
+        }
+
+        /* EXPERIMENTAL.
+         * 
+         * But if langID is given, we first consider if text in document
+         * is possibly a Proper name of sort...
+         * UPPERCASENAME -- possibly stop?
+         * Upper Case Name -- pass; not stop
+         * not upper case name -- possibly stop.
+         */
+        char c = t.getText().charAt(0);
+        if (Character.isUpperCase(c) && !t.isUpper()) {
+            // Proper Name, possibly. Not stopping.
+            return false;
+        }
+
+        boolean cjk = TextUtils.isCJK(langId);
+
+        if (cjk && filterOutCJK(t)) {
+            return true;
+        }
+
+        /* 
+         * Consider language specific stop filters.
+         * NOTE: LangID should not be 'CJK' or group.  langStopFilters keys stop terms by LangID
+         */
+        if (langStopFilters.containsKey(langId)) {
+            Set<String> terms = langStopFilters.get(langId);
+            return terms.contains(t.getTextnorm());
+        }
+        return false;
+    }
+
+    /**
+     * Experimental. Hack.
+     * 
+     * Due to bi-gram shingling with CJK languages - Chinese, Japanese, Korean - 
+     * the matcher really over-matches, e.g.  For really short matches, let's rule out obvious bad matches.
+     * <pre>
+     * ... に た ...  input text matched
+     *  にた          gazetteer place name. 
+     * </pre>
+     * TOOD: make use of better tokenizer/matcher in SolrTextTagger configuration for CJK 
+     * @param t
+     * @return
+     */
+    private boolean filterOutCJK(PlaceCandidate t) {
+        if (t.getLength() < 5 && TextUtils.count_ws(t.getText()) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Run a term (already lowercased) against all stop filters.
+     * @param textnorm
+     * @return
+     */
+    private boolean assessAllFilters(String textnorm) {
+        for (Set<String> terms : langStopFilters.values()) {
+            if (terms.contains(textnorm)) {
+                return true;
+            }
+        }
         return false;
     }
 

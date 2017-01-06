@@ -479,14 +479,14 @@ public class PlaceGeocoder extends GazetteerMatcher
         List<PlaceCandidate> candidates = null;
         if (input.langid == null) {
             candidates = tagText(input.buffer, input.id, tagOnly);
-        } else if (TextUtils.isCJK(input.langid)) {
-            candidates = this.tagCJKText(input.buffer, input.id, tagOnly);
+            //} else if (TextUtils.isCJK(input.langid)) {
+            // candidates = this.tagCJKText(input.buffer, input.id, tagOnly);
         } else if (TextUtils.arabicLang.equals(input.langid)) {
             candidates = this.tagArabicText(input.buffer, input.id, tagOnly);
         } else {
             // Default - unknown language.
             log.debug("Default Language {}. Treating as Generic.", input.langid);
-            candidates = tagText(input.buffer, input.id, tagOnly);
+            candidates = tagText(input, tagOnly);
         }
 
         // 1. COORDINATES. If caller thinks their data may have coordinates, then attempt to parse

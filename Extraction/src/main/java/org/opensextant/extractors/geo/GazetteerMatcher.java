@@ -63,13 +63,13 @@ import org.apache.solr.common.util.NamedList;
 import org.opensextant.ConfigException;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
+import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.util.SolrProxy;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
-// import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -149,7 +149,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             filter.enableCaseSensitive(!allowLowerCase);
 
             tagText("trivial priming of the solr pump", "__initialization___");
-        } catch (ExtractionException initErr) {
+        } catch (ExtractionException | IOException initErr) {
             throw new ConfigException("Unable to prime the tagger", initErr);
         }
     }
@@ -324,12 +324,21 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * 
      */
     public List<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
-        return tagText(buffer, docid, false, CJK_TAG_FIELD);
+        return tagText(buffer, docid, false, CJK_TAG_FIELD, "cjk");
     }
 
+    /**
+     * 
+     * @param buffer
+     * @param docid
+     * @param tagOnly
+     * @return
+     * @throws ExtractionException
+     * @deprecated
+     */
     public List<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly)
             throws ExtractionException {
-        return tagText(buffer, docid, tagOnly, CJK_TAG_FIELD);
+        return tagText(buffer, docid, tagOnly, CJK_TAG_FIELD, "cjk");
     }
 
     /**
@@ -345,12 +354,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *             on err
      */
     public List<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
-        return tagText(buffer, docid, false, AR_TAG_FIELD);
+        return tagText(buffer, docid, false, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
     public List<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly)
             throws ExtractionException {
-        return tagText(buffer, docid, tagOnly, AR_TAG_FIELD);
+        return tagText(buffer, docid, tagOnly, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
     /** Most languages */
@@ -367,7 +376,32 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public static final String AR_TAG_FIELD = "name_tag_ar";
 
     public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
-        return tagText(buffer, docid, tagOnly, DEFAULT_TAG_FIELD);
+        return tagText(buffer, docid, tagOnly, DEFAULT_TAG_FIELD, null);
+    }
+
+    public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld)
+            throws ExtractionException {
+        return tagText(buffer, docid, tagOnly, fld, null);
+    }
+
+    /**
+     * More convenient way of passing input args, using tuple TextInput (buffer, docid, langid)
+     * @param t
+     * @param tagOnly
+     * @return geocoded matches. see tagText()
+     * @throws ExtractionException
+     */
+    public List<PlaceCandidate> tagText(TextInput t, boolean tagOnly)
+            throws ExtractionException {
+        String fld = DEFAULT_TAG_FIELD;
+        if (t.langid != null) {
+            if (TextUtils.isCJK(t.langid)) {
+                fld = CJK_TAG_FIELD;
+            } else if (t.langid.equals(TextUtils.arabicLang)) {
+                fld = AR_TAG_FIELD;
+            }
+        }
+        return tagText(t.buffer, t.id, tagOnly, fld, t.langid);
     }
 
     /**
@@ -385,11 +419,13 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *            want the full list of Place Candidates.
      * @param fld
      *            gazetteer field to use for tagging
+     * @param langid
+     *             ISO lang ID 
      * @return place_candidates List of place candidates
      * @throws ExtractionException
      *             on err
      */
-    public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld)
+    public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld, String langid)
             throws ExtractionException {
         // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
         // "startOffset":38},
@@ -475,7 +511,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 }
             }
 
-
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would. 
             // be allowed. If lowercase abbreviations are allowed, then all matches are passed.               
             if (len < 3) {
@@ -499,7 +534,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             /**
              * Filter out trivial tags. Due to normalization, we tend to get
-             * lots of false positives that can be eliminated early.
+             * lots of false positives that can be eliminated early.  This is 
+             * testing matches against the most general set of stop words.
              */
             if (filter.filterOut(matchText)) {
                 ++this.defaultFilterCount;
@@ -533,6 +569,17 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 pc.isContinent = true;
                 pc.setFilteredOut(true);
                 candidates.put(pc.start, pc);
+                continue;
+            }
+
+            /**
+             * Further testing is done if lang ID is provided AND if we have a stop list
+             * for that language.  Otherwise, short terms are filtered out if they appear in any lang stop list.
+             * NOTE: internally TagFilter here checks only languages other than English, Spanish and Vietnamese.
+             */
+            if (filter.filterOut(pc, langid)) {
+                ++this.defaultFilterCount;
+                log.debug("STOPWORD {} {}", langid, pc.getText());
                 continue;
             }
             /*
@@ -665,7 +712,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return new ArrayList<PlaceCandidate>(candidates.values());
     }
 
-    private static final String CONTRACTIONS="SsTtDd";
+    private static final String CONTRACTIONS = "SsTtDd";
 
     /**
      * Context: if pattern appears to be in context " ....'s NAME..."
@@ -678,7 +725,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private static boolean assessApostrophe(final char c, final String t) {
         if (c == '\'' || c == '\u2019') {
             char c0 = t.charAt(0);
-            return (CONTRACTIONS.indexOf(c0)>=0 && t.charAt(1) == ' ');
+            return (CONTRACTIONS.indexOf(c0) >= 0 && t.charAt(1) == ' ');
         }
         return false;
     }

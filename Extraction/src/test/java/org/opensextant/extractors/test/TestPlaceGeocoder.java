@@ -35,6 +35,21 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         }
     }
 
+    public void tagFile(File f, String langid) throws IOException {
+        // Call as many times as you have documents...
+        //
+        TextInput in = new TextInput("test", FileUtility.readFile(f,
+                "UTF-8"));
+        in.langid = langid;
+
+        try {
+            List<TextMatch> matches = geocoder.extract(in);
+            summarizeFindings(matches);
+        } catch (Exception procErr) {
+            procErr.printStackTrace();
+        }
+    }
+
     /**
      * try a series of known tests.
      * 
@@ -78,6 +93,8 @@ public class TestPlaceGeocoder extends TestGazMatcher {
                     TextInput t = new TextInput("test", args[1]);
                     t.langid = args[0];
                     tester.tagText(t);
+                } else if (args.length == 3) {
+                    tester.tagFile(new File(args[2]), args[0]);
                 } else {
                     tester.tagEvaluation();
                 }
