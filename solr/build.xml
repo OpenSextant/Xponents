@@ -85,7 +85,14 @@
 		</get>
 	</target>
 
-	<target name="init" depends="setup,jetty9,solr4,copy-libs">
+        <target name="stopwords">
+		<get dest="${solr.home}/gazetteer/conf/filters" skipexisting="true" ignoreerrors="true">
+                        <!-- LICENSE: https://github.com/stopwords/vietnamese-stopwords#license --> 
+			<url url="https://github.com/stopwords/vietnamese-stopwords/blob/master/vietnamese-stopwords.txt"/>
+		</get>
+        </target>
+
+	<target name="init" depends="setup,stopwords,jetty9,solr4,copy-libs">
         </target>
 
 	<target name="clean" description="Delete indexed data">

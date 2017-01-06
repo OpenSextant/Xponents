@@ -1,9 +1,17 @@
 exclusion,category
 doc,abbrev
+meta,abbrev
+ed,abbrev
 id,abbrev
 ibid,abbrev
 imo,abbrev
 asap,abbrev
+cid,abbrev
+coll,abbrev
+tid,abbrev
+toc,abbrev
+tos,abbrev
+rel,abbrev
 bio,abbrev
 eta,abbrev
 tel,abbrev
@@ -258,6 +266,7 @@ taurus,astrology
 sagittarius,astrology
 capricorn,astrology
 capricornio,astrology
+virgo,astrology
 tauro,astrology
 black,color
 blue,color
@@ -385,6 +394,8 @@ valentines,holiday
 valentine's,holiday
 mardi gras,holiday
 pic,internet
+nav,internet
+login,internet
 cam,internet
 wireless,internet
 weibo,internet
@@ -1914,6 +1925,7 @@ y'all,slang
 lemme,slang
 la copa,sport
 masters,sport
+sumo,sport
 polo,sport
 mets,sport
 marathon,sport
@@ -1941,6 +1953,10 @@ ajax,stopword.web
 demo,stopword.web
 stat,stopword.web
 rfc,stopword.web
+lua,stopword.web
+kanji,stopword.web
+hanja,stopword.web
+kana,stopword.web
 seminar,stopword.web
 perf,stopword.web
 null,stopword.web
@@ -1976,6 +1992,9 @@ perl,stopword.web
 pagina,stopword.web
 foto,stopword.web
 español,stopword.web
+việt,stopword.web
+català,stopword.web
+norsk,stopword.web
 português,stopword.web
 français,stopword.web
 deutsch,stopword.web
@@ -2305,6 +2324,7 @@ friday,weekday
 saturday,weekday
 sunday,weekday
 buick,well-known.brand
+tesla,well-known.brand
 nike,well-known.brand
 samsung,well-known.brand
 uber,well-known.brand
@@ -2350,6 +2370,7 @@ coca cola,well-known.concept
 disney,well-known.concept
 zodiac,well-known.concept
 dengue,well-known.disease
+mers,well-known.disease
 lyme,well-known.disease
 ebola,well-known.disease
 zika,well-known.disease
@@ -2418,4 +2439,16 @@ deli,place.civil
 ball field,place.civil
 girls school,place.civil
 boys school,place.civil
+ecco,preposition.ita
+ci sono,preposition.ita
 tomahawk,noun
+lei,pronoun.ita
+hak,junk
+pak,junk
+lotto,noun
+aria,noun
+num,enum
+sup,slang
+uls,junk
+kun,junk
+xe,junk

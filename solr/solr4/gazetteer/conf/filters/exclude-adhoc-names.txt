@@ -71,3 +71,6 @@ poe
 mark twain
 dick
 dicks
+manny
+pepe
+paco

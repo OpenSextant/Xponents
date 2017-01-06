@@ -4,6 +4,8 @@ log
 /solr4/taxcat/data
 /solr4/lib
 /gazetteer/conf/filters/non-placenames,user.csv
+/gazetteer/conf/filters/vietnamese-stopwords.txt
+/gazetteer/conf/filters/carrot2-stop*
 /test
 jetty9
 webapps
