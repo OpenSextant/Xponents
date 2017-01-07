@@ -54,5 +54,3 @@ rm -rf ./dist/*
 DATE=`date +%Y%m%d`
 zip -r dist/xponents-mr-v$DATE.zip libjars script log* xponents*jar
 
-popd
-popd
