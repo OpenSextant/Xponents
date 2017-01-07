@@ -13,7 +13,7 @@ JARS=`echo $str | sed -e 's: :,:g;'`
 phase=$1
 input=$2
 
-OUTPUT=xponents-mr-test-$phase
+OUTPUT=xponents-mr-test-$phase-$$
 HDFS_USER=/user/$USER
 JOB_OUT=$HDFS_USER/$OUTPUT
 hdfs dfs -rm -r $JOB_OUT
