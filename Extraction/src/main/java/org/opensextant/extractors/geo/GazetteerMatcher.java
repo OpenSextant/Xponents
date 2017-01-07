@@ -448,6 +448,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         log.debug("TEXT SIZE = {}", buffer.length());
         int[] textMetrics = TextUtils.measureCase(buffer);
         boolean isUpperCase = TextUtils.isUpperCaseDocument(textMetrics);
+        boolean isLowerCase = TextUtils.isLowerCaseDocument(textMetrics);
 
         params.set("field", fld);
         Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
@@ -577,7 +578,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * for that language.  Otherwise, short terms are filtered out if they appear in any lang stop list.
              * NOTE: internally TagFilter here checks only languages other than English, Spanish and Vietnamese.
              */
-            if (filter.filterOut(pc, langid)) {
+            if (filter.filterOut(pc, langid, isUpperCase, isLowerCase)) {
                 ++this.defaultFilterCount;
                 log.debug("STOPWORD {} {}", langid, pc.getText());
                 continue;

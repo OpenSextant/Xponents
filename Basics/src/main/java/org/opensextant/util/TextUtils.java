@@ -131,7 +131,7 @@ public class TextUtils {
             + "OoUu" // double acute
             + "Oo" // Scandanavian o
             + "AaEe" // A/E wiht micron
-            ;
+    ;
 
     private static final String ALPHAMAP_UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" // grave
             + "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD" // acute
@@ -144,20 +144,21 @@ public class TextUtils {
             + "\u00D8\u00F8" // Scandanavian o Øø
             + "\u0100\u0101\u0112\u0113" // E-bar, A-bar
     ;
-    
+
     private static final String COMMON_DIACRITC_HASHMARKS = "\"'`\u00B4\u2018\u2019";
+
     /**
      * If a string has extended latin diacritics.
      * @param s
      * @return true if a single diacritic is found.
      */
-    public final static boolean hasDiacritics(final String s){
+    public final static boolean hasDiacritics(final String s) {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (ALPHAMAP_UNICODE.indexOf(c)>=0){
+            if (ALPHAMAP_UNICODE.indexOf(c) >= 0) {
                 return true;
             }
-            if (COMMON_DIACRITC_HASHMARKS.indexOf(c)>=0){
+            if (COMMON_DIACRITC_HASHMARKS.indexOf(c) >= 0) {
                 return true;
             }
         }
@@ -562,6 +563,7 @@ public class TextUtils {
      * that
      * we don't find many texts that are that size and all lower or all upper where these heuristics are helpful.
      * E.g., tweets in English -- these thresholds are easily influenced by a difference of one or two characters.
+     * @deprecated this threshold is dependent on the length of the signal.
      */
     public static double UPPER_CASE_THRESHOLD = 0.75;
     /**
@@ -569,6 +571,7 @@ public class TextUtils {
      * very high.
      * "IS THIS UPPER CASE?, I WILL USE eBAY TODAY"
      * "by the same convention, this is largely lower case; I will use eBay today."
+     * @deprecated this threshold is dependent on the length of the signal.
      */
     public static double LOWER_CASE_THRESHOLD = 0.95;
 
@@ -588,7 +591,15 @@ public class TextUtils {
         // 
         // Method 2 seems best.
         int content = counts[0] /* + counts[3]*/ ;
-        return ((float) counts[1] / content) > UPPER_CASE_THRESHOLD;
+        float uc = ((float) counts[1] / content);
+        if (content < 100) {
+            return uc > 0.50;
+        }
+        if (content < 500) {
+            return uc > 0.60;
+        }
+        // Imagine 1KB of text,.. 75% of it is upper case...the document is largely uppercase.
+        return uc > 0.75;
     }
 
     /**
@@ -602,7 +613,11 @@ public class TextUtils {
      */
     public static boolean isLowerCaseDocument(final int[] counts) {
         int content = counts[0] /*+ counts[3]*/;
-        return ((float) counts[2] / content) > LOWER_CASE_THRESHOLD;
+        float lc = ((float) counts[2] / content);
+        if (content < 100) {
+            return lc > 0.97;
+        }
+        return lc > 0.98;
     }
 
     /**
@@ -1688,18 +1703,18 @@ public class TextUtils {
 
         return _new;
     }
-    
+
     /**
      * Count number of non-alphanumeric chars are present.
      * 
      * @param t
      * @return
      */
-    public static int countNonText(final String t){
-        
+    public static int countNonText(final String t) {
+
         int nonText = 0;
         for (char c : t.toCharArray()) {
-            if (!Character.isLetter(c) && Character.isDigit(c) &&Character.isWhitespace(c)){
+            if (!Character.isLetter(c) && Character.isDigit(c) && Character.isWhitespace(c)) {
                 ++nonText;
             }
         }

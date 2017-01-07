@@ -16,11 +16,8 @@ if [ ! -d $XPONENTS/piplib ] ; then
    exit 1
 fi
 
-if [ ! -e ./resources/filters ] ; then 
-   # Keep link relative.
-   pushd ./resources/
-   ln -s ../solr4/gazetteer/conf/filters .
-   popd
+if [ ! -e ./solr4/lib/xponents-gazetteer-meta.jar ] ; then 
+   ant gaz-meta
 fi
 
 

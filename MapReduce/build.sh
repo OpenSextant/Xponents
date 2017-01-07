@@ -22,14 +22,15 @@ cp $MR/../solr/lib/ext/*jar $MR/libjars
 # Primary dependencies come from Xponents Extraction POM
 #  Xponents support JARS; Get current Xponents JARS as well as all dependencies.
 cp $MR/../solr/solr4/lib/*jar $MR/libjars
-pushd $MR/../Extraction
+cd $MR/../Extraction
 rm ./lib/*
 mvn dependency:copy-dependencies
 cp lib/*jar $MR/libjars
 
 # Collect JAR for Gazetteer metadata and filters.
-pushd $MR/../solr/solr4/gazetteer/conf;
-jar cf $MR/libjars/xponents-gazetteer-meta.jar ./filters/*.* 
+cd $MR/../solr
+ant proxy gaz-meta
+cp ./solr4/lib/xponents-gazetteer-meta.jar  $MR/libjars/
 
 cd $MR
 # Conflict with Solr servlet API:

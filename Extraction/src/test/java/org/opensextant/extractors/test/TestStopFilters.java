@@ -2,6 +2,7 @@ package org.opensextant.extractors.test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -13,10 +14,31 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.opensextant.ConfigException;
+import org.opensextant.extractors.geo.TagFilter;
+import org.opensextant.util.FileUtility;
 
 public class TestStopFilters {
 
-    @Test
+    public static void main(String[] args) {
+        try {
+            testTagFilter(args[0]);
+        } catch (Exception err) {
+        }
+
+    }
+
+    public static void testTagFilter(String file) throws IOException, ConfigException {
+        TagFilter filt = new TagFilter();
+        String buf = FileUtility.readFile(new File(file));
+        for (String tok : buf.split("\\s+")) {
+            if (filt.filterOut(tok.toLowerCase())) {
+                System.out.println("STOP " + tok);
+            }
+        }
+    }
+
+    //@Test
     public void test() {
         String[] langSet = { "ja", "cjk", "th", "vi", "id", "ar" };
         Map<String, Set<String>> stopFilters = new HashMap<>();

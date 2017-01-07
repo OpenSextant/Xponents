@@ -28,7 +28,7 @@ public class NonsenseFilter extends GeocodeRule {
     public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
 
     private static int MAX_NONSENSE_PHRASE_LEN = 15;
-    public static final int GENERIC_ONE_WORD = 8; // Chars in average word.
+    public static final int GENERIC_ONE_WORD = 10; // Chars in average word.
 
     private static Pattern wsRedux = Pattern.compile("[-\\s+`]");
 
@@ -102,7 +102,7 @@ public class NonsenseFilter extends GeocodeRule {
                     }
                     set.add(w);
                 }
-                continue;
+                //continue;
             }
 
             /*
@@ -111,7 +111,7 @@ public class NonsenseFilter extends GeocodeRule {
              * mismatch severely.  
              * NOTE: Score on each geo location is accounted for in default score. I.E., edit distance between text match and geo name. 
              */
-            if (p.getLength() < GENERIC_ONE_WORD) {
+            if (p.getLength() <= GENERIC_ONE_WORD) {
                 boolean hasValidGeo = false;
                 String ph1 = phoneticRedux(p.getTextnorm());
                 String diacriticRule = null;

@@ -85,14 +85,22 @@
 		</get>
 	</target>
 
+        <!-- LICENSE: https://github.com/stopwords/vietnamese-stopwords#license --> 
+        <!-- 
         <target name="stopwords">
 		<get dest="${solr.home}/gazetteer/conf/filters" skipexisting="true" ignoreerrors="true">
-                        <!-- LICENSE: https://github.com/stopwords/vietnamese-stopwords#license --> 
 			<url url="https://github.com/stopwords/vietnamese-stopwords/blob/master/vietnamese-stopwords.txt"/>
 		</get>
         </target>
+        -->
 
-	<target name="init" depends="setup,stopwords,jetty9,solr4,copy-libs">
+        <target name="gaz-meta" > <!-- depends="stopwords" -->
+            <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
+              <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**,filters/**"/>
+            </jar>
+        </target>
+
+	<target name="init" depends="setup,gaz-meta,jetty9,solr4,copy-libs">
         </target>
 
 	<target name="clean" description="Delete indexed data">

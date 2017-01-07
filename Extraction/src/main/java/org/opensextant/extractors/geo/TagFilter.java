@@ -68,6 +68,10 @@ public class TagFilter extends MatchFilter {
         generalLangId.add(TextUtils.englishLang);
         generalLangId.add(TextUtils.spanishLang);
 
+        /* NOTE: these stop word sets are of format='wordset'
+         * Whereas other languages (es, it, etc.) are provided in format='snowball'
+         * StopFilterFactory is needed to load snowball filters.
+         */
         String[] langSet = { "ja", "th", "tr", "id", "ar" };
         loadLanguageStopwords(langSet);
     }
@@ -81,8 +85,8 @@ public class TagFilter extends MatchFilter {
     private void loadLanguageStopwords(String[] langids) throws IOException, ConfigException {
 
         for (String lg : langids) {
-            String url = String.format("/org/apache/lucene/analysis/%s/stopwords.txt", lg);
-            URL obj = URL.class.getResource(url);
+            String url = String.format("/lang/stopwords_%s.txt", lg);
+            URL obj = TagFilter.class.getResource(url);
             if (obj == null) {
                 throw new IOException("No such stop filter file " + url);
             }
@@ -109,7 +113,7 @@ public class TagFilter extends MatchFilter {
 
         // VIETNAMESE
         url = "/filters/vietnamese-stopwords.txt";
-        lg = "vn";
+        lg = "vi";
         obj = URL.class.getResource(url);
         if (obj != null) {
             loadStopSet(obj, lg);
@@ -164,9 +168,10 @@ public class TagFilter extends MatchFilter {
      * 
      * @param t
      * @param langId
+     * @param docCase -- true = Upper, false = not Upper.
      * @return
      */
-    public boolean filterOut(PlaceCandidate t, String langId) {
+    public boolean filterOut(PlaceCandidate t, String langId, boolean docIsUpper, boolean docIsLower) {
         /*
          * Consider no given language ID -- only short, non-ASCII terms should be filtered out 
          * against all stop filters; Otherwise there is some performance issues.
@@ -175,7 +180,7 @@ public class TagFilter extends MatchFilter {
             if (t.isASCII()) {
                 return false; /* Not filtering out short crap, right now. */
             } else if (t.getLength() < 4) {
-                return assessAllFilters(t.getTextnorm());
+                return assessAllFilters(t.getText().toLowerCase());
             }
         }
         /*
@@ -184,7 +189,7 @@ public class TagFilter extends MatchFilter {
         if (generalLangId.contains(langId)) {
             return false;
         }
-
+        
         /* EXPERIMENTAL.
          * 
          * But if langID is given, we first consider if text in document
@@ -193,16 +198,34 @@ public class TagFilter extends MatchFilter {
          * Upper Case Name -- pass; not stop
          * not upper case name -- possibly stop.
          */
-        char c = t.getText().charAt(0);
-        if (Character.isUpperCase(c) && !t.isUpper()) {
-            // Proper Name, possibly. Not stopping.
-            return false;
+        if (!docIsUpper) {
+            char c = t.getText().charAt(0);
+            if (Character.isUpperCase(c) && !t.isUpper()) {
+                // Proper Name, possibly. Not stopping.
+                return false;
+            }
         }
 
         boolean cjk = TextUtils.isCJK(langId);
 
+        /*
+         * Bi-gram + whitespace filter for CJK:
+         */
         if (cjk && filterOutCJK(t)) {
             return true;
+        }
+        
+        /*
+         * FILTER out lower case matches for non-English, non-CJK texts.
+         * If document is mixed case.  That is we still expect/assume interesting
+         * place names to be proper names.
+         */
+        if (!cjk){
+            if (!docIsLower && !docIsUpper){
+                if (t.isLower()){
+                    return true;
+                }
+            }
         }
 
         /* 
@@ -211,7 +234,7 @@ public class TagFilter extends MatchFilter {
          */
         if (langStopFilters.containsKey(langId)) {
             Set<String> terms = langStopFilters.get(langId);
-            return terms.contains(t.getTextnorm());
+            return terms.contains(t.getText().toLowerCase());
         }
         return false;
     }
@@ -241,7 +264,7 @@ public class TagFilter extends MatchFilter {
      * @param textnorm
      * @return
      */
-    private boolean assessAllFilters(String textnorm) {
+    public boolean assessAllFilters(String textnorm) {
         for (Set<String> terms : langStopFilters.values()) {
             if (terms.contains(textnorm)) {
                 return true;
