@@ -168,7 +168,8 @@ public class TagFilter extends MatchFilter {
      * 
      * @param t
      * @param langId
-     * @param docCase -- true = Upper, false = not Upper.
+     * @param docIsUpper true if input doc is mostly upper
+     * @param docIsLower true if input doc is mostly lower
      * @return
      */
     public boolean filterOut(PlaceCandidate t, String langId, boolean docIsUpper, boolean docIsLower) {
