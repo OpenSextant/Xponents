@@ -88,7 +88,7 @@ public class TestTextUtils {
         int[] checkCase = TextUtils.measureCase(UPPER);
         if (checkCase != null) {
             print("NOT uppercase\t" + UPPER);
-            assertFalse(TextUtils.isUpperCaseDocument(checkCase));
+            assertTrue(TextUtils.isUpperCaseDocument(checkCase));
         }
         checkCase = TextUtils.measureCase(UPPER.toUpperCase());
         if (checkCase != null) {
