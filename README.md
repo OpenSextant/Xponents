@@ -1,5 +1,7 @@
 Xponents
 ========
+
+    Xponents 2.9, Jan 2017  v2.9.6
     Xponents 2.9, Oct 2016  v2.9.0
 
     Updated:  05 Dec  2015   v2.8
@@ -8,7 +10,7 @@ Xponents
     Updated:  01 April2015   v2.7
     Updated:  01 June 2014   v2.5
 
-Xponents is a set of text extractor libraries with a light veneer of processing control, including:
+Xponents is a set of information extraction libraries including:
 
 * Document conversion using Tika
 * Geographic name and coordinate extraction
@@ -23,7 +25,7 @@ When you build or use a release, see component documentation in ./doc/
 * ./doc/Examples  shows some Examples of geo/temporal extractors and output formatters
 * ./doc/Extraction provides the core library for geo, temporal and other pattern-based extraction
 * ./doc/XText  documents the document conversion, text extraction library
-* ./doc/Basics TBD -- primarily used in Extraction, however there are utilities and reference data useful on its own.
+* ./doc/Basics primarily used in Extraction, however there are utilities and reference data useful on its own.
 * Javadoc for each module is provided in each folder
  
 As well, the documentation for each module is in the respective source tree.
