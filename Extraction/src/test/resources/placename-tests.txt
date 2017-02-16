@@ -1,3 +1,4 @@
+Oh my Gosh, did I land on Mars or is this the red rock of the good ol USA?
 # Test for diacritics in short names, where the diacritic marks on gazetteer entries do not match the input text.
 Eh? Was Eï his home city? Or was that Ei eï?
 Méssi - where is this? ... or is it Messi, the beach in Greece?
