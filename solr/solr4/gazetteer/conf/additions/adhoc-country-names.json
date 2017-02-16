@@ -210,5 +210,20 @@
         "id_bias": 0.49,
         "name_type": "A",
         "geo": "25,45"
+      },
+      {
+        "id": 13674143,
+        "place_id": "NGA-1057067",
+        "name": "Украина",
+        "feat_class": "A",
+        "feat_code": "PCLI",
+        "FIPS_cc": "UP",
+        "cc": "UA",
+        "ISO3_cc": "UKR",
+        "source": "ADHOC",
+        "name_bias": 0.05,
+        "id_bias": 0.49,
+        "name_type": "N",
+        "geo": "49,32"
       }
 ]
