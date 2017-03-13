@@ -382,18 +382,18 @@ public class TestXCoord {
         log.info("=== ADHOC TESTS ===");
 
         log.info("Trying some specific DD tests now:\n=========================");
-        xcoord.match_DD(false);
+        xcoord.match_DD(true);
         xcoord.match_DMS(true);
-        xcoord.match_DM(false);
+        xcoord.match_DM(true);
         xcoord.match_MGRS(false);
         xcoord.match_UTM(false);
         TextMatchResult results = null;
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
-        boolean dd = false;
+        boolean dd = true;
         boolean dms = true;
-        boolean dm = false;
-        boolean mgrs = true;
+        boolean dm = true;
+        boolean mgrs = false;
         boolean utm = false;
         //
         xcoord.match_MGRS(mgrs);
@@ -433,7 +433,9 @@ public class TestXCoord {
                 "10 Jan 1995 02" };
 
         xcoord.match_DD(dd);
-        String[] ddtest = { "1.718114°  44.699603°", "N34.445566° W078.112233°","00 N 130 WA",
+        String[] ddtest = { 
+                "N 49°2' 0'' / E 38°22' 0''",
+                "1.718114°  44.699603°", "N34.445566° W078.112233°","00 N 130 WA",
                 "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
                 "-385331-17004121", "CAN-385331-17004121", "15S5E",
                 "TARGET [1]  LATITUDE: +32.3345  LONGITUDE: -179.3412", //DD04
@@ -455,6 +457,7 @@ public class TestXCoord {
         xcoord.match_DMS(dms);
         xcoord.match_DM(dm);
         String[] dmtest = {
+                "N 49°2' 0'' / E 38°22' 0''",
                 "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
                 "-385331-17004121",
                 "41º58'46\"N, 87º54'20\"W ",
