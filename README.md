@@ -1,6 +1,7 @@
 Xponents
 ========
 
+    Xponents 2.9, Feb 2017  v2.9.7  - minor tests and additional filters added; minor tweak for Curacao
     Xponents 2.9, Jan 2017  v2.9.6
     Xponents 2.9, Oct 2016  v2.9.0
 
