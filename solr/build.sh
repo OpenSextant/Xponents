@@ -34,6 +34,9 @@ done
 echo "Starting Solr $SERVER"
 nohup ./myjetty.sh  start & 
 
+echo "Wait for Solr / Jetty to load"
+sleep 5
+
 pushd solr4/gazetteer/
 echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
 python ./script/assemble_person_filter.py 
