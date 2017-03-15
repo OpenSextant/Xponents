@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opensextant</groupId>
-    <version>0.1</version>
+    <version>0.1a/version>
     <artifactId>xponents-mapreduce</artifactId>
     <name>MapReduce</name>
     <properties>
-       <xponents.v>2.9.6</xponents.v>
+       <xponents.v>2.9.7</xponents.v>
        <hadoop.v>2.6.2</hadoop.v>
        <solr.version>4.10.4</solr.version>
     </properties>
