@@ -50,6 +50,8 @@ rec,abbrev
 alt,abbrev
 astro,abbrev
 chem,abbrev
+dont,contraction
+isnt,contraction
 slick,adjective
 supreme,adjective
 imperial,adjective
@@ -211,6 +213,8 @@ boa,adjective.por
 shortly,adverb
 kangaroo,animal
 eagles,animal
+snail,animal
+mice,animal
 spider,animal
 tiger,animal
 lion,animal
@@ -638,6 +642,7 @@ wiki,noun
 commerce,noun
 bond,noun
 bill,noun
+wallet,noun
 fortune,noun
 revenue,noun
 finance,noun
@@ -2453,3 +2458,9 @@ sup,slang
 uls,junk
 kun,junk
 xe,junk
+burning,verb
+jazz,noun
+easy,adjective
+looker,noun
+utter,verb
+status,noun
