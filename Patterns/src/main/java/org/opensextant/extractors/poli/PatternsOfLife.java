@@ -112,6 +112,11 @@ public class PatternsOfLife extends AbstractFlexPat {
         return results.matches;
     }
 
+    public List<TextMatch> extract(TextInput input, String family) {
+        TextMatchResult results = extract_patterns(input.buffer, input.id, family);        
+        return results.matches;
+    }
+
     @Override
     public List<TextMatch> extract(String input_buf) {
         TextMatchResult results = extract_patterns(input_buf, NO_DOC_ID, null);
