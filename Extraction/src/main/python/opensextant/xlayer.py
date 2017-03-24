@@ -37,16 +37,23 @@ class XlayerClient:
             annots = json_content['annotations']
             if self.debug:
                 for a in annots:
-                    print "Match", a['text'], "at char offset", a['offset'];
+                    print "Match", a['matchtext'], "at char offset", a['offset'];
                     if 'lat' in a: print "representing geo location (%2.4f, %3.4f)" % (a.get('lat'), a.get('lon'))
             
         return annots
     
 if __name__ == '__main__':
-    xtractor = XlayerClient('http://localhost:8890/xlayer/rest/process')
-    xtractor.process('test doc#1', 'Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?'
+    import sys
+    # xtractor = XlayerClient('http://localhost:6789/xlayer/rest/process')
+    xtractor = XlayerClient(sys.argv[1])
+    xtractor.debug = True
+    result = xtractor.process('test doc#1', 'Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?'
                      + 'Seriously, what part of Canada would you visit to see the new prime minister discus our border?'
                      + 'Do you think Hillary Clinton or former President Clinton have an opinion on our Northern Border?')
+
+
+    print("PYTHON str(result)\n==============")
+    print(result)
     # Testing:
     #xtractor.ping()
     #xtractor.stop()
