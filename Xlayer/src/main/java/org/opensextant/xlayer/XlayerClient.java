@@ -70,7 +70,6 @@ public class XlayerClient extends Application {
      * @return
      * @throws IOException
      * @throws JSONException
-     * @throws MATDocumentException
      */
     public List<TextMatch> process(String docid, String text) throws IOException, JSONException {
 

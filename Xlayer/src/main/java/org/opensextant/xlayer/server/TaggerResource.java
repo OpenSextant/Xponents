@@ -36,13 +36,9 @@ public abstract class TaggerResource extends ServerResource {
 
 	/**
 	 * Implement your own STOP cammand
-	 *
-	 * @return status with current request count
 	 * 
 	 */
-	public void stop() {
-		System.exit(0);
-	}
+	public abstract void stop();
 
 	/**
 	 * Ping.

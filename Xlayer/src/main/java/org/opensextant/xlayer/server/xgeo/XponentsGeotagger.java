@@ -1,4 +1,4 @@
-package org.opensextant.xlayer.server;
+package org.opensextant.xlayer.server.xgeo;
 
 import java.util.List;
 
@@ -15,6 +15,8 @@ import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.xlayer.Transforms;
+import org.opensextant.xlayer.server.RequestParameters;
+import org.opensextant.xlayer.server.TaggerResource;
 import org.restlet.data.CharacterSet;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
@@ -45,10 +47,8 @@ public class XponentsGeotagger extends TaggerResource {
 	/**
 	 * Process the text for the given document.
 	 *
-	 * @param docid
-	 *            the docid
-	 * @param input
-	 *            the input
+	 * @param input     the input
+	 * @param jobParams the job params
 	 * @return the representation
 	 */
 	public Representation process(TextInput input, RequestParameters jobParams) {
@@ -215,5 +215,18 @@ public class XponentsGeotagger extends TaggerResource {
 		result.setCharacterSet(CharacterSet.UTF_8);
 
 		return result;
+	}
+
+	/**
+	 * Must explicitly stop Solr multi-threading. 
+	 */
+	@Override
+	public void stop() {
+		Extractor x = getExtractor();
+		if (x != null) {
+			x.cleanup();
+		}
+		System.exit(0);
+
 	}
 }

@@ -10,6 +10,6 @@ XPONENTS_SOLR=/mitre/xponents-solr
 
 #-Djava.util.logging.config.file=./etc/logging.properties  \
 nohup java -Dopensextant.solr=$XPONENTS_SOLR -Xmx2g   -Dlogback.configurationFile=$basedir/etc/logback.xml \
-   -classpath "$basedir/etc:$XPONENTS_SOLR/gazetteer/conf:$basedir/lib/*" org.opensextant.xlayer.server.XlayerServer   $*  2>$logfile > $stdout &
+   -classpath "$basedir/etc:$XPONENTS_SOLR/gazetteer/conf:$basedir/lib/*" org.opensextant.xlayer.server.xgeo.XlayerServer   $*  2>$logfile > $stdout &
 
 
