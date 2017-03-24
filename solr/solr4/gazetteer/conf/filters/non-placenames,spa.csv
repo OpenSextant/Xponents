@@ -194,6 +194,7 @@ gracias a dios,phrase
 gran,adjective.spa
 grande,adjective.spa
 grandes,adjective.spa
+gringo,noun.spa
 grupo,noun.spa
 guarda,noun
 habla,verb
@@ -494,7 +495,10 @@ habra,verb
 le dan,verb
 le voy,verb
 crea,verb
+usar,verb
 policia,noun
+tren,noun
+tortilla,noun
 revolucion,noun
 tarde,noun
 hijo,person.label

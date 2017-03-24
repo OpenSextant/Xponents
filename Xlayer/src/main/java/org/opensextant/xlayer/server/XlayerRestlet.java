@@ -28,7 +28,7 @@ public class XlayerRestlet extends Application {
         log = getContext().getCurrentLogger();
     }
 
-    private static final String version = "v2.8";
+    private static final String version = "v2.9";
 
     private void banner() throws IOException {
         info("\n" + FileUtility.readFile("etc/banner.txt"));

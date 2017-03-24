@@ -1,4 +1,5 @@
 exclusion,category
+baz,abbrev
 doc,abbrev
 meta,abbrev
 ed,abbrev
@@ -200,6 +201,7 @@ avian,adjective
 pleasant,adjective
 vegan,adjective
 bon,adjective.fre
+priviet,phrase.rus
 nouveau,adjective.fre
 de novo,adjective.ita
 santi,adjective.ita
@@ -409,10 +411,12 @@ gamer,internet
 siri,internet
 java,internet
 blackberry,internet
+jabber,internet
 fico,internet
 vid,internet
 naver,internet
 hacker,internet
+hacking,verb
 tor,internet
 hulu,internet
 vines,internet
@@ -422,6 +426,8 @@ dev,internet
 char,internet
 proc,internet
 apps,internet
+arial,internet
+botnet,internet
 deus,latin
 december,month
 dec,month
@@ -1292,6 +1298,7 @@ gen,person.label.rank
 admiral,person.label.rank
 adm,person.label.rank
 captain,person.label.rank
+skipper,person.label
 cpt,person.label.rank
 colonel,person.label.rank
 col,person.label.rank
@@ -1351,6 +1358,7 @@ po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
 goto,phrase
+eek,phrase
 end of the road,phrase
 up and down,phrase
 up-to-date,phrase
@@ -2335,6 +2343,7 @@ buick,well-known.brand
 tesla,well-known.brand
 nike,well-known.brand
 samsung,well-known.brand
+vaio,well-known.brand
 uber,well-known.brand
 über,well-known.brand
 kobe,well-known.brand
@@ -2392,6 +2401,8 @@ sherlock,well-known.fiction
 simpsons,well-known.fiction
 little red,well-known.fiction
 apollo,well-known.mythology
+zeus,well-known.mythology
+midas,well-known.mythology
 aslan,well-known.mythology
 sears,well-known.org
 reuters,well-known.org
@@ -2419,6 +2430,7 @@ einstein,well-known.person
 uncle sam,well-known.person
 ringo,well-known.person
 yoda,well-known.person
+mozart,well-known.person
 ghandi,well-known.person
 gandhi,well-known.person
 shaq,well-known.person
@@ -2431,6 +2443,7 @@ farewell,noun
 ditch,noun
 fork,noun
 junction,place.civil
+cir,place.civil
 burrow,noun
 shale,noun
 salmon,food
@@ -2466,3 +2479,11 @@ easy,adjective
 looker,noun
 utter,verb
 status,noun
+navigator,noun
+pod,noun
+kilo,noun
+kool,phrase
+guild,noun
+goose,animal
+comercial,adjective
+commercial,adjective
