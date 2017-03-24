@@ -13,7 +13,7 @@
 	<property name="guava.v" value="14.0.1" />
 	<property name="xponents.v" value="${xponents.build.v}" />
 	<property name="supercsv.v" value="2.4.0" />
-	<property name="lang3.v" value="3.4" />
+	<property name="lang3.v" value="3.5" />
 
 	<property name="jetty.runtime.lib" value="${basedir}/lib/ext" />
 	<property name="solr.runtime.lib" value="${basedir}/solr4/lib" />
