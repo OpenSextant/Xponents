@@ -155,6 +155,7 @@ public class TestPoLiReporter {
      */
     public void test() throws IOException {
 
+    	poli.enableAll();
         createResultsFile("results/test_System.csv");
 
         // List<TextMatch> allResults = new ArrayList<>();

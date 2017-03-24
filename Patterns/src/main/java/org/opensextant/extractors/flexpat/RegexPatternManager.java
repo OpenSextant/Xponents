@@ -87,6 +87,7 @@ public abstract class RegexPatternManager {
 
     public RegexPatternManager(InputStream s, String n) throws IOException {
         this.patternFile = n;
+        testing = this.debug;
         initialize(s);
     }
 
