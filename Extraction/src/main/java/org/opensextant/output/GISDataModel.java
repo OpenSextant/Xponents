@@ -309,7 +309,7 @@ public class GISDataModel {
 
         Feature row = new Feature();
         // Administrative settings:
-        // row.setName(getJobName());
+        row.setName(g.getPlaceName());
         row.setSchema(schema.getId());
         row.putData(OpenSextantSchema.SCHEMA_OID, id);
 

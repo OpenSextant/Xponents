@@ -48,6 +48,7 @@ public final class KMLFormatter extends GISDataFormatter {
         this.doc_type = DocumentType.KMZ;
         this.outputType = "KML";
         this.groupByDocument = true;
+        this.includeCoordinate = true;
     }
 
     /**
