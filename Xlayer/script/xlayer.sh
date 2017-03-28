@@ -6,7 +6,7 @@ echo $*
 cd $basedir
 logfile=$basedir/log/stderr.log
 stdout=$basedir/log/xlayer.log
-XPONENTS_SOLR=/mitre/xponents-solr
+XPONENTS_SOLR=/mitre/xponents-solr/solr4
 
 #-Djava.util.logging.config.file=./etc/logging.properties  \
 nohup java -Dopensextant.solr=$XPONENTS_SOLR -Xmx2g   -Dlogback.configurationFile=$basedir/etc/logback.xml \

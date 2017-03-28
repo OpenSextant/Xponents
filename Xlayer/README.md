@@ -34,6 +34,14 @@ GET or POST operations are supported.  With GET, use the parameters as noted abo
 With POST, use JSON to formulate your input as a single JSON object, e.g., "{'docid':..., 'text':....}"
 Additionally, features and tuning parameters will be supported.
 
+
+Stopping Cleanly
+------------------
+curl "http://localhost:8890/xlayer/rest/process?cmd=stop"
+
+  The recipe is SERVER/xlayer/rest/process?cmd=stop
+
+
 Implementation
 ---------------
 Please refer to Xponents Extraction module.  The tagging/extracting/geocoding is done by PlaceGeocoder Java API.
