@@ -1,5 +1,7 @@
 OpenSextant Solr Gazetteer
 ============================
+NOTE: text was written in plain text originally, not markdown. 
+
 The OpenSextant Gazetteer is a catalog of place names and basic geographic metadata, such 
 as country code, location, feature codings.  It is currently indexed and stored using 
 Solr 4.2+ (http://lucene.apache.org/solr).  Currently Solr 4.10+ is used.
@@ -23,37 +25,41 @@ Gazetteer data is generally best downloaded from here:
 Or checkout the project there and build it yourself.
 
 Once you have that "merged" flat file, configure a copy of Xponents/build.template as Xponents/build.properties
-
+```
   gazetteer.data.file   -- set the path to the MergedGazetteer.txt (TAB-delimited data file) as your input
                            NO default.
 
   solr.home             -- set the location of your solr home; the "gazetteer" Solr core is the output
                            Default: ./solr4  (as this is relative to the Xponents/solr/ dir)
+```
 
 
 Honing Gazetteer Index
 =================================
 
 Size matters.  So does content.  Your gazetteer should contain named locations and other data
-you want to use in your application.  For example, Complete worldwide name search suggests you 
-have a full gazetteer; Lightweight desktop geocoding suggests you have the basics plus some other 
-data, but much less than the full version.
+you want to use in your application.  For example, An application for a complete worldwide name 
+search suggests you have a full gazetteer; An application of lightweight desktop geocoding suggests 
+you have the basics plus some other data, but much less than the full version.
 
-Merged gazetteer file:  2.1 GB with 16.5 million entries.  
+Merged gazetteer file:  2.1 GB with 16.5 million entries.   (as of 2016)
 
 From this merged data set, we can filter the rows of data by making use of some simple categories.  
 Places and Place names may be well-known or rare, or some where in-between.
 
+```
 Solr Gazetteer Sizes Approximately:
   Full gazetteer:  1.6 GB  (v1.4 or v1.5 OpenSextant)
   General         ~600 MB
   Wellknown        ~20 MB
   Basic gazetteer:  ~1 MB 
+```
 
 To adjust content (and therefore size), use the FILE: solr/gazetteer/conf/solrconfig.xml 
 Look at the 'update-script' 'params' section, which has an include_category parameter.  
 The choices for this parameter are:
 
+```
  // NO filtering done within Solr; NOTE: Your Gazetteer ETL output may have already filtered records
  // So, the term 'all' here is relative to what you send into Solr
  // 
@@ -74,6 +80,7 @@ The choices for this parameter are:
           <!-- A comment here about your inclusions -->
           <str name="include_category">[cat,cat,cat,...]</str>
 
+```
 
 Running Xponents Solr
 =================================
@@ -81,8 +88,8 @@ Running Xponents Solr
 This is a stock instance of Solr 4.x with a number of custom solr cores.
 For now the main cores are:  taxcat and gazetteer.
 
-To start from raw data for Gazetteer, see gazetteer/README* for those staging details to generate a gazetteer.
-To start from raw data for Taxcat / XTax,  see Extraction/XTax/README.md
+* To start from raw data for Gazetteer, see gazetteer/README* for those staging details to generate a gazetteer.
+* To start from raw data for Taxcat / XTax,  see Extraction/XTax/README.md
 
 These notes here are for the general situation just establishing Solr and iterating through common tasks.
 
@@ -100,29 +107,37 @@ lexicon data to the Solr indexes for tagging.  These Python libs
 are used in ./build.sh and in any other scripts such as XTax/examples/jrcnames.py
 
 From Source:
+```
     pushd Extraction/src/main/python
     python ./setup.py bdist_wheel --universal
     popd
     # Install built lib with dependencies to ./python
     pip install --target ./piplib Extraction/src/main/python/dist/opensextant-VERSION.whl 
+```
 
 
 From Distribution:
+```
     pushd lib/python/
     python ./setup.py bdist_wheel --universal
     popd
     pip install --target piplib lib/python/dist/opensextant-VERSION.whl
-
+```
 
 Additionally, add JSON support:
+```
     pip install --target ./piplib simplejson
+```
 
 In Python Development mode where the opensextant libs are in development:
+```
     export PYTHONPATH=/path/to/lib/python   or /path/to/Xponents/Extraction/src/main/python
     # Hmm.. note you still have to install python dependencies.
+```
   
 1. Configure 
 =============
+```
 
     Decide where your final solr server data will be managed, e.g. 
         XP_SOLR = /myproject/resources/xponents-solr/      
@@ -132,10 +147,12 @@ In Python Development mode where the opensextant libs are in development:
     (XP_SOLR is not a real variable, just short hand for the sake of brevity)
 
     TODO: these two variable names will eventually converge and just be 'opensextant.solr'
+```
 
 2. Initialize
 =============
 
+```
     # If you use a proxy, then include proxy command first in all your Ant invocations.
     # As well, set proxy.host and proxy.port in your build.properties above.
     #
@@ -144,19 +161,23 @@ In Python Development mode where the opensextant libs are in development:
 
     # Otherwise, if you have NO proxy, then simply drop that command from any tasks below.
     ant init
+```
 
 
 3. Load Gazetteer 
 =============
 In this step, you can use:
-
+```
     bash$  ./build.sh 
+```
 
 which will build the Solr gazetteer index and add to the taxcat index
 Alternatively, you could run the Jetty server separately and adapt a copy of the build.sh script 
 for your own uses.
  
+```
     bash$  ./myjetty.sh start & 
+```
 
 And then interact with the Solr server from Python, Curl, Java, or your browser. As noted 
 in the various scripts,  default Solr URL is http://localhost:7000/solr
@@ -167,6 +188,7 @@ and data processing.  The filters are kept close by to the ./gazetteer index for
 packed in their own JAR or with the Extractors JAR.   And then that JAR would be put in Jetty CLASSPATH
 or your application CLASSPATH.
 
+```
    JETTY9 USAGE - Make a symbolic link
    cd ./resources/
    ln -s ../solr4/gazetteer/conf/filters .
@@ -176,11 +198,12 @@ or your application CLASSPATH.
    jar cf xponents-gazetteer-meta.jar ./filters .....  # Other stuff?
 
    # Push resulting JAR to ./lib/ext/ for Jetty, or add to Xponents/lib or wherever .jar files are referenced in your CLASSPATH
+```
 
 WHY?  These filters are data sets like source code. They are used 
-by client side code or server side code;  Inside Solr processors/taggers and outside. 
+by client side code or server side code;  Inside and outside of Solr processors and taggers.
 So there is no single best place to locate them, and there is no single best answer for putting them in your CLASSPATH.
-JAR is more portable, but for development, we just add the folder "...gazetteer/conf/"  to the CLASSPATH.
+A JAR is more portable for deployment, but for development we just add the folder "...gazetteer/conf/"  to the CLASSPATH.
 
 
 4.  Load TaxCat 
@@ -207,6 +230,8 @@ interesting -- you should save them all as a part of your pipeline.
 
 Okee dokee. Now let's give it a shot.
 
+```
+
    # Reference:  See Xponents/XTax/ for the full documentation on XTax and JRC, as an example data set.
    #
    export PYTHONPATH=/path/to/my/piplib
@@ -219,13 +244,19 @@ Okee dokee. Now let's give it a shot.
 
    ... 5-10 minutes later these entities are now in your ${opensexant.solr}/solr4/taxcat core ready to go.
 
+```
 
 
 Customization
 ================
 
 Phonetics
-
+---------
 As of OpenSextant 1.5 (July 2013), the use of phonetics codecs to provide a phoneme version of a place name
-was removed, as it had not been used.   The last few name field types that allowed for phonetic encoding were as follows:
+was removed, as it had not been used.   
+
+
+Other Topics
+--------
+Coming.
 
