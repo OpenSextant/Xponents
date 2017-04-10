@@ -98,13 +98,16 @@ To get a fully working Solr instance running in a web server, such as the defaul
 some extra steps, but is relatively well tested.
 
 
-0. Build Some Prequisite Libs
+Step 0. Build Some Prequisite Libs
 =================================
 The gazetteer build scripts use some Ant, but mainly Python.
 You'll see the Ant script just automates invocation of scripted steps.
 The Python libraries provide a platform to help us add any type of
 lexicon data to the Solr indexes for tagging.  These Python libs 
 are used in ./build.sh and in any other scripts such as XTax/examples/jrcnames.py
+
+And as far as Xponents Java, just build the full project, ```cd ../; mvn install``` 
+Running these steps depends on the current version of Xponents Extraction and Basics.
 
 From Source:
 ```
@@ -135,7 +138,7 @@ In Python Development mode where the opensextant libs are in development:
     # Hmm.. note you still have to install python dependencies.
 ```
   
-1. Configure 
+Step 1. Configure 
 =================================
 ```
 
@@ -149,7 +152,7 @@ In Python Development mode where the opensextant libs are in development:
     TODO: these two variable names will eventually converge and just be 'opensextant.solr'
 ```
 
-2. Initialize
+Step 2. Initialize
 =================================
 
 ```
@@ -164,7 +167,7 @@ In Python Development mode where the opensextant libs are in development:
 ```
 
 
-3. Load Gazetteer 
+Step 3. Load Gazetteer 
 =================================
 In this step, you can use:
 ```
@@ -206,7 +209,7 @@ So there is no single best place to locate them, and there is no single best ans
 A JAR is more portable for deployment, but for development we just add the folder "...gazetteer/conf/"  to the CLASSPATH.
 
 
-4.  Load TaxCat 
+Step 4.  Load TaxCat 
 =================================
 This step falls under the category of geotagger tuning.  E.g., see Extraction PlaceGeocoder class
 as an implemenation of a full geotagging capability.  To negate false-positives we need a source
