@@ -99,7 +99,7 @@ some extra steps, but is relatively well tested.
 
 
 0. Build Some Prequisite Libs
-=============
+=================================
 The gazetteer build scripts use some Ant, but mainly Python.
 You'll see the Ant script just automates invocation of scripted steps.
 The Python libraries provide a platform to help us add any type of
@@ -136,7 +136,7 @@ In Python Development mode where the opensextant libs are in development:
 ```
   
 1. Configure 
-=============
+=================================
 ```
 
     Decide where your final solr server data will be managed, e.g. 
@@ -150,7 +150,7 @@ In Python Development mode where the opensextant libs are in development:
 ```
 
 2. Initialize
-=============
+=================================
 
 ```
     # If you use a proxy, then include proxy command first in all your Ant invocations.
@@ -165,7 +165,7 @@ In Python Development mode where the opensextant libs are in development:
 
 
 3. Load Gazetteer 
-=============
+=================================
 In this step, you can use:
 ```
     bash$  ./build.sh 
@@ -207,7 +207,7 @@ A JAR is more portable for deployment, but for development we just add the folde
 
 
 4.  Load TaxCat 
-===============
+=================================
 This step falls under the category of geotagger tuning.  E.g., see Extraction PlaceGeocoder class
 as an implemenation of a full geotagging capability.  To negate false-positives we need a source
 of known things that are not places, rules that guide us how to judge non-places, or some other 
@@ -248,7 +248,7 @@ Okee dokee. Now let's give it a shot.
 
 
 Customization
-================
+=================================
 
 Phonetics
 ---------
