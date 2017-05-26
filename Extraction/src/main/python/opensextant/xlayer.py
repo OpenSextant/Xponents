@@ -9,6 +9,9 @@ import simplejson as json
 
 class XlayerClient:
     def __init__(self, server):
+        '''
+        @param server: URL for the service 
+        '''
         self.server = server
         self.debug = False
         
@@ -44,14 +47,35 @@ class XlayerClient:
     
 if __name__ == '__main__':
     import sys
-    # xtractor = XlayerClient('http://localhost:6789/xlayer/rest/process')
-    xtractor = XlayerClient(sys.argv[1])
+    from traceback import format_exc
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--service-url")
+    ap.add_argument("--docid")
+    ap.add_argument("--inputfile")
+    ap.add_argument("--text")
+    args = ap.parse_args()
+    xtractor = XlayerClient(args.service_url)
     xtractor.debug = True
-    result = xtractor.process('test doc#1', 'Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?'
-                     + 'Seriously, what part of Canada would you visit to see the new prime minister discus our border?'
-                     + 'Do you think Hillary Clinton or former President Clinton have an opinion on our Northern Border?')
-
-
+    _id = "test doc#1"
+    if args.docid:
+        _id = args.docid
+    _text = None
+    if args.inputfile:
+        try:
+            fh = open(args.inputfile, 'rb')
+            _text = fh.read()
+            _text = unicode(_text, 'utf-8')
+        except Exception, err:
+            print(format_exc(limit=5))
+    elif args.text:
+        _text  = args.text
+        
+    if not _text:
+        print ("No inputfile or text args providea")
+        sys.exit(-1)
+        
+    result = xtractor.process(_id, _text)
     print("PYTHON str(result)\n==============")
     print(result)
     # Testing:
