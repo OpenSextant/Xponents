@@ -135,11 +135,11 @@ public class XponentsGeotagger extends TaggerResource {
 						}
 						node.put("type", t);
 						node.put("taxon", n.name); // Name of taxon
-						node.put("catalog", n.catalog); // Name of catalog or
-														// source
+						node.put("catalog", n.catalog); // Name of catalog or source
 						// node.put("filtered-out", true);
 
 						resultArray.put(node);
+						break;
 					}
 				}
 				continue;
@@ -191,14 +191,18 @@ public class XponentsGeotagger extends TaggerResource {
 			 */
 			++tagCount;
 			if (place.isCountry) {
+				node.put("name", resolvedPlace.getPlaceName());
 				node.put("type", "country");
 				node.put("cc", resolvedPlace.getCountryCode());
+				node.put("confidence", place.getConfidence());
+				
 			} else {
 
 				/*
 				 * Conf = 20 or greater to be geocoded.
 				 */
 				Transforms.createGeocoding(resolvedPlace, node);
+				node.put("name", resolvedPlace.getPlaceName());
 				node.put("type", "place");
 				node.put("confidence", place.getConfidence());
 				if (place.getConfidence() <= 10) {
