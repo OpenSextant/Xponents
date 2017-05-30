@@ -247,7 +247,7 @@ Using Xlayer API and More
 =========================
 
 
-[XlayerClient demo](../Extraction/src/main/python/opensextant/xlayer.py Xlayer demo client) provides the real 
+[XlayerClient demo](../Extraction/src/main/python/opensextant/xlayer.py "Xlayer demo client") provides the real 
 basics of how a client calls the server.   A richer illustration of how to create a client and make use of 
 Xponents APIs is here in the Java XlayerClient:
 
