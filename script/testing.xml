@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
 
-<project name="Xponents-v2" >
+<project name="Xponents" >
 
-  <property name="version" value="2.0-runtime" />
   <property name="xponents" value="${basedir}/../" />
 
-  <!-- Copy runtime.local.cfg to runtime.cfg ; edit variables in that file.
+  <!-- By now  you have read some instructions and know what "build.properties" looks like.
    -->
-  <property file="runtime.cfg" />
+  <property file="${xponents}/build.properties" />
 
   <path id="runtime.classpath">
     <pathelement location="${solr.home}/gazetteer/conf" />
@@ -116,16 +115,13 @@
         </java>
     </target>
 
-
-
   <!-- Examples Testing area -->
   <target name="test" description="Basic Runner for Geo/Temporal" >
         <input message="inputfile?" addproperty="get.inputfile"/>
         <input message="outputfile?" addproperty="get.outputfile"/>
         <input message="formats?" addproperty="get.formats"/>
         <java classname="org.opensextant.examples.BasicGeoTemporalProcessing" classpathref="runtime.classpath" fork="yes" dir="${xponents}" >
-            <jvmarg value="-Dsolr.solr.home=${solr.home}" />
-            <jvmarg value="-Dopensextant.home=${opensextant.home}" />
+            <jvmarg value="-Dopensextant.solr=${solr.home}" />
             <jvmarg value="-Xmx2g" />
             <arg value="-i" />
             <arg value="${get.inputfile}" />
@@ -145,7 +141,7 @@
         <jvmArg value="-Xmx1g"/>
         <!-- To use FileGDB export with GISCore you must add some libraries to java.library.path. Documenation TBD -->
         <jvmArg value="-Djava.library.path=${xponents}/lib/linux-x64"/>
-        <jvmArg value="-Dsolr.solr.home=${solr.home}"/>
+        <jvmArg value="-Dopensextant.solr=${solr.home}"/>
         <jvmArg value="-Dlog4j.configuration=${xponents}/etc/log4j.properties" />
         <arg value="-n" />
         <arg value="${job}" />

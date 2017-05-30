@@ -62,6 +62,22 @@ in JSON, determines client's feature requests to hone processing and formatting,
 ![Figure 1](./doc/xlayer-xgeo-server-example.png "Extending Xlayer using Restlet")
 
 
+When building an Xlayer application, client-side or server-side, please understand the general CLASSPATH needs:
+
+* Xponents JARs -- APIs, Xlayer main and test code.  Use ``` mvn dependency:copy-dependencies``` and then see ./lib/opensextant-*.jar. The 
+  essential items are listed in order of increasing dependency:
+  * opensextant-xponents-basics-2.9.8.jar
+  * opensextant-xponents-patterns-2.9.8.jar
+  * opensextant-xponents-2.9.8.jar
+  * opensextant-xponents-xlayer-0.1.jar
+  * opensextant-xponents-xlayer-0.1-tests.jar
+* Configuration items foldered in ```./etc``` or similar folder in CLASSPATH
+* Logging configuration -- Logback is used in most Xponents work, but only through SLF4J. If you choose another logger implementation, 
+  SLF4J is your interface.   Copy and configure ```Xlayer/src/test/resources/logback.xml``` in your install.  As scripted, ```./etc/``` is the location for this item.
+* Geocoding metadata -- ./etc/ should contain xponents-gazetteer-meta.jar (result of normal full Xponents build. Specifically, ```ant -f ./solr/build.xml gaz-meta```). 
+  This resource is required for Java Xponents usage or server-side development, but not client REST usage necessarily.
+
+
 REST Interface
 ---------------
 For example,  run the Python client to see how easy it is to call the service above.
@@ -111,11 +127,22 @@ References:
 Example JSON Output:
 --------------------
 
-   # Python call
+```
+   from opensextant.xlayer import XlayerClient
+
+   # Ah,... Demo Client, really.
+   xtractor = XlayerClient(serverURL)
+
+   # Python call -- Send the text, process the text, print the JSON response to console.
    xtractor.process('test doc#1',
                      'Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?'
                      + 'Seriously, what part of Canada would you visit to see the new prime minister discus our border?'
                      + 'Do you think Hillary Clinton or former President Clinton have an opinion on our Northern Border?')
+
+   # NOTE -- This is draft 0.1;  We can certainly make a more complete Client API using our own 
+   # python or Java data model and API.  This demo client demonstrates primarily the connectivity.
+   #
+```
  
 
 	 {
@@ -212,3 +239,21 @@ Example JSON Output:
 	    }
 	  ]
 	 }
+
+
+
+
+Using Xlayer API and More
+=========================
+
+
+[XlayerClient demo] (../Extraction/src/main/python/opensextant/xlayer.py Xlayer demo client) provides the real 
+basics of how a client calls the server.   A richer illustration of how to create a client and make use of 
+Xponents APIs is here in the Java XlayerClient:
+
+* [src/main/java/XlayerClientTest.java](src/test/java/XlayerClientTest.java) - Test main program. Compile and include ./target/*-tests.jar in CLASSPATH
+* [src/main/java/org/opensextant/xlayer/XlayerClient.java](src/main/java/org/opensextant/xlayer/XlayerClient.java) - a basic Client, using Restlet
+* [src/main/java/org/opensextant/xlayer/Transforms.java](src/main/java/org/opensextant/xlayer/Transforms.java) - a basic data adapter for getting REST response back into API objects.
+
+
+
