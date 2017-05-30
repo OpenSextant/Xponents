@@ -102,6 +102,14 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadoc</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
@@ -147,10 +155,7 @@
                 </executions>
             </plugin>
         </plugins>
-
     </build>
-
-
     <repositories>
         <repository>
             <id>maven-restlet</id>
@@ -158,5 +163,4 @@
             <url>http://maven.restlet.org</url>
         </repository>
     </repositories>
-
 </project>
