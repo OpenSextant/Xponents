@@ -128,9 +128,10 @@ public class XponentsGeotagger extends TaggerResource {
 					for (Taxon n : match.getTaxons()) {
 						JSONObject node = populateMatch(name);
 						String t = "taxon";
-						if (n.name.startsWith("org")) {
+						String taxon_name = n.name.toLowerCase();
+						if (taxon_name.startsWith("org.")) {
 							t = "org";
-						} else if (n.name.startsWith("person")) {
+						} else if (taxon_name.startsWith("person.")) {
 							t = "person";
 						}
 						node.put("type", t);

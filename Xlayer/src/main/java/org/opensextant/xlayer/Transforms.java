@@ -112,8 +112,9 @@ public class Transforms {
 	 * @param a JSON annotation
 	 */
 	public static void parseTaxon(TaxonMatch x, String t, JSONObject a) {
+	    x.setText(a.getString("matchtext"));
 		if (a.has("taxon")) {
-			Taxon tx = new Taxon();
+			Taxon tx = new Taxon();			
 			tx.setName(a.getString("taxon"));
 			tx.catalog = a.getString("catalog");
 			x.addTaxon(tx);
