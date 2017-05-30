@@ -28,7 +28,7 @@ if "%COMMAND%" == "start" (
 if "%COMMAND%" == "stop" (
     echo "STOP XLAYER SERVICE"
     echo "Launching a browser and running this... "
-    start "http://localhost:%XLAYER_PORT%/xlayer/rest/process?cmd=stop"
+    start  "" "http://localhost:%XLAYER_PORT%/xlayer/rest/process?cmd=stop"
 )
 
 

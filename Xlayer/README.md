@@ -6,6 +6,9 @@ Using primarily the Restlet Framework (http://restlet.org)
 we have a very basic ability to provision the Xponent extraction 
 as REST services.  
 
+In this package is a REST server and several test clients in Java and Python 
+which demonstrate how to call the extraction service and parse the results.
+
 version 0.1
 -----------
 - Expose PlaceGeocoder capability: geocode text, yielding 
@@ -248,7 +251,7 @@ Using Xlayer API and More
 basics of how a client calls the server.   A richer illustration of how to create a client and make use of 
 Xponents APIs is here in the Java XlayerClient:
 
-* [src/main/java/XlayerClientTest.java](src/test/java/XlayerClientTest.java) - Test main program. Compile and include ./target/*-tests.jar in CLASSPATH
+* [src/main/java/XlayerClientTest.java](src/test/java/XlayerClientTest.java) - Test main program. Compile and include ./target/\*-tests.jar in CLASSPATH
 * [src/main/java/org/opensextant/xlayer/XlayerClient.java](src/main/java/org/opensextant/xlayer/XlayerClient.java) - a basic Client, using Restlet
 * [src/main/java/org/opensextant/xlayer/Transforms.java](src/main/java/org/opensextant/xlayer/Transforms.java) - a basic data adapter for getting REST response back into API objects.
 
@@ -256,6 +259,23 @@ If you have gotten this far please consider the Xponents APIs for your data mode
 back and you can do anything with it... however our preference is to consume the JSON and get API objects from the JSON. Sure, we can 
 do better getting into GSON or JSON object parsers.  But for now there are lots of choices for how to do this.  The crux of this occurs under the Transforms class.
 
+
+INSTALLATION
+================
+Essentials:
+
+```
+  # Install the Python library using Pip. Pip handles installing OS-specific python resources as needed. 
+  mkdir piplib 
+  pip install --target piplib dist/opensextant-1.1.4.tar.gz
+
+  # Run server
+  ./script/xlayer.sh 3535 start
+
+  # In another window, Run test client using Python.
+  ./test/test-python.sh 3535 ./test/randomness.txt
+
+  # Once done, run the Java client 
 
 
 
