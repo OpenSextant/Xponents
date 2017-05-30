@@ -18,9 +18,12 @@ Execution
 This is a server-side capability, but you can write your own BAT, Groovy, Ant or other script
 to invoke the main Restlet server as shown in this script:
 
-    ./script/xlayer.sh  8890
+    ./script/xlayer.sh  8890 start 
+  .... 
+    ./script/xlayer.sh  8890 stop 
 
 For now the script takes a port number, running a HTTP server on that port, with no security.
+And then also the control command start or stop. 
 
 Alternatives:  I considered making Solr request handlers to accompany the underlying
 Solr Text Tagger (solr /tag handler).   However, that seemed limiting, because not all extraction
@@ -37,15 +40,27 @@ Additionally, features and tuning parameters will be supported.
 
 Stopping Cleanly
 ------------------
-curl "http://localhost:8890/xlayer/rest/process?cmd=stop"
+    curl "http://localhost:8890/xlayer/rest/process?cmd=stop"
 
-  The recipe is SERVER/xlayer/rest/process?cmd=stop
+The recipe is ```SERVER/xlayer/rest/process?cmd=stop```
+as shown in the xlayer.sh (or .BAT) script
 
 
 Implementation
 ---------------
 Please refer to Xponents Extraction module.  The tagging/extracting/geocoding is done by PlaceGeocoder Java API.
 (https://github.com/OpenSextant/Xponents/blob/master/Extraction/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java)
+
+The general design of the RestLet applications here is depicted below in Figure 1. 
+The XlayerServer is a container that manages the overall runtime environement.
+The XlayerRestlet is an application inside the container.  A Restlet Application typically
+has multiple services (ServerResources) mapped to URLs or URL patterns.
+
+XponentsGeotagger is a wrapper around the PlaceGeocoder class. The wrapper manages the digestion of client requests 
+in JSON, determines client's feature requests to hone processing and formatting, and finally produces a JSON formatted response.
+
+![Figure 1](./doc/xlayer-xgeo-server-example.png "Extending Xlayer using Restlet")
+
 
 REST Interface
 ---------------
