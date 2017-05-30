@@ -241,19 +241,21 @@ Example JSON Output:
 	 }
 
 
-
-
 Using Xlayer API and More
 =========================
 
-
-[XlayerClient demo](../Extraction/src/main/python/opensextant/xlayer.py "Xlayer demo client") provides the real 
+[XlayerClient demo in Python](../Extraction/src/main/python/opensextant/xlayer.py "Xlayer demo client") provides the real 
 basics of how a client calls the server.   A richer illustration of how to create a client and make use of 
 Xponents APIs is here in the Java XlayerClient:
 
 * [src/main/java/XlayerClientTest.java](src/test/java/XlayerClientTest.java) - Test main program. Compile and include ./target/*-tests.jar in CLASSPATH
 * [src/main/java/org/opensextant/xlayer/XlayerClient.java](src/main/java/org/opensextant/xlayer/XlayerClient.java) - a basic Client, using Restlet
 * [src/main/java/org/opensextant/xlayer/Transforms.java](src/main/java/org/opensextant/xlayer/Transforms.java) - a basic data adapter for getting REST response back into API objects.
+
+If you have gotten this far please consider the Xponents APIs for your data model when using client-side/REST applications. You get JSON
+back and you can do anything with it... however our preference is to consume the JSON and get API objects from the JSON. Sure, we can 
+do better getting into GSON or JSON object parsers.  But for now there are lots of choices for how to do this.  The crux of this occurs under the Transforms class.
+
 
 
 
