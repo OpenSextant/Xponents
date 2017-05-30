@@ -276,6 +276,16 @@ Essentials:
   ./test/test-python.sh 3535 ./test/randomness.txt
 
   # Once done, run the Java client 
+  ./test/test-java.sh 3535 ./test/randomness.txt
+
+
+  These are limited examples.  If you want to demonstrate running client and server on different hosts 
+  which is more realistic, by all means adapt the shell scripts for you needs.
+
+  Rather than use shell scripting, we have used Groovy and Ant to simplify these tests for Java.
+  As these are for demonstration only, we do not intend to generalize the scripting beyond this.
+
+```
 
 
 
