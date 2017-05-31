@@ -1,7 +1,7 @@
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
-URL=$1 
+URL=http://localhost:$1/xlayer/rest/process
 FILE=$2
 
 java -Dlogback.configurationFile=$basedir/etc/logback.xml \
