@@ -46,6 +46,7 @@
             <!--  scope: test, however, Test progs that are used for eval/dev/test, etc. should be 
             included in with main API
              -->
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.opensextant</groupId>
