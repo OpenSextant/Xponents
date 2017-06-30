@@ -18,6 +18,7 @@ package org.opensextant.xtext.converters;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.io.TikaInputStream;
@@ -60,7 +61,7 @@ public abstract class ConverterAdapter implements Converter {
      * Yield a ConvertedDocument with no File metadata. Underlying
      * implementation opens and closes a stream to read the string. Metadata is
      * derived solely from the text provided, e.g., length, conversion time,
-     * encoding.
+     * encoding.  Defaults to UTF-8 charset 
      *
      * @param data stream
      * @return the converted document
@@ -68,7 +69,7 @@ public abstract class ConverterAdapter implements Converter {
      */
     @Override
     public ConvertedDocument convert(String data) throws IOException {
-        return conversionImplementation(TikaInputStream.get(IOUtils.toInputStream(data)), null);
+        return conversionImplementation(TikaInputStream.get(IOUtils.toInputStream(data, Charset.forName("UTF-8"))), null);
     }
 
     /**

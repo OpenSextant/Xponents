@@ -23,7 +23,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import static org.apache.commons.text.StringEscapeUtils.unescapeHtml4;
 import org.opensextant.xtext.collectors.Collector;
 import org.opensextant.xtext.collectors.web.HyperLink;
 
@@ -50,7 +50,7 @@ public class SPLink extends HyperLink {
         super(link, base, base);
 
         if (isSharepointFolder()) {
-            urlValue = StringEscapeUtils.unescapeHtml4(URLDecoder.decode(urlValue, "UTF-8"));
+            urlValue = unescapeHtml4(URLDecoder.decode(urlValue, "UTF-8"));
         }
 
         if (isAbsolute()) {

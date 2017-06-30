@@ -101,7 +101,7 @@ public class MessageConverter extends ConverterAdapter {
      * @throws IOException on err
      */
     public ConvertedDocument convertMimeMessage(Message msg, File doc) throws MessagingException,
-    IOException {
+            IOException {
         ConvertedDocument parentMsgDoc = new ConvertedDocument(doc);
         parentMsgDoc.is_RFC822_attachment = true;
         //parentMsgDoc.setEncoding(parseCharset(msg.getContentType()));
@@ -323,7 +323,8 @@ public class MessageConverter extends ConverterAdapter {
                         logger.debug("{}# Save String MIME part", msgPrefixId);
                         if (meta.isQP() || meta.isBase64()) {
                             try {
-                                partIO = IOUtils.toInputStream(text);
+                                // TODO: test decoding and charset settings.  Lacking effective test data with varied encodings.
+                                partIO = IOUtils.toInputStream(text, (meta.charset == null ? "UTF-8" : meta.charset));
                                 byte[] textBytes = decodeMIMEText(partIO, meta.transferEncoding);
                                 if (meta.charset != null) {
                                     text = new String(textBytes, meta.charset);
