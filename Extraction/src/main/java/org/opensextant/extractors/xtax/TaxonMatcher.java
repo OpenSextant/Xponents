@@ -31,12 +31,12 @@ package org.opensextant.extractors.xtax;
 //_____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
-//\ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
-//\ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
-//\ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
-//\/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
-//        \ \_\
-//         \/_/
+// \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
+//  \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
+//   \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
+//    \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
+//              \ \_\
+//               \/_/
 //
 //OpenSextant TaxonMatcher
 //*  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
@@ -69,6 +69,7 @@ import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.util.SolrProxy;
+import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 
 /**
@@ -164,6 +165,14 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         if (!tagAll && !this.catalogs.contains(_cat)) {
             return null;
         }
+        if (!taxonExclusionFilter.isEmpty()) {
+            String name = SolrUtil.getString(refData, "taxnode").toLowerCase();
+            for (String t : taxonExclusionFilter) {
+                if (name.startsWith(t)) {
+                    return null;
+                }
+            }
+        }
         return createTaxon(refData);
     }
 
@@ -177,12 +186,13 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     public static Taxon createTaxon(SolrDocument refData) {
         Taxon label = new Taxon();
 
-        label.name = SolrProxy.getString(refData, "taxnode");
-        label.isAcronym = "A".equals(SolrProxy.getString(refData, "name_type"));
-        label.catalog = SolrProxy.getString(refData, "catalog");
+        label.name = SolrUtil.getString(refData, "taxnode");
 
-        label.addTerm(SolrProxy.getString(refData, "phrase"));
-        label.addTags(refData.getFieldValues("tag"));
+        label.isAcronym = "A".equals(SolrUtil.getString(refData, "name_type"));
+        label.catalog = SolrUtil.getString(refData, "catalog");
+
+        label.addTerm(SolrUtil.getString(refData, "phrase"));
+        label.addTags(SolrUtil.getStrings(refData, "tag"));
         return label;
     }
 
@@ -249,7 +259,21 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     public void removeFilters() {
         catalogs.clear();
+        taxonExclusionFilter.clear();
         tagAll = true;
+    }
+
+    private Set<String> taxonExclusionFilter = new HashSet<String>();
+
+    /**
+     * Add prefixes of types of taxons you do not want returned.
+     * e.g., 
+     * "Place...."  // exlclude
+     * will allow "Org" and "Person" taxons to pass on thru
+     * @param prefix
+     */
+    public void excludeTaxons(String prefix) {
+        taxonExclusionFilter.add(prefix.toLowerCase());
     }
 
     /**
@@ -279,6 +303,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
         Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
         QueryResponse response = tagTextCallSolrTagger(buf, docid, beanMap);
+        /* Exit early if catalog or taxon filters yield no entries */
+        if (beanMap.isEmpty()) {
+            return matches;
+        }
 
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
@@ -298,7 +326,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
             m.start = ((Integer) tag.get("startOffset")).intValue();
             m.end = ((Integer) tag.get("endOffset")).intValue();// +1 char after
                                                                 // last matched
-            // m.pattern_id = "taxtag";
+                                                                // m.pattern_id = "taxtag";
             ++tag_count;
             m.match_id = id_prefix + tag_count;
             // m.setText((String) tag.get("matchText")); // Not reliable.
