@@ -27,6 +27,7 @@
 package org.opensextant.extractors.geo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +44,11 @@ import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
+import org.opensextant.extraction.ExtractionException;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrProxy;
+import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -324,10 +327,9 @@ public class SolrGazetteer {
 
             Country existingCountry = countryCodeMap.get(C.getCountryCode());
             if (existingCountry != null) {
-                if (existingCountry.ownsTerritory(C.getName())){
+                if (existingCountry.ownsTerritory(C.getName())) {
                     // do nothing.
-                }
-                else if (C.isTerritory) {
+                } else if (C.isTerritory) {
                     log.debug("{} territory of {}", C, existingCountry);
                     existingCountry.addTerritory(C);
                 } else {
@@ -423,7 +425,7 @@ public class SolrGazetteer {
             params.set("q", place);
         } else {
             // Bare keyword query needs to be quoted as "word word word"
-            params.set("q", "\"" + place + "\""); 
+            params.set("q", "\"" + place + "\"");
         }
 
         return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), params);
@@ -517,6 +519,90 @@ public class SolrGazetteer {
             return null;
         }
         return closest(yx, candidates);
+    }
+
+    /**
+     * Given a name, find all locations matching that.
+     * Matches may be +/- 1 or 2 characters different.
+     * 
+     * <pre>
+     * search for "Fafu"
+     * Is "Fafu'" acceptable? then len tolerance is about +1
+     * IS "Fafu Airport" acceptable, then use feat_class:S and a much longer tolerance.
+     * </pre>
+     * @param name
+     * @param parametricQuery
+     * @param lenTolerance your choice for how much longer a valid matching name can be.
+     * @return list of matching places
+     * @throws ExtractionException
+     */
+    public List<Place> findPlaces(String name, String parametricQuery, int lenTolerance) throws ExtractionException {
+
+        /*
+         * Create a solr fielded query "field:Value AND|OR field:Value..."
+         * Xponents gazetteer fields:
+         *  name    -- stores general purpose full-text value
+         *  name_ar -- stores Arabic-specific full-text value
+         *  name_cjk -- stores CJK-specific full-text value
+         */
+        String q = String.format("%s +name:\"%s\"", parametricQuery, name);
+
+        /*
+         * Execute query, get List of Place instances (one per gazetteer entry)
+         */
+        try {
+            int len = name.length();
+            List<Place> locs =  new ArrayList<>();
+            for (Place loc : this.search(q, true) ){
+                if (loc.getName().length()-len <= lenTolerance){
+                    locs.add(loc);
+                }
+            }
+            return locs;
+        } catch (SolrServerException sse) {
+            throw new ExtractionException("Query failed", sse);
+        }
+    }
+
+    /**
+     * Find all places for a given gazetteer Place ID.  You'll find all the variants vary by name only.
+     * same place ID should have same feature coding, lat/lon and other metadata.
+     * 
+     * @param placeID
+     * @return
+     * @throws ExtractionException
+     */
+    public List<Place> findPlacesById(String placeID) throws ExtractionException {
+        try {
+            return this.search("place_id:" + placeID, true);
+        } catch (SolrServerException sse) {
+            throw new ExtractionException("Query error using PlaceID. ID is purely alphanumeric", sse);
+        }
+    }
+
+    /**
+     * TODO: This yields primarily ASCII transliterations/romznized versions of the given place.
+     * You may indeed find multiple locations with the same name.
+     * Your parametric query should include feature type (feat_code:P, etc.) and country code (cc:AB)
+     * to yield the most relevant locations for a given name.
+     * 
+     * 
+     * @param name
+     * @param parametricQuery
+     * @param lenTolerance your choice for how much longer a valid matching name can be.
+     * @return
+     * @throws ExtractionException
+     */
+    public List<Place> findPlacesRomanizedNameOf(String name, String parametricQuery, int lenTolerance) throws ExtractionException {
+        List<Place> results = new ArrayList<>();
+        for (Place p : this.findPlaces(name, parametricQuery, lenTolerance)) {
+            for (Place pid : this.findPlacesById(p.getPlaceID())){
+                if (TextUtils.isASCII(pid.getName().getBytes())) {
+                    results.add(pid);
+                }
+            }
+        }
+        return results;
     }
 
 }
