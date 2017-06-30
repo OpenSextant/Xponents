@@ -29,31 +29,33 @@ package org.opensextant.data;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * For now, what seems useful are catalog, name, terms.
-
+ * 
  * @author ubaldino
  */
 public class Taxon {
 
-    /**  Catalog, for example "fruit" */
+    /** Catalog, for example "fruit" */
     public String catalog = null;
 
     /** Node name: citrus.tropical */
     public String name = null;
-    /** Nod OID:  1.2.3  */
+    /** Nod OID: 1.2.3 */
     public String id = null;
     /** Node root: citrus */
     public String rootid = null;
     /** Terms: "pineapple", "mango", ... */
     public Set<String> termset = null;
     public Set<String> tagset = null;
-    /** Acronyms are assumed to be ALL UPPER CASE; granted this does not
-     * always apply.   But this is used to inform post-processing if a match, such as
-     * 'abc' matched 'ABC' incorrectly.  If the match is lower case, but the Taxon is Acronym,
-     * then you have a mismatch of case and semantics likley.
+    /**
+     * Acronyms are assumed to be ALL UPPER CASE; granted this does not always
+     * apply. But this is used to inform post-processing if a match, such as
+     * 'abc' matched 'ABC' incorrectly. If the match is lower case, but the
+     * Taxon is Acronym, then you have a mismatch of case and semantics likley.
      */
     public boolean isAcronym = false;
 
@@ -80,17 +82,16 @@ public class Taxon {
             termset = new HashSet<String>();
         }
         termset.addAll(Arrays.asList(t));
-
     }
 
-    public void addTags(Collection<Object> tlist) {
+    public void addTags(List<String> tlist) {
         if (tlist == null) {
             return;
         }
-
-        for (Object o : tlist) {
-            addTag((String) o);
+        if (tagset == null) {
+            tagset = new HashSet<String>();
         }
+        tagset.addAll(tlist);
     }
 
     public void addTag(String t) {
