@@ -204,14 +204,14 @@ public class GeodeticUtility {
      * @return precision approx error in meters for a given feature. -1 if no
      * feature type given.
      */
-    public static int getFeaturePrecision(String feat_type, String feat_code) {
+    public static int getFeaturePrecision(final String feat_type, final String feat_code) {
 
         if (feat_type == null && feat_code == null) {
             // Unknown, uncategorized feature
             return DEFAULT_PRECISION;
         }
 
-        String lookup = (feat_code != null ? feat_type + "/" + feat_code : feat_type);
+        String lookup = (feat_code != null ? String.format("%s/%s", feat_type, feat_code) : feat_type);
 
         Integer prec = FEATURE_PRECISION.get(lookup);
 
@@ -314,17 +314,18 @@ public class GeodeticUtility {
     public final static String formatLatLon(final LatLon yx) {
         return String.format("%2.4f,%3.4f", yx.getLatitude(), yx.getLongitude());
     }
-    
+
     /**
      * 
      * @param yx lat,lon obj
      * @return geohash representation of the lat,lon
      */
-    public final static String geohash(final LatLon yx){
-        return  GeohashUtils.encodeLatLon(yx.getLatitude(), yx.getLongitude());
+    public final static String geohash(final LatLon yx) {
+        return GeohashUtils.encodeLatLon(yx.getLatitude(), yx.getLongitude());
     }
-    public final static String geohash(double lat, double lon){
-        return  GeohashUtils.encodeLatLon(lat, lon);
+
+    public final static String geohash(double lat, double lon) {
+        return GeohashUtils.encodeLatLon(lat, lon);
     }
-    
+
 }

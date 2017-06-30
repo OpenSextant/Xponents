@@ -162,6 +162,19 @@ public class GeonamesUtility {
         CsvMapReader tzMap = new CsvMapReader(tzReader, CsvPreference.TAB_PREFERENCE);
         String[] columns = tzMap.getHeader(true);
         Map<String, String> tzdata = null;
+        String gmtCol = null;
+        String dstCol = null;
+        for (String col : columns) {
+            if (col.startsWith("GMT ")) {
+                gmtCol = col;
+            } else if (col.startsWith("DST ")) {
+                dstCol = col;
+            }
+        }
+        if (dstCol == null || gmtCol == null) {
+            tzMap.close();
+            throw new IOException("Bad Timezone file format from geonames.org -- changes yearly");
+        }
         while ((tzdata = tzMap.read(columns)) != null) {
             String cc = tzdata.get("CountryCode");
             if (cc.trim().startsWith("#")) {
@@ -174,8 +187,8 @@ public class GeonamesUtility {
             }
 
             Country.TZ tz = new Country.TZ(tzdata.get("TimeZoneId"),
-                    tzdata.get("GMT offset 1. Jan 2016"),
-                    tzdata.get("DST offset 1. Jul 2016"),
+                    tzdata.get(gmtCol),
+                    tzdata.get(dstCol),
                     tzdata.get("rawOffset (independant of DST)"));
             C.addTimezone(tz);
         }
@@ -251,7 +264,7 @@ public class GeonamesUtility {
      * REFERENCE: https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
      * 
      * @param utc
-     * @return
+     * @return approximated longitude, in degrees
      */
     public final static int approximateLongitudeForUTCOffset(final int utc) {
         int normalized = (utc > 12 ? utc - 24 : utc);
@@ -302,7 +315,7 @@ public class GeonamesUtility {
      * 
      * @see #countriesInUTCOffset(double)
      * @param dst
-     * @return
+     * @return list of country codes observing DST at that offset
      */
     public Collection<String> countriesInDSTOffset(double dst) {
         return dst2cc.get(dst);
@@ -476,7 +489,6 @@ public class GeonamesUtility {
                 }
                 cities.add(p);
             }
-            reader.close();
         }
         return cities;
     }
@@ -587,7 +599,7 @@ public class GeonamesUtility {
      * This is a mutable list -- if you want to add MORE admin metadata (entries, postal code mappings, etc)
      * then have at it. For now this is US + territories only (as of v2.8.17)
      * 
-     * @return
+     * @return Array of Admin Level 1 Place objects 
      * @since 2.8.17
      */
     public List<Place> getAdmin1Metadata() {
@@ -1128,7 +1140,7 @@ public class GeonamesUtility {
      * 
      * @param cc
      *            UPPERCASE country code.
-     * @return
+     * @return ISO Language codes for a country
      */
     public Collection<String> languagesInCountry(String cc) {
         if (cc == null) {
