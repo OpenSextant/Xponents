@@ -100,11 +100,13 @@ public class MajorPlaceRule extends GeocodeRule {
                     // 
                     // Natural log gives a better, slower curve for population weights.
                     // ln(POP_MIN=25000) = 10.1
-                    // 
-                    // ln(22,000) = 0.0     wt=0  e^10 = 22,000
-                    // ln(60,000) = 11.x    wt=1
-                    // ln(165,000) = 12.x   wt=2
-                    // ln(444,000) = 13.x   wt=3       
+                    // ln(5000)   = 8.5     wt=-0.5    - Small village, population decrements score.
+                    // ln(13000)  = 9.5     wt= 0      - Inflection point. Cities larger, have some score increment. 
+                    //                                      Smaller population, score decrements.
+                    // ln(22,000) = 10.0    wt= 0      - e^10 = 22,000
+                    // ln(60,000) = 11.x    wt= 1
+                    // ln(165,000) = 12.x   wt= 2
+                    // ln(444,000) = 13.x   wt= 3       
                     // Etc.
                     // And to make scale even more gradual, wt - 1  or wt/2, wt/3
                     // These population stats cannot overtake all other rules entirely.
@@ -116,6 +118,7 @@ public class MajorPlaceRule extends GeocodeRule {
         }
 
         if (ev != null) {
+            name.markValid(); /* Protects this name from stop filters following this rule. */
             ev.setEvaluated(true);
             name.addEvidence(ev);
             name.incrementPlaceScore(geo, ev.getWeight() * 0.1);

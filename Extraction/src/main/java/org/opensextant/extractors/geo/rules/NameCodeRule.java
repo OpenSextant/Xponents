@@ -148,6 +148,7 @@ public class NameCodeRule extends GeocodeRule {
                 ev.setCountryCode(geo.getCountryCode());
                 ev.setAdmin1(geo.getAdmin1());
                 ev.setEvaluated(true); // Shunt. Evaluate this rule here.
+                name.markValid();      // and prevent downstream filters from filtering this out
 
                 int wt = weight + (comma ? 2 : 0);
                 if (geo.isAbbreviation() && (code.isAbbreviation || code.isAcronym)) {

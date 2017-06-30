@@ -74,7 +74,12 @@ public class LocationChooserRule extends GeocodeRule {
         }
 
         for (PlaceCandidate name : names) {
-            if (name.isFilteredOut() || name.isCountry) {
+            if (name.isCountry) {
+                this.assessConfidence(name);
+                // No Place is chosen, but confidence will be set.
+                continue;
+            }
+            if (name.isFilteredOut()) {
                 continue;
             }
 
@@ -309,6 +314,21 @@ public class LocationChooserRule extends GeocodeRule {
      * @param pc
      */
     public void assessConfidence(PlaceCandidate pc) {
+
+        /*
+         * Countries are used to qualify other place names by way of geographic boundaries.
+         * So the rules for assigning countries should not leverage place confidence too much, 
+         * otherwise this becomes an artificial feedback loop.  
+         * TODO: devise acceptable confidence for country name match vs. country code or other inference.
+         */
+        if (pc.isCountry) {
+            if (pc.isAbbreviation) {
+                pc.setConfidence(MATCHCONF_MINIMUM);
+            } else {
+                pc.setConfidence(MATCHCONF_NAME_REGION);
+            }
+            return;
+        }
 
         if (pc.getChosen() == null && pc.distinctLocationCount() > 0) {
             // Either not evaluated yet or no good choice could be made.

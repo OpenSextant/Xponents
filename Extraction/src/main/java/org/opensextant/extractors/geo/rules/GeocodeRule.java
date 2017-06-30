@@ -114,7 +114,7 @@ public abstract class GeocodeRule {
      * @return
      */
     public boolean evaluateNameFilterOnly(PlaceCandidate name) {
-        if (name.isFilteredOut()) {
+        if (name.isFilteredOut() && !name.isValid()) {
             return true;
         }
         // Some rules may choose early -- and that would prevent other rules
@@ -167,14 +167,15 @@ public abstract class GeocodeRule {
      * we can pare back and evaluate only significant places (e.g., cities and states)
      * and avoid say streams and roadways by the same name.
      * 
-     * If a name, N, occurs in more than 250 places, then consider only feature classes A and P.
-     * 
+     * If a name, N, occurs in more than 100 to 250 places, then consider only feature classes A and P.
+     * The exact distinct count is up for debate. Lower count means we filter out random places sooner
+     * for common city/village names.
      * @param name
      * @param geo
      * @return
      */
     protected boolean filterOutBySize(PlaceCandidate name, Place geo) {
-        if (name.distinctLocationCount() > 250) {
+        if (name.distinctLocationCount() > 100) {
             if (geo.isPopulated() || geo.isAdministrative()) {
                 // allow P places and A boundaries to pass through.
                 return false;

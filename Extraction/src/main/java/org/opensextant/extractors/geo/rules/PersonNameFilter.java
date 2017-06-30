@@ -175,22 +175,10 @@ public class PersonNameFilter extends GeocodeRule {
                         // Special conditions:
                         //    City name in the name of a Building or Landmark is worth saving as a location.
                         // But short one-word names appearing in organization names, may be false positives
-                        //
-                        // Ignore situation where country name appears in organization name. 
-                        // Country is still relevant and provides context to other geographic names.
+                        // After more evaluation, it seems like presence of a city name in an organization name is good 
+                        // evidence to leverage.
                         // 
-                        if (!pc.getTextnorm().contains(" ")) {
-                            //  Org is 'text name text'
-                            //  where  name is a city, and 'name' is a single word.
-                            pc.setFilteredOut(true);
-                            // Do not record such instances as resolved orgs, because if the name occurs on its own
-                            // then it is likely the locality/city in which that organization exists.
-                            // "Detroit City Council" -- an org.  Filter out just hit instance.
-                            // "Detroit"   -- mentioned later in the same doc, not an org.
-                            // 
-                            //resolvedOrgs.put(pc.getTextnorm(), name.getText());
-                            pc.addRule(NAME_IN_ORG_RULE);
-                        }
+                        pc.addRule(NAME_IN_ORG_RULE);
                     }
                 }
             }

@@ -73,6 +73,7 @@ public class PlaceCandidate extends TextMatch {
     private int confidence = 0;
     private Set<String> hierarchicalPaths = new HashSet<>();
     private Set<String> countries = new HashSet<>();
+    private boolean markedValid = false;
 
     /**
      * Default weighting increments.
@@ -631,4 +632,18 @@ public class PlaceCandidate extends TextMatch {
         return this.scoredPlaces.size(); // These are keyed by PLACE ID, essentially location.
     }
 
+    /**
+     * Mark candidate as valid to protect it from being filtered out by downstream rules.
+     */
+    public void markValid() {
+        markedValid = true;
+    }
+
+    /**
+     * if candidate was marked as valid. IF valid, then avoid filters.
+     * @return
+     */
+    public boolean isValid() {
+        return markedValid;
+    }
 }
