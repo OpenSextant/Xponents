@@ -177,7 +177,6 @@ public class PatternsOfLife extends AbstractFlexPat {
                         poliMatch = null;
                         log.error("Could not create... ", classErr2);
                     }
-
                 }
 
                 if (poliMatch == null) {

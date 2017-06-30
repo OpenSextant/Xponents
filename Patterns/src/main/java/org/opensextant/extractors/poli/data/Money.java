@@ -29,6 +29,7 @@
 package org.opensextant.extractors.poli.data;
 
 import org.opensextant.extractors.poli.PoliMatch;
+import org.opensextant.util.TextUtils;
 
 /**
  *
@@ -57,6 +58,13 @@ public class Money extends PoliMatch {
     @Override
     public void normalize() {
         super.normalize();
+        
+        String amt = this.match_groups.get("money_amount");
+        
+        /* Normalization rule: No Numeric Value */
+        if (TextUtils.count_digits(amt)==0){
+            this.setFilteredOut(true);
+        }
 
         /* retrieve fields from this.match_groups
          * create value and currency, and even a normalized text version of the amount
