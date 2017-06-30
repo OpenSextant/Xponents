@@ -7,7 +7,7 @@
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>2.9.9-SNAPSHOT</version>
+        <version>2.9.9</version>
     </parent>
 
     <name>Extraction</name>
@@ -335,7 +335,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>../solr/solr4/gazetteer/conf</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/../solr/solr4/gazetteer/conf</additionalClasspathElement>
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
