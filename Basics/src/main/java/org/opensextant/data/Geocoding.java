@@ -77,11 +77,13 @@ public interface Geocoding extends LatLon {
 
     /**
      * Precision - radius in meters of possible error
+     * @return precision error radius
      */
     public int getPrecision();
 
     /**
      * Precision - radius in meters of possible error
+     * @param m meters of error
      */
     public void setPrecision(int m);
 
@@ -118,11 +120,14 @@ public interface Geocoding extends LatLon {
 
     public void setPlaceName(String n);
     
-    /** State-level postal code, the corresponds usually to ADM1 */
+    /** State-level postal code, the corresponds usually to ADM1 
+     * @return optional postal code
+     */
     public String getAdmin1PostalCode();
     
     /** City-level postal code, that may be something like a zip. 
      * Thinking world-wide, not everyone calls these zipcodes, as in the US. 
+     * @return optional postal code
      */
     public String getPlacePostalCode();
 
