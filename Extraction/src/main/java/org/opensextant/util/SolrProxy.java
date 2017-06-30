@@ -193,52 +193,6 @@ public class SolrProxy extends SolrUtil {
     }
 
     /**
-     * Creates the bare minimum Gazetteer Place record
-     * @param gazEntry a solr document of key/value pairs
-     * @return Place obj
-     */
-    public static Place createPlace(SolrDocument gazEntry) {
-
-        Place bean = new Place(SolrUtil.getString(gazEntry, "place_id"), SolrProxy.getString(
-                gazEntry, "name"));
-        populatePlace(gazEntry, bean);
-        return bean;
-    }
-    
-    /**
-     * Populate the data card.
-     * @param gazEntry solr doc
-     * @param bean place obj to populate
-     */
-    public static void populatePlace(SolrDocument gazEntry, Place bean){
-        String nt = SolrUtil.getString(gazEntry, "name_type");
-        if (nt != null) {
-            if ("code".equals(nt)) {
-                bean.setName_type('A');
-            } else {
-                bean.setName_type(nt.charAt(0));
-            }
-        }
-
-        bean.setCountryCode(SolrUtil.getString(gazEntry, "cc"));
-
-        // Other metadata.
-        bean.setAdmin1(SolrUtil.getString(gazEntry, "adm1"));
-        bean.setAdmin2(SolrUtil.getString(gazEntry, "adm2"));
-        bean.setFeatureClass(SolrUtil.getString(gazEntry, "feat_class"));
-        bean.setFeatureCode(SolrUtil.getString(gazEntry, "feat_code"));
-
-        // Geo field is specifically Spatial4J lat,lon format.
-        // Value should have already been validated as it was stored in index
-        double[] xy = SolrUtil.getCoordinate(gazEntry, "geo");
-        bean.setLatitude(xy[0]);
-        bean.setLongitude(xy[1]);
-
-        bean.setName_bias(SolrUtil.getDouble(gazEntry, "name_bias"));
-        bean.setId_bias(SolrUtil.getDouble(gazEntry, "id_bias"));        
-    }
-
-    /**
      * Search an OpenSextant solr gazetteer.
      *
      * @param index solr server handle

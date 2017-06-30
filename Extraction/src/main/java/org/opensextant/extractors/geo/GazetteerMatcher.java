@@ -28,15 +28,15 @@ package org.opensextant.extractors.geo;
 
 ///** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
-//_____                                ____                     __                       __
+// _____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
-//\ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
-//\ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
-// \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
-//  \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
-//          \ \_\
-//           \/_/
+// \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
+//  \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
+//   \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
+//    \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
+//            \ \_\
+//             \/_/
 //
 // OpenSextant GazetteerMatcher
 //*  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
@@ -67,7 +67,6 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.SolrMatcherSupport;
-import org.opensextant.util.SolrProxy;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
@@ -213,7 +212,13 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *            as in social media or
      */
     public void setAllowLowerCaseAbbreviations(boolean b) {
-        allowLowercaseAbbrev = b;
+        this.allowLowercaseAbbrev = b;
+    }
+    
+    public void setAllowLowerCase(boolean b){
+        this.allowLowerCase = b;
+        this.filter.enableCaseSensitive(!b); 
+        /* Allow lower case, means we ignore any case-sensitive filtering */
     }
 
     /**
@@ -282,7 +287,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * Length Filter.  Alternative: store name as string in solr, vice full text field 
              */
             if (maxLen > 0) {
-                String nm = SolrProxy.getString(solrDoc, "name");
+                String nm = SolrUtil.getString(solrDoc, "name");
                 if (nm.length() > maxLen) {
                     continue;
                 }
@@ -336,6 +341,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @throws ExtractionException
      * @deprecated
      */
+    @Deprecated
     public List<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly)
             throws ExtractionException {
         return tagText(buffer, docid, tagOnly, CJK_TAG_FIELD, "cjk");
@@ -795,9 +801,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // Creates for now org.opensextant.placedata.Place
         //Place bean = SolrProxy.createPlace(gazEntry);
         String plid = SolrUtil.getString(gazEntry, "place_id");
-        String nm = SolrProxy.getString(gazEntry, "name");
+        String nm = SolrUtil.getString(gazEntry, "name");
         ScoredPlace bean = new ScoredPlace(plid, nm);
-        SolrProxy.populatePlace(gazEntry, bean);
+        SolrUtil.populatePlace(gazEntry, bean);
 
         return bean;
     }

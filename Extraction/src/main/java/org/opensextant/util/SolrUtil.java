@@ -6,9 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.document.StoredField;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.util.DateUtil;
+import org.joda.time.Instant;
+import org.opensextant.data.Place;
 
 /**
  * Utility functions better suited in their own class.
@@ -20,9 +22,12 @@ public class SolrUtil {
 
     /**
      *
-     * @param d solr doc
-     * @param f field name
-     * @return  a list of strings for this field from that document.;  Or null if none found.
+     * @param d
+     *            solr doc
+     * @param f
+     *            field name
+     * @return a list of strings for this field from that document.; Or null if
+     *         none found.
      */
     public static List<String> getStrings(SolrDocument d, String f) {
         List<String> vals = new LinkedList<String>();
@@ -33,7 +38,9 @@ public class SolrUtil {
         }
 
         for (Object o : objlist) {
-            if (o instanceof String) {
+            if (o instanceof StoredField) {
+                vals.add(((StoredField) o).stringValue());
+            } else if (o instanceof String) {
                 vals.add((String) o);
             } else {
                 vals.add(o.toString());
@@ -51,7 +58,9 @@ public class SolrUtil {
             return 0;
         }
 
-        if (obj instanceof Integer) {
+        if (obj instanceof StoredField) {
+            return ((StoredField) obj).numericValue().intValue();
+        } else if (obj instanceof Integer) {
             return ((Integer) obj).intValue();
         } else {
             Integer v = Integer.parseInt(obj.toString());
@@ -68,7 +77,9 @@ public class SolrUtil {
             return 0;
         }
 
-        if (obj instanceof Long) {
+        if (obj instanceof StoredField) {
+            return ((StoredField) obj).numericValue().longValue();
+        } else if (obj instanceof Long) {
             return ((Long) obj).longValue();
         } else {
             return new Long(obj.toString()).longValue();
@@ -82,18 +93,23 @@ public class SolrUtil {
         Object obj = d.getFieldValue(f);
         if (obj == null) {
             return 0F;
+        }
+        if (obj instanceof StoredField) {
+            return ((StoredField) obj).numericValue().floatValue();
+        } else if (obj instanceof Float) {
+            return ((Float) obj).floatValue();
         } else {
-            return (Float) obj;
+            return new Float(obj.toString()).floatValue();
         }
     }
 
     /**
      * Get a Date object from a record
      *
-     * @throws java.text.ParseException if DateUtil fails to parse date str
+     * @throws java.text.ParseException
+     *             if DateUtil fails to parse date str
      */
-    public static Date getDate(SolrDocument d, String f)
-            throws java.text.ParseException {
+    public static Date getDate(SolrDocument d, String f) throws java.text.ParseException {
         if (d == null || f == null) {
             return null;
         }
@@ -103,10 +119,9 @@ public class SolrUtil {
         }
         if (obj instanceof Date) {
             return (Date) obj;
-        } else if (obj instanceof String) {
-            return DateUtil.parseDate((String) obj);
+        } else {
+            return Instant.parse(obj.toString()).toDate();
         }
-        return null;
     }
 
     /**
@@ -123,15 +138,16 @@ public class SolrUtil {
         return result.charAt(0);
     }
 
-
     /**
      * Get a String object from a record on input.
-     * @param solrDoc solr Input document
+     * 
+     * @param solrDoc
+     *            solr input document
      */
     public static String getString(SolrInputDocument solrDoc, String name) {
         Object result = solrDoc.getFieldValue(name);
 
-        if (result==null || StringUtils.isBlank((String)result)) {
+        if (result == null || StringUtils.isBlank((String) result)) {
             return null;
         }
         return result.toString();
@@ -139,11 +155,19 @@ public class SolrUtil {
 
     /**
      * Get a String object from a record
+     * @param solrDoc SolrDocument from index
      */
     public static String getString(SolrDocument solrDoc, String name) {
         Object result = solrDoc.getFirstValue(name);
-        if (result==null || StringUtils.isBlank((String)result)) {
+        if (result == null) {
             return null;
+        }
+        if (result instanceof StoredField) {
+            String val = ((StoredField) result).stringValue();
+            if (StringUtils.isBlank(val)) {
+                return null;
+            }
+            return val;
         }
         return result.toString();
     }
@@ -171,10 +195,9 @@ public class SolrUtil {
      * @return XY double array, [lat, lon]
      */
     public static double[] getCoordinate(SolrDocument solrDoc, String field) {
-        String xy = (String) solrDoc.getFirstValue(field);
+        String xy = getString(solrDoc, field);
         if (xy == null) {
-            throw new IllegalStateException("Blank: " + field + " in "
-                    + solrDoc);
+            throw new IllegalStateException("Blank: " + field + " in " + solrDoc);
         }
 
         final double[] xyPair = { 0.0, 0.0 };
@@ -198,5 +221,58 @@ public class SolrUtil {
         xyPair[1] = Double.parseDouble(lat_lon[1]);
 
         return xyPair;
+    }
+
+    /*
+     * ===============================================
+     * Higher order routines -- createPlace, populatePlace
+     * 
+     * 
+     * ===============================================
+     */
+
+    /**
+     * Creates the bare minimum Gazetteer Place record
+     * @param gazEntry a solr document of key/value pairs
+     * @return Place obj
+     */
+    public static Place createPlace(SolrDocument gazEntry) {
+
+        Place bean = new Place(getString(gazEntry, "place_id"), getString(gazEntry, "name"));
+        populatePlace(gazEntry, bean);
+        return bean;
+    }
+
+    /**
+     * Populate the data card.
+     * @param gazEntry solr doc
+     * @param bean place obj to populate
+     */
+    public static void populatePlace(SolrDocument gazEntry, Place bean) {
+        String nt = getString(gazEntry, "name_type");
+        if (nt != null) {
+            if ("code".equals(nt)) {
+                bean.setName_type('A');
+            } else {
+                bean.setName_type(nt.charAt(0));
+            }
+        }
+
+        bean.setCountryCode(getString(gazEntry, "cc"));
+
+        // Other metadata.
+        bean.setAdmin1(getString(gazEntry, "adm1"));
+        bean.setAdmin2(getString(gazEntry, "adm2"));
+        bean.setFeatureClass(getString(gazEntry, "feat_class"));
+        bean.setFeatureCode(getString(gazEntry, "feat_code"));
+
+        // Geo field is specifically Spatial4J lat,lon format.
+        // Value should have already been validated as it was stored in index
+        double[] xy = getCoordinate(gazEntry, "geo");
+        bean.setLatitude(xy[0]);
+        bean.setLongitude(xy[1]);
+
+        bean.setName_bias(getDouble(gazEntry, "name_bias"));
+        bean.setId_bias(getDouble(gazEntry, "id_bias"));
     }
 }

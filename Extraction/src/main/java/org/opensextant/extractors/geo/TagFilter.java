@@ -13,8 +13,10 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.util.ClasspathResourceLoader;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.MatchFilter;
+import org.opensextant.util.LuceneStopwords;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +47,7 @@ public class TagFilter extends MatchFilter {
     /*
      * Select languages for experimentation.
      */
-    private Map<String, Set<String>> langStopFilters = new HashMap<>();
+    private Map<String, Set<Object>> langStopFilters = new HashMap<>();
 
     private Set<String> generalLangId = new HashSet<>();
 
@@ -72,7 +74,9 @@ public class TagFilter extends MatchFilter {
          * Whereas other languages (es, it, etc.) are provided in format='snowball'
          * StopFilterFactory is needed to load snowball filters.
          */
-        String[] langSet = { "ja", "th", "tr", "id", "ar" };
+        String[] langSet = { "ja", "th", "tr", "id", "ar", 
+                "ru", "it", "pt", "de", "nl"
+                /*, "es"*/};  // Español (es) is handled by adhoc list of spanish terms above.
         loadLanguageStopwords(langSet);
     }
 
@@ -85,12 +89,14 @@ public class TagFilter extends MatchFilter {
     private void loadLanguageStopwords(String[] langids) throws IOException, ConfigException {
 
         for (String lg : langids) {
-            String url = String.format("/lang/stopwords_%s.txt", lg);
+            /*String url = String.format("/lang/stopwords_%s.txt", lg);
             URL obj = TagFilter.class.getResource(url);
             if (obj == null) {
                 throw new IOException("No such stop filter file " + url);
             }
             loadStopSet(obj, lg);
+            */
+            langStopFilters.put(lg, LuceneStopwords.getStopwords(new ClasspathResourceLoader(TagFilter.class), lg));
         }
 
         /*
@@ -123,7 +129,7 @@ public class TagFilter extends MatchFilter {
 
     private void loadStopSet(URL url, String langid) throws IOException, ConfigException {
         try (InputStream strm = url.openStream()) {
-            HashSet<String> stopTerms = new HashSet<>();
+            HashSet<Object> stopTerms = new HashSet<>();
             for (String line : IOUtils.readLines(strm, Charset.forName("UTF-8"))) {
                 if (line.trim().startsWith("#")) {
                     continue;
@@ -145,6 +151,17 @@ public class TagFilter extends MatchFilter {
         filter_on_case = b;
     }
 
+    /**
+     * Default filtering rules:
+     * (a) If filter is in case-sensitive mode (DEFAULT), all lower case matches are ignored; only mixed case or upper case passes
+     * (b) If match term, t, is in stop word list it is filtered out. Case is ignored.
+     * 
+     * TODO: filter rules -- if text match is all lower case and filter is case-sensitive, then this 
+     * filters out any lower case matches. Not optimal.  This should take into account alpha-case of document.
+     * 
+     * TODO: trivial for the general case, but important: stopTerms is hashed only by lower case value, so native-case 
+     * lookup is not possible.
+     */
     @Override
     public boolean filterOut(String t) {
         if (filter_on_case && StringUtils.isAllLowerCase(t)) {
@@ -219,11 +236,12 @@ public class TagFilter extends MatchFilter {
         /*
          * FILTER out lower case matches for non-English, non-CJK texts.
          * If document is mixed case.  That is we still expect/assume interesting
-         * place names to be proper names.
+         * place names to be proper names.  However, if you find longer name matches ~10 chars or longer
+         * as lower case names, then let them pass. 10 chars is arbitrary, but approx. 1 word threshold. 
          */
         if (!cjk){
             if (!docIsLower && !docIsUpper){
-                if (t.isLower()){
+                if (t.isLower() && t.getLength()< 10){
                     return true;
                 }
             }
@@ -234,7 +252,7 @@ public class TagFilter extends MatchFilter {
          * NOTE: LangID should not be 'CJK' or group.  langStopFilters keys stop terms by LangID
          */
         if (langStopFilters.containsKey(langId)) {
-            Set<String> terms = langStopFilters.get(langId);
+            Set<Object> terms = langStopFilters.get(langId);
             return terms.contains(t.getText().toLowerCase());
         }
         return false;
@@ -266,7 +284,7 @@ public class TagFilter extends MatchFilter {
      * @return
      */
     public boolean assessAllFilters(String textnorm) {
-        for (Set<String> terms : langStopFilters.values()) {
+        for (Set<Object> terms : langStopFilters.values()) {
             if (terms.contains(textnorm)) {
                 return true;
             }
@@ -302,7 +320,10 @@ public class TagFilter extends MatchFilter {
                 if (StringUtils.isBlank(term) || term.startsWith("#")) {
                     continue;
                 }
-                stopTerms.add(term.toLowerCase().trim());
+                String trimmed = term.trim();
+                /* Allow for case-sensitive filtration, if stop terms are listed in native case in resource files */
+                stopTerms.add(trimmed);
+                stopTerms.add(trimmed.toLowerCase());
             }
             termreader.close();
             return stopTerms;
