@@ -1,4 +1,9 @@
 #2017#
+* Xponents 2.9.9  Fourth of July 
+ - Much improved stop filters for nearly all Solr-supported languages (using lucene stopword resources)
+ - Reviewed geocoding rules; Assigned default confidence to country matches, instead of 0.
+ - Solr6 staging
+
 * Xponents 2.9.6
  - Addition of a MapReduce (MR) experimentation area. Capability iterates over JSON data that has "text" and "id" fields; Geotags text for coordinates and place names.
  - Filters: with advent of MR tokenization and false-positives in specific languages became glaringly obvious. Fixed: geotagging in Japanese (and Chinese, Korean, etc); 
