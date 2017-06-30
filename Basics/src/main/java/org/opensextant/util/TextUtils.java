@@ -565,6 +565,7 @@ public class TextUtils {
      * E.g., tweets in English -- these thresholds are easily influenced by a difference of one or two characters.
      * @deprecated this threshold is dependent on the length of the signal.
      */
+    @Deprecated
     public static double UPPER_CASE_THRESHOLD = 0.75;
     /**
      * Since we live in a world that has made use of first-letter capital for a number of languages, this threshold is
@@ -573,6 +574,7 @@ public class TextUtils {
      * "by the same convention, this is largely lower case; I will use eBay today."
      * @deprecated this threshold is dependent on the length of the signal.
      */
+    @Deprecated
     public static double LOWER_CASE_THRESHOLD = 0.95;
 
     /**
