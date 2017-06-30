@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.9.8</version>
+    <version>2.9.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -55,8 +55,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.21</slf4j.version>
-        <xponents.v>2.9.8</xponents.v>
+        <slf4j.version>1.7.25</slf4j.version>
+        <xponents.v>2.9.9-SNAPSHOT</xponents.v>
     </properties>
 
     <modules>
@@ -107,7 +107,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.5</version>
+                <version>3.6</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -260,7 +260,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>solr/solr4/gazetteer/conf</additionalClasspathElement>
+                        <additionalClasspathElement>${basedir}/solr/solr4/gazetteer/conf</additionalClasspathElement>
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
