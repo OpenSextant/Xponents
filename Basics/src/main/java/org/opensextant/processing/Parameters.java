@@ -58,6 +58,7 @@ public class Parameters extends java.util.Properties {
     public boolean output_countries = true;
     public boolean output_places = true;
     public boolean output_coordinates = true;
+    public boolean output_filtered = false;
     /** Default is to not generate Geohash
      */
     public boolean output_geohash = false;
