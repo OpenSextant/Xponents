@@ -95,6 +95,7 @@ NOISE = set(
          'youtube',
          'they are',
          'our own',
+         'ps',
          'reach',
          'armed forces',
          'canal',
@@ -145,12 +146,14 @@ def check_validity(e):
     return
 
 
+# Entries starting or ending with place markers, will be recategorized as a Place.xxxxx
+#
 PLACE_ENDING_FIXES = set(['province', 'island', 'islands', 'district', 'peninsula','valley',
                           'territory', 'county', 'city', 'state', 'township', 'village',
                           'roads', 'avenue', 'avenida', 'prefecture', 'heights', 'springs', 'falls',
-                          'airport', 'aeropuerto', 'aeroporto', 'station' ])
+                          'airport', 'aeropuerto', 'aeroporto', 'station', 'harbor', 'harbour', 'port'])
 
-PLACE_STARTING_FIXES = set(['city', 'spin', 'town', 'fort'])
+PLACE_STARTING_FIXES = set(['city', 'spin', 'town', 'fort', 'port'])
 
 # A large number of entities are marked as Person unnecessarily.
 # Org fixes: find any of these terms in a phrase and declare the phrase an org, if not already.
