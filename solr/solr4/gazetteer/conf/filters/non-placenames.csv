@@ -51,6 +51,8 @@ rec,abbrev
 alt,abbrev
 astro,abbrev
 chem,abbrev
+cont,contraction
+ive,contraction
 dont,contraction
 isnt,contraction
 slick,adjective
@@ -216,6 +218,7 @@ shortly,adverb
 kangaroo,animal
 eagles,animal
 snail,animal
+leopard,animal
 mice,animal
 spider,animal
 tiger,animal
@@ -303,6 +306,7 @@ devil,concept.religion
 spirit,concept.religion
 holy,concept.religion
 jihad,concept.religion
+karma,concept.religion
 rectors,concept.religion
 lent,concept.religion
 adam and eve,concept.religion
@@ -1358,6 +1362,7 @@ po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
 goto,phrase
+ps,phrase
 eek,phrase
 end of the road,phrase
 up and down,phrase
@@ -2026,8 +2031,8 @@ at,stopword.wordnet
 by,stopword.wordnet
 he,stopword.wordnet
 his,stopword.wordnet
-me,stopword.wordnet
-or,stopword.wordnet
+#me,stopword.wordnet
+#or,stopword.wordnet
 thou,stopword.wordnet
 against,stopword.wordnet
 amid,stopword.wordnet
