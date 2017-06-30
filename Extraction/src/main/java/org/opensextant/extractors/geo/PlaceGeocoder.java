@@ -258,7 +258,6 @@ public class PlaceGeocoder extends GazetteerMatcher
                 "/filters/person-name-filter.txt",
                 "/filters/person-title-filter.txt",
                 "/filters/person-suffix-filter.txt");
-        rules.add(personNameRule);
 
         /*
          * assess coordinates related to ADM1, CC
@@ -294,12 +293,18 @@ public class PlaceGeocoder extends GazetteerMatcher
         majorPlaceRule.setCountryObserver(this);
         majorPlaceRule.setBoundaryObserver(this);
         rules.add(majorPlaceRule);
+        
+        /* Account for situations like "Eugene, OR"  person name followed by a stopword.
+         * Valid, fully-qualified city name so we have to allow it to be evaluated first before filtering it out. 
+         */
+        rules.add(personNameRule);
 
         // Names of Orgs and Persons.
         // 
         if (isPersonNameMatchingEnabled()) {
             try {
                 personMatcher = new TaxonMatcher();
+                personMatcher.excludeTaxons("place."); /* but allow org., person., etc. */
                 personMatcher.configure();
                 /*
                  * Default catalog must be built. Extraction ./XTax folder has
@@ -589,7 +594,7 @@ public class PlaceGeocoder extends GazetteerMatcher
             // TaxonMatches. Any place names should reside back in
             // gazetteer. If XTax does have place or location data, that would be new.
             //
-            tm.setFilteredOut(true);
+            // tm.setFilteredOut(true);
             for (Taxon taxon : tag.getTaxons()) {
                 String node = taxon.name.toLowerCase();
                 // If you matched a Person name or an Organization ACRONYM
