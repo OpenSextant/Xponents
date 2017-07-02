@@ -8,7 +8,7 @@
     <artifactId>xponents-mapreduce</artifactId>
     <name>MapReduce</name>
     <properties>
-       <xponents.v>2.9.8</xponents.v>
+       <xponents.v>2.9.9</xponents.v>
        <hadoop.v>2.6.2</hadoop.v>
        <solr.version>4.10.4</solr.version>
     </properties>
