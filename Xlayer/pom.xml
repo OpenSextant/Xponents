@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-xlayer</artifactId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Xlayer Restlet</name>
 
     <properties>
         <restlet.version>2.3.7</restlet.version>
-        <slf4j.version>1.7.21</slf4j.version>
-        <xponents.v>2.9.8</xponents.v>
+        <slf4j.version>1.7.25</slf4j.version>
+        <xponents.v>2.9.9</xponents.v>
     </properties>
     <dependencies>
         <dependency>

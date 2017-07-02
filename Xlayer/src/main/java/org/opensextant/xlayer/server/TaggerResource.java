@@ -190,6 +190,10 @@ public abstract class TaggerResource extends ServerResource {
 		job.tag_coordinates = true;
 		job.tag_countries = true;
 		job.tag_places = true;
+		
+		job.tag_taxons = false;
+        job.tag_patterns = false;
+        job.output_filtered = false;
 		job.format = "json";
 
 		if (inputs.has("features")) {
@@ -199,9 +203,22 @@ public abstract class TaggerResource extends ServerResource {
 			// JSONArray list = inputs.getJSONArray("features");
 			features.addAll(TextUtils.string2list(list.toLowerCase(), ","));
 
+			// Can't turn these off for tagging.
 			job.output_coordinates = features.contains("coordinates");
 			job.output_countries = features.contains("countries");
 			job.output_places = features.contains("places");
+			
+			// Request tagging on demand.
+			job.tag_taxons = job.output_taxons = features.contains("orgs") || features.contains("persons");
+            job.tag_patterns = job.output_patterns = features.contains("patterns") ;			
+		}
+		
+		if (inputs.has("options")){
+            String list = inputs.getString("options");
+            Set<String> features = new HashSet<>();
+            features.addAll(TextUtils.string2list(list.toLowerCase(), ","));
+		    job.clean_input = features.contains("clean_input");
+		    job.tag_lowercase = features.contains("lowercase");
 		}
 
 		return job;

@@ -13,6 +13,9 @@ public class RequestParameters extends Parameters {
     public boolean tag_patterns = false;
     public boolean output_taxons = true;
     public boolean output_patterns = true;
+    
+    public boolean clean_input = false;
+    public boolean tag_lowercase = false;
 
     public RequestParameters() {
         super();

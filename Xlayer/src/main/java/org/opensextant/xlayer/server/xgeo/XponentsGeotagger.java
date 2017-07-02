@@ -62,6 +62,7 @@ public class XponentsGeotagger extends TaggerResource {
 		try {
 			if (prodMode) {
 				PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor();
+				xgeo.setAllowLowerCase(jobParams.tag_lowercase);
 
 				List<TextMatch> matches = xgeo.extract(input);
 				/*

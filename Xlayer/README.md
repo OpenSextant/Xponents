@@ -9,8 +9,9 @@ as REST services.
 In this package is a REST server and several test clients in Java and Python 
 which demonstrate how to call the extraction service and parse the results.
 
-version 0.1
+version 0.2
 -----------
+- added features and options to allow caller to customize request
 - Expose PlaceGeocoder capability: geocode text, yielding 
   places, coordinates, countries, and matched non-places organizations and person names
 
@@ -30,7 +31,7 @@ And then also the control command start or stop.
 
 Alternatives:  I considered making Solr request handlers to accompany the underlying
 Solr Text Tagger (solr /tag handler).   However, that seemed limiting, because not all extraction
-tools and techniques in Xponents are Solr-based.   Solr as a server, though, is quite strong.
+tools and techniques in Xponents are Solr-based.  Solr as a server, though, is quite strong.
 
 Now the server is running, access it at:
 
@@ -39,7 +40,6 @@ Now the server is running, access it at:
 GET or POST operations are supported.  With GET, use the parameters as noted above.
 With POST, use JSON to formulate your input as a single JSON object, e.g., "{'docid':..., 'text':....}"
 Additionally, features and tuning parameters will be supported.
-
 
 Stopping Cleanly
 ------------------
@@ -77,8 +77,8 @@ When building an Xlayer application, client-side or server-side, please understa
 * Configuration items foldered in ```./etc``` or similar folder in CLASSPATH
 * Logging configuration -- Logback is used in most Xponents work, but only through SLF4J. If you choose another logger implementation, 
   SLF4J is your interface.   Copy and configure ```Xlayer/src/test/resources/logback.xml``` in your install.  As scripted, ```./etc/``` is the location for this item.
-* Geocoding metadata -- ./etc/ should contain xponents-gazetteer-meta.jar (result of normal full Xponents build. Specifically, ```ant -f ./solr/build.xml gaz-meta```). 
-  This resource is required for Java Xponents usage or server-side development, but not client REST usage necessarily.
+* Geocoding metadata -- ./etc/ should contain xponents-gazetteer-meta.jar (result of normal full Xponents build. Specifically, ```ant -f ./solr/build.xml gaz-meta```, 
+ with the resulting JAR landing in ```./solr/solr4/lib```).   This resource is required for Java Xponents usage or server-side development, but not client REST usage necessarily.
 
 
 REST Interface
@@ -95,7 +95,11 @@ Required Python packages: requests and simplejson
 INPUT:
 * 'docid' - an optional identifier for this text
 * 'text'  - UTF-8 text buffer
-
+* 'features' - comma-separated string of features
+    * Features will vary by app.  XponentsGeotagger class supports: places, coordinates, countries
+* 'options'  - comma-separated string of options
+    * Options will vary by app.   XponentsGeotagger class supports: lowercase
+    
 OUTPUT:
 * 'response'     - status, numfound
 * 'annotations'  - an array  of objects. 
@@ -106,6 +110,8 @@ Annotation schema
 * offset         - character offset into text buffer where text span starts
 * length         - length of text span.  end offset = offset + length
 * method         - method tag identifying the means by which this annotation was derived.
+* filtered-out   - true or false if match was filtered by some rule or configuration setting. 
+                   Filtered out items are therefore low-quality stuff.
 
 Geographic annotations additionally have:
 * cc             - country code
@@ -171,7 +177,8 @@ Example JSON Output:
 	      "feat_code": "COORD",
 	      "lat": 56.145835876464844,
 	      "adm1": "01",
-	      "feat_class": "S"
+	      "feat_class": "S", 
+	      "filtered-out":false
 	    },
 	    {
 	      /* A PERSON 
@@ -183,7 +190,8 @@ Example JSON Output:
 	      "length": 15,
 	      /*  annotation-specific items: */
 	      "taxon": "Person.Hillary Rodham Clinton",
-	      "catalog": "JRC"
+	      "catalog": "JRC",
+	      "filtered-out":false
 	    },
 	    {
 	      /* A PLACE 
@@ -200,7 +208,8 @@ Example JSON Output:
 	      "lat": 38.71667,
 	      "type": "place",
 	      "adm1": "14",
-	      "feat_class": "P"
+	      "feat_class": "P",
+	      "filtered-out":false
 	    },
 	    {
 	      "confidence": 73,
@@ -214,7 +223,8 @@ Example JSON Output:
 	      "lat": 54,
 	      "type": "place",
 	      "adm1": "11",
-	      "feat_class": "A"
+	      "feat_class": "A",
+	      "filtered-out":false
 	    },
 	    {
 	      /* A COUNTRY 
@@ -224,7 +234,8 @@ Example JSON Output:
 	      "text": "Canada",
 	      "length": 6,
 	      "type": "country",
-	      "offset": 101
+	      "offset": 101,
+	      "filtered-out":false
 	    },
 	    {
 	      "confidence": 93,
@@ -238,7 +249,8 @@ Example JSON Output:
 	      "lat": 30.25,
 	      "type": "place",
 	      "adm1": "15",
-	      "feat_class": "A"
+	      "feat_class": "A",
+	      "filtered-out":false
 	    }
 	  ]
 	 }
