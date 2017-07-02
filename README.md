@@ -11,14 +11,14 @@ Xponents is a set of information extraction libraries including:
 The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.
 The major sub-modules include:
 
-* '''Extraction''': Fully developed entity tagging, processing, filtering, and formatting API solutions for Geography, Time, Patterns, and Keywords.
-* '''Xponents Solr''': ./solr folder containing Solr 4.x (soon 6.x) configurations, scripts and resources for supporting fast, rich tagging with Solr and SolrTextTagger
-* '''XText''': Mature solutions for getting text and metadata from binary formats.
+* **Extraction**: Fully developed entity tagging, processing, filtering, and formatting API solutions for Geography, Time, Patterns, and Keywords.
+* **Xponents Solr**: ./solr folder containing Solr 4.x (soon 6.x) configurations, scripts and resources for supporting fast, rich tagging with Solr and SolrTextTagger
+* **XText**: Mature solutions for getting text and metadata from binary formats.
 
 Related sub-modules that employ these SDKs:
-* '''Examples''': A set of Java main programs that demonstrates the use of XText alongside Extraction to take raw data, process it, and output GIS formats in one shot!
-* '''Xlayer''': A functional skeleton design of REST microservices for Extraction project, featuring "PlaceGeocoder" class, Patterns and Keyword extraction.
-* '''MapReduce''': A demonstration of how to design, package, and deploy Extraction with a full Solr gazetteer
+* **Examples**: A set of Java main programs that demonstrates the use of XText alongside Extraction to take raw data, process it, and output GIS formats in one shot!
+* **Xlayer**: A functional skeleton design of REST microservices for Extraction project, featuring "PlaceGeocoder" class, Patterns and Keyword extraction.
+* **MapReduce**: A demonstration of how to design, package, and deploy Extraction with a full Solr gazetteer
 
 Release History
 ---------------
