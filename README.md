@@ -1,6 +1,6 @@
 Xponents
 ========
-
+    Xponents 2.9, Jul 2017  v2.9.9  - Improved stop filters and other geotagging and KW tagging improvements
     Xponents 2.9, Apr 2017  v2.9.8  - refactored XLayer, added trivial match filters; updated versions of commons libs
     Xponents 2.9, Feb 2017  v2.9.7  - minor tests and additional filters added; minor tweak for Curacao
     Xponents 2.9, Jan 2017  v2.9.6
@@ -89,12 +89,5 @@ From source:
   ## Now ./Xponents-VER  contains a built version of XPonents that will run off of Ant from there on; Where VER=X.x
 
 #Misc#
-
-If you are building under OS X and receive an error like this:
-
-    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:2.4:test-jar (attach-tests) on project opensextant-xponents: 
-       Error assembling JAR: java.lang.reflect.InvocationTargetException: Malformed input or input contains unmappable chacraters: 
-       /path/to/Xponents/Extraction/target/test-classes/unicode-filen?me.txt -> [Help 1]
-
-Then you may need to set the environment variable LC_CTYPE="UTF-8" to allow building to work correctly. 
-See here for a discussion: https://netbeans.org/bugzilla/show_bug.cgi?id=225743#c3
+set variable LC_CTYPE="UTF-8" for use in Linux/Mac shells when working with filenames or OS resources 
+that may have Unicode characters. MORE: https://netbeans.org/bugzilla/show_bug.cgi?id=225743#c3
