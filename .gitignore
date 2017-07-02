@@ -1,6 +1,7 @@
 #Misc:
 .DS_Store
 release
+piplib
 
 #Maven output
 target/
@@ -18,6 +19,7 @@ build.properties
 .classpath
 .project
 .settings/
+.pydevproject
 
 #IntelliJ
 /out/
