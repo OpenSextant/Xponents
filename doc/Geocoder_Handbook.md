@@ -1,5 +1,8 @@
 Geocoder's Handbook for Xponents
 ================================
+Author: Marc Ubaldino
+Copyright OpenSextant.org, 2017
+
 Welcome to Xponents.  We realize geocoding text or data can be tedious and mind numbing.
 Hopefully this handbook will help you walk through the techniques defined in Xponents
 and the rest of OpenSextant in a way that makes it obvious which rules will impact 
