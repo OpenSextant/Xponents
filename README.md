@@ -16,6 +16,10 @@ The major sub-modules include:
 * **XText**: Mature solutions for getting text and metadata from binary formats.
 * **Basics** and **Patterns** are two supporting modules that are used as the Xponents lingua franca throughout the SDK.
 
+As of 2017, this [Geocoding Handbook](./doc/Geocoding_Handbook.md) represents 
+the Xponents methodology to geotagging and geocoding.  Nearly all of Xponents
+and XText has some role in supporting the methodology.
+
 Related sub-modules that employ these SDKs:
 * **Examples**: A set of Java main programs that demonstrates the use of XText alongside Extraction to take raw data, process it, and output GIS formats in one shot!
 * **Xlayer**: A functional skeleton design of REST microservices for Extraction project, featuring "PlaceGeocoder" class, Patterns and Keyword extraction.
