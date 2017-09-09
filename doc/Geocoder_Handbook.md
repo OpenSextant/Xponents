@@ -1,12 +1,21 @@
 Geocoder's Handbook for Xponents
 ================================
-Author: Marc Ubaldino
-Copyright OpenSextant.org, 2017
+**Author:** Marc Ubaldino
+
+**Copyright** OpenSextant.org, 2017
 
 Welcome to Xponents.  We realize geocoding text or data can be tedious and mind numbing.
 Hopefully this handbook will help you walk through the techniques defined in Xponents
 and the rest of OpenSextant in a way that makes it obvious which rules will impact 
-your geocoding of your data.
+geocoding of your data.  One important thing to note is that in all this information/entity 
+extraction performed here you will not see that much discussion of traditional 
+natural language processing (NLP), e.g., parts of speech, co-references, sentence boundaries, etc.
+Much of the language-specific processing is delegated to Solr and Lucene, which handle this 
+reasonalbly well. Xponents APIs are then able to focus more on the critical extraction and encoding 
+challenges.  In this regard when you have to do less tuning up front per-language, you can field
+a decent geotagging capability faster and discover what you do not know.  You can refine language-specific
+performance later.   In conclusion -- NLP mechanics and theory is very important, however as a developer
+or integrator you need not be so concerned with it intially. 
 
 There main topics to cover (Figure 1):
 
