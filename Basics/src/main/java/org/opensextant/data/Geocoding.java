@@ -119,12 +119,12 @@ public interface Geocoding extends LatLon {
     public String getPlaceName();
 
     public void setPlaceName(String n);
-    
+
     /** State-level postal code, the corresponds usually to ADM1 
      * @return optional postal code
      */
     public String getAdmin1PostalCode();
-    
+
     /** City-level postal code, that may be something like a zip. 
      * Thinking world-wide, not everyone calls these zipcodes, as in the US. 
      * @return optional postal code
@@ -138,4 +138,19 @@ public interface Geocoding extends LatLon {
 
     public void setMethod(String m);
 
+    /**
+     * Confidence metric is a normalized 100-point scale.
+     * Xponents conventions are simple, so value of confidence is an integer.
+     * @return value on a 100 point scale.
+     */
+    public int getConfidence();
+
+    /**
+     * Set confidence, a value on a 100 point scale, 0-100.
+     * Yes values above or below scale are allowed, however 
+     * it may be difficult to compare such values.  The intent is to normalize
+     * all confidence metrics to this relative scale for your application.
+     * @param c confidence 
+     */
+    public void setConfidence(int c);
 }

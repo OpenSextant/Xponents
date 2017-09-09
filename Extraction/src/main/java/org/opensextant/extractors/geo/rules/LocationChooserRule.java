@@ -10,6 +10,7 @@ import org.opensextant.extractors.geo.CountryCount;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceCount;
 import org.opensextant.extractors.geo.PlaceEvidence;
+import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.util.GeodeticUtility;
 
 /**
@@ -102,6 +103,11 @@ public class LocationChooserRule extends GeocodeRule {
             name.choose();
             if (name.getChosen() != null) {
                 this.assessConfidence(name);
+                /* Copy confidence AND method back to chosen place instance.  Method should be a richer reprensetation of
+                 * method for inferencing. e.g., a summary of major branch of rules by which name+location is identified and geolocated.
+                 */
+                name.getChosen().setConfidence(name.getConfidence());
+                name.getChosen().setMethod(PlaceGeocoder.METHOD_DEFAULT);
                 documentResolvedLocations.put(name.getTextnorm(), name.getChosen());
             } else {
                 log.info("Place name is ambiguous: {} in N={} places", name.getText(), name.distinctLocationCount());

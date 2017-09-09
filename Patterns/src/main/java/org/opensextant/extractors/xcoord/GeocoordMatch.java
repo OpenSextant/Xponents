@@ -289,7 +289,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         if (offsetSeparator > 0) {
             // Offsets are regex char 1.. based or 0.. based?
             x2 = offsetSeparator - 1; // Exclude the offset; should remain
-                                      // as-is;
+                                     // as-is;
         } else if (lat.offsetHemi > 0 && lat.offsetHemi > lat.offsetDeg) {
             x2 = lat.offsetHemi + 1; // Include the hemisphere for Lat. +1
         }
@@ -509,8 +509,9 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      * 
      * @return
      */
-    public double getConfidence() {
-        return 0.90;
+    @Override
+    public int getConfidence() {
+        return confidence;
     }
 
     /**
@@ -774,6 +775,21 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     public void setPlacePostalCode(String c) {
         this.placePostalCode = c;
+    }
+
+    /**
+     * Becuase coordinate parsing is pretty deterministic,
+     * for now the confidence defaults to a high value.
+     * TODO: introduce qualitative measures of goodness as far as 
+     * if detected pattern is reliable vs. loose; or if the geocoding
+     * has multiple interpretations due to ambiguous fields. Etc.
+     */
+    private int confidence = 90;
+
+    @Override
+    public void setConfidence(int c) {
+        // TODO Auto-generated method stub
+        confidence = c;
     }
 
 }
