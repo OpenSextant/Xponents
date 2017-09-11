@@ -175,7 +175,6 @@ if __name__ == "__main__":
     args = ap.parse_args()
     
     solrGaz = pysolr.Solr(args.solr)
-    # added_variants = os.path.join('..', 'conf', 'additions', 'generated-variants.json')
     added_variants = args.output
     fh = codecs.open(added_variants, 'wb', encoding="utf-8")
 

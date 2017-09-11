@@ -95,8 +95,9 @@
 # Ö => O
 "\u00D6" => "O"
 
+# Leading Scandanavian "o" in short words like Ør resolve to "or" and match large numbers of false-positives.
 # Ø => O
-"\u00D8" => "O"
+# "\u00D8" => "O"
 
 # Œ => OE
 "\u0152" => "OE"
@@ -138,7 +139,7 @@
 "\u00E4" => "a"
 
 # å => a
-"\u00E5" => "a"
+# "\u00E5" => "a"
 
 # æ => ae
 "\u00E6" => "ae"
@@ -194,8 +195,9 @@
 # ö => o
 "\u00F6" => "o"
 
+# See Capital version above.
 # ø => o
-"\u00F8" => "o"
+# "\u00F8" => "o"
 
 # œ => oe
 "\u0153" => "oe"

@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import os, sys,csv
+import traceback
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-print "Note - run from ./solr/gazetteer/ folder" 
-
+print "Note - run from ./solr/ folder" 
 print "Ingesting filter files"
 
+GAZ_CONF = './etc/gazetteer'
 # The resulting name filter file:
-output = 'conf/filters/person-name-filter.txt'
+output = os.path.join(GAZ_CONF, 'filters/person-name-filter.txt')
 
 # All final names
 names = set([])
@@ -21,7 +22,7 @@ def is_comment(s):
 # USGS/Census top 1000 surnames
 #  To counter-act these names, add entries to  conf/inclusions/adhoc-places.txt
 #
-fpath =   'conf/filters/census/top1000-surnames-cy2010.csv' 
+fpath =   os.path.join(GAZ_CONF, 'filters/census/top1000-surnames-cy2010.csv')
 f1 =  os.path.abspath( fpath )
 if os.path.exists(f1):
     print "\tParse ", f1
@@ -35,7 +36,7 @@ else:
    print "Census data not present:", fpath
 
 #
-fpath = 'conf/filters/census/dist.male.first'
+fpath = os.path.join(GAZ_CONF, 'filters/census/dist.male.first')
 f1 =  os.path.abspath( fpath )
 if os.path.exists(f1):
     print "\tParse ", f1
@@ -51,7 +52,7 @@ if os.path.exists(f1):
 else:
    print "Census data not present:", fpath
 
-fpath = 'conf/filters/census/dist.female.first'
+fpath = os.path.join(GAZ_CONF, 'filters/census/dist.female.first')
 f1 =  os.path.abspath( fpath )
 if os.path.exists(f1):
     print "\tParse ", f1
@@ -69,7 +70,7 @@ else:
     
 # Other useful names to use as not-place entries.
 #
-f1 = os.path.abspath( 'conf/filters/exclude-adhoc-names.txt' )
+f1 = os.path.abspath(os.path.join(GAZ_CONF, 'filters/exclude-adhoc-names.txt'))
 if os.path.exists(f1):
     print "\tParse ", f1
     fh = open(f1, 'rb')
@@ -81,7 +82,7 @@ if os.path.exists(f1):
 
 # a list of valid known places.  Remove known places from name filter.
 # 
-f1 = os.path.abspath( 'conf/filters/include-adhoc-places.txt' )
+f1 = os.path.abspath( os.path.join(GAZ_CONF, 'filters/include-adhoc-places.txt' ))
 if os.path.exists(f1):
     print "\tParse ", f1
     fh = open(f1, 'rb')
@@ -96,10 +97,15 @@ if names:
 
     # manual deletes, while these signify Person names, they also collide with general geographic cues
     # not enough terms that are both locations, person names, and confounded terms to warrant separate data sets.
-
-    names.remove('hall')
-    names.remove('many')
-    names.remove('zona')
+    try:
+        names.remove('hall')
+        names.remove('many')
+        names.remove('zona')
+    except Exception, err:
+        print "===========ERROR=========="
+        print "Something is wrong with the data.  Check any downloaded files"
+        print traceback.format_exc(limit=5)
+        print "===========ERROR=========="
 
     fh = open(output, 'wb')
     fh.write('# Generated File:  census surnames + exclusions - inclusions\n')
@@ -108,7 +114,6 @@ if names:
         fh.write(n)
         fh.write('\n')
     fh.close()
-
 
 print "\tWahoo. Done"
 print "\tResulting names filter file is at", os.path.abspath(output)

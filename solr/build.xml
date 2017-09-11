@@ -96,7 +96,8 @@
 
         <target name="gaz-meta" > <!-- depends="stopwords" -->
             <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
-              <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**,filters/**"/>
+              <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**"/>
+              <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**"/>
             </jar>
         </target>
 

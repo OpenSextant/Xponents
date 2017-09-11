@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!--  
+ This is the Solr schema file. This file should be named "schema.xml" and
+ should be in the conf directory under the solr home
+ (i.e. ./solr/conf/schema.xml by default) 
+ or located where the classloader for the Solr webapp can find it.
+
+ This example schema is the recommended starting point for users.
+ It should be kept correct and concise, usable out-of-the-box.
+
+ For more information, on how to customize this file, please see
+ http://wiki.apache.org/solr/SchemaXml
+
+ PERFORMANCE NOTE: this schema includes many optional features and should not
+ be used for benchmarking.  To improve performance one could
+  - set stored="false" for all fields possible (esp large fields) when you
+    only need to search on the field but don't need to return the original
+    value.
+  - set indexed="false" if you don't need to search on the field, but only
+    return the field as a result of searching on other indexed fields.
+  - remove all unneeded copyField statements
+  - for best index size and searching performance, set "index" to false
+    for all general text fields, use copyField to copy them to the
+    catchall "text" field, and use that for searching.
+  - For maximum indexing performance, use the ConcurrentUpdateSolrServer
+    java client.
+  - Remember to run the JVM in server mode, and use a higher logging level
+    that avoids logging every request
+-->
+
+<schema name="gazetteer" version="1.6">
+    <!-- attribute "name" is the name of this schema and is only used for display purposes.
+       version="x.y" is Solr's version number for the schema syntax and 
+       semantics.  It should not normally be changed by applications.
+
+       1.0: multiValued attribute did not exist, all fields are multiValued 
+            by nature
+       1.1: multiValued attribute introduced, false by default 
+       1.2: omitTermFreqAndPositions attribute introduced, true by default 
+            except for text fields.
+       1.3: removed optional field compress feature
+       1.4: autoGeneratePhraseQueries attribute introduced to drive QueryParser
+            behavior when a single string produces multiple tokens.  Defaults 
+            to off for version >= 1.4
+       1.5: omitNorms defaults to true for primitive field types 
+            (int, float, boolean, string...)
+       1.6: useDocValuesAsStored defaults to true.
+    -->
+
+    <!-- Valid attributes for fields:
+     name: mandatory - the name for the field
+     type: mandatory - the name of a field type from the 
+       fieldTypes section
+     indexed: true if this field should be indexed (searchable or sortable)
+     stored: true if this field should be retrievable
+     docValues: true if this field should have doc values. Doc values are
+       useful (required, if you are using *Point fields) for faceting, 
+       grouping, sorting and function queries. Doc values will make the index 
+       faster to load, more NRT-friendly and more memory-efficient. 
+       They however come with some limitations: they are currently only 
+       supported by StrField, UUIDField, all Trie*Fields and *PointFields,
+       and depending on the field type, they might require the field to be
+       single-valued, be required or have a default value (check the
+       documentation of the field type you're interested in for more information)
+     multiValued: true if this field may contain multiple values per document
+     omitNorms: (expert) set to true to omit the norms associated with
+       this field (this disables length normalization and index-time
+       boosting for the field, and saves some memory).  Only full-text
+       fields or fields that need an index-time boost need norms.
+       Norms are omitted for primitive (non-analyzed) types by default.
+     termVectors: [false] set to true to store the term vector for a
+       given field.
+       When using MoreLikeThis, fields used for similarity should be
+       stored for best performance.
+     termPositions: Store position information with the term vector.  
+       This will increase storage costs.
+     termOffsets: Store offset information with the term vector. This 
+       will increase storage costs.
+     required: The field is required.  It will throw an error if the
+       value does not exist
+     default: a value that should be used if no value is specified
+       when adding a document.
+    -->
+
+    <!-- field names should consist of alphanumeric or underscore characters only and
+      not start with a digit.  This is not currently strictly enforced,
+      but other field names will not have first class support from all components
+      and back compatibility is not guaranteed.  Names with both leading and
+      trailing underscores (e.g. _version_) are reserved.
+    -->
+
+    <!-- Integer ID from gazetteer ETL; Integer for performance reasons -->
+    <field name="id" type="int" required="true" />
+    <field name="_version_" type="long" />
+
+    <!-- Place ID from source gazetteer -->
+    <field name="place_id" type="string" required="true" />
+
+    <!-- place name indexed for typical free-text search -->
+    <field name="name" type="name_text" required="true" />
+
+    <!-- place name indexed separately for the tagger -->
+    <field name="name_tag" type="name_tag" stored="false"/>
+    <copyField source="name" dest="name_tag" />
+
+    <!-- Record names in CJK script only -->
+    <field name="name_cjk" type="name_text_cjk"  />
+    <field name="name_tag_cjk" type="name_tag_cjk" stored="false"/>
+    <copyField source="name_cjk" dest="name_tag_cjk" />
+
+    <!-- Record names in ARABIC script only -->
+    <field name="name_ar" type="name_text_ar"  />
+    <field name="name_tag_ar" type="name_tag_ar" stored="false"/>
+    <copyField source="name_ar" dest="name_tag_ar" />
+
+    <!-- phonetic variant for FST -->
+    <!--
+    <field name="name_idx" type="name_idx"                    stored="false"  omitTermFreqAndPositions="true" omitNorms="true"/>
+    <copyField source="name" dest="name_idx" />
+    -->
+
+    <!-- phonetic variant for deep name matching
+     -->
+    <!-- TODO: Phonetic name matching later.
+    <field name="name_phoneme"  type="phonetic"               stored="false"  omitTermFreqAndPositions="true" omitNorms="true"/>
+
+    <copyField source="name" dest="name_phoneme" />
+     -->
+
+    <!-- geo = XY coordinate in the form 'lat,lon' update-script.js handles merging fields
+         lat,lon are now ignored
+     -->
+    <field name="geo" type="geo" />
+    <!-- Optimizations:  we do not store lat,lon separately as of OpSx v1.5 ; 'geo' field stores location -->
+    <field name="lat"  stored="false" indexed="false" type="ignored" />
+    <field name="lon"  stored="false" indexed="false" type="ignored" /> 
+
+    <!-- see update-script.js -->
+    <field name="search_only" type="boolean" indexed="true" stored="false" />
+
+    <field name="SplitCategory" stored="false" indexed="false" type="ignored" /> 
+
+    <!-- Name and ID bias stats are generated ahead of time and built in using ETL scripts
+      these numbers offer tuning for downstream geocoding rules
+     -->
+    <field name="name_bias" type="tfloat" />
+    <field name="id_bias" type="tfloat" />
+
+    <!-- Geonames style Feature Class - A, P, L, H, V, S, T, R -->
+    <field name="feat_class" type="string" />
+    <!-- Geonames style Feature Code - ADM1, PPL, etc-->
+    <field name="feat_code" type="string" />
+
+    <!-- ISO country code is 'cc' -->
+    <field name="cc" type="string" />
+    <field name="FIPS_cc" type="string" />
+    <field name="ISO3_cc" type="string" />
+    <!--
+     @deprecation
+     Optimizations: each distinct country code standard is stored once.
+     cc is ISO 2-alpha;  as of OpSx v1.5 ISO_cc is no longer used.
+    <field name="ISO_cc"   type="string" />
+    <copyField source="ISO_cc" dest="cc" />
+     -->
+
+    <field name="adm1" type="string" />
+    <field name="adm2" type="string" />
+    <field name="adm3" type="string" />
+
+    <!-- Name type is a flag that tells us if an entry is a code, abbrev (A), or a name (N) -->
+    <field name="name_type" type="string" />
+
+    <!--  TODO: Make use of Currently unused fields, e.g., source is source of gazetteer records, e.g., NGA, user, USGS, etc.
+     -->
+    <field name="source" type="string" />
+
+    <!-- Script of name, CJK, ARABIC, LATIN, ARMENIAN, CYRILLIC, etc. -->
+    <field name="script" type="string" stored="false" multiValued="true"/>
+
+    <!--
+
+    "Record_ID":12803368, X
+    "PLACE_ID":"USGS1992110", Y
+    "PLACE_NAME":"San Fernando", Y
+    "LATITUDE":"18.38745", Y
+    "LONGITUDE":"-66.25461", Y
+    "FEATURE_CLASS":"P", Y
+    "FEATURE_CODE":"PPL", Y
+    country_code: xx // ISO2
+    "FIPS_COUNTRY_CODE":"RQ",
+    "ISO2_COUNTRY_CODE":"PR",
+    "ISO3_COUNTRY_CODE":"PRI",
+
+    "ADMIN_LEVEL_1":"RQ72", Y
+    "ADMIN_LEVEL_2":"RQ72.0135", Y
+    "SOURCE":"USGS GNIS", N
+    "SOURCE_FEATURE_ID":1992110, N
+    "SCRIPT":"BASIC_LATIN", N
+    "CONFLATE_KEY":1148752447, N
+    "PLACE_NAME_BIAS":0.0, Y
+    "PLACE_ID_BIAS":0.0 Y
+
+    -->
+
+    <!-- uncomment the following to ignore any fields that don't already match an existing 
+        field name or dynamic field, rather than reporting them as an error. 
+        alternately, change the type="ignored" to some other type e.g. "text" if you want 
+        unknown fields indexed and/or stored by default 
+        
+        NB: use of "*" dynamic fields will disable field type guessing and adding
+        unknown fields to the schema. --> 
+    <!--dynamicField name="*" type="ignored" multiValued="true" /-->
+    <!--
+    <dynamicField name="*" type="ignored" multiValued="true" /> -->
+
+    <!-- Field to use to determine and enforce document uniqueness.
+      Unless this field is marked with required="false", it will be a required field
+    -->
+    <uniqueKey>id</uniqueKey>
+
+    <!-- copyField commands copy one field to another at the time a document
+       is added to the index.  It's used either to index the same field differently,
+       or to add multiple fields to the same field for easier/faster searching.
+
+    <copyField source="sourceFieldName" dest="destinationFieldName"/>
+    -->
+
+    <!-- field type definitions. The "name" attribute is
+       just a label to be used by field definitions.  The "class"
+       attribute and any other attributes determine the real
+       behavior of the fieldType.
+         Class names starting with "solr" refer to java classes in a
+       standard package such as org.apache.solr.analysis
+    -->
+
+    <!-- The StrField type is not analyzed, but indexed/stored verbatim.
+       It supports doc values but in that case the field needs to be
+       single-valued and either required or have a default value.
+      -->
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />
+    <fieldType name="strings" class="solr.StrField" sortMissingLast="true" multiValued="true" docValues="true" />
+
+    <!-- boolean type: "true" or "false" -->
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+
+    <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+
+    <!-- sortMissingLast and sortMissingFirst attributes are optional attributes are
+         currently supported on types that are sorted internally as strings
+         and on numeric types.
+	     This includes "string","boolean", "int", "float", "long", "date", "double",
+	     including the "Trie" and "Point" variants.
+       - If sortMissingLast="true", then a sort on this field will cause documents
+         without the field to come after documents with the field,
+         regardless of the requested sort order (asc or desc).
+       - If sortMissingFirst="true", then a sort on this field will cause documents
+         without the field to come before documents with the field,
+         regardless of the requested sort order.
+       - If sortMissingLast="false" and sortMissingFirst="false" (the default),
+         then default lucene sorting will be used which places docs without the
+         field first in an ascending sort and last in a descending sort.
+    -->
+    
+    <!--
+      Numeric field types that index values using KD-trees. *Point fields are faster and more efficient than Trie* fields both, at
+      search time and at index time, but some features are still not supported.
+      Point fields don't support FieldCache, so they must have docValues="true" if needed for sorting, faceting, functions, etc.
+    -->
+    <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+    <fieldType name="pfloat" class="solr.FloatPointField" docValues="true"/>
+    <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+    <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+    
+    <fieldType name="pints" class="solr.IntPointField" docValues="true" multiValued="true"/>
+    <fieldType name="pfloats" class="solr.FloatPointField" docValues="true" multiValued="true"/>
+    <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+    <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+
+    <!--
+      Default numeric field types. For faster range queries, consider *PointFields (pint/pfloat/plong/pdouble), or the 
+      tint/tfloat/tlong/tdouble types.
+    -->
+    <fieldType name="int" class="solr.TrieIntField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="float" class="solr.TrieFloatField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="double" class="solr.TrieDoubleField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
+
+    <fieldType name="ints" class="solr.TrieIntField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
+    <fieldType name="floats" class="solr.TrieFloatField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
+    <fieldType name="longs" class="solr.TrieLongField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
+    <fieldType name="doubles" class="solr.TrieDoubleField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
+
+    <!--
+     Numeric field types that index each value at various levels of precision
+     to accelerate range queries when the number of values between the range
+     endpoints is large. See the javadoc for NumericRangeQuery for internal
+     implementation details.
+
+     Smaller precisionStep values (specified in bits) will lead to more tokens
+     indexed per value, slightly larger index size, and faster range queries.
+     A precisionStep of 0 disables indexing at different precision levels.
+     
+     Consider using pint/pfloat/plong/pdouble instead of Trie* fields if possible
+    -->
+    <fieldType name="tint" class="solr.TrieIntField" docValues="true" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tfloat" class="solr.TrieFloatField" docValues="true" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tlong" class="solr.TrieLongField" docValues="true" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tdouble" class="solr.TrieDoubleField" docValues="true" precisionStep="8" positionIncrementGap="0"/>
+    
+    <fieldType name="tints" class="solr.TrieIntField" docValues="true" precisionStep="8" positionIncrementGap="0" multiValued="true"/>
+    <fieldType name="tfloats" class="solr.TrieFloatField" docValues="true" precisionStep="8" positionIncrementGap="0" multiValued="true"/>
+    <fieldType name="tlongs" class="solr.TrieLongField" docValues="true" precisionStep="8" positionIncrementGap="0" multiValued="true"/>
+    <fieldType name="tdoubles" class="solr.TrieDoubleField" docValues="true" precisionStep="8" positionIncrementGap="0" multiValued="true"/>
+
+    <!-- The format for this date field is of the form 1995-12-31T23:59:59Z, and
+         is a more restricted form of the canonical representation of dateTime
+         http://www.w3.org/TR/xmlschema-2/#dateTime    
+         The trailing "Z" designates UTC time and is mandatory.
+         Optional fractional seconds are allowed: 1995-12-31T23:59:59.999Z
+         All other components are mandatory.
+
+         Expressions can also be used to denote calculations that should be
+         performed relative to "NOW" to determine the value, ie...
+
+               NOW/HOUR
+                  ... Round to the start of the current hour
+               NOW-1DAY
+                  ... Exactly 1 day prior to now
+               NOW/DAY+6MONTHS+3DAYS
+                  ... 6 months and 3 days in the future from the start of
+                      the current day
+                      
+         Consult the TrieDateField javadocs for more information.
+      -->
+    <!-- KD-tree versions of date fields -->
+    <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+    <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
+    
+    <fieldType name="date" class="solr.TrieDateField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="dates" class="solr.TrieDateField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
+
+    <fieldType name="tdate" class="solr.TrieDateField" docValues="true" precisionStep="6" positionIncrementGap="0"/>
+    <fieldType name="tdates" class="solr.TrieDateField" docValues="true" precisionStep="6" positionIncrementGap="0" multiValued="true"/>
+
+
+    <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
+    <fieldType name="binary" class="solr.BinaryField"/>
+
+
+    <!-- This point type indexes the coordinates as separate fields (subFields)
+      If subFieldType is defined, it references a type, and a dynamic field
+      definition is created matching *___<typename>.  Alternately, if 
+      subFieldSuffix is defined, that is used to create the subFields.
+      Example: if subFieldType="double", then the coordinates would be
+        indexed in fields myloc_0___double,myloc_1___double.
+      Example: if subFieldSuffix="_d" then the coordinates would be indexed
+        in fields myloc_0_d,myloc_1_d
+      The subFields are an implementation detail of the fieldType, and end
+      users normally should not need to know about them.
+     -->
+    <dynamicField name="*_point" type="point"  indexed="true"  stored="true"/>
+    <fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/>
+
+    <!-- A specialized field for geospatial search filters and distance sorting. -->
+    <fieldType name="location" class="solr.LatLonPointSpatialField" docValues="true"/>
+
+    <!-- An alternative geospatial field type new to Solr 4.  It supports multiValued and polygon shapes.
+      For more information about this and other Spatial fields new to Solr 4, see:
+      http://wiki.apache.org/solr/SolrAdaptersForLuceneSpatial4
+    -->
+    <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
+               geo="true" distErrPct="0.025" maxDistErr="0.001" distanceUnits="kilometers" />
+
+    <!-- Money/currency field type. See http://wiki.apache.org/solr/MoneyFieldType
+        Parameters:
+          defaultCurrency: Specifies the default currency if none specified. Defaults to "USD"
+          precisionStep:   Specifies the precisionStep for the TrieLong field used for the amount
+          providerClass:   Lets you plug in other exchange provider backend:
+                           solr.FileExchangeRateProvider is the default and takes one parameter:
+                             currencyConfig: name of an xml file holding exchange rates
+                           solr.OpenExchangeRatesOrgProvider uses rates from openexchangerates.org:
+                             ratesFileLocation: URL or path to rates JSON file (default latest.json on the web)
+                             refreshInterval: Number of minutes between each rates fetch (default: 1440, min: 60)
+    <fieldType name="currency" class="solr.CurrencyField" precisionStep="8" defaultCurrency="USD" currencyConfig="currency.xml" />
+    -->
+
+    <!-- some examples for different languages (generally ordered by ISO code) 
+    # OMITTED
+    -->
+
+    <!-- 
+        =============================================================
+        OpenSextant Xponents custom types start here.
+        =============================================================
+    -->
+    <!-- Looks like we could benefit from a char filter that combines contractions and ASCII folding;
+         Sure, its more elegant to maintain separate char filters;  Or a char filter and token filter.
+         See also name_idx* fields that have phonetic support
+         SOLR-TEXT-TAGGER v2.0 in effect here:  postingsFormat="Memory"
+      -->
+    <fieldType name="name_tag" class="solr.TextField"
+        positionIncrementGap="100" postingsFormat="Memory"
+        omitTermFreqAndPositions="true" omitNorms="true">
+        <analyzer type="index">
+            <charFilter class="solr.MappingCharFilterFactory"
+                mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
+            <tokenizer class="solr.ClassicTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+            <!-- only difference between index & query chains: -->
+            <filter
+                class="org.opensextant.solrtexttagger.ConcatenateFilterFactory" />
+        </analyzer>
+        <analyzer type="query">
+            <charFilter class="solr.MappingCharFilterFactory"
+                mapping="OpenSextant-Gazetteer-ASCIIFolding.txt" />
+            <tokenizer class="solr.ClassicTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+        </analyzer>
+    </fieldType>
+
+    <!-- Functionally the same as text_general, but no stop filter 
+      * Other features: map 's and other apos+s to standard "'s" 
+      * For query time only, parse off 's, as in "Big City's" =&lt; "Big City"; But do not normalize "'s" 
+        on indexing. If apos+s is part of name in gaz leave it. -->
+    <fieldType name="name_text" class="solr.TextField"
+        positionIncrementGap="100">
+        <analyzer type="index">
+            <tokenizer class="solr.StandardTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+        </analyzer>
+        <analyzer type="query">
+            <tokenizer class="solr.StandardTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+            <filter class="solr.EnglishPossessiveFilterFactory" />
+        </analyzer>
+    </fieldType>
+
+    <!-- CJK bigram (see text_ja for a Japanese configuration using morphological 
+        analysis) -->
+    <fieldType name="name_text_cjk" class="solr.TextField"
+        positionIncrementGap="100">
+        <analyzer>
+            <tokenizer class="solr.StandardTokenizerFactory" />
+            <!-- normalize width before bigram, as e.g. half-width dakuten 
+                combine -->
+            <filter class="solr.CJKWidthFilterFactory" />
+            <!-- for any non-CJK -->
+            <filter class="solr.LowerCaseFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+    </fieldType>
+
+    <!-- Chinese/Japanese/Korean name_tag and name_text -->
+    <fieldType name="name_tag_cjk" class="solr.TextField"
+        positionIncrementGap="100" postingsFormat="Memory"
+        omitTermFreqAndPositions="true" omitNorms="true">
+        <analyzer type="index">
+            <tokenizer class="solr.StandardTokenizerFactory" />
+            <filter class="solr.CJKWidthFilterFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+
+            <!-- only difference between index & query chains: -->
+            <filter
+                class="org.opensextant.solrtexttagger.ConcatenateFilterFactory" />
+        </analyzer>
+        <analyzer type="query">
+            <tokenizer class="solr.StandardTokenizerFactory" />
+            <filter class="solr.CJKWidthFilterFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+    </fieldType>
+
+    <!-- Arabic -->
+    <fieldType name="name_text_ar" class="solr.TextField" positionIncrementGap="100">
+      <analyzer> 
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- for any non-arabic -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ar.txt" />
+        <!-- normalizes ﻯ to ﻱ, etc -->
+        <filter class="solr.ArabicNormalizationFilterFactory"/>
+        <filter class="solr.ArabicStemFilterFactory"/>
+      </analyzer>
+    </fieldType>
+    <!-- Arabic -->
+    <fieldType name="name_tag_ar" class="solr.TextField" positionIncrementGap="100" 
+      postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true" >
+      <analyzer type="index"> 
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- for any non-arabic -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ar.txt" />
+        <!-- normalizes ﻯ to ﻱ, etc -->
+        <filter class="solr.ArabicNormalizationFilterFactory"/>
+        <filter class="solr.ArabicStemFilterFactory"/>
+        <!-- only difference between index & query chains: -->
+        <filter class="org.opensextant.solrtexttagger.ConcatenateFilterFactory" />
+      </analyzer>
+      <analyzer type="query"> 
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!-- for any non-arabic -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ar.txt" />
+        <!-- normalizes ﻯ to ﻱ, etc -->
+        <filter class="solr.ArabicNormalizationFilterFactory"/>
+        <filter class="solr.ArabicStemFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <!-- since fields of this type are by default not stored or indexed, 
+        any data added to them will be ignored outright. -->
+    <fieldtype name="ignored" stored="false" indexed="false"
+        multiValued="true" class="solr.StrField" />
+
+    <!-- A specialized field for geospatial search. If indexed, this fieldType 
+        must not be multivalued. -->
+    <!--<fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate" 
+        /> -->
+
+    <!-- Geospatial field type (aka GeoSolr) http://wiki.apache.org/solr/SolrAdaptersForLuceneSpatial4 
+        Note: This field type has some optional params: spatialContextFactory, geo, 
+        distCalculator, worldbounds, distErrPct, defaultFieldValuesArrayLen, prefixTree, 
+        maxLevels, maxDistErr 0.00009 = 10meter accuracy specified in degrees (111.2km/degree) -->
+    <fieldType name="geo" class="solr.SpatialRecursivePrefixTreeFieldType"
+        spatialContextFactory="org.locationtech.spatial4j.context.jts.JtsSpatialContextFactory"
+        maxDistErr="0.00009" distErrPct="0.025" geo="true" distanceUnits="kilometers"/>
+
+</schema>

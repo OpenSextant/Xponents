@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<project name="OpenSextant-Xponents-Gazetteer">
+
+	<!-- Solr Home and Gazetteer config data sourced here: -->
+	<property file="${basedir}/../build.properties" />
+
+	<property name="textTagger.v" value="2.4" />
+	<property name="slf4j.v" value="1.7.25" />
+	<property name="log4j.v" value="1.2.17" />
+	<property name="guava.v" value="14.0.1" />
+	<property name="xponents.v" value="${xponents.build.v}" />
+	<property name="supercsv.v" value="2.4.0" />
+	<property name="lang3.v" value="3.6" />
+
+	<property name="jetty.runtime.lib" value="${basedir}/solr6-dist/lib/ext" />
+	<property name="solr.runtime.lib" value="${basedir}/solr6/lib" />
+	<property name="solr.runtime.log" value="${basedir}/solr6-dist/server/logs" />
+
+	<target name="proxy">
+		<property name="proxy.port" value="80" />
+		<property name="proxy.user" value="" />
+		<property name="proxy.pass" value="" />
+		<setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
+	</target>
+
+	<target name="setup">
+		<mkdir dir="log" />
+		<mkdir dir="lib/ext" />
+		<mkdir dir="download" />
+		<mkdir dir="webapps" />
+		<!-- Same as solr.runtime.lib -->
+		<mkdir dir="${solr.home}/lib" />
+	</target>
+
+	<target name="copy-libs">
+
+		<get dest="${jetty.runtime.lib}" skipexisting="true">
+			<url url="http://repo1.maven.org/maven2/com/vividsolutions/jts/1.13/jts-1.13.jar" />
+			<url url="http://repo1.maven.org/maven2/org/locationtech/spatial4j/spatial4j/0.6/spatial4j-0.6.jar" />
+		</get>
+		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents-basics/${xponents.v}/opensextant-xponents-basics-${xponents.v}.jar" />
+		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents/${xponents.v}/opensextant-xponents-${xponents.v}.jar" />
+		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/apache/commons/commons-lang3/${lang3.v}/commons-lang3-${lang3.v}.jar" />
+		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar" />
+
+		<get dest="${solr.runtime.lib}" skipexisting="true" ignoreerrors="true">
+			<url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+		</get>
+	</target>
+
+        <target name="gaz-meta" > <!-- depends="stopwords" -->
+            <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
+              <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**"/>
+              <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**"/>
+            </jar>
+        </target>
+
+	<target name="init" depends="setup,gaz-meta,copy-libs">
+	</target>
+
+	<target name="clean" description="Delete indexed data">
+		<delete dir="${solr.home}/gazetteer/data/index/**" />
+		<delete dir="${solr.home}/taxcat/data/index/**" />
+		<delete dir="${solr.home}/gazetteer/data/index" />
+		<delete dir="${solr.home}/taxcat/data/index" />
+		<delete dir="${solr.home}/lib" />
+		<delete dir="${solr.runtime.lib}" /> 
+	</target>
+
+	<target name="index-gazetteer">
+		<available property="csvFile.exists" file="${gazetteer.data.file}" />
+		<fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
+		<get src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?stream.file=${gazetteer.data.file}&amp;stream.contentType=application/csv" 
+                     dest="${solr.runtime.log}/gazetteer-update-response.xml" />
+	</target>
+</project>

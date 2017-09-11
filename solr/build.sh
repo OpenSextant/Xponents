@@ -2,7 +2,10 @@ if [ ! -d ./log ] ;  then
   mkdir log
 fi
 
-SERVER=localhost:7000
+CMD=$1
+OPT=$2
+SOLR_PORT=7000
+SERVER=localhost:$SOLR_PORT
 unset http_proxy
 unset https_proxy
 export noproxy=localhost,127.0.0.1
@@ -16,48 +19,58 @@ if [ ! -d $XPONENTS/piplib ] ; then
    exit 1
 fi
 
-if [ ! -e ./solr4/lib/xponents-gazetteer-meta.jar ] ; then 
-   ant gaz-meta
+export PYTHONPATH=$XPONENTS/piplib
+GAZ_CONF=etc/gazetteer
+SOLR_CORE_VER=solr6
+
+echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
+python ./script/gaz_assemble_person_filter.py 
+
+if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
+   # Collect Gazetteer Metadata: 
+   # in ./etc/gazetteer,  ./filters;   in ./solr4/gazetteer/conf/,  ./lang
+   ant -f ./solr6-build.xml gaz-meta
 fi
 
+sleep 2 
 
-export PYTHONPATH=$XPONENTS/piplib
 
-for core in gazetteer taxcat ; do 
-  if [ -d solr4/$core/data/index ] ; then
-    rm solr4/$core/data/index/*
-  else 
-    mkdir -p solr4/$core/data/index
+if [ "$CMD" = 'start' ]; then 
+  if [ "$OPT" = 'clean' ]; then 
+    ant -f ./solr6-build.xml init
+    for core in gazetteer taxcat ; do 
+      core_data=${SOLR_CORE_VER}/$core/data
+      if [ -d $core_data/index ] ; then
+        rm $core_data/index/*
+      else 
+        mkdir -p $core_data/index
+      fi
+    done
   fi
-done
 
-echo "Starting Solr $SERVER"
-nohup ./myjetty.sh  start & 
-
-echo "Wait for Solr / Jetty to load"
-sleep 5
-
-pushd solr4/gazetteer/
-echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
-python ./script/assemble_person_filter.py 
+  echo "Starting Solr $SERVER"
+  # TODO: solr4 support:
+  # nohup ./myjetty.sh  start & 
+  # Solr6 is current:
+  echo "Wait for Solr 6.x to load"
+  ./mysolr.sh stop $SOLR_PORT
+  ./mysolr.sh start $SOLR_PORT
+  sleep 2
+fi
 
 echo "Populate nationalities taxonomy in XTax"
 # you must set your PYTHONPATH to include Extraction/XTax required libraries.
-python  ./script/nationalities.py  --taxonomy ./conf/filters/nationalities.csv --solr http://$SERVER/solr/taxcat --starting-id 0
-popd
+python  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr http://$SERVER/solr/taxcat --starting-id 0
+
+sleep 2 
 
 
 echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
-ant index-gazetteer
+ant -f solr6-build.xml index-gazetteer
 
-
-pushd solr4/gazetteer/
+sleep 2 
 echo "Generate Name Variants"
-python ./script/generate_variants.py  --solr http://$SERVER/solr/gazetteer --output ./conf/additions/generated-variants.json
-popd
-
-
-GAZ_CONF=solr4/gazetteer/conf
+python ./script/gaz_generate_variants.py  --solr http://$SERVER/solr/gazetteer --output $GAZ_CONF/additions/generated-variants.json
 
 # Finally add adhoc entries from JSON formatted files.
 #

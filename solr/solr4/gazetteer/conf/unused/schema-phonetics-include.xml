@@ -82,7 +82,7 @@
                 <filter class="solr.EnglishPossessiveFilterFactory" />
                 <filter class="solr.LowerCaseTokenizerFactory" />
                 <filter class="solr.PhoneticFilterFactory"
-                        encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer"
+                        encoder="org.opensextant.phonetic.AbbreviationNormalizer"
                         inject="false" />
 
             </analyzer>
@@ -113,7 +113,7 @@
                 <filter class="solr.ASCIIFoldingFilterFactory" />
                 <filter class="solr.LowerCaseFilterFactory" />
                 <filter class="solr.PhoneticFilterFactory"
-                        encoder="org.mitre.opensextant.phonetic.AbbreviationNormalizer"
+                        encoder="org.opensextant.phonetic.AbbreviationNormalizer"
                         inject="false" />
             </analyzer>
         </fieldType>
