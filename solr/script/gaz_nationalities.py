@@ -167,7 +167,6 @@ if __name__ == '__main__':
         builder.save(flush=True)
         builder.optimize()
     except Exception, err:
-        print err
+        print str(err)
     
     fh.close()
-            

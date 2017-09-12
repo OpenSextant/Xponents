@@ -66,7 +66,7 @@ sleep 2
 
 
 echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
-ant -f solr6-build.xml index-gazetteer
+ant -f solr6-build.xml index-gazetteer-solrj
 
 sleep 2 
 echo "Generate Name Variants"

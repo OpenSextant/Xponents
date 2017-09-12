@@ -5,7 +5,7 @@ SOLR_INSTALL=./solr6-dist
 PORT=$2
 case "$1" in 
  'start')
-    $SOLR_INSTALL/bin/solr start  -p $PORT -s ./solr6 
+    $SOLR_INSTALL/bin/solr start  -p $PORT -s ./solr6  -m 3g
     # -Dsolr.lock.type=none
  ;;
  'stop')

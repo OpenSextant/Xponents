@@ -17,6 +17,19 @@
 	<property name="solr.runtime.lib" value="${basedir}/solr6/lib" />
 	<property name="solr.runtime.log" value="${basedir}/solr6-dist/server/logs" />
 
+	<path id="runtime.classpath">
+		<!-- TODO: need to run these routines to fully automate CLASSPATH items here.
+    	  mvn install
+    	  mvn dependency:copy-dependencies
+    	  cd ./solr
+    	  ant -f ./solr6-build.xml gaz-meta
+    	  -->
+
+		<pathelement location="${basedir}/../Extraction/lib/*" />
+		<pathelement location="${solr.runtime.lib}/xponents-gazetteer-meta.jar" />
+	</path>
+
+
 	<target name="proxy">
 		<property name="proxy.port" value="80" />
 		<property name="proxy.user" value="" />
@@ -25,7 +38,7 @@
 	</target>
 
 	<target name="setup">
-                <!-- Solr 4 + Jetty:
+		<!-- Solr 4 + Jetty:
 		<mkdir dir="log" />
 		<mkdir dir="lib/ext" />
 		<mkdir dir="download" />
@@ -41,26 +54,20 @@
 			<url url="http://repo1.maven.org/maven2/org/locationtech/spatial4j/spatial4j/0.6/spatial4j-0.6.jar" />
 		</get>
 
-          <!-- Not used now...
-		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
-		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents-basics/${xponents.v}/opensextant-xponents-basics-${xponents.v}.jar" />
-		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents/${xponents.v}/opensextant-xponents-${xponents.v}.jar" />
-		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/apache/commons/commons-lang3/${lang3.v}/commons-lang3-${lang3.v}.jar" />
-		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar" />
-           -->
 
 		<get dest="${solr.runtime.lib}" skipexisting="true" ignoreerrors="true">
 			<url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
 		</get>
 	</target>
 
-        <target name="gaz-meta" > <!-- depends="stopwords" -->
-            <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
-              <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**"/>
-              <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**"/>
-              <fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**"/>
-            </jar>
-        </target>
+	<target name="gaz-meta">
+		<!-- depends="stopwords" -->
+		<jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
+			<fileset dir="${solr.home}/gazetteer/conf" includes="lang/**" />
+			<fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**" />
+			<fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**" />
+		</jar>
+	</target>
 
 	<target name="init" depends="setup,gaz-meta,copy-libs">
 	</target>
@@ -71,13 +78,31 @@
 		<delete dir="${solr.home}/gazetteer/data/index" />
 		<delete dir="${solr.home}/taxcat/data/index" />
 		<delete dir="${solr.home}/lib" />
-		<delete dir="${solr.runtime.lib}" /> 
+		<delete dir="${solr.runtime.lib}" />
 	</target>
 
+	<!-- Solr 4.10 gazetteer ingest.  To use this, additional JARs supporting the /addGazetteer endpoint are required
+	under ./solr4/lib;  
+	-->
 	<target name="index-gazetteer">
 		<available property="csvFile.exists" file="${gazetteer.data.file}" />
 		<fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
-		<get src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?commit=true&amp;stream.file=${gazetteer.data.file}&amp;stream.contentType=application/csv;charset=UTF-8" 
-                     dest="${solr.runtime.log}/gazetteer-update-response.xml" />
+		<get src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?commit=true&amp;stream.file=${gazetteer.data.file}&amp;stream.contentType=application/csv;charset=UTF-8" dest="${solr.runtime.log}/gazetteer-update-response.xml" />
+	</target>
+
+	<!-- Using a traditional SolrJ client approach; URP using /update/csv variation fails in Solr 6.6 although worked great in Solr 4.10 -->
+	<target name="index-gazetteer-solrj">
+		<echo>Need to fully build project ahead of this to populate items in CLASSPATH</echo>
+		<available property="csvFile.exists" file="${gazetteer.data.file}" />
+		<fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
+		<java classname="org.opensextant.extractors.geo.GazetteerIndexer" classpathref="runtime.classpath" fork="yes">
+			<jvmarg value="-Dlogback.configurationFile=./logback.xml" />
+			<arg value="-u" />
+			<arg value="http://localhost:7000/solr/gazetteer" />
+			<arg value="-s" />
+			<arg value="id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,script,name_bias,id_bias,name_type,,SplitCategory,search_only" />
+			<arg value="-f" />
+			<arg value="${gazetteer.data.file}" />
+		</java>
 	</target>
 </project>
