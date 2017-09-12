@@ -26,6 +26,8 @@
  */
 package org.opensextant.extraction;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.StreamingResponseCallback;
@@ -42,14 +44,13 @@ import org.slf4j.LoggerFactory;
  *
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
- * the Solr server.
- * <p >
- * This class is not thread-safe. It could be made to be with little effort.
+ * the Solr server. <p > This class is not thread-safe. It could be made to be
+ * with little effort.
  *
  * @author David Smiley - dsmiley@mitre.org
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
-public abstract class SolrMatcherSupport {
+public abstract class SolrMatcherSupport implements Closeable {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -65,12 +66,10 @@ public abstract class SolrMatcherSupport {
     protected int totalTime = 0;
 
     /**
-     * Use this if you intend to set a non-default tagger path. E.g.,
-     * /tag1
-     * /tag-lang1
-     * etc.
+     * Use this if you intend to set a non-default tagger path. E.g., /tag1
+     * /tag-lang1 etc.
      *
-     * @param nonDefault  path of tagger.
+     * @param nonDefault path of tagger.
      */
     public void setTaggerHandler(String nonDefault) {
         requestHandler = nonDefault;
@@ -79,9 +78,13 @@ public abstract class SolrMatcherSupport {
     /**
      * Close solr resources.
      */
-    public void shutdown() {
+    public void close() {
         if (solr != null) {
-            solr.close();
+            try {
+                solr.close();
+            } catch (IOException err) {
+                this.log.error("Rare failure closing Solr I/O");
+            }
         }
     }
 
@@ -109,10 +112,12 @@ public abstract class SolrMatcherSupport {
     public abstract Object createTag(SolrDocument doc);
 
     /**
-     * Initialize. This capability is not supporting taggers/matchers using HTTP server.
-     * For now it is intedended to be in-memory, local embedded solr server.
+     * Initialize. This capability is not supporting taggers/matchers using HTTP
+     * server. For now it is intedended to be in-memory, local embedded solr
+     * server.
      *
-     * @throws ConfigException if solr server cannot be established from local index or from http server
+     * @throws ConfigException if solr server cannot be established from local
+     *             index or from http server
      */
     public void initialize() throws ConfigException {
         solr = new SolrProxy(getCoreName());
@@ -147,15 +152,14 @@ public abstract class SolrMatcherSupport {
      * matched during tagging.
      *
      * @param buffer text to tag
-     * @param docid  id for text, only for tracking purposes
-     * @param refDataMap
-     *            - a map of reference data in solr, It will store caller's
-     *            domain objects. e.g., rec.id =&gt; domain(rec)
+     * @param docid id for text, only for tracking purposes
+     * @param refDataMap - a map of reference data in solr, It will store
+     *            caller's domain objects. e.g., rec.id =&gt; domain(rec)
      * @return solr response
      * @throws ExtractionException tagger error
      */
-    protected QueryResponse tagTextCallSolrTagger(String buffer, String docid,
-            final Map<Integer, Object> refDataMap) throws ExtractionException {
+    protected QueryResponse tagTextCallSolrTagger(String buffer, String docid, final Map<Integer, Object> refDataMap)
+            throws ExtractionException {
         SolrTaggerRequest tagRequest = new SolrTaggerRequest(getMatcherParameters(), buffer);
         tagRequest.setPath(requestHandler);
         // Stream the response to avoid serialization and to save memory by
@@ -194,8 +198,7 @@ public abstract class SolrMatcherSupport {
         if (docList != null) {
             // log.debug("Not streaming docs from Solr (not supported)");
             StreamingResponseCallback callback = tagRequest.getStreamingResponseCallback();
-            callback.streamDocListInfo(docList.getNumFound(), docList.getStart(),
-                    docList.getMaxScore());
+            callback.streamDocListInfo(docList.getNumFound(), docList.getStart(), docList.getMaxScore());
             for (SolrDocument solrDoc : docList) {
                 /**
                  * This appears to be an empty list; what is this explicit

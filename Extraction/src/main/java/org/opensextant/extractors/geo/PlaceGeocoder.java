@@ -81,18 +81,17 @@ import org.slf4j.LoggerFactory;
 /**
  * A simple variation on the geocoding algorithms: geotag all possible things
  * and determine a best geo-location for each tagged item. This uses the
- * following components:
- * <ul>
- * <li>PlacenameMatcher: place name tagging and gazetteering</li>
- * <li>XCoord: coordinate extraction</li>
- * <li>geo.rules.* pkg: disambiguation rules to choose the best location for
- * tagged names</li>
- * </ul>
+ * following components: <ul> <li>PlacenameMatcher: place name tagging and
+ * gazetteering</li> <li>XCoord: coordinate extraction</li> <li>geo.rules.* pkg:
+ * disambiguation rules to choose the best location for tagged names</li> </ul>
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class PlaceGeocoder extends GazetteerMatcher
         implements Extractor, CountryObserver, BoundaryObserver, LocationObserver {
+
+    public final static String VERSION = "2.9";
+    public static String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
 
     /**
      * Resources and Taggers
@@ -108,8 +107,8 @@ public class PlaceGeocoder extends GazetteerMatcher
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
 
     /**
-     * Rules -- specific ones that are globals.
-     * Generic rules that have no state or order are added to this.rules array
+     * Rules -- specific ones that are globals. Generic rules that have no state
+     * or order are added to this.rules array
      */
     private CountryRule countryRule = null;
     private CoordinateAssociationRule coordRule = null;
@@ -127,9 +126,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      * to tag person names. Match Filters and rules work in conjunction to
      * filter and tag further any candidates.
      * 
-     *
-     * @throws ConfigException
-     *             if resource files could not be found in CLASSPATH
+     * @throws ConfigException if resource files could not be found in CLASSPATH
      */
     public PlaceGeocoder() throws ConfigException {
         super();
@@ -137,10 +134,9 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * 
-     * @param lowercaseAllowed
-     *            if lower case abbreviations are allowed. See GazetteerMatcher
-     * @throws ConfigException
-     *             if resource files could not be found in CLASSPATH
+     * @param lowercaseAllowed if lower case abbreviations are allowed. See
+     *            GazetteerMatcher
+     * @throws ConfigException if resource files could not be found in CLASSPATH
      */
     public PlaceGeocoder(boolean lowercaseAllowed) throws ConfigException {
         super(lowercaseAllowed);
@@ -159,10 +155,8 @@ public class PlaceGeocoder extends GazetteerMatcher
     /**
      * Configure an Extractor using a config file named by a path.
      *
-     * @param patfile
-     *            configuration file path
-     * @throws ConfigException
-     *             on err
+     * @param patfile configuration file path
+     * @throws ConfigException on err
      */
     @Override
     public void configure(String patfile) throws ConfigException {
@@ -172,8 +166,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     /**
      * Configure an Extractor using a config file named by a URL
      *
-     * @param patfile
-     *            configuration URL
+     * @param patfile configuration URL
      */
     @Override
     public void configure(java.net.URL patfile) throws ConfigException {
@@ -209,22 +202,25 @@ public class PlaceGeocoder extends GazetteerMatcher
      * 
      * Rules Configured in approximate order:
      * 
-     * <pre>
-     * CountryRule    -- tag all country names
-     * NameCodeRule   -- parse any Name, CODE, or Name1, Name2 patterns for "Place, AdminPlace" evidence
-     * PersonNameRule -- annotate, negate any patterns or matches that appear to be known celebrity persons or organizations.
-     *                   Qualified places are not negated, e.g., "Euguene, Oregon" is a place;  "Euguene" with no other evidence is a person name.  
-     * CoordRule      -- if requested, parse any coordinate patterns;  Reverse geocode Country + Province.
-     * ProvinceAssociationRule  -- associate places with Province inferred by coordinates.
-     * MajorPlaceRule -- identify major places by feature type, class or location population.
-     * LocationChooserRule    -- final rule that assigns confidence and chooses best location(s)
+     * <ul> <li>CountryRule -- tag all country names </li> <li>NameCodeRule --
+     * parse any Name, CODE, or Name1, Name2 patterns for "Place, AdminPlace"
+     * evidence</li> <li>PersonNameRule -- annotate, negate any patterns or
+     * matches that appear to be known celebrity persons or organizations.
+     * Qualified places are not negated, e.g., "Euguene, Oregon" is a place;
+     * "Euguene" with no other evidence is a person name. </li> <li>CoordRule --
+     * if requested, parse any coordinate patterns; Reverse geocode Country +
+     * Province.</li> <li>ProvinceAssociationRule -- associate places with
+     * Province inferred by coordinates. </li> <li>MajorPlaceRule -- identify
+     * major places by feature type, class or location population. </li>
+     * <li>LocationChooserRule -- final rule that assigns confidence and chooses
+     * best location(s)</li> </ul>
      * 
-     * Your Rule Here -- use addRule( GeocodeRule ) to add a rule on the stack.  It will be evaluated just before the final LocationChooserRule.
-     * your rule should improve Place scores on PlaceCandidates and name the rules that fire.
-     * </pre>
+     * Your Rule Here -- use addRule( GeocodeRule ) to add a rule on the stack.
+     * It will be evaluated just before the final LocationChooserRule. your rule
+     * should improve Place scores on PlaceCandidates and name the rules that
+     * fire. </pre>
      *
-     * @throws ConfigException
-     *             on err
+     * @throws ConfigException on err
      */
     @Override
     public void configure() throws ConfigException {
@@ -254,9 +250,7 @@ public class PlaceGeocoder extends GazetteerMatcher
          * in geocoding.
          * 
          */
-        personNameRule = new PersonNameFilter(
-                "/filters/person-name-filter.txt",
-                "/filters/person-title-filter.txt",
+        personNameRule = new PersonNameFilter("/filters/person-name-filter.txt", "/filters/person-title-filter.txt",
                 "/filters/person-suffix-filter.txt");
 
         /*
@@ -293,7 +287,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         majorPlaceRule.setCountryObserver(this);
         majorPlaceRule.setBoundaryObserver(this);
         rules.add(majorPlaceRule);
-        
+
         /* Account for situations like "Eugene, OR"  person name followed by a stopword.
          * Valid, fully-qualified city name so we have to allow it to be evaluated first before filtering it out. 
          */
@@ -342,13 +336,12 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     /**
-     * Add your own geocode rules to enable you to add evidence, adjust score, outright choose Place instances on
-     * PlaceCandidates, etc.
-     * As long as your rule implements or overrides GeocodeRule.evaluate() methods candidate tags will be fully
-     * evaluated.
+     * Add your own geocode rules to enable you to add evidence, adjust score,
+     * outright choose Place instances on PlaceCandidates, etc. As long as your
+     * rule implements or overrides GeocodeRule.evaluate() methods candidate
+     * tags will be fully evaluated.
      * 
-     * @param r
-     *            a rule
+     * @param r a rule
      */
     public void addRule(GeocodeRule r) {
         rules.add(r);
@@ -368,14 +361,14 @@ public class PlaceGeocoder extends GazetteerMatcher
     @Override
     public void cleanup() {
         reportMetrics();
-        shutdown();
+        close();
     }
 
     @Override
-    public void shutdown() {
-        super.shutdown();
+    public void close() {
+        super.close();
         if (personMatcher != null) {
-            personMatcher.shutdown();
+            personMatcher.close();
         }
     }
 
@@ -434,9 +427,9 @@ public class PlaceGeocoder extends GazetteerMatcher
     private Map<String, String> nationalities = new HashMap<>();
 
     /**
-     * If all you are doing is geotagging (just identifying places), then enableGeocoding = false;
-     * Otherwise the default here is geocoding (identify and geolocate) places.
-     * This is not a public API attribute.
+     * If all you are doing is geotagging (just identifying places), then
+     * enableGeocoding = false; Otherwise the default here is geocoding
+     * (identify and geolocate) places. This is not a public API attribute.
      * 
      * @since 2.8.3
      */
@@ -449,27 +442,21 @@ public class PlaceGeocoder extends GazetteerMatcher
      * Extractor.extract() calls first XCoord to get coordinates, then
      * PlacenameMatcher In the end you have all geo entities ranked and scored.
      * 
-     * LangID can be set on TextInput input.langid. Only lowercase langIDs please:
-     * 'zh', 'ar', tag text for those languages in particular. Null and Other values
-     * are treated as generic as of v2.8.
+     * LangID can be set on TextInput input.langid. Only lowercase langIDs
+     * please: 'zh', 'ar', tag text for those languages in particular. Null and
+     * Other values are treated as generic as of v2.8.
      * 
-     * <pre>
-     * Use TextMatch.getType()
-     * to determine how to interpret TextMatch / Geocoding results:
+     * Use TextMatch.getType() to determine how to interpret TextMatch /
+     * Geocoding results:  Given TextMatch match, then
      *
-     * Given TextMatch match
+     *         Place tag: ((PlaceCandiate)match).getGeocoding() 
+     *         Coord tag: (Geocoding)match
      *
-     *    Place tag:   ((PlaceCandiate)match).getGeocoding()
-     *    Coord tag:   (Geocoding)match
+     * Both methods yield a geocoding. 
      *
-     * Both methods yield a geocoding.
-     * </pre>
-     *
-     * @param input
-     *            input buffer, doc ID, and optional langID.
+     * @param input input buffer, doc ID, and optional langID.
      * @return TextMatch instances which are all PlaceCandidates.
-     * @throws ExtractionException
-     *             on err
+     * @throws ExtractionException on err
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
@@ -553,8 +540,8 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     /**
-     * If no geo matches are found, we still parse the data if person name matching is enabled.
-     * Poor-man's named-entity extraction
+     * If no geo matches are found, we still parse the data if person name
+     * matching is enabled. Poor-man's named-entity extraction
      * 
      * @throws ExtractionException
      * 
@@ -632,7 +619,8 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     /**
-     * Concrete lat/lon or MGRS grid locations infer location, city, province, country
+     * Concrete lat/lon or MGRS grid locations infer location, city, province,
+     * country
      */
     private List<TextMatch> parseGeoCoordinates(TextInput input) {
         if (!isCoordExtractionEnabled()) {
@@ -651,8 +639,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     /**
      * Record how often country references are made.
      * 
-     * @param c
-     *            country obj
+     * @param c country obj
      */
     @Override
     public void countryInScope(Country c) {
@@ -677,8 +664,9 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * Calculate country mention totals and ratios. These ratios help qualify
-     * what the document is about. These may be mentions in text or inferred mentions to
-     * the countries listed, e.g., a coord infers a particular country.
+     * what the document is about. These may be mentions in text or inferred
+     * mentions to the countries listed, e.g., a coord infers a particular
+     * country.
      */
     public Map<String, CountryCount> countryMentionCount() {
         int total = 0;
@@ -750,9 +738,10 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     /**
-     * When coordinates are found track them. A coordinate is critical -- it informs us
-     * of city, province, and country. If the location is off shore or in no-mans' land,
-     * these chains of observers should respect that and fail quietly.
+     * When coordinates are found track them. A coordinate is critical -- it
+     * informs us of city, province, and country. If the location is off shore
+     * or in no-mans' land, these chains of observers should respect that and
+     * fail quietly.
      */
     @Override
     public void locationInScope(Geocoding geo) {
@@ -773,10 +762,10 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     /**
-     * Observer pattern that sees any time a possible boundary (state, province, district, etc) is mentioned.
+     * Observer pattern that sees any time a possible boundary (state, province,
+     * district, etc) is mentioned.
      * 
-     * @param p
-     *            ID of a boundary.
+     * @param p ID of a boundary.
      */
     @Override
     public void boundaryLevel1InScope(Place p) {
@@ -800,8 +789,8 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     /**
-     * Generic tagging. No doc ID or language ID given.
-     * Nothing language specific will be done here.
+     * Generic tagging. No doc ID or language ID given. Nothing language
+     * specific will be done here.
      */
     @Override
     public List<TextMatch> extract(String input_buf) throws ExtractionException {
@@ -811,8 +800,9 @@ public class PlaceGeocoder extends GazetteerMatcher
     Map<String, Integer> locationBias = new HashMap<>();
 
     /**
-     * Find nearest city within r=25 KM to infer geography of a given coordinate, e.g.,
-     * What state is (x,y) in? Found locations are sorted by distance to point.
+     * Find nearest city within r=25 KM to infer geography of a given
+     * coordinate, e.g., What state is (x,y) in? Found locations are sorted by
+     * distance to point.
      */
     public static int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /*km*/ ;
     public static int COORDINATE_PROXIMITY_ADM1_THRESHOLD = 50 /*km*/;
@@ -821,13 +811,12 @@ public class PlaceGeocoder extends GazetteerMatcher
      * A method to retrieve one or more distinct admin boundaries containing the
      * coordinate. This depends on resolution of gazetteer at hand.
      *
-     * @param g
-     *            geocoordinate found in text.
+     * @param g geocoordinate found in text.
      * @return Place object near the geocoding.
-     * @throws SolrServerException
-     *             a query against the Solr index may throw a Solr error.
+     * @throws SolrServerException a query against the Solr index may throw a
+     *             Solr error.
      */
-    public Place evaluateCoordinate(Geocoding g) throws SolrServerException {
+    public Place evaluateCoordinate(Geocoding g) throws SolrServerException, IOException {
         Place found = getGazetteer().placeAt(g, COORDINATE_PROXIMITY_CITY_THRESHOLD, "P");
         if (found != null) {
             if (g instanceof GeocoordMatch) {

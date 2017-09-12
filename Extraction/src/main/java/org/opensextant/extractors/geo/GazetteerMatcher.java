@@ -75,9 +75,8 @@ import org.slf4j.LoggerFactory;
  *
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
- * the Solr server.
- * <p >
- * This class is not thread-safe. It could be made to be with little effort.
+ * the Solr server. <p > This class is not thread-safe. It could be made to be
+ * with little effort.
  *
  * @author David Smiley - dsmiley@mitre.org
  * @author Marc Ubaldino - ubaldino@mitre.org
@@ -118,11 +117,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
     /**
      * 
-     * @param lowercaseAllowed
-     *            variant is case insensitive.
+     * @param lowercaseAllowed variant is case insensitive.
      * 
-     * @throws ConfigException
-     *             on err
+     * @throws ConfigException on err
      */
     public GazetteerMatcher(boolean lowercaseAllowed) throws ConfigException {
         log = LoggerFactory.getLogger(GazetteerMatcher.class);
@@ -207,17 +204,16 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *
      * but almost never 'in' or 'or' for those cases.
      *
-     * @param b
-     *            flag true = allow lower case abbreviations to be tagged, e.g.,
+     * @param b flag true = allow lower case abbreviations to be tagged, e.g.,
      *            as in social media or
      */
     public void setAllowLowerCaseAbbreviations(boolean b) {
         this.allowLowercaseAbbrev = b;
     }
-    
-    public void setAllowLowerCase(boolean b){
+
+    public void setAllowLowerCase(boolean b) {
         this.allowLowerCase = b;
-        this.filter.enableCaseSensitive(!b); 
+        this.filter.enableCaseSensitive(!b);
         /* Allow lower case, means we ignore any case-sensitive filtering */
     }
 
@@ -226,8 +222,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * filtering out things that are indeed places, but require disambiguation
      * or refinement.
      *
-     * @param f
-     *            a match filter
+     * @param f a match filter
      */
     public void setMatchFilter(MatchFilter f) {
         userfilter = f;
@@ -243,34 +238,28 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @return
      * @throws SolrServerException
      */
-    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr) throws SolrServerException {
+    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr) throws SolrServerException, IOException {
         return searchAdvanced(place, as_solr, -1);
     }
 
     /**
-     * This is a variation on SolrGazetteer.search(), just this creates ScoredPlace which is
-     * immediately usable with scoring and ranking matches. The score for a ScoredPlace is
-     * created when added to PlaceCandidate: a default score is created for the place.
+     * This is a variation on SolrGazetteer.search(), just this creates
+     * ScoredPlace which is immediately usable with scoring and ranking matches.
+     * The score for a ScoredPlace is created when added to PlaceCandidate: a
+     * default score is created for the place.
      * 
-     * <pre>
-     *    Usage:
-     *    pc = PlaceCandidate();
-     *    list = gaz.searchAdvanced("name:Boston", true)  // solr fielded query used as-is.
-     *    for ScoredPlace p: list:
-     *        pc.addPlace( p )
-     * </pre>
+     * <pre> Usage: pc = PlaceCandidate(); list =
+     * gaz.searchAdvanced("name:Boston", true) // solr fielded query used as-is.
+     * for ScoredPlace p: list: pc.addPlace( p ) </pre>
      * 
-     * @param place
-     *            the place string or text; or a Solr query
-     * @param as_solr
-     *            the as_solr
-     * @param maxLen
-     *            max length of gazetteer place names.
+     * @param place the place string or text; or a Solr query
+     * @param as_solr the as_solr
+     * @param maxLen max length of gazetteer place names.
      * @return places List of scoreable place entries
-     * @throws SolrServerException
-     *             the solr server exception
+     * @throws SolrServerException the solr server exception
      */
-    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr, int maxLen) throws SolrServerException {
+    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr, int maxLen)
+            throws SolrServerException, IOException {
 
         if (as_solr) {
             params.set("q", place);
@@ -279,7 +268,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             params.set("q", "\"" + place + "\"");
         }
 
-        QueryResponse response = solr.getInternalSolrServer().query(params, SolrRequest.METHOD.GET);
+        QueryResponse response = solr.getInternalSolrClient().query(params, SolrRequest.METHOD.GET);
 
         List<ScoredPlace> places = new ArrayList<>();
         for (SolrDocument solrDoc : response.getResults()) {
@@ -303,13 +292,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * Geotag a buffer and return all candidates of gazetteer entries whose name
      * matches phrases in the buffer.
      *
-     * @param buffer
-     *            text
-     * @param docid
-     *            ID
+     * @param buffer text
+     * @param docid ID
      * @return list of place candidates
-     * @throws ExtractionException
-     *             on err
+     * @throws ExtractionException on err
      */
     public List<PlaceCandidate> tagText(String buffer, String docid) throws ExtractionException {
         return tagText(buffer, docid, false);
@@ -318,14 +304,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Tag names specifically with Chinese tokenizaiton
      * 
-     * @param buffer
-     *            text
-     * @param docid
-     *            ID
+     * @param buffer text
+     * @param docid ID
      * @return list of place candidates
      * @since 2.7.11
-     * @throws ExtractionException
-     *             on err
+     * @throws ExtractionException on err
      * 
      */
     public List<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
@@ -342,29 +325,24 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @deprecated
      */
     @Deprecated
-    public List<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly)
-            throws ExtractionException {
+    public List<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
         return tagText(buffer, docid, tagOnly, CJK_TAG_FIELD, "cjk");
     }
 
     /**
      * Tag place names in arabic.
      * 
-     * @param buffer
-     *            text
-     * @param docid
-     *            ID
+     * @param buffer text
+     * @param docid ID
      * @since 2.7.11
      * @return list of place candidates
-     * @throws ExtractionException
-     *             on err
+     * @throws ExtractionException on err
      */
     public List<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
         return tagText(buffer, docid, false, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
-    public List<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly)
-            throws ExtractionException {
+    public List<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
         return tagText(buffer, docid, tagOnly, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
@@ -391,14 +369,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     }
 
     /**
-     * More convenient way of passing input args, using tuple TextInput (buffer, docid, langid)
+     * More convenient way of passing input args, using tuple TextInput (buffer,
+     * docid, langid)
      * @param t
      * @param tagOnly
      * @return geocoded matches. see tagText()
      * @throws ExtractionException
      */
-    public List<PlaceCandidate> tagText(TextInput t, boolean tagOnly)
-            throws ExtractionException {
+    public List<PlaceCandidate> tagText(TextInput t, boolean tagOnly) throws ExtractionException {
         String fld = DEFAULT_TAG_FIELD;
         if (t.langid != null) {
             if (TextUtils.isCJK(t.langid)) {
@@ -416,20 +394,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * no Place objects attached. Names of contients are passed back as matches,
      * with geo matches. Continents are filtered out by default.
      *
-     * @param buffer
-     *            text
-     * @param docid
-     *            identity of the text
-     * @param tagOnly
-     *            True if you wish to get the matched phrases only. False if you
-     *            want the full list of Place Candidates.
-     * @param fld
-     *            gazetteer field to use for tagging
-     * @param langid
-     *             ISO lang ID 
+     * @param buffer text
+     * @param docid identity of the text
+     * @param tagOnly True if you wish to get the matched phrases only. False if
+     *            you want the full list of Place Candidates.
+     * @param fld gazetteer field to use for tagging
+     * @param langid ISO lang ID
      * @return place_candidates List of place candidates
-     * @throws ExtractionException
-     *             on err
+     * @throws ExtractionException on err
      */
     public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld, String langid)
             throws ExtractionException {
@@ -541,7 +513,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             /**
              * Filter out trivial tags. Due to normalization, we tend to get
-             * lots of false positives that can be eliminated early.  This is 
+             * lots of false positives that can be eliminated early. This is
              * testing matches against the most general set of stop words.
              */
             if (filter.filterOut(matchText)) {
@@ -580,9 +552,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             }
 
             /**
-             * Further testing is done if lang ID is provided AND if we have a stop list
-             * for that language.  Otherwise, short terms are filtered out if they appear in any lang stop list.
-             * NOTE: internally TagFilter here checks only languages other than English, Spanish and Vietnamese.
+             * Further testing is done if lang ID is provided AND if we have a
+             * stop list for that language. Otherwise, short terms are filtered
+             * out if they appear in any lang stop list. NOTE: internally
+             * TagFilter here checks only languages other than English, Spanish
+             * and Vietnamese.
              */
             if (filter.filterOut(pc, langid, isUpperCase, isLowerCase)) {
                 ++this.defaultFilterCount;
@@ -722,9 +696,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private static final String CONTRACTIONS = "SsTtDd";
 
     /**
-     * Context: if pattern appears to be in context " ....'s NAME..."
-     * Trivial:  If apos preceeds a MATCH, e.g. 'MATCH, then check if MATCH is "s xxxxx"
-     * NOTE: looking for a fast character check without too much String operations.
+     * Context: if pattern appears to be in context " ....'s NAME..." Trivial:
+     * If apos preceeds a MATCH, e.g. 'MATCH, then check if MATCH is "s xxxxx"
+     * NOTE: looking for a fast character check without too much String
+     * operations.
      * @param c
      * @param t
      * @return true this starts with the 'S,'T, 'D in a contraction.
@@ -792,8 +767,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * Adapt the SolrProxy method for creating a Place object. Here, for
      * disambiguation down stream gazetteer metrics are added.
      *
-     * @param gazEntry
-     *            a solr record from the gazetteer
+     * @param gazEntry a solr record from the gazetteer
      * @return Place (Xponents) object
      */
     public static ScoredPlace createPlace(SolrDocument gazEntry) {
@@ -873,15 +847,13 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Find places located at a particular location.
      *
-     * @param yx
-     *            location
+     * @param yx location
      * @return list of places near location
-     * @throws SolrServerException
-     *             on err
+     * @throws SolrServerException on err
      * @deprecated Use SolrGazetteer directly
      */
     @Deprecated
-    public List<Place> placesAt(LatLon yx) throws SolrServerException {
+    public List<Place> placesAt(LatLon yx) throws SolrServerException, IOException {
         return gazetteer.placesAt(yx, 50);
     }
 

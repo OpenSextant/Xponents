@@ -11,14 +11,12 @@ import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.util.FileUtility;
 
 /**
- * Demonstration of XTax
- * - search the 'taxcat' catalog
- * - tag data using the 'taxcat' catalog
+ * Demonstration of XTax - search the 'taxcat' catalog - tag data using the
+ * 'taxcat' catalog
  * 
  * Prerequisite -- Build the JRC example catalog per Extraction/XTax/ notes
  * 
- * Run with JVM arg:
- * -Dopensextant.solr=/path/to/your/xponents-solr
+ * Run with JVM arg: -Dopensextant.solr=/path/to/your/xponents-solr
  * 
  * where that solr contains the taxcat core
  * 
@@ -30,10 +28,8 @@ public class TestXTax {
     /**
      * 
      *
-     * @param args
-     *            the arguments
-     * @throws Exception
-     *             the exception
+     * @param args the arguments
+     * @throws Exception the exception
      */
     public static void main(String[] args) {
 
@@ -52,8 +48,7 @@ public class TestXTax {
 
             if (args.length > 0) {
                 File f = new File(args[0]);
-                String content = FileUtility.readFile(f,
-                        "UTF-8");
+                String content = FileUtility.readFile(f, "UTF-8");
                 List<TextMatch> findings = tax.extract(content);
                 for (TextMatch tm : findings) {
                     String type = "" + ((TaxonMatch) tm).getTaxons();
@@ -64,7 +59,7 @@ public class TestXTax {
         } catch (Exception err) {
             err.printStackTrace();
         } finally {
-            tax.shutdown();
+            tax.close();
             System.exit(0);
         }
     }

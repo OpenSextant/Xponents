@@ -27,7 +27,7 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.util.GeodeticUtility;
 
-import com.spatial4j.core.io.GeohashUtils;
+import org.locationtech.spatial4j.io.GeohashUtils;
 
 public class CoordinateAssociationRule extends GeocodeRule {
 

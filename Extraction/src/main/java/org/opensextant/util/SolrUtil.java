@@ -22,10 +22,8 @@ public class SolrUtil {
 
     /**
      *
-     * @param d
-     *            solr doc
-     * @param f
-     *            field name
+     * @param d solr doc
+     * @param f field name
      * @return a list of strings for this field from that document.; Or null if
      *         none found.
      */
@@ -106,8 +104,7 @@ public class SolrUtil {
     /**
      * Get a Date object from a record
      *
-     * @throws java.text.ParseException
-     *             if DateUtil fails to parse date str
+     * @throws java.text.ParseException if DateUtil fails to parse date str
      */
     public static Date getDate(SolrDocument d, String f) throws java.text.ParseException {
         if (d == null || f == null) {
@@ -141,8 +138,7 @@ public class SolrUtil {
     /**
      * Get a String object from a record on input.
      * 
-     * @param solrDoc
-     *            solr input document
+     * @param solrDoc solr input document
      */
     public static String getString(SolrInputDocument solrDoc, String name) {
         Object result = solrDoc.getFieldValue(name);

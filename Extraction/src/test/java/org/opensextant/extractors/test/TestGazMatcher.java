@@ -153,7 +153,7 @@ public class TestGazMatcher {
         } catch (Exception err) {
             err.printStackTrace();
         } finally {
-            sm.shutdown();
+            sm.close();
         }
     }
 }
