@@ -25,10 +25,11 @@
 	</target>
 
 	<target name="setup">
+                <!-- Solr 4 + Jetty:
 		<mkdir dir="log" />
 		<mkdir dir="lib/ext" />
 		<mkdir dir="download" />
-		<mkdir dir="webapps" />
+		<mkdir dir="webapps" /> -->
 		<!-- Same as solr.runtime.lib -->
 		<mkdir dir="${solr.home}/lib" />
 	</target>
@@ -39,11 +40,14 @@
 			<url url="http://repo1.maven.org/maven2/com/vividsolutions/jts/1.13/jts-1.13.jar" />
 			<url url="http://repo1.maven.org/maven2/org/locationtech/spatial4j/spatial4j/0.6/spatial4j-0.6.jar" />
 		</get>
+
+          <!-- Not used now...
 		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
 		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents-basics/${xponents.v}/opensextant-xponents-basics-${xponents.v}.jar" />
 		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/opensextant/opensextant-xponents/${xponents.v}/opensextant-xponents-${xponents.v}.jar" />
 		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/org/apache/commons/commons-lang3/${lang3.v}/commons-lang3-${lang3.v}.jar" />
 		<copy todir="${solr.runtime.lib}" overwrite="false" failonerror="false" file="${user.home}/.m2/repository/net/sf/supercsv/super-csv/${supercsv.v}/super-csv-${supercsv.v}.jar" />
+           -->
 
 		<get dest="${solr.runtime.lib}" skipexisting="true" ignoreerrors="true">
 			<url url="http://repo1.maven.org/maven2/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
@@ -72,7 +76,7 @@
 	<target name="index-gazetteer">
 		<available property="csvFile.exists" file="${gazetteer.data.file}" />
 		<fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
-		<get src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?stream.file=${gazetteer.data.file}&amp;stream.contentType=application/csv" 
+		<get src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?commit=true&amp;stream.file=${gazetteer.data.file}&amp;stream.contentType=application/csv;charset=UTF-8" 
                      dest="${solr.runtime.log}/gazetteer-update-response.xml" />
 	</target>
 </project>

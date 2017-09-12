@@ -34,3 +34,10 @@ First names are located at:
 Build script (build.sh) is default build for gazetteer.  Put US Census files above  in 
 ./conf/filters/census/ .  The Python script ./script/assemble_person_filter.py handles
 these files to put together a final name list.
+
+Stop Filters:  ./etc/gazetteer/filters/
+  Some files for specific languages may be borrowed from Carrot2 if not already in the Lucene stop word set
+  Korean:  Carrot2/workspace/stopwords.ko     --> ./filters/carrot2-stopwords.ko
+  Chinese: Carrot2/workspace/stopwords.zh_cn  --> ./filters/carrot2-stopwords.zh
+These are optional files, if you are not processing asian language data, this will not matter.
+But if you are, then download Carrot2 and grab copies of these stop sets.
