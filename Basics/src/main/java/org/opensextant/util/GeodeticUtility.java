@@ -38,12 +38,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.GeoBase;
 import org.opensextant.data.LatLon;
 
-import com.spatial4j.core.io.GeohashUtils;
+import org.locationtech.spatial4j.io.GeohashUtils;
 
 /**
- * A collection of geodetic routines used within OpenSextant.
- * This is a light wrapper around the most common routines - a full API exists
- * in other APIs such as GISCore, Geodesy, or Spatial4J
+ * A collection of geodetic routines used within OpenSextant. This is a light
+ * wrapper around the most common routines - a full API exists in other APIs
+ * such as GISCore, Geodesy, or Spatial4J
  *
  * @author ubaldino
  */
@@ -82,14 +82,16 @@ public class GeodeticUtility {
     }
 
     /**
-     * A common check required by practical applications -- 0,0 is not interesting,
-     * so this is a simple java-based check.  double (and all number) values by
-     * default have a value = 0.  This appears to be true for class attributes,
-     * but not for locals.  Hence the NaN check in validateCoordinate.
+     * A common check required by practical applications -- 0,0 is not
+     * interesting, so this is a simple java-based check. double (and all
+     * number) values by default have a value = 0. This appears to be true for
+     * class attributes, but not for locals. Hence the NaN check in
+     * validateCoordinate.
      *
      * @param lat in degrees
      * @param lon in degress
-     * @return true if coordinate is non-zero (0.000, 0.000) AND is valid abs(lon) &lt; 180.0, etc.
+     * @return true if coordinate is non-zero (0.000, 0.000) AND is valid
+     *         abs(lon) &lt; 180.0, etc.
      */
     public final static boolean isValidNonZeroCoordinate(double lat, double lon) {
         if (validateCoordinate(lat, lon)) {
@@ -104,8 +106,8 @@ public class GeodeticUtility {
      * together, e.g., within the same 1 or 2 degrees of lat or lon. Beyond that
      * there can be a lot of distortion in the physical distance.
      *
-     *@param p1 point
-     *@param p2 point
+     * @param p1 point
+     * @param p2 point
      * @return distance between p1 and p2 in degrees.
      */
     public final static double distanceDegrees(GeoBase p1, GeoBase p2) {
@@ -118,10 +120,11 @@ public class GeodeticUtility {
 
     public static final long EARTH_RADIUS = 6372800L; // In meters
 
-    /** Haversine distance using LL1 to LL2;
+    /**
+     * Haversine distance using LL1 to LL2;
      *
-     * @param p1  geodesy API LatLon
-     * @param p2  geodesy API LatLon
+     * @param p1 geodesy API LatLon
+     * @param p2 geodesy API LatLon
      * @return distance in meters.
      */
     public final static long distanceMeters(LatLon p1, LatLon p2) {
@@ -136,8 +139,8 @@ public class GeodeticUtility {
         lat1 = Math.toRadians(lat1);
         lat2 = Math.toRadians(lat2);
 
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1)
-                * Math.cos(lat2);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
         double c = 2 * Math.asin(Math.sqrt(a));
         return (long) (EARTH_RADIUS * c);
     }
@@ -202,7 +205,7 @@ public class GeodeticUtility {
      * @param feat_type major feature type
      * @param feat_code minor feature type or designation
      * @return precision approx error in meters for a given feature. -1 if no
-     * feature type given.
+     *         feature type given.
      */
     public static int getFeaturePrecision(final String feat_type, final String feat_code) {
 
@@ -227,11 +230,13 @@ public class GeodeticUtility {
         return DEFAULT_PRECISION;
     }
 
-    /** For a given Geonames feature class/designation provide a guess about how long
-     * geohash should be.  Geohash in this use is very approximate
+    /**
+     * For a given Geonames feature class/designation provide a guess about how
+     * long geohash should be. Geohash in this use is very approximate
      * @param feat_type major feature type
      * @param feat_code minor feature type or designation
-     * @return prefix length for a geohash, e.g., for a province in general is 3 chars of geohash sufficient?
+     * @return prefix length for a geohash, e.g., for a province in general is 3
+     *         chars of geohash sufficient?
      */
     public static int getGeohashPrecision(String feat_type, String feat_code) {
         if (feat_type == null && feat_code == null) {
@@ -256,9 +261,9 @@ public class GeodeticUtility {
     }
 
     /**
-     * The most simplistic parsing and validation of "lat lon" or "lat, lon"
-     * any amount of whitespace is allowed, provided the lat lon order is there.
-     * @param lat_lon string form of a simple lat/lon, e.g.,  "Y X";  No symbols
+     * The most simplistic parsing and validation of "lat lon" or "lat, lon" any
+     * amount of whitespace is allowed, provided the lat lon order is there.
+     * @param lat_lon string form of a simple lat/lon, e.g., "Y X"; No symbols
      * @return LatLon object
      * @throws ParseException if string is unparsable
      */
@@ -309,7 +314,8 @@ public class GeodeticUtility {
     /**
      * Create a string representation of a decimal lat/lon.
      * @param yx LatLon object
-     * @return  "lat, lon" formatted with 4 decimal places; that is an average amount of precision for common XY=&gt; String uses.
+     * @return "lat, lon" formatted with 4 decimal places; that is an average
+     *         amount of precision for common XY=&gt; String uses.
      */
     public final static String formatLatLon(final LatLon yx) {
         return String.format("%2.4f,%3.4f", yx.getLatitude(), yx.getLongitude());
