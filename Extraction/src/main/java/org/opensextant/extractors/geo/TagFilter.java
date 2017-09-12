@@ -103,14 +103,14 @@ public class TagFilter extends MatchFilter {
          * More optional lists.
          */
         // KOREAN
-        String url = "/filters/carrot2-stopwords.ko";
+        String url = "/lang/carrot2-stopwords.ko";
         String lg = "ko";
         URL obj = URL.class.getResource(url);
         if (obj != null) {
             loadStopSet(obj, lg);
         }
         // CHINESE
-        url = "/filters/carrot2-stopwords.zh";
+        url = "/lang/carrot2-stopwords.zh";
         lg = "zh";
         obj = URL.class.getResource(url);
         if (obj != null) {
@@ -118,7 +118,7 @@ public class TagFilter extends MatchFilter {
         }
 
         // VIETNAMESE
-        url = "/filters/vietnamese-stopwords.txt";
+        url = "/lang/vietnamese-stopwords.txt";
         lg = "vi";
         obj = URL.class.getResource(url);
         if (obj != null) {

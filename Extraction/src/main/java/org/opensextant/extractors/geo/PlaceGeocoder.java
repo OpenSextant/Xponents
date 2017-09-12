@@ -218,7 +218,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      * Your Rule Here -- use addRule( GeocodeRule ) to add a rule on the stack.
      * It will be evaluated just before the final LocationChooserRule. your rule
      * should improve Place scores on PlaceCandidates and name the rules that
-     * fire. </pre>
+     * fire. 
      *
      * @throws ConfigException on err
      */

@@ -58,6 +58,7 @@
             <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
               <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**"/>
               <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**"/>
+              <fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**"/>
             </jar>
         </target>
 
