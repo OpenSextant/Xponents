@@ -32,6 +32,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
+import org.opensextant.ConfigException;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
@@ -93,6 +94,8 @@ public class GazetteerIndexer {
             indexer.index(new File(file), schema, "\t");
         } catch (SolrServerException e) {
             log.error("Server Error", e);
+        } catch (ConfigException e) {
+            log.error("Input Data Error", e);
         }
     }
 
@@ -129,9 +132,10 @@ public class GazetteerIndexer {
      * @param f
      * @param schema
      * @param delim
-     * @throws SolrServerException
+     * @throws SolrServerException if solr I/O error occurs.
+     * @throws ConfigException bad data in cells
      */
-    public void index(File f, String schema, String delim) throws SolrServerException {
+    public void index(File f, String schema, String delim) throws SolrServerException, ConfigException {
 
         LineIterator iter = null;
         schemaColumn = schema.split(",");
@@ -187,13 +191,25 @@ public class GazetteerIndexer {
     }
 
     /**
+     * This mapping rarely ever changes.
+     */
+    private final static Map<String, String> nameTypes = new HashMap<>();
+    static {
+        nameTypes.put("name", "N");
+        nameTypes.put("abbrev", "A");
+        nameTypes.put("code", "A"); // TODO: This mapping should be preserved and distinct.
+    }
+
+    /**
      * Adding a gazetteer entry involves looking at a few fields -- we keep it
      * if its values match the desired "include category" -- if we keep it, we
      * filter it and mark "search_only" if needed. -- finally, ensure geo =
      * lat,lon format
+     * @throws ConfigException if name type in row is bad: only abbrev and name
+     *             are known.
      */
 
-    private SolrInputDocument mapGazetteerEntry(String[] row) {
+    private SolrInputDocument mapGazetteerEntry(String[] row) throws ConfigException {
         Map<String, String> raw = parseSchema(row);
 
         ++rowCount;
@@ -235,7 +251,15 @@ public class GazetteerIndexer {
         }
 
         String nt = raw.get("name_type");
-        boolean isName = (nt != null ? "N".equals(nt) : false);
+        boolean isName = true;
+        if (nt != null) {
+            nt = nt.toLowerCase();
+            isName = nt.equals("name");
+            if (!nameTypes.containsKey(nt)) {
+                throw new ConfigException("Data ingested is has unknown name_type = " + nt);
+            }
+            doc.setField("name_type", nameTypes.get(nt));
+        }
 
         /**
          * Cleanup scripts.
@@ -247,7 +271,6 @@ public class GazetteerIndexer {
             List<String> nameScripts = TextUtils.string2list(TextUtils.removeAny(nameScript, "[]"), ",");
             logger.debug("Scripts = {}", nameScripts);
             for (String scr : nameScripts) {
-                doc.addField("script", scr);
                 switch (scr) {
                 case "ARABIC":
                     doc.setField("name_ar", nm);
