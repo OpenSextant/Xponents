@@ -3,7 +3,7 @@
 <project name="OpenSextant-Xponents-Gazetteer">
 
 	<!-- Solr Home and Gazetteer config data sourced here: -->
-	<property file="${basedir}/../build.properties" />
+	<property file="${basedir}/build.properties" />
 	
 	<property name="jetty.v" value="9.3.12.v20160915" />
 	<property name="solr.v" value="4.10.4" />
