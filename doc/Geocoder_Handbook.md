@@ -68,7 +68,7 @@ however this class of tag is filtered and used differently than proper names.
 that infer a country code. There are certainly singular ethnicities within multiple countries that are not 
 represented. A future enhancement would be to provide the mapping for such multiplicity.
 * **T6. Non-Place entities** such as organizations and well-known persons. Identifying things that are 
-likely not places helps filter out noise or amplify context.  For example, ```Detroit City Council`` is an 
+likely not places helps filter out noise or amplify context.  For example, ```Detroit City Council``` is an 
 organization name, that contains a city name. Whereas the ```Smithfield Group``` may be an institution not actually located
 in a place called ```Smithfield```.  Either way it is important to be able to detect all such cases to work
 with negation or amplification all at once. Xponents **Extraction** project provides ```TaxonMatcher```, aka XTax, which 
