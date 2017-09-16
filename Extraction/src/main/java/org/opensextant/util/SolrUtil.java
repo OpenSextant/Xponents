@@ -67,6 +67,28 @@ public class SolrUtil {
     }
 
     /**
+     * get integer value from input document.
+     * @param d doc
+     * @param f field name
+     * @return int
+     */
+    public static int getInteger(SolrInputDocument d, String f){
+        Object obj = d.getFieldValue(f);
+        if (obj == null) {
+            return 0;
+        }
+
+        if (obj instanceof StoredField) {
+            return ((StoredField) obj).numericValue().intValue();
+        } else if (obj instanceof Integer) {
+            return ((Integer) obj).intValue();
+        } else {
+            Integer v = Integer.parseInt(obj.toString());
+            return v.intValue();
+        }
+    }
+
+    /**
      * Get a long from a record
      */
     public static long getLong(SolrDocument d, String f) {
@@ -86,11 +108,12 @@ public class SolrUtil {
 
     /**
      * Get a floating point object from a record
+     * @return NaN if null
      */
     public static Float getFloat(SolrDocument d, String f) {
         Object obj = d.getFieldValue(f);
         if (obj == null) {
-            return 0F;
+            return Float.NaN;
         }
         if (obj instanceof StoredField) {
             return ((StoredField) obj).numericValue().floatValue();
@@ -101,6 +124,20 @@ public class SolrUtil {
         }
     }
 
+    public static Float getFloat(SolrInputDocument d, String f) {
+        Object obj = d.getFieldValue(f);
+        if (obj == null) {
+            return Float.NaN;
+        }
+        if (obj instanceof StoredField) {
+            return ((StoredField) obj).numericValue().floatValue();
+        } else if (obj instanceof Float) {
+            return ((Float) obj).floatValue();
+        } else {
+            return new Float(obj.toString()).floatValue();
+        }
+    }
+    
     /**
      * Get a Date object from a record
      *
@@ -173,15 +210,18 @@ public class SolrUtil {
      * Get a double from a record
      */
     public static double getDouble(SolrDocument solrDoc, String name) {
-        Object result = solrDoc.getFirstValue(name);
-        if (result == null) {
-            throw new IllegalStateException("Blank: " + name + " in " + solrDoc);
+        Object obj = solrDoc.getFirstValue(name);
+        if (obj == null) {
+            return Double.NaN;
         }
-        if (result instanceof Number) {
-            Number number = (Number) result;
+        if (obj instanceof StoredField) {
+            return ((StoredField) obj).numericValue().floatValue();
+        }        
+        if (obj instanceof Number) {
+            Number number = (Number) obj;
             return number.doubleValue();
         } else {
-            return Double.parseDouble(result.toString());
+            return Double.parseDouble(obj.toString());
         }
     }
 

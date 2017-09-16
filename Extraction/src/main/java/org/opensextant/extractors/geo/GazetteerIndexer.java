@@ -360,7 +360,7 @@ public class GazetteerIndexer {
         scrubCountryCode(doc, "adm2", cc, fips);
 
         // Reform id from string into integer value.
-        int id = Integer.parseInt(doc.getFieldValue("id").toString());
+        int id = SolrUtil.getInteger(doc, "id");
         doc.setField("id", id);
 
         setFloat(doc, "id_bias");
@@ -371,15 +371,10 @@ public class GazetteerIndexer {
     }
 
     private void setFloat(SolrInputDocument doc, String k) {
-        Object val = doc.getFieldValue(k);
-        if (val == null)
-            return;
-
-        if (val.toString().length() > 0) {
-            float fl = Float.parseFloat(doc.getFieldValue(k).toString());
+        Float fl = SolrUtil.getFloat(doc, k);
+        if (fl != Float.NaN) {
             doc.setField(k, fl);
         }
-
     }
 
     private Map<String, String> parseSchema(String[] row) {

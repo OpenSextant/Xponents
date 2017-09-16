@@ -37,6 +37,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.SolrParams;
 import org.opensextant.ConfigException;
 import org.opensextant.util.SolrProxy;
+import org.opensextant.util.SolrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,20 +176,20 @@ public abstract class SolrMatcherSupport implements Closeable {
             // expense of putting ids into memory.
             @Override
             public void streamSolrDocument(final SolrDocument solrDoc) {
-                Integer id = (Integer) solrDoc.getFirstValue("id");
+                int id = SolrUtil.getInteger(solrDoc, "id");
                 // create a domain object for the given tag;
                 // this callback handler caches such domain obj in simple k/v
                 // map.
                 Object domainObj = createTag(solrDoc);
                 if (domainObj != null) {
-                    refDataMap.put(id, domainObj);
+                    refDataMap.put(new Integer(id), domainObj);
                 }
             }
         });
 
         QueryResponse response;
         try {
-            response = tagRequest.process(solr.getInternalSolrServer());
+            response = tagRequest.process(solr.getInternalSolrClient());
         } catch (Exception err) {
             throw new ExtractionException("Failed to tag document=" + docid, err);
         }

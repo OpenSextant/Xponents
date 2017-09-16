@@ -5,8 +5,8 @@
   </description>
 
   <property name="xponents.home" value="${basedir}/../" />
-  <property name="version" value="2.9"/>
-  <property name="xtext.version" value="2.9"/>
+  <property name="version" value="2.10"/>
+  <property name="xtext.version" value="2.10"/>
   <property name="xlayer.version" value="0.1"/>
 
   <property name="release" location="${xponents.home}/dist/Xponents-${version}" />
@@ -184,6 +184,28 @@
     <delete file="${release}/build.properties" />
   </target>
 
+  <target name="copy-solr6">
+    <copy todir="${release}/solr/">
+        <fileset dir="${xponents.home}/solr" >
+           <exclude name="webapps" />
+           <exclude name="download" />
+           <exclude name="jetty9" />
+           <exclude name="lib" />
+           <exclude name="solr4/**" />
+           <!--  Include full gazetteer for solr6
+           <exclude name="solr6/gazetteer/data/**" />
+           <exclude name="solr6/taxcat/data/**" />
+           -->
+           <exclude name="solr6-dist/contrib/**" />
+           <exclude name="solr6-dist/docs/**"/>
+           <exclude name="solr6-dist/dist/**"/>
+           <exclude name="solr6-dist/example/**"/>
+           <exclude name="solr6-dist/server/solr/**"/>
+        </fileset>
+    </copy>
+    <copy file="${release}/solr/build.template" tofile="${release}/solr/build.properties" />
+  </target>
+
   <target name="copy-data">
     <copy todir="${release}/test/">
         <fileset dir="${xponents.home}/Extraction/src/test/resources/">
@@ -215,6 +237,7 @@
            <include name="Coord_Patterns*.*" />
         </fileset>
     </copy>
+    <copy file="${release}/solr/solr6/lib/xponents-gazetteer-meta.jar" todir="${release}/etc" />
     <copy todir="${release}/XTax">
         <fileset dir="${xponents.home}/Extraction/XTax" />
     </copy>
@@ -264,7 +287,7 @@
   -->
   </target>
 
-  <target name="dist" depends="build, copy-libs, copy-script, copy-data, copy-solr, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
+  <target name="dist" depends="build, copy-libs, copy-solr6, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
 
    <!-- Zip it .-->
   </target>

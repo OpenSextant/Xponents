@@ -5,17 +5,16 @@
   <property name="xponents" value="${basedir}/../" />
 
   <!-- By now  you have read some instructions and know what "build.properties" looks like.
+  <property file="${xponents}/solr/build.properties" />
    -->
-  <property file="${xponents}/build.properties" />
+  <property name="xponents_solr" value="${xponents}/solr/solr6" />
 
   <path id="runtime.classpath">
-    <pathelement location="${solr.home}/gazetteer/conf" />
     <pathelement location="${xponents}/etc" />
     <fileset dir="${xponents}/lib" includes="**/*.jar" />
+    <!-- JARs in etc are more like resource collections, not code -->
+    <fileset dir="${xponents}/etc" includes="**/*.jar" />
   </path>
-
-
-
 
     <!--
 
@@ -102,7 +101,8 @@
   <!-- XText -->
     <target name="convert">
         <java classname="org.opensextant.xtext.XText"  classpathref="runtime.classpath" fork="yes" dir="${xponents}">
-            <jvmArg value="-Xmx600m"/>
+            <jvmarg value="-Xmx600m"/>
+            <jvmarg value="-Dlogback.configurationFile=${xponents}/etc/logback.xml" />
             <arg value="-i"/>
             <arg value="${input}"/>
             <arg value="-o"/>
@@ -121,7 +121,9 @@
         <input message="outputfile?" addproperty="get.outputfile"/>
         <input message="formats?" addproperty="get.formats"/>
         <java classname="org.opensextant.examples.BasicGeoTemporalProcessing" classpathref="runtime.classpath" fork="yes" dir="${xponents}" >
-            <jvmarg value="-Dopensextant.solr=${solr.home}" />
+            <jvmarg value="-Dopensextant.solr=${xponents_solr}" />
+            <jvmarg value="-Dlogback.configurationFile=${xponents}/etc/logback.xml" />
+            <jvmarg value="-Dsolr.lock.type=single" />
             <jvmarg value="-Xmx2g" />
             <arg value="-i" />
             <arg value="${get.inputfile}" />
@@ -138,11 +140,11 @@
     <target name="tweet-test" description="Test tweet geocoding, parsing">
         <java classname="org.opensextant.examples.twitter.TweetGeocoder"  classpathref="runtime.classpath" fork="yes" dir="${xponents}">
 
-        <jvmArg value="-Xmx1g"/>
+        <jvmarg value="-Xmx1g"/>
         <!-- To use FileGDB export with GISCore you must add some libraries to java.library.path. Documenation TBD -->
-        <jvmArg value="-Djava.library.path=${xponents}/lib/linux-x64"/>
-        <jvmArg value="-Dopensextant.solr=${solr.home}"/>
-        <jvmArg value="-Dlog4j.configuration=${xponents}/etc/log4j.properties" />
+        <jvmarg value="-Djava.library.path=${xponents}/lib/linux-x64"/>
+        <jvmarg value="-Dopensextant.solr=${xponents_solr}"/>
+        <jvmarg value="-Dlog4j.configuration=${xponents}/etc/log4j.properties" />
         <arg value="-n" />
         <arg value="${job}" />
         <arg value="-i" />

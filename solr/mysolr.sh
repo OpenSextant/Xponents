@@ -6,7 +6,6 @@ PORT=$2
 case "$1" in 
  'start')
     $SOLR_INSTALL/bin/solr start  -p $PORT -s ./solr6  -m 3g
-    # -Dsolr.lock.type=none
  ;;
  'stop')
     $SOLR_INSTALL/bin/solr stop -p $PORT
