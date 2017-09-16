@@ -214,7 +214,7 @@ public class GazetteerIndexer {
 
         ++rowCount;
 
-        if (rowCount % 10000 == 0) {
+        if (rowCount % 100000 == 0) {
             logger.info("GazURP ## Row {}; Excluded:{}", rowCount, excludedTerms.size());
         }
 
