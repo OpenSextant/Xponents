@@ -28,30 +28,17 @@ python ./script/gaz_assemble_person_filter.py
 
 if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
    # Collect Gazetteer Metadata: 
-   # in ./etc/gazetteer,  ./filters;   in ./solr4/gazetteer/conf/,  ./lang
    ant -f ./solr6-build.xml gaz-meta
 fi
 
 sleep 2 
 
-
 if [ "$CMD" = 'start' ]; then 
   if [ "$OPT" = 'clean' ]; then 
-    ant -f ./solr6-build.xml init
-    for core in gazetteer taxcat ; do 
-      core_data=${SOLR_CORE_VER}/$core/data
-      if [ -d $core_data/index ] ; then
-        rm $core_data/index/*
-      else 
-        mkdir -p $core_data/index
-      fi
-    done
+    ant -f ./solr6-build.xml clean init
   fi
 
   echo "Starting Solr $SERVER"
-  # TODO: solr4 support:
-  # nohup ./myjetty.sh  start & 
-  # Solr6 is current:
   echo "Wait for Solr 6.x to load"
   ./mysolr.sh stop $SOLR_PORT
   ./mysolr.sh start $SOLR_PORT
@@ -63,7 +50,6 @@ echo "Populate nationalities taxonomy in XTax"
 python  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr http://$SERVER/solr/taxcat --starting-id 0
 
 sleep 2 
-
 
 echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
 ant -f solr6-build.xml index-gazetteer-solrj
@@ -100,4 +86,4 @@ curl --noproxy localhost "http://$SERVER/solr/gazetteer/update?stream.body=<opti
 
 echo "Gazetteer and TaxCat built, however Solr $SERVER is still running...." 
 echo
-echo "Use 'myjetty.sh stop'"
+echo "Use 'mysolr.sh stop $SOLR_PORT'"

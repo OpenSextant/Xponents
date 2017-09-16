@@ -1,4 +1,4 @@
-
+#!/bin/bash
 # Use Installed Solr as "./solr6-dist"
 SOLR_INSTALL=./solr6-dist
 
