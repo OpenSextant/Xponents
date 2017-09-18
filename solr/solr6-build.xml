@@ -15,6 +15,8 @@
     <property name="solr.runtime.lib" value="${basedir}/solr6/lib" />
     <property name="solr.runtime.log" value="${basedir}/solr6-dist/server/logs" />
     <property name="maven.lib" value="${user.home}/.m2/repository" />
+    <property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip" />
+    <property name="jrc.data" value="${solr.home}/../etc/taxcat/data"/>
 
     <path id="runtime.classpath">
         <!-- TODO: need to run these routines to fully automate CLASSPATH items here. 
@@ -54,6 +56,15 @@
             <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**" />
             <fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**" />
         </jar>
+    </target>
+
+    <!-- Too bad this source data is compromised, as of 2017.  Should be a 5 MB gzip file with 600K entries  -->
+    <target name="taxcat-jrc">
+        <mkdir dir="${jrc.data}" />
+        <get dest="${jrc.data}" skipexisting="true">
+            <url url="${jrc.url}"/>
+        </get>
+        <gunzip dest="${jrc.data}" src="${jrc.data}/entities.gzip" />
     </target>
 
     <target name="init" depends="setup,gaz-meta,copy-libs">

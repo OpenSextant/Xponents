@@ -51,6 +51,13 @@ python  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalitie
 
 sleep 2 
 
+echo "Populate core JRC Names 'entities' data file, c.2014"
+JRC_DATA=./etc/taxcat/data
+JRC_SCRIPT=./script/taxcat_jrcnames.py
+python $JRC_SCRIPT --taxonomy $JRC_DATA/entities.txt  --solr http://$SERVER/solr/taxcat
+
+sleep 2 
+
 echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
 ant -f solr6-build.xml index-gazetteer-solrj
 
