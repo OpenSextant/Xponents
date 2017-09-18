@@ -74,3 +74,10 @@ dicks
 manny
 pepe
 paco
+# Various Spanish last names
+reyes
+hernandez
+ramirez
+martinez
+garcia
+

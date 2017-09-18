@@ -16,6 +16,7 @@ names = set([])
 
 def is_comment(s):
   if not s: return False
+  if not s.strip(): return False
   return s.strip()[0] == '#'
 
 
