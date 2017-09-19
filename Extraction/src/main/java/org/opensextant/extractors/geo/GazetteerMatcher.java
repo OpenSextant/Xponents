@@ -86,7 +86,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /*
      * Gazetteer specific stuff:
      */
-    private TagFilter filter = null;
+    protected TagFilter filter = null;
     private MatchFilter userfilter = null;
     private MatchFilter continents = null;
 

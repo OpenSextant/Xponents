@@ -45,7 +45,8 @@ package org.opensextant.extraction;
 import org.opensextant.util.TextUtils;
 
 /**
- * A very simple struct to hold data useful for post-processing entities once found.
+ * A very simple struct to hold data useful for post-processing entities once
+ * found.
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
@@ -88,8 +89,7 @@ public class TextEntity {
     /**
      * sets the value of the TextEntity
      * 
-     * @param t
-     *            text
+     * @param t text
      */
     public void setText(String t) {
         text = t;
@@ -107,12 +107,13 @@ public class TextEntity {
             }
         }
     }
+
     /**
-     * Set just the value, without incurring the cost of other
-     * metrics or flags about the text that likely are unchanged.
+     * Set just the value, without incurring the cost of other metrics or flags
+     * about the text that likely are unchanged.
      * @param t
      */
-    public void setTextOnly(String t){
+    public void setTextOnly(String t) {
         text = t;
     }
 
@@ -168,14 +169,15 @@ public class TextEntity {
         return (end - start);
     }
 
-    /** Convenience methods for carrying the context through the output processing */
+    /**
+     * Convenience methods for carrying the context through the output
+     * processing
+     */
     /**
      * Set the context with before and after windows
      * 
-     * @param before
-     *            text before match
-     * @param after
-     *            text after match
+     * @param before text before match
+     * @param after text after match
      */
     public void setContext(String before, String after) {
         this.prematch = before;
@@ -192,8 +194,7 @@ public class TextEntity {
     /**
      * Set the context buffer from a single window
      * 
-     * @param window
-     *            textual window
+     * @param window textual window
      */
     public void setContext(String window) {
         this.context = window;
@@ -201,7 +202,8 @@ public class TextEntity {
 
     /**
      *
-     * @return context buffer regardless if it is singular context or separate pre/post match
+     * @return context buffer regardless if it is singular context or separate
+     *         pre/post match
      */
     public String getContext() {
         return this.context;
@@ -234,8 +236,7 @@ public class TextEntity {
 
     /**
      *
-     * @param m
-     *            match/entity object to copy
+     * @param m match/entity object to copy
      */
     public void copy(TextEntity m) {
 
@@ -258,6 +259,28 @@ public class TextEntity {
         return (end <= t.end && start >= t.start);
     }
 
+    /**
+     * Assuming simple whitespace separation or other simple delimiters, is this
+     * term following the argument entity?
+     * 
+     * @param t
+     * @return
+     */
+    public boolean isAfter(TextEntity t) {
+        return (start - t.end <= 2 && start > t.end);
+    }
+
+    /**
+     * Assuming simple whitespace separation or other simple delimiters, is this
+     * term preceeding the argument entity?
+     * 
+     * @param t
+     * @return
+     */
+    public boolean isBefore(TextEntity t) {
+        return (t.start - end <= 2 && t.start > end);
+    }
+
     public boolean isSameMatch(TextEntity t) {
         return (start == t.start && end == t.end);
     }
@@ -274,8 +297,7 @@ public class TextEntity {
         // t overlaps with self on the left side
         // OR t overlaps with self on right side
         //
-        return (end > t.end && start > t.start && start < t.end)
-                || (end < t.end && start < t.start && end > t.start);
+        return (end > t.end && start > t.start && start < t.end) || (end < t.end && start < t.start && end > t.start);
     }
 
 }

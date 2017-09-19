@@ -306,6 +306,7 @@ public class PlaceGeocoder extends GazetteerMatcher
                  */
                 personMatcher.addCatalogFilter("JRC");
                 personMatcher.addCatalogFilter("nationality");
+                personMatcher.addCatalogFilter("person_names");
 
             } catch (IOException err) {
                 throw new ConfigException("XTax resource not available.");
@@ -609,6 +610,14 @@ public class PlaceGeocoder extends GazetteerMatcher
                             nationalities.put(tag.getText(), isocode);
                         }
                     }
+                } else if (node.startsWith("person_name.")){
+                    // Ignore names that are already stop terms.  Okay, 'Will Smith' 
+                    // passes,  but 'will i am' is filtered out.
+                    // 
+                    if (this.filter.filterOut(input.langid, node) && tm.isLower()){
+                        continue;
+                    }
+                    persons.add(tag);                    
                 }
             }
         }
