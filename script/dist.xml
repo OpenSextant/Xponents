@@ -238,9 +238,6 @@
         </fileset>
     </copy>
     <copy file="${release}/solr/solr6/lib/xponents-gazetteer-meta.jar" todir="${release}/etc" />
-    <copy todir="${release}/XTax">
-        <fileset dir="${xponents.home}/Extraction/XTax" />
-    </copy>
   </target>
 
   <target name="apidocs" >
