@@ -622,7 +622,7 @@ public class PlaceGeocoder extends GazetteerMatcher
             }
         }
 
-        personNameRule.evaluateNamedEntities(candidates, persons, orgs);
+        personNameRule.evaluateNamedEntities(input, candidates, persons, orgs);
         matches.addAll(persons);
         matches.addAll(orgs);
     }

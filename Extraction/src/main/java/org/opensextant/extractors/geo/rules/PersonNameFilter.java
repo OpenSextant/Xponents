@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
+import org.opensextant.data.TextInput;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.util.FileUtility;
@@ -113,6 +114,24 @@ public class PersonNameFilter extends GeocodeRule {
     }
 
     /**
+     * Simple check for a span of text to see if it is purely whitespace or not at the given offsets, [x1..x2}
+     * Include left side, not right side-character.
+     * 
+     * @param buf buf to splice
+     * @param x1  offset to start at
+     * @param x2  offset to stop at.
+     * @return
+     */
+    private static boolean hasNonWhitespace(final String buf, int x1, int x2) {
+        for (int x = x1; x < x2; ++x) {
+            if (!Character.isWhitespace(buf.charAt(x))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Use known person names to distinguish well-known persons that may or may
      * not overlap in in the text and the namespace.
      * 
@@ -126,8 +145,8 @@ public class PersonNameFilter extends GeocodeRule {
      * @param persons named persons in doc
      * @param orgs named orgs in doc
      */
-    public void evaluateNamedEntities(final List<PlaceCandidate> placeNames, final List<TaxonMatch> persons,
-            final List<TaxonMatch> orgs) {
+    public void evaluateNamedEntities(final TextInput input, final List<PlaceCandidate> placeNames,
+            final List<TaxonMatch> persons, final List<TaxonMatch> orgs) {
 
         for (PlaceCandidate pc : placeNames) {
             if (pc.isFilteredOut() || pc.isCountry) {
@@ -152,13 +171,24 @@ public class PersonNameFilter extends GeocodeRule {
                 // place name)
                 // "General Murtagh Memorial Square" PERSON within PLACE (valid
                 // place name)
+                //
+                // Avoid marking as relevant if there is non-whitespace separating the PLACE and the NAME.
+                // E.g.,  Alexandria, Virgina; Bob and Mary of ....
+                // So, "Virginia; Bob" is not a valid qualifying "first last" name pattern given the punctuation.
+
                 String rule = null;
                 if (pc.isWithin(name)) {
                     rule = "ResolvedPerson";
                 } else if (pc.isBefore(name)) {
+                    if (hasNonWhitespace(input.buffer, pc.end, name.start)) {
+                        continue;
+                    }
                     rule = "ResolvedPerson.PreceedingName";
                 } else if (pc.isAfter(name)) {
                     rule = "ResolvedPerson.SucceedingName";
+                    if (hasNonWhitespace(input.buffer, name.end, pc.start)) {
+                        continue;
+                    }
                 }
 
                 if (rule != null) {

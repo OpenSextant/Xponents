@@ -56,6 +56,9 @@ JRC_DATA=./etc/taxcat/data
 JRC_SCRIPT=./script/taxcat_jrcnames.py
 python $JRC_SCRIPT --taxonomy $JRC_DATA/entities.txt  --solr http://$SERVER/solr/taxcat
 
+# Arbitrary row ID scheme, but we have various catalogs that should have reserved row-id space based on size.
+python script/taxcat_person_names.py   --solr http://$SERVER/solr/taxcat --starting-id 20000
+
 sleep 2 
 
 echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
