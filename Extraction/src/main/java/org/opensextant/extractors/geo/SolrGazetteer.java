@@ -118,7 +118,6 @@ public class SolrGazetteer {
         } catch (IOException ioErr) {
             throw new ConfigException("SolrGazetteer is unable to load countries due to IO/file error", ioErr);
         }
-
     }
 
     /**
@@ -139,32 +138,6 @@ public class SolrGazetteer {
     public static String normalizeCountryName(String c) {
         return StringUtils.capitalize(c.toLowerCase());
     }
-
-    // * Do Not use.
-    // *
-    // * return solr params
-    // * deprecated DO NOT USE. Keeping this as a reminder of what not to do.
-    // * This will load entire index into memory.
-    // *
-    // @Deprecated
-    // private static ModifiableSolrParams createGeodeticLookupParamsXX() {
-    // /*
-    // * Basic parameters for geospatial lookup. These are reused, and only pt
-    // * and d are set for each lookup.
-    // *
-    // */
-    // ModifiableSolrParams p = new ModifiableSolrParams();
-    // p.set(CommonParams.FL,
-    // "id,name,cc,adm1,adm2,feat_class,feat_code," +
-    // "geo,place_id,name_bias,id_bias,name_type");
-    // p.set(CommonParams.ROWS, 25);
-    // p.set(CommonParams.Q, "*:*");
-    // p.set(CommonParams.FQ, "{!geofilt}");
-    // p.set("spatial", true);
-    // p.set("sfield", "geo");
-    // p.set(CommonParams.SORT, "geodist() asc"); // Find closest places first.
-    // return p;
-    // }
 
     /**
      * Creates a generic spatial query for up to first 25 rows.

@@ -48,7 +48,6 @@ import org.opensextant.data.Geocoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: Auto-generated Javadoc
 public class GISDataModel {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -63,12 +62,9 @@ public class GISDataModel {
     /**
      * Instantiates a new GIS data model.
      *
-     * @param jobName
-     *            the job name
-     * @param includeOffsets
-     *            the include offsets
-     * @param includeCoordinate
-     *            the include coordinate
+     * @param jobName the job name
+     * @param includeOffsets the include offsets
+     * @param includeCoordinate the include coordinate
      */
     public GISDataModel(String jobName, boolean includeOffsets, boolean includeCoordinate) {
         this(jobName, includeOffsets, includeCoordinate, true);
@@ -77,14 +73,10 @@ public class GISDataModel {
     /**
      * Instantiates a new GIS data model.
      *
-     * @param jobName
-     *            the job name
-     * @param includeOffsets
-     *            the include offsets
-     * @param includeCoordinate
-     *            the include coordinate
-     * @param buildSchema
-     *            the build schema
+     * @param jobName the job name
+     * @param includeOffsets the include offsets
+     * @param includeCoordinate the include coordinate
+     * @param buildSchema the build schema
      */
     public GISDataModel(String jobName, boolean includeOffsets, boolean includeCoordinate, boolean buildSchema) {
         super();
@@ -104,10 +96,8 @@ public class GISDataModel {
     /**
      * Adds the place data.
      *
-     * @param row
-     *            row of data
-     * @param g
-     *            geocoding
+     * @param row row of data
+     * @param g geocoding
      */
     protected void addPlaceData(Feature row, Geocoding g) {
         addColumn(row, OpenSextantSchema.ISO_COUNTRY, g.getCountryCode());
@@ -128,10 +118,8 @@ public class GISDataModel {
     /**
      * Adds the precision.
      *
-     * @param row
-     *            row of data
-     * @param g
-     *            geocoding
+     * @param row row of data
+     * @param g geocoding
      */
     protected void addPrecision(Feature row, Geocoding g) {
         addColumn(row, OpenSextantSchema.PRECISION, g.getPrecision());
@@ -140,10 +128,8 @@ public class GISDataModel {
     /**
      * Adds the confidence.
      *
-     * @param row
-     *            row of data
-     * @param conf
-     *            confidence
+     * @param row row of data
+     * @param conf confidence
      */
     protected void addConfidence(Feature row, int conf) {
         addColumn(row, OpenSextantSchema.CONFIDENCE, conf);
@@ -152,10 +138,8 @@ public class GISDataModel {
     /**
      * Adds the offsets.
      *
-     * @param row
-     *            data
-     * @param m
-     *            match metadata
+     * @param row data
+     * @param m match metadata
      */
     protected void addOffsets(Feature row, TextMatch m) {
         addColumn(row, OpenSextantSchema.START_OFFSET, m.start);
@@ -165,10 +149,8 @@ public class GISDataModel {
     /**
      * Adds the lat lon. to the given data row.
      *
-     * @param row
-     *            data
-     * @param g
-     *            geocoding
+     * @param row data
+     * @param g geocoding
      */
     protected void addLatLon(Feature row, Geocoding g) {
         addColumn(row, OpenSextantSchema.LAT, g.getLatitude());
@@ -183,12 +165,9 @@ public class GISDataModel {
      * geocoding whereas attrs on GeocodingResult are global for all geocodings
      * in that result set.
      *
-     * @param row
-     *            the row
-     * @param rowAttributes
-     *            the row attributes
-     * @throws ConfigException
-     *             the config exception
+     * @param row the row
+     * @param rowAttributes the row attributes
+     * @throws ConfigException the config exception
      */
     protected void addAdditionalAttributes(Feature row, Map<String, Object> rowAttributes) throws ConfigException {
         if (rowAttributes != null) {
@@ -209,12 +188,9 @@ public class GISDataModel {
     /**
      * Adds the file paths.
      *
-     * @param row
-     *            data
-     * @param recordFile
-     *            original file
-     * @param recordTextFile
-     *            text version of original
+     * @param row data
+     * @param recordFile original file
+     * @param recordTextFile text version of original
      */
     protected void addFilePaths(Feature row, String recordFile, String recordTextFile) {
         // TOOD: HPATH goes here.
@@ -243,10 +219,8 @@ public class GISDataModel {
     /**
      * Adds the context.
      *
-     * @param row
-     *            the row
-     * @param g
-     *            the g
+     * @param row the row
+     * @param g the g
      */
     protected void addContext(Feature row, TextMatch g) {
         addColumn(row, OpenSextantSchema.CONTEXT, g.getContext());
@@ -255,10 +229,8 @@ public class GISDataModel {
     /**
      * Adds the match text.
      *
-     * @param row
-     *            the row
-     * @param g
-     *            the g
+     * @param row the row
+     * @param g the g
      */
     protected void addMatchText(Feature row, TextMatch g) {
         addColumn(row, OpenSextantSchema.MATCH_TEXT, g.getText());
@@ -268,10 +240,8 @@ public class GISDataModel {
      * Allows caller to add a method or pattern id of sorts to denote how match
      * was derived.
      *
-     * @param row
-     *            the row
-     * @param method
-     *            the method
+     * @param row the row
+     * @param method the method
      */
     protected void addMatchMethod(Feature row, String method) {
         addColumn(row, OpenSextantSchema.MATCH_METHOD, method);
@@ -280,10 +250,8 @@ public class GISDataModel {
     /**
      * Adds the match method.
      *
-     * @param row
-     *            the row
-     * @param match
-     *            the match
+     * @param row the row
+     * @param match the match
      */
     protected void addMatchMethod(Feature row, TextMatch match) {
         String method = match.getType();
@@ -291,27 +259,22 @@ public class GISDataModel {
     }
 
     /**
-     * Builds a GISCore feature array (rows) from a given array of TextMatches; Enrich
-     * the features with record-level attributes (columns).  If provided result has .input set, 
-     * then conext and other metadata for this match will be pulled from it.  Context is not 
-     * pulled at match time, as it is not used by most processing -- it tends to be more 
-     * of an output/formatting issue.  And only matches that pass any filters are enriched with 
-     * context and other metadaa.
+     * Builds a GISCore feature array (rows) from a given array of TextMatches;
+     * Enrich the features with record-level attributes (columns). If provided
+     * result has .input set, then conext and other metadata for this match will
+     * be pulled from it. Context is not pulled at match time, as it is not used
+     * by most processing -- it tends to be more of an output/formatting issue.
+     * And only matches that pass any filters are enriched with context and
+     * other metadaa.
      *
      *
-     * @param id
-     *            the id
-     * @param g
-     *            the g
-     * @param m
-     *            the m
-     * @param rowAttributes
-     *            the row attributes
-     * @param res
-     *            the res
+     * @param id the id
+     * @param g the g
+     * @param m the m
+     * @param rowAttributes the row attributes
+     * @param res the res
      * @return the list
-     * @throws ConfigException
-     *             schema configuration error
+     * @throws ConfigException schema configuration error
      */
     public List<Feature> buildRows(int id, Geocoding g, TextMatch m, Map<String, Object> rowAttributes,
             ExtractionResult res) throws ConfigException {
@@ -360,8 +323,7 @@ public class GISDataModel {
      * Convenience method for managing how confidence number is reported in
      * output.
      *
-     * @param conf
-     *            the conf
+     * @param conf the conf
      * @return the string
      */
     protected String formatConfidence(double conf) {
@@ -380,11 +342,9 @@ public class GISDataModel {
     /**
      * Create a schema instance with the fields properly typed and ordered.
      *
-     * @param jobName
-     *            the job name
+     * @param jobName the job name
      * @return the schema
-     * @throws ConfigException
-     *             schema configuration error
+     * @throws ConfigException schema configuration error
      */
     protected Schema buildSchema(String jobName) throws ConfigException {
 
@@ -426,11 +386,9 @@ public class GISDataModel {
     /**
      * Gets the field.
      *
-     * @param field
-     *            the field
+     * @param field the field
      * @return the field
-     * @throws ConfigException
-     *             the config exception
+     * @throws ConfigException the config exception
      */
     protected SimpleField getField(String field) throws ConfigException {
         return OpenSextantSchema.getField(field);
@@ -439,8 +397,7 @@ public class GISDataModel {
     /**
      * Can add.
      *
-     * @param f
-     *            the f
+     * @param f the f
      * @return true, if successful
      */
     protected boolean canAdd(SimpleField f) {
@@ -454,12 +411,9 @@ public class GISDataModel {
      * Add a column of data to output; Field is validated ; value is not added
      * if null.
      *
-     * @param row
-     *            the row
-     * @param f
-     *            the f
-     * @param d
-     *            the d
+     * @param row the row
+     * @param f the f
+     * @param d the d
      */
     protected void addColumn(Feature row, SimpleField f, Object d) {
         if (d == null) {
@@ -473,12 +427,9 @@ public class GISDataModel {
     /**
      * Add a column of data to output; Field is validated.
      *
-     * @param row
-     *            the row
-     * @param f
-     *            the f
-     * @param d
-     *            the d
+     * @param row the row
+     * @param f the f
+     * @param d the d
      */
     protected void addColumn(Feature row, SimpleField f, int d) {
         if (canAdd(f)) {
@@ -489,12 +440,9 @@ public class GISDataModel {
     /**
      * Add a column of data to output; Field is validated.
      *
-     * @param row
-     *            the row
-     * @param f
-     *            the f
-     * @param d
-     *            the d
+     * @param row the row
+     * @param f the field name
+     * @param d value
      */
     protected void addColumn(Feature row, SimpleField f, double d) {
         if (canAdd(f)) {
@@ -506,10 +454,8 @@ public class GISDataModel {
      * Add a field key to the field order; Caller must also be responsible for
      * ensuring field is valid and exists in Schema.
      *
-     * @param fld
-     *            field name
-     * @throws ConfigException
-     *             the config exception
+     * @param fld field name
+     * @throws ConfigException the config exception
      */
     public void addField(String fld) throws ConfigException {
         if (getField(fld) == null) {
@@ -521,10 +467,8 @@ public class GISDataModel {
     /**
      * Removes the field.
      *
-     * @param fld
-     *            field name
-     * @throws ConfigException
-     *             the config exception
+     * @param fld field name
+     * @throws ConfigException the config exception
      */
     public void removeField(String fld) throws ConfigException {
         if (getField(fld) == null) {

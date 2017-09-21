@@ -33,8 +33,9 @@ import org.opensextant.giscore.GISFactory;
 import org.opensextant.processing.ProcessingException;
 
 /**
- * A formatter for KML output.
- *
+ * A formatter for KML output that uses GISCore API. This KML interpretation is
+ * limited. Preferably use a more modern KML lib.
+ * 
  * @author Rich Markeloff, MITRE Corp. Initial version created on Jan 6, 2012
  */
 public final class KMLFormatter extends GISDataFormatter {

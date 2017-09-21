@@ -20,8 +20,7 @@ public interface CountryObserver {
     /**
      * Have you seen this country before?
      * 
-     * @param cc
-     *            country code
+     * @param cc country code
      * @return true if observer saw country
      */
     public boolean countryObserved(String cc);
@@ -29,8 +28,7 @@ public interface CountryObserver {
     /**
      * Have you seen this country before?
      * 
-     * @param C
-     *            country object
+     * @param C country object
      * @return true if observer saw country
      */
 
