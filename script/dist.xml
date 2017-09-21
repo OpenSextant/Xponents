@@ -62,7 +62,7 @@
 
   <!--  Consolidate XText items to their own release app
     -->
-  <target name="dist.xtext">
+  <target name="dist-xtext">
     <delete dir="${xtext.release}"/>
 
     <mkdir dir="${xtext.release}"/>

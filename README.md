@@ -16,6 +16,10 @@ The major sub-modules include:
 * **XText**: Mature solutions for getting text and metadata from binary formats.
 * **Basics** and **Patterns** are two supporting modules that are used as the Xponents lingua franca throughout the SDK.
 
+As of 2017, this [Geocoder Handbook](./doc/Geocoder_Handbook.md) represents 
+the Xponents methodology to geotagging and geocoding.  Nearly all of Xponents
+and XText has some role in supporting the methodology.
+
 Related sub-modules that employ these SDKs:
 * **Examples**: A set of Java main programs that demonstrates the use of XText alongside Extraction to take raw data, process it, and output GIS formats in one shot!
 * **Xlayer**: A functional skeleton design of REST microservices for Extraction project, featuring "PlaceGeocoder" class, Patterns and Keyword extraction.
@@ -70,8 +74,10 @@ Name matching depends on:
 * OpenSextant Gazetteer; Download a built gazetteer flat file at  http://www.opensextant.org/ OR build your own
   using https://github.com/OpenSextant/opensextant/tree/master/Gazetteer, which depends on Pentaho Kettle 
 
-* OpenSextant SolrTextTagger;  https://github.com/OpenSextant/SolrTextTagger v2.0 (See project for maven details)
-  Xponents ./solr/build.properties (copy of build.template) allows you to set the solr-text-tagger 2.x version of your choice.
+* OpenSextant SolrTextTagger;  https://github.com/OpenSextant/SolrTextTagger v2.x (See project for maven details)
+  * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10
+  * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+
+  
 
 Using
 ============

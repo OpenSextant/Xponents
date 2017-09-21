@@ -214,6 +214,17 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-tests</id>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                 </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <executions>
                     <execution>
