@@ -28,14 +28,14 @@ python ./script/gaz_assemble_person_filter.py
 
 if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
    # Collect Gazetteer Metadata: 
-   ant -f ./solr6-build.xml gaz-meta
+   ant -f ./build.xml gaz-meta
 fi
 
 sleep 2 
 
 if [ "$CMD" = 'start' ]; then 
   if [ "$OPT" = 'clean' ]; then 
-    ant -f ./solr6-build.xml clean init
+    ant -f ./build.xml clean init
   fi
 
   echo "Starting Solr $SERVER"
@@ -62,7 +62,7 @@ python script/taxcat_person_names.py   --solr http://$SERVER/solr/taxcat --start
 sleep 2 
 
 echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
-ant -f solr6-build.xml index-gazetteer-solrj
+ant -f build.xml index-gazetteer-solrj
 
 sleep 2 
 echo "Generate Name Variants"
