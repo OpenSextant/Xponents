@@ -9,6 +9,14 @@ case "$1" in
  ;;
  'stop')
     $SOLR_INSTALL/bin/solr stop -p $PORT
+
+    echo "Now deleting local write locks"
+    sleep 2
+
+    for IDX in gazetteer taxcat; do 
+      echo INDEX LOCK: $IDX
+      rm -i ./solr6/$IDX/data/index/write.lock
+    done
  ;;
  *)
    echo "Please just start or stop the Solr server"
