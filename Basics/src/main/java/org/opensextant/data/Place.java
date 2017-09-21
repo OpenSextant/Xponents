@@ -530,4 +530,16 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     public void setPlacePostalCode(String c) {
         this.placePostalCode = c;
     }
+
+    private int confidence = 0;
+
+    @Override
+    public int getConfidence() {
+        return confidence;
+    }
+
+    @Override
+    public void setConfidence(int c) {
+        confidence = c;
+    }
 }

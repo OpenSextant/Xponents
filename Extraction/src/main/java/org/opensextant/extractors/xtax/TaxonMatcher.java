@@ -417,7 +417,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * @throws IOException
      */
     public List<Taxon> search(String query) throws SolrServerException, IOException {
-        return search(this.solr.getInternalSolrServer(), query);
+        return search(this.solr.getInternalSolrClient(), query);
     }
 
     /**
@@ -429,6 +429,6 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * @throws IOException
      */
     public List<Taxon> search(SolrParams qparams) throws SolrServerException, IOException {
-        return search(this.solr.getInternalSolrServer(), qparams);
+        return search(this.solr.getInternalSolrClient(), qparams);
     }
 }

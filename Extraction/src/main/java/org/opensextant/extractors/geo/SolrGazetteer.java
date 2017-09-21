@@ -216,7 +216,7 @@ public class SolrGazetteer {
         params.set(CommonParams.FL,
                 "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
         try {
-            this.countryCodes = loadCountries(solr.getInternalSolrServer());
+            this.countryCodes = loadCountries(solr.getInternalSolrClient());
         } catch (SolrServerException loadErr) {
             throw new ConfigException("SolrGazetteer is unable to load countries due to Solr error", loadErr);
         } catch (IOException ioErr) {

@@ -49,6 +49,7 @@ public final class KMLFormatter extends GISDataFormatter {
         this.outputType = "KML";
         this.groupByDocument = true;
         this.includeCoordinate = true;
+        this.useFileHyperlink = true;
     }
 
     /**

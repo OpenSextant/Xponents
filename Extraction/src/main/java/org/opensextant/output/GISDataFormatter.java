@@ -51,7 +51,7 @@ import org.opensextant.processing.ProcessingException;
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Dec 20, 2011
  *
- * @author Marc C. Ubaldino, MITRE Corp. Refactored, redesigned package, 2013.
+ * @author Marc C. Ubaldino, MITRE Corp. Refactored, redesigned package using GISCore, 2013.
  */
 public abstract class GISDataFormatter extends AbstractFormatter {
 
@@ -70,6 +70,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     private int id = 0;
     protected GISDataModel gisDataModel;
     protected boolean allowNonGeo = false; /* For vanilla CSV, where match does not have lat/lon */
+    protected boolean useFileHyperlink = false;
 
     /**
      *
@@ -108,6 +109,8 @@ public abstract class GISDataFormatter extends AbstractFormatter {
             throw new ProcessingException(create_err);
         }
 
+        // Copy paramters down.
+        this.gisDataModel.useFileHyperlink = this.useFileHyperlink;
         DocumentStart ds = new DocumentStart(doc_type);
         this.os.write(ds);
         this.os.write(gisDataModel.getSchema());

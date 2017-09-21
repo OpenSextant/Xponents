@@ -52,8 +52,10 @@ import org.slf4j.LoggerFactory;
 public class GISDataModel {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected boolean includeOffsets;
-    protected boolean includeCoordinate;
+    protected boolean includeOffsets = false;
+    protected boolean includeCoordinate = true;
+    protected boolean useFileHyperlink = false;
+
     protected Schema schema = null;
     protected List<String> field_order = new ArrayList<String>();
     public Set<String> field_set = new HashSet<String>();
@@ -143,8 +145,8 @@ public class GISDataModel {
      * @param conf
      *            confidence
      */
-    protected void addConfidence(Feature row, double conf) {
-        addColumn(row, OpenSextantSchema.CONFIDENCE, formatConfidence(conf));
+    protected void addConfidence(Feature row, int conf) {
+        addColumn(row, OpenSextantSchema.CONFIDENCE, conf);
     }
 
     /**
@@ -217,8 +219,15 @@ public class GISDataModel {
     protected void addFilePaths(Feature row, String recordFile, String recordTextFile) {
         // TOOD: HPATH goes here.
         if (recordFile != null) {
-            addColumn(row, OpenSextantSchema.FILENAME, FilenameUtils.getBaseName(recordFile));
-            addColumn(row, OpenSextantSchema.FILEPATH, recordFile);
+            String fname = FilenameUtils.getBaseName(recordFile);
+            addColumn(row, OpenSextantSchema.FILENAME, fname);
+            if (this.useFileHyperlink) {
+                // Caller is responsible for making sure recordFile is absolute path.
+                addColumn(row, OpenSextantSchema.FILEPATH,
+                        String.format("<a href=\"file://%s\">%s</a>", recordFile, fname));
+            } else {
+                addColumn(row, OpenSextantSchema.FILEPATH, recordFile);
+            }
             // Only add text path:
             // if original is not plaintext or
             // if original has not been converted
@@ -320,9 +329,9 @@ public class GISDataModel {
 
         addPlaceData(row, g);
         addPrecision(row, g);
-        //addConfidence(row, g.getConfidence());
+        addConfidence(row, g.getConfidence());
 
-        if (m.getContext() == null && res.input!=null){
+        if (m.getContext() == null && res.input != null) {
             int len = res.input.buffer.length();
             ResultsUtility.setContextFor(res.input.buffer, m, len);
         }
