@@ -509,7 +509,6 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      * 
      * @return
      */
-    @Override
     public int getConfidence() {
         return confidence;
     }
@@ -776,11 +775,10 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     public void setPlacePostalCode(String c) {
         this.placePostalCode = c;
     }
-
     /**
      * Becuase coordinate parsing is pretty deterministic,
      * for now the confidence defaults to a high value.
-     * TODO: introduce qualitative measures of goodness as far as 
+     * TODO: introduce qualitative measures of goodness as far as
      * if detected pattern is reliable vs. loose; or if the geocoding
      * has multiple interpretations due to ambiguous fields. Etc.
      */
@@ -791,5 +789,4 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         // TODO Auto-generated method stub
         confidence = c;
     }
-
 }

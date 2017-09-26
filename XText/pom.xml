@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <!-- <artifactId>xponents-parent</artifactId> -->
-    <version>2.9.12</version>
+    <version>2.10.0</version>
 
     <name>XText</name>
     <artifactId>opensextant-xponents-xtext</artifactId>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents-basics</artifactId>
-            <version>2.9.9</version>
+            <version>2.10.0</version>
         </dependency>
 
         <dependency>
@@ -236,7 +236,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.6</version>
+            <version>2.0.7</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -313,20 +313,7 @@
             <artifactId>activation</artifactId>
             <version>1.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.5</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.5</version>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
-
 
     <dependencyManagement>
         <dependencies>
@@ -334,7 +321,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.11</version>
+                <version>4.12</version>
                 <scope>test</scope>
             </dependency>
 
@@ -402,19 +389,11 @@
                     <header>&lt;img alt='[OpenSextant Logo]' height='36'
                         width='36'
                         src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
-                        OpenSextant.org, 2010-2013
+                        OpenSextant.org, 2013-2017
                     </header>
                     <version>true</version>
                     <windowtitle>XText - Content Extraction Simplified</windowtitle>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -432,7 +411,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.7</source>
-                    <target>1.7</target>
+                    <target>1.8</target>
                     <compilerVersion>1.8</compilerVersion>
                     <compilerArgument>-Xlint:all,-path</compilerArgument>
                     <showWarnings>true</showWarnings>

@@ -3,6 +3,9 @@ log
 /solr4/gazetteer/data
 /solr4/taxcat/data
 /solr4/lib
+/solr6/gazetteer/data
+/solr6/taxcat/data
+/solr6/lib
 /gazetteer/conf/filters/non-placenames,user.csv
 /gazetteer/conf/filters/carrot2-stop*
 /test
@@ -12,3 +15,7 @@ lib/ext
 generated-*json
 build
 download
+/etc/gazetteer/filters/carrot2*
+managed-schema
+/etc/gazetteer/filters/person-name-filter.txt
+/etc/gazetteer/filters/census

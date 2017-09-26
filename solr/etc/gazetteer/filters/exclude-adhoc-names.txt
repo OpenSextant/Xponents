@@ -1,0 +1,83 @@
+# those in the news,... or any names you wish to omit.
+# These are all place names that coincide with celebrity names
+# Some of these are common, short names from various cultures.
+obama
+putin
+medvedev
+erdogan
+erdoğan
+cristiano
+francois
+francoise
+françois
+bashar
+bushehr
+assad
+asad
+oleg
+abd
+abu
+abi
+ed
+eddie
+ahmad
+ahmed
+chip
+dimitry
+dmitriy
+abdul
+igor
+mikhail
+walid
+karim
+fernando
+felicity
+luiz
+luis
+matty
+mick
+sri
+kath
+nat
+nate
+cosby
+walt
+disney
+blitzer
+brooks
+tom
+keith
+liam
+paulo
+vic
+connor
+zach
+cate
+arun
+anders
+ana
+ana maría
+ana maria
+romney
+miley
+peyton
+bieber
+kanye
+méssi
+sia
+papi
+harrison ford
+poe
+mark twain
+dick
+dicks
+manny
+pepe
+paco
+# Various Spanish last names
+reyes
+hernandez
+ramirez
+martinez
+garcia
+

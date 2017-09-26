@@ -37,7 +37,7 @@ import org.apache.solr.update.processor.StatelessScriptUpdateProcessorFactory;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
 import org.opensextant.util.GeonamesUtility;
-import org.opensextant.util.SolrProxy;
+import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,8 +190,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 logger.info("GazURP ## Row {}; Excluded:{}", rowCount, excludedTerms.size());
             }
 
-            String cc = SolrProxy.getString(doc, "cc");
-            String fips = SolrProxy.getString(doc, "FIPS_cc");
+            String cc = SolrUtil.getString(doc, "cc");
+            String fips = SolrUtil.getString(doc, "FIPS_cc");
 
             if (includeCountrySet != null) {
                 if (!includeCountrySet.contains(cc)) {
@@ -204,7 +204,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
              * See solrconfig for documentation on gazetteer filtering
              * =======================================================
              */
-            String nm = SolrProxy.getString(doc, "name");
+            String nm = SolrUtil.getString(doc, "name");
             if (!includeAll && includeCategorySet != null) {
                 String cat = (String) doc.getFieldValue(catField);
                 if (cat == null) {
@@ -215,13 +215,13 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                     return;
                 }
             }
-            String nt = SolrProxy.getString(doc, "name_type");
+            String nt = SolrUtil.getString(doc, "name_type");
             boolean isName = (nt != null ? "N".equals(nt) : false);
 
             /**
              * Cleanup scripts.
              */
-            String nameScript = SolrProxy.getString(doc, "script");
+            String nameScript = SolrUtil.getString(doc, "script");
 
             if (StringUtils.isNotBlank(nameScript)) {
                 doc.removeField("script");
@@ -269,7 +269,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             /* Pattern: Short word followed by digit. XXXX NNN
              * Approximately one word of text  Ignore things that are not major places - adm or ppl */
             if (!search_only && nm2.length() <= 8) {
-                search_only = ignoreShortAlphanumeric(nm2, SolrProxy.getString(doc, "feat_class"));
+                search_only = ignoreShortAlphanumeric(nm2, SolrUtil.getString(doc, "feat_class"));
             }
 
             /*
@@ -301,8 +301,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
              */
 
             // CREATE searchable lat lon
-            String lat = SolrProxy.getString(doc, "lat");
-            String lon = SolrProxy.getString(doc, "lon");
+            String lat = SolrUtil.getString(doc, "lat");
+            String lon = SolrUtil.getString(doc, "lon");
 
             if (lat != null && lon != null) {
                 // Where SpatialRecursivePrefixTreeFieldType is used format "LAT
@@ -319,6 +319,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             ++addCount;
 
             // pass it up the chain
+            logger.debug("Added DOC="+doc.getFieldValue("name"));
             super.processAdd(cmd);
         }
 
@@ -351,7 +352,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
          *            FIPS country code
          */
         private void scrubCountryCode(SolrInputDocument d, String field, String cc, String fips) {
-            String adm = SolrProxy.getString(d, field);
+            String adm = SolrUtil.getString(d, field);
             if (adm == null) {
                 /* nothing to do. */
                 return;

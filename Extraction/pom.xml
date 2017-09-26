@@ -7,14 +7,14 @@
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
         <relativePath>../pom.xml</relativePath>
-        <version>2.9.10-SNAPSHOT</version>
+        <version>2.10.0</version>
     </parent>
 
     <name>Extraction</name>
     <artifactId>opensextant-xponents</artifactId>
 
     <properties>
-        <solr.version>4.10.4</solr.version>
+        <solr.version>6.6.1</solr.version>
     </properties>
 
     <dependencies>
@@ -204,7 +204,8 @@
             <version>3.0.1</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- only if used via EmbeddedSolrServer -->
+        <!-- Required Solr plugins:  SolrTextTagger goes into solr6/lib;  JTS and Spatial4j go into server's lib/ext
+          -->
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>solr-text-tagger</artifactId>
@@ -214,10 +215,9 @@
                 <artifactId>jcl-over-slf4j</artifactId>
               </exclusion>
             </exclusions>
-            <version>2.0</version>
+            <version>2.4</version>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
@@ -283,7 +283,7 @@
         <dependency>
             <groupId>org.restlet.jee</groupId>
             <artifactId>org.restlet</artifactId>
-            <version>2.2.2</version>
+            <version>2.3.7</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -292,9 +292,9 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.spatial4j</groupId>
+            <groupId>org.locationtech.spatial4j</groupId>
             <artifactId>spatial4j</artifactId>
-            <version>0.5</version>
+            <version>0.6</version>
         </dependency>
         <dependency>
             <groupId>com.vividsolutions</groupId>
@@ -313,7 +313,7 @@
                     <header>&lt;img alt='[OpenSextant Logo]' height='36'
                         width='36'
                         src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
-                        OpenSextant.org, 2010-2013
+                        OpenSextant.org, 2013-2017
                     </header>
                     <version>true</version>
                     <windowtitle>Xponents Extraction Toolkit</windowtitle>
@@ -335,7 +335,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>${project.basedir}/../solr/solr4/gazetteer/conf</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/../solr/etc/gazetteer</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/../solr/solr6/gazetteer/conf</additionalClasspathElement>
                     </additionalClasspathElements>
                 </configuration>
             </plugin>

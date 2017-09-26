@@ -74,8 +74,9 @@ Name matching depends on:
 * OpenSextant Gazetteer; Download a built gazetteer flat file at  http://www.opensextant.org/ OR build your own
   using https://github.com/OpenSextant/opensextant/tree/master/Gazetteer, which depends on Pentaho Kettle 
 
-* OpenSextant SolrTextTagger;  https://github.com/OpenSextant/SolrTextTagger v2.0 (See project for maven details)
-  Xponents ./build.properties (copy of build.template) allows you to set the solr-text-tagger 2.x version of your choice.
+* OpenSextant SolrTextTagger;  https://github.com/OpenSextant/SolrTextTagger v2.x (See project for maven details)
+  * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10
+  * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+
   
 
 Using

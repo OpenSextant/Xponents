@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.opensextant</groupId>
         <artifactId>xponents-parent</artifactId>
-        <version>2.9.10-SNAPSHOT</version>
+        <version>2.10.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -23,9 +23,9 @@
             <artifactId>super-csv</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.spatial4j</groupId>
+            <groupId>org.locationtech.spatial4j</groupId>
             <artifactId>spatial4j</artifactId>
-            <version>0.5</version>
+            <version>0.6</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -59,7 +59,7 @@
                     <header>&lt;img alt='[OpenSextant Logo]' height='36'
                         width='36'
                         src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
-                        OpenSextant.org, 2010-2013
+                        OpenSextant.org, 2013-2017
                     </header>
                     <version>true</version>
                     <windowtitle>Xponents Basics</windowtitle>

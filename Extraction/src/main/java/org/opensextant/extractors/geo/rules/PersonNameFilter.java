@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
+import org.opensextant.data.TextInput;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.util.FileUtility;
@@ -39,8 +40,8 @@ public class PersonNameFilter extends GeocodeRule {
     private Set<String> suffixes = null;
 
     /**
-     * Constructor for general usage if you know your files might come from file system
-     * or JAR.
+     * Constructor for general usage if you know your files might come from file
+     * system or JAR.
      * @param names
      * @param persTitles
      * @param persSuffixes
@@ -57,18 +58,19 @@ public class PersonNameFilter extends GeocodeRule {
         }
     }
 
-    private void debug(){
-        if (log.isDebugEnabled()){
+    private void debug() {
+        if (log.isDebugEnabled()) {
             log.debug("NAME FILTER\n\t{}", nameFilter);
             log.debug("TITLE FILTER\n\t{}", titles);
             log.debug("SUFFIX FILTER\n\t{}", suffixes);
         }
     }
+
     /**
-     * Default constructor here used resource paths (which are retrieved as getResourceAsStream()
-     * Instead of retrieving resource URLs or files.  This works best if you know your 
-     * resource files will come from JAR only.
-     *  
+     * Default constructor here used resource paths (which are retrieved as
+     * getResourceAsStream() Instead of retrieving resource URLs or files. This
+     * works best if you know your resource files will come from JAR only.
+     * 
      * @param namesPath
      * @param persTitlesPath
      * @param persSuffixesPath
@@ -79,7 +81,7 @@ public class PersonNameFilter extends GeocodeRule {
             nameFilter = FileUtility.loadDictionary(namesPath, false);
             titles = FileUtility.loadDictionary(persTitlesPath, false);
             suffixes = FileUtility.loadDictionary(persSuffixesPath, false);
-            debug();            
+            debug();
         } catch (IOException filterErr) {
             throw new ConfigException("Default filter not found", filterErr);
         }
@@ -112,26 +114,39 @@ public class PersonNameFilter extends GeocodeRule {
     }
 
     /**
+     * Simple check for a span of text to see if it is purely whitespace or not at the given offsets, [x1..x2}
+     * Include left side, not right side-character.
+     * 
+     * @param buf buf to splice
+     * @param x1  offset to start at
+     * @param x2  offset to stop at.
+     * @return
+     */
+    private static boolean hasNonWhitespace(final String buf, int x1, int x2) {
+        for (int x = x1; x < x2; ++x) {
+            if (!Character.isWhitespace(buf.charAt(x))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Use known person names to distinguish well-known persons that may or may
      * not overlap in in the text and the namespace.
      * 
-     * <pre>
-     * Hillary Clinton visited New York state today.
-     * </pre>
+     * <pre> Hillary Clinton visited New York state today. </pre>
      * 
      * So, Clinton is part of a well known celebrity, and is not referring to
      * Clinton, NY a town in upstate. We identify all such person names and mark
      * any overlaps and co-references that coincide with tagged place names.
      * 
-     * @param placeNames
-     *            places to NEgate
-     * @param persons
-     *            named persons in doc
-     * @param orgs
-     *            named orgs in doc
+     * @param placeNames places to NEgate
+     * @param persons named persons in doc
+     * @param orgs named orgs in doc
      */
-    public void evaluateNamedEntities(final List<PlaceCandidate> placeNames, final List<TaxonMatch> persons,
-            final List<TaxonMatch> orgs) {
+    public void evaluateNamedEntities(final TextInput input, final List<PlaceCandidate> placeNames,
+            final List<TaxonMatch> persons, final List<TaxonMatch> orgs) {
 
         for (PlaceCandidate pc : placeNames) {
             if (pc.isFilteredOut() || pc.isCountry) {
@@ -149,18 +164,43 @@ public class PersonNameFilter extends GeocodeRule {
                 pc.setFilteredOut(true);
                 pc.addRule("ResolvedOrg");
                 continue;
-            }                    
-                    
+            }
+
             for (TaxonMatch name : persons) {
                 // "General Murtagh" PLACE=murtagh within PERSON (not a valid
                 // place name)
                 // "General Murtagh Memorial Square" PERSON within PLACE (valid
                 // place name)
+                //
+                // Avoid marking as relevant if there is non-whitespace separating the PLACE and the NAME.
+                // E.g.,  Alexandria, Virgina; Bob and Mary of ....
+                // So, "Virginia; Bob" is not a valid qualifying "first last" name pattern given the punctuation.
+
+                String rule = null;
                 if (pc.isWithin(name)) {
+                    rule = "ResolvedPerson";
+                } else if (pc.isBefore(name)) {
+                    if (hasNonWhitespace(input.buffer, pc.end, name.start)) {
+                        continue;
+                    }
+                    rule = "ResolvedPerson.PreceedingName";
+                } else if (pc.isAfter(name)) {
+                    rule = "ResolvedPerson.SucceedingName";
+                    if (hasNonWhitespace(input.buffer, name.end, pc.start)) {
+                        continue;
+                    }
+                }
+
+                if (rule != null) {
                     pc.setFilteredOut(true);
                     resolvedPersons.put(pc.getTextnorm(), name.getText());
-                    pc.addRule("ResolvedPerson");
+                    pc.addRule(rule);
+                    break;
                 }
+            }
+
+            if (pc.isFilteredOut()) {
+                continue;
             }
 
             for (TaxonMatch name : orgs) {
@@ -186,7 +226,8 @@ public class PersonNameFilter extends GeocodeRule {
     }
 
     /**
-     * Rule fired if a location is found in an organization name; Only organization should be filtered out.
+     * Rule fired if a location is found in an organization name; Only
+     * organization should be filtered out.
      */
     public static final String NAME_IN_ORG_RULE = "NameInOrg";
 
@@ -244,7 +285,7 @@ public class PersonNameFilter extends GeocodeRule {
                     name.setFilteredOut(true);
                     resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
                     name.addRule("PersonTitle");
-                    name.addRule("Prefix="+pre);                    
+                    name.addRule("Prefix=" + pre);
                     return true;
                 }
 
@@ -252,7 +293,7 @@ public class PersonNameFilter extends GeocodeRule {
                     name.setFilteredOut(true);
                     resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
                     name.addRule("PersonName");
-                    name.addRule("Prefix="+pre);
+                    name.addRule("Prefix=" + pre);
                     return true;
                 }
             }

@@ -2,7 +2,10 @@ if [ ! -d ./log ] ;  then
   mkdir log
 fi
 
-SERVER=localhost:7000
+CMD=$1
+OPT=$2
+SOLR_PORT=7000
+SERVER=localhost:$SOLR_PORT
 unset http_proxy
 unset https_proxy
 export noproxy=localhost,127.0.0.1
@@ -16,48 +19,54 @@ if [ ! -d $XPONENTS/piplib ] ; then
    exit 1
 fi
 
-if [ ! -e ./solr4/lib/xponents-gazetteer-meta.jar ] ; then 
-   ant gaz-meta
+export PYTHONPATH=$XPONENTS/piplib
+GAZ_CONF=etc/gazetteer
+SOLR_CORE_VER=solr6
+
+echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
+python ./script/gaz_assemble_person_filter.py 
+
+if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
+   # Collect Gazetteer Metadata: 
+   ant -f ./build.xml gaz-meta
 fi
 
+sleep 2 
 
-export PYTHONPATH=$XPONENTS/piplib
-
-for core in gazetteer taxcat ; do 
-  if [ -d solr4/$core/data/index ] ; then
-    rm solr4/$core/data/index/*
-  else 
-    mkdir -p solr4/$core/data/index
+if [ "$CMD" = 'start' ]; then 
+  if [ "$OPT" = 'clean' ]; then 
+    ant -f ./build.xml clean init
   fi
-done
 
-echo "Starting Solr $SERVER"
-nohup ./myjetty.sh  start & 
-
-echo "Wait for Solr / Jetty to load"
-sleep 5
-
-pushd solr4/gazetteer/
-echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
-python ./script/assemble_person_filter.py 
+  echo "Starting Solr $SERVER"
+  echo "Wait for Solr 6.x to load"
+  ./mysolr.sh stop $SOLR_PORT
+  ./mysolr.sh start $SOLR_PORT
+  sleep 2
+fi
 
 echo "Populate nationalities taxonomy in XTax"
 # you must set your PYTHONPATH to include Extraction/XTax required libraries.
-python  ./script/nationalities.py  --taxonomy ./conf/filters/nationalities.csv --solr http://$SERVER/solr/taxcat --starting-id 0
-popd
+python  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr http://$SERVER/solr/taxcat --starting-id 0
 
+sleep 2 
+
+echo "Populate core JRC Names 'entities' data file, c.2014"
+JRC_DATA=./etc/taxcat/data
+JRC_SCRIPT=./script/taxcat_jrcnames.py
+python $JRC_SCRIPT --taxonomy $JRC_DATA/entities.txt  --solr http://$SERVER/solr/taxcat
+
+# Arbitrary row ID scheme, but we have various catalogs that should have reserved row-id space based on size.
+python script/taxcat_person_names.py   --solr http://$SERVER/solr/taxcat --starting-id 20000
+
+sleep 2 
 
 echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
-ant index-gazetteer
+ant -f build.xml index-gazetteer-solrj
 
-
-pushd solr4/gazetteer/
+sleep 2 
 echo "Generate Name Variants"
-python ./script/generate_variants.py  --solr http://$SERVER/solr/gazetteer --output ./conf/additions/generated-variants.json
-popd
-
-
-GAZ_CONF=solr4/gazetteer/conf
+python ./script/gaz_generate_variants.py  --solr http://$SERVER/solr/gazetteer --output $GAZ_CONF/additions/generated-variants.json
 
 # Finally add adhoc entries from JSON formatted files.
 #
@@ -87,4 +96,4 @@ curl --noproxy localhost "http://$SERVER/solr/gazetteer/update?stream.body=<opti
 
 echo "Gazetteer and TaxCat built, however Solr $SERVER is still running...." 
 echo
-echo "Use 'myjetty.sh stop'"
+echo "Use 'mysolr.sh stop $SOLR_PORT'"

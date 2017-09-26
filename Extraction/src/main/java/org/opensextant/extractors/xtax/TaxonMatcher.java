@@ -52,7 +52,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -124,7 +124,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      */
     @Override
     public void cleanup() {
-        this.shutdown();
+        this.close();
     }
 
     /**
@@ -152,8 +152,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * Caller must implement their domain objects, POJOs... this callback
      * handler only hashes them.
      *
-     * @param refData
-     *            solr doc
+     * @param refData solr doc
      * @return tag data
      */
     @Override
@@ -179,8 +178,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Parse the taxon reference data from a solr doc and return Taxon obj.
      * 
-     * @param refData
-     *            solr doc
+     * @param refData solr doc
      * @return taxon obj
      */
     public static Taxon createTaxon(SolrDocument refData) {
@@ -219,8 +217,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Configure an Extractor using a config file named by a path
      *
-     * @param patfile
-     *            configuration file path
+     * @param patfile configuration file path
      */
     @Override
     public void configure(String patfile) throws ConfigException {
@@ -230,8 +227,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Configure an Extractor using a config file named by a URL
      *
-     * @param patfile
-     *            configuration URL
+     * @param patfile configuration URL
      */
     @Override
     public void configure(java.net.URL patfile) throws ConfigException {
@@ -266,10 +262,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     private Set<String> taxonExclusionFilter = new HashSet<String>();
 
     /**
-     * Add prefixes of types of taxons you do not want returned.
-     * e.g., 
-     * "Place...."  // exlclude
-     * will allow "Org" and "Person" taxons to pass on thru
+     * Add prefixes of types of taxons you do not want returned. e.g.,
+     * "Place...." // exlclude will allow "Org" and "Person" taxons to pass on
+     * thru
+     * 
      * @param prefix
      */
     public void excludeTaxons(String prefix) {
@@ -290,10 +286,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * Implementation details -- use with or without the formal ID/buffer
      * pairing.
      *
-     * @param id
-     *            doc id
-     * @param buf
-     *            input text
+     * @param id doc id
+     * @param buf input text
      * @return list of matches
      * @throws ExtractionException
      */
@@ -326,7 +320,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
             m.start = ((Integer) tag.get("startOffset")).intValue();
             m.end = ((Integer) tag.get("endOffset")).intValue();// +1 char after
                                                                 // last matched
-                                                                // m.pattern_id = "taxtag";
+                                                                // m.pattern_id
+                                                                // = "taxtag";
             ++tag_count;
             m.match_id = id_prefix + tag_count;
             // m.setText((String) tag.get("matchText")); // Not reliable.
@@ -392,14 +387,14 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         return extractorImpl(input.id, input.buffer);
     }
 
-    public static List<Taxon> search(SolrServer index, String query) throws SolrServerException {
+    public static List<Taxon> search(SolrClient index, String query) throws SolrServerException, IOException {
         ModifiableSolrParams qp = new ModifiableSolrParams();
         qp.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag,name_type");
         qp.set(CommonParams.Q, query);
         return search(index, qp);
     }
 
-    public static List<Taxon> search(SolrServer index, SolrParams qparams) throws SolrServerException {
+    public static List<Taxon> search(SolrClient index, SolrParams qparams) throws SolrServerException, IOException {
 
         QueryResponse response = index.query(qparams, SolrRequest.METHOD.GET);
 
@@ -416,26 +411,24 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * search the current taxonomic catalog.
      *
-     * @param query
-     *            Solr "q" parameter only
+     * @param query Solr "q" parameter only
      * @return list of taxons
-     * @throws SolrServerException
-     *             on err
+     * @throws SolrServerException on err
+     * @throws IOException
      */
-    public List<Taxon> search(String query) throws SolrServerException {
-        return search(this.solr.getInternalSolrServer(), query);
+    public List<Taxon> search(String query) throws SolrServerException, IOException {
+        return search(this.solr.getInternalSolrClient(), query);
     }
 
     /**
      * search the current taxonomic catalog.
      * 
-     * @param qparams
-     *            Solr parameters in full.
+     * @param qparams Solr parameters in full.
      * @return list of taxons
-     * @throws SolrServerException
-     *             on err
+     * @throws SolrServerException on err
+     * @throws IOException
      */
-    public List<Taxon> search(SolrParams qparams) throws SolrServerException {
-        return search(this.solr.getInternalSolrServer(), qparams);
+    public List<Taxon> search(SolrParams qparams) throws SolrServerException, IOException {
+        return search(this.solr.getInternalSolrClient(), qparams);
     }
 }

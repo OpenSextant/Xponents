@@ -1,5 +1,6 @@
 package org.opensextant.extractors.test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,18 +16,17 @@ import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 
 /**
- * <pre>
- * 1) GeonamesUtility:  list countries official names and data
- * 2) SolrGazetteer:    query countries and print
- * 3) SolrGazetteer:    spatial query to find a place with M meters of a point.
- * </pre>
+ * <ol> <li> GeonamesUtility: list countries official names and data
+ * </li><li>SolrGazetteer: query countries and print</li> <li>SolrGazetteer:
+ * spatial query to find a place with M meters of a point. </li></ol>
  */
 public class TestGazetteer {
 
     public static SolrGazetteer gaz = null;
 
     /**
-     * Do a basic test -- This main prog makes use of the default JVM arg for solr:  -Dopensextant.solr=/path/to/solr
+     * Do a basic test -- This main prog makes use of the default JVM arg for
+     * solr: -Dopensextant.solr=/path/to/solr
      *
      *
      * @param args the arguments
@@ -45,22 +45,21 @@ public class TestGazetteer {
             // Try to get countries
             Map<String, Country> countries = gaz.getCountries();
             for (Country c : countries.values()) {
-                System.out.println(c.getKey() + " = " + c.name + "\t  Aliases: "
-                        + c.getAliases().toString());
+                System.out.println(c.getKey() + " = " + c.name + "\t  Aliases: " + c.getAliases().toString());
             }
 
             /*
-             * This test organizes country names to see if there are any country names
-             * that are unique.
+             * This test organizes country names to see if there are any country
+             * names that are unique.
              */
             List<String> cnames = new ArrayList<>();
             Map<String, Boolean> done = new TreeMap<>();
             for (Country C : geodataUtil.getCountries()) {
 
-                String q = String.format("name:%s AND -feat_code:PCL* AND -feat_code:TERR",
-                        C.getName());
+                String q = String.format("name:%s AND -feat_code:PCL* AND -feat_code:TERR", C.getName());
                 List<Place> country_name_matches = gaz.search(q, true);
-                //System.out.println("Matched names for " + C.getName() + ":\t");
+                // System.out.println("Matched names for " + C.getName() +
+                // ":\t");
                 String cname = TextUtils.removeDiacritics(C.getName()).toLowerCase();
 
                 done.put(cname, false);
@@ -74,21 +73,20 @@ public class TestGazetteer {
                 cnames.add(cname);
             }
 
-            //Collections.sort(cnames);
+            // Collections.sort(cnames);
             for (String cname : done.keySet()) {
-                System.out.println(String.format("\"%s\", Has Duplicates:", cname)
-                        + done.get(cname));
+                System.out.println(String.format("\"%s\", Has Duplicates:", cname) + done.get(cname));
             }
 
-            testPlacesAt(44, -118, 25 /*km*/, "P"); // US
-            testPlacesAt(44, 118, 100 /*km*/, "A"); // East Asia
-            testPlacesAt(44, 0, 250 /*km*/, "A");  // Europe
-            testPlacesAt(44, 0, 10 /*km*/, "P");  // Europe
+            testPlacesAt(44, -118, 25 /* km */, "P"); // US
+            testPlacesAt(44, 118, 100 /* km */, "A"); // East Asia
+            testPlacesAt(44, 0, 250 /* km */, "A"); // Europe
+            testPlacesAt(44, 0, 10 /* km */, "P"); // Europe
 
         } catch (Exception err) {
             err.printStackTrace();
         } finally {
-            gaz.shutdown();
+            gaz.close();
             System.exit(0);
         }
     }
@@ -98,7 +96,8 @@ public class TestGazetteer {
     }
 
     /**
-     * Test placesAt and closest functions to find and sort within reason places near a given location.
+     * Test placesAt and closest functions to find and sort within reason places
+     * near a given location.
      * 
      * @param lat
      * @param lon
@@ -106,7 +105,8 @@ public class TestGazetteer {
      * @param feat
      * @throws SolrServerException
      */
-    private static final void testPlacesAt(double lat, double lon, int radius, String feat) throws SolrServerException {
+    private static final void testPlacesAt(double lat, double lon, int radius, String feat)
+            throws SolrServerException, IOException {
         Place xy = new Place();
         xy.setLatitude(lat);
         xy.setLongitude(lon);
@@ -120,7 +120,7 @@ public class TestGazetteer {
             Place closestGeo = SolrGazetteer.closest(xy, places);
             print(String.format("Closest: %s (%d m away)", closestGeo, GeodeticUtility.distanceMeters(xy, closestGeo)));
 
-            //print(places.toString());
+            // print(places.toString());
             for (Place geo : places) {
                 print(String.format("\tDistance  %s = %d m", geo.toString(), GeodeticUtility.distanceMeters(xy, geo)));
             }

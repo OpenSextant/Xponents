@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -89,8 +89,8 @@ public class SolrGazetteer {
     /**
      * Instantiates a new solr gazetteer.
      *
-     * @throws ConfigException
-     *             Signals that a configuration exception has occurred.
+     * @throws ConfigException Signals that a configuration exception has
+     *             occurred.
      */
     public SolrGazetteer() throws ConfigException {
         this((String) null);
@@ -99,10 +99,9 @@ public class SolrGazetteer {
     /**
      * Instantiates a new solr gazetteer with the specified Solr Home location.
      *
-     * @param solrHome
-     *            the location of solrHome.
-     * @throws ConfigException
-     *             Signals that a configuration exception has occurred.
+     * @param solrHome the location of solrHome.
+     * @throws ConfigException Signals that a configuration exception has
+     *             occurred.
      */
     public SolrGazetteer(String solrHome) throws ConfigException {
         initialize(solrHome);
@@ -113,13 +112,12 @@ public class SolrGazetteer {
         solr = currentIndex;
 
         try {
-            this.countryCodes = loadCountries(solr.getInternalSolrServer());
+            this.countryCodes = loadCountries(solr.getInternalSolrClient());
         } catch (SolrServerException loadErr) {
             throw new ConfigException("SolrGazetteer is unable to load countries due to Solr error", loadErr);
         } catch (IOException ioErr) {
             throw new ConfigException("SolrGazetteer is unable to load countries due to IO/file error", ioErr);
         }
-
     }
 
     /**
@@ -134,38 +132,12 @@ public class SolrGazetteer {
     /**
      * Normalize country name.
      *
-     * @param c
-     *            the c
+     * @param c the c
      * @return the string
      */
     public static String normalizeCountryName(String c) {
         return StringUtils.capitalize(c.toLowerCase());
     }
-
-    //   * Do Not use.
-    //   * 
-    //   * return solr params
-    //   * deprecated DO NOT USE. Keeping this as a reminder of what not to do.
-    //   *             This will load entire index into memory.
-    //   *
-    //    @Deprecated
-    //    private static ModifiableSolrParams createGeodeticLookupParamsXX() {
-    //        /*
-    //         * Basic parameters for geospatial lookup. These are reused, and only pt
-    //         * and d are set for each lookup.
-    //         *
-    //         */
-    //        ModifiableSolrParams p = new ModifiableSolrParams();
-    //        p.set(CommonParams.FL,
-    //                "id,name,cc,adm1,adm2,feat_class,feat_code," + "geo,place_id,name_bias,id_bias,name_type");
-    //        p.set(CommonParams.ROWS, 25);
-    //        p.set(CommonParams.Q, "*:*");
-    //        p.set(CommonParams.FQ, "{!geofilt}");
-    //        p.set("spatial", true);
-    //        p.set("sfield", "geo");
-    //        p.set(CommonParams.SORT, "geodist() asc"); // Find closest places first.
-    //        return p;
-    //    }
 
     /**
      * Creates a generic spatial query for up to first 25 rows.
@@ -182,8 +154,7 @@ public class SolrGazetteer {
      * appears to want to load entire index into memory. So this sort mechanism
      * is off by default.
      * 
-     * @param rows
-     *            rows to include in spatial lookups
+     * @param rows rows to include in spatial lookups
      * @return solr params
      */
     protected static ModifiableSolrParams createGeodeticLookupParams(int rows) {
@@ -207,8 +178,8 @@ public class SolrGazetteer {
      * Initialize. Cascading env variables: First use value from constructor,
      * then opensextant.solr, then solr.solr.home
      *
-     * @throws ConfigException
-     *             Signals that a configuration exception has occurred.
+     * @throws ConfigException Signals that a configuration exception has
+     *             occurred.
      */
     private void initialize(String solrHome) throws ConfigException {
 
@@ -218,7 +189,7 @@ public class SolrGazetteer {
         params.set(CommonParams.FL,
                 "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
         try {
-            this.countryCodes = loadCountries(solr.getInternalSolrServer());
+            this.countryCodes = loadCountries(solr.getInternalSolrClient());
         } catch (SolrServerException loadErr) {
             throw new ConfigException("SolrGazetteer is unable to load countries due to Solr error", loadErr);
         } catch (IOException ioErr) {
@@ -229,22 +200,26 @@ public class SolrGazetteer {
     /**
      * Close or release all resources.
      */
-    public void shutdown() {
+    public void close() {
         if (solr != null) {
-            solr.close();
+            try {
+                solr.close();
+            } catch (IOException err) {
+                // log: error("Rare failure closing Solr I/O");
+            }
         }
     }
 
     /**
-     * List all country names, official and variant names.
-     * Distinct territories (whose own ISO codes are unique) are listed as well.
-     * Territories owned by other countries -- their ISO code is their owning nation -- are attached
-     * as Country.territory  (call Country.getTerritories() to list them).
+     * List all country names, official and variant names. Distinct territories
+     * (whose own ISO codes are unique) are listed as well. Territories owned by
+     * other countries -- their ISO code is their owning nation -- are attached
+     * as Country.territory (call Country.getTerritories() to list them).
      * 
      * Name aliases are listed as Country.getAliases()
      * 
-     * The hash map returned contains all 260+ country listings keyed by ISO2 and ISO3.
-     * Odd commonly used variant codes are added as well.
+     * The hash map returned contains all 260+ country listings keyed by ISO2
+     * and ISO3. Odd commonly used variant codes are added as well.
      *
      * @return the countries
      */
@@ -262,8 +237,7 @@ public class SolrGazetteer {
      * TODO: throw a GazetteerException of some sort. for null query or invalid
      * code.
      *
-     * @param isocode
-     *            the isocode
+     * @param isocode the isocode
      * @return the country
      */
     public Country getCountry(String isocode) {
@@ -279,8 +253,7 @@ public class SolrGazetteer {
     /**
      * Gets the country by fips.
      *
-     * @param fips
-     *            the fips
+     * @param fips the fips
      * @return the country by fips
      */
     public Country getCountryByFIPS(String fips) {
@@ -294,15 +267,13 @@ public class SolrGazetteer {
      * 
      * TODO: allow caller to get all entries, including abbreviations.
      *
-     * @param index
-     *            solr instance to query
+     * @param index solr instance to query
      * @return country data hash
-     * @throws SolrServerException
-     *             the solr server exception
-     * @throws IOException
-     *             on err, if country metadata file is not found in classpath
+     * @throws SolrServerException the solr server exception
+     * @throws IOException on err, if country metadata file is not found in
+     *             classpath
      */
-    public static Map<String, Country> loadCountries(SolrServer index) throws SolrServerException, IOException {
+    public static Map<String, Country> loadCountries(SolrClient index) throws SolrServerException, IOException {
 
         GeonamesUtility geodataUtil = new GeonamesUtility();
         Map<String, Country> countryCodeMap = geodataUtil.getISOCountries();
@@ -313,7 +284,9 @@ public class SolrGazetteer {
 
         /* TODO: Consider different behaviors for PCLI vs. PCL[DFS] */
         ctryparams.set("q", "+feat_class:A +feat_code:(PCLI OR PCLIX OR TERR) +name_type:N");
-        /* As of 2015 we have 2300+ name variants for countries and territories */
+        /*
+         * As of 2015 we have 2300+ name variants for countries and territories
+         */
         ctryparams.set("rows", 5000);
 
         QueryResponse response = index.query(ctryparams);
@@ -334,7 +307,8 @@ public class SolrGazetteer {
                     existingCountry.addTerritory(C);
                 } else {
                     log.debug("{} alias of {}", C, existingCountry);
-                    existingCountry.addAlias(C.getName()); // all other metadata is same.
+                    existingCountry.addAlias(C.getName()); // all other metadata
+                                                          // is same.
                 }
                 continue;
             }
@@ -358,7 +332,8 @@ public class SolrGazetteer {
             C.isTerritory = true;
             // Other conditions?
         }
-        // Set this once.  Yes, indeed we would see this metadata repeated for every country entry.
+        // Set this once. Yes, indeed we would see this metadata repeated for
+        // every country entry.
         // Geo field is specifically Spatial4J lat,lon format.
         double[] xy = SolrProxy.getCoordinate(gazEntry, "geo");
         C.setLatitude(xy[0]);
@@ -375,51 +350,45 @@ public class SolrGazetteer {
     }
 
     /**
-     * <pre>
-     * Search the gazetteer using a phrase.
-     * The phrase will be quoted internally as it searches Solr
+     * <pre> Search the gazetteer using a phrase. The phrase will be quoted
+     * internally as it searches Solr
      *
-     *  e.g., search( "\"Boston City\"" )
+     * e.g., search( "\"Boston City\"" )
      *
-     * Solr Gazetteer uses OR as default joiner for clauses.  Without quotes
-     * the above search would be "Boston" OR "City" effectively.
+     * Solr Gazetteer uses OR as default joiner for clauses. Without quotes the
+     * above search would be "Boston" OR "City" effectively.
      *
      * </pre>
      *
-     * @param place_string
-     *            the place_string
+     * @param place_string the place_string
      * @return places List of place entries
-     * @throws SolrServerException
-     *             the solr server exception
+     * @throws SolrServerException the solr server exception
      */
-    public List<Place> search(String place_string) throws SolrServerException {
+    public List<Place> search(String place_string) throws SolrServerException, IOException {
         return search(place_string, false);
     }
 
     /**
      * Instance method that reuses a set of SolrParams for optimized search.
      * 
-     * <pre>
-     * Search the gazetteer using one of the following:
+     * <pre> Search the gazetteer using one of the following:
      *
-     *   a name or keyword
-     *   a Solr style fielded query, which by default includes bare keyword searches
+     * a name or keyword a Solr style fielded query, which by default includes
+     * bare keyword searches
      *
-     *  search( "\"Boston City\"" )
+     * search( "\"Boston City\"" )
      *
      * Solr Gazetteer uses OR as default joiner for clauses.
      *
      * </pre>
      *
-     * @param place
-     *            the place
-     * @param as_solr
-     *            the as_solr
+     * @param place the place
+     * @param as_solr the as_solr
      * @return places List of place entries
-     * @throws SolrServerException
-     *             the solr server exception
+     * @throws SolrServerException the solr server exception
+     * @throws IOException
      */
-    public List<Place> search(String place, boolean as_solr) throws SolrServerException {
+    public List<Place> search(String place, boolean as_solr) throws SolrServerException, IOException {
 
         if (as_solr) {
             params.set("q", place);
@@ -428,41 +397,34 @@ public class SolrGazetteer {
             params.set("q", "\"" + place + "\"");
         }
 
-        return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), params);
+        return SolrProxy.searchGazetteer(solr.getInternalSolrClient(), params);
     }
 
     /**
      * Find places located at a particular location.
      *
-     * @param yx
-     *            location
-     * @param withinKM
-     *            positive distance radius is required.
+     * @param yx location
+     * @param withinKM positive distance radius is required.
      * @return unsorted list of places near location
-     * @throws SolrServerException
-     *             on err
+     * @throws SolrServerException on err
      */
-    public List<Place> placesAt(LatLon yx, int withinKM) throws SolrServerException {
+    public List<Place> placesAt(LatLon yx, int withinKM) throws SolrServerException, IOException {
 
         geoLookup.set("pt", GeodeticUtility.formatLatLon(yx));
         geoLookup.set("d", withinKM);
-        return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), geoLookup);
+        return SolrProxy.searchGazetteer(solr.getInternalSolrClient(), geoLookup);
     }
 
     /**
      * Variation on placesAt().
      *
-     * @param yx
-     *            location
-     * @param withinKM
-     *            distance - required.
-     * @param feature
-     *            feature class
+     * @param yx location
+     * @param withinKM distance - required.
+     * @param feature feature class
      * @return unsorted list of places near location
-     * @throws SolrServerException
-     *             on err
+     * @throws SolrServerException on err
      */
-    public List<Place> placesAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
+    public List<Place> placesAt(LatLon yx, int withinKM, String feature) throws SolrServerException, IOException {
 
         /*
          */
@@ -473,16 +435,14 @@ public class SolrGazetteer {
         spatialQuery.set("pt", GeodeticUtility.formatLatLon(yx));
         // Example: Find places within 50KM, but only first N rows returned.
         spatialQuery.set("d", withinKM);
-        return SolrProxy.searchGazetteer(solr.getInternalSolrServer(), spatialQuery);
+        return SolrProxy.searchGazetteer(solr.getInternalSolrClient(), spatialQuery);
     }
 
     /**
      * Iterate through a list and choose a place closest to the given point
      * 
-     * @param yx
-     *            point of interest
-     * @param places
-     *            list of places
+     * @param yx point of interest
+     * @param places list of places
      * @return closest place
      */
     public static final Place closest(LatLon yx, List<Place> places) {
@@ -503,17 +463,13 @@ public class SolrGazetteer {
      * This is a reasonable guess. CAVEAT: This does not use Solr Spatial
      * location sorting.
      * 
-     * @param yx
-     *            location
-     * @param withinKM
-     *            distance in KM
-     * @param feature
-     *            feature type
+     * @param yx location
+     * @param withinKM distance in KM
+     * @param feature feature type
      * @return closest place to given location.
-     * @throws SolrServerException
-     *             on err
+     * @throws SolrServerException on err
      */
-    public Place placeAt(LatLon yx, int withinKM, String feature) throws SolrServerException {
+    public Place placeAt(LatLon yx, int withinKM, String feature) throws SolrServerException, IOException {
         List<Place> candidates = placesAt(yx, withinKM, feature);
         if (candidates == null || candidates.isEmpty()) {
             return null;
@@ -522,17 +478,17 @@ public class SolrGazetteer {
     }
 
     /**
-     * Given a name, find all locations matching that.
-     * Matches may be +/- 1 or 2 characters different.
+     * Given a name, find all locations matching that. Matches may be +/- 1 or 2
+     * characters different.
      * 
-     * <pre>
-     * search for "Fafu"
-     * Is "Fafu'" acceptable? then len tolerance is about +1
-     * IS "Fafu Airport" acceptable, then use feat_class:S and a much longer tolerance.
-     * </pre>
+     * <pre> search for "Fafu" Is "Fafu'" acceptable? then len tolerance is
+     * about +1 IS "Fafu Airport" acceptable, then use feat_class:S and a much
+     * longer tolerance. </pre>
+     * 
      * @param name
      * @param parametricQuery
-     * @param lenTolerance your choice for how much longer a valid matching name can be.
+     * @param lenTolerance your choice for how much longer a valid matching name
+     *            can be.
      * @return list of matching places
      * @throws ExtractionException
      */
@@ -540,10 +496,9 @@ public class SolrGazetteer {
 
         /*
          * Create a solr fielded query "field:Value AND|OR field:Value..."
-         * Xponents gazetteer fields:
-         *  name    -- stores general purpose full-text value
-         *  name_ar -- stores Arabic-specific full-text value
-         *  name_cjk -- stores CJK-specific full-text value
+         * Xponents gazetteer fields: name -- stores general purpose full-text
+         * value name_ar -- stores Arabic-specific full-text value name_cjk --
+         * stores CJK-specific full-text value
          */
         String q = String.format("%s +name:\"%s\"", parametricQuery, name);
 
@@ -552,21 +507,22 @@ public class SolrGazetteer {
          */
         try {
             int len = name.length();
-            List<Place> locs =  new ArrayList<>();
-            for (Place loc : this.search(q, true) ){
-                if (loc.getName().length()-len <= lenTolerance){
+            List<Place> locs = new ArrayList<>();
+            for (Place loc : this.search(q, true)) {
+                if (loc.getName().length() - len <= lenTolerance) {
                     locs.add(loc);
                 }
             }
             return locs;
-        } catch (SolrServerException sse) {
+        } catch (SolrServerException | IOException sse) {
             throw new ExtractionException("Query failed", sse);
         }
     }
 
     /**
-     * Find all places for a given gazetteer Place ID.  You'll find all the variants vary by name only.
-     * same place ID should have same feature coding, lat/lon and other metadata.
+     * Find all places for a given gazetteer Place ID. You'll find all the
+     * variants vary by name only. same place ID should have same feature
+     * coding, lat/lon and other metadata.
      * 
      * @param placeID
      * @return
@@ -575,28 +531,31 @@ public class SolrGazetteer {
     public List<Place> findPlacesById(String placeID) throws ExtractionException {
         try {
             return this.search("place_id:" + placeID, true);
-        } catch (SolrServerException sse) {
+        } catch (SolrServerException | IOException sse) {
             throw new ExtractionException("Query error using PlaceID. ID is purely alphanumeric", sse);
         }
     }
 
     /**
-     * TODO: This yields primarily ASCII transliterations/romznized versions of the given place.
-     * You may indeed find multiple locations with the same name.
-     * Your parametric query should include feature type (feat_code:P, etc.) and country code (cc:AB)
-     * to yield the most relevant locations for a given name.
+     * TODO: This yields primarily ASCII transliterations/romznized versions of
+     * the given place. You may indeed find multiple locations with the same
+     * name. Your parametric query should include feature type (feat_code:P,
+     * etc.) and country code (cc:AB) to yield the most relevant locations for a
+     * given name.
      * 
      * 
      * @param name
      * @param parametricQuery
-     * @param lenTolerance your choice for how much longer a valid matching name can be.
+     * @param lenTolerance your choice for how much longer a valid matching name
+     *            can be.
      * @return
      * @throws ExtractionException
      */
-    public List<Place> findPlacesRomanizedNameOf(String name, String parametricQuery, int lenTolerance) throws ExtractionException {
+    public List<Place> findPlacesRomanizedNameOf(String name, String parametricQuery, int lenTolerance)
+            throws ExtractionException {
         List<Place> results = new ArrayList<>();
         for (Place p : this.findPlaces(name, parametricQuery, lenTolerance)) {
-            for (Place pid : this.findPlacesById(p.getPlaceID())){
+            for (Place pid : this.findPlacesById(p.getPlaceID())) {
                 if (TextUtils.isASCII(pid.getName().getBytes())) {
                     results.add(pid);
                 }

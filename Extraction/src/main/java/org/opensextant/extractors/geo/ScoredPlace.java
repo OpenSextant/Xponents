@@ -29,7 +29,8 @@ package org.opensextant.extractors.geo;
 import org.opensextant.data.Place;
 
 /**
- * A class to hold a Place and a score together. Used by PlaceCandidate to rank places.
+ * A class to hold a Place and a score together. Used by PlaceCandidate to rank
+ * places.
  * 
  * @author dlutz
  * @author ubaldino
@@ -55,8 +56,8 @@ public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
     }
 
     /**
-     * Ordering: higher score comes first in our sortable lists. So A.score &gt; B.score yields -1, so A is ordered
-     * first.
+     * Ordering: higher score comes first in our sortable lists. So A.score &gt;
+     * B.score yields -1, so A is ordered first.
      */
     @Override
     public int compareTo(ScoredPlace o) {
@@ -68,11 +69,12 @@ public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
         }
         return 0;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         if (getName() != null) {
-            return String.format("%s (%s, %s, %s), score=%03.2f", getName(), getAdmin1(), this.getCountryCode(), getFeatureCode(), getScore());
+            return String.format("%s (%s, %s, %s), score=%03.2f", getName(), getAdmin1(), getCountryCode(),
+                    getFeatureCode(), getScore());
         }
         return "No Name";
     }

@@ -33,10 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -50,16 +50,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * As Xponents is a multi-core instance of Solr, a single default solr home and default solr core
- * does not make sense.  Each wrapper around Solr (via SolrProxy) needs to name the solr home and an explicit core name.
+ * As Xponents is a multi-core instance of Solr, a single default solr home and
+ * default solr core does not make sense. Each wrapper around Solr (via
+ * SolrProxy) needs to name the solr home and an explicit core name.
  *
  * @author ubaldino
  */
 public class SolrProxy extends SolrUtil {
 
-    /**A single method to help find a suitable value for SOLR HOME
+    /**
+     * A single method to help find a suitable value for SOLR HOME
      *
      * If given is null, then system variables are checked.
+     * 
      * @param given solr home.
      */
     public static String deriveSolrHome(String given) throws ConfigException {
@@ -97,38 +100,38 @@ public class SolrProxy extends SolrUtil {
      */
     public SolrProxy(URL url) throws IOException {
         this.server_url = url;
-        solrServer = initializeHTTP(this.server_url);
+        solrClient = initializeHTTP(this.server_url);
     }
 
     /**
      * Initializes a Solr server from the SOLR_HOME environment variable.
      *
-     * @param core  name of solr core
+     * @param core name of solr core
      * @throws ConfigException cfg err
      */
     public SolrProxy(String core) throws ConfigException {
         this.server_url = null;
         this.solrHome = deriveSolrHome(null);
         this.coreName = core;
-        solrServer = setupCore(solrHome, core);
+        solrClient = setupCore(solrHome, core);
     }
 
     /**
      * Initializes a Solr server from the SOLR_HOME environment variable.
      *
      * @param solr_home the solr_home
-     * @param core  name of solr core
+     * @param core name of solr core
      * @throws ConfigException cfg err
      */
     public SolrProxy(String solr_home, String core) throws ConfigException {
         this.server_url = null;
         solrHome = solr_home;
         this.coreName = core;
-        solrServer = setupCore(solrHome, core);
+        solrClient = setupCore(solrHome, core);
     }
 
     protected Logger logger = LoggerFactory.getLogger(SolrProxy.class);
-    protected SolrServer solrServer = null;
+    protected SolrClient solrClient = null;
     private UpdateRequest solrUpdate = null;
     protected URL server_url = null;
     private boolean writable = false;
@@ -140,6 +143,7 @@ public class SolrProxy extends SolrUtil {
     /**
      *
      * Is Solr server instance allowed to write to index?
+     * 
      * @return true if index is intended to be writable.
      */
     public boolean isWritable() {
@@ -153,12 +157,10 @@ public class SolrProxy extends SolrUtil {
      * @return Instance of a Solr server
      * @throws MalformedURLException
      */
-    public static SolrServer initializeHTTP(URL url) throws MalformedURLException {
+    public static SolrClient initializeHTTP(URL url) throws MalformedURLException {
 
-        HttpSolrServer server = new HttpSolrServer(url.toString());
-        server.setAllowCompression(true);
-
-        return server;
+        HttpSolrClient client = new HttpSolrClient.Builder(url.toString()).allowCompression(true).build();
+        return client;
 
     }
 
@@ -166,13 +168,12 @@ public class SolrProxy extends SolrUtil {
      * Creates an EmbeddedSolrServer given solr home &amp; the core to use.
      * These may be null and you get the default.
      *
-     * @param _solrHome  solr home
-     * @param _coreName  name of core
+     * @param _solrHome solr home
+     * @param _coreName name of core
      * @return the embedded solr server
      * @throws ConfigException on err
      */
-    public static EmbeddedSolrServer setupCore(String _solrHome, String _coreName)
-            throws ConfigException {
+    public static EmbeddedSolrServer setupCore(String _solrHome, String _coreName) throws ConfigException {
 
         try {
             CoreContainer solrContainer;
@@ -187,8 +188,7 @@ public class SolrProxy extends SolrUtil {
             return new EmbeddedSolrServer(solrContainer, _coreName);
 
         } catch (Exception err) {
-            throw new ConfigException("Failed to set up Embedded Solr at " + _solrHome + " CORE:"
-                    + _coreName, err);
+            throw new ConfigException("Failed to set up Embedded Solr at " + _solrHome + " CORE:" + _coreName, err);
         }
     }
 
@@ -199,9 +199,10 @@ public class SolrProxy extends SolrUtil {
      * @param qparams search parameters
      * @return list of places
      * @throws SolrServerException on err
+     * @throws IOException
      */
-    public static List<Place> searchGazetteer(SolrServer index, SolrParams qparams)
-            throws SolrServerException {
+    public static List<Place> searchGazetteer(SolrClient index, SolrParams qparams)
+            throws SolrServerException, IOException {
 
         QueryResponse response = index.query(qparams, SolrRequest.METHOD.GET);
 
@@ -262,17 +263,17 @@ public class SolrProxy extends SolrUtil {
     }
 
     /**
-     *  Reopen an existing solr proxy.
+     * Reopen an existing solr proxy.
      *
      * @throws ConfigException the config exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void openIndex() throws ConfigException, IOException {
-        if (solrServer == null) {
+        if (solrClient == null) {
             if (server_url != null) {
-                solrServer = initializeHTTP(server_url);
+                solrClient = initializeHTTP(server_url);
             } else {
-                solrServer = setupCore(solrHome, coreName);
+                solrClient = setupCore(solrHome, coreName);
             }
         }
     }
@@ -284,7 +285,7 @@ public class SolrProxy extends SolrUtil {
      * @throws SolrServerException the solr server exception
      */
     public void optimize() throws IOException, SolrServerException {
-        solrServer.optimize(true, false); // Don't wait'
+        solrClient.optimize(true, false); // Don't wait'
     }
 
     /**
@@ -302,7 +303,7 @@ public class SolrProxy extends SolrUtil {
      * In the event of a failure all records since last "saveIndex" would be
      * lost and should be resubmitted.
      *
-     * @param commit  true, if we should commit updates
+     * @param commit true, if we should commit updates
      */
     public void saveIndex(boolean commit) {
         if (solrUpdate == null) {
@@ -311,9 +312,9 @@ public class SolrProxy extends SolrUtil {
 
         logger.info("Saving records to index");
         try {
-            solrServer.request(solrUpdate);
+            solrClient.request(solrUpdate);
             if (commit) {
-                solrServer.commit();
+                solrClient.commit();
             }
             solrUpdate.clear();
             solrUpdate = null;
@@ -336,21 +337,31 @@ public class SolrProxy extends SolrUtil {
     }
 
     /**
+     * @throws IOException
      *
      */
-    public void close() {
+    public void close() throws IOException {
         if (isWritable()) {
             saveIndex();
         }
 
-        if (solrServer != null) {
-            solrServer.shutdown();
-            solrServer = null;
+        if (solrClient != null) {
+            solrClient.close();
+            solrClient = null;
         }
     }
 
-    public SolrServer getInternalSolrServer() {
-        return solrServer;
+    /**
+     * @deprecated using SolrClient terminology now.
+     * @return
+     */
+    @Deprecated
+    public SolrClient getInternalSolrServer() {
+        return solrClient;
+    }
+
+    public SolrClient getInternalSolrClient() {
+        return solrClient;
     }
 
 }

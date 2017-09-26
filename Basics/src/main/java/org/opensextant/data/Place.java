@@ -62,8 +62,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     protected String admin2 = null;
 
     /**
-     * optional postal code, usually associated with ADM1 code.
-     * Typical not the same value, but may correspond
+     * optional postal code, usually associated with ADM1 code. Typical not the
+     * same value, but may correspond
      */
     private String admin1PostalCode = null;
     private String placePostalCode = null;
@@ -74,10 +74,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * Creates a new instance of Geobase
      *
-     * @param placeId
-     *            primary key or ID for this place
-     * @param nm
-     *            place name
+     * @param placeId primary key or ID for this place
+     * @param nm place name
      */
     public Place(String placeId, String nm) {
         super(placeId, null);
@@ -115,8 +113,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * Set the country object and the local country ID code.
      * 
-     * @param c
-     *            Country object which contains or is associated with this Place.
+     * @param c Country object which contains or is associated with this Place.
      */
     public void setCountry(Country c) {
         country = c;
@@ -142,8 +139,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * Compat: set country_id aka CountryCode
      * 
-     * @param cc
-     *            a country code. Caller's choice as far as code code standard used.
+     * @param cc a country code. Caller's choice as far as code code standard
+     *            used.
      */
     public void setCountryCode(String cc) {
         country_id = cc;
@@ -179,8 +176,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * Wrapper around GeoBase.setKey for compat
      * 
-     * @param id
-     *            place identity
+     * @param id place identity
      */
     public final void setPlaceID(String id) {
         setKey(id);
@@ -236,7 +232,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     protected String admin2Name = null;
 
     /**
-     * Represent the geographic hierarchy as a string country/province/county/city.
+     * Represent the geographic hierarchy as a string
+     * country/province/county/city.
      */
     private String hierarchicalPath = null;
 
@@ -286,8 +283,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     }
 
     /**
-     * if feature class for this location is 'P' for populated place.
-     * TODO: Not sure if this is part of Geocoding interface.
+     * if feature class for this location is 'P' for populated place. TODO: Not
+     * sure if this is part of Geocoding interface.
      * 
      * @return true if feature class is typically populated
      */
@@ -330,8 +327,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     /**
      *
-     * @param bias
-     *            name bias, float
+     * @param bias name bias, float
      */
     public void setName_bias(Double bias) {
         name_bias = bias;
@@ -349,8 +345,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     /**
      *
-     * @param bias
-     *            identity bias
+     * @param bias identity bias
      */
     public void setId_bias(Double bias) {
         id_bias = bias;
@@ -371,11 +366,10 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     }
 
     /**
-     * With multiple data sources there is no standard way of saying this place == that place.
-     * So we compare features, locations, Ids, etc.
+     * With multiple data sources there is no standard way of saying this place
+     * == that place. So we compare features, locations, Ids, etc.
      * 
-     * @param other
-     *            another Place
+     * @param other another Place
      */
     public int compareTo(Place other) {
         // Identity Matches?
@@ -405,11 +399,11 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     private int precision = -1;
 
     /**
-     * Xponents version of precision is number of meters of error, approximately.
-     * precision = 15 means the lat/lon on this Place object is within 15 m of the true location.
+     * Xponents version of precision is number of meters of error,
+     * approximately. precision = 15 means the lat/lon on this Place object is
+     * within 15 m of the true location.
      *
-     * @param prec,
-     *            meters of error
+     * @param prec, meters of error
      */
     public void setPrecision(int prec) {
         precision = prec;
@@ -455,8 +449,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     /**
      *
-     * @param admName
-     *            name of the administrative boundary that contains this place.
+     * @param admName name of the administrative boundary that contains this
+     *            place.
      */
     public void setAdminName(String admName) {
         this.adminName = admName;
@@ -516,8 +510,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     }
 
     /**
-     * City-level postal code, that may be something like a zip.
-     * Thinking world-wide, not everyone calls these zipcodes, as in the US.
+     * City-level postal code, that may be something like a zip. Thinking
+     * world-wide, not everyone calls these zipcodes, as in the US.
      */
     public String getPlacePostalCode() {
         return placePostalCode;

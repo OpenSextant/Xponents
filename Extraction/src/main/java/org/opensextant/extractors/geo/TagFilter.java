@@ -36,8 +36,7 @@ import org.supercsv.prefs.CsvPreference;
 
 public class TagFilter extends MatchFilter {
     /**
-     * This may need to be turned off for processing lower-case or dirty
-     * data.
+     * This may need to be turned off for processing lower-case or dirty data.
      */
     boolean filter_stopwords = true;
     boolean filter_on_case = true;
@@ -52,15 +51,15 @@ public class TagFilter extends MatchFilter {
     private Set<String> generalLangId = new HashSet<>();
 
     /**
-     * NOTE:  This expects the files are all available. This fails if resource files are missing.
+     * NOTE: This expects the files are all available. This fails if resource
+     * files are missing.
      * 
-     * @throws ConfigException if any file has a problem. 
+     * @throws ConfigException if any file has a problem.
      */
     public TagFilter() throws IOException, ConfigException {
         super();
         stopTerms = new HashSet<>();
-        String[] defaultNonPlaceFilters = {
-                "/filters/non-placenames.csv", // GENERAL
+        String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", // GENERAL
                 "/filters/non-placenames,spa.csv", // SPANISH 
                 "/filters/non-placenames,acronym.csv" // ACRONYMS
         };
@@ -74,9 +73,8 @@ public class TagFilter extends MatchFilter {
          * Whereas other languages (es, it, etc.) are provided in format='snowball'
          * StopFilterFactory is needed to load snowball filters.
          */
-        String[] langSet = { "ja", "th", "tr", "id", "ar", 
-                "ru", "it", "pt", "de", "nl"
-                /*, "es"*/};  // Español (es) is handled by adhoc list of spanish terms above.
+        String[] langSet = { "ja", "th", "tr", "id", "ar", "ru", "it", "pt", "de", "nl"
+                /*, "es"*/ };  // Español (es) is handled by adhoc list of spanish terms above.
         loadLanguageStopwords(langSet);
     }
 
@@ -103,14 +101,14 @@ public class TagFilter extends MatchFilter {
          * More optional lists.
          */
         // KOREAN
-        String url = "/filters/carrot2-stopwords.ko";
+        String url = "/lang/carrot2-stopwords.ko";
         String lg = "ko";
         URL obj = URL.class.getResource(url);
         if (obj != null) {
             loadStopSet(obj, lg);
         }
         // CHINESE
-        url = "/filters/carrot2-stopwords.zh";
+        url = "/lang/carrot2-stopwords.zh";
         lg = "zh";
         obj = URL.class.getResource(url);
         if (obj != null) {
@@ -118,7 +116,7 @@ public class TagFilter extends MatchFilter {
         }
 
         // VIETNAMESE
-        url = "/filters/vietnamese-stopwords.txt";
+        url = "/lang/vietnamese-stopwords.txt";
         lg = "vi";
         obj = URL.class.getResource(url);
         if (obj != null) {
@@ -152,15 +150,17 @@ public class TagFilter extends MatchFilter {
     }
 
     /**
-     * Default filtering rules:
-     * (a) If filter is in case-sensitive mode (DEFAULT), all lower case matches are ignored; only mixed case or upper case passes
-     * (b) If match term, t, is in stop word list it is filtered out. Case is ignored.
+     * Default filtering rules: (a) If filter is in case-sensitive mode
+     * (DEFAULT), all lower case matches are ignored; only mixed case or upper
+     * case passes (b) If match term, t, is in stop word list it is filtered
+     * out. Case is ignored.
      * 
-     * TODO: filter rules -- if text match is all lower case and filter is case-sensitive, then this 
-     * filters out any lower case matches. Not optimal.  This should take into account alpha-case of document.
+     * TODO: filter rules -- if text match is all lower case and filter is
+     * case-sensitive, then this filters out any lower case matches. Not
+     * optimal. This should take into account alpha-case of document.
      * 
-     * TODO: trivial for the general case, but important: stopTerms is hashed only by lower case value, so native-case 
-     * lookup is not possible.
+     * TODO: trivial for the general case, but important: stopTerms is hashed
+     * only by lower case value, so native-case lookup is not possible.
      */
     @Override
     public boolean filterOut(String t) {
@@ -180,8 +180,8 @@ public class TagFilter extends MatchFilter {
     /**
      * Experimental.
      * 
-     * Using proper Language ID (ISO 2-char for now), determine if the 
-     * given term, t, is a stop term in that language.
+     * Using proper Language ID (ISO 2-char for now), determine if the given
+     * term, t, is a stop term in that language.
      * 
      * @param t
      * @param langId
@@ -207,7 +207,7 @@ public class TagFilter extends MatchFilter {
         if (generalLangId.contains(langId)) {
             return false;
         }
-        
+
         /* EXPERIMENTAL.
          * 
          * But if langID is given, we first consider if text in document
@@ -232,16 +232,16 @@ public class TagFilter extends MatchFilter {
         if (cjk && filterOutCJK(t)) {
             return true;
         }
-        
+
         /*
          * FILTER out lower case matches for non-English, non-CJK texts.
          * If document is mixed case.  That is we still expect/assume interesting
          * place names to be proper names.  However, if you find longer name matches ~10 chars or longer
          * as lower case names, then let them pass. 10 chars is arbitrary, but approx. 1 word threshold. 
          */
-        if (!cjk){
-            if (!docIsLower && !docIsUpper){
-                if (t.isLower() && t.getLength()< 10){
+        if (!cjk) {
+            if (!docIsLower && !docIsUpper) {
+                if (t.isLower() && t.getLength() < 10) {
                     return true;
                 }
             }
@@ -259,15 +259,30 @@ public class TagFilter extends MatchFilter {
     }
 
     /**
+     * 
+     * @param langId lang ID to check.
+     * @param termLower lower case term.
+     * @return
+     */
+    public boolean filterOut(String langId, String termLower) {
+
+        String lg = "en"; // default? eek.
+
+        if (langStopFilters.containsKey(langId != null ? langId : lg)) {
+            Set<Object> terms = langStopFilters.get(langId);
+            return terms.contains(termLower);
+        }
+        return false;
+    }
+
+    /**
      * Experimental. Hack.
      * 
-     * Due to bi-gram shingling with CJK languages - Chinese, Japanese, Korean - 
-     * the matcher really over-matches, e.g.  For really short matches, let's rule out obvious bad matches.
-     * <pre>
-     * ... に た ...  input text matched
-     *  にた          gazetteer place name. 
-     * </pre>
-     * TOOD: make use of better tokenizer/matcher in SolrTextTagger configuration for CJK 
+     * Due to bi-gram shingling with CJK languages - Chinese, Japanese, Korean -
+     * the matcher really over-matches, e.g. For really short matches, let's
+     * rule out obvious bad matches. <pre> ... に た ... input text matched にた
+     * gazetteer place name. </pre> TOOD: make use of better tokenizer/matcher
+     * in SolrTextTagger configuration for CJK
      * @param t
      * @return
      */
@@ -295,14 +310,12 @@ public class TagFilter extends MatchFilter {
     /**
      * Exclusions have two columns in a CSV file. 'exclusion', 'category'
      *
-     * "#" in exclusion column implies a comment.
-     * Call is responsible for getting I/O stream.
-     *  
-     * @param filestream
-     *            URL/file with exclusion terms
+     * "#" in exclusion column implies a comment. Call is responsible for
+     * getting I/O stream.
+     * 
+     * @param filestream URL/file with exclusion terms
      * @return set of filter terms
-     * @throws ConfigException
-     *             if filter is not found
+     * @throws ConfigException if filter is not found
      */
     public static Set<String> loadExclusions(InputStream filestream) throws ConfigException {
         /*
