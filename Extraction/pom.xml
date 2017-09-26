@@ -14,7 +14,7 @@
     <artifactId>opensextant-xponents</artifactId>
 
     <properties>
-        <solr.version>6.6.0</solr.version>
+        <solr.version>6.6.1</solr.version>
     </properties>
 
     <dependencies>
@@ -335,7 +335,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>${project.basedir}/../solr/solr4/gazetteer/conf</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/../solr/etc/gazetteer</additionalClasspathElement>
+                        <additionalClasspathElement>${project.basedir}/../solr/solr6/gazetteer/conf</additionalClasspathElement>
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
