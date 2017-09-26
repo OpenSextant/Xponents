@@ -40,6 +40,10 @@ case $1 in
      ;;
 esac
 
+pushd ../Extraction
+mvn dependency:copy-dependencies
+popd
+
 export PYTHONPATH=$XPONENTS/piplib
 GAZ_CONF=etc/gazetteer
 SOLR_CORE_VER=solr6

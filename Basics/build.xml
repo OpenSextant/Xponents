@@ -1,45 +1,23 @@
 <project>
 
-    <property file="${basedir}/../build.properties" />
-    <property name="geonames.meta.cache" value="${basedir}/src/main/resources/geonames.org"/>
+	<property file="${basedir}/../solr/build.properties" />
+	<property name="geonames.meta.cache" value="${basedir}/src/main/resources/geonames.org" />
 
-    <!-- setup proxy -->
-    <target name="proxy" >
-      <property name="proxy.port" value="80"/>
-      <property name="proxy.user" value=""/>
-      <property name="proxy.pass" value=""/>
-      <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
-    </target>
-                            <target  name="get-meta">
+	<!-- setup proxy -->
+	<target name="proxy">
+		<property name="proxy.port" value="80" />
+		<property name="proxy.user" value="" />
+		<property name="proxy.pass" value="" />
+		<setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
+	</target>
+	<target name="get-meta">
+		<get src="http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt" dest="${basedir}/src/main/resources/" verbose="true" usetimestamp="true" />
+		<mkdir dir="${geonames.meta.cache}" />
 
-                                <!-- Frustrating p.o.s.  LOC site returns a Gzip file for something 
-                                     that is obviously plain text.  Ant gets HTTP/403; Wget gets a Gzip binary
-                                <get
-                                    src="http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt"
-                                    dest="${basedir}/src/main/resources/ISO-639-2_utf-8.txt.gz"
-                                    verbose="true" usetimestamp="true" />
-
-                                <gunzip src="${basedir}/src/main/resources/ISO-639-2_utf-8.txt.gz" 
-                                    dest="${basedir}/src/main/resources/ISO-639-2_utf-8.txt" />
-                                 -->
-                                    
-                                <mkdir dir="${geonames.meta.cache}" />
-                                
-                                <get
-                                    src="http://download.geonames.org/export/dump/timeZones.txt"
-                                    dest="${geonames.meta.cache}"
-                                    verbose="true" usetimestamp="true" />
-                                <get
-                                    src="http://download.geonames.org/export/dump/countryInfo.txt"
-                                    dest="${geonames.meta.cache}"
-                                    verbose="true" usetimestamp="true" />
-                                <get
-                                    src="http://download.geonames.org/export/dump/cities15000.zip"
-                                    dest="${geonames.meta.cache}"
-                                    verbose="true" usetimestamp="true" />
-                                <unzip
-                                    src="${geonames.meta.cache}/cities15000.zip"
-                                    dest="${geonames.meta.cache}" />
-                            </target>
+		<get src="http://download.geonames.org/export/dump/timeZones.txt" dest="${geonames.meta.cache}" verbose="true" usetimestamp="true" />
+		<get src="http://download.geonames.org/export/dump/countryInfo.txt" dest="${geonames.meta.cache}" verbose="true" usetimestamp="true" />
+		<get src="http://download.geonames.org/export/dump/cities15000.zip" dest="${geonames.meta.cache}" verbose="true" usetimestamp="true" />
+		<unzip src="${geonames.meta.cache}/cities15000.zip" dest="${geonames.meta.cache}" />
+	</target>
 
 </project>
