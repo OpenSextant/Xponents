@@ -2,8 +2,6 @@ if [ ! -d ./log ] ;  then
   mkdir log
 fi
 
-CMD=$1
-OPT=$2
 SOLR_PORT=7000
 SERVER=localhost:$SOLR_PORT
 unset http_proxy
@@ -19,11 +17,39 @@ if [ ! -d $XPONENTS/piplib ] ; then
    exit 1
 fi
 
+do_start=0
+do_clean=0
+do_data=0
+proxy='' 
+case $1 in 
+  'data')
+     do_data=1
+     shift
+     ;;
+  'start')
+     do_start=1
+     shift
+     ;;
+  'clean')
+     do_clean=1
+     shift
+     ;;
+  'proxy')
+     proxy='proxy'
+     shift
+     ;;
+esac
+
 export PYTHONPATH=$XPONENTS/piplib
 GAZ_CONF=etc/gazetteer
 SOLR_CORE_VER=solr6
 
-echo "Ensure you have downloaded the various Census names files or other name lists for exclusions..."
+if [ $do_data -eq 1 ] ; then 
+  echo "Acquiring Census data files for names"
+  ant -f build.xml $proxy get-gaz-resources
+  ant -f build.xml $proxy taxcat-jrc
+fi
+
 python ./script/gaz_assemble_person_filter.py 
 
 if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
@@ -33,8 +59,8 @@ fi
 
 sleep 2 
 
-if [ "$CMD" = 'start' ]; then 
-  if [ "$OPT" = 'clean' ]; then 
+if [ $do_start -eq 1 ]; then 
+  if [ $do_clean -eq 1 ]; then 
     ant -f ./build.xml clean init
   fi
 

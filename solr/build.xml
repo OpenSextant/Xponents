@@ -16,7 +16,8 @@
     <property name="solr.runtime.log" value="${basedir}/solr6-dist/server/logs" />
     <property name="maven.lib" value="${user.home}/.m2/repository" />
     <property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip" />
-    <property name="jrc.data" value="${solr.home}/../etc/taxcat/data"/>
+    <property name="jrc.data" value="${basedir}/etc/taxcat/data"/>
+    <property name="gaz.data" value="${basedir}/etc/gazetteer/"/>
 
     <path id="runtime.classpath">
         <!-- TODO: need to run these routines to fully automate CLASSPATH items here. 
@@ -49,6 +50,16 @@
             file="${maven.lib}/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
     </target>
 
+    <target name="get-gaz-resources">
+        <mkdir dir="${gaz.data}/filters/census"/>
+        <get dest="${gaz.data}/filters/census">
+           <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.male.first"/>
+           <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.female.first"/>
+           <url url="https://www2.census.gov/topics/genealogy/2010surnames/names.zip"/>
+        </get>
+        <unzip dest="${gaz.data}/filters/census" src="${gaz.data}/filters/census/names.zip" />
+    </target>
+
     <target name="gaz-meta">
         <!-- depends="stopwords" -->
         <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
@@ -64,7 +75,12 @@
         <get dest="${jrc.data}" skipexisting="true">
             <url url="${jrc.url}"/>
         </get>
-        <gunzip dest="${jrc.data}" src="${jrc.data}/entities.gzip" />
+        <!-- <gunzip dest="${jrc.data}" src="${jrc.data}/entities.gzip" />-->
+        <move file="${jrc.data}/entities.gzip" tofile="${jrc.data}/entities.gz"/>
+        <exec executable="gunzip" dir="${jrc.data}">
+           <arg value="${jrc.data}/entities.gz"/>
+        </exec>
+        <move file="${jrc.data}/entities" tofile="${jrc.data}/entities.txt"/>
     </target>
 
     <target name="init" depends="setup,gaz-meta,copy-libs">

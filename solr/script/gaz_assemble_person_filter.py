@@ -23,16 +23,22 @@ def is_comment(s):
 # USGS/Census top 1000 surnames
 #  To counter-act these names, add entries to  conf/inclusions/adhoc-places.txt
 #
-fpath =   os.path.join(GAZ_CONF, 'filters/census/top1000-surnames-cy2010.csv')
+# Formerly manual download: filters/census/top1000-surnames-cy2010.csv
+fpath =   os.path.join(GAZ_CONF, 'filters/census/Names_2010Census.csv')
+TOP_N=1500
 f1 =  os.path.abspath( fpath )
 if os.path.exists(f1):
     print "\tParse ", f1
-    fh = open(f1, 'rb')
-    csvh = csv.reader(fh, delimiter=',')
-    for row in csvh:
-        if not is_comment(row[0]):
-            names.add(unicode(row[0]).strip().lower())
-    fh.close()
+    with open(f1, 'rb') as fh:
+        counter=0
+        csvh = csv.reader(fh, delimiter=',')
+        for row in csvh:
+            if not is_comment(row[0]):
+                names.add(unicode(row[0]).strip().lower())
+                counter += 1
+                if counter > TOP_N: 
+                    print ("Found top N names")
+                    break
 else:
    print "Census data not present:", fpath
 
