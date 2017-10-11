@@ -12,7 +12,7 @@ The intent of Xponents is to provide the extraction without too much infrastruct
 The major sub-modules include:
 
 * **Extraction**: Fully developed entity tagging, processing, filtering, and formatting API solutions for Geography, Time, Patterns, and Keywords.
-* **Xponents Solr**: ./solr folder containing Solr 4.x (soon 6.x) configurations, scripts and resources for supporting fast, rich tagging with Solr and SolrTextTagger
+* **Xponents Solr**: ./solr folder containing Solr 6.x configurations, scripts and resources for supporting fast, rich tagging with Solr and SolrTextTagger
 * **XText**: Mature solutions for getting text and metadata from binary formats.
 * **Basics** and **Patterns** are two supporting modules that are used as the Xponents lingua franca throughout the SDK.
 
@@ -28,6 +28,7 @@ Related sub-modules that employ these SDKs:
 Release History
 ---------------
 
+    Xponents 2.10 Sept 2017 v2.10.0 - Solr 6 support, Java 8 only, SolrTextTagger 2.4
     Xponents 2.9, Jul 2017  v2.9.9  - Improved stop filters and other geotagging and KW tagging improvements
     Xponents 2.9, Apr 2017  v2.9.8  - refactored XLayer, added trivial match filters; updated versions of commons libs
     Xponents 2.9, Feb 2017  v2.9.7  - minor tests and additional filters added; minor tweak for Curacao
