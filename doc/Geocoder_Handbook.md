@@ -4,7 +4,7 @@ Geocoder's Handbook for Xponents
 
 **Copyright** OpenSextant.org, 2017
 
-**Video**: "Discoverying World Geography in Your Data",  presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. https://www.youtube.com/watch?v=44v2WljG1R0, at minute 29:50. (12 minute talk)
+**Video**: **["Discoverying World Geography in Your Data"](https://www.youtube.com/watch?v=44v2WljG1R0)**,  presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
 
 Welcome to Xponents.  We realize geocoding text or data can be tedious and mind numbing.
 Hopefully this handbook will help you walk through the techniques defined in Xponents
