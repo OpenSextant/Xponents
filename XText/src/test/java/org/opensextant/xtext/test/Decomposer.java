@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.opensextant.xtext.ConvertedDocument;
-import org.opensextant.xtext.XText;
 import org.opensextant.xtext.converters.EmbeddedContentConverter;
 
 public class Decomposer {

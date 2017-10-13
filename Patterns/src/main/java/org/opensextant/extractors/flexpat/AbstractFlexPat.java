@@ -17,7 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * FlexPat Extractor -- given a set of pattern families, extract, filter and normalize matches.
+ * 
  * @author ubaldino
  */
 public abstract class AbstractFlexPat implements Extractor {
@@ -44,8 +45,11 @@ public abstract class AbstractFlexPat implements Extractor {
 
     /**
      * Create a pattern manager given the input stream and the file name.
+     *
+     * @param s stream of patterns config file
+     * @param name app name
      * @return the regex pattern manager
-     * @throws java.net.MalformedURLException config error
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     protected abstract RegexPatternManager createPatternManager(InputStream s, String name)
             throws IOException;

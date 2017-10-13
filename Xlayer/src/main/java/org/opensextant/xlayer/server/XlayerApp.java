@@ -1,18 +1,14 @@
 package org.opensextant.xlayer.server;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.opensextant.ConfigException;
-import org.opensextant.extraction.MatchFilter;
-import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.util.FileUtility;
 import org.restlet.Application;
 import org.restlet.Context;
 import org.restlet.Restlet;
-import org.restlet.routing.Router;
 
 /**
  * @author ubaldino

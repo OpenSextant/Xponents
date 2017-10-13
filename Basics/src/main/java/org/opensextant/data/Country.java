@@ -144,7 +144,7 @@ public class Country extends Place {
     /**
      * Refactor -- use JodaTime and the TZDB more formally. For now, tzdb tracks the timezone metadata.
      * 
-     * @param tz
+     * @param tz - Country.TZ object
      */
     public void addTimezone(TZ tz) {
         String l = tz.label.toLowerCase();
@@ -180,10 +180,10 @@ public class Country extends Place {
         /**
          * Parse error will be thrown on invalid data.
          * Nulls or empty fields are allowable.  
-         * @param l
-         * @param utc
-         * @param dst
-         * @param raw
+         * @param l   timezone label
+         * @param utc  UTC offset
+         * @param dst  UTC offset for Daylight savings
+         * @param raw  UTC offset
          */
         public TZ(String l, String utc, String dst, String raw) {
             label = l;
@@ -327,7 +327,7 @@ public class Country extends Place {
 
     /**
      * 
-     * @param langid
+     * @param langid lang ID string
      * @return true if language given matches primary language
      */
     public boolean isPrimaryLanguage(String langid) {
@@ -360,7 +360,7 @@ public class Country extends Place {
 
     /**
      * Return the full list of TZ.
-     * @return
+     * @return full list of TZ as hashmap
      */
     public Map<String, TZ> getTZDatabase() {
         return tzdb;
@@ -379,7 +379,7 @@ public class Country extends Place {
      * We do not make any political statements here. You can change the underlying flat file data
      * country-names-xxxx.csv anyway you want.
      * 
-     * @param n
+     * @param n name of country or territory
      * @return true if this country owns the named territory.
      */
     public boolean ownsTerritory(String n) {
@@ -397,7 +397,7 @@ public class Country extends Place {
      * List the territories for this country.
      * Returns an empty list if no territories associated.
      * 
-     * @return
+     * @return list of Territories, that are Country objects flagged with isTerritory = true
      */
     public Collection<Country> getTerritories() {
         return territories;

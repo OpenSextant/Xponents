@@ -747,10 +747,10 @@ public class FileUtility {
      * The do all method.  Load the dictionary from stream
      * This closes the stream when done.
      * 
-     * @param io
-     * @param case_sensitive
+     * @param io stream
+     * @param case_sensitive true if data should be loaded preserving case
      * @return set of phrases from file.  
-     * @throws IOException
+     * @throws IOException on IO error
      */
     public static Set<String> loadDict(InputStream io, boolean case_sensitive) throws IOException {
 

@@ -95,7 +95,7 @@ public final class PoliPatternManager extends RegexPatternManager {
      * @param fam  pattern family
      * @param rule pattern rule ID
      * @param desc optional description
-     * @return
+     * @return flexpat pattern
      */
     @Override
     protected RegexPattern create_pattern(String fam, String rule, String desc) {

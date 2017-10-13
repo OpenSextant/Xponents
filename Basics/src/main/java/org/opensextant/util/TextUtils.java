@@ -149,7 +149,7 @@ public class TextUtils {
 
     /**
      * If a string has extended latin diacritics.
-     * @param s
+     * @param s string to test
      * @return true if a single diacritic is found.
      */
     public final static boolean hasDiacritics(final String s) {
@@ -1709,8 +1709,8 @@ public class TextUtils {
     /**
      * Count number of non-alphanumeric chars are present.
      * 
-     * @param t
-     * @return
+     * @param t text
+     * @return count of chars
      */
     public static int countNonText(final String t) {
 

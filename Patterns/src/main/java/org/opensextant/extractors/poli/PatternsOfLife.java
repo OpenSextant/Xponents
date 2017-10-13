@@ -87,7 +87,7 @@ public class PatternsOfLife extends AbstractFlexPat {
     /**
      * Extractor interface: getName
      *
-     * @return
+     * @return extractor name
      */
     @Override
     public String getName() {

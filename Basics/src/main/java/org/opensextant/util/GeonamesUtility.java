@@ -255,7 +255,7 @@ public class GeonamesUtility {
      * 
      * REFERENCE: https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
      * 
-     * @param utc
+     * @param utc UTC offset
      * @return approximated longitude, in degrees
      */
     public final static int approximateLongitudeForUTCOffset(final int utc) {
@@ -306,7 +306,7 @@ public class GeonamesUtility {
      * E.g., Boston and New York US standard time: GMT-0500, DST: GMT-0400
      * 
      * @see #countriesInUTCOffset(double)
-     * @param dst
+     * @param dst DST offset
      * @return list of country codes observing DST at that offset
      */
     public Collection<String> countriesInDSTOffset(double dst) {

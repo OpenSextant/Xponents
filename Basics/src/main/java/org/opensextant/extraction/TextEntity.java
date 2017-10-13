@@ -111,7 +111,7 @@ public class TextEntity {
     /**
      * Set just the value, without incurring the cost of other metrics or flags
      * about the text that likely are unchanged.
-     * @param t
+     * @param t the text
      */
     public void setTextOnly(String t) {
         text = t;
@@ -263,8 +263,8 @@ public class TextEntity {
      * Assuming simple whitespace separation or other simple delimiters, is this
      * term following the argument entity?
      * 
-     * @param t
-     * @return
+     * @param t other entity
+     * @return true if t occurs after the current entity
      */
     public boolean isAfter(TextEntity t) {
         return (start - t.end <= 2 && start > t.end);
@@ -274,8 +274,8 @@ public class TextEntity {
      * Assuming simple whitespace separation or other simple delimiters, is this
      * term preceeding the argument entity?
      * 
-     * @param t
-     * @return
+     * @param t other TextEntity
+     * @return true if t is before the current entity
      */
     public boolean isBefore(TextEntity t) {
         return (t.start - end <= 2 && t.start > end);

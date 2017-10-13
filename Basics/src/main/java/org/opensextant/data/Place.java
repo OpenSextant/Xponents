@@ -370,6 +370,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
      * == that place. So we compare features, locations, Ids, etc.
      * 
      * @param other another Place
+     * @return 1 if other is greater than current; 0 if equal, -1 if lesser
      */
     public int compareTo(Place other) {
         // Identity Matches?

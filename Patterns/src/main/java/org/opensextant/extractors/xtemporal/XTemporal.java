@@ -57,29 +57,35 @@ import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 
 /**
- *
+ * Date/Time pattern extractor -- detects, parses, normalizes dates. 
+ * Found date/time are DateMatch (TextMatch) objects
  * @author ubaldino
  */
 public class XTemporal extends AbstractFlexPat {
 
+    /** The Constant DEFAULT_XTEMP_CFG. */
     public static final String DEFAULT_XTEMP_CFG = "/datetime_patterns.cfg";
 
     /**
      * Application constants -- note the notion of TODAY is relative to the caller's notion of TODAY.
      * If you are processing data from the past but have a sense of what TODAY is, then when found dates fall on either
-     * side of that
-     * they will be relative PAST and relative FUTURE.
+     * side of that they will be relative PAST and relative FUTURE.
      */
     public static Date TODAY = new Date();
+    
+    /** The today epoch. */
     public static long TODAY_EPOCH = TODAY.getTime();
 
+    /** The Constant JAVA_0_DATE_YEAR. */
     public static final int JAVA_0_DATE_YEAR = 1970;
+    
+    /** The Constant ONE_YEAR_MS. */
     public static final long ONE_YEAR_MS = 365L * 24L * 3600L * 1000L;
 
     /**
-     * Extractor interface: getName
+     * Extractor interface: getName.
      *
-     * @return
+     * @return extractor name
      */
     @Override
     public String getName() {
@@ -94,8 +100,9 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
+     *  XTemporal ctor
      *
-     * @param debugmode
+     * @param debugmode true if debugging
      */
     public XTemporal(boolean debugmode) {
         super(debugmode);
@@ -103,7 +110,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * non-debugging ctor;
+     * non-debugging ctor;.
      */
     public XTemporal() {
         this(false);
@@ -113,14 +120,17 @@ public class XTemporal extends AbstractFlexPat {
     protected RegexPatternManager createPatternManager(InputStream strm, String name)
             throws IOException {
         patterns_file = name;
-        PatternManager mgr =  new PatternManager(strm, patterns_file);
-        mgr.testing  = debug;
+        PatternManager mgr = new PatternManager(strm, patterns_file);
+        mgr.testing = debug;
         return mgr;
     }
 
     /**
      * Support the standard Extractor interface. This provides access to the
      * most common extraction;
+     *
+     * @param input text
+     * @return list of TextMatch
      */
     @Override
     public List<TextMatch> extract(TextInput input) {
@@ -131,6 +141,9 @@ public class XTemporal extends AbstractFlexPat {
     /**
      * Support the standard Extractor interface. This provides access to the
      * most common extraction;
+     *
+     * @param input_buf text
+     * @return list of TextMatch
      */
     @Override
     public List<TextMatch> extract(String input_buf) {
@@ -142,9 +155,9 @@ public class XTemporal extends AbstractFlexPat {
      * A direct call to extract dates; which is useful for diagnostics and
      * development/testing.
      *
-     * @param text
-     * @param text_id
-     * @return
+     * @param text text
+     * @param text_id text ID
+     * @return TextMatchResult, a wrapper around a list of TextMatch
      */
     public TextMatchResult extract_dates(String text, String text_id) {
 
@@ -219,21 +232,28 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
+     * enable date time patterns
      *
-     * @param flag
+     * @param flag true if enabling date/time matching
      */
     public void match_DateTime(boolean flag) {
         ((PatternManager) patterns).enable_pattern_family(XTConstants.DATETIME_FAMILY, flag);
     }
 
     /**
+     * enable mon day year patterns.
      *
-     * @param flag
+     * @param flag true if enabling MonthDayYear family
      */
     public void match_MonDayYear(boolean flag) {
         ((PatternManager) patterns).enable_pattern_family(XTConstants.MDY_FAMILY, flag);
     }
 
+    /**
+     * enable day mon year.
+     *
+     * @param flag the flag
+     */
     public void match_DayMonYear(boolean flag) {
         ((PatternManager) patterns).enable_pattern_family(XTConstants.DMY_FAMILY, flag);
     }
@@ -241,7 +261,7 @@ public class XTemporal extends AbstractFlexPat {
     /**
      * Optionally reset your context... what is TODAY with respect to your data?
      * 
-     * @param d
+     * @param d date
      */
     public void setToday(Date d) {
         if (d != null) {
@@ -251,9 +271,9 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     ** Application thresholds -- chosen by the user
-     * 
-     * @param y
+     * * Application thresholds -- chosen by the user.
+     *
+     * @param y 4-digit year
      */
     public void setDistantPastYear(int y) {
         DISTANT_PAST_YEAR = y;
@@ -273,14 +293,20 @@ public class XTemporal extends AbstractFlexPat {
 
     /**
      * Given the set MAX_DATE_CUTOFF_YEAR, determine if the date epoch is earlier than this.
-     * 
-     * @param epoch
-     * @return
+     *
+     * @param epoch epoch since 1970-01-01
+     * @return true, if is future
      */
     public boolean isFuture(long epoch) {
         return (epoch > TODAY_EPOCH);
     }
 
+    /**
+     * Checks if is future.
+     *
+     * @param dt the dt
+     * @return true, if is future
+     */
     public boolean isFuture(Date dt) {
         if (dt == null) {
             return true;
@@ -289,14 +315,21 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
+     * Checks if is distant past.
      *
-     * @param epoch
-     * @return
+     * @param epoch epoch
+     * @return true if past DISTANT_PAST_THRESHOLD
      */
     public boolean isDistantPast(long epoch) {
         return (epoch < DISTANT_PAST_THRESHOLD);
     }
 
+    /**
+     * Checks if is distant past.
+     *
+     * @param dt date
+     * @return true, if is distant past
+     */
     public boolean isDistantPast(Date dt) {
         if (dt == null) {
             return true;
@@ -305,7 +338,10 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * if a date is too far in past to likley be a date of the format YYYY-MM-DD
+     * if a date is too far in past to likley be a date of the format YYYY-MM-DD.
+     *
+     * @param dt date
+     * @return true if date is distant
      */
     public boolean isDistantPastYMD(Date dt) {
         //return dt.getTime() < DISTANT_PAST_YMD_THRESHOLD;

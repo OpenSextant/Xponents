@@ -116,7 +116,7 @@
   <!-- </module> -->
 
   <module name="TreeWalker">
-    <property name="tabWidth" value="${checkstyle.indentChars}" default="2"/>
+    <property name="tabWidth" value="${checkstyle.indentChars}" default="4"/>
 
     <!-- Commented because a little too noisy; ideally there would be a throwsIndent option -->
     <!--<module name="Indentation">-->

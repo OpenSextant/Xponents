@@ -179,7 +179,7 @@ public abstract class RegexPatternManager {
      * Initializes the pattern manager implementations. Reads the DEFINEs and
      * RULEs from the pattern file and does the requisite substitutions. After
      * initialization patterns HashMap will be populated.
-     *
+     * @param io stream
      * @throws IOException if patterns file can not be loaded and parsed
      */
     public void initialize(InputStream io) throws IOException {
@@ -392,9 +392,9 @@ public abstract class RegexPatternManager {
     /**
      * Matched fields as TextEntities
      *
-     * @param p the p
-     * @param matched the matched
-     * @return the map
+     * @param p pattern
+     * @param matched java RE Matcher
+     * @return keyed TextEntity
      */
     public Map<String, TextEntity> group_matches(RegexPattern p, java.util.regex.Matcher matched) {
 
