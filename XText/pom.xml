@@ -4,11 +4,37 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opensextant</groupId>
-    <!-- <artifactId>xponents-parent</artifactId> -->
-    <version>2.10.1-SNAPSHOT</version>
+    <version>2.10.1</version>
 
     <name>XText</name>
     <artifactId>opensextant-xponents-xtext</artifactId>
+    <description>Content extraction simplified! Retrieve text, data and metadata from binary documents using Tika and similar toolkits</description>
+    <inceptionYear>2013</inceptionYear>
+    <url>https://opensextant.github.io/Xponents/XText</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/OpenSextant/Xponents.git</connection>
+        <developerConnection>scm:git:https://github.com/OpenSextant/Xponents.git</developerConnection>
+        <url>https://github.com/OpenSextant/Xponents.git</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Marc Ubaldino</name>
+            <email>ubaldino@mitre.org</email>
+            <organization>MITRE</organization>
+            <roles>
+                <role>Lead</role>
+            </roles>
+        </developer>
+    </developers>
 
     <properties>
         <poi.version>3.16</poi.version>
@@ -394,6 +420,14 @@
                     <version>true</version>
                     <windowtitle>XText - Content Extraction Simplified</windowtitle>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadoc</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
