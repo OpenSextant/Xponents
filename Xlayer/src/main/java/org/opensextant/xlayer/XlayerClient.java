@@ -10,10 +10,10 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.TextMatch;
 import org.restlet.Application;
+import org.restlet.Context;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Parameter;
@@ -21,8 +21,6 @@ import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
-import org.restlet.Context;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

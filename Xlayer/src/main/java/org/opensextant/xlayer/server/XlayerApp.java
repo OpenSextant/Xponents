@@ -16,47 +16,47 @@ import org.restlet.Restlet;
  */
 public abstract class XlayerApp extends Application {
 
-	/** The log. */
-	protected Logger log = null;
+    /** The log. */
+    protected Logger log = null;
 
-	public XlayerApp(Context c) {
-		super(c);
-		log = getContext().getCurrentLogger();
-	}
+    public XlayerApp(Context c) {
+        super(c);
+        log = getContext().getCurrentLogger();
+    }
 
-	protected static  String version = "v2.9";
+    protected static String version = "v2.10";
 
-	protected void banner() throws IOException {
-		info("\n" + FileUtility.readFile("etc/banner.txt"));
-	}
+    protected void banner() throws IOException {
+        info("\n" + FileUtility.readFile("etc/banner.txt"));
+    }
 
-	protected void error(String msg, Exception err) {
-		log.severe(msg + " ERR: " + err.getMessage());
-		if (isDebug()) {
-			log.fine("" + err.getStackTrace());
-		}
-	}
+    protected void error(String msg, Exception err) {
+        log.severe(msg + " ERR: " + err.getMessage());
+        if (isDebug()) {
+            log.fine("" + err.getStackTrace());
+        }
+    }
 
-	protected void info(String msg) {
-		log.info(msg);
-	}
+    protected void info(String msg) {
+        log.info(msg);
+    }
 
-	protected void debug(String msg) {
-		if (isDebug()) {
-			log.fine(msg);
-		}
-	}
+    protected void debug(String msg) {
+        if (isDebug()) {
+            log.fine(msg);
+        }
+    }
 
-	protected boolean isDebug() {
-		return (log.getLevel() == Level.FINE || log.getLevel() == Level.FINEST || log.getLevel() == Level.FINER);
-	}
+    protected boolean isDebug() {
+        return (log.getLevel() == Level.FINE || log.getLevel() == Level.FINEST || log.getLevel() == Level.FINER);
+    }
 
-	@Override
-	public abstract Restlet createInboundRoot();
+    @Override
+    public abstract Restlet createInboundRoot();
 
-	/**
-	 * 
-	 * @throws ConfigException
-	 */
-	public abstract void configure() throws ConfigException;
+    /**
+     * 
+     * @throws ConfigException
+     */
+    public abstract void configure() throws ConfigException;
 }

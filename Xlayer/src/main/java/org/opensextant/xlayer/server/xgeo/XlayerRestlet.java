@@ -27,7 +27,6 @@ public class XlayerRestlet extends XlayerApp {
         log = getContext().getCurrentLogger();
     }
 
-
     @Override
     public synchronized Restlet createInboundRoot() {
         Router router = new Router(getContext());
