@@ -34,42 +34,51 @@ This is primarily a Maven-based project, and so here are our Maven artifacts.
 For those using other build platforms, you can find our published artifacts at 
 [ OpenSextant Xponents on Maven ](http://search.maven.org/#search%7Cga%7C1%7Corg.opensextant)
 
+**Xponents Extraction**
+This Maven reference will pull in the Xponents Extraction project, and all dependencies.
+You still have to build or download (coming) the supporting ./solr gazetteer and taxcat indices for your lexicon.
 ```
-  <!-- Pull in the Xponents Extraction project, and all dependencies -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
     <version>2.10.1</version>
   </dependency>
+```
 
-  <!-- Work related to Coordinate, Date/Time and other explicit pattern extraction 
-       Supports Extraction above.
-    -->
+**Xponents Patterns**
+Work related to Geo Coordinate, Date/Time and other explicit pattern extraction 
+This Supports Extraction above.
+```
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-patterns</artifactId>
     <version>2.10.1</version>
   </dependency>
+```
 
-  <!-- Java data model (Country, Place, Text Entity, etc.), Text and File/Stream Utilites
-       Supports all tool chains - Extraction, Patterns, XText, etc.
-    -->
+**Xponents Basics**
+Basics is a Java data model (Country, Place, Text Entity, etc.), Text and File/Stream Utilites
+Supports all tool chains - Extraction, Patterns, XText, etc.
+```
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-basics</artifactId>
     <version>2.10.1</version>
   </dependency>
+```
 
 
-  <!-- XText:  Text &amp; Metdata Content extraction from data formats, PDF, Word Docs, etc. 
-       Purely optional module.  This helps you acquire content from source data, e.g., Web, Folder crawl, or other.
-    -->
+**XText:**
+XText provides an API for Text &amp; Metdata Content extraction from data formats, PDF, Word Docs, etc. 
+Purely optional module.  This helps you acquire content from source data, e.g., Web, Folder crawl, or other.
+From an XText ConversionListener you can fire off extraction routines or databasing operations, for example.
+
+```
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-xtext</artifactId>
     <version>2.10.1</version>
   </dependency>
-
 ```
 
 Additional prototypes such as Xponents MapReduce and Xlayer RESTFul extraction service examples are production prototypes
