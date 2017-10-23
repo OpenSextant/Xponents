@@ -27,10 +27,62 @@ Related sub-modules that employ these SDKs:
 * **Xlayer**: A functional skeleton design of REST microservices for Extraction project, featuring "PlaceGeocoder" class, Patterns and Keyword extraction.
 * **MapReduce**: A demonstration of how to design, package, and deploy Extraction with a full Solr gazetteer
 
+
+Developer Quick Start
+--------------
+This is primarily a Maven-based project, and so here are our Maven artifacts.
+For those using other build platforms, you can find our published artifacts at 
+[ OpenSextant Xponents on Maven ](http://search.maven.org/#search%7Cga%7C1%7Corg.opensextant)
+
+```
+  <!-- Pull in the Xponents Extraction project, and all dependencies -->
+  <dependency>
+    <groupId>org.opensextant</groupId>
+    <artifactId>opensextant-xponents</artifactId>
+    <version>2.10.1</version>
+  </dependency>
+
+  <!-- Work related to Coordinate, Date/Time and other explicit pattern extraction 
+       Supports Extraction above.
+    -->
+  <dependency>
+    <groupId>org.opensextant</groupId>
+    <artifactId>opensextant-xponents-patterns</artifactId>
+    <version>2.10.1</version>
+  </dependency>
+
+  <!-- Java data model (Country, Place, Text Entity, etc.), Text and File/Stream Utilites
+       Supports all tool chains - Extraction, Patterns, XText, etc.
+    -->
+  <dependency>
+    <groupId>org.opensextant</groupId>
+    <artifactId>opensextant-xponents-basics</artifactId>
+    <version>2.10.1</version>
+  </dependency>
+
+
+  <!-- XText:  Text &amp; Metdata Content extraction from data formats, PDF, Word Docs, etc. 
+       Purely optional module.  This helps you acquire content from source data, e.g., Web, Folder crawl, or other.
+    -->
+  <dependency>
+    <groupId>org.opensextant</groupId>
+    <artifactId>opensextant-xponents-xtext</artifactId>
+    <version>2.10.1</version>
+  </dependency>
+
+```
+
+Additional prototypes such as Xponents MapReduce and Xlayer RESTFul extraction service examples are production prototypes
+you have to check out and build.
+
+Finally, in order to make use of the Xponents main Extraction project you either build your own Solr6 index ( Docs: [./solr](./solr/README.md) )
+or download a pre-built index (Coming Soon -- hopefully November 2017)
+
+
 Release History
 ---------------
 
-    Xponents 2.10 Sept 2017 v2.10.0 - Solr 6 support, Java 8 only, SolrTextTagger 2.4
+    Xponents 2.10 Sept 2017 v2.10.1 - Solr 6 support, Java 8 only, SolrTextTagger 2.4;  Published to Sonatype and Maven Central
     Xponents 2.9, Jul 2017  v2.9.9  - Improved stop filters and other geotagging and KW tagging improvements
     Xponents 2.9, Apr 2017  v2.9.8  - refactored XLayer, added trivial match filters; updated versions of commons libs
     Xponents 2.9, Feb 2017  v2.9.7  - minor tests and additional filters added; minor tweak for Curacao
