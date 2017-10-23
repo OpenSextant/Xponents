@@ -34,14 +34,13 @@ import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
 
-
 /**
  * Abstract class encapsulating basic results formatter functionality.
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Aug 22, 2011
  * @author Marc Ubaldino, MITRE Corp. Refactored, 2013
  */
-abstract public class AbstractFormatter implements ResultsFormatter {
+public abstract class AbstractFormatter implements ResultsFormatter {
 
     protected Parameters outputParams = null;
     public boolean overwrite = false;
@@ -50,6 +49,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     public void setParameters(Parameters params) {
         outputParams = params;
     }
+
     /**
      *
      */
@@ -60,19 +60,11 @@ abstract public class AbstractFormatter implements ResultsFormatter {
     /**
      *
      */
-    protected String current_corpus = null;
-    /**
-     *
-     */
     protected String outputType = null;
     /**
      *
      */
     protected static int TEXT_WIDTH = 150;
-    /**
-     *
-     */
-    protected float min_score = 0.000f;
     /**
      *
      */
@@ -128,11 +120,7 @@ abstract public class AbstractFormatter implements ResultsFormatter {
      */
     @Override
     public String formatResults(ExtractionResult res) throws ProcessingException {
-
-        //createOutputStreams();
         writeGeocodingResult(res);
-        //closeOutputStreams();
-
         return "";
     }
 
@@ -159,9 +147,9 @@ abstract public class AbstractFormatter implements ResultsFormatter {
 
     /** This is checked only by internal classes as they create output streams.
      */
-    protected void deleteOutput(File previous_run) {
-        if (previous_run.exists()) {
-            FileUtils.deleteQuietly(previous_run);
+    protected void deleteOutput(File previousRun) {
+        if (previousRun.exists()) {
+            FileUtils.deleteQuietly(previousRun);
         }
     }
 
@@ -171,42 +159,36 @@ abstract public class AbstractFormatter implements ResultsFormatter {
         if (this.overwrite) {
             this.deleteOutput(item);
         } else if (item.exists()) {
-            throw new ProcessingException("OpenSextant API cannot overwrite GIS output files -- caller must do that.  FILE=" + item.getPath() + " exists");
+            throw new ProcessingException(
+                    "OpenSextant API cannot overwrite GIS output files -- caller must do that.  FILE=" + item.getPath()
+                            + " exists");
         }
     }
 
+    @Override
+    public abstract void start(String nm) throws ProcessingException;
 
     @Override
-    abstract public void start(String nm) throws ProcessingException;
-
-    @Override
-    abstract public void finish();
+    public abstract void finish();
 
     /**
      * Create the output stream appropriate for the output type.
      * IO is created using the filename represented by getOutputFilepath()
      * @throws Exception
      */
-    abstract protected void createOutputStreams() throws Exception;
+    protected abstract void createOutputStreams() throws Exception;
 
     /**
      *
      * @throws Exception
      */
-    abstract protected void closeOutputStreams() throws Exception;
-
-    /**
-     *
-     * @param doc
-     * @throws IOException
-     */
-    //abstract public void writeRowsFor(Document doc) throws IOException;
+    protected abstract void closeOutputStreams() throws Exception;
 
     /** Write your geocoding result directly to output
      * Result should carry ExtractionResult.recordFile as a URI for original.
      *
      * @param rowdata the data to write out
      */
-    abstract public void writeGeocodingResult(ExtractionResult rowdata);
+    public abstract void writeGeocodingResult(ExtractionResult rowdata);
 
 }
