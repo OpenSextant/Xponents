@@ -1,7 +1,7 @@
 # COPY COPY COPY
 # Please copy this to "build.properties"  which will provide settings for your workspace.
 # 
-xponents.build.v=2.10.1
+xponents.build.v=2.10.2-SNAPSHOT
 #
 # Gazetteer catalog.  Specify the path to the merged file.  
 # Merged.txt is usually the file name in OpenSextant/Gazetteer
