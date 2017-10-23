@@ -35,6 +35,7 @@ For those using other build platforms, you can find our published artifacts at
 [ OpenSextant Xponents on Maven ](http://search.maven.org/#search%7Cga%7C1%7Corg.opensextant)
 
 **Xponents Extraction**
+
 This Maven reference will pull in the Xponents Extraction project, and all dependencies.
 You still have to build or download (coming) the supporting ./solr gazetteer and taxcat indices for your lexicon.
 ```
@@ -46,6 +47,7 @@ You still have to build or download (coming) the supporting ./solr gazetteer and
 ```
 
 **Xponents Patterns**
+
 Work related to Geo Coordinate, Date/Time and other explicit pattern extraction 
 This Supports Extraction above.
 ```
@@ -57,6 +59,7 @@ This Supports Extraction above.
 ```
 
 **Xponents Basics**
+
 Basics is a Java data model (Country, Place, Text Entity, etc.), Text and File/Stream Utilites
 Supports all tool chains - Extraction, Patterns, XText, etc.
 ```
@@ -67,8 +70,8 @@ Supports all tool chains - Extraction, Patterns, XText, etc.
   </dependency>
 ```
 
+**XText**
 
-**XText:**
 XText provides an API for Text &amp; Metdata Content extraction from data formats, PDF, Word Docs, etc. 
 Purely optional module.  This helps you acquire content from source data, e.g., Web, Folder crawl, or other.
 From an XText ConversionListener you can fire off extraction routines or databasing operations, for example.
