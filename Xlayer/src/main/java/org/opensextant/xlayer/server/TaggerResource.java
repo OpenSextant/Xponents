@@ -177,6 +177,26 @@ public abstract class TaggerResource extends ServerResource {
     }
 
     /**
+     * Convenience helper to reset data.
+     * @param job
+     */
+    protected void resetParameters(RequestParameters job) {
+        job.output_coordinates = false;
+        job.output_countries = false;
+        job.output_places = false;
+        job.output_geohash = false;
+        job.output_filtered = false;
+
+        job.tag_lowercase = false;
+        job.tag_coordinates = false;
+        job.tag_countries = false;
+        job.tag_places = false;
+        job.tag_taxons = false;
+        job.tag_patterns = false;
+        job.format = "json";
+    }
+
+    /**
      * 
      * @param inputs
      * @return
@@ -185,32 +205,42 @@ public abstract class TaggerResource extends ServerResource {
     private RequestParameters fromRequest(JSONObject inputs) throws JSONException {
         RequestParameters job = new RequestParameters();
         job.output_coordinates = false;
-        job.output_countries = false;
-        job.output_places = false;
-        job.tag_coordinates = true;
+        job.output_countries = true;
+        job.output_places = true;
+        job.tag_coordinates = false;
         job.tag_countries = true;
         job.tag_places = true;
 
-        job.tag_taxons = false;
-        job.tag_patterns = false;
+        job.tag_taxons = true;
+        job.tag_patterns = true;
         job.output_filtered = false;
         job.format = "json";
 
         if (inputs.has("features")) {
+            resetParameters(job);
+
             String list = inputs.getString("features");
             Set<String> features = new HashSet<>();
 
             // JSONArray list = inputs.getJSONArray("features");
             features.addAll(TextUtils.string2list(list.toLowerCase(), ","));
 
-            // Can't turn these off for tagging.
-            job.output_coordinates = features.contains("coordinates");
-            job.output_countries = features.contains("countries");
-            job.output_places = features.contains("places");
+            job.tag_coordinates = job.output_coordinates = features.contains("coordinates");
+            job.tag_countries = job.output_countries = features.contains("countries");
+            job.tag_places = job.output_places = features.contains("places");
+
+            if (features.contains("geo")) {
+                job.tag_coordinates = job.output_coordinates = true;
+                job.tag_countries = job.output_countries = true;
+                job.tag_places = job.output_places = true;
+            }
 
             // Request tagging on demand.
-            job.tag_taxons = job.output_taxons = features.contains("orgs") || features.contains("persons");
+            job.tag_taxons = job.output_taxons = (features.contains("taxons") || features.contains("orgs")
+                    || features.contains("persons"));
             job.tag_patterns = job.output_patterns = features.contains("patterns");
+
+            job.output_filtered = features.contains("filtered_out");
         }
 
         if (inputs.has("options")) {
