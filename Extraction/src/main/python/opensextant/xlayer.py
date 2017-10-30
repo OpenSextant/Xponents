@@ -36,7 +36,10 @@ class XlayerClient:
           features = "f,f,f,f"  String of comma-separated features
           options  = "o,o,o,o"  String of comma-separated features
 
-          features are places, coordinates, countries, orgs, persons, patterns
+          features are places, coordinates, countries, orgs, persons, patterns. 
+          
+          feature aliases "geo" can be used to get All Geographic entities (places,coordinates,countries)
+          feature "taxons" can get at any Taxon "taxons", "persons", "orgs"
           
           options are not observed by Xlayer "Xgeo", but you can adapt your own service
           to accomodate such options.   Possible options are clean_input, lowercase, for example:
@@ -50,7 +53,7 @@ class XlayerClient:
         response = requests.post(self.server,
                                  json={'docid':docid,
                                        'text':text,
-                                       'features':"places,coordinates,countries",
+                                       'features':"geo",  # Alias for places,coordinates,countries
                                        'options':self.default_options    
                                   })
         if response.status_code != 200:        
