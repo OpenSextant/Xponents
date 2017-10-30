@@ -27,8 +27,7 @@ class XlayerClient:
         if response.status_code != 200:
             return response.raise_for_status()        
         
-    def process(self, docid, text):
-
+    def process(self, docid, text, features=["geo"]):
         '''
           SERVICE parameters:
           docid and text -- obvious
@@ -50,12 +49,11 @@ class XlayerClient:
           but interpretation of "clean text" and "lower case" support is subjective.
           so they are not supported out of the box here.
         '''
-        response = requests.post(self.server,
-                                 json={'docid':docid,
-                                       'text':text,
-                                       'features':"geo",  # Alias for places,coordinates,countries
-                                       'options':self.default_options    
-                                  })
+        json_request = {'docid':docid, 'text':text, 'options':self.default_options }
+        if features:
+            json_request['features'] = ','.join(features)
+           
+        response = requests.post(self.server, json=json_request)
         if response.status_code != 200:        
             return response.raise_for_status()
         
