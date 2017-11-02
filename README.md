@@ -18,7 +18,7 @@ The major sub-modules include:
 * **XText**: Mature solutions for getting text and metadata from binary formats.
 * **Basics** and **Patterns** are two supporting modules that are used as the Xponents lingua franca throughout the SDK.
 
-As of 2017, this [Geocoder Handbook](./doc/Geocoder_Handbook.md) represents 
+As of 2017, this **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
 the Xponents methodology to geotagging and geocoding.  Nearly all of Xponents
 and XText has some role in supporting the methodology.
 
