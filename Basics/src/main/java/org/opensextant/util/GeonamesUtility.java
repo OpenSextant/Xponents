@@ -47,11 +47,13 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.Language;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
 import org.supercsv.io.CsvMapReader;
+import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
 /**
@@ -80,10 +82,9 @@ public class GeonamesUtility {
      * @throws IOException if metadata files are not found or do not load.
      */
     public GeonamesUtility() throws IOException {
-
         this.loadCountryNameMap();
         this.loadFeatureMetaMap();
-        this.loadAdmin1Metadata();
+        this.loadUSStateMetadata();
     }
 
     /**
@@ -587,12 +588,152 @@ public class GeonamesUtility {
      * 
      * @return Array of Admin Level 1 Place objects
      * @since 2.8.17
+     * @deprecated Use getUSStateMetadata
      */
     public List<Place> getAdmin1Metadata() {
+        return getUSStateMetadata();
+    }
+
+    /**
+     * Provides access to a array of ADM1 metadata. This is a mutable list -- if
+     * you want to add MORE admin metadata (entries, postal code mappings, etc)
+     * then have at it. For now this is US + territories only (as of v2.8.17)
+     * 
+     * @return Array of US States (Admin Level 1) Place objects
+     */
+    public List<Place> getUSStateMetadata() {
+        return usStateMetadata;
+    }
+
+    private List<Place> usStateMetadata = new ArrayList<>();
+    private List<Place> admin1Metadata = new ArrayList<>();
+    private Map<String, Place> admin1MetadataMap = new HashMap<>();
+    
+    /**
+     * Alias for getWorldAdmin1Metadata. 
+     * @return list of Places.
+     */
+    public List<Place> getProvinceMetadata() {
         return admin1Metadata;
     }
 
-    private List<Place> admin1Metadata = new ArrayList<>();
+    /**
+     * Get the array of Place objects representing ADM1 level boundaries.
+     * This is literally just Names, ADM1 codes and Country code data.
+     * No location information, except for US States.
+     * 
+     * To get a province by code, use 
+     * @return list of Places 
+     */
+    public List<Place> getWorldAdmin1Metadata() {
+        return admin1Metadata;
+    }
+
+    /**
+     * Source: geonames.org ADM1 codes/names in anglo/ASCII form.
+     * 
+     * @throws IOException
+     */
+    public void loadWorldAdmin1Metadata() throws IOException {
+        String uri = "/geonames.org/admin1CodesASCII.txt";
+        Pattern ccSplit = Pattern.compile("\\.");
+        try (Reader fio = new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri))) {
+            CsvListReader adm1CSV = new CsvListReader(fio, CsvPreference.TAB_PREFERENCE);
+            List<String> adm1;
+            while ((adm1 = adm1CSV.read()) != null) {
+                String[] path = ccSplit.split(adm1.get(0), 2);
+                String placeID = adm1.get(3);
+                if (path[0] == "US"){
+                    placeID = String.format("USGS%s",placeID);
+                } else {
+                    placeID = String.format("NGA%s",placeID);                    
+                }
+                 
+                Place p = new Place(placeID, adm1.get(1));
+
+                p.setFeatureClass("A");
+                p.setFeatureCode("ADM1");
+                p.setSource("geonames.org");
+                p.setName_type('N');
+
+                p.setCountryCode(path[0]);
+                p.setAdmin1(path[1]);
+                p.defaultHierarchicalPath();
+                admin1Metadata.add(p);
+            }
+            adm1CSV.close();
+
+            if (admin1Metadata.isEmpty()) {
+                return;
+            }
+            /* NOTE: US data is coded in FIPS ADM1 codes, but in geonames data in next loop
+             * it is keyed by US Postal code. we get both.
+             */
+            for (Place p : admin1Metadata) {
+                admin1MetadataMap.put(p.getHierarchicalPath(), p);
+            }
+            for (Place p : usStateMetadata) {
+                String key = getHASC(p.getCountryCode(), p.getAdmin1PostalCode());
+                Place geonamesADM1 = admin1MetadataMap.get(key);
+                if (geonamesADM1 == null) {
+                    continue;
+                }
+                p.setPlaceName(geonamesADM1.getPlaceName());
+                p.setPlaceID(geonamesADM1.getPlaceID());
+
+                admin1MetadataMap.put(key, p);
+                admin1MetadataMap.put(p.getHierarchicalPath(), p);
+            }
+        } catch (IOException err) {
+            throw err;
+        } catch (Exception err) {
+            throw new IOException("Failure to parse ADM1 data from geonames.org");
+        }
+    }
+
+    /**
+     * Retrieve a Place object with the semi-official name (in Latin/Anglo terms) given CC and ADM1 code.
+     * REQUIRED: loadWorldAdmin1Metadata() first.
+     * 
+     * @param cc ISO country code
+     * @param adm1 ISO province code
+     * @return Place or null.
+     * @throws ConfigException if data table is not loaded. This is not commonly required. 
+     */
+    public Place getAdmin1Place(String cc, String adm1) throws ConfigException {
+        if (admin1Metadata.isEmpty()) {
+            throw new ConfigException("You must load World ADM1 data first; use loadWorldAdmin1Metadata()");
+        }
+        return admin1MetadataMap.get(GeonamesUtility.getHASC(cc, adm1));
+    }
+
+    /**
+     *  Alias for {@link #getAdmin1Place(String, String)}
+     */
+    public Place getProvince(String cc, String adm1) throws ConfigException{
+        return getAdmin1Place(cc, adm1);
+    }
+    
+    /**
+     * Lookup by coded path, CC.ADM1
+     * @param path hierarchical path
+     * @return
+     * @throws ConfigException
+     */
+    public Place getAdmin1PlaceByHASC(String path) throws ConfigException {
+        if (admin1Metadata.isEmpty()) {
+            throw new ConfigException("You must load World ADM1 data first; use loadWorldAdmin1Metadata()");
+        }
+        return admin1MetadataMap.get(path);
+    }
+
+    /**
+     * @deprecated use loadUSStateMetadata()
+     * @throws IOException
+     */
+    public void loadAdmin1Metadata() throws IOException {
+        loadUSStateMetadata();
+    }
 
     /**
      * <pre> TODO: This is mildly informed by geonames.org, however even there
@@ -610,8 +751,8 @@ public class GeonamesUtility {
      * 
      * @throws IOException if CSV file not found in classpath
      */
-    public void loadAdmin1Metadata() throws IOException {
-        String uri = "/country-adm1-codes.csv";
+    public void loadUSStateMetadata() throws IOException {
+        String uri = "/us-state-metadata.csv";
         try (Reader fio = new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri))) {
             CsvMapReader adm1CSV = new CsvMapReader(fio, CsvPreference.EXCEL_PREFERENCE);
             String[] columns = adm1CSV.getHeader(true);
@@ -633,7 +774,7 @@ public class GeonamesUtility {
                 s.setLatLon(yx);
 
                 s.setAdmin1PostalCode(stateRow.get("POSTAL_CODE"));
-                admin1Metadata.add(s);
+                usStateMetadata.add(s);
             }
             adm1CSV.close();
         } catch (Exception err) {
