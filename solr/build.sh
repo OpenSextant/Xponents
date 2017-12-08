@@ -54,7 +54,7 @@ if [ $do_data -eq 1 ] ; then
   ant -f build.xml $proxy taxcat-jrc
 fi
 
-python ./script/gaz_assemble_person_filter.py 
+python ./script/assemble_person_filter.py 
 
 if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
    # Collect Gazetteer Metadata: 
