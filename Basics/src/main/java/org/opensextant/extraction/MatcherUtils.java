@@ -6,7 +6,7 @@ import java.util.List;
 public class MatcherUtils {
 
     public final static String startChars = "<[";
-    public final static String closeChars = ">[";
+    public final static String closeChars = ">]";
 
     /*
      * Trivial attempt at locating edges of tags in data.
@@ -68,8 +68,9 @@ public class MatcherUtils {
             return;
         }
         List<TextEntity> spans = findTagSpans(buffer);
-        if (!spans.isEmpty())
+        if (spans.isEmpty()) {
             return;
+        }
 
         for (TextMatch m : matches) {
             for (TextEntity span : spans) {
