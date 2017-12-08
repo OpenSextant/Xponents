@@ -261,6 +261,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     private Set<String> taxonExclusionFilter = new HashSet<String>();
 
+    private TaxonFilter ruleFilter = new TaxonFilter();
+
     /**
      * Add prefixes of types of taxons you do not want returned. e.g.,
      * "Place...." // exlclude will allow "Org" and "Person" taxons to pass on
@@ -326,13 +328,19 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
             m.match_id = id_prefix + tag_count;
             // m.setText((String) tag.get("matchText")); // Not reliable.
             // matchText can be null.
-            m.setText(buf.substring(m.start, m.end));
-            if (TextUtils.countFormattingSpace(m.getText()) > 1) {
+            if (TextUtils.countFormattingSpace(buf.substring(m.start, m.end)) > 1) {
                 // Phrases with words broken across more than one line are not
                 // valid matches.
                 // Phrase with a single TAB is okay
                 continue;
             }
+            /*
+             * Set Text and immediately determine if there is some validity 
+             * to this match
+             */
+            m.setText(buf.substring(m.start, m.end));
+            m.setFilteredOut(ruleFilter.filterOut(m.getText()));
+
             @SuppressWarnings("unchecked")
             List<Integer> taxonIDs = (List<Integer>) tag.get("ids");
 
@@ -364,9 +372,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         }
 
         log.debug("FOUND LABELS count={}", matches.size());
-
         return matches;
-
     }
 
     /**

@@ -27,7 +27,8 @@ public class NonsenseFilter extends GeocodeRule {
 
     public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
 
-    private static int MAX_NONSENSE_PHRASE_LEN = 15;
+    private static int MAX_NONSENSE_PHRASE_LEN = 20;
+    private static int MIN_PHONETIC_MATCH_LEN = 4;
     public static final int GENERIC_ONE_WORD = 10; // Chars in average word.
 
     private static Pattern wsRedux = Pattern.compile("[-\\s+`]");
@@ -61,6 +62,11 @@ public class NonsenseFilter extends GeocodeRule {
     @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate p : names) {
+            if (irregularPunctPatterns(p.getText())) {
+                p.setFilteredOut(true);
+                p.addRule("Nonsense,Punct");
+                continue;
+            }
 
             /*
              * is Nonsense?
@@ -86,11 +92,6 @@ public class NonsenseFilter extends GeocodeRule {
                     continue;
                 }
             }
-            if (irregularPunctPatterns(p.getText())) {
-                p.setFilteredOut(true);
-                p.addRule("Nonsense,Punct");
-                continue;
-            }
             if (p.isLower()) {
                 String[] wds = tokenizer.split(p.getTextnorm());
                 HashSet<String> set = new HashSet<>();
@@ -99,10 +100,10 @@ public class NonsenseFilter extends GeocodeRule {
                         p.setFilteredOut(true);
                         p.addRule("Nonsense,Repeated,Lower");
                         break;
+                    } else {
+                        set.add(w);
                     }
-                    set.add(w);
                 }
-                //continue;
             }
 
             /*
@@ -111,48 +112,64 @@ public class NonsenseFilter extends GeocodeRule {
              * mismatch severely.  
              * NOTE: Score on each geo location is accounted for in default score. I.E., edit distance between text match and geo name. 
              */
-            if (p.getLength() <= GENERIC_ONE_WORD) {
-                boolean hasValidGeo = false;
-                String ph1 = phoneticRedux(p.getTextnorm());
-                String diacriticRule = null;
-                log.debug("Testing phrase {} phonetic:{}", p.getTextnorm(), ph1);
-                for (Place geo : p.getPlaces()) {
-                    log.debug("\tPLACE={}, {}", geo, geo.getNamenorm());
-                    boolean geoDiacritics = TextUtils.hasDiacritics(geo.getPlaceName());
-                    if (geoDiacritics && p.hasDiacritics) {
-                        hasValidGeo = true;
-                        diacriticRule = "Matched-Diacritics";
-                        break;
-                    }
-                    if (!geoDiacritics && !p.hasDiacritics) {
-                        hasValidGeo = true;
-                        // both ASCII? not worth tracking.
-                        break;
-                    }
+            if (!p.isFilteredOut() && p.getLength() <= GENERIC_ONE_WORD) {
+                assessPhoneticMatch(p);
+            }
+        }
+    }
 
-                    /* Pattern: Official name has accented/emphasis markings on the name, such as:
-                     *     `NAME   or NAME`
-                     * Where NAME is some Latin transliteration of non-Latin script    
-                     */
-                    if (geo.getNamenorm().contains(p.getTextnorm())) {
-                        hasValidGeo = true;
-                        diacriticRule = "Location-Contains-Name";
-                        break;
-                    }
-                    if (isPhoneticMatch(ph1, geo.getNamenorm())) {
-                        hasValidGeo = true;
-                        diacriticRule = "Matched-Phonetic";
-                        break;
-                    }
-                    log.debug("\t{} != {}", p.getTextnorm(), geo.getNamenorm());
-                }
-                if (!hasValidGeo) {
-                    p.setFilteredOut(true);
-                    p.addRule("Nonsense,Mismatched,Diacritic");
-                } else if (diacriticRule != null) {
-                    p.addRule(diacriticRule);
+    /**
+     * Assess the validity of a match candidate with the geographic names associated with it.
+     * For example if you have ÄEÃ how well does it match Aeå, Aea or aeA?  
+     * this is intended for ruling out short crap phonetically.
+     * @param p
+     */
+    public void assessPhoneticMatch(PlaceCandidate p) {
+        boolean hasValidGeo = false;
+        String ph1 = phoneticRedux(p.getTextnorm());
+        String diacriticRule = null;
+        log.debug("Testing phrase {} phonetic:{}", p.getTextnorm(), ph1);
+        for (Place geo : p.getPlaces()) {
+            log.debug("\tPLACE={}, {}", geo, geo.getNamenorm());
+            boolean geoDiacritics = TextUtils.hasDiacritics(geo.getPlaceName());
+            if (geoDiacritics && p.hasDiacritics) {
+                if (geo.getName().equalsIgnoreCase(p.getText())) {
+                    hasValidGeo = true;
+                    diacriticRule = "Matched-Diacritics";
+                    break;
                 }
             }
+            if (!geoDiacritics && !p.hasDiacritics) {
+                hasValidGeo = true;
+                // both ASCII? not worth tracking.
+                break;
+            }
+
+            /* Pattern: Official name has accented/emphasis markings on the name, such as:
+             *     `NAME   or NAME`
+             * Where NAME is some Latin transliteration of non-Latin script 
+             * RULE applies to names 5 characters or longer; Shorter than that 
+             * we find too much noise.   
+             */
+            if (p.getLength() > MIN_PHONETIC_MATCH_LEN) {
+                if (geo.getNamenorm().contains(p.getTextnorm())) {
+                    hasValidGeo = true;
+                    diacriticRule = "Location-Contains-Name";
+                    break;
+                }
+                if (isPhoneticMatch(ph1, geo.getNamenorm())) {
+                    hasValidGeo = true;
+                    diacriticRule = "Matched-Phonetic";
+                    break;
+                }
+            }
+            log.debug("\t{} !~ {}", p.getText(), geo.getNamenorm());
+        }
+        if (!hasValidGeo) {
+            p.setFilteredOut(true);
+            p.addRule("Nonsense,Mismatched,Diacritic");
+        } else if (diacriticRule != null) {
+            p.addRule(diacriticRule);
         }
     }
 
@@ -162,6 +179,11 @@ public class NonsenseFilter extends GeocodeRule {
     //                       Any phrase containing double quotes or long dashes.
     static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+|[\"\u2014\u2015\u201C\u201D\u2033]");
     static Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
+    static Pattern anyInvalidPunct = Pattern.compile("[[\\p{Punct}\u2014\u2015\u201C\u201D\u2033]&&[^-_.'`]]+");
+
+    public static boolean irregularPunctPatterns(final String t) {
+        return anyInvalidPunct.matcher(t).find();
+    }
 
     /**
      * Find odd patterns of punctuation in names.
@@ -171,7 +193,7 @@ public class NonsenseFilter extends GeocodeRule {
      * @param t
      * @return
      */
-    public static boolean irregularPunctPatterns(final String t) {
+    public static boolean irregularPunctPatternsComplicated(final String t) {
         // HTML, Internet trash: <,>
         if (t.indexOf('<') >= 0 || t.indexOf('>') >= 0) {
             return true;

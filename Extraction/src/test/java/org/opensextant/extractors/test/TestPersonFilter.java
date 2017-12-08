@@ -3,6 +3,8 @@ package org.opensextant.extractors.test;
 import static org.junit.Assert.*;
 
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.opensextant.ConfigException;
@@ -19,13 +21,53 @@ public class TestPersonFilter {
     }
 
     @Test
+    public void testPunctuation() {
+        String testUniDashes = "\u2014\u2015\u201C\u201D\u2033";
+        Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`.]]+\\s+|[\"\u2014\u2015\u201C\u201D\u2033]");
+
+        /* allowable: 
+         *  A. B
+         *  A-B
+         *  A.B.
+         *  A_B
+         *  A` B
+         *  A`B
+         *  `A B
+         *  'A B
+         *  A 'B
+         */
+        Pattern anyInvalidPunct = Pattern.compile("[\\p{Punct}&&[^-_.'`]]+");
+        assertTrue(invalidPunct.matcher("A[ ]B").find());
+        assertTrue(invalidPunct.matcher("A} {B").find());
+        assertTrue(invalidPunct.matcher(testUniDashes).find());
+
+        Matcher m = invalidPunct.matcher("A}{B");
+        while (m.find()) {
+            print(m.group());
+        }
+        String[] validExamples = { "A-B", "Mr. A. B-C", "A{}B", "A} {B", "A. {B", "A\u2014.B" };
+        for (String s : validExamples) {
+            m = invalidPunct.matcher(s);
+            print("Test " + s);
+            while (m.find()) {
+
+                print("\tInvalid:" + m.group());
+            }
+            m = anyInvalidPunct.matcher(s);
+            while (m.find()) {
+                print("\tInvalid: " + m.group());
+            }
+        }
+    }
+
+    @Test
     public void testNonsenseShortPhrases() {
         assertTrue(isMismatchedShortName("Eï", "ei"));
         assertTrue(isMismatchedShortName("Eï", "Ei"));
         assertTrue(isMismatchedShortName("S A", "S. a'"));
         assertTrue(!isMismatchedShortName("In", "In."));
     }
-    
+
     /**
      * Call if you have a short name. This method does not have a length filter assumed.
      * 
@@ -34,15 +76,14 @@ public class TestPersonFilter {
      * @return
      */
     public static boolean isMismatchedShortName(String matched, String signal) {
-        boolean isShort = signal.length()<8;
+        boolean isShort = signal.length() < 8;
         boolean badMatch = NonsenseFilter.irregularPunctPatterns(signal);
         boolean hasDiacritics = TextUtils.hasDiacritics(matched);
         boolean signalDiacrtics = TextUtils.hasDiacritics(signal);
         boolean misMatchDiacritics = signalDiacrtics != hasDiacritics;
-        
+
         return isShort && (badMatch || misMatchDiacritics);
     }
-
 
     @Test
     public void testNonsensePhrases() {
@@ -54,7 +95,6 @@ public class TestPersonFilter {
         assertTrue(NonsenseFilter.irregularPunctPatterns("bust— a-move")); /* Unicode Dash with spaces */
         assertTrue(NonsenseFilter.irregularPunctPatterns("south\", bend"));
         assertTrue(NonsenseFilter.irregularPunctPatterns("south\",bend")); /* No space? but has double quotes */
-        assertTrue(NonsenseFilter.irregularPunctPatterns("To-  To- To-"));
 
         /* Valid names. */
         assertTrue(!NonsenseFilter.irregularPunctPatterns("St. Paul"));

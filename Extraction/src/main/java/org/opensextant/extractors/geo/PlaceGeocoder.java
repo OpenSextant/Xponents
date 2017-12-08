@@ -68,6 +68,7 @@ import org.opensextant.extractors.geo.rules.NameRule;
 import org.opensextant.extractors.geo.rules.NonsenseFilter;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
 import org.opensextant.extractors.geo.rules.ProvinceAssociationRule;
+import org.opensextant.extractors.geo.rules.ProvinceNameSetter;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.extractors.xtax.TaxonMatch;
@@ -118,6 +119,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private LocationChooserRule chooser = null;
     private ContextualOrganizationRule placeInOrgRule = null;
     private NonsenseFilter nonsenseFilter = null;
+    private ProvinceNameSetter provinceNameSetter = null;
 
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding
@@ -334,6 +336,14 @@ public class PlaceGeocoder extends GazetteerMatcher
         //rules.add(chooser);
 
         countryCatalog = this.getGazetteer().getCountries();
+
+        if (taggingParams.resolve_provinces) {
+            try {
+                provinceNameSetter = new ProvinceNameSetter();
+            } catch (Exception namesErr) {
+                throw new ConfigException("Failed to load names of ADM1 boundaries", namesErr);
+            }
+        }
     }
 
     /**
@@ -373,25 +383,23 @@ public class PlaceGeocoder extends GazetteerMatcher
         }
     }
 
-    private Parameters params = new Parameters();
+    private Parameters taggingParams = new Parameters();
 
     public void setParameters(Parameters p) {
-        params = p;
-        params.isdefault = false;
+        taggingParams = p;
+        taggingParams.isdefault = false;
     }
 
     public boolean isCoordExtractionEnabled() {
-        return params.tag_coordinates;
+        return taggingParams.tag_coordinates;
     }
 
-    boolean tagPersonNames = false;
-
     public boolean isPersonNameMatchingEnabled() {
-        return tagPersonNames;
+        return taggingParams.tag_names;
     }
 
     public void enablePersonNameMatching(boolean b) {
-        tagPersonNames = b;
+        taggingParams.tag_names = b;
     }
 
     private void reset() {
@@ -523,7 +531,9 @@ public class PlaceGeocoder extends GazetteerMatcher
         // Last rule: score, choose, add confidence.
         // 
         chooser.evaluate(candidates);
-
+        if (provinceNameSetter!=null){
+            provinceNameSetter.evaluate(candidates);
+        }
         // For each candidate, if PlaceCandidate.chosen is not null,
         // add chosen (Geocoding) to matches
         // Otherwise add PlaceCandidates to matches.
@@ -610,14 +620,14 @@ public class PlaceGeocoder extends GazetteerMatcher
                             nationalities.put(tag.getText(), isocode);
                         }
                     }
-                } else if (node.startsWith("person_name.")){
+                } else if (node.startsWith("person_name.")) {
                     // Ignore names that are already stop terms.  Okay, 'Will Smith' 
                     // passes,  but 'will i am' is filtered out.
                     // 
-                    if (this.filter.filterOut(input.langid, node) && tm.isLower()){
+                    if (this.filter.filterOut(input.langid, node) && tm.isLower()) {
                         continue;
                     }
-                    persons.add(tag);                    
+                    persons.add(tag);
                 }
             }
         }

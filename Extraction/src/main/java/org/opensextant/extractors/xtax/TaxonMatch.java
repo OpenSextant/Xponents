@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.opensextant.data.Taxon;
+import org.opensextant.util.TextUtils;
 
 /**
  *
@@ -37,14 +38,23 @@ import org.opensextant.data.Taxon;
  */
 public class TaxonMatch extends org.opensextant.extraction.TextMatch {
 
-    public TaxonMatch(){
+    public TaxonMatch() {
         this.type = "taxon";
         this.producer = "XTax";
     }
 
+    @Override
+    public void setText(String t) {
+        super.setText(t);
+        if (t != null) {
+            this.hasDiacritics = TextUtils.hasDiacritics(t);
+        }
+    }
+
+    public boolean hasDiacritics = false;
     private List<Taxon> taxons = null;
 
-    public List<Taxon> getTaxons(){
+    public List<Taxon> getTaxons() {
         return taxons;
     }
 
@@ -59,10 +69,10 @@ public class TaxonMatch extends org.opensextant.extraction.TextMatch {
         taxons.add(t);
     }
 
-    public boolean hasTaxons(){
-        if (taxons == null){
+    public boolean hasTaxons() {
+        if (taxons == null) {
             return false;
         }
-        return ! taxons.isEmpty();
+        return !taxons.isEmpty();
     }
 }
