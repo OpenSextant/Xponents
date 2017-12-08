@@ -51,6 +51,7 @@ rec,abbrev
 alt,abbrev
 astro,abbrev
 chem,abbrev
+mbit,abbrev
 cont,contraction
 ive,contraction
 dont,contraction
@@ -66,6 +67,10 @@ harder,adjective
 urban,adjective
 allied,adjective
 inter,adjective
+comercial,adjective
+commercial,adjective
+noname,adjective
+collegiate,adjective
 mini,adjective
 covert,adjective
 quick,adjective
@@ -293,6 +298,8 @@ grey,color
 bronze,color
 tan,color
 cobalt,color
+cyan,color
+magenta,color
 blanc,color.fra
 nero,color.ita
 democracy,concept.politics
@@ -432,6 +439,25 @@ proc,internet
 apps,internet
 arial,internet
 botnet,internet
+gecko,internet
+mcafee,internet
+borland,internet
+seagate,internet
+thunderbird,internet
+auth,internet
+hitachi,internet
+avatar,internet
+enigma,internet
+fedora,internet
+eudora,internet
+hex,internet
+bool,internet
+solaris,internet
+access point,internet
+ezine,internet
+alibaba,internet
+dell,internet
+acer,internet
 deus,latin
 december,month
 dec,month
@@ -494,6 +520,7 @@ rift,noun
 carrier,noun
 sample,noun
 burden,noun
+joiner,noun
 gap,noun
 speed,noun
 weeks,noun
@@ -1071,6 +1098,7 @@ minha,noun.por
 minha,noun.por
 aeroport,noun.por
 golf,noun.sport
+pong,noun.sport
 skeet,noun.sport
 rugby,noun.sport
 sprint,noun.sport
@@ -1747,6 +1775,7 @@ desert,place.general
 land,place.general
 island,place.general
 islands,place.general
+lagoon,place.general
 islet,place.general
 valley,place.general
 ridge,place.general
@@ -2491,5 +2520,20 @@ chin,noun
 kool,phrase
 guild,noun
 goose,animal
-comercial,adjective
-commercial,adjective
+beaver,animal
+proto,junk
+pioneer,noun
+cutter,noun
+fidelity,noun
+black box,phrase
+cyclone,noun
+pyramid,noun
+excalibur,myth
+marche,noun.fra
+stargazer,noun
+bullseye,noun
+cobol,internet
+mirage,noun
+joiner,noun
+ramp,noun
+maple,noun
