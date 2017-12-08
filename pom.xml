@@ -5,7 +5,7 @@
 
     <groupId>org.opensextant</groupId>
     <artifactId>xponents-parent</artifactId>
-    <version>2.10.2-SNAPSHOT</version>
+    <version>2.10.2</version>
     <packaging>pom</packaging>
 
     <name>OpenSextant Xponents</name>
@@ -57,7 +57,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.25</slf4j.version>
-        <xponents.v>2.10.2-SNAPSHOT</xponents.v>
+        <xponents.v>2.10.2</xponents.v>
     </properties>
 
     <modules>
@@ -86,7 +86,7 @@
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-xtext</artifactId>
-                <version>2.9.12</version>
+                <version>2.10.2</version>
             </dependency>
             <dependency>
                 <groupId>org.opensextant</groupId>
@@ -96,7 +96,7 @@
             <dependency>
                 <groupId>org.opensextant</groupId>
                 <artifactId>opensextant-xponents-examples</artifactId>
-                <version>2.9dev-SNAPSHOT</version>
+                <version>2.10dev-SNAPSHOT</version>
             </dependency>
 
             <dependency>
