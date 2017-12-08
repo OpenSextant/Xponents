@@ -1722,5 +1722,4 @@ public class TextUtils {
         }
         return nonText;
     }
-
 }

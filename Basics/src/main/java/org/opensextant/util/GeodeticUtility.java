@@ -35,10 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.locationtech.spatial4j.io.GeohashUtils;
 import org.opensextant.data.GeoBase;
 import org.opensextant.data.LatLon;
-
-import org.locationtech.spatial4j.io.GeohashUtils;
 
 /**
  * A collection of geodetic routines used within OpenSextant. This is a light

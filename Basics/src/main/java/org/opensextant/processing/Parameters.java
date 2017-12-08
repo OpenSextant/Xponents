@@ -52,6 +52,12 @@ public class Parameters extends java.util.Properties {
     public boolean tag_countries = true;
     public boolean tag_places = true;
     public boolean tag_coordinates = true;
+    /** Generic flag to represent tagging non-Geo names, e.g., names of persons, orgs and things */
+    public boolean tag_names = true;
+    
+    /** Parameter to add a Province name to a Place object, if CC &amp; ADM1 are set.
+     */
+    public boolean resolve_provinces = false;
     /** By default Country Names will not be included in GIS products
      *  They should appear in CSV, though.
      */

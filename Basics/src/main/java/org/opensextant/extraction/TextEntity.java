@@ -87,6 +87,16 @@ public class TextEntity {
     }
 
     /**
+     * Simple Span representation.
+     * @param x1 start offset
+     * @param x2 end offset
+     */
+    public TextEntity(int x1, int x2) {
+        start = x1;
+        end = x2;
+    }
+
+    /**
      * sets the value of the TextEntity
      * 
      * @param t text
@@ -231,7 +241,19 @@ public class TextEntity {
      */
     @Override
     public String toString() {
-        return text + " @(" + start + ":" + end + ")";
+        if (text == null) {
+            return String.format("Span @(%d:%d)", start, end);
+        } else {
+            return String.format("%s @(%d:%d)", text, start, end);
+        }
+    }
+
+    /** Assess if an offset is within this span */
+    public boolean contains(int x) {
+        if (start < 0 || end < 0) {
+            return false;
+        }
+        return (start <= x && x <= end);
     }
 
     /**

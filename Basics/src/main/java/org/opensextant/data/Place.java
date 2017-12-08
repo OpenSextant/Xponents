@@ -39,8 +39,9 @@
 //
 package org.opensextant.data;
 
-import org.opensextant.util.GeodeticUtility;
 import static org.opensextant.util.GeodeticUtility.geohash;
+
+import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 

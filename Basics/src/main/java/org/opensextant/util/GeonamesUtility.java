@@ -47,13 +47,12 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.Language;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
-import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.CsvListReader;
+import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
 /**
@@ -608,7 +607,7 @@ public class GeonamesUtility {
     private List<Place> usStateMetadata = new ArrayList<>();
     private List<Place> admin1Metadata = new ArrayList<>();
     private Map<String, Place> admin1MetadataMap = new HashMap<>();
-    
+
     /**
      * Alias for getWorldAdmin1Metadata. 
      * @return list of Places.
@@ -643,12 +642,12 @@ public class GeonamesUtility {
             while ((adm1 = adm1CSV.read()) != null) {
                 String[] path = ccSplit.split(adm1.get(0), 2);
                 String placeID = adm1.get(3);
-                if (path[0] == "US"){
-                    placeID = String.format("USGS%s",placeID);
+                if (path[0] == "US") {
+                    placeID = String.format("USGS%s", placeID);
                 } else {
-                    placeID = String.format("NGA%s",placeID);                    
+                    placeID = String.format("NGA%s", placeID);
                 }
-                 
+
                 Place p = new Place(placeID, adm1.get(1));
 
                 p.setFeatureClass("A");
@@ -693,37 +692,37 @@ public class GeonamesUtility {
 
     /**
      * Retrieve a Place object with the semi-official name (in Latin/Anglo terms) given CC and ADM1 code.
-     * REQUIRED: loadWorldAdmin1Metadata() first.
+     * You must load World ADM1 data first; use loadWorldAdmin1Metadata()
      * 
      * @param cc ISO country code
      * @param adm1 ISO province code
      * @return Place or null.
-     * @throws ConfigException if data table is not loaded. This is not commonly required. 
      */
-    public Place getAdmin1Place(String cc, String adm1) throws ConfigException {
-        if (admin1Metadata.isEmpty()) {
-            throw new ConfigException("You must load World ADM1 data first; use loadWorldAdmin1Metadata()");
-        }
+    public Place getAdmin1Place(String cc, String adm1)  {
         return admin1MetadataMap.get(GeonamesUtility.getHASC(cc, adm1));
     }
 
     /**
+     * Lookup by coded path, CC.ADM1. 
+     * You must load World ADM1 data first; use loadWorldAdmin1Metadata()
+    *
      *  Alias for {@link #getAdmin1Place(String, String)}
      */
-    public Place getProvince(String cc, String adm1) throws ConfigException{
+    public Place getProvince(String cc, String adm1) {
         return getAdmin1Place(cc, adm1);
     }
-    
+
     /**
-     * Lookup by coded path, CC.ADM1
+     * Lookup by coded path, CC.ADM1. 
+     * You must load World ADM1 data first; use loadWorldAdmin1Metadata()
+     * 
      * @param path hierarchical path
-     * @return
-     * @throws ConfigException
+     * @return adm1 place obj
      */
-    public Place getAdmin1PlaceByHASC(String path) throws ConfigException {
-        if (admin1Metadata.isEmpty()) {
-            throw new ConfigException("You must load World ADM1 data first; use loadWorldAdmin1Metadata()");
-        }
+    public Place getAdmin1PlaceByHASC(String path) {
+        //if (admin1Metadata.isEmpty()) {
+        //    throw new ConfigException("You must load World ADM1 data first; use loadWorldAdmin1Metadata()");
+        //}
         return admin1MetadataMap.get(path);
     }
 
