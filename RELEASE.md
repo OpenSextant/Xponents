@@ -1,13 +1,22 @@
 #2017#
+* Xponents 2.10.x Revival
+ - Solr6 + Java8 support.  Solr4 discontinued
+ - Province Names table: Geocoded matches now have Province Name along side ADM1
+ - Applied noise filters to TaxonMatcher 
+ - MatcherUtils: utility class to help special cases in sifting through matches, e.g. matches 
+  on HTML or tagged data need more filtering.
+
 * Xponents 2.9.9  Fourth of July 
  - Much improved stop filters for nearly all Solr-supported languages (using lucene stopword resources)
  - Reviewed geocoding rules; Assigned default confidence to country matches, instead of 0.
  - Solr6 staging
 
 * Xponents 2.9.6
- - Addition of a MapReduce (MR) experimentation area. Capability iterates over JSON data that has "text" and "id" fields; Geotags text for coordinates and place names.
- - Filters: with advent of MR tokenization and false-positives in specific languages became glaringly obvious. Fixed: geotagging in Japanese (and Chinese, Korean, etc); 
-As well, improved some common stop word lists for Vietnamese and Spanish leveraging stop word lists from Lucene and Carrot2.
+ - Addition of a MapReduce (MR) experimentation area. Capability iterates over JSON data that 
+  has "text" and "id" fields; Geotags text for coordinates and place names.
+ - Filters: with advent of MR tokenization and false-positives in specific languages became glaringly obvious. 
+  Fixed: geotagging in Japanese (and Chinese, Korean, etc); As well, improved some common stop word lists 
+  for Vietnamese and Spanish leveraging stop word lists from Lucene and Carrot2.
 
 * Xponents 2.9.3
  - Solr Gazetteer: non-places split into general and spanish as the major groupings.
