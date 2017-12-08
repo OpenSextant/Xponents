@@ -8,19 +8,20 @@ public class MatcherUtils {
     public final static String startChars = "<[";
     public final static String closeChars = ">[";
 
-    /**
+    /*
      * Trivial attempt at locating edges of tags in data.
      * This allows us to tag any data, but post-filter any 
-     * items match within tags, that is if you have
+     * items match within tags, that is if you have 
+     * <pre>
      *    [A]text[A]
      *    [A]text[/A]
      *    [A data]text
+     * </pre>
      * where A is a tag, but the (angle,paren,square,curly) bracket
      * marks the start of a tag area.  We are finding those start/ends
      * of the tag area, not the text span represented by the matching
      * tags.
-     * Supported characters are > and [ for now.
-     * 
+     * Supported characters are &gt; and [ for now.
      * @param text
      * @return list of TextEntity with no text, just span offsets
      */
