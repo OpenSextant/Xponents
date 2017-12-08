@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.XlayerApp;
 import org.restlet.Context;
 import org.restlet.Restlet;
@@ -23,7 +24,7 @@ public class XlayerRestlet extends XlayerApp {
 
     public XlayerRestlet(Context c) {
         super(c);
-        version = "v2.9";
+        version = "v2.10";
         log = getContext().getCurrentLogger();
     }
 
@@ -59,7 +60,10 @@ public class XlayerRestlet extends XlayerApp {
         // Default - process place/country mentions in document texts.
         //
         tagger = new PlaceGeocoder();
-        // tagger.setParameters(this.params); See Xponents concept of Parameters
+        Parameters taggerParams = new Parameters();
+        taggerParams.resolve_provinces = true;
+        tagger.setParameters(taggerParams); 
+        //See Xponents concept of Parameters
         tagger.enablePersonNameMatching(true);
         tagger.configure();
 

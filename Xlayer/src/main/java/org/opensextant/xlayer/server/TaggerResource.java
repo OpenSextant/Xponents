@@ -250,6 +250,10 @@ public abstract class TaggerResource extends ServerResource {
             job.clean_input = features.contains("clean_input");
             job.tag_lowercase = features.contains("lowercase");
         }
+        
+        if (job.clean_input || job.tag_lowercase){
+            job.isdefault = false;
+        }
 
         return job;
     }

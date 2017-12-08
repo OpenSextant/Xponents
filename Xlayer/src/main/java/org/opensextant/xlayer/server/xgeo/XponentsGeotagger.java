@@ -130,9 +130,9 @@ public class XponentsGeotagger extends TaggerResource {
                         JSONObject node = populateMatch(name);
                         String t = "taxon";
                         String taxon_name = n.name.toLowerCase();
-                        if (taxon_name.startsWith("org.")) {
+                        if (taxon_name.startsWith("org")) {
                             t = "org";
-                        } else if (taxon_name.startsWith("person.")) {
+                        } else if (taxon_name.startsWith("person")) {
                             t = "person";
                         }
                         node.put("type", t);
@@ -205,6 +205,7 @@ public class XponentsGeotagger extends TaggerResource {
                  */
                 Transforms.createGeocoding(resolvedPlace, node);
                 node.put("name", resolvedPlace.getPlaceName());
+                addProvinceName(node, resolvedPlace);
                 node.put("type", "place");
                 node.put("confidence", place.getConfidence());
                 if (place.getConfidence() <= 10) {
@@ -221,6 +222,19 @@ public class XponentsGeotagger extends TaggerResource {
         result.setCharacterSet(CharacterSet.UTF_8);
 
         return result;
+    }
+
+    /**
+     * 
+     * @param map
+     * @param resolvedPlace
+     */
+    private static void addProvinceName(JSONObject map, Place resolvedPlace) {
+        String adm1Name = resolvedPlace.getAdmin1Name();
+        if (adm1Name == null) {
+            return;
+        }
+        map.put("province-name", adm1Name);
     }
 
     /**
