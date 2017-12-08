@@ -48,7 +48,7 @@ public class TagFilter extends MatchFilter {
      */
     private Map<String, Set<Object>> langStopFilters = new HashMap<>();
 
-    private Set<String> generalLangId = new HashSet<>();
+    //private Set<String> generalLangId = new HashSet<>();
 
     /**
      * NOTE: This expects the files are all available. This fails if resource
@@ -66,15 +66,14 @@ public class TagFilter extends MatchFilter {
         for (String f : defaultNonPlaceFilters) {
             stopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
         }
-        generalLangId.add(TextUtils.englishLang);
-        generalLangId.add(TextUtils.spanishLang);
+        //generalLangId.add(TextUtils.englishLang);
+        //generalLangId.add(TextUtils.spanishLang);
 
         /* NOTE: these stop word sets are of format='wordset'
          * Whereas other languages (es, it, etc.) are provided in format='snowball'
          * StopFilterFactory is needed to load snowball filters.
          */
-        String[] langSet = { "ja", "th", "tr", "id", "ar", "ru", "it", "pt", "de", "nl"
-                /*, "es"*/ };  // Español (es) is handled by adhoc list of spanish terms above.
+        String[] langSet = { "ja", "th", "tr", "id", "ar", "ru", "it", "pt", "de", "nl", "es", "en"}; 
         loadLanguageStopwords(langSet);
     }
 
@@ -85,15 +84,7 @@ public class TagFilter extends MatchFilter {
      * @throws ConfigException
      */
     private void loadLanguageStopwords(String[] langids) throws IOException, ConfigException {
-
         for (String lg : langids) {
-            /*String url = String.format("/lang/stopwords_%s.txt", lg);
-            URL obj = TagFilter.class.getResource(url);
-            if (obj == null) {
-                throw new IOException("No such stop filter file " + url);
-            }
-            loadStopSet(obj, lg);
-            */
             langStopFilters.put(lg, LuceneStopwords.getStopwords(new ClasspathResourceLoader(TagFilter.class), lg));
         }
 
@@ -201,11 +192,13 @@ public class TagFilter extends MatchFilter {
                 return assessAllFilters(t.getText().toLowerCase());
             }
         }
-        /*
-         * IGNORE languages already filtered out by the general filter above.
+        /* 
+         * Consider language specific stop filters.
+         * NOTE: LangID should not be 'CJK' or group.  langStopFilters keys stop terms by LangID
          */
-        if (generalLangId.contains(langId)) {
-            return false;
+        if (langStopFilters.containsKey(langId)) {
+            Set<Object> terms = langStopFilters.get(langId);
+            return terms.contains(t.getText().toLowerCase());
         }
 
         /* EXPERIMENTAL.
@@ -245,15 +238,6 @@ public class TagFilter extends MatchFilter {
                     return true;
                 }
             }
-        }
-
-        /* 
-         * Consider language specific stop filters.
-         * NOTE: LangID should not be 'CJK' or group.  langStopFilters keys stop terms by LangID
-         */
-        if (langStopFilters.containsKey(langId)) {
-            Set<Object> terms = langStopFilters.get(langId);
-            return terms.contains(t.getText().toLowerCase());
         }
         return false;
     }

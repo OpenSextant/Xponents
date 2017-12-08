@@ -1,6 +1,6 @@
 from opensextant.TaxCat import TaxCatalogBuilder, Taxon
 
-non_person_names = set([ 'man','case','dot','chase','art' ])
+# non-person names maintained in ./etc/taxcat
 
 def create_entity(name):
     '''
@@ -13,8 +13,8 @@ def create_entity(name):
     taxon.phrasenorm = taxon.phrase # Nothing more to normalize.
     taxon.is_valid = True
     taxon.tags = []
-    if n in non_person_names: 
-        taxon.is_valid = False
+    #if n in non_person_names: 
+    #    taxon.is_valid = False
     
     return taxon
 
@@ -28,7 +28,6 @@ data_sets = [
         'path':'./etc/gazetteer/filters/exclude-adhoc-names.txt'
         }
     ]
-
 
 def index_names(taxcat, fpath, cat, tag, rownum):
     fh = open(fpath, 'rb')

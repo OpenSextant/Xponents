@@ -458,6 +458,7 @@ ezine,internet
 alibaba,internet
 dell,internet
 acer,internet
+epson,internet
 deus,latin
 december,month
 dec,month
@@ -1390,6 +1391,8 @@ po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
 goto,phrase
+start point,phrase
+end point,phrase
 ps,phrase
 eek,phrase
 end of the road,phrase

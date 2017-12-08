@@ -8,8 +8,10 @@ print "Note - run from ./solr/ folder"
 print "Ingesting filter files"
 
 GAZ_CONF = './etc/gazetteer'
+TAX_CONF = './etc/taxcat'
 # The resulting name filter file:
 output = os.path.join(GAZ_CONF, 'filters/person-name-filter.txt')
+nonpersons = os.path.join(TAX_CONF, 'non-person-names.txt')
 
 # All final names
 names = set([])
@@ -99,20 +101,18 @@ if os.path.exists(f1):
             if k in names: names.remove(k)
     fh.close()
 
+
+non_person_names = set([])
+with open(nonpersons, 'rb') as fh:
+    for nm in fh:
+        non_person_names.add(nm.strip().lower())
+
+print "Found non-person names:", len(non_person_names)
+
 #
 if names:
-
-    # manual deletes, while these signify Person names, they also collide with general geographic cues
-    # not enough terms that are both locations, person names, and confounded terms to warrant separate data sets.
-    try:
-        names.remove('hall')
-        names.remove('many')
-        names.remove('zona')
-    except Exception, err:
-        print "===========ERROR=========="
-        print "Something is wrong with the data.  Check any downloaded files"
-        print traceback.format_exc(limit=5)
-        print "===========ERROR=========="
+    for nm in non_person_names:
+        names.remove(nm)
 
     fh = open(output, 'wb')
     fh.write('# Generated File:  census surnames + exclusions - inclusions\n')

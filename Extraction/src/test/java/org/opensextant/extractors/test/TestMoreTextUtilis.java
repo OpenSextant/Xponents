@@ -27,5 +27,18 @@ public class TestMoreTextUtilis {
         text = "ABC <br>yakkety yak and <tag Dont talk bak.";
         spans = MatcherUtils.findTagSpans(text);
         print(spans.toString());
+
+        text = "ABC [TAG]<br>yakkety yak and <tag > Dont talk bak.[TAG data] text...";
+        spans = MatcherUtils.findTagSpans(text);
+        print(spans.toString());
+    }
+
+    public static void testSomeSpans(String buf) {
+        List<TextEntity> spans = MatcherUtils.findTagSpans(buf);
+        print(spans.toString());
+    }
+
+    public static void main(String[] args) {
+        testSomeSpans(args[0]);
     }
 }
