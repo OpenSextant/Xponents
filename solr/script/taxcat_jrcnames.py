@@ -61,6 +61,15 @@ creating the taxnode value.
 
 from opensextant.TaxCat import Taxon, TaxCatalogBuilder
 from opensextant.CommonsUtils import is_ascii
+from opensextant.GeonamesUtility import load_us_provinces
+
+load_us_provinces()
+from opensextant.GeonamesUtility import usstates
+
+ignore_provinces = []
+for adm1 in usstates:
+  adm1_place = usstates[adm1]
+  ignore_provinces.append( adm1_place.name.lower() )
 
 # distinct primary names act as a JRC root entry; all others would be variants
 #    That is just the convention here for demo sake.
@@ -184,6 +193,9 @@ class JRCEntity(Taxon):
           elif tokens[0] in PLACE_STARTING_FIXES:
             self.entity_type = 'T'
             print "Place Phrase fixed", self.phrase
+          elif tokens[-1] in ignore_provinces:
+            self.entity_type = 'T'
+            print "Ignore Province name in token", self.phrase
 
           if self.entity_type == 'P':
             for tok in tokens:

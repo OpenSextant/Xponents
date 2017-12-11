@@ -384,6 +384,17 @@ public class LocationChooserRule extends GeocodeRule {
             }
         }
 
+        /*
+         * If we find random places that are short in length (1,2,3 chars)
+         * then we mark them down in confidence. Send them along but low-confidence.
+         * Administrative names, though may be short -- allow them to pass as-is.
+         */
+        if (!pc.getChosen().isAdministrative() && pc.getLength() < 4) {
+            if (pc.getEvidence().isEmpty() && pc.hasDefaultRuleOnly()) {
+                points -= 10;
+            }
+        }
+
         // TODO: work through ambiguities -- true ties.
         // AMBIGUOUS TIE:
         if (pc.isAmbiguous()) {

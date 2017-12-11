@@ -11,3 +11,10 @@ manual
 key
 page
 head
+good
+love
+alpha
+sun
+mac
+smart
+else

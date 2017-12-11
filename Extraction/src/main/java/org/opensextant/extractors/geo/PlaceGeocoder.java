@@ -624,7 +624,7 @@ public class PlaceGeocoder extends GazetteerMatcher
                     // Ignore names that are already stop terms.  Okay, 'Will Smith' 
                     // passes,  but 'will i am' is filtered out.
                     // 
-                    if (this.filter.filterOut(input.langid, node) && tm.isLower()) {
+                    if (this.filter.filterOut(input.langid, tag.getText().toLowerCase()) && tm.isLower()) {
                         continue;
                     }
                     persons.add(tag);

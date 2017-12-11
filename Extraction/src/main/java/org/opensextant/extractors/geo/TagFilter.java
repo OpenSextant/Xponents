@@ -40,7 +40,7 @@ public class TagFilter extends MatchFilter {
      */
     boolean filter_stopwords = true;
     boolean filter_on_case = true;
-    Set<String> stopTerms = null;
+    Set<String> nonPlaceStopTerms = null;
     Logger log = LoggerFactory.getLogger(TagFilter.class);
 
     /*
@@ -58,13 +58,13 @@ public class TagFilter extends MatchFilter {
      */
     public TagFilter() throws IOException, ConfigException {
         super();
-        stopTerms = new HashSet<>();
+        nonPlaceStopTerms = new HashSet<>();
         String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", // GENERAL
                 "/filters/non-placenames,spa.csv", // SPANISH 
                 "/filters/non-placenames,acronym.csv" // ACRONYMS
         };
         for (String f : defaultNonPlaceFilters) {
-            stopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
+            nonPlaceStopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
         }
         //generalLangId.add(TextUtils.englishLang);
         //generalLangId.add(TextUtils.spanishLang);
@@ -160,7 +160,7 @@ public class TagFilter extends MatchFilter {
         }
 
         if (filter_stopwords) {
-            if (stopTerms.contains(t.toLowerCase())) {
+            if (nonPlaceStopTerms.contains(t.toLowerCase())) {
                 return true;
             }
         }
@@ -250,10 +250,10 @@ public class TagFilter extends MatchFilter {
      */
     public boolean filterOut(String langId, String termLower) {
 
-        String lg = "en"; // default? eek.
+        String lg = langId != null ? langId : "en"; // default? eek.
 
-        if (langStopFilters.containsKey(langId != null ? langId : lg)) {
-            Set<Object> terms = langStopFilters.get(langId);
+        if (langStopFilters.containsKey(lg)) {
+            Set<Object> terms = langStopFilters.get(lg);
             return terms.contains(termLower);
         }
         return false;

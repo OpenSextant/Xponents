@@ -422,7 +422,9 @@ gamer,internet
 siri,internet
 java,internet
 blackberry,internet
+ubuntu,internet
 jabber,internet
+sirius,internet
 fico,internet
 vid,internet
 naver,internet
@@ -444,6 +446,7 @@ mcafee,internet
 borland,internet
 seagate,internet
 thunderbird,internet
+firebird,internet
 auth,internet
 hitachi,internet
 avatar,internet
@@ -453,6 +456,7 @@ eudora,internet
 hex,internet
 bool,internet
 solaris,internet
+entry point,internet
 access point,internet
 ezine,internet
 alibaba,internet
@@ -1564,6 +1568,7 @@ brightside,phrase
 a better view,phrase
 bright star,phrase
 hum,phrase
+else,phrase
 else's,phrase
 a do,phrase
 hoo,phrase
@@ -1619,6 +1624,7 @@ pipeline,place.civil
 jail,place.civil
 checkpoint,place.civil
 holy ground,place.civil
+interchange,place.civil
 stadium,place.civil
 community center,place.civil
 media center,place.civil
@@ -2540,3 +2546,7 @@ mirage,noun
 joiner,noun
 ramp,noun
 maple,noun
+mapper,noun
+pest,noun
+eval,abbrev
+ballad,noun
