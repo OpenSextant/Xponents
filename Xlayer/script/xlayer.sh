@@ -4,6 +4,7 @@ basedir=`cd -P $script/..; echo $PWD`
 PORT=$1 
 CMD=$2
 
+CATALOG_VERSION=2017Q4
 case $CMD in
 
   'start')
@@ -12,10 +13,10 @@ case $CMD in
     cd $basedir
     logfile=$basedir/log/stderr.log
     stdout=$basedir/log/xlayer.log
-    XPONENTS_SOLR=${XPONENTS_SOLR:-/mitre/xponents-solr/solr4}
+    XPONENTS_SOLR=${XPONENTS_SOLR:-/data/xponents-solr-$CATALOG_VERSION/solr6}
 
     nohup java -Dopensextant.solr=$XPONENTS_SOLR -Xmx2g   -Dlogback.configurationFile=$basedir/etc/logback.xml \
-        -classpath "$basedir/etc:$XPONENTS_SOLR/gazetteer/conf:$basedir/lib/*" org.opensextant.xlayer.server.xgeo.XlayerServer   $*  2>$logfile > $stdout &
+        -classpath "$basedir/etc:$basedir/etc/*:$basedir/lib/*" org.opensextant.xlayer.server.xgeo.XlayerServer   $*  2>$logfile > $stdout &
   ;;
 
 
