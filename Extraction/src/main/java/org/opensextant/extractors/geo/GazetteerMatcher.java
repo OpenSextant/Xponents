@@ -102,6 +102,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private long filteredTotal = 0;
     private long matchedTotal = 0;
     private boolean allowLowercaseAbbrev = false;
+    private final static int AVERAGE_ABBREV_LEN = 6;
+    
     /*
      * enable trure for data such as tweets, blogs, etc. where case varies or
      * does not exist
@@ -494,7 +496,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // be allowed. If lowercase abbreviations are allowed, then all matches are passed.               
             if (len < 3) {
                 if (!allowLowercaseAbbrev) {
-                    if (TextUtils.isASCII(matchText) && !StringUtils.isAllUpperCase(matchText)) {
+                    if (TextUtils.isASCII(matchText) && StringUtils.isAllLowerCase(matchText)) {
                         ++this.defaultFilterCount;
                         continue;
                     }
@@ -579,6 +581,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              */
             if (!isUpperCase && pc.isUpper() && len < 5) {
                 pc.isAcronym = true;
+                pc.isAbbreviation = true;
             }
             pc.hasDiacritics = TextUtils.hasDiacritics(pc.getText());
 
@@ -586,15 +589,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             @SuppressWarnings("unchecked")
             List<Integer> placeRecordIds = (List<Integer>) tag.get("ids");
-
-            /*
-             * This assertion is helpful in debugging: assert
-             * placeRecordIds.size() == new
-             * HashSet<Integer>(placeRecordIds).size() : "ids should be unique";
-             */
-            // assert!placeRecordIds.isEmpty();
             namesMatched.clear();
-
             //double maxNameBias = 0.0;
             for (Integer solrId : placeRecordIds) {
                 log.debug("{} = {}", pc.getText(), beanMap.get(solrId));
@@ -615,12 +610,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 // Common terms: in, or, oh, me, us, we, etc. Are all not
                 // typically place names or valid abbreviations in text.
                 //
-                if (!allowLowercaseAbbrev && pGeo.isAbbreviation() && pc.isLower()) {
-                    log.debug("Ignore lower case term={}", pc.getText());
-                    // DWS: TODO what if there is another pGeo for this pc that
-                    // isn't an abbrev? Therefore shouldn't we continue this
-                    // loop and not tagLoop?
-                    continue tagLoop;
+                if (pGeo.isAbbreviation() && len<AVERAGE_ABBREV_LEN) {
+                    // If this is an abbreviation, then allow it only if we match uppercase
+                    if (!allowLowercaseAbbrev && pc.isLower()) {
+                        log.debug("Ignore lower case term={}", pc.getText());
+                        continue tagLoop;
+                    } else if (allowLowercaseAbbrev && pc.isMixedCase()) {
+                        continue tagLoop;
+                    }
                 }
 
                 /*
@@ -638,9 +635,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * it is not classified as an abbreviation. Otherwise if you have
                  * "My organization YAK happens to coincide with a place named Yak.
                  * But we first must determine if 'YAK' is a valid abbreviation for an actual place.
-                 * HEURISTIC: place abbreviations are relatively short, e.g. one word(len=7 or less)
+                 * HEURISTIC: place abbreviations are relatively short, e.g. one short word(len=5 or less)
                  */
-                if (len < 8 && !pc.isAbbreviation) {
+                if (len < AVERAGE_ABBREV_LEN && !pc.isAbbreviation) {
                     assessAbbreviation(pc, pGeo, postChar, isUpperCase);
                 }
 
@@ -745,7 +742,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         }
         // Lower or mixed-case abbreviations without "." are not
         // tagged Mr, Us, etc.
-
     }
 
     /**

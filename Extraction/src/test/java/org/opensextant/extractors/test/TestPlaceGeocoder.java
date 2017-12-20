@@ -20,6 +20,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         // INIT once.
         geocoder = new PlaceGeocoder(true);
         geocoder.enablePersonNameMatching(true);
+        geocoder.setAllowLowerCaseAbbreviations(false);        
         geocoder.configure();
     }
 
