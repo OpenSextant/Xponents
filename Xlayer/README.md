@@ -69,11 +69,11 @@ When building an Xlayer application, client-side or server-side, please understa
 
 * Xponents JARs -- APIs, Xlayer main and test code.  Use ``` mvn dependency:copy-dependencies``` and then see ./lib/opensextant-*.jar. The 
   essential items are listed in order of increasing dependency:
-  * opensextant-xponents-basics-2.9.8.jar
-  * opensextant-xponents-patterns-2.9.8.jar
-  * opensextant-xponents-2.9.8.jar
-  * opensextant-xponents-xlayer-0.1.jar
-  * opensextant-xponents-xlayer-0.1-tests.jar
+  * opensextant-xponents-basics-2.x.xjar
+  * opensextant-xponents-patterns-2.x.x.jar
+  * opensextant-xponents-2.x.x.jar
+  * opensextant-xponents-xlayer-0.4.jar
+  * opensextant-xponents-xlayer-0.4-tests.jar
 * Configuration items foldered in ```./etc``` or similar folder in CLASSPATH
 * Logging configuration -- Logback is used in most Xponents work, but only through SLF4J. If you choose another logger implementation, 
   SLF4J is your interface.   Copy and configure ```Xlayer/src/test/resources/logback.xml``` in your install.  As scripted, ```./etc/``` is the location for this item.
@@ -128,6 +128,8 @@ Non-Geographic annotations have:
 
 
 References:
+The following data here is emitted in the Xlayer and most all Xponents APIs.  Xponents Basics API provides
+GeonamesUtility class (in Java, and partial solution in Python) to access the codes easily:
 * NGA, http://geonames.nga.mil/gns/html/countrycodes.html
 * Geonames.org, http://download.geonames.org/export/dump/featureCodes_en.txt
 * Geonames.org, http://www.geonames.org/data-sources.html
