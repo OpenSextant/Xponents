@@ -49,8 +49,6 @@ public final class GeocoordNormalization {
     private static final boolean DMLAT = true;
     private static final boolean DMLON = false;
 
-
-
     /**
      * The match object is normalized, setting the coord_text and other data
      * from parsing "text" and knowing which pattern family was matched.
@@ -59,16 +57,19 @@ public final class GeocoordNormalization {
      * @param groups fields
      * @throws NormalizationException
      */
-    public static void normalize_coordinate(GeocoordMatch m, Map<String, TextEntity> groups) throws NormalizationException {
+    public static void normalize_coordinate(GeocoordMatch m, Map<String, TextEntity> groups)
+            throws NormalizationException {
 
         // Hoaky Java 6 issue:  REGEX does not use named groups, so here we map both the value to
         // a text/offset pair (in groups) and provide just the key/text pairs  (_elements)
         //
-        Map<String, String> fieldValues = new HashMap<String,String>();
-        for (String name : groups.keySet()){
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        for (String name : groups.keySet()) {
             TextEntity val = groups.get(name);
             fieldValues.put(name, val.getText());
         }
+
+        m.precision.precision = PrecisionScales.DEFAULT_UNKNOWN_RESOLUTION;
 
         // Extract m.regex_groups, and ordered list of group names
         // align with matcher.group(N)
@@ -89,12 +90,10 @@ public final class GeocoordNormalization {
             // Yield a cooridnate-only version of text; "+42.4440 -102.3333"
             // preserving the innate precision given in the original text.
             //
-
             m.lat_text = ddlat.text;
             m.lon_text = ddlon.text;
             m.setSeparator(groups);
             m.setCoordinate(ddlat, ddlon);
-
 
             /**
              * DD filters enabled.
@@ -118,6 +117,7 @@ public final class GeocoordNormalization {
             }
 
             m.coord_text = m.lat_text + " " + m.lon_text;
+            set_precision(m);
 
         } else if (m.cce_family_id == XConstants.DM_PATTERN) {
             // get lat text
@@ -133,10 +133,11 @@ public final class GeocoordNormalization {
             m.setSeparator(groups);
             m.setCoordinate(dmlat, dmlon);
 
-            if (!m.isFilteredOut()){
+            if (!m.isFilteredOut()) {
                 m.setFilteredOut(m.evaluateInvalidDashes());
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
+            set_precision(m);
 
         } else if (m.cce_family_id == XConstants.DMS_PATTERN) {
             // remove whitespace
@@ -150,10 +151,11 @@ public final class GeocoordNormalization {
             m.setSeparator(groups);
             m.setCoordinate(dmlat, dmlon);
 
-            if (!m.isFilteredOut()){
+            if (!m.isFilteredOut()) {
                 m.setFilteredOut(m.evaluateInvalidDashes());
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
+            set_precision(m);
 
         } else if (m.cce_family_id == XConstants.MGRS_PATTERN) {
 
@@ -194,6 +196,13 @@ public final class GeocoordNormalization {
                         m.addOtherInterpretation(m2);
                     }
                 }
+                String offsets = fieldValues.get("Easting_Northing");
+                int len = offsets.length();
+                if (len < 11) {
+                    m.precision.precision = PrecisionScales.MGRS_offset_precision_list[len];
+                    m.precision.digits = (int) (len / 2);
+                }
+
             } catch (java.lang.IllegalArgumentException parseErr) {
                 //.debug("Failed to parse MGRS pattern with text=" + m.getText() + " COORD?:"
                 //        + m.coord_text, parseErr);
@@ -214,12 +223,13 @@ public final class GeocoordNormalization {
                     Geodetic2DPoint pt = utm.getGeodetic();
                     m.setLatitude(pt.getLatitudeAsDegrees());
                     m.setLongitude(pt.getLongitudeAsDegrees());
-
                     m.coord_text = utm.toString();
+                    PrecisionScales.setUTMPrecision(m);
                 }
             } catch (java.lang.IllegalArgumentException parseErr) {
-                throw new NormalizationException("Failed to parse UTM pattern with text=" + m.getText() + " COORD?:"
-                        + m.coord_text, parseErr);
+                throw new NormalizationException(
+                        String.format("Failed to parse UTM. text=%s coord=%s", m.getText(), m.coord_text),
+                        parseErr);
                 // No normalization done.
             } catch (Exception err) {
                 throw new NormalizationException("Failed to parse UTM pattern", err);
@@ -262,9 +272,9 @@ public final class GeocoordNormalization {
             if ((XCoord.RUNTIME_FLAGS & XConstants.MGRS_FILTERS_ON) > 0) {
                 return MGRS_FILTER.stop(m);
             }
-        }/**
-         * Apply DMS filter also only if static flags say it is enabled.
-         */
+        } /**
+          * Apply DMS filter also only if static flags say it is enabled.
+          */
         else if (m.cce_family_id == XConstants.DMS_PATTERN) {
             if ((XCoord.RUNTIME_FLAGS & XConstants.DMS_FILTERS_ON) > 0) {
                 return DMS_FILTER.stop(m);
@@ -287,28 +297,28 @@ public final class GeocoordNormalization {
 
         // Assess if matched pair has comparable field specificity
         //
-        if (lat.hasSeconds() && lon.hasSeconds()){
+        if (lat.hasSeconds() && lon.hasSeconds()) {
             return true;
         }
-        if (lat.hasMinutes() && lon.hasMinutes()){
+        if (lat.hasMinutes() && lon.hasMinutes()) {
             return true;
         }
-        if (lat.hasDegrees() && lon.hasDegrees()){
+        if (lat.hasDegrees() && lon.hasDegrees()) {
             return true;
         }
 
         // Mismatched.  Degrees or subdegree fields may not be paired up with Second and/or subsecond fields.
         //
-        if (lat.hasDegrees() && lon.hasSeconds() || lon.hasSeconds() && lat.hasDegrees()){
+        if (lat.hasDegrees() && lon.hasSeconds() || lon.hasSeconds() && lat.hasDegrees()) {
             return false;
         }
 
         // This would be non-sensical
         //  DD.dd  DDD MM.m
-        if (lat.hasSubDegrees() && lon.hasSubMinutes()){
+        if (lat.hasSubDegrees() && lon.hasSubMinutes()) {
             return false;
         }
-        if (lon.hasSubDegrees() && lat.hasSubMinutes()){
+        if (lon.hasSubDegrees() && lat.hasSubMinutes()) {
             return false;
         }
 

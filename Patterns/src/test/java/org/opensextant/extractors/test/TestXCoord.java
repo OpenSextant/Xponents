@@ -385,20 +385,22 @@ public class TestXCoord {
         xcoord.match_DD(true);
         xcoord.match_DMS(true);
         xcoord.match_DM(true);
-        xcoord.match_MGRS(false);
+        xcoord.match_MGRS(true);
         xcoord.match_UTM(false);
         TextMatchResult results = null;
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
-        boolean dd = true;
-        boolean dms = true;
-        boolean dm = true;
-        boolean mgrs = false;
+        boolean dd = false;
+        boolean dms = false;
+        boolean dm = false;
+        boolean mgrs = true;
         boolean utm = false;
         //
         xcoord.match_MGRS(mgrs);
 
         String[] mgrstest = {
+                "1N\n678912340",
+                "3GSM 2000",
                 "1 FEB 2013",
                 "12 GMT 18",
                 "12 ctf 4000",

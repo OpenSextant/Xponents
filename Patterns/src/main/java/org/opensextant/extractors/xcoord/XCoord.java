@@ -359,10 +359,7 @@ public class XCoord extends AbstractFlexPat {
                     continue;
                 }
 
-                // Establish precision
-                GeocoordNormalization.set_precision(coord);
-
-                /**
+                /*
                  * Caller may want to disable getContext operation here for
                  * short texts.... or for any use case. This is more helpful for
                  * longer texts with many annotations.
@@ -382,7 +379,6 @@ public class XCoord extends AbstractFlexPat {
                 }
 
                 set_match_id(coord, found);
-
                 results.matches.add(coord);
 
                 // Other Interpretations -- due to possible ambiguities with
@@ -410,7 +406,6 @@ public class XCoord extends AbstractFlexPat {
 
             patternsComplete++;
             updateProgress(patternsComplete / (double) patterns.get_patterns().size() + 1);
-
         }
 
         // "pass" is the wrong idea. If no data was found

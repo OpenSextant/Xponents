@@ -53,32 +53,32 @@ public class PrecisionScales {
      * decimal places.
      */
     public static final double[] DD_precision_list = {
-        //
-        LAT_DEGREE_PRECISION, // 0
-        //
-        LAT_DEGREE_PRECISION / 10, // 1
-        //
-        LAT_DEGREE_PRECISION / 100, // 2, ... etc.
-        //
-        LAT_DEGREE_PRECISION / 1000,
-        //
-        LAT_DEGREE_PRECISION / 10000,
-        // Approx 1m precision at equator:
-        LAT_DEGREE_PRECISION / 100000,
-        //
-        LAT_DEGREE_PRECISION / 1000000,
-        //
-        LAT_DEGREE_PRECISION / 10000000,
-        //
-        LAT_DEGREE_PRECISION / 100000000,
-        //
-        LAT_DEGREE_PRECISION / 1000000000,
-        //
-        LAT_DEGREE_PRECISION / 10000000000L,
-        //
-        LAT_DEGREE_PRECISION / 100000000000L,
-        //
-        LAT_DEGREE_PRECISION / 1000000000000L };
+            //
+            LAT_DEGREE_PRECISION, // 0
+            //
+            LAT_DEGREE_PRECISION / 10, // 1
+            //
+            LAT_DEGREE_PRECISION / 100, // 2, ... etc.
+            //
+            LAT_DEGREE_PRECISION / 1000,
+            //
+            LAT_DEGREE_PRECISION / 10000,
+            // Approx 1m precision at equator:
+            LAT_DEGREE_PRECISION / 100000,
+            //
+            LAT_DEGREE_PRECISION / 1000000,
+            //
+            LAT_DEGREE_PRECISION / 10000000,
+            //
+            LAT_DEGREE_PRECISION / 100000000,
+            //
+            LAT_DEGREE_PRECISION / 1000000000,
+            //
+            LAT_DEGREE_PRECISION / 10000000000L,
+            //
+            LAT_DEGREE_PRECISION / 100000000000L,
+            //
+            LAT_DEGREE_PRECISION / 1000000000000L };
 
     // Last entry above.
     static final double FINEST_DD_PRECISION = LAT_DEGREE_PRECISION / 1000000000000L;
@@ -231,42 +231,59 @@ public class PrecisionScales {
      * Precision appears in pairs, as we tolerate some typo/errors in MGRs.
      *
      */
-    public static float[] MGRS_precision_list = { 100000, // 1  GZD
-        100000, // 2  GZD
-        100000, // 3  GZD
-        100000, // 4  Q
-        100000, // 5  Q
-        100000, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
-        // ---------------------------
-        10000, //  DEC PREC:  1 digit
-        10000, //
-        1000, //             3 digits
-        1000, // MINUTES PREC 3 digits
-        100, //              4 digits
-        100, //              4
-        10, // SECONDS PREC 6 digits
-        10, 1, 1, 0.1f, // 16
-        0.1f // 17
+    public static float[] MGRS_precision_list = { 1000000, // 0 length MGRS -- no meaning. 
+            100000, // 1  GZD
+            100000, // 2  GZD
+            100000, // 3  GZD
+            100000, // 4  Q
+            100000, // 5  Q
+            100000, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
+            // ---------------------------
+            10000, //  DEC PREC:  1 digit
+            10000, //
+            1000, //             3 digits
+            1000, // MINUTES PREC 3 digits
+            100, //              4 digits
+            100, //              4
+            10, // SECONDS PREC 6 digits
+            10, 1, 1, 0.1f, // 16
+            0.1f // 17
     };
+
+    public static float[] MGRS_offset_precision_list = { 
+            100000, // NONE. 0 or 1 digit of precision is meaningless.
+            100000, // NONE.
+            10000, //  DEC PREC:  1 digit
+            10000, //
+            1000, //             4 digits
+            1000, // MINUTES PREC 4 or 5 digits
+            100, //              6 digits
+            100, //              7
+            10, // SECONDS PREC 8 digits. Goes to 99999
+            10, //
+            1   // 1-meter precision eeeee nnnnn 
+            };
+
     /**
      *
      */
-    public static int[] MGRS2DEC_digits = { 0, // 1  GZD
-        0, // 2  GZD
-        0, // 3  GZD
-        0, // 4  Q
-        0, // 5  Q
-        0, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
-        // ---------------------------
-        1, //  DEC PREC:  1 digit
-        1, //
-        3, //             3 digits
-        3, // MINUTES PREC 3 digits
-        4, //              4 digits
-        4, //              4
-        6, // SECONDS PREC 6 digits
-        6, 7, 7, 8, // 16
-        8 // 17
+    public static int[] MGRS2DEC_digits = { 0,
+            0, // 1  GZD
+            0, // 2  GZD
+            0, // 3  GZD
+            0, // 4  Q
+            0, // 5  Q
+            0, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
+            // ---------------------------
+            1, //  DEC PREC:  1 digit
+            1, //
+            3, //             3 digits
+            3, // MINUTES PREC 3 digits
+            4, //              4 digits
+            4, //              4
+            6, // SECONDS PREC 6 digits
+            6, 7, 7, 8, // 16
+            8 // 17
     };
 
     /**

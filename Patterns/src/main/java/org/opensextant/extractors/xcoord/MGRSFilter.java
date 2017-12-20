@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.opensextant.util.TextUtils;
 
@@ -121,6 +122,8 @@ public class MGRSFilter implements GeocoordMatchFilter {
         return !stop(m);
     }
 
+    final static Pattern eol = Pattern.compile("[\r\n]");
+    
     /**
      * TODO: Document rules.
      * stop a match
@@ -144,7 +147,7 @@ public class MGRSFilter implements GeocoordMatchFilter {
         }
 
         String eolTest = m.getText().substring(0,5);
-        if (eolTest.contains("\n")|| eolTest.contains("\r") ){
+        if (eol.matcher(eolTest).find()){
             return true;
         }
 
