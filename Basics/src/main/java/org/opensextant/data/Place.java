@@ -101,8 +101,10 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     protected char name_type = 0;
 
+    private boolean isAbbreviation = false;
     public void setName_type(char t) {
         name_type = t;
+        isAbbreviation = GeonamesUtility.isAbbreviation(name_type);        
     }
 
     public char getName_type() {
@@ -255,7 +257,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
      * @return true if name value here is an abbreviation, e.g., Mass.
      */
     public boolean isAbbreviation() {
-        return GeonamesUtility.isAbbreviation(name_type);
+        return isAbbreviation;
     }
 
     /**

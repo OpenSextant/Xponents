@@ -157,6 +157,13 @@ public class TextEntity {
     public boolean isUpper() {
         return isUpper;
     }
+    /**
+     * test if text is mixed case.
+     * @return true if neither allower or all upper.
+     */
+    public boolean isMixedCase(){
+        return !isUpper && !isLower;
+    }
 
     /**
      *
