@@ -18,3 +18,5 @@ sun
 mac
 smart
 else
+asia
+beach

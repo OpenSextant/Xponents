@@ -2531,6 +2531,7 @@ guild,noun
 goose,animal
 beaver,animal
 proto,junk
+nitro,junk
 pioneer,noun
 cutter,noun
 fidelity,noun
@@ -2549,4 +2550,5 @@ maple,noun
 mapper,noun
 pest,noun
 eval,abbrev
+lib,abbrev
 ballad,noun
