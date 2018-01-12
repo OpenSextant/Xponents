@@ -18,9 +18,15 @@ The major sub-modules include:
 * **XText**: Mature solutions for getting text and metadata from binary formats.
 * **Basics** and **Patterns** are two supporting modules that are used as the Xponents lingua franca throughout the SDK.
 
-As of 2017, this **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
+The original focus of Xponents was to provide a simplified tool kit for geotagging and related geo-extraction.
+With that goal in mind you can see where the toolkit is today (as of fall 2017):
+
+* **Video**: **["Discoverying World Geography in Your Data"](https://www.youtube.com/watch?v=44v2WljG1R0)**,  
+presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
+
+The **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
 the Xponents methodology to geotagging and geocoding.  Nearly all of Xponents
-and XText has some role in supporting the methodology.
+and XText has some role in supporting the methodology. As you can see above, the toolkit supports much more types of extraction than just geotagging.
 
 Related sub-modules that employ these SDKs:
 * **Examples**: A set of Java main programs that demonstrates the use of XText alongside Extraction to take raw data, process it, and output GIS formats in one shot!
