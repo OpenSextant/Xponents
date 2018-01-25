@@ -500,7 +500,7 @@ public class SolrGazetteer {
          * value name_ar -- stores Arabic-specific full-text value name_cjk --
          * stores CJK-specific full-text value
          */
-        String q = String.format("%s +name:\"%s\"", parametricQuery, name);
+        String q = String.format("%s AND +name:\"%s\"", parametricQuery, name);
 
         /*
          * Execute query, get List of Place instances (one per gazetteer entry)
