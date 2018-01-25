@@ -9,8 +9,8 @@ We cover first the Java version of some query tools, and then the Python version
 Java Demonstration
 ------------------
 
-```
 __DEMO COMMAND USAGE:__
+```
 
 usage: org.opensextant.examples.XponentsGazetteerQuery [-g] [-h] [-l <arg>] [-p]
 _______
