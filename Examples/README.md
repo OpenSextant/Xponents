@@ -1,8 +1,10 @@
 
-#OpenSextant Xponents: Example Processing Apps#
+OpenSextant Xponents: Example Processing Apps
+=======================
 
 Xponents demonstrations reside here: src/main/java/org/opensextant/examples/
 
+- XponentsGazetteerQuery:  Explore API calls to navigate gazetteer data and utilities for data lookups. See ./doc/
 - BasicGeoTemporalProcessing:  Process raw unstructured data/documents resulting in a GIS file of your choice.
 - TweetGeocoder: An illustration of how to use XCoord to parse coordinates and other metadata from tweets resulting in a GIS file of your choice.
 - TaxonomicTagger: Demonstration of using XTax; Follow Extraction/XTax README on setting up examples or your own instance.  
