@@ -26,9 +26,11 @@
     </logger>
     <logger name="org.opensextant.extractors.poli" level="info">
     </logger>
-    <logger name="org.opensextant.extractors.geo.rules" level="debug">
+    <logger name="org.opensextant.extractors.geo.rules" level="info">
     </logger>
-    <logger name="org.opensextant.extractors.geo.GazetteerMatcher" level="debug">
+    <logger name="org.opensextant.extractors.geo.GazetteerMatcher" level="info">
+    </logger>
+    <logger name="org.opensextant.examples" level="info">
     </logger>
 
 </configuration>
