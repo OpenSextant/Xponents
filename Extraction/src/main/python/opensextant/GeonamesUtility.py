@@ -1,4 +1,4 @@
-'''
+q'''
  GeonamesUtility:  lines up with functionality in Xponents Basics utility package.
 
 '''
@@ -134,4 +134,4 @@ def get_province(cc, adm1):
     ''' REQUIRES you load_provinces() first. 
     '''    
     return adm1_by_hasc.get(make_HASC(cc, adm1))
-    
+
