@@ -92,12 +92,11 @@ public class PlaceGeocoder extends GazetteerMatcher
         implements Extractor, CountryObserver, BoundaryObserver, LocationObserver {
 
     public final static String VERSION = "2.10";
-    public static String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
+    public final static String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
 
     /**
      * Resources and Taggers
      */
-    protected Logger log = LoggerFactory.getLogger(getClass());
     private XCoord xcoord = null;
     private PersonNameFilter personNameRule = null;
     private TaxonMatcher personMatcher = null;
@@ -132,6 +131,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      */
     public PlaceGeocoder() throws ConfigException {
         super();
+        log = LoggerFactory.getLogger(getClass());
     }
 
     /**
@@ -142,6 +142,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      */
     public PlaceGeocoder(boolean lowercaseAllowed) throws ConfigException {
         super(lowercaseAllowed);
+        log = LoggerFactory.getLogger(getClass());
     }
 
     /*
@@ -823,8 +824,8 @@ public class PlaceGeocoder extends GazetteerMatcher
      * coordinate, e.g., What state is (x,y) in? Found locations are sorted by
      * distance to point.
      */
-    public static int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /*km*/ ;
-    public static int COORDINATE_PROXIMITY_ADM1_THRESHOLD = 50 /*km*/;
+    public final static int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /*km*/ ;
+    public final static int COORDINATE_PROXIMITY_ADM1_THRESHOLD = 50 /*km*/;
 
     /**
      * A method to retrieve one or more distinct admin boundaries containing the

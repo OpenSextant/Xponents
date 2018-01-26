@@ -61,7 +61,7 @@ public class SolrUtil {
         } else if (obj instanceof Integer) {
             return ((Integer) obj).intValue();
         } else {
-            Integer v = Integer.parseInt(obj.toString());
+            Integer v = Integer.valueOf(obj.toString());
             return v.intValue();
         }
     }
@@ -83,7 +83,7 @@ public class SolrUtil {
         } else if (obj instanceof Integer) {
             return ((Integer) obj).intValue();
         } else {
-            Integer v = Integer.parseInt(obj.toString());
+            Integer v = Integer.valueOf(obj.toString());
             return v.intValue();
         }
     }
@@ -100,9 +100,9 @@ public class SolrUtil {
         if (obj instanceof StoredField) {
             return ((StoredField) obj).numericValue().longValue();
         } else if (obj instanceof Long) {
-            return ((Long) obj).longValue();
+            return ((Long) obj);
         } else {
-            return new Long(obj.toString()).longValue();
+            return Long.valueOf(obj.toString());
         }
     }
 
@@ -118,9 +118,9 @@ public class SolrUtil {
         if (obj instanceof StoredField) {
             return ((StoredField) obj).numericValue().floatValue();
         } else if (obj instanceof Float) {
-            return ((Float) obj).floatValue();
+            return ((Float) obj);
         } else {
-            return new Float(obj.toString()).floatValue();
+            return Float.valueOf(obj.toString());
         }
     }
 
@@ -134,7 +134,7 @@ public class SolrUtil {
         } else if (obj instanceof Float) {
             return ((Float) obj).floatValue();
         } else {
-            return new Float(obj.toString()).floatValue();
+            return Float.valueOf(obj.toString());
         }
     }
     
@@ -221,7 +221,7 @@ public class SolrUtil {
             Number number = (Number) obj;
             return number.doubleValue();
         } else {
-            return Double.parseDouble(obj.toString());
+            return Double.valueOf(obj.toString());
         }
     }
 
@@ -238,8 +238,8 @@ public class SolrUtil {
 
         final double[] xyPair = { 0.0, 0.0 };
         String[] lat_lon = xy.split(",", 2);
-        xyPair[0] = Double.parseDouble(lat_lon[0]);
-        xyPair[1] = Double.parseDouble(lat_lon[1]);
+        xyPair[0] = Double.valueOf(lat_lon[0]);
+        xyPair[1] = Double.valueOf(lat_lon[1]);
 
         return xyPair;
     }
@@ -253,8 +253,8 @@ public class SolrUtil {
 
         final double[] xyPair = { 0.0, 0.0 };
         String[] lat_lon = xy.split(",", 2);
-        xyPair[0] = Double.parseDouble(lat_lon[0]);
-        xyPair[1] = Double.parseDouble(lat_lon[1]);
+        xyPair[0] = Double.valueOf(lat_lon[0]);
+        xyPair[1] = Double.valueOf(lat_lon[1]);
 
         return xyPair;
     }

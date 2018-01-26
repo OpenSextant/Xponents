@@ -642,7 +642,7 @@ public class GeonamesUtility {
             while ((adm1 = adm1CSV.read()) != null) {
                 String[] path = ccSplit.split(adm1.get(0), 2);
                 String placeID = adm1.get(3);
-                if (path[0] == "US") {
+                if ("US".equals(path[0])) {
                     placeID = String.format("USGS%s", placeID);
                 } else {
                     placeID = String.format("NGA%s", placeID);

@@ -101,11 +101,11 @@ public class FileUtility {
             throw new IOException("Null values cannot be used to write out file.");
         }
 
-        final FileOutputStream file = new FileOutputStream(fname, append); // APPEND
-        final OutputStreamWriter fout = new OutputStreamWriter(file, enc);
-        fout.write(buffer, 0, buffer.length());
-        fout.flush();
-        fout.close();
+        try (final FileOutputStream file = new FileOutputStream(fname, append)) {// APPEND
+            final OutputStreamWriter fout = new OutputStreamWriter(file, enc);
+            fout.write(buffer, 0, buffer.length());
+            fout.flush();
+        }
         return true;
     }
 
@@ -309,11 +309,11 @@ public class FileUtility {
             return null;
         }
 
-        final FileInputStream instream = new FileInputStream(fileinput);
-        final byte[] inputBytes = new byte[instream.available()];
-        instream.read(inputBytes);
-        instream.close();
-        return new String(inputBytes, enc);
+        try (final FileInputStream instream = new FileInputStream(fileinput)) {
+            final byte[] inputBytes = new byte[instream.available()];
+            instream.read(inputBytes);
+            return new String(inputBytes, enc);
+        }
     }
 
     /**
@@ -330,11 +330,11 @@ public class FileUtility {
             return null;
         }
 
-        final FileInputStream instream = new FileInputStream(fileinput);
-        final byte[] inputBytes = new byte[instream.available()];
-        instream.read(inputBytes);
-        instream.close();
-        return inputBytes;
+        try (final FileInputStream instream = new FileInputStream(fileinput)) {
+            final byte[] inputBytes = new byte[instream.available()];
+            instream.read(inputBytes);
+            return inputBytes;
+        }
     }
 
     /**
@@ -788,12 +788,8 @@ public class FileUtility {
      */
     public static Set<String> loadDictionary(File resourcepath, boolean case_sensitive)
             throws IOException {
-        InputStream io = null;
-        try {
-            io = new FileInputStream(resourcepath);
+        try (InputStream io = new FileInputStream(resourcepath)) {
             return loadDict(io, case_sensitive);
-        } finally {
-            io.close();
         }
     }
 

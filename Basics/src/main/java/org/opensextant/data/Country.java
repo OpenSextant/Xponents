@@ -202,7 +202,7 @@ public class Country extends Place {
         }
 
         public String toString() {
-            return String.format("%s %d, %d", label, utcOffset, dstOffset);
+            return String.format("%s %1.1f, %1.1f", label, utcOffset, dstOffset);
         }
     }
 

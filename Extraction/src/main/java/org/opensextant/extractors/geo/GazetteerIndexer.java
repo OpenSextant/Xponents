@@ -171,7 +171,7 @@ public class GazetteerIndexer {
                     }
                 }
             }
-            if (docs.size() >= 0) {
+            if (docs.size() > 0) {
                 client.add(docs);
                 client.commit();
                 docs.clear();
@@ -372,7 +372,7 @@ public class GazetteerIndexer {
 
     private void setFloat(SolrInputDocument doc, String k) {
         Float fl = SolrUtil.getFloat(doc, k);
-        if (fl != Float.NaN) {
+        if (!Float.isNaN(fl)) {
             doc.setField(k, fl);
         }
     }

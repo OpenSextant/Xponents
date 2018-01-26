@@ -96,10 +96,10 @@ public class ImageMetadataConverter extends ConverterAdapter {
                 lonHemi = "W";
             }
 
-            return String.format("%2.6f%s %2.6f%s", Math.abs(yx.getLatitude()), latHemi,
+            return String.format("%2.6f%s %3.6f%s", Math.abs(yx.getLatitude()), latHemi,
                     Math.abs(yx.getLongitude()), lonHemi);
         } else {
-            return String.format("invalid Lat %d x Lon %d", yx.getLatitude(), yx.getLongitude());
+            return String.format("invalid Lat %2.3f x Lon %2.3f", yx.getLatitude(), yx.getLongitude());
         }
     }
 

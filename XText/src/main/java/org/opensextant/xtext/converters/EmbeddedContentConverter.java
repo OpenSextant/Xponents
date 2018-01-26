@@ -150,7 +150,7 @@ public class EmbeddedContentConverter extends DefaultConverter {
         StringBuilder buf = new StringBuilder();
         for (Content c : childObjects) {
 
-            buf.append(String.format("\n[Embedded: %s; %s]\n", c.id, c.tikaMediatype.toString()));
+            buf.append(String.format("%n[Embedded: %s; %s]%n", c.id, c.tikaMediatype.toString()));
             try {
                 // NOTE: To do this well, you may have to write bytes to disk as a valid file name
                 //  And let Tika convert in full.

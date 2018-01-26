@@ -553,31 +553,6 @@ public class TextUtils {
     }
 
     /**
-     * a threshold for determining if character content in a document is upper case enough that the entire document can
-     * be considered upper case. These are constants you can override, since these thresholds are just heuristics. We
-     * don't expect you would pass in such things as arguments
-     * as they don't change from doc to doc much; they do change from domain to domain.
-     * 
-     * IFF you are hitting these thresholds too closely, then you have to adapt these to your own data. These are
-     * meant to be very, very general. They would best apply to documents on the order of 200 to 10,000 bytes. Beyond
-     * that
-     * we don't find many texts that are that size and all lower or all upper where these heuristics are helpful.
-     * E.g., tweets in English -- these thresholds are easily influenced by a difference of one or two characters.
-     * @deprecated this threshold is dependent on the length of the signal.
-     */
-    @Deprecated
-    public static double UPPER_CASE_THRESHOLD = 0.75;
-    /**
-     * Since we live in a world that has made use of first-letter capital for a number of languages, this threshold is
-     * very high.
-     * "IS THIS UPPER CASE?, I WILL USE eBAY TODAY"
-     * "by the same convention, this is largely lower case; I will use eBay today."
-     * @deprecated this threshold is dependent on the length of the signal.
-     */
-    @Deprecated
-    public static double LOWER_CASE_THRESHOLD = 0.95;
-
-    /**
      * First measureCase(Text) to acquire counts, then call this routine for a heuristic
      * that suggests the text is mainly upper case. These routines may not work well on languages that are not
      * Latin-alphabet.

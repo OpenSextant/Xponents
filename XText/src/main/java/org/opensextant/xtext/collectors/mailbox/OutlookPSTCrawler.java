@@ -423,7 +423,7 @@ public class OutlookPSTCrawler implements Collector {
     }
 
     protected static String formatField(Field f) {
-        return String.format("%s:\t%s\n", f.label, f.value);
+        return String.format("%s:\t%s%n", f.label, f.value);
     }
 
     /**

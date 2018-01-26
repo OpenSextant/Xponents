@@ -601,7 +601,7 @@ public class HyperLink {
         // Test case: http://a.b.com/my/page
         //  Not query, no file extension.
         // 
-        if (urlValue.contains("/") && !urlValue.contains("?") && desc == FileUtility.NOT_AVAILABLE) {
+        if (urlValue.contains("/") && !urlValue.contains("?") && FileUtility.NOT_AVAILABLE.equals(desc)) {
             return true;
         }
         return isDynamic(absoluteURL.getPath());
@@ -624,10 +624,10 @@ public class HyperLink {
      * @return if path is a common type of file.
      */
     public static boolean isCommonFile(String v) {
-        if (FileUtility.getFileDescription(v) == FileUtility.DOC_MIMETYPE
-                || FileUtility.isArchiveFile(v)
-                || FileUtility.getFileDescription(v) == FileUtility.SPREADSHEET_MIMETYPE
-                || FileUtility.getFileDescription(v) == FileUtility.GIS_MIMETYPE) {
+        String desc = FileUtility.getFileDescription(v);
+        if (FileUtility.DOC_MIMETYPE.equals(desc) || FileUtility.SPREADSHEET_MIMETYPE.equals(desc)
+                || FileUtility.GIS_MIMETYPE.equals(desc)
+                || FileUtility.isArchiveFile(v)) {
             return true;
         }
         // Other conditions?
@@ -658,7 +658,7 @@ public class HyperLink {
         if (isAbsolute()) {
             return p.contains("#");
         }
-        if (isBlank(p)|| isBlank(referrerURL.getPath())) {
+        if (isBlank(p) || isBlank(referrerURL.getPath())) {
             return false;
         }
         String file = FileUtility.getBasename(p, "");

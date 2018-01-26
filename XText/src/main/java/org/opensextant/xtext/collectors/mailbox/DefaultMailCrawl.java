@@ -193,9 +193,10 @@ public class DefaultMailCrawl extends MailClient implements ConversionListener, 
     @Override
     public void collect() throws IOException, ConfigException {
 
-        File dateFolder = createDateFolder(new Date());
+        Date d = new Date();
+        File dateFolder = createDateFolder(d);
         if (dateFolder == null) {
-            log.error("Unable to create directory: " + dateFolder);
+            log.error("Unable to create directory for: {}", d);
             return;
         }
         Message[] messages = null;

@@ -9,7 +9,7 @@ import org.opensextant.util.GeonamesUtility;
 
 public class ProvinceNameSetter extends GeocodeRule {
 
-    private static GeonamesUtility nameHelper = null;
+    private GeonamesUtility nameHelper = null;
 
     /**
      * Configure name helper if you want Province name resolution and other things..

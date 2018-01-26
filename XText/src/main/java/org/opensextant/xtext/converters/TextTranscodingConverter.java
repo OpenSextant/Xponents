@@ -75,6 +75,10 @@ public class TextTranscodingConverter extends ConverterAdapter {
             in.close();
         }
 
+        if (data == null){
+            return textdoc;
+        }
+
         // Encoding heuristics here.....
         //
         // Objective:  mark small plain text payloads with unknown character set

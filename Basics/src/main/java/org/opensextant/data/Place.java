@@ -358,7 +358,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     public String toString() {
         if (getName() != null) {
             return String.format("%s (%s, %s, %s)", getName(), getAdmin1(), this.getCountryCode(), getFeatureCode());
-        } else if (this.latitude != Double.NaN) {
+        } else if (!Double.isNaN(this.latitude)) {
             return String.format("%2.3f, %3.3f", this.latitude, this.longitude);
         }
         return "unset";

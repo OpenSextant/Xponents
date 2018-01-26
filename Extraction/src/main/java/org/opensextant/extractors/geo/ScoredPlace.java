@@ -61,13 +61,7 @@ public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
      */
     @Override
     public int compareTo(ScoredPlace o) {
-        if (getScore() > o.getScore()) {
-            return -1;
-        }
-        if (getScore() < o.getScore()) {
-            return 1;
-        }
-        return 0;
+        return Double.compare(getScore(), o.getScore());
     }
 
     @Override
