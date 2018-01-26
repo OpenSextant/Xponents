@@ -1,3 +1,8 @@
+#2018#
+* Xponents 2.10.4:
+ - Bug fix: SolrGazetteer.findPlaces() missing " AND " in solr clause
+ - Added demonstration code under Examples for work with gazetteer
+
 #2017#
 * Xponents 2.10.x Revival
  - Solr6 + Java8 support.  Solr4 discontinued

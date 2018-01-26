@@ -26,7 +26,7 @@ _________
 #
 XPONENTS_SOLR=xponents-solr-2017Q4/solr6
 
-java -classpath  etc/*:lib/* -Dopensextant.solr=$XPONENTS_SOLR -Xmx300m -Xms300m  \
+java -classpath  etc/*:dist/*:lib/* -Dopensextant.solr=$XPONENTS_SOLR -Xmx300m -Xms300m  \
   -Dlogback.configurationFile=./etc/logback.xml  \
    org.opensextant.examples.XponentsGazetteerQuery  --lookup "San Francisco, CA, USA"  
 
@@ -114,8 +114,11 @@ Here the Solr server will be running and we use pysolr to RESTfully query the ga
 
 ```
    XPT=$PWD
+   # From source:
    cd Extraction/src/main/python 
    python ./setup.py sdist 
+
+   # Or just install distribution:
    pip install --target $XPT/piplib ./dist/opensextant-1.1.7.tar.gz 
 
    # env.
