@@ -102,7 +102,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private long filteredTotal = 0;
     private long matchedTotal = 0;
     private boolean allowLowercaseAbbrev = false;
-    private final static int AVERAGE_ABBREV_LEN = 6;
+    private static final int AVERAGE_ABBREV_LEN = 6;
     
     /*
      * enable trure for data such as tweets, blogs, etc. where case varies or

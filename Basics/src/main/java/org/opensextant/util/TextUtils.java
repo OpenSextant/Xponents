@@ -72,7 +72,7 @@ import org.supercsv.prefs.CsvPreference;
  */
 public class TextUtils {
 
-    final static Pattern delws = Pattern.compile("\\s+");
+    static final Pattern delws = Pattern.compile("\\s+");
     // Match ALL empty lines:
     // \n followed by other ootional whitespace
     // Up to 2 empty lines or more. This matches 3 line endings
@@ -80,8 +80,8 @@ public class TextUtils {
     // lines.
     // The intent is to reduce 3 or more EOL to 2. Preserving paragraph breaks.
     //
-    final static Pattern multi_eol = Pattern.compile("(\n[ \t\r]*){3,}");
-    final static Pattern multi_eol2 = Pattern.compile("(\n\r?){2,}");
+    static final Pattern multi_eol = Pattern.compile("(\n[ \t\r]*){3,}");
+    static final Pattern multi_eol2 = Pattern.compile("(\n\r?){2,}");
 
     /**
      * Checks if non-ASCII and non-LATIN characters are present.
@@ -90,7 +90,7 @@ public class TextUtils {
      *            any textual data
      * @return true if content is strictly ASCII or Latin1 extended.
      */
-    public final static boolean isLatin(String data) {
+    public static final boolean isLatin(String data) {
         char[] ch = data.toCharArray();
         boolean isLatin = true;
         for (char c : ch) {
@@ -152,7 +152,7 @@ public class TextUtils {
      * @param s string to test
      * @return true if a single diacritic is found.
      */
-    public final static boolean hasDiacritics(final String s) {
+    public static final boolean hasDiacritics(final String s) {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (ALPHAMAP_UNICODE.indexOf(c) >= 0) {
@@ -174,7 +174,7 @@ public class TextUtils {
      *            the string
      * @return converted string
      */
-    public final static String replaceDiacritics(final String s) {
+    public static final String replaceDiacritics(final String s) {
         if (s == null) {
             return null;
         }
@@ -202,11 +202,11 @@ public class TextUtils {
      *            a character
      * @return true if c is ASCII
      */
-    public final static boolean isASCII(char c) {
+    public static final boolean isASCII(char c) {
         return c > 0 && c <= ASCII_END;
     }
 
-    private final static int ASCII_END = 0x7F;
+    private static final int ASCII_END = 0x7F;
 
     /**
      * @param data
@@ -315,11 +315,11 @@ public class TextUtils {
         return t.replace('\n', ' ').replace('\r', ' ');
     }
 
-    public final static char NL = '\n';
-    public final static char CR = '\r';
-    public final static char SP = ' ';
-    public final static char TAB = '\t';
-    public final static char DEL = 0x7F;
+    public static final char NL = '\n';
+    public static final char CR = '\r';
+    public static final char SP = ' ';
+    public static final char TAB = '\t';
+    public static final char DEL = 0x7F;
 
     /**
      * Delete control chars from text data; leaving text and whitespace only.
@@ -384,7 +384,7 @@ public class TextUtils {
      *            val to parse
      * @return true if val is a number
      */
-    public final static boolean isNumeric(final String v) {
+    public static final boolean isNumeric(final String v) {
 
         if (v == null) {
             return false;
@@ -908,7 +908,7 @@ public class TextUtils {
         return squeeze_whitespace(str.substring(s1, s2 + 1));
     }
 
-    private final static Pattern tokenizer = Pattern.compile("\\s+");
+    private static final Pattern tokenizer = Pattern.compile("\\s+");
 
     /**
      * Return just white-space delmited tokens.
@@ -1022,16 +1022,16 @@ public class TextUtils {
     /**
      * Matches non-text after a word.
      */
-    final static Pattern CLEAN_WORD_RIGHT = Pattern.compile("[^\\p{L}\\p{Nd}]+$");
+    static final Pattern CLEAN_WORD_RIGHT = Pattern.compile("[^\\p{L}\\p{Nd}]+$");
     /**
      * Matches non-text preceeding text
      */
-    final static Pattern CLEAN_WORD_LEFT = Pattern.compile("^[^\\p{L}\\p{Nd}]+");
+    static final Pattern CLEAN_WORD_LEFT = Pattern.compile("^[^\\p{L}\\p{Nd}]+");
     /**
      * Obscure punctuation pattern that also deals with Unicode single and
      * double quotes
      */
-    final static Pattern CLEAN_WORD_PUNCT = Pattern.compile("[\"'.`\\u00B4\\u2018\\u2019]");
+    static final Pattern CLEAN_WORD_PUNCT = Pattern.compile("[\"'.`\\u00B4\\u2018\\u2019]");
 
     /**
      * Remove any leading and trailing punctuation and some internal
@@ -1065,25 +1065,25 @@ public class TextUtils {
 
     // Alphabetic list of top-N languages -- ISO-639_1 "ISO2" language codes
     //
-    public final static String arabicLang = "ar";
-    public final static String bahasaLang = "id";
-    public final static String chineseLang = "zh";
-    public final static String chineseTradLang = "zt";
-    public final static String englishLang = "en";
-    public final static String farsiLang = "fa";
-    public final static String frenchLang = "fr";
-    public final static String germanLang = "de";
-    public final static String italianLang = "it";
-    public final static String japaneseLang = "ja";
-    public final static String koreanLang = "ko";
-    public final static String portugueseLang = "pt";
-    public final static String russianLang = "ru";
-    public final static String spanishLang = "es";
-    public final static String turkishLang = "tr";
-    public final static String thaiLang = "th";
-    public final static String vietnameseLang = "vi";
-    public final static String romanianLang = "ro";
-    private final static Map<String, Language> languageMapISO639 = new HashMap<String, Language>();
+    public static final String arabicLang = "ar";
+    public static final String bahasaLang = "id";
+    public static final String chineseLang = "zh";
+    public static final String chineseTradLang = "zt";
+    public static final String englishLang = "en";
+    public static final String farsiLang = "fa";
+    public static final String frenchLang = "fr";
+    public static final String germanLang = "de";
+    public static final String italianLang = "it";
+    public static final String japaneseLang = "ja";
+    public static final String koreanLang = "ko";
+    public static final String portugueseLang = "pt";
+    public static final String russianLang = "ru";
+    public static final String spanishLang = "es";
+    public static final String turkishLang = "tr";
+    public static final String thaiLang = "th";
+    public static final String vietnameseLang = "vi";
+    public static final String romanianLang = "ro";
+    private static final Map<String, Language> languageMapISO639 = new HashMap<String, Language>();
 
     /*
      * Initialize some langauge metadata.
@@ -1447,7 +1447,7 @@ public class TextUtils {
         return ((double) cjkCount) / buf.length();
     }
 
-    private final static int LATIN1_END = 0xFE;
+    private static final int LATIN1_END = 0xFE;
 
     /**
      *
@@ -1605,7 +1605,7 @@ public class TextUtils {
         return uncompress(gzData, "UTF-8");
     }
 
-    private final static int ONEKB = 1024;
+    private static final int ONEKB = 1024;
 
     /**
      *

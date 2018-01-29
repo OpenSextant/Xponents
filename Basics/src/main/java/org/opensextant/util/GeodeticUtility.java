@@ -65,7 +65,7 @@ public class GeodeticUtility {
      * @param lon longitude
      * @return if lat/lon is valid
      */
-    public final static boolean validateCoordinate(double lat, double lon) {
+    public static final boolean validateCoordinate(double lat, double lon) {
         // Java behavior for NaN -- use object/class routines to compare.
         //
         if (Double.isNaN(lon) || Double.isNaN(lat)) {
@@ -92,7 +92,7 @@ public class GeodeticUtility {
      * @return true if coordinate is non-zero (0.000, 0.000) AND is valid
      *         abs(lon) &lt; 180.0, etc.
      */
-    public final static boolean isValidNonZeroCoordinate(double lat, double lon) {
+    public static final boolean isValidNonZeroCoordinate(double lat, double lon) {
         if (validateCoordinate(lat, lon)) {
             return (lat != 0 && lon != 0);
         }
@@ -109,7 +109,7 @@ public class GeodeticUtility {
      * @param p2 point
      * @return distance between p1 and p2 in degrees.
      */
-    public final static double distanceDegrees(GeoBase p1, GeoBase p2) {
+    public static final double distanceDegrees(GeoBase p1, GeoBase p2) {
         if (p1 == null || p2 == null) {
             return Double.MAX_VALUE;
         }
@@ -126,7 +126,7 @@ public class GeodeticUtility {
      * @param p2 geodesy API LatLon
      * @return distance in meters.
      */
-    public final static long distanceMeters(LatLon p1, LatLon p2) {
+    public static final long distanceMeters(LatLon p1, LatLon p2) {
         double lat1 = p1.getLatitude();
         double lon1 = p1.getLongitude();
         double lat2 = p2.getLatitude();
@@ -316,7 +316,7 @@ public class GeodeticUtility {
      * @return "lat, lon" formatted with 4 decimal places; that is an average
      *         amount of precision for common XY=&gt; String uses.
      */
-    public final static String formatLatLon(final LatLon yx) {
+    public static final String formatLatLon(final LatLon yx) {
         return String.format("%2.4f,%3.4f", yx.getLatitude(), yx.getLongitude());
     }
 
@@ -325,11 +325,11 @@ public class GeodeticUtility {
      * @param yx lat,lon obj
      * @return geohash representation of the lat,lon
      */
-    public final static String geohash(final LatLon yx) {
+    public static final String geohash(final LatLon yx) {
         return GeohashUtils.encodeLatLon(yx.getLatitude(), yx.getLongitude());
     }
 
-    public final static String geohash(double lat, double lon) {
+    public static final String geohash(double lat, double lon) {
         return GeohashUtils.encodeLatLon(lat, lon);
     }
 

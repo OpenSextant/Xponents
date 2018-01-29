@@ -39,8 +39,8 @@ public class NameCodeRule extends GeocodeRule {
 
     private static int MAX_CHAR_DIST = 4;
 
-    public final static String NAME_ADMCODE_RULE = "AdminCode";
-    public final static String NAME_ADMNAME_RULE = "AdminName";
+    public static final String NAME_ADMCODE_RULE = "AdminCode";
+    public static final String NAME_ADMNAME_RULE = "AdminName";
 
     public NameCodeRule() {
         NAME = "AdminCodeOrName";

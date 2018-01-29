@@ -193,7 +193,7 @@ public class GazetteerIndexer {
     /**
      * This mapping rarely ever changes.
      */
-    private final static Map<String, String> nameTypes = new HashMap<>();
+    private static final Map<String, String> nameTypes = new HashMap<>();
     static {
         nameTypes.put("name", "N");
         nameTypes.put("abbrev", "A");

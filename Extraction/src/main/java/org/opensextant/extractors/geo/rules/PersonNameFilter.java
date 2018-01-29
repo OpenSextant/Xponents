@@ -92,7 +92,7 @@ public class PersonNameFilter extends GeocodeRule {
     private static final Pattern delPeriod = Pattern.compile("\\.+$");
 
     /** Delete ending "."or "..." */
-    private final static String withoutPeriod(String s) {
+    private static final String withoutPeriod(String s) {
         if (s.endsWith(".")) {
             return delPeriod.matcher(s).replaceAll("");
         }
@@ -122,7 +122,7 @@ public class PersonNameFilter extends GeocodeRule {
      * @param x2  offset to stop at.
      * @return
      */
-    private static boolean hasNonWhitespace(final String buf, int x1, int x2) {
+    private static final boolean hasNonWhitespace(final String buf, int x1, int x2) {
         for (int x = x1; x < x2; ++x) {
             if (!Character.isWhitespace(buf.charAt(x))) {
                 return true;

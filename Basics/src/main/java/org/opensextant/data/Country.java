@@ -160,7 +160,7 @@ public class Country extends Place {
         }
     }
 
-    public final static class TZ {
+    public static final class TZ {
         public String label = null;
         public double utcOffset = Double.NaN;
         public double dstOffset = Double.NaN;

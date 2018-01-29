@@ -56,7 +56,7 @@ public class TestPoLiReporter {
 
     private Logger log = LoggerFactory.getLogger(TestPoLiReporter.class);
     private PatternsOfLife poli;
-    protected final static String[] header = { "result_id", "status", "message", "pattern", "matchtext", "offset" };
+    protected static final String[] header = { "result_id", "status", "message", "pattern", "matchtext", "offset" };
     protected static final CellProcessor[] poliResultsSpec = new CellProcessor[] {
             // Given test data is required:
             new NotNull(), new NotNull(), new NotNull(),

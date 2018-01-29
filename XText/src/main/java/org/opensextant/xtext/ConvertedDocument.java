@@ -60,7 +60,7 @@ public final class ConvertedDocument extends DocInput {
 
     /**
      */
-    public final static char UNIVERSAL_PATH_SEP = '/';
+    public static final char UNIVERSAL_PATH_SEP = '/';
 
     private static final DateTimeFormatter dtfmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 
@@ -68,10 +68,10 @@ public final class ConvertedDocument extends DocInput {
      * The url where this document (html, image, doc download) was found
      * The url-referrer the page containing the url.
      */
-    public final static String URL_FIELD = "url";
-    public final static String URL_REFERRER_FIELD = "url-referrer";
+    public static final String URL_FIELD = "url";
+    public static final String URL_REFERRER_FIELD = "url-referrer";
 
-    public final static String[] fields = {
+    public static final String[] fields = {
         // Dublin Core style metadata fields
         "title", "author", "creator_tool", "pub_date", "keywords", "subject", "filepath",
         "encoding",
@@ -91,7 +91,7 @@ public final class ConvertedDocument extends DocInput {
      * Interpreting the entry name as a file name on a file system is up to the recipient.  E.g., Mail attachments
      * might be file names;  Embedded objects may be object IDs.
      */
-    public final static String CHILD_ENTRY_KEY = "entry.name";
+    public static final String CHILD_ENTRY_KEY = "entry.name";
     /**
      * if you are a child document/object, then
      */
@@ -99,7 +99,7 @@ public final class ConvertedDocument extends DocInput {
     private List<ConvertedDocument> children = null;
     private List<Content> childrenContent = null;
 
-    public final static Set<String> valid_fields = new HashSet<String>(Arrays.asList(fields));
+    public static final Set<String> valid_fields = new HashSet<String>(Arrays.asList(fields));
     public String filepath = null;
 
     public String filename = null;
@@ -641,8 +641,8 @@ public final class ConvertedDocument extends DocInput {
         this.relative_path = PathManager.getRelativePath(relPath, this.filepath);
     }
 
-    public final static String OUTPUT_ENCODING = "UTF-8";
-    public final static String CONVERTED_TEXT_EXT = "-utf8.txt";
+    public static final String OUTPUT_ENCODING = "UTF-8";
+    public static final String CONVERTED_TEXT_EXT = "-utf8.txt";
 
     /**
      * relative_path is original relative to input folder TOOD: cleanup

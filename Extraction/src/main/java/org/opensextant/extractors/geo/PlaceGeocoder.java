@@ -91,8 +91,8 @@ import org.slf4j.LoggerFactory;
 public class PlaceGeocoder extends GazetteerMatcher
         implements Extractor, CountryObserver, BoundaryObserver, LocationObserver {
 
-    public final static String VERSION = "2.10";
-    public final static String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
+    public static final String VERSION = "2.10";
+    public static final String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
 
     /**
      * Resources and Taggers
@@ -824,8 +824,8 @@ public class PlaceGeocoder extends GazetteerMatcher
      * coordinate, e.g., What state is (x,y) in? Found locations are sorted by
      * distance to point.
      */
-    public final static int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /*km*/ ;
-    public final static int COORDINATE_PROXIMITY_ADM1_THRESHOLD = 50 /*km*/;
+    public static final int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /*km*/ ;
+    public static final int COORDINATE_PROXIMITY_ADM1_THRESHOLD = 50 /*km*/;
 
     /**
      * A method to retrieve one or more distinct admin boundaries containing the

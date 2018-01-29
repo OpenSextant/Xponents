@@ -22,7 +22,6 @@ import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
 import static org.opensextant.util.GeodeticUtility.geohash;
-import java.lang.Math;
 
 /**
  * Major Place rule -- fire this rule after Country rule.
@@ -40,10 +39,10 @@ import java.lang.Math;
  */
 public class MajorPlaceRule extends GeocodeRule {
 
-    private final static String MAJ_PLACE_RULE = "MajorPlace";
-    public final static String CAPITAL = "MajorPlace.Captial";
-    public final static String ADMIN = "MajorPlace.Admin";
-    public final static String POP = "MajorPlace.Population";
+    private static final String MAJ_PLACE_RULE = "MajorPlace";
+    public static final String CAPITAL = "MajorPlace.Captial";
+    public static final String ADMIN = "MajorPlace.Admin";
+    public static final String POP = "MajorPlace.Population";
     private Map<String, Integer> popStats = null;
     private static final int GEOHASH_RESOLUTION = 5;
     private static final int POP_MIN = 60000;

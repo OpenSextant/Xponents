@@ -258,7 +258,7 @@ public class GeonamesUtility {
      * @param utc UTC offset
      * @return approximated longitude, in degrees
      */
-    public final static int approximateLongitudeForUTCOffset(final int utc) {
+    public static final int approximateLongitudeForUTCOffset(final int utc) {
         int normalized = (utc > 12 ? utc - 24 : utc);
 
         return 15 * normalized; /* 360 deg / 24 hr  = 15deg per UTC offset hour */

@@ -287,11 +287,11 @@ public class FileUtility {
     /**
      *
      */
-    public final static String default_encoding = "UTF-8";
+    public static final String default_encoding = "UTF-8";
     /**
      *
      */
-    private final static int ioBufferSize = 0x800;
+    private static final int ioBufferSize = 0x800;
 
     /**
      * Slurps a text file into a string and returns the string.
@@ -660,7 +660,7 @@ public class FileUtility {
     /**
      * Char to use in place of special chars when scrubbing filenames.
      */
-    public final static char FILENAME_REPLACE_CHAR = '_';
+    public static final char FILENAME_REPLACE_CHAR = '_';
 
     /**
      * Tests for valid filename chars for simple normalization

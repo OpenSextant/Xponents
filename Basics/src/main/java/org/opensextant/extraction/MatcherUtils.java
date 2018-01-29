@@ -5,8 +5,8 @@ import java.util.List;
 
 public class MatcherUtils {
 
-    public final static String startChars = "<[";
-    public final static String closeChars = ">]";
+    public static final String startChars = "<[";
+    public static final String closeChars = ">]";
 
     /*
      * Trivial attempt at locating edges of tags in data.

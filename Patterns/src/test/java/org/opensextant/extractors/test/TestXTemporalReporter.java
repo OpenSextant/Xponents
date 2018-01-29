@@ -58,7 +58,7 @@ public class TestXTemporalReporter {
         report = open(file);
         report.writeHeader(header);
     }
-    protected final static String[] header = {"RESULT_ID", "STATUS",
+    protected static final String[] header = {"RESULT_ID", "STATUS",
         "Message", "PATTERN", "MATCHTEXT", "DATETEXT", "DATE", "RESOLUTION", "JAVA_EPOCH", "OFFSET"};
 
     protected static final CellProcessor[] xtempResultsSpec = new CellProcessor[]{
