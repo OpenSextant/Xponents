@@ -1,7 +1,7 @@
 XText Usage
 ===========
 
-#Overview#
+# Overview #
 
 The three main constructs in XText are:
 
@@ -11,8 +11,8 @@ The three main constructs in XText are:
   sharepoint, and IMAP mail box crawls. PST mailbox crawl is now experimental.
   
 
-#Structure#
-##XText##
+# Structure #
+## XText ##
 The main program, XText, provides a thin shell around Tika and other Converters (org.opensextant.xtext.iConvert interface).
 XText will crawl an input folder or handle a single file.  The converter chosen is determined by the supported file
 types (namely by file extension) established at runtime.  The defaults are reasonable -- PDF, RTF, all Office documents, 
@@ -22,7 +22,7 @@ XText demonstrates the listener pattern for the most basic file system crawl:  A
 an optional listener for additional post-processing.  The listener is provided by the caller.  The conversion listener 
 helps eliminate the need for XText to internally track what is converted, as that is the caller's job.
 
-##ConversionListener##
+## ConversionListener ##
 
 XText applications should define a ConversionListener and implement the handleConversion method.
 The unit of currency here is a ConvertedDocument, one for each document found.  Archives and compound 
@@ -31,7 +31,7 @@ containers of documents.  Within reason one might consider large embedded docume
 with embedded content in them) as containers also. The interpretation of Container vs Document is one 
 left to the caller.
 
-##ConvertedDocument, Content##
+## ConvertedDocument, Content ##
 With that said,  embbedded documents (e.g., powerpoint slide with a spreadsheet and media files), are supported
 containers in XText.
 
@@ -45,7 +45,7 @@ developers to traverse and retrieve the content themselves.  And so out of the b
 documents may yield very little text content for something that may obviously have text, albeit squirreled 
 away in internal formats.
 
-##Containers, Collectors##
+## Containers, Collectors ##
 
 A Collector allows you to "collect()".  Its a simple interface.
 The CollectionListener allows you to customize more intricate collection, aka crawling. 
@@ -64,7 +64,7 @@ But these need to be re-worked for clarity.  The conversion is handled by an ins
 
 
 
-##ConvertedDocument##
+## ConvertedDocument ##
 
 The unit of currency here. The objective of any XText app is to return ConvertedDocument instances.
 
@@ -95,7 +95,7 @@ Or  using a listener:
        }    
        
        
-#Caching#
+# Caching #
 The original intent of XText was to facilitate and speed up the conversion process.
 So, XText can be set up to take an input folder/file and record the conversion 
 of all found originals in a "xtext" cache.    If XText "save" = false, then you are not caching. 
@@ -175,7 +175,7 @@ the conversion of any item found by XText.  To use caching the general pattern i
     conv.getPathManager.setConversionCache("/path/to/conversion/archive/");
 
    
-#Error Handling#
+# Error Handling #
 
 It can be difficult to determine if an error is related to an IO issue or a configuration issue.  Both IOException and ConfigException 
 are commonly thrown for conversion and other routines.  You should trap them separately and watch those errors closely.
