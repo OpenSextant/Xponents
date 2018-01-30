@@ -1,11 +1,11 @@
 Xponents Basics
 ===============
 
-#Purpose#
+# Purpose #
 Basics library provides some key object types used throughout Xponents.  As well, some commonly used utility classes are 
 offered -- the utility classes are used under the hood of Xponent extraction, but are not required by API users otherwise.
 
-#Objects and Utilities#
+# Objects and Utilities #
 The common objects cover the geography, date/time and taxonomic extraction.  They include:
 
 * Geo: Country, Place, Geocoding,  which extend/implmement  GeoBase and LatLon.  
@@ -22,7 +22,7 @@ Utilities that facilitate extraction applications include these:
 * GeonamesUtility - a library of tools for testing Geonames-like metadata (e.g., feature codes, types, etc). 
 * TextUtils and UnicodeTextUtils - a wide range of text scrubbing routines not commonly found in other open source libraries.
 
-#Behaviors#
+# Behaviors #
 
 The most common resources used are the language name mappings, Geonames features, and Geonames country list (curated by OpenSextant.org)
 Staticly these files are loaded from the resource classpath (Basics JAR file):
@@ -31,7 +31,7 @@ Staticly these files are loaded from the resource classpath (Basics JAR file):
   * ./src/main/resources/feature-metadata-2013.csv // OpenSextant.org gazetteer
   * ./src/main/resources/ISO-639-2_utf-8.txt  // Library of Congress (LoC) language listing 
 
-#Install#
+# Install #
 
 Because this utility library uses freely available metadata from other providers, such as Geonames.org and LOC
 
@@ -54,7 +54,7 @@ Yes, we can automate pulling these files in.  For now download them and put them
   * For production, also copy these items into ./solr/gazetteer/conf/geonames.org/
 
 
-#Pairings with Extraction Tools#
+# Pairings with Extraction Tools #
 
 * Geocoding, LatLon and GeodeticUtility are used heavily by XCoord (Extraction org.opensextant.extractors.xcoord)
 * Place, PlaceName and Country are used by the SimpleGeocoder (TBD) (Extraction org.opensextant.extractors.geo)

@@ -1,9 +1,9 @@
-#2018#
+# 2018 #
 * Xponents 2.10.4:
  - Bug fix: SolrGazetteer.findPlaces() missing " AND " in solr clause
  - Added demonstration code under Examples for work with gazetteer
 
-#2017#
+# 2017 #
 * Xponents 2.10.x Revival
  - Solr6 + Java8 support.  Solr4 discontinued
  - Province Names table: Geocoded matches now have Province Name along side ADM1
@@ -29,7 +29,7 @@
  - Filters:  CLASSPATH order is important, gazetteer/conf must appear first in classpath to override anything else.  
    Do NOT include test JARs in production setting or in evaluation -- If you do, then be aware of CLASSPATH.
 
-#2016#
+# 2016 #
 * Xponents 2.9.0 
  - Fresh look at how resource files are pulled from CLASSPATH:  InputStream (getResourceAsStream()) is the primary entry point to 
    pulling in any sort of config file or data resource.  Getting File or URL should be left to the caller of APIs. If such things
@@ -62,7 +62,7 @@
  - XText 2.9.x:  TikaHTML parser/converter was not yielding reasonably obvious metadata tags (title, org, author, etc.) so I pulled in JerichoHTML to get tags.
 
    
-#2015#
+# 2015 #
 * Xponents 2.8.5 - december 2015: 
  - adding timezone and language metadata; 
  - PlaceGeocoder: rules and tracing improved.
@@ -103,7 +103,7 @@
  - Dist: Improved distribution packaging (script/dist.xml)
    
 
-#2014#
+# 2014 #
 
 * Xponents 2.5.1 - July 2014 
  - Java 7+ required now;  Java 6 source syntax supported, but release will be Java 7 binary
