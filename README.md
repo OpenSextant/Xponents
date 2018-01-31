@@ -43,7 +43,10 @@ For those using other build platforms, you can find our published artifacts at
 **Xponents Extraction**
 
 This Maven reference will pull in the Xponents Extraction project, and all dependencies.
-You still have to build or download (coming) the supporting ./solr gazetteer and taxcat indices for your lexicon.
+You still have to build or download the supporting ./solr gazetteer and taxcat indices for your lexicon.
+The build process well documented in `./solr`, but can be involved. Downloads will be available Spring 2018.
+
+* Maven
 ```
   <dependency>
     <groupId>org.opensextant</groupId>
@@ -52,10 +55,15 @@ You still have to build or download (coming) the supporting ./solr gazetteer and
   </dependency>
 ```
 
+* Javadoc: [Xponents Extraction](./docs/apidocs/Extraction)
+
 **Xponents Patterns**
 
 Work related to Geo Coordinate, Date/Time and other explicit pattern extraction 
 This Supports Extraction above.
+
+* Maven:
+
 ```
   <dependency>
     <groupId>org.opensextant</groupId>
@@ -64,10 +72,14 @@ This Supports Extraction above.
   </dependency>
 ```
 
+* Javadoc: [Xponents Patterns](./docs/apidocs/Patterns)
+
 **Xponents Basics**
 
 Basics is a Java data model (Country, Place, Text Entity, etc.), Text and File/Stream Utilites
 Supports all tool chains - Extraction, Patterns, XText, etc.
+
+* Maven:
 ```
   <dependency>
     <groupId>org.opensextant</groupId>
@@ -75,12 +87,16 @@ Supports all tool chains - Extraction, Patterns, XText, etc.
     <version>2.10.1</version>
   </dependency>
 ```
+* Javadoc: [Xponents Basics](./docs/apidocs/Basics)
+
 
 **XText**
 
 XText provides an API for Text &amp; Metdata Content extraction from data formats, PDF, Word Docs, etc. 
 Purely optional module.  This helps you acquire content from source data, e.g., Web, Folder crawl, or other.
 From an XText ConversionListener you can fire off extraction routines or databasing operations, for example.
+
+* Maven
 
 ```
   <dependency>
@@ -89,6 +105,8 @@ From an XText ConversionListener you can fire off extraction routines or databas
     <version>2.10.1</version>
   </dependency>
 ```
+* Javadoc: [Xponents XText](./docs/apidocs/XText)
+
 
 Additional prototypes such as Xponents MapReduce and Xlayer RESTFul extraction service examples are production prototypes
 you have to check out and build.
@@ -100,6 +118,7 @@ or download a pre-built index (Coming Soon -- hopefully November 2017)
 Release History
 ---------------
 
+    Xponents 2.10 Feb 2017  v2.10.5 - (Pending) Bug patches 
     Xponents 2.10 Sept 2017 v2.10.1 - Solr 6 support, Java 8 only, SolrTextTagger 2.4;  Published to Sonatype and Maven Central
     Xponents 2.9, Jul 2017  v2.9.9  - Improved stop filters and other geotagging and KW tagging improvements
     Xponents 2.9, Apr 2017  v2.9.8  - refactored XLayer, added trivial match filters; updated versions of commons libs

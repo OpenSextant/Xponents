@@ -12,7 +12,7 @@
 
     <properties>
         <slf4j.version>1.7.25</slf4j.version>
-        <xponents.version>2.10.5-SNAPSHOT</xponents.version>
+        <xponents.version>2.10.5</xponents.version>
         <xtext.version>2.10.2</xtext.version>
     </properties>
 
