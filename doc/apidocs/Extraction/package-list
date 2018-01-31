@@ -1,0 +1,8 @@
+org.opensextant.extraction
+org.opensextant.extractors.geo
+org.opensextant.extractors.geo.rules
+org.opensextant.extractors.xtax
+org.opensextant.output
+org.opensextant.processing
+org.opensextant.processing.progress
+org.opensextant.util

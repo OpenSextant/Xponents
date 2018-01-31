@@ -1,0 +1,5 @@
+org.opensextant
+org.opensextant.data
+org.opensextant.extraction
+org.opensextant.processing
+org.opensextant.util
