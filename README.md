@@ -55,7 +55,7 @@ The build process well documented in `./solr`, but can be involved. Downloads wi
   </dependency>
 ```
 
-* Javadoc: [Xponents Extraction](./docs/apidocs/Extraction)
+* Javadoc: [Xponents Extraction](./doc/apidocs/Extraction)
 
 **Xponents Patterns**
 
@@ -72,7 +72,7 @@ This Supports Extraction above.
   </dependency>
 ```
 
-* Javadoc: [Xponents Patterns](./docs/apidocs/Patterns)
+* Javadoc: [Xponents Patterns](./doc/apidocs/Patterns)
 
 **Xponents Basics**
 
@@ -87,7 +87,7 @@ Supports all tool chains - Extraction, Patterns, XText, etc.
     <version>2.10.1</version>
   </dependency>
 ```
-* Javadoc: [Xponents Basics](./docs/apidocs/Basics)
+* Javadoc: [Xponents Basics](./doc/apidocs/Basics)
 
 
 **XText**
@@ -105,7 +105,7 @@ From an XText ConversionListener you can fire off extraction routines or databas
     <version>2.10.1</version>
   </dependency>
 ```
-* Javadoc: [Xponents XText](./docs/apidocs/XText)
+* Javadoc: [Xponents XText](./doc/apidocs/XText)
 
 
 Additional prototypes such as Xponents MapReduce and Xlayer RESTFul extraction service examples are production prototypes
