@@ -206,6 +206,15 @@ public class TextUtils {
         return c > 0 && c <= ASCII_END;
     }
 
+    /**
+     * 
+     * @param c  character
+     * @return true if c is ASCII a-z or A-Z
+     */
+    public static final boolean isASCIILetter(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    }
+
     private static final int ASCII_END = 0x7F;
 
     /**

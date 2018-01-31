@@ -11,6 +11,13 @@ public class TestTextUtils {
     }
 
     @Test
+    public void testAlphaUtils() {
+        assertTrue(TextUtils.isASCIILetter('M'));
+        assertTrue(TextUtils.isASCIILetter('n'));
+        assertTrue(!TextUtils.isASCIILetter('9'));
+    }
+
+    @Test
     public void testFormatting() {
         assertTrue(TextUtils.countFormattingSpace("a\nb") == 1);
         assertTrue(TextUtils.countFormattingSpace("a\n\u000Bb") == 2);
