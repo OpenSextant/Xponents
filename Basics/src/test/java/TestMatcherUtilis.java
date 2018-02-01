@@ -1,10 +1,13 @@
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.opensextant.extraction.MatcherUtils;
 import org.opensextant.extraction.TextEntity;
+import org.opensextant.util.FileUtility;
 
 public class TestMatcherUtilis {
 
@@ -40,12 +43,28 @@ public class TestMatcherUtilis {
         print(spans.toString());
     }
 
-    public static void testSomeSpans(String buf) {
-        List<TextEntity> spans = MatcherUtils.findTagSpans(buf);
-        print(spans.toString());
+    public static void testSomeSpans(String buf) throws IOException {
+        String content = buf;
+        if (new File(buf).exists()) {
+            content = FileUtility.readFile(buf);
+        }
+        if (content == null) {
+            print("Nothing given....");
+            return;
+        }
+        List<TextEntity> spans = MatcherUtils.findTagSpans(content);
+        for (TextEntity x : spans) {
+            print(String.format("\t%s\t%s", x.toString(), content.substring(x.start, x.end+1)));
+        }
+        //print(spans.toString());
+
     }
 
     public static void main(String[] args) {
-        testSomeSpans(args[0]);
+        try {
+            testSomeSpans(args[0]);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
     }
 }

@@ -27,6 +27,9 @@ public class MatcherUtils {
      *    
      *  Tag names are always ASCII, as these are simple tag detection tools.
      *  Uniccode tags are allowable.
+     *  
+     *  To properly detect end tags, [/a] or &lt;/a&gt; then "/" is the only allowable character after 
+     *  an opening char for a tag. 
      *    </pre>
      * @param text
      * 
@@ -47,7 +50,7 @@ public class MatcherUtils {
                  * Check if this is a bare open tag. Ignore if so.
                  */
                 next_c = text.charAt(x + 1);
-                if (!TextUtils.isASCIILetter(next_c)) {
+                if (!TextUtils.isASCIILetter(next_c) && next_c != '/') {
                     continue;
                 }
                 span_start = x;
