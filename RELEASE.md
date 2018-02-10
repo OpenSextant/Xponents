@@ -1,9 +1,10 @@
 # 2018 #
 
-Xponents 2.10.4:
+Xponents 2.10.4, 2.10.5:
 
   * Bug fix: SolrGazetteer.findPlaces() missing " AND " in solr clause
   * Added demonstration code under Examples for work with gazetteer
+  * Fix span tag detection in MatcherUtils 
 
 # 2017 #
 
