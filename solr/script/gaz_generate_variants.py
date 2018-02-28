@@ -28,7 +28,9 @@ general_repl = {
     'mount': 'mt. ',
     'fort': 'ft. ',
     'north': 'n. ',
-    'south': 's. ' 
+    'south': 's. ',
+    'west': 'w. ',
+    'east': 'e. '
     }
 
 splitter = re.compile(u"[-.`'\u2019\s]+", re.UNICODE|re.IGNORECASE)
@@ -68,6 +70,8 @@ def generate_GENERAL_variants(gaz, output):
         print "PREFIX", term, results.hits
         pat = u"(%s\s+)" % (term)
         regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
+        repl = general_repl[term].capitalize()
+        term_ = '{} '.format(term)
         for place in results.docs:
             n = place.get('name')
             norm = n.lower()
@@ -76,10 +80,15 @@ def generate_GENERAL_variants(gaz, output):
                 continue
             
             # Prefix pattern!
-            if not norm.startswith(term):
+            if not norm.startswith(term_):
                 continue
-            
-            repl = general_repl[term].capitalize()
+
+            if len(norm) - len(term) < 3:
+                # Avoid variants that produce abbreviations and are very short.
+                # "West Oz" --> "W. Oz";  "West Oz" - "West " is only 2 chars.
+                print ("Short variant avoided", norm)
+                continue
+
             nVar = regex.sub(repl, n)
             nVar = nVar.replace('-', ' ').strip()
             nVar = nVar.replace('  ',' ')  
@@ -110,6 +119,10 @@ def generate_SAINT_variants(gaz, output):
         
         pat = u"(%s[-`'\u2019\s]+)" % (saintly)
         regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
+        repl = saint_repl[saintly].capitalize()
+        term_ = '{} '.format(saintly)
+        term_dash = '{}-'.format(saintly)
+        print (term_)
         for place in results.docs:
             n = place.get('name')
             norm = n.lower()
@@ -118,14 +131,19 @@ def generate_SAINT_variants(gaz, output):
                 continue
             
             # Prefix pattern!
-            if not norm.startswith(saintly):
+            if not (norm.startswith(term_) or norm.startswith(term_dash)):
+                continue
+
+            if len(norm) - len(saintly) < 3:
+                # Avoid variants that produce abbreviations and are very short.
+                # "Saint Oz" --> "S. Oz";  "Saint Oz" - "Saint " is only 2 chars.
+                print ("Short variant avoided", norm)
                 continue
             
             cc = place.get('cc')
             if cc in ignore_countries and saintly == 'san':
                 continue
             
-            repl = saint_repl[saintly].capitalize()
             nVar = regex.sub(repl, n)
             nVar = nVar.replace('-', ' ').strip()
             nVar = nVar.replace('  ',' ')  
