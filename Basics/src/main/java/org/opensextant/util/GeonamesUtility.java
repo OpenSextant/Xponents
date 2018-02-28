@@ -1330,7 +1330,7 @@ public class GeonamesUtility {
      * @param langOrLocale lang code
      * @param cc country code
      */
-    private void addLang(String langOrLocale, String cc) {
+    protected void addLang(String langOrLocale, String cc) {
 
         String lid = langOrLocale;
         if (lid.length() == 3) {
@@ -1361,7 +1361,7 @@ public class GeonamesUtility {
      * @param langid lang ID
      * @return language family
      */
-    private static String getLang(final String langid) {
+    protected static String getLang(final String langid) {
         String l = langidSplit.split(langid)[0];
         return l;
     }
