@@ -172,6 +172,9 @@ def get_text_window(offset, matchlen, textsize, width):
 ##  FILE UTILITIES
 ## ---------------------------------------
 ##
+def _utf_8_encoder(unicode_csv_data):
+    for line in unicode_csv_data:
+        yield line.encode('utf-8')
 
 def get_csv_writer(fh, columns, delim=','):
     return csv.DictWriter(fh, columns, restval="", extrasaction='raise',
@@ -180,7 +183,7 @@ def get_csv_writer(fh, columns, delim=','):
                             quoting=csv.QUOTE_ALL, escapechar='\\')
 
 def get_csv_reader(fh, columns, delim=','):
-    return csv.DictReader(fh, columns,
+    return csv.DictReader(_utf_8_encoder(fh), columns,
                           restval="",  dialect='excel', lineterminator='\n', escapechar='\\',
                           delimiter=delim, quotechar='"', quoting=csv.QUOTE_ALL)
 

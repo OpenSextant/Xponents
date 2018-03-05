@@ -4,7 +4,7 @@
 	<property file="${basedir}/../solr/build.properties" />
 	<property name="java.resources" value="${basedir}/src/main/resources" />
 	<property name="geonames.resources" value="${java.resources}/geonames.org" />
-	<property name="pylib.resources" value="${basedir}/../Extraction/src/main/python/opensextant/resources" />
+	<property name="pylib.resources" value="${basedir}/../python/opensextant/resources" />
 	<!-- setup proxy -->
 	<target name="proxy">
 		<property name="proxy.port" value="80" />
@@ -29,6 +29,7 @@
 
 	<target name="copy-resources">
 		<copy file="${basedir}/src/main/resources/us-state-metadata.csv" todir="${pylib.resources}"/>		
+		<copy file="${basedir}/src/main/resources/country-names-2015.csv" todir="${pylib.resources}"/>		
 	</target>
 		
 	<target name="all" depends="proxy,get-meta,copy-resources" />

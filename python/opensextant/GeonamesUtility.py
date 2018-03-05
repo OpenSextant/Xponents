@@ -1,4 +1,4 @@
-q'''
+'''
  GeonamesUtility:  lines up with functionality in Xponents Basics utility package.
 
 '''
@@ -24,14 +24,18 @@ def make_HASC(cc, adm1):
         
     return '{}.{}'.format(cc, adm1)
 
-def load_countries(csvpath):
+def load_countries(csvpath=None):
     ''' parses Xponents Basics/src/main/resource CSV file country-names-2015.csv
         putting out an array of Country objects.
     ''' 
-    fh = codecs.open(csvpath, 'rb', encoding="UTF-8")
-    columns = "country_name,FIPS_cc,ISO2_cc,ISO3_cc,unique_name,territory".split(',')
-    io = get_csv_reader(fh, columns)
-    for row in io:
+    if not csvpath:
+        pkg_dir = os.path.dirname(os.path.abspath(__file__))
+        csvpath = os.path.join(pkg_dir, 'resources', 'country-names-2015.csv')
+
+    with codecs.open(csvpath, 'rb', encoding="UTF-8") as fh:
+      columns = "country_name,FIPS_cc,ISO2_cc,ISO3_cc,unique_name,territory".split(',')
+      io = get_csv_reader(fh, columns)
+      for row in io:
 
         # ignore empty row and header.
         if 'country_name' not in row: continue
@@ -48,8 +52,6 @@ def load_countries(csvpath):
         C.namenorm = C.name.lower()
 
         countries.append(C)
-
-    fh.close()
 
     for C in countries:
         if not C.is_territory:

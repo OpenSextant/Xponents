@@ -120,11 +120,11 @@ Running these steps depends on the current version of Xponents Extraction and Ba
 
 From Source:
 ```
-    pushd Extraction/src/main/python
+    pushd ./python
     python ./setup.py bdist_wheel --universal
     popd
     # Install built lib with dependencies to ./python
-    pip install --target ./piplib Extraction/src/main/python/dist/opensextant-VERSION.whl 
+    pip install --target ./piplib ./python/dist/opensextant-VERSION.whl 
 ```
 
 
@@ -143,7 +143,7 @@ Additionally, add JSON support:
 
 In Python Development mode where the opensextant libs are in development:
 ```
-    export PYTHONPATH=/path/to/lib/python   or /path/to/Xponents/Extraction/src/main/python
+    export PYTHONPATH=/path/to/lib/python   or /path/to/Xponents/python
     # Hmm.. note you still have to install python dependencies.
 ```
   

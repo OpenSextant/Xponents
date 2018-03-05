@@ -158,7 +158,7 @@
         </fileset>
     </copy>
     <copy todir="${release}/lib/python">
-        <fileset dir="${xponents.home}/Extraction/src/main/python" >
+        <fileset dir="${xponents.home}/python" >
            <exclude name="**/*.pyc"></exclude> 
         </fileset>
     </copy>
