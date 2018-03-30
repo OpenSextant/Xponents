@@ -235,15 +235,19 @@ public class PlaceCandidate extends TextMatch {
             // return chosen;
             return;
         }
+        if (scoredPlaces.isEmpty()) {
+            return;
+        }
 
         List<ScoredPlace> tmp = new ArrayList<>();
         tmp.addAll(scoredPlaces.values());
         Collections.sort(tmp);
 
-        choice1 = tmp.get(0);
-        if (tmp.size() > 1) {
-            choice2 = tmp.get(1);
-            secondPlaceScore = tmp.get(1).getScore();
+        int last=tmp.size()-1;
+        choice1 = tmp.get(last);
+        if (tmp.size() > 1) {            
+            choice2 = tmp.get(last-1);
+            secondPlaceScore = tmp.get(last-1).getScore();
         }
     }
 
