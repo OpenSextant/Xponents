@@ -1,24 +1,26 @@
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.opensextant.data.Country;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 
 import jodd.json.JsonObject;
 import jodd.json.JsonSerializer;
-import jodd.json.JsonWriter;
 
 public class GeonamesCSV2JSON extends GeonamesUtility {
 
+    /**
+     * Brute force copy of Geonames loadCountries method;  Objective:  read geonames.org CSV file and convert to JSON.
+     * This sort of data is helpful for integrating with apps and JavaScript tools.
+     * 
+     * @param outfile
+     * @throws IOException
+     */
     public GeonamesCSV2JSON(String outfile) throws IOException {
 
         JsonObject obj = new JsonObject();
@@ -89,6 +91,7 @@ public class GeonamesCSV2JSON extends GeonamesUtility {
         try {
             new GeonamesCSV2JSON(args[0]);
         } catch (Exception err) {
+            System.err.println("GeonamesCSV2JSON  outputfile");
             err.printStackTrace();
         }
     }
