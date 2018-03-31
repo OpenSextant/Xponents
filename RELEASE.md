@@ -1,7 +1,8 @@
 # 2018 #
 
-Xponents 2.10.4, 2.10.5:
+Xponents 2.10.4 thru 2.10.6:
 
+  * Bug fix: PlaceCandidate had opposite sort order (improper implementation of Comparable in ScoredPlace)
   * Bug fix: SolrGazetteer.findPlaces() missing " AND " in solr clause
   * Added demonstration code under Examples for work with gazetteer
   * Fix span tag detection in MatcherUtils 
