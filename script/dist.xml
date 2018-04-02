@@ -217,7 +217,7 @@
         </fileset>
     </copy>
     <copy todir="${release}/etc/">
-        <fileset dir="${xponents.home}/Extraction/src/test/resources">
+        <fileset dir="${xponents.home}/Examples/etc">
            <include name="logback.*" />
         </fileset>
         <fileset dir="${xponents.home}/Extraction/src/test/resources">
