@@ -22,7 +22,7 @@
       <arg value="-DskipTests=true"/>
       <arg value="clean"/>
       <arg value="install"/>
-      <arg value="javadoc:javadoc"/>
+      <arg value="javadoc:jar"/>
       <arg value="dependency:copy-dependencies"/>
     </exec>
 
@@ -33,22 +33,9 @@
       <arg value="-DskipTests=true"/>
       <arg value="clean"/>
       <arg value="install"/>
-      <arg value="javadoc:javadoc"/>
+      <arg value="javadoc:jar"/>
       <arg value="dependency:copy-dependencies"/>
     </exec>
-
-<!--
-    <exec executable="mvn" dir="${xponents.home}/Xlayer" failonerror="true">
-      <arg value="-DincludeScope=test"/>
-      <arg value="-DincludeScope=runtime"/>
-      <arg value="-DincludeScope=compile"/>
-      <arg value="-DskipTests=true"/>
-      <arg value="clean"/>
-      <arg value="install"/>
-      <arg value="javadoc:javadoc"/>
-      <arg value="dependency:copy-dependencies"/>
-    </exec>
--->
 
     <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
       <arg value="-DincludeScope=test"/>
@@ -277,11 +264,8 @@
            <include name="*.md" />
         </fileset>
     </copy>
-<!--
-    <copy todir="${release}/doc/Examples/apidocs">
-        <fileset dir="${xponents.home}/Examples/target/apidocs" />
-    </copy>
-  -->
+    <copy todir="${release}/doc/Examples/" file="${xponents.home}/Examples/README.md" />
+    <copy todir="${release}/doc/Examples/" file="${xponents.home}/Examples/doc/README_gazetteer.md" />
   </target>
 
   <target name="dist" depends="build, copy-libs, copy-solr6, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
