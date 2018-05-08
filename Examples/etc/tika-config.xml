@@ -1,0 +1,3 @@
+<properties>
+    <service-loader initializableProblemHandler="ignore"/>
+</properties>
