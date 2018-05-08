@@ -599,6 +599,7 @@ count,noun
 index,noun
 counts,noun
 defence,noun
+civil defense,noun
 civil defence,noun
 civil servants,noun
 defense,noun
@@ -1612,6 +1613,7 @@ pluto,place.astro
 polaris,place.astro
 spa,place.civil
 boutique,place.civil
+gardens,place.civil
 brig,place.civil
 resort,place.civil
 resort island,place.civil
@@ -1724,6 +1726,7 @@ mines,place.civil
 monitoring station,place.civil
 resovoir,place.civil
 reservoir,place.civil
+a reservoir,place.civil
 parkway,place.civil
 state land,place.civil
 landing,place.civil
@@ -1918,13 +1921,17 @@ branch,place.general
 spring,place.general
 plain,place.general
 plains,place.general
-west coast,place.general
 midwest,place.general
 mideast,place.general
 far east,place.general
-the west coast,place.general
+west coast,place.general
 east coast,place.general
+the west coast,place.general
 the east coast,place.general
+north side,place.general
+south side,place.general
+east side,place.general
+west side,place.general
 three-way,place.general
 four-way,place.general
 three way,place.general
@@ -2037,6 +2044,7 @@ lol,stopword.web
 information technology,stopword.web
 telecom,stopword.web
 google,stopword.web
+getty,stopword.web
 amazon,stopword.web
 adobe,stopword.web
 apple,stopword.web
@@ -2552,3 +2560,5 @@ pest,noun
 eval,abbrev
 lib,abbrev
 ballad,noun
+solitaire,noun
+
