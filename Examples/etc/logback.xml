@@ -1,0 +1,36 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--  Root  -->
+    <root level="error" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <!--  Loggers -->
+    <logger name="org.apache" level="error">
+    </logger>
+    <logger name="org.opensextant.extractors" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.geo" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.xtax" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.xtemporal" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.xcoord" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.poli" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.geo.rules" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.geo.GazetteerMatcher" level="info">
+    </logger>
+    <logger name="org.opensextant.examples" level="info">
+    </logger>
+
+</configuration>
