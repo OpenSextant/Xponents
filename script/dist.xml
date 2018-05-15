@@ -6,11 +6,9 @@
 
   <property name="xponents.home" value="${basedir}/../" />
   <property name="version" value="2.10"/>
-  <property name="xtext.version" value="2.10"/>
   <property name="xlayer.version" value="0.1"/>
 
   <property name="release" location="${xponents.home}/dist/Xponents-${version}" />
-  <property name="xtext.release" location="${xponents.home}/dist/XText-${xtext.version}" />
   <property name="xlayer.release" location="${xponents.home}/dist/Xlayer-${xlayer.version}" />
 
 
@@ -47,57 +45,6 @@
     </exec>
    </target>
 
-  <!--  Consolidate XText items to their own release app
-    -->
-  <target name="dist-xtext">
-    <delete dir="${xtext.release}"/>
-
-    <mkdir dir="${xtext.release}"/>
-    <mkdir dir="${xtext.release}/lib"/>
-    <mkdir dir="${xtext.release}/logs"/>
-    <mkdir dir="${xtext.release}/test"/>
-    <mkdir dir="${xtext.release}/script"/>
-
-    <exec executable="mvn" dir="${xponents.home}/XText" failonerror="true">
-      <arg value="-DoutputDirectory=${xtext.release}/lib"/>
-      <arg value="-DincludeScope=test"/>
-      <arg value="-DincludeScope=runtime"/>
-      <arg value="-DincludeScope=compile"/>
-      <arg value="dependency:copy-dependencies"/>
-    </exec>
-
-
-    <copy todir="${xtext.release}/lib/">
-        <fileset dir="${xponents.home}/XText/target">
-           <include name="*.jar" />
-        </fileset>
-        <fileset dir="${xponents.home}/XText/lib">
-           <include name="*.jar" />
-        </fileset>
-    </copy>
-
-    <copy todir="${xtext.release}">
-        <fileset dir="${xponents.home}/XText/">
-           <include name="*.htm*" />
-           <include name="*.md" />
-        </fileset>
-    </copy>
-
-    <copy todir="${xtext.release}/script/">
-        <fileset dir="${xponents.home}/XText/script">
-           <include name="*.*" />
-        </fileset>
-    </copy>
-
-    <copy todir="${xtext.release}/test/">
-        <fileset dir="${xponents.home}/XText/src/test/resources/">
-           <include name="*.*" />
-        </fileset>
-    </copy>
-
-  </target>
-
- 
   <!-- Release script for Xponents complete. -->
 
   <target name="copy-libs" >

@@ -51,7 +51,7 @@ The build process well documented in `./solr`, but can be involved. Downloads wi
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>2.10.5</version>
+    <version>2.10.6</version>
   </dependency>
 ```
 
@@ -68,7 +68,7 @@ This Supports Extraction above.
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-patterns</artifactId>
-    <version>2.10.5</version>
+    <version>2.10.6</version>
   </dependency>
 ```
 
@@ -84,7 +84,7 @@ Supports all tool chains - Extraction, Patterns, XText, etc.
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-basics</artifactId>
-    <version>2.10.5</version>
+    <version>2.10.6</version>
   </dependency>
 ```
 * Javadoc: [Xponents Basics](./doc/apidocs/Basics)
@@ -102,7 +102,7 @@ From an XText ConversionListener you can fire off extraction routines or databas
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-xtext</artifactId>
-    <version>2.10.5</version>
+    <version>2.10.6</version>
   </dependency>
 ```
 * Javadoc: [Xponents XText](./doc/apidocs/XText)
@@ -118,7 +118,7 @@ or download a pre-built index (Coming Soon -- hopefully November 2017)
 Release History
 ---------------
 
-    Xponents 2.10 Feb 2017  v2.10.5 - Bug patches; Xponents + Xtext release
+    Xponents 2.10 Feb 2017  v2.10.6 - Bug patches; Xponents + Xtext release
     Xponents 2.10 Sept 2017 v2.10.1 - Solr 6 support, Java 8 only, SolrTextTagger 2.4;  Published to Sonatype and Maven Central
     Xponents 2.9, Jul 2017  v2.9.9  - Improved stop filters and other geotagging and KW tagging improvements
     Xponents 2.9, Apr 2017  v2.9.8  - refactored XLayer, added trivial match filters; updated versions of commons libs
