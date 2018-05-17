@@ -200,7 +200,7 @@ public final class GeocoordNormalization {
                 int len = offsets.length();
                 if (len < 11) {
                     m.precision.precision = PrecisionScales.MGRS_offset_precision_list[len];
-                    m.precision.digits = (int) (len / 2);
+                    m.precision.digits = len/2;
                 }
 
             } catch (java.lang.IllegalArgumentException parseErr) {

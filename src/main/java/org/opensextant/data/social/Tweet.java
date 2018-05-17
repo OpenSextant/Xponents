@@ -212,7 +212,7 @@ public class Tweet extends Message {
      * @return
      * @throws MessageParseException
      */
-    protected String parseIds(Map tw) throws MessageParseException {
+    protected String parseIds(Map<?,?> tw) throws MessageParseException {
         if (tw.containsKey("id_str")) {
             return (String) tw.get("id_str");
         } else if (tw.containsKey("id")) {
@@ -314,7 +314,7 @@ public class Tweet extends Message {
         }
     }
 
-    protected void parseDate(Map tw) {
+    protected void parseDate(Map<?,?> tw) {
         /*
          * Date string tracking -- argh. Which one really matters dare we
          * normalize one to the other?
@@ -340,7 +340,7 @@ public class Tweet extends Message {
 
     }
 
-    protected void parseText(Map tw) throws MessageParseException {
+    protected void parseText(Map<?,?> tw) throws MessageParseException {
         if (this.text != null) {
             // Does not overwrite. 
             return;
@@ -369,7 +369,7 @@ public class Tweet extends Message {
     * 
     * @param jsonArray
     */
-    public void parseURLs(List jsonArray) {
+    public void parseURLs(List<?> jsonArray) {
         if (!Tweet.isValue(jsonArray)) {
             return;
         }

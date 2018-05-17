@@ -589,6 +589,7 @@ public class GeonamesUtility {
      * @since 2.8.17
      * @deprecated Use getUSStateMetadata
      */
+    @Deprecated
     public List<Place> getAdmin1Metadata() {
         return getUSStateMetadata();
     }
@@ -730,6 +731,7 @@ public class GeonamesUtility {
      * @deprecated use loadUSStateMetadata()
      * @throws IOException
      */
+    @Deprecated
     public void loadAdmin1Metadata() throws IOException {
         loadUSStateMetadata();
     }
