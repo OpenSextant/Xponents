@@ -17,7 +17,7 @@ import org.opensextant.data.Geocoding;
 public class GeoInference {
 
     /** original data record that this inference is attached to */
-    public String recordId = null;    
+    public String recordId = null;
     /**
      * Contributor -- what app, class or module generated the inference.
      */
@@ -37,7 +37,7 @@ public class GeoInference {
     /**
      * Any additional attributes you would like to add. Optional.
      */
-    public Map<String,Object> attributes = null;
+    public Map<String, Object> attributes = null;
     /**
      * offset bounds.  Borrowed from TextMatch.
      */
