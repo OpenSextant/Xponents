@@ -9,7 +9,7 @@
     <property name="guava.v" value="14.0.1" />
     <property name="xponents.v" value="${xponents.build.v}" />
     <property name="supercsv.v" value="2.4.0" />
-    <property name="lang3.v" value="3.6" />
+    <property name="lang3.v" value="3.7" />
 
     <property name="jetty.runtime.lib" value="${basedir}/solr6-dist/lib/ext" />
     <property name="solr.runtime.lib" value="${basedir}/solr6/lib" />
@@ -22,9 +22,9 @@
     <path id="runtime.classpath">
         <!-- TODO: need to run these routines to fully automate CLASSPATH items here. 
             mvn install mvn dependency:copy-dependencies cd ./solr ant -f ./solr6-build.xml gaz-meta -->
-        <pathelement location="${basedir}/../Extraction/lib/*" />
+        <pathelement location="${basedir}/../lib/*" />
         <pathelement
-            location="${basedir}/../Extraction/target/opensextant-xponents-${xponents.v}.jar" />
+            location="${basedir}/../target/opensextant-xponents-${xponents.v}.jar" />
         <pathelement location="${solr.runtime.lib}/xponents-gazetteer-meta.jar" />
     </path>
 

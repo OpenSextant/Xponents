@@ -25,7 +25,7 @@ fi
 index_taxcat () {
   SOLR_URL=$1
   echo "Populate nationalities taxonomy in XTax"
-  # you must set your PYTHONPATH to include Extraction/XTax required libraries.
+  # you must set your PYTHONPATH to include required libraries built from ../python
   python  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr $SOLR_URL --starting-id 0
   sleep 1 
 
@@ -111,7 +111,7 @@ case $1 in
      ;;
 esac
 
-pushd ../Extraction
+pushd ../
 mvn dependency:copy-dependencies
 popd
 
