@@ -1,5 +1,7 @@
 Xponents and MapReduce
 ======================
+CAVEAT:  This experiment was done with Xponents 2.9 and Solr 4.x.
+We have no plans on maintaining it.
 
 You have data that has text.
 Your data also likely has been organized temporally or by some other means.

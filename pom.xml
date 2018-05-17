@@ -4,9 +4,9 @@
 >
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
-  <artifactId>xponents-parent</artifactId>
-  <version>2.10.6</version>
-  <packaging>pom</packaging>
+  <artifactId>xponents</artifactId>
+  <version>3.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
   <inceptionYear>2013</inceptionYear>
@@ -49,18 +49,11 @@
     </developer>
   </developers>
   <properties>
+    <solr.version>6.6.2</solr.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <slf4j.version>1.7.25</slf4j.version>
-    <xponents.v>2.10.6</xponents.v>
+    <xponents.v>3.0-SNAPSHOT</xponents.v>
   </properties>
-  <modules>
-    <module>Basics</module>
-    <module>Patterns</module>
-    <module>Extraction</module>
-    <!-- These modules are separate now: -->
-    <!-- <module>XText</module> -->
-    <!-- <module>Examples</module> -->
-  </modules>
   <!-- OSS Sonatype instructions: list repositories -->
   <distributionManagement>
     <snapshotRepository>
@@ -74,32 +67,6 @@
   </distributionManagement>
   <dependencyManagement>
     <dependencies>
-      <!-- Module Versions -->
-      <dependency>
-        <groupId>org.opensextant</groupId>
-        <artifactId>opensextant-xponents-basics</artifactId>
-        <version>${xponents.v}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opensextant</groupId>
-        <artifactId>opensextant-xponents</artifactId>
-        <version>${xponents.v}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opensextant</groupId>
-        <artifactId>opensextant-xponents-xtext</artifactId>
-        <version>2.10.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opensextant</groupId>
-        <artifactId>opensextant-xponents-patterns</artifactId>
-        <version>${xponents.v}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opensextant</groupId>
-        <artifactId>opensextant-xponents-examples</artifactId>
-        <version>2.10dev-SNAPSHOT</version>
-      </dependency>
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
@@ -139,16 +106,275 @@
         <version>1.2.2</version>
         <scope>test</scope>
       </dependency>
-      <!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
-        <version>${slf4j.version}</version> <scope>test</scope> </dependency> -->
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.17</version>
-        <scope>test</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
+  <dependencies>
+    <!-- BASIC LIBS -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <!-- GEODETIC MATH LIBS -->
+    <dependency>
+      <groupId>org.locationtech.spatial4j</groupId>
+      <artifactId>spatial4j</artifactId>
+      <version>0.6</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vividsolutions</groupId>
+      <artifactId>jts</artifactId>
+      <version>1.13</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.opensextant</groupId>
+      <artifactId>giscore</artifactId>
+      <version>2.0.2</version>
+      <!-- https://github.com/OpenSextant/giscore/issues/4 TODO remove once 
+        fixed >2.0.2 -->
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>geodesy</artifactId>
+          <groupId>org.opensextant</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-lang</artifactId>
+          <groupId>commons-lang</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.opensextant</groupId>
+      <artifactId>geodesy</artifactId>
+      <version>2.0.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-simple</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- SOLR 6.x LIBS -->
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-core</artifactId>
+      <version>${solr.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.orbit</groupId>
+          <artifactId>javax.servlet</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-memory</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-queryparser</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-analyzers-suggest</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-analyzers-kuromoji</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-cli</groupId>
+          <artifactId>commons-cli</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.restlet.jee</groupId>
+          <artifactId>org.restlet</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.restlet.jee</groupId>
+          <artifactId>org.restlet.ext.servlet</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+          <artifactId>concurrentlinkedhashmap-lru</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-auth</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-hdfs</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>wstx-asl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-deploy</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-jmx</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-security</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-servlet</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-webapp</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-xml</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- solr-core missing dependency -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- Required Solr plugins: SolrTextTagger goes into solr6/lib; JTS and 
+      Spatial4j go into server's lib/ext -->
+    <dependency>
+      <groupId>org.opensextant</groupId>
+      <artifactId>solr-text-tagger</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
+      <version>2.4</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-solrj</artifactId>
+      <version>${solr.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>wstx-asl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- LANG ID -->
+    <dependency>
+      <!-- 2014 release of Cybozu, mavenized here: -->
+      <groupId>com.norconex.language</groupId>
+      <artifactId>langdetect</artifactId>
+      <version>1.3.0</version>
+    </dependency>
+    <!-- TEMPORAL PARSING -->
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+    <!-- UTILITY AND LOGGING -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.supercsv</groupId>
+      <artifactId>super-csv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>gnu.getopt</groupId>
+      <artifactId>java-getopt</artifactId>
+      <version>1.0.13</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jee</groupId>
+      <artifactId>org.restlet</artifactId>
+      <version>2.3.7</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jodd</groupId>
+      <artifactId>jodd-json</artifactId>
+      <version>4.1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.2</version>
+    </dependency>
+  </dependencies>
   <build>
     <!-- <directory>target</directory> -->
     <pluginManagement>
@@ -231,10 +457,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
@@ -268,6 +490,39 @@
           <useReleaseProfile>true</useReleaseProfile>
           <releaseProfiles>release</releaseProfiles>
           <goals>deploy</goals>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <header>&lt;img alt='[OpenSextant Logo]' height='36'
+            width='36'
+            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
+            OpenSextant.org, 2013-2017 
+          </header>
+          <version>true</version>
+          <windowtitle>Xponents Extraction Toolkit</windowtitle>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-tests</id>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${project.basedir}/solr/etc/gazetteer</additionalClasspathElement>
+            <additionalClasspathElement>${project.basedir}/solr/solr6/gazetteer/conf</additionalClasspathElement>
+          </additionalClasspathElements>
         </configuration>
       </plugin>
     </plugins>

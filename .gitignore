@@ -2,6 +2,11 @@
 .DS_Store
 release
 piplib
+# Others data
+src/main/resources/geonames.org/
+src/main/resources/ISO-639-2_utf-8.txt
+etc/langdetect
+
 
 #Maven output
 target/
