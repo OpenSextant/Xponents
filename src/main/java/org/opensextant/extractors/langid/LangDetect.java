@@ -437,7 +437,6 @@ public class LangDetect {
      * @param findCJK
      *            - if findCJK is true, then this will try to find the best language ID if Chinese/Japanese/Korean
      *            characters exist at all.
-     * @category Experimental
      * @return lang ID, possibly different than given lang ID.
      */
     public Language detectSocialMediaLang(String lang, String naturalLanguage, boolean findCJK) {
