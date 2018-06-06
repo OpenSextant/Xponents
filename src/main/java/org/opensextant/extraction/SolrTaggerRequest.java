@@ -29,8 +29,12 @@ package org.opensextant.extraction;
 import java.util.Collection;
 import java.util.Collections;
 
+//import java.util.Collection;
+//import java.util.Collections;
+
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.request.QueryRequest;
+//import org.apache.solr.client.solrj.request.RequestWriter;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
 import org.apache.solr.common.util.ContentStreamBase;
@@ -50,10 +54,18 @@ public class SolrTaggerRequest extends QueryRequest {
         this.input = text;
     }
 
+    /* Not yet fixed in Solr 7.x 
+    @Override
+    public RequestWriter.ContentWriter getContentWriter(String expectedType) {
+        return new RequestWriter.StringPayloadContentWriter(input, "text/plain; charset=UTF8");
+    }
+    */
+
     @Override
     public Collection<ContentStream> getContentStreams() {
         ContentStreamBase.StringStream stringStream = new ContentStreamBase.StringStream(input);
         stringStream.setContentType("text/plain; charset=UTF-8");
         return Collections.singleton((ContentStream) stringStream);
     }
+
 }
