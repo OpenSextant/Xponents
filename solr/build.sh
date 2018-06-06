@@ -83,7 +83,8 @@ do_data=0
 do_taxcat=1
 do_gazetteer=1
 proxy='' 
-case $1 in 
+while [ "$1" != "" ]; do
+ case $1 in 
   'data')
      do_data=1
      shift
@@ -109,7 +110,8 @@ case $1 in
      do_taxcat=0
      shift
      ;;
-esac
+  esac
+done
 
 pushd ../
 mvn dependency:copy-dependencies

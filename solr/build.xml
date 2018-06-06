@@ -4,16 +4,15 @@
     <!-- Solr Home and Gazetteer config data sourced here: -->
     <property file="${basedir}/build.properties" />
 
-    <property name="textTagger.v" value="2.4" />
+    <property name="textTagger.v" value="2.5" />
     <property name="slf4j.v" value="1.7.25" />
     <property name="guava.v" value="14.0.1" />
     <property name="xponents.v" value="${xponents.build.v}" />
     <property name="supercsv.v" value="2.4.0" />
     <property name="lang3.v" value="3.7" />
 
-    <property name="jetty.runtime.lib" value="${basedir}/solr6-dist/lib/ext" />
-    <property name="solr.runtime.lib" value="${basedir}/solr6/lib" />
-    <property name="solr.runtime.log" value="${basedir}/solr6-dist/server/logs" />
+    <property name="jetty.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext" />
+    <property name="solr.runtime.log" value="${basedir}/solr7-dist/server/logs" />
     <property name="maven.lib" value="${user.home}/.m2/repository" />
     <property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip" />
     <property name="jrc.data" value="${basedir}/etc/taxcat/data"/>
@@ -25,7 +24,7 @@
         <pathelement location="${basedir}/../lib/*" />
         <pathelement
             location="${basedir}/../target/opensextant-xponents-${xponents.v}.jar" />
-        <pathelement location="${solr.runtime.lib}/xponents-gazetteer-meta.jar" />
+        <pathelement location="${solr.home}/lib/xponents-gazetteer-meta.jar" />
     </path>
 
     <target name="proxy">
@@ -38,15 +37,14 @@
     <target name="setup">
         <!-- Solr 4 + Jetty: <mkdir dir="log" /> <mkdir dir="lib/ext" /> <mkdir dir="download" 
             /> <mkdir dir="webapps" /> -->
-        <!-- Same as solr.runtime.lib -->
         <mkdir dir="${solr.home}/lib" />
     </target>
 
     <target name="copy-libs">
-        <copy todir="${jetty.runtime.lib}" file="${maven.lib}/com/vividsolutions/jts/1.13/jts-1.13.jar" />
+        <copy todir="${jetty.runtime.lib}" file="${maven.lib}/org/locationtech/jts/jts-core/1.15.0/jts-core-1.15.0.jar" />
         <copy todir="${jetty.runtime.lib}"
-            file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.6/spatial4j-0.6.jar" />
-        <copy todir="${solr.runtime.lib}"
+            file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar" />
+        <copy todir="${solr.home}/lib"
             file="${maven.lib}/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
     </target>
 
@@ -87,10 +85,13 @@
     </target>
 
     <target name="clean" description="Delete indexed data">
-        <delete dir="${solr.home}/gazetteer/data/**" />
-        <delete dir="${solr.home}/taxcat/data/**" />
+        <delete dir="${solr.home}/gazetteer/data" />
+        <delete dir="${solr.home}/taxcat/data" />
         <delete dir="${solr.home}/lib" />
-        <delete dir="${solr.runtime.lib}" />
+
+        <mkdir dir="${solr.home}/gazetteer/data" />
+        <mkdir dir="${solr.home}/taxcat/data" />
+        <mkdir dir="${solr.home}/lib" />
     </target>
 
     <!-- Solr 4.10 gazetteer ingest. To use this, additional JARs supporting the 

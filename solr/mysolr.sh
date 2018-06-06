@@ -1,6 +1,6 @@
 #!/bin/bash
-# Use Installed Solr as "./solr6-dist"
-SOLR_INSTALL=./solr6-dist
+# Use Installed Solr $SOLR_INSTALL
+SOLR_INSTALL=./solr7-dist
 
 PORT=$2
 case "$1" in 
