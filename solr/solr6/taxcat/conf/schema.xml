@@ -73,17 +73,32 @@
 		and back compatibility is not guaranteed. Names with both leading and trailing 
 		underscores (e.g. _version_) are reserved. -->
 
-	<!-- // =================================================== Generic Taxonomy 
-		tagger Catalog: short key for narrowing which entries are used in tagging 
+	<!-- // =================================================== 
+        Generic Taxonomy tagger 
+        Catalog: 
+           short key for narrowing which entries are used in tagging 
 		Phrase: the value to find in text and data TaxNode: the label associated 
-		with the text found Example: text: "I like coffee, you like tea. We like 
-		a good drink now and then" use catalog = 'beverages' entries: { taxnode: 
-		'breakfast', phrase: 'coffee' }, { taxnode: 'breakfast', phrase: 'tea' }, 
-		{ taxnode: 'anytime', phrase: 'diet coke' } tagging the text with the chosen 
-		catalog should match the beverages.breakfast nodes but ignore the beverages.anytime 
-		node // =================================================== \\ -->
+		with the text found 
+    
+        Example: text: "I like coffee, you like tea. We like a good drink now and then" 
+        
+        use catalog = 'beverages' entries: 
+        { taxnode: 'breakfast', phrase: 'coffee' }, 
+        { taxnode: 'breakfast', phrase: 'tea' }, 
+		{ taxnode: 'anytime', phrase: 'diet coke' } 
+    
+        tagging the text with the chosen catalog should match the beverages.breakfast nodes 
+        but ignore the beverages.anytime node 
+        // ===================================================  
+        -->
+        
+    <!--  TrieIntField is deprecated in Solr 7. Will disappear in Solr 8.
+          See SolrTextTagger examples where id here is a String - this likely increases FST memory used at runtime.
+     -->
+   <fieldType name="int" class="solr.TrieIntField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
+        
 	<field name="id" type="int" required="true" />
-	<field name="_version_" type="long" required="false" stored="true" indexed="true" />
+	<field name="_version_" type="plong" required="false" stored="true" indexed="true" />
 
 	<!-- Callers name what catalog is used to tag data, e.g., 'events' -->
 	<field name="catalog" type="string" required="true" stored="true" indexed="true" />
@@ -159,77 +174,20 @@
 		(the default), then default lucene sorting will be used which places docs 
 		without the field first in an ascending sort and last in a descending sort. -->
 
-	<!-- Numeric field types that index values using KD-trees. *Point fields 
+`	<!-- Numeric field types that index values using KD-trees. *Point fields 
 		are faster and more efficient than Trie* fields both, at search time and 
 		at index time, but some features are still not supported. Point fields don't 
 		support FieldCache, so they must have docValues="true" if needed for sorting, 
 		faceting, functions, etc. -->
 	<fieldType name="pint" class="solr.IntPointField" docValues="true" />
-	<fieldType name="pfloat" class="solr.FloatPointField"
-		docValues="true" />
-	<fieldType name="plong" class="solr.LongPointField"
-		docValues="true" />
-	<fieldType name="pdouble" class="solr.DoublePointField"
-		docValues="true" />
+	<fieldType name="pfloat" class="solr.FloatPointField"		docValues="true" />
+	<fieldType name="plong" class="solr.LongPointField"		docValues="true" />
+	<fieldType name="pdouble" class="solr.DoublePointField"		docValues="true" />
 
-	<fieldType name="pints" class="solr.IntPointField" docValues="true"
-		multiValued="true" />
-	<fieldType name="pfloats" class="solr.FloatPointField"
-		docValues="true" multiValued="true" />
-	<fieldType name="plongs" class="solr.LongPointField"
-		docValues="true" multiValued="true" />
-	<fieldType name="pdoubles" class="solr.DoublePointField"
-		docValues="true" multiValued="true" />
-
-	<!-- Default numeric field types. For faster range queries, consider *PointFields 
-		(pint/pfloat/plong/pdouble), or the tint/tfloat/tlong/tdouble types. -->
-	<fieldType name="int" class="solr.TrieIntField" docValues="true"
-		precisionStep="0" positionIncrementGap="0" />
-	<fieldType name="float" class="solr.TrieFloatField"
-		docValues="true" precisionStep="0" positionIncrementGap="0" />
-	<fieldType name="long" class="solr.TrieLongField" docValues="true"
-		precisionStep="0" positionIncrementGap="0" />
-	<fieldType name="double" class="solr.TrieDoubleField"
-		docValues="true" precisionStep="0" positionIncrementGap="0" />
-
-	<fieldType name="ints" class="solr.TrieIntField" docValues="true"
-		precisionStep="0" positionIncrementGap="0" multiValued="true" />
-	<fieldType name="floats" class="solr.TrieFloatField"
-		docValues="true" precisionStep="0" positionIncrementGap="0"
-		multiValued="true" />
-	<fieldType name="longs" class="solr.TrieLongField" docValues="true"
-		precisionStep="0" positionIncrementGap="0" multiValued="true" />
-	<fieldType name="doubles" class="solr.TrieDoubleField"
-		docValues="true" precisionStep="0" positionIncrementGap="0"
-		multiValued="true" />
-
-	<!-- Numeric field types that index each value at various levels of precision 
-		to accelerate range queries when the number of values between the range endpoints 
-		is large. See the javadoc for NumericRangeQuery for internal implementation 
-		details. Smaller precisionStep values (specified in bits) will lead to more 
-		tokens indexed per value, slightly larger index size, and faster range queries. 
-		A precisionStep of 0 disables indexing at different precision levels. Consider 
-		using pint/pfloat/plong/pdouble instead of Trie* fields if possible -->
-	<fieldType name="tint" class="solr.TrieIntField" docValues="true"
-		precisionStep="8" positionIncrementGap="0" />
-	<fieldType name="tfloat" class="solr.TrieFloatField"
-		docValues="true" precisionStep="8" positionIncrementGap="0" />
-	<fieldType name="tlong" class="solr.TrieLongField" docValues="true"
-		precisionStep="8" positionIncrementGap="0" />
-	<fieldType name="tdouble" class="solr.TrieDoubleField"
-		docValues="true" precisionStep="8" positionIncrementGap="0" />
-
-	<fieldType name="tints" class="solr.TrieIntField" docValues="true"
-		precisionStep="8" positionIncrementGap="0" multiValued="true" />
-	<fieldType name="tfloats" class="solr.TrieFloatField"
-		docValues="true" precisionStep="8" positionIncrementGap="0"
-		multiValued="true" />
-	<fieldType name="tlongs" class="solr.TrieLongField"
-		docValues="true" precisionStep="8" positionIncrementGap="0"
-		multiValued="true" />
-	<fieldType name="tdoubles" class="solr.TrieDoubleField"
-		docValues="true" precisionStep="8" positionIncrementGap="0"
-		multiValued="true" />
+	<fieldType name="pints" class="solr.IntPointField" docValues="true"		multiValued="true" />
+	<fieldType name="pfloats" class="solr.FloatPointField"		docValues="true" multiValued="true" />
+	<fieldType name="plongs" class="solr.LongPointField"		docValues="true" multiValued="true" />
+	<fieldType name="pdoubles" class="solr.DoublePointField"		docValues="true" multiValued="true" />
 
 	<!-- The format for this date field is of the form 1995-12-31T23:59:59Z, 
 		and is a more restricted form of the canonical representation of dateTime 
@@ -246,18 +204,6 @@
 		docValues="true" />
 	<fieldType name="pdates" class="solr.DatePointField"
 		docValues="true" multiValued="true" />
-
-	<fieldType name="date" class="solr.TrieDateField" docValues="true"
-		precisionStep="0" positionIncrementGap="0" />
-	<fieldType name="dates" class="solr.TrieDateField" docValues="true"
-		precisionStep="0" positionIncrementGap="0" multiValued="true" />
-
-	<fieldType name="tdate" class="solr.TrieDateField" docValues="true"
-		precisionStep="6" positionIncrementGap="0" />
-	<fieldType name="tdates" class="solr.TrieDateField"
-		docValues="true" precisionStep="6" positionIncrementGap="0"
-		multiValued="true" />
-
 
 	<!--Binary data type. The data should be sent/retrieved in as Base64 encoded 
 		Strings -->
@@ -289,10 +235,12 @@
 	<!--OPENSEXTANT USE OF TEXT TAGGGER Looks like we could benefit from a char 
 		filter that combines contractions and ASCII folding; Sure, its more elegant 
 		to maintain separate char filters; Or a char filter and token filter. See 
-		also name_idx* fields that have phonetic support SOLR-TEXT-TAGGER v2.0 in 
-		effect here: postingsFormat="Memory" -->
+		also name_idx* fields that have phonetic support 
+                SOLR-TEXT-TAGGER v2.0 in effect here: postingsFormat="Memory" 
+                SOLR-TEXT-TAGGER v2.4+ in effect here: postingsFormat="FST50" 
+          -->
 	<fieldType name="name_tag" class="solr.TextField"
-		positionIncrementGap="100" postingsFormat="Memory"
+		positionIncrementGap="100" postingsFormat="FST50"
 		omitTermFreqAndPositions="true" omitNorms="true">
 		<!-- ?? <charFilter class="solr.MappingCharFilterFactory" mapping="contraction-filter2.txt"/> -->
 		<analyzer type="index">

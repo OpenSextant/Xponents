@@ -35,7 +35,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>6.6.0</luceneMatchVersion>
+  <luceneMatchVersion>7.3.0</luceneMatchVersion>
 
   <!-- <lib/> directives can be used to instruct Solr to load any Jars
        identified and use them to resolve any "plugins" specified in
@@ -658,7 +658,7 @@
          using enableRemoteStreaming="true"
 
       -->
-    <requestParsers enableRemoteStreaming="true"
+    <requestParsers enableRemoteStreaming="true" enableStreamBody="true"
                     multipartUploadLimitInKB="2048000"
                     formdataUploadLimitInKB="2048"
                     addHttpRequestToContext="false"/>
@@ -1231,16 +1231,16 @@
       </lst>
       <lst name="typeMapping">
         <str name="valueClass">java.util.Date</str>
-        <str name="fieldType">tdates</str>
+        <str name="fieldType">pdates</str>
       </lst>
       <lst name="typeMapping">
         <str name="valueClass">java.lang.Long</str>
         <str name="valueClass">java.lang.Integer</str>
-        <str name="fieldType">tlongs</str>
+        <str name="fieldType">plongs</str>
       </lst>
       <lst name="typeMapping">
         <str name="valueClass">java.lang.Number</str>
-        <str name="fieldType">tdoubles</str>
+        <str name="fieldType">pdoubles</str>
       </lst>
     </processor>
 

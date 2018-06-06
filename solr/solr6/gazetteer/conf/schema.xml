@@ -105,10 +105,14 @@
       and back compatibility is not guaranteed.  Names with both leading and
       trailing underscores (e.g. _version_) are reserved.
     -->
+    <!--  TrieIntField is deprecated in Solr 7. Will disappear in Solr 8.
+          See SolrTextTagger examples where id here is a String - this likely increases FST memory used at runtime.
+     -->
+   <fieldType name="int" class="solr.TrieIntField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
 
     <!-- Integer ID from gazetteer ETL; Integer for performance reasons -->
     <field name="id" type="int" required="true" />
-    <field name="_version_" type="long" />
+    <field name="_version_" type="plong" />
 
     <!-- Place ID from source gazetteer -->
     <field name="place_id" type="string" required="true" />
@@ -160,8 +164,8 @@
     <!-- Name and ID bias stats are generated ahead of time and built in using ETL scripts
       these numbers offer tuning for downstream geocoding rules
      -->
-    <field name="name_bias" type="tfloat" />
-    <field name="id_bias" type="tfloat" />
+    <field name="name_bias" type="pfloat" />
+    <field name="id_bias" type="pfloat" />
 
     <!-- Geonames style Feature Class - A, P, L, H, V, S, T, R -->
     <field name="feat_class" type="string" />
@@ -293,41 +297,6 @@
     <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
     <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
 
-    <!--
-      Default numeric field types. For faster range queries, consider *PointFields (pint/pfloat/plong/pdouble), or the 
-      tint/tfloat/tlong/tdouble types.
-    -->
-    <fieldType name="int" class="solr.TrieIntField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="float" class="solr.TrieFloatField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="long" class="solr.TrieLongField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="double" class="solr.TrieDoubleField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
-
-    <fieldType name="ints" class="solr.TrieIntField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
-    <fieldType name="floats" class="solr.TrieFloatField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
-    <fieldType name="longs" class="solr.TrieLongField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
-    <fieldType name="doubles" class="solr.TrieDoubleField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
-
-    <!--
-     Numeric field types that index each value at various levels of precision
-     to accelerate range queries when the number of values between the range
-     endpoints is large. See the javadoc for NumericRangeQuery for internal
-     implementation details.
-
-     Smaller precisionStep values (specified in bits) will lead to more tokens
-     indexed per value, slightly larger index size, and faster range queries.
-     A precisionStep of 0 disables indexing at different precision levels.
-     
-     Consider using pint/pfloat/plong/pdouble instead of Trie* fields if possible
-    -->
-    <fieldType name="tint" class="solr.TrieIntField" docValues="true" precisionStep="8" positionIncrementGap="0"/>
-    <fieldType name="tfloat" class="solr.TrieFloatField" docValues="true" precisionStep="8" positionIncrementGap="0"/>
-    <fieldType name="tlong" class="solr.TrieLongField" docValues="true" precisionStep="8" positionIncrementGap="0"/>
-    <fieldType name="tdouble" class="solr.TrieDoubleField" docValues="true" precisionStep="8" positionIncrementGap="0"/>
-    
-    <fieldType name="tints" class="solr.TrieIntField" docValues="true" precisionStep="8" positionIncrementGap="0" multiValued="true"/>
-    <fieldType name="tfloats" class="solr.TrieFloatField" docValues="true" precisionStep="8" positionIncrementGap="0" multiValued="true"/>
-    <fieldType name="tlongs" class="solr.TrieLongField" docValues="true" precisionStep="8" positionIncrementGap="0" multiValued="true"/>
-    <fieldType name="tdoubles" class="solr.TrieDoubleField" docValues="true" precisionStep="8" positionIncrementGap="0" multiValued="true"/>
 
     <!-- The format for this date field is of the form 1995-12-31T23:59:59Z, and
          is a more restricted form of the canonical representation of dateTime
@@ -352,13 +321,6 @@
     <!-- KD-tree versions of date fields -->
     <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
     <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
-    
-    <fieldType name="date" class="solr.TrieDateField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
-    <fieldType name="dates" class="solr.TrieDateField" docValues="true" precisionStep="0" positionIncrementGap="0" multiValued="true"/>
-
-    <fieldType name="tdate" class="solr.TrieDateField" docValues="true" precisionStep="6" positionIncrementGap="0"/>
-    <fieldType name="tdates" class="solr.TrieDateField" docValues="true" precisionStep="6" positionIncrementGap="0" multiValued="true"/>
-
 
     <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
     <fieldType name="binary" class="solr.BinaryField"/>
@@ -379,14 +341,17 @@
     <fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/>
 
     <!-- A specialized field for geospatial search filters and distance sorting. -->
+    <!-- 
     <fieldType name="location" class="solr.LatLonPointSpatialField" docValues="true"/>
-
+     -->
     <!-- An alternative geospatial field type new to Solr 4.  It supports multiValued and polygon shapes.
       For more information about this and other Spatial fields new to Solr 4, see:
       http://wiki.apache.org/solr/SolrAdaptersForLuceneSpatial4
     -->
+    <!-- 
     <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
                geo="true" distErrPct="0.025" maxDistErr="0.001" distanceUnits="kilometers" />
+     -->
 
     <!-- Money/currency field type. See http://wiki.apache.org/solr/MoneyFieldType
         Parameters:
@@ -414,9 +379,10 @@
          Sure, its more elegant to maintain separate char filters;  Or a char filter and token filter.
          See also name_idx* fields that have phonetic support
          SOLR-TEXT-TAGGER v2.0 in effect here:  postingsFormat="Memory"
+         SOLR-TEXT-TAGGER v2.4+ in effect here:  postingsFormat="FST50"
       -->
     <fieldType name="name_tag" class="solr.TextField"
-        positionIncrementGap="100" postingsFormat="Memory"
+        positionIncrementGap="100" postingsFormat="FST50"
         omitTermFreqAndPositions="true" omitNorms="true">
         <analyzer type="index">
             <charFilter class="solr.MappingCharFilterFactory"
@@ -469,7 +435,7 @@
 
     <!-- Chinese/Japanese/Korean name_tag and name_text -->
     <fieldType name="name_tag_cjk" class="solr.TextField"
-        positionIncrementGap="100" postingsFormat="Memory"
+        positionIncrementGap="100" postingsFormat="FST50"
         omitTermFreqAndPositions="true" omitNorms="true">
         <analyzer type="index">
             <tokenizer class="solr.StandardTokenizerFactory" />
@@ -503,7 +469,7 @@
     </fieldType>
     <!-- Arabic -->
     <fieldType name="name_tag_ar" class="solr.TextField" positionIncrementGap="100" 
-      postingsFormat="Memory" omitTermFreqAndPositions="true" omitNorms="true" >
+      postingsFormat="FST50" omitTermFreqAndPositions="true" omitNorms="true" >
       <analyzer type="index"> 
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <!-- for any non-arabic -->
