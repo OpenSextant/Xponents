@@ -1,4 +1,4 @@
-package org.opensextant.examples.twitter;
+package org.opensextant.examples;
 
 import java.io.File;
 import java.io.FileReader;
@@ -9,15 +9,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.json.JSONObject;
-
 import org.opensextant.data.TextInput;
+import org.opensextant.data.social.MessageParseException;
+import org.opensextant.data.social.Tweet;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.xcoord.XConstants;
 import org.opensextant.extractors.xcoord.XCoord;
+import org.opensextant.extractors.geo.social.JSONListener;
+import org.opensextant.extractors.geo.social.TweetLoader;
 import org.opensextant.output.FormatterFactory;
 import org.opensextant.output.GISDataFormatter;
 import org.opensextant.output.OpenSextantSchema;
@@ -28,11 +30,13 @@ import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jodd.json.JsonObject;
+
 /**
  *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public class TweetGeocoder {
+public class TweetGeocoder implements JSONListener {
 
     private final Logger log = LoggerFactory.getLogger(TweetGeocoder.class);
     private final boolean debug = log.isDebugEnabled();
@@ -65,8 +69,8 @@ public class TweetGeocoder {
             //  so we need to carefully undo DD filters.
             //
             userlocX.match_DD(true);
-            XCoord.RUNTIME_FLAGS ^= XConstants.DD_FILTERS_ON;  // Be less strict with Decimal degrees.
-            XCoord.RUNTIME_FLAGS ^= XConstants.FLAG_EXTRACT_CONTEXT;  // ignore text context.
+            XCoord.RUNTIME_FLAGS ^= XConstants.DD_FILTERS_ON; // Be less strict with Decimal degrees.
+            XCoord.RUNTIME_FLAGS ^= XConstants.FLAG_EXTRACT_CONTEXT; // ignore text context.
 
         } catch (ConfigException xcerr) {
             throw new ProcessingException(xcerr);
@@ -182,41 +186,40 @@ public class TweetGeocoder {
      */
     public void geocodeTweetUser(Tweet tw) {
 
-        if (tw.author_xy_val == null || tw.author_location == null) {
-            return;
-        }
-
-        ExtractionResult res = new ExtractionResult(tw.id);
-        res.addAttribute("timestamp", tw.pub_date);
-        res.addAttribute("author", tw.author);
-        res.addAttribute("tweet", tw.getText());
-
-        /*
-         * If User profile location or geo coord is a Coordinate... parse and add to matched locations
-         */
-        if (tw.author_xy_val != null) {
-            res.matches = userlocX.extract(new TextInput(tw.id, tw.author_xy_val));
-        } else if (tw.author_location != null) {
-            res.matches = userlocX.extract(new TextInput(tw.id, tw.author_location));
-        }
-        
-        /*
-         * If User profile is a place name, attempt to match it and disambiguate. 
-         */
-        if (res.matches.isEmpty()) {
-            try {
-                res.matches = geocoder.extract(new TextInput(tw.id, tw.author_location));
-            } catch (Exception userErr) {
-                log.error("Geocoding error with Users?", userErr);
-            }
-        }
-
-
-        if (res.matches.isEmpty()) {
-            return;
-        }
-
-        userOutput.writeGeocodingResult(res);
+//        if (tw.author_xy_val == null || tw.author_location == null) {
+//            return;
+//        }
+//
+//        ExtractionResult res = new ExtractionResult(tw.id);
+//        res.addAttribute("timestamp", tw.pub_date);
+//        res.addAttribute("author", tw.author);
+//        res.addAttribute("tweet", tw.getText());
+//
+//        /*
+//         * If User profile location or geo coord is a Coordinate... parse and add to matched locations
+//         */
+//        if (tw.author_xy_val != null) {
+//            res.matches = userlocX.extract(new TextInput(tw.id, tw.author_xy_val));
+//        } else if (tw.author_location != null) {
+//            res.matches = userlocX.extract(new TextInput(tw.id, tw.author_location));
+//        }
+//
+//        /*
+//         * If User profile is a place name, attempt to match it and disambiguate. 
+//         */
+//        if (res.matches.isEmpty()) {
+//            try {
+//                res.matches = geocoder.extract(new TextInput(tw.id, tw.author_location));
+//            } catch (Exception userErr) {
+//                log.error("Geocoding error with Users?", userErr);
+//            }
+//        }
+//
+//        if (res.matches.isEmpty()) {
+//            return;
+//        }
+//
+//        userOutput.writeGeocodingResult(res);
     }
 
     /**
@@ -231,9 +234,9 @@ public class TweetGeocoder {
                 ExtractionResult res = new ExtractionResult(tw.id);
                 // Place name tagger may not work if content has mostly lower case proper names.!!!! TODO: allow mixed case;
                 res.matches = geocoder.extract(new TextInput(tw.id, tw.getText()));
-                res.addAttribute("timestamp", tw.pub_date);
+                res.addAttribute("timestamp", tw.date);
                 res.addAttribute("tweet", tw.getText());
-                res.addAttribute("author", tw.author);
+                res.addAttribute("author", tw.authorName);
                 enrichResults(res.matches);
 
                 tweetOutput.writeGeocodingResult(res);
@@ -247,6 +250,7 @@ public class TweetGeocoder {
             geocoder.reportMemory();
         }
     }
+
     private Set<String> distinct_names = new HashSet<String>();
 
     /**
@@ -289,7 +293,7 @@ public class TweetGeocoder {
                  * TBD. refactoring name tagger.
                  */
                 /*Geocoding geo = (Geocoding) g;
-
+                
                  if (!(geo.isCountry() || geo.isAdministrative())) {
                  g.setFilteredOut(true);
                  if (debug) {
@@ -313,64 +317,8 @@ public class TweetGeocoder {
         return _new;
     }
 
-    private String separateHashMark(String t) {
-        return t.replace("#", "# ");
-    }
-
-    /**
-     * Need references to current methodologies for what data is available,
-     * reliable, etc and where/when to use it.
-     */
-    private void readTweet(String json, Tweet tw) throws ParseException {
-
-        try {
-
-            JSONObject twj = JSONObject.fromObject(json.trim());
-            tw.fromJSON(twj);
-
-            // RESET using a cleaned up status text
-            tw.setText(scrubText(separateHashMark(tw.getText())));
-
-        } catch (Exception twerr) {
-            throw new ParseException("Failed to parse Tweet " + twerr.getMessage(), 0);
-        }
-    }
-
     public static int START_ROW = 0;
     public static int MAX_ROWS = -10000;
-
-    /**
-     * One JSON tweet per line
-     */
-    public void process(String path) throws IOException, ProcessingException {
-        File input = new File(path);
-        LineNumberReader io = new LineNumberReader(new FileReader(input));
-        String line;
-        Tweet tw = new Tweet();
-        int linecount = 0;
-        while ((line = io.readLine()) != null) {
-            ++linecount;
-
-            if (linecount < START_ROW) {
-                continue;
-            }
-            try {
-                tw.reset();
-                readTweet(line, tw);
-                geocodeTweet(tw);
-                geocodeTweetUser(tw);
-            } catch (ParseException err) {
-                // throw new ProcessingException(err);
-                log.error("At line #" + linecount + " we failed to parse " + line, err);
-            }
-
-            if (recordCount >= MAX_ROWS && MAX_ROWS > 0) {
-                break;
-            }
-        }
-        io.close();
-        shutdown();
-    }
 
     public void shutdown() {
         // Close connections and save your output.
@@ -396,40 +344,48 @@ public class TweetGeocoder {
             int c;
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
-                    case 'n':
-                        jobname = opts.getOptarg();
-                        break;
-                    case 'i':
-                        inputfile = opts.getOptarg();
-                        break;
-                    case 'f':
-                        formatType = opts.getOptarg();
-                        break;
+                case 'n':
+                    jobname = opts.getOptarg();
+                    break;
+                case 'i':
+                    inputfile = opts.getOptarg();
+                    break;
+                case 'f':
+                    formatType = opts.getOptarg();
+                    break;
                 }
             }
 
             final TweetGeocoder job = new TweetGeocoder(jobname);
-            job.process(inputfile);
+            TweetLoader.readJSONByLine(new File(inputfile), job);
+            job.shutdown();
         } catch (Exception err) {
             err.printStackTrace();
         }
     }
 
-    /**
-     * Extend the generic Tweet with some name and value tracking.
-     */
-    class TweetPlus extends Tweet {
+    @Override
+    public boolean isDone() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-        public Set<String> names = new HashSet<String>();
+    @Override
+    public boolean preferJSON() {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-        public TweetPlus() {
-            super();
-        }
+    @Override
+    public void readObject(JsonObject obj) throws MessageParseException {
+        Tweet tw = new Tweet();
+        tw.fromJSON(obj);
+        geocodeTweet(tw);
+        geocodeTweetUser(tw);
+    }
 
-        @Override
-        public void reset() {
-            super.reset();
-            names.clear();
-        }
+    @Override
+    public void readObject(String obj) throws MessageParseException {
+
     }
 }
