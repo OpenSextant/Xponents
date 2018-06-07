@@ -16,5 +16,7 @@
     </logger>
     <logger name="org.opensextant.extractors" level="debug">
     </logger>
+    <logger name="org.opensextant.extractors.xcoord" level="info">
+    </logger>
 
 </configuration>

@@ -1,11 +1,12 @@
 #!/bin/bash
 # Use Installed Solr $SOLR_INSTALL
 SOLR_INSTALL=./solr7-dist
+SOLR_HOME=./solr7
 
 PORT=$2
 case "$1" in 
  'start')
-    $SOLR_INSTALL/bin/solr start  -p $PORT -s ./solr6  -m 3g
+    $SOLR_INSTALL/bin/solr start  -p $PORT -s $SOLR_HOME  -m 3g
  ;;
  'stop')
     $SOLR_INSTALL/bin/solr stop -p $PORT
@@ -15,7 +16,7 @@ case "$1" in
 
     for IDX in gazetteer taxcat; do 
       echo INDEX LOCK: $IDX
-      rm -i ./solr6/$IDX/data/index/write.lock
+      rm -i $SOLR_HOME/$IDX/data/index/write.lock
     done
  ;;
  *)

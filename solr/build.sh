@@ -13,7 +13,7 @@ XPONENTS=`cd -P $cur/..; echo $PWD`
 
 export PYTHONPATH=$XPONENTS/piplib
 GAZ_CONF=etc/gazetteer
-SOLR_CORE_VER=solr6
+SOLR_CORE_VER=solr7
 
 
 if [ ! -d $XPONENTS/piplib ] ; then

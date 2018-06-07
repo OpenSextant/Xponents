@@ -19,8 +19,6 @@
     <property name="gaz.data" value="${basedir}/etc/gazetteer/"/>
 
     <path id="runtime.classpath">
-        <!-- TODO: need to run these routines to fully automate CLASSPATH items here. 
-            mvn install mvn dependency:copy-dependencies cd ./solr ant -f ./solr6-build.xml gaz-meta -->
         <pathelement location="${basedir}/../lib/*" />
         <pathelement
             location="${basedir}/../target/opensextant-xponents-${xponents.v}.jar" />
