@@ -298,8 +298,8 @@
       <version>3.0.1</version>
       <scope>runtime</scope>
     </dependency>
-    <!-- Required Solr plugins: SolrTextTagger goes into solr6/lib; JTS and 
-      Spatial4j go into server's lib/ext -->
+    <!-- Required Solr plugins: SolrTextTagger goes into solr6 or sol7 lib; 
+      JTS and Spatial4j go into server's server/lib/ -->
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>solr-text-tagger</artifactId>
@@ -531,7 +531,7 @@
         <configuration>
           <additionalClasspathElements>
             <additionalClasspathElement>${project.basedir}/solr/etc/gazetteer</additionalClasspathElement>
-            <additionalClasspathElement>${project.basedir}/solr/solr6/gazetteer/conf</additionalClasspathElement>
+            <additionalClasspathElement>${project.basedir}/solr/solr7/gazetteer/conf</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>
