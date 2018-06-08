@@ -1,6 +1,7 @@
 package org.opensextant.extractors.geo.social;
 
 import org.opensextant.data.social.MessageParseException;
+
 import jodd.json.JsonObject;
 
 public interface JSONListener {

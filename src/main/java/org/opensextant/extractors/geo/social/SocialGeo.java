@@ -14,13 +14,11 @@ package org.opensextant.extractors.geo.social;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Country;

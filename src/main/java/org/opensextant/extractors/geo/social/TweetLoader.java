@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensextant.data.social.Tweet;
 import org.opensextant.util.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,5 +105,10 @@ public class TweetLoader {
                 reader.close();
             }
         }
+    }
+
+    public static JsonObject toJSON(Tweet tw) {
+        //
+        return new JsonObject();
     }
 }
