@@ -540,6 +540,7 @@ public class SimpleProcessorDemo implements JSONListener {
      * @deprecated
      */
     @Override
+    @Deprecated
     public void readObject(String obj) throws MessageParseException {
         // NOT Implemented.
         return;

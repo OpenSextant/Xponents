@@ -1,4 +1,4 @@
-/**
+/*
  *
  * Copyright 2012-2013 The MITRE Corporation.
  *
@@ -13,15 +13,6 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *
- * **************************************************************************
- * NOTICE This software was produced for the U. S. Government under Contract No.
- * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
- * Software and Noncommercial Computer Software Documentation Clause
- * 252.227-7014 (JUN 1995)
- *
- * (c) 2012 The MITRE Corporation. All Rights Reserved.
- * **************************************************************************
  */
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //

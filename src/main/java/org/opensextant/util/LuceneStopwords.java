@@ -45,15 +45,15 @@ public class LuceneStopwords {
      * Simple wrapper around Lucene resource loading to access Solr-provided stop lists.
      * @param loader classpath loader
      * @param givenLang ISO 2-char language ID used by lucene for lang-specific filters (./lang)
-     * @return
-     * @throws IOException
+     * @return set of stopwords in Lucene API construct
+     * @throws IOException if resource files are not found in classpath (JAR or solr core ./conf/lang/
      */
     public static Set<Object> getStopwords(ResourceLoader loader, String givenLang) throws IOException {
         String lang = givenLang.toLowerCase();
         HashMap<String, String> configurationArgs = new HashMap<>();
         configurationArgs.put("words", defaultPath(lang));
         configurationArgs.put("format", SNOWBALL_SETS.contains(lang) ? "snowball" : "wordset");
-        configurationArgs.put("luceneMatchVersion", "6.6");
+        configurationArgs.put("luceneMatchVersion", "7.3");
         StopFilterFactory filter = new StopFilterFactory(configurationArgs);
         filter.inform(loader);
 

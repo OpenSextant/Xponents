@@ -1,4 +1,4 @@
-/**
+/*
  Copyright 2012-2013 The MITRE Corporation.
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
- ** **************************************************
- * NOTICE
- *
- *
- * This software was produced for the U. S. Government
- * under Contract No. W15P7T-12-C-F600, and is
- * subject to the Rights in Noncommercial Computer Software
- * and Noncommercial Computer Software Documentation
- * Clause 252.227-7014 (JUN 1995)
- *
- * (c) 2012-2013 The MITRE Corporation. All Rights Reserved.
- **************************************************   */
+*/
 package org.opensextant.util;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -632,7 +620,7 @@ public class GeonamesUtility {
     /**
      * Source: geonames.org ADM1 codes/names in anglo/ASCII form.
      * 
-     * @throws IOException
+     * @throws IOException if geonames.org table cannot be found in classpath
      */
     public void loadWorldAdmin1Metadata() throws IOException {
         String uri = "/geonames.org/admin1CodesASCII.txt";
@@ -706,8 +694,10 @@ public class GeonamesUtility {
     /**
      * Lookup by coded path, CC.ADM1. 
      * You must load World ADM1 data first; use loadWorldAdmin1Metadata()
-    *
+     *
      *  Alias for {@link #getAdmin1Place(String, String)}
+     * @param cc country code
+     * @param adm1 ADM level 1 code
      */
     public Place getProvince(String cc, String adm1) {
         return getAdmin1Place(cc, adm1);
@@ -725,15 +715,6 @@ public class GeonamesUtility {
         //    throw new ConfigException("You must load World ADM1 data first; use loadWorldAdmin1Metadata()");
         //}
         return admin1MetadataMap.get(path);
-    }
-
-    /**
-     * @deprecated use loadUSStateMetadata()
-     * @throws IOException
-     */
-    @Deprecated
-    public void loadAdmin1Metadata() throws IOException {
-        loadUSStateMetadata();
     }
 
     /**

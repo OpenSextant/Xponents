@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 ubaldino.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2012-2013 The MITRE Corporation.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
@@ -102,10 +103,10 @@ public class GeodeticUtility {
         return false;
     }
 
-        /**
+    /**
      * 
-     * @param xy
-     * @return
+     * @param xy a geocoding 
+     * @return true if geocoding has a non-zero coordinate
      */
     public static boolean isCoord(Geocoding xy) {
         return isCoord(xy.getLatitude(), xy.getLongitude());
@@ -115,9 +116,9 @@ public class GeodeticUtility {
      * Just tests if location is not 0,0 ... if provided as floating point objects
      * Java has rounding error off in 0.0000001 place. Close enough to 0,0 counts as zero-coordinate.
      * 
-     * @param lat
-     * @param lon
-     * @return
+     * @param lat latitude
+     * @param lon longitude
+     * @return true if coordinate is set and is other than (0,0)
      */
     public static boolean isZeroCoord(double lat, double lon) {
         return (Math.abs(lat) < 0.00001 && Math.abs(lon) < 0.00001);

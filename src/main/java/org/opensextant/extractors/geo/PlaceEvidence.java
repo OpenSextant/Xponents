@@ -1,4 +1,5 @@
-/**
+/*
+ *
  * Copyright 2012-2013 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -12,26 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *
- *
- * **************************************************************************
- * NOTICE This software was produced for the U. S. Government under Contract No.
- * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
- * Software and Noncommercial Computer Software Documentation Clause
- * 252.227-7014 (JUN 1995)
- *
- * (c) 2012 The MITRE Corporation. All Rights Reserved.
- * **************************************************************************
- *
  */
 package org.opensextant.extractors.geo;
 
 import org.opensextant.data.Place;
 
 /**
- * COPY: original is (OpenSextant v1.4:
- * org.mitre.opensextant.placedata.PlaceEvidence)
- *
  * A PlaceEvidence represents a fragment of evidence about a Place. Its intended
  * purpose is to represent evidence about a Place's identity which has been
  * extracted from a document. This evidence is used to help disambiguate
@@ -40,8 +27,9 @@ import org.opensextant.data.Place;
  * that class.
  *
  * @author dlutz
+ * 
  */
-public final class PlaceEvidence extends Place implements Comparable<Object> /*, Serializable */ {
+public final class PlaceEvidence extends Place implements Comparable<Object> {
 
     /**
      * SCOPE - Where did this evidence come from wrt to the PlaceCandidate it is

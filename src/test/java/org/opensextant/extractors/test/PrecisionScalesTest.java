@@ -1,17 +1,4 @@
 package org.opensextant.extractors.test;
-/**
- * **************************************************
- * NOTICE
- *
- *
- * This software was produced for the U. S. Government under Contract No.
- * W15P7T-12-C-F600, and is subject to the Rights in Noncommercial Computer
- * Software and Noncommercial Computer Software Documentation Clause
- * 252.227-7014 (JUN 1995)
- *
- * (c) 2009-2012 The MITRE Corporation. All Rights Reserved.
- */
-
 
 import org.junit.Test;
 import org.opensextant.extractors.xcoord.PrecisionScales;
