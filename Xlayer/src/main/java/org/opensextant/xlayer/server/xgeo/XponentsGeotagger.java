@@ -1,20 +1,12 @@
 package org.opensextant.xlayer.server.xgeo;
 
 import java.util.List;
-import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.opensextant.data.Place;
-import org.opensextant.data.Taxon;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
-import org.opensextant.extractors.xcoord.GeocoordMatch;
-import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.TaggerResource;
@@ -81,176 +73,14 @@ public class XponentsGeotagger extends TaggerResource {
         return status("TEST", "nothing done in test with doc=" + input.id);
     }
 
-    /**
-     * Copy the basic match information
-     * 
-     * @param m
-     * @return
-     * @throws JSONException
-     */
-    private JSONObject populateMatch(TextMatch m) throws JSONException {
-
-        JSONObject o = new JSONObject();
-        int len = m.end - m.start;
-        o.put("offset", m.start);
-        o.put("length", len);
-        // String matchText = TextUtils.squeeze_whitespace(name.getText());
-        o.put("matchtext", m.getText());
-        return o;
-    }
-
     private Representation format(List<TextMatch> matches, Parameters jobParams) throws JSONException {
 
+        JsonObject j = Transforms.toJSON(matches, jobParams);
         Representation result = null;
-        int tagCount = 0;
-
-        JSONObject resultContent = new JSONObject();
-        JSONObject resultMeta = new JSONObject();
-        resultMeta.put("status", "ok");
-        resultMeta.put("numfound", 0);
-        JSONArray resultArray = new JSONArray();
-
-        /*
-         * Super loop: Iterate through all found entities. record Taxons as
-         * person or orgs record Geo tags as country, place, or geo. geo =
-         * geocoded place or parsed coordinate (MGRS, DMS, etc)
-         * 
-         */
-        for (TextMatch name : matches) {
-
-            /*            
-             * ==========================
-             * ANNOTATIONS: non-geographic entities that are filtered out, but worth tracking
-             * ==========================             
-             */
-            if (name instanceof TaxonMatch) {
-                if (jobParams.output_taxons) {
-
-                    TaxonMatch match = (TaxonMatch) name;
-                    ++tagCount;
-                    for (Taxon n : match.getTaxons()) {
-                        JSONObject node = populateMatch(name);
-                        String t = "taxon";
-                        String taxon_name = n.name.toLowerCase();
-                        if (taxon_name.startsWith("org")) {
-                            t = "org";
-                        } else if (taxon_name.startsWith("person")) {
-                            t = "person";
-                        }
-                        node.put("type", t);
-                        node.put("taxon", n.name); // Name of taxon
-                        node.put("catalog", n.catalog); // Name of catalog or source
-                        // node.put("filtered-out", true);
-
-                        resultArray.put(node);
-                        break;
-                    }
-                }
-                continue;
-            }
-
-            /*
-             * ==========================
-             * FILTERING
-             * ==========================
-             */
-            // Ignore non-place tags
-            if (name.isFilteredOut() || !(name instanceof PlaceCandidate || name instanceof GeocoordMatch)) {
-                continue;
-            }
-
-            JSONObject node = populateMatch(name);
-
-            /*
-             * ==========================
-             * ANNOTATIONS: coordinates
-             * ==========================
-             */
-            if (name instanceof GeocoordMatch) {
-                ++tagCount;
-                GeocoordMatch geo = (GeocoordMatch) name;
-                node.put("type", "coordinate");
-                Transforms.createGeocoding(geo, new JsonObject());
-                resultArray.put(node);
-                continue;
-            }
-
-            if (name.isFilteredOut()) {
-                debug("Filtered out " + name.getText());
-                continue;
-            }
-
-            PlaceCandidate place = (PlaceCandidate) name;
-            Place resolvedPlace = place.getChosen();
-
-            /*
-             * ==========================
-             * ANNOTATIONS: countries, places, etc.
-             * ==========================
-             */
-            /*
-             * Accept all country names as potential geotags Else if name can be
-             * filtered out, do it now. Otherwise it is a valid place name to
-             * consider
-             */
-            ++tagCount;
-            if (place.isCountry) {
-                node.put("name", resolvedPlace.getPlaceName());
-                node.put("type", "country");
-                node.put("cc", resolvedPlace.getCountryCode());
-                node.put("confidence", place.getConfidence());
-
-            } else {
-
-                /*
-                 * Conf = 20 or greater to be geocoded.
-                 */
-                JsonObject j = new JsonObject();
-                Transforms.createGeocoding(resolvedPlace, j);
-                copyFlatten(node, j);
-                node.put("name", resolvedPlace.getPlaceName());
-                addProvinceName(node, resolvedPlace);
-                node.put("type", "place");
-                node.put("confidence", place.getConfidence());
-                if (place.getConfidence() <= 10) {
-                    node.put("filtered-out", true);
-                }
-            }
-            resultArray.put(node);
-        }
-        resultMeta.put("numfound", tagCount);
-        resultContent.put("response", resultMeta);
-        resultContent.put("annotations", resultArray);
-
-        result = new JsonRepresentation(resultContent.toString(2));
+        result = new JsonRepresentation(j.toString());
         result.setCharacterSet(CharacterSet.UTF_8);
 
         return result;
-    }
-
-    /**
-     * 
-     * @param node
-     * @param j
-     */
-    private void copyFlatten(JSONObject node, JsonObject j) {
-        Map<String, Object> m = j.map();
-        for (String k : m.keySet()) {
-            node.put(k, m.get(k));
-        }
-    }
-
-    /**
-     * 
-     * @param map
-     * @param resolvedPlace
-     */
-    private static void addProvinceName(JSONObject map, Place resolvedPlace) {
-        String adm1Name = resolvedPlace.getAdmin1Name();
-        if (adm1Name == null) {
-            return;
-        }
-        map.put("province-name", adm1Name);
     }
 
     /**
