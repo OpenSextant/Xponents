@@ -209,7 +209,7 @@ public class Transforms {
     * @param m
     * @return
     */
-    private JsonObject populateMatch(TextMatch m) {
+    private static JsonObject populateMatch(final TextMatch m) {
 
         JsonObject o = new JsonObject();
         int len = m.end - m.start;
@@ -220,7 +220,7 @@ public class Transforms {
         return o;
     }
 
-    public JsonObject toJSON(List<TextMatch> matches, Parameters jobParams) {
+    public static JsonObject toJSON(final List<TextMatch> matches, final Parameters jobParams) {
         Logger log = LoggerFactory.getLogger(Transforms.class);
 
         int tagCount = 0;
