@@ -5,8 +5,8 @@
   </description>
 
   <property name="xponents.home" value="${basedir}/../" />
-  <property name="version" value="2.10"/>
-  <property name="xlayer.version" value="0.1"/>
+  <property name="version" value="3.0"/>
+  <property name="xlayer.version" value="0.6"/>
 
   <property name="release" location="${xponents.home}/dist/Xponents-${version}" />
   <property name="xlayer.release" location="${xponents.home}/dist/Xlayer-${xlayer.version}" />
@@ -14,17 +14,6 @@
 
   <target name="build">
     <exec executable="mvn" dir="${xponents.home}" failonerror="true">
-      <arg value="-DincludeScope=test"/>
-      <arg value="-DincludeScope=runtime"/>
-      <arg value="-DincludeScope=compile"/>
-      <arg value="-DskipTests=true"/>
-      <arg value="clean"/>
-      <arg value="install"/>
-      <arg value="javadoc:jar"/>
-      <arg value="dependency:copy-dependencies"/>
-    </exec>
-
-    <exec executable="mvn" dir="${xponents.home}/XText" failonerror="true">
       <arg value="-DincludeScope=test"/>
       <arg value="-DincludeScope=runtime"/>
       <arg value="-DincludeScope=compile"/>
@@ -48,13 +37,6 @@
   <!-- Release script for Xponents complete. -->
 
   <target name="copy-libs" >
-    <!--
-    <delete dir="${xponents.home}/Examples/lib"/>
-    <delete dir="${xponents.home}/Extraction/lib"/>
-    <delete dir="${xponents.home}/XText/lib"/>
-    <delete dir="${xponents.home}/Basics/lib"/>
-    -->
-
     <delete dir="${release}"/>
 
     <mkdir dir="${release}"/>
@@ -87,8 +69,8 @@
         </fileset>
     </copy>
     <copy todir="${release}/lib/">
-        <fileset dir="${xponents.home}/Extraction/target">
-           <include name="*-tests.jar" />
+        <fileset dir="${xponents.home}/target">
+           <include name="*.jar" />
         </fileset>
     </copy>
     <copy todir="${release}/lib/python">
@@ -98,13 +80,6 @@
     </copy>
   </target>
   <target name="copy-solr">
-<!--
-    <subant >
-       <fileset dir="${xponents.home}/solr" includes="build.xml"/>
-       <target name="proxy" />
-       <target name="init" />
-    </subant>
--->
     <copy todir="${release}/solr/">
         <fileset dir="${xponents.home}/solr" >
            <exclude name="webapps" />
@@ -126,15 +101,22 @@
            <exclude name="jetty9" />
            <exclude name="lib" />
            <exclude name="solr4/**" />
-           <!--  Include full gazetteer for solr6
-           <exclude name="solr6/gazetteer/data/**" />
-           <exclude name="solr6/taxcat/data/**" />
-           -->
-           <exclude name="solr6-dist/contrib/**" />
+           <exclude name="solr6/**" />
            <exclude name="solr6-dist/docs/**"/>
            <exclude name="solr6-dist/dist/**"/>
            <exclude name="solr6-dist/example/**"/>
-           <exclude name="solr6-dist/server/solr/**"/>
+        </fileset>
+    </copy>
+    <copy file="${release}/solr/build.template" tofile="${release}/solr/build.properties" />
+  </target>
+
+  <target name="copy-solr7">
+    <copy todir="${release}/xponents-solr-2018Q3/">
+        <fileset dir="${xponents.home}/solr" >
+           <exclude name="solr4/**" />
+           <exclude name="solr6/**" />
+           <exclude name="solr7-dist/contrib/**"/>
+           <exclude name="solr7-dist/example/**"/>
         </fileset>
     </copy>
     <copy file="${release}/solr/build.template" tofile="${release}/solr/build.properties" />
@@ -145,18 +127,12 @@
         <fileset dir="${xponents.home}/Extraction/src/test/resources/">
            <include name="*.*" />
         </fileset>
-        <fileset dir="${xponents.home}/XText/src/test/resources/">
-           <include name="*.*" />
-        </fileset>
     </copy>
   </target>
 
   <target name="copy-script">
     <copy todir="${release}/script/">
         <fileset dir="${xponents.home}/script">
-           <include name="*.*" />
-        </fileset>
-        <fileset dir="${xponents.home}/XText/script">
            <include name="*.*" />
         </fileset>
         <fileset dir="${xponents.home}/Examples/script">
@@ -195,27 +171,11 @@
     <copy todir="${release}/doc/Extraction/">
         <fileset dir="${xponents.home}/Extraction/doc"/>
     </copy>
-    <!-- No current need for configuration files in Extraction
-    <copy todir="${release}/doc/Extraction/">
-        <fileset dir="${xponents.home}/Extraction/src/main/resources">
-           <include name="*.cfg" />
-        </fileset>
-    </copy>  -->
-
-    <copy todir="${release}/doc/XText/apidocs">
-        <fileset dir="${xponents.home}/XText/target/apidocs"/>
-    </copy>
-    <copy todir="${release}/doc/XText/">
-        <fileset dir="${xponents.home}/XText/">
-           <include name="*.htm*" />
-           <include name="*.md" />
-        </fileset>
-    </copy>
     <copy todir="${release}/doc/Examples/" file="${xponents.home}/Examples/README.md" />
     <copy todir="${release}/doc/Examples/" file="${xponents.home}/Examples/doc/README_gazetteer.md" />
   </target>
 
-  <target name="dist" depends="build, copy-libs, copy-solr6, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
+  <target name="dist" depends="build, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
 
    <!-- Zip it .-->
   </target>
