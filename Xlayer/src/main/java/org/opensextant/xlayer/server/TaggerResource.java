@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
+import org.opensextant.processing.Parameters;
 import org.opensextant.util.TextUtils;
 import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
@@ -61,7 +62,7 @@ public abstract class TaggerResource extends ServerResource {
      * @param jobParams controls
      * @return JSON or other formatted response.  
      */
-    public abstract Representation process(TextInput input, RequestParameters jobParams);
+    public abstract Representation process(TextInput input, Parameters jobParams);
 
     /**
      * Contract:
@@ -96,7 +97,7 @@ public abstract class TaggerResource extends ServerResource {
             TextInput item = new TextInput(docid, input);
             item.langid = lang;
 
-            RequestParameters job = fromRequest(json);
+            Parameters job = fromRequest(json);
             return process(item, job);
         }
 
@@ -125,8 +126,7 @@ public abstract class TaggerResource extends ServerResource {
         if ("ping".equalsIgnoreCase(cmd)) {
             return ping();
         } else if ("stop".equalsIgnoreCase(cmd)) {
-            info("Stopping Xponents Xlayer Service Requested by CLIENT="
-                    + getRequest().getClientInfo().getAddress());
+            info("Stopping Xponents Xlayer Service Requested by CLIENT=" + getRequest().getClientInfo().getAddress());
             stop();
         }
 
@@ -136,7 +136,7 @@ public abstract class TaggerResource extends ServerResource {
         TextInput item = new TextInput(docid, input);
         item.langid = lang;
 
-        RequestParameters job = fromRequest(inputs);
+        Parameters job = fromRequest(inputs);
         return process(item, job);
     }
 
@@ -152,8 +152,8 @@ public abstract class TaggerResource extends ServerResource {
      * @param inputs
      * @return
      */
-    private RequestParameters fromRequest(Form inputs) {
-        RequestParameters job = new RequestParameters();
+    private Parameters fromRequest(Form inputs) {
+        Parameters job = new Parameters();
         String list = inputs.getValues("features");
         Set<String> features = new HashSet<>();
         job.tag_coordinates = true;
@@ -170,7 +170,7 @@ public abstract class TaggerResource extends ServerResource {
 
         String fmt = inputs.getFirstValue("format");
         if (fmt != null) {
-            job.format = fmt;
+            job.addOutputFormat(fmt);
         }
 
         return job;
@@ -180,7 +180,7 @@ public abstract class TaggerResource extends ServerResource {
      * Convenience helper to reset data.
      * @param job
      */
-    protected void resetParameters(RequestParameters job) {
+    protected void resetParameters(Parameters job) {
         job.output_coordinates = false;
         job.output_countries = false;
         job.output_places = false;
@@ -193,7 +193,7 @@ public abstract class TaggerResource extends ServerResource {
         job.tag_places = false;
         job.tag_taxons = false;
         job.tag_patterns = false;
-        job.format = "json";
+        job.addOutputFormat("json");
     }
 
     /**
@@ -202,8 +202,8 @@ public abstract class TaggerResource extends ServerResource {
      * @return
      * @throws JSONException
      */
-    private RequestParameters fromRequest(JSONObject inputs) throws JSONException {
-        RequestParameters job = new RequestParameters();
+    private Parameters fromRequest(JSONObject inputs) throws JSONException {
+        Parameters job = new Parameters();
         job.output_coordinates = false;
         job.output_countries = true;
         job.output_places = true;
@@ -214,7 +214,7 @@ public abstract class TaggerResource extends ServerResource {
         job.tag_taxons = true;
         job.tag_patterns = true;
         job.output_filtered = false;
-        job.format = "json";
+        job.addOutputFormat("json");
 
         if (inputs.has("features")) {
             resetParameters(job);
@@ -250,8 +250,8 @@ public abstract class TaggerResource extends ServerResource {
             job.clean_input = features.contains("clean_input");
             job.tag_lowercase = features.contains("lowercase");
         }
-        
-        if (job.clean_input || job.tag_lowercase){
+
+        if (job.clean_input || job.tag_lowercase) {
             job.isdefault = false;
         }
 

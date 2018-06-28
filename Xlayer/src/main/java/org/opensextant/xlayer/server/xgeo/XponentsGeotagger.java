@@ -1,6 +1,7 @@
 package org.opensextant.xlayer.server.xgeo;
 
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,12 +15,14 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xtax.TaxonMatch;
-import org.opensextant.xlayer.Transforms;
-import org.opensextant.xlayer.server.RequestParameters;
+import org.opensextant.output.Transforms;
+import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.TaggerResource;
 import org.restlet.data.CharacterSet;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
+
+import jodd.json.JsonObject;
 
 /**
  * 
@@ -35,8 +38,7 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     public Extractor getExtractor() {
-        PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext()
-                .getAttributes().get("xgeo");
+        PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext().getAttributes().get("xgeo");
         if (xgeo == null) {
             info("Misconfigured, no context-level pipeline initialized");
             return null;
@@ -51,7 +53,7 @@ public class XponentsGeotagger extends TaggerResource {
      * @param jobParams the job params
      * @return the representation
      */
-    public Representation process(TextInput input, RequestParameters jobParams) {
+    public Representation process(TextInput input, Parameters jobParams) {
 
         if (input == null || input.buffer == null) {
             return status("FAIL", "No text");
@@ -97,7 +99,7 @@ public class XponentsGeotagger extends TaggerResource {
         return o;
     }
 
-    private Representation format(List<TextMatch> matches, RequestParameters jobParams) throws JSONException {
+    private Representation format(List<TextMatch> matches, Parameters jobParams) throws JSONException {
 
         Representation result = null;
         int tagCount = 0;
@@ -168,7 +170,7 @@ public class XponentsGeotagger extends TaggerResource {
                 ++tagCount;
                 GeocoordMatch geo = (GeocoordMatch) name;
                 node.put("type", "coordinate");
-                Transforms.createGeocoding(geo, node);
+                Transforms.createGeocoding(geo, new JsonObject());
                 resultArray.put(node);
                 continue;
             }
@@ -203,7 +205,9 @@ public class XponentsGeotagger extends TaggerResource {
                 /*
                  * Conf = 20 or greater to be geocoded.
                  */
-                Transforms.createGeocoding(resolvedPlace, node);
+                JsonObject j = new JsonObject();
+                Transforms.createGeocoding(resolvedPlace, j);
+                copyFlatten(node, j);
                 node.put("name", resolvedPlace.getPlaceName());
                 addProvinceName(node, resolvedPlace);
                 node.put("type", "place");
@@ -222,6 +226,18 @@ public class XponentsGeotagger extends TaggerResource {
         result.setCharacterSet(CharacterSet.UTF_8);
 
         return result;
+    }
+
+    /**
+     * 
+     * @param node
+     * @param j
+     */
+    private void copyFlatten(JSONObject node, JsonObject j) {
+        Map<String, Object> m = j.map();
+        for (String k : m.keySet()) {
+            node.put(k, m.get(k));
+        }
     }
 
     /**
