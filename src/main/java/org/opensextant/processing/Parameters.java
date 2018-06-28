@@ -44,7 +44,11 @@ public class Parameters extends java.util.Properties {
     public boolean tag_coordinates = true;
     /** Generic flag to represent tagging non-Geo names, e.g., names of persons, orgs and things */
     public boolean tag_names = true;
-    
+    public boolean tag_taxons = false;
+    public boolean tag_patterns = false;
+    public boolean tag_lowercase = false;
+    public boolean clean_input = false;
+
     /** Parameter to add a Province name to a Place object, if CC &amp; ADM1 are set.
      */
     public boolean resolve_provinces = false;
@@ -54,6 +58,8 @@ public class Parameters extends java.util.Properties {
     public boolean output_countries = true;
     public boolean output_places = true;
     public boolean output_coordinates = true;
+    public boolean output_taxons = true;
+    public boolean output_patterns = true;
     public boolean output_filtered = false;
     /** Default is to not generate Geohash
      */
@@ -102,8 +108,7 @@ public class Parameters extends java.util.Properties {
         return jobName;
     }
 
-    private static final DateTimeFormatter procdate_fmt = DateTimeFormat
-            .forPattern("yyyyMMMdd_HHmm");
+    private static final DateTimeFormatter procdate_fmt = DateTimeFormat.forPattern("yyyyMMMdd_HHmm");
 
     /**
      * Generates a simple job date/time key for the job

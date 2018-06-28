@@ -16,12 +16,14 @@
  */
 package org.opensextant;
 
+import java.io.IOException;
+
 /**
  * Generic OpenSextant Configuration Exception
  *
  * @author ubaldino
  */
-public class ConfigException extends Exception {
+public class ConfigException extends IOException {
 
     protected static final long serialVersionUID = 1981L;
 
