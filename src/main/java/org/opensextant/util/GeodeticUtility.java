@@ -95,12 +95,7 @@ public class GeodeticUtility {
      *         abs(lon) &lt; 180.0, etc.
      */
     public static final boolean isValidNonZeroCoordinate(double lat, double lon) {
-        if (validateCoordinate(lat, lon)) {
-            // lat != 0 is very, very narrow criteria for "non-zero".
-            //  0.0000001 is just about zero.
-            return (lat != 0 && lon != 0);
-        }
-        return false;
+        return isCoord(lat, lon);
     }
 
     /**
@@ -124,10 +119,14 @@ public class GeodeticUtility {
         return (Math.abs(lat) < 0.00001 && Math.abs(lon) < 0.00001);
     }
 
-    public static boolean isCoord(double lat, double lon) {
+    public static final boolean isCoord(double lat, double lon) {
         return validateCoordinate(lat, lon) && !isZeroCoord(lat, lon);
     }
-    
+
+    public static final boolean isCoord(final LatLon p) {
+        return isValidNonZeroCoordinate(p.getLatitude(), p.getLongitude());
+    }
+
     /**
      * This returns distance in degrees, e.g., this is a Cartesian distance.
      * Only to be used for fast comparison of two locations relatively close

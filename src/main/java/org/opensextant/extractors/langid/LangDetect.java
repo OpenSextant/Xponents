@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.opensextant.ConfigException;
-import org.opensextant.util.TextUtils;
 import org.opensextant.data.Language;
+import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

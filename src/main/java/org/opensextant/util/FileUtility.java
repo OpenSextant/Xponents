@@ -142,12 +142,20 @@ public class FileUtility {
      * @throws IOException
      *             if file could not be opened
      */
+    public static InputStreamReader getInputStreamReader(File f, String enc) throws IOException {
+        return getInputStream(f, enc);
+    }
+
     public static InputStreamReader getInputStream(String fname, String enc) throws IOException {
-        return new InputStreamReader(new FileInputStream(fname), enc);
+        return getInputStream(new File(fname), enc);
     }
 
     public static InputStreamReader getInputStream(File f, String enc) throws IOException {
-        return new InputStreamReader(new FileInputStream(f), enc);
+        if (f.getName().toLowerCase().endsWith(".gz")) {
+            return new InputStreamReader(new GZIPInputStream(new FileInputStream(f)), enc);
+        } else {
+            return new InputStreamReader(new FileInputStream(f), enc);
+        }
     }
 
     /**

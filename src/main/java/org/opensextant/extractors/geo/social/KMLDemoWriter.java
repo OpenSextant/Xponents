@@ -10,6 +10,7 @@ import java.util.Map;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.opensextant.data.Language;
+import org.opensextant.data.Place;
 //import org.mitre.deepeye.Annotation;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.giscore.DocumentType;

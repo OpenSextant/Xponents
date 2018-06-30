@@ -7,7 +7,7 @@
  *      \/           \/_____/      \/       
  *
  *      Social Media Geo-Inferencing
- *                 OpenSextant
+ *             OpenSextant
  */
 package org.opensextant.extractors.geo.social;
 
@@ -55,19 +55,7 @@ public abstract class SocialGeo {
     /** A particular hashing of the list of country names. */
     protected Map<String, Country> basicCountryNames = null;
 
-    /**
-     * SOCGEO global is set from JVM arg 'socgeo' or current working dir.
-     */
-    protected String SOCGEO = System.getProperty("socgeo", System.getProperty("user.dir"));
-
-    /**
-     * ADNA uses country names as its output; they do not all align with a standard; the adna-country.json mapping
-     * addresses that
-     */
-    protected Map<String, Country> authorDNAcountryNameMap = null;
-
     public SocialGeo() {
-
     }
 
     /**
@@ -116,7 +104,6 @@ public abstract class SocialGeo {
      *      LON
      *      TODO:  consider (Country.LatLon ~ Tweet.UTC) ? within 5 degrees.  Countries vary by size this
      *      makes little sense.  But for Cities and States it makes more sense.
-     * 
      * 
      * MAX score is 3 + 4 + 3 = 10
      * </pre>
@@ -172,10 +159,6 @@ public abstract class SocialGeo {
         }
 
         return score;
-    }
-
-    public static final boolean isValidCoord(LatLon p) {
-        return GeodeticUtility.isValidNonZeroCoordinate(p.getLatitude(), p.getLongitude());
     }
 
     /**
@@ -287,7 +270,6 @@ public abstract class SocialGeo {
         }
     }
 
-
     protected double getConfidence(double c) {
         return new BigDecimal(c).setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
@@ -301,16 +283,11 @@ public abstract class SocialGeo {
         if (nm == null) {
             return null;
         }
-        if (allCountries != null) {
-            Country c = allCountries.get(nm.toLowerCase());
-            if (c!=null){
-                return c;
-            }
-        } 
-        if (authorDNAcountryNameMap != null) {
-            return authorDNAcountryNameMap.get(nm.toLowerCase());
+        if (allCountries == null) {
+            return null;
         }
-        return null;
+        Country c = allCountries.get(nm.toLowerCase());
+        return c;
     }
 
     public Place inferPlaceRecursively(SolrGazetteer gaz, Geocoding poi) throws SolrServerException, IOException {

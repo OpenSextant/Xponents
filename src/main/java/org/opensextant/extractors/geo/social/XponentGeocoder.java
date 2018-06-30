@@ -30,7 +30,8 @@ import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xcoord.XConstants;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.processing.Parameters;
-import org.opensextant.util.GeodeticUtility;
+import static org.opensextant.util.GeodeticUtility.getFeaturePrecision;
+import static org.opensextant.util.GeodeticUtility.isCoord;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 
@@ -883,11 +884,10 @@ public class XponentGeocoder extends GeoInferencer {
         g.setFeatureCode(chosen.getFeatureCode());
 
         g.setPlaceID(chosen.getPlaceID());
-        g.setPrecision(GeodeticUtility.getFeaturePrecision(g.getFeatureClass(), g.getFeatureCode()));
-        if (isValidCoord(chosen) && !chosen.isCountry()) {
+        g.setPrecision(getFeaturePrecision(g.getFeatureClass(), g.getFeatureCode()));
+        if (isCoord(chosen) && !chosen.isCountry()) {
             // Some gazetteer guesses are composite and may not have a location
-            // at all.
-            // Just best guess at country and name.
+            // at all.  Just best guess at country and name.
             g.setLatLon(chosen);
         }
     }
@@ -1088,7 +1088,7 @@ public class XponentGeocoder extends GeoInferencer {
             GeoInference G = new GeoInference();
             G.recordId = rid;
             G.contributor = inferencerID;
-            if (isValidCoord(g)) {
+            if (isCoord(g)) {
                 ++recordsWithCoord;
                 G.confidence += 10;
                 /*
@@ -1127,7 +1127,7 @@ public class XponentGeocoder extends GeoInferencer {
          * 
          * Objective -- Province ID, via reverse lookup.
          */
-        if (isValidCoord(g)) {
+        if (isCoord(g)) {
             ++recordsWithCoord;
             /*
              * INFER:  PROVINCE ID

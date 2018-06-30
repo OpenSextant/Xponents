@@ -24,10 +24,16 @@ import java.util.zip.GZIPInputStream;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.Language;
+import org.opensextant.data.Place;
 import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
+import org.opensextant.data.social.TweetUtility;
 import org.opensextant.extraction.ExtractionException;
+import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.langid.LangDetect;
+import org.opensextant.extractors.xcoord.GeocoordMatch;
+import org.opensextant.output.Transforms;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
@@ -35,16 +41,14 @@ import org.slf4j.LoggerFactory;
 
 import gnu.getopt.LongOpt;
 import jodd.json.JsonObject;
-//import jodd.json.JsonParser;
 
 /**
- * SimpleProcessor is a demonstration of the primary geoinferencing techniques:
+ * SimpleProcessor is a demonstration of some geoinferencing techniques:
  * <ul>
- * <li>PropLoc - location propagation</li>
- * <li>Xponents - OpenSextant toolkit for deep geotagging and geocoding natural
- * language text and metadata.</li>
- * <li>AuthorDNA - statistical models for predicting missing data about social
- * media users, i.e., Country.</li>
+ * <li>Tagging Free text: deep geotagging and geocoding of natural language text such as social media excerpts
+ * </li>
+ * <li>Inferring location based on metadata: geographic reasoning on metadata innate in social media, given or derived</li>
+ * <li>Other techniques from publications or internal R&amp;D.
  * </ul>
  * 
  * <p>
@@ -63,12 +67,6 @@ import jodd.json.JsonObject;
  *   </li>
  *   </ul>
  *  <p>
- * For PropLoc, it is assumed you will have a large data set of users to work with and so 
- * for this demo the content is parked in a MongoDB, enriched, and then it is ready for use.
- * Alternatively, you could just run the enrichment on the PropLoc data and generate JSON
- * formatted enriched user data. <code> ingestAndEnrichPropLoc </code> works with files;  
- * If only the <code>mongo</code> URL is provide and no input file, then PropLoc is read from Mongo and then updated
- * there as well.
  *    
  * @author ubaldino
  *
@@ -112,17 +110,16 @@ public class SimpleProcessorDemo implements JSONListener {
             usage();
         }
 
-        // If configured,... run some processing.
+        // If configured,... run some processing.  
+        // For demonstration simplicity, data is processed (tagged, filtered, output) as it is read in.
         //
         if (looper.configured) {
-
             try {
                 TweetLoader.readJSONByLine(new File(looper.inputFile), looper);
                 looper.finish();
             } catch (Exception e) {
                 log.error("\n\nFailure reading JSON input", e);
             }
-
         }
 
         // Normal shutdown
@@ -283,8 +280,7 @@ public class SimpleProcessorDemo implements JSONListener {
      */
     public static void usage() {
         System.err.println("\n======USAGE=======\njava ...demo.SimpleProcessor ARGS, where ARGS are:"
-                + "\n\t--phase adna | adna-us |\n" + "\t\tproploc-gaz | proploc |\n"
-                + "\t\txponents-meta | xponents-text\n\t\t// ID of phase to run."
+                + "\n\t--phase xponents-meta | xponents-text\n\t\t// ID of phase to run."
                 + "\n\t\t// Run multiple: --phase A --phase B ... " + "\n\t--in file\t\t// JSON or JSON.gz"
                 + "\n\t--max N\t\t\t// N is maximum number of records to process" + "\n\t--help\t\t\t// This help "
                 + "\n\t--out FILE\t\t// JSON file for tweets and annotations"
@@ -459,12 +455,8 @@ public class SimpleProcessorDemo implements JSONListener {
                         // Caller will have to figure out how to mark
                         // entities derived from User, Status, Message Text.
 
-                        /*
-                         * For now not mapping items to KML map
-                         */
+                        mapTweetKML(tw, list);
                     }
-                    // ? KML
-                    // mapTweetKML(tw, list);
 
                 }
             } catch (ExtractionException err) {
@@ -483,18 +475,15 @@ public class SimpleProcessorDemo implements JSONListener {
      */
     private String guessLanguage(Tweet tw) {
         /*
-         * LANG ID ======== Minimal data ingest conditioning. Check language of
-         * text, this is evidence of what culture and geography is relevant
-         * here. Note, We are sensitive to altering the given raw data -- only
-         * objective here is to identify a reasonable language of text.
+         * Identify a reasonable language of text. If lang ID was given in data, you could trust it.... or not.
          */
-        if (!tw.isASCII && tw.lang == null) {
-            String naturalLanguage = TextUtils.parseNaturalLanguage(tw.getText());
-            Language L = langidTool.detectSocialMediaLang(tw.lang, naturalLanguage);
-            if (L != null) {
-                return L.getCode();
-            }
+        //if (!tw.isASCII && tw.lang == null) {
+        String naturalLanguage = TextUtils.parseNaturalLanguage(tw.getText());
+        Language L = langidTool.detectSocialMediaLang(tw.lang, naturalLanguage);
+        if (L != null) {
+            return L.getCode();
         }
+        //}
         return tw.lang;
     }
 
@@ -507,7 +496,7 @@ public class SimpleProcessorDemo implements JSONListener {
      * @throws IOException
      */
     private void saveTweet(Tweet tw) throws IOException {
-        JsonObject serializedTweet = TweetLoader.toJSON(tw);
+        JsonObject serializedTweet = TweetUtility.toJSON(tw);
         if (output != null) {
             output.write(serializedTweet.toString());
             output.write('\n');
@@ -523,16 +512,21 @@ public class SimpleProcessorDemo implements JSONListener {
      * @throws IOException
      */
     private void saveAnnotation(GeoInference a) throws IOException {
-        throw new IOException("Not re-implemented. Need JSON serialization");
-        /*
-        String str = null;
+
+        JsonObject o = a.attributes != null ? new JsonObject(a.attributes) : new JsonObject();
+        Transforms.createGeocoding(a.geocode, o);
+        o.put("contrib", a.contributor);
+        o.put("rec_id", a.recordId);
+        o.put("type", a.inferenceName);
+        o.put("confidence", a.confidence);
+        //
+        String str = o.toString();
         if (output != null) {
             output.write(str);
             output.write('\n');
         } else {
             log.info(str);
         }
-        */
     }
 
     /**
@@ -577,6 +571,16 @@ public class SimpleProcessorDemo implements JSONListener {
         }
 
         kmlWriter.write(tw, a);
+    }
+
+    private void mapTweetKML(Tweet tw, Collection<GeoInference> tags) {
+        if (kmlWriter == null) {
+            return;
+        }
+
+        for (GeoInference t : tags) {
+            kmlWriter.write(tw, t);
+        }
     }
 
 }

@@ -14,12 +14,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.opensextant.data.Place;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.TextUtils;
 
-import jodd.json.JsonObject;
 import jodd.json.JsonArray;
+import jodd.json.JsonObject;
 
 public class Tweet extends Message {
 
@@ -50,6 +51,7 @@ public class Tweet extends Message {
             .withZoneUTC();
     private static final DateTimeFormatter posted_tm_parser = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .withZoneUTC();
+    public static final DateTimeFormatter iso_date_formatter = ISODateTimeFormat.dateTime().withZoneUTC();
 
     public boolean geoEnabled = false;
 
@@ -120,6 +122,10 @@ public class Tweet extends Message {
         geoMethod = m;
     }
 
+    /**
+     * TODO: this is not clear.
+     * @return
+     */
     public String getGeoMethod() {
         if (geoMethod != null) {
             return geoMethod; // use your own value.
@@ -128,8 +134,9 @@ public class Tweet extends Message {
             return "LL"; // a given lat/lon
         }
         if (isGeoinferenced()) {
-            return "given"; // various means, either data derived from original
-                            // data, source/provider GI, or other methods.
+            return "given";
+            // various means, either data derived from original
+            // data, source/provider GI, or other methods.
         }
         return null;
     }
@@ -187,6 +194,10 @@ public class Tweet extends Message {
         this.dateText = Tweet.timestamp_parser.print(d);
     }
 
+    public String getISOTimestamp() {
+        return iso_date_formatter.print(date.getTime());
+    }
+
     /**
      * Most commonly needed to parse TweetID from a GnipID
      * 
@@ -212,7 +223,7 @@ public class Tweet extends Message {
      * @return
      * @throws MessageParseException
      */
-    protected String parseIds(Map<?,?> tw) throws MessageParseException {
+    protected String parseIds(Map<?, ?> tw) throws MessageParseException {
         if (tw.containsKey("id_str")) {
             return (String) tw.get("id_str");
         } else if (tw.containsKey("id")) {
@@ -314,7 +325,7 @@ public class Tweet extends Message {
         }
     }
 
-    protected void parseDate(Map<?,?> tw) {
+    protected void parseDate(Map<?, ?> tw) {
         /*
          * Date string tracking -- argh. Which one really matters dare we
          * normalize one to the other?
@@ -340,7 +351,7 @@ public class Tweet extends Message {
 
     }
 
-    protected void parseText(Map<?,?> tw) throws MessageParseException {
+    protected void parseText(Map<?, ?> tw) throws MessageParseException {
         if (this.text != null) {
             // Does not overwrite. 
             return;
@@ -596,16 +607,16 @@ public class Tweet extends Message {
         }
         return null;
     }
+
     public static int getInteger(JsonObject o, String k, int defVal) {
         if (o.containsKey(k)) {
-            if (o.getValue(k)==null) {
+            if (o.getValue(k) == null) {
                 return defVal;
             }
             return o.getInteger(k, defVal);
         }
         return defVal;
     }
-        
 
     public static boolean isValue(String o) {
         if (StringUtils.isNotBlank(o)) {
@@ -619,7 +630,7 @@ public class Tweet extends Message {
         authorID = tw_user.getString("screen_name");
         authorName = tw_user.getString("name");
         authorLocation = optString(tw_user, "location");
-        authorProfileID = optString(tw_user,"id_str");//Integer.toString(getInteger(tw_user, "id", -1));
+        authorProfileID = optString(tw_user, "id_str");//Integer.toString(getInteger(tw_user, "id", -1));
 
         /*
          * Note: this may need to parsed for an actual lat/lon or place name

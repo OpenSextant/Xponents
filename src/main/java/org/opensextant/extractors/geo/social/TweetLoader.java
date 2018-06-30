@@ -2,14 +2,9 @@ package org.opensextant.extractors.geo.social;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.lang3.StringUtils;
-import org.opensextant.data.social.Tweet;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.opensextant.util.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +27,6 @@ public class TweetLoader {
 
     public static int MAX_ERROR_COUNT = 100;
 
-    private static String JSON_NULL = "null";
-
-    public static boolean isValue(String str) {
-        return StringUtils.isNotBlank(str) && !JSON_NULL.equalsIgnoreCase(str);
-    }
-
     /**
      * To read gzip/JSON files one row of JSON at a time.
      * This will tolerate up to MAX_ERROR_COUNT for parsing data files...
@@ -51,21 +40,15 @@ public class TweetLoader {
         if (!jsonFile.exists()) {
             throw new IOException("File does not exist; not opening...");
         }
-        InputStream stream = null;
         BufferedReader reader = null;
         Logger log = LoggerFactory.getLogger(TweetLoader.class);
         JsonParser jsonp = JsonParser.create();
         int errors = 0;
         try {
-            if (FileUtility.isJSONGzip(jsonFile.getName())) {
-                stream = new GZIPInputStream(new FileInputStream(jsonFile));
-            } else {
-                stream = new FileInputStream(jsonFile);
-            }
-            reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+            reader = new BufferedReader(FileUtility.getInputStreamReader(jsonFile, "UTF-8"));
             String line;
             while ((line = reader.readLine()) != null) {
-                if (!isValue(line)) {
+                if (isBlank(line)) {
                     // Eat up ^M (\r) or other whitespace.
                     continue;
                 }
@@ -82,7 +65,7 @@ public class TweetLoader {
                      * JSON or Text.
                      */
                     if (ingester.preferJSON()) {
-                        JsonObject obj = jsonp.parseAsJsonObject(line);                        
+                        JsonObject obj = jsonp.parseAsJsonObject(line);
                         ingester.readObject(obj);
                     } else {
                         ingester.readObject(line);
@@ -100,15 +83,9 @@ public class TweetLoader {
             }
 
         } finally {
-            stream.close();
             if (reader != null) {
                 reader.close();
             }
         }
-    }
-
-    public static JsonObject toJSON(Tweet tw) {
-        //
-        return new JsonObject();
     }
 }

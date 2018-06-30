@@ -1,10 +1,11 @@
 package org.opensextant.data.social;
 
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 import org.opensextant.data.Geocoding;
 import org.opensextant.util.TextUtils;
-import java.util.Date;
 
 /**
  * Micro Message is the basis for any sort microblog message, SMS, or tweet or other social media post.
