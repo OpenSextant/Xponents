@@ -31,11 +31,11 @@ public class TweetUtility {
 
     /**
      * Objective of this is to create a FLAT key/value map for a JSON or a simple HashMap to use.
-     * 
-     * @param tw
-     * @param full
-     *            if not full, then id, text and source_id are omitted;
-     * @return
+     *
+     * @param tw tweet obj
+     * @param includeGeo include geo* fields
+     * @param formatDate true if date should be in both text and epoch
+     * @return JSON
      */
     public static JsonObject toJSON(Tweet tw, boolean includeGeo, boolean formatDate) {
 

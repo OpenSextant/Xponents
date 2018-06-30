@@ -133,14 +133,10 @@ public class FileUtility {
 
     /**
      * Getting an input stream from a file.
-     *
-     * @param fname
-     *            file name
-     * @param enc
-     *            text encoding
-     * @return reader the java.io reader
+     * @param f file object
+     * @param enc encoding of text data
+     * @return
      * @throws IOException
-     *             if file could not be opened
      */
     public static InputStreamReader getInputStreamReader(File f, String enc) throws IOException {
         return getInputStream(f, enc);
