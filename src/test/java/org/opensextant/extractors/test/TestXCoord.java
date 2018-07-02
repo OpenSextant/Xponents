@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FilenameUtils;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
+import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
@@ -111,8 +112,7 @@ public class TestXCoord {
             TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_System.csv");
 
             for (PatternTestCase tst : mgr.testcases) {
-                TextMatchResult results = xcoord.extract_coordinates(tst.text, tst.id,
-                        tst.family_id);
+                TextMatchResult results = xcoord.extract_coordinates(tst.text, tst.id, tst.family_id);
                 results.add_trace("Test Payload: " + tst.text);
 
                 if (!results.evaluated) {
@@ -132,7 +132,7 @@ public class TestXCoord {
         }
         log.info("=== SYSTEM TESTS DONE ===");
     }
-    
+
     /**
      * Deprecated: LineNumberReader is deprecated. Very limited as this reads the entire buffer first.
      *
@@ -147,6 +147,34 @@ public class TestXCoord {
         return new LineNumberReader(new StringReader(FileUtility.readFile(filepath)));
     }
 
+    public void userTest(String text) {
+        xcoord.match_UTM(true);
+        xcoord.match_MGRS(true);
+        xcoord.match_DD(true);
+        xcoord.match_DMS(true);
+        xcoord.match_DM(true);
+
+        TextInput tst = new TextInput(text, text);
+        tst.buffer = text;
+        tst.id = "from-command-line";
+        try {
+
+            TextMatchResult results = xcoord.extract_coordinates(tst.buffer, tst.id);
+            log.info("=========FILE TEST " + tst.id + " FOUND:"
+                    + (results.matches.isEmpty() ? "NOTHING" : results.matches.size()));
+            for (TextMatch tm : results.matches) {
+                /*
+                 * trivial casting: XCoord only returns GeocoordMatch TextMatch objects.  
+                 * You should always check class type with instancoef if you need to dig into object.
+                 */
+                // log.info("\tFOUND: {}", (GeocoordMatch) tm);
+                log.info("\tFOUND: {}", tm);
+            }
+
+        } catch (Exception err) {
+            log.error("TEST BY LINES", err);
+        }
+    }
 
     /**
      * This will accomodate any test file that has at least the following style:
@@ -169,8 +197,7 @@ public class TestXCoord {
 
             String _file = coordfile.trim();
             String fname = FilenameUtils.getBaseName(_file);
-            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname
-                    + "-lines.csv");
+            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname + "-lines.csv");
 
             java.io.LineNumberReader in = getLineReader(coordfile);
             String line = null;
@@ -253,8 +280,7 @@ public class TestXCoord {
 
             //String _file = coordfile.trim();
             String fname = FilenameUtils.getBaseName(coordfile.getName());
-            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname
-                    + "-rows.csv");
+            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname + "-rows.csv");
             //
             tester.full_report = false;
 
@@ -373,33 +399,11 @@ public class TestXCoord {
         //
         xcoord.match_MGRS(mgrs);
 
-        String[] mgrstest = {
-                "1N\n678912340",
-                "3GSM 2000",
-                "1 FEB 2013",
-                "12 GMT 18",
-                "12 ctf 4000",
-                "04\nSMB800999",
-                "12\nDTF\r7070",
-                "12\rDTF\r7070",
-                "12\n\rDTF\r7070",
-                "7MAR13 1600", 
-                "17MAR13 1600", 
-                "17MAR13 2014", 
-                "17MAY13 2014", 
-                "17JUN13 2014", 
-                "17JUL13 2014", 
-                "17SEP13 2014", 
-                "17OCT13 2014", 
-                "17NOV13 2014", 
-                "17DEC13 2014", 
-                "17APR13 2014", 
-                "17AUG13 2014", 
-                "17JAN13 2014", 
-                "7JAN13 2001", 
-                "17 JAN 13 2014", 
-                "7 JAN 13 2001", 
-                "04RAA80099\n\t1", // Fail -- too much whitespace.
+        String[] mgrstest = { "1N\n678912340", "3GSM 2000", "1 FEB 2013", "12 GMT 18", "12 ctf 4000", "04\nSMB800999",
+                "12\nDTF\r7070", "12\rDTF\r7070", "12\n\rDTF\r7070", "7MAR13 1600", "17MAR13 1600", "17MAR13 2014",
+                "17MAY13 2014", "17JUN13 2014", "17JUL13 2014", "17SEP13 2014", "17OCT13 2014", "17NOV13 2014",
+                "17DEC13 2014", "17APR13 2014", "17AUG13 2014", "17JAN13 2014", "7JAN13 2001", "17 JAN 13 2014",
+                "7 JAN 13 2001", "04RAA80099\n\t1", // Fail -- too much whitespace.
                 "12FTF82711", "15 EST 2008", "14 MRE\n\n 1445", "4 jul 2008", "10 Jan 1994", // edge case, bare minimum.
                 "10 Jan 13", // edge case, bare minimum.
                 "10 Jan 94", // no, this is the real bare minimum.
@@ -410,10 +414,8 @@ public class TestXCoord {
                 "10 Jan 1995 02" };
 
         xcoord.match_DD(dd);
-        String[] ddtest = { 
-                "N 49°2' 0'' / E 38°22' 0''",
-                "1.718114°  44.699603°", "N34.445566° W078.112233°","00 N 130 WA",
-                "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
+        String[] ddtest = { "N 49°2' 0'' / E 38°22' 0''", "1.718114°  44.699603°", "N34.445566° W078.112233°",
+                "00 N 130 WA", "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
                 "-385331-17004121", "CAN-385331-17004121", "15S5E",
                 "TARGET [1]  LATITUDE: +32.3345  LONGITUDE: -179.3412", //DD04
                 "TARGET [1]  LATITUDE= +32.3345  LONGITUDE= -179.3412", //DD04
@@ -423,9 +425,9 @@ public class TestXCoord {
                 "+32.3345:-179.3412", // DD03
                 " 32.3345:-179.3412", // DD03
                 " 32.3345°;-179.3412°", // DD03
-                "032.3345°;-179.3412°",// DD03  leading 0 on lat;
+                "032.3345°;-179.3412°", // DD03  leading 0 on lat;
                 "N32.3345:W179.3412", // DD01
-                "032.3345°N;-179.3412°W",// DD03  leading 0 on lat;
+                "032.3345°N;-179.3412°W", // DD03  leading 0 on lat;
                 "N32.3345:E179.3412", // DD01
                 "32.3345N/179.3412E", // DD02
                 "32.33N 179.34E" // DD02
@@ -433,36 +435,18 @@ public class TestXCoord {
 
         xcoord.match_DMS(dms);
         xcoord.match_DM(dm);
-        String[] dmtest = {
-                "N 49°2' 0'' / E 38°22' 0''",
-                "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
-                "-385331-17004121",
-                "41º58'46\"N, 87º54'20\"W ",
-                "Latitude: 41º58'46\"N, Longitude: 87º54'20\"W ",
-                "15S5E",
+        String[] dmtest = { "N 49°2' 0'' / E 38°22' 0''",
+                "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy", "-385331-17004121",
+                "41º58'46\"N, 87º54'20\"W ", "Latitude: 41º58'46\"N, Longitude: 87º54'20\"W ", "15S5E",
                 //"01-02-03-04 005-06-07-08",           
-                " 79.22.333N, 100.22.333W",
-                " N 01° 44' E 101° 22'",
-                "+42 18.0 x -102 24.0",
-                "42 DEG 18.0N 102 DEG 24.0W",
-                "#TEST   DM      01b      01DEG 44 N 101DEG 44 E",
-                "03bv  4218N 10224W",
-                "03bv      42°18'N 102°24'W",
-                "03bv      42° 18'N 102° 24'W",
-                "N 01° 44' E 101° 22'",
-                "1122N-00 11122W-00",
-                "01DEG 44N 101DEG 44E",
-                "42 9-00 N 102 6-00W",
-                "N42 18-00 x W102 24-00",
-                "N01° 44' 55.5\" E101° 22' 33.0\"",
-                "N 01° 44' 55\" E 101° 22'33.0\"",
-                "33-04-05 12:11:10",
-                "31°24' 70°21'",
-                "40°55'23.2\" 9°43'51.1\"", // No HEMI
+                " 79.22.333N, 100.22.333W", " N 01° 44' E 101° 22'", "+42 18.0 x -102 24.0",
+                "42 DEG 18.0N 102 DEG 24.0W", "#TEST   DM      01b      01DEG 44 N 101DEG 44 E", "03bv  4218N 10224W",
+                "03bv      42°18'N 102°24'W", "03bv      42° 18'N 102° 24'W", "N 01° 44' E 101° 22'",
+                "1122N-00 11122W-00", "01DEG 44N 101DEG 44E", "42 9-00 N 102 6-00W", "N42 18-00 x W102 24-00",
+                "N01° 44' 55.5\" E101° 22' 33.0\"", "N 01° 44' 55\" E 101° 22'33.0\"", "33-04-05 12:11:10",
+                "31°24' 70°21'", "40°55'23.2\" 9°43'51.1\"", // No HEMI
                 "-40°55'23.2\" +9°43'51.1\"", // with HEMI
-                "42 9-00 N 102 6-00W;           ",
-                "42 18-009 N 102 24-009W;        ",
-                "08°29.067' 13°14.067'", // No HEMI
+                "42 9-00 N 102 6-00W;           ", "42 18-009 N 102 24-009W;        ", "08°29.067' 13°14.067'", // No HEMI
                 "08°29.067'N 13°14.067'W", "08°29.067'N 113°14.067'W", "40°55'23.2\"N 9°43'51\"E",
                 "42° 18' 00\" 102° 24' 00", "(42° 18' 00\" 102° 24' 00", "01° 44' 55.5\" 101° 22' 33.0\"",
                 "77°55'33.22\"N 127°33'22.11\"W", "40:26:46.123N,79:56:55.000W", "43-04-30.2720N 073-34-58.4170W",
@@ -528,7 +512,7 @@ public class TestXCoord {
         XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT | XConstants.MGRS_FILTERS_ON
                 | XConstants.CONTEXT_FILTERS_ON;
 
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TestXCoord", args, "aft:u:");
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TestXCoord", args, "aft:u:i:");
 
         try {
             // xc.configure( "file:./etc/test_regex.cfg"); // default
@@ -540,13 +524,17 @@ public class TestXCoord {
                 switch (c) {
                 case 'f':
                     String testFile = "/Coord_Patterns_Truth.csv";
-                    System.out.println("SYSTEM TESTS=======FILE="+testFile+"\n");
+                    System.out.println("SYSTEM TESTS=======FILE=" + testFile + "\n");
                     test.systemTests();
 
                     // Truth source is at src/test/resources  -- Or anywhere in your runtime classpath at TOP LEVEL!
                     //
                     URL truthData = XCoord.class.getResource(testFile);
                     test.fileTruth(new File(truthData.getPath()));
+                    break;
+
+                case 'i':
+                    test.userTest(opts.getOptarg());
                     break;
 
                 case 't':

@@ -1,5 +1,14 @@
 # 2018 #
 
+Xponents 3.0 Fourth of July
+* Refactor: all major libraries converged into one project: Basic, Patterns, Xponents are now just "Xponents"
+* Refactor: XText is moved up to its own top level OpenSextant project
+* Feature: Tweet geocoding was moved from Examples to a formal part of Xponents `org.opensextant.data.social` and ` org.opensextant.extractors.geo.social` represent the core functionality.
+* Feature: Added Language ID API wrapping CyboZu LangDetect;  Xponents `langid` extractor though adds a fair amount of wrapping using Xponents `Language` object to make language data (ISO639 codes, etc) easier to use.  As well, where CyboZu LangDetect fails on short texts
+or other data, Xponents has some fall-back approaches to attempt alternate lang IDs for CJK languages (Chinese/Japanese/Korean).  
+* Versions: Solr 7.3 is core Solr/Lucene version
+* Data: Formally support JSON through Jodd.org JSON package primarily with data transforms for "geocoding" data.  This supports both REST (Xlayer project) and social media ingest and export.
+
 Xponents 2.10.4 thru 2.10.6:
 
   * Bug fix: PlaceCandidate had opposite sort order (improper implementation of Comparable in ScoredPlace)
