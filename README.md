@@ -21,7 +21,7 @@ The intent of Xponents is to provide the extraction without too much infrastruct
   * An extensible regular-expression entity tagger library, `FlexPat` (see `XCoord` and `XTemporal` packages for examples)
 * **Data Model**: Keeping with our geographic theme, Xponents provides a simple set of data classes that act as the lingua franca for geographic reasoning:
   * `Country, Place, LatLon` are all examples of the `Geocoding` interface (see `org.opensextant.data`)
-  * `Language` and `LangID` represents a simple but powerful and underlooked data item -- language codes and names.  We use language codes to drive various language-dependent features, however conveying a intelligible language name to end users is more than useful. (see ISO-339 standards; our source table is from Library of Congress)  
+  * `Language` and `LangID` represents a simple but powerful and overlooked data: language codes and names.  Here we use language codes to drive various language-dependent features and then also to present language name to end users. (see ISO-339 standards; our source table is from Library of Congress)  
   * Entity Extraction and Matching:  `TextEntity` (a text span) and `TextMatch` (a span matched by a rule or extractor) represent the essential unit of data emitted by all Extractors in Xponents.  These include:  `GeocoordMatch`, `PlaceCandidate`, `DateMatch`, `TaxonMatch`, and others.
 * **GIS Formatters:**  The immediate satisfaction of processing some challenging data and then producing a map visual from that is undeniable.  However, our GIS outputter options offer more than just the immediate map plot:  the output schema includes a decent combination of source information, match metadata, and geocoding so you can review  what was found while in the map view.  
   
@@ -40,16 +40,16 @@ Here are two examples of extracting geographic entities from this made-up text:
 
 ```
 
-	String text = "Earthquake epicenter occurred at 39.56N, -123.45W or an hour west of the Mendocino National Forest ";	
-	
-	// INIT
+    String text = "Earthquake epicenter occurred at 39.56N, -123.45W or an hour west of the Mendocino National Forest ";    
+    
+    // INIT
     //==================
-	XCoord xcoord = new XCoord();
-	
-	/* configure() may take an optional patterns file;  default is rather comprehensive. */
-	xcoord.configure(  );		
-	
-	// EXTRACT
+    XCoord xcoord = new XCoord();
+    
+    /* configure() may take an optional patterns file;  default is rather comprehensive. */
+    xcoord.configure(  );        
+    
+    // EXTRACT
     //==================
     List<TextMatch> coords = xcoord.extract( text );
     
@@ -59,14 +59,14 @@ Here are two examples of extracting geographic entities from this made-up text:
             do something. 
        */
     }
-	
-	/* "Do something" might produce this output:  print the location found could be reverse geocoded to Arnold, CA, US
-	 * The loop makes more sense if your document contains many coordinates.
-	 */
-	 -=-=-=-=-=-=-==-=-=-=-=-=-=
-		FOUND: 39.56N, -123.45W @(33:49) matched by DD-02
-		Coordinate at place named Arnold (06, US, PPL)
-	 -=-=-=-=-=-=-==-=-=-=-=-=-=
+    
+    /* "Do something" might produce this output:  print the location found could be reverse geocoded to Arnold, CA, US
+     * The loop makes more sense if your document contains many coordinates.
+     */
+     -=-=-=-=-=-=-==-=-=-=-=-=-=
+        FOUND: 39.56N, -123.45W @(33:49) matched by DD-02
+        Coordinate at place named Arnold (06, US, PPL)
+     -=-=-=-=-=-=-==-=-=-=-=-=-=
 ```
 
 Now with the same text as above, the second and more complex example applies the PlaceGeocoder:
@@ -74,15 +74,15 @@ Now with the same text as above, the second and more complex example applies the
 ```
     // INIT
     //==================
-	tagger = new PlaceGeocoder();
-	Parameters xponentsParams = new Parameters();
-	        
-	/* Province ID helps convert raw coded info into plain language.
-	 * Its not enabled by default.  But, say we find "Mendocino National Forest"
-	 * the find is returned with cc=US, adm1="06"... 
-	 * the 'resolve_provinces' renders adm1="06" into adm1_name="California".  
-	 * This is a second lookup for every match, so it can be expensive.
-	 */
+    tagger = new PlaceGeocoder();
+    Parameters xponentsParams = new Parameters();
+            
+    /* Province ID helps convert raw coded info into plain language.
+     * Its not enabled by default.  But, say we find "Mendocino National Forest"
+     * the find is returned with cc=US, adm1="06"... 
+     * the 'resolve_provinces' renders adm1="06" into adm1_name="California".  
+     * This is a second lookup for every match, so it can be expensive.
+     */
     xponentsParams.resolve_provinces = true;
     tagger.setParameters(xponentsParams);
         
@@ -106,24 +106,22 @@ Now with the same text as above, the second and more complex example applies the
     
     /* And now imagine the do something printed output to the console or saved data to a database,
      ... or exported the findings immediately to a map file....
-     Below is just the raw console output from running.  There is a lot of metadata for you to filter and work with.
-     
-     
-          TestPlaceGeocoder --text TEXT
+     Below is just the raw console output from running.  There is a lot of metadata for you to filter and work with.     
      */
-    	 -=-=-=-=-=-=-==-=-=-=-=-=-=
-    	 ....
-	Name:Mendocino National Forest
-	Rules = [DefaultScore]
-		geocoded @ Mendocino National Forest (06, US, FRST), score=20.56 with conf=93
-	MENTIONS DISTINCT PLACES == 1
-	[Mendocino National Forest]
-	MENTIONS COUNTRIES == 0
-	[]
-	MENTIONS COORDINATES == 1
-	[39.56N, -123.45W]
-    	 ....
-    	 -=-=-=-=-=-=-==-=-=-=-=-=-=
+     
+    -=-=-=-=-=-=-==-=-=-=-=-=-=
+    ....
+    Name:Mendocino National Forest
+    Rules = [DefaultScore]
+        geocoded @ Mendocino National Forest (06, US, FRST), score=20.56 with conf=93
+    MENTIONS DISTINCT PLACES == 1
+    [Mendocino National Forest]
+    MENTIONS COUNTRIES == 0
+    []
+    MENTIONS COORDINATES == 1
+    [39.56N, -123.45W]
+    ....
+    -=-=-=-=-=-=-==-=-=-=-=-=-=
     
 ```
 
@@ -168,7 +166,7 @@ Build
 Building a full Xponents release is involved.  The order of things is:
 
 1. copy `./solr/build.template` to `./solr/build.properties`.  Edit according to comments there.f
-2. `ant -f setup-ant.xml`
+2. `ant -f ./script/setup-ant.xml`
 3. `mvn compile`
 4. `mvn install`
 
@@ -183,7 +181,7 @@ Separately acquire the Gazetteer "Merged Gazetteer" data file:
 Release History
 ---------------
 
-	Xponents 3.0  Jul 2018  v3.0    - Refactoring.  Added language ID and improved JSON support.
+    Xponents 3.0  Jul 2018  v3.0    - Refactoring.  Added language ID and improved JSON support.
     Xponents 2.10 Feb 2018  v2.10.6 - Bug patches; Xponents + Xtext release
     Xponents 2.10 Sept 2017 v2.10.1 - Solr 6 support, Java 8 only, SolrTextTagger 2.4;  Published to Sonatype and Maven Central
     Xponents 2.9, Jul 2017  v2.9.9  - Improved stop filters and other geotagging and KW tagging improvements
@@ -210,7 +208,7 @@ Name matching depends on:
   using https://github.com/OpenSextant/Gazetteer, which depends on Pentaho Kettle 
 
 * OpenSextant SolrTextTagger;  https://github.com/OpenSextant/SolrTextTagger v2.x (See project for maven details)
-  * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10 + Java7
-  * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+ + Java8
-  * Xponents 3.0     == SolrTextTagger v2.4 w/Solr 7.3+ + Java8
+  * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10 w/ Java7
+  * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+ w/ Java8
+  * Xponents 3.0     == SolrTextTagger v2.4 w/Solr 7.3+ w/ Java8
   
