@@ -11,7 +11,6 @@ Xponents is a set of information extraction libraries including:
 
 The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.  This library tool chest contains the following ideas and capabilities:
 
-* **Geographic Gazetteers & Metadata:** under the hood are standard (ISO, USGS, etc) and defacto standard (geonames.org) data sets instrumented by these Java APIs.  The primary gazetteer is housed in an Apache Solr index, which can you can interact with during development. The [OpenSextant Gazetteer](https://github.com/OpenSextant/Gazetteer) project provides the data ETL to 
 * **Extractors for Text:** The focus of Xponents is working with unstructured text in any language: conditioning, extracting entities, tagging, coding it.  These extractors include:
   * `PlaceGeocoder` a geotagger/geocoder for ALL geographic entities in free-text of any size.
   * `XCoord`  a geographic coordinate extractor to pull out and geocode MGRS, UTM or latitude/longitude in degrees (decimal, minutes, seconds, etc)
@@ -23,12 +22,20 @@ The intent of Xponents is to provide the extraction without too much infrastruct
   * `Country, Place, LatLon` are all examples of the `Geocoding` interface (see `org.opensextant.data`)
   * `Language` and `LangID` represents a simple but powerful and overlooked data: language codes and names.  Here we use language codes to drive various language-dependent features and then also to present language name to end users. (see ISO-339 standards; our source table is from Library of Congress)  
   * Entity Extraction and Matching:  `TextEntity` (a text span) and `TextMatch` (a span matched by a rule or extractor) represent the essential unit of data emitted by all Extractors in Xponents.  These include:  `GeocoordMatch`, `PlaceCandidate`, `DateMatch`, `TaxonMatch`, and others.
+* **Geographic Gazetteers & Metadata:** under the hood are standard (ISO, USGS, etc) and defacto standard (geonames.org) data sets instrumented by these Java APIs.  The primary gazetteer is housed in an Apache Solr index, which can you can interact with during development. The [OpenSextant Gazetteer](https://github.com/OpenSextant/Gazetteer) project provides the data ETL. 
+  * `SolrGazetteer` provides a clean API to query gazetteer data using Solr query mechanics and Xponents data classes. The index is optimized for full text search and geospatial queries
+  * `GazetteerMatcher` provides a direct API around the text tagging capability (via [SolrTextTagger](https://github.com/OpenSextant/SolrTextTagger)) beneath the SolrGazetteer.
 * **GIS Formatters:**  The immediate satisfaction of processing some challenging data and then producing a map visual from that is undeniable.  However, our GIS outputter options offer more than just the immediate map plot:  the output schema includes a decent combination of source information, match metadata, and geocoding so you can review  what was found while in the map view.  
   
 Video: Lucene/Solr Revolution 2017 Conference Talk
 ---------------------------------------
 **["Discoverying World Geography in Your Data"](https://www.youtube.com/watch?v=44v2WljG1R0)**,  
 presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
+
+Methodology
+---------------------------------------
+The **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
+the Xponents methodology to geotagging and geocoding that pertains to coordinate extraction and general geotagging, i.e., XCoord and PlaceGeocoder, respectively.
 
 Code Examples
 ---------------------------------------
@@ -60,8 +67,8 @@ Here are two examples of extracting geographic entities from this made-up text:
        */
     }
     
-    /* "Do something" might produce this output:  print the location found could be reverse geocoded to Arnold, CA, US
-     * The loop makes more sense if your document contains many coordinates.
+    /* "Do something" might produce this output:  print the location found could
+     *  be reverse geocoded to Arnold, CA, US
      */
      -=-=-=-=-=-=-==-=-=-=-=-=-=
         FOUND: 39.56N, -123.45W @(33:49) matched by DD-02
@@ -104,9 +111,10 @@ Now with the same text as above, the second and more complex example applies the
        */
     }
     
-    /* And now imagine the do something printed output to the console or saved data to a database,
-     ... or exported the findings immediately to a map file....
-     Below is just the raw console output from running.  There is a lot of metadata for you to filter and work with.     
+    /* And now imagine the do something printed output to the console or saved 
+     data to a database,  ... or exported the findings immediately to a map file....
+     Below is just the raw console output from running.  There is a lot of metadata 
+     for you to filter and work with.     
      */
      
     -=-=-=-=-=-=-==-=-=-=-=-=-=
@@ -125,20 +133,14 @@ Now with the same text as above, the second and more complex example applies the
     
 ```
 
-
-Methodology
----------------------------------------
-The **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
-the Xponents methodology to geotagging and geocoding that pertains to coordinate extraction and general geotagging, i.e., XCoord and PlaceGeocoder, respectively.
-
 Modes of Integration
 ----------------------------------------
 
-* **Java**: [Examples](./tree/master/Examples) sub-project illustrates the essential Java API setup and classes. See Maven notes below. 
-* **REST**:  See [Xlayer](./tree/master/Xlayer) sub-project, which provides a wrapper around `PlaceGeocoder` with some default settings.
+* **Java**: [Examples](./Examples) sub-project illustrates the essential Java API setup and classes. See Maven notes below. 
+* **REST**:  See [Xlayer](./Xlayer) sub-project, which provides a wrapper around `PlaceGeocoder` with some default settings.
 * **Python**:  A small set of libraries, utilities and data classes are provided in Python to facilitate interacting the the gazetteer, RESTful Extractors, and other simple tasks. Extraction is not implemented in Python.
-* **MapReduce**:  For Xponents 2.9, some demonstrations were done to show how to package and create a Mapper to geotag social media, or any data record that had a "text" field.  See [MapReduce](./tree/master/MapReduce)
-* **Pipeline**:  For raw content (e.g., folders or other stream of data) consider using **XText** project which will help you render data to plain text that can be fed to Xponents Extractors.  See [Examples](./tree/master/Examples)
+* **MapReduce**:  For Xponents 2.9, some demonstrations were done to show how to package and create a Mapper to geotag social media, or any data record that had a "text" field.  See [MapReduce](./MapReduce)
+* **Pipeline**:  For raw content (e.g., folders or other stream of data) consider using **XText** project which will help you render data to plain text that can be fed to Xponents Extractors.  See [Examples](./Examples)
 
 Developer Quick Start
 -----------------------
