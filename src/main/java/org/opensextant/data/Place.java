@@ -37,7 +37,9 @@ import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 
 /**
- *
+ * Place class represents all the metadata about a location.
+ * Such location could be static data such as that in the gazetteer or something dynamic or fabricated on the fly. 
+ * 
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  * @author David P. Lutz, MITRE, dlutz at mitre dot org
  */

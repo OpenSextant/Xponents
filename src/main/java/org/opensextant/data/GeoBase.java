@@ -34,7 +34,7 @@ package org.opensextant.data;
 import org.opensextant.util.GeodeticUtility;
 
 /**
- *
+ * An intermediary between the simple LatLon and other conceptual classes: Place, Country, etc.
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class GeoBase implements LatLon {

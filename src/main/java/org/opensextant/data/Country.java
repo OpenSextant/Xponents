@@ -42,7 +42,20 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *
+ * Country metadata provided on this class includes:
+ * <ul>
+ * <li>ISO-3166 country code 2-char and 3-char forms, aligned with US standard FIPS 10-4 codes 
+ * </li>
+ * <li>Country aliases: nick names, variant names, abbreviations
+ * </li>
+ * <li>Affiliated territories
+ * </li>
+ * <li>Timezone and  UTC offset for temporal calculations
+ * </li>
+ * <li>Primary and Secondary languages
+ * </li>
+ *</ul>
+ * 
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class Country extends Place {

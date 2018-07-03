@@ -13,16 +13,19 @@
       </li>
       <li>MGRS - Military Grid Reference System<br>
       </li>
-      <li>Degrees, Minutes, Seconds variants (DD, DM, DMS</li>
+      <li>Degrees, Minutes, Seconds and variants (DD, DM, DMS)</li>
     </ul>
     <p>XCoord allows the user to define their own coordinate patterns or
-      extend the default patterns.<br>
+      extend the default patterns.&nbsp; There are about 2 dozen
+      coordinate patterns, defined here:&nbsp; <a
+        href="https://opensextant.github.io/Xponents/doc/XCoord_Patterns.htm">./doc/XCoord_Patterns.htm</a><br>
+      <br>
     </p>
     <h1>Usage</h1>
     <p>From the command line you can quickly test XCoord on a set of
       given test cases or provide a file of your own.<br>
     </p>
-    <pre style="margin-left: 40px;">ant test <br>file?&nbsp;&nbsp;&nbsp; test/mytest.txt<br></pre>
+    <pre style="margin-left: 40px;">ant -f ./script/testing.xml test-xcoord<br>file?&nbsp;&nbsp;&nbsp; test/mytest.txt<br></pre>
     <pre style="margin-left: 40px;">ant test-default</pre>
     <p>... runs internal unit tests coupled with the given patterns
       configuration file<br>

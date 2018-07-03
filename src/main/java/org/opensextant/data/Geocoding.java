@@ -32,7 +32,12 @@
 package org.opensextant.data;
 
 /**
- *
+ * An interface that describes any data that can be geocoded -- the metadata behind deriving 
+ * location is as important as the actual location is.  Important features include location precision, confidence and method.
+ * For confidence, the Xponents convention is a 100 point integer scale.  
+ * For precision, report the accuracy of your geocoding in terms of meters of error, e.g., <code>precision  = 5000 (m)</code>
+ * suggests your geocoding around point (Y,X) has an error of 5 KM.
+ * 
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public interface Geocoding extends LatLon {

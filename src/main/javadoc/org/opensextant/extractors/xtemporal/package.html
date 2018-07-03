@@ -14,7 +14,7 @@
     <p>From the command line you can quickly test XCoord on a set of
       given test cases or provide a file of your own.<br>
     </p>
-    <pre style="margin-left: 40px;">ant test <br>file?&nbsp;&nbsp;&nbsp; test/mytest.txt<br></pre>
+    <pre style="margin-left: 40px;">ant -f ./script/testing.xml <br>file?&nbsp;&nbsp;&nbsp; test/mytest.txt<br></pre>
     <pre style="margin-left: 40px;">ant test-default</pre>
     <p>... runs internal unit tests coupled with the given patterns
       configuration file<br>
@@ -23,8 +23,8 @@
     </p>
     <pre style="margin-left: 40px;"> XTemporal xdt = new XTemporal(true);<br>      <br> xdt.configure();<br> xdt.test("/text/file.txt");<br><br> XTempResult res = xdt.extract_dates(buf, id);<br>	<br> // print our res.matches<br></pre>
     <h1>Pattern Definition</h1>
-    <p><br>
-      TBD<br>
+    <p>(coming)&nbsp; See ./src/main/resources/datetime_patterns.cfg<br>
+      <br>
     </p>
     <h1><br>
     </h1>

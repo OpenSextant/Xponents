@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   </head>
   <body>
-    <h1> Xponents Common Data Model<br>
+    <h1> Xponents Data Model<br>
     </h1>
     The key constructs here are the GeoBase and Geocoding.&nbsp; GeoBase
     provides a base class for anything that has an ID, name or label,
@@ -25,6 +25,20 @@
       used extensively in place name extraction, reverse geocoding, and
       general country name/code lookups.&nbsp; See GeonamesUtility for
       more country metadata tools.<br>
+    </p>
+    <p>Language object helps tie language code and name. 
+    LangDetect and LangId (<tt>org.opensextant.extractors.langid</tt>) 
+    provide some tools for language detection.  Language ID does not always line 
+    up with a known Language code literally, as LangID may yield language + locale.
+    So there is a need to be able to parse and manage explicit and inferred language/locale codings.
+    
+    </p>
+    <p>
+    Java SDK Locale classes appear to only cover those used for computer internationalization.
+    ICU4J libraries, for example, do not have a simple clear API.  
+    So, I created language lookup tables around ISO-639 codes (sourced from <a href="http://loc.gov">Library of Congress</a>)
+    which are found in <tt>org.opensextant.util.TextUtility</tt>:   getLanguage(), getLanguageCode(), getLanguageMap().
+ 
     </p>
     <br>
     <b><br>

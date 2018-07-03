@@ -17,7 +17,9 @@
 package org.opensextant.data;
 
 /**
- *
+ * TextInput is a unit of data -- a tuple that represents the text and its language and an identifier
+ * for downstream processing, export formatting, databasing results keyed by text identifier, etc.  
+ * 
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TextInput {

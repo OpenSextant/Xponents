@@ -45,10 +45,7 @@
       sufficient -- "\\s+" is not needed to escape the "\" modifier.<br>
     </p>
     <br>
-    Core objects include the following:<br>
-    <br>
-    <ul>
-      <li><b>Defining patterns</b></li>
+    <b>Defining patterns involves these classes</b>
       <ul>
         <li><b>RegexPatternManager</b> -- the central pattern manager as
           describe above. It takes a config file as a URL or file.
@@ -60,26 +57,6 @@
         <li><b>RegexPattern</b> -- maps to the RULE objects.<br>
         </li>
       </ul>
-      <li><b>Managing matching operations</b></li>
-      <ul>
-        <li><b>SpanAnnotation</b> -- a trivial class that has a text
-          match value and start/end offsets.</li>
-        <li><b>TextMatch</b> -- an instance of SpanAnnotation that
-          associates the match with a particular rule.</li>
-        <li><b>TextMatchResult</b> -- a group of TextMatch objects from
-          any set of rules. </li>
-      </ul>
-      <li><b>Helpers</b></li>
-      <ul>
-        <li><b>FileUtility</b> -- IO helpers;&nbsp; Migrating to Apache
-          Commons IO where possible.<br>
-        </li>
-        <li><b>TextUtils</b> -- main utility is to generate match IDs
-          (i.e., an MD5 hash ID) and safely getting the window around
-          text match for context.<br>
-        </li>
-      </ul>
-    </ul>
     <br>
     <h1> Implementation</h1>
     Subclass <b>RegexPatternManager </b>implementing the <b>create_pattern</b>,
