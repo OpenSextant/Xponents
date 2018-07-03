@@ -1,5 +1,6 @@
 Xponents Basics
 ===============
+TODO:  fold this detail into main documentation and/or javadoc.
 
 # Purpose #
 Basics library provides some key object types used throughout Xponents.  As well, some commonly used utility classes are 
