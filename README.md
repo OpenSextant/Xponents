@@ -42,12 +42,10 @@ Code Examples
 
 Here are two examples of extracting geographic entities from this made-up text: 
 
-    "Earthquake epicenter occurred at 39.56N, -123.45W or an hour west of the Mendocino National Forest ";
-
-
 ```
 
-    String text = "Earthquake epicenter occurred at 39.56N, -123.45W or an hour west of the Mendocino National Forest ";    
+    String text = "Earthquake epicenter occurred at 39.56N, -123.45W or "+
+                  "an hour west of the Mendocino National Forest ";    
     
     // INIT
     //==================
@@ -144,13 +142,14 @@ Modes of Integration
 
 Developer Quick Start
 -----------------------
+[Xponents Javadoc](./doc/apidocs/)
+
 This is primarily a Maven-based project, and so here are our Maven artifacts.
 For those using other build platforms, you can find our published artifacts at 
 [ OpenSextant Xponents on Maven ](http://search.maven.org/#search%7Cga%7C1%7Corg.opensextant)
 
 * Java 8+ is required
-
-* Maven 3.0 is required.  Xponents artifact profile:
+* Maven 3+ is required.  Xponents artifact profile:
 
 ```
   <dependency>
@@ -160,12 +159,16 @@ For those using other build platforms, you can find our published artifacts at
   </dependency>
 ```
 
-* [Xponents Javadoc](./doc/apidocs/)
+
 
 Build
 ---------------------
 
-Building a full Xponents release is involved.  The order of things is:
+Building a full Xponents release is involved.  
+
+* Ant 1.9+ and cURL are required in addition to developer items above. 
+
+The order of things is:
 
 1. copy `./solr/build.template` to `./solr/build.properties`.  Edit according to comments there.f
 2. `ant -f ./script/setup-ant.xml`
@@ -212,5 +215,5 @@ Name matching depends on:
 * OpenSextant SolrTextTagger;  https://github.com/OpenSextant/SolrTextTagger v2.x (See project for maven details)
   * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10 w/ Java7
   * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+ w/ Java8
-  * Xponents 3.0     == SolrTextTagger v2.4 w/Solr 7.3+ w/ Java8
+  * Xponents 3.0     == SolrTextTagger v2.5 w/Solr 7.3+ w/ Java8
   

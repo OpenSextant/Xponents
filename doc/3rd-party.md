@@ -13,5 +13,5 @@ Used as optional downloads --  LICENSE:
 http://project.carrot2.org/license.html
 
 You the Xponents user are responsible for acquiring stopwords.
-Runtime location:  ./solr/solr4/gazetteer/conf/filters,  
+Runtime location:  ./solr/etc/gazetteer/filters,  
     Or anywhere in CLASSPATH as "/filters/carrot2-stopwords.LL" for Language LL

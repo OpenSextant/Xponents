@@ -11,6 +11,7 @@ etc/langdetect
 #Maven output
 target/
 #  TODO can we remove this?:
+dist/
 build/
 bin/
 log
