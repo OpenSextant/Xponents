@@ -149,7 +149,7 @@ For those using other build platforms, you can find our published artifacts at
 [ OpenSextant Xponents on Maven ](http://search.maven.org/#search%7Cga%7C1%7Corg.opensextant)
 
 * Java 8+ is required
-* Maven 3+ is required.  Xponents artifact profile:
+* Maven 3+ is required. Maven Version 3.5 is highly recommended.  Xponents artifact profile:
 
 ```
   <dependency>

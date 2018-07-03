@@ -1,6 +1,6 @@
 <project default="build" name="Xponents Distribution">
 
-	<description>
+  <description>
     Builds a version of Xponents that runs out of the box.
   </description>
 
@@ -121,7 +121,7 @@
 				<exclude name="solr7-dist/example/**" />
 			</fileset>
 		</copy>
-		<copy file="${basedir}/solr/build.template" tofile="${solr.release}/build.properties" />
+		<copy file="${xponents.home}/solr/build.template" tofile="${solr.release}/build.properties" />
 	</target>
 
 	<target name="copy-data">
@@ -130,7 +130,7 @@
 				<include name="*.*" />
 			</fileset>
 		</copy>
-		<unzip src="${xponents.home}/etc/langdetect-profiles-v3.zip" dest="${release.home}/etc" />
+		<unzip src="${xponents.home}/etc/langdetect-profiles-v3.zip" dest="${release}/etc" />
 
 	</target>
 
@@ -151,7 +151,7 @@
 				<include name="Coord_Patterns*.*" />
 			</fileset>
 		</copy>
-		<copy file="${release}/solr/solr7/lib/xponents-gazetteer-meta.jar" todir="${release}/etc" />
+		<copy file="${xponents.home}/solr/solr7/lib/xponents-gazetteer-meta.jar" todir="${release}/etc" />
 	</target>
 
 	<target name="apidocs">
@@ -166,7 +166,6 @@
 				<include name="NOTICE" />
 				<include name="LICENSE" />
 				<include name="*.md" />
-				<include name="build.template" />
 			</fileset>
 		</copy>
 		<copy todir="${release}/doc/apidocs">
