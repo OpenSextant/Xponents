@@ -11,6 +11,9 @@ import org.restlet.Context;
 import org.restlet.Restlet;
 
 /**
+ * XlayerApp is an abstract "Webapp" running inside the Server....
+ * well, you must implement one first.
+ * 
  * @author ubaldino
  *
  */
@@ -24,8 +27,12 @@ public abstract class XlayerApp extends Application {
         log = getContext().getCurrentLogger();
     }
 
-    protected static String version = "v2.10";
+    protected static String version = "Xponents-v3.0";
 
+    /**
+     * Banner at start improves visibility of your product.
+     * @throws IOException
+     */
     protected void banner() throws IOException {
         info("\n" + FileUtility.readFile("etc/banner.txt"));
     }

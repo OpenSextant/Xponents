@@ -16,16 +16,12 @@ import org.opensextant.util.TextUtils;
 import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
-import org.restlet.resource.Get;
-import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
 public abstract class TaggerResource extends ServerResource {
 
     /** The log. */
     protected Logger log = null;
-    /** The request count. */
-    public static long requestCount = 0;
     /** The test mode. */
     protected static final boolean testMode = false;
     /** The prod mode. */
@@ -35,19 +31,24 @@ public abstract class TaggerResource extends ServerResource {
         super();
     }
 
-    /**
-     * Implement your own STOP cammand
-     * 
-     */
-    public abstract void stop();
+    protected String operation = null;
 
     /**
-     * Ping.
+     * operational parameter.
+     */
+    public void doInit() {
+        operation = this.getAttribute("operation");
+    }
+
+    /**
+     * Ping. trivial thing for now.
      *
-     * @return status with current request count
+     * @return status
      */
     public Representation ping() {
-        return new JsonRepresentation("{status='OK', requests='" + requestCount + "'}");
+        JSONObject ping = new JSONObject();
+        ping.put("status", "OK");
+        return new JsonRepresentation(ping);
     }
 
     /**
@@ -65,82 +66,6 @@ public abstract class TaggerResource extends ServerResource {
     public abstract Representation process(TextInput input, Parameters jobParams);
 
     /**
-     * Contract:
-     * docid optional; 'text' | 'doc-list' required.
-     * command: cmd=ping sends back a simple response
-     * 
-     * text = UTF-8 encoded text
-     * docid = user's provided document ID
-     * doc-list = An array of text
-     * 
-     * cmd=ping = report status.
-     * 
-     * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B', text='...',...] }
-     * The entire array must be parsable in memory as a single, traversible JSON object.
-     * We make no assumption about one-JSON object per line or anything about line-endings as separators.
-     * 
-     *
-     * @param params
-     *            the params
-     * @return the representation
-     * @throws JSONException
-     *             the JSON exception
-     */
-    @Post("application/json;charset=utf-8")
-    public Representation processForm(JsonRepresentation params) throws JSONException {
-        org.json.JSONObject json = params.getJsonObject();
-        String input = json.optString("text", null);
-        String docid = json.optString("docid", null);
-
-        if (input != null) {
-            String lang = json.optString("lang", null);
-            TextInput item = new TextInput(docid, input);
-            item.langid = lang;
-
-            Parameters job = fromRequest(json);
-            return process(item, job);
-        }
-
-        // org.json.JSONArray array = json.optJSONArray("doc-list");
-        // if (array != null) {
-        // return processList(array);
-        // }
-        return status("FAIL", "Invalid API use text+docid pair or doc-list was not found");
-    }
-
-    /**
-     * HTTP GET -- vanilla. Do not use in production, unless you have really small data packages.
-     * This is useful for testing. Partial contract:
-     * 
-     * miscellany: 'cmd' = 'ping' |... other commands.
-     * processing: 'docid' = ?, 'text' = ?
-     * 
-     * @param params
-     *            the params
-     * @return the representation
-     */
-    @Get("application/json;charset=utf-8")
-    public Representation processGet(Representation params) {
-        Form inputs = getRequest().getResourceRef().getQueryAsForm();
-        String cmd = inputs.getFirstValue("cmd");
-        if ("ping".equalsIgnoreCase(cmd)) {
-            return ping();
-        } else if ("stop".equalsIgnoreCase(cmd)) {
-            info("Stopping Xponents Xlayer Service Requested by CLIENT=" + getRequest().getClientInfo().getAddress());
-            stop();
-        }
-
-        String input = inputs.getFirstValue("text");
-        String docid = inputs.getFirstValue("docid");
-        String lang = inputs.getFirstValue("lang");
-        TextInput item = new TextInput(docid, input);
-        item.langid = lang;
-
-        Parameters job = fromRequest(inputs);
-        return process(item, job);
-    }
-
-    /**
      * // Get parameters for processing? None currently, but may be:
      * // - lower case tagging or filtering
      * // - coordinate parsing on|off
@@ -152,7 +77,7 @@ public abstract class TaggerResource extends ServerResource {
      * @param inputs
      * @return
      */
-    private Parameters fromRequest(Form inputs) {
+    protected Parameters fromRequest(Form inputs) {
         Parameters job = new Parameters();
         String list = inputs.getValues("features");
         Set<String> features = new HashSet<>();
@@ -202,7 +127,7 @@ public abstract class TaggerResource extends ServerResource {
      * @return
      * @throws JSONException
      */
-    private Parameters fromRequest(JSONObject inputs) throws JSONException {
+    protected Parameters fromRequest(JSONObject inputs) throws JSONException {
         Parameters job = new Parameters();
         job.output_coordinates = false;
         job.output_countries = true;

@@ -9,6 +9,7 @@ import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.XlayerApp;
+import org.opensextant.xlayer.server.XlayerControl;
 import org.restlet.Context;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
@@ -45,6 +46,7 @@ public class XlayerRestlet extends XlayerApp {
             System.exit(-1);
         }
 
+        router.attach("/control/{operation}", XlayerControl.class);
         router.attach("/process", XponentsGeotagger.class);
 
         return router;

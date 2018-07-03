@@ -11,13 +11,16 @@ import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.TaggerResource;
 import org.restlet.data.CharacterSet;
+import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
+import org.restlet.resource.Get;
+import org.restlet.resource.Post;
 
 import jodd.json.JsonObject;
 
 /**
- * 
+ * A RESTFul application of PlaceGeocoder
  */
 public class XponentsGeotagger extends TaggerResource {
 
@@ -29,6 +32,9 @@ public class XponentsGeotagger extends TaggerResource {
         log = getContext().getCurrentLogger();
     }
 
+    /**
+     * get Xponents Exxtractor object from global attributes. 
+     */
     public Extractor getExtractor() {
         PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext().getAttributes().get("xgeo");
         if (xgeo == null) {
@@ -36,6 +42,70 @@ public class XponentsGeotagger extends TaggerResource {
             return null;
         }
         return xgeo;
+    }
+
+    /**
+    * Contract:
+    * docid optional; 'text' | 'doc-list' required.
+    * command: cmd=ping sends back a simple response
+    * 
+    * text = UTF-8 encoded text
+    * docid = user's provided document ID
+    * doc-list = An array of text
+    * 
+    * cmd=ping = report status.
+    * 
+    * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B', text='...',...] }
+    * The entire array must be parsable in memory as a single, traversible JSON object.
+    * We make no assumption about one-JSON object per line or anything about line-endings as separators.
+    * 
+    *
+    * @param params
+    *            the params
+    * @return the representation
+    * @throws JSONException
+    *             the JSON exception
+    */
+    @Post("application/json;charset=utf-8")
+    public Representation processForm(JsonRepresentation params) throws JSONException {
+        org.json.JSONObject json = params.getJsonObject();
+        String input = json.optString("text", null);
+        String docid = json.optString("docid", null);
+
+        if (input != null) {
+            String lang = json.optString("lang", null);
+            TextInput item = new TextInput(docid, input);
+            item.langid = lang;
+
+            Parameters job = fromRequest(json);
+            return process(item, job);
+        }
+
+        return status("FAIL", "Invalid API use text+docid pair or doc-list was not found");
+    }
+
+    /**
+    * HTTP GET -- vanilla. Do not use in production, unless you have really small data packages.
+    * This is useful for testing. Partial contract:
+    * 
+    * miscellany: 'cmd' = 'ping' |... other commands.
+    * processing: 'docid' = ?, 'text' = ?
+    * 
+    * @param params
+    *            the params
+    * @return the representation
+    */
+    @Get
+    public Representation processGet(Representation params) {
+        Form inputs = getRequest().getResourceRef().getQueryAsForm();
+        String input = inputs.getFirstValue("text");
+        String docid = inputs.getFirstValue("docid");
+        String lang = inputs.getFirstValue("lang");
+        TextInput item = new TextInput(docid, input);
+        item.langid = lang;
+
+        Parameters job = fromRequest(inputs);
+        return process(item, job);
     }
 
     /**
@@ -52,7 +122,6 @@ public class XponentsGeotagger extends TaggerResource {
         }
         debug("Processing plain text doc");
 
-        ++requestCount;
         try {
             if (prodMode) {
                 PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor();
@@ -67,12 +136,20 @@ public class XponentsGeotagger extends TaggerResource {
 
         } catch (Exception processingErr) {
             error("Failure on doc " + input.id, processingErr);
-            return status("FAIL", processingErr.getMessage() + "; requests=" + requestCount);
+            return status("FAIL", processingErr.getMessage());
         }
 
         return status("TEST", "nothing done in test with doc=" + input.id);
     }
 
+    /**
+     * Format matches as JSON
+     * 
+     * @param matches
+     * @param jobParams
+     * @return
+     * @throws JSONException
+     */
     private Representation format(List<TextMatch> matches, Parameters jobParams) throws JSONException {
 
         JsonObject j = Transforms.toJSON(matches, jobParams);
@@ -83,16 +160,4 @@ public class XponentsGeotagger extends TaggerResource {
         return result;
     }
 
-    /**
-     * Must explicitly stop Solr multi-threading. 
-     */
-    @Override
-    public void stop() {
-        Extractor x = getExtractor();
-        if (x != null) {
-            x.cleanup();
-        }
-        System.exit(0);
-
-    }
 }
