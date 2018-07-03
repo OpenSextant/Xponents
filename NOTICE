@@ -1,5 +1,7 @@
-                    Copyright 2013 OpenSextant.org
-
+                
+    
+    Copyright 2013-2018 MITRE Corporation. All Rights Reserved. 
+               
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -12,6 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
+ See also ./LICENSE or http://www.apache.org/licenses for the full Apache License
+
+
  * **************************************************************************
  *                          NOTICE
  * This software was produced for the U. S. Government under Contract No.
@@ -19,8 +24,4 @@
  * Software and Noncommercial Computer Software Documentation Clause
  * 252.227-7014 (JUN 1995)
  *
- * (c) 2012-2015 The MITRE Corporation. All Rights Reserved.
  * **************************************************************************
-
-
- See also ./LICENSE file for a copy of full Apache License

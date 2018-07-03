@@ -4,10 +4,14 @@ Xlayer:  Xponents REST service
 You can pronounce this like "Zlayer" or X-Layer or Slayer.
 Using primarily the Restlet Framework (http://restlet.org)
 we have a very basic ability to provision the Xponent extraction 
-as REST services.  
+as REST services.   
 
 In this package is a REST server and several test clients in Java and Python 
 which demonstrate how to call the extraction service and parse the results.
+
+version 0.6
+-----------
+- Xponents 3.0 release plugged in
 
 version 0.2
 -----------
@@ -23,7 +27,7 @@ This is a server-side capability, but you can write your own BAT, Groovy, Ant or
 to invoke the main Restlet server as shown in this script:
 
     ./script/xlayer.sh  8890 start 
-  .... 
+    .... 
     ./script/xlayer.sh  8890 stop 
 
 For now the script takes a port number, running a HTTP server on that port, with no security.

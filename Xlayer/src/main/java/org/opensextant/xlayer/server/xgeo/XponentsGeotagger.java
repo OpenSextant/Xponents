@@ -2,27 +2,25 @@ package org.opensextant.xlayer.server.xgeo;
 
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.opensextant.data.Place;
-import org.opensextant.data.Taxon;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
-import org.opensextant.extractors.xcoord.GeocoordMatch;
-import org.opensextant.extractors.xtax.TaxonMatch;
-import org.opensextant.xlayer.Transforms;
-import org.opensextant.xlayer.server.RequestParameters;
+import org.opensextant.output.Transforms;
+import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.TaggerResource;
 import org.restlet.data.CharacterSet;
+import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
+import org.restlet.resource.Get;
+import org.restlet.resource.Post;
+
+import jodd.json.JsonObject;
 
 /**
- * 
+ * A RESTFul application of PlaceGeocoder
  */
 public class XponentsGeotagger extends TaggerResource {
 
@@ -34,14 +32,80 @@ public class XponentsGeotagger extends TaggerResource {
         log = getContext().getCurrentLogger();
     }
 
+    /**
+     * get Xponents Exxtractor object from global attributes. 
+     */
     public Extractor getExtractor() {
-        PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext()
-                .getAttributes().get("xgeo");
+        PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext().getAttributes().get("xgeo");
         if (xgeo == null) {
             info("Misconfigured, no context-level pipeline initialized");
             return null;
         }
         return xgeo;
+    }
+
+    /**
+    * Contract:
+    * docid optional; 'text' | 'doc-list' required.
+    * command: cmd=ping sends back a simple response
+    * 
+    * text = UTF-8 encoded text
+    * docid = user's provided document ID
+    * doc-list = An array of text
+    * 
+    * cmd=ping = report status.
+    * 
+    * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B', text='...',...] }
+    * The entire array must be parsable in memory as a single, traversible JSON object.
+    * We make no assumption about one-JSON object per line or anything about line-endings as separators.
+    * 
+    *
+    * @param params
+    *            the params
+    * @return the representation
+    * @throws JSONException
+    *             the JSON exception
+    */
+    @Post("application/json;charset=utf-8")
+    public Representation processForm(JsonRepresentation params) throws JSONException {
+        org.json.JSONObject json = params.getJsonObject();
+        String input = json.optString("text", null);
+        String docid = json.optString("docid", null);
+
+        if (input != null) {
+            String lang = json.optString("lang", null);
+            TextInput item = new TextInput(docid, input);
+            item.langid = lang;
+
+            Parameters job = fromRequest(json);
+            return process(item, job);
+        }
+
+        return status("FAIL", "Invalid API use text+docid pair or doc-list was not found");
+    }
+
+    /**
+    * HTTP GET -- vanilla. Do not use in production, unless you have really small data packages.
+    * This is useful for testing. Partial contract:
+    * 
+    * miscellany: 'cmd' = 'ping' |... other commands.
+    * processing: 'docid' = ?, 'text' = ?
+    * 
+    * @param params
+    *            the params
+    * @return the representation
+    */
+    @Get
+    public Representation processGet(Representation params) {
+        Form inputs = getRequest().getResourceRef().getQueryAsForm();
+        String input = inputs.getFirstValue("text");
+        String docid = inputs.getFirstValue("docid");
+        String lang = inputs.getFirstValue("lang");
+        TextInput item = new TextInput(docid, input);
+        item.langid = lang;
+
+        Parameters job = fromRequest(inputs);
+        return process(item, job);
     }
 
     /**
@@ -51,14 +115,13 @@ public class XponentsGeotagger extends TaggerResource {
      * @param jobParams the job params
      * @return the representation
      */
-    public Representation process(TextInput input, RequestParameters jobParams) {
+    public Representation process(TextInput input, Parameters jobParams) {
 
         if (input == null || input.buffer == null) {
             return status("FAIL", "No text");
         }
         debug("Processing plain text doc");
 
-        ++requestCount;
         try {
             if (prodMode) {
                 PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor();
@@ -73,180 +136,28 @@ public class XponentsGeotagger extends TaggerResource {
 
         } catch (Exception processingErr) {
             error("Failure on doc " + input.id, processingErr);
-            return status("FAIL", processingErr.getMessage() + "; requests=" + requestCount);
+            return status("FAIL", processingErr.getMessage());
         }
 
         return status("TEST", "nothing done in test with doc=" + input.id);
     }
 
     /**
-     * Copy the basic match information
+     * Format matches as JSON
      * 
-     * @param m
+     * @param matches
+     * @param jobParams
      * @return
      * @throws JSONException
      */
-    private JSONObject populateMatch(TextMatch m) throws JSONException {
+    private Representation format(List<TextMatch> matches, Parameters jobParams) throws JSONException {
 
-        JSONObject o = new JSONObject();
-        int len = m.end - m.start;
-        o.put("offset", m.start);
-        o.put("length", len);
-        // String matchText = TextUtils.squeeze_whitespace(name.getText());
-        o.put("matchtext", m.getText());
-        return o;
-    }
-
-    private Representation format(List<TextMatch> matches, RequestParameters jobParams) throws JSONException {
-
+        JsonObject j = Transforms.toJSON(matches, jobParams);
         Representation result = null;
-        int tagCount = 0;
-
-        JSONObject resultContent = new JSONObject();
-        JSONObject resultMeta = new JSONObject();
-        resultMeta.put("status", "ok");
-        resultMeta.put("numfound", 0);
-        JSONArray resultArray = new JSONArray();
-
-        /*
-         * Super loop: Iterate through all found entities. record Taxons as
-         * person or orgs record Geo tags as country, place, or geo. geo =
-         * geocoded place or parsed coordinate (MGRS, DMS, etc)
-         * 
-         */
-        for (TextMatch name : matches) {
-
-            /*            
-             * ==========================
-             * ANNOTATIONS: non-geographic entities that are filtered out, but worth tracking
-             * ==========================             
-             */
-            if (name instanceof TaxonMatch) {
-                if (jobParams.output_taxons) {
-
-                    TaxonMatch match = (TaxonMatch) name;
-                    ++tagCount;
-                    for (Taxon n : match.getTaxons()) {
-                        JSONObject node = populateMatch(name);
-                        String t = "taxon";
-                        String taxon_name = n.name.toLowerCase();
-                        if (taxon_name.startsWith("org")) {
-                            t = "org";
-                        } else if (taxon_name.startsWith("person")) {
-                            t = "person";
-                        }
-                        node.put("type", t);
-                        node.put("taxon", n.name); // Name of taxon
-                        node.put("catalog", n.catalog); // Name of catalog or source
-                        // node.put("filtered-out", true);
-
-                        resultArray.put(node);
-                        break;
-                    }
-                }
-                continue;
-            }
-
-            /*
-             * ==========================
-             * FILTERING
-             * ==========================
-             */
-            // Ignore non-place tags
-            if (name.isFilteredOut() || !(name instanceof PlaceCandidate || name instanceof GeocoordMatch)) {
-                continue;
-            }
-
-            JSONObject node = populateMatch(name);
-
-            /*
-             * ==========================
-             * ANNOTATIONS: coordinates
-             * ==========================
-             */
-            if (name instanceof GeocoordMatch) {
-                ++tagCount;
-                GeocoordMatch geo = (GeocoordMatch) name;
-                node.put("type", "coordinate");
-                Transforms.createGeocoding(geo, node);
-                resultArray.put(node);
-                continue;
-            }
-
-            if (name.isFilteredOut()) {
-                debug("Filtered out " + name.getText());
-                continue;
-            }
-
-            PlaceCandidate place = (PlaceCandidate) name;
-            Place resolvedPlace = place.getChosen();
-
-            /*
-             * ==========================
-             * ANNOTATIONS: countries, places, etc.
-             * ==========================
-             */
-            /*
-             * Accept all country names as potential geotags Else if name can be
-             * filtered out, do it now. Otherwise it is a valid place name to
-             * consider
-             */
-            ++tagCount;
-            if (place.isCountry) {
-                node.put("name", resolvedPlace.getPlaceName());
-                node.put("type", "country");
-                node.put("cc", resolvedPlace.getCountryCode());
-                node.put("confidence", place.getConfidence());
-
-            } else {
-
-                /*
-                 * Conf = 20 or greater to be geocoded.
-                 */
-                Transforms.createGeocoding(resolvedPlace, node);
-                node.put("name", resolvedPlace.getPlaceName());
-                addProvinceName(node, resolvedPlace);
-                node.put("type", "place");
-                node.put("confidence", place.getConfidence());
-                if (place.getConfidence() <= 10) {
-                    node.put("filtered-out", true);
-                }
-            }
-            resultArray.put(node);
-        }
-        resultMeta.put("numfound", tagCount);
-        resultContent.put("response", resultMeta);
-        resultContent.put("annotations", resultArray);
-
-        result = new JsonRepresentation(resultContent.toString(2));
+        result = new JsonRepresentation(j.toString());
         result.setCharacterSet(CharacterSet.UTF_8);
 
         return result;
     }
 
-    /**
-     * 
-     * @param map
-     * @param resolvedPlace
-     */
-    private static void addProvinceName(JSONObject map, Place resolvedPlace) {
-        String adm1Name = resolvedPlace.getAdmin1Name();
-        if (adm1Name == null) {
-            return;
-        }
-        map.put("province-name", adm1Name);
-    }
-
-    /**
-     * Must explicitly stop Solr multi-threading. 
-     */
-    @Override
-    public void stop() {
-        Extractor x = getExtractor();
-        if (x != null) {
-            x.cleanup();
-        }
-        System.exit(0);
-
-    }
 }

@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>Geo Extraction: PlaceGeocoder, SolrGazetteer, GazetteerMatcher
+      and related items</h1>
+    <p> This package is all about complete geotagging of unstructured
+      text, and any supporting functions. The foundation of this is the
+      Gazetteer and the tagger -- represented by <code>SolrGazetteer</code>
+      and <code>GazetteerMatcher</code>, respectively. The gazetteer is
+      the database of all the place names, abbreviations, codes and
+      location information. The tagger is a Solr handler on top of the
+      database. <i>(Here "database" == "solr index"</i>). </p>
+    <p> Now the fun part: PlaceGeocoder. This is a complex rules
+      processor for all geotagging and geocoding work in pure Java. Lots
+      of internal resource dependencies are involved: gazetteer,
+      resource files, lookup tables, configuration data, tuning
+      parameters. But the API is simple:&nbsp; <br>
+    </p>
+    <ul>
+      <li><b>initialize</b>: <code>PlaceGeocoder p = new
+          PlaceGeocoder(); /* optionally: */ p.setParameters(...);</code>
+      </li>
+      <li> <b>use</b>: <code>List&lt;TextMatch&gt; results =
+          p.extract( input )</code></li>
+    </ul>
+    PlaceGeocoder is based on the Xponents geocoding methodology: <a
+href="https://github.com/OpenSextant/Xponents/blob/master/doc/Geocoder_Handbook.md"
+      target="xponents">https://github.com/OpenSextant/Xponents/blob/master/doc/Geocoder_Handbook.md</a>.&nbsp;&nbsp;
+
+    The rules package is a collection of implemented GeocodeRules that
+    operate on PlaceCandidates found in your input text.&nbsp; Each rule
+    may look at the match itself, the candidate locations behind the
+    match or the surrounding evidence near the match or within the
+    document.&nbsp; The general approach of the geocoder is:<br>
+    <br>
+    <ol>
+      <li><b>Extract hard evidence </b>first, e.g., acceptable
+        resolution coordinates in text or metadata for document ==&gt;
+        infers Country and or Province.&nbsp; Note, that hard evidence
+        is not always available in the text.&nbsp; <br>
+      </li>
+      <li><b>Use language ID of text </b>==&gt; guides text
+        tokenization, matching and filtering of matches.&nbsp; In rich
+        metadata scenarios, language of data may also indirectly infer
+        Country of origin or of topic.&nbsp; (see <code>Country</code>
+        data class which has primary language and timezone information)</li>
+      <li>Decorate candidates / input document <b>obvious soft evidence
+        </b>==&gt; mentions of countries by name or well-known
+        abbreviations of provinces infer geographic region and weight
+        location names in those regions higher.</li>
+      <li><b>Filter</b> obvious false positives ==&gt; organizations or
+        person names that are confounded with place names</li>
+      <li><b>Choose location</b> ==&gt; given all the evidence assign
+        rules for the choices made and a confidence level (a relative
+        score on a 100 point scale)</li>
+      <li><b>Emit all matches</b>: filtered "out" matches are marked as
+        such; matches may be PlaceCandidate, TaxonMatch (org or person),
+        GeocoordMatch.</li>
+    </ol>
+    <p>Once the caller receives the List of TextMatch, all of the rules
+      and other metadata can be accessed through the data classes
+      APIs.&nbsp; Caller must cast TextMatch to subclass to leverage
+      such methods.<br>
+    </p>
+    <p>Examples of PlaceGeocoder usage:<br>
+    </p>
+    <ul>
+      <li><b>BasicGeotemporalExtraction</b> (Examples subproject)<code></code></li>
+      <li><code><b>org.opensextant.extractors.geo.social </b></code>(Experimental)
+
+        Geo-inferencing on Tweets:&nbsp; <b>XponentsTextGeotagger</b>
+        and <b>XponentsGeocoder</b> are PlaceGeocoder applicatons
+        driven by the demo SimpleProcessorDemo.&nbsp; <br>
+      </li>
+      <li>Xlayer (subproject) XGeo REST service.&nbsp; This is a Restlet
+        application that provisions a PlaceGeocoder as a RESTful
+        extractor.<br>
+      </li>
+    </ul>
+    <br>
+    <br>
+  </body>
+</html>

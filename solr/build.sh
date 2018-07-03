@@ -13,7 +13,7 @@ XPONENTS=`cd -P $cur/..; echo $PWD`
 
 export PYTHONPATH=$XPONENTS/piplib
 GAZ_CONF=etc/gazetteer
-SOLR_CORE_VER=solr6
+SOLR_CORE_VER=solr7
 
 
 if [ ! -d $XPONENTS/piplib ] ; then
@@ -25,7 +25,7 @@ fi
 index_taxcat () {
   SOLR_URL=$1
   echo "Populate nationalities taxonomy in XTax"
-  # you must set your PYTHONPATH to include Extraction/XTax required libraries.
+  # you must set your PYTHONPATH to include required libraries built from ../python
   python  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr $SOLR_URL --starting-id 0
   sleep 1 
 
@@ -83,7 +83,8 @@ do_data=0
 do_taxcat=1
 do_gazetteer=1
 proxy='' 
-case $1 in 
+while [ "$1" != "" ]; do
+ case $1 in 
   'data')
      do_data=1
      shift
@@ -109,9 +110,10 @@ case $1 in
      do_taxcat=0
      shift
      ;;
-esac
+  esac
+done
 
-pushd ../Extraction
+pushd ../
 mvn dependency:copy-dependencies
 popd
 

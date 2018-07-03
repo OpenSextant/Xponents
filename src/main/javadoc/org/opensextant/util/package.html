@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Utilities for Extraction</title>
+</head>
+<body>
+<h1>Utilities for Extraction</h1>
+<p>Don't get me wrong -- there are a lot of good utilities already
+out there for NLP work.&nbsp; I found using Apache Commons
+StringUtils, File*Utils and other APIs very helpful.&nbsp;
+However, there are some oddities in the Java and Unicode world
+that need handling, as well as in the standards world where
+reasonable metadata is just missing.<br>
+</p>
+<ul>
+    <li><b>FileUtility</b> -- provides some simpler method calls and
+        macro-like calls for common things.&nbsp; Most often used
+        resource is just readFile(path, encoding)
+    </li>
+    <li><b>GeodeticUtility</b> -- simple geo math, validation and some
+        geohash utilities
+    </li>
+    <li><b>TextUtils</b> text buffer cleanup routines;&nbsp; Language metadata 
+        and simple language detection. 
+        <ul>
+            <li>isASCII, isEnglish, isLatin, isJapanese...: detect Language codes and simple text detection</li>
+            <li>checkCase, measureCase, isUpper, isLower:  operations for character/text case metrics</li>
+            <li>hasDiacritics, replaceDiacritics, removeDiacritics..: work with diacritics</li>
+            <li>removeAny, removeAnyLeft, removeEmoticons, removeSymbols,...: non-text removals</li>
+            <li>tokens, tokensRight, tokensLeft:  split whitespace and return normalized tokens</li>
+            <li>parseHashtTags, parseNaturalLanguage: work with jargon text or social media</li>
+        </ul>
+    </li>
+    <li><b>GeonamesUtility</b> -- a helper for working with country
+        metadata: ISO, FIPS, names and codes.
+    </li>
+    <li><b>SolrProxy</b> and <b>SolrUtil</b> -- SolrProxy is a catch-all for interfacing with Solr
+        index or server. The primary use cases here are interfacing
+        Extractors with their underlying SolrTextTagger.  SolrUtil supports some general and specific 
+        schema interaction for OpenSextant gazetteer Solr schema.<br>
+    </li>
+</ul>
+</body>
+</html>
