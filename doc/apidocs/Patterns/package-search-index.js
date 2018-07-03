@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"org.opensextant.extractors.flexpat"},{"l":"org.opensextant.extractors.poli"},{"l":"org.opensextant.extractors.poli.data"},{"l":"org.opensextant.extractors.xcoord"},{"l":"org.opensextant.extractors.xtemporal"}]

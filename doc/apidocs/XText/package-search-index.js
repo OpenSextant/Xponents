@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"org.opensextant.xtext"},{"l":"org.opensextant.xtext.collectors"},{"l":"org.opensextant.xtext.collectors.mailbox"},{"l":"org.opensextant.xtext.collectors.sharepoint"},{"l":"org.opensextant.xtext.collectors.web"},{"l":"org.opensextant.xtext.converters"}]
