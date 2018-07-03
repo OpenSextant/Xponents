@@ -1,7 +1,7 @@
 # COPY COPY COPY
 # Please copy this to "build.properties"  which will provide settings for your workspace.
 # 
-xponents.build.v=2.10.5
+xponents.build.v=3.0
 #
 # Gazetteer catalog.  Specify the path to the merged file.  
 # Merged.txt is usually the file name in OpenSextant/Gazetteer
@@ -9,7 +9,7 @@ gazetteer.data.file=/path/to/merged.csv
 
 # Default physical path is ./solr/solr4  Use an absolute path when out of dev mode.
 # 'solr.home' is relative to ./solr/build.xml Ant script.
-solr.home=solr6
+solr.home=solr7
 solr.server.port=7000
 
 # Set your proxy host below.

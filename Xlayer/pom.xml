@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-xlayer</artifactId>
-    <version>0.5</version>
+    <version>0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Xlayer Restlet</name>
 
     <properties>
         <restlet.version>2.3.12</restlet.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <xponents.v>2.10.6</xponents.v>
+        <xponents.v>3.0-SNAPSHOT</xponents.v>
     </properties>
     <dependencies>
         <dependency>
@@ -36,16 +36,6 @@
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents</artifactId>
-            <version>${xponents.v}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opensextant</groupId>
-            <artifactId>opensextant-xponents-basics</artifactId>
-            <version>${xponents.v}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opensextant</groupId>
-            <artifactId>opensextant-xponents-patterns</artifactId>
             <version>${xponents.v}</version>
         </dependency>
         <dependency>

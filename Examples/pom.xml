@@ -6,23 +6,18 @@
     <!-- Examples is not intended for artifact publication. Just demonstration 
         So release version should be SNAPSHOT -->
     <groupId>org.opensextant</groupId>
-    <version>2.10dev</version>
+    <version>3.0dev</version>
     <name>Xponent Examples</name>
     <artifactId>opensextant-xponents-examples</artifactId>
 
     <properties>
         <slf4j.version>1.7.25</slf4j.version>
-        <xponents.version>2.10.6</xponents.version>
-        <xtext.version>2.10.6</xtext.version>
+        <xponents.version>3.0</xponents.version>
+        <xtext.version>3.0</xtext.version>
     </properties>
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.opensextant</groupId>
-            <artifactId>opensextant-xponents-basics</artifactId>
-            <version>${xponents.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.opensextant</groupId>

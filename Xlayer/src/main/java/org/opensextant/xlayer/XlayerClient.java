@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.output.Transforms;
 import org.restlet.Application;
 import org.restlet.Context;
 import org.restlet.data.CharacterSet;

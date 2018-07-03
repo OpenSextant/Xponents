@@ -6,8 +6,9 @@ log
 /solr6/gazetteer/data
 /solr6/taxcat/data
 /solr6/lib
-/gazetteer/conf/filters/non-placenames,user.csv
-/gazetteer/conf/filters/carrot2-stop*
+/solr7/gazetteer/data
+/solr7/taxcat/data
+/solr7/lib
 /test
 jetty9
 webapps
@@ -21,3 +22,4 @@ managed-schema
 /etc/gazetteer/filters/census
 /etc/taxcat/data/
 /solr6-dist/
+/solr7-dist/

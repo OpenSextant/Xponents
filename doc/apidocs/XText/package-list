@@ -1,6 +1,0 @@
-org.opensextant.xtext
-org.opensextant.xtext.collectors
-org.opensextant.xtext.collectors.mailbox
-org.opensextant.xtext.collectors.sharepoint
-org.opensextant.xtext.collectors.web
-org.opensextant.xtext.converters

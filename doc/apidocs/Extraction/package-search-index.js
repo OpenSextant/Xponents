@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"org.opensextant.extraction"},{"l":"org.opensextant.extractors.geo"},{"l":"org.opensextant.extractors.geo.rules"},{"l":"org.opensextant.extractors.xtax"},{"l":"org.opensextant.output"},{"l":"org.opensextant.processing"},{"l":"org.opensextant.processing.progress"},{"l":"org.opensextant.util"}]

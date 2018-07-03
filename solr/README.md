@@ -31,7 +31,7 @@ Once you have that "merged" flat file, configure a copy of Xponents/build.templa
                            NO default.
 
   solr.home             -- set the location of your solr home; the "gazetteer" Solr core is the output
-                           Default: ./solr6  (as this is relative to the Xponents/solr/ dir)
+                           Default: ./solr7  (as this is relative to the Xponents/solr/ dir)
 ```
 
 
@@ -95,13 +95,13 @@ For now the main cores are:  taxcat and gazetteer.
 These notes here are for the general situation just establishing Solr and iterating through common tasks.
 
 Please note working from a distribution vs. from checkout should be about the same.
-To get a fully working Solr instance running unpack the full Solr 6.x distribution here at ./solr6-dist;
+To get a fully working Solr instance running unpack the full Solr 7.x distribution here at ./solr7-dist;
 This involves some extra steps, but is relatively well tested.
 
 ```
-    wget http://archive.apache.org/dist/lucene/solr/6.6.1/solr-6.6.1.zip
-    unzip solr-6.6.1.zip
-    mv ./solr-6.6.1  ./solr6-dist
+    wget http://archive.apache.org/dist/lucene/solr/7.3.1/solr-7.3.1.zip
+    unzip solr-7.3.1.zip
+    mv ./solr-7.3.1  ./solr7-dist
 
     # We could automate this sure. But you need only do it once and hopefully is not repetitive.
 ````
@@ -154,8 +154,8 @@ Step 1. Configure
     Decide where your final solr server data will be managed, e.g. 
         XP_SOLR = /myproject/resources/xponents-solr/      
     This folder should contain all the scripts and server stuff from Xponents/solr
-    The JVM arg "opensextant.solr"  is then XP_SOLR/solr6
-    You properties arg "solr.home"  is also this same path, which includes the "./solr6" sub folder.
+    The JVM arg "opensextant.solr"  is then XP_SOLR/solr7
+    You properties arg "solr.home"  is also this same path, which includes the "./solr7" sub folder.
     (XP_SOLR is not a real variable, just short hand for the sake of brevity)
 
     TODO: these two variable names will eventually converge and just be 'opensextant.solr'
@@ -249,7 +249,7 @@ as an implemenation of a full geotagging capability.  To negate false-positives 
 of known things that are not places, rules that guide us how to judge non-places, or some other 
 means such as statistical models to do so.
 
-XTax API uses TaxCat (./solr6/taxcat core).  This API supports the Gazetteer and Xponents taggers
+XTax API uses TaxCat (./solr7/taxcat core).  This API supports the Gazetteer and Xponents taggers
 with lexicons of various types.  Like the GazetteerMatcher tagger, XTax tagger uses the TaxCat 
 catalog to markup documents with known entities in the catalogs.
 
@@ -278,6 +278,6 @@ Okee dokee. Now let's give it a shot.
    #
    python $JRC_SCRIPT --taxonomy /path/to/JRCNames/entities.txt  --solr $solr
 
-   ... 5-10 minutes later these entities are now in your ${opensexant.solr}/solr6/taxcat core ready to go.
+   ... 5-10 minutes later these entities are now in your ${opensexant.solr}/taxcat core ready to go.
 
 ```

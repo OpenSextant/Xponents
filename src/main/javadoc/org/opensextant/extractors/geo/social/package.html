@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <h1>Social Geoinferencing</h1>
+    <p>In 2013 when OpenSextant was first released, we had a demo of how
+      to parse tweets. That was fun.&nbsp;&nbsp; Since then, what we've
+      done with Xponents here is to develop a methodology for
+      georeferencing any variety of data.&nbsp; The terms
+      geoinferencing, geocoding, geotagging seem to blur.&nbsp; But for
+      all intents and purposes what we mean is:<br>
+    </p>
+    <ul>
+      <li>to detect all reasonable geographic cues in data, social media
+        and other data alike</li>
+      <li>extract and report known entities supporting geographic
+        intelligence: language, culture, nationality, etc.</li>
+      <li>provide a sense of confidence of codings and location accuracy</li>
+      <li>provide a rules trace of rules that fired arriving the
+        geocoding <br>
+      </li>
+      <li>provide reasonable means for "tagging": meaning serializing
+        data or persisting it in durable forms, e.g., inject geocode
+        into a JSON subdocument or export a database schema (CSV
+        headings) that are easy to interpret</li>
+    </ul>
+    <p>This package applies mainly <b>SolrGazetteer</b>, <b>XCoord</b>
+      and <b>PlaceGeocoder</b> in these classes:<br>
+    </p>
+    <ul>
+      <li><b>XponentsTextGeotagger</b>: demonstrate tagging social media
+        text where there is additional metadata about user, location,
+        profile.&nbsp; This derives the geographic topics or locations
+        in a post.</li>
+      <li><b>XponentsGeocoder</b>: demonstrate the heuristic metadata
+        rules for dealing with sparse inputs, as is the case with most
+        social media. Xponents application here looks at finding the
+        highest fidelity location associated with a user profile based
+        on given country, location description, device GPS location,
+        timezone and UTC offset.&nbsp; The language of the post is
+        compared to the primary language of any inferred Countries, as
+        is the timezone of the post.&nbsp; Such things help disambiguate
+        free text descriptions of one's home location.</li>
+    </ul>
+    <p>These <b>Geoinferencers</b> provide a base illustration for how
+      other algorithms could extract and report discrete location
+      intelligence.<br>
+    </p>
+    <p><b>SimpleProcessorDemo</b> demonstrates using the <b>TweetLoader</b>
+      to load JSON formatted data, process it, and output it as CSV or
+      KML (using <b>KMLDemoWriter</b> and the stock OpenSextant output
+      schema)<br>
+    </p>
+    <p><br>
+    </p>
+    <h2>SimpleProcessorDemo usage:<br>
+    </h2>
+    <code>&nbsp;&nbsp;&nbsp; mkdir -p output<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; j</code><code>ava --cp lib/* </code><code><code>-Dopensextant.solr=./solr/solr7
+        -Xmx2g -Xms2g \</code><code><br>
+        &nbsp; </code></code><code><code></code><code>&nbsp; org.opensextant.extractors.geo.social.</code>SimpleProcessorDemo
+      \</code><code></code><br>
+    <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --phase
+      xponents-text --in src/test/resources/sample-tweets.json \</code><br>
+    <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --out
+      ./output/sample-tweets+geocoded.json \<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --kml&nbsp;
+      ./output/sample-tweets.kml</code><br>
+    <br>
+    The output is then a Geocoded JSON file as well as a KML file.&nbsp;
+    <br>
+  </body>
+</html>
