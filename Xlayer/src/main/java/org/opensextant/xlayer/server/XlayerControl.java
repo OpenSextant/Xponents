@@ -10,6 +10,11 @@ import org.restlet.resource.Get;
 
 public class XlayerControl extends TaggerResource {
 
+    public XlayerControl() {
+        super();
+        log = getContext().getCurrentLogger();
+    }
+
     //@Override
     public void stop() {
         // TODO Auto-generated method stub
