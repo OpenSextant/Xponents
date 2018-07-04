@@ -58,7 +58,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
      */
     public void tagEvaluation() throws IOException {
 
-        Set<String> texts = FileUtility.loadDictionary("/placename-tests.txt", true);
+        Set<String> texts = FileUtility.loadDictionary("/data/placename-tests.txt", true);
         // Call as many times as you have documents...
         //
         try {

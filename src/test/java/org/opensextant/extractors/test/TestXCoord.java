@@ -523,7 +523,7 @@ public class TestXCoord {
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
                 case 'f':
-                    String testFile = "/Coord_Patterns_Truth.csv";
+                    String testFile = "/data/Coord_Patterns_Truth.csv";
                     System.out.println("SYSTEM TESTS=======FILE=" + testFile + "\n");
                     test.systemTests();
 

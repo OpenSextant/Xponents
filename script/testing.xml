@@ -3,7 +3,7 @@
 <project name="Xponents" >
 
   <property name="xponents" value="${basedir}/../" />
-  <property name="xponents_solr" value="${xponents}/xponents-solr-2018Q3/solr7" />
+  <property name="xponents_solr" value="${xponents}/xponents-solr/solr7" />
 
   <path id="runtime.classpath">
     <pathelement location="${xponents}/etc" />
