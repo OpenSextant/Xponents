@@ -1,6 +1,7 @@
 # those in the news,... or any names you wish to omit.
 # These are all place names that coincide with celebrity names
 # Some of these are common, short names from various cultures.
+do
 obama
 putin
 medvedev

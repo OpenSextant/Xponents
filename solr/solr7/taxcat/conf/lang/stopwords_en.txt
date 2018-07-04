@@ -15,8 +15,8 @@
 
 # a couple of test stopwords to test that the words are really being
 # configured from this file:
-stopworda
-stopwordb
+# stopworda
+# stopwordb
 
 # Standard english stop words taken from Lucene's StopAnalyzer
 a
@@ -52,3 +52,10 @@ to
 was
 will
 with
+# common verbs
+do
+does
+has
+have
+had
+
