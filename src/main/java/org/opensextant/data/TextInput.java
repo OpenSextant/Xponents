@@ -26,6 +26,11 @@ public class TextInput {
     public String buffer = null;
     public String id = null;
     public String langid = null;
+    /** writable flags that represent some basic assement of your input text. Default is mixed case where text
+     * is neither upper or lower.
+     */
+    public boolean isLower = false;
+    public boolean isUpper = false;
 
     /** A simple input.
      * If this input is to be used with the normal OpenSextant pipelines, the caller

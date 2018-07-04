@@ -522,7 +522,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         // Last rule: score, choose, add confidence.
         // 
         chooser.evaluate(candidates);
-        if (provinceNameSetter!=null){
+        if (provinceNameSetter != null) {
             provinceNameSetter.evaluate(candidates);
         }
         // For each candidate, if PlaceCandidate.chosen is not null,
@@ -544,7 +544,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     /**
      * If no geo matches are found, we still parse the data if person name
      * matching is enabled. Poor-man's named-entity extraction
-     * 
+     * @param docCase 0=unknown, 1=lower, 2=upper
      * @throws ExtractionException
      * 
      */
@@ -574,6 +574,11 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         for (TextMatch tm : nonPlaces) {
             if (!(tm instanceof TaxonMatch)) {
+                continue;
+            }
+
+            if (tm.isLower() && !input.isLower) {
+                tm.setFilteredOut(true);
                 continue;
             }
 
@@ -614,8 +619,11 @@ public class PlaceGeocoder extends GazetteerMatcher
                 } else if (node.startsWith("person_name.")) {
                     // Ignore names that are already stop terms.  Okay, 'Will Smith' 
                     // passes,  but 'will i am' is filtered out.
+                    // Short names that are also stopwords are filtered out.  Names that are stopwords, 
+                    // but appear as proper names may be valid first or last names
                     // 
-                    if (this.filter.filterOut(input.langid, tag.getText().toLowerCase()) && tm.isLower()) {
+                    boolean sillyOrShort = tm.isLower() || tm.getLength() < 4;
+                    if (this.filter.filterOut(input.langid, tag.getText().toLowerCase()) && sillyOrShort) {
                         continue;
                     }
                     persons.add(tag);

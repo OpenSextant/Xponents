@@ -106,6 +106,7 @@ public class Transforms {
         m.setType(typ);
         m.start = a.getInteger("offset");
         m.end = m.start + a.getInteger("length");
+        m.setFilteredOut( a.getBoolean("filtered-out"));
 
         return m;
     }
@@ -239,6 +240,11 @@ public class Transforms {
          */
         for (TextMatch name : matches) {
 
+            if (!jobParams.output_filtered && name.isFilteredOut()) {
+                log.debug("Filtered out {}", name.getText());
+                continue;
+            }
+
             /*            
              * ==========================
              * ANNOTATIONS: non-geographic entities that are filtered out, but worth tracking
@@ -246,7 +252,6 @@ public class Transforms {
              */
             if (name instanceof TaxonMatch) {
                 if (jobParams.output_taxons) {
-
                     TaxonMatch match = (TaxonMatch) name;
                     ++tagCount;
                     for (Taxon n : match.getTaxons()) {
@@ -261,7 +266,7 @@ public class Transforms {
                         node.put("type", t);
                         node.put("taxon", n.name); // Name of taxon
                         node.put("catalog", n.catalog); // Name of catalog or source
-                        // node.put("filtered-out", true);
+                        node.put("filtered-out", name.isFilteredOut());
 
                         resultArray.add(node);
                         break;
@@ -275,10 +280,6 @@ public class Transforms {
              * FILTERING
              * ==========================
              */
-            // Ignore non-place tags
-            if (name.isFilteredOut() || !(name instanceof PlaceCandidate || name instanceof GeocoordMatch)) {
-                continue;
-            }
 
             JsonObject node = populateMatch(name);
 
@@ -291,13 +292,9 @@ public class Transforms {
                 ++tagCount;
                 GeocoordMatch geo = (GeocoordMatch) name;
                 node.put("type", "coordinate");
+                node.put("filtered-out", name.isFilteredOut());
                 Transforms.createGeocoding(geo, new JsonObject());
                 resultArray.add(node);
-                continue;
-            }
-
-            if (name.isFilteredOut()) {
-                log.debug("Filtered out {}", name.getText());
                 continue;
             }
 
@@ -332,9 +329,10 @@ public class Transforms {
                 node.put("type", "place");
                 node.put("confidence", place.getConfidence());
                 if (place.getConfidence() <= 10) {
-                    node.put("filtered-out", true);
+                    place.setFilteredOut(true);
                 }
             }
+            node.put("filtered-out", place.isFilteredOut());
             resultArray.add(node);
         }
         resultMeta.put("numfound", tagCount);

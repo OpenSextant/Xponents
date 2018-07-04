@@ -304,21 +304,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * 
      */
     public List<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
-        return tagText(buffer, docid, false, CJK_TAG_FIELD, "cjk");
-    }
-
-    /**
-     * 
-     * @param buffer
-     * @param docid
-     * @param tagOnly
-     * @return
-     * @throws ExtractionException
-     * @deprecated
-     */
-    @Deprecated
-    public List<PlaceCandidate> tagCJKText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
-        return tagText(buffer, docid, tagOnly, CJK_TAG_FIELD, "cjk");
+        TextInput in = new TextInput(docid, buffer);        
+        return tagText(in, false, CJK_TAG_FIELD, "cjk");
     }
 
     /**
@@ -331,11 +318,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @throws ExtractionException on err
      */
     public List<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
-        return tagText(buffer, docid, false, AR_TAG_FIELD, TextUtils.arabicLang);
+        TextInput in = new TextInput(docid, buffer);
+        
+        return tagText(in, false, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
     public List<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
-        return tagText(buffer, docid, tagOnly, AR_TAG_FIELD, TextUtils.arabicLang);
+        TextInput in = new TextInput(docid, buffer);        
+        return tagText(in, tagOnly, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
     /** Most languages */
@@ -352,12 +342,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public static final String AR_TAG_FIELD = "name_tag_ar";
 
     public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
-        return tagText(buffer, docid, tagOnly, DEFAULT_TAG_FIELD, null);
+        TextInput in = new TextInput(docid, buffer);
+        return tagText(in, tagOnly, DEFAULT_TAG_FIELD, null);
     }
 
     public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld)
             throws ExtractionException {
-        return tagText(buffer, docid, tagOnly, fld, null);
+        TextInput in = new TextInput(docid, buffer);
+        return tagText(in, tagOnly, fld, null);
     }
 
     /**
@@ -377,7 +369,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 fld = AR_TAG_FIELD;
             }
         }
-        return tagText(t.buffer, t.id, tagOnly, fld, t.langid);
+        return tagText(t, tagOnly, fld, t.langid);
     }
 
     /**
@@ -395,7 +387,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @return place_candidates List of place candidates
      * @throws ExtractionException on err
      */
-    public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld, String langid)
+    public List<PlaceCandidate> tagText(TextInput input, boolean tagOnly, String fld, String langid)
             throws ExtractionException {
         // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
         // "startOffset":38},
@@ -410,6 +402,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // Reset counts.
         this.defaultFilterCount = 0;
         this.userFilterCount = 0;
+        String buffer = input.buffer;
         // during post-processing tags we may have to distinguish between tagging/tokenizing 
         // general vs. cjk vs. ar. But not yet though.
         // boolean useGeneralMode = DEFAULT_TAG_FIELD.equals(fld);
@@ -417,12 +410,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
         int[] textMetrics = TextUtils.measureCase(buffer);
-        boolean isUpperCase = TextUtils.isUpperCaseDocument(textMetrics);
-        boolean isLowerCase = TextUtils.isLowerCaseDocument(textMetrics);
+        input.isUpper = TextUtils.isUpperCaseDocument(textMetrics);
+        input.isLower = TextUtils.isLowerCaseDocument(textMetrics);
 
         params.set("field", fld);
         Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
-        QueryResponse response = tagTextCallSolrTagger(buffer, docid, beanMap);
+        QueryResponse response = tagTextCallSolrTagger(buffer, input.id, beanMap);
 
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
@@ -445,7 +438,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * large volume of tags and gazetteer data that is involved. And this is
          * relatively early in the pipline.
          */
-        log.debug("DOC={} TAGS SIZE={}", docid, tags.size());
+        log.debug("DOC={} TAGS SIZE={}", input.id, tags.size());
 
         TreeMap<Integer, PlaceCandidate> candidates = new TreeMap<Integer, PlaceCandidate>();
 
@@ -550,7 +543,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * TagFilter here checks only languages other than English, Spanish
              * and Vietnamese.
              */
-            if (filter.filterOut(pc, langid, isUpperCase, isLowerCase)) {
+            if (filter.filterOut(pc, langid, input.isUpper, input.isLower)) {
                 ++this.defaultFilterCount;
                 log.debug("STOPWORD {} {}", langid, pc.getText());
                 continue;
@@ -569,7 +562,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * using such place candidates you may score short acronym matches lower than fully named ones.
              * when inferring boundaries (states, provinces, etc)
              */
-            if (!isUpperCase && pc.isUpper() && len < 5) {
+            if (!input.isUpper && pc.isUpper() && len < 5) {
                 pc.isAcronym = true;
                 pc.isAbbreviation = true;
             }
@@ -628,7 +621,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * HEURISTIC: place abbreviations are relatively short, e.g. one short word(len=5 or less)
                  */
                 if (len < AVERAGE_ABBREV_LEN && !pc.isAbbreviation) {
-                    assessAbbreviation(pc, pGeo, postChar, isUpperCase);
+                    assessAbbreviation(pc, pGeo, postChar, input.isUpper);
                 }
 
                 if (log.isDebugEnabled()) {
@@ -671,7 +664,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         this.totalTime = (int) (t3 - t0);
 
         if (log.isDebugEnabled()) {
-            summarizeExtraction(candidates.values(), docid);
+            summarizeExtraction(candidates.values(), input.id);
         }
 
         this.filteredTotal += this.defaultFilterCount + this.userFilterCount;
