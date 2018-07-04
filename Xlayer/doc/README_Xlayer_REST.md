@@ -26,9 +26,9 @@ Execution
 This is a server-side capability, but you can write your own BAT, Groovy, Ant or other script
 to invoke the main Restlet server as shown in this script:
 
-    ./script/xlayer.sh  8890 start 
+    ./script/xlayer-server.sh  start 8080
     .... 
-    ./script/xlayer.sh  8890 stop 
+    ./script/xlayer-server.sh  stop 8080 
 
 For now the script takes a port number, running a HTTP server on that port, with no security.
 And then also the control command start or stop. 
@@ -39,24 +39,28 @@ tools and techniques in Xponents are Solr-based.  Solr as a server, though, is q
 
 Now the server is running, access it at:
 
-    http://localhost:8890/xlayer/rest/process ? docid = .... & text = ...
+    http://localhost:8080/xlayer/rest/process ? docid = .... & text = ...
 
 GET or POST operations are supported.  With GET, use the parameters as noted above.
 With POST, use JSON to formulate your input as a single JSON object, e.g., "{'docid':..., 'text':....}"
 Additionally, features and tuning parameters will be supported.
 
+
+Health Check
+--------------
+
+    curl "http://localhost:8080/xlayer/rest/control/ping"
+
 Stopping Cleanly
 ------------------
-    curl "http://localhost:8890/xlayer/rest/process?cmd=stop"
 
-The recipe is ```SERVER/xlayer/rest/process?cmd=stop```
-as shown in the xlayer.sh (or .BAT) script
+    curl "http://localhost:8080/xlayer/rest/control/stop"
 
 
 Implementation
 ---------------
 Please refer to Xponents Extraction module.  The tagging/extracting/geocoding is done by PlaceGeocoder Java API.
-(https://github.com/OpenSextant/Xponents/blob/master/Extraction/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java)
+(https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java)
 
 The general design of the RestLet applications here is depicted below in Figure 1. 
 The XlayerServer is a container that manages the overall runtime environement.
@@ -66,23 +70,21 @@ has multiple services (ServerResources) mapped to URLs or URL patterns.
 XponentsGeotagger is a wrapper around the PlaceGeocoder class. The wrapper manages the digestion of client requests 
 in JSON, determines client's feature requests to hone processing and formatting, and finally produces a JSON formatted response.
 
-![Figure 1](./doc/xlayer-xgeo-server-example.png "Extending Xlayer using Restlet")
+![Figure 1](./xlayer-xgeo-server-example.png "Extending Xlayer using Restlet")
 
 
 When building an Xlayer application, client-side or server-side, please understand the general CLASSPATH needs:
 
 * Xponents JARs -- APIs, Xlayer main and test code.  Use ``` mvn dependency:copy-dependencies``` and then see ./lib/opensextant-*.jar. The 
   essential items are listed in order of increasing dependency:
-  * opensextant-xponents-basics-2.x.xjar
-  * opensextant-xponents-patterns-2.x.x.jar
-  * opensextant-xponents-2.x.x.jar
-  * opensextant-xponents-xlayer-0.4.jar
-  * opensextant-xponents-xlayer-0.4-tests.jar
+  * opensextant-xponents-3.*.jar
+  * opensextant-xponents-xlayer-0.*.jar
+  * opensextant-xponents-xlayer-0.*-tests.jar
 * Configuration items foldered in ```./etc``` or similar folder in CLASSPATH
 * Logging configuration -- Logback is used in most Xponents work, but only through SLF4J. If you choose another logger implementation, 
   SLF4J is your interface.   Copy and configure ```Xlayer/src/test/resources/logback.xml``` in your install.  As scripted, ```./etc/``` is the location for this item.
-* Geocoding metadata -- ./etc/ should contain xponents-gazetteer-meta.jar (result of normal full Xponents build. Specifically, ```ant -f ./solr/build.xml gaz-meta```, 
- with the resulting JAR landing in ```./solr/solr4/lib```).   This resource is required for Java Xponents usage or server-side development, but not client REST usage necessarily.
+* Geocoding metadata -- ./etc/ should contain xponents-gazetteer-meta.jar (result of normal Xponents/solr build)
+  This resource is required for Java Xponents usage or server-side development, but not client REST usage necessarily.
 
 
 REST Interface
@@ -265,13 +267,13 @@ Example JSON Output:
 Using Xlayer API and More
 =========================
 
-[XlayerClient demo in Python](../Extraction/src/main/python/opensextant/xlayer.py "Xlayer demo client") provides the real 
+[XlayerClient demo in Python](../src/main/python/opensextant/xlayer.py "Xlayer demo client") provides the real 
 basics of how a client calls the server.   A richer illustration of how to create a client and make use of 
 Xponents APIs is here in the Java XlayerClient:
 
 * [src/main/java/XlayerClientTest.java](src/test/java/XlayerClientTest.java) - Test main program. Compile and include ./target/\*-tests.jar in CLASSPATH
 * [src/main/java/org/opensextant/xlayer/XlayerClient.java](src/main/java/org/opensextant/xlayer/XlayerClient.java) - a basic Client, using Restlet
-* [src/main/java/org/opensextant/xlayer/Transforms.java](src/main/java/org/opensextant/xlayer/Transforms.java) - a basic data adapter for getting REST response back into API objects.
+* [src/main/java/org/opensextant/output/Transforms.java](src/main/java/org/opensextant/output/Transforms.java) - a basic data adapter for getting REST response back into API objects.
 
 If you have gotten this far please consider the Xponents APIs for your data model when using client-side/REST applications. You get JSON
 back and you can do anything with it... however our preference is to consume the JSON and get API objects from the JSON. Sure, we can 
@@ -284,17 +286,18 @@ Essentials:
 
 ```
   # Install the Python library using Pip. Pip handles installing OS-specific python resources as needed. 
+  cd Xponents/
   mkdir piplib 
-  pip install --target piplib dist/opensextant-1.1.4.tar.gz
+  pip install --target piplib python/opensextant-1.1.4.tar.gz
 
   # Run server
-  ./script/xlayer.sh 3535 start
+  ./script/xlayer-server.sh 3535 start
 
   # In another window, Run test client using Python.
-  ./test/test-python.sh 3535 ./test/randomness.txt
+  ./test/test-xlayer-python.sh 3535 ./test/data/randomness.txt
 
   # Once done, run the Java client 
-  ./test/test-java.sh 3535 ./test/randomness.txt
+  ./test/test-xlayer-java.sh 3535 ./test/data/randomness.txt
 
 
   These are limited examples.  If you want to demonstrate running client and server on different hosts 
@@ -305,5 +308,22 @@ Essentials:
 
 ```
 
+
+PACKAGING
+==============
+
+```
+ cd Xponents
+ # Fully build
+ ant -f ./script/dist.xml dist
+
+ cd Xlayer 
+ cp -r ./test   ../dist/Xponents-3.0/
+ cp -r ./script ../dist/Xponents-3.0/
+ cp -r ./doc    ../dist/Xponents-3.0/
+ cp etc/banner.txt ../dist/Xponents-3.0/etc/
+ mvn dependency:copy-dependencies # aim for . ../dist/.../lib
+ cp  target/*xlayer*jar ../dist/Xponents-3.0/lib/
+```
 
 

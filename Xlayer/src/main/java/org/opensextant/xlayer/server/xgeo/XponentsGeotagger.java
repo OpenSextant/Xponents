@@ -7,6 +7,7 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.TaggerResource;
@@ -131,6 +132,7 @@ public class XponentsGeotagger extends TaggerResource {
                 /*
                  * formulate matches as JSON output.
                  */
+                filter(matches, jobParams);
                 return format(matches, jobParams);
             }
 
@@ -158,6 +160,29 @@ public class XponentsGeotagger extends TaggerResource {
         result.setCharacterSet(CharacterSet.UTF_8);
 
         return result;
+    }
+
+    /**
+    * 
+    * @param variousMatches
+    */
+    public void filter(List<TextMatch> variousMatches, Parameters params) {
+        // Determine what looks useful. Filter out things not worth
+        // saving at all in data store.
+        //simpleFilter.filter(variousMatches);
+
+        /* HACK.  Prefer not to change the "filter" state based on output/visibility parameters.
+         * consider output options; filter out returns based on requested outputs.
+         */
+        if (!params.output_taxons) {
+            for (TextMatch m : variousMatches) {
+                if (m.isFilteredOut()) {
+                    continue;
+                } else if (m instanceof TaxonMatch) {
+                    m.setFilteredOut(true);
+                }
+            }
+        }
     }
 
 }

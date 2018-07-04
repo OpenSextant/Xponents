@@ -24,7 +24,7 @@ _________
 # The Xponents Solr index to use is the "solr6" folder in the
 # full gazetteer distribution.  That is, in the release there is more than just solr 
 #
-XPONENTS_SOLR=xponents-solr-2018Q2/solr6
+XPONENTS_SOLR=xponents-solr/solr7
 
 java -classpath  etc/*:dist/*:lib/* -Dopensextant.solr=$XPONENTS_SOLR -Xmx300m -Xms300m  \
   -Dlogback.configurationFile=./etc/logback.xml  \

@@ -7,9 +7,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import jodd.json.JsonArray;
+import jodd.json.JsonObject;
+import jodd.json.JsonParser;
+
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.output.Transforms;
@@ -36,11 +37,12 @@ public class XlayerClient extends Application {
     private static final int ONE_SEC = 1000;
 
     /** 1 minute */
-    public static final String SO_TIMEOUT_STRING = new Integer(60 * ONE_SEC).toString();
+    public static final String SO_TIMEOUT_STRING =  Integer.valueOf(60 * ONE_SEC).toString();
     /** 1 minutes */
-    public static final String READ_TIMEOUT_STRING = new Integer(60 * ONE_SEC).toString();
+    public static final String READ_TIMEOUT_STRING = Integer.valueOf(60 * ONE_SEC).toString();
     /* 5 seconds */
-    public static final String CONN_TIMEOUT_STRING = new Integer(5 * ONE_SEC).toString();
+    public static final String CONN_TIMEOUT_STRING =  Integer.valueOf(5 * ONE_SEC).toString();
+    protected JsonParser jsonp = JsonParser.create();
 
     public XlayerClient(URL serviceAddr) throws ConfigException {
 
@@ -70,13 +72,14 @@ public class XlayerClient extends Application {
      * @throws IOException
      * @throws JSONException
      */
-    public List<TextMatch> process(String docid, String text) throws IOException, JSONException {
+    public List<TextMatch> process(String docid, String text, boolean viewFilteredOut) throws IOException {
 
         ClientResource client = new ClientResource(serviceContext, serviceURI);
-        org.json.JSONObject content = new JSONObject();
+        JsonObject content = new JsonObject();
         content.put("text", text);
         content.put("docid", docid);
-        content.put("features", "places,coordinates,countries,persons,orgs,reverse-geocode");
+        String featureSet = "places,coordinates,countries,persons,orgs,reverse-geocode" +  (viewFilteredOut ? ",filtered_out":"");
+        content.put("features", featureSet);
         /* Coordinates mainly are XY locations; Reverse Geocode them to find what country the location resides */
         StringWriter data = new StringWriter();
 
@@ -90,13 +93,13 @@ public class XlayerClient extends Application {
             response.exhaust();
             response.release();
 
-            JSONObject json = new JSONObject(data.toString());
-            log.debug("POST: response  {}", json.toString(2));
-            JSONObject meta = json.getJSONObject("response");
-            JSONArray annots = json.getJSONArray("annotations");
+            JsonObject json = jsonp.parseAsJsonObject(data.toString());
+            log.debug("POST: response  {}", json.toString());
+            JsonObject meta = json.getJsonObject("response");
+            JsonArray annots = json.getJsonArray("annotations");
             List<TextMatch> matches = new ArrayList<TextMatch>();
-            for (int x = 0; x < annots.length(); ++x) {
-                Object m = annots.get(x);
+            for (int x = 0; x < annots.size(); ++x) {
+                JsonObject m = annots.getJsonObject(x);
                 matches.add(Transforms.parseAnnotation(m));
             }
             return matches;

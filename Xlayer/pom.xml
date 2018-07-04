@@ -10,7 +10,7 @@
     <properties>
         <restlet.version>2.3.12</restlet.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <xponents.v>3.0</xponents.v>
+        <xponents.v>3.0.1</xponents.v>
     </properties>
     <dependencies>
         <dependency>
@@ -60,6 +60,11 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.2.2</version>
+    </dependency>
     </dependencies>
 
     <build>
@@ -113,7 +118,8 @@
                         </goals>
                         <phase></phase> <!-- Only execute from the command line. -->
                         <configuration>
-                            <outputDirectory>lib</outputDirectory>
+                            <!-- <outputDirectory>../dist/Xponents-3.0/lib</outputDirectory> -->
+                            <outputDirectory>lib</outputDirectory> 
                             <includeScope>runtime</includeScope>
                             <includeScope>test</includeScope>
                         </configuration>

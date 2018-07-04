@@ -36,10 +36,12 @@ public class XlayerClientTest {
                  * The XlayerClient process() method makes use of Transforms helper class to 
                  * digest JSON annotations into Java API TextMatch objects of various flavors.
                  */
-                List<TextMatch> results = c.process(docid, text);
+                System.out.println("Processing document " + docid);
+                List<TextMatch> results = c.process(docid, text, false);
                 for (TextMatch m : results) {
-                    System.out
-                            .println(String.format("Found %s %s @ (%d:%d)", m.getType(), m.getText(), m.start, m.end));
+                    String filt = m.isFilteredOut() ? "\tFILTERED NOISE" : "";
+                    System.out.println(
+                            String.format("Found %s %s @ (%d:%d) " + filt, m.getType(), m.getText(), m.start, m.end));
                 }
             } catch (Exception parseErr) {
                 parseErr.printStackTrace();

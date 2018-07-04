@@ -15,9 +15,7 @@ public class XlayerControl extends TaggerResource {
         log = getContext().getCurrentLogger();
     }
 
-    //@Override
     public void stop() {
-        // TODO Auto-generated method stub
         Extractor x = getExtractor();
         if (x != null) {
             x.cleanup();
@@ -39,7 +37,6 @@ public class XlayerControl extends TaggerResource {
 
     @Override
     public Representation process(TextInput input, Parameters jobParams) {
-        // TODO Auto-generated method stub
         return new JsonRepresentation("{\"message\":\"not implemented\"}");
     }
 

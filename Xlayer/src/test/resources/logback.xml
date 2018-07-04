@@ -29,5 +29,7 @@
     <!-- disable rules logging once you are comfortable things are working -->
     <logger name="org.opensextant.extractors.geo.rules" level="debug">
     </logger>
+    <logger name="org.opensextant.xlayer" level="debug">
+    </logger>
 
 </configuration>

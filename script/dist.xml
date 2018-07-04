@@ -9,7 +9,7 @@
 	<property name="xlayer.version" value="0.6" />
 
 	<property name="release" location="${xponents.home}/dist/Xponents-${version}" />
-	<property name="solr.release" location="${release}/xponents-solr-2018Q3" />
+	<property name="solr.release" location="${release}/xponents-solr" />
 	<property name="xlayer.release" location="${xponents.home}/dist/Xlayer-${xlayer.version}" />
 
 
@@ -42,8 +42,8 @@
 
 		<mkdir dir="${release}" />
 		<mkdir dir="${release}/lib" />
-		<mkdir dir="${release}/lib/python" />
-		<mkdir dir="${release}/logs" />
+		<mkdir dir="${release}/python" />
+		<mkdir dir="${release}/log" />
 		<mkdir dir="${release}/etc" />
 		<mkdir dir="${release}/test" />
 		<mkdir dir="${release}/script" />
@@ -74,10 +74,9 @@
 				<include name="*.jar" />
 			</fileset>
 		</copy>
-		<copy todir="${release}/lib/python">
-			<fileset dir="${xponents.home}/python">
-				<exclude name="**/*.pyc">
-				</exclude>
+		<copy todir="${release}/python">
+			<fileset dir="${xponents.home}/python/dist/">
+			  <exclude name="**/*.pyc" />
 			</fileset>
 		</copy>
 	</target>
