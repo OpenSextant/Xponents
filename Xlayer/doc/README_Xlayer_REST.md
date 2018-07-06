@@ -9,15 +9,15 @@ as REST services.
 In this package is a REST server and several test clients in Java and Python 
 which demonstrate how to call the extraction service and parse the results.
 
-version 0.6
------------
-- Xponents 3.0 release plugged in
+History 
+---------
+* version 0.6
+  Xponents 3.0 release plugged in
 
-version 0.2
------------
-- added features and options to allow caller to customize request
-- Expose PlaceGeocoder capability: geocode text, yielding 
-  places, coordinates, countries, and matched non-places organizations and person names
+* version 0.2
+  - added features and options to allow caller to customize request
+  - Expose PlaceGeocoder capability: geocode text, yielding 
+    places, coordinates, countries, and matched non-places organizations and person names
 
 
 Execution
@@ -33,10 +33,6 @@ to invoke the main Restlet server as shown in this script:
 For now the script takes a port number, running a HTTP server on that port, with no security.
 And then also the control command start or stop. 
 
-Alternatives:  I considered making Solr request handlers to accompany the underlying
-Solr Text Tagger (solr /tag handler).   However, that seemed limiting, because not all extraction
-tools and techniques in Xponents are Solr-based.  Solr as a server, though, is quite strong.
-
 Now the server is running, access it at:
 
     http://localhost:8080/xlayer/rest/process ? docid = .... & text = ...
@@ -44,6 +40,16 @@ Now the server is running, access it at:
 GET or POST operations are supported.  With GET, use the parameters as noted above.
 With POST, use JSON to formulate your input as a single JSON object, e.g., "{'docid':..., 'text':....}"
 Additionally, features and tuning parameters will be supported.
+
+Testing/Processing
+------------------
+
+A quick test can be done by these test scripts: In each case specify the PORT that Xlayer is running on and then 
+test file.
+
+* `./script/test-xlayer-curl.sh PORT FILE`  - requires cURL
+* `./script/test-xlayer-java.sh PORT FILE`  - requires Java 8 and test libraries in ./lib
+* `./script/test-xlayer-python.sh PORT FILE`  - requires Python 2 and the OpenSextant python lib in `./python/`
 
 
 Health Check
@@ -55,36 +61,6 @@ Stopping Cleanly
 ------------------
 
     curl "http://localhost:8080/xlayer/rest/control/stop"
-
-
-Implementation
----------------
-Please refer to Xponents Extraction module.  The tagging/extracting/geocoding is done by PlaceGeocoder Java API.
-(https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java)
-
-The general design of the RestLet applications here is depicted below in Figure 1. 
-The XlayerServer is a container that manages the overall runtime environement.
-The XlayerRestlet is an application inside the container.  A Restlet Application typically
-has multiple services (ServerResources) mapped to URLs or URL patterns.
-
-XponentsGeotagger is a wrapper around the PlaceGeocoder class. The wrapper manages the digestion of client requests 
-in JSON, determines client's feature requests to hone processing and formatting, and finally produces a JSON formatted response.
-
-![Figure 1](./xlayer-xgeo-server-example.png "Extending Xlayer using Restlet")
-
-
-When building an Xlayer application, client-side or server-side, please understand the general CLASSPATH needs:
-
-* Xponents JARs -- APIs, Xlayer main and test code.  Use ``` mvn dependency:copy-dependencies``` and then see ./lib/opensextant-*.jar. The 
-  essential items are listed in order of increasing dependency:
-  * opensextant-xponents-3.*.jar
-  * opensextant-xponents-xlayer-0.*.jar
-  * opensextant-xponents-xlayer-0.*-tests.jar
-* Configuration items foldered in ```./etc``` or similar folder in CLASSPATH
-* Logging configuration -- Logback is used in most Xponents work, but only through SLF4J. If you choose another logger implementation, 
-  SLF4J is your interface.   Copy and configure ```Xlayer/src/test/resources/logback.xml``` in your install.  As scripted, ```./etc/``` is the location for this item.
-* Geocoding metadata -- ./etc/ should contain xponents-gazetteer-meta.jar (result of normal Xponents/solr build)
-  This resource is required for Java Xponents usage or server-side development, but not client REST usage necessarily.
 
 
 REST Interface
@@ -132,13 +108,6 @@ Non-Geographic annotations have:
 * catalog        - attribution to a data source or catalog containing the reference data
 * taxon          - the ID of a normalized catalog entry for the match, e.g., `person = { text:'Rick Springfield', taxon:'person.Richard Springfield', catalog:'Rock-Legends'}`
 
-
-References:
-The following data here is emitted in the Xlayer and most all Xponents APIs.  Xponents Basics API provides
-GeonamesUtility class (in Java, and partial solution in Python) to access the codes easily:
-* NGA, http://geonames.nga.mil/gns/html/countrycodes.html
-* Geonames.org, http://download.geonames.org/export/dump/featureCodes_en.txt
-* Geonames.org, http://www.geonames.org/data-sources.html
 
 
 Example JSON Output:
@@ -264,6 +233,46 @@ Example JSON Output:
 	 }
 
 
+
+Implementation
+---------------
+Please refer to Xponents Extraction module.  The tagging/extracting/geocoding is done by PlaceGeocoder Java API.
+(https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java)
+
+The general design of the RestLet applications here is depicted below in Figure 1. 
+The XlayerServer is a container that manages the overall runtime environement.
+The XlayerRestlet is an application inside the container.  A Restlet Application typically
+has multiple services (ServerResources) mapped to URLs or URL patterns.
+
+XponentsGeotagger is a wrapper around the PlaceGeocoder class. The wrapper manages the digestion of client requests 
+in JSON, determines client's feature requests to hone processing and formatting, and finally produces a JSON formatted response.
+
+![Figure 1](./xlayer-xgeo-server-example.png "Extending Xlayer using Restlet")
+
+
+When building an Xlayer application, client-side or server-side, please understand the general CLASSPATH needs:
+
+* Xponents JARs -- APIs, Xlayer main and test code.  Use ``` mvn dependency:copy-dependencies``` and then see ./lib/opensextant-*.jar. The 
+  essential items are listed in order of increasing dependency:
+  * opensextant-xponents-3.*.jar
+  * opensextant-xponents-xlayer-0.*.jar
+  * opensextant-xponents-xlayer-0.*-tests.jar
+* Configuration items foldered in ```./etc``` or similar folder in CLASSPATH
+* Logging configuration -- Logback is used in most Xponents work, but only through SLF4J. If you choose another logger implementation, 
+  SLF4J is your interface.   Copy and configure ```Xlayer/src/test/resources/logback.xml``` in your install.  As scripted, ```./etc/``` is the location for this item.
+* Geocoding metadata -- ./etc/ should contain xponents-gazetteer-meta.jar (result of normal Xponents/solr build)
+  This resource is required for Java Xponents usage or server-side development, but not client REST usage necessarily.
+
+
+
+References:
+The following data here is emitted in the Xlayer and most all Xponents APIs.  Xponents Basics API provides
+GeonamesUtility class (in Java, and partial solution in Python) to access the codes easily:
+* NGA, http://geonames.nga.mil/gns/html/countrycodes.html
+* Geonames.org, http://download.geonames.org/export/dump/featureCodes_en.txt
+* Geonames.org, http://www.geonames.org/data-sources.html
+
+
 Using Xlayer API and More
 =========================
 
@@ -288,7 +297,9 @@ Essentials:
   # Install the Python library using Pip. Pip handles installing OS-specific python resources as needed. 
   cd Xponents/
   mkdir piplib 
-  pip install --target piplib python/opensextant-1.1.4.tar.gz
+  pip install --target piplib python/opensextant-1.x.x.tar.gz
+  OR 
+  pip install --user python/opensextant-1.x.x.tar.gz
 
   # Run server
   ./script/xlayer-server.sh 3535 start
