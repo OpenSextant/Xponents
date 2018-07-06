@@ -12,33 +12,27 @@
 
     <properties>
         <slf4j.version>1.7.25</slf4j.version>
-        <xponents.version>3.0</xponents.version>
+        <xponents.version>3.0.1</xponents.version>
         <xtext.version>3.0</xtext.version>
     </properties>
 
     <dependencies>
-
-
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents</artifactId>
             <version>${xponents.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents-xtext</artifactId>
             <version>${xtext.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.0.1</version>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

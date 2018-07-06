@@ -76,7 +76,6 @@
 		</copy>
 		<copy todir="${release}/python">
 			<fileset dir="${xponents.home}/python/dist/">
-			  <exclude name="**/*.pyc" />
 			</fileset>
 		</copy>
 	</target>

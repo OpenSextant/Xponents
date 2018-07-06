@@ -9,7 +9,7 @@ set scriptdir=%~dp0
 set scriptdir=%scriptdir:~0,-1%
 set basedir=%scriptdir%\..
 set logconf=%scriptdir:\=/%
-set XPONENTS_SOLR=%basedir%\xponents-solr\solr7
+set XPONENTS_SOLR=%basedir%\xponents-solr
 
 set COMMAND=%1
 set XLAYER_PORT=%2
@@ -21,7 +21,7 @@ REM Alternatively, we could deploy as a Tomcat or other webapp
 
 if "%COMMAND%" == "start" (
     echo "START XLAYER SERVICE"
-    java -Dopensextant.solr="%XPONENTS_SOLR%" -Xmx2g -Xms2g ^
+    java -Dopensextant.solr="%XPONENTS_SOLR%\solr7" -Xmx2g -Xms2g ^
           -Dlogback.configurationFile="%basedir%\etc\logback.xml" ^
           -classpath "%basedir%\etc;%basedir%\etc\*;%basedir%\lib\*" ^
           org.opensextant.xlayer.server.xgeo.XlayerServer   %XLAYER_PORT% 

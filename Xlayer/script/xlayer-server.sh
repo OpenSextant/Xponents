@@ -12,9 +12,9 @@ case $CMD in
     cd $basedir
     logfile=$basedir/log/stderr.log
     stdout=$basedir/log/xlayer.log
-    XPONENTS_SOLR=${XPONENTS_SOLR:-$basedir/xponents-solr/solr7}
+    XPONENTS_SOLR=${XPONENTS_SOLR:-$basedir/xponents-solr}
 
-    nohup java -Dopensextant.solr=$XPONENTS_SOLR -Xmx2g -Xms2g \
+    nohup java -Dopensextant.solr=$XPONENTS_SOLR/solr7 -Xmx2g -Xms2g \
         -Dlogback.configurationFile=$basedir/etc/logback.xml \
         -classpath "$basedir/etc:$basedir/etc/*:$basedir/lib/*" org.opensextant.xlayer.server.xgeo.XlayerServer $XLAYER_PORT  2>$logfile > $stdout &
   ;;
