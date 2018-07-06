@@ -12,7 +12,7 @@ which demonstrate how to call the extraction service and parse the results.
 History 
 ---------
 * version 0.6
-  Xponents 3.0 release plugged in
+  - Xponents 3.0 release plugged in
 
 * version 0.2
   - added features and options to allow caller to customize request
