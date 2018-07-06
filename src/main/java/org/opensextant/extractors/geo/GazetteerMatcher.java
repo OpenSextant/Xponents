@@ -378,8 +378,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * no Place objects attached. Names of contients are passed back as matches,
      * with geo matches. Continents are filtered out by default.
      *
-     * @param buffer text
-     * @param docid identity of the text
+     * @param input text object
      * @param tagOnly True if you wish to get the matched phrases only. False if
      *            you want the full list of Place Candidates.
      * @param fld gazetteer field to use for tagging
