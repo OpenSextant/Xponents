@@ -125,9 +125,9 @@ Example JSON Output:
 
    # Python call -- Send the text, process the text, print the JSON response to console.
    xtractor.process("test doc#1",
-       "Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?"
-       + "Seriously, what part of Canada would you visit to see the new prime minister discus our border?"
-       + "Do you think Hillary Clinton or former President Clinton have an opinion on our Northern Border?")
+     "Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?"
+     + "Seriously, what part of Canada would you visit to see the new prime minister discus our border?"
+     + "Do you think Hillary Clinton or former President Clinton have opinions on our Northern Border?")
 
    # NOTE -- This is draft 0.1;  We can certainly make a more complete Client API using our own 
    # python or Java data model and API.  This demo client demonstrates primarily the connectivity.
