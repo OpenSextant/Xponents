@@ -38,7 +38,7 @@ Now the server is running, access it at:
     http://localhost:8080/xlayer/rest/process ? docid = .... & text = ...
 
 GET or POST operations are supported.  With GET, use the parameters as noted above.
-With POST, use JSON to formulate your input as a single JSON object, e.g., "{'docid':..., 'text':....}"
+With POST, use JSON to formulate your input as a single JSON object, e.g., `{"docid":..., "text":....}`
 Additionally, features and tuning parameters will be supported.
 
 Testing/Processing
@@ -75,20 +75,25 @@ Required Python packages: requests and simplejson
     python  opensextant/xlayer.py  
 
 INPUT:
-* 'docid' - an optional identifier for this text
-* 'text'  - UTF-8 text buffer
-* 'features' - comma-separated string of features
-    * Features will vary by app.  XponentsGeotagger class supports: places, coordinates, countries
-* 'options'  - comma-separated string of options
-    * Options will vary by app.   XponentsGeotagger class supports: lowercase
+
+* `docid` - an optional identifier for this text
+* `text`  - UTF-8 text buffer
+* `features` - comma-separated string of features which will vary by app.  XponentsGeotagger (default app) class supports: 
+   * `places, coordinates, countries` or `geo` to refer to all of those geographic entities
+   * `persons`, `orgs`, `taxons` to refer to those non-geo entities.  
+   * `filtered_out` will turn on noisy entities that were filtered out for some reason. The default is not return filtered-out items.
+   
+* `options`  - comma-separated string of options
+   * Options will vary by app.   XponentsGeotagger class supports: `lowercase`
     
 OUTPUT:
-* 'response'     - status, numfound
-* 'annotations'  - an array  of objects. 
+
+* `response`     - status, numfound
+* `annotations`  - an array  of objects. 
 
 Annotation schema 
 * matchtext      - text span matched
-* type           - type of annotation, one of 'place', 'country', 'coordinate', 'org', 'person'
+* type           - type of annotation, one of `place`, `country`, `coordinate`, `org`, `person`
 * offset         - character offset into text buffer where text span starts
 * length         - length of text span.  end offset = offset + length
 * method         - method tag identifying the means by which this annotation was derived.
@@ -106,7 +111,7 @@ Geographic annotations additionally have:
 
 Non-Geographic annotations have:
 * catalog        - attribution to a data source or catalog containing the reference data
-* taxon          - the ID of a normalized catalog entry for the match, e.g., `person = { text:'Rick Springfield', taxon:'person.Richard Springfield', catalog:'Rock-Legends'}`
+* taxon          - the ID of a normalized catalog entry for the match, e.g., `person = { text:"Rick Springfield", taxon:"person.Richard Springfield", catalog:"Rock-Legends"}`
 
 
 
@@ -116,21 +121,18 @@ Example JSON Output:
 ```
    from opensextant.xlayer import XlayerClient
 
-   # Ah,... Demo Client, really.
    xtractor = XlayerClient(serverURL)
 
    # Python call -- Send the text, process the text, print the JSON response to console.
-   xtractor.process('test doc#1',
-       'Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?'
-       + 'Seriously, what part of Canada would you visit to see the new prime minister discus our border?'
-       + 'Do you think Hillary Clinton or former President Clinton have an opinion on our Northern Border?')
+   xtractor.process("test doc#1",
+       "Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?"
+       + "Seriously, what part of Canada would you visit to see the new prime minister discus our border?"
+       + "Do you think Hillary Clinton or former President Clinton have an opinion on our Northern Border?")
 
    # NOTE -- This is draft 0.1;  We can certainly make a more complete Client API using our own 
    # python or Java data model and API.  This demo client demonstrates primarily the connectivity.
-   #
 ```
  
-
 	 {
 	  "response": {
 	    "status": "ok",
@@ -245,7 +247,7 @@ The XlayerRestlet is an application inside the container.  A Restlet Application
 has multiple services (ServerResources) mapped to URLs or URL patterns.
 
 XponentsGeotagger is a wrapper around the PlaceGeocoder class. The wrapper manages the digestion of client requests 
-in JSON, determines client's feature requests to hone processing and formatting, and finally produces a JSON formatted response.
+in JSON, determines client"s feature requests to hone processing and formatting, and finally produces a JSON formatted response.
 
 ![Figure 1](./xlayer-xgeo-server-example.png "Extending Xlayer using Restlet")
 
