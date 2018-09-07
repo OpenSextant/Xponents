@@ -1,12 +1,12 @@
 OpenSextant Solr Gazetteer
 ============================
-NOTE: text was written in plain text originally, not markdown. 
-
 The OpenSextant Gazetteer is a catalog of place names and basic geographic metadata, such 
-as country code, location, feature codings.   In Xponents, Solr 6.6+ is used to index and provision 
+as country code, location, feature codings.   In Xponents, Solr 7+ is used to index and provision 
 the large lexicons such as gazetteer and taxonomies.
 
 You are reading about the Xponents variant of the Solr Gazetteer.
+(OpenSextantToolbox is a similar tagger solution with a variant of the Gazetteer.
+Both libraries use the same Gazetteer "merged" flat file as a starting point)
 
 Definitions: 
 * OpenSextant "Gazetteer" is an ETL project that assembles the catalog into a single "merged" flat file.
@@ -19,44 +19,109 @@ when you need to optimize or extend things for new langauges.
 
 Getting started
 ================================
+You have a few options:
 
-Gazetteer data is generally best downloaded from here:
-    http://opensextant.github.io/Gazetteer/ see "latest release" to get processed Gazetteer flat file.
+1. Download Xponents SDK release (libraries, docs, and pre-built Xponents Solr)
+   * You just want the capability. No hassle.
+   * https://github.com/OpenSextant/Xponents/releases will have library releases; Maven Central has JARs/javaodcs
+   * https://github.com/OpenSextant/DataReleases will list full SDK releases for Xponents 3.0+
+2. Checkout Xponents and Gazetteer projects and build from latest source and data.
+   * You want the full experience.
+3. Checkout Xponents build from latest source using an existing Gazetteer flat file.
+   * https://github.com/OpenSextant/DataReleases -- lists Gazetteer quarterly releases
+   * You want to dig into Xponents but most recent gazeeteer is not that important.
 
-Or checkout the project there and build it yourself.
+For option 1 download what you need from the links above.
 
-Once you have that "merged" flat file, configure a copy of Xponents/build.template as Xponents/build.properties
+For options 2 and 3 above, you'll follow the remainder of these instructions to build Xponents SDK with Solr indices populated.
+
+Option 2.  Build Gazetteer From Scatch
+---------------------------------------------
+
+1. Checkout Gazetteer ETL project
+   * http://opensextant.github.io/Gazetteer/ 
+   * Follow instructions to install Pentaho Kettle 6+ and Ant
+   * Tune the build.properties there.
+
+Desired layout:
+
 ```
-  gazetteer.data.file   -- set the path to the MergedGazetteer.txt (TAB-delimited data file) as your input
-                           NO default.
+  ./Xponents/     (git project)
+  ./Xponents/solr (this folder)
+  ./Gazetteer/    (git project)
+```
+
+Now run these steps to acquire gazetteer data from USGS and NGA:
+
+```
+  cd Gazetter
+  ant setProxy nga.data
+  ant setProxy usgs.data
+
+  # Remove setProxy if you have no http_proxy to worry about.
+```
+
+Separately run the ETL in the Gazetter project.
+This Xponents script emulates the Gazetteer ant script, but allows 
+for some tuning of JVM and other parameters, such as logging, etc.
+
+```
+  cd Xponents/solr
+  ./build-gazetteer.sh 
+```
+
+**TIME:** Expect the above process to take 30-60 minutes once all software is installed and working.
+
+**OUTPUT**: Now find the absolute path to the output `MergedGazetteer.txt`  (`Gazetteer/GazetteerETL/GeoData/Merged/MergedGazetteer.txt`)
+
+Continue on with the rest of the instructions.
+ 
+
+Option 3. Build Xponents Solr from Gazetteer Flat File
+---------------------------------------------
+First, copy Xponents/build.template as Xponents/build.properties
+
+```
+  gazetteer.data.file   -- set the absolute path to the MergedGazetteer.txt 
 
   solr.home             -- set the location of your solr home; the "gazetteer" Solr core is the output
                            Default: ./solr7  (as this is relative to the Xponents/solr/ dir)
+
+  proxy                 -- set your HTTP proxy host, or leave blank if none. 
 ```
 
 
 Honing Gazetteer Index
 =================================
-
 Size matters.  So does content.  Your gazetteer should contain named locations and other data
 you want to use in your application.  For example, An application for a complete worldwide name 
 search suggests you have a full gazetteer; An application of lightweight desktop geocoding suggests 
 you have the basics plus some other data, but much less than the full version.
 
-Merged gazetteer file:  2.1 GB with 16.5 million entries.   (as of 2016)
+If you don't care about size move onto next section.
+Regardless, this section is deprecated given this tuning is no longer supported:
+* Xponents 2.9+ we got away from using Ant to RESTfully post data to Solr and invoke the update-script
+ (java or javascript solution).  And with that the filtration on SplitCategory went with it.
 
-From this merged data set, we can filter the rows of data by making use of some simple categories.  
-Places and Place names may be well-known or rare, or some where in-between.
+Merged gazetteer file sizes:  
+* 2.1 GB with 16.5 million entries.   (as of 2016)
+* 2.3 GB with 18.5 million entries.   (as of 2018)
+
+Proprotions of categories of entries -- which could help you decide how to balance SDK size with geographic coverage.
 
 ```
-Solr Gazetteer Sizes Approximately:
-  Full gazetteer:  1.6 GB  (v1.4 or v1.5 OpenSextant)
-  General         ~600 MB
-  Wellknown        ~20 MB
-  Basic gazetteer:  ~1 MB 
+  SplitCategory
+  --------------
+  Full gazetteer: 100.0 %   
+  General          30.0 %    Well-known + all administrative boundaries and populated places.
+  Wellknown         1.0 %    Basic + major cities
+  Basic          :  0.1 %    countries + territories + Level-1 provinces
+  Rare             40.0 %    Uncommonly seen names, numeric entries, mostly unpopulated places or other features.
 ```
 
-To adjust content (and therefore size), use the FILE: solr/gazetteer/conf/solrconfig.xml 
+``` DEPRECATED FILTERS BELOW```
+
+To adjust content (and therefore size), use the FILE: solrN/gazetteer/conf/solrconfig.xml 
 Look at the 'update-script' 'params' section, which has an include_category parameter.  
 The choices for this parameter are:
 
@@ -86,15 +151,21 @@ The choices for this parameter are:
 Running Xponents Solr
 =================================
 
-This is a stock instance of Solr 4.x with a number of custom solr cores.
-For now the main cores are:  taxcat and gazetteer.
+This is a stock instance of Solr 7.x with a number of custom solr cores.
+For now the main cores are:  `taxcat` and `gazetteer`.  They are populated like this:
 
-* To start from raw data for Gazetteer, see gazetteer/README* for those staging details to generate a gazetteer.
-* To start from raw data for Taxcat / XTax,  see [XTax README](./solr/etc/taxcat/README.md)
+* `gazetteer`:  All the notes above on producing the flat file, but also additional sources of data and filters are 
+  integrated by this `./solr/build.sh` script.
+* `taxcat`:  `./solr/build.sh` conducts all the data downloads and loading.  See [XTax README](`./solr/etc/taxcat/README.md`)
 
 These notes here are for the general situation just establishing Solr and iterating through common tasks.
 
-Please note working from a distribution vs. from checkout should be about the same.
+
+Setup
+----------
+
+**Step 1.  Get Solr 7.x **
+
 To get a fully working Solr instance running unpack the full Solr 7.x distribution here at ./solr7-dist;
 This involves some extra steps, but is relatively well tested.
 
@@ -104,86 +175,76 @@ This involves some extra steps, but is relatively well tested.
     mv ./solr-7.3.1  ./solr7-dist
 
     # We could automate this sure. But you need only do it once and hopefully is not repetitive.
-````
+    # Solr 7.4 not yet tested.
+```
 
 
-Step 0. Build Some Prequisite Libs
-=================================
+**Step 2. Build Some Prequisite Libs **
+
 The gazetteer build scripts use some Ant, but mainly Python.
 You'll see the Ant script just automates invocation of scripted steps.
 The Python libraries provide a platform to help us add any type of
 lexicon data to the Solr indexes for tagging.  These Python libs 
-are used in ./build.sh and in any other scripts such as ./script/taxcat_jrcnames.py
+are used in ./build.sh and in any other scripts such as `./script/taxcat_jrcnames.py`
 
-And as far as Xponents Java, just build the full project, ```cd ../; mvn install``` 
+And as far as Xponents Java, just build the full project, `cd ../; mvn install`
 Running these steps depends on the current version of Xponents Extraction and Basics.
 
 From Source:
 ```
-    pushd ./python
-    python ./setup.py bdist_wheel --universal
+    pushd ../python
+    python ./setup.py sdist
     popd
+    pushd ../
     # Install built lib with dependencies to ./python
-    pip install --target ./piplib ./python/dist/opensextant-VERSION.whl 
+    pip install -U --target ./piplib ./python/dist/opensextant-1.1.9.tar.gz 
+    popd
 ```
-
 
 From Distribution:
 ```
-    pushd lib/python/
-    python ./setup.py bdist_wheel --universal
-    popd
-    pip install --target piplib lib/python/dist/opensextant-VERSION.whl
+    pip install -U --target ./piplib python/opensextant-1.1.9.tar.gz
 ```
 
-Additionally, add JSON support:
+NOTE: In Python Development mode where the opensextant libs are in development:
 ```
-    pip install --target ./piplib simplejson
-```
-
-In Python Development mode where the opensextant libs are in development:
-```
-    export PYTHONPATH=/path/to/lib/python   or /path/to/Xponents/python
-    # Hmm.. note you still have to install python dependencies.
+    export PYTHONPATH=/path/to/Xponents/piplib
 ```
   
-Step 1. Configure 
-=================================
-```
+**Step 3. Configure and Deployment Paths **
 
-    Decide where your final solr server data will be managed, e.g. 
-        XP_SOLR = /myproject/resources/xponents-solr/      
-    This folder should contain all the scripts and server stuff from Xponents/solr
-    The JVM arg "opensextant.solr"  is then XP_SOLR/solr7
-    You properties arg "solr.home"  is also this same path, which includes the "./solr7" sub folder.
-    (XP_SOLR is not a real variable, just short hand for the sake of brevity)
+By default, you have this runtime environment in check-out or in distribution:
+- ./Xponents/solr/solr7 will contain the Solr indicies
+- ./Xponents/solr/solr7-dist will contain the Solr server that serves the indices
 
-    TODO: these two variable names will eventually converge and just be 'opensextant.solr'
-```
+We refer to Xponents Solr informally as `XP_SOLR`, which is `./Xponents/solr`
+Formally, the JVM argument `opensextant.solr` is set to `XP_SOLR/solr7`
 
-Step All-In-One. 
-=================================
+In deployment you can choose XP_SOLR to be any path you want, as long as the `solr`
+folder is kept intact once built.
 
-Hmm. If you could run this in one command start to finish, why not?  But keep in mind this 
-can be brittle, so let's educate you and you can make decisions on your own. See comments on each option/directive
+
+**Step 4. Build Indices **
+
+The build process can be brittle, so let's educate you and you can make decisions on your own. See comments on each option/directive
 The ```build.sh``` script is the central brain behind the data assembly.
 
 ```
    ./build.sh  start clean data proxy 
 
    # clean  = Clean Solr indices and initialize library folders with copies of dependencies, etc.
-   # start  = Start the Solr 6 server on default Xponents port 7000.  Server is only used at build time, not at runtime
+   # start  = Start the Solr server on default Xponents port 7000.  Server is only used at build time, not at runtime
    # data   = Acquire additional data e.g., Census, Geonames.org, JRC entities, etc. These data sets are not cleaned by 'clean'
    # proxy  = IF you are behind a proxy, set your proxy in build.propertes
 
 ```
 
 If you are really lucky, you would be done after this. 
-But review the remaining steps individually if you run into problems.
+But review the above build steps individually if you run into problems.
 
 
 
-Step 2. Initialize
+Index Step 1. Initialize
 =================================
 
 ```
@@ -196,8 +257,8 @@ Step 2. Initialize
     ant [proxy] init
 ```
 
-Step 3. Get Supporting Data
-=================================
+Index Step 2. Get Supporting Data
+--------------------------------
 
 ```
     build.sh [proxy] data 
@@ -208,8 +269,8 @@ This will pull down data sets used by Gazetteer and TaxCat taggers and resources
 * ```ant taxcat-jrc ```
 
 
-Step 4. Load Gazetteer 
-=================================
+Index Step 3. Load Gazetteer 
+--------------------------------
 In this step, you can use:
 
 ```
@@ -242,8 +303,8 @@ So there is no single best place to locate them, and there is no single best ans
 A JAR is more portable for deployment, but for development we just add the folder "...gazetteer/conf/"  to the CLASSPATH.
 
 
-Step 5.  Load TaxCat 
-=================================
+Index Step 4.  Load TaxCat 
+--------------------------------
 This step falls under the category of geotagger tuning.  E.g., see Extraction PlaceGeocoder class
 as an implemenation of a full geotagging capability.  To negate false-positives we need a source
 of known things that are not places, rules that guide us how to judge non-places, or some other 
@@ -263,21 +324,3 @@ Some terms:
 Note, as XTax JRC (and other catalogs you add) tag text you naturally find lots of additional entities.
 Some of them can be used to negate false-positives in geotagging, .... other entities found are just 
 interesting -- you should save them all as a part of your pipeline.
-
-Okee dokee. Now let's give it a shot.
-
-```
-
-   # Reference:  See Xponents/XTax/ for the full documentation on XTax and JRC, as an example data set.
-   #
-   export PYTHONPATH=/path/to/my/piplib
-   solr=http://localhost:7000/solr/taxcat
-   JRC_SCRIPT=/path/to/Xponents/solr/script/taxcat_jrcnames.py
-
-   # JRC Entities - global multilingal identies
-   #
-   python $JRC_SCRIPT --taxonomy /path/to/JRCNames/entities.txt  --solr $solr
-
-   ... 5-10 minutes later these entities are now in your ${opensexant.solr}/taxcat core ready to go.
-
-```
