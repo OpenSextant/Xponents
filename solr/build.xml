@@ -114,7 +114,7 @@
             classpathref="runtime.classpath" fork="yes">
             <jvmarg value="-Dlogback.configurationFile=./logback.xml" />
             <arg value="-u" />
-            <arg value="http://localhost:7000/solr/gazetteer" />
+            <arg value="http://localhost:${solr.server.port}/solr/gazetteer" />
             <arg value="-s" />
             <arg value="id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,script,name_bias,id_bias,name_type,,SplitCategory,search_only" />
             <arg value="-f" />

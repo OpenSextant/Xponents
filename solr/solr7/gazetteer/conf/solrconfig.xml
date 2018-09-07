@@ -1254,7 +1254,8 @@
 
 
     <!-- Solr Gazetter capabilities:  /addGazetteer and /tag -->
-    <requestHandler name="/tag" class="org.opensextant.solrtexttagger.TaggerRequestHandler">
+    <!-- class="org.opensextant.solrtexttagger.TaggerRequestHandler"  pre-Solr7.4 -->
+    <requestHandler name="/tag"  class="solr.TagRequestHandler">
         <str name="field">name_tag</str>
         <bool name="matchText">true</bool>
         <str name="fq">(+name_bias:[0 TO *] AND -search_only:true AND name_type:N) OR name_type:code OR name_type:A</str>

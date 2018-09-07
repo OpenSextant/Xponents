@@ -737,7 +737,7 @@
        not be initialized until the first request that uses it.
 
     -->
-    <requestHandler name="/tag" class="org.opensextant.solrtexttagger.TaggerRequestHandler">
+    <requestHandler name="/tag" class="solr.TagRequestHandler">
 	    <str name="field">phrase_tag</str>
 	    <bool name="partialMatches">false</bool>
 	    <bool name="matchText">false</bool>

@@ -2,7 +2,7 @@ if [ ! -d ./log ] ;  then
   mkdir log
 fi
 
-SOLR_PORT=7000
+SOLR_PORT=${SOLR_PORT:-7000}
 SERVER=localhost:$SOLR_PORT
 unset http_proxy
 unset https_proxy
