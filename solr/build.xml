@@ -92,7 +92,8 @@
         <mkdir dir="${solr.home}/lib" />
     </target>
 
-    <!-- Solr 4.10 gazetteer ingest. To use this, additional JARs supporting the 
+    <!-- @ Deprecated : index-gazetteer not supported.
+         Solr 4.10 gazetteer ingest. To use this, additional JARs supporting the 
         /addGazetteer endpoint are required under ./solr4/lib; -->
     <target name="index-gazetteer">
         <available property="csvFile.exists" file="${gazetteer.data.file}" />
@@ -102,8 +103,8 @@
             dest="${solr.runtime.log}/gazetteer-update-response.xml" />
     </target>
 
-    <!-- Using a traditional SolrJ client approach; URP using /update/csv variation 
-        fails in Solr 6.6 although worked great in Solr 4.10 -->
+    <!-- Using a traditional SolrJ client approach; 
+         * URP using /update/csv variation fails in Solr 6.6 although worked great in Solr 4.10 -->
     <target name="index-gazetteer-solrj">
         <echo>Need to fully build project ahead of this to populate items in
             CLASSPATH</echo>
@@ -115,8 +116,7 @@
             <arg value="-u" />
             <arg value="http://localhost:7000/solr/gazetteer" />
             <arg value="-s" />
-            <arg
-                value="id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,script,name_bias,id_bias,name_type,,SplitCategory,search_only" />
+            <arg value="id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,script,name_bias,id_bias,name_type,,SplitCategory,search_only" />
             <arg value="-f" />
             <arg value="${gazetteer.data.file}" />
         </java>

@@ -138,7 +138,7 @@ if [ $do_start -eq 1 ]; then
   fi
 
   echo "Starting Solr $SERVER"
-  echo "Wait for Solr 6.x to load"
+  echo "Wait for Solr 7.x to load"
   ./mysolr.sh stop $SOLR_PORT
   ./mysolr.sh start $SOLR_PORT
   sleep 2
