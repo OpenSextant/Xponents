@@ -47,6 +47,10 @@ public class TestGazMatcher {
     }
 
     public static void summarizeFindings(List<TextMatch> matches) {
+        if (matches == null) {
+            print(" *** NULL MATCHES ***");
+            return;
+        }
         Set<String> placeNames = new TreeSet<>();
         Set<String> countryNames = new TreeSet<>();
         Set<String> coordinates = new TreeSet<>();
