@@ -1111,6 +1111,7 @@ sprint,noun.sport
 sports,noun.sport
 cricket,noun.sport
 tycoon,person.label
+missionary,person.label
 marshal,person.label
 comrade,person.label
 foreman,person.label
@@ -1184,7 +1185,9 @@ sisters,person.label
 cousin,person.label
 child,person.label
 son,person.label
+sons,person.label
 daughter,person.label
+daughters,person.label
 king,person.label
 queen,person.label
 prince,person.label
@@ -1396,10 +1399,12 @@ po1,person.label.rank
 cpo,person.label.rank
 a1c,person.label.rank
 goto,phrase
+a pool,phrase
 start point,phrase
 end point,phrase
 ps,phrase
 eek,phrase
+as a,phrase
 end of the road,phrase
 up and down,phrase
 up-to-date,phrase
@@ -1479,6 +1484,7 @@ olive branch,phrase
 rendezvous point,phrase
 good point,phrase
 main point,phrase
+focal point,phrase
 one point,phrase
 zero point,phrase
 final point,phrase
@@ -1783,6 +1789,7 @@ boulevard,place.civil
 capitol,place.civil
 country,place.general
 reef,place.general
+well,place.general
 desert,place.general
 land,place.general
 island,place.general
