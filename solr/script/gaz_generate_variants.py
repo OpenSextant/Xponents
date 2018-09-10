@@ -229,5 +229,5 @@ if __name__ == "__main__":
     basepath = args.output.replace('.json', '')
 
     generate_GENERAL_variants(solrGaz, basepath)
-    #generate_SAINT_variants(solrGaz, basepath)
+    generate_SAINT_variants(solrGaz, basepath)
 

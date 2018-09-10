@@ -18,6 +18,7 @@
     <property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip" />
     <property name="jrc.data" value="${basedir}/etc/taxcat/data"/>
     <property name="gaz.data" value="${basedir}/etc/gazetteer/"/>
+    <property name="gaz.conf" value="${solr.home}/gazetteer/conf"/>
 
     <path id="runtime.classpath">
         <pathelement location="${basedir}/../lib/*" />
@@ -53,10 +54,39 @@
            <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.female.first"/>
            <url url="https://www2.census.gov/topics/genealogy/2010surnames/names.zip"/>
         </get>
-        <unzip dest="${gaz.data}/filters/census" src="${gaz.data}/filters/census/names.zip" />
+        <unzip dest="${gaz.data}/filters/census" src="${gaz.data}/filters/census/names.zip" />        
     </target>
+	
+	<!-- Big list of Stopwords -->
+	<target name="gaz-stopwords">
+		<get dest="${gaz.conf}/lang/stopwords_tl.txt" >
+			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-tl/master/stopwords-tl.txt"/>
+		</get>
+		<get dest="${gaz.conf}/lang/stopwords_ur.txt">
+			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ur/master/stopwords-ur.txt" />
+		</get>
+		<get dest="${gaz.conf}/lang/stopwords_ko.txt">
+			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ko/master/stopwords-ko.txt" />
+		</get>
+		<get dest="${gaz.conf}/lang/stopwords_zh.txt">
+			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-zh/master/stopwords-zh.txt" />
+		</get>
+		<get dest="${gaz.conf}/lang/stopwords_ja.txt">
+			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ja/master/stopwords-ja.txt" />
+		</get>
+		<get dest="${gaz.conf}/lang/stopwords_vi.txt">
+			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-vi/master/stopwords-vi.txt" />
+		</get>
+		
+		<!--  Possibility of using stopword sets from Carrot2 
+		<copy file="${carrot.workspace}/stopwords.ja" tofile="${gaz.conf}/lang/stopwords_ja.txt" /> 
+		<copy file="${carrot.workspace}/stopwords.ko" tofile="${gaz.conf}/lang/carrot2-stopwords.ko" /> 
+		<copy file="${carrot.workspace}/stopwords.zh_cn" tofile="${gaz.conf}/lang/carrot2-stopwords.zh" />
+		--> 
+		  			
+	</target>
 
-    <target name="gaz-meta">
+    <target name="gaz-meta" depends="gaz-stopwords">
         <!-- depends="stopwords" -->
         <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
             <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**" />

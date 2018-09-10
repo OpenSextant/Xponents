@@ -302,7 +302,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @since 2.7.11
      * @throws ExtractionException on err
      * 
+     * @deprecated Use tagText(TextInput) with a language ID set on argument.
      */
+    @Deprecated
     public List<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
         TextInput in = new TextInput(docid, buffer);
         return tagText(in, false, CJK_TAG_FIELD, "cjk");
@@ -316,16 +318,29 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @since 2.7.11
      * @return list of place candidates
      * @throws ExtractionException on err
+     * @deprecated Use tagText(TextInput) with a language ID set on argument.
      */
+    @Deprecated
     public List<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
         TextInput in = new TextInput(docid, buffer);
 
         return tagText(in, false, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
+    /**
+     * 
+     * @param buffer
+     * @param docid
+     * @param tagOnly
+     * @return
+     * @throws ExtractionException
+     * @deprecated Use tagText(TextInput) with a language ID set on argument.
+     */
+    @Deprecated
     public List<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
         TextInput in = new TextInput(docid, buffer);
-        return tagText(in, tagOnly, AR_TAG_FIELD, TextUtils.arabicLang);
+        in.langid = TextUtils.arabicLang;
+        return tagText(in, tagOnly);
     }
 
     /** Most languages */
@@ -337,7 +352,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public static final String CJK_TAG_FIELD = "name_tag_cjk";
 
     /**
-     * Use Solr param 'field = name_tag_ar for Arabic.
+     * Use Solr param 'field = name_tag_ar for Arabic. TODO: Generalize this or expand so Farsi and Urdu are managed separately.
      */
     public static final String AR_TAG_FIELD = "name_tag_ar";
 
@@ -352,6 +367,20 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return tagText(in, tagOnly, fld, null);
     }
 
+    protected static final HashMap<String,String> lang2nameField = new HashMap<>();
+    static {
+        /* Asian scripts Chinese, Japanese, Korean */
+        lang2nameField.put("zh", CJK_TAG_FIELD);
+        lang2nameField.put("zt", CJK_TAG_FIELD);
+        lang2nameField.put("ja", CJK_TAG_FIELD);
+        lang2nameField.put("ko", CJK_TAG_FIELD);
+
+        /* Mid-East scripts: Arabic, Farsi, Urdu */
+        lang2nameField.put("ar", AR_TAG_FIELD);
+        lang2nameField.put("fa", AR_TAG_FIELD);
+        lang2nameField.put("ur", AR_TAG_FIELD);
+    }
+    
     /**
      * More convenient way of passing input args, using tuple TextInput (buffer,
      * docid, langid)
@@ -363,10 +392,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public List<PlaceCandidate> tagText(TextInput t, boolean tagOnly) throws ExtractionException {
         String fld = DEFAULT_TAG_FIELD;
         if (t.langid != null) {
-            if (TextUtils.isCJK(t.langid)) {
-                fld = CJK_TAG_FIELD;
-            } else if (t.langid.equals(TextUtils.arabicLang)) {
-                fld = AR_TAG_FIELD;
+            String testField = lang2nameField.get(t.langid);
+            if (testField != null) {
+                fld  = testField;
             }
         }
         return tagText(t, tagOnly, fld, t.langid);

@@ -73,24 +73,20 @@ public class TagFilter extends MatchFilter {
          * Whereas other languages (es, it, etc.) are provided in format='snowball'
          * StopFilterFactory is needed to load snowball filters.
          */
-        String[] langSet = { "ja", "th", "tr", "id", "ar", "ru", "it", "pt", "de", "nl", "es", "en"}; 
+        String[] langSet = { "ja", "th", "tr", "id", "ar", "fa", "ur", "ru", "it", "pt", "de", "nl", "es", "en", "tl",
+                "ko", "vi" };
         loadLanguageStopwords(langSet);
     }
 
-    /**
-     * Load default Lucene stop words to aid in language specific filtration.
-     * @param langids
-     * @throws IOException
-     * @throws ConfigException
-     */
-    private void loadLanguageStopwords(String[] langids) throws IOException, ConfigException {
-        for (String lg : langids) {
-            langStopFilters.put(lg, LuceneStopwords.getStopwords(new ClasspathResourceLoader(TagFilter.class), lg));
-        }
+    private boolean loadCustomStops = false;
 
+    private void loadCustomStopwords() throws IOException {
+        if (!loadCustomStops) {
+            return;
+        }
         /*
-         * More optional lists.
-         */
+        * More optional lists.
+        */
         // KOREAN
         String url = "/lang/carrot2-stopwords.ko";
         String lg = "ko";
@@ -114,6 +110,21 @@ public class TagFilter extends MatchFilter {
             loadStopSet(obj, lg);
         }
 
+    }
+
+    /**
+     * Load default Lucene stop words to aid in language specific filtration.
+     * @param langids
+     * @throws IOException
+     * @throws ConfigException
+     */
+    private void loadLanguageStopwords(String[] langids) throws IOException, ConfigException {
+        for (String lg : langids) {
+            langStopFilters.put(lg, LuceneStopwords.getStopwords(new ClasspathResourceLoader(TagFilter.class), lg));
+        }
+
+        // Temporarily discontinued:
+        loadCustomStopwords();
     }
 
     private void loadStopSet(URL url, String langid) throws IOException, ConfigException {
