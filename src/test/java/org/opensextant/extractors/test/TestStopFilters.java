@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
 import org.opensextant.ConfigException;
 import org.opensextant.extractors.geo.TagFilter;
 import org.opensextant.util.FileUtility;
