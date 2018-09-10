@@ -200,6 +200,9 @@ public class XponentTextGeotagger extends XponentGeocoder {
          */
         List<TextMatch> matches = tagger.extract(data);
 
+        if (matches == null) {
+            return null;
+        }
         if (matches.isEmpty()) {
             return null;
         }

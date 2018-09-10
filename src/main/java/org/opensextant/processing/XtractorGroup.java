@@ -110,7 +110,7 @@ public class XtractorGroup {
         for (Extractor x : extractors) {
             try {
                 List<TextMatch> results = x.extract(input);                
-                if (results != null && !results.isEmpty()) {
+                if (results != null) {
                     oneResultSet.addAll(results);
                 }
             } catch (ExtractionException loopErr) {

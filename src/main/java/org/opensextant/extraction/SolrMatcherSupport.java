@@ -149,7 +149,7 @@ public abstract class SolrMatcherSupport implements Closeable {
      * @return solr response
      * @throws ExtractionException tagger error
      */
-    protected QueryResponse tagTextCallSolrTagger(String buffer, String docid, final Map<Integer, Object> refDataMap)
+    protected QueryResponse tagTextCallSolrTagger(String buffer, String docid, final Map<Object, Object> refDataMap)
             throws ExtractionException {
         SolrTaggerRequest tagRequest = new SolrTaggerRequest(getMatcherParameters(), buffer);
         tagRequest.setPath(requestHandler);
@@ -166,13 +166,12 @@ public abstract class SolrMatcherSupport implements Closeable {
             // expense of putting ids into memory.
             @Override
             public void streamSolrDocument(final SolrDocument solrDoc) {
-                int id = SolrUtil.getInteger(solrDoc, "id");
+                String id = SolrUtil.getString(solrDoc, "id");
                 // create a domain object for the given tag;
-                // this callback handler caches such domain obj in simple k/v
-                // map.
+                // this callback handler caches such domain obj in simple k/v  map.
                 Object domainObj = createTag(solrDoc);
                 if (domainObj != null) {
-                    refDataMap.put(new Integer(id), domainObj);
+                    refDataMap.put(id, domainObj);
                 }
             }
         });

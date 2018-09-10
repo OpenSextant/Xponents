@@ -267,7 +267,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Light-weight usage: text in, matches out. Behaviors: ACRONYMS matching
      * lower case terms will automatically be omitted from results.
-     *
+     *@return Null if nothing found, otherwise a list of TextMatch objects
      */
     @Override
     public List<TextMatch> extract(String input_buf) throws ExtractionException {
@@ -280,19 +280,20 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      *
      * @param id doc id
      * @param buf input text
-     * @return list of matches
+     * @return list of matches or Null
      * @throws ExtractionException
      */
     private List<TextMatch> extractorImpl(String id, String buf) throws ExtractionException {
-        List<TextMatch> matches = new ArrayList<TextMatch>();
         String docid = (id != null ? id : NO_DOC_ID);
 
-        Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
+        Map<Object, Object> beanMap = new HashMap<Object, Object>(100);
         QueryResponse response = tagTextCallSolrTagger(buf, docid, beanMap);
         /* Exit early if catalog or taxon filters yield no entries */
         if (beanMap.isEmpty()) {
-            return matches;
+            return null;
         }
+
+        List<TextMatch> matches = new ArrayList<TextMatch>();
 
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
@@ -331,10 +332,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
             m.setText(buf.substring(m.start, m.end));
             m.setFilteredOut(ruleFilter.filterOut(m.getText()));
 
-            @SuppressWarnings("unchecked")
-            List<Integer> taxonIDs = (List<Integer>) tag.get("ids");
+            List<?> taxonIDs = tag.getAll("ids");
+            //NamedList taxonIDs2 =  tag.get("ids");
 
-            for (Integer solrId : taxonIDs) {
+            for (Object solrId : taxonIDs) {
                 Object refData = beanMap.get(solrId);
                 if (refData == null) {
                     continue;

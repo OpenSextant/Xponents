@@ -24,15 +24,11 @@ import java.util.zip.GZIPInputStream;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.Language;
-import org.opensextant.data.Place;
 import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.data.social.TweetUtility;
 import org.opensextant.extraction.ExtractionException;
-import org.opensextant.extraction.TextMatch;
-import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.langid.LangDetect;
-import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.output.Transforms;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.TextUtils;

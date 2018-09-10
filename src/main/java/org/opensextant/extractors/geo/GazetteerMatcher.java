@@ -93,7 +93,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private long matchedTotal = 0;
     private boolean allowLowercaseAbbrev = false;
     private static final int AVERAGE_ABBREV_LEN = 6;
-    
+
     /*
      * enable trure for data such as tweets, blogs, etc. where case varies or
      * does not exist
@@ -158,7 +158,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         // we've got the input doc as a string instead; matchText=false means
         // the tagger will not report the text, just span offsets.
-        params.set("matchText", false);
+        // params.set("matchText", true);
 
         /*
          * Possible overlaps: ALL, NO_SUB, LONGEST_DOMINANT_RIGHT See Solr Text
@@ -304,7 +304,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * 
      */
     public List<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
-        TextInput in = new TextInput(docid, buffer);        
+        TextInput in = new TextInput(docid, buffer);
         return tagText(in, false, CJK_TAG_FIELD, "cjk");
     }
 
@@ -319,12 +319,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      */
     public List<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
         TextInput in = new TextInput(docid, buffer);
-        
+
         return tagText(in, false, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
     public List<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
-        TextInput in = new TextInput(docid, buffer);        
+        TextInput in = new TextInput(docid, buffer);
         return tagText(in, tagOnly, AR_TAG_FIELD, TextUtils.arabicLang);
     }
 
@@ -408,14 +408,18 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
+        params.set("field", fld);
+        Map<Object, Object> beanMap = new HashMap<Object, Object>(100);
+        QueryResponse response = tagTextCallSolrTagger(buffer, input.id, beanMap);
+        if (beanMap.isEmpty()) {
+            // Nothing found.
+            return null;
+        }
+
         int[] textMetrics = TextUtils.measureCase(buffer);
         input.isUpper = TextUtils.isUpperCaseDocument(textMetrics);
         input.isLower = TextUtils.isLowerCaseDocument(textMetrics);
-
-        params.set("field", fld);
-        Map<Integer, Object> beanMap = new HashMap<Integer, Object>(100);
-        QueryResponse response = tagTextCallSolrTagger(buffer, input.id, beanMap);
-
+        
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
 
@@ -570,15 +574,15 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             pc.setSurroundingTokens(buffer);
 
             @SuppressWarnings("unchecked")
-            List<Integer> placeRecordIds = (List<Integer>) tag.get("ids");
+            List<Object> placeRecordIds = (List<Object>) tag.get("ids");
             namesMatched.clear();
             //double maxNameBias = 0.0;
-            for (Integer solrId : placeRecordIds) {
-                log.debug("{} = {}", pc.getText(), beanMap.get(solrId));
+            for (Object solrId : placeRecordIds) {
                 // Yes, we must cast here.
                 // As long as createTag generates the correct type stored in
                 // beanMap we are fine.
                 ScoredPlace pGeo = (ScoredPlace) beanMap.get(solrId);
+                log.debug("{} = {}", pc.getText(), pGeo);
                 // assert pGeo != null;
 
                 // Optimization: abbreviation filter.
@@ -592,7 +596,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 // Common terms: in, or, oh, me, us, we, etc. Are all not
                 // typically place names or valid abbreviations in text.
                 //
-                if (pGeo.isAbbreviation() && len<AVERAGE_ABBREV_LEN) {
+                if (pGeo.isAbbreviation() && len < AVERAGE_ABBREV_LEN) {
                     // If this is an abbreviation, then allow it only if we match uppercase
                     if (!allowLowercaseAbbrev && pc.isLower()) {
                         log.debug("Ignore lower case term={}", pc.getText());
@@ -658,7 +662,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         } // for tag
         long t3 = System.currentTimeMillis();
 
-        // this.tagNamesTime = (int)(t1 - t0);
         this.getNamesTime = (int) (t2 - t1);
         this.totalTime = (int) (t3 - t0);
 
@@ -818,8 +821,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 continue;
             }
         }
-        log.debug("Countries found:" + countries.toString());
-        log.debug("Places found:" + places.toString());
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Countries found: {}", countries.toString());
+            log.debug("Places found: {}", places.toString());
+        }
     }
 
     /**

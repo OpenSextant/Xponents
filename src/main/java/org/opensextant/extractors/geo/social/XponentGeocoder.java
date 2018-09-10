@@ -1,5 +1,8 @@
 package org.opensextant.extractors.geo.social;
 
+import static org.opensextant.util.GeodeticUtility.getFeaturePrecision;
+import static org.opensextant.util.GeodeticUtility.isCoord;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,8 +33,6 @@ import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xcoord.XConstants;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.processing.Parameters;
-import static org.opensextant.util.GeodeticUtility.getFeaturePrecision;
-import static org.opensextant.util.GeodeticUtility.isCoord;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 
@@ -301,30 +302,32 @@ public class XponentGeocoder extends GeoInferencer {
         // RESET?
         if (tw.timezone != null) {
             List<TextMatch> entities = tagger.extract(tw.timezone);
-            Place chosen = null;
-            int conf = -1;
-            for (TextMatch e : entities) {
-                if (e.isFilteredOut()) {
-                    continue;
-                }
-                if (!(e instanceof PlaceCandidate)) {
-                    continue;
-                }
-                // Expecting exactly one choice.
-                // Break out of loop after getting a non-null choice.
-                PlaceCandidate chooser = (PlaceCandidate) e;
-                Place geo = chooser.getChosen();
-                if (geo != null) {
-                    chosen = geo;
-                    conf = chosen.isCountry() ? DEFAULT_COUNTRY_CONF : chooser.getConfidence();
-                    if (chosen.isCountry()) {
-                        g.setMethod("geotag/tz/country");
-                    } else {
-                        g.setMethod("geotag/tz");
+            if (entities != null) {
+                Place chosen = null;
+                int conf = -1;
+                for (TextMatch e : entities) {
+                    if (e.isFilteredOut()) {
+                        continue;
                     }
-                    geocode(g, chosen);
-                    return conf;
-                    // NOTE: Accept only first match for Timezone
+                    if (!(e instanceof PlaceCandidate)) {
+                        continue;
+                    }
+                    // Expecting exactly one choice.
+                    // Break out of loop after getting a non-null choice.
+                    PlaceCandidate chooser = (PlaceCandidate) e;
+                    Place geo = chooser.getChosen();
+                    if (geo != null) {
+                        chosen = geo;
+                        conf = chosen.isCountry() ? DEFAULT_COUNTRY_CONF : chooser.getConfidence();
+                        if (chosen.isCountry()) {
+                            g.setMethod("geotag/tz/country");
+                        } else {
+                            g.setMethod("geotag/tz");
+                        }
+                        geocode(g, chosen);
+                        return conf;
+                        // NOTE: Accept only first match for Timezone
+                    }
                 }
             }
         }
@@ -732,28 +735,31 @@ public class XponentGeocoder extends GeoInferencer {
          */
         try {
             entities = tagger.extract(lastTry);
-            for (TextMatch e : entities) {
-                if (e.isFilteredOut()) {
-                    continue;
-                }
-                if (!(e instanceof PlaceCandidate)) {
-                    continue;
-                }
-                PlaceCandidate chooser = (PlaceCandidate) e;
+            if (entities != null) {
+                for (TextMatch e : entities) {
 
-                if (chosen != null) {
-                    log.debug("Ignored 2nd place in free text:{}@{}", e.getText(), chooser.getChosen());
-                    continue;
-                }
+                    if (e.isFilteredOut()) {
+                        continue;
+                    }
+                    if (!(e instanceof PlaceCandidate)) {
+                        continue;
+                    }
+                    PlaceCandidate chooser = (PlaceCandidate) e;
 
-                ScoredPlace geo = chooser.getChosen();
-                if (geo != null) {
-                    chosen = geo;
-                    conf = chosen.isCountry() ? DEFAULT_COUNTRY_CONF : chooser.getConfidence();
-                    g.setMethod(chosen.isCountry() ? "geotag/freetext/country" : "geotag/freetext");
+                    if (chosen != null) {
+                        log.debug("Ignored 2nd place in free text:{}@{}", e.getText(), chooser.getChosen());
+                        continue;
+                    }
+
+                    ScoredPlace geo = chooser.getChosen();
+                    if (geo != null) {
+                        chosen = geo;
+                        conf = chosen.isCountry() ? DEFAULT_COUNTRY_CONF : chooser.getConfidence();
+                        g.setMethod(chosen.isCountry() ? "geotag/freetext/country" : "geotag/freetext");
+                    }
+                    // TODO: ACCEPT ALL matched place names in free-text
+                    // descriptions
                 }
-                // TODO: ACCEPT ALL matched place names in free-text
-                // descriptions
             }
         } catch (Exception err) {
             log.error(String.format("Unable to parse %s / name=%s", g, name), err);

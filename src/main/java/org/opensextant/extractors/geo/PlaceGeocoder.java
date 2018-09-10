@@ -488,6 +488,9 @@ public class PlaceGeocoder extends GazetteerMatcher
         if (coordinates != null) {
             matches.addAll(coordinates);
         }
+        if (candidates==null) {
+            return matches;
+        }
 
         /*
          * 3.RULE EVALUATION: accumulate all the evidence from everything found so far.
@@ -559,7 +562,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         List<TextMatch> nonPlaces = null;
         try {
             nonPlaces = personMatcher.extract(input.buffer);
-            if (nonPlaces.isEmpty()) {
+            if (nonPlaces == null || nonPlaces.isEmpty()) {
                 return;
             }
         } catch (Exception err) {
