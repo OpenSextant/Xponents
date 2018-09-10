@@ -30,5 +30,6 @@
     </logger>
     <logger name="org.opensextant.extractors.geo.GazetteerMatcher" level="debug">
     </logger>
-
+    <logger name="org.opensextant.extractors.geo.GazetteerIndexer" level="info">
+    </logger>
 </configuration>
