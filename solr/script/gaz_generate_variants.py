@@ -36,24 +36,22 @@ general_repl = {
 splitter = re.compile(u"[-.`'\u2019\s]+", re.UNICODE|re.IGNORECASE)
 
 debug = False
-first = True
-def save_result(pl, nameVar, out):
-    global first
-    # print "\tADD", n, "=>", nVar
-    if first:
-        out.write('[')
-    else:
-        out.write(',')        
-        out.write('\n')
-        
+
+ORIGINALS_BLOCK=20000000L
+
+def _init_json(out):
+    out.write('[')
+
+def save_result(pl, nameVar, out, first=False):
+    if not first: out.write(',\n')        
     pl['name'] = nameVar
     pl['source'] = 'XpGen'
-    pl['id'] = 30000000L + long(pl['id'])
+    given_id = pl['id']
+    # NOTE: this adds the size of ID space to each new variant.
+    pl['id'] = str( ORIGINALS_BLOCK + long(given_id) )
+    for k in ["adm1","adm2","adm3"]:
+        if k in pl and not pl[k]: del pl[k]
     out.write(json.dumps(pl))
-    
-    if first:
-        first = False
-    
     
 def generate_GENERAL_variants(gaz, output):
     '''
@@ -66,40 +64,66 @@ def generate_GENERAL_variants(gaz, output):
     Almost as exact as SAINT replacements... 
     ''' 
     for term in general_repl:
-        results = gaz.search("name:%s* AND feat_class:(A P) AND id:[ * TO 20000000]" % (term), rows=1000000)
+        count=0
+        output_path = '{}_{}.json'.format(output, term)
+        fh = codecs.open(output_path, 'wb', encoding="utf-8")
+        _init_json(fh)
+        first = True
+
+        results = gaz.search("name:{} AND feat_class:(A P) AND id:[ * TO {}]".format(term, ORIGINALS_BLOCK), rows=500000)
         print "PREFIX", term, results.hits
         pat = u"(%s\s+)" % (term)
         regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
         repl = general_repl[term].capitalize()
-        term_ = '{} '.format(term)
+        term_ = term + u' '
         for place in results.docs:
             n = place.get('name')
             norm = n.lower()
             if norm == term:
                 # No variant. Looking for multi-word names to make variants out of.
                 continue
-            
+
+            norm2 = norm.replace("town of ", "").replace("township of ", "").replace("village of ", "")
+            norm2 = norm2.lower().strip()
+
             # Prefix pattern!
-            if not norm.startswith(term_):
+            # Village of West Bar Harbour ==> W. Bar Harbour [[ OK ]]
+            # Village of Bar Harbour au West ==>  will not prodouce a variant with West => W. abbreviated.
+            if not norm2.startswith(term_):
                 continue
 
-            if len(norm) - len(term) < 3:
+            repl_candidates = [norm]
+            if len(norm2) - len(term) > 4:
+                repl_candidates.append(norm2)
+            else:
                 # Avoid variants that produce abbreviations and are very short.
                 # "West Oz" --> "W. Oz";  "West Oz" - "West " is only 2 chars.
-                print ("Short variant avoided", norm)
-                continue
-
-            nVar = regex.sub(repl, n)
-            nVar = nVar.replace('-', ' ').strip()
-            nVar = nVar.replace('  ',' ')  
+                print ("Short variant avoided", norm2)
 
             pid = place.get('place_id')
-    
-            existing = solrGaz.search(u'place_id:%s AND name:"%s"' % (pid, nVar), rows=1)
-            if existing.hits == 0:
-                save_result(place, nVar, output)
-        
-        
+            variants = []
+
+            for nameVariant in set(repl_candidates):
+                nVar = regex.sub(repl, nameVariant)
+                nVar = nVar.replace('-', ' ').strip()
+                nVar = nVar.replace('  ',' ')
+                variants.append(nVar)
+
+            if norm != norm2:
+                variants.append(norm2)
+
+            for nameVariant in variants:
+                existing = solrGaz.search(u'place_id:%s AND name:"%s"' % (pid, nameVariant), rows=1)
+                if existing.hits == 0:
+                    count+=1
+                    save_result(place, nameVariant, fh, first=first)
+                    first=False
+
+        if count==0:
+            print ("None found")
+        fh.write(']')
+        fh.close()
+
 
 def generate_SAINT_variants(gaz, output):
     '''
@@ -111,10 +135,15 @@ def generate_SAINT_variants(gaz, output):
         Because 'San' is a typical syllable in Asian languages, we'll ignore certain countries
     
     '''
-    
+
+    output_path = '{}_{}.json'.format(output, 'SAINT')
+    fh = codecs.open(output_path, 'wb', encoding="utf-8")
+    _init_json(fh)
+    first=True
+
     ignore_countries = set("TW CN JP LA VN ML PA KR KP".split())
     for saintly in saint_repl:
-        results = gaz.search("name:%s AND id:[ * TO 20000000]" % (saintly), rows=200000)
+        results = gaz.search("name:{} AND id:[ * TO {}]".format(saintly, ORIGINALS_BLOCK), rows=500000)
         print "PREFIX", saintly, results.hits
         
         pat = u"(%s[-`'\u2019\s]+)" % (saintly)
@@ -153,7 +182,11 @@ def generate_SAINT_variants(gaz, output):
             existing = solrGaz.search(u'place_id:%s AND name:"%s"' % (pid, nVar), rows=1)
             if existing.hits == 0:
                 if debug: print n, "==>", nVar
-                save_result(place, nVar, output)
+                save_result(place, nVar, fh, first=first)
+                first=False
+
+    fh.write(']')
+    fh.close()
         
         
 def tester():
@@ -181,7 +214,7 @@ def tester():
 if __name__ == "__main__":
     
     # tester()
-    
+    import os
     import pysolr
     import codecs
     import argparse
@@ -193,11 +226,8 @@ if __name__ == "__main__":
     args = ap.parse_args()
     
     solrGaz = pysolr.Solr(args.solr)
-    added_variants = args.output
-    fh = codecs.open(added_variants, 'wb', encoding="utf-8")
+    basepath = args.output.replace('.json', '')
 
-    generate_SAINT_variants(solrGaz, fh)
-    generate_GENERAL_variants(solrGaz, fh)
+    generate_GENERAL_variants(solrGaz, basepath)
+    #generate_SAINT_variants(solrGaz, basepath)
 
-    fh.write(']')
-    fh.close()

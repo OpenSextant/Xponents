@@ -4,7 +4,8 @@
     <!-- Solr Home and Gazetteer config data sourced here: -->
     <property file="${basedir}/build.properties" />
 
-    <property name="textTagger.v" value="2.5" />
+    <!-- Legacy support for SolrTextTagger - as late as Xponents 3.0 / Solr 7.3 -->
+    <!-- <property name="textTagger.v" value="2.5" /> -->
     <property name="slf4j.v" value="1.7.25" />
     <property name="guava.v" value="14.0.1" />
     <property name="xponents.v" value="${xponents.build.v}" />
@@ -42,8 +43,7 @@
         <copy todir="${jetty.runtime.lib}" file="${maven.lib}/org/locationtech/jts/jts-core/1.15.0/jts-core-1.15.0.jar" />
         <copy todir="${jetty.runtime.lib}"
             file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar" />
-        <copy todir="${solr.home}/lib"
-            file="${maven.lib}/org/opensextant/solr-text-tagger/${textTagger.v}/solr-text-tagger-${textTagger.v}.jar" />
+        <!--  Solr 7.3 or earlier: copy Solr-Text-Tagger lib to solr.home/lib -->
     </target>
 
     <target name="get-gaz-resources">

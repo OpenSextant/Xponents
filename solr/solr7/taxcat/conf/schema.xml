@@ -30,48 +30,65 @@
 	request -->
 
 <schema name="taxcat" version="1.6">
-	<!-- attribute "name" is the name of this schema and is only used for display 
-		purposes. version="x.y" is Solr's version number for the schema syntax and 
-		semantics. It should not normally be changed by applications. 1.0: multiValued 
-		attribute did not exist, all fields are multiValued by nature 1.1: multiValued 
-		attribute introduced, false by default 1.2: omitTermFreqAndPositions attribute 
-		introduced, true by default except for text fields. 1.3: removed optional 
-		field compress feature 1.4: autoGeneratePhraseQueries attribute introduced 
-		to drive QueryParser behavior when a single string produces multiple tokens. 
-		Defaults to off for version >= 1.4 1.5: omitNorms defaults to true for primitive 
-		field types (int, float, boolean, string...) 1.6: useDocValuesAsStored defaults 
-		to true. -->
+    <!-- attribute "name" is the name of this schema and is only used for display purposes.
+       version="x.y" is Solr's version number for the schema syntax and 
+       semantics.  It should not normally be changed by applications.
 
-	<!-- Valid attributes for fields: name: mandatory - the name for the field 
-		type: mandatory - the name of a field type from the fieldTypes section indexed: 
-		true if this field should be indexed (searchable or sortable) stored: true 
-		if this field should be retrievable docValues: true if this field should 
-		have doc values. Doc values are useful (required, if you are using *Point 
-		fields) for faceting, grouping, sorting and function queries. Doc values 
-		will make the index faster to load, more NRT-friendly and more memory-efficient. 
-		They however come with some limitations: they are currently only supported 
-		by StrField, UUIDField, all Trie*Fields and *PointFields, and depending on 
-		the field type, they might require the field to be single-valued, be required 
-		or have a default value (check the documentation of the field type you're 
-		interested in for more information) multiValued: true if this field may contain 
-		multiple values per document omitNorms: (expert) set to true to omit the 
-		norms associated with this field (this disables length normalization and 
-		index-time boosting for the field, and saves some memory). Only full-text 
-		fields or fields that need an index-time boost need norms. Norms are omitted 
-		for primitive (non-analyzed) types by default. termVectors: [false] set to 
-		true to store the term vector for a given field. When using MoreLikeThis, 
-		fields used for similarity should be stored for best performance. termPositions: 
-		Store position information with the term vector. This will increase storage 
-		costs. termOffsets: Store offset information with the term vector. This will 
-		increase storage costs. required: The field is required. It will throw an 
-		error if the value does not exist default: a value that should be used if 
-		no value is specified when adding a document. -->
+       1.0: multiValued attribute did not exist, all fields are multiValued 
+            by nature
+       1.1: multiValued attribute introduced, false by default 
+       1.2: omitTermFreqAndPositions attribute introduced, true by default 
+            except for text fields.
+       1.3: removed optional field compress feature
+       1.4: autoGeneratePhraseQueries attribute introduced to drive QueryParser
+            behavior when a single string produces multiple tokens.  Defaults 
+            to off for version >= 1.4
+       1.5: omitNorms defaults to true for primitive field types 
+            (int, float, boolean, string...)
+       1.6: useDocValuesAsStored defaults to true.
+    -->
 
-	<!-- field names should consist of alphanumeric or underscore characters 
-		only and not start with a digit. This is not currently strictly enforced, 
-		but other field names will not have first class support from all components 
-		and back compatibility is not guaranteed. Names with both leading and trailing 
-		underscores (e.g. _version_) are reserved. -->
+    <!-- Valid attributes for fields:
+     name: mandatory - the name for the field
+     type: mandatory - the name of a field type from the 
+       fieldTypes section
+     indexed: true if this field should be indexed (searchable or sortable)
+     stored: true if this field should be retrievable
+     docValues: true if this field should have doc values. Doc values are
+       useful (required, if you are using *Point fields) for faceting, 
+       grouping, sorting and function queries. Doc values will make the index 
+       faster to load, more NRT-friendly and more memory-efficient. 
+       They however come with some limitations: they are currently only 
+       supported by StrField, UUIDField, all Trie*Fields and *PointFields,
+       and depending on the field type, they might require the field to be
+       single-valued, be required or have a default value (check the
+       documentation of the field type you're interested in for more information)
+     multiValued: true if this field may contain multiple values per document
+     omitNorms: (expert) set to true to omit the norms associated with
+       this field (this disables length normalization and index-time
+       boosting for the field, and saves some memory).  Only full-text
+       fields or fields that need an index-time boost need norms.
+       Norms are omitted for primitive (non-analyzed) types by default.
+     termVectors: [false] set to true to store the term vector for a
+       given field.
+       When using MoreLikeThis, fields used for similarity should be
+       stored for best performance.
+     termPositions: Store position information with the term vector.  
+       This will increase storage costs.
+     termOffsets: Store offset information with the term vector. This 
+       will increase storage costs.
+     required: The field is required.  It will throw an error if the
+       value does not exist
+     default: a value that should be used if no value is specified
+       when adding a document.
+    -->
+
+    <!-- field names should consist of alphanumeric or underscore characters only and
+      not start with a digit.  This is not currently strictly enforced,
+      but other field names will not have first class support from all components
+      and back compatibility is not guaranteed.  Names with both leading and
+      trailing underscores (e.g. _version_) are reserved.
+    -->
 
 	<!-- // =================================================== 
         Generic Taxonomy tagger 
@@ -96,7 +113,7 @@
           See SolrTextTagger examples where id here is a String - this likely increases FST memory used at runtime.
           <fieldType name="int" class="solr.TrieIntField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
      -->
-        <field name="id" type="string" docValues="true" required="true" />
+    <field name="id" type="string" docValues="true" required="true" />
 	<field name="_version_" type="plong" required="false" stored="true" indexed="true" />
 
 	<!-- Callers name what catalog is used to tag data, e.g., 'events' -->
