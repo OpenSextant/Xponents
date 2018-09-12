@@ -10,7 +10,7 @@
     <properties>
         <restlet.version>2.3.12</restlet.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <xponents.v>3.0.2</xponents.v>
+        <xponents.v>3.0.3</xponents.v>
     </properties>
     <dependencies>
         <dependency>
