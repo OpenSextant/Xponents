@@ -414,7 +414,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @param tagOnly True if you wish to get the matched phrases only. False if
      *            you want the full list of Place Candidates.
      * @param fld gazetteer field to use for tagging
-     * @param langid ISO lang ID
      * @return place_candidates List of place candidates
      * @throws ExtractionException on err
      */
