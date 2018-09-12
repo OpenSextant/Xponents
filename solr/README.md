@@ -170,12 +170,11 @@ To get a fully working Solr instance running unpack the full Solr 7.x distributi
 This involves some extra steps, but is relatively well tested.
 
 ```
-    wget http://archive.apache.org/dist/lucene/solr/7.3.1/solr-7.3.1.zip
-    unzip solr-7.3.1.zip
-    mv ./solr-7.3.1  ./solr7-dist
+    wget http://archive.apache.org/dist/lucene/solr/7.4.0/solr-7.4.0.zip
+    unzip solr-7.4.0.zip
+    mv ./solr-7.4.0  ./solr7-dist
 
     # We could automate this sure. But you need only do it once and hopefully is not repetitive.
-    # Solr 7.4 not yet tested.
 ```
 
 

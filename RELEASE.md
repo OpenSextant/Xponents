@@ -1,6 +1,16 @@
 # 2018 #
 
+Xponents 3.0.3 Day of Rememberance (9/11)
+
+* Account for all decent stop word lists (see genediazjr "stopwords-iso" project); Stopwords for Tagalog, Urdu, Farsi, Chinese, Korean, etc, contributed there.
+  These lists just make output less noisy when the language of text is known.
+* More LanguageID-driven tests added for PlaceGeocoder
+* NAME, CODE patterns teased apart
+* Solr 7.4+ is required now; SolrTextTagger miraculously is embedded in Solr, so less has to be done externally to configure it all.
+* Solr 7.4: removed deprecated Solr request optimizations, and other deprecated SolrJ usage.
+
 Xponents 3.0 Fourth of July
+
 * Refactor: all major libraries converged into one project: Basic, Patterns, Xponents are now just "Xponents"
 * Refactor: XText is moved up to its own top level OpenSextant project
 * Feature: Tweet geocoding was moved from Examples to a formal part of Xponents `org.opensextant.data.social` and ` org.opensextant.extractors.geo.social` represent the core functionality.
