@@ -54,6 +54,12 @@ public class TextEntity {
      * char offset of entity; location in document where entity ends.
      */
     public int end = -1;
+    
+    /** char immediately after span*/
+    public char postChar=0;
+    
+    /** char immediately before span*/
+    public char preChar=0;
 
     // Use this
     private String context = null;

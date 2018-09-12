@@ -46,6 +46,21 @@ public class TestGazMatcher {
         System.out.println("Name:" + match.getText());
     }
 
+    public static void summarizeFindings(List<TextMatch> matches, int expected) {
+        if (matches == null) {
+            print(" *** NULL MATCHES ***");
+            return;
+        }
+        int count = 0;
+        for (TextMatch m : matches) {
+            count += (m.isFilteredOut() ? 0 : 1);
+        }
+        if (count != expected) {
+            print(" *** MISMATCH COUNT Expected=" + expected + " ***");
+        }
+        summarizeFindings(matches);
+    }
+
     public static void summarizeFindings(List<TextMatch> matches) {
         if (matches == null) {
             print(" *** NULL MATCHES ***");
@@ -69,8 +84,7 @@ public class TestGazMatcher {
                 if (p.isCountry) {
                     countryNames.add(p.getText());
                 } else if (p.getChosen() != null) {
-                    print(String.format("\tgeocoded @ %s with conf=%d", p.getChosen(),
-                            p.getConfidence()));
+                    print(String.format("\tgeocoded @ %s with conf=%d", p.getChosen(), p.getConfidence()));
                     ScoredPlace alt = p.getSecondChoice();
                     if (alt != null) {
                         print(String.format("\tgeocoded @ %s second place", alt));

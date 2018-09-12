@@ -307,7 +307,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     @Deprecated
     public List<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
         TextInput in = new TextInput(docid, buffer);
-        return tagText(in, false, CJK_TAG_FIELD, "cjk");
+        // May not actually be true, but this is not necessary.
+        // Best if caller names language explicitly.
+        in.langid=TextUtils.chineseLang;
+        return tagText(in, false, CJK_TAG_FIELD);
     }
 
     /**
@@ -323,8 +326,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     @Deprecated
     public List<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
         TextInput in = new TextInput(docid, buffer);
+        in.langid = TextUtils.arabicLang;
 
-        return tagText(in, false, AR_TAG_FIELD, TextUtils.arabicLang);
+        return tagText(in, false, AR_TAG_FIELD);
     }
 
     /**
@@ -358,13 +362,13 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
     public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
         TextInput in = new TextInput(docid, buffer);
-        return tagText(in, tagOnly, DEFAULT_TAG_FIELD, null);
+        return tagText(in, tagOnly, DEFAULT_TAG_FIELD);
     }
 
     public List<PlaceCandidate> tagText(String buffer, String docid, boolean tagOnly, String fld)
             throws ExtractionException {
         TextInput in = new TextInput(docid, buffer);
-        return tagText(in, tagOnly, fld, null);
+        return tagText(in, tagOnly, fld);
     }
 
     protected static final HashMap<String,String> lang2nameField = new HashMap<>();
@@ -397,7 +401,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 fld  = testField;
             }
         }
-        return tagText(t, tagOnly, fld, t.langid);
+        return tagText(t, tagOnly, fld);
     }
 
     /**
@@ -414,7 +418,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @return place_candidates List of place candidates
      * @throws ExtractionException on err
      */
-    public List<PlaceCandidate> tagText(TextInput input, boolean tagOnly, String fld, String langid)
+    public List<PlaceCandidate> tagText(TextInput input, boolean tagOnly, String fld)
             throws ExtractionException {
         // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
         // "startOffset":38},
@@ -574,9 +578,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * TagFilter here checks only languages other than English, Spanish
              * and Vietnamese.
              */
-            if (filter.filterOut(pc, langid, input.isUpper, input.isLower)) {
+            if (filter.filterOut(pc, input.langid, input.isUpper, input.isLower)) {
                 ++this.defaultFilterCount;
-                log.debug("STOPWORD {} {}", langid, pc.getText());
+                log.debug("STOPWORD {} {}", input.langid, pc.getText());
                 continue;
             }
             /*

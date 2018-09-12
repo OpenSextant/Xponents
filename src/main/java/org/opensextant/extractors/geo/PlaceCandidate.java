@@ -182,6 +182,13 @@ public class PlaceCandidate extends TextMatch {
          */
         setPrematchTokens(TextUtils.tokensRight(sourceBuffer.substring(window[0], window[1])));
         setPostmatchTokens(TextUtils.tokensLeft(sourceBuffer.substring(window[2], window[3])));
+        
+        if (window[1]!=0) {
+            preChar=sourceBuffer.charAt(window[1]); /* offset greater than 0 */
+        }
+        if (window[2]!=sourceBuffer.length()) {
+            preChar=sourceBuffer.charAt(window[2]);/* offset less than doc end */
+        }
     }
 
     /**

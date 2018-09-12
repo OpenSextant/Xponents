@@ -311,17 +311,14 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         for (NamedList<?> tag : tags) {
             m = new TaxonMatch();
             m.start = ((Integer) tag.get("startOffset")).intValue();
-            m.end = ((Integer) tag.get("endOffset")).intValue();// +1 char after
-                                                                // last matched
-                                                                // m.pattern_id
-                                                                // = "taxtag";
+            m.end = ((Integer) tag.get("endOffset")).intValue();
+            // +1 char after last matched m.pattern_id = "taxtag";
             ++tag_count;
             m.match_id = id_prefix + tag_count;
-            // m.setText((String) tag.get("matchText")); // Not reliable.
+
             // matchText can be null.
             if (TextUtils.countFormattingSpace(buf.substring(m.start, m.end)) > 1) {
-                // Phrases with words broken across more than one line are not
-                // valid matches.
+                // Phrases with words broken across more than one line are not valid matches.
                 // Phrase with a single TAB is okay
                 continue;
             }
@@ -332,9 +329,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
             m.setText(buf.substring(m.start, m.end));
             m.setFilteredOut(ruleFilter.filterOut(m.getText()));
 
-            List<?> taxonIDs = tag.getAll("ids");
-            //NamedList taxonIDs2 =  tag.get("ids");
-
+            List<?> taxonIDs = (List<?>) tag.get("ids");
             for (Object solrId : taxonIDs) {
                 Object refData = beanMap.get(solrId);
                 if (refData == null) {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.opensextant.ConfigException;
+import org.opensextant.data.Language;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.langid.LangDetect;
@@ -54,7 +55,8 @@ public class TestPlaceGeocoderLanguages extends TestPlaceGeocoder {
                 "ハイチ系米国人の父と北海道生まれの日本人の母を持ち、３歳で大阪から米国に移住してテニスに打ち込み、日本語より英語をうまく話すのに日本代表としてプレーしている。オンとオフの内面的なギャップだけでなく、文化的背景のギャップ、複雑さも大坂にはある. "
                 };
 
-        LangDetect langid = new LangDetect();
+        int textSize = 50; 
+        LangDetect langid = new LangDetect(textSize);
 
         try {
             for (String t : textsMiddleEastScripts) {
@@ -78,7 +80,9 @@ public class TestPlaceGeocoderLanguages extends TestPlaceGeocoder {
                 print("%%%%%%%%%%%  %%%%%%%%%%%%%   %%%%%%%%%%%  %%%%%%%%%");
                 print("TEST:\t" + t + "\n=====================");
                 TextInput i = new TextInput("test", t);
-                String languageID = langid.detect(t);
+                String languageID = null; /*langid.detect(t); */ 
+                Language L = langid.detectSocialMediaLang(null, t, true);
+                languageID = L.getCode();
                 i.langid = languageID;
                 print("\tDetected language " + TextUtils.getLanguage(languageID).getName());
                 List<TextMatch> matches = geocoder.extract(i);

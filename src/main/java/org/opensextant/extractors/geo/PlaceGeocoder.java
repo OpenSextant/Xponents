@@ -469,15 +469,6 @@ public class PlaceGeocoder extends GazetteerMatcher
         // 0. GEOTAG raw text. Flag tag-only = false, in otherwords do extra work for geocoding.
         //
         List<PlaceCandidate> candidates = tagText(input, tagOnly);
-        /*if (input.langid == null) {
-            candidates = tagText(input.buffer, input.id, tagOnly);
-        } else if (TextUtils.arabicLang.equals(input.langid)) {
-            candidates = this.tagArabicText(input.buffer, input.id, tagOnly);
-        } else {
-            // Default - unknown language.
-            log.debug("Default Language {}. Treating as Generic.", input.langid);
-            candidates = tagText(input, tagOnly);
-        }*/
 
         // 1. COORDINATES. If caller thinks their data may have coordinates, then attempt to parse
         // lat/lon.  Any coordinates found fire rules for resolve lat/lon to a Province/Country if possible.
