@@ -67,10 +67,11 @@ public class XlayerClient extends Application {
 
     /**
      * 
-     * @param text
-     * @return
-     * @throws IOException
-     * @throws JSONException
+     * @param docid id
+     * @param text input text
+     * @param viewFilteredOut true if user wants to print filtered out items for diagnostics.
+     * @return list of matches
+     * @throws IOException on error
      */
     public List<TextMatch> process(String docid, String text, boolean viewFilteredOut) throws IOException {
 

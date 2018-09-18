@@ -147,10 +147,10 @@ public class XponentsGeotagger extends TaggerResource {
     /**
      * Format matches as JSON
      * 
-     * @param matches
-     * @param jobParams
-     * @return
-     * @throws JSONException
+     * @param matches items to format
+     * @param jobParams parameters
+     * @return formatted json
+     * @throws JSONException on format error
      */
     private Representation format(List<TextMatch> matches, Parameters jobParams) throws JSONException {
 
@@ -162,9 +162,9 @@ public class XponentsGeotagger extends TaggerResource {
         return result;
     }
 
-    /**
-    * 
-    * @param variousMatches
+   /**
+    * @param params  parameters
+    * @param variousMatches matches to filter
     */
     public void filter(List<TextMatch> variousMatches, Parameters params) {
         // Determine what looks useful. Filter out things not worth

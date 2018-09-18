@@ -51,8 +51,6 @@ public abstract class TaggerResource extends ServerResource {
         return new JsonRepresentation(ping);
     }
 
-    /**
-     */
     protected abstract Extractor getExtractor();
 
     /**
@@ -74,8 +72,8 @@ public abstract class TaggerResource extends ServerResource {
      * // Output represents filters + format.
      * //
      * 
-     * @param inputs
-     * @return
+     * @param inputs arguments to RESTful request
+     * @return Xponents Parameters
      */
     protected Parameters fromRequest(Form inputs) {
         Parameters job = new Parameters();
@@ -103,7 +101,7 @@ public abstract class TaggerResource extends ServerResource {
 
     /**
      * Convenience helper to reset data.
-     * @param job
+     * @param job job parameters
      */
     protected void resetParameters(Parameters job) {
         job.output_coordinates = false;
@@ -123,9 +121,9 @@ public abstract class TaggerResource extends ServerResource {
 
     /**
      * 
-     * @param inputs
-     * @return
-     * @throws JSONException
+     * @param inputs the inputs
+     * @return job parameters
+     * @throws JSONException on error.
      */
     protected Parameters fromRequest(JSONObject inputs) throws JSONException {
         Parameters job = new Parameters();
@@ -184,13 +182,9 @@ public abstract class TaggerResource extends ServerResource {
     }
 
     /**
-     * Status.
-     *
-     * @param status
-     *            the status
-     * @param error
-     *            the error
-     * @return the json representation
+     * @param status status
+     * @param error error msg
+     * @return json formatted response
      */
     protected JsonRepresentation status(String status, String error) {
         JSONObject s = new JSONObject();
