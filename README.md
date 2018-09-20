@@ -9,6 +9,15 @@ Xponents is a set of information extraction libraries including:
 * Pattern-based extraction
 * Foundational data model for info extraction and text scrubbing utilities
 
+Video: Lucene/Solr Revolution 2017 Conference Talk
+---------------------------------------
+**["Discoverying World Geography in Your Data"](https://youtu.be/44v2WljG1R0?t=1805)**,
+presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
+<!-- https://www.youtube.com/watch?v=44v2WljG1R0  -->
+
+
+Development Kit Contents
+-----------------------
 The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.  This library tool chest contains the following ideas and capabilities:
 
 * **Extractors for Text:** The focus of Xponents is working with unstructured text in any language: conditioning, extracting entities, tagging, coding it.  These extractors include:
@@ -27,10 +36,6 @@ The intent of Xponents is to provide the extraction without too much infrastruct
   * `GazetteerMatcher` provides a direct API around the text tagging capability (via [SolrTextTagger](https://github.com/OpenSextant/SolrTextTagger)) beneath the SolrGazetteer.
 * **GIS Formatters:**  The immediate satisfaction of processing some challenging data and then producing a map visual from that is undeniable.  However, our GIS outputter options offer more than just the immediate map plot:  the output schema includes a decent combination of source information, match metadata, and geocoding so you can review  what was found while in the map view.  
   
-Video: Lucene/Solr Revolution 2017 Conference Talk
----------------------------------------
-**["Discoverying World Geography in Your Data"](https://www.youtube.com/watch?v=44v2WljG1R0)**,  
-presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
 
 Methodology
 ---------------------------------------
