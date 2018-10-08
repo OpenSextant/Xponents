@@ -24,6 +24,7 @@ static void menu(){
       xtemp      -- Temporal extraction tests
       xtext      -- XText demonstration - crawl and convert (files to text) local folders
       web-crawl  -- Content crawl and convert. Advanced XText demo, e.g., feed convert and extraction pipeline.
+      social-geo -- Social geo-inferencing on tweets (for now).
       =======================
      '''
 }
