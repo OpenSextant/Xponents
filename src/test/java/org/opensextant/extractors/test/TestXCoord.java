@@ -497,6 +497,19 @@ public class TestXCoord {
 
     }
 
+    public static void usage() {
+
+        String USAGE ="" + 
+                    "TestXCoord  -f       -- system tests" + 
+                    "TestXCoord  -i TEXT  -- user test " +
+                    "TestXCoord  -t FILE  -- user test with file; one test per line"+
+                    "TestXCoord  -t FILE  -- user test with file" +
+                    "TestXCoord  -a       -- adhoc tests, e.g., recompiling code and testing"+
+                    "TestXCoord  -h       -- help. ";
+        System.out.println(USAGE);
+
+    }
+
     /**
      * Run a simple test.
      * TODO: Move Main program to Examples or other test area.
@@ -512,7 +525,7 @@ public class TestXCoord {
         XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT | XConstants.MGRS_FILTERS_ON
                 | XConstants.CONTEXT_FILTERS_ON;
 
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TestXCoord", args, "aft:u:i:");
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TestXCoord", args, "ahft:u:i:");
 
         try {
             // xc.configure( "file:./etc/test_regex.cfg"); // default
@@ -552,7 +565,9 @@ public class TestXCoord {
                     test.focusedTests();
                     break;
 
+                case 'h':
                 default:
+                    usage();
                 }
             }
         } catch (Exception xerr) {

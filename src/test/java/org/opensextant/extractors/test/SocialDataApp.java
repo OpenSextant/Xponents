@@ -1,3 +1,4 @@
+package org.opensextant.extractors.test;
 import java.io.File;
 import java.io.IOException;
 
