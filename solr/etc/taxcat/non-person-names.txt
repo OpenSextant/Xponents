@@ -5,6 +5,7 @@ beach
 case
 cash
 chase
+day
 do
 dot
 else
