@@ -104,6 +104,8 @@ NOISE = set(
          'youtube',
          'they are',
          'our own',
+         'just want',
+         'are you',
          'ps',
          'reach',
          'armed forces',

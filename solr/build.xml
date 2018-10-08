@@ -55,8 +55,10 @@
            <url url="https://www2.census.gov/topics/genealogy/2010surnames/names.zip"/>
         </get>
         <unzip dest="${gaz.data}/filters/census" src="${gaz.data}/filters/census/names.zip" />        
+        <delete file="${gaz.data}/filters/census/names.zip" />
+        <delete file="${gaz.data}/filters/census/Names_2010Census.xlsx" />
     </target>
-	
+
 	<!-- Big list of Stopwords -->
 	<target name="gaz-stopwords">
 		<get dest="${gaz.conf}/lang/stopwords_tl.txt" >
