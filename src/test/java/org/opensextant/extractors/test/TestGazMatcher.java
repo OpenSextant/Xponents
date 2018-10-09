@@ -13,6 +13,7 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.util.FileUtility;
+import org.opensextant.util.GeodeticUtility;
 
 /**
  * Setup for testing:
@@ -84,7 +85,8 @@ public class TestGazMatcher {
                 if (p.isCountry) {
                     countryNames.add(p.getText());
                 } else if (p.getChosen() != null) {
-                    print(String.format("\tgeocoded @ %s with conf=%d", p.getChosen(), p.getConfidence()));
+                    print(String.format("\tgeocoded @ %s with conf=%d, at [%s]", p.getChosen(), p.getConfidence(),
+                            GeodeticUtility.formatLatLon(p.getChosen())));
                     ScoredPlace alt = p.getSecondChoice();
                     if (alt != null) {
                         print(String.format("\tgeocoded @ %s second place", alt));

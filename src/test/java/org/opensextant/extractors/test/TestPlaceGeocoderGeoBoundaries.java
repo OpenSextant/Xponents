@@ -43,6 +43,8 @@ public class TestPlaceGeocoderGeoBoundaries extends TestPlaceGeocoder {
                 new TestPhrase("oh, Montgomery, Al?", 1), 
                 new TestPhrase("xyz co.", 0), 
                 new TestPhrase("xyz Co.", 0),
+                new TestPhrase("Boise, ID", 1),
+                new TestPhrase("Boise id", 1),
                 new TestPhrase("CO", 0), 
                 new TestPhrase("Colo.", 0), 
                 new TestPhrase("COLO", 0),
@@ -60,6 +62,7 @@ public class TestPlaceGeocoderGeoBoundaries extends TestPlaceGeocoder {
                 new TestPhrase("some text and Denver, CO and some more text.", 1) };
 
         List<TestPhrase> tests = new ArrayList<TestPhrase>();
+        String langId = "en";
         if (testText != null && testText.length >= 2) {
             tests.add(new TestPhrase(testText[1], 0));
         } else {
@@ -71,6 +74,7 @@ public class TestPlaceGeocoderGeoBoundaries extends TestPlaceGeocoder {
                 print("%%%%%%%%%%%  %%%%%%%%%%%%%   %%%%%%%%%%%  %%%%%%%%%");
                 print("TEST:\t" + t.text + "\n=====================");
                 TextInput i = new TextInput("test", t.text);
+                i.langid = langId;
                 List<TextMatch> matches = geocoder.extract(i);
                 summarizeFindings(matches, t.expected);
                 print("\n");
