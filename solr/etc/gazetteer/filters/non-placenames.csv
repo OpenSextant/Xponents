@@ -3,7 +3,7 @@ baz,abbrev
 doc,abbrev
 meta,abbrev
 ed,abbrev
-id,abbrev
+#id,abbrev
 ibid,abbrev
 imo,abbrev
 asap,abbrev
