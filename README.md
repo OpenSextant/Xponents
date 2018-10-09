@@ -2,11 +2,21 @@ Back to [OpenSextant](http://opensextant.org)
 
 Xponents
 ========
-Xponents is a set of information extraction libraries including:
+Xponents is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example:
+
+| text|routine|notional output with normalization|
+|---|---|---|
+|_"Boise, ID is fun!"_|PlaceGeocoder| `geo` = <br>`{ matchtext:"Boise ID", adm1:"US.16", lat,lon: [43.6135,-116.2035],` <br>`feat_code:"PPL", confidence=78}` <br>And associated rules for the location resolution
+|_"Born on 30 DECIEMBRE 1990 "_ |XTemporal  | `date` = <br>`{ matchtext="30 DECIEMBRE 1990", date_norm="1990-12-30"}'`	 
+|_"Epicenter at 01°44'N 101°22'E ..."_  |  XCoord | `coord` = <br>`{ matchtext="42°18.009N; 102°24.003W", lat=1.733, lon=101.367, pattern="DM-01"}`
+
+Define your own patterns or compose your own Extractor apps. 
+
 
 * Geographic name and coordinate extraction, along with a rich set of rules and metadata for geographic reasoning.  Such reasoning methods are essential for geoinferencing and disambiguating place names, e.g., 
 * Temporal extraction
 * Pattern-based extraction
+* Keyword extraction
 * Foundational data model for info extraction and text scrubbing utilities
 
 Video: Lucene/Solr Revolution 2017 Conference Talk
@@ -27,7 +37,7 @@ The intent of Xponents is to provide the extraction without too much infrastruct
   * `XTax` a keyword extractor that allows you to associate important metadata and taxonomic information with keywords
   * `LangDetect` langid, using mainly CyboZu LangDetect
   * An extensible regular-expression entity tagger library, `FlexPat` (see `XCoord` and `XTemporal` packages for examples)
-* **Data Model**: Keeping with our geographic theme, Xponents provides a simple set of data classes that act as the lingua franca for geographic reasoning:
+* **Output Data Model**: Keeping with our geographic theme, Xponents provides a simple set of data classes that act as the lingua franca for geographic reasoning:
   * `Country, Place, LatLon` are all examples of the `Geocoding` interface (see `org.opensextant.data`)
   * `Language` and `LangID` represents a simple but powerful and overlooked data: language codes and names.  Here we use language codes to drive various language-dependent features and then also to present language name to end users. (see ISO-339 standards; our source table is from Library of Congress)  
   * Entity Extraction and Matching:  `TextEntity` (a text span) and `TextMatch` (a span matched by a rule or extractor) represent the essential unit of data emitted by all Extractors in Xponents.  These include:  `GeocoordMatch`, `PlaceCandidate`, `DateMatch`, `TaxonMatch`, and others.
@@ -41,6 +51,18 @@ Methodology
 ---------------------------------------
 The **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
 the Xponents methodology to geotagging and geocoding that pertains to coordinate extraction and general geotagging, i.e., XCoord and PlaceGeocoder, respectively.
+
+
+Demonstration
+---------------------------------------
+So, you can download and try out a full build. But return here
+to read the rest of the story.  The demonstrations only give you a sense of outputs 
+for simple inputs.  A lot of actual usage will involve tuning your inputs (cleanup, language ID, etc)
+and interpreting your outputs (e.g., filtering, cross-referencing, etc.)
+
+* See [Examples](./Examples/README.md)
+* Download: [Xponents SDK 3.0](https://github.com/OpenSextant/DataReleases) 
+
 
 Code Examples
 ---------------------------------------
@@ -160,7 +182,7 @@ For those using other build platforms, you can find our published artifacts at
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.0</version>
+    <version>3.0.3</version>
   </dependency>
 ```
 
@@ -187,24 +209,9 @@ Separately acquire the Gazetteer "Merged Gazetteer" data file:
 5. Next, follow the instructions in `./solr/` to generate your copy of a working Solr index
 6. Distribution/Packaging: `ant -f ./script/dist.xml dist`
 
-
-Release History
+Release History 
 ---------------
-
-    Xponents 3.0  Jul 2018  v3.0    - Refactoring.  Added language ID and improved JSON support.
-    Xponents 2.10 Feb 2018  v2.10.6 - Bug patches; Xponents + Xtext release
-    Xponents 2.10 Sept 2017 v2.10.1 - Solr 6 support, Java 8 only, SolrTextTagger 2.4;  Published to Sonatype and Maven Central
-    Xponents 2.9, Jul 2017  v2.9.9  - Improved stop filters and other geotagging and KW tagging improvements
-    Xponents 2.9, Apr 2017  v2.9.8  - refactored XLayer, added trivial match filters; updated versions of commons libs
-    Xponents 2.9, Feb 2017  v2.9.7  - minor tests and additional filters added; minor tweak for Curacao
-    Xponents 2.9, Jan 2017  v2.9.6
-    Xponents 2.9, Oct 2016  v2.9.0
-    Updated:  05 Dec  2015  v2.8
-    Updated:  30 Nov  2015  v2.7.19
-    Updated:  30 Oct  2015  v2.7.16
-    Updated:  01 April2015  v2.7
-    Updated:  01 June 2014  v2.5
-
+[RELEASES](./RELEASE.md)
 
 Other Libraries
 ---------------
