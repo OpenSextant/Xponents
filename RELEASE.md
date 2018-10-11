@@ -1,5 +1,9 @@
 # 2018 #
 
+Xponents 3.0.4 Columbus Day
+* Command line improvemnts on testing
+* Consolidate all tests and examples under single Groovy script 
+
 Xponents 3.0.3 Day of Rememberance (9/11)
 
 * Account for all decent stop word lists (see genediazjr "stopwords-iso" project); Stopwords for Tagalog, Urdu, Farsi, Chinese, Korean, etc, contributed there.
