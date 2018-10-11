@@ -190,7 +190,7 @@ public class NameCodeRule extends GeocodeRule {
                 }
 
                 logicalGeoMatchFound = true;
-                updateNameCodePair(name, code, geo, comma);
+                updateNameCodePair(name, code, geo, true /*comma*/);
             }
 
             /*
