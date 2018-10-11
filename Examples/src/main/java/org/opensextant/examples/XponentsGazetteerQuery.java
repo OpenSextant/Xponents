@@ -61,7 +61,7 @@ import org.slf4j.Logger;
  * @author ubaldino
  *
  */
-public class XponentsGazetteerQuery {
+public class XponentsGazetteerQuery extends ExampleMain {
 
     // Full out extraction
     PlaceGeocoder extractor = null;
@@ -73,7 +73,9 @@ public class XponentsGazetteerQuery {
 
     Logger logger = LoggerFactory.getLogger(XponentsGazetteerQuery.class);
 
-    public XponentsGazetteerQuery() throws ConfigException, IOException {
+    public XponentsGazetteerQuery(){
+    }
+    public void configure() throws ConfigException, IOException {
         util = new GeonamesUtility();
         gazetteer = new SolrGazetteer();
         allCountries = gazetteer.getCountries();
@@ -108,7 +110,15 @@ public class XponentsGazetteerQuery {
          * Can honestly say Commons CLI is not much of an improvement over GetOpt.
          */
         if (!cmd.hasOption("l")) {
-            logger.error("--lookup NAME is required.");
+            print("--lookup NAME is required.\n");
+            cliHelp.printHelp(appName, "_______", opts, "_________", true);
+            return;
+        }
+
+        try {
+            configure();
+        }  catch (Exception err){
+            error(err, "Something went wrong.");
             return;
         }
 
@@ -116,30 +126,30 @@ public class XponentsGazetteerQuery {
 
         if (cmd.hasOption("parse")) {
             // PARSE 
-            logger.info("NAME parsed, then various lookups");
-            logger.info("=============================");
+            print("NAME parsed, then various lookups");
+            print("=============================");
             try {
                 parseThenLookup(nm);
             } catch (Exception err) {
-                logger.error("\tFailure", err);
+                error(err, "\tFailure");
             }
         } else if (cmd.hasOption("geotag")) {
             // GEOTAG FREE TEXT
-            logger.info("TEXT BLOB geotagged and all findings listed.");
-            logger.info("=============================");
+            print("TEXT BLOB geotagged and all findings listed.");
+            print("=============================");
             try {
                 extraction(nm);
             } catch (Exception err) {
-                logger.error("\tFailure", err);
+                error(err, "\tFailure");
             }
         } else {
             // LOOKUP AS-IS.
-            logger.info("NAME straight lookup: '{}'", nm);
-            logger.info("=============================");
+            print("NAME straight lookup: '%s'", nm);
+            print("=============================");
             try {
                 nameLookup(nm);
             } catch (Exception err) {
-                logger.error("\tFailure", err);
+                error(err, "\tFailure");
             }
         }
     }
@@ -172,7 +182,7 @@ public class XponentsGazetteerQuery {
          */
         List<String> abc = TextUtils.string2list(nm, ",");
         if (abc.size() != 3) {
-            logger.info("Lookup for parsing is NAME, PROV, CC");
+            print("Lookup for parsing is NAME, PROV, CC");
             return;
         }
 
@@ -192,7 +202,7 @@ public class XponentsGazetteerQuery {
         }
 
         if (C == null) {
-            logger.info("Country not found");
+            print("Country not found");
             return;
         }
 
@@ -206,7 +216,7 @@ public class XponentsGazetteerQuery {
         String parametricQuery = String.format("feat_class:A AND cc:%s", C.getCountryCode());
         List<Place> provPlaces = gazetteer.findPlaces(provValue, parametricQuery, 1);
         if (provPlaces.isEmpty()) {
-            logger.info("\tNo such province '{}'", provValue);
+            print("\tNo such province '%s'", provValue);
             return;
         }
 
@@ -218,11 +228,11 @@ public class XponentsGazetteerQuery {
         cities = gazetteer.findPlaces(cityValue, parametricQuery, 2);
 
         if (cities == null) {
-            logger.info("\tNo such province '{}'", cityValue);
+            print("\tNo such province '%s'", cityValue);
             return;
         }
         for (Place p : cities) {
-            logger.info("\t{} @ ({})", p, GeodeticUtility.formatLatLon(p));
+            print("\t%s @ (%s)", p.toString(), GeodeticUtility.formatLatLon(p));
         }
 
     }
@@ -247,12 +257,12 @@ public class XponentsGazetteerQuery {
                 /* Work with geotag */
                 PlaceCandidate geotag = (PlaceCandidate) m;
                 if (geotag.getChosen() != null) {
-                    logger.info("\t{}, Geocoded to {}", m.getText(), geotag.getChosen());
+                    print("\t%s, Geocoded to %s", m.getText(), geotag.getChosen().toString());
                 } else {
-                    logger.info("\t{}, Rules {}", m.getText(), geotag.getRules());
+                    print("\t%s, Rules %s", m.getText(), geotag.getRules().toString());
                 }
             } else {
-                logger.info("\t{}, Not a place. Type={}", m.getText(), m.getType());
+                print("\t%s, Not a place. Type=%s", m.getText(), m.getType());
             }
         }
     }
@@ -264,12 +274,12 @@ public class XponentsGazetteerQuery {
          */
         List<Place> places = gazetteer.findPlaces(nm, "+feat_class:(P A)", 2);
         if (places.isEmpty()) {
-            logger.info("\tNothing found");
+            print("\tNothing found");
             return;
         }
-        logger.info("\tfirst 10...");
+        print("\tfirst 10...");
         for (Place p : places.subList(0, places.size() > 10 ? 10 : places.size() - 1)) {
-            logger.info("\t{}", p);
+            print("\t%s", p.toString());
         }
 
     }

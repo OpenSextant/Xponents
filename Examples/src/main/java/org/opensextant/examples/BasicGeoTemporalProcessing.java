@@ -99,13 +99,14 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
      *   c) output formatters
      *   d) other resources, e.g., filters
      */
-    public void setup(String inFile, List<String> outFormats, String outFile, String tempDir)
-            throws ConfigException, ProcessingException, IOException {
+    public boolean setup(String inFile, List<String> outFormats, String outFile, String tempDir)
+            throws  ProcessingException, IOException {
 
         params.isdefault = false;
 
         if (!validateParameters(inFile, outFormats, outFile, tempDir, params)) {
-            throw new ProcessingException("VALIDATION ERRORS: " + runnerMessage.toString());
+            print("VALIDATION ERRORS: " + runnerMessage.toString());
+            return false;
         }
 
         // If you are dead-sure you want only coordinates from text, then just use XCoord.
@@ -171,7 +172,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
                 formatter.start(params.getJobName());
             }
         }
-
+        return true;
     }
 
     /**
@@ -184,8 +185,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
             throw new ProcessingException("Caller is required to use non-default Parameters; "
                     + "\nat least set the output options, folder, jobname, etc.");
         }
-        AbstractFormatter formatter = (AbstractFormatter) FormatterFactory
-                .getInstance(outputFormat);
+        AbstractFormatter formatter = (AbstractFormatter) FormatterFactory.getInstance(outputFormat);
         if (formatter == null) {
             throw new ProcessingException("Wrong formatter?");
         }
@@ -287,15 +287,15 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
     public void reportMemory() {
         Runtime R = Runtime.getRuntime();
         long usedMemory = R.totalMemory() - R.freeMemory();
-        log.info("CURRENT MEM USAGE(K)=" + (int) (usedMemory / 1024));
+        print("CURRENT MEM USAGE(K)=" + (int) (usedMemory / 1024));
     }
 
     public void reportMetrics() {
-        log.info("===============\nDOCUMENT CONVERSION");
-        log.info("\t" + conversionMetric.toString());
+        print("===============\nDOCUMENT CONVERSION");
+        print("\t" + conversionMetric);
 
-        log.info("===============\nDOCUMENT PROCESSING");
-        log.info("\t" + processingMetric.toString());
+        print("===============\nDOCUMENT PROCESSING");
+        print("\t" + processingMetric);
     }
 
     private static String _inFile = null;
@@ -342,11 +342,27 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         }
     }
 
+    public static void print(String msg) {
+        System.out.println(msg);
+    }
+
+    public static void print(String msg, Object... args) {
+        System.out.println(String.format(msg, args));
+    }
+
+    public static void error(Exception err, String... args) {
+        System.out.println("ERROR " + err.getMessage());
+        System.out.println(args);
+
+        System.err.println("ERROR " + err.getMessage());
+        err.printStackTrace(System.err);
+    }
+
     protected void printRequest() {
-        log.info("----------------- REQUEST -----------------");
-        log.info("Input file: " + params.inputFile);
-        log.info("Output format: " + params.getOutputFormats());
-        log.info("Output location: " + params.outputDir);
+        print("----------------- REQUEST -----------------");
+        print("Input file: " + params.inputFile);
+        print("Output format: " + params.getOutputFormats());
+        print("Output location: " + params.outputDir);
     }
 
     /**
@@ -354,11 +370,11 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
      */
     protected static void printHelp() {
 
-        System.out.println("Options:");
-        System.out.println("\t-i inputFile = path to file or directory of files to be processed");
-        System.out.println("\t-f outputFormat = the desired output format");
-        System.out.println("\t-o outputFile = the path to output file");
-        System.out.println("\t-t tempDir = the path to the temporary storage directory");
+        print("Options:");
+        print("\t-i inputFile = path to file or directory of files to be processed");
+        print("\t-f outputFormat = the desired output format");
+        print("\t-o outputFile = the path to output file");
+        print("\t-t tempDir = the path to the temporary storage directory");
     }
 
     private StringBuilder runnerMessage = new StringBuilder();
@@ -368,8 +384,8 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
      *
      * @return true if parameters and defaults suffice; false otherwise.
      */
-    public boolean validateParameters(String inPath, List<String> outFormats, String outPath,
-            String tempDir, Parameters plist) {
+    public boolean validateParameters(String inPath, List<String> outFormats, String outPath, String tempDir,
+            Parameters plist) {
 
         runnerMessage = new StringBuilder();
 
@@ -408,8 +424,8 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         //String ext = FilenameUtils.getExtension(inPath);
 
         if (FileUtility.isArchiveFile(inPath) && tempDir == null) {
-            runnerMessage
-                    .append("A directory for temporary storage must be provided for unpacking Zip and other archive files");
+            runnerMessage.append(
+                    "A directory for temporary storage must be provided for unpacking Zip and other archive files");
             return false;
         }
 
@@ -425,8 +441,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
                 // DEFAULT file name.
                 plist.setJobName("OpenSextant_Output_" + Parameters.getJobTimestamp());
             } catch (Exception fmterr) {
-                runnerMessage
-                        .append("Failed to invoke the requested format to create a default output file");
+                runnerMessage.append("Failed to invoke the requested format to create a default output file");
                 return false;
             }
         } else {
@@ -471,14 +486,15 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
      */
     public static void main(String[] args) {
 
-        System.out.println("Parsing Commandline");
+        print("Parsing Commandline");
         parseCommandLine(args);
         try {
             BasicGeoTemporalProcessing runner = new BasicGeoTemporalProcessing();
 
-            runner.setup(_inFile, _outFormats, _outFile, _tempDir);
-            runner.run();
-            runner.shutdown();
+            if (runner.setup(_inFile, _outFormats, _outFile, _tempDir)) {
+                runner.run();
+                runner.shutdown();
+            }
             // Success.
         } catch (Exception err) {
             err.printStackTrace();

@@ -1,8 +1,10 @@
 package org.opensextant.extractors.test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
@@ -259,6 +261,12 @@ public class TestXCoord {
         return R;
     }
 
+    public CsvMapReader openStream(InputStream strm) throws IOException {
+        InputStreamReader rdr = new InputStreamReader(strm, "UTF-8");
+        CsvMapReader R = new CsvMapReader(rdr, CsvPreference.STANDARD_PREFERENCE);
+        return R;
+    }
+
     /**
      * This will accomodate any test file that has at least the following style:
      *
@@ -268,7 +276,7 @@ public class TestXCoord {
      *
      * @param coordfile
      */
-    public void fileTruth(File coordfile) {
+    public void fileTruth(InputStream coordfile, String fname) {
 
         xcoord.match_UTM(true);
         xcoord.match_MGRS(true);
@@ -279,12 +287,11 @@ public class TestXCoord {
         try {
 
             //String _file = coordfile.trim();
-            String fname = FilenameUtils.getBaseName(coordfile.getName());
             TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname + "-rows.csv");
             //
             tester.full_report = false;
 
-            CsvMapReader in = open(coordfile);
+            CsvMapReader in = openStream(coordfile);
             String text = null;
             int linenum = 0;
 
@@ -499,13 +506,11 @@ public class TestXCoord {
 
     public static void usage() {
 
-        String USAGE ="" + 
-                    "TestXCoord  -f       -- system tests" + 
-                    "TestXCoord  -i TEXT  -- user test " +
-                    "TestXCoord  -t FILE  -- user test with file; one test per line"+
-                    "TestXCoord  -t FILE  -- user test with file" +
-                    "TestXCoord  -a       -- adhoc tests, e.g., recompiling code and testing"+
-                    "TestXCoord  -h       -- help. ";
+        String USAGE = "" + "TestXCoord  -f       -- system tests" + "TestXCoord  -i TEXT  -- user test "
+                + "TestXCoord  -t FILE  -- user test with file; one test per line"
+                + "TestXCoord  -t FILE  -- user test with file"
+                + "TestXCoord  -a       -- adhoc tests, e.g., recompiling code and testing"
+                + "TestXCoord  -h       -- help. ";
         System.out.println(USAGE);
 
     }
@@ -542,8 +547,12 @@ public class TestXCoord {
 
                     // Truth source is at src/test/resources  -- Or anywhere in your runtime classpath at TOP LEVEL!
                     //
-                    URL truthData = XCoord.class.getResource(testFile);
-                    test.fileTruth(new File(truthData.getPath()));
+                    InputStream truthData = XCoord.class.getResourceAsStream(testFile);
+                    if (truthData != null) {
+                        test.fileTruth(truthData, FilenameUtils.getBaseName(testFile));
+                    } else {
+                        System.err.println("Failed... " + testFile + " not found");
+                    }
                     break;
 
                 case 'i':
