@@ -698,6 +698,7 @@ public class GeonamesUtility {
      *  Alias for {@link #getAdmin1Place(String, String)}
      * @param cc country code
      * @param adm1 ADM level 1 code
+     * @return Place for province
      */
     public Place getProvince(String cc, String adm1) {
         return getAdmin1Place(cc, adm1);

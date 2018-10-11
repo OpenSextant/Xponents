@@ -135,8 +135,8 @@ public class FileUtility {
      * Getting an input stream from a file.
      * @param f file object
      * @param enc encoding of text data
-     * @return
-     * @throws IOException
+     * @return reader
+     * @throws IOException if failure reading file or using encoding.
      */
     public static InputStreamReader getInputStreamReader(File f, String enc) throws IOException {
         return getInputStream(f, enc);

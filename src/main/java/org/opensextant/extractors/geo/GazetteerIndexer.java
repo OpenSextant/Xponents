@@ -94,7 +94,7 @@ public class GazetteerIndexer {
             indexer.index(new File(file), schema, "\t");
         } catch (SolrServerException e) {
             log.error("Server Error", e);
-        } catch (ConfigException e) {
+        } catch (IOException e) {
             log.error("Input Data Error", e);
         }
     }
@@ -135,7 +135,7 @@ public class GazetteerIndexer {
      * @throws SolrServerException if solr I/O error occurs.
      * @throws ConfigException bad data in cells
      */
-    public void index(File f, String schema, String delim) throws SolrServerException, ConfigException {
+    public void index(File f, String schema, String delim) throws SolrServerException, IOException {
 
         LineIterator iter = null;
         schemaColumn = schema.split(",");
@@ -178,9 +178,11 @@ public class GazetteerIndexer {
             }
 
             client.close();
-        } catch (IOException someErr) {
-        } finally {
             iter.close();
+        } catch (Exception someErr) {
+            if (iter != null) {
+                iter.close();
+            }
         }
     }
 
