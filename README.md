@@ -99,7 +99,7 @@ Here are two examples of extracting geographic entities from this made-up text:
      */
      -=-=-=-=-=-=-==-=-=-=-=-=-=
         FOUND: 39.56N, -123.45W @(33:49) matched by DD-02
-        Coordinate at place named Arnold (06, US, PPL)
+        Coordinate at place named Arnold (ADM1=06, CC=US, FEAT=PPL)
      -=-=-=-=-=-=-==-=-=-=-=-=-=
 ```
 
@@ -166,7 +166,7 @@ Modes of Integration
 * **Java**: [Examples](./Examples) sub-project illustrates the essential Java API setup and classes. See Maven notes below. 
 * **REST**:  See [Xlayer](./Xlayer) sub-project, which provides a wrapper around `PlaceGeocoder` with some default settings.
 * **Python**:  A small set of libraries, utilities and data classes are provided in Python to facilitate interacting the the gazetteer, RESTful Extractors, and other simple tasks. Extraction is not implemented in Python.
-* **MapReduce**:  For Xponents 2.9, some demonstrations were done to show how to package and create a Mapper to geotag social media, or any data record that had a "text" field.  See [MapReduce](./MapReduce)
+* **MapReduce**:  (Deprecated) For Xponents 2.9, some demonstrations were done to show how to package and create a Mapper to geotag social media, or any data record that had a "text" field.  See [MapReduce](./MapReduce)
 * **Pipeline**:  For raw content (e.g., folders or other stream of data) consider using **XText** project which will help you render data to plain text that can be fed to Xponents Extractors.  See [Examples](./Examples)
 
 Developer Quick Start
@@ -184,7 +184,7 @@ For those using other build platforms, you can find our published artifacts at
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
   </dependency>
 ```
 
@@ -230,4 +230,5 @@ Name matching depends on:
   * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10 w/ Java7
   * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+ w/ Java8
   * Xponents 3.0     == SolrTextTagger v2.5 w/Solr 7.3+ w/ Java8
+  * Xponents 3.0.4   == Solr 7.4+ w/ Java8. SolrTextTagger was migrated into Solr 7.4 formally as "TextTagger" request handler.
   

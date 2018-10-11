@@ -3,11 +3,14 @@ import org.opensextant.examples.*
 import org.opensextant.extractors.test.*
 
 static void usage(){
+  println "Xponents help          -- this help message."
   println "Xponents <TEST> <ARGS....>"
+  println ""
   println "  each TEST has different contextual ARGS for command line usage."
   println "  these are all demonstrational tests."
-
-  println "Xponents <TEST> help"
+  println ""
+  println "Xponents <TEST> --help | -h  -- displays help on that command, if available."
+  println ""
   menu()
   System.exit(-1)
 }

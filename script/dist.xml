@@ -49,8 +49,7 @@
 		<mkdir dir="${release}/script" />
 
 
-		<!-- As Examples requires all other dependencies it is a good one for forcing the copy
-     -->
+		<!-- As Examples requires all other dependencies it is a good one for forcing the copy -->
 		<exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
 			<arg value="-DoutputDirectory=${release}/lib" />
 			<arg value="-DincludeScope=test" />
@@ -144,7 +143,7 @@
 		</copy>
 		<copy todir="${release}/etc/">
 			<fileset dir="${xponents.home}/Examples/etc">
-				<include name="logback.*" />
+				<include name="*.xml" />
 			</fileset>
 			<fileset dir="${xponents.home}/src/test/resources">
 				<include name="Coord_Patterns*.*" />
