@@ -20,6 +20,7 @@ for f in $REL/xponents-solr/solr7-dist/bin/post \
 done 
 
 
+rm $REL/script/dist.sh
 rm $REL/script/dist.xml
 rm $REL/script/setup-ant.xml
 
