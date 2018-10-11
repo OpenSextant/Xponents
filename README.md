@@ -6,9 +6,9 @@ Xponents is a set of information extraction libraries including to extract and n
 
 | text|routine|notional output with normalization|
 |---|---|---|
-|_"Boise, ID is fun!"_|PlaceGeocoder| `geo` = <br>`{ matchtext:"Boise ID", adm1:"US.16", lat,lon: [43.6135,-116.2035],` <br>`feat_code:"PPL", confidence=78}` <br>And associated rules for the location resolution
-|_"Born on 30 DECIEMBRE 1990 "_ |XTemporal  | `date` = <br>`{ matchtext="30 DECIEMBRE 1990", date_norm="1990-12-30"}'`	 
-|_"Epicenter at 01°44'N 101°22'E ..."_  |  XCoord | `coord` = <br>`{ matchtext="42°18.009N; 102°24.003W", lat=1.733, lon=101.367, pattern="DM-01"}`
+|_"Boise, ID is fun!"_|PlaceGeocoder| `geo` = <br>`{ matchtext:"Boise ID", adm1:"US.16", lat,lon: [43.61,-116.20],`<br>`feat_code:"PPL", confidence=78}`<br>And associated rules for the location resolution
+|_"Born on 30 DECIEMBRE 1990 ... "_ |XTemporal  | `date` = <br>`{ matchtext="30 DECIEMBRE 1990", date_norm="1990-12-30"}'`	 
+|_"Epicenter at 01°44'N 101°22'E ..."_  |  XCoord | `coord` = <br>`{ matchtext="01°44'N 101°22'E", lat=1.733, lon=101.367, pattern="DM-01"}`
 
 Define your own patterns or compose your own Extractor apps. 
 
@@ -58,7 +58,9 @@ Demonstration
 So, you can download and try out a full build. But return here
 to read the rest of the story.  The demonstrations only give you a sense of outputs 
 for simple inputs.  A lot of actual usage will involve tuning your inputs (cleanup, language ID, etc)
-and interpreting your outputs (e.g., filtering, cross-referencing, etc.)
+and interpreting your outputs (e.g., filtering, cross-referencing, etc.).
+
+Download the SDK, then walk through examples:
 
 * See [Examples](./Examples/README.md)
 * Download: [Xponents SDK 3.0](https://github.com/OpenSextant/DataReleases) 
