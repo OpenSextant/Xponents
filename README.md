@@ -6,9 +6,9 @@ Xponents is a set of information extraction libraries including to extract and n
 
 | text|routine|notional output with normalization|
 |---|---|---|
-|_"Boise, ID is fun!"_|PlaceGeocoder| `geo = { matchtext:"Boise ID", adm1:"US.16",`<br>` lat,lon: [43.61,-116.20], feat_code:"PPL",` <br>`confidence=78}` <br> And associated rules for the location resolution
-|_"Born on 30 DECIEMBRE 1990 ... "_ |XTemporal  | `date = { matchtext="30 DECIEMBRE 1990",`<br>`  date_norm="1990-12-30"}` 
-|_"Epicenter at 01°44'N 101°22'E ..."_  |  XCoord | `coord = { matchtext="01°44'N 101°22'E",`<br>` lat=1.733, lon=101.367, pattern="DM-01"}`  
+|_"Boise, ID is fun!"_|PlaceGeocoder| `geo = { match:"Boise ID", adm1:"US.16",`<br>` lat,lon: [43.61,-116.20],`<br>` feat_code:"PPL", confidence=78}` <br> And associated rules for the location resolution
+|_"Born on 30 DECIEMBRE 1990 ... "_ |XTemporal  | `date = { match="30 DECIEMBRE 1990",`<br>` date_norm="1990-12-30"}` 
+|_"Epicenter at 01°44'N 101°22'E ..."_  |  XCoord | `coord = { match="01°44'N 101°22'E",`<br>` lat=1.733, lon=101.367,`<br>` pattern="DM-01"}`  
 
 Define your own patterns or compose your own Extractor apps. 
 
@@ -24,6 +24,20 @@ Video: Lucene/Solr Revolution 2017 Conference Talk
 **["Discoverying World Geography in Your Data"](https://youtu.be/44v2WljG1R0?t=1805)**,
 presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
 <!-- https://www.youtube.com/watch?v=44v2WljG1R0  -->
+
+Demonstration
+---------------------------------------
+So, you can download and try out a full build. But return here to read the rest of the story.  
+The demonstrations only give you a sense of outputs 
+for simple inputs.  A lot of actual usage will involve tuning your inputs (cleanup, language ID, etc)
+and interpreting your outputs (e.g., filtering, cross-referencing, etc.).
+
+Download the SDK, then walk through examples -- these resources are intended for developers with some Java or Python
+experience, and some NLP or GIS background. But the examples and download should work with only the **Java 8+** 
+installed on your system.
+
+* See [Examples](./Examples/README.md)
+* Download: [Xponents SDK 3.0](https://github.com/OpenSextant/DataReleases) 
 
 
 Development Kit Contents
@@ -46,25 +60,10 @@ The intent of Xponents is to provide the extraction without too much infrastruct
   * `GazetteerMatcher` provides a direct API around the text tagging capability (via [SolrTextTagger](https://github.com/OpenSextant/SolrTextTagger)) beneath the SolrGazetteer.
 * **GIS Formatters:**  The immediate satisfaction of processing some challenging data and then producing a map visual from that is undeniable.  However, our GIS outputter options offer more than just the immediate map plot:  the output schema includes a decent combination of source information, match metadata, and geocoding so you can review  what was found while in the map view.  
   
-
 Methodology
 ---------------------------------------
 The **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
 the Xponents methodology to geotagging and geocoding that pertains to coordinate extraction and general geotagging, i.e., XCoord and PlaceGeocoder, respectively.
-
-
-Demonstration
----------------------------------------
-So, you can download and try out a full build. But return here
-to read the rest of the story.  The demonstrations only give you a sense of outputs 
-for simple inputs.  A lot of actual usage will involve tuning your inputs (cleanup, language ID, etc)
-and interpreting your outputs (e.g., filtering, cross-referencing, etc.).
-
-Download the SDK, then walk through examples:
-
-* See [Examples](./Examples/README.md)
-* Download: [Xponents SDK 3.0](https://github.com/OpenSextant/DataReleases) 
-
 
 Code Examples
 ---------------------------------------
