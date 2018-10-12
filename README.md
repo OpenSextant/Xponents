@@ -6,7 +6,7 @@ Xponents is a set of information extraction libraries including to extract and n
 
 | text|routine|notional output with normalization|
 |---|---|---|
-|_"Boise, ID is fun!"_|PlaceGeocoder| `geo = { match:"Boise ID", adm1:"US.16",`<br>` lat,lon: [43.61,-116.20],`<br>` feat_code:"PPL", confidence=78}` <br> And associated rules for the location resolution
+|_"Boise, ID is fun!"_|PlaceGeocoder| `geo = { match:"Boise ID",`<br>` adm1:"US.16",`<br>` lat,lon: [43.61,-116.20],`<br>` feat_code:"PPL", confidence=78}` <br> And associated rules for the location resolution
 |_"Born on 30 DECIEMBRE 1990 ... "_ |XTemporal  | `date = { match="30 DECIEMBRE 1990",`<br>` date_norm="1990-12-30"}` 
 |_"Epicenter at 01°44'N 101°22'E ..."_  |  XCoord | `coord = { match="01°44'N 101°22'E",`<br>` lat=1.733, lon=101.367,`<br>` pattern="DM-01"}`  
 
