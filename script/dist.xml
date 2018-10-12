@@ -78,39 +78,9 @@
 			</fileset>
 		</copy>
 	</target>
-	<target name="copy-solr">
-		<copy todir="${release}/solr/">
-			<fileset dir="${xponents.home}/solr">
-				<exclude name="webapps" />
-				<exclude name="download" />
-				<exclude name="jetty9" />
-				<exclude name="lib" />
-				<exclude name="solr4/gazetteer/data/**" />
-				<exclude name="solr4/taxcat/data/**" />
-			</fileset>
-		</copy>
-		<delete file="${release}/build.properties" />
-	</target>
-
-	<target name="copy-solr6">
-		<copy todir="${release}/solr/">
-			<fileset dir="${xponents.home}/solr">
-				<exclude name="webapps" />
-				<exclude name="download" />
-				<exclude name="jetty9" />
-				<exclude name="lib" />
-				<exclude name="solr4/**" />
-				<exclude name="solr6/**" />
-				<exclude name="solr6-dist/docs/**" />
-				<exclude name="solr6-dist/dist/**" />
-				<exclude name="solr6-dist/example/**" />
-			</fileset>
-		</copy>
-		<copy file="${basedir}/solr/build.template" tofile="${release}/solr/build.properties" />
-	</target>
 
 	<target name="copy-solr7">
-		<copy todir="${solr.release}/">
+		<copy todir="${solr.release}/" overwrite="true" >
 			<fileset dir="${xponents.home}/solr">
 				<exclude name="solr4/**" />
 				<exclude name="solr6/**" />
@@ -119,11 +89,11 @@
 				<exclude name="solr7-dist/server/logs/**" />
 			</fileset>
 		</copy>
-		<copy file="${xponents.home}/solr/build.template" tofile="${solr.release}/build.properties" />
+		<copy file="${xponents.home}/solr/build.template" tofile="${solr.release}/build.properties" overwrite="true" />
 	</target>
 
 	<target name="copy-data">
-		<copy todir="${release}/test/">
+		<copy todir="${release}/test/" overwrite="true" >
 			<fileset dir="${xponents.home}/src/test/resources/">
 				<include name="*.*" />
 			</fileset>
@@ -133,7 +103,7 @@
 	</target>
 
 	<target name="copy-script">
-		<copy todir="${release}/script/">
+		<copy todir="${release}/script/" overwrite="true" >
 			<fileset dir="${xponents.home}/script">
 				<include name="*.*" />
 			</fileset>
@@ -141,7 +111,7 @@
 				<include name="*.*" />
 			</fileset>
 		</copy>
-		<copy todir="${release}/etc/">
+		<copy todir="${release}/etc/" overwrite="true" >
 			<fileset dir="${xponents.home}/Examples/etc">
 				<include name="*.xml" />
 			</fileset>
@@ -176,8 +146,7 @@
 		<copy todir="${release}/doc/Examples/" file="${xponents.home}/Examples/doc/README_gazetteer.md" />
 	</target>
 
-	<target name="dist" depends="build, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
-
-		<!-- Zip it .-->
+	<target name="dist" depends="build, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" 
+            description="Build a zip file containing a distributable, runnable thing.">
 	</target>
 </project>

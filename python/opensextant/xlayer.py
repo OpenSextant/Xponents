@@ -85,9 +85,10 @@ if __name__ == '__main__':
     ap.add_argument("--lines", action="store_true", help="process your inputfile as one line per call")
     ap.add_argument("--text", help="UTF-8 string to process")
     ap.add_argument("--options", help="your service options to send with each request")
+    ap.add_argument("--debug", default=False, action="store_true" )
     args = ap.parse_args()
     xtractor = XlayerClient(args.service_url)
-    # xtractor.debug = True
+    xtractor.debug = args.debug
 
     # ======================================
     # Support for arbitrary amounts of text
