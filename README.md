@@ -25,7 +25,7 @@ Video: Lucene/Solr Revolution 2017 Conference Talk
 presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
 <!-- https://www.youtube.com/watch?v=44v2WljG1R0  -->
 
-Demonstration
+Demonstration &amp; Download
 ---------------------------------------
 So, you can download and try out a full build. But return here to read the rest of the story.  
 The demonstrations only give you a sense of outputs 
@@ -34,7 +34,7 @@ and interpreting your outputs (e.g., filtering, cross-referencing, etc.).
 
 Download the SDK, then walk through examples -- these resources are intended for developers with some Java or Python
 experience, and some NLP or GIS background. But the examples and download should work with only the **Java 8+** 
-installed on your system.
+installed on your system. **Python 2.7** is required for the few Python examples.
 
 * See [Examples](./Examples/README.md)
 * Download: [Xponents SDK 3.0](https://github.com/OpenSextant/DataReleases) 
