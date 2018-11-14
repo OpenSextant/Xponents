@@ -30,6 +30,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.SolrParams;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.LatLon;
@@ -155,12 +156,26 @@ public class SolrGazetteer {
          */
         ModifiableSolrParams p = new ModifiableSolrParams();
         p.set(CommonParams.FL,
-                "id,name,cc,adm1,adm2,feat_class,feat_code," + "geo,place_id,name_bias,id_bias,name_type");
+                "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
         p.set(CommonParams.ROWS, rows);
         p.set(CommonParams.Q, "{!geofilt sfield=geo}");
         // p.set(CommonParams.SORT, "score desc");
         p.set("spatial", "true");
 
+        return p;
+    }
+    
+    public static ModifiableSolrParams createDefaultSearchParams(int rows) {
+        ModifiableSolrParams p = new ModifiableSolrParams();
+        
+        // What?
+        p.set(CommonParams.Q, "*:*");
+        // Which fields:
+        p.set(CommonParams.FL,
+                "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+        // Max Rows:
+        p.set(CommonParams.ROWS, rows);
+        
         return p;
     }
 
@@ -390,6 +405,17 @@ public class SolrGazetteer {
         return SolrProxy.searchGazetteer(solr.getInternalSolrClient(), params);
     }
 
+    /**
+     * Use create M
+     * @param p
+     * @return
+     * @throws SolrServerException
+     * @throws IOException
+     */
+    public List<Place> search(SolrParams p) throws SolrServerException, IOException {
+
+        return SolrProxy.searchGazetteer(solr.getInternalSolrClient(), p);
+    }
     /**
      * Find places located at a particular location.
      *

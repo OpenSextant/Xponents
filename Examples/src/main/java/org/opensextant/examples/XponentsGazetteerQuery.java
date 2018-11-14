@@ -64,17 +64,18 @@ import org.slf4j.Logger;
 public class XponentsGazetteerQuery extends ExampleMain {
 
     // Full out extraction
-    PlaceGeocoder extractor = null;
+    protected PlaceGeocoder extractor = null;
     // Instance of the gazetteer -- world-wide gazetteer of 18 million entries.
-    SolrGazetteer gazetteer = null;
+    protected SolrGazetteer gazetteer = null;
     // Geonames Utility - tables of Countries (names, languages, TZ), Province official names+codes.
-    GeonamesUtility util = null;
-    Map<String, Country> allCountries = null;
+    protected GeonamesUtility util = null;
+    protected Map<String, Country> allCountries = null;
 
-    Logger logger = LoggerFactory.getLogger(XponentsGazetteerQuery.class);
+    protected Logger logger = LoggerFactory.getLogger(XponentsGazetteerQuery.class);
 
     public XponentsGazetteerQuery(){
     }
+    
     public void configure() throws ConfigException, IOException {
         util = new GeonamesUtility();
         gazetteer = new SolrGazetteer();
