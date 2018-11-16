@@ -293,7 +293,7 @@ public class Transforms {
                 GeocoordMatch geo = (GeocoordMatch) name;
                 node.put("type", "coordinate");
                 node.put("filtered-out", name.isFilteredOut());
-                Transforms.createGeocoding(geo, new JsonObject());
+                Transforms.createGeocoding(geo, node);
                 resultArray.add(node);
                 continue;
             }
