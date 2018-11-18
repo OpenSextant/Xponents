@@ -2,9 +2,7 @@ Back to [OpenSextant](http://opensextant.org)
 
 Xponents
 ========
-**Author:** Marc Ubaldino, MITRE
-**Contact:** mubaldino@gmail.com, ubaldino@mitre.org
-**Date:** Fall 2018
+**Author:** Marc Ubaldino, MITRE, (mubaldino@gmail.com, ubaldino@mitre.org). Fall 2018.
 
 Xponents is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example:
 
