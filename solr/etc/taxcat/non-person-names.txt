@@ -16,6 +16,9 @@ head
 hill
 hope
 key
+la
+le
+lo
 long
 love
 mac
@@ -31,3 +34,10 @@ smart
 spring
 sun
 zona
+sunday
+monday
+tuesday
+wednesday
+thursday
+friday
+saturday
