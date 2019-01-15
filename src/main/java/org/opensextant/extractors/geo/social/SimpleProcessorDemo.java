@@ -127,23 +127,23 @@ public class SimpleProcessorDemo implements JSONListener {
 
     String inputFile = null;
     String outputFile = null;
-    BufferedWriter output = null;
+    protected BufferedWriter output = null;
     int maxBatch = -1;
     String kmlFile = null;
-    KMLDemoWriter kmlWriter = null;
+    protected KMLDemoWriter kmlWriter = null;
 
     /*
      * The geoinference handlers here:
      */
-    private XponentGeocoder xponentGeocoder = null;
-    private XponentTextGeotagger xponentTextGeocoder = null;
+    protected XponentGeocoder xponentGeocoder = null;
+    protected XponentTextGeotagger xponentTextGeocoder = null;
 
     /*
      * And then again here, as generic list of them. This list handles common
      * work like configure(), geoinference() and close() steps.
      */
-    private List<GeoInferencer> inferencers = new ArrayList<>();
-    private boolean configured = false;
+    protected List<GeoInferencer> inferencers = new ArrayList<>();
+    protected boolean configured = false;
     protected LangDetect langidTool = null;
 
     /**
@@ -372,9 +372,9 @@ public class SimpleProcessorDemo implements JSONListener {
         return true;
     }
 
-    boolean ioError = false;
+    protected boolean ioError = false;
 
-    private long recordCount = 0;
+    protected long recordCount = 0;
 
     /**
      * This is a much abbreviated demonstration. Usually: read all data and
@@ -469,7 +469,7 @@ public class SimpleProcessorDemo implements JSONListener {
      * @param tw
      * @return
      */
-    private String guessLanguage(Tweet tw) {
+    protected String guessLanguage(Tweet tw) {
         /*
          * Identify a reasonable language of text. If lang ID was given in data, you could trust it.... or not.
          */
@@ -491,7 +491,7 @@ public class SimpleProcessorDemo implements JSONListener {
      * @param tw
      * @throws IOException
      */
-    private void saveTweet(Tweet tw) throws IOException {
+    protected void saveTweet(Tweet tw) throws IOException {
         JsonObject serializedTweet = TweetUtility.toJSON(tw);
         if (output != null) {
             output.write(serializedTweet.toString());
@@ -507,7 +507,7 @@ public class SimpleProcessorDemo implements JSONListener {
      * @param a
      * @throws IOException
      */
-    private void saveAnnotation(GeoInference a) throws IOException {
+    protected void saveAnnotation(GeoInference a) throws IOException {
 
         JsonObject o = a.attributes != null ? new JsonObject(a.attributes) : new JsonObject();
         Transforms.createGeocoding(a.geocode, o);
@@ -553,7 +553,7 @@ public class SimpleProcessorDemo implements JSONListener {
         }
     }
 
-    private void mapTweetKML(Tweet tw, GeoInference a) {
+    public void mapTweetKML(Tweet tw, GeoInference a) {
         if (kmlWriter == null) {
             return;
         }
@@ -569,7 +569,7 @@ public class SimpleProcessorDemo implements JSONListener {
         kmlWriter.write(tw, a);
     }
 
-    private void mapTweetKML(Tweet tw, Collection<GeoInference> tags) {
+    public void mapTweetKML(Tweet tw, Collection<GeoInference> tags) {
         if (kmlWriter == null) {
             return;
         }
