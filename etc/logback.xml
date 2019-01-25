@@ -14,9 +14,13 @@
     <!--  Loggers -->
     <logger name="org.apache" level="error">
     </logger>
-    <logger name="org.opensextant.extractors" level="info">
+    <logger name="org.opensextant.extractors.xcoord" level="debug">
     </logger>
-    <logger name="org.opensextant.extractors.xcoord" level="info">
+    <logger name="org.opensextant.extractors.xtemporal" level="debug">
     </logger>
+    <!--
+    <logger name="org.opensextant.extractors" level="debug"></logger>
+    -->
+ 
 
 </configuration>
