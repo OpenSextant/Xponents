@@ -53,7 +53,7 @@ public class LuceneStopwords {
         HashMap<String, String> configurationArgs = new HashMap<>();
         configurationArgs.put("words", defaultPath(lang));
         configurationArgs.put("format", SNOWBALL_SETS.contains(lang) ? "snowball" : "wordset");
-        configurationArgs.put("luceneMatchVersion", "7.3");
+        configurationArgs.put("luceneMatchVersion", "7.4");
         StopFilterFactory filter = new StopFilterFactory(configurationArgs);
         filter.inform(loader);
 

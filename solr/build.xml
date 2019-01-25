@@ -42,8 +42,7 @@
 
     <target name="copy-libs">
         <copy todir="${jetty.runtime.lib}" file="${maven.lib}/org/locationtech/jts/jts-core/1.15.0/jts-core-1.15.0.jar" />
-        <copy todir="${jetty.runtime.lib}"
-            file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar" />
+        <copy todir="${jetty.runtime.lib}" file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar" />
         <!--  Solr 7.3 or earlier: copy Solr-Text-Tagger lib to solr.home/lib -->
     </target>
 
