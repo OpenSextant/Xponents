@@ -49,7 +49,7 @@
     </developer>
   </developers>
   <properties>
-    <solr.version>7.5.0</solr.version>
+    <solr.version>7.6.0</solr.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <slf4j.version>1.7.25</slf4j.version>
   </properties>
@@ -79,7 +79,7 @@
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
-        <version>2.9.4</version>
+        <version>2.10.1</version>
       </dependency>
       <dependency>
         <groupId>net.sf.supercsv</groupId>
@@ -354,7 +354,7 @@
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-json</artifactId>
-      <version>4.1.4</version>
+      <version>5.0.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
