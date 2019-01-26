@@ -79,7 +79,7 @@ public class XlayerClient extends Application {
         JsonObject content = new JsonObject();
         content.put("text", text);
         content.put("docid", docid);
-        String featureSet = "places,coordinates,countries,persons,orgs,reverse-geocode" +  (viewFilteredOut ? ",filtered_out":"");
+        String featureSet = "places,coordinates,countries,persons,orgs,reverse-geocode,dates" +  (viewFilteredOut ? ",filtered_out":"");
         content.put("features", featureSet);
         /* Coordinates mainly are XY locations; Reverse Geocode them to find what country the location resides */
         StringWriter data = new StringWriter();

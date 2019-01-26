@@ -8,6 +8,7 @@ import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.xtax.TaxonMatch;
+import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.TaggerResource;
@@ -36,13 +37,25 @@ public class XponentsGeotagger extends TaggerResource {
     /**
      * get Xponents Exxtractor object from global attributes. 
      */
-    public Extractor getExtractor() {
-        PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext().getAttributes().get("xgeo");
-        if (xgeo == null) {
-            info("Misconfigured, no context-level pipeline initialized");
-            return null;
+    public Extractor getExtractor(String xid) {
+        Object X = this.getApplication().getContext().getAttributes().get(xid);
+        if (xid.equals("xgeo")) {
+            PlaceGeocoder xgeo = (PlaceGeocoder) X;
+            if (xgeo == null) {
+                info("Misconfigured, no context-level geocoder pipeline initialized");
+                return null;
+            }
+            return xgeo;
+        } else if (xid.equals("xtemp")) {
+            XTemporal xt = (XTemporal) X;
+            if (xt == null) {
+                info("Misconfigured, no context-level date/time pipeline initialized");
+                return null;
+            }
+            return xt;
         }
-        return xgeo;
+        error("No such extractor " + xid, null);
+        return null;
     }
 
     /**
@@ -125,10 +138,15 @@ public class XponentsGeotagger extends TaggerResource {
 
         try {
             if (prodMode) {
-                PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor();
+                PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor("xgeo");
                 xgeo.setAllowLowerCase(jobParams.tag_lowercase);
 
                 List<TextMatch> matches = xgeo.extract(input);
+                
+                if (jobParams.tag_patterns) {
+                    XTemporal xt = (XTemporal) getExtractor("xtemp");
+                    matches.addAll(xt.extract(input));
+                }
                 /*
                  * formulate matches as JSON output.
                  */
@@ -162,7 +180,7 @@ public class XponentsGeotagger extends TaggerResource {
         return result;
     }
 
-   /**
+    /**
     * @param params  parameters
     * @param variousMatches matches to filter
     */

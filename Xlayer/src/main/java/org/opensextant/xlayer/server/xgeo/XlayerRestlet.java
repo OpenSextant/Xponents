@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.XlayerApp;
 import org.opensextant.xlayer.server.XlayerControl;
@@ -25,7 +26,7 @@ public class XlayerRestlet extends XlayerApp {
 
     public XlayerRestlet(Context c) {
         super(c);
-        version = "v2.10";
+        version = "v3.0";
         log = getContext().getCurrentLogger();
     }
 
@@ -40,6 +41,7 @@ public class XlayerRestlet extends XlayerApp {
             configure();
             Context ctx = getContext();
             ctx.getAttributes().put("xgeo", tagger);
+            ctx.getAttributes().put("xtemp", dateTagger);
             info("%%%%   Xponents Geo Phase Configured");
         } catch (Exception err) {
             error("Unable to start", err);
@@ -53,6 +55,7 @@ public class XlayerRestlet extends XlayerApp {
     }
 
     private PlaceGeocoder tagger = null;
+    private XTemporal dateTagger = null;
 
     /**
      * 
@@ -86,5 +89,10 @@ public class XlayerRestlet extends XlayerApp {
         } else {
             info("Optional user filter not found.  User exclusion list is file=" + userFilterPath);
         }
+        
+        // Support Dates
+        // 
+        dateTagger = new XTemporal();
+        dateTagger.configure();
     }
 }

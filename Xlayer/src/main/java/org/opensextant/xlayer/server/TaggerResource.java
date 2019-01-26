@@ -51,7 +51,7 @@ public abstract class TaggerResource extends ServerResource {
         return new JsonRepresentation(ping);
     }
 
-    protected abstract Extractor getExtractor();
+    protected abstract Extractor getExtractor(String xid);
 
     /**
      * Implement the processing of a single Input given some request parameters
@@ -85,10 +85,7 @@ public abstract class TaggerResource extends ServerResource {
 
         if (isNotBlank(list)) {
             features.addAll(TextUtils.string2list(list.toLowerCase(), ","));
-
-            job.output_coordinates = features.contains("coordinates");
-            job.output_countries = features.contains("countries");
-            job.output_places = features.contains("places");
+            parseParameters(job, features);
         }
 
         String fmt = inputs.getFirstValue("format");
@@ -97,6 +94,25 @@ public abstract class TaggerResource extends ServerResource {
         }
 
         return job;
+    }
+
+    protected void parseParameters(Parameters p, Set<String> kv) {
+        p.tag_coordinates = p.output_coordinates = kv.contains("coordinates");
+        p.tag_countries = p.output_countries = kv.contains("countries");
+        p.tag_places = p.output_places = kv.contains("places");
+
+        if (kv.contains("geo")) {
+            p.tag_coordinates = p.output_coordinates = true;
+            p.tag_countries = p.output_countries = true;
+            p.tag_places = p.output_places = true;
+        }
+
+        // Request tagging on demand.
+        p.tag_taxons = p.output_taxons = (kv.contains("taxons") || kv.contains("orgs") || kv.contains("persons"));
+        p.tag_patterns = p.output_patterns = kv.contains("patterns") || kv.contains("dates");
+
+        p.output_filtered = kv.contains("filtered_out");
+
     }
 
     /**
@@ -148,22 +164,7 @@ public abstract class TaggerResource extends ServerResource {
             // JSONArray list = inputs.getJSONArray("features");
             features.addAll(TextUtils.string2list(list.toLowerCase(), ","));
 
-            job.tag_coordinates = job.output_coordinates = features.contains("coordinates");
-            job.tag_countries = job.output_countries = features.contains("countries");
-            job.tag_places = job.output_places = features.contains("places");
-
-            if (features.contains("geo")) {
-                job.tag_coordinates = job.output_coordinates = true;
-                job.tag_countries = job.output_countries = true;
-                job.tag_places = job.output_places = true;
-            }
-
-            // Request tagging on demand.
-            job.tag_taxons = job.output_taxons = (features.contains("taxons") || features.contains("orgs")
-                    || features.contains("persons"));
-            job.tag_patterns = job.output_patterns = features.contains("patterns");
-
-            job.output_filtered = features.contains("filtered_out");
+            this.parseParameters(job, features);
         }
 
         if (inputs.has("options")) {
@@ -202,9 +203,13 @@ public abstract class TaggerResource extends ServerResource {
     }
 
     public void error(String msg, Exception err) {
-        log.severe(msg + " ERR: " + err.getMessage());
-        if (isDebug()) {
-            log.fine("" + err.getStackTrace());
+        if (err == null) {
+            log.severe(msg);
+        } else {
+            log.severe(msg + " ERR: " + err.getMessage());
+            if (isDebug()) {
+                log.fine("" + err.getStackTrace());
+            }
         }
     }
 

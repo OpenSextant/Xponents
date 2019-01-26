@@ -16,7 +16,7 @@ public class XlayerControl extends TaggerResource {
     }
 
     public void stop() {
-        Extractor x = getExtractor();
+        Extractor x = getExtractor("xgeo");
         if (x != null) {
             x.cleanup();
         }
@@ -26,7 +26,11 @@ public class XlayerControl extends TaggerResource {
     /**
      * get Xponents Exxtractor object from global attributes. 
      */
-    public Extractor getExtractor() {
+    public Extractor getExtractor(String xid) {
+        /*
+         * xid argument is ignored.  This default case, only the 'xgeo' object is queried to stop it.
+         * 
+         */
         PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext().getAttributes().get("xgeo");
         if (xgeo == null) {
             info("Misconfigured, no context-level pipeline initialized");
