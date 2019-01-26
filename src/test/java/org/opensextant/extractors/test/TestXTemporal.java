@@ -31,8 +31,9 @@ public class TestXTemporal {
         //xdt.match_MonDayYear(true);
         //xdt.match_DateTime(false);
 
-        String[] tests = { "2010-04-13", "1111-11-11","12/13/1900", "11/12/1817", "12/30/90", "JUN 00", "JUN '13", "JUN '12", "JUN '17",
-                "JUN '33", "JUN 2017", "JUN 1917" };
+        String[] tests = { "12 July 2019", "12JULIO2002", "16DEC2020", "2010-04-13", "1111-11-11", "12/13/1900",
+                "11/12/1817", "12/30/90", "JUN 00", "JUN '13", "JUN '12", "JUN '17", "JUN '33", "JUN 2017",
+                "JUN 1917" };
 
         try {
             TestXTemporalReporter tester = new TestXTemporalReporter("./results/xtemp_Adhoc.csv");
@@ -77,7 +78,6 @@ public class TestXTemporal {
 
         try {
             TestXTemporalReporter tester = new TestXTemporalReporter("./results/xtemp_System.csv");
-
             for (PatternTestCase tst : xdt.getPatternManager().testcases) {
                 TextMatchResult results = xdt.extract_dates(tst.text, tst.id);
                 results.add_trace("Test Payload: " + tst.text);

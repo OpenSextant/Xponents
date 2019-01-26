@@ -1,32 +1,33 @@
 package org.opensextant.extractors.test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FilenameUtils;
-import org.supercsv.io.CsvMapReader;
-import org.supercsv.prefs.CsvPreference;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
-import org.opensextant.extractors.xcoord.GeocoordTestCase;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
+import org.opensextant.extractors.xcoord.GeocoordTestCase;
 import org.opensextant.extractors.xcoord.XConstants;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.supercsv.io.CsvMapReader;
+import org.supercsv.prefs.CsvPreference;
 
 /**
  *
@@ -100,7 +101,7 @@ public class TestXCoord {
 
         log.info("\n\n=== SYSTEM TESTS ===\n\n");
         if (!mgr.testing) {
-            log.info("TESTING OFF -- TURN ON DEBUG in LOG4J");
+            log.info("TESTING OFF -- TURN ON DEBUG in LOGGER CONFIG");
             return;
         }
 
