@@ -1,10 +1,11 @@
 package org.opensextant.extractors.geo.social;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.opensextant.util.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

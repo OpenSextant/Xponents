@@ -66,7 +66,6 @@ import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
-import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
 /**
