@@ -179,10 +179,11 @@ public class XTemporal extends AbstractFlexPat {
                 dt.start = match.start();
                 dt.end = match.end();
                 dt.setText(match.group());
+                dt.patternFields = patterns.group_map(pat, match);
 
                 try {
 
-                    DateNormalization.normalize_date(patterns.group_map(pat, match), dt);
+                    DateNormalization.normalize_date(dt.patternFields, dt);
                     if (dt.datenorm == null) {
                         continue;
                     }

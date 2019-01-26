@@ -17,6 +17,7 @@
 package org.opensextant.extractors.xtemporal;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.opensextant.extraction.TextMatch;
 
@@ -30,10 +31,16 @@ public class DateMatch extends TextMatch {
      * Just the coordinate text normalized
      */
     public Date datenorm = null;
+
     /**
      *
      */
     public String datenorm_text = null;
+
+    /**
+     * fields in pattern match
+     */
+    protected Map<String, String> patternFields = null;
 
     /**
      *
