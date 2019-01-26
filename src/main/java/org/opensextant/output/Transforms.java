@@ -9,6 +9,7 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xtax.TaxonMatch;
+import org.opensextant.extractors.xtemporal.DateMatch;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeodeticUtility;
 import org.slf4j.Logger;
@@ -34,7 +35,6 @@ public class Transforms {
         TextMatch m = null;
         JsonObject a = (JsonObject) data;
 
-        TaxonMatch x = null;
         String typ = a.getString("type");
         String text = a.getString("matchtext");
         switch (typ) {
@@ -82,21 +82,24 @@ public class Transforms {
             break;
 
         case "person":
-            x = new TaxonMatch();
-            Transforms.parseTaxon(x, "person", a);
-            m = x;
+            m = new TaxonMatch();
+            Transforms.parseTaxon((TaxonMatch) m, "person", a);
             break;
 
         case "org":
-            x = new TaxonMatch();
-            Transforms.parseTaxon(x, "org", a);
-            m = x;
+            m = new TaxonMatch();
+            Transforms.parseTaxon((TaxonMatch) m, "org", a);
             break;
 
         case "taxon":
-            x = new TaxonMatch();
-            Transforms.parseTaxon(x, "taxon", a);
-            m = x;
+            m = new TaxonMatch();
+            Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
+            break;
+
+        case "date":
+            DateMatch dt = new DateMatch();
+            Transforms.parseDate(dt, a);
+            m = dt;
             break;
 
         default:
@@ -106,9 +109,21 @@ public class Transforms {
         m.setType(typ);
         m.start = a.getInteger("offset");
         m.end = m.start + a.getInteger("length");
-        m.setFilteredOut( a.getBoolean("filtered-out"));
+        m.setFilteredOut(a.getBoolean("filtered-out"));
 
         return m;
+    }
+
+    /**
+     * First stab at deserializing JSON date annotation.
+     * @param d datematch
+     * @param a json annot
+     */
+    public static void parseDate(DateMatch d, JsonObject a) {
+        d.setText(a.getString("matchtext"));
+        d.setType(a.getString("type"));
+        d.datenorm_text = a.getString("date-normalized");
+        d.pattern_id = a.getString("pattern-id");
     }
 
     /**
@@ -280,8 +295,18 @@ public class Transforms {
              * FILTERING
              * ==========================
              */
-
             JsonObject node = populateMatch(name);
+
+            if (name instanceof DateMatch) {
+                ++tagCount;
+                DateMatch dt = (DateMatch) name;
+                node.put("type", "date");
+                node.put("date-normalized", dt.datenorm_text);
+                node.put("pattern-id", dt.pattern_id);
+                node.put("filtered-out", name.isFilteredOut());
+                resultArray.add(node);
+                continue;
+            }
 
             /*
              * ==========================
