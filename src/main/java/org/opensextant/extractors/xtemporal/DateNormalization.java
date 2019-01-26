@@ -33,10 +33,9 @@ public class DateNormalization {
     static final DateTime cal = DateTime.now(DateTimeZone.UTC);
     static final int YEAR = cal.getYear();
     static final int MILLENIUM = 2000;
-    static final int CURRENT_YY = YEAR - MILLENIUM;
-    ;
+    static final int CURRENT_YY = YEAR - MILLENIUM;;
     static final int FUTURE_YY_THRESHOLD = CURRENT_YY + 2;
-    static final int MAXIMUM_YEAR = 2020;
+    static final int MAXIMUM_YEAR = 2025;
 
     // Use of year "15" would imply 1915 in this case.
     // Adjust 2-digit year threshold as needed.
@@ -76,16 +75,16 @@ public class DateNormalization {
     /*
      *
      * #DEFINE MON_ABBREV  JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEPT?|OCT|NOV|DEC
-
+    
      #DEFINE MON_NAME   [A-Z]{3}\w{0,8}
-
+    
      #DEFINE YEAR         [12]\d{3}
      #DEFINE YY           \d\d
      #DEFINE YEARYY       \d{2,4}
      #DEFINE MM           [01]\d
      #DEFINE DD           [0-3]\d
      #DEFINE SHORT_TZ     [A-Z]
-
+    
      #DEFINE hh    [0-2]\d
      #DEFINE mm    [0-5]\d
      #DEFINE DOM         [0-3]?\d
@@ -102,8 +101,7 @@ public class DateNormalization {
      * @param dt found date
      * @throws ParseException the parse exception
      */
-    public static void normalize_date(java.util.Map<String, String> elements, DateMatch dt) throws
-    ParseException {
+    public static void normalize_date(java.util.Map<String, String> elements, DateMatch dt) throws ParseException {
 
         // Parse years.
         int year = normalize_year(elements);
@@ -174,12 +172,10 @@ public class DateNormalization {
                 _cal = _cal.withHourOfDay(hour);
             }
 
-
         } else {
             // No hour; default is 12:00 UTC.
             _cal = _cal.withHourOfDay(12);
         }
-
 
         dt.datenorm = new Date(_cal.getMillis());
     }
@@ -321,8 +317,8 @@ public class DateNormalization {
             // Okay its NOT a year
             //      its NOT a month
             // so "44" => 1944 is best guess.  not 1844, not 0044...
-            //
-            year += 1990;
+            // And to avoid conflict with Month numbers (1-31) the candidate year here is '32 or higher.
+            year += 1900;
         } else if (!_is_year) {
             // Given two digit year that is possible day of month,... ignore!
             // JUN 17  -- no year given
@@ -340,8 +336,7 @@ public class DateNormalization {
      * @return the int
      * @throws ParseException the parse exception
      */
-    public static int normalize_month(java.util.Map<String, String> elements)
-            throws ParseException {
+    public static int normalize_month(java.util.Map<String, String> elements) throws ParseException {
 
         //  MM, MONTH  -- numeric 01-12
         //  MON_ABBREV, MON_NAME  -- text
@@ -369,8 +364,7 @@ public class DateNormalization {
      * @return the month numeric
      * @throws ParseException the parse exception
      */
-    public static int normalize_month_name(java.util.Map<String, String> elements)
-            throws ParseException {
+    public static int normalize_month_name(java.util.Map<String, String> elements) throws ParseException {
 
         //  MM, MONTH  -- numeric 01-12
         //  MON_ABBREV, MON_NAME  -- text
