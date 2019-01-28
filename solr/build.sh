@@ -4,9 +4,11 @@ fi
 
 SOLR_PORT=${SOLR_PORT:-7000}
 SERVER=localhost:$SOLR_PORT
-unset http_proxy
-unset https_proxy
+# Proxies can be sensitive, but at least we need NOPROXY
+#unset http_proxy
+#unset https_proxy
 export noproxy=localhost,127.0.0.1
+export NO_PROXY=$noproxy
 
 cur=`dirname $0 `
 XPONENTS=`cd -P $cur/..; echo $PWD`
@@ -44,7 +46,7 @@ index_taxcat () {
 index_gazetteer () {
   SOLR_URL=$1
   echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
-  ant -f build.xml index-gazetteer-solrj
+  ant -f build.xml $proxy index-gazetteer-solrj
 
   sleep 2 
   echo "Generate Name Variants"
@@ -127,14 +129,14 @@ python ./script/assemble_person_filter.py
 
 if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
    # Collect Gazetteer Metadata: 
-   ant -f ./build.xml gaz-meta
+   ant -f ./build.xml $proxy gaz-meta
 fi
 
 sleep 2 
 
 if [ $do_start -eq 1 ]; then 
   if [ $do_clean -eq 1 ]; then 
-    ant -f ./build.xml clean init
+    ant -f ./build.xml $proxy clean init
   fi
 
   echo "Starting Solr $SERVER"
