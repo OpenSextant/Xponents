@@ -1,6 +1,10 @@
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
+unset http_proxy
+export NO_PROXY=localhost,127.0.0.1
+export noproxy=$NO_PROXY
+
 CMD=$1
 XLAYER_PORT=$2 
 
