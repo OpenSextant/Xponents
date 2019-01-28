@@ -112,7 +112,8 @@ print "Found non-person names:", len(non_person_names)
 #
 if names:
     for nm in non_person_names:
-        names.remove(nm)
+        if nm in names:
+            names.remove(nm)
 
     fh = open(output, 'wb')
     fh.write('# Generated File:  census surnames + exclusions - inclusions\n')
