@@ -1,5 +1,10 @@
 # 2018 #
 
+Xponents 3.0.5 SuperBowl
+* Reviewed low recall due to name-code filters and rules.  NAME,.....CODE will not filter out a CODE if CODE is a country.
+* Solr/Lucene 7.6+
+* Tika 1.19+ on XText
+
 Xponents 3.0.4 Columbus Day
 * Command line improvemnts on testing
 * Consolidate all tests and examples under single Groovy script 

@@ -80,8 +80,7 @@ public class TextUtils {
     /**
      * Checks if non-ASCII and non-LATIN characters are present.
      * 
-     * @param data
-     *            any textual data
+     * @param data any textual data
      * @return true if content is strictly ASCII or Latin1 extended.
      */
     public static final boolean isLatin(String data) {
@@ -1728,6 +1727,8 @@ public class TextUtils {
     /**
      * Takes a string and returns all the hashtags in it.  Normalized tags are just lowercased and deduplicated.
      * https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json
+     * @param tweetText text
+     * @param normalize if to normalize text by lowercasing tags, etc.
      */
     public static Set<String> parseHashTags(String tweetText, boolean normalize) {
         if (!tweetText.contains("#")) {
@@ -1762,8 +1763,8 @@ public class TextUtils {
      * @see #parseNaturalLanguage(String)
      * 
      *      replace HTML, URLs removed, Tags and entity markers (@ and #) stripped; Tags and entities left in place.
-     * @param raw
-     * @return
+     * @param raw raw text
+     * @return cleaner looking text
      */
     public static String parseNaturalLanguage(String raw) {
         return parseNaturalLanguage(raw, true, true, true, true);
@@ -1790,10 +1791,10 @@ public class TextUtils {
      * But in Twitter, tag format is "#tag" or "#[phrase here]" etc. So there is no generic hashtag replacement.
      * 
      * @param raw   original text
-     * @param unescapeHtml
-     * @param remURLs
-     * @param remTags
-     * @param remEntities
+     * @param unescapeHtml  unescape HTML
+     * @param remURLs  remove URLs
+     * @param remTags  remove hash tags
+     * @param remEntities remove other entities
      * @return text less entities.
      */
     public static String parseNaturalLanguage(final String raw, boolean unescapeHtml, boolean remURLs, boolean remTags,

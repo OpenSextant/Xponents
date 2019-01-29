@@ -250,7 +250,10 @@ public class TextEntity {
         }
     }
 
-    /** Assess if an offset is within this span */
+    /** Assess if an offset is within this span 
+     * @param x offest to test
+     * @return if this entity contains the offset
+     */
     public boolean contains(int x) {
         if (start < 0 || end < 0) {
             return false;

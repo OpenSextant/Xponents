@@ -8,12 +8,13 @@ public interface CountryObserver {
     /**
      * Use a country code to signal that a country was mentioned.
      * 
-     * @param cc
+     * @param cc country code
      */
     public void countryInScope(String cc);
 
     /**
      * Use a country object to signal a country was mentioned or is in scope
+     * @param C country object
      */
     public void countryInScope(Country C);
 
@@ -39,7 +40,7 @@ public interface CountryObserver {
     /**
      * Calculates totals and ratios for the discovered set of countries.
      * 
-     * @return
+     * @return map of country code : counts
      */
     public Map<String, CountryCount> countryMentionCount();
 }

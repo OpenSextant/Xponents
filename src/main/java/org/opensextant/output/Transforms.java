@@ -146,8 +146,8 @@ public class Transforms {
     /**
      * Given an existing JSON object, add geocoding metadata to it.
      * 
-     * @param geo
-     * @param node
+     * @param geo geocoding object
+     * @param node JsonObject representing the serialized JSON for an Xlayer or other annotation.
      */
     public static final void createGeocoding(Geocoding geo, JsonObject node) {
         if (geo.getCountryCode() != null) {
@@ -176,8 +176,8 @@ public class Transforms {
     /**
      * Given a JSON object, parse fields relevant to the geocoding and populate that JSON data
      * 
-     * @param geo
-     * @param node
+     * @param geo geocoding object
+     * @param node JsonObject representing the serialized JSON for an Xlayer or other annotation.
      */
     public static final void parseGeocoding(Place geo, JsonObject node) {
         if (node.containsKey("cc")) {
