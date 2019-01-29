@@ -613,7 +613,7 @@ public class PlaceCandidate extends TextMatch {
      * @return
      */
     public boolean presentInHierarchy(String path) {
-        return this.hierarchicalPaths.contains(path);
+        return path != null && this.hierarchicalPaths.contains(path);
     }
 
     public boolean presentInCountry(String cc) {

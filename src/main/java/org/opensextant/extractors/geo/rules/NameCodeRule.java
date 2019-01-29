@@ -108,6 +108,7 @@ public class NameCodeRule extends GeocodeRule {
             /*
              * Test if SOMENAME, CODE is the case. a1.....a2.b1.., where b1 > a2
              * > a1, but distance is minimal from end of name to start of code.
+             * If we see a standalone country code, we'll allow it to pass.
              */
             if ((code.start - name.end) > MAX_CHAR_DIST) {
                 boolean canIgnoreCode = canIgnoreShortCode || ignoreNonAdminCode(code);
@@ -197,9 +198,13 @@ public class NameCodeRule extends GeocodeRule {
              * Found "Good Docktor, MD" --> likely medical doctor (MD), not Maryland.
              * So if no geographic connection between NAME, CODE and CODE is an abbreviation, then omit CODE.
              * If you actually have NAME, NAME, NAME, ... then you cannot omit subsequent NAMEs.
+             * 
+             * With NAME, CODE -- if CODE is an abbreviation but represents a Country, then let it pass, 
+             * as it is more common to see country names/GPEs abbreviated as personified actors.  Omit all other abbreviations, though.
+             *  
              */
             if (abbrev) {
-                if (!logicalGeoMatchFound) {
+                if (!logicalGeoMatchFound && !code.isCountry) {
                     code.setFilteredOut(true);
                 } else {
                     log.debug("Let one through.{}", code);
@@ -258,6 +263,10 @@ public class NameCodeRule extends GeocodeRule {
 
         boolean abbrev = possiblyAbbreviation(pc);
         boolean matchFound = false;
+        if (abbrev && pc.isCountry) {
+            // Ignore standalone references to country codes for this filtration.
+            return false;
+        }
         for (Place geo : pc.getPlaces()) {
             boolean lexicalMatch1 = (abbrev && geo.isAbbreviation());
             if (geo.isAdministrative()) {

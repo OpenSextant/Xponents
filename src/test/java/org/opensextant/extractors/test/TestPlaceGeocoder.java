@@ -105,12 +105,13 @@ public class TestPlaceGeocoder extends TestGazMatcher {
 
             /** Sub-class can override options */
             LongOpt[] options = { new LongOpt("file", LongOpt.REQUIRED_ARGUMENT, null, 'f'),
+                    new LongOpt("input", LongOpt.REQUIRED_ARGUMENT, null, 'i'),
                     new LongOpt("text", LongOpt.REQUIRED_ARGUMENT, null, 't'),
                     new LongOpt("lang", LongOpt.REQUIRED_ARGUMENT, null, 'l'),
                     new LongOpt("system-tests", LongOpt.NO_ARGUMENT, null, 's'),
                     new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h') };
 
-            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("PlaceGeocoder demo", args, "hsf:t:l:", options);
+            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("PlaceGeocoder demo", args, "hsf:i:t:l:", options);
 
             String lang = TextUtils.englishLang;
             String text = null;
@@ -128,6 +129,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
                 case 's':
                     doEval = true;
                     break;
+                case 'f':
                 case 'i':
                     file = opts.getOptarg();
                     break;
