@@ -1,11 +1,5 @@
 # a comment.
-this 
-is 
-only 
-a 
-test
-add person
-names like
-marc
-or a full name
-these  will be filtered out
+# this is only a test
+# add person names like
+#   marc
+#or a full name.  These  will be filtered out
