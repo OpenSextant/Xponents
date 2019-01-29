@@ -41,3 +41,6 @@ wednesday
 thursday
 friday
 saturday
+#
+tottenham
+valencia
