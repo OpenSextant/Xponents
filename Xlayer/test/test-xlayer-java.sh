@@ -6,4 +6,4 @@ URL=http://localhost:$PORT/xlayer/rest/process
 FILE=$2
 
 java -Dlogback.configurationFile=$basedir/etc/logback.xml \
-        -classpath "$basedir/etc:$basedir/lib/*" XlayerClientTest $URL $FILE 
+        -classpath "$basedir/etc:$basedir/lib/*:$basedir/xlayer-lib/*" XlayerClientTest $URL $FILE 

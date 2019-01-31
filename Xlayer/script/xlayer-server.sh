@@ -14,13 +14,14 @@ case $CMD in
     echo JAVA_HOME =  $JAVA_HOME
     echo $*
     cd $basedir
-    logfile=$basedir/log/stderr.log
+    logfile=$basedir/log/xlayer-stderr.log
     stdout=$basedir/log/xlayer.log
+    CLASSPATH="$basedir/etc:$basedir/etc/*:$basedir/lib/*:$basedir/xlayer-lib/*"
     XPONENTS_SOLR=${XPONENTS_SOLR:-$basedir/xponents-solr}
 
     nohup java -Dopensextant.solr=$XPONENTS_SOLR/solr7 -Xmx2g -Xms2g \
         -Dlogback.configurationFile=$basedir/etc/logback.xml \
-        -classpath "$basedir/etc:$basedir/etc/*:$basedir/lib/*" org.opensextant.xlayer.server.xgeo.XlayerServer $XLAYER_PORT  2>$logfile > $stdout &
+        -classpath "$CLASSPATH" org.opensextant.xlayer.server.xgeo.XlayerServer $XLAYER_PORT  2>$logfile > $stdout &
   ;;
 
 

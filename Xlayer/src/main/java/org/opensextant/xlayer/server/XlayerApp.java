@@ -34,7 +34,7 @@ public abstract class XlayerApp extends Application {
      * @throws IOException
      */
     protected void banner() throws IOException {
-        info("\n" + FileUtility.readFile("etc/banner.txt"));
+        info("\n" + FileUtility.readFile("etc/xlayer-banner.txt"));
     }
 
     protected void error(String msg, Exception err) {

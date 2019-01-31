@@ -21,9 +21,10 @@ REM Alternatively, we could deploy as a Tomcat or other webapp
 
 if "%COMMAND%" == "start" (
     echo "START XLAYER SERVICE"
+    set CLASSPATH=%"%basedir%\etc;%basedir%\etc\*;%basedir%\lib\*;%basedir%\xlayer-lib\*;"%
     java -Dopensextant.solr="%XPONENTS_SOLR%\solr7" -Xmx2g -Xms2g ^
           -Dlogback.configurationFile="%basedir%\etc\logback.xml" ^
-          -classpath "%basedir%\etc;%basedir%\etc\*;%basedir%\lib\*" ^
+          -classpath "%CLASSPATH%" ^
           org.opensextant.xlayer.server.xgeo.XlayerServer   %XLAYER_PORT% 
     pause
 )
