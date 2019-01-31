@@ -9,6 +9,7 @@ python2 ./setup.py sdist
 popd
 
 VER=3.0
+BUILD_VER=3.0.5
 ant -f ./dist.xml dist
 
 REL=../dist/Xponents-$VER
@@ -23,4 +24,12 @@ done
 rm $REL/script/dist.sh
 rm $REL/script/dist.xml
 rm $REL/script/setup-ant.xml
+
+cat <<EOF > $REL/VERSION.txt
+Build:     $BUILD_VER
+Date:      `date`
+Gazetteer: Xponents Solr 2019-Q1
+  Sources: NGA,  2019-JAN
+           USGS, 2018-DEC
+EOF
 
