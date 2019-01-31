@@ -32,5 +32,7 @@
     </logger>
     <logger name="org.opensextant.examples" level="info">
     </logger>
+    <logger name="org.opensextant.xlayer" level="debug">
+    </logger>
 
 </configuration>
