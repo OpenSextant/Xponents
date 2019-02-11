@@ -9,6 +9,7 @@ imo,abbrev
 asap,abbrev
 cid,abbrev
 coll,abbrev
+natl,abbrev
 tid,abbrev
 toc,abbrev
 tos,abbrev
@@ -667,6 +668,8 @@ device,noun
 science,noun
 engineering,noun
 physics,noun
+optics,noun
+boron,noun
 petro,noun
 petroleum,noun
 telegraph,noun
@@ -1086,6 +1089,7 @@ coupe,noun
 credo,noun
 crafts,noun
 mach,noun
+mech,noun
 barrell,noun
 barrel,noun
 l'heure,noun.fre
@@ -1419,6 +1423,7 @@ our school,phrase
 our house,phrase
 milestone,phrase
 rican,phrase
+mea,phrase.latin
 pro,phrase
 rad,phrase
 zip,phrase

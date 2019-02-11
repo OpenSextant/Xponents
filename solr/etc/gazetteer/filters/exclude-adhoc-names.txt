@@ -81,4 +81,49 @@ hernandez
 ramirez
 martinez
 garcia
+# Various Chinese/Asian last names
+# https://www.thechairmansbao.com/the-ten-most-common-surnames-in-china/
+# https://en.wikipedia.org/wiki/List_of_common_Chinese_surnames
+# Some of these may already be English stop words.
+chang
+chen
+chin
+chung
+fan
+fang
+fu
+guo
+liao
+liang
+liu
+luo
+meng
+ming
+qian
+shen
+huang
+pan
+pang
+peng
+ping
+tang
+wang
+wai
+wei
+wu
+xi
+yang
+yan
+yin
+yi
+yu
+yee
+zeng
+zhang
+zheng
+zhen
+zhou
+zho
+zhi
+zhu
 
