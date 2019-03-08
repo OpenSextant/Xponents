@@ -3,6 +3,8 @@
 # Why is Java so difficult?
 # Ant 1.10 / Java 8 do not support Unix file permissions on "copy"
 
+unset PYTHONPATH
+
 pushd ../python
 rm -rf ./dist/*
 python2 ./setup.py sdist
