@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-xlayer</artifactId>
-    <version>0.7</version>
+    <version>0.8-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Xlayer Restlet</name>
 
     <properties>
         <restlet.version>2.3.12</restlet.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <xponents.v>3.0.5</xponents.v>
+        <xponents.v>3.0.6-SNAPSHOT</xponents.v>
     </properties>
     <dependencies>
         <dependency>
@@ -37,6 +37,12 @@
             <groupId>org.opensextant</groupId>
             <artifactId>opensextant-xponents</artifactId>
             <version>${xponents.v}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -63,12 +69,12 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.2</version>
+      <version>1.2.3</version>
     </dependency>
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-json</artifactId>
-      <version>5.0.6</version>
+      <version>5.0.10</version>
     </dependency>
     </dependencies>
 
