@@ -2,6 +2,7 @@ package org.opensextant.output;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
 import org.opensextant.data.Taxon;
@@ -164,6 +165,7 @@ public class Transforms {
             node.put("prec", geo.getPrecision());
             node.put("lat", geo.getLatitude());
             node.put("lon", geo.getLongitude());
+            node.put("geohash", GeodeticUtility.geohash(geo));
         }
         if (geo.getMethod() != null) {
             node.put("method", geo.getMethod());
@@ -343,7 +345,7 @@ public class Transforms {
                 node.put("cc", resolvedPlace.getCountryCode());
                 node.put("confidence", place.getConfidence());
 
-            } else {
+            } else if (resolvedPlace != null ) {
 
                 /*
                  * Conf = 20 or greater to be geocoded.
@@ -356,6 +358,13 @@ public class Transforms {
                 if (place.getConfidence() <= 10) {
                     place.setFilteredOut(true);
                 }
+            } else {
+                node.put("name", name.getText());
+                node.put("type", "place");
+                node.put("confidence", 15); /* A low confidence */
+                node.put("filtered-out", name.isFilteredOut());
+                node.put("rules", StringUtils.join(place.getRules(), ";"));
+                
             }
             node.put("filtered-out", place.isFilteredOut());
             resultArray.add(node);
