@@ -1986,6 +1986,7 @@ partido,place.general.spa
 atlantis,place.legend
 pacific,place.ocean
 atlantic,place.ocean
+saharan,place.landmass
 in,preposition
 autumn,season
 fall,season
@@ -2049,6 +2050,7 @@ safari,stopword.web
 ebay,stopword.web
 xbox,stopword.web
 cookie,stopword.web
+alpha,stopword.web
 beta,stopword.web
 gamma,stopword.web
 click,stopword.web

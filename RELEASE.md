@@ -1,5 +1,8 @@
 # 2018 #
 
+Xponents 3.0.6 Pi Day/Equinox
+* Xtemporal now reduces matches filtering out submatches or duplicate date/time matches.
+
 Xponents 3.0.5 SuperBowl
 * Reviewed low recall due to name-code filters and rules.  NAME,.....CODE will not filter out a CODE if CODE is a country.
 * Solr/Lucene 7.6+
