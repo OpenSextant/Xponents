@@ -217,7 +217,15 @@ public class XTemporal extends AbstractFlexPat {
 
         results.pass = !results.matches.isEmpty();
 
+        /*
+         * Reduce duplicates, then mark them as filtered out.
+         */
         PatternManager.reduce_matches(results.matches);
+        for (TextMatch dt : results.matches) {
+            if (dt.is_duplicate || dt.is_submatch) {
+                dt.setFilteredOut(true);
+            }
+        }
 
         return results;
     }

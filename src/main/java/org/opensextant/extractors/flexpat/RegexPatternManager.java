@@ -415,7 +415,6 @@ public abstract class RegexPatternManager {
             TextMatch M = matches.get(i);
             long m1 = M.start;
             long m2 = M.end;
-
             // Compare from
             for (int j = i + 1; j < len; ++j) {
                 TextMatch N = matches.get(j);
