@@ -11,7 +11,7 @@ python2 ./setup.py sdist
 popd
 
 VER=3.0
-BUILD_VER=3.0.5
+BUILD_VER=3.0.6
 ant -f ./dist.xml dist
 
 REL=../dist/Xponents-$VER

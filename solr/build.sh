@@ -28,16 +28,16 @@ index_taxcat () {
   SOLR_URL=$1
   echo "Populate nationalities taxonomy in XTax"
   # you must set your PYTHONPATH to include required libraries built from ../python
-  python  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr $SOLR_URL --starting-id 0
+  python2.7  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr $SOLR_URL --starting-id 0
   sleep 1 
 
   echo "Populate core JRC Names 'entities' data file, c.2014"
   JRC_DATA=./etc/taxcat/data
   JRC_SCRIPT=./script/taxcat_jrcnames.py
-  python $JRC_SCRIPT --taxonomy $JRC_DATA/entities.txt  --solr $SOLR_URL
+  python2.7 $JRC_SCRIPT --taxonomy $JRC_DATA/entities.txt  --solr $SOLR_URL
 
   # Arbitrary row ID scheme, but we have various catalogs that should have reserved row-id space based on size.
-  python script/taxcat_person_names.py   --solr $SOLR_URL --starting-id 20000
+  python2.7 script/taxcat_person_names.py   --solr $SOLR_URL --starting-id 20000
 
   sleep 1 
 }
@@ -50,7 +50,7 @@ index_gazetteer () {
 
   sleep 2 
   echo "Generate Name Variants"
-  python ./script/gaz_generate_variants.py  --solr $SOLR_URL --output $GAZ_CONF/additions/generated-variants.json
+  python2.7 ./script/gaz_generate_variants.py  --solr $SOLR_URL --output $GAZ_CONF/additions/generated-variants.json
 
   # Finally add adhoc entries from JSON formatted files.
   #
@@ -125,7 +125,7 @@ if [ $do_data -eq 1 ] ; then
   ant -f build.xml $proxy taxcat-jrc
 fi
 
-python ./script/assemble_person_filter.py 
+python2.7 ./script/assemble_person_filter.py 
 
 if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
    # Collect Gazetteer Metadata: 
