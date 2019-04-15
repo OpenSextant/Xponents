@@ -1,6 +1,6 @@
 VER=3.0
 REL=../dist/Xponents-$VER
-TARGET_LIB=$REL/xlayer-lib/
+TARGET_LIB=$REL/xlayer-lib
 
 # Prepare distribution, to add Xlayer
 # ./lib/          -- has all Xponents libs
@@ -9,7 +9,7 @@ TARGET_LIB=$REL/xlayer-lib/
 # ./test          test scripts for xlayer
 # ./script        Shell/BAT script for xlayer
 #
-mkdir -p $TARGET_LIB
+mkdir -p $TARGET_LIB/
 
 # clean and gather dependencies.
 mvn clean install
@@ -22,8 +22,8 @@ for CFG in xlayer-banner.txt logging.properties; do
   cp ./etc/$CFG $REL/etc/
 done
 
-# Copy select libraries to release.
-for lib in json-20160212.jar log4j* org.restlet* simple-5.1.6.jar ; do 
+# Copy select libraries to release. Log4J JARs omitted.
+for lib in json-20160212.jar org.restlet* simple-5.1.6.jar ; do 
   cp ./lib/$lib $TARGET_LIB/
 done
 
