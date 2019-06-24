@@ -1,9 +1,12 @@
-'''
+"""
 Xponents Python Data: see comparable classes in Xponents Basics data pkg in Java.
-'''
+"""
+
+
 class Country:
-    '''  Country metadata
-    '''
+    """  Country metadata
+    """
+
     def __init__(self):
         self.cc_iso2 = None
         self.cc_iso3 = None
@@ -20,7 +23,7 @@ class Country:
         self.lon = 0
 
     def __str__(self):
-        return u'%s (%s)' %(self.name, self.cc_iso2)
+        return u'%s (%s)' % (self.name, self.cc_iso2)
 
 
 def validate_lat(f):
@@ -32,11 +35,12 @@ def validate_lon(f):
 
 
 class Coordinate:
-    ''' Convenient class for Lat/Lon pair.
+    """ Convenient class for Lat/Lon pair.
         Expects a row dict with 'lat' and 'lon', 
         or kwd args 'lat', 'lon'
         @param row default dictionary 
-    ''' 
+    """
+
     def __init__(self, row, lat=None, lon=None):
 
         self.X = 0.0
@@ -44,16 +48,13 @@ class Coordinate:
         self.mgrs = None
 
         if row:
-            if (row.has_key('lat') and row.has_key('lon')):
+            if row.has_key('lat') and row.has_key('lon'):
                 lat = row['lat']
                 lon = row['lon']
 
-        if (lat and lon):
+        if lat and lon:
             self.X = float(lon)
             self.Y = float(lat)
-        else:
-            return None
-
 
     def validate(self):
         return validate_lat(self.Y) and validate_lon(self.X) and (self.X is not None and self.Y is not None)
@@ -64,13 +65,13 @@ class Coordinate:
 
     def __str__(self):
         if self.Y:
-            return '%3.4f, %3.4f'  % (self.Y, self.X)
+            return '%3.4f, %3.4f' % (self.Y, self.X)
         else:
             return 'unset'
 
 
 class Place(Coordinate):
-    '''
+    """
     Location or GeoBase
     + Coordinate
     + Place
@@ -84,7 +85,8 @@ class Place(Coordinate):
        etc.  Not sure of the best data model for inheritance.
     This Python API hopes to simplify the concepts in the Java API.
     
-    '''
+    """
+
     def __init__(self, pid, name, lat=None, lon=None):
         Coordinate.__init__(self, None, lat=lat, lon=lon)
         self.place_id = pid
@@ -92,8 +94,8 @@ class Place(Coordinate):
 
         self.is_ascii = False
         self.is_upper = False
-        self.adm1_postalcode = None # Province Postal CODE?
-        self.place_postalcode = None # ZIP CODE?
+        self.adm1_postalcode = None  # Province Postal CODE?
+        self.place_postalcode = None  # ZIP CODE?
         self.name_type = None
         self.country = None
         self.country_code = None
@@ -106,30 +108,28 @@ class Place(Coordinate):
         self.source = None
         self.name_bias = 0.0
         self.id_bias = 0.0
-        self.precision= -1
-        self.method = None;
+        self.precision = -1
+        self.method = None
         self.population = 0
-        self.hierachical_path= None
+        self.hierachical_path = None
 
     def has_coordinate(self):
         if self.validate():
-            return (self.Y != 0 and self.X != 0)
+            return self.Y != 0 and self.X != 0
         return False
-    
+
     def get_location(self):
-        ''' Returns (LAT, LON) tuple
+        """ Returns (LAT, LON) tuple
         @return: tuple, (lat,lon)
-        '''
-        return (self.Y, self.X)
-        
+        """
+        return self.Y, self.X
+
     def set_location(self, lat, lon):
         self.set(lat, lon)
 
     def __str__(self):
         crd = 'Unset'
         if self.Y:
-            crd = '%3.4f, %3.4f'  % (self.Y, self.X)
-        meta = '%s (%s), %s'  %( self.name, self.place_id, self.country_code)
+            crd = '%3.4f, %3.4f' % (self.Y, self.X)
+        meta = '%s (%s), %s' % (self.name, self.place_id, self.country_code)
         return ', '.join([meta, crd])
-        
-    
