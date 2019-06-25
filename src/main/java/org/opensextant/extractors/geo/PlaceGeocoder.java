@@ -446,7 +446,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      * 
      * LangID can be set on TextInput input.langid. Only lowercase langIDs please: 'zh', 'ar', tag text
      * for those languages in particular. Null and Other values are treated as generic as of v2.8.
-     * <p/>
+     * <p>
      * Use TextMatch.getType() to determine how to interpret TextMatch / Geocoding results:
      * <ul>
      * <li>Given TextMatch match, then</li>

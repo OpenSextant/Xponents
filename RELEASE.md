@@ -1,4 +1,12 @@
-# 2018 #
+# 2019 
+
+Xponents 3.0.7 Summer Solstice
+* Reverse geocoding added on request.  Xlayer exposes the results of enriching found coordinates
+  ** Use of Solr `{geofilt}` does not work with large number of rows of point data -- RPT wants to work with shapes and appearently tries to load resources
+     to support more advanced shape queries.  Ran out of memory with all invocationso of Solr Spatial mechanisms.
+* OpenJDK 8 and 12 testing;  Experiments on GC settings
+
+# 2018 
 
 Xponents 3.0.6 Pi Day/Equinox
 * Xtemporal now reduces matches filtering out submatches or duplicate date/time matches.
