@@ -56,7 +56,7 @@ public class XponentTextGeotagger extends XponentGeocoder {
         // Default is to tag coords, places, and countries.
         /* "resolve_provinces" is equivalent to setProvinceName(Place) */
         xponentsParams.tag_coordinates = true;
-        xponentsParams.resolve_provinces = true;
+        xponentsParams.resolve_localities = true;
         tagger.setParameters(xponentsParams);
 
         /*

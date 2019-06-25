@@ -6,21 +6,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.opensextant.data.Place;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.GazetteerMatcher;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
+import org.opensextant.processing.RuntimeTools;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.GeodeticUtility;
 
 /**
  * Setup for testing:
  * 
- * - build Gazeteer project - load data into ./solr/gazetteer solr core - run
- * this test main, -Dopensextant.solr=<path to gazetteer solr home> one
- * argument, then input file to test.
+ * - build Gazeteer project - load data into ./solr/gazetteer solr core - run this test main,
+ * -Dopensextant.solr=<path to gazetteer solr home> one argument, then input file to test.
  * 
  * @author ubaldino
  *
@@ -39,12 +40,27 @@ public class TestGazMatcher {
         }
     }
 
+    protected final static ArrayList<Integer> memStats = new ArrayList<>();
+
+    protected static final void printMemory() {
+        int kbMemory = RuntimeTools.reportMemory();
+        memStats.add(kbMemory);
+        print("MEMORY USAGE (KB) " + kbMemory);
+    }
+
+    protected static final void dumpStats() {
+        print("MEMORY SUMMARY");
+        for (int s : memStats) {
+            print (""+s);
+        }
+    }
+
     public static void print(String m) {
         System.out.println(m);
     }
 
     public static void printGeoTags(TextMatch match) {
-        System.out.println("Name:" + match.getText());
+        System.out.println("Name:" + match.getText() + ", Type:" + match.getType());
     }
 
     public static void summarizeFindings(List<TextMatch> matches, int expected) {
@@ -106,8 +122,13 @@ public class TestGazMatcher {
                 if (geo.getRelatedPlace() != null) {
                     System.out.println("Coordinate at place named " + geo.getRelatedPlace());
                 }
+                if (geo.getNearByPlaces() != null) {
+                    for (Place p : geo.getNearByPlaces()) {
+                        long dist = GeodeticUtility.distanceMeters(p, geo);
+                        System.out.println(String.format("Nearby place %s is %d meters away", p.getName(), dist));
+                    }
+                }
             }
-
         }
 
         System.out.println("MENTIONS DISTINCT PLACES == " + placeNames.size());
@@ -126,13 +147,12 @@ public class TestGazMatcher {
     }
 
     /**
-     * Do a basic test. Requirements include setting opensextant.solr to solr
-     * core home. (Xponents/solr, by default) USAGE:
+     * Do a basic test. Requirements include setting opensextant.solr to solr core home. (Xponents/solr,
+     * by default) USAGE:
      * 
      * TestGazMatcher file
      * 
-     * Prints: all matched, filtered place mentions distinct places distinct
-     * countries
+     * Prints: all matched, filtered place mentions distinct places distinct countries
      */
     public static void main(String[] args) throws Exception {
 

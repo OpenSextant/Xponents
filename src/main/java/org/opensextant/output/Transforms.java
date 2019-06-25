@@ -22,9 +22,9 @@ import jodd.json.JsonObject;
 public class Transforms {
 
     /**
-     * Convert JSON object for an annotation into a Xponents TextMatch instance.
-     * Parsing data from JSON/REST representations has very limited capability compared to
-     * using Java API for processing routines directly.
+     * Convert JSON object for an annotation into a Xponents TextMatch instance. Parsing data from
+     * JSON/REST representations has very limited capability compared to using Java API for processing
+     * routines directly.
      * 
      * @param data
      * @return TextMatch object represented by json annotation
@@ -60,11 +60,12 @@ public class Transforms {
             coord.setLatLon(coordLoc);
             coord.setMethod(coordLoc.getMethod());
 
-            /* TODO: GeocoordMatch needs to support setters for Geocoding here.
-             * missing reverse geo info
+            /*
+             * TODO: GeocoordMatch needs to support setters for Geocoding here. missing
+             * reverse geo info
              * 
-             *  cc, adm1
-             *  
+             * cc, adm1
+             * 
              */
             m = coord;
             break;
@@ -117,6 +118,7 @@ public class Transforms {
 
     /**
      * First stab at deserializing JSON date annotation.
+     * 
      * @param d datematch
      * @param a json annot
      */
@@ -129,6 +131,7 @@ public class Transforms {
 
     /**
      * Parse out a taxon from JSON/REST
+     * 
      * @param x a taxon object
      * @param t type of taxon
      * @param a JSON annotation
@@ -147,7 +150,7 @@ public class Transforms {
     /**
      * Given an existing JSON object, add geocoding metadata to it.
      * 
-     * @param geo geocoding object
+     * @param geo  geocoding object
      * @param node JsonObject representing the serialized JSON for an Xlayer or other annotation.
      */
     public static final void createGeocoding(Geocoding geo, JsonObject node) {
@@ -173,12 +176,42 @@ public class Transforms {
         if (geo.getAdminName() != null) {
             node.put("adm1_name", geo.getAdminName());
         }
+        if (geo instanceof GeocoordMatch) {
+            GeocoordMatch coord = (GeocoordMatch) geo;
+            if (coord.getRelatedPlace() != null) {
+                node.put("related_place_name", coord.getRelatedPlace().getName());
+            }
+            /*
+             * "name": "Provincial Park of Alberta", "cc": "CA", "lat": 56.16, "lon":
+             * -117.54, "prec": 5000, "feat_class": "S", "feat_code": "PARK", "adm1": "01",
+             * "distance": 3400
+             */
+            if (coord.getNearByPlaces() != null) {
+                JsonArray arr = new JsonArray();
+                for (Place pl : coord.getNearByPlaces()) {
+                    JsonObject o = new JsonObject();
+                    o.put("name", pl.getName());
+                    o.put("cc", pl.getCountryCode());
+                    o.put("adm1", pl.getAdmin1());
+                    o.put("lat", pl.getLatitude());
+                    o.put("lon", pl.getLongitude());
+                    o.put("feat_class", pl.getFeatureClass());
+                    o.put("feat_code", pl.getFeatureCode());
+                    o.put("prec", pl.getPrecision());
+                    o.put("distance", GeodeticUtility.distanceMeters(coord, pl));
+
+                    arr.add(o);
+                }
+                node.put("nearest_places", arr);
+            }
+        }
     }
 
     /**
-     * Given a JSON object, parse fields relevant to the geocoding and populate that JSON data
+     * Given a JSON object, parse fields relevant to the geocoding and populate that JSON data TODO:
+     * implement Parsing reverse geocoding structures related_place_name and nearest_places
      * 
-     * @param geo geocoding object
+     * @param geo  geocoding object
      * @param node JsonObject representing the serialized JSON for an Xlayer or other annotation.
      */
     public static final void parseGeocoding(Place geo, JsonObject node) {
@@ -205,10 +238,11 @@ public class Transforms {
             geo.setMethod(node.getString("method"));
         }
         if (node.containsKey("adm1_name")) {
-            geo.setAdminName("adm1_name");
+            geo.setAdminName(node.getString("adm1_name"));
         }
 
-        /* Name overrides matchtext or text.
+        /*
+         * Name overrides matchtext or text.
          */
         if (node.containsKey("text")) {
             geo.setPlaceName(node.getString("text"));
@@ -222,11 +256,11 @@ public class Transforms {
     }
 
     /**
-    * Copy the basic match information
-    * 
-    * @param m
-    * @return
-    */
+     * Copy the basic match information
+     * 
+     * @param m
+     * @return
+     */
     private static JsonObject populateMatch(final TextMatch m) {
 
         JsonObject o = new JsonObject();
@@ -250,9 +284,9 @@ public class Transforms {
         JsonArray resultArray = new JsonArray();
 
         /*
-         * Super loop: Iterate through all found entities. record Taxons as
-         * person or orgs record Geo tags as country, place, or geo. geo =
-         * geocoded place or parsed coordinate (MGRS, DMS, etc)
+         * Super loop: Iterate through all found entities. record Taxons as person or
+         * orgs record Geo tags as country, place, or geo. geo = geocoded place or
+         * parsed coordinate (MGRS, DMS, etc)
          * 
          */
         for (TextMatch name : matches) {
@@ -262,10 +296,11 @@ public class Transforms {
                 continue;
             }
 
-            /*            
+            /*
+             * ========================== 
+             * ANNOTATIONS: non-geographic entities that are
+             * filtered out, but worth tracking 
              * ==========================
-             * ANNOTATIONS: non-geographic entities that are filtered out, but worth tracking
-             * ==========================             
              */
             if (name instanceof TaxonMatch) {
                 if (jobParams.output_taxons) {
@@ -293,9 +328,7 @@ public class Transforms {
             }
 
             /*
-             * ==========================
-             * FILTERING
-             * ==========================
+             * ========================== FILTERING ==========================
              */
             JsonObject node = populateMatch(name);
 
@@ -311,14 +344,14 @@ public class Transforms {
             }
 
             /*
-             * ==========================
+             * ========================== 
              * ANNOTATIONS: coordinates
              * ==========================
              */
             if (name instanceof GeocoordMatch) {
                 ++tagCount;
                 GeocoordMatch geo = (GeocoordMatch) name;
-                node.put("type", "coordinate");
+                node.put("type", geo.getType());
                 node.put("filtered-out", name.isFilteredOut());
                 Transforms.createGeocoding(geo, node);
                 resultArray.add(node);
@@ -329,14 +362,13 @@ public class Transforms {
             Place resolvedPlace = place.getChosen();
 
             /*
-             * ==========================
+             * ========================== 
              * ANNOTATIONS: countries, places, etc.
              * ==========================
              */
             /*
-             * Accept all country names as potential geotags Else if name can be
-             * filtered out, do it now. Otherwise it is a valid place name to
-             * consider
+             * Accept all country names as potential geotags Else if name can be filtered
+             * out, do it now. Otherwise it is a valid place name to consider
              */
             ++tagCount;
             if (place.isCountry) {
@@ -345,7 +377,7 @@ public class Transforms {
                 node.put("cc", resolvedPlace.getCountryCode());
                 node.put("confidence", place.getConfidence());
 
-            } else if (resolvedPlace != null ) {
+            } else if (resolvedPlace != null) {
 
                 /*
                  * Conf = 20 or greater to be geocoded.
@@ -364,7 +396,7 @@ public class Transforms {
                 node.put("confidence", 15); /* A low confidence */
                 node.put("filtered-out", name.isFilteredOut());
                 node.put("rules", StringUtils.join(place.getRules(), ";"));
-                
+
             }
             node.put("filtered-out", place.isFilteredOut());
             resultArray.add(node);

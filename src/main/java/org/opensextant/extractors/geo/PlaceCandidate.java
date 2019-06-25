@@ -647,4 +647,8 @@ public class PlaceCandidate extends TextMatch {
     public boolean isValid() {
         return markedValid;
     }
+
+    public boolean hasEvidence() {
+        return !this.evidence.isEmpty();
+    }
 }

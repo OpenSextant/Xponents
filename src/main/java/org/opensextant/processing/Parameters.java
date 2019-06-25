@@ -49,9 +49,13 @@ public class Parameters extends java.util.Properties {
     public boolean tag_lowercase = false;
     public boolean clean_input = false;
 
-    /** Parameter to add a Province name to a Place object, if CC &amp; ADM1 are set.
+    /** Reverse Geo here is accommodated by resolving Provinces and Localities when a
+     * geodetic coordinate is encountered in text.  The containing province and/or closest 
+     * feature is reported.  Country code and ADM1 code, and Province Name are inferred
+     * and set on coordinate object, improving the contextual information for the rest of the processing. 
      */
-    public boolean resolve_provinces = false;
+    public boolean resolve_localities = false;
+
     /** By default Country Names will not be included in GIS products
      *  They should appear in CSV, though.
      */
@@ -77,10 +81,12 @@ public class Parameters extends java.util.Properties {
     public String outputFile = null;
 
     private Set<String> formats = new HashSet<String>();
+
     /**  You the caller must explicitly set isdefault = false;
      *   forcing you to actually look at these parameters.
      */
     public boolean isdefault = true;
+
     public static final int FLAG_EXTRACT_CONTEXT = 0x10;
     public static final int FLAG_NO_COORDINATES = 0x20;
 

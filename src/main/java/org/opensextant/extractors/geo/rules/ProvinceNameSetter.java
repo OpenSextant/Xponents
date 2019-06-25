@@ -13,11 +13,16 @@ public class ProvinceNameSetter extends GeocodeRule {
 
     /**
      * Configure name helper if you want Province name resolution and other things..
+     * 
      * @throws IOException
      */
-    public ProvinceNameSetter() throws IOException {
-        nameHelper = new GeonamesUtility();
-        nameHelper.loadWorldAdmin1Metadata();
+    public ProvinceNameSetter(GeonamesUtility geonamesUtil) throws IOException {
+        if (geonamesUtil == null) {
+            nameHelper = new GeonamesUtility();
+            nameHelper.loadWorldAdmin1Metadata();
+        } else {
+            nameHelper = geonamesUtil;
+        }
     }
 
     protected void assignProvinceName(Place geo) {
@@ -47,10 +52,6 @@ public class ProvinceNameSetter extends GeocodeRule {
              * First choice -- set the place name.
              */
             assignProvinceName(pc.getChosen());
-            /**
-             * Second choice -- set the place name.
-             */
-            assignProvinceName(pc.getSecondChoice());
         }
     }
 

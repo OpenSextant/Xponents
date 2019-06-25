@@ -502,9 +502,8 @@
     <!-- Geospatial field type (aka GeoSolr) http://wiki.apache.org/solr/SolrAdaptersForLuceneSpatial4 
         Note: This field type has some optional params: spatialContextFactory, geo, 
         distCalculator, worldbounds, distErrPct, defaultFieldValuesArrayLen, prefixTree, 
-        maxLevels, maxDistErr 0.00009 = 10meter accuracy specified in degrees (111.2km/degree) -->
+        maxLevels, maxDistErr 0.010 = 100meter accuracy specified in degrees (111.2km/degree) -->
     <fieldType name="geo" class="solr.SpatialRecursivePrefixTreeFieldType"
-        spatialContextFactory="org.locationtech.spatial4j.context.jts.JtsSpatialContextFactory"
-        maxDistErr="0.00009" distErrPct="0.025" geo="true" distanceUnits="kilometers"/>
+        maxDistErr="0.010" distErrPct="0.05" geo="true" distanceUnits="kilometers"/>
 
 </schema>
