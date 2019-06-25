@@ -23,6 +23,7 @@ if "%COMMAND%" == "start" (
     echo "START XLAYER SERVICE"
     set CLASSPATH=%"%basedir%\etc;%basedir%\etc\*;%basedir%\lib\*;%basedir%\xlayer-lib\*;"%
     java -Dopensextant.solr="%XPONENTS_SOLR%\solr7" -Xmx2g -Xms2g ^
+          -XX:+UseParallelGC -server ^
           -Dlogback.configurationFile="%basedir%\etc\logback.xml" ^
           -classpath "%CLASSPATH%" ^
           org.opensextant.xlayer.server.xgeo.XlayerServer   %XLAYER_PORT% 

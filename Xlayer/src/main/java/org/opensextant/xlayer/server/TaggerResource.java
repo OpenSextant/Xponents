@@ -149,6 +149,8 @@ public abstract class TaggerResource extends ServerResource {
         job.tag_coordinates = false;
         job.tag_countries = true;
         job.tag_places = true;
+        /** Coordinates are not reverse geocoded by default. */
+        job.resolve_localities = false;
 
         job.tag_taxons = true;
         job.tag_patterns = true;
@@ -169,10 +171,11 @@ public abstract class TaggerResource extends ServerResource {
 
         if (inputs.has("options")) {
             String list = inputs.getString("options");
-            Set<String> features = new HashSet<>();
-            features.addAll(TextUtils.string2list(list.toLowerCase(), ","));
-            job.clean_input = features.contains("clean_input");
-            job.tag_lowercase = features.contains("lowercase");
+            Set<String> opts = new HashSet<>();
+            opts.addAll(TextUtils.string2list(list.toLowerCase(), ","));
+            job.clean_input = opts.contains("clean_input");
+            job.tag_lowercase = opts.contains("lowercase");
+            job.resolve_localities = opts.contains("revgeo") || opts.contains("resolve_localities");
         }
 
         if (job.clean_input || job.tag_lowercase) {

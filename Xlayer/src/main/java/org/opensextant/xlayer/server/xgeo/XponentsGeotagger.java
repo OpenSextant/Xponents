@@ -11,6 +11,7 @@ import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
+import org.opensextant.processing.RuntimeTools;
 import org.opensextant.xlayer.server.TaggerResource;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
@@ -147,6 +148,9 @@ public class XponentsGeotagger extends TaggerResource {
                     XTemporal xt = (XTemporal) getExtractor("xtemp");
                     matches.addAll(xt.extract(input));
                 }
+                if (isDebug()) {
+                    debug(String.format("CURRENT MEM USAGE(K)=", RuntimeTools.reportMemory()));
+                }
                 /*
                  * formulate matches as JSON output.
                  */
@@ -173,8 +177,7 @@ public class XponentsGeotagger extends TaggerResource {
     private Representation format(List<TextMatch> matches, Parameters jobParams) throws JSONException {
 
         JsonObject j = Transforms.toJSON(matches, jobParams);
-        Representation result = null;
-        result = new JsonRepresentation(j.toString());
+        Representation result = new JsonRepresentation(j.toString());
         result.setCharacterSet(CharacterSet.UTF_8);
 
         return result;

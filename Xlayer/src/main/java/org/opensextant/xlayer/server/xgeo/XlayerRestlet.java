@@ -66,7 +66,7 @@ public class XlayerRestlet extends XlayerApp {
         //
         tagger = new PlaceGeocoder();
         Parameters taggerParams = new Parameters();
-        taggerParams.resolve_provinces = true;
+        taggerParams.resolve_localities = true;
         tagger.setParameters(taggerParams); 
         //See Xponents concept of Parameters
         tagger.enablePersonNameMatching(true);

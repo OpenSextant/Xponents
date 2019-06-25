@@ -11,12 +11,15 @@ which demonstrate how to call the extraction service and parse the results.
 
 History 
 ---------
+* version 0.8
+  * Xponents 3.0.7, exposing reverse geocoding feature set
+  
 * version 0.6
-  - Xponents 3.0 release plugged in
+  * Xponents 3.0 release integrated
 
 * version 0.2
-  - added features and options to allow caller to customize request
-  - Expose PlaceGeocoder capability: geocode text, yielding 
+  * added features and options to allow caller to customize request
+  * Expose PlaceGeocoder capability: geocode text, yielding 
     places, coordinates, countries, and matched non-places organizations and person names
 
 
@@ -91,27 +94,34 @@ OUTPUT:
 * `response`     - status, numfound
 * `annotations`  - an array  of objects. 
 
-Annotation schema 
-* matchtext      - text span matched
-* type           - type of annotation, one of `place`, `country`, `coordinate`, `org`, `person`
-* offset         - character offset into text buffer where text span starts
-* length         - length of text span.  end offset = offset + length
-* method         - method tag identifying the means by which this annotation was derived.
-* filtered-out   - true or false if match was filtered by some rule or configuration setting. 
+Annotation schema
+ 
+* `matchtext`      - text span matched
+* `type`           - type of annotation, one of `place`, `country`, `coordinate`, `org`, `person`
+* `offset`         - character offset into text buffer where text span starts
+* `length`         - length of text span.  end offset = offset + length
+* `method`         - method tag identifying the means by which this annotation was derived.
+* `filtered-out`   - true or false if match was filtered by some rule or configuration setting. 
                    Filtered out items are therefore low-quality stuff.
 
 Geographic annotations additionally have:
-* cc             - country code
-* lat, lon       - WGS84 latitude, longitude
-* prec           - precision inferred from text (coordinate digits) or gazetteer feature type
-* adm1           - ADM1 boundary code, ideally ISO nomenclature, but still often FIPS
-* feat_class     - Geonames class. One of A, P, H, R, T, S, L, V.  
-* feat_code      - Geonames designation code. This is more specific than the class.
-* confidence     - A relative level of confidence.  Subject to change; A scale of 0 to 100, where confidence < 20 is not reliable or lacks evidence.
+
+* `cc`             - country code
+* `lat, lon`       - WGS84 latitude, longitude
+* `prec`           - precision inferred from text (coordinate digits) or gazetteer feature type
+* `adm1`           - ADM1 boundary code, ideally ISO nomenclature, but still often FIPS
+* `feat_class`     - Geonames class. One of A, P, H, R, T, S, L, V.  
+* `feat_code`      - Geonames designation code. This is more specific than the class.
+* `confidence`     - A relative level of confidence.  Subject to change; A scale of 0 to 100, where confidence < 20 is not reliable or lacks evidence.
+* `related_place_name` - IF a close by city can be associated with this coordinate the other metadata
+  for ADM1, province name, and country code should reflect the coding. This place name identifies that city.
+* `nearest_places` - An ARRAY of all such known places that could be landmarks, natural features, etc.
+This is different than the `related_place_name` mainly by feature type: that field is a populated place (P/PPL) and this array is any feature type.
 
 Non-Geographic annotations have:
-* catalog        - attribution to a data source or catalog containing the reference data
-* taxon          - the ID of a normalized catalog entry for the match, e.g., `person = { text:"Rick Springfield", taxon:"person.Richard Springfield", catalog:"Rock-Legends"}`
+
+* `catalog`        - attribution to a data source or catalog containing the reference data
+* `taxon`          - the ID of a normalized catalog entry for the match, e.g., `person = { text:"Rick Springfield", taxon:"person.Richard Springfield", catalog:"Rock-Legends"}`
 
 
 
@@ -151,14 +161,54 @@ Example JSON Output:
 	      "offset": 8,      
 	      /*  annotation-specific items: */
 	      "cc": "CA",
-	      "lon": -117.55333709716797,
+	      "lon": -117.55333,
 	      "prec": 15,
 	      "feat_code": "COORD",
-	      "lat": 56.145835876464844,
+	      "lat": 56.145835,
 	      "adm1": "01",
 	      "feat_class": "S", 
-	      "filtered-out":false
+	      "filtered-out":false	      
 	    },
+	    {
+	      /* A COORD, with an indication of neighboring locales.
+	       *   option "revgeo" or "resolve_localities" will evoke this output for Coordinates.
+	       * ~~~~~~~~~~~~~~~~~~~
+	       */
+	      /* common annotation items */
+	      "text": " 56:08:45N, 117:33:12W",
+	      "type": "coordinate",
+	      "method": "DMS-01a",
+	      "length": 22,
+	      "offset": 8,      
+	      /*  annotation-specific items: */
+	      "cc": "CA",
+	      "lat": 56.145835,
+	      "lon": -117.55333,
+	      "prec": 15,
+	      "feat_class": "S", 
+	      "feat_code": "COORD",
+	      "adm1": "01",
+	      "filtered-out":false, 
+	      "related_place_name": "Grimshaw",
+	      "nearest_places": [
+	         {
+		      "name": "Provincial Park of Alberta", 
+		      "cc": "CA",
+		      "adm1": "01",
+		      "lat": 56.16,
+		      "lon": -117.54,
+		      "feat_class": "S", 
+		      "feat_code": "PARK",
+		      "prec": 5000,             /* Precision (in meters) is an approximate radius around the point
+		                                 * that represents the total area of the feature.
+		                                 */
+	          "distance": 3400	          /* Distance (in meters) from this nearby place to the found coordinate
+	                                      */
+	         }
+	         /* UP to 5 different locations */
+	      ]	      
+	    },
+	    
 	    {
 	      /* A PERSON 
 	       * ~~~~~~~~~~~~~~~~~~~
