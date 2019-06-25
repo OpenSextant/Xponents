@@ -619,6 +619,8 @@ public class GeonamesUtility {
 
     /**
      * Source: geonames.org ADM1 codes/names in anglo/ASCII form.
+     * These codes do NOT contain geodetic information (lat/lon, etc)
+     * CAVEAT -- using such Place metadata will provide a coordinate of (0,0)
      * 
      * @throws IOException if geonames.org table cannot be found in classpath
      */
@@ -694,7 +696,8 @@ public class GeonamesUtility {
     /**
      * Lookup by coded path, CC.ADM1. 
      * You must load World ADM1 data first; use loadWorldAdmin1Metadata()
-     *
+     * These Admin Places do NOT contain geodetic information (lat/lon, etc)
+     * CAVEAT -- using such Place metadata will provide a coordinate of (0,0)
      *  Alias for {@link #getAdmin1Place(String, String)}
      * @param cc country code
      * @param adm1 ADM level 1 code
