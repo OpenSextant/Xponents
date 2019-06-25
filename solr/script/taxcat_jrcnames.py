@@ -133,7 +133,8 @@ NOISE = set(
          u'nuevo léon',
          'nuevo leon',
          'san pedro',
-         'umm qasr'
+         'umm qasr',
+         'windows'
         ])
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
