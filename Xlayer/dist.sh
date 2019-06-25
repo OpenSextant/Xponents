@@ -1,4 +1,4 @@
-VER=3.0
+VER=3.1
 REL=../dist/Xponents-$VER
 TARGET_LIB=$REL/xlayer-lib
 

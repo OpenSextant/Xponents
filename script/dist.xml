@@ -5,12 +5,10 @@
   </description>
 
 	<property name="xponents.home" value="${basedir}/../" />
-	<property name="version" value="3.0" />
-	<property name="xlayer.version" value="0.6" />
+	<property name="version" value="3.1" />
 
 	<property name="release" location="${xponents.home}/dist/Xponents-${version}" />
 	<property name="solr.release" location="${release}/xponents-solr" />
-	<property name="xlayer.release" location="${xponents.home}/dist/Xlayer-${xlayer.version}" />
 
 
 	<target name="build">

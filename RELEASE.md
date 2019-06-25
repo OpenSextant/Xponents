@@ -1,6 +1,6 @@
 # 2019 
 
-Xponents 3.0.7 Summer Solstice
+Xponents 3.1.0 Summer Solstice
 * Reverse geocoding added on request.  Xlayer exposes the results of enriching found coordinates
   ** Use of Solr `{geofilt}` does not work with large number of rows of point data -- RPT wants to work with shapes and appearently tries to load resources
      to support more advanced shape queries.  Ran out of memory with all invocationso of Solr Spatial mechanisms.
