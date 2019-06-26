@@ -12,7 +12,7 @@ which demonstrate how to call the extraction service and parse the results.
 History 
 ---------
 * version 0.8
-  * Xponents 3.0.7, exposing reverse geocoding feature set
+  * Xponents 3.1.0, exposing reverse geocoding feature set
   
 * version 0.6
   * Xponents 3.0 release integrated
