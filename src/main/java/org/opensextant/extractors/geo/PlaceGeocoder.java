@@ -840,16 +840,18 @@ public class PlaceGeocoder extends GazetteerMatcher
     public static final int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /* km */ ;
     public static final int COORDINATE_PROXIMITY_ADM1_THRESHOLD = 50 /* km */;
 
-    /** Internal convenience wrapper 
+    /**
+     * Internal convenience wrapper
      */
     private Place getProvinceFor(Place loc) throws IOException {
-        if (nameHelper==null) {
+        if (nameHelper == null) {
             throw new IOException("GeonamesUtility was not initialized");
         }
         return nameHelper.getProvince(loc.getCountryCode(), loc.getAdmin1());
     }
+
     /**
-     * Compund-method that is crucial in reverse geocoding COORDINATE to KNOWN PLACE. 
+     * Compund-method that is crucial in reverse geocoding COORDINATE to KNOWN PLACE.
      * <p>
      * A method to retrieve one or more distinct admin boundaries containing the coordinate. This
      * depends on resolution of gazetteer at hand. Secondarily as nearby places are encountered they are
@@ -912,7 +914,7 @@ public class PlaceGeocoder extends GazetteerMatcher
          */
         if (nearestPlace != null && nameHelper != null) {
             Place adm1 = getProvinceFor(nearestPlace);
-            if (adm1!=null) {
+            if (adm1 != null) {
                 nearestPlace.setAdmin1Name(adm1.getName());
                 geo.setRelatedPlace(nearestPlace);
                 return adm1;
@@ -930,7 +932,13 @@ public class PlaceGeocoder extends GazetteerMatcher
         }
         if (found != null) {
             Place adm1 = getProvinceFor(found);
-            found.setAdmin1Name(adm1.getName());
+            /* 
+             * IF found, then this COORD is likely very remote.  If still not found, then 
+             * COORD is possibly over deep water or near poles.
+             */
+            if (adm1 != null) {
+                found.setAdmin1Name(adm1.getName());
+            }
             geo.setRelatedPlace(found);
         }
         return found;
