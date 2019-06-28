@@ -185,7 +185,7 @@ For those using other build platforms, you can find our published artifacts at
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.0.4</version>
+    <version>3.1.0</version>
   </dependency>
 ```
 
