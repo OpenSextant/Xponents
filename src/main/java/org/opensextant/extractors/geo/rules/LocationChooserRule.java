@@ -14,13 +14,13 @@ import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.util.GeodeticUtility;
 
 /**
- * A final geocoding pass or two. Loop through candidates and choose
- * the location that best fits the context.
+ * A final geocoding pass or two. Loop through candidates and choose the location that best fits the
+ * context.
  * 
- * As needed cache chosen entries to optimize, e.g. co-referrenced places
- * aformentioned in document. Ideally, consider choosing a best place for the
- * particular instance of a name, but percolate that to the other mentions of that same name.
- * Is it the same place? No need to disambiguate it multiple times at this point.
+ * As needed cache chosen entries to optimize, e.g. co-referrenced places aformentioned in document.
+ * Ideally, consider choosing a best place for the particular instance of a name, but percolate that
+ * to the other mentions of that same name. Is it the same place? No need to disambiguate it
+ * multiple times at this point.
  * 
  * @author ubaldino
  *
@@ -34,6 +34,12 @@ public class LocationChooserRule extends GeocodeRule {
     private Map<String, PlaceCount> boundaryContext = null;
     private Map<String, PlaceCount> namespace = new HashMap<>();
     private HashMap<String, CountryCount> inferredCountries = new HashMap<>();
+
+    private int textCase = 0;
+
+    public void setTextCase(int c) {
+        textCase = c;
+    }
 
     /**
      * These are accumulated.
@@ -116,8 +122,8 @@ public class LocationChooserRule extends GeocodeRule {
     }
 
     /**
-     * What can we learn from assembling better stats at the document level?
-     * Evidence breaks down into concrete locations vs. inferred.
+     * What can we learn from assembling better stats at the document level? Evidence breaks down into
+     * concrete locations vs. inferred.
      * 
      * @param names
      */
@@ -170,25 +176,24 @@ public class LocationChooserRule extends GeocodeRule {
     protected static final double COUNTRY_CONTAINS_PLACE_WT = 1.0;
 
     /**
-     * An amount of points that would be distributed amongst feature types
-     * at each level, e.g., Country names, ADM1, ADM2, PPL names.
+     * An amount of points that would be distributed amongst feature types at each level, e.g., Country
+     * names, ADM1, ADM2, PPL names.
      * 
-     * If you have 2 different countries, one mentioned 4 times and the other mentioned 10 times
-     * you might say the latter is more relevant regarding any ambiguous geography. 
-     * With 14 mentions, that second country is weighted 10/14 = 0.71 of the GLOBAL_POINTS for disambiguation.
+     * If you have 2 different countries, one mentioned 4 times and the other mentioned 10 times you
+     * might say the latter is more relevant regarding any ambiguous geography. With 14 mentions, that
+     * second country is weighted 10/14 = 0.71 of the GLOBAL_POINTS for disambiguation.
      * 
-     * Note, that if only one country appears in context, then it is very possible 
-     * that these global points will outweigh other over arching connections, such as rules for 
-     * CITY,STATE or MAJOR PLACE (POPULATION).  That is okay -- if one single country is mentioned at all, 
-     * then that seems to be a big anchoring point for lots of ambiguities. 
+     * Note, that if only one country appears in context, then it is very possible that these global
+     * points will outweigh other over arching connections, such as rules for CITY,STATE or MAJOR PLACE
+     * (POPULATION). That is okay -- if one single country is mentioned at all, then that seems to be a
+     * big anchoring point for lots of ambiguities.
      */
     private static final int GLOBAL_POINTS = 5;
 
     /**
-     * Yet unchosen location.
-     * Consider given evidence first, creating some weight there,
-     * then introducing innate properties of possible locations, thereby amplifying the
-     * differences in the candidates.
+     * Yet unchosen location. Consider given evidence first, creating some weight there, then
+     * introducing innate properties of possible locations, thereby amplifying the differences in the
+     * candidates.
      * 
      */
     @Override
@@ -242,31 +247,30 @@ public class LocationChooserRule extends GeocodeRule {
     public static final int MATCHCONF_BARE_ACRONYM = 10;
 
     /**
-     * The bare minimum confidence -- if rules negate confidence points,
-     * confidence may go below 20.
+     * The bare minimum confidence -- if rules negate confidence points, confidence may go below 20.
      */
     public static final int MATCHCONF_MINIMUM = 20;
 
     /**
-     * Absolute Confidence: Many Locations matched a single name.
-     * No country is in scope; No country mentioned in document, so this is very low confidence.
+     * Absolute Confidence: Many Locations matched a single name. No country is in scope; No country
+     * mentioned in document, so this is very low confidence.
      */
     public static final int MATCHCONF_MANY_LOC = MATCHCONF_MINIMUM;
 
     /**
-     * Absolute Confidence: Many locations matched, with multiple countries in scope
-     * So, Many countries mentioned in document
+     * Absolute Confidence: Many locations matched, with multiple countries in scope So, Many countries
+     * mentioned in document
      */
     public static final int MATCHCONF_MANY_COUNTRIES = 40;
     /**
-     * Absolute Confidence: Many locations matched, but one country in scope.
-     * So, 1 country mentioned in document
+     * Absolute Confidence: Many locations matched, but one country in scope. So, 1 country mentioned in
+     * document
      */
     public static final int MATCHCONF_MANY_COUNTRY = 50;
 
     /**
-     * Absolute Confidence: Name, Region; City, State; Capital, Country; etc.
-     * Patterns of qualified places.
+     * Absolute Confidence: Name, Region; City, State; Capital, Country; etc. Patterns of qualified
+     * places.
      */
     public static final int MATCHCONF_NAME_REGION = 60;
 
@@ -298,9 +302,9 @@ public class LocationChooserRule extends GeocodeRule {
     /** Confidence Qualifier: The chosen place scored high compared to the runner up */
     public static final int MATCHCONF_QUALIFIER_HIGH_SCORE = 5;
     /**
-     * Confidence Qualifier: Start here if you have a lower case term that may be a place.
-     * -20 points or more for lower case matches, however feat_class P and A win back 5 points; others are
-     * less likely places.
+     * Confidence Qualifier: Start here if you have a lower case term that may be a place. -20 points or
+     * more for lower case matches, however feat_class P and A win back 5 points; others are less likely
+     * places.
      */
     public static final int MATCHCONF_QUALIFIER_LOWERCASE = -15;
 
@@ -309,9 +313,9 @@ public class LocationChooserRule extends GeocodeRule {
     }
 
     /**
-     * Confidence of your final chosen location for a given name is assembled as the sum of some absolute metric
-     * plus some additional qualifiers. The absolute provides some context at the document level, whereas the
-     * qualifiers are refinements.
+     * Confidence of your final chosen location for a given name is assembled as the sum of some
+     * absolute metric plus some additional qualifiers. The absolute provides some context at the
+     * document level, whereas the qualifiers are refinements.
      * 
      * <pre>
      *  conf = A + Q1 + Q2...  // this may change.
@@ -356,8 +360,7 @@ public class LocationChooserRule extends GeocodeRule {
             points = MATCHCONF_ONE_LOC;
         } else if (countryObserver.countryCount() == 0 && pc.hasDiacritics && isShort(pc.getLength())) {
             points = MATCHCONF_MINIMUM;
-        } else if (pc.hasRule(NameCodeRule.NAME_ADMCODE_RULE)
-                || pc.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
+        } else if (pc.hasRule(NameCodeRule.NAME_ADMCODE_RULE) || pc.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
             points = MATCHCONF_NAME_REGION;
         } else if (countryObserver.countryCount() == 1) {
             points = MATCHCONF_MANY_COUNTRY;
@@ -437,6 +440,11 @@ public class LocationChooserRule extends GeocodeRule {
 
         if (this.countryObserver.countryObserved(pc.getChosen().getCountryCode())) {
             points += MATCHCONF_QUALIFIER_COUNTRY_MENTIONED;
+        }
+
+        if (textCase == LOWERCASE) {
+            /* Simple lower case boost:  ADD a point for every character past a basic acronym (2-4 chars long). */
+            points += pc.getLength() - 4;
         }
 
         pc.setConfidence(points);

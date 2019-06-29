@@ -520,6 +520,7 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         // Last rule: score, choose, add confidence.
         //
+        chooser.setTextCase(input.isLower ? GeocodeRule.LOWERCASE : 0);
         chooser.evaluate(candidates);
         if (provinceNameSetter != null) {
             provinceNameSetter.evaluate(candidates);
