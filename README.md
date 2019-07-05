@@ -6,20 +6,22 @@ Xponents
 
 Xponents is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example:
 
-| text|routine|notional output with normalization|
+| text|extracted entity|notional output with normalization|
 |---|---|---|
-|_"Boise, ID is fun!"_|PlaceGeocoder| `geo = { match:"Boise ID",`<br>` adm1:"US.16",`<br>` lat=43.61, lon=-116.20,`<br>` feat_code:"PPL", confidence=78}` <br> And associated rules for the location resolution
-|_"Born on 30 DECIEMBRE 1990 ... "_ |XTemporal  | `date = { match="30 DECIEMBRE 1990",`<br>` date_norm="1990-12-30"}` 
-|_"Epicenter at 01°44'N 101°22'E ..."_  |  XCoord | `coord = { match="01°44'N 101°22'E",`<br>` lat=1.733, lon=101.367,`<br>` pattern="DM-01"}`  
+|_"Boise, ID is fun!"_|Place names, geocoded| `geo = { match:"Boise ID",`<br>` adm1:"US.16",`<br>` lat=43.61, lon=-116.20,`<br>` feat_code:"PPL", confidence=78}` <br> And associated rules for the location resolution
+|_"Born on 30 DECIEMBRE 1990 ... "_ |Normalized date and time| `date = { match="30 DECIEMBRE 1990",`<br>` date_norm="1990-12-30"}` 
+|_"Epicenter at 01°44'N 101°22'E ..."_  |  Geo Coordinates| `coord = { match="01°44'N 101°22'E",`<br>` lat=1.733, lon=101.367,`<br>` pattern="DM-01"}`  
+|_"The Swiss delegation..."_ | Keywords | `taxon = { match="Swiss", id="nationality.CHI" }`
+|_"User accessed IP 233.12.0.11"_| Patterns | `pattern= { match="233.12.0.11", pattern_id="IPADDRESS" }`
 
-Define your own patterns or compose your own Extractor apps. 
+Define your own patterns or compose your own Extractor apps.  As a Java API, the following application classes implement the extraction above:
 
+* **PlaceGeocoder**: Tag and geocode named places, countries, coordinates, nationalities, all with some reasonable amount of disambiguation and noise filtration.
+* **XCoord**: Tag and normalize geodetic coordinates of the forms Lat/Lon, MGRS, or UTM (30+ variations in all)
+* **XTemporal**:  Tag and normalize date or date+time patterns
+* **PoLi**: Patterns of Life ~ develop and test entity tagging based on regular expressions
+* **TaxonMatcher**: Tag a list of known keywords or structured vocabularies aka taxonomic nomenclature.
 
-* Geographic name and coordinate extraction, along with a rich set of rules and metadata for geographic reasoning.  Such reasoning methods are essential for geoinferencing and disambiguating place names, e.g., 
-* Temporal extraction
-* Pattern-based extraction
-* Keyword extraction
-* Foundational data model for info extraction and text scrubbing utilities
 
 Video: Lucene/Solr Revolution 2017 Conference Talk
 ---------------------------------------
@@ -185,7 +187,7 @@ For those using other build platforms, you can find our published artifacts at
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
   </dependency>
 ```
 
