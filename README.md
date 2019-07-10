@@ -178,7 +178,7 @@ Developer Quick Start
 
 This is primarily a Maven-based project, and so here are our Maven artifacts.
 For those using other build platforms, you can find our published artifacts at 
-[ OpenSextant Xponents on Maven ](http://search.maven.org/#search%7Cga%7C1%7Corg.opensextant)
+[OpenSextant Xponents on Maven](https://search.maven.org/search?q=a:opensextant-xponents)
 
 * Java 8+ is required
 * Maven 3+ is required. Maven Version 3.5 is highly recommended.  Xponents artifact profile:
@@ -190,6 +190,14 @@ For those using other build platforms, you can find our published artifacts at
     <version>3.1.1</version>
   </dependency>
 ```
+
+For That matter, the only relevant artifacts are:
+
+* `org.opensextant geodesy 2.0.1 `  - Geodetic operations and coordinate system calculations
+* `org.opensextant giscore 2.0.2 `  - GIS I/O
+* `org.opensextant opensextant-xponents  3.1.1` - This extraction toolkit
+* `org.opensextant opensextant-xponents-xtext 3.1.0` - XText, the text extraction toolkit
+
 
 
 
