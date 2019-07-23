@@ -12,6 +12,15 @@
 
 
 	<target name="build">
+		<exec executable="mvn" dir="${xponents.home}/Core" failonerror="true">
+			<arg value="-DincludeScope=test" />
+			<arg value="-DincludeScope=runtime" />
+			<arg value="-DincludeScope=compile" />
+			<arg value="-DskipTests=true" />
+			<arg value="clean" />
+			<arg value="install" />
+			<arg value="javadoc:jar" />
+		</exec>
 		<exec executable="mvn" dir="${xponents.home}" failonerror="true">
 			<arg value="-DincludeScope=test" />
 			<arg value="-DincludeScope=runtime" />

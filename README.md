@@ -30,8 +30,8 @@ Define your own patterns or compose your own Extractor apps.  As a Java API, the
 
 These extractors are in the `org.opensextant.extractors` packages, and demonstrated in the Examples sub-project using Groovy.  These libraries and builds are located in Maven Central and in Docker Hub.  Here is a quick overview of the organization of the project:
 
-- **`Core`:** The core Xponents API for pattern matching (coordinates, dates, etc), text utilities, simple classes around social media, languaged ID, and geographic metadata. Additionally tying this all together is an essential Xponents Data Model (`org.opensextant.data` [JavaDoc](https://opensextant.github.io/Xponents/doc/apidocs/))
-- **`Xponents SDK`:** the root project here that provide the advanced geoparsing, geotagger, keyword tagger, Xlayer (REST API), and other application components. This is very dependent on understanding the fundamentals in Core.
+- **`Core`:** The core Xponents API for pattern matching (coordinates, dates, etc), text utilities, simple classes around social media, languaged ID, and geographic metadata. Additionally tying this all together is an essential Xponents Data Model (`org.opensextant.data` [Core JavaDoc](https://opensextant.github.io/Xponents/doc/core-apidocs/))
+- **`Xponents SDK`:** the root project here that provide the advanced geoparsing, geotagger, keyword tagger, Xlayer (REST API), and other application components. This is very dependent on understanding the fundamentals in Core. [SDK JavaDoc](https://opensextant.github.io/Xponents/doc/sdk-apidocs/)
 - **`Examples:`** demonstrations of using various input/output solutions, e.g. `BasicGeoTemporalProcessing` is a command line app that uses [`XText`](https://github.com/OpenSextant/XText/) to crawl and grab text from your media, process geo entities, and then output them as Shapefile, KML, or CSV files.
 
 To start using Xponents now, consider your use case:

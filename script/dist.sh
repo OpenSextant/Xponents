@@ -10,8 +10,8 @@ rm -rf ./dist/*
 python2 ./setup.py sdist
 popd
 
-VER=3.1
-BUILD_VER=3.1.1
+VER=3.2
+BUILD_VER=3.2.0
 ant -f ./dist.xml package-dist
 
 REL=../dist/Xponents-$VER
@@ -31,7 +31,7 @@ cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER
 Date:      `date`
 Gazetteer: Xponents Solr 2019-Q3
-  Sources: NGA,  2019-APR
-           USGS, 2019-APR
+  Sources: NGA,  2019-MAY
+           USGS, 2019-MAY
 EOF
 
