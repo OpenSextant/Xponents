@@ -122,7 +122,6 @@ popd
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
   ant -f build.xml $proxy get-gaz-resources
-  ant -f build.xml $proxy taxcat-jrc
 fi
 
 python ./script/assemble_person_filter.py 
@@ -135,24 +134,28 @@ fi
 sleep 2 
 
 if [ $do_start -eq 1 ]; then 
+  # Stop first.
+  ./mysolr.sh stop $SOLR_PORT
+
   if [ $do_clean -eq 1 ]; then 
     ant -f ./build.xml $proxy clean init
   fi
 
   echo "Starting Solr $SERVER"
   echo "Wait for Solr 7.x to load"
-  ./mysolr.sh stop $SOLR_PORT
   ./mysolr.sh start $SOLR_PORT
   sleep 2
 fi
 
+if [ $do_data -eq 1 ] ; then 
+  ant -f build.xml $proxy taxcat-jrc
+fi
 if [ $do_taxcat -eq 1 ]; then
   index_taxcat http://$SERVER/solr/taxcat
 fi
 if [ $do_gazetteer -eq 1 ]; then
   index_gazetteer http://$SERVER/solr/gazetteer
 fi
-
 
 echo "Gazetteer and TaxCat built, however Solr $SERVER is still running...." 
 echo

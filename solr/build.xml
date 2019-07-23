@@ -3,13 +3,7 @@
 
 	<!-- Solr Home and Gazetteer config data sourced here: -->
 	<property file="${basedir}/../build.properties" />
-
-	<property name="slf4j.v" value="1.7.25" />
-	<property name="guava.v" value="14.0.1" />
 	<property name="xponents.v" value="${xponents.build.v}" />
-	<property name="supercsv.v" value="2.4.0" />
-	<property name="lang3.v" value="3.7" />
-
 	<property name="jetty.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext" />
 	<property name="solr.runtime.log" value="${basedir}/solr7-dist/server/logs" />
 	<property name="maven.lib" value="${user.home}/.m2/repository" />
