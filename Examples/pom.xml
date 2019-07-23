@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
   <!-- Examples is not intended for artifact publication. Just demonstration So release version should be SNAPSHOT -->
   <groupId>org.opensextant</groupId>
-  <version>3.1-SNAPSHOT</version>
+  <version>3.2-SNAPSHOT</version>
   <name>Xponent Examples</name>
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <slf4j.version>1.7.25</slf4j.version>
-    <xponents.version>3.1.1</xponents.version>
-    <xtext.version>3.1.0</xtext.version>
+    <xponents.version>3.2-SNAPSHOT</xponents.version>
+    <xtext.version>3.2-SNAPSHOT</xtext.version>
   </properties>
   <dependencies>
     <dependency>
@@ -77,6 +77,11 @@
       <artifactId>logback-classic</artifactId>
       <version>1.2.2</version>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.opensextant</groupId>
+    	<artifactId>opensextant-xponents-core</artifactId>
+    	<version>3.2-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
