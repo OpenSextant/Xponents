@@ -2,7 +2,7 @@
 <project name="OpenSextant-Xponents-Gazetteer">
 
 	<!-- Solr Home and Gazetteer config data sourced here: -->
-	<property file="${basedir}/build.properties" />
+	<property file="${basedir}/../build.properties" />
 
 	<property name="slf4j.v" value="1.7.25" />
 	<property name="guava.v" value="14.0.1" />

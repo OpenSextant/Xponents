@@ -87,7 +87,7 @@
 				<exclude name="solr7-dist/server/logs/**" />
 			</fileset>
 		</copy>
-		<copy file="${xponents.home}/solr/build.template" tofile="${solr.release}/build.properties" overwrite="true" />
+		<copy file="${xponents.home}/build.template" tofile="${release}/build.properties" overwrite="true" />
 	</target>
 
 	<target name="copy-data">
