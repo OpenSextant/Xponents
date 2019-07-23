@@ -10,7 +10,7 @@ set basedir=%scriptdir%\..
 set logconf=%scriptdir:\=/%
 set XP=%basedir%
 
-set CLASSPATH=%XP%\etc;%XP%\etc\xponents-gazetteer-meta.jar;%XP%\lib\*;%XP%\script\*
+set CLASSPATH=%XP%\etc;%XP%\etc\xponents-gazetteer-meta.jar;%XP%\lib\*
 set SOLR_HOME=%XP%\xponents-solr\solr7
 
 logging_args="-Dlogback.configurationFile=%basedir%\etc\logback.xml "
