@@ -28,6 +28,7 @@ import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.AbstractFormatter;
 import org.opensextant.output.FormatterFactory;
 import org.opensextant.output.ResultsFormatter;
+import org.opensextant.output.TaggerMatchInterpeter;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
 import org.opensextant.processing.XtractorGroup;
@@ -192,6 +193,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
 
         formatter.setParameters(plist);
         formatter.setOutputFilename(plist.getJobName() + formatter.outputExtension);
+        formatter.setMatchInterpeter(new TaggerMatchInterpeter());
 
         return formatter;
     }

@@ -19,7 +19,9 @@ package org.opensextant.output;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.opensextant.data.Geocoding;
 import org.opensextant.extraction.ExtractionResult;
+import org.opensextant.extraction.TextMatch;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
 import org.slf4j.Logger;
@@ -31,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author Rich Markeloff, MITRE Corp. Initial version created on Aug 22, 2011
  * @author Marc Ubaldino, MITRE Corp. Refactored, 2013
  */
-public abstract class AbstractFormatter implements ResultsFormatter {
+public abstract class AbstractFormatter implements ResultsFormatter, MatchInterpreter {
 
     protected Parameters outputParams = null;
     public boolean overwrite = false;
@@ -40,6 +42,26 @@ public abstract class AbstractFormatter implements ResultsFormatter {
     public void setParameters(Parameters params) {
         outputParams = params;
     }
+    
+    // Allow customization of "geocoding" object.
+    protected MatchInterpreter geoInterpreter = null;
+
+    /** Override means for how geocoding is determined per row. */
+    public void setMatchInterpeter(MatchInterpreter mi) {
+        this.geoInterpreter = mi;
+    }
+
+    /** The default geocoding interpretation is here. 
+     * This works for simple stuff like Coordinate extraction
+     */
+    public Geocoding getGeocoding(TextMatch m) {
+        Geocoding geocoding = null;
+        if (m instanceof Geocoding) {
+            geocoding = (Geocoding) m;
+        }
+        return geocoding;
+    }
+
 
     /**
      *

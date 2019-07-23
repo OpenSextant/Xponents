@@ -22,7 +22,6 @@ import org.opensextant.ConfigException;
 import org.opensextant.data.Geocoding;
 import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.giscore.DocumentType;
 import org.opensextant.giscore.events.ContainerEnd;
 import org.opensextant.giscore.events.ContainerStart;
@@ -32,12 +31,11 @@ import org.opensextant.giscore.output.IGISOutputStream;
 import org.opensextant.processing.ProcessingException;
 
 /**
- * This is the base class for classes that convert document annotations to
- * GISCore features. Subclasses differ chiefly by choice of text string for the
- * description field. For some types of documents (e.g., news articles) the
- * sentence containing the annotation is a good choice, but for other types
- * (e.g., spreadsheets) sentence splitting may not be successful and the line of
- * text containing the annotation is a better choice.
+ * This is the base class for classes that convert document annotations to GISCore features.
+ * Subclasses differ chiefly by choice of text string for the description field. For some types of
+ * documents (e.g., news articles) the sentence containing the annotation is a good choice, but for
+ * other types (e.g., spreadsheets) sentence splitting may not be successful and the line of text
+ * containing the annotation is a better choice.
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Dec 20, 2011
  *
@@ -62,11 +60,13 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     protected boolean allowNonGeo = false; /* For vanilla CSV, where match does not have lat/lon */
     protected boolean useFileHyperlink = false;
 
+
     /**
      *
      */
     public GISDataFormatter() {
         this.debug = log.isDebugEnabled();
+        this.geoInterpreter = this;
     }
 
     public void setGisDataModel(GISDataModel gisDataModel) {
@@ -128,8 +128,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     }
 
     protected File createTempFolder(String key) {
-        File tempDir = new File(this.outputParams.tempDir + File.separator + key + "_"
-                + System.currentTimeMillis());
+        File tempDir = new File(this.outputParams.tempDir + File.separator + key + "_" + System.currentTimeMillis());
         tempDir.mkdirs();
         return tempDir;
     }
@@ -157,7 +156,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
             return false;
         }
 
-        Geocoding geocoding = getGeocoding(geo);
+        Geocoding geocoding = geoInterpreter.getGeocoding(geo);
 
         if (geocoding != null) {
             if (!outputParams.output_coordinates && geocoding.isCoordinate()) {
@@ -171,17 +170,6 @@ public abstract class GISDataFormatter extends AbstractFormatter {
 
         // Not Geo, but also not filtered out.
         return false;
-    }
-
-    private Geocoding getGeocoding(TextMatch m) {
-        Geocoding geocoding = null;
-        if (m instanceof Geocoding) {
-            geocoding = (Geocoding) m;
-        } else if (m instanceof PlaceCandidate) {
-            geocoding = ((PlaceCandidate) m).getChosen();
-        }
-        return geocoding;
-
     }
 
     /**
@@ -203,8 +191,8 @@ public abstract class GISDataFormatter extends AbstractFormatter {
 
             // Only TextMatches that implement the Geocoding interface are
             // allowed here:
-            Geocoding geocoding = getGeocoding(g);
-            if (geocoding == null){
+            Geocoding geocoding = geoInterpreter.getGeocoding(g);
+            if (geocoding == null) {
                 log.debug("Non-geo will be ignored: {}", g);
                 continue;
             }
