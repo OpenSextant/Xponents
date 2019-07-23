@@ -31,6 +31,7 @@ public class GeocoordPattern extends RegexPattern {
      * However this set of values should align with XConstants enumerations.
      */
     public String cce_family  = null;
+    
     /**
      * Only as defined in your configured patterns, e.g., the "01" in "DM-01"
      */
@@ -40,8 +41,6 @@ public class GeocoordPattern extends RegexPattern {
      * XConstants value for the family
      */
     public int cce_family_id = -1;
-    ///public int line_number = -1; -- thought line number from config file would help.
-    // but ID should suffice.
 
     /**
      *

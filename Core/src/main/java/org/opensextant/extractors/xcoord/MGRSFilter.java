@@ -44,25 +44,27 @@ public class MGRSFilter implements GeocoordMatchFilter {
     /** DateFormat used to check for dates that look like MGRS i.e. ddMMMyyyy
      */
     public List<DateFormat> df = new ArrayList<DateFormat>();
-    /**
-     */
+    
+    /** The today. */
     public Date today = new Date();
-    /**
-     */
+    
+    /** The max years ago. */
     public static int MAX_YEARS_AGO = 80; // If valid date/year found -- what is worth filtering?
-    /**
-     */
+    
+    /** The cal. */
     public Calendar cal = null;
-    /**
-     */
+    
+    /** The current year. */
     public int CURRENT_YEAR = 0;
+    
+    /** The current yy. */
     public int CURRENT_YY = 0;
-    /**
-     */
+    
+    /** The ignore seq. */
     public Set<String> IGNORE_SEQ = new HashSet<String>();
 
     /**
-     *
+     * Instantiates a new MGRS filter.
      */
     public MGRSFilter() {
         DateFormat _df = new java.text.SimpleDateFormat("ddMMMyyyy");
@@ -102,16 +104,17 @@ public class MGRSFilter implements GeocoordMatchFilter {
     }
 
     /**
-     * pass a match
+     * pass a match.
      *
-     * @param m
-     * @return
+     * @param m the m
+     * @return true, if successful
      */
     @Override
     public boolean pass(GeocoordMatch m) {
         return !stop(m);
     }
 
+    /** The Constant eol. */
     final static Pattern eol = Pattern.compile("[\r\n]");
     
     /**
@@ -119,8 +122,8 @@ public class MGRSFilter implements GeocoordMatchFilter {
      * stop a match
      * Note, use of case sensitivity filter is really limited to MGRS.  UTM might have the "m" units designation on matches; MGRS typically does not.
      *
-     * @param m
-     * @return
+     * @param m the m
+     * @return true, if successful
      */
     @Override
     public boolean stop(GeocoordMatch m) {

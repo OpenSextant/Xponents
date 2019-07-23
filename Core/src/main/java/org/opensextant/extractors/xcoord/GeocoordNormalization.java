@@ -47,7 +47,7 @@ public final class GeocoordNormalization {
      *
      * @param m match
      * @param groups fields
-     * @throws NormalizationException
+     * @throws NormalizationException if entity or match is not parseable
      */
     public static void normalize_coordinate(GeocoordMatch m, Map<String, TextEntity> groups)
             throws NormalizationException {
@@ -281,8 +281,8 @@ public final class GeocoordNormalization {
      * This evaluates if a lat/lon pair have disparate field specificity.  A lat with Deg:Min
      * should not be paired with a lon with Deg:Min:Sec:Subsec  for example.
      *
-     * @param lat
-     * @param lon
+     * @param lat latitude
+     * @param lon longitude
      * @return true if specifity of lat and lon are reasonable.
      */
     public static boolean evaluateSpecificity(DMSOrdinate lat, DMSOrdinate lon) {
@@ -320,7 +320,7 @@ public final class GeocoordNormalization {
     }
 
     /**
-     * set the precision on a match based on the situation (match + pattern)
+     * set the precision on a match based on the situation (match + pattern).
      *
      * @param m match
      */

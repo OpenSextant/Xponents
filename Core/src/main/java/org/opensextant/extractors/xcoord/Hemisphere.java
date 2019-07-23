@@ -17,14 +17,12 @@
 package org.opensextant.extractors.xcoord;
 
 /**
- *
+ * Represent a Hemisphere symbol and value.
  * @author ubaldino
  */
 public class Hemisphere {
 
-    /**
-     *
-     */
+    /** The symbol. */
     public String symbol = null;
 
     /**
@@ -35,8 +33,9 @@ public class Hemisphere {
     public int polarity = 0;
 
     /**
+     * Checks if is alpha.
      *
-     * @return
+     * @return true, if is alphabetic
      */
     public boolean isAlpha(){
         if (symbol == null){
