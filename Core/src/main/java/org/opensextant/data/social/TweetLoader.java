@@ -1,4 +1,4 @@
-package org.opensextant.extractors.geo.social;
+package org.opensextant.data.social;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

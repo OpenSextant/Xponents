@@ -1,6 +1,4 @@
-package org.opensextant.extractors.geo.social;
-
-import org.opensextant.data.social.MessageParseException;
+package org.opensextant.data.social;
 
 import jodd.json.JsonObject;
 
