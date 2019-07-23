@@ -7,7 +7,7 @@ Xponents
 
 Xponents is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example as depicted in Figure 1:
 
-![General topics in our geotagging workflow](./geocoding-workflow.png)
+![General topics in our geotagging workflow](./doc/geocoding-workflow.png)
 
 **Figure 1. A General Tagging and Coding Paradigm.**
 
