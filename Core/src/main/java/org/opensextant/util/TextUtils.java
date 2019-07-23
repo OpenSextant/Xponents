@@ -53,6 +53,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.joda.time.Instant;
 import org.opensextant.data.Language;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.constraint.NotNull;
@@ -1827,5 +1828,17 @@ public class TextUtils {
 
         /* Offsets are not preserved with this sort of function*/
         return TextUtils.squeeze_whitespace(text);
+    }
+    
+    /**
+     * A limited-scope date parsing:  Parse properly formatted strings for example,
+     * ISO date/time strings stored in one of our Solr indices.
+     * 
+     * @param dt ISO date/time string.
+     * @return
+     */
+    public final static java.util.Date parseDate(final String dt){
+        if (dt==null) { return null; } 
+        return Instant.parse(dt).toDate();
     }
 }
