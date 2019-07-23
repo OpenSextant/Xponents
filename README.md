@@ -2,10 +2,15 @@ Back to [OpenSextant](http://opensextant.org)
 
 Xponents
 ========
-* **Author:** Marc Ubaldino, MITRE, (mubaldino@gmail.com, ubaldino@mitre.org). Fall 2018.
-* **Docker:** https://hub.docker.com/r/mubaldino/opensexant  Xponents builds featuring Xlayer REST API
+* **Author:** Marc Ubaldino, MITRE, (mubaldino@gmail.com, ubaldino@mitre.org). Summer 2019.
+* **Docker:** https://hub.docker.com/r/mubaldino/opensexant  Xponents builds featuring Xlayer REST API and full Worldwide Gazetter
 
-Xponents is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example:
+Xponents is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example as depicted in Figure 1:
+
+![General topics in our geotagging workflow](./geocoding-workflow.png)
+
+**Figure 1. A General Tagging and Coding Paradigm.**
+
 
 | text|extracted entity|notional output with normalization|
 |---|---|---|
@@ -23,6 +28,32 @@ Define your own patterns or compose your own Extractor apps.  As a Java API, the
 * **PoLi**: Patterns of Life ~ develop and test entity tagging based on regular expressions
 * **TaxonMatcher**: Tag a list of known keywords or structured vocabularies aka taxonomic nomenclature.
 
+These extractors are in the `org.opensextant.extractors` packages, and demonstrated in the Examples sub-project using Groovy.  These libraries and builds are located in Maven Central and in Docker Hub.  Here is a quick overview of the organization of the project:
+
+- **`Core`:** The core Xponents API for pattern matching (coordinates, dates, etc), text utilities, simple classes around social media, languaged ID, and geographic metadata. Additionally tying this all together is an essential Xponents Data Model (`org.opensextant.data` [JavaDoc](https://opensextant.github.io/Xponents/doc/apidocs/))
+- **`Xponents SDK`:** the root project here that provide the advanced geoparsing, geotagger, keyword tagger, Xlayer (REST API), and other application components. This is very dependent on understanding the fundamentals in Core.
+- **`Examples:`** demonstrations of using various input/output solutions, e.g. `BasicGeoTemporalProcessing` is a command line app that uses [`XText`](https://github.com/OpenSextant/XText/) to crawl and grab text from your media, process geo entities, and then output them as Shapefile, KML, or CSV files.
+
+To start using Xponents now, consider your use case:
+
+* **Deploy a REST service** for all this geo/temporal entity extraction: Use the Docker Hub image here: https://hub.docker.com/r/mubaldino/opensexant 
+* **Build your own Java 8+ app** against Xponents SDK: use Maven here:
+
+```
+  <!-- Xponents Core API -->
+  <dependency>
+    <groupId>org.opensextant</groupId>
+    <artifactId>opensextant-xponents-core</artifactId>
+    <version>3.2.0</version>
+  </dependency>
+
+  <!-- Xponents SDK API -->
+  <dependency>
+    <groupId>org.opensextant</groupId>
+    <artifactId>opensextant-xponents</artifactId>
+    <version>3.2.0</version>
+  </dependency>
+```
 
 Video: Lucene/Solr Revolution 2017 Conference Talk
 ---------------------------------------
@@ -41,11 +72,11 @@ Download the SDK, then walk through examples -- these resources are intended for
 experience, and some NLP or GIS background. But the examples and download should work with only the **Java 8+** 
 installed on your system. **Python 2.7** is required for the few Python examples.
 
-* See [Examples](./Examples/README.md)
-* Download: [Xponents SDK 3.0](https://github.com/OpenSextant/DataReleases) 
+* See [Examples](./Examples/README.md).  Some examples here require a full SDK build.
+* Download SDK builds -- to start using a full release, for now you have to acquire the binary from Docker Hub (2GB image as listed above) or build it yourself. 
 
 
-Development Kit Contents
+Developing with Xponents
 -----------------------
 The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.  This library tool chest contains the following ideas and capabilities:
 
@@ -123,22 +154,17 @@ Now with the same text as above, the second and more complex example applies the
      */
     xponentsParams.resolve_provinces = true;
     tagger.setParameters(xponentsParams);
-        
     tagger.configure();
     
     ...
     
     // EXTRACT
     //==================
-    
     List<TextMatch> allPlaces = tagger.extract( text );
-    
     for (TextMatch match : allPlaces) {
     
        /* if match instanceof GeocoordMatch, PlaceCandidate, TaxonMatch, etc.
-             PlaceGeocoder yields many types of entities!!!
-          then 
-            do something. 
+             PlaceGeocoder yields many types of entities!! then do something. 
        */
     }
     
@@ -148,7 +174,7 @@ Now with the same text as above, the second and more complex example applies the
      for you to filter and work with.     
      */
      
-    -=-=-=-=-=-=-==-=-=-=-=-=-=
+    -=-=-=-=-=-=-STDOUT==-=-=-=-=-=-=
     ....
     Name:Mendocino National Forest
     Rules = [DefaultScore]
@@ -161,17 +187,16 @@ Now with the same text as above, the second and more complex example applies the
     [39.56N, -123.45W]
     ....
     -=-=-=-=-=-=-==-=-=-=-=-=-=
-    
 ```
 
 Modes of Integration
 ----------------------------------------
 
 * **Java**: [Examples](./Examples) sub-project illustrates the essential Java API setup and classes. See Maven notes below. 
-* **REST**:  See [Xlayer](./Xlayer) sub-project, which provides a wrapper around `PlaceGeocoder` with some default settings.
-* **Python**:  A small set of libraries, utilities and data classes are provided in Python to facilitate interacting the the gazetteer, RESTful Extractors, and other simple tasks. Extraction is not implemented in Python.
-* **MapReduce**:  (Deprecated) For Xponents 2.9, some demonstrations were done to show how to package and create a Mapper to geotag social media, or any data record that had a "text" field.  See [MapReduce](./MapReduce)
-* **Pipeline**:  For raw content (e.g., folders or other stream of data) consider using **XText** project which will help you render data to plain text that can be fed to Xponents Extractors.  See [Examples](./Examples)
+* **REST**:  See [Xlayer](./doc/README_Xlayer_REST.md) sub-project, which provides a wrapper around `PlaceGeocoder`, `LangDetect` and other items with some default settings.
+* **Python**:  `./python/opensextant` provides a small subset of Xponent functionality as utilities and data classes that facilitate interacting the the gazetteer, RESTful Extractors, and other simple tasks. Extraction is not implemented in Python.
+* **MapReduce**:  (Deprecated) For Xponents 2.9, some demonstrations were done to show how to package and create a Mapper to geotag social media, or any data record that had a "text" field.  See [MapReduce](./Examples/MapReduce)
+* **Pipelines**:  For raw content (e.g., folders or other stream of data) consider using **XText** project which will help you render data to plain text that can be fed to Xponents Extractors.  See [Examples](./Examples)
 
 Developer Quick Start
 -----------------------
@@ -181,66 +206,21 @@ This is primarily a Maven-based project, and so here are our Maven artifacts.
 For those using other build platforms, you can find our published artifacts at 
 [OpenSextant Xponents on Maven](https://search.maven.org/search?q=a:opensextant-xponents)
 
-* Java 8+ is required
-* Maven 3+ is required. Maven Version 3.5 is highly recommended.  Xponents artifact profile:
+* Java 8+, Maven 3+, and Ant 1.10+ are required. Maven Version 3.5 is highly recommended.  
 
-```
-  <dependency>
-    <groupId>org.opensextant</groupId>
-    <artifactId>opensextant-xponents</artifactId>
-    <version>3.1.1</version>
-  </dependency>
-```
+For that matter, the only relevant artifacts in our `org.opensextant` group are:
 
-For That matter, the only relevant artifacts are:
-
-* `org.opensextant geodesy 2.0.1 `  - Geodetic operations and coordinate system calculations
-* `org.opensextant giscore 2.0.2 `  - GIS I/O
-* `org.opensextant opensextant-xponents  3.1.1` - This extraction toolkit
-* `org.opensextant opensextant-xponents-xtext 3.1.0` - XText, the text extraction toolkit
-
-
+* `geodesy 2.0.1`   - Geodetic operations and coordinate system calculations
+* `giscore 2.0.2`  - GIS I/O
+* `opensextant-xponents-core 3.2.0` - This Core API
+* `opensextant-xponents  3.2.0` - This Solr-based tagger SDK
+* `opensextant-xponents-xtext 3.2.0` - XText, the text extraction toolkit
 
 
 Build
 ---------------------
+See [BUILD.md](BUILD.md)
 
-Building a full Xponents release is involved.  
-
-* Ant 1.9+ and cURL are required in addition to developer items above. 
-
-The order of things is:
-
-1. copy `./solr/build.template` to `./solr/build.properties`.  Edit according to comments there.f
-2. `ant -f ./script/setup-ant.xml`
-3. `mvn compile`
-4. `mvn install`
-
-Separately acquire the Gazetteer "Merged Gazetteer" data file:
-* Download from GitHub: https://github.com/OpenSextant/DataReleases OR
-* Build from source https://github.com/OpenSextant/Gazetteer
-
-5. Next, follow the instructions in `./solr/` to generate your copy of a working Solr index
-6. Distribution/Packaging: `ant -f ./script/dist.xml dist`
-
-Release History 
+Release History and Versioning 
 ---------------
 [RELEASES](./RELEASE.md)
-
-Other Libraries
----------------
-- XText depends on Tika 1.13+
-- XCoord depends on Geodesy (OpenSextant) for geodetic parsing and validation 
-- Extraction makes usef of GISCore (OpenSextant) for output file formatting
-
-Name matching depends on:
-
-* OpenSextant Gazetteer; Download a built gazetteer flat file at  http://www.opensextant.org/ OR build your own
-  using https://github.com/OpenSextant/Gazetteer, which depends on Pentaho Kettle 
-
-* OpenSextant SolrTextTagger;  https://github.com/OpenSextant/SolrTextTagger v2.x (See project for maven details)
-  * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10 w/ Java7
-  * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+ w/ Java8
-  * Xponents 3.0     == SolrTextTagger v2.5 w/Solr 7.3+ w/ Java8
-  * Xponents 3.0.4   == Solr 7.4+ w/ Java8. SolrTextTagger was migrated into Solr 7.4 formally as "TextTagger" request handler.
-  

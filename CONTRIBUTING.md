@@ -21,5 +21,7 @@ Maven Publishing
   # Ensure GPG key is known...
   # and OSSRH login is set in settings.xml
   mvn clean deploy -P release
-  mvn nexus-staging:release
+  
+  # No longer necessary:
+  # mvn nexus-staging:release
 ```
