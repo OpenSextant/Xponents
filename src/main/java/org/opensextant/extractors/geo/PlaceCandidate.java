@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
@@ -363,7 +363,8 @@ public class PlaceCandidate extends TextMatch {
      */
     protected double scoreName(Place g) {
         int startingScore = getTextnorm().length();
-        int editDist = StringUtils.getLevenshteinDistance(getTextnorm(), g.getNamenorm());
+        
+        int editDist = LevenshteinDistance.getDefaultInstance().apply(getTextnorm(), g.getNamenorm());
         int score = startingScore - editDist;
         if (isUpper() && (g.isAbbreviation() || TextUtils.isUpper(g.getName()))) {
             ++score;

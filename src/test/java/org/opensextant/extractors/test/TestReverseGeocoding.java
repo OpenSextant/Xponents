@@ -2,7 +2,7 @@ package org.opensextant.extractors.test;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.TextInput;
 import org.opensextant.processing.RuntimeTools;
 import org.opensextant.util.TextUtils;
