@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.opensextant.data.Language;
 //import org.opensextant.data.Place;
 //import org.mitre.deepeye.Annotation;
@@ -57,8 +55,6 @@ public class KMLDemoWriter implements Closeable {
             throw new IOException("Unlikely error", err);
         }
     }
-
-    public final DateTimeFormatter timefmt = ISODateTimeFormat.dateTime();
 
     static Style ugeoStyle = new Style();
     static Style geoStyle = new Style();

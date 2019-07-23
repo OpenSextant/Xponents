@@ -18,6 +18,7 @@ public class CountryCount {
      * given a total number of ALL country mentions,
      * you can derive a ratio, e.g., text ABC is 45% about country1, 34% about country2, etc.
      * Set total attribute before calling this. 
+     * @return double
      */
     public double getRatio() {
         ratio = (double) count / total;

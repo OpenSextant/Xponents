@@ -6,6 +6,9 @@ piplib
 src/main/resources/geonames.org/
 src/main/resources/ISO-639-2_utf-8.txt
 etc/langdetect
+Core/src/main/resources/geonames.org/
+Core/src/main/resources/ISO-639-2_utf-8.txt
+Core/etc/langdetect
 
 
 #Maven output

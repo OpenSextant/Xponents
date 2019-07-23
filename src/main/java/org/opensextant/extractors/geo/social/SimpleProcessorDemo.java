@@ -24,8 +24,10 @@ import java.util.zip.GZIPInputStream;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.Language;
+import org.opensextant.data.social.JSONListener;
 import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
+import org.opensextant.data.social.TweetLoader;
 import org.opensextant.data.social.TweetUtility;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extractors.langid.LangDetect;

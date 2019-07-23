@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.StoredField;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
-import org.joda.time.Instant;
 import org.opensextant.data.Place;
 
 /**
@@ -170,7 +169,7 @@ public class SolrUtil {
         if (obj instanceof Date) {
             return (Date) obj;
         } else {
-            return Instant.parse(obj.toString()).toDate();
+            return TextUtils.parseDate(obj.toString());
         }
     }
 

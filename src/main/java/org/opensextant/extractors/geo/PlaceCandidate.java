@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2012-2019 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
@@ -111,6 +111,9 @@ public class PlaceCandidate extends TextMatch {
         }
     }
 
+    /**
+     * 
+     */
     // basic constructor
     public PlaceCandidate() {
     }
@@ -119,15 +122,17 @@ public class PlaceCandidate extends TextMatch {
      * Using a scale of 0 to 100, indicate how confident we are that the chosen place is best.
      * Note this is different than the individual score assigned to each candidate place.
      * We just need one final confidence measure for this place mention.
+     *
+     * @param c 
      */
     public void setConfidence(int c) {
         confidence = c;
     }
 
     /**
-     * see setConfidence
-     * 
-     * @return
+     * see setConfidence.
+     *
+     * @return 
      */
     public int getConfidence() {
         return confidence;
@@ -136,6 +141,8 @@ public class PlaceCandidate extends TextMatch {
     /**
      * If caller is willing to claim an explicit choice, so be it. Otherwise
      * unchosen places go to disambiguation.
+     *
+     * @param geo 
      */
     public void choose(Place geo) {
         if (geo instanceof ScoredPlace) {
@@ -193,29 +200,65 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * Common evidence flags -- isCountry, isPerson, isOrganization,
-     * abbreviation, and acronym
+     * abbreviation, and acronym.
      */
     public boolean isCountry = false;
+    
+    /**
+     * 
+     */
     public boolean isContinent = false;
+    
+    /**
+     * 
+     */
     public boolean isPerson = false;
+    
+    /**
+     * 
+     */
     public boolean isOrganization = false;
+    
+    /**
+     * 
+     */
     public boolean isAbbreviation = false;
+    
+    /**
+     * 
+     */
     public boolean isAcronym = false;
+    
+    /**
+     * 
+     */
     public boolean hasDiacritics = false;
 
     /**
      * After candidate has been scored and all, the final best place is the
      * geocoding result for the given name in context.
+     *
+     * @return 
      */
     public Geocoding getGeocoding() {
         choose();
         return getChosen();
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public ScoredPlace getChosen() {
         return choice1;
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public ScoredPlace getFirstChoice() {
         return getChosen();
     }
@@ -275,20 +318,40 @@ public class PlaceCandidate extends TextMatch {
         return secondPlaceScore;
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public ScoredPlace getSecondChoice() {
         return choice2;
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public Collection<ScoredPlace> getPlaces() {
         return scoredPlaces.values();
     }
 
+    /**
+     * 
+     *
+     * @param place 
+     */
     // add a new place with a default score
     public void addPlace(ScoredPlace place) {
         this.addPlace(place, defaultScore(place));
         this.rules.add("DefaultScore");
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public boolean hasDefaultRuleOnly() {
         return rules.contains("DefaultScore") && rules.size() == 1;
     }
@@ -304,6 +367,12 @@ public class PlaceCandidate extends TextMatch {
         return String.format("%s~%s", p.getKey(), p.getNamenorm());
     }
 
+    /**
+     * 
+     *
+     * @param place 
+     * @param score 
+     */
     // add a new place with a specific score
     public void addPlace(ScoredPlace place, Double score) {
         place.setScore(score);
@@ -317,8 +386,19 @@ public class PlaceCandidate extends TextMatch {
         }
     }
 
+    /**
+     * 
+     */
     public static final double NAME_WEIGHT = 0.2;
+    
+    /**
+     * 
+     */
     public static final double FEAT_WEIGHT = 0.1;
+    
+    /**
+     * 
+     */
     public static final double LOCATION_BIAS_WEIGHT = 0.7;
 
     /**
@@ -363,7 +443,8 @@ public class PlaceCandidate extends TextMatch {
      */
     protected double scoreName(Place g) {
         int startingScore = getTextnorm().length();
-        int editDist = StringUtils.getLevenshteinDistance(getTextnorm(), g.getNamenorm());
+        
+        int editDist = LevenshteinDistance.getDefaultInstance().apply(getTextnorm(), g.getNamenorm());
         int score = startingScore - editDist;
         if (isUpper() && (g.isAbbreviation() || TextUtils.isUpper(g.getName()))) {
             ++score;
@@ -404,6 +485,12 @@ public class PlaceCandidate extends TextMatch {
         return (float) score / 10;
     }
 
+    /**
+     * 
+     *
+     * @param place 
+     * @param score 
+     */
     // increment the score of an existing place
     public void incrementPlaceScore(Place place, Double score) {
         ScoredPlace currentScore = this.scoredPlaces.get(makeKey(place));
@@ -415,6 +502,12 @@ public class PlaceCandidate extends TextMatch {
         }
     }
 
+    /**
+     * 
+     *
+     * @param place 
+     * @param score 
+     */
     // set the score of an existing place
     public void setPlaceScore(ScoredPlace place, Double score) {
         if (!this.scoredPlaces.containsKey(makeKey(place))) {
@@ -424,18 +517,39 @@ public class PlaceCandidate extends TextMatch {
         addPlace(place, score);
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public Collection<String> getRules() {
         return rules;
     }
 
+    /**
+     * 
+     *
+     * @param rule 
+     * @return 
+     */
     public boolean hasRule(String rule) {
         return rules.contains(rule);
     }
 
+    /**
+     * 
+     *
+     * @param rule 
+     */
     public void addRule(String rule) {
         rules.add(rule);
     }
 
+    /**
+     * 
+     *
+     * @param evidence 
+     */
     public void addEvidence(PlaceEvidence evidence) {
         this.evidence.add(evidence);
         if (evidence.getRule() != null) {
@@ -443,10 +557,28 @@ public class PlaceCandidate extends TextMatch {
         }
     }
 
+    /**
+     * 
+     *
+     * @param rule 
+     * @param weight 
+     * @param ev 
+     */
     public void addEvidence(String rule, double weight, Place ev) {
         addEvidence(new PlaceEvidence(ev, rule, weight));
     }
 
+    /**
+     * 
+     *
+     * @param rule 
+     * @param weight 
+     * @param cc 
+     * @param adm1 
+     * @param fclass 
+     * @param fcode 
+     * @param geo 
+     */
     // some convenience methods to add evidence
     public void addEvidence(String rule, double weight, String cc, String adm1, String fclass, String fcode,
             LatLon geo) {
@@ -490,6 +622,14 @@ public class PlaceCandidate extends TextMatch {
         this.incrementPlaceScore(geo, /*1 x */ weight);
     }
 
+    /**
+     * 
+     *
+     * @param rule 
+     * @param weight 
+     * @param adm1 
+     * @param cc 
+     */
     public void addAdmin1Evidence(String rule, double weight, String adm1, String cc) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
@@ -499,6 +639,13 @@ public class PlaceCandidate extends TextMatch {
         this.evidence.add(ev);
     }
 
+    /**
+     * 
+     *
+     * @param rule 
+     * @param weight 
+     * @param fclass 
+     */
     public void addFeatureClassEvidence(String rule, double weight, String fclass) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
@@ -507,6 +654,13 @@ public class PlaceCandidate extends TextMatch {
         this.evidence.add(ev);
     }
 
+    /**
+     * 
+     *
+     * @param rule 
+     * @param weight 
+     * @param fcode 
+     */
     public void addFeatureCodeEvidence(String rule, double weight, String fcode) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
@@ -537,14 +691,29 @@ public class PlaceCandidate extends TextMatch {
         // is assessed here.  The score for geo has already be incremented.
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public List<PlaceEvidence> getEvidence() {
         return this.evidence;
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public boolean hasPlaces() {
         return !this.scoredPlaces.isEmpty();
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     // an overide of toString to get a meaningful representation of this PC
     @Override
     public String toString() {
@@ -552,10 +721,10 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * If you need a full print out of the data, use summarize(true);
-     * 
-     * @param dumpAll
-     * @return
+     * If you need a full print out of the data, use summarize(true);.
+     *
+     * @param dumpAll 
+     * @return 
      */
     public String summarize(boolean dumpAll) {
         StringBuilder tmp = new StringBuilder(getText());
@@ -616,19 +785,30 @@ public class PlaceCandidate extends TextMatch {
         return path != null && this.hierarchicalPaths.contains(path);
     }
 
+    /**
+     * 
+     *
+     * @param cc 
+     * @return 
+     */
     public boolean presentInCountry(String cc) {
         return this.countries.contains(cc);
     }
 
     /**
-     * How many different countries contain this name?
-     * 
-     * @return
+     * How many different countries contain this name?.
+     *
+     * @return 
      */
     public int distinctCountryCount() {
         return this.countries.size();
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public int distinctLocationCount() {
         return this.scoredPlaces.size(); // These are keyed by PLACE ID, essentially location.
     }
@@ -648,6 +828,11 @@ public class PlaceCandidate extends TextMatch {
         return markedValid;
     }
 
+    /**
+     * 
+     *
+     * @return 
+     */
     public boolean hasEvidence() {
         return !this.evidence.isEmpty();
     }

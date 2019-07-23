@@ -1,0 +1,17 @@
+# Please copy this to "build.properties"  which will provide settings for your workspace.
+# 
+xponents.build.v=3.2-SNAPSHOT
+xponents.version=3.2
+#
+# Gazetteer catalog.  Specify the path to the merged file.  
+# Merged.txt is usually the file name in OpenSextant/Gazetteer
+gazetteer.data.file=/path/to/merged.csv
+carrot.workspace=/path/to/carrot2/workspace
+
+# 'solr.home' is relative to ./solr/build.xml Ant script.
+solr.home=solr7
+solr.server.port=7000
+
+# Set your proxy host below.
+proxy.host=
+
