@@ -11,8 +11,8 @@
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <slf4j.version>1.7.25</slf4j.version>
-    <xponents.version>3.2-SNAPSHOT</xponents.version>
-    <xtext.version>3.2-SNAPSHOT</xtext.version>
+    <xponents.version>3.2</xponents.version>
+    <xtext.version>3.2</xtext.version>
   </properties>
   <dependencies>
     <dependency>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.2-SNAPSHOT</version>
+      <version>3.2</version>
     </dependency>
   </dependencies>
   <build>

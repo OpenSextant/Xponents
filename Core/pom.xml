@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents-core</artifactId>
-  <version>3.2-SNAPSHOT</version>
+  <version>3.2</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents Core API</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -303,8 +303,10 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36'
-            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright OpenSextant.org, 2013-2017 
+          <header>&lt;img alt='[OpenSextant Logo]' height='36'
+            width='36'
+            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
+            OpenSextant.org, 2013-2017
           </header>
           <version>true</version>
           <windowtitle>Xponents Core API</windowtitle>
@@ -410,6 +412,12 @@
                 <goals>
                   <goal>sign</goal>
                 </goals>
+                <configuration>
+                  <gpgArguments>
+                    <gpgArgument>--pinentry-mode</gpgArgument>
+                    <gpgArgument>loopback</gpgArgument>
+                  </gpgArguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>
