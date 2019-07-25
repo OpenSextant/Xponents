@@ -1,9 +1,11 @@
 Back to [OpenSextant](http://opensextant.org)
 
-Xponents
+Xponents, A Toolkit for Geotagging World-wide Geography
 ========
 * **Author:** Marc Ubaldino, MITRE, (mubaldino@gmail.com, ubaldino@mitre.org). Summer 2019.
 * **Docker:** https://hub.docker.com/r/mubaldino/opensexant  Xponents builds featuring Xlayer REST API and full Worldwide Gazetter
+* **Citing:** Ubaldino, M (MITRE Corporation), __"OpenSextant Xponents: Geotagging Toolkit for World-wide Geography"__, 2019. https://opensextant.github.io/Xponents/
+
 
 Xponents is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example as depicted in Figure 1:
 
