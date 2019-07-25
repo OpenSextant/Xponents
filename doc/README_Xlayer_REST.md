@@ -34,9 +34,7 @@ to invoke the main Restlet server as shown in this script:
     ./script/xlayer-server.sh  stop 8080 
 
 For now the script takes a port number, running a HTTP server on that port, with no security.
-And then also the control command start or stop. 
-
-Now the server is running, access it at:
+And then also the control command start or stop.  Now the server is running, access it at:
 
     http://localhost:8080/xlayer/rest/process ? docid = .... & text = ...
 
@@ -51,9 +49,46 @@ A quick test can be done by these test scripts: In each case specify the PORT th
 test file.
 
 * `./script/test-xlayer-curl.sh PORT FILE`  - requires cURL
-* `./script/test-xlayer-java.sh PORT FILE`  - requires Java 8 and test libraries in ./lib
+* `./script/test-xlayer-java.sh PORT FILE`  - requires Java and test libraries in ./lib
 * `./script/test-xlayer-python.sh PORT FILE`  - requires Python 2 and the OpenSextant python lib in `./python/`
 
+Developing with Java
+-------------------
+
+Pardon the paltry API documentation. Still polishing.
+
+Use the `opensextant-xponents` artifact and `org.opensextant.xlayer.XlayerClient(url)` 
+gives you a starting point to invoke the `.process()` method. [API](../sdk-apidocs/org/opensextant/xlayer/XlayerClient.html). 
+```
+/* Note - import org.opensextant.output.Transforms is handling the JSON-to-Java object deserialization
+ * if for whatever reason that is wrong, you can adapt it as needed.  
+ */
+....
+
+client = XlayerClient(url);
+results = client.process(....);
+/* Results is an array of TextMatch */
+
+```
+
+Developing with Python
+--------------------
+In your distribution use either `./python/opensextant-1.*.tar.gz` of from a checkout, 
+compose the Pip bundle as `cd ./python/;  python2.7 ./setup.py sdist`.  The resulting TAR/gz file will be in `./dist`. 
+
+Install it, `pip2.7  install opensextant-1.1.10.tar.gz`.  You now can make use of the `xlayer module`:
+
+```python
+
+from opensextant.xlayer import XlayerClient
+client = XlayerClient(url)
+results  = client.process(.....)
+
+/* results is a simple array of dict.
+ * Later versions may have a convenience method that transforms raw dictionaries into Python API classes
+ * In Python, opensextant.Data classes are not complete and conssitent with their Java counterparts.
+ */
+```
 
 Health Check
 --------------
