@@ -58,7 +58,7 @@ Developing with Java
 Pardon the paltry API documentation. Still polishing.
 
 Use the `opensextant-xponents` artifact and `org.opensextant.xlayer.XlayerClient(url)` 
-gives you a starting point to invoke the `.process()` method. [API](../sdk-apidocs/org/opensextant/xlayer/XlayerClient.html). 
+gives you a starting point to invoke the `.process()` method. [API](../doc/sdk-apidocs/org/opensextant/xlayer/XlayerClient.html). 
 ```
 /* Note - import org.opensextant.output.Transforms is handling the JSON-to-Java 
  * object deserialization if for whatever reason that is wrong, you can adapt it as needed.  
@@ -76,7 +76,8 @@ Developing with Python
 In your distribution use either `./python/opensextant-1.*.tar.gz` of from a checkout, 
 compose the Pip bundle as `cd ./python/;  python2.7 ./setup.py sdist`.  The resulting TAR/gz file will be in `./dist`. 
 
-Install it, `pip2.7  install opensextant-1.1.10.tar.gz`.  You now can make use of the `xlayer module`:
+Install it, `pip2.7  install opensextant-1.1.10.tar.gz`.  You now can make use of the `xlayer` module, as (poorly) documented 
+here in the [Py API](../doc/pydoc/opensextant.xlayer.html). This example captures the meat of it all:
 
 ```python
 
