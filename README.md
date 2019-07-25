@@ -46,14 +46,14 @@ To start using Xponents now, consider your use case:
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.2.0</version>
+    <version>3.2</version>
   </dependency>
 
   <!-- Xponents SDK API -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.2.0</version>
+    <version>3.2</version>
   </dependency>
 ```
 
@@ -214,9 +214,9 @@ For that matter, the only relevant artifacts in our `org.opensextant` group are:
 
 * `geodesy 2.0.1`   - Geodetic operations and coordinate system calculations
 * `giscore 2.0.2`  - GIS I/O
-* `opensextant-xponents-core 3.2.0` - This Core API
-* `opensextant-xponents  3.2.0` - This Solr-based tagger SDK
-* `opensextant-xponents-xtext 3.2.0` - XText, the text extraction toolkit
+* `opensextant-xponents-core 3.2` - This Core API
+* `opensextant-xponents  3.2` - This Solr-based tagger SDK
+* `opensextant-xponents-xtext 3.2` - XText, the text extraction toolkit
 
 
 Build
