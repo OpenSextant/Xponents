@@ -48,9 +48,9 @@ Testing/Processing
 A quick test can be done by these test scripts: In each case specify the PORT that Xlayer is running on and then 
 test file.
 
-* `./script/test-xlayer-curl.sh PORT FILE`  - requires cURL
-* `./script/test-xlayer-java.sh PORT FILE`  - requires Java and test libraries in ./lib
-* `./script/test-xlayer-python.sh PORT FILE`  - requires Python 2 and the OpenSextant python lib in `./python/`
+* `./test/test-xlayer-curl.sh PORT FILE`  - requires cURL
+* `./test/test-xlayer-java.sh PORT FILE`  - requires Java and test libraries in ./lib
+* `./test/test-xlayer-python.sh PORT FILE`  - requires Python 2 `opensextant` module in `PYTHONPATH`
 
 Developing with Java
 -------------------
@@ -60,8 +60,8 @@ Pardon the paltry API documentation. Still polishing.
 Use the `opensextant-xponents` artifact and `org.opensextant.xlayer.XlayerClient(url)` 
 gives you a starting point to invoke the `.process()` method. [API](../sdk-apidocs/org/opensextant/xlayer/XlayerClient.html). 
 ```
-/* Note - import org.opensextant.output.Transforms is handling the JSON-to-Java object deserialization
- * if for whatever reason that is wrong, you can adapt it as needed.  
+/* Note - import org.opensextant.output.Transforms is handling the JSON-to-Java 
+ * object deserialization if for whatever reason that is wrong, you can adapt it as needed.  
  */
 ....
 
@@ -107,10 +107,6 @@ For example,  run the Python client to see how easy it is to call the service ab
 Please note a Java version, XLayerClient, also exists in the src/main folder, with
 test code in src/test
 
-Required Python packages: requests and simplejson
-
-    PYTHONPATH=/my/python 
-    python  opensextant/xlayer.py  
 
 INPUT:
 
@@ -342,8 +338,7 @@ When building an Xlayer application, client-side or server-side, please understa
 * Xponents JARs -- APIs, Xlayer main and test code.  Use ``` mvn dependency:copy-dependencies``` and then see ./lib/opensextant-*.jar. The 
   essential items are listed in order of increasing dependency:
   * opensextant-xponents-3.*.jar
-  * opensextant-xponents-xlayer-0.*.jar
-  * opensextant-xponents-xlayer-0.*-tests.jar
+  * opensextant-xponents-core-3.*.jar
 * Configuration items foldered in ```./etc``` or similar folder in CLASSPATH
 * Logging configuration -- Logback is used in most Xponents work, but only through SLF4J. If you choose another logger implementation, 
   SLF4J is your interface.   Copy and configure ```Xlayer/src/test/resources/logback.xml``` in your install.  As scripted, ```./etc/``` is the location for this item.
@@ -398,30 +393,11 @@ Essentials:
   ./test/test-xlayer-java.sh 3535 ./test/data/randomness.txt
 
 
-  These are limited examples.  If you want to demonstrate running client and server on different hosts 
-  which is more realistic, by all means adapt the shell scripts for you needs.
+These are limited examples.  If you want to demonstrate running client and server on 
+different hosts which is more realistic, by all means adapt the shell scripts as needed.
 
-  Rather than use shell scripting, we have used Groovy and Ant to simplify these tests for Java.
-  As these are for demonstration only, we do not intend to generalize the scripting beyond this.
-
-```
-
-
-PACKAGING
-==============
+Rather than use shell scripting, we have used Groovy and Ant to simplify these tests for Java.
+As these are for demonstration only, we do not intend to generalize the scripting beyond this.
 
 ```
- cd Xponents
- # Fully build
- ant -f ./script/dist.xml dist
-
- cd Xlayer 
- cp -r ./test   ../dist/Xponents-3.0/
- cp -r ./script ../dist/Xponents-3.0/
- cp -r ./doc    ../dist/Xponents-3.0/
- cp etc/banner.txt ../dist/Xponents-3.0/etc/
- mvn dependency:copy-dependencies # aim for . ../dist/.../lib
- cp  target/*xlayer*jar ../dist/Xponents-3.0/lib/
-```
-
 
