@@ -29,6 +29,8 @@
       <arg value="dependency:copy-dependencies" />
     </exec>
 
+    <!-- Clean lib -->
+    <delete dir="${xponents.home}/Examples/lib" />
     <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
       <arg value="-DincludeScope=test" />
       <arg value="-DincludeScope=runtime" />
@@ -128,9 +130,10 @@
       </fileset>
     </copy>
     <copy todir="${release}/etc/" overwrite="true">
-      <fileset dir="${xponents.home}/Examples/etc">
+      <fileset dir="${xponents.home}/etc">
         <include name="*.xml" />
         <include name="*.txt" />
+        <include name="*.properties" />
       </fileset>
     </copy>
     <copy file="${xponents.home}/solr/solr7/lib/xponents-gazetteer-meta.jar" todir="${release}/etc" />

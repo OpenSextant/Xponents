@@ -456,6 +456,7 @@
           </header>
           <version>true</version>
           <windowtitle>Xponents Extraction Toolkit</windowtitle>
+          <detectJavaApiLink>false</detectJavaApiLink>
         </configuration>
       </plugin>
       <plugin>
