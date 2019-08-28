@@ -48,7 +48,7 @@ class Coordinate:
         self.mgrs = None
 
         if row:
-            if row.has_key('lat') and row.has_key('lon'):
+            if 'lat' in row and 'lon' in row:
                 lat = row['lat']
                 lon = row['lon']
 
@@ -59,9 +59,9 @@ class Coordinate:
     def validate(self):
         return validate_lat(self.Y) and validate_lon(self.X) and (self.X is not None and self.Y is not None)
 
-    def set(self, strLAT, strLON):
-        self.X = float(strLON)
-        self.Y = float(strLAT)
+    def set(self, lat, lon):
+        self.X = float(lon)
+        self.Y = float(lat)
 
     def __str__(self):
         if self.Y:
@@ -111,7 +111,7 @@ class Place(Coordinate):
         self.precision = -1
         self.method = None
         self.population = 0
-        self.hierachical_path = None
+        self.hierarchical_path = None
 
     def has_coordinate(self):
         if self.validate():

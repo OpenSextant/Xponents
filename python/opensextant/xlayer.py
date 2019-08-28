@@ -12,7 +12,8 @@ class XlayerClient:
     def __init__(self, server, options=""):
         """
         @param server: URL for the service
-        @keyword  options:  a comma-separated list of options to send with each request.  There are no default options supported. 
+        @keyword  options:  a comma-separated list of options to send with each request.
+        There are no default options supported.
         """
         self.server = server
         self.debug = False
@@ -63,7 +64,9 @@ class XlayerClient:
         if self.debug:
             print(json.dumps(json_content, indent=2))
         if 'response' in json_content:
-            metadata = json_content['response']
+            # Get the response metadata block
+            # metadata = json_content['response']
+            pass
         annots = []
         if 'annotations' in json_content:
             annots = json_content['annotations']
@@ -80,6 +83,7 @@ if __name__ == '__main__':
     import os
     from traceback import format_exc
     import argparse
+    import codecs
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--service-url", help="XLayer server URL to /process endpoint")
@@ -110,18 +114,18 @@ if __name__ == '__main__':
     elif args.lines and args.inputfile:
         print("INPUT: from individual lines from inputfile")
         try:
-            fh = open(args.inputfile, 'rb')
+            fh = codecs.open(args.inputfile, 'r', encoding="utf-8")
             lineNum = 0
             for line in fh:
                 lineNum += 1
                 _id = "line{}".format(lineNum)
                 print("=============={}:".format(_id))
-                _text = unicode(line.strip(), 'utf-8')
+                _text = line.strip()
                 result = xtractor.process(_id, _text)
                 print("PYTHON str(result)\t ")
                 print(result)
             fh.close()
-        except Exception, err:
+        except Exception as err:
             print(format_exc(limit=5))
 
     # ======================================
@@ -132,15 +136,15 @@ if __name__ == '__main__':
         if args.docid:
             _id = args.docid
         try:
-            with open(args.inputfile, 'rb') as fh:
+            with codecs.open(args.inputfile, 'r', encoding="utf-8") as fh:
                 _text = fh.read()
-                _text = unicode(_text, 'utf-8')
+                _text = _text.strip()
                 result = xtractor.process(_id, _text)
                 print("==============")
                 print("INPUT: from text inputfile")
                 print("PYTHON str(result)")
                 print(result)
-        except Exception, err:
+        except Exception as err:
             print(format_exc(limit=5))
 
     # Testing:

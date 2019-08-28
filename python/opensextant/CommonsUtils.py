@@ -21,15 +21,18 @@
 OpenSextant utilities
 @module  CommonsUtils
 """
+from opensextant import PY3
+if PY3:
+    from io import StringIO
+else:
+    from cStringIO import StringIO
 
-version = 'v3'
-
-from cStringIO import StringIO
 import os
 import csv
 import re
 from chardet import detect as detect_charset
 
+version = 'v3'
 
 # ---------------------------------------
 #  TEXT UTILITIES
@@ -37,18 +40,28 @@ from chardet import detect as detect_charset
 #
 
 
-def is_ascii(s):
-    #
-    # Acceptable test: http://stackoverflow.com/questions/196345/how-to-check-if-a-string-in-python-is-in-ascii
-    if isinstance(s, unicode):
-        return all(ord(c) < 128 for c in s)
+def is_text(t):
+    if PY3:
+        return isinstance(t, str)
     else:
-        try:
-            return all(ord(c) < 128 for c in s)
-        except:
-            pass
+        return isinstance(t, str) or isinstance(t, unicode)
+
+
+def is_ascii(s):
+    try:
+        return all(ord(c) < 128 for c in s)
+    except:
+        pass
 
     return False
+
+
+def get_text(t):
+    """ Default is to return Unicode string from raw data"""
+    if PY3:
+        return str(t, encoding='utf-8')
+    else:
+        return unicode(t, 'utf-8')
 
 
 ## ISO-8859-2 is a common answer, when they really mean ISO-1
@@ -65,11 +78,11 @@ def guess_encoding(text):
 
     cset = enc['encoding']
     if cset.lower() == 'iso-8859-2':
-        ## Anamoly -- chardet things Hungarian (iso-8850-2) is
-        ## a close match for a latin-1 document.  At least the quotes match
-        ##  Other Latin-xxx variants will likely match, but actually be Latin1
-        ##  or win-1252.   see Chardet explanation for poor reliability of Latin-1 detection
-        ##
+        # Anomoaly -- chardet things Hungarian (iso-8850-2) is
+        # a close match for a latin-1 document.  At least the quotes match
+        # Other Latin-xxx variants will likely match, but actually be Latin1
+        # or win-1252.   see Chardet explanation for poor reliability of Latin-1 detection
+        #
         enc['encoding'] = CHARDET_LATIN2_ENCODING
 
     return enc
@@ -82,11 +95,14 @@ def bytes2unicode(buf, encoding=None):
         if not encoding:
             return None
 
-    if encoding.lower() == 'utf-8':
-        return unicode(buf)
+    if PY3:
+        return str(buf, encoding=encoding)
     else:
-        text = buf.decode(encoding)
-        return unicode(text)
+        if encoding.lower() == 'utf-8':
+            return unicode(buf)
+        else:
+            text = buf.decode(encoding)
+            return unicode(text)
 
 
 reSqueezeWhiteSpace = re.compile(r'\s+', re.MULTILINE)
@@ -214,11 +230,11 @@ class ConfigUtility:
       oxygen.cfg file would have this mapping.  Your code just references 'mywords' to load it.
     """
 
-    def __init__(self, CFG, rootdir='.'):
+    def __init__(self, cfg, rootdir='.'):
 
         # If config is None, then caller can still use loadDataFromFile(abspath, delim) for example.
         #
-        self.config = CFG
+        self.config = cfg
         self.rootdir = rootdir
 
     def loadCSVFile(self, keyword, delim):

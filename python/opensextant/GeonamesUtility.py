@@ -7,9 +7,8 @@ import codecs
 import os
 import re
 
-from Data import Country
-from CommonsUtils import get_csv_reader, get_bool
-from opensextant.Data import Place
+from opensextant.CommonsUtils import get_csv_reader, get_bool
+from opensextant.Data import Place, Country
 
 countries = []
 countries_by_iso = {}
@@ -66,9 +65,9 @@ def load_countries(csvpath=None):
 
         countries_by_name[C.namenorm] = C
 
-    intl = Country();
-    intl.name = "International";
-    intl.cc_iso2 = "ZZ";
+    intl = Country()
+    intl.name = "International"
+    intl.cc_iso2 = "ZZ"
     intl.cc_iso3 = "ZZZ"
     countries_by_iso["ZZ"] = intl
 

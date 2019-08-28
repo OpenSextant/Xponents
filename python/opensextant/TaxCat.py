@@ -21,6 +21,7 @@
 """
 
 import os
+from opensextant.CommonsUtils import is_text
 
 __API_PATH = os.path.realpath(__file__)
 
@@ -60,7 +61,7 @@ def add_text(dct, f, val):
         before sending to solr.   TEXT strings may need scrubbing
         but you just add non-TEXT values.
     """
-    if isinstance(val, str) or isinstance(val, unicode):
+    if is_text(val):
         dct[f] = val
     else:
         dct[f] = val
@@ -75,7 +76,7 @@ def add_value(f, val, case=0):
         f.append(u'')
         return
 
-    if isinstance(val, str) or isinstance(val, unicode):
+    if is_text(val):
         v = val
         # if "&" in val or "<" in val:
         #    print "SCRUB THIS:", val
@@ -133,16 +134,16 @@ class TaxCatalogBuilder:
         self.server_url = None
         self.set_server(server)
 
-        self._record_count = 0l
-        self._byte_count = 0l
-        self._add_byte_count = 0l
+        self._record_count = 0
+        self._byte_count = 0
+        self._add_byte_count = 0
         self.commit_rate = -1
 
         self._records = []
         self.count = 0
 
-        from CommonsUtils import ConfigUtility
-        ## Load file
+        from opensextant.CommonsUtils import ConfigUtility
+        # Load file
         self.utility = ConfigUtility(None)
         self.stopwords = set([])
 
@@ -172,7 +173,7 @@ class TaxCatalogBuilder:
             self.server = Solr(self.server_url, timeout=600)
             print("SERVER ", self.server_url, self.server)
 
-        except Exception, err:
+        except Exception as err:
             print("Problem with that server %s, ERR=%s" % (self.server_url, err))
 
     def optimize(self):
@@ -248,7 +249,7 @@ class TaxCatalogBuilder:
 
             key = _phrase.lower()
             if key in words:
-                print ("Not adding ", key)
+                print("Not adding ", key)
                 continue
 
             words.add(key)
@@ -258,7 +259,7 @@ class TaxCatalogBuilder:
             t.is_valid = len(key) >= minlen
             t.name = _name
             t.phrase = _phrase
-            # Allow case-sensitve entries.  IFF input text contains UPPER
+            # Allow case-sensitive entries.  IFF input text contains UPPER
             # case data, we'll mark it as acronym.
             if t.phrase.isupper():
                 t.is_acronym = True
