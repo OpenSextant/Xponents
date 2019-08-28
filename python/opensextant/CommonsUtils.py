@@ -209,7 +209,13 @@ def get_csv_writer(fh, columns, delim=','):
 
 
 def get_csv_reader(fh, columns, delim=','):
-    return csv.DictReader(_utf_8_encoder(fh), columns,
+    from opensextant import PY3
+    if PY3:
+        return csv.DictReader(fh, columns,
+                              restval="", dialect='excel', lineterminator='\n', escapechar='\\',
+                              delimiter=delim, quotechar='"', quoting=csv.QUOTE_ALL)
+    else:
+        return csv.DictReader(_utf_8_encoder(fh), columns,
                           restval="", dialect='excel', lineterminator='\n', escapechar='\\',
                           delimiter=delim, quotechar='"', quoting=csv.QUOTE_ALL)
 

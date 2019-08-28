@@ -34,10 +34,10 @@ def load_countries(csvpath=None):
         pkg_dir = os.path.dirname(os.path.abspath(__file__))
         csvpath = os.path.join(pkg_dir, 'resources', 'country-names-2015.csv')
 
-    with codecs.open(csvpath, 'rb', encoding="UTF-8") as fh:
+    with codecs.open(csvpath, 'r', encoding="UTF-8") as fh:
         columns = "country_name,FIPS_cc,ISO2_cc,ISO3_cc,unique_name,territory".split(',')
-        io = get_csv_reader(fh, columns)
-        for row in io:
+        fio = get_csv_reader(fh, columns)
+        for row in fio:
 
             # ignore empty row and header.
             if 'country_name' not in row: continue
