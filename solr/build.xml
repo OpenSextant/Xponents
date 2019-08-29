@@ -66,13 +66,6 @@
     <get dest="${gaz.conf}/lang/stopwords_vi.txt">
       <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-vi/master/stopwords-vi.txt" />
     </get>
-
-    <!--  Possibility of using stopword sets from Carrot2 
-		<copy file="${carrot.workspace}/stopwords.ja" tofile="${gaz.conf}/lang/stopwords_ja.txt" /> 
-		<copy file="${carrot.workspace}/stopwords.ko" tofile="${gaz.conf}/lang/carrot2-stopwords.ko" /> 
-		<copy file="${carrot.workspace}/stopwords.zh_cn" tofile="${gaz.conf}/lang/carrot2-stopwords.zh" />
-		-->
-
   </target>
 
   <target name="gaz-meta" depends="gaz-stopwords">
