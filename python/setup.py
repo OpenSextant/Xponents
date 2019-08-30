@@ -14,7 +14,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='opensextant',
-    version='1.1.11',
+    version='1.1.12',
 
     description='OpenSextant APIs and Utilities',
     long_description=long_description,
@@ -54,7 +54,7 @@ setup(
     keywords='geography taxonomy tagging',
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    package_data={'opensextant': ['./resources/geonames.org/*.txt', './resources/*.csv']},
+    package_data={'opensextant': ['./resources/geonames.org/*.txt', './resources/*.csv','./resources/*.cfg']},
 
     install_requires=['pysolr==3.6.0', 'chardet>=3.0.0', 'requests>=2.13', 'simplejson>=2.8']
 )
