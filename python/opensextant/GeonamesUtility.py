@@ -17,7 +17,7 @@ countries_by_name = {}
 usstates = {}
 
 adm1_by_hasc = {}
-
+__loaded = False
 
 def make_HASC(cc, adm1):
     if not adm1:
@@ -73,6 +73,8 @@ def load_countries(csvpath=None):
 
     # WE, PS, GAZ, etc. and a handful of other oddities are worth noting and remapping.
 
+    global __loaded
+    __loaded = len(countries_by_iso)>0
     return None
 
 
@@ -144,3 +146,27 @@ def get_province(cc, adm1):
     """ REQUIRES you load_provinces() first.
     """
     return adm1_by_hasc.get(make_HASC(cc, adm1))
+
+
+def get_country(code, standard="ISO"):
+    """
+
+    :param code: 2- or 3-alpha code.
+    :param standard: 'ISO' or 'FIPS'
+    :return:  Country object
+    """
+    if not code or not isinstance(code, str):
+        return None
+
+    lookup = code.upper()
+    if standard=="ISO":
+        if not __loaded:
+            load_countries()
+        return countries_by_iso.get(lookup)
+    elif standard=="FIPS":
+        if not __loaded:
+            load_countries()
+        return countries_by_fips.get(lookup)
+    else:
+        raise Exception("That standards body '{}' is not known for code {}".format(standard, code))
+

@@ -232,6 +232,8 @@ class RegexPatternManager:
         self.patterns_file_path = None
         self.test_cases = []
         self.matcher_classes = {}
+        # CUSTOM: For mapping Python and Java classes internally.  Experimental.
+        self.match_class_registry = {}
         self.testing = testing
         self.debug = debug
         self._initialize()
@@ -463,13 +465,22 @@ class PatternExtractor(Extractor):
         """
         test_results = []
         for t in self.pattern_manager.test_cases:
-            should_not_match = "FAIL " in t.text
+            expect_valid_match = "FAIL" not in t.text
             output = self.extract(t.text, features=[t.family])
-            tp = (output and not should_not_match)
-            fp = (not output and should_not_match)
+
+            # Determine if pattern matched true positive or false positive.
+            tp = len(output) > 0 and expect_valid_match
+            tn = not tp
+            for m in output:
+                if not expect_valid_match:
+                    if m.filtered_out:
+                        tn = True
+                    else:
+                        tp = False
+
             test_results.append({"TEST": t.id,
                                  "TEXT": t.text,
                                  "MATCHES": output,
-                                 "PASS": tp or fp})
+                                 "PASS": tp or tn})
 
         return test_results
