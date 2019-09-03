@@ -204,6 +204,16 @@ class PatternMatch(TextMatch):
         self.case = PatternMatch.FOUND_CASE
         self.match_groups = match_groups
 
+    def attributes(self):
+        """
+        Render domain details to meaningful exported view of the data.
+        :return:
+        """
+        default_attrs = {"pattern_id":self.pattern_id}
+        for (k, v, x1, x2) in self.match_groups:
+            default_attrs[k] = v
+        return default_attrs
+
     def normalize(self):
         if not self.text:
             return
@@ -454,6 +464,13 @@ class PatternExtractor(Extractor):
                                                   label=pat.family,
                                                   match_groups=digested_groups)
                         results.append(genericObj)
+
+        # Determine if any matches are redundant.  Mark redundancies as "filtered out".
+        reduce_matches(results)
+        for r in results:
+            if r.is_duplicate or r.is_submatch:
+                r.filtered_out = True
+
         return results
 
     def default_tests(self):
