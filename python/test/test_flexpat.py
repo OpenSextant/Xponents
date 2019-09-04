@@ -1,4 +1,4 @@
-from opensextant.Extraction import TextMatch
+from opensextant.Extraction import TextMatch, render_match
 from opensextant.FlexPat import class_for, resource_for, RegexPatternManager, RegexPattern, PatternTestCase
 
 # ========================
@@ -81,3 +81,4 @@ real_results = patternsApp.extract(".... text blob 1-800-123-4567...")
 print("TEST RESULTS")
 for result in real_results:
     print(repr(result))
+    print("\tRAW DICT:", render_match(result))

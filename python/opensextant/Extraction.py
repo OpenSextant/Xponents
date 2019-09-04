@@ -145,3 +145,21 @@ class Extractor(ABC):
         :return: array of TextMatch
         """
         pass
+
+
+def render_match(m):
+    """
+
+    :param m: TextMatch
+    :return: dict
+    """
+    if not isinstance(m, TextMatch):
+        return None
+    dct = {
+        "type": m.label,
+        "text": m.text,
+        "offset": m.start,
+        "length": m.len,
+        "filtered-out": m.filtered_out
+    }
+    return dct

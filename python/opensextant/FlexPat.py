@@ -209,7 +209,7 @@ class PatternMatch(TextMatch):
         Render domain details to meaningful exported view of the data.
         :return:
         """
-        default_attrs = {"pattern_id":self.pattern_id}
+        default_attrs = {"method": self.pattern_id}
         for (k, v, x1, x2) in self.match_groups:
             default_attrs[k] = v
         return default_attrs
