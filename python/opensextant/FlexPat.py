@@ -203,6 +203,9 @@ class PatternMatch(TextMatch):
         self.pattern_id = pattern_id
         self.case = PatternMatch.FOUND_CASE
         self.match_groups = match_groups
+        self.variant_id = None
+        if self.pattern_id and "-" in self.pattern_id:
+            self.variant_id = self.pattern_id.split("-", 1)[1]
 
     def attributes(self):
         """
@@ -492,6 +495,7 @@ class PatternExtractor(Extractor):
                 if not expect_valid_match:
                     if m.filtered_out:
                         tn = True
+                        tp = False
                     else:
                         tp = False
 
