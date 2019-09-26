@@ -21,22 +21,22 @@ Getting started
 ================================
 You have a few options:
 
-1. Download Xponents SDK release (libraries, docs, and pre-built Xponents Solr)
+* **Option 1.** Download Xponents SDK release (libraries, docs, and pre-built Xponents Solr)
    * You just want the capability. No hassle.
    * https://github.com/OpenSextant/Xponents/releases will have library releases; Maven Central has JARs/javaodcs
-   * https://github.com/OpenSextant/DataReleases will list full SDK releases for Xponents 3.0+
-2. Checkout Xponents and Gazetteer projects and build from latest source and data.
-   * You want the full experience.
-3. Checkout Xponents build from latest source using an existing Gazetteer flat file.
-   * https://github.com/OpenSextant/DataReleases -- lists Gazetteer quarterly releases
-   * You want to dig into Xponents but most recent gazetteer is not that important.
+   * https://hub.docker.com/r/mubaldino/opensextant will have Xponents 3.2 and later as a full running service.
+* **Option 2.** Checkout Xponents and Gazetteer projects and build from latest source and data.
+   * You want the full experience, all the pain of building from source.
 
-For option 1 download what you need from the links above.
+For options 2 and 3 above, you'll follow the remainder of these instructions to build Xponents SDK 
+with Solr indices populated.
 
-For options 2 and 3 above, you'll follow the remainder of these instructions to build Xponents SDK with Solr indices populated.
 
 Option 2.  Build Gazetteer From Scatch
 ---------------------------------------------
+
+A quick overview: Generate the raw gazetteer flat file `MergedGazetteer`, then load that 
+into the Solr server along with other reference data.
 
 1. Checkout Gazetteer ETL project
    * http://opensextant.github.io/Gazetteer/ 
@@ -62,7 +62,7 @@ Now run these steps to acquire gazetteer data from USGS and NGA:
 ```
 
 Separately run the ETL in the Gazetter project.
-This Xponents script emulates the Gazetteer ant script, but allows 
+This Xponents script emulates the Gazetteer's own ant script, but allows 
 for some tuning of JVM and other parameters, such as logging, etc.
 
 ```
@@ -74,11 +74,8 @@ for some tuning of JVM and other parameters, such as logging, etc.
 
 **OUTPUT**: Now find the absolute path to the output `MergedGazetteer.txt`  (`Gazetteer/GazetteerETL/GeoData/Merged/MergedGazetteer.txt`)
 
-Continue on with the rest of the instructions.
- 
 
-Option 3. Build Xponents Solr from Gazetteer Flat File
----------------------------------------------
+Next, load this flat file into the Solr server. 
 First, copy `build.template` as `build.properties`
 
 ```
@@ -90,9 +87,11 @@ First, copy `build.template` as `build.properties`
   proxy                 -- set your HTTP proxy host, or leave blank if none. 
 ```
 
+Finally, walk through the following section on "Building and Running Xponents Solr", which provides
+this last bit of configuration in 4 steps.
 
 
-Running Xponents Solr
+Building and Running Xponents Solr
 =================================
 
 This is a stock instance of Solr 7.x with a number of custom solr cores.
@@ -108,7 +107,7 @@ These notes here are for the general situation just establishing Solr and iterat
 Setup
 ----------
 
-**Step 1.  Get Solr 7.x **
+**Step 1. Get Solr 7.x**
 
 To get a fully working Solr instance running unpack the full Solr 7.x distribution here 
 at `./solr7-dist`.  This involves some extra steps, but is relatively well tested.
@@ -124,7 +123,7 @@ reviewing Solr index configurations.
 ```
 
 
-**Step 2. Build Prerequisite Libraries **
+**Step 2. Build Prerequisite Libraries**
 
 The gazetteer build scripts use some Ant, but mainly Python.
 You'll see the Ant script just automates invocation of scripted steps.
@@ -158,7 +157,7 @@ NOTE: In Python Development mode where the opensextant libs are in development:
     export PYTHONPATH=/path/to/Xponents/piplib
 ```
   
-**Step 3. Configure and Deployment Paths **
+**Step 3. Configure and Deployment Paths**
 
 By default, you have this runtime environment in check-out or in distribution:
 
@@ -175,46 +174,56 @@ In deployment you can choose XP_SOLR to be any path you want, as long as the `so
 folder is kept intact once built.
 
 
-**Step 4. Build Indices **
+**Step 4. Build Indices**
 
 The build process can be brittle, so let's educate you and you can make decisions on your own. See comments on each option/directive
 The `build.sh` script is the central brain behind the data assembly.  Use that script 
 alone to build and manage indices, however if there are problems see the individual steps below
 to intervene and redo any steps. 
 
+**FIRST USE:** 
+```
+    build.sh  start clean data 
+```
+IF you have gotten to this step and feel confident things look good, this one invocation of `build.sh`
+should allow you to run steps 4a, 4b, and 4c below all in one command.  STOP HERE.  If the above succeeded, check 
+your running solr instance at http://localhost:7000/solr/ and inspect the different Cores.  If you don't know
+Solr, please go learn a little bit about using that Solr Admin interface.  If you have about 20 million rows in the
+gazetteer you are likely ready to go start using Xponents SDK.
+
+**NEXT USES:** You should not need to reacquire data sources, clean or restart Solr after that first use of build.sh.
+ Subsequent uses may be only `build.sh  gazetteer`, to focus on reloading the gazetteer, for example.  The rest of 
+ this nonsense is to provide more transparency on the individual steps in the event something went wrong.
 
 ```
    Synopsis:
    ./build.sh  start clean data proxy gazeteer taxcat
 
    # clean  = Clean Solr indices and initialize library folders with copies of dependencies, etc.
+
    # start  = Start the Solr server on default Xponents port 7000.  
-   #          Solr Server is only used at build time, not at runtime
+              Solr Server is only used at build time, not at runtime
    # data   = Acquire additional data e.g., Census, Geonames.org, JRC entities, etc. 
-   #          These data sets are not cleaned by 'clean'
+              These data sets are not cleaned by 'clean'
    # proxy  = IF you are behind a proxy, set your proxy in build.propertes
 
-   # gazetteer or tacat or both (default).  = by default both indices are created from ground up if neither is specified.
-              specifying one excludes the other.
+   # gazetteer = regenerate only the gazetteer index
+   
+   # taxcat    = regenerate only the taxcat index
 
 ```
 
 
-Index Step 1. Initialize
-=================================
+**Step 4.a Initialize**
 
 ```
-    UNIX:  build.sh [proxy] init
-
-    # Or: 
     # If you use a proxy, then include proxy command first in all your Ant invocations.
     # As well, set proxy.host and proxy.port in your build.properties above.
     #
     ant [proxy] init
 ```
 
-Index Step 2. Get Supporting Data
---------------------------------
+**Step 4.b Get Supporting Data**
 
 ```
     build.sh [proxy] data 
@@ -226,8 +235,8 @@ This will pull down data sets used by Gazetteer and TaxCat taggers and resources
 * `ant taxcat-jrc `
 
 
-Index Step 3. Load Gazetteer 
---------------------------------
+**Step 4.c Load Gazetteer & TaxCat** 
+
 In this step, you can use:
 
 ```
@@ -251,8 +260,11 @@ must be available in the `CLASSPATH`
 ```
 
 
-Index Step 4.  Load TaxCat 
---------------------------------
+Expert Topics
+================
+
+TaxCat index ~ Taxonomic Catalog
+---------------------------------
 This step falls under the category of geotagger tuning.  E.g., see Extraction PlaceGeocoder class
 as an implementation of a full geotagging capability.  To negate false-positives we need a source
 of known things that are not places, rules that guide us how to judge non-places, or some other 
@@ -275,8 +287,8 @@ Some of them can be used to negate false-positives in geotagging, .... other ent
 interesting -- you should save them all as a part of your pipeline.
 
 
-Honing Gazetteer Index (Expert Topic)
-=================================
+Honing Gazetteer Index 
+---------------------------------
 Size matters.  So does content.  Your gazetteer should contain named locations and other data
 you want to use in your application.  For example, An application for a complete worldwide name search suggests you have a full gazetteer; An application of lightweight desktop geocoding suggests 
 you have the basics plus some other data, but much less than the full version.
