@@ -10,7 +10,7 @@ export noproxy=$NO_PROXY
 XLAYER_PORT=$1
 
 cd $basedir
-CLASSPATH="$basedir/etc:$basedir/etc/*:$basedir/lib/*:$basedir/xlayer-lib/*"
+CLASSPATH="$basedir/etc:$basedir/etc/*:$basedir/lib/*"
 XPONENTS_SOLR=${XPONENTS_SOLR:-$basedir/xponents-solr}
 
 java -Dopensextant.solr=$XPONENTS_SOLR/solr7 -Xmx2g -Xms2g \

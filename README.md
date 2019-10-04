@@ -39,7 +39,7 @@ These extractors are in the `org.opensextant.extractors` packages, and demonstra
 
 To start using Xponents now, consider your use case:
 
-* **Deploy a REST service** for all this geo/temporal entity extraction: Use the Docker Hub image here: https://hub.docker.com/r/mubaldino/opensexant 
+* **Deploy a REST service** for all this geo/temporal entity extraction: Use the Docker Hub image here: https://hub.docker.com/r/mubaldino/opensextant 
 * **Build your own Java 8+ app** against Xponents SDK: use Maven here:
 
 ```
