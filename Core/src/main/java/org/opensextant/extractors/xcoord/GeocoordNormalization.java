@@ -42,10 +42,10 @@ public final class GeocoordNormalization {
     private static final boolean DMLON = false;
 
     /**
-     * The match object is normalized, setting the coord_text and other data
-     * from parsing "text" and knowing which pattern family was matched.
+     * The match object is normalized, setting the coord_text and other data from parsing "text" and
+     * knowing which pattern family was matched.
      *
-     * @param m match
+     * @param m      match
      * @param groups fields
      * @throws NormalizationException if entity or match is not parseable
      */
@@ -94,9 +94,8 @@ public final class GeocoordNormalization {
              */
             if ((XCoord.RUNTIME_FLAGS & XConstants.DD_FILTERS_ON) > 0) {
                 /**
-                 * With FILTERS ON if lat/lon have no ALPHA hemisphere, i.e.,
-                 * ENSW * and if lat/lon text for match has no COORD symbology
-                 * then this is likely not a DD coordinate -- filter out.
+                 * With FILTERS ON if lat/lon have no ALPHA hemisphere, i.e., ENSW and if lat/lon text for match
+                 * has no COORD symbology then this is likely not a DD coordinate -- filter out.
                  */
                 if (!ddlon.hemisphere.isAlpha() && !ddlat.hemisphere.isAlpha()) {
                     if (!ddlat.hasSymbols()) {
@@ -192,7 +191,7 @@ public final class GeocoordNormalization {
                 int len = offsets.length();
                 if (len < 11) {
                     m.precision.precision = PrecisionScales.MGRS_offset_precision_list[len];
-                    m.precision.digits = len/2;
+                    m.precision.digits = len / 2;
                 }
 
             } catch (java.lang.IllegalArgumentException parseErr) {
@@ -220,8 +219,7 @@ public final class GeocoordNormalization {
                 }
             } catch (java.lang.IllegalArgumentException parseErr) {
                 throw new NormalizationException(
-                        String.format("Failed to parse UTM. text=%s coord=%s", m.getText(), m.coord_text),
-                        parseErr);
+                        String.format("Failed to parse UTM. text=%s coord=%s", m.getText(), m.coord_text), parseErr);
                 // No normalization done.
             } catch (Exception err) {
                 throw new NormalizationException("Failed to parse UTM pattern", err);
@@ -230,8 +228,8 @@ public final class GeocoordNormalization {
     }
 
     /**
-     * Not all pattens might have filters. This "filter_out" implies you should
-     * evaluate the MatchFilter.stop() method on any implementation.
+     * Not all pattens might have filters. This "filter_out" implies you should evaluate the
+     * MatchFilter.stop() method on any implementation.
      *
      * @param m the match
      * @return true if match is invalid and should be marked as filtered out
@@ -265,8 +263,8 @@ public final class GeocoordNormalization {
                 return MGRS_FILTER.stop(m);
             }
         } /**
-          * Apply DMS filter also only if static flags say it is enabled.
-          */
+           * Apply DMS filter also only if static flags say it is enabled.
+           */
         else if (m.cce_family_id == XConstants.DMS_PATTERN) {
             if ((XCoord.RUNTIME_FLAGS & XConstants.DMS_FILTERS_ON) > 0) {
                 return DMS_FILTER.stop(m);
@@ -277,9 +275,9 @@ public final class GeocoordNormalization {
     }
 
     /**
-     * Hueuristic for what style of fields are allowed in valid DD or DM/DMS coordinates.
-     * This evaluates if a lat/lon pair have disparate field specificity.  A lat with Deg:Min
-     * should not be paired with a lon with Deg:Min:Sec:Subsec  for example.
+     * Hueuristic for what style of fields are allowed in valid DD or DM/DMS coordinates. This evaluates
+     * if a lat/lon pair have disparate field specificity. A lat with Deg:Min should not be paired with
+     * a lon with Deg:Min:Sec:Subsec for example.
      *
      * @param lat latitude
      * @param lon longitude

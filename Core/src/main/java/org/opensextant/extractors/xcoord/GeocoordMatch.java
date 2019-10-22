@@ -320,8 +320,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
                 if (latField3 != null && lonField3 != null) {
                     boolean symmetric = latField3.startsWith("-") && lonField3.startsWith("-");
                     if (symmetric) {
-                        boolean is_decimal = latField3.length()>3 && lonField3.length()>3;
-                        if (! is_decimal) {
+                        boolean is_decimal = latField3.length() > 3 && lonField3.length() > 3;
+                        if (!is_decimal) {
                             return true;
                         }
                     }
