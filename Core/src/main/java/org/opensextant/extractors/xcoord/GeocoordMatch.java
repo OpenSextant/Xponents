@@ -46,12 +46,12 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      * Just the coordinate text normalized.
      */
     protected String coord_text = null; // MGRS, UTM, all, etc.
-    
+
     /**
      * The lat text.
      */
     protected String lat_text = null; // just DD, DMS, DM
-    
+
     /**
      * The lon text.
      */
@@ -66,17 +66,17 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     private double longitude = 0.0f;
     private DMSOrdinate lat = null;
     private DMSOrdinate lon = null;
-    
+
     /**
      * The cce family id.
      */
     public int cce_family_id = -1;
-    
+
     /**
      * The cce variant.
      */
     public String cce_variant = null;
-    
+
     /**
      * inherent precision of the coordinate matched.
      */
@@ -90,7 +90,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     private boolean balancedPrecision = false;
 
     /**
-     *  count dashes other than hemispheres, +/-.
+     * count dashes other than hemispheres, +/-.
      */
     protected int dashCount = 0;
 
@@ -224,12 +224,12 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      * The separators.
      */
     public final String[] separators = { "latlonSepNoDash", "latlonSep", "xySep", "trivialSep" };
-    
+
     /**
      * The offset separator.
      */
     protected int offsetSeparator = -1;
-    
+
     /**
      * The separator.
      */
@@ -270,7 +270,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      * @return true if coordinate is invalid because
      * @throws NormalizationException the normalization exception
      */
-    public boolean evaluateInvalidDashes() throws NormalizationException {
+    public boolean evaluateInvalidDashes(Map<String, String> fields) throws NormalizationException {
         if (lat == null || lon == null) {
             throw new NormalizationException("Set lat/lon first before evaluating dashes");
         }
@@ -298,7 +298,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         }
 
         // By this point x2 offset should be exclusive end of LAT
-        String latText = getText().substring(lat.offsetDeg, x2).trim();
+        String latText = getText().substring(lat.offsetDeg, x2 + 1).trim();
         String lonText = getText().substring(lon.offsetOrdinate).trim();
 
         // TODO: This fails to work if "-" is used as a separator, <Lat> - <Lon>
@@ -309,6 +309,25 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         //
         int lat_dashes = StringUtils.countMatches(latText, "-");
         int lon_dashes = StringUtils.countMatches(lonText, "-");
+
+        // DD-MM-SSH DDD-MM-SSH okay as DMS, but not DM.
+        // DD-MM-SSS...H DDD-MM-SSS...H okay as DM, but not DMS.
+        // 
+        if (this.cce_family_id == XConstants.DM_PATTERN) {
+            if ("-".equals(fields.get("dmLatSep")) && "-".equals(fields.get("dmLonSep"))) {
+                String latField3 = fields.get("fractMinLat");
+                String lonField3 = fields.get("fractMinLon");
+                if (latField3 != null && lonField3 != null) {
+                    boolean symmetric = latField3.startsWith("-") && lonField3.startsWith("-");
+                    if (symmetric) {
+                        boolean is_decimal = latField3.length()>3 && lonField3.length()>3;
+                        if (! is_decimal) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
 
         // ASSUMPTION: LON follows LAT, so where LAT, -LON
         // the "-" may be part of the LAT field.

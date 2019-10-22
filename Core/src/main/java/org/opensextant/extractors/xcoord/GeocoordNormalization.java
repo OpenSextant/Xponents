@@ -126,7 +126,7 @@ public final class GeocoordNormalization {
             m.setCoordinate(dmlat, dmlon);
 
             if (!m.isFilteredOut()) {
-                m.setFilteredOut(m.evaluateInvalidDashes());
+                m.setFilteredOut(m.evaluateInvalidDashes(fieldValues));
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
             set_precision(m);
@@ -144,7 +144,7 @@ public final class GeocoordNormalization {
             m.setCoordinate(dmlat, dmlon);
 
             if (!m.isFilteredOut()) {
-                m.setFilteredOut(m.evaluateInvalidDashes());
+                m.setFilteredOut(m.evaluateInvalidDashes(fieldValues));
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
             set_precision(m);
