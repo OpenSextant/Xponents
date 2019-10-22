@@ -26,7 +26,6 @@ public class XlayerRestlet extends XlayerApp {
 
     public XlayerRestlet(Context c) {
         super(c);
-        version = "v3.0";
         log = getContext().getCurrentLogger();
     }
 
@@ -42,6 +41,7 @@ public class XlayerRestlet extends XlayerApp {
             Context ctx = getContext();
             ctx.getAttributes().put("xgeo", tagger);
             ctx.getAttributes().put("xtemp", dateTagger);
+            ctx.getAttributes().put("version", this.version);
             info("%%%%   Xponents Geo Phase Configured");
         } catch (Exception err) {
             error("Unable to start", err);

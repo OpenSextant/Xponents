@@ -40,6 +40,10 @@ public abstract class TaggerResource extends ServerResource {
         operation = this.getAttribute("operation");
     }
 
+    public String getProperty(String k) {
+        return (String) this.getApplication().getContext().getAttributes().get(k);
+    }
+
     /**
      * Ping. trivial thing for now.
      *
@@ -48,29 +52,28 @@ public abstract class TaggerResource extends ServerResource {
     public Representation ping() {
         JSONObject ping = new JSONObject();
         ping.put("status", "OK");
+        ping.put("version", getProperty("version"));
         return new JsonRepresentation(ping);
     }
 
     protected abstract Extractor getExtractor(String xid);
 
     /**
-     * Implement the processing of a single Input given some request parameters
-     * Based on the processing and the request, format response accordingly.
+     * Implement the processing of a single Input given some request parameters Based on the processing
+     * and the request, format response accordingly.
      * 
-     * @param input  signal
+     * @param input     signal
      * @param jobParams controls
-     * @return JSON or other formatted response.  
+     * @return JSON or other formatted response.
      */
     public abstract Representation process(TextInput input, Parameters jobParams);
 
     /**
-     * // Get parameters for processing? None currently, but may be:
-     * // - lower case tagging or filtering
-     * // - coordinate parsing on|off
-     * //
-     * // Get parameters for formatting. JSON, HTML, mainly.
-     * // Output represents filters + format.
-     * //
+     * Get parameters for processing? None currently, but may be: 
+     * - lower case tagging or filtering 
+     * - coordinate parsing on|off
+     * Get parameters for formatting. JSON, HTML, mainly.
+     * Output represents filters + format.
      * 
      * @param inputs arguments to RESTful request
      * @return Xponents Parameters
@@ -117,6 +120,7 @@ public abstract class TaggerResource extends ServerResource {
 
     /**
      * Convenience helper to reset data.
+     * 
      * @param job job parameters
      */
     protected void resetParameters(Parameters job) {
@@ -187,7 +191,7 @@ public abstract class TaggerResource extends ServerResource {
 
     /**
      * @param status status
-     * @param error error msg
+     * @param error  error msg
      * @return json formatted response
      */
     protected JsonRepresentation status(String status, String error) {

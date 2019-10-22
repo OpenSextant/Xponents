@@ -24,7 +24,7 @@ public class XlayerControl extends TaggerResource {
     }
 
     /**
-     * get Xponents Exxtractor object from global attributes. 
+     * get Xponents Exxtractor object from global attributes.
      */
     public Extractor getExtractor(String xid) {
         /*
@@ -45,10 +45,10 @@ public class XlayerControl extends TaggerResource {
     }
 
     /**
-     * /control/OPERATION
+     * /control/OPERATION, for example:
      * 
-     *   * /control/ping
-     *   * /control/stop
+     *  /control/ping
+     *  /control/stop
      * 
      * @param params
      * @return
