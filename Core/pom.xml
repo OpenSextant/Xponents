@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents-core</artifactId>
-  <version>3.2</version>
+  <version>3.2.1</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents Core API</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -175,7 +175,7 @@
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-json</artifactId>
-      <version>5.0.10</version>
+      <version>5.0.13</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
