@@ -19,7 +19,6 @@
 @author: ubaldino
 
 OpenSextant utilities
-@module  CommonsUtils
 """
 from opensextant import PY3
 if PY3:
@@ -34,12 +33,11 @@ from chardet import detect as detect_charset
 
 version = 'v3'
 
+
 # ---------------------------------------
 #  TEXT UTILITIES
 # ---------------------------------------
 #
-
-
 def is_text(t):
     if PY3:
         return isinstance(t, str)
@@ -62,6 +60,26 @@ def get_text(t):
         return str(t, encoding='utf-8')
     else:
         return unicode(t, 'utf-8')
+
+
+def fast_replace(t, sep, sub=None):
+    """
+    Replace separators (sep) with substitute char, sub. Many-to-one substitute.
+
+    "a.b, c" SEP='.,'
+    :param t:  input text
+    :param sep: string of chars to replace
+    :param sub: replacement char
+    :return:  text with separators replaced
+    """
+    result = []
+    for ch in t:
+        if ch in sep:
+            if sub:
+                result.append(sub)
+        else:
+            result.append(ch)
+    return ''.join(result)
 
 
 ## ISO-8859-2 is a common answer, when they really mean ISO-1
@@ -89,6 +107,13 @@ def guess_encoding(text):
 
 
 def bytes2unicode(buf, encoding=None):
+    """
+    Convert bytes to unicode, regardless of Python 2 vs 3. If no encoding, attempt to guess at the encoding.
+
+    :param buf:
+    :param encoding:
+    :return:
+    """
     if not encoding:
         enc = guess_encoding(buf)
         encoding = enc['encoding']
@@ -223,8 +248,6 @@ def get_csv_reader(fh, columns, delim=','):
 # |||||||||||||||||||||||||||||||||||||||||||||
 # |||||||||||||||||||||||||||||||||||||||||||||
 class ConfigUtility:
-    # |||||||||||||||||||||||||||||||||||||||||||||
-    # |||||||||||||||||||||||||||||||||||||||||||||
     """ A utility to load parameter lists, CSV files, word lists, etc. from a folder *dir*
 
     functions here take an Oxygen cfg parameter keyword or a file path.

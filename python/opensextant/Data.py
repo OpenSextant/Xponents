@@ -56,8 +56,9 @@ class Coordinate:
             self.X = float(lon)
             self.Y = float(lat)
 
+
     def validate(self):
-        return validate_lat(self.Y) and validate_lon(self.X) and (self.X is not None and self.Y is not None)
+        return validate_lat(self.Y) and validate_lon(self.X) and (self.X != 0.0 and self.Y != 0.0)
 
     def set(self, lat, lon):
         self.X = float(lon)
