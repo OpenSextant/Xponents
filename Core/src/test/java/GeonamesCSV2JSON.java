@@ -75,7 +75,7 @@ public class GeonamesCSV2JSON extends GeonamesUtility {
                 obj.put(cc3, jsonCountry);
             }
 
-            JsonSerializer writer = new JsonSerializer();
+            JsonSerializer writer = JsonSerializer.create();
             FileUtility.writeFile(writer.serialize(obj), outfile);
 
         } catch (Exception err) {
