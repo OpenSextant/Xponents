@@ -1643,6 +1643,7 @@ gardens,place.civil
 brig,place.civil
 resort,place.civil
 resort island,place.civil
+sanctuary,place.civil
 palace,place.civil
 mosque,place.civil
 bunker,place.civil
@@ -2529,6 +2530,7 @@ cir,place.civil
 burrow,noun
 shale,noun
 salmon,food
+olives,food
 sap,noun
 czar,person.label
 csar,person.label

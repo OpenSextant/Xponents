@@ -1,11 +1,13 @@
 """
 Created on Mar 14, 2016
 
+history: py3.5+ json is as good or better than simplejson
+
 @author: ubaldino
 """
 
 import requests
-import simplejson as json
+import json
 
 
 class XlayerClient:
