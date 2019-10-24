@@ -136,7 +136,7 @@
         <include name="*.properties" />
       </fileset>
     </copy>
-    <copy file="${xponents.home}/solr/solr7/lib/xponents-gazetteer-meta.jar" todir="${release}/etc" />
+    <copy file="${xponents.home}/solr/solr7/lib/xponents-gazetteer-meta.jar" todir="${release}/lib" />
   </target>
 
   <target name="apidocs">

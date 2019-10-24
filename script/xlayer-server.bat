@@ -20,18 +20,17 @@ REM You are responsible for making a resident windows service out of it, if you 
 REM Alternatively, we could deploy as a Tomcat or other webapp
 
 if "%COMMAND%" == "start" (
-    echo "START XLAYER SERVICE"
-    set CLASSPATH=%"%basedir%\etc;%basedir%\etc\*;%basedir%\lib\*"
+    echo "START Xponents REST"
     java -Dopensextant.solr="%XPONENTS_SOLR%\solr7" -Xmx2g -Xms2g ^
           -XX:+UseParallelGC -server ^
           -Dlogback.configurationFile="%basedir%\etc\logback.xml" ^
-          -classpath "%CLASSPATH%" ^
+          -classpath "%basedir%\etc;%basedir%\lib\*" ^
           org.opensextant.xlayer.server.xgeo.XlayerServer   %XLAYER_PORT% 
     pause
 )
 
 if "%COMMAND%" == "stop" (
-    echo "STOP XLAYER SERVICE"
+    echo "STOP Xponents REST"
     echo "Launching a browser and running this... "
     start  "" "http://localhost:%XLAYER_PORT%/xlayer/rest/control/stop"
 )

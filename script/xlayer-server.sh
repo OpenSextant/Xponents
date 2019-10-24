@@ -1,3 +1,5 @@
+#!/bin/bash
+
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
@@ -16,7 +18,7 @@ case $CMD in
     cd $basedir
     logfile=$basedir/log/xlayer-stderr.log
     stdout=$basedir/log/xlayer.log
-    CLASSPATH="$basedir/etc:$basedir/etc/*:$basedir/lib/*
+    CLASSPATH="$basedir/etc:$basedir/lib/*"
     XPONENTS_SOLR=${XPONENTS_SOLR:-$basedir/xponents-solr}
 
     nohup java -Dopensextant.solr=$XPONENTS_SOLR/solr7 -Xmx2g -Xms2g \
