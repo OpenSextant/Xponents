@@ -59,7 +59,8 @@ Pardon the paltry API documentation. Still polishing.
 
 Use the `opensextant-xponents` artifact and `org.opensextant.xlayer.XlayerClient(url)` 
 gives you a starting point to invoke the `.process()` method. [API](../doc/sdk-apidocs/org/opensextant/xlayer/XlayerClient.html). 
-```
+
+```java
 /* Note - import org.opensextant.output.Transforms is handling the JSON-to-Java 
  * object deserialization if for whatever reason that is wrong, you can adapt it as needed.  
  */
@@ -83,12 +84,12 @@ here in the [Py API](../doc/pydoc/opensextant.xlayer.html). This example capture
 
 from opensextant.xlayer import XlayerClient
 client = XlayerClient(url)
-results  = client.process(.....)
+result  = client.process(.....)
 
-/* results is a simple array of dict.
- * Later versions may have a convenience method that transforms raw dictionaries into Python API classes
- * In Python, opensextant.Data classes are not complete and conssitent with their Java counterparts.
- */
+# result is a simple array of dict.
+# Later versions may have a convenience method that transforms raw dictionaries into API classes
+# opensextant.Data python classes are not complete and consistent with their Java counterparts.
+
 ```
 
 Health Check
