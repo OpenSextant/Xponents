@@ -75,9 +75,9 @@ results = client.process(....);
 Developing with Python
 --------------------
 In your distribution use either `./python/opensextant-1.*.tar.gz` of from a checkout, 
-compose the Pip bundle as `cd ./python/;  python2.7 ./setup.py sdist`.  The resulting TAR/gz file will be in `./dist`. 
+compose the Pip bundle as `cd ./python/;  python ./setup.py sdist`.  The resulting TAR/gz file will be in `./dist`. 
 
-Install it, `pip2.7  install opensextant-1.1.10.tar.gz`.  You now can make use of the `xlayer` module, as (poorly) documented 
+Install it, `pip3  install opensextant-1.2.tar.gz`.  You now can make use of the `xlayer` module, as documented 
 here in the [Py API](../doc/pydoc/opensextant.xlayer.html). This example captures the meat of it all:
 
 ```python
@@ -381,9 +381,9 @@ Essentials:
   # Install the Python library using Pip. Pip handles installing OS-specific python resources as needed. 
   cd Xponents/
   mkdir piplib 
-  pip install --target piplib python/opensextant-1.x.x.tar.gz
+  pip3 install --target piplib python/opensextant-1.x.x.tar.gz
   OR 
-  pip install --user python/opensextant-1.x.x.tar.gz
+  pip3 install --user python/opensextant-1.x.x.tar.gz
 
   # Run server
   ./script/xlayer-server.sh 3535 start

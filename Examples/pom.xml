@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.2</version>
+      <version>${xponents.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -99,7 +99,7 @@
           <header>&lt;img alt='[OpenSextant Logo]' height='36'
             width='36'
             src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
-            OpenSextant.org, 2010-2017</header>
+            OpenSextant.org, 2010-2019</header>
           <version>true</version>
           <windowtitle>Xponents Examples</windowtitle>
         </configuration>

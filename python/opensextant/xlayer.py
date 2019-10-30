@@ -8,6 +8,7 @@ history: py3.5+ json is as good or better than simplejson
 
 import requests
 import json
+from opensextant.Extraction import TextMatch
 
 
 class XlayerClient:
@@ -33,8 +34,7 @@ class XlayerClient:
 
     def process(self, docid, text, features=["geo"]):
         """
-          SERVICE parameters:
-          docid and text -- obvious
+        Process text, extracting some entities
 
           features = "f,f,f,f"  String of comma-separated features
           options  = "o,o,o,o"  String of comma-separated features
@@ -52,6 +52,10 @@ class XlayerClient:
           
           but interpretation of "clean text" and "lower case" support is subjective.
           so they are not supported out of the box here.
+        :param docid: identifier of transaction
+        :param text: Unicode text to process
+        :param features: list of places, coordinates, countries, orgs, persons, patterns
+        :return: array of TextMatch objects or empty array.
         """
         json_request = {'docid': docid, 'text': text, 'options': self.default_options}
         if features:
@@ -69,11 +73,15 @@ class XlayerClient:
             # Get the response metadata block
             # metadata = json_content['response']
             pass
-        annots = []
+
         if 'annotations' in json_content:
-            annots = json_content['annotations']
-            if self.debug:
-                for a in annots:
+            aj = json_content['annotations']
+            annots = []
+            for a in aj:
+                tm = TextMatch(a.get('matchtext'), a.get('offset'), None)
+                tm.populate(a)
+                annots.append(tm)
+                if self.debug:
                     print("Match", a['matchtext'], "at char offset", a['offset'])
                     if 'lat' in a:
                         print("representing geo location (%2.4f, %3.4f)" % (a.get('lat'), a.get('lon')))
@@ -108,8 +116,9 @@ if __name__ == '__main__':
         result = xtractor.process(_id, _text)
         print("==============")
         print("INPUT: from text argument")
-        print("PYTHON str(result)\t")
-        print(result)
+        print("Annotations\n============")
+        for a in result:
+            print(a)
     # ======================================
     # Support data as one text record per line in a file
     #                
@@ -124,8 +133,9 @@ if __name__ == '__main__':
                 print("=============={}:".format(_id))
                 _text = line.strip()
                 result = xtractor.process(_id, _text)
-                print("PYTHON str(result)\t ")
-                print(result)
+                print("Annotations\n============")
+                for a in result:
+                    print(a)
             fh.close()
         except Exception as err:
             print(format_exc(limit=5))
@@ -144,8 +154,9 @@ if __name__ == '__main__':
                 result = xtractor.process(_id, _text)
                 print("==============")
                 print("INPUT: from text inputfile")
-                print("PYTHON str(result)")
-                print(result)
+                print("Annotations\n============")
+                for a in result:
+                    print(a)
         except Exception as err:
             print(format_exc(limit=5))
 

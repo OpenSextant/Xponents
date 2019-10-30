@@ -141,14 +141,14 @@ From Source:
     popd
     pushd ../
     # Install built lib with dependencies to ./python
-    pip install -U --target ./piplib ./python/dist/opensextant-1.1.10.tar.gz 
+    pip3 install -U --target ./piplib ./python/dist/opensextant-1.2*.tar.gz 
     popd
 ```
 
 From Distribution:
 
 ```
-    pip install -U --target ./piplib python/opensextant-1.1.10.tar.gz
+    pip install -U --target ./piplib python/opensextant-1.2*.tar.gz
 ```
 
 NOTE: In Python Development mode where the opensextant libs are in development:

@@ -36,6 +36,8 @@ class TextEntity:
             return u"{}({},{})".format(unicode(self.text), self.start, self.end)
 
     def _is_valid(self):
+        if self.start is None or self.end is None:
+            return False
         return self.start >= 0 and self.end >= 0
 
     def contains(self, x1):
@@ -111,12 +113,24 @@ class TextMatch(TextEntity):
             return u"{}/{}({},{})".format(self.label, unicode(self.text), self.start, self.end)
 
     def populate(self, attrs):
+        """
+        Populate a TextMatch to normalize the set of attributes -- separate class fields on TextMatch from additional
+        optional attributes.
+        :param attrs:
+        :return:
+        """
         self.label = attrs.get("type")
         self.attrs = attrs
         self.filtered_out = get_bool(self.attrs.get("filtered-out"))
-        length = self.attrs.get("length")
-        if length and self.start >= 0 and not self.end:
-            self.end = self.start + length
+        if "length" in self.attrs:
+            self.len = self.attrs.get("length")
+        if self.len is not None and self.start >= 0 and not self.end:
+            self.end = self.start + self.len
+
+        # Remove attribute keys that may be confusing.
+        for fld in ['offset', 'start', 'end', 'length', 'type', 'filtered-out', 'text', 'matchtext']:
+            if fld in self.attrs:
+                del self.attrs[fld]
 
     def normalize(self):
         """
