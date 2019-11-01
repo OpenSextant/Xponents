@@ -25,8 +25,12 @@ RELEASES
 
 # 2019 
 
+**Xponents 3.2.1 Dead of Night** 
+* Halloween 2019: script simplification, CLASSPATH and other cleanup.  XCoord: Reduced ambiguity in some DM vs. DMS patterns
+
+
 **Xponents 3.2.0 Dead Heat**
-* Refactoring to split a lighter-weight "Core API" from the heavier, more involved tagger SDK
+* July 2019: Refactoring to split a lighter-weight "Core API" from the heavier, more involved tagger SDK
 
 **Xponents 3.1.0 Summer Solstice**
 * Reverse geocoding added on request.  Xlayer exposes the results of enriching found coordinates
