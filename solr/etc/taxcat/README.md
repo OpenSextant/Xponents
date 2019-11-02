@@ -11,8 +11,11 @@ The XTax tagger is intended to for these situations:
 * the terms and metadata come from many different reference data sets, but you want a single tagger.
 * the terms and metadata are mixed hierarchical, taxonomic, and simple word lists
 
-There is no taxcat catalog out of the box here -- See Xponents/Examples for ideas.
-The taxcat catalog is created from *your data*.  JRCNames is used as an example data set.
+The taxcat catalog is created from *your data*.  JRCNames and Nationalities are the only data sets 
+provided in TaxCat for use with the geotagger Xponents' PlaceGeocoder
+
+Please note that these instructions are from 2015 or so and have certainly been superceded by some of the 
+Xponents build automation.  Consult the main Xponents ./solr build notes.
 
 Getting Started
 ===============
@@ -77,7 +80,7 @@ code and development, by all means do so.
 Java considerations:
 ```
 
-	JVM argument -Dopensexant.solr=/path/to/xponents-solr/solr4
+	JVM argument -Dopensextant.solr=/path/to/xponents-solr/solr7
     JVM memory  -Xmx2g -Xms2g is a reasonable default for Gazetteer usage. Taxcat alone could use just 500m
     CLASSPATH  only the libraries in Xponents/lib/* are required. Again, for 
        XTax applications alone, you could use fewer JARs, based on Extraction/pom.xml

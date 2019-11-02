@@ -3,7 +3,7 @@
 scripts=`dirname $0`
 XP=`cd -P $scripts/..; echo $PWD`
 
-export CLASSPATH=$XP/etc:$XP/etc/xponents-gazetteer-meta.jar:$XP/lib/*:$XP/script/*
+export CLASSPATH=$XP/etc:$XP/lib/*
 
 SOLR_HOME=$XP/xponents-solr/solr7
 if [ -d $XP/solr/ ] ; then

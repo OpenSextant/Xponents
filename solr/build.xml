@@ -1,146 +1,133 @@
 <?xml version="1.0"?>
 <project name="OpenSextant-Xponents-Gazetteer">
 
-	<!-- Solr Home and Gazetteer config data sourced here: -->
-	<property file="${basedir}/build.properties" />
+  <!-- Solr Home and Gazetteer config data sourced here: -->
+  <property file="${basedir}/../build.properties" />
+  <property name="xponents.v" value="${xponents.build.v}" />
+  <property name="jetty.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext" />
+  <property name="solr.runtime.log" value="${basedir}/solr7-dist/server/logs" />
+  <property name="maven.lib" value="${user.home}/.m2/repository" />
+  <property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip" />
+  <property name="jrc.data" value="${basedir}/etc/taxcat/data" />
+  <property name="gaz.data" value="${basedir}/etc/gazetteer/" />
+  <property name="gaz.conf" value="${solr.home}/gazetteer/conf" />
 
-	<property name="slf4j.v" value="1.7.25" />
-	<property name="guava.v" value="14.0.1" />
-	<property name="xponents.v" value="${xponents.build.v}" />
-	<property name="supercsv.v" value="2.4.0" />
-	<property name="lang3.v" value="3.7" />
+  <path id="runtime.classpath">
+    <pathelement location="${basedir}/../lib/*" />
+    <pathelement location="${basedir}/../target/opensextant-xponents-${xponents.v}.jar" />
+    <pathelement location="${solr.home}/lib/xponents-gazetteer-meta.jar" />
+  </path>
 
-	<property name="jetty.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext" />
-	<property name="solr.runtime.log" value="${basedir}/solr7-dist/server/logs" />
-	<property name="maven.lib" value="${user.home}/.m2/repository" />
-	<property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip" />
-	<property name="jrc.data" value="${basedir}/etc/taxcat/data" />
-	<property name="gaz.data" value="${basedir}/etc/gazetteer/" />
-	<property name="gaz.conf" value="${solr.home}/gazetteer/conf" />
+  <target name="proxy">
+    <property name="proxy.port" value="80" />
+    <property name="proxy.user" value="" />
+    <property name="proxy.pass" value="" />
+    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
+  </target>
 
-	<path id="runtime.classpath">
-		<pathelement location="${basedir}/../lib/*" />
-		<pathelement location="${basedir}/../target/opensextant-xponents-${xponents.v}.jar" />
-		<pathelement location="${solr.home}/lib/xponents-gazetteer-meta.jar" />
-	</path>
+  <target name="setup">
+    <mkdir dir="${solr.home}/lib" />
+  </target>
 
-	<target name="proxy">
-		<property name="proxy.port" value="80" />
-		<property name="proxy.user" value="" />
-		<property name="proxy.pass" value="" />
-		<setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
-	</target>
+  <target name="copy-libs">
+    <copy todir="${jetty.runtime.lib}" file="${maven.lib}/org/locationtech/jts/jts-core/1.15.0/jts-core-1.15.0.jar" />
+    <copy todir="${jetty.runtime.lib}" file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar" />
+  </target>
 
-	<target name="setup">
-		<mkdir dir="${solr.home}/lib" />
-	</target>
+  <target name="get-gaz-resources">
+    <mkdir dir="${gaz.data}/filters/census" />
+    <get dest="${gaz.data}/filters/census">
+      <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.male.first" />
+      <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.female.first" />
+      <url url="https://www2.census.gov/topics/genealogy/2010surnames/names.zip" />
+    </get>
+    <unzip dest="${gaz.data}/filters/census" src="${gaz.data}/filters/census/names.zip" />
+    <delete file="${gaz.data}/filters/census/names.zip" />
+    <delete file="${gaz.data}/filters/census/Names_2010Census.xlsx" />
+  </target>
 
-	<target name="copy-libs">
-		<copy todir="${jetty.runtime.lib}" file="${maven.lib}/org/locationtech/jts/jts-core/1.15.0/jts-core-1.15.0.jar" />
-		<copy todir="${jetty.runtime.lib}" file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar" />
-	</target>
+  <!-- Big list of Stopwords -->
+  <target name="gaz-stopwords">
+    <get dest="${gaz.conf}/lang/stopwords_tl.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-tl/master/stopwords-tl.txt" />
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_ur.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ur/master/stopwords-ur.txt" />
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_ko.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ko/master/stopwords-ko.txt" />
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_zh.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-zh/master/stopwords-zh.txt" />
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_ja.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ja/master/stopwords-ja.txt" />
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_vi.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-vi/master/stopwords-vi.txt" />
+    </get>
+  </target>
 
-	<target name="get-gaz-resources">
-		<mkdir dir="${gaz.data}/filters/census" />
-		<get dest="${gaz.data}/filters/census">
-			<url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.male.first" />
-			<url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.female.first" />
-			<url url="https://www2.census.gov/topics/genealogy/2010surnames/names.zip" />
-		</get>
-		<unzip dest="${gaz.data}/filters/census" src="${gaz.data}/filters/census/names.zip" />
-		<delete file="${gaz.data}/filters/census/names.zip" />
-		<delete file="${gaz.data}/filters/census/Names_2010Census.xlsx" />
-	</target>
+  <target name="gaz-meta" depends="gaz-stopwords">
+    <!-- depends="stopwords" -->
+    <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
+      <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**" />
+      <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**" />
+      <fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**" />
+    </jar>
+  </target>
 
-	<!-- Big list of Stopwords -->
-	<target name="gaz-stopwords">
-		<get dest="${gaz.conf}/lang/stopwords_tl.txt">
-			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-tl/master/stopwords-tl.txt" />
-		</get>
-		<get dest="${gaz.conf}/lang/stopwords_ur.txt">
-			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ur/master/stopwords-ur.txt" />
-		</get>
-		<get dest="${gaz.conf}/lang/stopwords_ko.txt">
-			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ko/master/stopwords-ko.txt" />
-		</get>
-		<get dest="${gaz.conf}/lang/stopwords_zh.txt">
-			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-zh/master/stopwords-zh.txt" />
-		</get>
-		<get dest="${gaz.conf}/lang/stopwords_ja.txt">
-			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ja/master/stopwords-ja.txt" />
-		</get>
-		<get dest="${gaz.conf}/lang/stopwords_vi.txt">
-			<url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-vi/master/stopwords-vi.txt" />
-		</get>
+  <!-- Too bad this source data is compromised, as of 2017.  Should be a 5 MB gzip file with 600K entries  -->
+  <target name="taxcat-jrc">
+    <mkdir dir="${jrc.data}" />
+    <get dest="${jrc.data}" skipexisting="true">
+      <url url="${jrc.url}" />
+    </get>
+    <!-- <gunzip dest="${jrc.data}" src="${jrc.data}/entities.gzip" />-->
+    <move file="${jrc.data}/entities.gzip" tofile="${jrc.data}/entities.gz" />
+    <exec executable="gunzip" dir="${jrc.data}">
+      <arg value="${jrc.data}/entities.gz" />
+    </exec>
+    <move file="${jrc.data}/entities" tofile="${jrc.data}/entities.txt" />
+  </target>
 
-		<!--  Possibility of using stopword sets from Carrot2 
-		<copy file="${carrot.workspace}/stopwords.ja" tofile="${gaz.conf}/lang/stopwords_ja.txt" /> 
-		<copy file="${carrot.workspace}/stopwords.ko" tofile="${gaz.conf}/lang/carrot2-stopwords.ko" /> 
-		<copy file="${carrot.workspace}/stopwords.zh_cn" tofile="${gaz.conf}/lang/carrot2-stopwords.zh" />
-		-->
+  <target name="init" depends="setup,gaz-meta,copy-libs">
+  </target>
 
-	</target>
+  <target name="clean" description="Delete indexed data">
+    <delete dir="${solr.home}/gazetteer/data" />
+    <delete dir="${solr.home}/taxcat/data" />
+    <delete dir="${solr.home}/lib" />
 
-	<target name="gaz-meta" depends="gaz-stopwords">
-		<!-- depends="stopwords" -->
-		<jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
-			<fileset dir="${solr.home}/gazetteer/conf" includes="lang/**" />
-			<fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**" />
-			<fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**" />
-		</jar>
-	</target>
+    <mkdir dir="${solr.home}/gazetteer/data" />
+    <mkdir dir="${solr.home}/taxcat/data" />
+    <mkdir dir="${solr.home}/lib" />
+  </target>
 
-	<!-- Too bad this source data is compromised, as of 2017.  Should be a 5 MB gzip file with 600K entries  -->
-	<target name="taxcat-jrc">
-		<mkdir dir="${jrc.data}" />
-		<get dest="${jrc.data}" skipexisting="true">
-			<url url="${jrc.url}" />
-		</get>
-		<!-- <gunzip dest="${jrc.data}" src="${jrc.data}/entities.gzip" />-->
-		<move file="${jrc.data}/entities.gzip" tofile="${jrc.data}/entities.gz" />
-		<exec executable="gunzip" dir="${jrc.data}">
-			<arg value="${jrc.data}/entities.gz" />
-		</exec>
-		<move file="${jrc.data}/entities" tofile="${jrc.data}/entities.txt" />
-	</target>
-
-	<target name="init" depends="setup,gaz-meta,copy-libs">
-	</target>
-
-	<target name="clean" description="Delete indexed data">
-		<delete dir="${solr.home}/gazetteer/data" />
-		<delete dir="${solr.home}/taxcat/data" />
-		<delete dir="${solr.home}/lib" />
-
-		<mkdir dir="${solr.home}/gazetteer/data" />
-		<mkdir dir="${solr.home}/taxcat/data" />
-		<mkdir dir="${solr.home}/lib" />
-	</target>
-
-	<!-- @ Deprecated : index-gazetteer not supported.
+  <!-- @ Deprecated : index-gazetteer not supported.
          Solr 4.10 gazetteer ingest. To use this, additional JARs supporting the 
         /addGazetteer endpoint are required under ./solr4/lib; -->
-	<target name="index-gazetteer">
-		<available property="csvFile.exists" file="${gazetteer.data.file}" />
-		<fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
-		<get src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?commit=true&amp;stream.file=${gazetteer.data.file}&amp;stream.contentType=application/csv;charset=UTF-8" dest="${solr.runtime.log}/gazetteer-update-response.xml" />
-	</target>
+  <target name="index-gazetteer">
+    <available property="csvFile.exists" file="${gazetteer.data.file}" />
+    <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
+    <get src="http://localhost:${solr.server.port}/solr/gazetteer/addGazetteer?commit=true&amp;stream.file=${gazetteer.data.file}&amp;stream.contentType=application/csv;charset=UTF-8" dest="${solr.runtime.log}/gazetteer-update-response.xml" />
+  </target>
 
-	<!-- Using a traditional SolrJ client approach; 
+  <!-- Using a traditional SolrJ client approach; 
          * URP using /update/csv variation fails in Solr 6.6 although worked great in Solr 4.10 -->
-	<target name="index-gazetteer-solrj">
-		<echo>Need to fully build project ahead of this to populate items in
+  <target name="index-gazetteer-solrj">
+    <echo>Need to fully build project ahead of this to populate items in
             CLASSPATH</echo>
-		<available property="csvFile.exists" file="${gazetteer.data.file}" />
-		<fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
-		<java classname="org.opensextant.extractors.geo.GazetteerIndexer" classpathref="runtime.classpath" fork="yes">
-			<jvmarg value="-Dlogback.configurationFile=./logback.xml" />
-			<arg value="-u" />
-			<arg value="http://localhost:${solr.server.port}/solr/gazetteer" />
-			<arg value="-s" />
-			<arg value="id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,script,name_bias,id_bias,name_type,,SplitCategory,search_only" />
-			<arg value="-f" />
-			<arg value="${gazetteer.data.file}" />
-		</java>
-	</target>
+    <available property="csvFile.exists" file="${gazetteer.data.file}" />
+    <fail unless="csvFile.exists" message="The CSV file doesn't exist: ${gazetteer.data.file}" />
+    <java classname="org.opensextant.extractors.geo.GazetteerIndexer" classpathref="runtime.classpath" fork="yes">
+      <jvmarg value="-Dlogback.configurationFile=./logback.xml" />
+      <arg value="-u" />
+      <arg value="http://localhost:${solr.server.port}/solr/gazetteer" />
+      <arg value="-s" />
+      <arg value="id,place_id,name,,lat,lon,feat_class,feat_code,FIPS_cc,cc,ISO3_cc,adm1,adm2,adm3,,,source,,,script,name_bias,id_bias,name_type,,SplitCategory,search_only" />
+      <arg value="-f" />
+      <arg value="${gazetteer.data.file}" />
+    </java>
+  </target>
 </project>

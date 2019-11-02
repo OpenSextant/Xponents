@@ -2,6 +2,10 @@ alpha
 art
 asia
 beach
+best
+blue
+green
+red
 case
 cash
 chase
@@ -12,6 +16,7 @@ else
 good
 guy
 hall
+field
 head
 hill
 hope
@@ -23,12 +28,15 @@ long
 love
 mac
 man
+person
 manual
 many
 name
 page
 quick
 royal
+short
+long
 small
 smart
 spring
@@ -41,6 +49,7 @@ wednesday
 thursday
 friday
 saturday
+weeks
 #
 tottenham
 valencia

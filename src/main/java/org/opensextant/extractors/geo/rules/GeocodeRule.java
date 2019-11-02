@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
 
 public abstract class GeocodeRule {
 
+    public final static int UPPERCASE = 2;
+    public final static int LOWERCASE = 1;
+    
     public int weight = 0; /* of 10, approximately */
     public String NAME = null;
 

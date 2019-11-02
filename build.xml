@@ -1,0 +1,45 @@
+<project default="setup">
+  <property file="${basedir}/build.properties" />
+  <property name="core-api" value="${basedir}/Core" />
+  <property name="java.resources" value="${core-api}/src/main/resources" />
+  <property name="tmp" value="${basedir}/tmp" />
+  <property name="geonames.resources" value="${java.resources}/geonames.org" />
+  <property name="pylib.resources" value="${basedir}/python/opensextant/resources" />
+  <!-- setup proxy -->
+  <target name="proxy">
+    <property name="proxy.port" value="80" />
+    <property name="proxy.user" value="" />
+    <property name="proxy.pass" value="" />
+    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
+  </target>
+  <target name="get-meta">
+    <get src="http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt" dest="${java.resources}" verbose="true" usetimestamp="true" />
+
+    <mkdir dir="${core-api}/etc" />
+    <mkdir dir="${geonames.resources}" />
+    <mkdir dir="${pylib.resources}" />
+    <mkdir dir="${pylib.resources}/geonames.org" />
+    <mkdir dir="${tmp}" />
+
+    <get src="http://download.geonames.org/export/dump/admin1CodesASCII.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
+    <get src="http://download.geonames.org/export/dump/admin1CodesASCII.txt" dest="${pylib.resources}/geonames.org" verbose="true" usetimestamp="true" />
+    <get src="http://download.geonames.org/export/dump/timeZones.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
+    <get src="http://download.geonames.org/export/dump/countryInfo.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
+    <get src="http://download.geonames.org/export/dump/cities15000.zip" dest="${tmp}" verbose="true" usetimestamp="true" />
+    <unzip src="${tmp}/cities15000.zip" dest="${geonames.resources}" />
+  </target>
+
+  <target name="unpack-langid">
+    <unzip src="${basedir}/etc/langdetect-profiles-v3.zip" dest="${core-api}/etc" />
+  </target>
+
+  <target name="copy-resources">
+    <copy file="${java.resources}/us-state-metadata.csv" todir="${pylib.resources}" />
+    <copy file="${java.resources}/country-names-2015.csv" todir="${pylib.resources}" />
+    <copy file="${java.resources}/geocoord_patterns.cfg" todir="${pylib.resources}" />
+    <copy file="${java.resources}/datetime_patterns.cfg" todir="${pylib.resources}" />
+    <copy file="${java.resources}/poli_patterns.cfg" todir="${pylib.resources}" />
+  </target>
+
+  <target name="setup" depends="proxy,get-meta,copy-resources,unpack-langid" />
+</project>

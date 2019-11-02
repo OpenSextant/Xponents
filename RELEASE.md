@@ -1,18 +1,58 @@
-# 2018 #
 
-Xponents 3.0.6 Pi Day/Equinox
+VERSIONING AND OTHER 3rd PARTY LIBRARIES
+---------------
+
+A very superficial description of other libraries Xponents relies on:
+
+- XText depends on Tika 1.21+
+- XCoord depends on [OpenSextant Geodesy](https://github.com/OpenSextant/geodesy/) for geodetic parsing and validation 
+- Extraction makes usef of [OpenSextant GISCore](https://github.com/OpenSextant/giscore/) for output file formatting
+
+Name matching depends on:
+
+* [OpenSextant Gazetteer](https://github.com/OpenSextant/Gazetteer), which depends on Pentaho Kettle and the NGA and USGS source gazetteers.
+
+* OpenSextant SolrTextTagger (__deprecated__) https://github.com/OpenSextant/SolrTextTagger v2.x (See project for maven details; This has been folded into the main line Apache Solr 7.4+ release)
+  * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10 w/ Java7
+  * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+ w/ Java8
+  * Xponents 3.0     == SolrTextTagger v2.5 w/Solr 7.3+ w/ Java8
+  * Xponents 3.0.4   == Solr 7.4+ w/Java8. SolrTextTagger was migrated into Solr 7.4 formally as "TextTagger" request handler.
+  * Xponents 3.1+    == Solr 7.7+ w/Java8
+  
+
+RELEASES
+==============
+
+# 2019 
+
+**Xponents 3.2.1 Dead of Night** 
+* Halloween 2019: script simplification, CLASSPATH and other cleanup.  XCoord: Reduced ambiguity in some DM vs. DMS patterns
+
+
+**Xponents 3.2.0 Dead Heat**
+* July 2019: Refactoring to split a lighter-weight "Core API" from the heavier, more involved tagger SDK
+
+**Xponents 3.1.0 Summer Solstice**
+* Reverse geocoding added on request.  Xlayer exposes the results of enriching found coordinates
+  ** Use of Solr `{geofilt}` does not work with large number of rows of point data -- RPT wants to work with shapes and appearently tries to load resources
+     to support more advanced shape queries.  Ran out of memory with all invocationso of Solr Spatial mechanisms.
+* OpenJDK 8 and 12 testing;  Experiments on GC settings
+
+# 2018 
+
+**Xponents 3.0.6 Pi Day/Equinox**
 * Xtemporal now reduces matches filtering out submatches or duplicate date/time matches.
 
-Xponents 3.0.5 SuperBowl
+**Xponents 3.0.5 SuperBowl**
 * Reviewed low recall due to name-code filters and rules.  NAME,.....CODE will not filter out a CODE if CODE is a country.
 * Solr/Lucene 7.6+
 * Tika 1.19+ on XText
 
-Xponents 3.0.4 Columbus Day
+**Xponents 3.0.4 Columbus Day**
 * Command line improvemnts on testing
 * Consolidate all tests and examples under single Groovy script 
 
-Xponents 3.0.3 Day of Rememberance (9/11)
+**Xponents 3.0.3 Day of Rememberance (9/11)**
 
 * Account for all decent stop word lists (see genediazjr "stopwords-iso" project); Stopwords for Tagalog, Urdu, Farsi, Chinese, Korean, etc, contributed there.
   These lists just make output less noisy when the language of text is known.
@@ -21,7 +61,7 @@ Xponents 3.0.3 Day of Rememberance (9/11)
 * Solr 7.4+ is required now; SolrTextTagger miraculously is embedded in Solr, so less has to be done externally to configure it all.
 * Solr 7.4: removed deprecated Solr request optimizations, and other deprecated SolrJ usage.
 
-Xponents 3.0 Fourth of July
+**Xponents 3.0 Fourth of July**
 
 * Refactor: all major libraries converged into one project: Basic, Patterns, Xponents are now just "Xponents"
 * Refactor: XText is moved up to its own top level OpenSextant project
@@ -30,6 +70,10 @@ Xponents 3.0 Fourth of July
 or other data, Xponents has some fall-back approaches to attempt alternate lang IDs for CJK languages (Chinese/Japanese/Korean).  
 * Versions: Solr 7.3 is core Solr/Lucene version
 * Data: Formally support JSON through Jodd.org JSON package primarily with data transforms for "geocoding" data.  This supports both REST (Xlayer project) and social media ingest and export.
+
+
+DEPRECATED: 2.10 and earlier
+-----------------------------
 
 Xponents 2.10.4 thru 2.10.6:
 

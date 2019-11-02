@@ -28,6 +28,7 @@ import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.AbstractFormatter;
 import org.opensextant.output.FormatterFactory;
 import org.opensextant.output.ResultsFormatter;
+import org.opensextant.output.TaggerMatchInterpeter;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
 import org.opensextant.processing.XtractorGroup;
@@ -192,6 +193,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
 
         formatter.setParameters(plist);
         formatter.setOutputFilename(plist.getJobName() + formatter.outputExtension);
+        formatter.setMatchInterpeter(new TaggerMatchInterpeter());
 
         return formatter;
     }
@@ -375,6 +377,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         print("\t-f outputFormat = the desired output format");
         print("\t-o outputFile = the path to output file");
         print("\t-t tempDir = the path to the temporary storage directory");
+        //print("\t-l lang-id specify the language of text");
     }
 
     private StringBuilder runnerMessage = new StringBuilder();
@@ -433,7 +436,8 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         File container = new File(outPath);
         File destDir = null;
         String destFile = null;
-        log.info("Working off INPUT=" + container.getAbsolutePath());
+        log.info("Working off INPUT=" + inPath);
+        log.info("Working off OUTPUT=" + container.getAbsolutePath());
 
         if (container.isDirectory()) {
             destDir = container;

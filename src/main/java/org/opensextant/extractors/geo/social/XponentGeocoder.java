@@ -139,7 +139,7 @@ public class XponentGeocoder extends GeoInferencer {
                                                 // here by XCoord.
 
         /* "resolve_provinces" is equivalent to setProvinceName(Place) */
-        xponentsParams.resolve_provinces = true;
+        xponentsParams.resolve_localities = true;
         tagger.setParameters(xponentsParams);
         tagger.setMatchFilter(profilePlaceFilter);
         tagger.configure();

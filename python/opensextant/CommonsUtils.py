@@ -1,4 +1,4 @@
-'''
+"""
  
                 Copyright 2012-2014 The MITRE Corporation.
  
@@ -19,91 +19,140 @@
 @author: ubaldino
 
 OpenSextant utilities
-@module  CommonsUtils
-'''
+"""
+from opensextant import PY3
+if PY3:
+    from io import StringIO
+else:
+    from cStringIO import StringIO
 
-version = 'v3'
-
-from cStringIO import StringIO
 import os
 import csv
 import re
 from chardet import detect as detect_charset
 
-## ---------------------------------------
-##  TEXT UTILITIES
-## ---------------------------------------
-##
+version = 'v3'
 
+
+# ---------------------------------------
+#  TEXT UTILITIES
+# ---------------------------------------
 #
-# Acceptable test: http://stackoverflow.com/questions/196345/how-to-check-if-a-string-in-python-is-in-ascii
-def is_ascii(s):
-    if isinstance(s, unicode):
-        return all(ord(c) < 128 for c in s)
+def is_text(t):
+    if PY3:
+        return isinstance(t, str)
     else:
-        try:
-            return all(ord(c) < 128 for c in s)
-        except:
-            pass
-        
+        return isinstance(t, str) or isinstance(t, unicode)
+
+
+def is_ascii(s):
+    try:
+        return all(ord(c) < 128 for c in s)
+    except:
+        pass
+
     return False
+
+
+def get_text(t):
+    """ Default is to return Unicode string from raw data"""
+    if PY3:
+        return str(t, encoding='utf-8')
+    else:
+        return unicode(t, 'utf-8')
+
+
+def fast_replace(t, sep, sub=None):
+    """
+    Replace separators (sep) with substitute char, sub. Many-to-one substitute.
+
+    "a.b, c" SEP='.,'
+    :param t:  input text
+    :param sep: string of chars to replace
+    :param sub: replacement char
+    :return:  text with separators replaced
+    """
+    result = []
+    for ch in t:
+        if ch in sep:
+            if sub:
+                result.append(sub)
+        else:
+            result.append(ch)
+    return ''.join(result)
 
 
 ## ISO-8859-2 is a common answer, when they really mean ISO-1
 CHARDET_LATIN2_ENCODING = 'ISO-8859-1'
 
+
 def guess_encoding(text):
-    ''' Given bytes, determine the character set encoding
+    """ Given bytes, determine the character set encoding
     @return: dict with encoding and confidence
-    '''
-    if not text: return {'confidence':0, 'encoding':None}
+    """
+    if not text: return {'confidence': 0, 'encoding': None}
 
     enc = detect_charset(text)
 
     cset = enc['encoding']
     if cset.lower() == 'iso-8859-2':
-        ## Anamoly -- chardet things Hungarian (iso-8850-2) is
-        ## a close match for a latin-1 document.  At least the quotes match
-        ##  Other Latin-xxx variants will likely match, but actually be Latin1
-        ##  or win-1252.   see Chardet explanation for poor reliability of Latin-1 detection
-        ##
+        # Anomoaly -- chardet things Hungarian (iso-8850-2) is
+        # a close match for a latin-1 document.  At least the quotes match
+        # Other Latin-xxx variants will likely match, but actually be Latin1
+        # or win-1252.   see Chardet explanation for poor reliability of Latin-1 detection
+        #
         enc['encoding'] = CHARDET_LATIN2_ENCODING
 
     return enc
 
+
 def bytes2unicode(buf, encoding=None):
+    """
+    Convert bytes to unicode, regardless of Python 2 vs 3. If no encoding, attempt to guess at the encoding.
+
+    :param buf:
+    :param encoding:
+    :return:
+    """
     if not encoding:
         enc = guess_encoding(buf)
         encoding = enc['encoding']
         if not encoding:
             return None
 
-    if encoding.lower() == 'utf-8':
-        return unicode(buf)
+    if PY3:
+        return str(buf, encoding=encoding)
     else:
-        text = buf.decode(encoding)
-        return unicode(text)
+        if encoding.lower() == 'utf-8':
+            return unicode(buf)
+        else:
+            text = buf.decode(encoding)
+            return unicode(text)
 
-    return None
 
 reSqueezeWhiteSpace = re.compile(r'\s+', re.MULTILINE)
+
+
 def squeeze_whitespace(s):
     return reSqueezeWhiteSpace.sub(' ', s).strip()
+
 
 def scrub_eol(t):
     return t.replace('\n', ' ').replace('\r', '')
 
-BOOL_F_STR = set(["false", "0", "n", "f", "no", "", "null"])
-BOOL_T_STR = set(["true", "1", "y", "t", "yes" ])
-def get_bool(token):
 
+BOOL_F_STR = {"false", "0", "n", "f", "no", "", "null"}
+BOOL_T_STR = {"true", "1", "y", "t", "yes"}
+
+
+def get_bool(token):
     if not token:
         return False
 
     if isinstance(token, bool):
         return token
 
-    t=token.lower()
+    t = token.lower()
     if t in BOOL_F_STR:
         return False
 
@@ -114,8 +163,8 @@ def get_bool(token):
 
 
 def get_number(token):
-    ''' Turn leading part of a string into a number, if possible.
-    '''
+    """ Turn leading part of a string into a number, if possible.
+    """
     num = StringIO()
     for ch in token:
         if ch.isdigit() or ch == '.' or ch == '-':
@@ -126,11 +175,12 @@ def get_number(token):
     num.close()
     return val
 
+
 def has_digit(text):
-    '''
+    """
     Used primarily to report places and appears to be critical for
     name filtering when doing phonetics.
-    '''
+    """
     if text is None:
         return False
 
@@ -140,12 +190,13 @@ def has_digit(text):
             return True
     return False
 
+
 def get_text_window(offset, matchlen, textsize, width):
-    ''' prepreprepre MATCH postpostpost
+    """ prepreprepre MATCH postpostpost
        ^            ^   ^            ^
        l-width      l   l+len        l+len+width
        left_y  left_x   right_x      right_y
-    '''
+    """
     left_x = offset - width
     left_y = offset - 1
     right_x = offset + matchlen
@@ -163,9 +214,7 @@ def get_text_window(offset, matchlen, textsize, width):
     if right_x > right_y:
         right_x = right_y
 
-    return [ left_x, left_y, right_x, right_y]
-
-
+    return [left_x, left_y, right_x, right_y]
 
 
 ## ---------------------------------------
@@ -176,24 +225,30 @@ def _utf_8_encoder(unicode_csv_data):
     for line in unicode_csv_data:
         yield line.encode('utf-8')
 
+
 def get_csv_writer(fh, columns, delim=','):
     return csv.DictWriter(fh, columns, restval="", extrasaction='raise',
-                            dialect='excel', lineterminator='\n',
-                            delimiter=delim, quotechar='"',
-                            quoting=csv.QUOTE_ALL, escapechar='\\')
+                          dialect='excel', lineterminator='\n',
+                          delimiter=delim, quotechar='"',
+                          quoting=csv.QUOTE_ALL, escapechar='\\')
+
 
 def get_csv_reader(fh, columns, delim=','):
-    return csv.DictReader(_utf_8_encoder(fh), columns,
-                          restval="",  dialect='excel', lineterminator='\n', escapechar='\\',
+    from opensextant import PY3
+    if PY3:
+        return csv.DictReader(fh, columns,
+                              restval="", dialect='excel', lineterminator='\n', escapechar='\\',
+                              delimiter=delim, quotechar='"', quoting=csv.QUOTE_ALL)
+    else:
+        return csv.DictReader(_utf_8_encoder(fh), columns,
+                          restval="", dialect='excel', lineterminator='\n', escapechar='\\',
                           delimiter=delim, quotechar='"', quoting=csv.QUOTE_ALL)
 
 
 # |||||||||||||||||||||||||||||||||||||||||||||
 # |||||||||||||||||||||||||||||||||||||||||||||
 class ConfigUtility:
-# |||||||||||||||||||||||||||||||||||||||||||||
-# |||||||||||||||||||||||||||||||||||||||||||||
-    ''' A utility to load parameter lists, CSV files, word lists, etc. from a folder *dir*
+    """ A utility to load parameter lists, CSV files, word lists, etc. from a folder *dir*
 
     functions here take an Oxygen cfg parameter keyword or a file path.
     If the keyword is valid and points to a valid file path, then the file path is used.
@@ -202,18 +257,19 @@ class ConfigUtility:
       Ex.  'mywords' = '.\cfg\mywords_v03_filtered.txt'
 
       oxygen.cfg file would have this mapping.  Your code just references 'mywords' to load it.
-    '''
-    def __init__(self, CFG, rootdir='.'):
+    """
+
+    def __init__(self, cfg, rootdir='.'):
 
         # If config is None, then caller can still use loadDataFromFile(abspath, delim) for example.
         #
-        self.config = CFG
+        self.config = cfg
         self.rootdir = rootdir
 
     def loadCSVFile(self, keyword, delim):
-        '''
+        """
           Load a named CSV file.  If the name is not a cfg parameter, the keyword name *is* the file.
-        '''
+        """
         f = self.config.get(keyword)
         if f is None:
             f = keyword
@@ -222,10 +278,10 @@ class ConfigUtility:
         return self.loadDataFromFile(path, delim)
 
     def loadDataFromFile(self, path, delim):
-        '''
+        """
           Load columnar data from a file.
           Returns array of non-comment rows.
-        '''
+        """
         if not os.path.exists(path):
             raise Exception('File does not exist, FILE=%s' % path)
 
@@ -237,19 +293,18 @@ class ConfigUtility:
             if first_cell.startswith('#'):
                 continue
 
-            #if not delim and not first_cell:
+            # if not delim and not first_cell:
             #    continue
 
             data.append(row)
         f.close()
         return data
 
-
     def loadFile(self, keyword):
-        '''
+        """
         Load a named word list file.
         If the name is not a cfg parameter, the keyword name *is* the file.
-        '''
+        """
         filename = ''
 
         if os.path.exists(keyword):
@@ -265,27 +320,23 @@ class ConfigUtility:
 
         return self.loadListFromFile(path)
 
-
     def loadListFromFile(self, path):
-        '''
+        """
           Load text data from a file.
           Returns array of non-comment rows. One non-whitespace row per line.
-        '''
+        """
         if not os.path.exists(path):
             raise Exception('File does not exist, FILE=%s' % path)
 
-        file = open(path, 'r')
-        termlist = []
-        for line in file:
-            line = line.strip()
-            if line.startswith('#'):
-                continue
-            if len(line) == 0:
-                continue
+        with open(path, 'r') as fh:
+            termlist = []
+            for line in fh:
+                line = line.strip()
+                if line.startswith('#'):
+                    continue
+                if len(line) == 0:
+                    continue
 
-            termlist.append(line.lower())
+                termlist.append(line.lower())
 
-        file.close()
-        return termlist
-
-
+            return termlist

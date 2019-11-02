@@ -10,6 +10,7 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.processing.Parameters;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 
@@ -24,7 +25,11 @@ public class TestPlaceGeocoder extends TestGazMatcher {
 
     public void configure() throws ConfigException {
         // INIT once.
+        Parameters testParams = new Parameters();
+        testParams.resolve_localities = true;
+        testParams.tag_coordinates = true;
         geocoder = new PlaceGeocoder(true);
+        geocoder.setParameters(testParams);
         geocoder.enablePersonNameMatching(true);
         geocoder.setAllowLowerCaseAbbreviations(false);
         geocoder.configure();
@@ -80,7 +85,9 @@ public class TestPlaceGeocoder extends TestGazMatcher {
 
     public void cleanup() {
         // CALL only when you are done for good.
-        geocoder.cleanup();
+        if (geocoder != null) {
+            geocoder.cleanup();
+        }
     }
 
     protected static void printHelp() {
@@ -92,7 +99,6 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         print("\t-l, --lang LANG    lang id of text");
         print("\t-h, --help");
         System.exit(0);
-
     }
 
     /**
@@ -111,7 +117,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
                     new LongOpt("system-tests", LongOpt.NO_ARGUMENT, null, 's'),
                     new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h') };
 
-            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("PlaceGeocoder demo", args, "hsf:i:t:l:", options);
+            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("PlaceGeocoder Tester", args, "hsf:i:t:l:", options);
 
             String lang = TextUtils.englishLang;
             String text = null;
@@ -172,8 +178,8 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         }
     }
 
-    private void tagText(TextInput t) throws ExtractionException {
-        print("TEST:\t" + t + "\n=====================");
+    protected void tagText(TextInput t) throws ExtractionException {
+        print("TEST:\t" + t.buffer + "\n=====================");
         List<TextMatch> matches = geocoder.extract(t);
         summarizeFindings(matches);
         print("\n");

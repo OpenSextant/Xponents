@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?><!-- -*- indent-tabs-mode: nil -*- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <!-- Examples is not intended for artifact publication. Just demonstration So release version should be SNAPSHOT -->
+  <!-- Examples is not intended for artifact publication. Just demonstration 
+    So release version should be SNAPSHOT -->
   <groupId>org.opensextant</groupId>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.2-SNAPSHOT</version>
   <name>Xponent Examples</name>
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <slf4j.version>1.7.25</slf4j.version>
-    <xponents.version>3.0.6</xponents.version>
-    <xtext.version>3.0.8</xtext.version>
+    <xponents.version>3.2.1</xponents.version>
+    <xtext.version>3.2.1</xtext.version>
   </properties>
   <dependencies>
     <dependency>
@@ -57,6 +58,11 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>2.4.17</version>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>3.0.1</version>
@@ -78,6 +84,11 @@
       <version>1.2.2</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.opensextant</groupId>
+      <artifactId>opensextant-xponents-core</artifactId>
+      <version>${xponents.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -85,8 +96,10 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.0.0</version>
         <configuration>
-          <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36'
-            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright OpenSextant.org, 2010-2017</header>
+          <header>&lt;img alt='[OpenSextant Logo]' height='36'
+            width='36'
+            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
+            OpenSextant.org, 2010-2019</header>
           <version>true</version>
           <windowtitle>Xponents Examples</windowtitle>
         </configuration>

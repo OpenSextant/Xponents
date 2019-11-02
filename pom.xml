@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.0.6</version>
+  <version>3.2.1</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -34,7 +34,6 @@
     </developer>
     <developer>
       <name>Todd Hay</name>
-      <email>no_longer_at_hayt@mitre.org</email>
       <organization>MITRE</organization>
     </developer>
     <developer>
@@ -49,9 +48,10 @@
     </developer>
   </developers>
   <properties>
-    <solr.version>7.6.0</solr.version>
+    <solr.version>7.7.2</solr.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <slf4j.version>1.7.25</slf4j.version>
+    <restlet.version>2.3.12</restlet.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
   <distributionManagement>
@@ -66,6 +66,7 @@
   </distributionManagement>
   <dependencyManagement>
     <dependencies>
+
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
@@ -74,17 +75,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.7</version>
-      </dependency>
-      <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>2.10.1</version>
-      </dependency>
-      <dependency>
-        <groupId>net.sf.supercsv</groupId>
-        <artifactId>super-csv</artifactId>
-        <version>2.4.0</version>
+        <version>3.9</version>
       </dependency>
       <!-- JUnit -->
       <dependency>
@@ -109,14 +100,10 @@
   </dependencyManagement>
   <dependencies>
     <!-- BASIC LIBS -->
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -133,37 +120,6 @@
       <artifactId>jts-core</artifactId>
       <version>1.15.0</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.opensextant</groupId>
-      <artifactId>giscore</artifactId>
-      <version>2.0.2</version>
-      <!-- https://github.com/OpenSextant/giscore/issues/4 TODO remove once fixed >2.0.2 -->
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>geodesy</artifactId>
-          <groupId>org.opensextant</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-lang</artifactId>
-          <groupId>commons-lang</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opensextant</groupId>
-      <artifactId>geodesy</artifactId>
-      <version>2.0.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>slf4j-simple</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <!-- SOLR 6.x LIBS -->
     <dependency>
@@ -296,9 +252,9 @@
       <version>3.0.1</version>
       <scope>runtime</scope>
     </dependency>
-    <!-- Required Solr plugins: SolrTextTagger goes into solr6 or sol7 lib; As of Solr 7.4.0, Solr-text-tagger is natively in Solr. 
-    JTS and Spatial4j go into server's server/lib/ 
-    -->
+    <!-- Required Solr plugins: SolrTextTagger goes into solr6 or sol7 lib; 
+      As of Solr 7.4.0, Solr-text-tagger is natively in Solr. JTS and Spatial4j 
+      go into server's server/lib/ -->
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
@@ -310,18 +266,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- LANG ID -->
-    <dependency>
-      <!-- 2014 release of Cybozu, mavenized here: -->
-      <groupId>com.norconex.language</groupId>
-      <artifactId>langdetect</artifactId>
-      <version>1.3.0</version>
-    </dependency>
-    <!-- TEMPORAL PARSING -->
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-    </dependency>
     <!-- UTILITY AND LOGGING -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -330,10 +274,6 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.supercsv</groupId>
-      <artifactId>super-csv</artifactId>
     </dependency>
     <dependency>
       <groupId>gnu.getopt</groupId>
@@ -345,21 +285,33 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- XLAYER support -->
     <dependency>
       <groupId>org.restlet.jee</groupId>
       <artifactId>org.restlet</artifactId>
-      <version>2.3.12</version>
-      <scope>runtime</scope>
+      <version>${restlet.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.restlet.jee</groupId>
+      <artifactId>org.restlet.ext.servlet</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.simple</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.json</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
+
+    <!-- JSON serialization and metadata transforms -->
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-json</artifactId>
-      <version>5.0.10</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-text</artifactId>
-      <version>1.6</version>
+      <version>5.0.13</version>
     </dependency>
     <dependency>
       <groupId>org.apache.lucene</groupId>
@@ -370,6 +322,11 @@
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
       <version>${solr.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opensextant</groupId>
+      <artifactId>opensextant-xponents-core</artifactId>
+      <version>3.2.1</version>
     </dependency>
   </dependencies>
   <build>
@@ -492,11 +449,14 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36'
-            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright OpenSextant.org, 2013-2017 
+          <header>&lt;img alt='[OpenSextant Logo]' height='36'
+            width='36'
+            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
+            OpenSextant.org, 2013-2017
           </header>
           <version>true</version>
           <windowtitle>Xponents Extraction Toolkit</windowtitle>
+          <detectJavaApiLink>false</detectJavaApiLink>
         </configuration>
       </plugin>
       <plugin>
@@ -599,6 +559,12 @@
                 <goals>
                   <goal>sign</goal>
                 </goals>
+                <configuration>
+                  <gpgArguments>
+                    <gpgArgument>--pinentry-mode</gpgArgument>
+                    <gpgArgument>loopback</gpgArgument>
+                  </gpgArguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>

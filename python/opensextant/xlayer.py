@@ -1,36 +1,40 @@
-'''
+"""
 Created on Mar 14, 2016
 
+history: py3.5+ json is as good or better than simplejson
+
 @author: ubaldino
-'''
+"""
 
 import requests
-import simplejson as json
+import json
+from opensextant.Extraction import TextMatch
+
 
 class XlayerClient:
     def __init__(self, server, options=""):
-        '''
+        """
         @param server: URL for the service
-        @keyword  options:  a comma-separated list of options to send with each request.  There are no default options supported. 
-        '''
+        @keyword  options:  a comma-separated list of options to send with each request.
+        There are no default options supported.
+        """
         self.server = server
         self.debug = False
         self.default_options = options
-        
+
     def stop(self):
         response = requests.get("%s?cmd=stop" % (self.server))
-        if response.status_code != 200:        
+        if response.status_code != 200:
             return response.raise_for_status()
-        
+
     def ping(self):
         response = requests.get("%s?cmd=ping" % (self.server))
         if response.status_code != 200:
-            return response.raise_for_status()        
-        
+            return response.raise_for_status()
+
     def process(self, docid, text, features=["geo"]):
-        '''
-          SERVICE parameters:
-          docid and text -- obvious
+        """
+        Process text, extracting some entities
 
           features = "f,f,f,f"  String of comma-separated features
           options  = "o,o,o,o"  String of comma-separated features
@@ -48,36 +52,49 @@ class XlayerClient:
           
           but interpretation of "clean text" and "lower case" support is subjective.
           so they are not supported out of the box here.
-        '''
-        json_request = {'docid':docid, 'text':text, 'options':self.default_options }
+        :param docid: identifier of transaction
+        :param text: Unicode text to process
+        :param features: list of places, coordinates, countries, orgs, persons, patterns
+        :return: array of TextMatch objects or empty array.
+        """
+        json_request = {'docid': docid, 'text': text, 'options': self.default_options}
         if features:
             json_request['features'] = ','.join(features)
-           
+
         response = requests.post(self.server, json=json_request)
-        if response.status_code != 200:        
+        if response.status_code != 200:
             return response.raise_for_status()
-        
+
         json_content = response.json()
-        
+
         if self.debug:
-            print json.dumps(json_content, indent=2)
+            print(json.dumps(json_content, indent=2))
         if 'response' in json_content:
-            metadata = json_content['response']
-        annots = []
+            # Get the response metadata block
+            # metadata = json_content['response']
+            pass
+
         if 'annotations' in json_content:
-            annots = json_content['annotations']
-            if self.debug:
-                for a in annots:
-                    print "Match", a['matchtext'], "at char offset", a['offset'];
-                    if 'lat' in a: print "representing geo location (%2.4f, %3.4f)" % (a.get('lat'), a.get('lon'))
-            
+            aj = json_content['annotations']
+            annots = []
+            for a in aj:
+                tm = TextMatch(a.get('matchtext'), a.get('offset'), None)
+                tm.populate(a)
+                annots.append(tm)
+                if self.debug:
+                    print("Match", a['matchtext'], "at char offset", a['offset'])
+                    if 'lat' in a:
+                        print("representing geo location (%2.4f, %3.4f)" % (a.get('lat'), a.get('lon')))
+
         return annots
-    
+
+
 if __name__ == '__main__':
-    import sys
     import os
     from traceback import format_exc
     import argparse
+    import codecs
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--service-url", help="XLayer server URL to /process endpoint")
     ap.add_argument("--docid", help="your doc id")
@@ -85,7 +102,7 @@ if __name__ == '__main__':
     ap.add_argument("--lines", action="store_true", help="process your inputfile as one line per call")
     ap.add_argument("--text", help="UTF-8 string to process")
     ap.add_argument("--options", help="your service options to send with each request")
-    ap.add_argument("--debug", default=False, action="store_true" )
+    ap.add_argument("--debug", default=False, action="store_true")
     args = ap.parse_args()
     xtractor = XlayerClient(args.service_url)
     xtractor.debug = args.debug
@@ -99,28 +116,30 @@ if __name__ == '__main__':
         result = xtractor.process(_id, _text)
         print("==============")
         print("INPUT: from text argument")
-        print("PYTHON str(result)\t")
-        print(result)
+        print("Annotations\n============")
+        for a in result:
+            print(a)
     # ======================================
     # Support data as one text record per line in a file
     #                
     elif args.lines and args.inputfile:
         print("INPUT: from individual lines from inputfile")
         try:
-            fh = open(args.inputfile, 'rb')
+            fh = codecs.open(args.inputfile, 'r', encoding="utf-8")
             lineNum = 0
             for line in fh:
                 lineNum += 1
                 _id = "line{}".format(lineNum)
                 print("=============={}:".format(_id))
-                _text = unicode(line.strip(), 'utf-8')
+                _text = line.strip()
                 result = xtractor.process(_id, _text)
-                print("PYTHON str(result)\t ")
-                print(result)        
+                print("Annotations\n============")
+                for a in result:
+                    print(a)
             fh.close()
-        except Exception, err:
+        except Exception as err:
             print(format_exc(limit=5))
-            
+
     # ======================================
     # Use a single file as the source text to process
     #                
@@ -129,19 +148,18 @@ if __name__ == '__main__':
         if args.docid:
             _id = args.docid
         try:
-            fh = open(args.inputfile, 'rb')
-            _text = fh.read()
-            _text = unicode(_text, 'utf-8')
-            fh.close()
-        except Exception, err:
+            with codecs.open(args.inputfile, 'r', encoding="utf-8") as fh:
+                _text = fh.read()
+                _text = _text.strip()
+                result = xtractor.process(_id, _text)
+                print("==============")
+                print("INPUT: from text inputfile")
+                print("Annotations\n============")
+                for a in result:
+                    print(a)
+        except Exception as err:
             print(format_exc(limit=5))
-            
-        result = xtractor.process(_id, _text)
-        print("==============")
-        print("INPUT: from text inputfile")
-        print("PYTHON str(result)")
-        print(result)        
-        
+
     # Testing:
     # xtractor.ping()
     # xtractor.stop()

@@ -13,6 +13,8 @@ natl,abbrev
 tid,abbrev
 toc,abbrev
 tos,abbrev
+max,abbrev
+proj,abbrev
 rel,abbrev
 bio,abbrev
 eta,abbrev
@@ -20,7 +22,9 @@ tel,abbrev
 lat,abbrev
 lon,abbrev
 res,abbrev
+robo,abbrev
 sub,abbrev
+topo,abbrev
 fig,abbrev
 ref,abbrev
 bros,abbrev
@@ -222,9 +226,11 @@ bom,adjective.por
 boa,adjective.por
 shortly,adverb
 kangaroo,animal
+alligator,animal
 eagles,animal
 snail,animal
 leopard,animal
+zebra,animal
 mice,animal
 spider,animal
 tiger,animal
@@ -245,6 +251,7 @@ coyote,animal
 anaconda,animal
 ape,animal
 bug,animal
+beetle,animal
 bat,animal
 foxes,animal
 gopher,animal
@@ -414,6 +421,11 @@ valentines,holiday
 valentine's,holiday
 mardi gras,holiday
 pic,internet
+packer,internet
+api,internet
+apis,internet
+serv,internet
+pref,internet
 nav,internet
 login,internet
 cam,internet
@@ -489,6 +501,7 @@ february,month
 jan,month
 january,month
 dragon,myth
+krypton,myth
 gotham,myth
 thor,myth
 nirvana,myth
@@ -508,6 +521,7 @@ marker,noun
 primer,noun
 loyalist,noun
 guess,noun
+grub,noun
 brink,noun
 trades,noun
 champion,noun
@@ -1629,6 +1643,7 @@ gardens,place.civil
 brig,place.civil
 resort,place.civil
 resort island,place.civil
+sanctuary,place.civil
 palace,place.civil
 mosque,place.civil
 bunker,place.civil
@@ -1636,6 +1651,7 @@ harbour,place.civil
 harbor,place.civil
 pipeline,place.civil
 jail,place.civil
+arbor,place.civil
 checkpoint,place.civil
 holy ground,place.civil
 interchange,place.civil
@@ -2514,6 +2530,7 @@ cir,place.civil
 burrow,noun
 shale,noun
 salmon,food
+olives,food
 sap,noun
 czar,person.label
 csar,person.label
@@ -2579,3 +2596,5 @@ ballad,noun
 solitaire,noun
 lam,transliteration
 tao,transliteration
+striker,noun
+

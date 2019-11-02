@@ -14,9 +14,22 @@
     <!--  Loggers -->
     <logger name="org.apache" level="error">
     </logger>
-    <logger name="org.opensextant.extractors" level="debug">
+    <logger name="org.opensextant.extractors" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.geo" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.xtax" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.xtemporal" level="info">
     </logger>
     <logger name="org.opensextant.extractors.xcoord" level="info">
+    </logger>
+    <logger name="org.opensextant.extractors.poli" level="info">
+    </logger>
+    <!-- disable rules logging once you are comfortable things are working -->
+    <logger name="org.opensextant.extractors.geo.rules" level="debug">
+    </logger>
+    <logger name="org.opensextant.xlayer" level="debug">
     </logger>
 
 </configuration>
