@@ -12,7 +12,7 @@ popd
 
 VER=3.0
 BUILD_VER=3.0.6
-ant -f ./dist.xml dist
+ant -f ./dist.xml package-dist
 
 REL=../dist/Xponents-$VER
 find $REL -type f -name "*.sh" -exec chmod u+x {} \; -print

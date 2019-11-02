@@ -149,4 +149,7 @@
 	<target name="dist" depends="build, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" 
             description="Build a zip file containing a distributable, runnable thing.">
 	</target>
+	<target name="package-dist" depends="copy-libs, copy-solr7, copy-script, copy-data, copy-docs" 
+            description="Build a zip file containing a distributable, runnable thing from a pre-built source tree.">
+	</target>
 </project>
