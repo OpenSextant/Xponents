@@ -29,7 +29,8 @@ You have a few options:
    * You want the full experience, all the pain of building from source.
 
 For options 2 and 3 above, you'll follow the remainder of these instructions to build Xponents SDK 
-with Solr indices populated.
+with Solr indices populated.  Either way, where Python is referred in any instructions we are referring 
+to Python 3.6+ only.  `python` and `pip` may be further qualified as `python3` and `pip3` in many scripts.
 
 
 Option 2.  Build Gazetteer From Scatch
@@ -53,7 +54,7 @@ Desired layout:
 
 Now run these steps to acquire gazetteer data from USGS and NGA:
 
-```
+```shell script
   cd Gazetter
   ant setProxy nga.data
   ant setProxy usgs.data
@@ -65,7 +66,7 @@ Separately run the ETL in the Gazetter project.
 This Xponents script emulates the Gazetteer's own ant script, but allows 
 for some tuning of JVM and other parameters, such as logging, etc.
 
-```
+```shell script
   cd Xponents/solr
   ./build-gazetteer.sh 
 ```
@@ -114,7 +115,7 @@ at `./solr7-dist`.  This involves some extra steps, but is relatively well teste
 Using the latest Solr distribution would involve updating Maven POM, possibly, as well as
 reviewing Solr index configurations.
 
-```
+```shell script
     wget http://archive.apache.org/dist/lucene/solr/7.4.0/solr-7.4.0.zip
     unzip solr-7.4.0.zip
     mv ./solr-7.4.0  ./solr7-dist
@@ -135,7 +136,7 @@ And as far as Xponents Java, just build the full project, `cd ../; mvn install`
 
 From Source:
 
-```
+```shell script
     pushd ../python
     python ./setup.py sdist
     popd
@@ -153,7 +154,7 @@ From Distribution:
 
 NOTE: In Python Development mode where the opensextant libs are in development:
 
-```
+```shell script
     export PYTHONPATH=/path/to/Xponents/piplib
 ```
   
@@ -181,8 +182,18 @@ The `build.sh` script is the central brain behind the data assembly.  Use that s
 alone to build and manage indices, however if there are problems see the individual steps below
 to intervene and redo any steps. 
 
-**FIRST USE:** 
+**Build Setup**
+Managing public domain data sets pulled down, scraped, harvested, etc. involves additional Python libraries
+that are not required by normal use of the `opensextant` package.  Add this Pip-installable items now.
+
+```shell script
+
+  pip3 install -U --target ./piplib bs4 arrow requests
+
 ```
+
+**FIRST USE:** 
+```shell script
     build.sh  start clean data 
 ```
 IF you have gotten to this step and feel confident things look good, this one invocation of `build.sh`
@@ -216,7 +227,7 @@ gazetteer you are likely ready to go start using Xponents SDK.
 
 **Step 4.a Initialize**
 
-```
+```shell script
     # If you use a proxy, then include proxy command first in all your Ant invocations.
     # As well, set proxy.host and proxy.port in your build.properties above.
     #
@@ -225,7 +236,7 @@ gazetteer you are likely ready to go start using Xponents SDK.
 
 **Step 4.b Get Supporting Data**
 
-```
+```shell script
     build.sh [proxy] data 
 ```
 
@@ -252,7 +263,7 @@ taggers and data processing.  Filters are packed in the `xponents-gazetteer.jar`
 both running Solr-server gazetteer operations and normal Xponents library operations.  This JAR
 must be available in the `CLASSPATH`
 
-```
+```shell script
    
    # Copy Xponents gazetteer meta-files to runtime location
    #

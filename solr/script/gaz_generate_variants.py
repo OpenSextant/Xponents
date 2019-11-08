@@ -2,7 +2,7 @@
 import re
 import simplejson as json
 
-'''
+"""
 Name Variant Generator:  create as many valid name variants for popular 
 abbreviated phrases in names.
 
@@ -12,7 +12,7 @@ abbreviated phrases in names.
 Seems trivial, however we miss lots of potential mentions because 
 many times only the short form is used:  St. Louis,...
 
-'''
+"""
 
 saint_repl = {
     #'santos' : 'sto',  have not found good variation on 'santos'
@@ -37,7 +37,8 @@ splitter = re.compile(u"[-.`'\u2019\s]+", re.UNICODE|re.IGNORECASE)
 
 debug = False
 
-ORIGINALS_BLOCK=20000000L
+ORIGINALS_BLOCK=20000000
+
 
 def _init_json(out):
     out.write('[')
@@ -48,13 +49,13 @@ def save_result(pl, nameVar, out, first=False):
     pl['source'] = 'XpGen'
     given_id = pl['id']
     # NOTE: this adds the size of ID space to each new variant.
-    pl['id'] = str( ORIGINALS_BLOCK + long(given_id) )
+    pl['id'] = str( ORIGINALS_BLOCK + int(given_id) )
     for k in ["adm1","adm2","adm3"]:
         if k in pl and not pl[k]: del pl[k]
     out.write(json.dumps(pl))
     
 def generate_GENERAL_variants(gaz, output):
-    '''
+    """
     Ft Worth <<==== Fort Worth
     N. Hampstead <<== North Hampstead
     W. Bedford Falls   <<== West Bedford Falls
@@ -62,7 +63,7 @@ def generate_GENERAL_variants(gaz, output):
     We generate variants that do not already exist.
     
     Almost as exact as SAINT replacements... 
-    ''' 
+    """
     for term in general_repl:
         count=0
         output_path = '{}_{}.json'.format(output, term)
@@ -71,7 +72,7 @@ def generate_GENERAL_variants(gaz, output):
         first = True
 
         results = gaz.search("name:{} AND feat_class:(A P) AND id:[ * TO {}]".format(term, ORIGINALS_BLOCK), rows=500000)
-        print "PREFIX", term, results.hits
+        print ("PREFIX", term, results.hits)
         pat = u"(%s\s+)" % (term)
         regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
         repl = general_repl[term].capitalize()
@@ -126,7 +127,7 @@ def generate_GENERAL_variants(gaz, output):
 
 
 def generate_SAINT_variants(gaz, output):
-    '''
+    """
     Valid French village abbreviations:
         St Pryvé St Mesmin   <<<--- Saint-Pryvé-Saint-Mesmin)
     
@@ -134,7 +135,7 @@ def generate_SAINT_variants(gaz, output):
         
         Because 'San' is a typical syllable in Asian languages, we'll ignore certain countries
     
-    '''
+    """
 
     output_path = '{}_{}.json'.format(output, 'SAINT')
     fh = codecs.open(output_path, 'wb', encoding="utf-8")
@@ -144,9 +145,9 @@ def generate_SAINT_variants(gaz, output):
     ignore_countries = set("TW CN JP LA VN ML PA KR KP".split())
     for saintly in saint_repl:
         results = gaz.search("name:{} AND id:[ * TO {}]".format(saintly, ORIGINALS_BLOCK), rows=500000)
-        print "PREFIX", saintly, results.hits
+        print("PREFIX", saintly, results.hits)
         
-        pat = u"(%s[-`'\u2019\s]+)" % (saintly)
+        pat = u"({}}[-`'\u2019\s]+)".format (saintly)
         regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
         repl = saint_repl[saintly].capitalize()
         term_ = '{} '.format(saintly)
@@ -181,7 +182,7 @@ def generate_SAINT_variants(gaz, output):
     
             existing = solrGaz.search(u'place_id:%s AND name:"%s"' % (pid, nVar), rows=1)
             if existing.hits == 0:
-                if debug: print n, "==>", nVar
+                if debug: print(n, "==>", nVar)
                 save_result(place, nVar, fh, first=first)
                 first=False
 
@@ -193,7 +194,7 @@ def tester():
     res = splitter.split("Saint Bob's Pond")
     res = splitter.split("Saint Bob' Pond")
     res = splitter.split("Sant' Bob Pond")
-    print res
+    print(res)
     
     replacements = {}
     
@@ -207,7 +208,7 @@ def tester():
     nVar = regex.sub(repl, test)
     nVar = nVar.replace('-', ' ').strip()
     nVar = nVar.replace('  ',' ')  
-    print nVar
+    print(nVar)
 
 
     

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''
+"""
  
                 Copyright 2014 The MITRE Corporation.
  
@@ -38,10 +38,10 @@ The TaxCat/XTax strategy here is to use the following mapping:
       phrase =  'brit'
       tags  = [ 'cc+GBR' ]
     }
-'''
+"""
 
 from opensextant.TaxCat import Taxon, TaxCatalogBuilder
-from opensextant.CommonsUtils import is_ascii
+from opensextant.CommonsUtils import get_text
 
 
 class Nationality(Taxon):
@@ -52,121 +52,113 @@ class Nationality(Taxon):
         self.country = cc
         self.phrase = phr
         self.phrasenorm = phr.lower()
-        self.is_valid = is_valid 
-                
+        self.is_valid = is_valid
+
         # taxon ID/name:
         self.name = eid
         self.tags = self._make_tags()
-        
+
     def _make_tags(self):
-        
         if self.country:
-            return [ 'cc+%s' % (self.country) ]
+            return ['cc+%s' % (self.country)]
         return []
-        
+
     def __str__(self):
         return "%d / %s (%s) %s" % (self.id, self.name, self.phrase, self.tags)
 
 
 def create_entities(line):
-    ''' Create a taxon entry for this nationality, which may have diacritics. All phrases are unicode.
-    '''
+    """
+    Create a taxon entry for this nationality, which may have diacritics. All phrases are unicode.
+    """
+    if not line: return []
     parts = line.split(',')
-    name = unicode(parts[0], 'utf-8').strip()
+    name = get_text(parts[0]).strip()
     cc = parts[1].strip().upper()
-    
+
     #
     # done with aliasing.
     #            
-    is_valid = len(cc)>0
+    # is_valid = len(cc)>0
+    is_valid = True
+    is_ethnicity = len(cc) == 0
     taxons = []
-    if not is_valid:
-        n = 'nationality.%s' %(name) 
-        taxons.append( Nationality(n, name, None, is_valid) )
+
+    # Preserve this logic for now. Not officially declaring a difference between ethnicity and nationality.
+    # This data catalogues a mix.
+    if is_ethnicity:
+        n = 'nationality.%s' % (name)
+        taxons.append(Nationality(n, name, None, is_valid))
     else:
         if ';' in cc:
             codes = cc.split(';')
             for c in codes:
-                n = 'nationality.%s' %(c) 
-                taxons.append( Nationality(n, name, c, is_valid) )
+                n = 'nationality.%s' % (c)
+                taxons.append(Nationality(n, name, c, is_valid))
         else:
-            n = 'nationality.%s' %(cc)
-            taxons.append( Nationality(n, name, cc, is_valid) )
+            n = 'nationality.%s' % (cc)
+            taxons.append(Nationality(n, name, cc, is_valid))
 
     return taxons
 
 
 if __name__ == '__main__':
-    '''
-    '''
-    taxonomy = None
+    """
+    """
     start_id = 0
     catalog_id = 'nationality'
 
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument('--taxonomy')
+    ap.add_argument('--taxonomy', required=True)
     ap.add_argument('--starting-id')
     ap.add_argument('--solr')
     ap.add_argument('--max')
 
     args = ap.parse_args()
 
-    taxonomy = args.taxonomy
     if args.starting_id:
         start_id = int(args.starting_id)
-    
-    test = False
+
+    test = args.solr is None
     builder = None
     row_max = -1
 
-    if args.solr:
-        solr_url = args.solr
-        builder = TaxCatalogBuilder(server=solr_url)
-    else:
-        test = True
-        row_max = 1000
-        builder = TaxCatalogBuilder(server=None)
+    builder = TaxCatalogBuilder(server=args.solr, test=test)
 
     if args.max:
         row_max = int(args.max)
 
     # Commit rows every N entries
     builder.commit_rate = 100
-    builder.stopwords = set([])
-    
+
     row_id = 0
-    fh = open(taxonomy, 'rb')
-    for row in fh:       
+    fh = open(args.taxonomy, 'rU', encoding="UTF-8")
+    for row in fh:
         if row.startswith("#"): continue
 
-        nodes = create_entities(row)
-        # possibly filtered out during creation?
-        if not nodes: continue
+        for taxon in create_entities(row):
+            # increment
+            row_id = row_id + 1
+            # ".id" must be an Integer for text tagger
+            taxon.id = start_id + row_id
 
-        for taxon in nodes:
-          # increment
-          row_id = row_id + 1
-          # ".id" must be an Integer for text tagger
-          taxon.id = start_id + row_id        
+            builder.add(catalog_id, taxon)
 
-          builder.add(catalog_id, taxon)
-          builder.save()
+            if row_id % 100 == 0:
+                print("Row # ", row_id)
+            if test:
+                print(str(taxon))
 
-          if row_id % 100 == 0:
-              print "Row # ", row_id
-          if test:
-              print str(taxon)
-        if row_max > 0 and row_id > row_max:
+        if 0 < row_max < row_id:
             break
-            
 
-    print "Created total of %d nationality tags" % (row_id)
+    print("Created total of %d nationality tags" % (row_id))
     try:
         builder.save(flush=True)
         builder.optimize()
-    except Exception, err:
-        print str(err)
-    
+    except Exception as err:
+        print(str(err))
+
     fh.close()
