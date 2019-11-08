@@ -20,7 +20,7 @@
     </logger>
     <logger name="org.opensextant.extractors.xcoord" level="info">
     </logger>
-    <logger name="org.opensextant.extractors.poli" level="info">
+    <logger name="org.opensextant.extractors.poli" level="debug">
     </logger>
 
 </configuration>

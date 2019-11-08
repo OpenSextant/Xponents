@@ -36,7 +36,16 @@ def _scrub_cdata_content(text):
 
 
 def get_taxnode(t, val):
-    return t.lower() + "." + val.strip()
+    """
+
+    :param t:
+    :param val:
+    :return:
+    """
+    name_value = val.strip().title().replace("'S", "'s")
+    # Title case capitalizes "'s"..geesh.
+    tx = "{}.{}".format(t.lower(), name_value)
+    return tx
 
 
 _FALSE_VAL = {'f', 'false', '0', 'n', 'no'}
@@ -107,9 +116,23 @@ CASE_UPPER = 2
 #
 """
 CATALOG_REGISTRY = {
-
-    "DEFAULT": 0
+    "DEFAULT": 0,
+    "WFB": 100000,
+    "JRC": 3000000
 }
+
+
+def get_starting_id(cat):
+    """
+    For well-known catalogs, determine the default catatag ID range.
+    :param cat:
+    :return:
+    """
+    offset = CATALOG_REGISTRY.get(cat)
+    if not offset:
+        raise Exception("Catalog is not registered: " + cat)
+
+    return offset
 
 
 class Taxon:
@@ -125,14 +148,16 @@ class Taxon:
 
 class TaxCatalogBuilder:
 
-    def __init__(self, server=None):
+    def __init__(self, server=None, test=False):
         """
-           @param server: solr server http URL; Not solrhome -- this is not SolrEmbedded.
+        API to assist in building taxon nodes and storing them in Solr.
+        @param server: solr server http URL
         """
 
         self.server = None
         self.server_url = None
         self.set_server(server)
+        self.test = test
 
         self._record_count = 0
         self._byte_count = 0
@@ -156,13 +181,6 @@ class TaxCatalogBuilder:
         _stopwords_list = self.utility.loadListFromFile(stopfile)
         self.stopwords.add(_stopwords_list)
 
-    def get_starting_id(self, cat):
-        offset = CATALOG_REGISTRY.get(cat)
-        if not offset:
-            raise Exception("Catalog is not registered: " + cat)
-
-        return offset
-
     def set_server(self, svr):
         self.server_url = svr
         if not self.server_url:
@@ -177,14 +195,14 @@ class TaxCatalogBuilder:
             print("Problem with that server %s, ERR=%s" % (self.server_url, err))
 
     def optimize(self):
-        if self.server:
+        if self.server and not self.test:
             self.server.optimize()
 
     def save(self, flush=False):
+        if self.test: return
         if not self.server:
             print("No server")
             return
-
         if not flush:
             qty = len(self._records)
             if self.commit_rate > 0 and qty % self.commit_rate != 0:
@@ -226,45 +244,41 @@ class TaxCatalogBuilder:
             add_wordlist('CAT', f3, 600, taxonode='third')
             add_wordlist('CAT', f4, 700, taxonode='fourth')
         """
-
         _name = os.path.basename(datafile)
         if taxnode:
             _name = taxnode
 
-        sheet = open(datafile, 'rb')
         words = set([])
+        with open(datafile, 'r', encoding="UTF-8") as sheet:
+            for row in sheet:
+                _phrase = row.strip()
+                if not _phrase:
+                    continue
 
-        for row in sheet:
+                if _phrase.startswith("#"):
+                    # is a comment or commented out word.
+                    continue
 
-            _phrase = row.strip()
-            if not _phrase:
-                continue
+                self.count += 1
+                _id = start_id + self.count
 
-            if _phrase.startswith("#"):
-                # is a comment or commented out word.
-                continue
+                key = _phrase.lower()
+                if key in words:
+                    print("Not adding ", key)
+                    continue
 
-            self.count += 1
-            _id = start_id + self.count
+                words.add(key)
 
-            key = _phrase.lower()
-            if key in words:
-                print("Not adding ", key)
-                continue
+                t = Taxon()
+                t.id = _id
+                t.is_valid = len(key) >= minlen
+                t.name = _name
+                t.phrase = _phrase
+                # Allow case-sensitive entries.  IFF input text contains UPPER
+                # case data, we'll mark it as acronym.
+                if t.phrase.isupper():
+                    t.is_acronym = True
 
-            words.add(key)
+                self.add(catalog, t)
 
-            t = Taxon()
-            t.id = _id
-            t.is_valid = len(key) >= minlen
-            t.name = _name
-            t.phrase = _phrase
-            # Allow case-sensitive entries.  IFF input text contains UPPER
-            # case data, we'll mark it as acronym.
-            if t.phrase.isupper():
-                t.is_acronym = True
-
-            self.add(catalog, t)
-
-        print("COUNT: %d" % (self.count))
-        sheet.close()
+            print("COUNT: %d" % (self.count))

@@ -1,6 +1,5 @@
 import os
 import re
-import codecs
 from opensextant.Extraction import TextMatch, Extractor
 
 """
@@ -296,8 +295,7 @@ class RegexPatternManager:
             config_fpath = resource_for(self.patterns_file)
 
         # PY3:
-        with codecs.open(config_fpath, "r", encoding="UTF-8") as fh:
-
+        with open(config_fpath, "r", encoding="UTF-8") as fh:
             testcount = 0
             for line in fh:
                 stmt = line.strip()

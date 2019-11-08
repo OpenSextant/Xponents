@@ -28,17 +28,25 @@ index_taxcat () {
   SOLR_URL=$1
   echo "Populate nationalities taxonomy in XTax"
   # you must set your PYTHONPATH to include required libraries built from ../python
-  python2.7  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr $SOLR_URL --starting-id 0
+  python3  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr $SOLR_URL --starting-id 0
   sleep 1 
 
   echo "Populate core JRC Names 'entities' data file, c.2014"
   JRC_DATA=./etc/taxcat/data
   JRC_SCRIPT=./script/taxcat_jrcnames.py
-  python2.7 $JRC_SCRIPT --taxonomy $JRC_DATA/entities.txt  --solr $SOLR_URL
+  python3 $JRC_SCRIPT --taxonomy $JRC_DATA/entities.txt  --solr $SOLR_URL
+  sleep 1
+
+  # This file is manually curated, not sourced from JRC (EU). But the format is the same.
+  JRC_ADHOC=./etc/taxcat/entities-adhoc.txt
+  python3 $JRC_SCRIPT --taxonomy $JRC_ADHOC  --solr $SOLR_URL --no-fixes
+  sleep 1
 
   # Arbitrary row ID scheme, but we have various catalogs that should have reserved row-id space based on size.
-  python2.7 script/taxcat_person_names.py   --solr $SOLR_URL --starting-id 20000
+  python3 script/taxcat_person_names.py   --solr $SOLR_URL --starting-id 20000
+  sleep 1
 
+  python3 script/taxcat_wfb.py --solr $SOLR_URL
   sleep 1 
 }
 
@@ -50,7 +58,7 @@ index_gazetteer () {
 
   sleep 2 
   echo "Generate Name Variants"
-  python2.7 ./script/gaz_generate_variants.py  --solr $SOLR_URL --output $GAZ_CONF/additions/generated-variants.json
+  python3 ./script/gaz_generate_variants.py  --solr $SOLR_URL --output $GAZ_CONF/additions/generated-variants.json
 
   # Finally add adhoc entries from JSON formatted files.
   #
@@ -122,9 +130,13 @@ popd
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
   ant -f build.xml $proxy get-gaz-resources
+
+  echo "Harvesting World Factbook 'factoids'"
+  python3 ./script/assemble_wfb_leaders.py
+  python3 ./script/assemble_wfb_orgs.py
 fi
 
-python2.7 ./script/assemble_person_filter.py 
+python3 ./script/assemble_person_filter.py
 
 if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
    # Collect Gazetteer Metadata: 

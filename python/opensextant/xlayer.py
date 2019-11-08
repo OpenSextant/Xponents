@@ -93,7 +93,6 @@ if __name__ == '__main__':
     import os
     from traceback import format_exc
     import argparse
-    import codecs
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--service-url", help="XLayer server URL to /process endpoint")
@@ -125,18 +124,17 @@ if __name__ == '__main__':
     elif args.lines and args.inputfile:
         print("INPUT: from individual lines from inputfile")
         try:
-            fh = codecs.open(args.inputfile, 'r', encoding="utf-8")
-            lineNum = 0
-            for line in fh:
-                lineNum += 1
-                _id = "line{}".format(lineNum)
-                print("=============={}:".format(_id))
-                _text = line.strip()
-                result = xtractor.process(_id, _text)
-                print("Annotations\n============")
-                for a in result:
-                    print(a)
-            fh.close()
+            with open(args.inputfile, 'r', encoding="UTF-8") as fh:
+                lineNum = 0
+                for line in fh:
+                    lineNum += 1
+                    _id = "line{}".format(lineNum)
+                    print("=============={}:".format(_id))
+                    _text = line.strip()
+                    result = xtractor.process(_id, _text)
+                    print("Annotations\n============")
+                    for a in result:
+                        print(a)
         except Exception as err:
             print(format_exc(limit=5))
 
@@ -148,7 +146,7 @@ if __name__ == '__main__':
         if args.docid:
             _id = args.docid
         try:
-            with codecs.open(args.inputfile, 'r', encoding="utf-8") as fh:
+            with open(args.inputfile, 'r', encoding="UTF-8") as fh:
                 _text = fh.read()
                 _text = _text.strip()
                 result = xtractor.process(_id, _text)

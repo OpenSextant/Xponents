@@ -1,0 +1,260 @@
+# Mainly tracking names that conflict with gazetteer -- But worth expanding list of 
+# known organizations and maintaining/automating.
+# entities starting IDs
+# non-US 2,000,000+  
+# US     2,100,000+
+# JRC    0 to 999,999
+#
+# FORMAT:
+# ID    P|O  LANG   Unicode Name
+#
+# ID is a number
+# P|O designator indicates person or organization
+# LANG is 'u' universal or a ISO language ID 2-char.
+# Name is in native script or ASCII; insert "+" in lieu of whitespace. Not important.
+
+# ----------EXISTING JRC-------------------
+# ----------- < 999999 range---------------
+#
+58      P       u       Tayyip
+453     P       u       Merkel
+1698324 P       u       Snowden
+
+
+
+# ----------non-USA Organizatons-----------
+#           2000000-2099999 range
+# -----------------------------------------
+2000000	O	u	Inter-Services+Intelligence
+2000000	O	u	Directorate+for+Inter-Services+Intelligence
+2000000	O	u	ISI
+2000000	O	ar	بین الخدماتی مخابرات
+#
+2000001	O	u	Islamic+State+of+Iraq+and+the+Levant
+2000001	O	u	Islamic+State+of+Iraq+and+ash+Sham
+2000001	O	u	ISIL
+2000001	O	u	ISIS
+2000001	O	u	Daesh
+2000001	O	u	Dayesh
+2000001	O	u	Daish
+2000001	O	ar	الدولة الإسلامية في العراق والشام
+#
+2000002	O	u	al-Qaeda+Organization+in+the+Arabian+Peninsula
+2000002	O	u	Al-Qaeda+in+the+Arabian+Peninsula
+2000002	O	u	AQAP
+2000002	O	u	Ansar+al-Sharia+in+Yemen
+#
+2000003	O	u	al-Qaeda+in+the+Islamic+Maghreb
+2000003	O	u	AQIM
+#
+2000004	O	u	Sinn+Fein
+#
+2000005	O	u	Palestinian+Liberation+Organization
+2000005	O	u	PLO
+#
+2000006	O	u	Al-Jazirah
+2000007	O	u	Al-Jazirah+Television
+2000007	O	u	Al-Jazirah+TV
+#
+2000008	O	u 	Boko+Haram
+#
+2000009	O	u	Al+Arabiyah
+2000009	O	u	Al+Arabiyah
+#
+2000010	P	u	Fedorov
+#
+2000011	O	u	Hezbollah
+2000011	O	u	Hezbullah
+2000011	O	u	Hizbullah
+2000011	O	u	Hizbollah
+#
+2000012	O	u	IRNA
+# Source: Taliban wikipedia, Pashtu
+2000013	O	u	Taliban
+2000013	O	u	Taleban
+2000013	O	ps	طالبان
+# Source: LeT wikipedia
+2000014	O	u	Lashkar-e-Taiba
+2000014	O	u	Army of the Good
+2000014	O	u	Lashkar-i-Tayyaba
+2000014	O	u	Lashkar-i-Taiba
+2000014	O	u	Lashkar Taiba
+2000014	O	u	Lashkar Tayyaba
+2000014	O	u	Lashkar Tayyiba
+2000014	O	ur	لشکر طیبہ
+#
+2000015	O	u	Harakat al-Shabaab al-Mujahideen
+2000015	O	u	Harakat al-Shabab al-Mujahideen
+2000015	O	u	Xarakada Mujaahidiinta Alshabaab
+2000015	O	u	Al-Shabaab
+2000015	O	u	Al-Shabab
+2000015	O	u	Al Shebab
+2000015	O	u	HSM
+2000015	O	u	Shabaab
+2000015	O	u	Shebaab
+2000015	O	u	Shabab
+2000015	O	u	Shebab
+#
+2000016	O	u	Likud Party
+2000016	O	u	Likud
+#
+2000017	O	u	Hamas
+#
+2000018	P	u	Al-Asad
+2000018	P	u	Al-Assad
+2000018	P	u	Bashar Hafez al-Assad
+2000018	P	u	Bashar al-Assad
+2000018	P	u	Bashar Assad
+2000018	P	u	Bashar al-Asad
+2000018	P	u	Bashar Asad
+#
+2000019	O	u	China News Agency
+2000019	O	u	CNA
+#
+2000020	O	u	People's Liberation Army
+2000020	O	u	PLA
+#
+2000021	O	u	Korean Central News Agency
+2000021	O	u	KCNA
+#
+2000022	O	u	Xinhua
+#
+2000023	O	u	Mozambique Liberation Front
+2000023	O	u	Frelimo
+#
+2000024	O	u	Mozambique National Resistance
+2000024	O	u	Renamo
+
+
+
+# ----------USA Organizations--------------
+#           2100000-2199999 range
+# -----------------------------------------
+2100000	O	u	Office of Naval Intelligence
+2100000	O	u	ONI
+#
+2100001	O	u	Central Intelligence Agency
+2100001	O	u	CIA
+#
+2100002	O	u	Defense Intelligence Agency
+2100002	O	u	DIA
+#
+2100003	O	u	Department of Defense
+2100003	O	u	DoD
+#
+2100004	O	u	Department of Justice
+2100004	O	u	DoJ
+#
+2100005	O	u	Judge Advocate General
+2100005	O	u	JAG
+#
+2100006	O	u	Department of State
+2100006	O	u	State Department
+2100006	O	u	DoS
+#
+2100007	O	u	Drug Enforcement Agency
+2100007	O	u	DEA
+#
+2100008	O	u	Immigrations and Customs Enforcement
+2100008	O	u	ICE
+#
+2100009	O	u	Bureau for Alcohol, Tabacco, Firearms and Explosives
+2100009	O	u	ATF
+#
+2100010	O	u	Social Security Administration
+2100010	O	u	SSA
+#
+2100011	O	u	The White House
+#
+2100012	O	u	National Security Agency
+2100012	O	u	NSA
+#
+2100013	O	u	National Geospatial Intelligence Agency
+2100013	O	u	NGA
+#
+2100014	O	u	United States Government
+2100014	O	u	US Government
+2100014	O	u	U. S. Government
+2100014	O	u	USG
+#
+2100015	O	u	DARPA
+2100015	O	u	Defense Advanced Research Projects Agency
+2100015	O	u	Defense Advanced Research Project Agency
+2100015	O	u	darpa.mil
+#
+2100016	O	u	IARPA
+2100016	O	u	Intelligence Advanced Research Projects Activity
+#
+2100017	O	u	Department of Energy
+2100017	O	u	DOE
+2100017	O	u	Dept of Energy
+#
+2100018	O	u	Department of Health and Human Services
+2100018	O	u	HHS
+#
+2100019	O	u	National Institutes of Health
+2100019	O	u	NIH
+#
+2100020	O	u	Office of the Director of National Intelligence 
+2100020	O	u	ODNI
+#
+2100021	P	u	Director of National Intelligence 
+#
+2100022	O	u	Department of National Intelligence 
+2100022	O	u	DNI
+#
+2100023	O	u	Missile Defense Agency
+2100023	O	u	MDA
+#
+#
+# 2,101,***  US Terms for foreign entities
+2101001	O	u	Government+of+India
+2101001	O	u	GoI
+#
+2101002	O	u	Government+of+Japan
+2101002	O	u	GoJ
+# 2,102,***  US Terms for non-govt institutions
+2102001	O	u	Brookings+Institute
+2102001	O	u	Brookings
+#
+2102002	O	u	Bloomberg
+#
+2102003	O	u	Boeing
+#
+2102004	O	u	Sandia National Laboratories
+2102004	O	u	Sandia National Labs
+2102004	O	u	Sandia Labs
+2102004	O	u	Sandia
+#
+2102005	O	u	Oak Ridge National Laboratory
+2102005	O	u	Oak Ridge
+2102005	O	u	ORNL
+#
+2102006	O	u	Los Alamos National Laboratory
+2102006	O	u	LANL
+#
+2102007	O	u	Brookhaven National Laboratory
+2102007	O	u	BNL
+#
+2102008	O	u	Lawrence Livermore National Laboratory
+2102008	O	u	Lawrence Livermore
+2102008	O	u	LLNL
+#
+2102009	O	u	Argonne National Laboratory
+2102009	O	u	Argonne National Lab
+#
+2102010	O	u	International Atomic Energy Agency
+2102010	O	u	IAEA
+#
+2102011	P	u	Director General
+#
+2102012	O	u	Board of Govenors
+#
+2102013	O	u	United Nations Security Council
+2102013	O	u	UNSC
+#
+2102014	O	u	National Nuclear Security Administration 
+2102014	O	u	NNSA
+#
+2102015	O	u	United Services Automobile Association
+2102015	O	u	USAA
