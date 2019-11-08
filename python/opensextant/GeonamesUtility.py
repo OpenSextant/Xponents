@@ -2,8 +2,6 @@
  GeonamesUtility:  lines up with functionality in Xponents Basics utility package.
 
 """
-
-import codecs
 import os
 import re
 
@@ -18,6 +16,7 @@ usstates = {}
 
 adm1_by_hasc = {}
 __loaded = False
+
 
 def make_HASC(cc, adm1):
     if not adm1:
@@ -34,7 +33,7 @@ def load_countries(csvpath=None):
         pkg_dir = os.path.dirname(os.path.abspath(__file__))
         csvpath = os.path.join(pkg_dir, 'resources', 'country-names-2015.csv')
 
-    with codecs.open(csvpath, 'r', encoding="UTF-8") as fh:
+    with open(csvpath, 'r', encoding="UTF-8") as fh:
         columns = "country_name,FIPS_cc,ISO2_cc,ISO3_cc,unique_name,territory".split(',')
         fio = get_csv_reader(fh, columns)
         for row in fio:
@@ -74,14 +73,14 @@ def load_countries(csvpath=None):
     # WE, PS, GAZ, etc. and a handful of other oddities are worth noting and remapping.
 
     global __loaded
-    __loaded = len(countries_by_iso)>0
+    __loaded = len(countries_by_iso) > 0
     return None
 
 
 def load_us_provinces():
     pkg_dir = os.path.dirname(os.path.abspath(__file__))
     csvpath = os.path.join(pkg_dir, 'resources', 'us-state-metadata.csv')
-    with open(csvpath, 'rb') as fh:
+    with open(csvpath, 'rU', encoding="UTF-8") as fh:
         columns = ["POSTAL_CODE", "ADM1_CODE", "STATE", "LAT", "LON", "FIPS_CC", "ISO2_CC"]
         io = get_csv_reader(fh, columns)
         for row in io:
@@ -115,7 +114,7 @@ def load_world_adm1():
     pkg_dir = os.path.dirname(os.path.abspath(__file__))
     csvpath = os.path.join(pkg_dir, 'resources', 'geonames.org', 'admin1CodesASCII.txt')
 
-    with codecs.open(csvpath, 'rb', encoding="UTF-8") as fh:
+    with open(csvpath, 'r', encoding="UTF-8") as fh:
         adm1Splitter = re.compile(r'\.')
         lineSplitter = re.compile('\t')
         for line in fh:
@@ -159,14 +158,13 @@ def get_country(code, standard="ISO"):
         return None
 
     lookup = code.upper()
-    if standard=="ISO":
+    if standard == "ISO":
         if not __loaded:
             load_countries()
         return countries_by_iso.get(lookup)
-    elif standard=="FIPS":
+    elif standard == "FIPS":
         if not __loaded:
             load_countries()
         return countries_by_fips.get(lookup)
     else:
         raise Exception("That standards body '{}' is not known for code {}".format(standard, code))
-

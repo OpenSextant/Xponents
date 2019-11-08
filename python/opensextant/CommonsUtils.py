@@ -57,6 +57,8 @@ def is_ascii(s):
 def get_text(t):
     """ Default is to return Unicode string from raw data"""
     if PY3:
+        if isinstance(t, str):
+            return t
         return str(t, encoding='utf-8')
     else:
         return unicode(t, 'utf-8')
@@ -259,11 +261,11 @@ class ConfigUtility:
       oxygen.cfg file would have this mapping.  Your code just references 'mywords' to load it.
     """
 
-    def __init__(self, cfg, rootdir='.'):
+    def __init__(self, config=None, rootdir='.'):
 
         # If config is None, then caller can still use loadDataFromFile(abspath, delim) for example.
         #
-        self.config = cfg
+        self.config = config
         self.rootdir = rootdir
 
     def loadCSVFile(self, keyword, delim):
@@ -285,19 +287,14 @@ class ConfigUtility:
         if not os.path.exists(path):
             raise Exception('File does not exist, FILE=%s' % path)
 
-        f = open(path, 'rb')
-        filereader = csv.reader(f, delimiter=delim, lineterminator='\n')
-        data = []
-        for row in filereader:
-            first_cell = row[0].strip()
-            if first_cell.startswith('#'):
-                continue
-
-            # if not delim and not first_cell:
-            #    continue
-
-            data.append(row)
-        f.close()
+        with  open(path, 'r', encoding="UTF-8") as f:
+            filereader = csv.reader(f, delimiter=delim, lineterminator='\n')
+            data = []
+            for row in filereader:
+                first_cell = row[0].strip()
+                if first_cell.startswith('#'):
+                    continue
+                data.append(row)
         return data
 
     def loadFile(self, keyword):
@@ -328,7 +325,7 @@ class ConfigUtility:
         if not os.path.exists(path):
             raise Exception('File does not exist, FILE=%s' % path)
 
-        with open(path, 'r') as fh:
+        with open(path, 'r', encoding="UTF-8") as fh:
             termlist = []
             for line in fh:
                 line = line.strip()
