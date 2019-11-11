@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-import simplejson as json
+import json
 
 """
 Name Variant Generator:  create as many valid name variants for popular 
@@ -67,18 +67,21 @@ def generate_GENERAL_variants(gaz, output):
     for term in general_repl:
         count=0
         output_path = '{}_{}.json'.format(output, term)
-        fh = codecs.open(output_path, 'wb', encoding="utf-8")
+        fh = open(output_path, 'w', encoding="utf-8")
         _init_json(fh)
         first = True
 
-        results = gaz.search("name:{} AND feat_class:(A P) AND id:[ * TO {}]".format(term, ORIGINALS_BLOCK), rows=500000)
+        results = gaz.search("name:{} AND feat_class:(A P)".format(term), rows=500000)
         print ("PREFIX", term, results.hits)
-        pat = u"(%s\s+)" % (term)
+        pat = "({}\s+)".format(term)
         regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
         repl = general_repl[term].capitalize()
         term_ = term + u' '
         for place in results.docs:
             n = place.get('name')
+            _id = int(place.get("id"))
+            if _id > ORIGINALS_BLOCK: continue
+
             norm = n.lower()
             if norm == term:
                 # No variant. Looking for multi-word names to make variants out of.
@@ -138,16 +141,16 @@ def generate_SAINT_variants(gaz, output):
     """
 
     output_path = '{}_{}.json'.format(output, 'SAINT')
-    fh = codecs.open(output_path, 'wb', encoding="utf-8")
+    fh = open(output_path, 'w', encoding="utf-8")
     _init_json(fh)
     first=True
 
     ignore_countries = set("TW CN JP LA VN ML PA KR KP".split())
     for saintly in saint_repl:
-        results = gaz.search("name:{} AND id:[ * TO {}]".format(saintly, ORIGINALS_BLOCK), rows=500000)
+        results = gaz.search("name:{}".format(saintly), rows=500000)
         print("PREFIX", saintly, results.hits)
         
-        pat = u"({}}[-`'\u2019\s]+)".format (saintly)
+        pat = u"({}[-`'\u2019\s]+)".format (saintly)
         regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
         repl = saint_repl[saintly].capitalize()
         term_ = '{} '.format(saintly)
@@ -155,6 +158,9 @@ def generate_SAINT_variants(gaz, output):
         print (term_)
         for place in results.docs:
             n = place.get('name')
+            _id = int(place.get("id"))
+            if _id > ORIGINALS_BLOCK: continue
+
             norm = n.lower()
             if norm == saintly:
                 # No variant. Looking for multi-word names to make variants out of.
@@ -217,7 +223,6 @@ if __name__ == "__main__":
     # tester()
     import os
     import pysolr
-    import codecs
     import argparse
     
     ap = argparse.ArgumentParser()

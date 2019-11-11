@@ -277,7 +277,7 @@ def create_entity(line, scan=False):
     parts = jrc_line_split.split(input, maxsplit=3)
     _id = parts[0]
     if _id == '0':
-        print("Ignore line? ID=0, ", input)
+        if test: print("Ignore line? ID=0, ", input)
         no_id_counter += 1
         _id = no_id_counter + NO_ID_BASE
     else:
