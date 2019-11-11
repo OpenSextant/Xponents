@@ -116,9 +116,9 @@ Using the latest Solr distribution would involve updating Maven POM, possibly, a
 reviewing Solr index configurations.
 
 ```shell script
-    wget http://archive.apache.org/dist/lucene/solr/7.4.0/solr-7.4.0.zip
-    unzip solr-7.4.0.zip
-    mv ./solr-7.4.0  ./solr7-dist
+    wget http://archive.apache.org/dist/lucene/solr/7.7.2/solr-7.7.2.zip
+    unzip solr-7.7.2.zip
+    mv ./solr-7.7.2  ./solr7-dist
 
     # We could automate this sure. But you need only do it once and hopefully is not repetitive.
 ```
@@ -188,7 +188,7 @@ that are not required by normal use of the `opensextant` package.  Add this Pip-
 
 ```shell script
 
-  pip3 install -U --target ./piplib bs4 arrow requests
+  pip3 install -U --target ./piplib lxml bs4 arrow requests
 
 ```
 

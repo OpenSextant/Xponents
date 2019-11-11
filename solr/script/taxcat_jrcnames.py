@@ -74,9 +74,14 @@ for adm1 in usstates:
 # distinct primary names act as a JRC root entry; all others would be variants
 #    That is just the convention here for demo sake.
 nameset = {}
-
+names = set([])
 # ID map -- distinct JRC IDs must be reproducible and unique for each variant.
 idset = {}
+
+jrc_line_split = re.compile("\s+")
+
+NO_ID_BASE = 800000
+no_id_counter = 0
 
 # Ambiguous phrases or noisy ones I would prefer not to tag, so
 # they are marked valid=false, but retained in the names taxonomy.
@@ -152,7 +157,7 @@ def check_validity(e):
     """
     @param e: a JRCEntity 
     """
-    phr = e.phrase.lower().replace(',', ' ')
+    phr = e.phrasenorm.replace(',', ' ')
     if phr in NOISE:
         e.is_valid = False
     return
@@ -175,15 +180,15 @@ ORG_FIXES = set(['tribunal', 'council', 'shura', 'group', 'committee', 'senate',
 
 
 class JRCEntity(Taxon):
-    def __init__(self, eid, variant_id, etype, lang, primary_name, ename):
+    def __init__(self, eid, variant_id, etype, lang, primary_name, variant):
         Taxon.__init__(self)
 
         # JRC original entity ID and type
         self.entity_id = eid
         self.entity_type = etype.upper()
         self.lang = lang
-        self.phrase = ename
-        self.phrasenorm = ename.lower()
+        self.phrase = variant
+        self.phrasenorm = variant.lower()
 
         if self.phrase in FIXES:
             self.entity_type = FIXES.get(self.phrase)
@@ -214,8 +219,13 @@ class JRCEntity(Taxon):
         self.variant_id = variant_id
         # solr record ID:
         self.id = self._make_id()
-        self.is_valid = True
-        self.is_acronym = ename.isupper() and is_ascii(ename)
+        l = len(variant)
+        # General validity
+        self.is_valid = l > 2
+        # specifically acronyms.
+        self.is_acronym = variant.isupper() and is_ascii(variant) and ' ' not in variant and l <= 12
+        if self.is_acronym:
+            print("Acronym?", variant)
 
         # taxon ID/name:
         self.name = '%s.%s' % (self.entity_type, primary_name)
@@ -253,9 +263,6 @@ entity_map = {
 }
 
 
-jrc_line_split = re.compile("\s+")
-
-
 def create_entity(line, scan=False):
     """ Create a entry for this entity that has the primary name.
     the "line" of data must be already UTF-8 or ASCII.  We avoid using a default encoding.
@@ -263,28 +270,33 @@ def create_entity(line, scan=False):
     other variants are associated.  Each variant has an entity ID, but there
     is no single primary variant to represent the entity, e.g., for presentation purposes.
     """
+    global no_id_counter
     input = line.strip()
     if not input:
         return None
     parts = jrc_line_split.split(input, maxsplit=3)
     _id = parts[0]
     if _id == '0':
-        print("Ignore line, ", input)
-        return None
+        print("Ignore line? ID=0, ", input)
+        no_id_counter += 1
+        _id = no_id_counter + NO_ID_BASE
+    else:
+        _id = int(_id)
 
     if len(parts) != 4:
         print("Must be 4 distinct whitespace-delimited fields '{}'".format(input))
         return None
 
-    name = get_text(parts[3]).replace('+', ' ').strip()
+    name = parts[3]
+    for a, b in [('+', ' '), ('&amp;', '&'), ('&quot;', '"')]:
+        name = name.replace(a, b)
+    name = name.strip().strip('!').strip(';')
     lang = parts[2]
     etype = parts[1]
 
     if not etype:
         print("No valid type; Ignoring line, ", input)
         return None
-
-    _id = int(_id)
 
     if scan:
         # if etype in other_types:
@@ -293,6 +305,12 @@ def create_entity(line, scan=False):
         lookup_id = "%s%d" % (lang, _id)
         if lookup_id not in nameset:
             nameset[lookup_id] = name
+
+        if test:
+            if name in names:
+                print("Duplicate", name, lookup_id)
+            else:
+                names.add(name)
 
         return None
 
@@ -307,11 +325,11 @@ def create_entity(line, scan=False):
 
     count = 1
     if _id in idset:
-        count = idset.get(_id)
-        count = count + 1
+        count = idset.get(_id) + 1
     idset[_id] = count
-
     variant_id = count
+    # if variant_id > 1:
+    #    print("Multiple ~ ", name)
     #
     # done with aliasing.
     #            
@@ -322,14 +340,7 @@ def create_entity(line, scan=False):
 
 if __name__ == '__main__':
     """
-    Testing Usage:  This will take upto the first 100K rows of JRC and print to console.
-        jrcnames.py   file
-
-    Actual Usage: All data will be ingested to solr-url
-        jrcnames.py   file   solr-url
-
-    To just update entries to mark as invalid for tagging:
-        jrcnames.py   file   solr-url   "invalid-only"
+    Index JRC Names entities as a lexicon useful for tagging text.
     """
     catalog_id = 'JRC'
     start_id = get_starting_id("JRC")
@@ -337,10 +348,10 @@ if __name__ == '__main__':
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument('--taxonomy', required=True)
-    ap.add_argument('--starting-id')
-    ap.add_argument('--solr')
-    ap.add_argument('--max')
+    ap.add_argument('--taxonomy', required=True, help="Taxonomy file in JRCNames format")
+    ap.add_argument('--starting-id', help="Solr index row ID start")
+    ap.add_argument('--solr', help="Solr URL for taxcat index")
+    ap.add_argument('--max', help="Max # of rows to index; for testing")
     ap.add_argument('--invalidate', action='store_true', default=False)
     ap.add_argument('--no-fixes', action='store_true', default=False)
 
@@ -385,11 +396,13 @@ if __name__ == '__main__':
             if 0 < row_max < row_id:
                 break
 
+    # Zero these counters:
     row_id = 0
+    no_id_counter = 0
     with open(args.taxonomy, 'rU', encoding="UTF-8") as fh:
         for row in fh:
-            if row.startswith("#"):
-                continue
+            if row.startswith("#") or len(row.strip()) == 0: continue
+
             node = create_entity(row)
             row_id = row_id + 1
             if not node:
