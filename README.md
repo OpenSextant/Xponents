@@ -47,14 +47,14 @@ To start using Xponents now, consider your use case:
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.2</version>
+    <version>3.2.2</version>
   </dependency>
 
   <!-- Xponents SDK API -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.2</version>
+    <version>3.2.2</version>
   </dependency>
 ```
 
