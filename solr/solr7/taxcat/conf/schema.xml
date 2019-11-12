@@ -108,11 +108,6 @@
         but ignore the beverages.anytime node 
         // ===================================================  
         -->
-        
-    <!--  TrieIntField is deprecated in Solr 7. Will disappear in Solr 8.
-          See SolrTextTagger examples where id here is a String - this likely increases FST memory used at runtime.
-          <fieldType name="int" class="solr.TrieIntField" docValues="true" precisionStep="0" positionIncrementGap="0"/>
-     -->
     <field name="id" type="string" docValues="true" required="true" />
 	<field name="_version_" type="plong" required="false" stored="true" indexed="true" />
 
