@@ -121,6 +121,8 @@ reviewing Solr index configurations.
     mv ./solr-7.7.2  ./solr7-dist
 
     # We could automate this sure. But you need only do it once and hopefully is not repetitive.
+    # NOTE If Solr 8.x is in use, the distro is ./solr8-dist.  Differences from Solr 7 to Solr 8 are still being 
+    # investigated.
 ```
 
 

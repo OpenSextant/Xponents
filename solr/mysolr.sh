@@ -1,6 +1,6 @@
 #!/bin/bash
 # Use Installed Solr $SOLR_INSTALL
-SOLR_INSTALL=./solr7-dist
+SOLR_INSTALL=./solr8-dist
 SOLR_HOME=./solr7
 
 PORT=$2
