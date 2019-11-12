@@ -2,7 +2,8 @@
 #
 #
 VER=3.2
-BUILD_VER=3.2.1
+BUILD_VER=3.2.2
+SOLR_DIST=./solr7-dist
 
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
@@ -14,7 +15,7 @@ unset PYTHONPATH
 
 pushd $basedir/python
 rm -rf ./dist/*
-python2 ./setup.py sdist
+python3 ./setup.py sdist
 
 pushd $basedir/script
 
@@ -23,10 +24,12 @@ ant -f ./dist.xml package-dist
 REL=$basedir/dist/Xponents-$VER
 find $REL -type f -name "*.sh" -exec chmod u+x {} \; -print
 
-for f in $REL/xponents-solr/solr7-dist/bin/post \
-	$REL/xponents-solr/solr7-dist/bin/solr ; do
+for f in $REL/xponents-solr/solr*-dist/bin/post \
+	$REL/xponents-solr/solr*-dist/bin/solr ; do
   chmod u+x $f
 done 
+
+rm -rf $REL/xponents-solr/solr*-dist/server/logs/*
 
 rm $REL/script/dist.* 
 cp -r $basedir/Examples/Docker ./dist/
@@ -34,8 +37,8 @@ cp -r $basedir/Examples/Docker ./dist/
 cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER
 Date:      `date`
-Gazetteer: Xponents Solr 2019-Q3
-  Sources: NGA,  2019-MAY
-           USGS, 2019-MAY
+Gazetteer: Xponents Solr 2019-Q4
+  Sources: NGA,  2019-NOV
+           USGS, 2019-NOV
 EOF
 

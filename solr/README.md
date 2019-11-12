@@ -118,7 +118,10 @@ reviewing Solr index configurations.
 ```shell script
     wget http://archive.apache.org/dist/lucene/solr/7.7.2/solr-7.7.2.zip
     unzip solr-7.7.2.zip
-    mv ./solr-7.7.2  ./solr7-dist
+    SOLR_DIST=./solr7-dist
+    mv ./solr-7.7.2  $SOLR_DIST
+
+    rm -rf $SOLR_DIST/example $SOLR_DIST/server/solr/configsets $SOLR_DIST/contrib $SOLR_DIST/dist/test-framework
 
     # We could automate this sure. But you need only do it once and hopefully is not repetitive.
     # NOTE If Solr 8.x is in use, the distro is ./solr8-dist.  Differences from Solr 7 to Solr 8 are still being 
