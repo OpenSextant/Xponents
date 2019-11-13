@@ -2,6 +2,8 @@
 Xponents Python Data: see comparable classes in Xponents Basics data pkg in Java.
 """
 
+from math import sqrt, sin, cos, radians, atan2
+
 
 class Country:
     """  Country metadata
@@ -34,11 +36,42 @@ def validate_lon(f):
     return (f >= -180.0) and (f <= 180.0)
 
 
+def distance_cartesian(x1, y1, x2, y2):
+    """
+        Given X1, Y1 and X2, Y2 provide the 2-D Cartesian distance between two points.
+    """
+    xdist = x2 - x1
+    ydist = y2 - y1
+    return sqrt(xdist * xdist + ydist * ydist)
+
+
+EARTH_RADIUS_WGS84 = 6378  # KM,  True: 6378.137
+
+
+def distance_haversine(ddlon1, ddlat1, ddlon2, ddlat2):
+    """
+    Returns distance in kilometers for given decimal degree Lon/Lat (X,Y) pair
+
+    http://www.movable-type.co.uk/scripts/latlong.html
+    """
+    lat1 = radians(ddlat1)
+    lon1 = radians(ddlon1)
+    lat2 = radians(ddlat2)
+    lon2 = radians(ddlon2)
+    dLat = lat2 - lat1
+    dLon = lon2 - lon1
+    a = (sin(dLat / 2) * sin(dLat / 2)) + (cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2))
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    d = EARTH_RADIUS_WGS84 * c
+    return d
+
+
 class Coordinate:
-    """ Convenient class for Lat/Lon pair.
-        Expects a row dict with 'lat' and 'lon', 
-        or kwd args 'lat', 'lon'
-        @param row default dictionary 
+    """
+    Convenient class for Lat/Lon pair.
+    Expects a row dict with 'lat' and 'lon',
+    or kwd args 'lat', 'lon'
+    @param row default dictionary
     """
 
     def __init__(self, row, lat=None, lon=None):
@@ -46,6 +79,8 @@ class Coordinate:
         self.X = 0.0
         self.Y = 0.0
         self.mgrs = None
+        self.lat = self.Y
+        self.lon = self.X
 
         if row:
             if 'lat' in row and 'lon' in row:
@@ -53,16 +88,17 @@ class Coordinate:
                 lon = row['lon']
 
         if lat and lon:
-            self.X = float(lon)
-            self.Y = float(lat)
-
+            self.set(lat, lon)
 
     def validate(self):
         return validate_lat(self.Y) and validate_lon(self.X) and (self.X != 0.0 and self.Y != 0.0)
 
     def set(self, lat, lon):
+        """ Set the location lat, lon"""
         self.X = float(lon)
         self.Y = float(lat)
+        self.lat = self.Y
+        self.lon = self.X
 
     def __str__(self):
         if self.Y:
