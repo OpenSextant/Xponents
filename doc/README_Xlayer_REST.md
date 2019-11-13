@@ -116,6 +116,7 @@ INPUT:
 * `text`  - UTF-8 text buffer
 * `features` - comma-separated string of features which will vary by app.  XponentsGeotagger (default app) class supports: 
    * `places, coordinates, countries` or `geo` to refer to all of those geographic entities
+   * `patterns` - configured patterns. By default only date/time patterns are detected and normalized. 
    * `persons`, `orgs`, `taxons` to refer to those non-geo entities.  
    * `filtered_out` will turn on noisy entities that were filtered out for some reason. The default is not return filtered-out items.
    
