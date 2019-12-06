@@ -28,5 +28,5 @@ Leave off `--detach` if you want to see console.
 Use `docker logs NAME` to see the console, if it was a detached run. NAME is the docker container "--name" argument.
 
 ```
-docker run -p 8888:8888,7000:7000 -e XLAYER_PORT=8888 --name xponents--rm --detach  opensextant:xponents-3.2
+docker run -p 8888:8888 -p 7000:7000 -e XLAYER_PORT=8888 --name xponents --rm --detach  opensextant:xponents-3.2
 ```
