@@ -30,20 +30,26 @@ Leave off `--detach` if you want to see console.
 Use `docker logs NAME` to see the console, if it was a detached run. NAME is the docker container "--name" argument.
 
 ```sh
-docker run -p 8888:8888 -p 7000:7000 -e XLAYER_PORT=8888 --name xponents --rm --detach  opensextant:xponents-3.2
+
+docker run -p 8888:8888 -p 7000:7000 -e XLAYER_PORT=8888 \
+      --name xponents --rm --detach  opensextant:xponents-3.2
+      
 ```
 
 **Run Gazeteeer:**
 
 ```sh
-docker exec -it xponents /bin/bash -c "cd ./xponents-solr && ./solr7-dist/bin/solr start -p 7000 -s ./solr7 -m 3g -q -force"
+
+docker exec -it xponents /bin/bash -c \
+   "cd ./xponents-solr && ./solr7-dist/bin/solr start -p 7000 -s ./solr7 -m 3g -q -force"
+
 ```
 
-Now that you have the Gazetteer running, you can query this in various ways:
+Now that you have the Gazetteer running, you can query this in various ways below.  But first consult the [Gazetteer demo service](https://github.com/OpenSextant/Xponents/blob/master/Examples/doc/README_gazetteer.md) to see example queries.
 
-* Python client, as illustrated by `gazetteer.py`: https://github.com/OpenSextant/Xponents/blob/master/Examples/script/gazetteer.py, which requires the service URL as the `--solr URL` argument.
-* Java API, as illustrated in the Xponents demo in the SDK: `./script/xponents-demo.sh gazetteer --help`. This does not need to the Solr server running; just listing this here for completeness.
-* Direct Solr Gazetteer access, which provides a standard Solr search experience. For example in this example the query is getting at "places with Boston in the name, within 50KM of the lat/lon (40, -71), listing results as CSV":
+* **Python client**, as illustrated by `gazetteer.py`: https://github.com/OpenSextant/Xponents/blob/master/Examples/script/gazetteer.py, which requires the service URL as the `--solr URL` argument.
+* **Java API**, as illustrated in the Xponents demo in the SDK: `./script/xponents-demo.sh gazetteer --help`. This does not need to the Solr server running; just listing this here for completeness.
+* **Direct Solr Gazetteer access**, which provides a standard Solr search experience. For example in this example the query is getting at "places with Boston in the name, within 50KM of the lat/lon (40, -71), listing results as CSV":
 http://localhost:7000/solr/gazetteer/select?q=name%3ABoston%20AND%20{!geofilt%20sfield=geo%20d=50%20pt=40.0,-71.0}&wt=csv
 
 
