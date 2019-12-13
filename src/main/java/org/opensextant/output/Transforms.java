@@ -28,6 +28,9 @@ public class Transforms {
      * 
      * @param data
      * @return TextMatch object represented by json annotation
+     * @see org.opensextant.annotations.AnnotationHelper utility and package. This Annotation approach is more general 
+     * with respect to the data model overall.  This Transforms utility is about transforming matches directly to JSON output
+     * ready for RESTful response. 
      */
     public static TextMatch parseAnnotation(Object data) {
         if (!(data instanceof JsonObject)) {

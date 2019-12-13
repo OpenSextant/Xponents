@@ -64,6 +64,8 @@ import jodd.json.JsonObject;
  *   operations, consider filtering out such things before you store them blindly.
  * </pre>
  * 
+ * @see org.opensextant.output.Transform in SDK: this utility class offers more ideas on standard JSON representations for REST.
+ *    whereas this utility is aimed at a more reliable pure representation of the match data for storing/retrieving from a data store. 
  * @author ubaldino
  * 
  */
@@ -502,7 +504,7 @@ public class AnnotationHelper {
     /**
      * Returns an instance of a Country object using annotation value as country name, and attr[cc]
      * optionally as code. This does not reproduce a full Country object as if queried from
-     * {@see org.opensextant.util.GeonamesUtility#getCountry(String)}
+     * @see org.opensextant.util.GeonamesUtility#getCountry(String)
      * 
      * @param a annot
      * @return the country
