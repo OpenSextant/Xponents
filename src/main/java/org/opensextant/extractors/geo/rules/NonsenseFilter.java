@@ -62,6 +62,9 @@ public class NonsenseFilter extends GeocodeRule {
     @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate p : names) {
+            if (p.isValid()) {
+                continue;
+            }
             if (irregularPunctPatterns(p.getText())) {
                 p.setFilteredOut(true);
                 p.addRule("Nonsense,Punct");
