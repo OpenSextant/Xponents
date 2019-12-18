@@ -334,8 +334,8 @@ public class TestXCoord {
                 // DMS07#12  -- 12th example of DMS07 test.
                 //
                 GeocoordTestCase tst = new GeocoordTestCase(patid + "#" + linenum, fam, text);
-                tst.match.setLatitude(testRow.get("true_lat"));
-                tst.match.setLongitude(testRow.get("true_lon"));
+                tst.getGeo().setLatitude(testRow.get("true_lat"));
+                tst.getGeo().setLongitude(testRow.get("true_lon"));
                 tst.setRemarks(rmks);
 
                 TextMatchResult results = xcoord.extract_coordinates(tst.text, tst.id);

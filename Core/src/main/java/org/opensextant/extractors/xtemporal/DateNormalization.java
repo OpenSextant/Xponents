@@ -35,32 +35,34 @@ public class DateNormalization {
     static final int MILLENIUM = 2000;
     static final int CURRENT_YY = YEAR - MILLENIUM;;
     static final int FUTURE_YY_THRESHOLD = CURRENT_YY + 2;
-    static final int MAXIMUM_YEAR = 2025;
+    static final int MAXIMUM_YEAR = 2030;
 
     // Use of year "15" would imply 1915 in this case.
     // Adjust 2-digit year threshold as needed.
     // Java default is 80/20.  2000 - 2032 is the assumed year for "00" through "32"
     // "33" is 1933
     //
-    /**
-     *
+
+    /** 
      */
     public static int INVALID_DATE = -1;
-    /**
-     *
+    /** 
      */
-    public static int NO_YEAR = -1;
+    public static int INVALID_DAY = -2;
     /**
-     *
      */
-    public static int NO_MONTH = -1;
+    public static int NO_YEAR = -3;
     /**
-     *
      */
-    public static int NO_DAY = -1;
+    public static int NO_MONTH = -4;
+    /**
+     */
+    public static int NO_DAY = -5;
     static final DateTimeFormatter fmt_month = DateTimeFormat.forPattern("MMM").withZoneUTC();
     static final DateTimeFormatter fmt_mm = DateTimeFormat.forPattern("MM").withZoneUTC();
     static final DateTimeFormatter fmt_ydm = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC();
+
+    static final String DATE_SEP = "-./";
 
     /**
      * Format_date.
@@ -92,13 +94,12 @@ public class DateNormalization {
      #DEFINE LONG_TZ     [A-Z]{3,5}
      */
     /**
-     * For now this reports only DATE and standard TIME fields. Timezone is
-     * still TODO.
+     * For now this reports only DATE and standard TIME fields. Timezone is still TODO.
      * 
      * TODO: throw NormalizationException
      *
-     * @param elements  pattern fields
-     * @param dt found date
+     * @param elements pattern fields
+     * @param dt       found date
      * @throws ParseException the parse exception
      */
     public static void normalize_date(java.util.Map<String, String> elements, DateMatch dt) throws ParseException {
@@ -124,11 +125,28 @@ public class DateNormalization {
             return;
         }
 
+        /*
+         * Ensure consistency of DATE separators, for example avoid dates "14.15/22" 
+         */
+        String sep1 = elements.get("DSEP1");
+        String sep2 = elements.get("DSEP2");
+        if (sep1 != null && sep2 != null) {
+            if (!sep1.equals(sep2)) {
+                return;
+            }
+        }
+
         DateTime _cal = new DateTime(year, month, 1, 0, 0, DateTimeZone.UTC);
 
         dt.resolution = DateMatch.TimeResolution.MONTH;
 
         int dom = normalize_day(elements);
+        if (dom == INVALID_DAY) {
+            // Typo?
+            dt.resolution = DateMatch.TimeResolution.DAY;
+            dt.setFilteredOut(true);
+            return;
+        }
         // If you got this far, then assume Day of Month is 1 (first of the month)
         if (dom == INVALID_DATE) {
             // No date found, resolution is month
@@ -210,11 +228,10 @@ public class DateNormalization {
     }
 
     /**
-     * Given a field hh, mm, or ss, get field from map and normalize/validate
-     * the value.
+     * Given a field hh, mm, or ss, get field from map and normalize/validate the value.
      *
      * @param elements the elements
-     * @param tmField the tm field
+     * @param tmField  the tm field
      * @return the int
      */
     public static int normalize_time(java.util.Map<String, String> elements, String tmField) {
@@ -381,14 +398,14 @@ public class DateNormalization {
         }
 
         // How long is a month name really?  May is shortest, Deciembre or September are longest.
-        if (text.length() < 3 || text.length() > 10) {
+        if (text.length() < 3 || text.length() > 11) {
             return INVALID_DATE;
         }
 
         // TODO: Standardize on month trigraph, e.g. ,DEC can get DECEMBER or DECIEMBRE
         // False positivies:  "market 19" is not "mar 19" or "march 19"
         //
-        DateTime mon = fmt_month.parseDateTime(text /*.substring(0, 3)*/);
+        DateTime mon = fmt_month.parseDateTime(text.substring(0, 3));
         return mon.getMonthOfYear();
     }
 
@@ -401,21 +418,20 @@ public class DateNormalization {
     public static int normalize_day(java.util.Map<String, String> elements) {
         int day = INVALID_DATE;
 
+        // DOM, DD -- are numeric slots, that should be valid 1-12
         if (elements.containsKey("DOM")) {
-            // DOM, DD -- numeric
-            int dom = getIntValue(elements.get("DOM"));
-            if (dom != INVALID_DATE) {
-                day = dom;
-            }
+            day = getIntValue(elements.get("DOM"));
         } else if (elements.containsKey("DD")) {
             int dd = getIntValue(elements.get("DD"));
             if (dd != INVALID_DATE) {
                 day = dd;
             }
         }
-
-        if (day <= 31 && day >= 0) {
+        if (day > 0 && day <= 31) {
             return day;
+        }
+        if (day==0 || day >31) {
+            return INVALID_DAY;
         }
 
         return INVALID_DATE;

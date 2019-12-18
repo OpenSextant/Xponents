@@ -135,8 +135,8 @@ public class TestXCoordReporter {
         row.put(header[0], t.id);
         row.put(header[1], t.family);
         row.put(header[2], t.true_positive);
-        row.put(header[3], t.match.getLatText());
-        row.put(header[4], t.match.getLonText());
+        row.put(header[3], t.getGeo().getLatText());
+        row.put(header[4], t.getGeo().getLonText());
         row.put(header[5], t.text);
 
         return row;

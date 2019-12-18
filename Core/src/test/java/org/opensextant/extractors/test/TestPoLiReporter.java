@@ -129,7 +129,7 @@ public class TestPoLiReporter {
     public void test() throws IOException {
 
     	poli.enableAll();
-        createResultsFile("results/test_System.csv");
+        createResultsFile("results/poli_System.csv");
 
         // List<TextMatch> allResults = new ArrayList<>();
         log.info("TESTING ALL SYSTEM PATTERNS");

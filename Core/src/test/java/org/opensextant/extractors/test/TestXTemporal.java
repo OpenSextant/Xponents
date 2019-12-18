@@ -1,6 +1,9 @@
 package org.opensextant.extractors.test;
 
+import java.util.List;
+
 import org.opensextant.ConfigException;
+import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.extractors.xtemporal.XTemporal;
@@ -22,10 +25,31 @@ public class TestXTemporal {
         systemTests();
     }
 
+    public void userTest(String text) {
+
+        log.info("=== INTERACTIVE TESTS START ===");
+        log.info("INPUT:\n"+text);
+        xdt.enableAll();
+
+        List<TextMatch> results = xdt.extract(text);
+        //results.add_trace("Test Payload: " + text);
+
+        if (results.isEmpty()) {
+            log.info("Nada.");
+        } else {
+            log.info("OUTPUT: " + results.size() + " FOUND.");
+            for (TextMatch m:results) {
+                log.info(m.toString() + " valid return "+!m.isFilteredOut());
+            }
+        }
+        log.info("=== INTERACTIVE TEST DONE ===");
+
+    }
+
     /**
      */
     public void adhocTests() {
-        log.info("=== SYSTEM TESTS START ===");
+        log.info("=== ADHOC TESTS START ===");
         xdt.enableAll();
 
         //xdt.match_MonDayYear(true);
@@ -48,7 +72,7 @@ public class TestXTemporal {
                     continue;
                 }
 
-                log.info("=========SYSTEM TEST " + count + " FOUND:"
+                log.info("=========AHDOC TEST " + count + " FOUND:"
                         + (results.matches == null ? "NOTHING" : results.matches.size()));
                 tester.save_result(results);
 
@@ -59,7 +83,7 @@ public class TestXTemporal {
             log.error("Not finishing tests", err);
             return;
         }
-        log.info("=== SYSTEM TESTS DONE ===");
+        log.info("=== ADHOC TESTS DONE ===");
 
     }
 
@@ -88,7 +112,7 @@ public class TestXTemporal {
 
                 log.info("=========SYSTEM TEST " + tst.id + " FOUND:"
                         + (results.matches == null ? "NOTHING" : results.matches.size()));
-                tester.save_result(results);
+                tester.save_result(results, tst);
 
             }
             tester.close_report();
@@ -120,9 +144,10 @@ public class TestXTemporal {
         xdt = new XTemporal(debug);
         boolean systemTest = false;
         boolean adhocTest = false;
+        String userText = null;
 
         try {
-            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XTemporal", args, "fa");
+            gnu.getopt.Getopt opts = new gnu.getopt.Getopt("XTemporal", args, "fat:");
             int c;
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
@@ -131,6 +156,9 @@ public class TestXTemporal {
                     break;
                 case 'a':
                     adhocTest = true;
+                    break;
+                case 't':
+                    userText = opts.getOptarg();
                     break;
                 default:
                     usage();
@@ -153,6 +181,9 @@ public class TestXTemporal {
             if (adhocTest) {
                 System.out.println("\tADHOC TESTS=======\n");
                 test.adhocTests();
+            }
+            if (userText != null) {
+                test.userTest(userText);
             }
         } catch (ConfigException exErr) {
             exErr.printStackTrace();

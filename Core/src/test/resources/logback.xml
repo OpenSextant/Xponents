@@ -16,9 +16,9 @@
     </logger>
     <logger name="org.opensextant.extractors" level="info">
     </logger>
-    <logger name="org.opensextant.extractors.xtemporal" level="info">
+    <logger name="org.opensextant.extractors.xtemporal" level="debug">
     </logger>
-    <logger name="org.opensextant.extractors.xcoord" level="info">
+    <logger name="org.opensextant.extractors.xcoord" level="debug">
     </logger>
     <logger name="org.opensextant.extractors.poli" level="debug">
     </logger>

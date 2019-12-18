@@ -40,4 +40,5 @@ public class TestCase extends PatternTestCase {
     public TestCase(String id, String fam, String text){
         super(id, fam, text);
     }
+
 }

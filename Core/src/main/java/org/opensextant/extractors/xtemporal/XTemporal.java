@@ -47,8 +47,9 @@ import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 
 /**
- * Date/Time pattern extractor -- detects, parses, normalizes dates. 
- * Found date/time are DateMatch (TextMatch) objects
+ * Date/Time pattern extractor -- detects, parses, normalizes dates. Found date/time are DateMatch
+ * (TextMatch) objects
+ * 
  * @author ubaldino
  */
 public class XTemporal extends AbstractFlexPat {
@@ -57,18 +58,18 @@ public class XTemporal extends AbstractFlexPat {
     public static final String DEFAULT_XTEMP_CFG = "/datetime_patterns.cfg";
 
     /**
-     * Application constants -- note the notion of TODAY is relative to the caller's notion of TODAY.
-     * If you are processing data from the past but have a sense of what TODAY is, then when found dates fall on either
-     * side of that they will be relative PAST and relative FUTURE.
+     * Application constants -- note the notion of TODAY is relative to the caller's notion of TODAY. If
+     * you are processing data from the past but have a sense of what TODAY is, then when found dates
+     * fall on either side of that they will be relative PAST and relative FUTURE.
      */
     public static Date TODAY = new Date();
-    
+
     /** The today epoch. */
     public static long TODAY_EPOCH = TODAY.getTime();
 
     /** The Constant JAVA_0_DATE_YEAR. */
     public static final int JAVA_0_DATE_YEAR = 1970;
-    
+
     /** The Constant ONE_YEAR_MS. */
     public static final long ONE_YEAR_MS = 365L * 24L * 3600L * 1000L;
 
@@ -90,7 +91,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     *  XTemporal ctor
+     * XTemporal ctor
      *
      * @param debugmode true if debugging
      */
@@ -107,8 +108,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     @Override
-    protected RegexPatternManager createPatternManager(InputStream strm, String name)
-            throws IOException {
+    protected RegexPatternManager createPatternManager(InputStream strm, String name) throws IOException {
         patterns_file = name;
         PatternManager mgr = new PatternManager(strm, patterns_file);
         mgr.testing = debug;
@@ -116,8 +116,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * Support the standard Extractor interface. This provides access to the
-     * most common extraction;
+     * Support the standard Extractor interface. This provides access to the most common extraction;
      *
      * @param input text
      * @return list of TextMatch
@@ -129,8 +128,7 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * Support the standard Extractor interface. This provides access to the
-     * most common extraction;
+     * Support the standard Extractor interface. This provides access to the most common extraction;
      *
      * @param input_buf text
      * @return list of TextMatch
@@ -142,10 +140,9 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * A direct call to extract dates; which is useful for diagnostics and
-     * development/testing.
+     * A direct call to extract dates; which is useful for diagnostics and development/testing.
      *
-     * @param text text
+     * @param text    text
      * @param text_id text ID
      * @return TextMatchResult, a wrapper around a list of TextMatch
      */
@@ -281,8 +278,8 @@ public class XTemporal extends AbstractFlexPat {
 
     /**
      * This is a very subjective topic -- if a date is distant past or not is relative to your context
-     * If you use the DateMatch flags for distant past and future, then you are likely going to want to set Today and
-     * Distant Past Year
+     * If you use the DateMatch flags for distant past and future, then you are likely going to want to
+     * set Today and Distant Past Year
      */
     private static int DISTANT_PAST_YEAR = 1950;
     private static long DISTANT_PAST_THRESHOLD = (DISTANT_PAST_YEAR - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;

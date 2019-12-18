@@ -26,16 +26,6 @@ public class GeocoordTestCase extends PatternTestCase {
 
     /**
      *
-     */
-    public GeocoordMatch match = null;
-
-    /**
-     *
-     */
-    public String remarks = null;
-
-    /**
-     *
      * @param _id
      * @param _family
      * @param _text
@@ -48,15 +38,7 @@ public class GeocoordTestCase extends PatternTestCase {
         this.match = new GeocoordMatch();
     }
 
-    /**
-     *
-     * @param rmks
-     */
-    public void setRemarks(String rmks) {
-        remarks = rmks;
-        if (rmks != null && rmks.toLowerCase().contains("fail")) {
-            this.true_positive = false;
-        }
-
+    public GeocoordMatch getGeo() {
+        return (GeocoordMatch) this.match;
     }
 }

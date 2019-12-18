@@ -16,6 +16,8 @@
  */
 package org.opensextant.extractors.flexpat;
 
+import org.opensextant.extraction.TextMatch;
+
 /**
  *
  * @author ubaldino
@@ -44,15 +46,35 @@ public class PatternTestCase {
     public boolean true_positive = true;
 
     /**
+    *
+    */
+    public TextMatch match = null;
+    /**
+    *
+    */
+    public String remarks = null;
+
+    /**
      *
-     * @param _id pattern identifier
-     * @param _family  family of pattern
+     * @param _id     pattern identifier
+     * @param _family family of pattern
      * @param _text   text for test case
      */
-    public PatternTestCase(String _id, String _family, String _text){
+    public PatternTestCase(String _id, String _family, String _text) {
 
         this.id = _id;
         this.family = _family;
         this.text = _text;
+    }
+
+    /**
+     * Set the test remarks and IFF the word "fail" is in the comment, the test is indicated as a true negative.
+     * @param rmks
+     */
+    public void setRemarks(String rmks) {
+        remarks = rmks;
+        if (rmks != null && rmks.toLowerCase().contains("fail")) {
+            this.true_positive = false;
+        }
     }
 }

@@ -7,7 +7,7 @@ import org.opensextant.data.Language;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 
-public class langid_util {
+public class TestLangIDUtility {
 
     public static void print(String m) {
         System.out.println(m);

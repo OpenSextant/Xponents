@@ -25,14 +25,6 @@ import org.opensextant.extractors.flexpat.PatternTestCase;
  */
 public class TestCase extends PatternTestCase {
 
-    /**
-     *
-     */
-    public TextMatch match = null;
-    /**
-     *
-     */
-    public String remarks = null;
 
     /**
      *
@@ -41,21 +33,7 @@ public class TestCase extends PatternTestCase {
      * @param _text
      */
     public TestCase(String _id, String _family, String _text) {
-
         super(_id, _family, _text);
-
         this.match = new TextMatch();
-    }
-
-    /**
-     *
-     * @param rmks
-     */
-    public void setRemarks(String rmks) {
-        remarks = rmks;
-        if (rmks != null && rmks.toLowerCase().contains("fail")) {
-            this.true_positive = false;
-        }
-
     }
 }
