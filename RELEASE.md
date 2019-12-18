@@ -25,9 +25,13 @@ RELEASES
 
 # 2019 
 
+**Xponents 3.3.0 Holly Jolly**
+* Holiday 2019 release: Date/time pattern detection and normalization improvements.  
+* Python API improvements, mainly converting `XlayerClient` to return array of `TextMatch` objects, rather than raw python dicts.
+* Minor gazetteer improvements
+
 **Xponents 3.2.1 Dead of Night** 
 * Halloween 2019: script simplification, CLASSPATH and other cleanup.  XCoord: Reduced ambiguity in some DM vs. DMS patterns
-
 
 **Xponents 3.2.0 Dead Heat**
 * July 2019: Refactoring to split a lighter-weight "Core API" from the heavier, more involved tagger SDK

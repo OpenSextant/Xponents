@@ -64,7 +64,7 @@ import jodd.json.JsonObject;
  *   operations, consider filtering out such things before you store them blindly.
  * </pre>
  * 
- * @see org.opensextant.output.Transform in SDK: this utility class offers more ideas on standard JSON representations for REST.
+ * SEE ALSO: Xponents SDK class org.opensextant.output.Transform: this utility class offers more ideas on standard JSON representations for REST.
  *    whereas this utility is aimed at a more reliable pure representation of the match data for storing/retrieving from a data store. 
  * @author ubaldino
  * 

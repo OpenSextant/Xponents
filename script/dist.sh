@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 #
-VER=3.2
-BUILD_VER=3.2.2
+VER=3.3
+BUILD_VER=3.3.0
 SOLR_DIST=./solr7-dist
 
 script=`dirname $0;`
@@ -32,12 +32,12 @@ done
 rm -rf $REL/xponents-solr/solr*-dist/server/logs/*
 
 rm $REL/script/dist.* 
-cp -r $basedir/Examples/Docker ./dist/
+cp $basedir/Examples/Docker/* $REL/
 
 cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER
 Date:      `date`
-Gazetteer: Xponents Solr 2019-Q4
+Gazetteer: Xponents Solr 2020-Q1
   Sources: NGA,  2019-NOV
            USGS, 2019-NOV
 EOF
