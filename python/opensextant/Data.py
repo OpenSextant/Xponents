@@ -25,8 +25,17 @@ class Country:
         self.lon = 0
 
     def __str__(self):
-        return u'%s (%s)' % (self.name, self.cc_iso2)
+        return u'{} ({})'.format(self.name, self.cc_iso2)
 
+
+def format_coord(lat, lon):
+    """
+    2.6, 3.6 format.
+    :param lat: latitude
+    :param lon: longitude
+    :return: string
+    """
+    return '{:2.6f}, {:3.6f}'.format(float(lat), float(lon))
 
 def validate_lat(f):
     return (f >= -90.0) and (f <= 90.0)
@@ -102,7 +111,7 @@ class Coordinate:
 
     def __str__(self):
         if self.Y:
-            return '%3.4f, %3.4f' % (self.Y, self.X)
+            return format_coord(self.Y, self.X)
         else:
             return 'unset'
 
@@ -151,9 +160,7 @@ class Place(Coordinate):
         self.hierarchical_path = None
 
     def has_coordinate(self):
-        if self.validate():
-            return self.Y != 0 and self.X != 0
-        return False
+        return self.validate()
 
     def get_location(self):
         """ Returns (LAT, LON) tuple
@@ -165,8 +172,4 @@ class Place(Coordinate):
         self.set(lat, lon)
 
     def __str__(self):
-        crd = 'Unset'
-        if self.Y:
-            crd = '%3.4f, %3.4f' % (self.Y, self.X)
-        meta = '%s (%s), %s' % (self.name, self.place_id, self.country_code)
-        return ', '.join([meta, crd])
+        return '{}, {} @({})'.format(self.name, self.country_code, format_coord(self.Y, self.X))

@@ -9,6 +9,7 @@ history: py3.5+ json is as good or better than simplejson
 import requests
 import json
 from opensextant.Extraction import TextMatch
+from opensextant.Data import Place
 
 
 class XlayerClient:
@@ -22,17 +23,27 @@ class XlayerClient:
         self.debug = False
         self.default_options = options
 
-    def stop(self):
-        response = requests.get("%s?cmd=stop" % (self.server))
+    def stop(self, timeout=30):
+        """
+        Timeout of 30 seconds is used here so calls do not hang indefinitely.
+        :return: True if successful.
+        """
+        response = requests.get("{}?cmd=stop".format (self.server), timeout=timeout)
         if response.status_code != 200:
             return response.raise_for_status()
+        return True
 
-    def ping(self):
-        response = requests.get("%s?cmd=ping" % (self.server))
+    def ping(self, timeout=30):
+        """
+        Timeout of 30 seconds is used here so calls do not hang indefinitely.
+        :return: True if successful.
+        """
+        response = requests.get("{}?cmd=ping".format (self.server), timeout=timeout)
         if response.status_code != 200:
             return response.raise_for_status()
+        return True
 
-    def process(self, docid, text, features=["geo"]):
+    def process(self, docid, text, features=["geo"], timeout=10):
         """
         Process text, extracting some entities
 
@@ -55,13 +66,15 @@ class XlayerClient:
         :param docid: identifier of transaction
         :param text: Unicode text to process
         :param features: list of places, coordinates, countries, orgs, persons, patterns
+        :param timeout: default to 10 seconds; If you think your processing takes longer,
+                 adjust if you see exceptions.
         :return: array of TextMatch objects or empty array.
         """
         json_request = {'docid': docid, 'text': text, 'options': self.default_options}
         if features:
             json_request['features'] = ','.join(features)
 
-        response = requests.post(self.server, json=json_request)
+        response = requests.post(self.server, json=json_request, timeout=timeout)
         if response.status_code != 200:
             return response.raise_for_status()
 
@@ -83,14 +96,16 @@ class XlayerClient:
                 annots.append(tm)
                 if self.debug:
                     print("Match '{}' at char offset {}".format(tm.text, tm.start))
-                    if 'lat' in a:
-                        print("\trepresenting geo location (%2.4f, %3.4f)" % (a.get('lat'), a.get('lon')))
+                    if 'lat' in tm.attrs:
+                        geo = Place(None, tm.text, lat=tm.attrs.get('lat'), lon=tm.attrs.get('lon'))
+                        print("\trepresenting location: {}".format(str(geo)))
 
         return annots
 
 
 if __name__ == '__main__':
     import os
+    import sys
     from traceback import format_exc
     import argparse
 
@@ -105,6 +120,12 @@ if __name__ == '__main__':
     args = ap.parse_args()
     xtractor = XlayerClient(args.service_url)
     xtractor.debug = args.debug
+    print("Ping server (timeout=5s)....")
+    try:
+        xtractor.ping(timeout=5)
+    except Exception as err:
+        print(str(err))
+        sys.exit(1)
 
     # ======================================
     # Support for arbitrary amounts of text
@@ -157,7 +178,3 @@ if __name__ == '__main__':
                     print(a)
         except Exception as err:
             print(format_exc(limit=5))
-
-    # Testing:
-    # xtractor.ping()
-    # xtractor.stop()
