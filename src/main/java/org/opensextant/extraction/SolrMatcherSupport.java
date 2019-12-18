@@ -190,7 +190,7 @@ public abstract class SolrMatcherSupport implements Closeable {
             StreamingResponseCallback callback = tagRequest.getStreamingResponseCallback();
             callback.streamDocListInfo(docList.getNumFound(), docList.getStart(), docList.getMaxScore());
             for (SolrDocument solrDoc : docList) {
-                /**
+                /*
                  * This appears to be an empty list; what is this explicit
                  * callback loop for?
                  */
