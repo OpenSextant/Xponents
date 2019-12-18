@@ -82,9 +82,9 @@ class XlayerClient:
                 tm.populate(a)
                 annots.append(tm)
                 if self.debug:
-                    print("Match", a['matchtext'], "at char offset", a['offset'])
+                    print("Match '{}' at char offset {}".format(tm.text, tm.start))
                     if 'lat' in a:
-                        print("representing geo location (%2.4f, %3.4f)" % (a.get('lat'), a.get('lon')))
+                        print("\trepresenting geo location (%2.4f, %3.4f)" % (a.get('lat'), a.get('lon')))
 
         return annots
 

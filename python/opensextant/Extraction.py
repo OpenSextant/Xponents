@@ -122,13 +122,14 @@ class TextMatch(TextEntity):
         self.label = attrs.get("type")
         self.attrs = attrs
         self.filtered_out = get_bool(self.attrs.get("filtered-out"))
-        if "length" in self.attrs:
-            self.len = self.attrs.get("length")
+        for k in ['len', 'length']:
+            if k in self.attrs:
+                self.len = self.attrs.get(k)
         if self.len is not None and self.start >= 0 and not self.end:
             self.end = self.start + self.len
 
         # Remove attribute keys that may be confusing.
-        for fld in ['offset', 'start', 'end', 'length', 'type', 'filtered-out', 'text', 'matchtext']:
+        for fld in ['offset', 'start', 'end', 'len', 'length', 'type', 'filtered-out', 'text', 'matchtext']:
             if fld in self.attrs:
                 del self.attrs[fld]
 
