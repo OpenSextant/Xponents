@@ -71,8 +71,9 @@ index_gazetteer () {
   echo "Alter some entries"
   # custom fixes: 'Calif.' abbreviation is not coded properly.
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<delete><query>name_tag:calif+AND+cc:US+AND+adm1:06</query></delete>"
+  # ADHOC gazetter offers "washington dc" which confuses things.
+  curl --noproxy localhost "$SOLR_URL/update?stream.body=<delete><query>name:%22washington+dc%22+AND+place_id:(USGS531871+USGS1702382)</query></delete>"
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit/>"
-
   echo "Add some others"
   curl --noproxy localhost  "$SOLR_URL/update?commit=true" \
    -H Content-type:application/json --data-binary @$GAZ_CONF/additions/adhoc-US-city-nicknames.json

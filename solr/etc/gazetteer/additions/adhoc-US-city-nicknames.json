@@ -187,23 +187,6 @@
         "geo": "38.89511,-77.03637"
       },
       {
-        "id": 214334613,
-        "place_id": "USGS531871",
-        "name": "Washington DC",
-        "feat_class": "P",
-        "feat_code": "PPLC",
-        "FIPS_cc": "US",
-        "cc": "US",
-        "ISO3_cc": "USA",
-        "adm1": "11",
-        "adm2": "11.0001",
-        "source": "Xponents/USGS",
-        "name_bias": 0,
-        "id_bias": 0.775,
-        "name_type": "A",
-        "geo": "38.89511,-77.03637"
-      },
-      {
         "id": 26325564,
         "place_id": "USGS1779778",
         "name": "Calif.",

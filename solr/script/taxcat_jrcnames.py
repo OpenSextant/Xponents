@@ -147,7 +147,8 @@ NOISE = set(
 FIXES = {
     # Somehow this entry was marked as a "p" (Person)
     # So it is remapped to "-" (Thing, default)
-    'Improvised Explosive Device': '-'
+    'Improvised Explosive Device': '-',
+    'Liberty Reserve': 'O',
 }
 
 apply_default_fixes = True
@@ -207,11 +208,15 @@ class JRCEntity(Taxon):
                 print("Ignore Province name in token", self.phrase)
 
             if self.entity_type == 'P':
-                for tok in tokens:
-                    if tok in ORG_FIXES:
-                        self.entity_type = 'O'
-                        print("Org Phrase fixed", self.phrase)
-                        break
+                if self.phrasenorm.startswith('liberty '):
+                    # JRC tagging got this wrong 98% of the time. Most Liberty... phrases are Orgs, not Pers.
+                    self.entity_type = 'O'
+                else:
+                    for tok in tokens:
+                        if tok in ORG_FIXES:
+                            self.entity_type = 'O'
+                            print("Org Phrase fixed", self.phrase)
+                            break
 
         if self.entity_type in entity_map:
             self.entity_type = entity_map[self.entity_type]
