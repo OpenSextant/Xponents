@@ -1,4 +1,5 @@
 org.opensextant
+org.opensextant.annotations
 org.opensextant.data
 org.opensextant.data.social
 org.opensextant.extraction
