@@ -42,3 +42,21 @@ The Second time to walk through this all usually takes 2-4 hours, on a Macbook o
 for example.
 
 If this sounds like a bit much, then leverage the artifacts in Maven Central or Docker Hub.
+
+
+Maven Publishing
+----------------
+```
+
+  # Fix all versions to be release versions.
+  # Ensure GPG key is known...
+  # and OSSRH login is set in settings.xml
+
+  cd ./Core
+  mvn clean deploy -P release
+  cd ..
+  mvn clean deploy -P release
+  
+
+```
+
