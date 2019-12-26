@@ -31,6 +31,15 @@ Separately acquire the Gazetteer "Merged Gazetteer" data file:
 
 6\. Distribution and Packaging: `ant -f ./script/dist.xml dist`
 
+Producing API documentation updates: infrequently, only for major releases.
+ 
+```
+ cp -r target/apidocs doc/sdk-apidocs/
+ cp -r Core/target/apidocs doc/core-apidocs/
+
+ # When done, commit changes, as API docs appear on GitHub public site.
+```
+
 7\. Test.  Leverage the `Examples` projects to more fully test your build.
 
 

@@ -153,9 +153,6 @@
         <include name="*.md" />
       </fileset>
     </copy>
-    <copy todir="${release}/doc/apidocs">
-      <fileset dir="${xponents.home}/target/apidocs" />
-    </copy>
     <copy todir="${release}/doc/">
       <fileset dir="${xponents.home}/doc" />
     </copy>

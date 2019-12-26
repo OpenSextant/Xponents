@@ -30,7 +30,10 @@ for f in $REL/xponents-solr/solr*-dist/bin/post \
 done 
 
 rm -rf $REL/xponents-solr/solr*-dist/server/logs/*
+rm -rf $REL/log
+mkdir -p $REL/log
 
+rm $REL/doc/*.mp4
 rm $REL/script/dist.* 
 cp $basedir/Examples/Docker/* $REL/
 
