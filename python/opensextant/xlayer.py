@@ -16,7 +16,7 @@ class XlayerClient:
     def __init__(self, server, options=""):
         """
         @param server: URL for the service
-        @keyword  options:  a comma-separated list of options to send with each request.
+        @keyword  options:  STRING. a comma-separated list of options to send with each request.
         There are no default options supported.
         """
         self.server = server
@@ -65,12 +65,14 @@ class XlayerClient:
           so they are not supported out of the box here.
         :param docid: identifier of transaction
         :param text: Unicode text to process
-        :param features: list of places, coordinates, countries, orgs, persons, patterns
+        :param features: LIST of geo OR [places, coordinates, countries], orgs, persons, patterns, taxons
         :param timeout: default to 10 seconds; If you think your processing takes longer,
                  adjust if you see exceptions.
         :return: array of TextMatch objects or empty array.
         """
-        json_request = {'docid': docid, 'text': text, 'options': self.default_options}
+        json_request = {'docid': docid, 'text': text}
+        if self.default_options:
+            json_request['options'] = self.default_options
         if features:
             json_request['features'] = ','.join(features)
 
@@ -87,12 +89,12 @@ class XlayerClient:
             # metadata = json_content['response']
             pass
 
+        annots = []
         if 'annotations' in json_content:
             aj = json_content['annotations']
-            annots = []
-            for a in aj:
-                tm = TextMatch(a.get('matchtext'), a.get('offset'), None)
-                tm.populate(a)
+            for annot in aj:
+                tm = TextMatch(annot.get('matchtext'), annot.get('offset'), None)
+                tm.populate(annot)
                 annots.append(tm)
                 if self.debug:
                     print("Match '{}' at char offset {}".format(tm.text, tm.start))
@@ -101,6 +103,23 @@ class XlayerClient:
                         print("\trepresenting location: {}".format(str(geo)))
 
         return annots
+
+
+def print_results(arr):
+    """
+
+    :param arr: array of Annotations or TextMatch
+    :return:
+    """
+    for a in arr:
+        if isinstance(a, TextMatch):
+            if a.filtered_out:
+                print("{} Excluded".format(str(a)))
+            else:
+                print(a)
+        else:
+            print(a)
+
 
 
 if __name__ == '__main__':
@@ -115,11 +134,16 @@ if __name__ == '__main__':
     ap.add_argument("--inputfile", help="your input")
     ap.add_argument("--lines", action="store_true", help="process your inputfile as one line per call")
     ap.add_argument("--text", help="UTF-8 string to process")
-    ap.add_argument("--options", help="your service options to send with each request")
+    ap.add_argument("--options", help="your service options to send with each request, e.g., 'lowercase,clean_input,revgeo'", default=None)
+    ap.add_argument("--features", help="Feature set e.g., 'geo,patterns,taxons'", default="geo,patterns,taxons")
     ap.add_argument("--debug", default=False, action="store_true")
     args = ap.parse_args()
-    xtractor = XlayerClient(args.service_url)
+
+    xtractor = XlayerClient(args.service_url, options=args.options)
     xtractor.debug = args.debug
+    feat = ["geo"]
+    if args.features:
+        feat = args.features.split(',')
     print("Ping server (timeout=5s)....")
     try:
         xtractor.ping(timeout=5)
@@ -133,12 +157,11 @@ if __name__ == '__main__':
     if args.text:
         _id = "test doc#1"
         _text = args.text
-        result = xtractor.process(_id, _text)
+        result = xtractor.process(_id, _text, features=feat)
         print("==============")
         print("INPUT: from text argument")
         print("Annotations\n============")
-        for a in result:
-            print(a)
+        print_results(result)
     # ======================================
     # Support data as one text record per line in a file
     #                
@@ -152,10 +175,9 @@ if __name__ == '__main__':
                     _id = "line{}".format(lineNum)
                     print("=============={}:".format(_id))
                     _text = line.strip()
-                    result = xtractor.process(_id, _text)
+                    result = xtractor.process(_id, _text, features=feat)
                     print("Annotations\n============")
-                    for a in result:
-                        print(a)
+                    print_results(result)
         except Exception as err:
             print(format_exc(limit=5))
 
@@ -170,11 +192,10 @@ if __name__ == '__main__':
             with open(args.inputfile, 'r', encoding="UTF-8") as fh:
                 _text = fh.read()
                 _text = _text.strip()
-                result = xtractor.process(_id, _text)
+                result = xtractor.process(_id, _text, features=feat)
                 print("==============")
                 print("INPUT: from text inputfile")
                 print("Annotations\n============")
-                for a in result:
-                    print(a)
+                print_results(result)
         except Exception as err:
             print(format_exc(limit=5))
