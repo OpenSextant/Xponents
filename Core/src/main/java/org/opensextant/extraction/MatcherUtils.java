@@ -7,6 +7,62 @@ import org.opensextant.util.TextUtils;
 
 public class MatcherUtils {
 
+    /**
+     * Reduce actual valid matches by identifying duplicates or sub-matches. Overlapping spans are not
+     * considered filtered out.
+     * 
+     * @param matches set of matches you need to sift through to find filtered out items.
+     */
+    public static void reduceMatches(List<TextMatch> matches) {
+        int len = matches.size();
+
+        for (int i = 0; i < len; ++i) {
+            TextMatch M = matches.get(i);
+            long m1 = M.start;
+            long m2 = M.end;
+            // Compare from
+            for (int j = i + 1; j < len; ++j) {
+                TextMatch N = matches.get(j);
+
+                long n1 = N.start;
+                long n2 = N.end;
+
+                if (m2 < n1) {
+                    // M before N entirely
+                    continue;
+                }
+                if (m1 > n2) {
+                    // M after N entirely
+                    continue;
+                }
+
+                // Same span, but duplicate.
+                if (n1 == m1 && n2 == m2) {
+                    N.is_duplicate = true;
+                    M.is_overlap = true;
+                    continue;
+                }
+                // M entirely within N
+                if (n1 <= m1 && m2 <= n2) {
+                    M.is_submatch = true;
+                    N.is_overlap = true;
+                    continue;
+                }
+
+                // N entirely within M
+                if (n1 >= m1 && m2 >= n2) {
+                    M.is_overlap = true;
+                    N.is_submatch = true;
+                    continue;
+                }
+
+                // Overlapping spans
+                M.is_overlap = true;
+                N.is_overlap = true;
+            }
+        }
+    }
+
     public static final String startChars = "<[";
     public static final String closeChars = ">]";
 
@@ -71,17 +127,14 @@ public class MatcherUtils {
     }
 
     /**
-     * A simple demonstration of how to sift through matches identifying which
-     * matches appear within tags. So we say [A]match[/A] -- match is good. [A]match
-     * -- match is good. [A match]text other_match -- match is not good; other_match
-     * is fine.
+     * A simple demonstration of how to sift through matches identifying which matches appear within
+     * tags. So we say [A]match[/A] -- match is good. [A]match -- match is good. [A match]text
+     * other_match -- match is not good; other_match is fine.
      * 
      * The result is that matches inside tags are "filteredOut"
      * 
-     * @param buffer
-     *            the raw signal text where the matches were found.
-     * @param matches
-     *            TextMatch array
+     * @param buffer  the raw signal text where the matches were found.
+     * @param matches TextMatch array
      */
     public static void filterMatchesBySpans(String buffer, List<TextMatch> matches) {
         if (matches.isEmpty()) {
@@ -93,8 +146,11 @@ public class MatcherUtils {
         }
 
         for (TextMatch m : matches) {
+            if (m.isFilteredOut()) {
+                continue;
+            }
             for (TextEntity span : spans) {
-                if (span.contains(m.start) || span.contains(m.end)) {
+                if (m.isWithin(span)) {
                     m.setFilteredOut(true);
                     break;
                 }

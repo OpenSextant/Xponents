@@ -63,14 +63,13 @@ import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 
 /**
- * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents. The
- * phrases can be from simple word lists or they can connect to a taxonomy of
- * sorts -- the "taxcat" solr core (see Xponents/solr/taxcat and Xponents/XTax
- * for implementation)
+ * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents. The phrases can be from
+ * simple word lists or they can connect to a taxonomy of sorts -- the "taxcat" solr core (see
+ * Xponents/solr/taxcat and Xponents/XTax for implementation)
  *
- * JVM arg to use is "opensextant.solr" to point to the local path Less tested:
- * solr.solr.home might conflict with a Solr document server instead of this
- * tagger. solr.url is good for RESTful integration, but not recommended
+ * JVM arg to use is "opensextant.solr" to point to the local path Less tested: solr.solr.home might
+ * conflict with a Solr document server instead of this tagger. solr.url is good for RESTful
+ * integration, but not recommended
  *
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
@@ -136,11 +135,9 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Create a Taxon tag, which is filtered based on established catalog
-     * filters.
+     * Create a Taxon tag, which is filtered based on established catalog filters.
      *
-     * Caller must implement their domain objects, POJOs... this callback
-     * handler only hashes them.
+     * Caller must implement their domain objects, POJOs... this callback handler only hashes them.
      *
      * @param refData solr doc
      * @return tag data
@@ -226,9 +223,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Catalogs is a list of catalogs caller wants to tag for. If set, only
-     * taxon matches with the catalog ID in this list will be returned by
-     * tagText()
+     * Catalogs is a list of catalogs caller wants to tag for. If set, only taxon matches with the
+     * catalog ID in this list will be returned by tagText()
      */
     public Set<String> catalogs = new HashSet<String>();
 
@@ -254,9 +250,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     private TaxonFilter ruleFilter = new TaxonFilter();
 
     /**
-     * Add prefixes of types of taxons you do not want returned. e.g.,
-     * "Place...." // exlclude will allow "Org" and "Person" taxons to pass on
-     * thru
+     * Add prefixes of types of taxons you do not want returned. e.g., "Place...." // exlclude will
+     * allow "Org" and "Person" taxons to pass on thru
      * 
      * @param prefix
      */
@@ -265,9 +260,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Light-weight usage: text in, matches out. Behaviors: ACRONYMS matching
-     * lower case terms will automatically be omitted from results.
-     *@return Null if nothing found, otherwise a list of TextMatch objects
+     * Light-weight usage: text in, matches out. Behaviors: ACRONYMS matching lower case terms will
+     * automatically be omitted from results.
+     * 
+     * @return Null if nothing found, otherwise a list of TextMatch objects
      */
     @Override
     public List<TextMatch> extract(String input_buf) throws ExtractionException {
@@ -275,15 +271,29 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Implementation details -- use with or without the formal ID/buffer
-     * pairing.
      *
-     * @param id doc id
+     * @param id  doc id
      * @param buf input text
      * @return list of matches or Null
      * @throws ExtractionException
      */
     private List<TextMatch> extractorImpl(String id, String buf) throws ExtractionException {
+        /* Implementation notes:
+         * "tags" are instances of the matching text spans from your input buffer
+         * "matchingDocs" are records from the taxonomy catalog. They have all the
+         * metadata.
+         *
+         * tags' ids array are pointers into matchingDocs, by Solr record ID.
+         *
+         * "tagsCount":10, "tags":[
+         *   { "ids":[35], "endOffset":40, "startOffset":38},
+         *   { "ids":[750308, 2769912, 2770041, 10413973, 10417546], "endOffset":49, "startOffset":41},
+         * "matchingDocs":{
+         *   "numFound":75, "start":0,
+         *   "docs":[
+         *      {records matching}]
+         */
+
         String docid = (id != null ? id : NO_DOC_ID);
 
         Map<Object, Object> beanMap = new HashMap<Object, Object>(100);
@@ -362,17 +372,11 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * "tags" are instances of the matching text spans from your input buffer
-     * "matchingDocs" are records from the taxonomy catalog. They have all the
-     * metadata.
-     *
-     * tags' ids array are pointers into matchingDocs, by Solr record ID.
-     *
-     * // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
-     * "startOffset":38}, // { "ids":[750308, 2769912, 2770041, 10413973,
-     * 10417546], "endOffset":49, // "startOffset":41}, // ... //
-     * "matchingDocs":{"numFound":75, "start":0, "docs":[ // {records matching}]
-     *
+     * Tag the input
+     * 
+     * @param input TextInput
+     * @return array of TextMatch or Null
+     * @throws ExtractionException the extraction exception
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {

@@ -16,6 +16,8 @@
  */
 package org.opensextant.extractors.flexpat;
 
+import static org.opensextant.extraction.MatcherUtils.reduceMatches;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -411,54 +413,9 @@ public abstract class RegexPatternManager {
      * match or if it is completely contained within other match.
      * 
      * @param matches a list of related matches from a single text
+     * @deprecated use MatcherUtils.reduceMatches()
      */
     public static void reduce_matches(List<TextMatch> matches) {
-        int len = matches.size();
-
-        for (int i = 0; i < len; ++i) {
-            TextMatch M = matches.get(i);
-            long m1 = M.start;
-            long m2 = M.end;
-            // Compare from
-            for (int j = i + 1; j < len; ++j) {
-                TextMatch N = matches.get(j);
-
-                long n1 = N.start;
-                long n2 = N.end;
-
-                if (m2 < n1) {
-                    // M before N entirely
-                    continue;
-                }
-                if (m1 > n2) {
-                    // M after N entirely
-                    continue;
-                }
-
-                // Same span, but duplicate.
-                if (n1 == m1 && n2 == m2) {
-                    N.is_duplicate = true;
-                    M.is_overlap = true;
-                    continue;
-                }
-                // M entirely within N
-                if (n1 <= m1 && m2 <= n2) {
-                    M.is_submatch = true;
-                    N.is_overlap = true;
-                    continue;
-                }
-
-                // N entirely within M
-                if (n1 >= m1 && m2 >= n2) {
-                    M.is_overlap = true;
-                    N.is_submatch = true;
-                    continue;
-                }
-
-                // Overlapping spans
-                M.is_overlap = true;
-                N.is_overlap = true;
-            }
-        }
+        reduceMatches(matches);
     }
 }
