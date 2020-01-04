@@ -7,6 +7,7 @@ history: py3.5+ json is as good or better than simplejson
 """
 
 import requests
+import requests.exceptions
 import json
 from opensextant.Extraction import TextMatch
 from opensextant.Data import Place
@@ -15,30 +16,35 @@ from opensextant.Data import Place
 class XlayerClient:
     def __init__(self, server, options=""):
         """
-        @param server: URL for the service
+        @param server: URL for the service.   E.g., http://SERVER/xlayer/rest/process.
         @keyword  options:  STRING. a comma-separated list of options to send with each request.
         There are no default options supported.
         """
         self.server = server
+        self.server_control = server.replace('/process', '/control')
         self.debug = False
         self.default_options = options
 
     def stop(self, timeout=30):
         """
         Timeout of 30 seconds is used here so calls do not hang indefinitely.
-        :return: True if successful.
+        The service URL is inferred:  /process and /control endpoints should be next to each other.
+        :return: True if successful or if "Connection aborted" ConnectionError occurs
         """
-        response = requests.get("{}?cmd=stop".format (self.server), timeout=timeout)
-        if response.status_code != 200:
-            return response.raise_for_status()
-        return True
+        try:
+            response = requests.get("{}/stop".format (self.server_control), timeout=timeout)
+            if response.status_code != 200:
+                return response.raise_for_status()
+        except requests.exceptions.ConnectionError as err:
+            return "Connection aborted" in str(err)
+        return False
 
     def ping(self, timeout=30):
         """
         Timeout of 30 seconds is used here so calls do not hang indefinitely.
         :return: True if successful.
         """
-        response = requests.get("{}?cmd=ping".format (self.server), timeout=timeout)
+        response = requests.get("{}/ping".format (self.server_control), timeout=timeout)
         if response.status_code != 200:
             return response.raise_for_status()
         return True
