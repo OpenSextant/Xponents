@@ -2,7 +2,7 @@
 #
 #
 VER=3.3
-BUILD_VER=3.3.1
+BUILD_VER=3.3.2
 SOLR_DIST=./solr7-dist
 
 script=`dirname $0;`

@@ -34,8 +34,8 @@ Separately acquire the Gazetteer "Merged Gazetteer" data file:
 Producing API documentation updates: infrequently, only for major releases.
  
 ```
- cp -r target/apidocs doc/sdk-apidocs/
- cp -r Core/target/apidocs doc/core-apidocs/
+ cp -r target/apidocs/ doc/sdk-apidocs/
+ cp -r Core/target/apidocs/ doc/core-apidocs/
 
  # When done, commit changes, as API docs appear on GitHub public site.
 ```
