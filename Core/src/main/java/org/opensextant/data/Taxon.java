@@ -84,6 +84,10 @@ public class Taxon {
         termset.addAll(Arrays.asList(t));
     }
 
+    public boolean hasTags() {
+        return (tagset!=null);
+    }
+    
     public void addTags(List<String> tlist) {
         if (tlist == null) {
             return;

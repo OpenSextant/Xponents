@@ -95,7 +95,6 @@ public class PlaceGeocoder extends GazetteerMatcher
     private GeonamesUtility nameHelper = null;
 
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
-    private final ExtractionMetrics retrievalTimes = new ExtractionMetrics("retrieval");
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
 
     /**
@@ -178,7 +177,6 @@ public class PlaceGeocoder extends GazetteerMatcher
     public void reportMetrics() {
         log.info("=======================\nTAGGING METRICS");
         log.info(taggingTimes.toString());
-        log.info(retrievalTimes.toString());
         log.info(matcherTotalTimes.toString());
     }
 
@@ -611,13 +609,17 @@ public class PlaceGeocoder extends GazetteerMatcher
                     // cc+XXX, where XXX is a ISO country code.
                     // The tag may be absent as some ethnicities may be mixed in and indicate no
                     // country.
-                    for (String t : taxon.tagset) {
-                        int x = t.indexOf("cc+");
-                        if (x >= 0) {
-                            String isocode = t.substring(x + 3);
-                            this.countryInScope(isocode);
-                            nationalities.put(tag.getText(), isocode);
+                    if (taxon.hasTags()) {
+                        for (String t : taxon.tagset) {
+                            int x = t.indexOf("cc+");
+                            if (x >= 0) {
+                                String isocode = t.substring(x + 3);
+                                this.countryInScope(isocode);
+                                nationalities.put(tag.getText(), isocode);
+                            }
                         }
+                    } else {
+                        this.log.debug("Taxon has not tags {}", taxon);
                     }
                 } else if (node.startsWith("person_name.")) {
                     // Ignore names that are already stop terms. Okay, 'Will Smith'
