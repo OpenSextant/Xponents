@@ -333,10 +333,12 @@ north,directional
 northern,directional
 north-east,directional
 north-eastern,directional
+north eastern,directional
 north east,directional
 northeast,directional
 north-west,directional
 north-western,directional
+north western,directional
 north west,directional
 northwest,directional
 south,directional
@@ -345,6 +347,7 @@ south east,directional
 southeast,directional
 south-west,directional
 south-western,directional
+south western,directional
 south west,directional
 southwest,directional
 southwestern,directional
@@ -353,6 +356,10 @@ west,directional
 western,directional
 east,directional
 eastern,directional
+east central,directional
+west central,directional
+north central,directional
+south central,directional
 top,directional
 bottom,directional
 right,directional
@@ -410,6 +417,7 @@ cracker,food
 crawfish,food
 corndog,food
 butternut,food
+olive,food
 jam,food
 ale,food
 avocado,food
@@ -471,8 +479,10 @@ bool,internet
 solaris,internet
 entry point,internet
 access point,internet
+power point,internet
 ezine,internet
 alibaba,internet
+foursquare,internet
 dell,internet
 acer,internet
 epson,internet
@@ -624,6 +634,7 @@ revolution,noun
 gang,noun
 angst,noun
 war,noun
+wars,noun
 scud,noun
 sides,noun
 sextet,noun
@@ -1065,6 +1076,7 @@ sonar,noun
 stamps,noun
 stern,noun
 sum,noun
+survey,noun
 verge,noun
 vest,noun
 arcangel,noun
@@ -1467,7 +1479,9 @@ big town,phrase
 new one,phrase
 new state,phrase
 new city,phrase
+little city,phrase
 new house,phrase
+new home,phrase
 new deal,phrase
 new way,phrase
 back way,phrase
@@ -1656,6 +1670,7 @@ checkpoint,place.civil
 holy ground,place.civil
 interchange,place.civil
 stadium,place.civil
+health center,place.civil
 community center,place.civil
 media center,place.civil
 zoo,place.civil
@@ -1726,6 +1741,8 @@ court,place.civil
 market,place.civil
 courts,place.civil
 postal,place.civil
+post office,place.civil
+government office,place.civil
 prison,place.civil
 investment bank,place.civil
 station,place.civil
@@ -1967,6 +1984,7 @@ four-way,place.general
 three way,place.general
 four way,place.general
 a river,place.general
+small river,place.general
 hills,place.general
 continent,place.general
 burg,place.general
@@ -2598,5 +2616,10 @@ lam,transliteration
 tao,transliteration
 striker,noun
 zulu,place.timezone
+well water,noun
+liberation,noun
+orbiter,well-known.name
+mast,noun
+main camp,noun
 
 
