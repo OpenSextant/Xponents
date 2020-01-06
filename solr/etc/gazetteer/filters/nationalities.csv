@@ -1,4 +1,6 @@
 #Nationality listing from OpenSextant v1.1,ISO3
+#REFERENCES:,https://www.everyculture.com/A-Bo/index.html
+#REFERENCES:,https://en.wikipedia.org/ select pages
 abkhaz,TUR
 abkhazian,TUR
 abkhazians,TUR
@@ -38,14 +40,14 @@ austrian,AUT
 austrians,AUT
 azerbaijani,AZE
 azerbaijanis,AZE
-azeri,
-azeris,
+azeri,TUR
+azeris,TUR
 bahamian,BHS
 bahamians,BHS
 bahraini,BHR
 bahrainis,BHR
-bajuns,
-bamar,
+bajuns,BRB
+bamar,MMR
 bangladeshi,BGD
 bangladeshis,BGD
 barbadian,BRB
@@ -348,8 +350,8 @@ montserratians,MSR
 moroccan,MAR
 moroccans,MAR
 mosotho,
-motswana,
-motswana,
+motswana,BWA
+motswana,BWA
 mozambican,MOZ
 mozambicans,MOZ
 myanmarese,MMR
@@ -497,7 +499,7 @@ swiss,CHE
 syrian,SYR
 syrians,SYR
 tadzhik,
-tahitians,
+tahitians,PYF
 taiwanese,TWN
 tajik,TJK
 tajikistani,TJK
@@ -517,10 +519,10 @@ trinidadians,TTO
 tunisian,TUN
 tunisians,TUN
 turk,TUR
+turks,TUR
 turkish,TUR
-turkmen,TUR
+turkmen,TKM
 turkmens,TKM
-turks,TKM
 #turks and caicos islanders,
 tuvaluan,TUV
 tuvaluans,TUV
