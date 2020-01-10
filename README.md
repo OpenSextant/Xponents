@@ -47,14 +47,14 @@ To start using Xponents now, consider your use case:
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.3.0</version>
+    <version>3.3.2</version>
   </dependency>
 
   <!-- Xponents SDK API -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.3.0</version>
+    <version>3.3.2</version>
   </dependency>
 ```
 
@@ -73,7 +73,7 @@ and interpreting your outputs (e.g., filtering, cross-referencing, etc.).
 
 Download the SDK, then walk through examples -- these resources are intended for developers with some Java or Python
 experience, and some NLP or GIS background. But the examples and download should work with only the **Java 8+** 
-installed on your system. **Python 2.7** is required for the few Python examples.
+installed on your system. **Python 3.6+** is required for the few Python examples.
 
 * See [Examples](./Examples/README.md).  Some examples here require a full SDK build.
 * Download SDK builds -- to start using a full release, for now you have to acquire the binary from Docker Hub (2GB image as listed above) or build it yourself. 

@@ -326,7 +326,7 @@
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.3.2-SNAPSHOT</version>
+      <version>3.3.2</version>
     </dependency>
   </dependencies>
   <build>

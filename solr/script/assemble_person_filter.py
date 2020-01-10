@@ -47,15 +47,13 @@ fpath = os.path.join(GAZ_CONF, 'filters/census/dist.male.first')
 f1 = os.path.abspath(fpath)
 if os.path.exists(f1):
     print("\tParse ", f1)
-    fh = open(f1, 'rb')
-    # csvh = csv.reader(fh, delimiter='')
-    for line in fh:
-        row = line.split()
-        name = row[0].lower()
-        if not is_comment(name) and len(name) > 2:
-            names.add(get_text(name))
-
-    fh.close()
+    with open(f1, 'r', encoding="UTF-8") as fh:
+        # csvh = csv.reader(fh, delimiter='')
+        for line in fh:
+            row = line.split()
+            name = row[0].lower()
+            if not is_comment(name) and len(name) > 2:
+                names.add(get_text(name))
 else:
     print("Census data not present:", fpath)
 
@@ -63,15 +61,12 @@ fpath = os.path.join(GAZ_CONF, 'filters/census/dist.female.first')
 f1 = os.path.abspath(fpath)
 if os.path.exists(f1):
     print("\tParse ", f1)
-    fh = open(f1, 'rb')
-    # csvh = csv.reader(fh, delimiter='')
-    for line in fh:
-        row = line.split()
-        name = row[0].lower()
-        if not is_comment(name) and len(name) > 2:
-            names.add(get_text(name))
-
-    fh.close()
+    with open(f1, 'r', encoding="UTF-8") as fh:
+        for line in fh:
+            row = line.split()
+            name = row[0].lower()
+            if not is_comment(name) and len(name) > 2:
+                names.add(get_text(name))
 else:
     print("Census data not present:", fpath)
 
@@ -80,26 +75,24 @@ else:
 f1 = os.path.abspath(os.path.join(GAZ_CONF, 'filters/exclude-adhoc-names.txt'))
 if os.path.exists(f1):
     print("\tParse ", f1)
-    fh = open(f1, 'rb')
-    for row in fh:
-        if not is_comment(row):
-            names.add(get_text(row).strip().lower())
-    fh.close()
+    with open(f1, 'r', encoding="UTF-8") as fh:
+        for row in fh:
+            if not is_comment(row):
+                names.add(get_text(row).strip().lower())
 
 # a list of valid known places.  Remove known places from name filter.
 # 
 f1 = os.path.abspath(os.path.join(GAZ_CONF, 'filters/include-adhoc-places.txt'))
 if os.path.exists(f1):
     print("\tParse ", f1)
-    fh = open(f1, 'rb')
-    for row in fh:
-        if not is_comment(row):
-            k = get_text(row).strip().lower()
-            if k in names: names.remove(k)
-    fh.close()
+    with open(f1, 'r', encoding="UTF-8") as fh:
+        for row in fh:
+            if not is_comment(row):
+                k = get_text(row).strip().lower()
+                if k in names: names.remove(k)
 
 non_person_names = set([])
-with open(nonpersons, 'rb') as fh:
+with open(nonpersons, 'r', encoding="UTF-8") as fh:
     for nm in fh:
         non_person_names.add(nm.strip().lower())
 

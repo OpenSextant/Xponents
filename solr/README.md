@@ -197,6 +197,22 @@ that are not required by normal use of the `opensextant` package.  Add this Pip-
 
 ```
 
+**MAINTENANCE USE:**
+
+To update the Gazetteer Meta JAR (`xponents-gazetteer-meta.jar`) in between major quarterly releases, consider these few steps:
+
+1. Follow notes above to setup.
+2. Update Person names filter
+3. Create JAR
+4. Field new JAR with your runtime deployment in CLASSPATH
+
+```
+  cd ./solr
+  python3 ./script/assemble_person_filter.py 
+  ant gaz-meta
+```
+
+
 **FIRST USE:** 
 ```shell script
     build.sh  start clean data 

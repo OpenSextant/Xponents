@@ -1,3 +1,5 @@
+#countries.  Somehow Israel is now a common male name; had not seen this before.
+israel
 # Random find. York is a common place as well as last name.  But as a last name or first, "New York, Abc" would cause Abc to be filtered out.
 york
 # Last names, that are ordinals -- do not filter out items based on last name, e.g., West Texas or "West, Texas"
