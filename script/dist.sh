@@ -41,7 +41,7 @@ cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER
 Date:      `date`
 Gazetteer: Xponents Solr 2020-Q1
-  Sources: NGA,  2019-NOV
+  Sources: NGA,  2020-JAN
            USGS, 2019-NOV
 EOF
 

@@ -170,14 +170,17 @@ By default, you have this runtime environment in check-out or in distribution:
 - `./Xponents/solr/solr7` will contain the Solr indices
 - `./Xponents/solr/solr7-dist` will contain the Solr server that serves the indices
 
-We refer to **Xponents Solr** informally as `XP_SOLR`, which is `./Xponents/solr`
-or in deployment if you have a versioned index it may be `/path/to/xponents-solr-YYYYQQ` for a 
-quarterly release.  Formally, Solr typically uses its own `solr.home` JVM argument -- which 
-in OpenSextant in general this is the JVM argument `opensextant.solr`.  
-That is set to `XP_SOLR/solr7`. 
+We refer to **Xponents Solr** informally as `XP_SOLR`, which is `./Xponents/solr` in source tree, 
+but in distribution it defaults to `./Xponents-VER/xponents-solr` to distinguish it from the raw source.
+Because Gazetteer and related metadata is constantly updated, this folder in distribution or in 
+your runtime may be versioned as `/path/to/xponents-solr-YYYYQQ` for clarity.
+The typical release schedule for the `XP_SOLR` distribution is quarterly.
+The OpenSextant/Xponents JVM argument used to set this index path is `opensextant.solr` which 
+must be set to the `solr7` index folder, i.e. `XP_SOLR/solr7`.  This may be an absolute or relative path.
 
-In deployment you can choose XP_SOLR to be any path you want, as long as the `solr`
-folder is kept intact once built.
+
+Keep the `./xponents-solr/` folder in tact, although only the `solr7` index folder is used at 
+runtime -- The other folders provide a fully operational Solr Server.
 
 
 **Step 4. Build Indices**

@@ -49,7 +49,7 @@ index_taxcat () {
   python3 script/taxcat_wfb.py --solr $SOLR_URL
   sleep 1
   # When done for the day,  optimize
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit expungeDeletes=\"true\"/>/>"
+  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
 }
 
@@ -88,7 +88,7 @@ index_gazetteer () {
   done
 
   # When done for the day,  optimize
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit expungeDeletes=\"true\"/>/>"
+  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
 }
 
