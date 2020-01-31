@@ -455,6 +455,10 @@ class PatternExtractor(Extractor):
         self.pattern_manager = pattern_manager
 
     def extract(self, text, **kwargs):
+        """ Default Extractor API. """
+        return self.extract_patterns(text, **kwargs)
+
+    def extract_patterns(self, text, **kwargs):
         """
         Given some text input, apply all relevant pattern families against the text.
         :param text:
@@ -503,13 +507,14 @@ class PatternExtractor(Extractor):
         """
         Runs the default tests on the provided configuration. Plenty of debug printed to screen.
         But returns the test results as an array, e.g., to write to CSV for review.
-
+        This uses PatternExtractor.extract_patterns() to avoid any collision with the generic use
+        of  Extractor.extract() parent method.
         :return: test results array; Each result represents a TEST case run against a RULE
         """
         test_results = []
         for t in self.pattern_manager.test_cases:
             expect_valid_match = "FAIL" not in t.text
-            output = self.extract(t.text, features=[t.family])
+            output = self.extract_patterns(t.text, features=[t.family])
 
             # Determine if pattern matched true positive or false positive.
             tp = len(output) > 0 and expect_valid_match
