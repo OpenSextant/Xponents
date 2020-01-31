@@ -235,12 +235,30 @@ class PatternTestCase:
         self.true_positive = True
 
 
+def get_config_file(cfg, modfile):
+    """
+    Locate a resource file that is collocated with the python module, e.g., get_config_file("file.cfg", __file__)
+    :param cfg:
+    :param modfile:
+    :return:
+    """
+    pkgdir = os.path.dirname(os.path.abspath(modfile))
+    patterns_file = os.path.join(pkgdir, cfg)
+    if os.path.exists(patterns_file):
+        return patterns_file
+    raise FileNotFoundError("No such file {} at {}".format(cfg, patterns_file))
+
+
 # from abc import ABC, abstractmethod
 class RegexPatternManager:
-    def __init__(self, cfg, debug=False, testing=False):
+    def __init__(self, patterns_cfg, module_file=None, debug=False, testing=False):
         self.families = set([])
         self.patterns = {}
-        self.patterns_file = cfg
+        self.patterns_file = patterns_cfg
+        if module_file:
+            # Resolve this absolute path now.
+            self.patterns_file = get_config_file(patterns_cfg, module_file)
+
         self.patterns_file_path = None
         self.test_cases = []
         self.matcher_classes = {}
@@ -293,6 +311,12 @@ class RegexPatternManager:
         config_fpath = self.patterns_file
         if not os.path.exists(self.patterns_file):
             config_fpath = resource_for(self.patterns_file)
+
+        # By now we have tried the given file path, inferred a path local to the calling module
+        # and lastly tried a resource folder in opensextant/resource/ data.
+        if not os.path.exists(config_fpath):
+            raise FileNotFoundError("Tried various absolute and inferred paths for the file '{}'".format(
+                os.path.basename(self.patterns_file)))
 
         # PY3:
         with open(config_fpath, "r", encoding="UTF-8") as fh:
