@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Xponents Python Data: see comparable classes in Xponents Basics data pkg in Java.
 """

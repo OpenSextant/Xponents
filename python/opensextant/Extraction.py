@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 
 classes and routines that align with Java org.opensextant.data and org.opensextant.extraction

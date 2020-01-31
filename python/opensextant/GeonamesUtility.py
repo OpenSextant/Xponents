@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
  GeonamesUtility:  lines up with functionality in Xponents Basics utility package.
 

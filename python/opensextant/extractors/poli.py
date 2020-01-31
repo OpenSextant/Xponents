@@ -41,6 +41,11 @@ class Money(PatternMatch):
 
 
 class PatternsOfLifeManager(RegexPatternManager):
+    #
+    # Demonstration.  PatternsOfLifeManager is a custom RegexPatternManager
+    # that shows how to apply FlexPat to extracting common things like currency amounts, MAC addresses
+    # and telephone numbers.
+    #
     def __init__(self, cfg):
         """
         Call as
@@ -52,7 +57,10 @@ class PatternsOfLifeManager(RegexPatternManager):
 
         :param cfg: patterns config file.
         """
+        RegexPatternManager.__init__(self, cfg, debug=True, testing=True)
 
+    def _initialize(self):
+        #
         # This Class registry maps the existing Java classes (in the config file) to Python variations here.
         self.match_class_registry = {
             "org.opensextant.extractors.poli.data.TelephoneNumber":
@@ -62,6 +70,9 @@ class PatternsOfLifeManager(RegexPatternManager):
                 "opensextant.extractors.poli.MACAddress",
 
             "org.opensextant.extractors.poli.data.Money":
-                "opensextant.extractors.poli.Money"
+                "opensextant.extractors.poli.Money",
+
+            "org.opensextant.extractors.poli.data.EmailAddress":
+                "opensextant.extractors.poli.EmailAddress"
         }
-        RegexPatternManager.__init__(self, cfg, debug=True, testing=True)
+        RegexPatternManager._initialize(self)
