@@ -275,7 +275,7 @@ public abstract class RegexPatternManager {
             int groupNum = 1;
 
             if (debug) {
-                configMessages.append("\nrulename=" + tmpRuleName);
+                configMessages.append("\n\nrulename=" + tmpRuleName);
                 configMessages.append(", rulepattern=" + tmpRulePattern);
             }
 

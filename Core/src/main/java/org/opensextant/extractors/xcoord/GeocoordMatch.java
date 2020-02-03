@@ -223,7 +223,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     /**
      * The separators.
      */
-    public final String[] separators = { "latlonSepNoDash", "latlonSep", "xySep", "trivialSep" };
+    public final String[] separators = { "trivialSep", "xySep", "latlonSep", "latlonSep3", "latlonSep03",
+            "latlonSepNoDash" };
 
     /**
      * The offset separator.

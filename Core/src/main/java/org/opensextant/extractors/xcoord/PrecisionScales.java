@@ -151,33 +151,17 @@ public class PrecisionScales {
     public static float DMS_SEC_PREC = 15; // +/- 0.03 KM at equator, 60th of a minute
 
     /**
-     * set precision on a DMS text coordinate
+     * set precision on a DMS text coordinate -- simply if the Match latitude "has seconds" 
+     * then its precision is seconds, otherwise if it has minutes, then it is precise to +/- 1 minute, 
+     * etc. 
+     * Default precision is half-degree ~ +/- 55KM.
+     * Prior implementation was based on digit counting, whereas with decimal degrees you must count digits
+     * to infer precision. 
      *
      * @param m DMS match
      */
     public static void setDMSPrecision(GeocoordMatch m) {
         m.precision.precision = LAT_DEGREE_PRECISION;
-
-        if (m.lat_text != null) {
-            int dig = count_DMS_digits(m.lat_text);
-            int deg = Math.abs((int) m.getLatitude());
-            if (deg < 10) {
-                --dig;
-            } else {
-                //  10 <= Lat <= 90   ---> Means it is a 2digit string.
-                --dig;
-                --dig;
-            }
-            m.precision.digits = dig;
-
-            if (dig >= 4) {
-                m.precision.precision = DMS_SEC_PREC;
-
-            } else if (dig >= 2) {
-                m.precision.precision = DMS_MIN_PREC;
-            }
-            return;
-        }
 
         if (m.hasSeconds()) {
             m.precision.precision = DMS_SEC_PREC;
