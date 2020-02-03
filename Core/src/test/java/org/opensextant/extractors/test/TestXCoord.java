@@ -400,9 +400,9 @@ public class TestXCoord {
         // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
 
         boolean dd = false;
-        boolean dms = false;
+        boolean dms = true;
         boolean dm = false;
-        boolean mgrs = true;
+        boolean mgrs = false;
         boolean utm = false;
         //
         xcoord.match_MGRS(mgrs);
@@ -443,7 +443,15 @@ public class TestXCoord {
 
         xcoord.match_DMS(dms);
         xcoord.match_DM(dm);
-        String[] dmtest = { "N 49°2' 0'' / E 38°22' 0''",
+        String[] dmtest = { 
+                "28˚ 55' 19\"N 77˚ 23' 14\"W",
+                "x +42:18:00 -102:24:00 ",
+                "x +42:18:00 -102:24:00 x",
+                "N421800W1022400",
+                "4218009N10224003W",
+                "xxx +42° 18' 00\"  -102° 24' 00\" xxx",
+                "+42° 18' 00\" W 102° 24' 00\"", 
+                "N 49°2' 0'' / E 38°22' 0''",
                 "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy", "-385331-17004121",
                 "41º58'46\"N, 87º54'20\"W ", "Latitude: 41º58'46\"N, Longitude: 87º54'20\"W ", "15S5E",
                 //"01-02-03-04 005-06-07-08",           
@@ -492,12 +500,10 @@ public class TestXCoord {
             results = xcoord.extract_coordinates("text before " + testcase + " and after", test_id);
             log.info("TEST (" + count + ") " + testcase + " FOUND:"
                     + (results.matches.isEmpty() ? "NOTHING" : results.matches.size()));
-            if (results.matches != null) {
-                for (TextMatch m : results.matches) {
-                    log.info("\t" + m.toString());
-                    GeocoordMatch g = (GeocoordMatch) m;
-                    log.info("\t" + g.formatLatitude() + ", " + g.formatLongitude());
-                }
+            for (TextMatch m : results.matches) {
+                log.info("\t" + m.toString());
+                GeocoordMatch g = (GeocoordMatch) m;
+                log.info("\t" + g.formatLatitude() + ", " + g.formatLongitude());
             }
         }
 

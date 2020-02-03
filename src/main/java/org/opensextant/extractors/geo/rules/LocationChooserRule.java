@@ -272,7 +272,7 @@ public class LocationChooserRule extends GeocodeRule {
      * Absolute Confidence: Name, Region; City, State; Capital, Country; etc. Patterns of qualified
      * places.
      */
-    public static final int MATCHCONF_NAME_REGION = 60;
+    public static final int MATCHCONF_NAME_REGION = 75;
 
     /**
      * Absolute Confidence: Unique name in gazetteer.

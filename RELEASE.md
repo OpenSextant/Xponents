@@ -23,7 +23,19 @@ Name matching depends on:
 RELEASES
 ==============
 
+# 2020
+
+**Xponents 3.3.3 New Vision**
+
+(( That is, "2020" = New Vision. Happy new year!))
+* XCoord improvements - accommodating for missing degree and other symbols
+* PlaceGeocoder uses feature class weighting using some common sense and less than obvious math.
+  effect is to rank certain features higher than others.  this could be data-driven, but for now
+  is a implemented with a simple hash table of FEATURE CODES ==> WEIGHTS.  
+
+
 # 2019 
+
 
 **Xponents 3.3.0 Holly Jolly**
 * Holiday 2019 release: Date/time pattern detection and normalization improvements.  
