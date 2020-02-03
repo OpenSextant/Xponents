@@ -276,8 +276,9 @@ public class LocationChooserRule extends GeocodeRule {
 
     /**
      * Absolute Confidence: Unique name in gazetteer.
+     * Confidence is high, however this needs to be tempered by the number of gazetteers, coverage, and diversity
      */
-    public static final int MATCHCONF_ONE_LOC = 80;
+    public static final int MATCHCONF_ONE_LOC = 70;
 
     /** Absolute Confidence: Geographic location of a named place lines up with a coordinate in-scope */
     public static final int MATCHCONF_GEODETIC = 90;
@@ -372,6 +373,15 @@ public class LocationChooserRule extends GeocodeRule {
             points = MATCHCONF_MANY_LOC;
         }
 
+        // Pro-rate this a-priori confidence as 75% + (feature-weight*25%)
+        //
+        double featWeight = 0;
+        FeatureClassMeta fc = FeatureRule.lookupFeature(pc.getChosen());
+        if (fc != null) {
+            featWeight = fc.factor;
+        }
+        points =  (int)((0.75 * points) + (0.25 * points * featWeight));
+
         // Any of these may occur.
         //======================
         //
@@ -392,7 +402,7 @@ public class LocationChooserRule extends GeocodeRule {
          * then we mark them down in confidence. Send them along but low-confidence.
          * Administrative names, though may be short -- allow them to pass as-is.
          */
-        if (!pc.getChosen().isAdministrative() && pc.getLength() < 4) {
+        if (!pc.getChosen().isAdministrative() && pc.getLength() < 5) {
             if (pc.getEvidence().isEmpty() && pc.hasDefaultRuleOnly()) {
                 points -= 10;
             }

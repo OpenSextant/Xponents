@@ -1830,6 +1830,7 @@ capitol,place.civil
 country,place.general
 reef,place.general
 well,place.general
+volcano,place.general
 desert,place.general
 land,place.general
 island,place.general

@@ -321,6 +321,49 @@ Note, as XTax JRC (and other catalogs you add) tag text you naturally find lots 
 Some of them can be used to negate false-positives in geotagging, .... other entities found are just 
 interesting -- you should save them all as a part of your pipeline.
 
+Feature Metrics
+---------------------------------
+
+Relative metrics on feature classes, followed immediately by some commentary on 
+how such feature types as mentioned in most text are seen.   For example, 
+we do not often hear about folks talking about Undersea features.  If an solid exact match for 
+such a name is tagged and geocoded our confidence in that finding is based on a few aspects:
+
+* length of the name (i.e., longer names are more explicit and less ambiguous)
+* relative popularity of the feature class in available gazetteer data (an a-priori weighting may be used)
+* likelihood of the term being used, aka `Mention Weight` is a relative weight applied to the Xponents confidence metric
+* uniqueness of the name
+* quality of specific gazetteer sources in terms of fairness of coverage and balance across the world \[Acheson, et al, 2017].
+
+Approximate Feature Count from OpenSextant Gazetteer (2020)
+
+    Feature Type   Count        Mention-Weight
+    Places (P) - 9,000,000          1.0
+    Hydro (H)  - 3,200,000          0.7 default
+         H/STM*        50%          0.3
+         H/LK*         10%
+         H/RSV, SPNG, WLL 10%       0.3
+         H/BAY, COVE    1% 
+    Spot  (S)  - 2.700,000          0.8
+    Terrain(T) - 2,300,000          0.8
+    Land   (L) -   700,000          0.8
+    Admin  (A) -   700,000          1.0
+    Vegetation(V) - 85,000          0.8
+    Roadways (R) -  65,000          0.7
+    Undersea (U) -  12,000          0.5
+
+
+This is an initial, experimental model for features based on intuition.
+Populated Place and Administrative features 
+are far more common in most data, but this depends on your domain.  This weighting will NOT omit
+particular feature types, but it will help with disambiguating (choosing a most likely feature) 
+and informing the confidence in that conclusion.  More test data is needed to objectively build 
+a reasonable feature model.  
+
+References:
+* Acheson, De Sabbata, Purvesa   "A quantitative analysis of global gazetteers: Patterns of coverage for common feature types". 2017.  https://www.sciencedirect.com/science/article/pii/S0198971516302496 
+
+
 
 Honing Gazetteer Index 
 ---------------------------------

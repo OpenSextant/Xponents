@@ -51,6 +51,7 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.rules.ContextualOrganizationRule;
 import org.opensextant.extractors.geo.rules.CoordinateAssociationRule;
 import org.opensextant.extractors.geo.rules.CountryRule;
+import org.opensextant.extractors.geo.rules.FeatureRule;
 import org.opensextant.extractors.geo.rules.GeocodeRule;
 import org.opensextant.extractors.geo.rules.LocationChooserRule;
 import org.opensextant.extractors.geo.rules.MajorPlaceRule;
@@ -318,8 +319,11 @@ public class PlaceGeocoder extends GazetteerMatcher
         rules.add(placeInOrgRule);
 
         // Simple patterns such as city of x or abc county.
-        //
+        // 
         rules.add(new NameRule());
+        
+        // Feature classification rule:
+        rules.add(new FeatureRule());
 
         chooser = new LocationChooserRule();
         chooser.setCountryObserver(this);
