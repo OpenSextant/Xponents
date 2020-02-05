@@ -67,8 +67,9 @@ def reduce_matches(matches):
                 continue
 
             if n1 == m1 and n2 == m2:
-                # Exact duplicate - Mark N as dup, as M is first in array.
-                N.is_duplicate = True
+                # Exact duplicate - Mark N as dup, as M is first in array, but only if M is a valid match.
+                if not M.filtered_out:
+                    N.is_duplicate = True
                 break
 
             if n1 <= m1 < m2 <= n2:
@@ -503,33 +504,59 @@ class PatternExtractor(Extractor):
 
         return results
 
-    def default_tests(self):
+    def default_tests(self, scope="rule"):
         """
+        Default Tests run all TEST cases for each RULE in patterns config.
+        TESTs marked with a 'FAIL' comment are intended to return 0 matches or only matches that are filtered out.
+        Otherwise a TEST is intended to return 1 or more matches.
+
+        By default, this runs each test and observes only results that were triggered by that rule being tested.
+        If scope is "ruleset" then any results from any rule will be allowed.
+        "rule" scope is much better for detailed rule development as it tells you if your rule tests are testing the
+        right thing.
+        
         Runs the default tests on the provided configuration. Plenty of debug printed to screen.
         But returns the test results as an array, e.g., to write to CSV for review.
         This uses PatternExtractor.extract_patterns() to avoid any collision with the generic use
         of  Extractor.extract() parent method.
+        :param scope: rule or ruleset.  Rule scope means only results for rule test case are evaluated.
+                 ruleset scope means that all results for a test are evaluated.
         :return: test results array; Each result represents a TEST case run against a RULE
         """
         test_results = []
         for t in self.pattern_manager.test_cases:
             expect_valid_match = "FAIL" not in t.text
-            output = self.extract_patterns(t.text, features=[t.family])
+            output1 = self.extract_patterns(t.text, features=[t.family])
+
+            output=[]
+            for m in output1:
+                if scope == "rule" and not t.id.startswith( m.pattern_id ):
+                    continue
+                output.append(m)
 
             # Determine if pattern matched true positive or false positive.
-            tp = len(output) > 0 and expect_valid_match
-            tn = not tp
+            count =len(output)
+            # To condition the TP or FP based on the matches
+            #  keep a running tally of whether each match is filtered or not.
+            # That is, for many matches True Positive = at least one unfiltered match is needed, AND was expected.
+            #          for many matches False Positive = at least one unfiltered match is needed, AND was NOT expected.
+            fpcount = 0
+            tpcount = 0
             for m in output:
-                if not expect_valid_match:
-                    if m.filtered_out:
-                        tn = True
-                        tp = False
-                    else:
-                        tp = False
+                allowed = not m.filtered_out or (m.is_duplicate and m.filtered_out)
+                if expect_valid_match and allowed:
+                    tpcount += 1
+                if not expect_valid_match and allowed:
+                    fpcount += 1
 
+            tp = tpcount > 0 and expect_valid_match
+            fp = fpcount > 0 and not expect_valid_match
+            tn = fpcount == 0 and not expect_valid_match
+            fn = tpcount == 0 and expect_valid_match
+            success = (tp or tn) and not (fp or fn)
             test_results.append({"TEST": t.id,
                                  "TEXT": t.text,
                                  "MATCHES": output,
-                                 "PASS": tp or tn})
+                                 "PASS": success})
 
         return test_results
