@@ -128,4 +128,11 @@ zhou
 zho
 zhi
 zhu
-
+# german names; Test sources: DerFreischütz
+hanne
+olaf
+harald
+samael
+samiel
+viktoria
+wilhelm

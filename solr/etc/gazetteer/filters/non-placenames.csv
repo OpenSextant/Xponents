@@ -15,7 +15,10 @@ toc,abbrev
 tos,abbrev
 max,abbrev
 proj,abbrev
+pharma,abbrev
 rel,abbrev
+eval,abbrev
+lib,abbrev
 bio,abbrev
 eta,abbrev
 tel,abbrev
@@ -394,7 +397,9 @@ latte,food
 lattes,food
 taco,food
 strawberry,food
+pineapple,food
 burgers,food
+chive,food
 sushi,food
 spice,food
 peanut,food
@@ -476,6 +481,7 @@ fedora,internet
 eudora,internet
 hex,internet
 bool,internet
+shard,internet
 solaris,internet
 entry point,internet
 access point,internet
@@ -560,6 +566,7 @@ edge,noun
 sharing,verb
 bang,verb
 bangs,verb
+trim,verb
 provost,noun
 cult,noun
 joy,noun
@@ -905,6 +912,7 @@ salon,noun
 ghost,noun
 chef,noun
 logo,noun
+logos,noun
 blues,noun
 dame,noun
 doll,noun
@@ -1140,6 +1148,7 @@ rugby,noun.sport
 sprint,noun.sport
 sports,noun.sport
 cricket,noun.sport
+checkers,noun.sport
 tycoon,person.label
 missionary,person.label
 marshal,person.label
@@ -1439,6 +1448,8 @@ end of the road,phrase
 up and down,phrase
 up-to-date,phrase
 up to date,phrase
+pros,phrase
+cons,phrase
 a small world,phrase
 bah bah,phrase
 story building,phrase
@@ -1449,6 +1460,7 @@ a school,phrase
 our school,phrase
 our house,phrase
 milestone,phrase
+limbo,phrase
 rican,phrase
 mea,phrase.latin
 pro,phrase
@@ -1706,6 +1718,7 @@ casino,place.civil
 quarry,place.civil
 tower,place.civil
 bridge,place.civil
+fort,place.civil
 fortress,place.civil
 passage,place.civil
 tunnel,place.civil
@@ -1763,6 +1776,8 @@ district courts,place.civil
 court of appeal,place.civil
 court of appeals,place.civil
 farms,place.civil
+orchard,place.civil
+grove,place.civil
 groves,place.civil
 hospital,place.civil
 inner city,place.civil
@@ -1829,6 +1844,7 @@ boulevard,place.civil
 capitol,place.civil
 country,place.general
 reef,place.general
+oasis,place.general
 well,place.general
 volcano,place.general
 desert,place.general
@@ -1927,6 +1943,7 @@ metropolis,place.general
 metropolitan,place.general
 avenue,place.general
 street,place.general
+terrace,place.general
 road,place.general
 path,place.general
 pike,place.general
@@ -2589,7 +2606,9 @@ chin,noun
 kool,phrase
 guild,noun
 goose,animal
+gorilla,animal
 beaver,animal
+mange,noun
 proto,junk
 nitro,junk
 pioneer,noun
@@ -2606,11 +2625,10 @@ cobol,internet
 mirage,noun
 joiner,noun
 ramp,noun
+pine,noun
 maple,noun
 mapper,noun
 pest,noun
-eval,abbrev
-lib,abbrev
 ballad,noun
 solitaire,noun
 lam,transliteration
@@ -2622,5 +2640,6 @@ liberation,noun
 orbiter,well-known.name
 mast,noun
 main camp,noun
-
-
+sheets,noun
+bush,noun
+snow,noun

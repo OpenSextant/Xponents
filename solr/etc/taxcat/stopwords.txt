@@ -1,4 +1,10 @@
-# Collection of stop words assembled from various resources.
+# Generic stop words that are not good taxonomic phrases; These are mostly JRC tweaks
+thing
+people
+time
+good
+bad
+# # Collection of stop words assembled from various resources.
 #
 #Standard english stop words taken from Lucene's StopAnalyzer
 a

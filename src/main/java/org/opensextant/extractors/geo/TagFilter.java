@@ -61,6 +61,7 @@ public class TagFilter extends MatchFilter {
         nonPlaceStopTerms = new HashSet<>();
         String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", // GENERAL
                 "/filters/non-placenames,spa.csv", // SPANISH 
+                "/filters/non-placenames,deu.csv", // GERMAN
                 "/filters/non-placenames,acronym.csv" // ACRONYMS
         };
         for (String f : defaultNonPlaceFilters) {

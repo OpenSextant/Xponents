@@ -90,6 +90,8 @@ no_id_counter = 0
 # That coincide with popular place names.  The person name is marked is not valid for tagging.
 NOISE = set(
     [
+        'north', 'south', 'east', 'west', 
+        'start', 'end', 'total',
         'times',
         'the sun',
         'the times',
@@ -110,7 +112,7 @@ NOISE = set(
         'they are',
         'our own',
         'just want',
-        'are you',
+        'are you', 'all you',
         'ps',
         'reach',
         'armed forces',
