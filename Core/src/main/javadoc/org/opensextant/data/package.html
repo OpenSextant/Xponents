@@ -1,7 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   </head>
   <body>
     <h1> Xponents Data Model<br>
@@ -27,7 +26,7 @@
       more country metadata tools.<br>
     </p>
     <p>Language object helps tie language code and name. 
-    LangDetect and LangId (<tt>org.opensextant.extractors.langid</tt>) 
+    LangDetect and LangId (<code>org.opensextant.extractors.langid</code>)
     provide some tools for language detection.  Language ID does not always line 
     up with a known Language code literally, as LangID may yield language + locale.
     So there is a need to be able to parse and manage explicit and inferred language/locale codings.
@@ -37,7 +36,7 @@
     Java SDK Locale classes appear to only cover those used for computer internationalization.
     ICU4J libraries, for example, do not have a simple clear API.  
     So, I created language lookup tables around ISO-639 codes (sourced from <a href="http://loc.gov">Library of Congress</a>)
-    which are found in <tt>org.opensextant.util.TextUtility</tt>:   getLanguage(), getLanguageCode(), getLanguageMap().
+    which are found in <code>org.opensextant.util.TextUtility</code>:   getLanguage(), getLanguageCode(), getLanguageMap().
  
     </p>
     <br>
