@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 #
-VER=3.3
-BUILD_VER=3.3.2
+VER=3.4
+BUILD_VER=3.4-SNAPSHOT
 SOLR_DIST=./solr7-dist
 
 script=`dirname $0;`

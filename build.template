@@ -1,9 +1,9 @@
 # Please copy this to "build.properties"  which will provide settings for your workspace.
 # 
 # JAR version number, include -SNAPSHOT or whatever:
-xponents.build.v=3.3.2
+xponents.build.v=3.4-SNAPSHOT
 # General version of SDK:
-xponents.version=3.3
+xponents.version=3.4
 #
 # Gazetteer catalog.  Specify the path to the merged file.  
 # Merged.txt is usually the file name in OpenSextant/Gazetteer
