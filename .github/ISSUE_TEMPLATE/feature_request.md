@@ -8,9 +8,10 @@ assignees: ''
 ---
 
 **Type of Feature**:
-[ ] Collaboration or partnership
-[ ] Improvement or clarification
-[ ] New Processing 
+
+- [ ] Collaboration or partnership
+- [ ] Improvement or clarification
+- [ ] New Processing 
 
 **Description of Feature** 
 
