@@ -22,7 +22,7 @@ def run_lookup(url, lookup, parse):
         slots = [a.strip() for a in lookup.split(',')]
 
         if len(slots)<3:  
-            print ("NAME, PROV, CC  is required format for --lookup")
+            print("NAME, PROV, CC  is required format for --lookup")
             return None
 
         cityVal = slots[0]
@@ -79,7 +79,7 @@ def run_query(url, q):
 def print_places(arr, limit=25):
     print ("FOUND {}. Showing top {}".format(len(arr), limit))
     for p in arr[0:limit]:
-        print str(p)
+        print(str(p))
 
 if __name__ == "__main__":
 
