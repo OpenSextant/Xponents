@@ -39,6 +39,7 @@ import java.util.regex.Matcher;
 
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
+ import static org.opensextant.extraction.MatcherUtils.reduceMatches;
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
@@ -403,7 +404,7 @@ public class XCoord extends AbstractFlexPat {
         //
         results.pass = !results.matches.isEmpty();
 
-        PatternManager.reduce_matches(results.matches);
+        reduceMatches(results.matches);
 
         return results;
     }
