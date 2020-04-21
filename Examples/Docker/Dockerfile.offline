@@ -1,0 +1,34 @@
+FROM adoptopenjdk:12-jdk-hotspot
+# SHADOWS: FROM mubaldino/opensextant:xponents-3.3
+# --------------------------
+ENV XLAYER_PORT=8787
+ENV VERSION=Xponents-3.3
+
+RUN adduser --system --group --uid 110 opensextant
+
+ENV XPONENTS=/home/opensextant/Xponents
+
+# Copy ./Xponents-3.x to target; Assumption is docker build is run from inside release folder
+#
+COPY ./ $XPONENTS/
+# --------------------------
+
+# OFFLINE
+#---------------------------
+# Install Maven to allow for offline recompilation
+RUN apt-get update && apt-get install maven -y
+
+# Copy in all source and resources
+#
+COPY ./src     $XPONENTS/src/
+COPY ./pom.xml $XPONENTS/
+COPY ./Core    $XPONENTS/Core/
+
+# Build fully as a test to show project is buildable inside container.
+RUN cd $XPONENTS/Core && mvn dependency:go-offline install
+RUN cd $XPONENTS      && mvn -Dopensextant.solr=./xponents-solr/solr7 dependency:go-offline install
+#---------------------------
+
+WORKDIR $XPONENTS
+EXPOSE $XLAYER_PORT 7000
+ENTRYPOINT ./script/xlayer-docker.sh $XLAYER_PORTk

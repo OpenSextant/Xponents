@@ -4,24 +4,25 @@ NOTE: "Xlayer" name is being deprecated in favor of simply "Xponents REST".
 
 **Build:**
 
-Copy this Dockerfile to the Xponents ./dist folder and build the docker image with the Xponents-X.x build in that folder.
+Copy this Dockerfile to the Xponents ./dist folder and build the docker image with the Xponents-X.x build in that folder.  
+To use a full development-ready version of the image use the `Docker.offline` builder or its respective image build instead.
 
 
 ```sh
 # This below produces a build of Xponents with Xlayer server scripts packed in.
 #
-cd Xponents/script
-./dist.sh  build
+cd Xponents
+./script/dist.sh  build
 
-# Stage the Docker image:
-cd Xponents/
-cp Examples/Docker/Dockerfile ./dist/
-
-XPONENTS_VERSION=3.2
-docker build . --tag opensextant:xponents-$XPONENTS_VERSION
-
+# After a succesfull build (dist will be about 3.5 GB), go to the release and build docker images -- regular and offline.
+ERSION=3.3
+docker build --tag opensextant:xponents-$VERSION .
+docker build --tag opensextant:xponents-offline-$VERSION -f ./Dockerfile.offline .
 ```
-This default build provides only a running Xponents REST service.  The Solr Gazetteer (default port 7000) is not running, but see below if you wish to run them together.  For heavy production use, it is better to keep these separate -- data processing vs. rote reference data lookups.
+
+This default build provides only a running Xponents REST service.  The Solr Gazetteer (default port 7000) is not running, 
+but see below if you wish to run them together.  For heavy production use, it is better to keep these separate -- 
+data processing vs. rote reference data lookups.
 
 **Run Xponents REST:**
 
@@ -32,7 +33,7 @@ Use `docker logs NAME` to see the console, if it was a detached run. NAME is the
 ```sh
 
 docker run -p 8888:8888 -p 7000:7000 -e XLAYER_PORT=8888 \
-      --name xponents --rm --detach  opensextant:xponents-3.2
+      --name xponents --rm --detach  opensextant:xponents-$VERSION
       
 ```
 
@@ -45,11 +46,15 @@ docker exec -it xponents /bin/bash -c \
 
 ```
 
-Now that you have the Gazetteer running, you can query this in various ways below.  But first consult the [Gazetteer demo service](https://github.com/OpenSextant/Xponents/blob/master/Examples/doc/README_gazetteer.md) to see example queries.
+Now that you have the Gazetteer running, you can query this in various ways below.  But first consult 
+the [Gazetteer demo service](https://github.com/OpenSextant/Xponents/blob/master/Examples/doc/README_gazetteer.md) to see example queries.
 
-* **Python client**, as illustrated by `gazetteer.py`: https://github.com/OpenSextant/Xponents/blob/master/Examples/script/gazetteer.py, which requires the service URL as the `--solr URL` argument.
-* **Java API**, as illustrated in the Xponents demo in the SDK: `./script/xponents-demo.sh gazetteer --help`. This does not need to the Solr server running; just listing this here for completeness.
-* **Direct Solr Gazetteer access**, which provides a standard Solr search experience. For example in this example the query is getting at "places with Boston in the name, within 50KM of the lat/lon (40, -71), listing results as CSV":
+* **Python client**, as illustrated by `gazetteer.py`: https://github.com/OpenSextant/Xponents/blob/master/Examples/script/gazetteer.py, 
+which requires the service URL as the `--solr URL` argument.
+* **Java API**, as illustrated in the Xponents demo in the SDK: `./script/xponents-demo.sh gazetteer --help`. This does not need to 
+the Solr server running; just listing this here for completeness.
+* **Direct Solr Gazetteer access**, which provides a standard Solr search experience. For example in this example the query is getting 
+at "places with Boston in the name, within 50KM of the lat/lon (40, -71), listing results as CSV":
 http://localhost:7000/solr/gazetteer/select?q=name%3ABoston%20AND%20{!geofilt%20sfield=geo%20d=50%20pt=40.0,-71.0}&wt=csv
 
 

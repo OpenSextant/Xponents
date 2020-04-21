@@ -55,6 +55,18 @@
     <mkdir dir="${release}/script" />
   </target>
 
+  <target name="copy-src">
+    <copy todir="${release}/src">
+      <fileset dir="${xponents.home}/src"/>
+    </copy>
+    <copy todir="${release}/Core">
+      <fileset dir="${xponents.home}/Core"/>
+    </copy>
+    <copy todir="${release}/">
+      <file file="${xponents.home}/pom.xml"/>
+    </copy>
+  </target>
+
   <target name="copy-libs">
 
     <!-- As Examples requires all other dependencies it is a good one for forcing the copy -->
@@ -162,6 +174,6 @@
 
   <target name="dist" depends="mkdirs, build, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
   </target>
-  <target name="package-dist" depends="mkdirs, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing from a pre-built source tree.">
+  <target name="package-dist" depends="mkdirs, copy-src, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing from a pre-built source tree.">
   </target>
 </project>

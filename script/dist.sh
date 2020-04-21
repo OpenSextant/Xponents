@@ -1,8 +1,8 @@
 #!/bin/bash
 #
 #
-VER=3.4
-BUILD_VER=3.4-SNAPSHOT
+VER=3.3
+BUILD_VER=3.3.4-SNAPSHOT
 SOLR_DIST=./solr7-dist
 
 script=`dirname $0;`
@@ -36,6 +36,8 @@ mkdir -p $REL/log
 rm $REL/doc/*.mp4
 rm $REL/script/dist.* 
 cp $basedir/Examples/Docker/* $REL/
+
+# cp -r $basedir/src $basedir/pom.xml $basedir/Core $REL/
 
 cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER

@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.4-SNAPSHOT</version>
+  <version>3.3.4</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -326,7 +326,7 @@
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.4-SNAPSHOT</version>
+      <version>3.3.4</version>
     </dependency>
   </dependencies>
   <build>
@@ -339,7 +339,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>3.8.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -475,8 +475,12 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <additionalClasspathElements>
+            <additionalClasspathElement>${project.basedir}/etc</additionalClasspathElement>
             <additionalClasspathElement>${project.basedir}/solr/etc/gazetteer</additionalClasspathElement>
+            <!-- for build/dev time -->
             <additionalClasspathElement>${project.basedir}/solr/solr7/gazetteer/conf</additionalClasspathElement>
+            <!-- for deploy/package/runtime -->
+            <additionalClasspathElement>${opensextant.solr}/gazetteer/conf</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>
