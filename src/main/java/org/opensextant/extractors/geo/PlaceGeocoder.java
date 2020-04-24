@@ -291,7 +291,6 @@ public class PlaceGeocoder extends GazetteerMatcher
             try {
                 personMatcher = new TaxonMatcher();
                 personMatcher.excludeTaxons("place."); /* but allow org., person., etc. */
-                personMatcher.configure();
                 /*
                  * Default catalog must be built. Extraction ./XTax folder has script for
                  * populating a catalog.
