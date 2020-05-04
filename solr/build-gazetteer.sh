@@ -1,7 +1,19 @@
 #!/bin/bash
 #
 echo "OpenSextant Gazetter Execution"
+echo "========================================"
 echo "NOTES: https://github.com/OpenSextant/Xponents/,  see ./solr/README.md"
+echo 
+echo "Java: Pentaho Data Integration (PDI) Kettle 6+ requires Java 8"
+echo "                                               ^^^^^^^^^^^^^^^"
+echo "      Your JDK: $JAVA_HOME"
+echo "      " `$JAVA_HOME/bin/java -version`
+echo 
+echo "      PDI Kettle:"
+echo "      KETTLE_HOME = '$KETTLE_HOME'"
+echo 
+echo "      Gazetteer Source:  " `ls -d ../../Gazetteer`
+echo "========================================"
 
 cd ../../Gazetteer
 export JAVA_HOME=${JAVA_HOME:-/opt/java8}

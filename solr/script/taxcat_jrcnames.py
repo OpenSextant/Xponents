@@ -109,6 +109,7 @@ NOISE = set(
         'yahoo',
         'twitter',
         'youtube',
+        'people',
         'they are',
         'our own',
         'just want',
