@@ -11,9 +11,7 @@ Then you can begin working with the Tagger API (opensextant-xponents)
 
 ```
   ant setup
-  cd ./Core
-  mvn test
-  mvn install
+  (cd ./Core && mvn install)
 ```
 
 3\. Build SDK:
