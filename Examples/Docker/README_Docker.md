@@ -8,15 +8,20 @@ Copy this Dockerfile to the Xponents ./dist folder and build the docker image wi
 To use a full development-ready version of the image use the `Docker.offline` builder or its respective image build instead.
 
 
-```sh
+```shell script
 # This below produces a build of Xponents with Xlayer server scripts packed in.
 #
 cd Xponents
 ./script/dist.sh  build
 
-# After a succesfull build (dist will be about 3.5 GB), go to the release and build docker images -- regular and offline.
-ERSION=3.3
+# After a succesful build (dist will be about 3.5 GB), go to the release and build docker images -- regular and then offline.
+VERSION=3.3
 docker build --tag opensextant:xponents-$VERSION .
+
+LOCAL_REPO=maven-repo
+(cd Core && mvn install -Dmaven.repo.local=../$LOCAL_REPO)
+mvn -U clean package -Dopensextant.solr=./xponents-solr/solr7  -Dmaven.repo.local=$LOCAL_REPO
+
 docker build --tag opensextant:xponents-offline-$VERSION -f ./Dockerfile.offline .
 ```
 
