@@ -7,7 +7,7 @@ RUN adduser --system --group --uid 110 opensextant
 
 ENV XPONENTS=/home/opensextant/Xponents
 
-COPY ./$RELEASE_NAME $XPONENTS/
+COPY ./ $XPONENTS/
 
 WORKDIR $XPONENTS
 EXPOSE $XLAYER_PORT 7000

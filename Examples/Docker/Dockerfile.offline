@@ -27,12 +27,6 @@ RUN cd /tmp && curl -O http://mirrors.advancedhosters.com/apache/maven/maven-3/3
    (cd /opt/ ; tar xzf /tmp/$MVN-bin.tar.gz) && \
    (mv /opt/$MVN /opt/maven)
 
-# Copy in all source and resources
-#
-COPY ./src     $XPONENTS/src/
-COPY ./pom.xml $XPONENTS/
-COPY ./Core    $XPONENTS/Core/
-
 WORKDIR $XPONENTS
 
 # Build inside Docker to confirm "offline mode" works
@@ -43,6 +37,7 @@ RUN mvn -o -Dopensextant.solr=./xponents-solr/solr7 \
 
 # 2. Copy built items and metadata from install to final runtime CLASSPATH ./lib
 RUN cp ./target/*jar ./xponents-solr/solr7/lib/xponents*jar ./lib/
+RUN rm ./lib/log4j-slf4j-impl-2.11.0.jar
 
 #---------------------------
 EXPOSE $XLAYER_PORT 7000
