@@ -6,7 +6,7 @@ A very superficial description of other libraries Xponents relies on:
 
 - XText depends on Tika 1.21+
 - XCoord depends on [OpenSextant Geodesy](https://github.com/OpenSextant/geodesy/) for geodetic parsing and validation 
-- Extraction makes usef of [OpenSextant GISCore](https://github.com/OpenSextant/giscore/) for output file formatting
+- Extraction makes use of [OpenSextant GISCore](https://github.com/OpenSextant/giscore/) for output file formatting
 
 Name matching depends on:
 
@@ -24,6 +24,12 @@ RELEASES
 ==============
 
 # 2020
+
+**Xponents 3.3.5 Clarity**
+
+* Maven offline support in a Docker offline image, now posted at https://hub.docker.com/r/mubaldino/opensextant/tags
+* Bugs and JavaDoc consistency addressed
+* XText brought up to v3.3.5
 
 **Xponents 3.3.3 New Vision**
 
