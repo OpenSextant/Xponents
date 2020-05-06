@@ -11,14 +11,15 @@ ENV XPONENTS=/home/opensextant/Xponents
 ENV MVN=apache-maven-3.6.3
 ENV PATH=/opt/maven/bin:$PATH
 ENV LOCAL_REPO_NAME=maven-repo
-ENV LOCAL_REPO=$XPONENTS/maven-repo
+ENV LOCAL_REPO=$XPONENTS/$LOCAL_REPO_NAME
 
 # --------------------------
 # Copy ./Xponents-3.x/<CONTENT> to target 
 # Assumption is docker build is run from inside release folder
 #
 COPY ./ $XPONENTS/
-COPY $LOCAL_REPO_NAME $XPONENTS/
+# This only applies if local repo is not already in current folder:
+# COPY $LOCAL_REPO_NAME $XPONENTS/$LOCAL_REPO_NAME/
 
 # OFFLINE
 #---------------------------
@@ -37,7 +38,6 @@ RUN mvn -o -Dopensextant.solr=./xponents-solr/solr7 \
 
 # 2. Copy built items and metadata from install to final runtime CLASSPATH ./lib
 RUN cp ./target/*jar ./xponents-solr/solr7/lib/xponents*jar ./lib/
-RUN rm ./lib/log4j-slf4j-impl-2.11.0.jar
 
 #---------------------------
 EXPOSE $XLAYER_PORT 7000
