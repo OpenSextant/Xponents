@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.3.5</version>
+  <version>3.3.6-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -50,7 +50,7 @@
   <properties>
     <solr.version>7.7.2</solr.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <slf4j.version>1.7.25</slf4j.version>
+    <slf4j.version>1.7.30</slf4j.version>
     <restlet.version>2.4.3</restlet.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
@@ -74,7 +74,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.9</version>
+        <version>3.11</version>
       </dependency>
       <!-- JUnit -->
       <dependency>
@@ -314,7 +314,7 @@
     <dependency>
       <groupId>org.jodd</groupId>
       <artifactId>jodd-json</artifactId>
-      <version>5.0.13</version>
+      <version>5.1.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.lucene</groupId>
@@ -329,7 +329,7 @@
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.3.5</version>
+      <version>3.3.6-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>

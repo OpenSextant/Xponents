@@ -4,14 +4,14 @@ FROM adoptopenjdk:12-jdk-hotspot
 # --------------------------
 ENV XLAYER_PORT=8787
 ENV VERSION=Xponents-3.3
-
-RUN adduser --system --group --uid 110 opensextant
-
 ENV XPONENTS=/home/opensextant/Xponents
 ENV MVN=apache-maven-3.6.3
 ENV PATH=/opt/maven/bin:$PATH
 ENV LOCAL_REPO_NAME=maven-repo
 ENV LOCAL_REPO=$XPONENTS/$LOCAL_REPO_NAME
+
+# RUN adduser --system --group --uid 110 opensextant
+# USER opensextant
 
 # --------------------------
 # Copy ./Xponents-3.x/<CONTENT> to target 

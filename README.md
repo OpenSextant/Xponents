@@ -3,8 +3,9 @@ Back to [OpenSextant](http://opensextant.org)
 Xponents, A Toolkit for Geotagging World-wide Geography
 ========
 * **Author:** Marc Ubaldino, MITRE, (mubaldino@gmail.com, ubaldino@mitre.org). Summer 2019.
-* **Docker:** [OpenSextant on Docker](https://hub.docker.com/r/mubaldino/opensextant) Xponents builds featuring Xlayer REST API and full Worldwide Gazetter
+* **Docker:** [OpenSextant on Docker](https://hub.docker.com/r/mubaldino/opensextant) Xponents builds featuring geotagger REST API and full Worldwide Gazetter
 * **Citing:** Ubaldino, M (MITRE Corporation), __"OpenSextant Xponents: Geotagging Toolkit for World-wide Geography"__, 2019. https://opensextant.github.io/Xponents/
+* **Lecture** **["Geographic Literacy in Text Analytics: Developing and Applying OpenSextant", Jan 2020](https://gis.harvard.edu/event/geographic-literacy-text-analytics-developing-and-applying-opensextant)**
 * **Video:** **["Discoverying World Geography in Your Data"](https://youtu.be/44v2WljG1R0?t=1805)**,
 
 
