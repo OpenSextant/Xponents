@@ -78,12 +78,10 @@ public class FormatterFactory {
         formatterClass = PKG + "." + formatterClass + "Formatter";
 
         try {
-            return (ResultsFormatter) (Class.forName(formatterClass)).newInstance();
+            return (ResultsFormatter) Class.forName(formatterClass).getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException e) {
             throw new ProcessingException("Formatter not found for " + fmt, e);
-        } catch (InstantiationException e) {
-            throw new ProcessingException("Formatter could not start for " + fmt, e);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException | ReflectiveOperationException e) {
             throw new ProcessingException("Formatter could not start for " + fmt, e);
         }
     }

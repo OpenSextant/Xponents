@@ -24,13 +24,11 @@ import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextEntity;
 
 /**
- * DMSOrdinate represents all the various fields a WGS84 cartesian coordinate
- * could have. degree/minute/second, as well as fractional minutes and
- * fractional seconds.
+ * DMSOrdinate represents all the various fields a WGS84 cartesian coordinate could have.
+ * degree/minute/second, as well as fractional minutes and fractional seconds.
  *
- * Patterns may have symbols which further indicate if a pattern is a literal
- * decimal number (e.g., 33-44, 33.44, 33.444, 33-4444) of if the numbers are in
- * minutes/seconds units (33:44).
+ * Patterns may have symbols which further indicate if a pattern is a literal decimal number (e.g.,
+ * 33-44, 33.44, 33.444, 33-4444) of if the numbers are in minutes/seconds units (33:44).
  *
  * @author ubaldino
  */
@@ -61,7 +59,8 @@ public final class DMSOrdinate {
     public boolean has_hemi = false;
     private double value = 0;
 
-    /** Resolution field for DMS.ms
+    /**
+     * Resolution field for DMS.ms
      */
     public static enum Resolution {
         DEG, SUBDEG, MIN, SUBMIN, SEC, SUBSEC
@@ -96,29 +95,26 @@ public final class DMSOrdinate {
     private Map<String, String> normalizedValues = null;
 
     /**
-     * DMS ordinates can be made up of degrees, minutes, seconds and then
-     * decimal minutes and decimal seconds
+     * DMS ordinates can be made up of degrees, minutes, seconds and then decimal minutes and decimal
+     * seconds
      *
-     * fractional minutes dddd are formatted as ".dddd" then parsed; ADD to
-     * existing minutes fractional seconds dddd are formatted as ".dddd" then
-     * parsed; ADD to existing seconds
+     * fractional minutes dddd are formatted as ".dddd" then parsed; ADD to existing minutes fractional
+     * seconds dddd are formatted as ".dddd" then parsed; ADD to existing seconds
      *
-     * decimal minutes d.ddd.. are parsed as float, divide by 60 to get # of
-     * degrees decimal seconds d.ddd.. "" "" , divide by 3600 to get # of
-     * degrees
+     * decimal minutes d.ddd.. are parsed as float, divide by 60 to get # of degrees decimal seconds
+     * d.ddd.. "" "" , divide by 3600 to get # of degrees
      *
      *
-     * All Constructors must set is_latitude from a given flag. This is used for
-     * range validation.
+     * All Constructors must set is_latitude from a given flag. This is used for range validation.
      *
      * @param fieldMatches the field matches
-     * @param fieldVals the field vals
-     * @param islat  true if matched part is for latitude
-     * @param t  the raw text of the matched coordinate
+     * @param fieldVals    the field vals
+     * @param islat        true if matched part is for latitude
+     * @param t            the raw text of the matched coordinate
      * @throws NormalizationException if coordinate is not valid or unable to normalize
      */
-    public DMSOrdinate(Map<String, TextEntity> fieldMatches, Map<String, String> fieldVals,
-            boolean islat, String t) throws NormalizationException {
+    public DMSOrdinate(Map<String, TextEntity> fieldMatches, Map<String, String> fieldVals, boolean islat, String t)
+            throws NormalizationException {
 
         // VALID XCoord elements or groups:
 
@@ -161,8 +157,7 @@ public final class DMSOrdinate {
         }
 
         if (!_parse_state) {
-            throw new NormalizationException("Unable to parse match due to "
-                    + (islat ? "LAT" : "LON"));
+            throw new NormalizationException("Unable to parse match due to " + (islat ? "LAT" : "LON"));
         }
 
         set_normalized_text();
@@ -170,8 +165,9 @@ public final class DMSOrdinate {
     }
 
     /**
-     * offsets for degree and hemisphere until this point are likely absolute within a document
-     * Reset them using this relative offset.  Offsets will then be relative to text.
+     * offsets for degree and hemisphere until this point are likely absolute within a document Reset
+     * them using this relative offset. Offsets will then be relative to text.
+     * 
      * @param matchStart offset of match into doc
      */
     protected void setRelativeOffsets(int matchStart) {
@@ -239,20 +235,17 @@ public final class DMSOrdinate {
     protected static final DecimalFormat fieldDec = new DecimalFormat("00.######");
 
     /**
-     * Get back a normalized version of what you found. Yield zero-padded
-     * version of coordinate, e.g., if DMS xdeg M' SS" is parsed we want
-     * xxx:MM:SS fully padded
+     * Get back a normalized version of what you found. Yield zero-padded version of coordinate, e.g.,
+     * if DMS xdeg M' SS" is parsed we want xxx:MM:SS fully padded
      *
      * 45 33N-00811 given 45:33.00811 normalized, DEG:MIN.mmmmm
      *
      * Full format should be:
      *
-     * hDDD.ddd hDDD:MM.mmm hDDD:MM.mmm:SS.sss unlikely -- if this happens --
-     * both fractional minutes and fractional seconds, pattern has errors
-     * hDDD:MM:SS.sss
+     * hDDD.ddd hDDD:MM.mmm hDDD:MM.mmm:SS.sss unlikely -- if this happens -- both fractional minutes
+     * and fractional seconds, pattern has errors hDDD:MM:SS.sss
      *
-     * .ddd, .mmm, .sss --- as many decimal places as there are h --- +/-
-     * hemisphere
+     * .ddd, .mmm, .sss --- as many decimal places as there are h --- +/- hemisphere
      *
      */
     protected void set_normalized_text() {
@@ -341,7 +334,7 @@ public final class DMSOrdinate {
         }
 
         saveField(norm, val);
-        return new Integer(val);
+        return Integer.valueOf(val);
     }
 
     /**
@@ -357,12 +350,12 @@ public final class DMSOrdinate {
             val = val.replaceFirst("-", ".");
         }
         saveField(norm, val);
-        return new Float(val);
+        return Float.valueOf(val);
     }
 
     /**
-     * As a result of this, the fsec field text will be saved with decimal
-     * point. Convert "-888" to the decimal part of a value, e.g., "0.888"
+     * As a result of this, the fsec field text will be saved with decimal point. Convert "-888" to the
+     * decimal part of a value, e.g., "0.888"
      */
     private Float getFractionValue(String f, String norm) {
         String val = fieldValues.get(f);
@@ -387,7 +380,8 @@ public final class DMSOrdinate {
 
     private void findDegreeOffset(String[] fieldNames) {
         /**
-         * Helpful for determining where the distinct coordinates start in the text.  Usually, Degrees are first.
+         * Helpful for determining where the distinct coordinates start in the text. Usually, Degrees are
+         * first.
          */
         for (String f : fieldNames) {
             TextEntity val = fields.get(f);
@@ -407,8 +401,7 @@ public final class DMSOrdinate {
      *       then if seconds...
      * </pre>
      *
-     * It would be difficult to skip minutes if DEG and SEC are only fields
-     * present.
+     * It would be difficult to skip minutes if DEG and SEC are only fields present.
      *
      * @return true if Latitude fields parse properly
      */
@@ -496,8 +489,7 @@ public final class DMSOrdinate {
     }
 
     /**
-     * This is a copy of the logic for digest_latitude_match; All I replace is
-     * "Lat" with "Lon"
+     * This is a copy of the logic for digest_latitude_match; All I replace is "Lat" with "Lon"
      *
      * @return true if longitude fields parse properly
      */
@@ -580,18 +572,16 @@ public final class DMSOrdinate {
     }
 
     /**
-     * Normalize a hemisphere pattern: +, -, NSEW, which may either be
-     * preceeding coordinate or after it. As well, it may be optional, so lack
-     * of a hemisphere may match to null. In which case, -- NO_HEMISPHERE --
-     * caller should assume POSITIVE hemisphere is implied. further filtering by
-     * caller is warranted.
+     * Normalize a hemisphere pattern: +, -, NSEW, which may either be preceeding coordinate or after
+     * it. As well, it may be optional, so lack of a hemisphere may match to null. In which case, --
+     * NO_HEMISPHERE -- caller should assume POSITIVE hemisphere is implied. further filtering by caller
+     * is warranted.
      *
-     * @param t raw text of match
+     * @param t        raw text of match
      * @param elements fields
-     * @param islat true if match represents latitude
+     * @param islat    true if match represents latitude
      */
-    protected void normalize_hemisphere(String t, java.util.Map<String, String> elements,
-            boolean islat) {
+    protected void normalize_hemisphere(String t, java.util.Map<String, String> elements, boolean islat) {
 
         int hemi = (islat ? getLatHemisphereSign(elements) : getLonHemisphereSign(elements));
 
@@ -623,8 +613,7 @@ public final class DMSOrdinate {
     /**
      *
      */
-    public static final String[] COORDINATE_SYMBOLS = { "°", "º", "'", "\"", ":", "lat", "lon",
-        "geo", "coord", "deg" };
+    public static final String[] COORDINATE_SYMBOLS = { "°", "º", "'", "\"", ":", "lat", "lon", "geo", "coord", "deg" };
 
     private String coordinateSymbol = null;
 
@@ -725,7 +714,8 @@ public final class DMSOrdinate {
 
     private void findHemiOffset(String[] fieldNames) {
         /**
-         * Helpful for determining where the distinct coordinates start in the text.  Usually, Degrees are first.
+         * Helpful for determining where the distinct coordinates start in the text. Usually, Degrees are
+         * first.
          */
         for (String f : fieldNames) {
             TextEntity val = fields.get(f);
@@ -739,8 +729,7 @@ public final class DMSOrdinate {
     /**
      * @see getLonHemisphereSign
      *
-     * @param elements
-     *            list of trimmed components of the match
+     * @param elements list of trimmed components of the match
      * @return polarity of hemisphere from fields
      */
     protected int getLatHemisphereSign(java.util.Map<String, String> elements) {
@@ -769,12 +758,10 @@ public final class DMSOrdinate {
     /**
      * Given a list of match groups find the first Longitude Hemisphere group
      *
-     * hemiLon W, E group used mostly for DMS, DM, DD formats hemiLonSign +, -
-     * group allowed only for specific formats; +/- may appear before any number
-     * not just coords. hemiLonPre W, E, +, -
+     * hemiLon W, E group used mostly for DMS, DM, DD formats hemiLonSign +, - group allowed only for
+     * specific formats; +/- may appear before any number not just coords. hemiLonPre W, E, +, -
      *
-     * @param elements
-     *            list of trimmed components of the match
+     * @param elements list of trimmed components of the match
      * @return polarity of hemisphere from fields
      */
     protected int getLonHemisphereSign(java.util.Map<String, String> elements) {
@@ -800,12 +787,13 @@ public final class DMSOrdinate {
 
     /**
      * Only used for literal decimal degrees that require little parsing.
+     * 
      * @deprecated For XCoord purposes use the DMSOrdinate(map, map, boolean, text) form.
-     * @param deg  degrees
-     * @param min  minutes
-     * @param sec seconds
-     * @param islat true if match is latitude
-     * @param hemi_sign  polarity of hemisphere
+     * @param deg       degrees
+     * @param min       minutes
+     * @param sec       seconds
+     * @param islat     true if match is latitude
+     * @param hemi_sign polarity of hemisphere
      */
     @Deprecated
     public DMSOrdinate(int deg, int min, int sec, boolean islat, int hemi_sign) {
@@ -820,12 +808,13 @@ public final class DMSOrdinate {
 
     /**
      * Construct a lat or lon ordinate from given values.
+     * 
      * @deprecated For XCoord purposes use the DMSOrdinate(map, map, boolean, text) form.
-     * @param deg degrees
-     * @param min minutes
-     * @param sec seconds
-     * @param msec millis
-     * @param islat true if match is latitude
+     * @param deg       degrees
+     * @param min       minutes
+     * @param sec       seconds
+     * @param msec      millis
+     * @param islat     true if match is latitude
      * @param hemi_sign polarity of hemisphere
      */
     @Deprecated
@@ -842,10 +831,10 @@ public final class DMSOrdinate {
      *
      * @deprecated For XCoord purposes use the DMSOrdinate(map, map, boolean, text) form.
      *
-     * @param deg degrees
-     * @param min minutes
-     * @param sec seconds
-     * @param islat isLat
+     * @param deg       degrees
+     * @param min       minutes
+     * @param sec       seconds
+     * @param islat     isLat
      * @param hemi_sign polarity
      * @throws java.text.ParseException on parsing error or if values are null
      */
@@ -894,9 +883,9 @@ public final class DMSOrdinate {
     }
 
     /**
-     * toDD() Return the decimal value to the extent it makes sense. That is,
-     * calculating minutes or seconds where MIN or SEC fields are out of bounds
-     * for those units does not make sense, return at least Deg or Deg/Min.
+     * toDD() Return the decimal value to the extent it makes sense. That is, calculating minutes or
+     * seconds where MIN or SEC fields are out of bounds for those units does not make sense, return at
+     * least Deg or Deg/Min.
      *
      * Validation of the ordinate is a second step to be done by caller.
      *
