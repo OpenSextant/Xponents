@@ -143,6 +143,7 @@ public class TextUtils {
 
     /**
      * If a string has extended latin diacritics.
+     * 
      * @param s string to test
      * @return true if a single diacritic is found.
      */
@@ -161,11 +162,9 @@ public class TextUtils {
 
     /**
      * remove accents from a string and replace with ASCII equivalent Reference:
-     * http://www.rgagnon.com/javadetails/java-0456.html Caveat: This
-     * implementation is not exhaustive.
+     * http://www.rgagnon.com/javadetails/java-0456.html Caveat: This implementation is not exhaustive.
      *
-     * @param s
-     *            the string
+     * @param s the string
      * @return converted string
      */
     public static final String replaceDiacritics(final String s) {
@@ -192,8 +191,7 @@ public class TextUtils {
 
     /**
      *
-     * @param c
-     *            a character
+     * @param c a character
      * @return true if c is ASCII
      */
     public static final boolean isASCII(char c) {
@@ -202,7 +200,7 @@ public class TextUtils {
 
     /**
      * 
-     * @param c  character
+     * @param c character
      * @return true if c is ASCII a-z or A-Z
      */
     public static final boolean isASCIILetter(char c) {
@@ -212,8 +210,7 @@ public class TextUtils {
     private static final int ASCII_END = 0x7F;
 
     /**
-     * @param data
-     *            bytes to test
+     * @param data bytes to test
      * @return boolean if data is ASCII or not
      */
     public static boolean isASCII(byte[] data) {
@@ -228,8 +225,7 @@ public class TextUtils {
     /**
      * Early exit test -- return false on first non-ASCII character found.
      * 
-     * @param t
-     *            buffer of text
+     * @param t buffer of text
      * @return true only if every char is in ASCII table.
      */
     public static boolean isASCII(String t) {
@@ -246,8 +242,7 @@ public class TextUtils {
     /**
      * count the number of ASCII bytes
      *
-     * @param data
-     *            bytes to count
+     * @param data bytes to count
      * @return count of ASCII bytes
      */
     public static int countASCIIChars(byte[] data) {
@@ -263,8 +258,7 @@ public class TextUtils {
     /**
      * Replaces all 3 or more blank lines with a single paragraph break (\n\n)
      *
-     * @param t
-     *            text
+     * @param t text
      * @return A string with fewer line breaks;
      *
      */
@@ -280,8 +274,7 @@ public class TextUtils {
     /**
      * Delete whitespace of any sort.
      *
-     * @param t
-     *            text
+     * @param t text
      * @return String, without whitespace.
      */
     public static String delete_whitespace(String t) {
@@ -295,8 +288,7 @@ public class TextUtils {
     /**
      * Minimize whitespace.
      *
-     * @param t
-     *            text
+     * @param t text
      * @return scrubbed string
      */
     public static String squeeze_whitespace(String t) {
@@ -310,8 +302,7 @@ public class TextUtils {
     /**
      * Replace line endings with SPACE
      * 
-     * @param t
-     *            text
+     * @param t text
      * @return scrubbed string
      */
     public static String delete_eol(String t) {
@@ -325,12 +316,10 @@ public class TextUtils {
     public static final char DEL = 0x7F;
 
     /**
-     * Delete control chars from text data; leaving text and whitespace only.
-     * Delete char (^?) is also removed. Length may differ if ctl chars are
-     * removed.
+     * Delete control chars from text data; leaving text and whitespace only. Delete char (^?) is also
+     * removed. Length may differ if ctl chars are removed.
      *
-     * @param t
-     *            text
+     * @param t text
      * @return scrubbed buffer
      */
     public static String delete_controls(String t) {
@@ -361,8 +350,7 @@ public class TextUtils {
     /**
      * Counts all digits in text.
      *
-     * @param txt
-     *            text to count
+     * @param txt text to count
      * @return count of digits
      */
     public static int count_digits(String txt) {
@@ -380,11 +368,9 @@ public class TextUtils {
     }
 
     /**
-     * StringUtils in commons isNumeric("1.234") is NOT numeric. Here "1.234" is
-     * numeric.
+     * StringUtils in commons isNumeric("1.234") is NOT numeric. Here "1.234" is numeric.
      * 
-     * @param v
-     *            val to parse
+     * @param v val to parse
      * @return true if val is a number
      */
     public static final boolean isNumeric(final String v) {
@@ -413,8 +399,7 @@ public class TextUtils {
     /**
      * Counts all whitespace in text.
      *
-     * @param txt
-     *            text
+     * @param txt text
      * @return whitespace count
      */
     public static int count_ws(String txt) {
@@ -433,13 +418,11 @@ public class TextUtils {
     }
 
     /**
-     * Count formatting whitespace. This is helpful in determining if text spans
-     * are phrases with multiple TAB or EOL characters. For that matter, any
-     * control character contributes to formatting in some way. DEL, VT, HT,
-     * etc. So all control characters ( c &lt; ' ') are counted.
+     * Count formatting whitespace. This is helpful in determining if text spans are phrases with
+     * multiple TAB or EOL characters. For that matter, any control character contributes to formatting
+     * in some way. DEL, VT, HT, etc. So all control characters ( c &lt; ' ') are counted.
      * 
-     * @param txt
-     *            input string
+     * @param txt input string
      * @return count of format chars
      */
     public static int countFormattingSpace(String txt) {
@@ -458,11 +441,10 @@ public class TextUtils {
     }
 
     /**
-     * For measuring the upper-case-ness of short texts. Returns true if ALL
-     * letters in text are UPPERCASE. Allows for non-letters in text.
+     * For measuring the upper-case-ness of short texts. Returns true if ALL letters in text are
+     * UPPERCASE. Allows for non-letters in text.
      *
-     * @param dat
-     *            text or data
+     * @param dat text or data
      * @return true if text is Upper
      */
     public static boolean isUpper(String dat) {
@@ -476,10 +458,8 @@ public class TextUtils {
     /**
      * detects if string alpha chars are purely lower case.
      * 
-     * @param text
-     *            text
-     * @param textcase
-     *            1 lower, 2 upper
+     * @param text     text
+     * @param textcase 1 lower, 2 upper
      * @return if case matches given textcase param
      */
     public static boolean checkCase(String text, int textcase) {
@@ -521,8 +501,7 @@ public class TextUtils {
     /**
      * Measure character count, upper, lower, non-Character, whitespace
      * 
-     * @param text
-     *            text
+     * @param text text
      * @return int array with counts.
      */
     public static int[] measureCase(String text) {
@@ -556,12 +535,11 @@ public class TextUtils {
     }
 
     /**
-     * First measureCase(Text) to acquire counts, then call this routine for a heuristic
-     * that suggests the text is mainly upper case. These routines may not work well on languages that are not
+     * First measureCase(Text) to acquire counts, then call this routine for a heuristic that suggests
+     * the text is mainly upper case. These routines may not work well on languages that are not
      * Latin-alphabet.
      * 
-     * @param counts
-     *            word stats from measureCase()
+     * @param counts word stats from measureCase()
      * @return true if counts represent text that exceeds the "UPPER CASE" threshold
      */
     public static boolean isUpperCaseDocument(final int[] counts) {
@@ -583,12 +561,10 @@ public class TextUtils {
     }
 
     /**
-     * This measures the amount of upper case
-     * See Upper Case. Two methods to measure -- lower case count compared to all content (char+non-char)
-     * or compared to just char content.
+     * This measures the amount of upper case See Upper Case. Two methods to measure -- lower case count
+     * compared to all content (char+non-char) or compared to just char content.
      * 
-     * @param counts
-     *            word stats from measureCase()
+     * @param counts word stats from measureCase()
      * @return true if counts represent text that exceeds the "lower case" threshold
      */
     public static boolean isLowerCaseDocument(final int[] counts) {
@@ -601,8 +577,8 @@ public class TextUtils {
     }
 
     /**
-     * Find the text window(s) around a match. Given the size of a buffer, the
-     * match and desired width return
+     * Find the text window(s) around a match. Given the size of a buffer, the match and desired width
+     * return
      *
      * <pre>
      * prepreprepre      MATCH        postpostpost
@@ -611,14 +587,10 @@ public class TextUtils {
      * left1     left2              right1    right2
      * </pre>
      *
-     * @param offset
-     *            offset of match
-     * @param width
-     *            width of window left and right of match
-     * @param textsize
-     *            size of buffer containing match; used for boundary conditions
-     * @param matchlen
-     *            length of match
+     * @param offset   offset of match
+     * @param width    width of window left and right of match
+     * @param textsize size of buffer containing match; used for boundary conditions
+     * @param matchlen length of match
      * @return window offsets left of match, right of match: [ l1, l2, r1, r2 ]
      */
     public static int[] get_text_window(int offset, int matchlen, int textsize, int width) {
@@ -653,12 +625,9 @@ public class TextUtils {
     /**
      * Get a single text window around the offset.
      *
-     * @param offset
-     *            offset of match
-     * @param width
-     *            width of window left and right of match
-     * @param textsize
-     *            size of buffer containing match; used for boundary conditions
+     * @param offset   offset of match
+     * @param width    width of window left and right of match
+     * @param textsize size of buffer containing match; used for boundary conditions
      * @return window offsets of a text span contianing match [ left, right ]
      */
     public static int[] get_text_window(int offset, int textsize, int width) {
@@ -686,13 +655,10 @@ public class TextUtils {
     /**
      * Static method -- use only if you are sure of thread-safety.
      *
-     * @param text
-     *            text or data
+     * @param text text or data
      * @return identifier for the text, an MD5 hash
-     * @throws NoSuchAlgorithmException
-     *             on err
-     * @throws UnsupportedEncodingException
-     *             on err
+     * @throws NoSuchAlgorithmException     on err
+     * @throws UnsupportedEncodingException on err
      */
     public static String text_id(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         if (text == null) {
@@ -711,8 +677,7 @@ public class TextUtils {
 
     /**
      *
-     * @param md5digest
-     *            byte array
+     * @param md5digest byte array
      * @return MD5 hash for the data
      */
     public static String md5_id(byte[] md5digest) {
@@ -730,15 +695,12 @@ public class TextUtils {
     }
 
     /**
-     * Get a list of values into a nice, scrubbed array of values, no
-     * whitespace.
+     * Get a list of values into a nice, scrubbed array of values, no whitespace.
      *
      * a, b, c d e, f =&gt; [ "a", "b", "c d e", "f" ]
      *
-     * @param s
-     *            string to split
-     * @param delim
-     *            delimiter, no default.
+     * @param s     string to split
+     * @param delim delimiter, no default.
      * @return list of split strings, which are also whitespace trimmed
      */
     public static List<String> string2list(String s, String delim) {
@@ -762,15 +724,11 @@ public class TextUtils {
      *
      * return the new string, S'.
      *
-     * "-name-with.invalid characters;" // replace "-. ;" with "_"
-     * "_name_with_invalid_characters_" //
+     * "-name-with.invalid characters;" // replace "-. ;" with "_" "_name_with_invalid_characters_" //
      *
-     * @param buf
-     *            buffer
-     * @param replace
-     *            string of characters to replace with the one substitute char
-     * @param substitution
-     *            string to insert in place of chars
+     * @param buf          buffer
+     * @param replace      string of characters to replace with the one substitute char
+     * @param substitution string to insert in place of chars
      * @return scrubbed text
      */
     public static String fast_replace(String buf, String replace, String substitution) {
@@ -789,10 +747,8 @@ public class TextUtils {
     /**
      * Remove instances of any char in the remove string from buf
      *
-     * @param buf
-     *            text
-     * @param remove
-     *            string to remove
+     * @param buf    text
+     * @param remove string to remove
      * @return scrubbed text
      */
     public static String removeAny(String buf, String remove) {
@@ -807,15 +763,12 @@ public class TextUtils {
     }
 
     /**
-     * Replace any of the removal chars with the sub. A many to one replacement.
-     * alt: use regex String.replace(//, '')
+     * Replace any of the removal chars with the sub. A many to one replacement. alt: use regex
+     * String.replace(//, '')
      * 
-     * @param buf
-     *            text
-     * @param remove
-     *            string to replace
-     * @param sub
-     *            the replacement string
+     * @param buf    text
+     * @param remove string to replace
+     * @param sub    the replacement string
      * @return scrubbed text
      */
     public static String replaceAny(String buf, String remove, String sub) {
@@ -836,10 +789,8 @@ public class TextUtils {
      *
      * Example: - a b c remove "-" from string above.
      *
-     * @param buf
-     *            text
-     * @param remove
-     *            string to remove
+     * @param buf    text
+     * @param remove string to remove
      * @return scrubbed text
      */
     public static String removeAnyLeft(String buf, String remove) {
@@ -869,8 +820,7 @@ public class TextUtils {
      * Where "__" represents omitted characters.
      * </pre>
      * 
-     * @param str
-     *            text
+     * @param str text
      * @return scrubbed text
      */
     public static String normalizeTextEntity(String str) {
@@ -916,8 +866,7 @@ public class TextUtils {
     /**
      * Return just white-space delmited tokens.
      *
-     * @param str
-     *            text
+     * @param str text
      * @return tokens
      */
     public static String[] tokens(String str) {
@@ -925,11 +874,10 @@ public class TextUtils {
     }
 
     /**
-     * Return tokens on the right most part of a buffer. If a para break occurs,
-     * \n\n or \r\n\r\n, then return the part on the right of the break.
+     * Return tokens on the right most part of a buffer. If a para break occurs, \n\n or \r\n\r\n, then
+     * return the part on the right of the break.
      * 
-     * @param str
-     *            text
+     * @param str text
      * @return whitespace delimited tokens
      */
     public static final String[] tokensRight(String str) {
@@ -946,8 +894,7 @@ public class TextUtils {
     /**
      * See tokensRight()
      * 
-     * @param str
-     *            text
+     * @param str text
      * @return whitespace delimited tokens
      */
     public static final String[] tokensLeft(String str) {
@@ -962,13 +909,12 @@ public class TextUtils {
     }
 
     /**
-     * Intended only as a filter for punctuation within a word. Text of the form
-     * A.T.T. or U.S. becomes ATT and US. A text such as Mr.Pibbs incorrectly
-     * becomes MrPibbs but for the purposes of normalizing tokens this should be
-     * fine. Use appropriate tokenization prior to using this as a filter.
+     * Intended only as a filter for punctuation within a word. Text of the form A.T.T. or U.S. becomes
+     * ATT and US. A text such as Mr.Pibbs incorrectly becomes MrPibbs but for the purposes of
+     * normalizing tokens this should be fine. Use appropriate tokenization prior to using this as a
+     * filter.
      * 
-     * @param word
-     *            phrase with periods denoting some abbreviation.
+     * @param word phrase with periods denoting some abbreviation.
      * @return scrubbed text
      */
     public static String normalizeAbbreviation(String word) {
@@ -976,11 +922,9 @@ public class TextUtils {
     }
 
     /**
-     * Supports Phoneticizer utility from OpenSextant v1.x Remove diacritics
-     * from a phrase
+     * Supports Phoneticizer utility from OpenSextant v1.x Remove diacritics from a phrase
      * 
-     * @param word
-     *            text
+     * @param word text
      * @return scrubbed text
      */
     public static String removeDiacritics(String word) {
@@ -1001,17 +945,14 @@ public class TextUtils {
     }
 
     /**
-     * Normalize to "Normalization Form Canonical Decomposition" (NFD) REF:
-     * http:
+     * Normalize to "Normalization Form Canonical Decomposition" (NFD) REF: http:
      * //stackoverflow.com/questions/3610013/file-listfiles-mangles-unicode-
-     * names-with-jdk-6-unicode-normalization-issues This supports proper file
-     * name retrieval from file system, among other things. In many situations
-     * we see unicode file names -- Java can list them, but in using the
-     * Java-provided version of the filename the OS/FS may not be able to find
-     * the file by the name given in a particular normalized form.
+     * names-with-jdk-6-unicode-normalization-issues This supports proper file name retrieval from file
+     * system, among other things. In many situations we see unicode file names -- Java can list them,
+     * but in using the Java-provided version of the filename the OS/FS may not be able to find the file
+     * by the name given in a particular normalized form.
      *
-     * @param str
-     *            text
+     * @param str text
      * @return normalized string, encoded with NFD bytes
      */
     public static String normalizeUnicode(String str) {
@@ -1031,22 +972,18 @@ public class TextUtils {
      */
     static final Pattern CLEAN_WORD_LEFT = Pattern.compile("^[^\\p{L}\\p{Nd}]+");
     /**
-     * Obscure punctuation pattern that also deals with Unicode single and
-     * double quotes
+     * Obscure punctuation pattern that also deals with Unicode single and double quotes
      */
     static final Pattern CLEAN_WORD_PUNCT = Pattern.compile("[\"'.`\\u00B4\\u2018\\u2019]");
 
     /**
-     * Remove any leading and trailing punctuation and some internal
-     * punctuation. Internal punctuation which indicates conjunction of two
-     * tokens, e.g. a hyphen, should have caused a split into separate tokens at
-     * the tokenization stage.
+     * Remove any leading and trailing punctuation and some internal punctuation. Internal punctuation
+     * which indicates conjunction of two tokens, e.g. a hyphen, should have caused a split into
+     * separate tokens at the tokenization stage.
      *
-     * Phoneticizer utility from OpenSextant v1.x Remove punctuation from a
-     * phrase
+     * Phoneticizer utility from OpenSextant v1.x Remove punctuation from a phrase
      * 
-     * @param word
-     *            text
+     * @param word text
      * @return scrubbed text
      */
     public static String removePunctuation(String word) {
@@ -1113,9 +1050,8 @@ public class TextUtils {
     }
 
     /**
-     * Initialize language codes and metadata. This establishes a map for the
-     * most common language codes/names that exist in at least ISO-639-1 and
-     * have a non-zero 2-char ID.
+     * Initialize language codes and metadata. This establishes a map for the most common language
+     * codes/names that exist in at least ISO-639-1 and have a non-zero 2-char ID.
      *
      * <pre>
      * Based on:
@@ -1141,14 +1077,12 @@ public class TextUtils {
     }
 
     /**
-     * This is Libray of Congress data for language IDs. This is offered as a
-     * tool to help downstream language ID and enrich metadata when tagging data
-     * from particular countries.
+     * This is Libray of Congress data for language IDs. This is offered as a tool to help downstream
+     * language ID and enrich metadata when tagging data from particular countries.
      *
      * Reference: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt
      *
-     * @throws java.io.IOException
-     *             if resource file is not found
+     * @throws java.io.IOException if resource file is not found
      */
     public static void initLOCLanguageData() throws java.io.IOException {
         //
@@ -1221,25 +1155,19 @@ public class TextUtils {
     }
 
     /**
-     * Extend the basic language dictionary. Note -- First language is listed in
-     * language map by Name, and is not overwritten. Language objects may be
-     * overwritten in map using lang codes.
+     * Extend the basic language dictionary. Note -- First language is listed in language map by Name,
+     * and is not overwritten. Language objects may be overwritten in map using lang codes.
      *
-     * For example, fre = French(fre), fra = French(fra), and french =
-     * French(fra)
+     * For example, fre = French(fre), fra = French(fra), and french = French(fra)
      *
      * the last one, 'french' = could have been the French(fre) or (fra).
      *
-     * Example, 'ger' and 'deu' are both valid ISO 3-alpha codes for German.
-     * What to do?
+     * Example, 'ger' and 'deu' are both valid ISO 3-alpha codes for German. What to do?
      *
-     * TODO: Create a language object that lists both language
-     * biblio/terminology codes.
+     * TODO: Create a language object that lists both language biblio/terminology codes.
      *
-     * @param lg
-     *            language object
-     * @param override
-     *            if this value should overwrite an existing one.
+     * @param lg       language object
+     * @param override if this value should overwrite an existing one.
      */
     public static void addLanguage(Language lg, boolean override) {
         if (lg == null) {
@@ -1263,14 +1191,11 @@ public class TextUtils {
     }
 
     /**
-     * Given an ISO2 char code (least common denominator) retrieve Language
-     * Name.
+     * Given an ISO2 char code (least common denominator) retrieve Language Name.
      *
-     * This is best effort, so if your code finds nothing, this returns code
-     * normalized to lowercase.
+     * This is best effort, so if your code finds nothing, this returns code normalized to lowercase.
      * 
-     * @param code
-     *            lang ID
+     * @param code lang ID
      * @return name of language
      */
     public static String getLanguageName(String code) {
@@ -1285,8 +1210,7 @@ public class TextUtils {
     /**
      * ISO2 and ISO3 char codes for languages are unique.
      *
-     * @param code
-     *            iso2 or iso3 code
+     * @param code iso2 or iso3 code
      * @return the other code.
      */
     public static Language getLanguage(String code) {
@@ -1313,8 +1237,7 @@ public class TextUtils {
     /**
      * ISO2 and ISO3 char codes for languages are unique.
      *
-     * @param code
-     *            iso2 or iso3 code
+     * @param code iso2 or iso3 code
      * @return the other code.
      */
     public static String getLanguageCode(String code) {
@@ -1337,8 +1260,7 @@ public class TextUtils {
     /**
      * European languages = Romance + GER + ENG Extend definition as needed.
      * 
-     * @param l
-     *            language ID
+     * @param l language ID
      * @return true if language is European in nature
      */
     public static boolean isEuroLanguage(String l) {
@@ -1356,8 +1278,7 @@ public class TextUtils {
      *
      * Extend definition as needed.
      * 
-     * @param l
-     *            lang ID
+     * @param l lang ID
      * @return true if language is a Romance language
      */
     public static boolean isRomanceLanguage(String l) {
@@ -1373,8 +1294,7 @@ public class TextUtils {
     /**
      * Utility method to check if lang ID is English...
      *
-     * @param x
-     *            a langcode
+     * @param x a langcode
      * @return whether langcode is english
      */
     public static boolean isEnglish(String x) {
@@ -1388,11 +1308,9 @@ public class TextUtils {
     }
 
     /**
-     * Utility method to check if lang ID is Chinese(Traditional or
-     * Simplified)...
+     * Utility method to check if lang ID is Chinese(Traditional or Simplified)...
      *
-     * @param x
-     *            a langcode
+     * @param x a langcode
      * @return whether langcode is chinese
      */
     public static boolean isChinese(String x) {
@@ -1408,8 +1326,7 @@ public class TextUtils {
     /**
      * Utility method to check if lang ID is Chinese, Korean, or Japanese
      *
-     * @param x
-     *            a langcode
+     * @param x a langcode
      * @return whether langcode is a CJK language
      */
     public static boolean isCJK(String x) {
@@ -1430,13 +1347,11 @@ public class TextUtils {
     /**
      * Returns a ratio of Chinese/Japanese/Korean characters: CJK chars / ALL
      *
-     * TODO: needs testing; not sure if this is sustainable if block; or if it
-     * is comprehensive. TODO: for performance reasons the internal chain of
-     * comparisons is embedded in the method; Otherwise for each char, an
-     * external method invocation is required.
+     * TODO: needs testing; not sure if this is sustainable if block; or if it is comprehensive. TODO:
+     * for performance reasons the internal chain of comparisons is embedded in the method; Otherwise
+     * for each char, an external method invocation is required.
      *
-     * @param buf
-     *            the character to be tested
+     * @param buf the character to be tested
      * @return true if CJK, false otherwise
      */
     public static double measureCJKText(String buf) {
@@ -1454,13 +1369,11 @@ public class TextUtils {
 
     /**
      *
-     * Counts the CJK characters in buffer, buf chars Inspiration:
-     * http://stackoverflow
-     * .com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string
-     * Assumption is that the char array is Unicode characters.
+     * Counts the CJK characters in buffer, buf chars Inspiration: http://stackoverflow
+     * .com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string Assumption is that the
+     * char array is Unicode characters.
      *
-     * @param chars
-     *            char array for the text in question.
+     * @param chars char array for the text in question.
      * @return count of CJK characters
      */
     public static int countCJKChars(char[] chars) {
@@ -1481,11 +1394,10 @@ public class TextUtils {
     }
 
     /**
-     * A simple test to see if text has any CJK characters at all. It returns
-     * after the first such character.
+     * A simple test to see if text has any CJK characters at all. It returns after the first such
+     * character.
      *
-     * @param buf
-     *            text
+     * @param buf text
      * @return if buf has at least one CJK char.
      */
     public static boolean hasCJKText(String buf) {
@@ -1532,14 +1444,12 @@ public class TextUtils {
     }
 
     /**
-     * Likely to be uniquely Korean if the character block is in Hangul. But
-     * also, it may be Korean if block is part of the CJK ideographs at large.
-     * User must check if text in its entirety is part of CJK &amp; Hangul,
-     * independently. This method only detects if character block is uniquely
-     * Hangul or not.
+     * Likely to be uniquely Korean if the character block is in Hangul. But also, it may be Korean if
+     * block is part of the CJK ideographs at large. User must check if text in its entirety is part of
+     * CJK &amp; Hangul, independently. This method only detects if character block is uniquely Hangul
+     * or not.
      * 
-     * @param blk
-     *            a Java Unicode block
+     * @param blk a Java Unicode block
      * @return true if char block is Hangul
      */
     public static boolean isKorean(Character.UnicodeBlock blk) {
@@ -1552,8 +1462,7 @@ public class TextUtils {
     /**
      * Checks if char block is uniquely Japanese. Check other chars isChinese
      *
-     * @param blk
-     *            a Java Unicode block
+     * @param blk a Java Unicode block
      * @return true if char block is Hiragana or Katakana
      */
     public static boolean isJapanese(Character.UnicodeBlock blk) {
@@ -1562,14 +1471,12 @@ public class TextUtils {
     }
 
     /**
-     * Compress bytes from a Unicode string. Conversion to bytes first to avoid
-     * unicode or platform-dependent IO issues.
+     * Compress bytes from a Unicode string. Conversion to bytes first to avoid unicode or
+     * platform-dependent IO issues.
      *
-     * @param buf
-     *            UTF-8 encoded text
+     * @param buf UTF-8 encoded text
      * @return byte array
-     * @throws IOException
-     *             on error with compression or text encoding
+     * @throws IOException on error with compression or text encoding
      */
     public static byte[] compress(String buf) throws IOException {
         return compress(buf, "UTF-8");
@@ -1577,13 +1484,10 @@ public class TextUtils {
 
     /**
      *
-     * @param buf
-     *            text
-     * @param charset
-     *            character set encoding for text
+     * @param buf     text
+     * @param charset character set encoding for text
      * @return byte array for the compressed result
-     * @throws IOException
-     *             on error with compression or text encoding
+     * @throws IOException on error with compression or text encoding
      */
     public static byte[] compress(String buf, String charset) throws IOException {
 
@@ -1597,12 +1501,10 @@ public class TextUtils {
 
     /**
      *
-     * @param gzData
-     *            byte array containing gzipped buffer
+     * @param gzData byte array containing gzipped buffer
      * @return buffer UTF-8 decoded string
      *
-     * @throws IOException
-     *             on error with decompression or text encoding
+     * @throws IOException on error with decompression or text encoding
      */
     public static String uncompress(byte[] gzData) throws IOException {
         return uncompress(gzData, "UTF-8");
@@ -1612,13 +1514,10 @@ public class TextUtils {
 
     /**
      *
-     * @param gzData
-     *            byte array containing gzipped buffer
-     * @param charset
-     *            character set decoding for text
+     * @param gzData  byte array containing gzipped buffer
+     * @param charset character set decoding for text
      * @return buffer of uncompressed, decoded string
-     * @throws IOException
-     *             on error with decompression or text encoding
+     * @throws IOException on error with decompression or text encoding
      */
     public static String uncompress(byte[] gzData, String charset) throws IOException {
         GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(gzData));
@@ -1637,11 +1536,10 @@ public class TextUtils {
     }
 
     /**
-     * Unicode and social media -- We encounter all sorts of hangups when
-     * processing modern unicode text. XML issues, JNI issues, escape utilities,
-     * etc. All sorts of problems arise with emoticons aka emoji, and other
-     * symbols used in online media. So these utilities are offered to help
-     * remove such things prior to data processing.
+     * Unicode and social media -- We encounter all sorts of hangups when processing modern unicode
+     * text. XML issues, JNI issues, escape utilities, etc. All sorts of problems arise with emoticons
+     * aka emoji, and other symbols used in online media. So these utilities are offered to help remove
+     * such things prior to data processing.
      */
     // UnicodeBlock.MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS;
     private static final Pattern SCRUB_SYM = Pattern.compile("\\p{block=Miscellaneous Symbols And Pictographs}+");
@@ -1654,11 +1552,10 @@ public class TextUtils {
     private static final Pattern SCRUB_PLAYCARDS = Pattern.compile("\\p{block=Playing Cards}+");
 
     /**
-     * replace Emoticons with something less nefarious -- UTF-16 characters do
-     * not play well with some I/O routines.
+     * replace Emoticons with something less nefarious -- UTF-16 characters do not play well with some
+     * I/O routines.
      *
-     * @param t
-     *            text
+     * @param t text
      * @return scrubbed text
      */
     public static String removeEmoticons(String t) {
@@ -1668,8 +1565,7 @@ public class TextUtils {
     /**
      * Replace symbology
      *
-     * @param t
-     *            text
+     * @param t text
      * @return scrubbed text
      */
     public static String removeSymbols(String t) {
@@ -1702,16 +1598,15 @@ public class TextUtils {
     }
 
     /**
-    * Find any pattern "ABC#[ABC 123]" -- a hashtag with whitespace.
-    * Java Regex note: UNICODE flags are important, otherwise "\w" and other classes match only ASCII.
-    * NOTE: These are Twitter hashtags primarily
-    */
+     * Find any pattern "ABC#[ABC 123]" -- a hashtag with whitespace. Java Regex note: UNICODE flags are
+     * important, otherwise "\w" and other classes match only ASCII. NOTE: These are Twitter hashtags
+     * primarily
+     */
     public final static Pattern hashtagPattern1 = Pattern.compile("#(\\[\\w+[\\d\\s\\w]+\\])",
             Pattern.UNICODE_CHARACTER_CLASS);
     /**
-     * Find any pattern "#ABC123" -- normal hashtag,
-     * Java Regex note: UNICODE flags are important, otherwise "\w" and other classes match only ASCII.
-    * NOTE: These are Twitter hashtags primarily
+     * Find any pattern "#ABC123" -- normal hashtag, Java Regex note: UNICODE flags are important,
+     * otherwise "\w" and other classes match only ASCII. NOTE: These are Twitter hashtags primarily
      */
     public final static Pattern hashtagPattern2 = Pattern.compile("#(\\w+[\\d\\w]+)", Pattern.UNICODE_CHARACTER_CLASS);
 
@@ -1726,8 +1621,10 @@ public class TextUtils {
     }
 
     /**
-     * Takes a string and returns all the hashtags in it.  Normalized tags are just lowercased and deduplicated.
+     * Takes a string and returns all the hashtags in it. Normalized tags are just lowercased and
+     * deduplicated.
      * https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json
+     * 
      * @param tweetText text
      * @param normalize if to normalize text by lowercasing tags, etc.
      */
@@ -1763,7 +1660,8 @@ public class TextUtils {
      * 
      * @see #parseNaturalLanguage(String)
      * 
-     *      replace HTML, URLs removed, Tags and entity markers (@ and #) stripped; Tags and entities left in place.
+     *      replace HTML, URLs removed, Tags and entity markers (@ and #) stripped; Tags and entities
+     *      left in place.
      * @param raw raw text
      * @return cleaner looking text
      */
@@ -1777,25 +1675,22 @@ public class TextUtils {
     static Pattern urlHTTPPattern = Pattern.compile("https?://[\u0021-\u007F]+", Pattern.CASE_INSENSITIVE);
 
     /**
-     * Given tweet text or any [social media] text remove entities or other markers:
-     * - URLs are removed
-     * - entities are stripped of "@"
-     * - hashtags are stripped of "#"
-     * - HTML: &amp; is converted to an ampersand
-     * - HTML: escaped angle brackets are replaced with { and } for gt and lt, respectively
-     * - HTML: remaining special chars are converted back to unicode; remaining ampersand is replaced with "+"
-     * Whitespaces (space, newlines, tabs, etc.) are reduced.
+     * Given tweet text or any [social media] text remove entities or other markers: - URLs are removed
+     * - entities are stripped of "@" - hashtags are stripped of "#" - HTML: &amp; is converted to an
+     * ampersand - HTML: escaped angle brackets are replaced with { and } for gt and lt, respectively -
+     * HTML: remaining special chars are converted back to unicode; remaining ampersand is replaced with
+     * "+" Whitespaces (space, newlines, tabs, etc.) are reduced.
      * 
      * DEPRECATED: the use of the tags=true flag to replace hashtags with blank is not supported.
      * #tag&lt;unicode text&gt; is a problem. It is hard to tell in some cases where the hashtag ends.
-     * In Weibo, #tag#&lt;unicode text&gt; is used to denote that tag has a start/end
-     * But in Twitter, tag format is "#tag" or "#[phrase here]" etc. So there is no generic hashtag replacement.
+     * In Weibo, #tag#&lt;unicode text&gt; is used to denote that tag has a start/end But in Twitter,
+     * tag format is "#tag" or "#[phrase here]" etc. So there is no generic hashtag replacement.
      * 
-     * @param raw   original text
-     * @param unescapeHtml  unescape HTML
-     * @param remURLs  remove URLs
-     * @param remTags  remove hash tags
-     * @param remEntities remove other entities
+     * @param raw          original text
+     * @param unescapeHtml unescape HTML
+     * @param remURLs      remove URLs
+     * @param remTags      remove hash tags
+     * @param remEntities  remove other entities
      * @return text less entities.
      */
     public static String parseNaturalLanguage(final String raw, boolean unescapeHtml, boolean remURLs, boolean remTags,
@@ -1829,16 +1724,18 @@ public class TextUtils {
         /* Offsets are not preserved with this sort of function*/
         return TextUtils.squeeze_whitespace(text);
     }
-    
+
     /**
-     * A limited-scope date parsing:  Parse properly formatted strings for example,
-     * ISO date/time strings stored in one of our Solr indices.
+     * A limited-scope date parsing: Parse properly formatted strings for example, ISO date/time strings
+     * stored in one of our Solr indices.
      * 
      * @param dt ISO date/time string.
      * @return
      */
-    public final static java.util.Date parseDate(final String dt){
-        if (dt==null) { return null; } 
+    public final static java.util.Date parseDate(final String dt) {
+        if (dt == null) {
+            return null;
+        }
         return Instant.parse(dt).toDate();
     }
 }

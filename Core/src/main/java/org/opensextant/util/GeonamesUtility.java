@@ -62,9 +62,8 @@ public class GeonamesUtility {
     private final Map<String, String> defaultCountryNames = new HashMap<>();
 
     /**
-     * A utility class that offers many static routines; If you instantiate this
-     * class it will require metadata files for country-names and feature-codes
-     * in your classpath
+     * A utility class that offers many static routines; If you instantiate this class it will require
+     * metadata files for country-names and feature-codes in your classpath
      * 
      * @throws IOException if metadata files are not found or do not load.
      */
@@ -75,9 +74,9 @@ public class GeonamesUtility {
     }
 
     /**
-     * This may help revert to a more readable country name, e.g., if you are
-     * given upper case name and you want some version of it as a proper name
-     * But no need to use this if you have good reference data.
+     * This may help revert to a more readable country name, e.g., if you are given upper case name and
+     * you want some version of it as a proper name But no need to use this if you have good reference
+     * data.
      * 
      * @param c country name
      * @return capitalize the name of a country
@@ -89,7 +88,7 @@ public class GeonamesUtility {
     /**
      * Find a readable name or description of a class/code
      *
-     * @param cls feature class, e.g., P
+     * @param cls  feature class, e.g., P
      * @param code feature code, e.g., PPL
      * @return name for a feature/code pair
      */
@@ -100,6 +99,7 @@ public class GeonamesUtility {
 
     /**
      * Load "feature-metadata" CSV
+     * 
      * @throws IOException
      */
     private void loadFeatureMetaMap() throws IOException {
@@ -192,8 +192,7 @@ public class GeonamesUtility {
     }
 
     /**
-     * Build out a global map of TZ to CC to find which countries are in a
-     * particular TZ quickly
+     * Build out a global map of TZ to CC to find which countries are in a particular TZ quickly
      * 
      * @param tz TZ name
      * @param cc ISO country code for lookup
@@ -210,14 +209,13 @@ public class GeonamesUtility {
     private static final int ONE_HR = 3600; /*seconds*/
 
     /**
-     * Build out a global map of UTC offset to CC to find which countries are in
-     * a particular TZ+UTC offset quickly
+     * Build out a global map of UTC offset to CC to find which countries are in a particular TZ+UTC
+     * offset quickly
      * 
      * 
-     * @param utc query in hours (-12.0 to 12.0) or seconds (-43,200 to 43,200)
-     *            in the respective 30 or 15 minute increments. Caveat -- some
-     *            timezones are up to +14h, e.g., Pacific islands.
-     * @param cc ISO country code
+     * @param utc query in hours (-12.0 to 12.0) or seconds (-43,200 to 43,200) in the respective 30 or
+     *            15 minute increments. Caveat -- some timezones are up to +14h, e.g., Pacific islands.
+     * @param cc  ISO country code
      */
     private void addTZOffset(Map<Double, Set<String>> offset2cc, Double utc, String cc) {
         Set<String> ccset = offset2cc.get(utc);
@@ -236,10 +234,9 @@ public class GeonamesUtility {
     }
 
     /**
-     * This helps get the general area +/-5 degrees for a given UTC offset. UTC
-     * offsets range from -12.00 to +14.00. This covers 360deg of planet over a
-     * 24 hour day. Each offset hour covers about 15deg. Any answer you get here
-     * is likely best used with a range of fuziness, e.g., +/- 5deg.
+     * This helps get the general area +/-5 degrees for a given UTC offset. UTC offsets range from
+     * -12.00 to +14.00. This covers 360deg of planet over a 24 hour day. Each offset hour covers about
+     * 15deg. Any answer you get here is likely best used with a range of fuziness, e.g., +/- 5deg.
      * 
      * REFERENCE: https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
      * 
@@ -276,8 +273,8 @@ public class GeonamesUtility {
     }
 
     /**
-     * List all countries in a particular UTC offset; These are usually -15.0 to
-     * 15.0 every 0.5 or 0.25 hrs.
+     * List all countries in a particular UTC offset; These are usually -15.0 to 15.0 every 0.5 or 0.25
+     * hrs.
      * 
      * @param utc offset in decimal hours
      * @return list of country codes found with the offset
@@ -287,9 +284,8 @@ public class GeonamesUtility {
     }
 
     /**
-     * This check only makes sense if you have date/time which is in a period of
-     * daylight savings. Then the UTC offset for that period can be used to see
-     * which countries adhere to that DST convention.
+     * This check only makes sense if you have date/time which is in a period of daylight savings. Then
+     * the UTC offset for that period can be used to see which countries adhere to that DST convention.
      * 
      * E.g., Boston and New York US standard time: GMT-0500, DST: GMT-0400
      * 
@@ -321,13 +317,11 @@ public class GeonamesUtility {
     }
 
     /**
-     * Convenience: prepare a map for lookup by ID. If these are geonames.org
-     * place objects then the geonames IDs do not line up with those curated
-     * within OpenSextant Gazetteer
+     * Convenience: prepare a map for lookup by ID. If these are geonames.org place objects then the
+     * geonames IDs do not line up with those curated within OpenSextant Gazetteer
      * 
-     * geonames.org cities data is usually unique by row, so if you provide 1000
-     * cities in a list your map will have 1000 city place IDs in the map. No
-     * duplicates expected.
+     * geonames.org cities data is usually unique by row, so if you provide 1000 cities in a list your
+     * map will have 1000 city place IDs in the map. No duplicates expected.
      * 
      * @param cities arra of Place objects
      * @return map of place ID to Place object
@@ -341,8 +335,8 @@ public class GeonamesUtility {
     }
 
     /**
-     * See mapPopulationByLocation(list, int). Default geohash prefix length is
-     * 5, which yields about 6km grids or so.
+     * See mapPopulationByLocation(list, int). Default geohash prefix length is 5, which yields about
+     * 6km grids or so.
      * 
      * @param cities list of major cities
      * @return map of population summation over geohash grids.
@@ -352,13 +346,13 @@ public class GeonamesUtility {
     }
 
     /**
-     * This organizes population data by geohash. Geohash of N-char prefixes. If
-     * multiple cities are located on top of that grid, then the populations
-     * Geohash prefix = 4, yields about 30 KM, and 5 yields 6 KM.
+     * This organizes population data by geohash. Geohash of N-char prefixes. If multiple cities are
+     * located on top of that grid, then the populations Geohash prefix = 4, yields about 30 KM, and 5
+     * yields 6 KM.
      * 
-     * @param cities list of major cities
-     * @param ghResolution number of geohash chars in prefix, for keys in map.
-     *            Higher resolution means finer geohash grid
+     * @param cities       list of major cities
+     * @param ghResolution number of geohash chars in prefix, for keys in map. Higher resolution means
+     *                     finer geohash grid
      * 
      * @return map of population summation over geohash grids.
      */
@@ -387,12 +381,13 @@ public class GeonamesUtility {
     }
 
     /**
-     * Load the Geonames.org majorcities data file. Mainly to acquire population
-     * and other metrics.
+     * Load the Geonames.org majorcities data file. Mainly to acquire population and other metrics.
      * 
-     * <pre> Schema: http://download.geonames.org/export/dump/ pass in the files
+     * <pre>
+     *  Schema: http://download.geonames.org/export/dump/ pass in the files
      * formatted in geonames.org format, and named citiesNNNN.zip (.txt) where
-     * NNNN is the population threshold. </pre>
+     * NNNN is the population threshold.
+     * </pre>
      * 
      * @param strm input stream for geonames.org cities file
      * @return list of xponents Place obj
@@ -562,16 +557,15 @@ public class GeonamesUtility {
         }
 
         /**
-         * Important data for many tools where time-of-day or other metadata is
-         * meaningful.
+         * Important data for many tools where time-of-day or other metadata is meaningful.
          */
         loadCountryTimezones();
     }
 
     /**
-     * Provides access to a array of ADM1 metadata. This is a mutable list -- if
-     * you want to add MORE admin metadata (entries, postal code mappings, etc)
-     * then have at it. For now this is US + territories only (as of v2.8.17)
+     * Provides access to a array of ADM1 metadata. This is a mutable list -- if you want to add MORE
+     * admin metadata (entries, postal code mappings, etc) then have at it. For now this is US +
+     * territories only (as of v2.8.17)
      * 
      * @return Array of Admin Level 1 Place objects
      * @since 2.8.17
@@ -583,9 +577,9 @@ public class GeonamesUtility {
     }
 
     /**
-     * Provides access to a array of ADM1 metadata. This is a mutable list -- if
-     * you want to add MORE admin metadata (entries, postal code mappings, etc)
-     * then have at it. For now this is US + territories only (as of v2.8.17)
+     * Provides access to a array of ADM1 metadata. This is a mutable list -- if you want to add MORE
+     * admin metadata (entries, postal code mappings, etc) then have at it. For now this is US +
+     * territories only (as of v2.8.17)
      * 
      * @return Array of US States (Admin Level 1) Place objects
      */
@@ -598,7 +592,8 @@ public class GeonamesUtility {
     private Map<String, Place> admin1MetadataMap = new HashMap<>();
 
     /**
-     * Alias for getWorldAdmin1Metadata. 
+     * Alias for getWorldAdmin1Metadata.
+     * 
      * @return list of Places.
      */
     public List<Place> getProvinceMetadata() {
@@ -606,21 +601,20 @@ public class GeonamesUtility {
     }
 
     /**
-     * Get the array of Place objects representing ADM1 level boundaries.
-     * This is literally just Names, ADM1 codes and Country code data.
-     * No location information, except for US States.
+     * Get the array of Place objects representing ADM1 level boundaries. This is literally just Names,
+     * ADM1 codes and Country code data. No location information, except for US States.
      * 
-     * To get a province by code, use 
-     * @return list of Places 
+     * To get a province by code, use
+     * 
+     * @return list of Places
      */
     public List<Place> getWorldAdmin1Metadata() {
         return admin1Metadata;
     }
 
     /**
-     * Source: geonames.org ADM1 codes/names in anglo/ASCII form.
-     * These codes do NOT contain geodetic information (lat/lon, etc)
-     * CAVEAT -- using such Place metadata will provide a coordinate of (0,0)
+     * Source: geonames.org ADM1 codes/names in anglo/ASCII form. These codes do NOT contain geodetic
+     * information (lat/lon, etc) CAVEAT -- using such Place metadata will provide a coordinate of (0,0)
      * 
      * @throws IOException if geonames.org table cannot be found in classpath
      */
@@ -682,24 +676,23 @@ public class GeonamesUtility {
     }
 
     /**
-     * Retrieve a Place object with the semi-official name (in Latin/Anglo terms) given CC and ADM1 code.
-     * You must load World ADM1 data first; use loadWorldAdmin1Metadata()
+     * Retrieve a Place object with the semi-official name (in Latin/Anglo terms) given CC and ADM1
+     * code. You must load World ADM1 data first; use loadWorldAdmin1Metadata()
      * 
-     * @param cc ISO country code
+     * @param cc   ISO country code
      * @param adm1 ISO province code
      * @return Place or null.
      */
-    public Place getAdmin1Place(String cc, String adm1)  {
+    public Place getAdmin1Place(String cc, String adm1) {
         return admin1MetadataMap.get(GeonamesUtility.getHASC(cc, adm1));
     }
 
     /**
-     * Lookup by coded path, CC.ADM1. 
-     * You must load World ADM1 data first; use loadWorldAdmin1Metadata()
-     * These Admin Places do NOT contain geodetic information (lat/lon, etc)
-     * CAVEAT -- using such Place metadata will provide a coordinate of (0,0)
-     *  Alias for {@link #getAdmin1Place(String, String)}
-     * @param cc country code
+     * Lookup by coded path, CC.ADM1. You must load World ADM1 data first; use loadWorldAdmin1Metadata()
+     * These Admin Places do NOT contain geodetic information (lat/lon, etc) CAVEAT -- using such Place
+     * metadata will provide a coordinate of (0,0) Alias for {@link #getAdmin1Place(String, String)}
+     * 
+     * @param cc   country code
      * @param adm1 ADM level 1 code
      * @return Place for province
      */
@@ -708,8 +701,7 @@ public class GeonamesUtility {
     }
 
     /**
-     * Lookup by coded path, CC.ADM1. 
-     * You must load World ADM1 data first; use loadWorldAdmin1Metadata()
+     * Lookup by coded path, CC.ADM1. You must load World ADM1 data first; use loadWorldAdmin1Metadata()
      * 
      * @param path hierarchical path
      * @return adm1 place obj
@@ -722,7 +714,8 @@ public class GeonamesUtility {
     }
 
     /**
-     * <pre> TODO: This is mildly informed by geonames.org, however even there
+     * <pre>
+     *  TODO: This is mildly informed by geonames.org, however even there
      * we are still missing a mapping between ADM1 FIPS/ISO codes for a state
      * and the Postal codes/abbreviations.
      * 
@@ -733,7 +726,8 @@ public class GeonamesUtility {
      * helpful.
      * 
      * TODO: Make use of geonames.org or other sources for ADM1 postal code
-     * listings at top level. </pre>
+     * listings at top level.
+     * </pre>
      * 
      * @throws IOException if CSV file not found in classpath
      */
@@ -779,10 +773,9 @@ public class GeonamesUtility {
     }
 
     /**
-     * List all country names, official and variant names. This does not key any
-     * Territories. Territories that carry another nation's country code are
-     * attached to that country. Territories assigned their own ISO code are
-     * listed/keyed as Countries here.
+     * List all country names, official and variant names. This does not key any Territories.
+     * Territories that carry another nation's country code are attached to that country. Territories
+     * assigned their own ISO code are listed/keyed as Countries here.
      * 
      * @return map of countries, keyed by ISO country code
      */
@@ -797,11 +790,10 @@ public class GeonamesUtility {
     public static final Country UNK_Country = new Country("UNK", "invalid");
 
     /**
-     * Get Country by the default ISO digraph returns the Unknown country if you
-     * are not using an ISO2 code.
-     *
-     * TODO: throw a GazetteerException of some sort. for null query or invalid
+     * Get Country by the default ISO digraph returns the Unknown country if you are not using an ISO2
      * code.
+     *
+     * TODO: throw a GazetteerException of some sort. for null query or invalid code.
      * 
      * @param isocode ISO code
      * @return Country object
@@ -814,10 +806,9 @@ public class GeonamesUtility {
     }
 
     /**
-     * Find distinct country object by a code. Ambiguous codes will not do
-     * anything. This is really useful only if you have no idea what standard
-     * your data uses -- FIPS or ISO2/ISO3. If you know then use the API method
-     * corresponding to that standard. getCountry() is ISO by default.
+     * Find distinct country object by a code. Ambiguous codes will not do anything. This is really
+     * useful only if you have no idea what standard your data uses -- FIPS or ISO2/ISO3. If you know
+     * then use the API method corresponding to that standard. getCountry() is ISO by default.
      *
      * @param cc country code from any standard.
      * @return found country object
@@ -873,10 +864,9 @@ public class GeonamesUtility {
     }
 
     /**
-     * Convert and ADM1 or ADM2 id to a normalized form. US.44 or US.00 gives
-     * you 44 or 00 for id part. In this case upper case code is returned. if
-     * code is a number alone, "0" is returned for "00", "000", etc. And other
-     * numbers are 0-padded as 2-digits
+     * Convert and ADM1 or ADM2 id to a normalized form. US.44 or US.00 gives you 44 or 00 for id part.
+     * In this case upper case code is returned. if code is a number alone, "0" is returned for "00",
+     * "000", etc. And other numbers are 0-padded as 2-digits
      *
      * @param v admin code
      * @return fixed admin code
@@ -908,16 +898,17 @@ public class GeonamesUtility {
     }
 
     /**
-     * Get a hiearchical path for a boundar or a place. This presumes you have
-     * already normalized these values.
+     * Get a hiearchical path for a boundar or a place. This presumes you have already normalized these
+     * values.
      * 
-     * <pre> CC.ADM1.ADM2.ADM3... etc. for example:
+     * <pre>
+     *  CC.ADM1.ADM2.ADM3... etc. for example:
      *
      * 'US.48.201' ... some county in Texas.
      *
      * </pre>
      *
-     * @param c country code
+     * @param c    country code
      * @param adm1 ADM1 code
      * @return HASC path
      */
@@ -930,8 +921,7 @@ public class GeonamesUtility {
     }
 
     /**
-     * Experimental. A trivial way of looking at mapping well-known name
-     * collisions to country codes
+     * Experimental. A trivial way of looking at mapping well-known name collisions to country codes
      */
     public static final Map<String, String> KNOWN_NAME_COLLISIONS = new HashMap<String, String>();
 
@@ -947,21 +937,18 @@ public class GeonamesUtility {
     }
 
     /**
-     * Experimental. Given a normalized name phrase, does it collide with
-     * country name?
+     * Experimental. Given a normalized name phrase, does it collide with country name?
      *
-     * Usage: Savannah is a great city. Georgia is lucky it has 10 Chic-fil-a
-     * restraunts in that metro area.
+     * Usage: Savannah is a great city. Georgia is lucky it has 10 Chic-fil-a restraunts in that metro
+     * area.
      *
-     * Georgia is not a country, but a US State. So the logic caller might take:
-     * If "savannah" is found, then ignore georgia("GG") as a possible country
+     * Georgia is not a country, but a US State. So the logic caller might take: If "savannah" is found,
+     * then ignore georgia("GG") as a possible country
      *
-     * isCountryNameCollision -- is intending to be objective. If you choose to
-     * ignore the country or not is up to caller. Hence this function is not
-     * "ignoreCountry(placenm)"
+     * isCountryNameCollision -- is intending to be objective. If you choose to ignore the country or
+     * not is up to caller. Hence this function is not "ignoreCountry(placenm)"
      *
-     * TODO: replace with simple config file of such rules that are objective
-     * and can be generalized
+     * TODO: replace with simple config file of such rules that are objective and can be generalized
      *
      * @param nm country name
      * @return if country name is ambiguous and collides with other name
@@ -1015,8 +1002,7 @@ public class GeonamesUtility {
      * Is this Place a State or Province?
      * 
      * @param featCode feature code
-     * @return - true if this is a State, Province or other first level admin
-     *         area
+     * @return - true if this is a State, Province or other first level admin area
      */
     public static boolean isAdmin1(String featCode) {
         return "ADM1".equalsIgnoreCase(featCode);
@@ -1106,20 +1092,18 @@ public class GeonamesUtility {
      */
 
     /**
-     * Given key LangID, list all countries that speak that language. langID's
-     * are locales and reduced primary language without locale.
+     * Given key LangID, list all countries that speak that language. langID's are locales and reduced
+     * primary language without locale.
      * 
-     * MAP: lang_id | locale_id ===&gt; set( cc1, cc2, cc3,...) KEYS: lowercase,
-     * ie. 'fr' or 'fr-fr'
+     * MAP: lang_id | locale_id ===&gt; set( cc1, cc2, cc3,...) KEYS: lowercase, ie. 'fr' or 'fr-fr'
      */
     private final HashMap<String, Set<String>> languageInCountries = new HashMap<>();
     //private final HashMap<String, Set<String>> primaryLanguageInCountries = new HashMap<>();
 
     /**
-     * Given Country code (ISO2) list all language locales and primary languages
-     * spoken there. E.g., If 'en-AU' is spoken in Sydney Australia, then they
-     * at least speak some form of English ('en') as well as the local
-     * australian dialect.
+     * Given Country code (ISO2) list all language locales and primary languages spoken there. E.g., If
+     * 'en-AU' is spoken in Sydney Australia, then they at least speak some form of English ('en') as
+     * well as the local australian dialect.
      * 
      * MAP: cc ===&gt; set( l1, l2, l3...) KEYS: uppercase
      */
@@ -1129,11 +1113,11 @@ public class GeonamesUtility {
     public final HashSet<String> unknownLanguages = new HashSet<>();
 
     /**
-     * Is language spoken in country ID'd by cc? See TextUtils for list of
-     * langauges provided by Library of Congress.
+     * Is language spoken in country ID'd by cc? See TextUtils for list of langauges provided by Library
+     * of Congress.
      * 
      * @param lang mixed case langID or langID+Locale.
-     * @param cc UPPERCASE country code.
+     * @param cc   UPPERCASE country code.
      * @return false if language is not known or not spoken in that country.
      * 
      */
@@ -1152,7 +1136,7 @@ public class GeonamesUtility {
      * If lang is primary lang.
      * 
      * @param lang Lang ID
-     * @param cc Country code
+     * @param cc   Country code
      * @return true if lang is the primary language of country named by cc
      */
     public boolean isPrimaryLanguage(String lang, String cc) {
@@ -1167,8 +1151,7 @@ public class GeonamesUtility {
     }
 
     /**
-     * When lang ID will do. see primaryLanguage() if Language object is
-     * desired.
+     * When lang ID will do. see primaryLanguage() if Language object is desired.
      * 
      * @param cc Country code
      * @return Lang ID
@@ -1183,10 +1166,9 @@ public class GeonamesUtility {
     }
 
     /**
-     * Primary language for a given country. By our convention, this will be the
-     * major language family, not the locale. E.g., primary language of
-     * Australia? 'en', not 'en_AU'; The hashmap records the first entry only
-     * which is language.
+     * Primary language for a given country. By our convention, this will be the major language family,
+     * not the locale. E.g., primary language of Australia? 'en', not 'en_AU'; The hashmap records the
+     * first entry only which is language.
      * 
      * @param cc Country code
      * @return Language object
@@ -1211,8 +1193,7 @@ public class GeonamesUtility {
     /**
      * Examples:
      * 
-     * what countries speak french (fr)? what countries speak Rwandan French?
-     * (fr-RW)?
+     * what countries speak french (fr)? what countries speak Rwandan French? (fr-RW)?
      * 
      * @param lang lang ID
      * @return list of country codes speaking lang
@@ -1243,10 +1224,9 @@ public class GeonamesUtility {
     }
 
     /**
-     * Parse metadata from geonames.org (file in CLASSPATH @
-     * /geonames.org/countryInfo.txt) and populate existing Country objects with
-     * language metadata. By the time you call this method Countries have names,
-     * codes, regions, aliases, timezones.
+     * Parse metadata from geonames.org (file in CLASSPATH @ /geonames.org/countryInfo.txt) and populate
+     * existing Country objects with language metadata. By the time you call this method Countries have
+     * names, codes, regions, aliases, timezones.
      * 
      * @throws IOException if geonames.org resource file is not found
      */
@@ -1315,7 +1295,7 @@ public class GeonamesUtility {
     /**
      * 
      * @param langOrLocale lang code
-     * @param cc country code
+     * @param cc           country code
      */
     protected void addLang(String langOrLocale, String cc) {
 
@@ -1329,9 +1309,8 @@ public class GeonamesUtility {
         }
 
         /**
-         * Special case: First language / country pairs seen, denote those as
-         * PRIMARY language. As geonames.org lists languages spoken by order of
-         * population of speakers.
+         * Special case: First language / country pairs seen, denote those as PRIMARY language. As
+         * geonames.org lists languages spoken by order of population of speakers.
          * 
          */
         Country C = this.isoCountries.get(cc);
