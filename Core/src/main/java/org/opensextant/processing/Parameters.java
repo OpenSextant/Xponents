@@ -17,7 +17,9 @@
 package org.opensextant.processing;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.format.DateTimeFormat;
@@ -81,6 +83,15 @@ public class Parameters extends java.util.Properties {
     public String outputFile = null;
 
     private Set<String> formats = new HashSet<String>();
+    
+    /**
+     * A way of relaying arbitrary geographic filters to an extraction routine indicating that useful answers for 
+     * disambiguation for tie-breakers come from these cues.
+     * 
+     * "countries" = [c1, c2, c3, ...]
+     * "geohash" = [g1, g2, g3, ...]
+     */
+    public HashMap<String, List<String>> preferredGeography = new HashMap<>(); 
 
     /**  You the caller must explicitly set isdefault = false;
      *   forcing you to actually look at these parameters.

@@ -36,7 +36,7 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     /**
-     * get Xponents Exxtractor object from global attributes. 
+     * get Xponents Exxtractor object from global attributes.
      */
     public Extractor getExtractor(String xid) {
         Object X = this.getApplication().getContext().getAttributes().get(xid);
@@ -60,27 +60,22 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     /**
-    * Contract:
-    * docid optional; 'text' | 'doc-list' required.
-    * command: cmd=ping sends back a simple response
-    * 
-    * text = UTF-8 encoded text
-    * docid = user's provided document ID
-    * doc-list = An array of text
-    * 
-    * cmd=ping = report status.
-    * 
-    * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B', text='...',...] }
-    * The entire array must be parsable in memory as a single, traversible JSON object.
-    * We make no assumption about one-JSON object per line or anything about line-endings as separators.
-    * 
-    *
-    * @param params
-    *            the params
-    * @return the representation
-    * @throws JSONException
-    *             the JSON exception
-    */
+     * Contract: docid optional; 'text' | 'doc-list' required. command: cmd=ping sends back a simple
+     * response
+     * 
+     * text = UTF-8 encoded text docid = user's provided document ID doc-list = An array of text
+     * 
+     * cmd=ping = report status.
+     * 
+     * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B', text='...',...] } The
+     * entire array must be parsable in memory as a single, traversible JSON object. We make no
+     * assumption about one-JSON object per line or anything about line-endings as separators.
+     * 
+     *
+     * @param params JSON parameters per REST API: docid, text, lang, features, options, and preferred_*
+     * @return the representation
+     * @throws JSONException the JSON exception
+     */
     @Post("application/json;charset=utf-8")
     public Representation processForm(JsonRepresentation params) throws JSONException {
         org.json.JSONObject json = params.getJsonObject();
@@ -100,16 +95,14 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     /**
-    * HTTP GET -- vanilla. Do not use in production, unless you have really small data packages.
-    * This is useful for testing. Partial contract:
-    * 
-    * miscellany: 'cmd' = 'ping' |... other commands.
-    * processing: 'docid' = ?, 'text' = ?
-    * 
-    * @param params
-    *            the params
-    * @return the representation
-    */
+     * HTTP GET -- vanilla. Do not use in production, unless you have really small data packages. This
+     * is useful for testing. Partial contract:
+     * 
+     * miscellany: 'cmd' = 'ping' |... other commands. processing: 'docid' = ?, 'text' = ?
+     * 
+     * @param params JSON parameters. see process()
+     * @return the representation
+     */
     @Get
     public Representation processGet(Representation params) {
         Form inputs = getRequest().getResourceRef().getQueryAsForm();
@@ -140,10 +133,8 @@ public class XponentsGeotagger extends TaggerResource {
         try {
             if (prodMode) {
                 PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor("xgeo");
-                xgeo.setAllowLowerCase(jobParams.tag_lowercase);
+                List<TextMatch> matches = xgeo.extract(input, jobParams);
 
-                List<TextMatch> matches = xgeo.extract(input);
-                
                 if (jobParams.tag_patterns) {
                     XTemporal xt = (XTemporal) getExtractor("xtemp");
                     matches.addAll(xt.extract(input));
@@ -169,7 +160,7 @@ public class XponentsGeotagger extends TaggerResource {
     /**
      * Format matches as JSON
      * 
-     * @param matches items to format
+     * @param matches   items to format
      * @param jobParams parameters
      * @return formatted json
      * @throws JSONException on format error
@@ -184,9 +175,9 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     /**
-    * @param params  parameters
-    * @param variousMatches matches to filter
-    */
+     * @param params         parameters
+     * @param variousMatches matches to filter
+     */
     public void filter(List<TextMatch> variousMatches, Parameters params) {
         // Determine what looks useful. Filter out things not worth
         // saving at all in data store.

@@ -1,6 +1,7 @@
 package org.opensextant.extractors.geo.rules;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceCount;
 import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeodeticUtility;
 
 /**
@@ -34,6 +36,8 @@ public class LocationChooserRule extends GeocodeRule {
     private Map<String, PlaceCount> boundaryContext = null;
     private Map<String, PlaceCount> namespace = new HashMap<>();
     private HashMap<String, CountryCount> inferredCountries = new HashMap<>();
+    private HashSet<String> preferredCountries = new HashSet<>();
+    private HashSet<String> preferredLocations = new HashSet<>();
 
     private int textCase = 0;
 
@@ -53,12 +57,19 @@ public class LocationChooserRule extends GeocodeRule {
         documentCandidates.clear();
         namespace.clear();
         inferredCountries.clear();
+        preferredCountries.clear();
+        preferredLocations.clear();
+    }
+
+    @Override
+    public void evaluate(List<PlaceCandidate> names) {
+        evaluate(names, (Parameters) null);
     }
 
     /**
      * Walk the entire list.
      */
-    public void evaluate(List<PlaceCandidate> names) {
+    public void evaluate(List<PlaceCandidate> names, Parameters preferences) {
 
         // INPUTS: 
         //    histogram of country mentions
@@ -71,6 +82,16 @@ public class LocationChooserRule extends GeocodeRule {
         //
         countryContext = countryObserver.countryMentionCount();
         boundaryContext = boundaryObserver.placeMentionCount();
+        // 
+        // PREFS:
+        if (preferences != null) {
+            if (preferences.preferredGeography.containsKey("countries")) {
+                preferredCountries.addAll(preferences.preferredGeography.get("countries"));
+            }
+            if (preferences.preferredGeography.containsKey("geohashes")) {
+                preferredLocations.addAll(preferences.preferredGeography.get("geohashes"));
+            }
+        }
 
         /* TODO:  DEBUG through location chooser using histograms 
          * of found and resolved place metadata.
@@ -191,6 +212,13 @@ public class LocationChooserRule extends GeocodeRule {
     private static final int GLOBAL_POINTS = 5;
 
     /**
+     * Preferred Country or Location -- when user supplies the context that may be missing.... We accept
+     * that and weight such preference higher.
+     */
+    public static String PREF_COUNTRY = "PreferredCountry";
+    public static String PREF_LOCATION = "PreferredLocation";
+
+    /**
      * Yet unchosen location. Consider given evidence first, creating some weight there, then
      * introducing innate properties of possible locations, thereby amplifying the differences in the
      * candidates.
@@ -199,7 +227,30 @@ public class LocationChooserRule extends GeocodeRule {
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
 
+        // With "preferred geography" we can influence in a subtle fashion ambiguous mentions, e.g., 
+        // If known geography is Ohio and we see mentions of Springfield without other context, we can 
+        // nudge choice of Springfield, OH as such.  Such as with a preferred location (geohash).
+
+        if (preferredCountries != null && !preferredCountries.isEmpty()) {
+            if (preferredCountries.contains(geo.getCountryCode())) {
+                // Get a half-point for being within the country
+                name.incrementPlaceScore(geo, 0.5);
+                name.addRule(PREF_COUNTRY);
+            }
+        }
+        if (preferredLocations != null && !preferredLocations.isEmpty()) {
+            for (String gh : preferredLocations) {
+                if (geo.getGeohash().startsWith(gh)) {
+                    // Increment a full point for being within the geohash. Note geohash length of 4 or more chars is reasonably good resolution.
+                    name.incrementPlaceScore(geo, 1.0);
+                    name.addRule(PREF_LOCATION);
+                }
+            }
+        }
+
         if (boundaryContext.isEmpty() && countryContext.isEmpty()) {
+            // So without context, there is nothing more we can do to influence the connection between 
+            // the one named place and the candidate location
             return;
         }
 
@@ -275,8 +326,8 @@ public class LocationChooserRule extends GeocodeRule {
     public static final int MATCHCONF_NAME_REGION = 75;
 
     /**
-     * Absolute Confidence: Unique name in gazetteer.
-     * Confidence is high, however this needs to be tempered by the number of gazetteers, coverage, and diversity
+     * Absolute Confidence: Unique name in gazetteer. Confidence is high, however this needs to be
+     * tempered by the number of gazetteers, coverage, and diversity
      */
     public static final int MATCHCONF_ONE_LOC = 70;
 
@@ -308,6 +359,12 @@ public class LocationChooserRule extends GeocodeRule {
      * places.
      */
     public static final int MATCHCONF_QUALIFIER_LOWERCASE = -15;
+
+    /**
+     * A subtle boost for locations that were preferred -- especially helps when there is no inherent
+     * context and we must rely on the caller's intuition.
+     */
+    public static final int MATCHCONF_PREFERRED = 5;
 
     private static boolean isShort(int matchLen) {
         return matchLen <= NonsenseFilter.GENERIC_ONE_WORD;
@@ -380,7 +437,7 @@ public class LocationChooserRule extends GeocodeRule {
         if (fc != null) {
             featWeight = fc.factor;
         }
-        points =  (int)((0.75 * points) + (0.25 * points * featWeight));
+        points = (int) ((0.75 * points) + (0.25 * points * featWeight));
 
         // Any of these may occur.
         //======================
@@ -455,6 +512,13 @@ public class LocationChooserRule extends GeocodeRule {
         if (textCase == LOWERCASE) {
             /* Simple lower case boost:  ADD a point for every character past a basic acronym (2-4 chars long). */
             points += pc.getLength() - 4;
+        }
+
+        if (pc.hasRule(PREF_COUNTRY)) {
+            points += MATCHCONF_PREFERRED;
+        }
+        if (pc.hasRule(PREF_LOCATION)) {
+            points += MATCHCONF_PREFERRED;
         }
 
         pc.setConfidence(points);

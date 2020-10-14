@@ -2,11 +2,15 @@ package org.opensextant.xlayer.server;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.opensextant.data.TextInput;
@@ -138,6 +142,20 @@ public abstract class TaggerResource extends ServerResource {
         job.tag_patterns = false;
         job.addOutputFormat("json");
     }
+    
+    /**
+     * 
+     * @param a JSONArray
+     * @return
+     */
+    protected List<String> fromArray(JSONArray a){
+        ArrayList<String> strings = new ArrayList<>();
+        Iterator<Object> iter  = a.iterator();
+        while (iter.hasNext()) {
+            strings.add((String)iter.next());            
+        }
+        return strings;
+    }
 
     /**
      * 
@@ -181,7 +199,14 @@ public abstract class TaggerResource extends ServerResource {
             job.tag_lowercase = opts.contains("lowercase");
             job.resolve_localities = opts.contains("revgeo") || opts.contains("resolve_localities");
         }
-
+        // 
+        // Geographic filters        
+        if (inputs.has("preferred_countries")) {
+            job.preferredGeography.put("countries", fromArray(inputs.getJSONArray("preferred_countries")));            
+        }
+        if (inputs.has("preferred_locations")) {
+            job.preferredGeography.put("geohashes", fromArray(inputs.getJSONArray("preferred_locations")));                        
+        }
         if (job.clean_input || job.tag_lowercase) {
             job.isdefault = false;
         }

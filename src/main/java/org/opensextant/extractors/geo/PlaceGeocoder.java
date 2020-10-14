@@ -441,6 +441,16 @@ public class PlaceGeocoder extends GazetteerMatcher
     private boolean geocode = true;
     private boolean tagOnly = !geocode;
 
+    
+    /**
+     * See {@link #extract(TextInput, Parameters)} below.
+     * This is the default extraction routine.  If you need to tune extraction call <code>extract( input, parameters ) </code> 
+     */
+    @Override
+    public List<TextMatch> extract(TextInput input) throws ExtractionException {
+        return extract(input, null);
+    }
+    
     /**
      * Extractor.extract() calls first XCoord to get coordinates, then PlacenameMatcher In the end you
      * have all geo entities ranked and scored.
@@ -462,10 +472,13 @@ public class PlaceGeocoder extends GazetteerMatcher
      * @return TextMatch instances which are all PlaceCandidates.
      * @throws ExtractionException on err
      */
-    @Override
-    public List<TextMatch> extract(TextInput input) throws ExtractionException {
+    public List<TextMatch> extract(TextInput input, Parameters jobParams) throws ExtractionException {
         long t1 = System.currentTimeMillis();
         reset();
+        
+        if (jobParams != null) {
+            this.setAllowLowerCase(jobParams.tag_lowercase);
+        }
 
         List<TextMatch> matches = new ArrayList<TextMatch>();
         List<TextMatch> coordinates = null;
@@ -522,7 +535,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         // Last rule: score, choose, add confidence.
         //
         chooser.setTextCase(input.isLower ? GeocodeRule.LOWERCASE : 0);
-        chooser.evaluate(candidates);
+        chooser.evaluate(candidates, jobParams);
         if (provinceNameSetter != null) {
             provinceNameSetter.evaluate(candidates);
         }
