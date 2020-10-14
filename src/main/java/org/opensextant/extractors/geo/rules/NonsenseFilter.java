@@ -95,7 +95,8 @@ public class NonsenseFilter extends GeocodeRule {
                     continue;
                 }
             }
-            if (p.isLower()) {
+            char ch = p.getText().charAt(0);           
+            if (p.isLower() ||  Character.isLowerCase(ch)) {
                 String[] wds = tokenizer.split(p.getTextnorm());
                 HashSet<String> set = new HashSet<>();
                 for (String w : wds) {
