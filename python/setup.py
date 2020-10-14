@@ -13,7 +13,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='opensextant',
-    version='1.2.0',
+    version='1.2.1',
 
     description='OpenSextant APIs and Utilities',
     long_description=long_description,
@@ -44,7 +44,9 @@ setup(
         'License :: OSI Approved :: Apache Software License',
 
         # Python 3+ only.  Python 2 support remains in ver 1.1.x
-        'Programming Language :: Python :: 3.6'
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8'
     ],
 
     # What does your project relate to?

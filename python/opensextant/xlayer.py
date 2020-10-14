@@ -7,11 +7,12 @@ history: py3.5+ json is as good or better than simplejson
 @author: ubaldino
 """
 
+import json
+
 import requests
 import requests.exceptions
-import json
-from opensextant.Extraction import TextMatch
 from opensextant.Data import Place
+from opensextant.Extraction import TextMatch
 
 
 class XlayerClient:
@@ -33,7 +34,7 @@ class XlayerClient:
         :return: True if successful or if "Connection aborted" ConnectionError occurs
         """
         try:
-            response = requests.get("{}/stop".format (self.server_control), timeout=timeout)
+            response = requests.get("{}/stop".format(self.server_control), timeout=timeout)
             if response.status_code != 200:
                 return response.raise_for_status()
         except requests.exceptions.ConnectionError as err:
@@ -45,12 +46,12 @@ class XlayerClient:
         Timeout of 30 seconds is used here so calls do not hang indefinitely.
         :return: True if successful.
         """
-        response = requests.get("{}/ping".format (self.server_control), timeout=timeout)
+        response = requests.get("{}/ping".format(self.server_control), timeout=timeout)
         if response.status_code != 200:
             return response.raise_for_status()
         return True
 
-    def process(self, docid, text, features=["geo"], timeout=10):
+    def process(self, docid, text, features=["geo"], timeout=10, preferred_countries=None, preferred_locations=None):
         """
         Process text, extracting some entities
 
@@ -82,6 +83,10 @@ class XlayerClient:
             json_request['options'] = self.default_options
         if features:
             json_request['features'] = ','.join(features)
+        if preferred_countries:
+            json_request['preferred_countries'] = preferred_countries
+        if preferred_locations:
+            json_request['preferred_locations'] = preferred_locations
 
         response = requests.post(self.server, json=json_request, timeout=timeout)
         if response.status_code != 200:
@@ -128,7 +133,6 @@ def print_results(arr):
             print(a)
 
 
-
 if __name__ == '__main__':
     import os
     import sys
@@ -141,16 +145,27 @@ if __name__ == '__main__':
     ap.add_argument("--inputfile", help="your input")
     ap.add_argument("--lines", action="store_true", help="process your inputfile as one line per call")
     ap.add_argument("--text", help="UTF-8 string to process")
-    ap.add_argument("--options", help="your service options to send with each request, e.g., 'lowercase,clean_input,revgeo'", default=None)
+    ap.add_argument("--options",
+                    help="your service options to send with each request, e.g., 'lowercase,clean_input,revgeo'",
+                    default=None)
     ap.add_argument("--features", help="Feature set e.g., 'geo,patterns,taxons'", default="geo,patterns,taxons")
+    ap.add_argument("--countries", help="Countries set e.g., 'AF,US,ID,BR,....", default=None)
+    ap.add_argument("--locations", help="Location geohashs set e.g., 'u23,u34,....", default=None)
     ap.add_argument("--debug", default=False, action="store_true")
     args = ap.parse_args()
 
     xtractor = XlayerClient(args.service_url, options=args.options)
     xtractor.debug = args.debug
     feat = ["geo"]
+    countries = None
+    locations = None
     if args.features:
         feat = args.features.split(',')
+    if args.countries:
+        countries = args.countries.split(',')
+    if args.locations:
+        locations = args.locations.split(',')
+
     print("Ping server (timeout=5s)....")
     try:
         xtractor.ping(timeout=5)
@@ -164,7 +179,10 @@ if __name__ == '__main__':
     if args.text:
         _id = "test doc#1"
         _text = args.text
-        result = xtractor.process(_id, _text, features=feat)
+        result = xtractor.process(_id, _text, features=feat,
+                                  timeout=90,
+                                  preferred_countries=countries,
+                                  preferred_locations=locations)
         print("==============")
         print("INPUT: from text argument")
         print("Annotations\n============")
@@ -182,7 +200,10 @@ if __name__ == '__main__':
                     _id = "line{}".format(lineNum)
                     print("=============={}:".format(_id))
                     _text = line.strip()
-                    result = xtractor.process(_id, _text, features=feat)
+                    result = xtractor.process(_id, _text, features=feat,
+                                              timeout=90,
+                                              preferred_countries=countries,
+                                              preferred_locations=locations)
                     print("Annotations\n============")
                     print_results(result)
         except Exception as err:
@@ -199,7 +220,10 @@ if __name__ == '__main__':
             with open(args.inputfile, 'r', encoding="UTF-8") as fh:
                 _text = fh.read()
                 _text = _text.strip()
-                result = xtractor.process(_id, _text, features=feat)
+                result = xtractor.process(_id, _text, features=feat,
+                                          timeout=90,
+                                          preferred_countries=countries,
+                                          preferred_locations=locations)
                 print("==============")
                 print("INPUT: from text inputfile")
                 print("Annotations\n============")
