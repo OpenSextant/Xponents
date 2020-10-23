@@ -1000,7 +1000,7 @@ public class TextUtils {
         // � b4 ACUTE ACCENT
         // � 2018 LEFT SINGLE QUOTATION MARK
         // � 2019 RIGHT SINGLE QUOTATION MARK
-        return CLEAN_WORD_PUNCT.matcher(tmp).replaceAll("").trim();
+        return CLEAN_WORD_PUNCT.matcher(tmp).replaceAll(" ").trim();
     }
 
     // Alphabetic list of top-N languages -- ISO-639_1 "ISO2" language codes

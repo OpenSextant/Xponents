@@ -16,6 +16,8 @@
  */
 package org.opensextant.extraction;
 
+import org.opensextant.util.TextUtils;
+
 /**
  * A variation on TextEntity that also records pattern metadata
  *
@@ -23,62 +25,81 @@ package org.opensextant.extraction;
  */
 public class TextMatch extends TextEntity {
 
-    /**
-     * the ID of the pattern that extracted this
-     */
-    public String pattern_id = null;
+	/**
+	 * the ID of the pattern that extracted this
+	 */
+	public String pattern_id = null;
 
-    /**
-     * A short label or tag representing the matcher, extractor, tagger, etc. that produced this match.
-     */
-    public String producer = null;
+	/**
+	 * A short label or tag representing the matcher, extractor, tagger, etc. that
+	 * produced this match.
+	 */
+	public String producer = null;
 
-    /** Type, as in Annotation type or code.
-     */
-    protected String type = "generic";
+	/**
+	 * Type, as in Annotation type or code.
+	 */
+	protected String type = "generic";
 
-    public String getType(){
-        return type;
-    }
+	public String getType() {
+		return type;
+	}
 
-    /**
-     * Allow matchers and taggers to set a type label, e.g., pattern family or other string.
-     * @param t type
-     */
-    public void setType(String t){
-        type = t;
-    }
+	/**
+	 * Allow matchers and taggers to set a type label, e.g., pattern family or other
+	 * string.
+	 * 
+	 * @param t type
+	 */
+	public void setType(String t) {
+		type = t;
+	}
 
-    /**
-     *
-     */
-    public TextMatch() {
-    }
+	/**
+	 *
+	 */
+	public TextMatch() {
+	}
 
-    /**
-     * @return string representation
-     */
-    @Override
-    public String toString() {
-        return text + " @(" + start + ":" + end + ") matched by " + this.pattern_id;
-    }
+	/**
+	 * @return string representation
+	 */
+	@Override
+	public String toString() {
+		return text + " @(" + start + ":" + end + ") matched by " + this.pattern_id;
+	}
 
-    /**
-     * @param m a text match to copy to this instance
-     */
-    public void copy(TextMatch m) {
-        super.copy(m);
+	/**
+	 * @param m a text match to copy to this instance
+	 */
+	public void copy(TextMatch m) {
+		super.copy(m);
 
-        this.pattern_id = m.pattern_id;
-    }
+		this.pattern_id = m.pattern_id;
+	}
 
-    private boolean filteredOut = false;
+	private boolean filteredOut = false;
 
-    public boolean isFilteredOut() {
-        return filteredOut;
-    }
+	public boolean isFilteredOut() {
+		return filteredOut;
+	}
 
-    public void setFilteredOut(boolean b) {
-        filteredOut = b;
-    }
+	public void setFilteredOut(boolean b) {
+		filteredOut = b;
+	}
+
+	private String textnorm = null;
+
+	/**
+	 * Get a normalized version of the text, lower case, punctuation and diacritics removed.
+	 * If you want only pieces of this normalization, you may override it.
+	 * @return normalized version of text.
+	 */
+	public String getTextnorm() {
+		if (textnorm == null) {
+			textnorm = TextUtils.removePunctuation(TextUtils.removeDiacritics(getText())).toLowerCase();
+		}
+		return textnorm;
+	}
+
 }

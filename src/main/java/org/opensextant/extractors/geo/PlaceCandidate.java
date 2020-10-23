@@ -47,8 +47,6 @@ import org.opensextant.util.TextUtils;
  */
 public class PlaceCandidate extends TextMatch {
 
-    private String textnorm = null;
-
     // --------------Place/NotPlace stuff ----------------------
     // which rules have expressed a Place/NotPlace opinion on this PC
     private final Set<String> rules = new HashSet<>();
@@ -155,16 +153,6 @@ public class PlaceCandidate extends TextMatch {
         }
     }
 
-    /**
-     *
-     * @return normalized version of text.
-     */
-    public String getTextnorm() {
-        if (textnorm == null) {
-            textnorm = TextUtils.removePunctuation(TextUtils.removeDiacritics(getText())).toLowerCase();
-        }
-        return textnorm;
-    }
 
     // ---- the getters and setters ---------
     //
