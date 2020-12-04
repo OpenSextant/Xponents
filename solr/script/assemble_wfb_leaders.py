@@ -26,12 +26,12 @@ OUTPUT:
 
 
 """
-import bs4
-import requests
 import json
 import os
-import arrow
 
+import arrow
+import bs4
+import requests
 from opensextant.CommonsUtils import squeeze_whitespace
 from opensextant.GeonamesUtility import load_countries
 
@@ -50,35 +50,35 @@ abbreviated_titles = {
     "Capt.": "Captain",
     "Cdr.": "Commander",
     "Cdte.": "Comandante",
-    "Chmn.":"Chair",
-    "Col.":"Colonel",
-    "Ctte.":"Committee",
-    "Del.":"Delegate",
-    "Dep.":"Deputy",
-    "Dept.":"Department",
-    "Dir.":"Director",
-    "Div.":"Division",
-    "Dr.":"Doctor",
-    "Eng.":"Engineer",
-    "Fd. Mar.":"Field Marshal",
-    "Fed.":"Federal",
-    "Gen.":"General",
-    "Govt.":"Government",
-    "Intl.":"International",
-    "Lt.":"Lieutenant",
-    "Maj.":"Major",
-    "Mar.":"Marshal",
-    "Mbr.":"Member",
-    "Min.":"Minister",
-    "NDE":"No Diplomatic Exchange",
-    "Org.":"Organization",
-    "Pres.":"President",
-    "Prof.":"Professor",
-    "RAdm.":"Rear Admiral",
-    "Ret.":"Retired",
-    "Sec.":"Secretary",
-    "VAdm.":"Vice Admiral",
-    "VMar.":"Vice Marshal"
+    "Chmn.": "Chair",
+    "Col.": "Colonel",
+    "Ctte.": "Committee",
+    "Del.": "Delegate",
+    "Dep.": "Deputy",
+    "Dept.": "Department",
+    "Dir.": "Director",
+    "Div.": "Division",
+    "Dr.": "Doctor",
+    "Eng.": "Engineer",
+    "Fd. Mar.": "Field Marshal",
+    "Fed.": "Federal",
+    "Gen.": "General",
+    "Govt.": "Government",
+    "Intl.": "International",
+    "Lt.": "Lieutenant",
+    "Maj.": "Major",
+    "Mar.": "Marshal",
+    "Mbr.": "Member",
+    "Min.": "Minister",
+    "NDE": "No Diplomatic Exchange",
+    "Org.": "Organization",
+    "Pres.": "President",
+    "Prof.": "Professor",
+    "RAdm.": "Rear Admiral",
+    "Ret.": "Retired",
+    "Sec.": "Secretary",
+    "VAdm.": "Vice Admiral",
+    "VMar.": "Vice Marshal"
 }
 
 title_key = {}
@@ -96,7 +96,6 @@ def expand_title(t):
     buf = []
 
     for tok in parts:
-        k = tok.lower()
         if k in title_key:
             repl = title_key.get(k)
             buf.append(repl)
@@ -118,7 +117,7 @@ for cc in countries_by_iso:
     cos = doc.find_all("div", attrs={"id": "chiefsOutput"})
     rows = []
     for chief in cos:
-        row = {}
+        row = dict()
         col = chief.find("span", attrs={"class": "title"})
         row["title_orig"] = col.text
         col = chief.find("span", attrs={"class": "cos_name"})

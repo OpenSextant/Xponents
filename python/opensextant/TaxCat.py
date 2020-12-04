@@ -193,7 +193,7 @@ class TaxCatalogBuilder:
             print("SERVER ", self.server_url, self.server)
 
         except Exception as err:
-            print("Problem with that server %s, ERR=%s" % (self.server_url, err))
+            print(f"Problem with that server {self.server_url}, ERR={err}")
 
     def optimize(self):
         if self.server and not self.test:
@@ -206,10 +206,9 @@ class TaxCatalogBuilder:
             return
         if not flush:
             qty = len(self._records)
-            if self.commit_rate > 0 and qty % self.commit_rate != 0:
-                return
-            if qty < self.commit_rate:
-                return
+            if self.commit_rate > 0:
+                if (qty % self.commit_rate != 0) or qty < self.commit_rate:
+                    return
 
         self.server.add(self._records)
         self.server.commit()
@@ -282,4 +281,4 @@ class TaxCatalogBuilder:
 
                 self.add(catalog, t)
 
-            print("COUNT: %d" % (self.count))
+            print(f"COUNT: {self.count}")

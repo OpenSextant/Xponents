@@ -28,13 +28,7 @@ class TextEntity:
             self.len = self.end - self.start
 
     def __str__(self):
-        return "{}({},{})".format(self.text, self.start, self.end)
-
-    def __unicode__(self):
-        if PY3:
-            return u"{}({},{})".format(self.text, self.start, self.end)
-        else:
-            return u"{}({},{})".format(unicode(self.text), self.start, self.end)
+        return f"{self.text}({self.start},{self.end})"
 
     def _is_valid(self):
         if self.start is None or self.end is None:
@@ -102,16 +96,10 @@ class TextMatch(TextEntity):
         self.id = None
         self.label = label
         self.filtered_out = False
-        self.attrs = {}
+        self.attrs = dict()
 
     def __str__(self):
-        return "{}/{}({},{})".format(self.label, self.text, self.start, self.end)
-
-    def __unicode__(self):
-        if PY3:
-            return u"{}/{}({},{})".format(self.label, self.text, self.start, self.end)
-        else:
-            return u"{}/{}({},{})".format(self.label, unicode(self.text), self.start, self.end)
+        return f"{self.label}/{self.text}({self.start},{self.end})"
 
     def populate(self, attrs):
         """

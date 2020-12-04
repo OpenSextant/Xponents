@@ -59,9 +59,10 @@ creating the taxnode value.
 
 """
 import re
-from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id
-from opensextant.CommonsUtils import is_ascii, get_text
+
+from opensextant.CommonsUtils import is_ascii
 from opensextant.GeonamesUtility import load_us_provinces
+from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id
 
 load_us_provinces()
 from opensextant.GeonamesUtility import usstates
@@ -78,7 +79,7 @@ names = set([])
 # ID map -- distinct JRC IDs must be reproducible and unique for each variant.
 idset = {}
 
-jrc_line_split = re.compile("\s+")
+jrc_line_split = re.compile(r"\s+")
 
 NO_ID_BASE = 800000
 no_id_counter = 0
@@ -88,62 +89,62 @@ no_id_counter = 0
 # These are all valid JRC entities, however they do not seem to add value due to their
 # popular use or ambiguity.  On very rare occasions there are instances of person names
 # That coincide with popular place names.  The person name is marked is not valid for tagging.
-NOISE = set(
-    [
-        'north', 'south', 'east', 'west', 
-        'start', 'end', 'total',
-        'times',
-        'the sun',
-        'the times',
-        'news agency',
-        'daily news',
-        'press agency',
-        'military intelligence',
-        'international studies',
-        'international trade',
-        'will meet',
-        'the nation',
-        'facebook',
-        'google',
-        'internet explorer',
-        'yahoo',
-        'twitter',
-        'youtube',
-        'people',
-        'they are',
-        'our own',
-        'just want',
-        'are you', 'all you',
-        'ps',
-        'reach',
-        'armed forces',
-        'canal',
-        'the age',
-        'read more',
-        'presedential office',
-        'set fire',
-        'emergency',
-        'nature',
-        'status quo',
-        'the independent',
-        'gross domestic product',
-        'privacy policy',
-        'adobe reader',
-        'guiding principles',
-        'lessons learned',
-        'better life',
-        u'san diegó',  # not San Diego
-        'san diego',  # not San Diego
-        u'san franciscó',
-        'san francisco',
-        'corpus christi',
-        u'nuevo león',
-        u'nuevo léon',
-        'nuevo leon',
-        'san pedro',
-        'umm qasr',
-        'windows'
-    ])
+NOISE = {
+    'north', 'south', 'east', 'west',
+    'start', 'end', 'total',
+    'times',
+    'the sun',
+    'the times',
+    'news agency',
+    'daily news',
+    'press agency',
+    'military intelligence',
+    'international studies',
+    'international trade',
+    'will meet',
+    'the nation',
+    'facebook',
+    'google',
+    'internet explorer',
+    'yahoo',
+    'twitter',
+    'youtube',
+    'people',
+    'they are',
+    'our own',
+    'just want',
+    'are you', 'all you',
+    'ps',
+    'pp',
+    'reach',
+    'armed forces',
+    'canal',
+    'the age',
+    'read more',
+    'presedential office',
+    'set fire',
+    'emergency',
+    'nature',
+    'status quo',
+    'the independent',
+    'gross domestic product',
+    'privacy policy',
+    'adobe reader',
+    'guiding principles',
+    'lessons learned',
+    'better life',
+    u'san diegó',  # not San Diego
+    'san diego',  # not San Diego
+    u'san franciscó',
+    'san francisco',
+    'corpus christi',
+    u'nuevo león',
+    u'nuevo léon',
+    'nuevo leon',
+    'san pedro',
+    'umm qasr',
+    'windows'
+}
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
 #
@@ -169,18 +170,18 @@ def check_validity(e):
 
 # Entries starting or ending with place markers, will be recategorized as a Place.xxxxx
 #
-PLACE_ENDING_FIXES = set(['province', 'island', 'islands', 'district', 'peninsula', 'valley',
-                          'territory', 'county', 'city', 'state', 'township', 'village',
-                          'roads', 'avenue', 'avenida', 'prefecture', 'heights', 'springs', 'falls',
-                          'airport', 'aeropuerto', 'aeroporto', 'station', 'harbor', 'harbour', 'port'])
+PLACE_ENDING_FIXES = {'province', 'island', 'islands', 'district', 'peninsula', 'valley',
+                      'territory', 'county', 'city', 'state', 'township', 'village',
+                      'roads', 'avenue', 'avenida', 'prefecture', 'heights', 'springs', 'falls',
+                      'airport', 'aeropuerto', 'aeroporto', 'station', 'harbor', 'harbour', 'port'}
 
-PLACE_STARTING_FIXES = set(['city', 'spin', 'town', 'fort', 'port'])
+PLACE_STARTING_FIXES = {'city', 'spin', 'town', 'fort', 'port'}
 
 # A large number of entities are marked as Person unnecessarily.
 # Org fixes: find any of these terms in a phrase and declare the phrase an org, if not already.
-ORG_FIXES = set(['tribunal', 'council', 'shura', 'group', 'committee', 'senate', ' of state',
-                 'departamento', 'department', 'transport', 'transit', 'musee', 'museum',
-                 'museums', 'organization', 'authority', 'enterprise', 'institute', 'inc', 'llc'])
+ORG_FIXES = {'tribunal', 'council', 'shura', 'group', 'committee', 'senate', ' of state',
+             'departamento', 'department', 'transport', 'transit', 'musee', 'museum',
+             'museums', 'organization', 'authority', 'enterprise', 'institute', 'inc', 'llc'}
 
 
 class JRCEntity(Taxon):
@@ -259,8 +260,7 @@ class JRCEntity(Taxon):
         return "%s (%s)" % (self.name, self.phrase)
 
 
-other_types = set(['U', 'T', 'E', 'p'])
-
+other_types = {'U', 'T', 'E', 'p'}
 entity_map = {
     'U': 'Unknown',
     'T': 'Place',
@@ -279,20 +279,20 @@ def create_entity(line, scan=False):
     is no single primary variant to represent the entity, e.g., for presentation purposes.
     """
     global no_id_counter
-    input = line.strip()
-    if not input:
+    line = line.strip()
+    if not line:
         return None
-    parts = jrc_line_split.split(input, maxsplit=3)
+    parts = jrc_line_split.split(line, maxsplit=3)
     _id = parts[0]
     if _id == '0':
-        if test: print("Ignore line? ID=0, ", input)
+        if test: print("Ignore line? ID=0, ", line)
         no_id_counter += 1
         _id = no_id_counter + NO_ID_BASE
     else:
         _id = int(_id)
 
     if len(parts) != 4:
-        print("Must be 4 distinct whitespace-delimited fields '{}'".format(input))
+        print("Must be 4 distinct whitespace-delimited fields '{}'".format(line))
         return None
 
     name = parts[3]
@@ -303,7 +303,7 @@ def create_entity(line, scan=False):
     etype = parts[1]
 
     if not etype:
-        print("No valid type; Ignoring line, ", input)
+        print("No valid type; Ignoring line, ", line)
         return None
 
     if scan:
@@ -328,7 +328,7 @@ def create_entity(line, scan=False):
         if primary_name: break
 
     if not primary_name:
-        print("Failed to find primary name for ", input)
+        print("Failed to find primary name for ", line)
         primary_name = name
 
     count = 1
@@ -371,11 +371,8 @@ if __name__ == '__main__':
     only_mark_invalid = args.invalidate
     apply_default_fixes = not args.no_fixes
 
-    test = False
-    builder = None
     row_max = -1
     test = args.solr is None
-
     builder = TaxCatalogBuilder(server=args.solr, test=test)
 
     if args.max:
@@ -392,7 +389,7 @@ if __name__ == '__main__':
     # As solr has no notion of row ID and your uniqueness requirements.
     #
     row_id = 0
-    with open(args.taxonomy, 'rU', encoding="UTF-8") as fh:
+    with open(args.taxonomy, 'r', encoding="UTF-8") as fh:
         for row in fh:
             if row.startswith("#") or len(row.strip()) == 0: continue
 
@@ -407,7 +404,7 @@ if __name__ == '__main__':
     # Zero these counters:
     row_id = 0
     no_id_counter = 0
-    with open(args.taxonomy, 'rU', encoding="UTF-8") as fh:
+    with open(args.taxonomy, 'r', encoding="UTF-8") as fh:
         for row in fh:
             if row.startswith("#") or len(row.strip()) == 0: continue
 

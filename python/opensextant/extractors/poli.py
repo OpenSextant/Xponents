@@ -53,7 +53,7 @@ class PatternsOfLifeManager(RegexPatternManager):
             patternsApp = PatternExtractor( mgr )
 
             test_results = patternsApp.default_tests()
-            real_resluts = patternsApp.extract( ".... text blob..." )
+            real_results = patternsApp.extract( ".... text blob..." )
 
         :param cfg: patterns config file.
         """

@@ -1,5 +1,6 @@
 # Generic stop words that are not good taxonomic phrases; These are mostly JRC tweaks
 thing
+total
 people
 time
 good
@@ -243,6 +244,7 @@ described
 despite
 did
 didn't
+disk
 different
 #do
 does

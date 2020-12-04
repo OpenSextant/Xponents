@@ -2,8 +2,6 @@
 """
 Created on Mar 14, 2016
 
-history: py3.5+ json is as good or better than simplejson
-
 @author: ubaldino
 """
 
@@ -76,6 +74,9 @@ class XlayerClient:
         :param features: LIST of geo OR [places, coordinates, countries], orgs, persons, patterns, taxons
         :param timeout: default to 10 seconds; If you think your processing takes longer,
                  adjust if you see exceptions.
+        :param preferred_countries: Array of country codes representing those which are preferred fall backs when
+            there are ambiguous location names.
+        :param preferred_locations:  Array of geohash representing general area of desired preferred matches
         :return: array of TextMatch objects or empty array.
         """
         json_request = {'docid': docid, 'text': text}
@@ -169,8 +170,8 @@ if __name__ == '__main__':
     print("Ping server (timeout=5s)....")
     try:
         xtractor.ping(timeout=5)
-    except Exception as err:
-        print(str(err))
+    except Exception as runErr:
+        print(str(runErr))
         sys.exit(1)
 
     # ======================================
@@ -206,7 +207,7 @@ if __name__ == '__main__':
                                               preferred_locations=locations)
                     print("Annotations\n============")
                     print_results(result)
-        except Exception as err:
+        except Exception as runErr:
             print(format_exc(limit=5))
 
     # ======================================
@@ -228,5 +229,5 @@ if __name__ == '__main__':
                 print("INPUT: from text inputfile")
                 print("Annotations\n============")
                 print_results(result)
-        except Exception as err:
+        except Exception as runErr:
             print(format_exc(limit=5))

@@ -49,7 +49,7 @@ class FactBookTaxon(Taxon):
 
         self.is_acronym = self.name.isupper()
 
-        ## If the entire value is a stop word we'll mark it as invalid.
+        # If the entire value is a stop word we'll mark it as invalid.
         stop = self.phrase in stopwords or self.phrase in GENERIC_PHRASES
 
         self.distinct.add(self.phrase)
@@ -110,15 +110,15 @@ class FactBookTaxon(Taxon):
             self.variant_count += 1
 
 
-def ingest_wfb_leaders(dct, fpath, stopwords=[]):
+def ingest_wfb_leaders(dct, filepath, stopwords=[]):
     """
     Add taxonomy in file to builder.
     TODO: merge multiple files into dct.
-    :param taxcat:
-    :param fpath:
+    :param dct: country keyed dictionary of entries
+    :param filepath:
     :return:
     """
-    with open(fpath, "rU", encoding="UTF-8") as fh:
+    with open(filepath, "r", encoding="UTF-8") as fh:
         countries = json.load(fh)
         for cc in countries:
             leaders = countries.get(cc)
@@ -144,7 +144,7 @@ def ingest_wfb_orgs(dct, fpath, stopwords=[]):
     :param fpath:
     :return:
     """
-    with open(fpath, "rU", encoding="UTF-8") as fh:
+    with open(fpath, "r", encoding="UTF-8") as fh:
         parent = json.load(fh)
         org_nodes = {}
         orgs = parent['orgs_and_groups']
@@ -161,7 +161,6 @@ def ingest_wfb_orgs(dct, fpath, stopwords=[]):
 if __name__ == '__main__':
 
     import json
-    import sys
     # import os
     import argparse
     import glob
@@ -172,10 +171,8 @@ if __name__ == '__main__':
     ap.add_argument('--solr')
     args = ap.parse_args()
     util = ConfigUtility()
-    stopwords = util.loadListFromFile("etc/taxcat/stopwords.txt")
+    all_stopwords = util.loadListFromFile("etc/taxcat/stopwords.txt")
     start_id = get_starting_id(catalog)
-
-    args.solr
 
     builder = TaxCatalogBuilder(server=args.solr, test=args.solr is None)
     if not args.solr:
@@ -186,7 +183,7 @@ if __name__ == '__main__':
     files = glob.glob("etc/taxcat/data/wfb-leaders*json")
     master = {}
     for fpath in files:
-        ingest_wfb_leaders(master, fpath, stopwords=stopwords)
+        ingest_wfb_leaders(master, fpath, stopwords=all_stopwords)
 
     tid = start_id
     for cc in master:
@@ -202,7 +199,7 @@ if __name__ == '__main__':
     # Load Taxons as a flat dictionary of 'taxon1' = [ taxon1_a, taxon1_b,... ]
     # so each taxon1_* represents a variation on taxon1
     for fpath in files:
-        ingest_wfb_orgs(master, fpath, stopwords=stopwords)
+        ingest_wfb_orgs(master, fpath, stopwords=all_stopwords)
 
     for taxon_name in master:
         for taxon in master[taxon_name]:

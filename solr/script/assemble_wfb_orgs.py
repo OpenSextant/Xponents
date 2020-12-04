@@ -17,15 +17,15 @@ Mechanics:
   TODO: fold together cached harvests and fold into a consolidated picture of all orgs over time for a given country.
 
 """
-import bs4
-import requests
 import json
 import os
-import arrow
 import re
 
+import arrow
+import bs4
+import requests
 
-pat = re.compile('\(([-/A-Z0-9 ]{2,15})\)', re.UNICODE|re.IGNORECASE)
+pat = re.compile(r'\(([-/A-Z0-9 ]{2,15})\)', re.UNICODE | re.IGNORECASE)
 
 
 def parse_aliases(nm):
@@ -39,11 +39,10 @@ def parse_aliases(nm):
         alist.append(m.group(1))
     return alist
 
-# MAIN
 
+# MAIN
 base_url = "https://www.cia.gov/library/publications/resources/the-world-factbook/appendix/appendix-b.html"
 master = {}
-
 load_cached = True
 cached_file = '/tmp/wfb-orgs.html'
 html = None
@@ -59,17 +58,16 @@ else:
 
 doc = bs4.BeautifulSoup(html, features="lxml")
 
-
 master = []
 for chx in range(ord('a'), ord('z')):
     ch = chr(chx)
     node_class = "appendix-entry reference-content ln-{}".format(ch)
     for entry in doc.find_all("div", attrs={"class": node_class}):
-        org_name = entry.find("div", attrs={"class":"appendix-entry-name category"})
-        org_desc = entry.find("div", attrs={"class":"appendix-entry-text category_data"})
+        org_name = entry.find("div", attrs={"class": "appendix-entry-name category"})
+        org_desc = entry.find("div", attrs={"class": "appendix-entry-text category_data"})
         if org_name:
             k = org_name.text.strip()
-            row = {"name": k, "description":org_desc.text.strip()}
+            row = {"name": k, "description": org_desc.text.strip()}
             if "(" in k:
                 row["aliases"] = parse_aliases(k)
                 row["name"] = k.split("(")[0].strip()
@@ -81,5 +79,4 @@ print("""Run this to update content periodically -- but in aggregating all updat
 ymd = arrow.utcnow().format("YYYY-MM-DD")
 target = os.path.join("etc", "taxcat", "data", "wfb-orgs-{}.json".format(ymd))
 with open(target, "w", encoding="UTF-8") as fh:
-    json.dump({ "orgs_and_groups":master}, fh, indent=2)
-
+    json.dump({"orgs_and_groups": master}, fh, indent=2)

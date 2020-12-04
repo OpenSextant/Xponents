@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-import os, sys, csv
+import csv
+import os
+import sys
+
 from opensextant.CommonsUtils import get_text
 
 print("Note - run from ./solr/ folder\nIngesting filter files")

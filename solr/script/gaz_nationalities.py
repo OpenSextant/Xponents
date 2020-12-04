@@ -40,8 +40,8 @@ The TaxCat/XTax strategy here is to use the following mapping:
     }
 """
 
-from opensextant.TaxCat import Taxon, TaxCatalogBuilder
 from opensextant.CommonsUtils import get_text
+from opensextant.TaxCat import Taxon, TaxCatalogBuilder
 
 
 class Nationality(Taxon):
@@ -122,9 +122,7 @@ if __name__ == '__main__':
         start_id = int(args.starting_id)
 
     test = args.solr is None
-    builder = None
     row_max = -1
-
     builder = TaxCatalogBuilder(server=args.solr, test=test)
 
     if args.max:

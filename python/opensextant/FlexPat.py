@@ -153,6 +153,7 @@ def class_for(full_classname, instantiate=True):
     """
 
     :param full_classname:
+    :param instantiate: True if you wish the found class return an instance.
     :return: Class obj or Class instance.
     """
     from importlib import import_module
@@ -535,7 +536,6 @@ class PatternExtractor(Extractor):
                 output.append(m)
 
             # Determine if pattern matched true positive or false positive.
-            count =len(output)
             # To condition the TP or FP based on the matches
             #  keep a running tally of whether each match is filtered or not.
             # That is, for many matches True Positive = at least one unfiltered match is needed, AND was expected.

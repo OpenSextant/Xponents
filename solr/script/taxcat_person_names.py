@@ -1,5 +1,6 @@
 from opensextant.TaxCat import TaxCatalogBuilder, Taxon
 
+
 def create_entity(name):
     """
     Create a generic person name taxon, rather than a particular personality/celebrity
@@ -61,9 +62,7 @@ if __name__ == '__main__':
     args = ap.parse_args()
 
     test = False
-    builder = None
     row_max = -1
-
     builder = TaxCatalogBuilder(server=args.solr)
     builder.commit_rate = 100
 

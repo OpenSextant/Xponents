@@ -85,7 +85,7 @@ def fast_replace(t, sep, sub=None):
     return ''.join(result)
 
 
-## ISO-8859-2 is a common answer, when they really mean ISO-1
+# ISO-8859-2 is a common answer, when they really mean ISO-1
 CHARDET_LATIN2_ENCODING = 'ISO-8859-1'
 
 
@@ -220,10 +220,10 @@ def get_text_window(offset, matchlen, textsize, width):
     return [left_x, left_y, right_x, right_y]
 
 
-## ---------------------------------------
-##  FILE UTILITIES
-## ---------------------------------------
-##
+# /---------------------------------------
+#  FILE UTILITIES
+# /---------------------------------------
+#
 def _utf_8_encoder(unicode_csv_data):
     for line in unicode_csv_data:
         yield line.encode('utf-8')

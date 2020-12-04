@@ -4,6 +4,7 @@ asia
 beach
 best
 blue
+brain
 green
 red
 case
@@ -13,9 +14,13 @@ day
 do
 dot
 else
+echo
+english
 good
 guy
 hall
+house
+ngo
 field
 head
 hill
@@ -39,6 +44,9 @@ short
 long
 small
 smart
+see
+son
+van
 spring
 sun
 zona
