@@ -18,8 +18,8 @@ import java.util.Collection;
 /**
  * DeepEyeStore is an abstraction of a data store that stores records and annotations.
  * 
- * For example, we built AnnotationStore, implementing DeepEyeStore using MongoDB as the backend.
- * SQLite and PostgreSQL worked, too.
+ * For example, we built annotation stores implementing DeepEyeStore using
+ * MongoDB, Postgres, Elasticsearch and SQLite backends.
  * 
  * @author ubaldino
  *

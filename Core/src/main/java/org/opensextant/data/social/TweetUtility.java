@@ -197,9 +197,9 @@ public class TweetUtility {
     /**
      * TOOD: validate available data for this schema.
      * 
-     * @param attrs
-     * @param isUser
-     * @return
+     * @param attrs given attributes
+     * @param isUser if attributes represent user profile
+     * @return geocoding object populated with attribute data
      */
     protected static Geocoding getGeo(JsonObject attrs, boolean isUser) {
         if (attrs == null) {
@@ -266,9 +266,9 @@ public class TweetUtility {
      * Serialize a user screen name / ID pairing., e.g. a mention of a friend.
      * If just screen name or ID is available, then each item is added separately.
      * 
-     * @param a
-     * @param u
-     * @param id
+     * @param a target array
+     * @param u user name
+     * @param id mention
      */
     public static void insertMention(final JsonArray a, final String u, final String id) {
         Map<String, String> mention = new HashMap<>();

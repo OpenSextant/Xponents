@@ -275,6 +275,11 @@ public class Transforms {
         return o;
     }
 
+    /**
+     * Cutoff confidence for geocoding results:
+     */
+    public static int DEFAULT_LOWER_CONFIDENCE = 10;
+    
     public static JsonObject toJSON(final List<TextMatch> matches, final Parameters jobParams) {
         Logger log = LoggerFactory.getLogger(Transforms.class);
 
@@ -390,7 +395,8 @@ public class Transforms {
                 addProvinceName(node, resolvedPlace);
                 node.put("type", "place");
                 node.put("confidence", place.getConfidence());
-                if (place.getConfidence() <= 10) {
+                node.put("rules", StringUtils.join(place.getRules(), ";"));
+                if (place.getConfidence() <= DEFAULT_LOWER_CONFIDENCE) {
                     place.setFilteredOut(true);
                 }
             } else {

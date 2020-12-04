@@ -49,7 +49,7 @@ public abstract class DeepEyeData {
         }
     }
 
-    /**
+    /** Converts internal JSON store to a key/value map.
      */
     public Map<String, Object> getAttributes() {
 
@@ -80,7 +80,7 @@ public abstract class DeepEyeData {
     /**
      * utility -- get list from jsonarray.
      * 
-     * @param arr
+     * @param arr JSON array
      * @return
      */
     public static List<Object> list(JsonArray arr) {
@@ -102,8 +102,8 @@ public abstract class DeepEyeData {
     /**
      * Convert an array to a trivial map, [i1, i2, i3,...] ==&gt; { i1:"1", i2:"1", ...} UNUSED.
      * 
-     * @param obj
-     * @return
+     * @param obj JSON array
+     * @return map representation of array
      */
     public static Map<String, Object> asMap(JsonArray obj) {
         if (obj != null) {

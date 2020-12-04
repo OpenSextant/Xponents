@@ -238,7 +238,7 @@ public abstract class TaggerResource extends ServerResource {
         if (err == null) {
             log.severe(msg);
         } else {
-            log.severe(msg + " ERR: " + err.getMessage());
+            log.severe(msg + " ERR:" + err.getMessage());
             if (isDebug()) {
                 log.fine("" + err.getStackTrace());
             }
