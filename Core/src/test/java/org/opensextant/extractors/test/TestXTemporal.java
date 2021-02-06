@@ -28,18 +28,18 @@ public class TestXTemporal {
     public void userTest(String text) {
 
         log.info("=== INTERACTIVE TESTS START ===");
-        log.info("INPUT:\n"+text);
+        log.info("INPUT:\n" + text);
         xdt.enableAll();
 
         List<TextMatch> results = xdt.extract(text);
-        //results.add_trace("Test Payload: " + text);
+        // results.add_trace("Test Payload: " + text);
 
         if (results.isEmpty()) {
             log.info("Nada.");
         } else {
             log.info("OUTPUT: " + results.size() + " FOUND.");
-            for (TextMatch m:results) {
-                log.info(m.toString() + " valid return "+!m.isFilteredOut());
+            for (TextMatch m : results) {
+                log.info(m.toString() + " valid return " + !m.isFilteredOut());
             }
         }
         log.info("=== INTERACTIVE TEST DONE ===");
@@ -52,8 +52,8 @@ public class TestXTemporal {
         log.info("=== ADHOC TESTS START ===");
         xdt.enableAll();
 
-        //xdt.match_MonDayYear(true);
-        //xdt.match_DateTime(false);
+        // xdt.match_MonDayYear(true);
+        // xdt.match_DateTime(false);
 
         String[] tests = { "12 July 2019", "12JULIO2002", "16DEC2020", "2010-04-13", "1111-11-11", "12/13/1900",
                 "11/12/1817", "12/30/90", "JUN 00", "JUN '13", "JUN '12", "JUN '17", "JUN '33", "JUN 2017",
@@ -93,7 +93,7 @@ public class TestXTemporal {
     public void systemTests() {
         log.info("=== SYSTEM TESTS START ===");
 
-        // Enable select patterns:  disable all first, then enable pattern families.
+        // Enable select patterns: disable all first, then enable pattern families.
         // xdt.disableAll();
         // xdt.match_MonDayYear(true);
         // xdt.match_DateTime(true);

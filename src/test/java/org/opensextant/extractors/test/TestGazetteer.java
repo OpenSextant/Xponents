@@ -16,17 +16,20 @@ import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
 
 /**
- * <ol> <li> GeonamesUtility: list countries official names and data
- * </li><li>SolrGazetteer: query countries and print</li> <li>SolrGazetteer:
- * spatial query to find a place with M meters of a point. </li></ol>
+ * <ol>
+ * <li>GeonamesUtility: list countries official names and data</li>
+ * <li>SolrGazetteer: query countries and print</li>
+ * <li>SolrGazetteer: spatial query to find a place with M meters of a point.
+ * </li>
+ * </ol>
  */
 public class TestGazetteer {
 
     public static SolrGazetteer gaz = null;
 
     /**
-     * Do a basic test -- This main prog makes use of the default JVM arg for
-     * solr: -Dopensextant.solr=/path/to/solr
+     * Do a basic test -- This main prog makes use of the default JVM arg for solr:
+     * -Dopensextant.solr=/path/to/solr
      *
      *
      * @param args the arguments
@@ -49,8 +52,8 @@ public class TestGazetteer {
             }
 
             /*
-             * This test organizes country names to see if there are any country
-             * names that are unique.
+             * This test organizes country names to see if there are any country names that
+             * are unique.
              */
             List<String> cnames = new ArrayList<>();
             Map<String, Boolean> done = new TreeMap<>();

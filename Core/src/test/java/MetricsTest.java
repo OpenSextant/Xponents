@@ -1,4 +1,4 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.opensextant.extraction.ExtractionMetrics;
@@ -18,7 +18,7 @@ public class MetricsTest {
         measure.addTime(555);
         measure.addTime(-555);
 
-        assertTrue(measure.getCallCount() == 3);
+        assertEquals(3, measure.getCallCount());
         System.out.println(measure.toString());
     }
 

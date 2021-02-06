@@ -3,18 +3,19 @@ package org.opensextant.extractors.test;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.opensextant.extractors.flexpat.PatternTestCase;
+import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.extractors.poli.PatternsOfLife;
-import org.opensextant.extraction.NormalizationException;
 import org.opensextant.util.FileUtility;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -79,8 +80,8 @@ public class TestPoLiReporter {
 
     /**
      * If test case is null, then we're likely testing patterns against a random
-     * block of text If match is null then we likely have a test case that
-     * yields no hits.
+     * block of text If match is null then we likely have a test case that yields no
+     * hits.
      *
      */
     protected Map<String, Object> createResultRow(PatternTestCase t, TextMatch m) {
@@ -110,7 +111,7 @@ public class TestPoLiReporter {
             if (!t.true_positive) {
                 row.put(header[1], "PASS"); // true negative
             } else {
-                row.put(header[1], "FAIL"); // false negative                
+                row.put(header[1], "FAIL"); // false negative
             }
             row.put(header[2], "test='" + t.text + "', nothing found");
 
@@ -128,7 +129,7 @@ public class TestPoLiReporter {
      */
     public void test() throws IOException {
 
-    	poli.enableAll();
+        poli.enableAll();
         createResultsFile("results/poli_System.csv");
 
         // List<TextMatch> allResults = new ArrayList<>();
@@ -165,8 +166,8 @@ public class TestPoLiReporter {
     }
 
     /**
-     * Run patterns over a single file using a pre-configured PoLi. Use -c
-     * config -u file test
+     * Run patterns over a single file using a pre-configured PoLi. Use -c config -u
+     * file test
      */
     public void testUserFile(String f) throws IOException, NormalizationException {
         // poli.configure(new File(f));
@@ -220,9 +221,9 @@ public class TestPoLiReporter {
     }
 
     /**
-     * Random testing
-     * TOOD: move the testing off to test package.  Such things involve re-compiling and therefore core lib is 
-     * recompiled to do adhoc testing.
+     * Random testing TOOD: move the testing off to test package. Such things
+     * involve re-compiling and therefore core lib is recompiled to do adhoc
+     * testing.
      */
     public void adhoc() {
         // this.poli.disableAll();

@@ -26,8 +26,8 @@ public class TestPlaceGeocoderGeoBoundaries extends TestPlaceGeocoder {
     }
 
     /**
-     * Language-specific parsing will involve more testing...
-     * For now, just making it available is enough.
+     * Language-specific parsing will involve more testing... For now, just making
+     * it available is enough.
      * 
      * @throws IOException
      */
@@ -37,27 +37,14 @@ public class TestPlaceGeocoderGeoBoundaries extends TestPlaceGeocoder {
         String[] textsMiddleEastScripts = {};
         /* TBD */
         String[] textsCJK = {};
-        TestPhrase[] textASCII = { 
-                new TestPhrase("Good Docter, MD", 0), 
-                new TestPhrase("Hey, Al xxx", 0),
-                new TestPhrase("oh, Montgomery, Al?", 1), 
-                new TestPhrase("xyz co.", 0), 
-                new TestPhrase("xyz Co.", 0),
-                new TestPhrase("Boise, ID", 1),
-                new TestPhrase("Boise id", 1),
-                new TestPhrase("CO", 0), 
-                new TestPhrase("Colo.", 0), 
-                new TestPhrase("COLO", 0),
-                new TestPhrase("COLORADO", 1), 
-                new TestPhrase("Boulder &Co.", 1), 
-                new TestPhrase("Boulder,Co.", 1),
-                new TestPhrase("Boulder Co.", 1), 
-                new TestPhrase("Boulder CO", 1),
-                new TestPhrase("Boulder COLORADO", 1), 
-                new TestPhrase("Boulder, Colorado", 1),
-                new TestPhrase("Boulder, CO", 1), 
-                new TestPhrase("Boulder, Colo.", 1), 
-                new TestPhrase("boulder, co", 1),
+        TestPhrase[] textASCII = { new TestPhrase("Good Docter, MD", 0), new TestPhrase("Hey, Al xxx", 0),
+                new TestPhrase("oh, Montgomery, Al?", 1), new TestPhrase("xyz co.", 0), new TestPhrase("xyz Co.", 0),
+                new TestPhrase("Boise, ID", 1), new TestPhrase("Boise id", 1), new TestPhrase("CO", 0),
+                new TestPhrase("Colo.", 0), new TestPhrase("COLO", 0), new TestPhrase("COLORADO", 1),
+                new TestPhrase("Boulder &Co.", 1), new TestPhrase("Boulder,Co.", 1), new TestPhrase("Boulder Co.", 1),
+                new TestPhrase("Boulder CO", 1), new TestPhrase("Boulder COLORADO", 1),
+                new TestPhrase("Boulder, Colorado", 1), new TestPhrase("Boulder, CO", 1),
+                new TestPhrase("Boulder, Colo.", 1), new TestPhrase("boulder, co", 1),
                 new TestPhrase("Bohaaaa and Co.", 0),
                 new TestPhrase("some text and Denver, CO and some more text.", 1) };
 

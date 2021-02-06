@@ -1,5 +1,7 @@
 package org.opensextant.annotations.test;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.opensextant.annotations.Annotation;
 
@@ -34,27 +36,27 @@ public class TestAnnot {
         a.value = "Salamander Assoc.";
         a.offset = 2290;
         a.attrs.put("k1", "v1");
-        a.attrs.put("date", "2014-04-89");        
-        
+        a.attrs.put("date", "2014-04-89");
+
         // Test for integers.
         int prec = -999;
-        //a.attrs.put("prec", 7777);
+        // a.attrs.put("prec", 7777);
         if (a.attrs.containsKey("prec")) {
             prec = a.attrs.getInteger("prec");
         }
-        System.out.println("Prec, non-existent = "+prec);
+        System.out.println("Prec, non-existent = " + prec);
         prec = a.attrs.getInteger("prec", -1);
-        System.out.println("Prec, non-existent, default= "+prec);
+        System.out.println("Prec, non-existent, default= " + prec);
         a.attrs.put("prec", 7000);
         prec = a.attrs.getInteger("prec");
-        System.out.println("Prec, exists as integer ="+prec);
+        System.out.println("Prec, exists as integer =" + prec);
         prec = a.attrs.getInteger("prec", -1);
-        System.out.println("Prec, exists as integer, w/default = "+prec);
-        
-        // ClassCastException: String to Number 
-        //a.attrs.put("prec", "8000");
-        //prec = a.attrs.getInteger("prec", -1);
-        //System.out.println("Prec, exists as str, w/default = "+prec);
+        System.out.println("Prec, exists as integer, w/default = " + prec);
+
+        // ClassCastException: String to Number
+        // a.attrs.put("prec", "8000");
+        // prec = a.attrs.getInteger("prec", -1);
+        // System.out.println("Prec, exists as str, w/default = "+prec);
 
         System.out.println("Annotation as a map\t" + a.getMap());
 
@@ -84,5 +86,7 @@ public class TestAnnot {
 
         a1.offset = 1001;
         System.out.println("Entity Annotation with one offset\t" + a1.getMap());
+
+        assertTrue(a1.getOffsets().isEmpty());
     }
 }

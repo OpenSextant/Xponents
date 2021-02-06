@@ -1,4 +1,4 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,8 +32,9 @@ public class TestLangID {
     }
 
     /**
-     * These are trivial experiments -- not trying to truth the language ID of this data
-     * ... just trying to see where various thresholds lie when working with CyboZu.
+     * These are trivial experiments -- not trying to truth the language ID of this
+     * data ... just trying to see where various thresholds lie when working with
+     * CyboZu.
      */
     @Test
     public void test() {
@@ -85,16 +86,20 @@ public class TestLangID {
 
         lid = langid.detectSocialMediaLang("zh", chiText);
         print(chiText, lid, "Chinese or Simplified Chinese");
+        assertEquals("zh", lid.getISO639_1_Code());
 
         lid = langid.detectSocialMediaLang("ko", koText);
         print(koText, lid, "Pure Korean text");
+        assertEquals("ko", lid.getISO639_1_Code());
 
         for (String tj : japText) {
             lid = langid.detectSocialMediaLang("ja", tj);
             print(tj, lid);
+            assertEquals("ja", lid.getISO639_1_Code());
         }
 
         lid = langid.detectSocialMediaLang("zh", notChinese);
-        print(notChinese, lid, "Not Chinese?");
+        print(notChinese, lid, "Mixed Japanese + Chinese?");
+        assertEquals("zh", lid.getISO639_1_Code());
     }
 }

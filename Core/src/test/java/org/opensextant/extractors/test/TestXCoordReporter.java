@@ -1,21 +1,23 @@
 package org.opensextant.extractors.test;
 
-import org.supercsv.io.CsvMapWriter;
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.cellprocessor.constraint.*;
-import org.supercsv.cellprocessor.*;
-import org.supercsv.prefs.CsvPreference;
-
-import java.io.*;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.opensextant.util.FileUtility;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.TextMatchResult;
-import org.opensextant.extractors.xcoord.GeocoordTestCase;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
+import org.opensextant.extractors.xcoord.GeocoordTestCase;
 import org.opensextant.extractors.xcoord.XConstants;
+import org.opensextant.util.FileUtility;
+import org.supercsv.cellprocessor.FmtBool;
+import org.supercsv.cellprocessor.Optional;
+import org.supercsv.cellprocessor.constraint.NotNull;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.io.CsvMapWriter;
+import org.supercsv.prefs.CsvPreference;
 
 /**
  *
@@ -34,14 +36,14 @@ public class TestXCoordReporter {
      * important: status = PASS, FAIL, IGNORE
      */
     public static String[] header = {
-        // Include truth test fields:
-        "test_id", "test_fam", "true_pos", "true_lat", "true_lon", "text",
-        // Include processed fields:
-        "result_id", "status", "message", "family", "pattern",
-        "matchtext", "lat", "lon", "mgrs", "precision", "offset"};
+            // Include truth test fields:
+            "test_id", "test_fam", "true_pos", "true_lat", "true_lon", "text",
+            // Include processed fields:
+            "result_id", "status", "message", "family", "pattern", "matchtext", "lat", "lon", "mgrs", "precision",
+            "offset" };
 
-    protected static Map<String,Object> getEmptyRow() {
-        Map<String,Object> blank = new HashMap<String,Object>();
+    protected static Map<String, Object> getEmptyRow() {
+        Map<String, Object> blank = new HashMap<String, Object>();
         blank.put(header[0], "");
         blank.put(header[1], "");
         blank.put(header[2], false);
@@ -51,30 +53,16 @@ public class TestXCoordReporter {
         return blank;
     }
 
-    protected static final CellProcessor[] xcoordResultsSpec = new CellProcessor[]{
-        // Given test data is required:
-        new NotNull(),
-        new NotNull(),
-        new FmtBool("true", "false"),
-        new NotNull(),
-        new NotNull(),
-        new NotNull(),
+    protected static final CellProcessor[] xcoordResultsSpec = new CellProcessor[] {
+            // Given test data is required:
+            new NotNull(), new NotNull(), new FmtBool("true", "false"), new NotNull(), new NotNull(), new NotNull(),
 
-        // test results fields -- if result exists
-        //
-        new Optional(),
-        new Optional(),
-        new Optional(),
-        new Optional(),
-        new Optional(),
+            // test results fields -- if result exists
+            //
+            new Optional(), new Optional(), new Optional(), new Optional(), new Optional(),
 
-        // Match data;  If result is PASS and match exists
-        new Optional(),
-        new Optional(),
-        new Optional(),
-        new Optional(),
-        new Optional(),
-        new Optional()
+            // Match data; If result is PASS and match exists
+            new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional()
 
     };
 
@@ -120,18 +108,21 @@ public class TestXCoordReporter {
     }
 
     /**
-     * Creates a valid row object for CSV output -- a blank row if TestCase is null, otherwise populate the row with the base test metadata.
+     * Creates a valid row object for CSV output -- a blank row if TestCase is null,
+     * otherwise populate the row with the base test metadata.
+     * 
      * @param t
      */
-    public Map<String,Object> createTestCase(GeocoordTestCase t) {
+    public Map<String, Object> createTestCase(GeocoordTestCase t) {
 
-        if (t==null) {
-            // This is used where there is no given test case... just extracting data from random data.
+        if (t == null) {
+            // This is used where there is no given test case... just extracting data from
+            // random data.
             return getEmptyRow();
         }
         // This happens when the TestCases are well defined.
 
-        Map<String,Object> row = new HashMap<String,Object>();
+        Map<String, Object> row = new HashMap<String, Object>();
         row.put(header[0], t.id);
         row.put(header[1], t.family);
         row.put(header[2], t.true_positive);
@@ -147,20 +138,17 @@ public class TestXCoordReporter {
      *
      *
      * Result ID, CCE family, pattern ID, status, message // Reason for failure
-     * Result ID, CCE family, pattern ID, status, Match ID, matchtext, lat, lon
-     * etc. // Success implied by match
+     * Result ID, CCE family, pattern ID, status, Match ID, matchtext, lat, lon etc.
+     * // Success implied by match
      *
-     * @TODO: use TestCase here or rely on truth evaluation in Python
-     * GeocoderEval?
+     * @TODO: use TestCase here or rely on truth evaluation in Python GeocoderEval?
      * @param t
      * @param results
      * @throws IOException
      */
-    public void save_result(GeocoordTestCase t, TextMatchResult results)
-            throws IOException {
+    public void save_result(GeocoordTestCase t, TextMatchResult results) throws IOException {
 
-
-        Map<String,Object> row = null;
+        Map<String, Object> row = null;
 
         if (!results.matches.isEmpty()) {
 
@@ -215,7 +203,7 @@ public class TestXCoordReporter {
                 expected_failure = test_status.contains("FAIL");
             }
 
-            row.put(header[7], expected_failure ? "PASS" : "FAIL");  // True Negative -- you ignored one correctly
+            row.put(header[7], expected_failure ? "PASS" : "FAIL"); // True Negative -- you ignored one correctly
             row.put(header[8], results.get_trace());
 
             report.write(row, header, xcoordResultsSpec);

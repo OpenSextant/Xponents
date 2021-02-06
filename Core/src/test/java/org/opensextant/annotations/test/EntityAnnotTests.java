@@ -21,10 +21,12 @@ public class EntityAnnotTests {
         util.cacheAnnotation(ea);
         ea.addOffset(4);
         ea.addOffset(6);
-        // Hmmm. Need to convey importance of caching (Annot, Offset) if using the Helper.
-        //       whereas, just caching (Annot) would not capture or cache the offset.
+        // Hmmm. Need to convey importance of caching (Annot, Offset) if using the
+        // Helper.
+        // whereas, just caching (Annot) would not capture or cache the offset.
         ea.addOffset(99);
-        // This cache adds the offset to the cached annotation if it was cached; Otherwise creates it anew.
+        // This cache adds the offset to the cached annotation if it was cached;
+        // Otherwise creates it anew.
         try {
             util.cacheAnnotation(ea, 99);
         } catch (Exception err) {

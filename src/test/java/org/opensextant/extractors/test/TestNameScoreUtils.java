@@ -12,13 +12,13 @@ public class TestNameScoreUtils {
         String a = "who dat";
         String b = "me too";
         int editDist = LevenshteinDistance.getDefaultInstance().apply(a, b);
-        assertEquals(editDist, 6);
+        assertEquals(6, editDist);
 
         editDist = LevenshteinDistance.getDefaultInstance().apply(a, a);
-        assertEquals(editDist, 0);
+        assertEquals(0, editDist);
         String c = "who dem";
         editDist = LevenshteinDistance.getDefaultInstance().apply(a, c);
-        assertEquals(editDist, 2);
+        assertEquals(2, editDist);
     }
 
 }

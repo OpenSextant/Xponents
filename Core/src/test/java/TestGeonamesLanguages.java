@@ -1,4 +1,6 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -17,11 +19,12 @@ public class TestGeonamesLanguages {
         try {
             GeonamesUtility util = new GeonamesUtility();
             // NOTE: caller has to invoke this language metadata load separately.
-            // This metadata should be carried close to gazetteer, e.g., solr/gazetteer/conf/geonames.org/
-            // with  "....solr/gazetteer/conf/"  path in CLASSPATH.
-            // 
+            // This metadata should be carried close to gazetteer, e.g.,
+            // solr/gazetteer/conf/geonames.org/
+            // with "....solr/gazetteer/conf/" path in CLASSPATH.
+            //
             util.loadCountryLanguages();
-            
+
             Collection<String> langs = util.languagesInCountry("RW");
             assertNotNull(langs);
             assertTrue(!langs.isEmpty());
@@ -40,16 +43,15 @@ public class TestGeonamesLanguages {
             Collection<String> countries = util.countriesSpeaking("fr");
             print("Countries speaking French " + countries.toString());
 
-            // Test island nations -- these entries in geonames.org data have fewer columns: no neighbors column.
-            // 
+            // Test island nations -- these entries in geonames.org data have fewer columns:
+            // no neighbors column.
+            //
             print("Spoken in Philippines - " + util.languagesInCountry("PH"));
             print("Unkonwn Language IDs " + util.unknownLanguages.toString());
 
-            String[] primaryLangCountries = {
-                    "US", "AT", "RU", "ZA", "CN", "TW", "KR", "KP",
-                    "JP", "TH", "ID", "PH", "MY", "FR", "ES", "DE",
-                    "CA", "MX", "SV", "SD", "SS", "EG" };
-            
+            String[] primaryLangCountries = { "US", "AT", "RU", "ZA", "CN", "TW", "KR", "KP", "JP", "TH", "ID", "PH",
+                    "MY", "FR", "ES", "DE", "CA", "MX", "SV", "SD", "SS", "EG" };
+
             for (String cc : primaryLangCountries) {
                 print("Primary language of " + cc + "? " + util.primaryLanguage(cc));
             }

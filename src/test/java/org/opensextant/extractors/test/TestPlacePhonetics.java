@@ -22,10 +22,10 @@ public class TestPlacePhonetics {
         pc.hasDiacritics = TextUtils.hasDiacritics(pc.getText());
 
         /*
-         * Create a simple set of names that would likely match via tagger
-         * but should not pass due to length and odd diacritics.
+         * Create a simple set of names that would likely match via tagger but should
+         * not pass due to length and odd diacritics.
          */
-        String[] names = { /*"ÄEÃ" */ "aea", "Aeå" };
+        String[] names = { /* "ÄEÃ" */ "aea", "Aeå" };
         for (String n : names) {
             ScoredPlace geo = new ScoredPlace("nothing" + n, n);
             geo.setId_bias(0.5);
@@ -35,8 +35,9 @@ public class TestPlacePhonetics {
         }
         NonsenseFilter filter = new NonsenseFilter();
         filter.assessPhoneticMatch(pc);
-        /* Is Filtered out because no good match appears in 
-         * candidate's geo list */
+        /*
+         * Is Filtered out because no good match appears in candidate's geo list
+         */
         assertTrue(pc.isFilteredOut());
 
         // Reset
@@ -45,8 +46,8 @@ public class TestPlacePhonetics {
         pc.setFilteredOut(false);
 
         /*
-         * Uh...Example below has a location with the same exact name
-         * as the matched candidate. No filtering should happen here.  
+         * Uh...Example below has a location with the same exact name as the matched
+         * candidate. No filtering should happen here.
          */
         String n = "ÄEÃ";
         ScoredPlace geo = new ScoredPlace("nothing" + n, n);
@@ -67,8 +68,8 @@ public class TestPlacePhonetics {
         pc.hasDiacritics = TextUtils.hasDiacritics(pc.getText());
 
         /*
-         * Create a simple set of names that would likely match via tagger
-         * but should not pass due to length and odd diacritics.
+         * Create a simple set of names that would likely match via tagger but should
+         * not pass due to length and odd diacritics.
          */
         String[] names = { "'OK", "øk", "ØK" };
         for (String n : names) {
@@ -80,8 +81,9 @@ public class TestPlacePhonetics {
         }
         NonsenseFilter filter = new NonsenseFilter();
         filter.assessPhoneticMatch(pc);
-        /* Is Filtered out because no good match appears in 
-         * candidate's geo list */
+        /*
+         * Is Filtered out because no good match appears in candidate's geo list
+         */
         assertTrue(pc.isFilteredOut());
 
         // Reset

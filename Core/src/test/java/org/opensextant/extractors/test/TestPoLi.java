@@ -16,8 +16,7 @@ public class TestPoLi {
     /**
      * Run a simple test.
      * 
-     * @param args
-     *            only one argument accepted: a text file input.
+     * @param args only one argument accepted: a text file input.
      */
     public static void main(String[] args) {
         boolean debug = true;

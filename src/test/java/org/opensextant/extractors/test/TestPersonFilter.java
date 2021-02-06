@@ -25,16 +25,8 @@ public class TestPersonFilter {
         String testUniDashes = "\u2014\u2015\u201C\u201D\u2033";
         Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`.]]+\\s+|[\"\u2014\u2015\u201C\u201D\u2033]");
 
-        /* allowable: 
-         *  A. B
-         *  A-B
-         *  A.B.
-         *  A_B
-         *  A` B
-         *  A`B
-         *  `A B
-         *  'A B
-         *  A 'B
+        /*
+         * allowable: A. B A-B A.B. A_B A` B A`B `A B 'A B A 'B
          */
         Pattern anyInvalidPunct = Pattern.compile("[\\p{Punct}&&[^-_.'`]]+");
         assertTrue(invalidPunct.matcher("A[ ]B").find());
@@ -69,10 +61,11 @@ public class TestPersonFilter {
     }
 
     /**
-     * Call if you have a short name. This method does not have a length filter assumed.
+     * Call if you have a short name. This method does not have a length filter
+     * assumed.
      * 
-     * @param matched  entry or official name matched
-     * @param signal   raw input 
+     * @param matched entry or official name matched
+     * @param signal  raw input
      * @return
      */
     public static boolean isMismatchedShortName(String matched, String signal) {

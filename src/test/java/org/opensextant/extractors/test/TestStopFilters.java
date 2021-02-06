@@ -37,7 +37,7 @@ public class TestStopFilters {
         }
     }
 
-    //@Test
+    // @Test
     public void test() {
         String[] langSet = { "ja", "cjk", "th", "vi", "id", "ar" };
         Map<String, Set<String>> stopFilters = new HashMap<>();

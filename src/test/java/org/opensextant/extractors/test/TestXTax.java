@@ -38,8 +38,9 @@ public class TestXTax {
 
             tax = new TaxonMatcher();
 
-            // Find JRC entities that have this random id pattern ID='1*1' and are in Russian form.
-            // 
+            // Find JRC entities that have this random id pattern ID='1*1' and are in
+            // Russian form.
+            //
             List<Taxon> results = tax.search("tag:jrc_id+1*1 AND tag:lang_id+ru");
             for (Taxon tx : results) {
 

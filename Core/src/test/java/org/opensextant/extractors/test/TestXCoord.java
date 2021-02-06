@@ -92,8 +92,8 @@ public class TestXCoord {
     }
 
     /**
-     * Using the TestUtility, all patterns are tested and reported to the
-     * results folder.
+     * Using the TestUtility, all patterns are tested and reported to the results
+     * folder.
      */
     public void systemTests() {
 
@@ -137,12 +137,13 @@ public class TestXCoord {
     }
 
     /**
-     * Deprecated: LineNumberReader is deprecated. Very limited as this reads the entire buffer first.
+     * Deprecated: LineNumberReader is deprecated. Very limited as this reads the
+     * entire buffer first.
      *
      * @param filepath file to read.
      * @return LineNumberReader obj
      * @throws FileNotFoundException
-     * @throws IOException if reader could not be created
+     * @throws IOException           if reader could not be created
      * @deprecated LineNumber reader is deprecated
      */
     @Deprecated
@@ -167,8 +168,9 @@ public class TestXCoord {
                     + (results.matches.isEmpty() ? "NOTHING" : results.matches.size()));
             for (TextMatch tm : results.matches) {
                 /*
-                 * trivial casting: XCoord only returns GeocoordMatch TextMatch objects.  
-                 * You should always check class type with instancoef if you need to dig into object.
+                 * trivial casting: XCoord only returns GeocoordMatch TextMatch objects. You
+                 * should always check class type with instancoef if you need to dig into
+                 * object.
                  */
                 // log.info("\tFOUND: {}", (GeocoordMatch) tm);
                 log.info("\tFOUND: {}", tm);
@@ -287,7 +289,7 @@ public class TestXCoord {
 
         try {
 
-            //String _file = coordfile.trim();
+            // String _file = coordfile.trim();
             TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname + "-rows.csv");
             //
             tester.full_report = false;
@@ -331,7 +333,7 @@ public class TestXCoord {
                 String rmks = testRow.get("remark");
 
                 // "Patid # rowid" == test instance id
-                // DMS07#12  -- 12th example of DMS07 test.
+                // DMS07#12 -- 12th example of DMS07 test.
                 //
                 GeocoordTestCase tst = new GeocoordTestCase(patid + "#" + linenum, fam, text);
                 tst.getGeo().setLatitude(testRow.get("true_lat"));
@@ -397,7 +399,8 @@ public class TestXCoord {
         xcoord.match_MGRS(true);
         xcoord.match_UTM(false);
         TextMatchResult results = null;
-        // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and after", "UTM");
+        // = xcoord.extract_coordinates("text before " + "17S 699999 3335554" + " and
+        // after", "UTM");
 
         boolean dd = true;
         boolean dms = false;
@@ -415,27 +418,30 @@ public class TestXCoord {
                 "12FTF82711", "15 EST 2008", "14 MRE\n\n 1445", "4 jul 2008", "10 Jan 1994", // edge case, bare minimum.
                 "10 Jan 13", // edge case, bare minimum.
                 "10 Jan 94", // no, this is the real bare minimum.
-                "38SMB 461136560", "38SMB 461103656", "38SMB 46110 3656", "38SMB 4611 03656", // 0-padded Northing/Easting?  7 4 or 0007 0004
+                "38SMB 461136560", "38SMB 461103656", "38SMB 46110 3656", "38SMB 4611 03656", // 0-padded
+                                                                                              // Northing/Easting? 7 4
+                                                                                              // or 0007 0004
                 "38SMB 46110365 60", "38SMB 46110365\n60", // even, but whitespace
                 "38SMB 4611035\n60", // odd, and whitespace
                 "38 SMB 4611 3656", "42 RPR 4611 3656", "10 Jan 2005 02", // MGRS 01, 10JAN 200502
                 "10 Jan 1995 02" };
 
         xcoord.match_DD(dd);
-        String[] ddtest = { "34.29, -81.55", "N 49°2' 0'' / E 38°22' 0''", "1.718114°  44.699603°", "N34.445566° W078.112233°",
-                "00 N 130 WA", "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy",
-                "-385331-17004121", "CAN-385331-17004121", "15S5E",
-                "TARGET [1]  LATITUDE: +32.3345  LONGITUDE: -179.3412", //DD04
-                "TARGET [1]  LATITUDE= +32.3345  LONGITUDE= -179.3412", //DD04
+        String[] ddtest = { "34.29, -81.55", "N 49°2' 0'' / E 38°22' 0''", "1.718114°  44.699603°",
+                "N34.445566° W078.112233°", "00 N 130 WA",
+                "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy", "-385331-17004121",
+                "CAN-385331-17004121", "15S5E", "TARGET [1]  LATITUDE: +32.3345  LONGITUDE: -179.3412", // DD04
+                "TARGET [1]  LATITUDE= +32.3345  LONGITUDE= -179.3412", // DD04
                 "42.3N; 102.4W", "42.3 N; 102.4 W", "23.34N 88.22E",
-                //"34.00N 44E", // Expected to fail as this matches DD06 -- 44E anchors this as a straight degree pattern.
+                // "34.00N 44E", // Expected to fail as this matches DD06 -- 44E anchors this as
+                // a straight degree pattern.
                 "N32.3345:W179.3412", // DD01
                 "+32.3345:-179.3412", // DD03
                 " 32.3345:-179.3412", // DD03
                 " 32.3345°;-179.3412°", // DD03
-                "032.3345°;-179.3412°", // DD03  leading 0 on lat;
+                "032.3345°;-179.3412°", // DD03 leading 0 on lat;
                 "N32.3345:W179.3412", // DD01
-                "032.3345°N;-179.3412°W", // DD03  leading 0 on lat;
+                "032.3345°N;-179.3412°W", // DD03 leading 0 on lat;
                 "N32.3345:E179.3412", // DD01
                 "32.3345N/179.3412E", // DD02
                 "32.33N 179.34E" // DD02
@@ -443,18 +449,12 @@ public class TestXCoord {
 
         xcoord.match_DMS(dms);
         xcoord.match_DM(dm);
-        String[] dmtest = { 
-                "28˚ 55' 19\"N 77˚ 23' 14\"W",
-                "x +42:18:00 -102:24:00 ",
-                "x +42:18:00 -102:24:00 x",
-                "N421800W1022400",
-                "4218009N10224003W",
-                "xxx +42° 18' 00\"  -102° 24' 00\" xxx",
-                "+42° 18' 00\" W 102° 24' 00\"", 
-                "N 49°2' 0'' / E 38°22' 0''",
+        String[] dmtest = { "28˚ 55' 19\"N 77˚ 23' 14\"W", "x +42:18:00 -102:24:00 ", "x +42:18:00 -102:24:00 x",
+                "N421800W1022400", "4218009N10224003W", "xxx +42° 18' 00\"  -102° 24' 00\" xxx",
+                "+42° 18' 00\" W 102° 24' 00\"", "N 49°2' 0'' / E 38°22' 0''",
                 "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy", "-385331-17004121",
                 "41º58'46\"N, 87º54'20\"W ", "Latitude: 41º58'46\"N, Longitude: 87º54'20\"W ", "15S5E",
-                //"01-02-03-04 005-06-07-08",           
+                // "01-02-03-04 005-06-07-08",
                 " 79.22.333N, 100.22.333W", " N 01° 44' E 101° 22'", "+42 18.0 x -102 24.0",
                 "42 DEG 18.0N 102 DEG 24.0W", "#TEST   DM      01b      01DEG 44 N 101DEG 44 E", "03bv  4218N 10224W",
                 "03bv      42°18'N 102°24'W", "03bv      42° 18'N 102° 24'W", "N 01° 44' E 101° 22'",
@@ -462,7 +462,8 @@ public class TestXCoord {
                 "N01° 44' 55.5\" E101° 22' 33.0\"", "N 01° 44' 55\" E 101° 22'33.0\"", "33-04-05 12:11:10",
                 "31°24' 70°21'", "40°55'23.2\" 9°43'51.1\"", // No HEMI
                 "-40°55'23.2\" +9°43'51.1\"", // with HEMI
-                "42 9-00 N 102 6-00W;           ", "42 18-009 N 102 24-009W;        ", "08°29.067' 13°14.067'", // No HEMI
+                "42 9-00 N 102 6-00W;           ", "42 18-009 N 102 24-009W;        ", "08°29.067' 13°14.067'", // No
+                                                                                                                // HEMI
                 "08°29.067'N 13°14.067'W", "08°29.067'N 113°14.067'W", "40°55'23.2\"N 9°43'51\"E",
                 "42° 18' 00\" 102° 24' 00", "(42° 18' 00\" 102° 24' 00", "01° 44' 55.5\" 101° 22' 33.0\"",
                 "77°55'33.22\"N 127°33'22.11\"W", "40:26:46.123N,79:56:55.000W", "43-04-30.2720N 073-34-58.4170W",
@@ -523,11 +524,9 @@ public class TestXCoord {
     }
 
     /**
-     * Run a simple test.
-     * TODO: Move Main program to Examples or other test area.
+     * Run a simple test. TODO: Move Main program to Examples or other test area.
      * 
-     * @param args
-     *            only one argument accepted: a text file input.
+     * @param args only one argument accepted: a text file input.
      */
     public static void main(String[] args) {
         boolean debug = true;
@@ -552,7 +551,8 @@ public class TestXCoord {
                     System.out.println("SYSTEM TESTS=======FILE=" + testFile + "\n");
                     test.systemTests();
 
-                    // Truth source is at src/test/resources  -- Or anywhere in your runtime classpath at TOP LEVEL!
+                    // Truth source is at src/test/resources -- Or anywhere in your runtime
+                    // classpath at TOP LEVEL!
                     //
                     InputStream truthData = XCoord.class.getResourceAsStream(testFile);
                     if (truthData != null) {

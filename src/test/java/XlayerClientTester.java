@@ -7,7 +7,7 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.util.FileUtility;
 import org.opensextant.xlayer.XlayerClient;
 
-public class XlayerClientTest {
+public class XlayerClientTester {
 
     public static void main(String[] args) {
         URL url;
@@ -19,21 +19,21 @@ public class XlayerClientTest {
              */
             XlayerClient c = new XlayerClient(url);
             try {
-                /* 
-                 * Prepare request.  Text must be UTF-8 encoded.
-                 * Note -- readFile() here assumes the file is unicode content
+                /*
+                 * Prepare request. Text must be UTF-8 encoded. Note -- readFile() here assumes
+                 * the file is unicode content
                  * 
                  */
                 String text = FileUtility.readFile(args[1]);
                 String docid = args[1];
 
                 /*
-                 * Process the text and print results to console.
-                 * Result is an array of TextMatch objects.  For each particular
-                 * TextMatch (Xponents Basic API), you have some common fields related to the 
-                 * text found, and then class-specific fields and objects you need to evaluate yourself.
+                 * Process the text and print results to console. Result is an array of
+                 * TextMatch objects. For each particular TextMatch (Xponents Basic API), you
+                 * have some common fields related to the text found, and then class-specific
+                 * fields and objects you need to evaluate yourself.
                  * 
-                 * The XlayerClient process() method makes use of Transforms helper class to 
+                 * The XlayerClient process() method makes use of Transforms helper class to
                  * digest JSON annotations into Java API TextMatch objects of various flavors.
                  */
                 System.out.println("Processing document " + docid);

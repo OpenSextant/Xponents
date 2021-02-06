@@ -1,4 +1,6 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -35,18 +37,18 @@ public class TestGeonamesMeta {
             print(util.getWorldAdmin1Metadata().get(x).toString());
         }
         print(".....\n");
-        
+
         print("+++++ Lookup by HASC ");
         try {
             print("Is California? " + util.getAdmin1Place("US", "CA"));
             print("Is California? " + util.getAdmin1Place("US", "06"));
             print("Is California? " + util.getAdmin1PlaceByHASC("US.06"));
-            
-            assertTrue(util.getAdmin1Place("US", "06").getPlaceName().equals("California"));
-            
+
+            assertEquals("California", util.getAdmin1Place("US", "06").getPlaceName());
+
             Place p = util.getAdmin1Place("CI", "78");
             print("Is Montagnes? " + p);
-            assertTrue(p.getPlaceID().equals("NGA11153058"));
+            assertEquals("NGA11153058", p.getPlaceID());
 
         } catch (Exception err) {
             fail("Oops: " + err.getMessage());

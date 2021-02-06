@@ -1,9 +1,9 @@
 import java.io.File;
 import java.util.Map;
 
+import org.opensextant.data.Language;
 import org.opensextant.extractors.langid.LangDetect;
 import org.opensextant.extractors.langid.LangID;
-import org.opensextant.data.Language;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.TextUtils;
 

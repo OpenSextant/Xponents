@@ -1,10 +1,11 @@
 package org.opensextant.extractors.test;
+
 import java.io.File;
 import java.io.IOException;
 
+import org.opensextant.data.social.JSONListener;
 import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
-import org.opensextant.data.social.JSONListener;
 import org.opensextant.data.social.TweetLoader;
 import org.opensextant.util.TextUtils;
 
@@ -31,7 +32,7 @@ public class SocialDataApp implements JSONListener {
 
     @Override
     public void readObject(JsonObject json) throws MessageParseException {
-        //JSONObject json = JSONObject.fromObject(obj);
+        // JSONObject json = JSONObject.fromObject(obj);
         Tweet tw = new Tweet();
         tw.fromJSON(json);
 
@@ -46,7 +47,7 @@ public class SocialDataApp implements JSONListener {
     }
 
     /**
-     * Testing only.  We don't flag if done or not... its over when its over.
+     * Testing only. We don't flag if done or not... its over when its over.
      */
     @Override
     public boolean isDone() {

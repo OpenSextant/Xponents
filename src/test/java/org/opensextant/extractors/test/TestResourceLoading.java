@@ -18,7 +18,12 @@ public class TestResourceLoading {
 
     @Test
     public void test() throws IOException {
-        System.out.println(LuceneStopwords.getStopwords(new ClasspathResourceLoader(GazetteerMatcher.class), "ru"));
+        System.out.println(
+                "This requires CLASSPATH set via maven or other means to include ./solr/etc/gazetteer/ or xponents-gaz-meta JAR");
+        java.util.Set<Object> words = LuceneStopwords.getStopwords(new ClasspathResourceLoader(GazetteerMatcher.class),
+                "ru");
+        assertNotNull(words);
+        System.out.println("Russian Stopwords count=" + words.size());
     }
 
 }

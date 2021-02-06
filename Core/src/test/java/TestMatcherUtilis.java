@@ -54,9 +54,9 @@ public class TestMatcherUtilis {
         }
         List<TextEntity> spans = MatcherUtils.findTagSpans(content);
         for (TextEntity x : spans) {
-            print(String.format("\t%s\t%s", x.toString(), content.substring(x.start, x.end+1)));
+            print(String.format("\t%s\t%s", x.toString(), content.substring(x.start, x.end + 1)));
         }
-        //print(spans.toString());
+        // print(spans.toString());
 
     }
 

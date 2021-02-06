@@ -1,10 +1,11 @@
 package org.opensextant.extractors.test;
-import org.opensextant.util.FileUtility;
-import org.opensextant.util.TextUtils;
-import org.opensextant.util.AnyFilenameFilter;
 
 import java.io.File;
 import java.net.URL;
+
+import org.opensextant.util.AnyFilenameFilter;
+import org.opensextant.util.FileUtility;
+import org.opensextant.util.TextUtils;
 
 public class TestUtils {
 

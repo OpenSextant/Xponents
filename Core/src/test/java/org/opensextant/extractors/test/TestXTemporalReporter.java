@@ -1,20 +1,20 @@
 package org.opensextant.extractors.test;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.opensextant.util.FileUtility;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.extractors.xtemporal.DateMatch;
-import org.supercsv.io.CsvMapWriter;
+import org.opensextant.util.FileUtility;
+import org.supercsv.cellprocessor.Optional;
+import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.cellprocessor.constraint.*;
-import org.supercsv.cellprocessor.*;
+import org.supercsv.io.CsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
 
 /**

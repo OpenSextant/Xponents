@@ -1,4 +1,7 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -19,8 +22,8 @@ public class TestTextUtils {
 
     @Test
     public void testFormatting() {
-        assertTrue(TextUtils.countFormattingSpace("a\nb") == 1);
-        assertTrue(TextUtils.countFormattingSpace("a\n\u000Bb") == 2);
+        assertEquals(1, TextUtils.countFormattingSpace("a\nb"));
+        assertEquals(2, TextUtils.countFormattingSpace("a\n\u000Bb"));
     }
 
     @Test
@@ -30,10 +33,16 @@ public class TestTextUtils {
 
     @Test
     public void testEOL() {
+        /*
+         * Test parsing text with multiple lines -- get all tokens, get Right token, get
+         * Left token.
+         */
         String buf = "\t ABC\r\n\r\n123 x y z ";
         print(StringUtils.join(TextUtils.tokens(buf), ","));
         print(StringUtils.join(TextUtils.tokensRight(buf), ","));
         print(StringUtils.join(TextUtils.tokensLeft(buf), ","));
+        String[] toks = TextUtils.tokensLeft(buf);
+        assertEquals(1, toks.length);
 
         print(StringUtils.join(TextUtils.tokensRight(""), ","));
         print(StringUtils.join(TextUtils.tokensRight("ABC_NO_EOL"), ","));
@@ -43,20 +52,20 @@ public class TestTextUtils {
     public void testRemoveSomeEmoticon() {
         String result = TextUtils.removeEmoticons("😪😔😱😱😱");
         System.out.println("Any emojis left? " + result);
-        // assertTrue( TextUtils.removeEmoticons("😪😔😱😱😱").length() == 0);
+        assertEquals("{icon}", TextUtils.removeEmoticons("😪😔😱😱😱"));
     }
 
     @Test
     public void testRemoveLeft() {
         int count = TextUtils.removeAnyLeft("-+*ABC", "-").length();
 
-        assertTrue(count == 5); // Trim
+        assertEquals(5, count); // Trim
         // left
         count = TextUtils.removeAnyLeft("-+*ABC", "+-").length();
-        assertTrue(count == 4); // Trim left
+        assertEquals(4, count); // Trim left
 
         count = TextUtils.removeAny("-+*ABC", "+ - * (^%").length();
-        assertTrue(count == 3); // Remove any chars from string. yields ABC
+        assertEquals(3, count); // Remove any chars from string. yields ABC
     }
 
     @Test
@@ -72,15 +81,14 @@ public class TestTextUtils {
         }
         assertTrue(!TextUtils.isASCII("xÖx"));
         assertTrue(TextUtils.isLatin("O a b c d O"));
-
     }
 
     @Test
     public void testLanguageCodes() {
-        assertTrue("Chinese".equals(TextUtils.getLanguage("chi").getName()));
-        assertTrue("French".equals(TextUtils.getLanguage("fre").getName()));
-        assertTrue("French".equals(TextUtils.getLanguage("fra").getName()));
-        assertTrue("French".equals(TextUtils.getLanguage("FRENCH").getName()));
+        assertEquals("Chinese", TextUtils.getLanguage("chi").getName());
+        assertEquals("French", TextUtils.getLanguage("fre").getName());
+        assertEquals("French", TextUtils.getLanguage("fra").getName());
+        assertEquals("French", TextUtils.getLanguage("FRENCH").getName());
     }
 
     @Test
@@ -140,5 +148,4 @@ public class TestTextUtils {
         assertTrue(!TextUtils.isUpper(latinText) && !TextUtils.isLower(latinText));
         assertTrue(TextUtils.isLower("øh baby") && TextUtils.isUpper("ØH BABY"));
     }
-
 }

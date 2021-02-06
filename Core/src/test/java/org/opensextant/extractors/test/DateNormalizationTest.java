@@ -1,8 +1,9 @@
 package org.opensextant.extractors.test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.extractors.xtemporal.DateMatch;
 import org.opensextant.extractors.xtemporal.XTemporal;
@@ -25,12 +26,12 @@ public class DateNormalizationTest {
     }
 
     /**
-     * Note that this may report false negatives if the JVM's default time
-     * zone is UTC.
+     * Note that this may report false negatives if the JVM's default time zone is
+     * UTC.
      */
     @Test
     public void ensureTimeZone() {
-        // Not parseable by default.  pattern is too noisy.
+        // Not parseable by default. pattern is too noisy.
         final TextMatchResult result1 = timeFinder.extract_dates("Oct 07", "dummy");
         System.err.println("1 " + result1.matches.toString());
         assertEquals(0, result1.matches.size());

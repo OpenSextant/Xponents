@@ -20,8 +20,9 @@ import org.opensextant.util.GeodeticUtility;
 /**
  * Setup for testing:
  * 
- * - build Gazeteer project - load data into ./solr/gazetteer solr core - run this test main,
- * -Dopensextant.solr=<path to gazetteer solr home> one argument, then input file to test.
+ * - build Gazeteer project - load data into ./solr/gazetteer solr core - run
+ * this test main, -Dopensextant.solr=<path to gazetteer solr home> one
+ * argument, then input file to test.
  * 
  * @author ubaldino
  *
@@ -51,7 +52,7 @@ public class TestGazMatcher {
     protected static final void dumpStats() {
         print("MEMORY SUMMARY");
         for (int s : memStats) {
-            print (""+s);
+            print("" + s);
         }
     }
 
@@ -147,12 +148,13 @@ public class TestGazMatcher {
     }
 
     /**
-     * Do a basic test. Requirements include setting opensextant.solr to solr core home. (Xponents/solr,
-     * by default) USAGE:
+     * Do a basic test. Requirements include setting opensextant.solr to solr core
+     * home. (Xponents/solr, by default) USAGE:
      * 
      * TestGazMatcher file
      * 
-     * Prints: all matched, filtered place mentions distinct places distinct countries
+     * Prints: all matched, filtered place mentions distinct places distinct
+     * countries
      */
     public static void main(String[] args) throws Exception {
 

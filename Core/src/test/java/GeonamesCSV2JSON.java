@@ -15,8 +15,9 @@ import jodd.json.JsonSerializer;
 public class GeonamesCSV2JSON extends GeonamesUtility {
 
     /**
-     * Brute force copy of Geonames loadCountries method;  Objective:  read geonames.org CSV file and convert to JSON.
-     * This sort of data is helpful for integrating with apps and JavaScript tools.
+     * Brute force copy of Geonames loadCountries method; Objective: read
+     * geonames.org CSV file and convert to JSON. This sort of data is helpful for
+     * integrating with apps and JavaScript tools.
      * 
      * @param outfile
      * @throws IOException
@@ -27,9 +28,11 @@ public class GeonamesCSV2JSON extends GeonamesUtility {
 
         final String uri = "/geonames.org/countryInfo.txt";
         // 0-9
-        // #ISO ISO3    ISO-Numeric fips    Country Capital Area(in sq km)  Population  Continent   tld
+        // #ISO ISO3 ISO-Numeric fips Country Capital Area(in sq km) Population
+        // Continent tld
         // 10-18
-        // CurrencyCode    CurrencyName    Phone   Postal Code Format  Postal Code Regex   Languages   geonameid   neighbours  EquivalentFipsCode
+        // CurrencyCode CurrencyName Phone Postal Code Format Postal Code Regex
+        // Languages geonameid neighbours EquivalentFipsCode
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri), "UTF-8"))) {
             String line;
@@ -53,16 +56,11 @@ public class GeonamesCSV2JSON extends GeonamesUtility {
                 Integer pop = Integer.parseInt(cells[7]);
                 List<String> langIDs = TextUtils.string2list(langs.toLowerCase(), ",");
 
-                /* We want to produce JSON:
+                /*
+                 * We want to produce JSON:
                  * 
-                 *    ISO3 key:{
-                 *     name:NAME
-                 *     cc_iso3: CC
-                 *     cc_iso2: CC
-                 *     cc_fips: CC
-                 *     languages: [ ]
-                 *     population: NUM
-                 *    }
+                 * ISO3 key:{ name:NAME cc_iso3: CC cc_iso2: CC cc_fips: CC languages: [ ]
+                 * population: NUM }
                  **/
                 JsonObject jsonCountry = new JsonObject();
                 jsonCountry.put("name", name);
