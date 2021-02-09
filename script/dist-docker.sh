@@ -21,8 +21,8 @@ read SONAR_TOKEN
 echo "              Xponents Docker                 "
 echo "=============================================="
 
-cd $TARGET/
-docker build --tag opensextant:xponents-$VERSION .
+#cd $TARGET/
+#docker build --tag opensextant:xponents-$VERSION .
 
 # Build offline.
 # ==============
