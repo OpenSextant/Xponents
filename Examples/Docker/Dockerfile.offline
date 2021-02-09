@@ -8,6 +8,7 @@ ENV XPONENTS=/home/opensextant/Xponents
 ENV MVN=apache-maven-3.6.3
 ENV PATH=/opt/maven/bin:$PATH
 ENV LOCAL_REPO_NAME=maven-repo
+# NOTE LOCAL_REPO is a absolute path
 ENV LOCAL_REPO=$XPONENTS/$LOCAL_REPO_NAME
 
 # RUN adduser --system --group --uid 110 opensextant
@@ -15,11 +16,8 @@ ENV LOCAL_REPO=$XPONENTS/$LOCAL_REPO_NAME
 
 # --------------------------
 # Copy ./Xponents-3.x/<CONTENT> to target 
-# Assumption is docker build is run from inside release folder
 #
 COPY ./ $XPONENTS/
-# This only applies if local repo is not already in current folder:
-# COPY $LOCAL_REPO_NAME $XPONENTS/$LOCAL_REPO_NAME/
 
 # OFFLINE
 #---------------------------
@@ -29,6 +27,11 @@ RUN cd /tmp && curl -O http://mirrors.advancedhosters.com/apache/maven/maven-3/3
    (mv /opt/$MVN /opt/maven)
 
 WORKDIR $XPONENTS
+
+# Stage offline mode
+RUN mvn dependency:go-offline -Dmaven.repo.local=$LOCAL_REPO
+RUN find $LOCAL_REPO  -name "*.sha1"  -exec rm {} \;
+RUN find $LOCAL_REPO  -name "*.repositories"  -exec rm {} \;
 
 # Build inside Docker to confirm "offline mode" works
 # 1. Build fully as a test to show project is buildable inside container.

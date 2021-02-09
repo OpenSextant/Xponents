@@ -11,8 +11,8 @@
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <slf4j.version>1.7.30</slf4j.version>
-    <xponents.version>3.3.6</xponents.version>
-    <xtext.version>3.3.6</xtext.version>
+    <xponents.version>3.3.7-SNAPSHOT</xponents.version>
+    <xtext.version>3.3.7-SNAPSHOT</xtext.version>
   </properties>
   <dependencies>
     <dependency>
@@ -93,29 +93,34 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>3.2.1</version>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.2.0</version>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>3.1.1</version>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M4</version>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.2.0</version>
         <configuration>
           <header>&lt;img alt='[OpenSextant Logo]' height='36'
             width='36'
             src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
-            OpenSextant.org, 2010-2019</header>
+            OpenSextant.org, 2010-2021</header>
           <version>true</version>
           <windowtitle>Xponents Examples</windowtitle>
         </configuration>
@@ -149,6 +154,7 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>

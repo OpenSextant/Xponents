@@ -1,8 +1,13 @@
 Xponents REST Docker Image
--------------------
+===========================
+
 NOTE: "Xlayer" name is being deprecated in favor of simply "Xponents REST".
 
-**Build:**
+This document contains Build, Run and Packaging sections.
+Packaging will include topics such as image publishing and Sonarqube code scanning.
+
+Building
+------------
 
 Copy this Dockerfile to the Xponents ./dist folder and build the docker image with the Xponents-X.x build in that folder.  
 To use a full development-ready version of the image use the `Docker.offline` builder or its respective image build instead.
@@ -51,6 +56,8 @@ This default build provides only a running Xponents REST service.  The Solr Gaze
 but see below if you wish to run them together.  For heavy production use, it is better to keep these separate -- 
 data processing vs. rote reference data lookups.
 
+Running
+--------------------
 **Run Xponents REST:**
 
 Main points:
@@ -88,5 +95,53 @@ the Solr server running; just listing this here for completeness.
 at "places with Boston in the name, within 50KM of the lat/lon (40, -71), listing results as CSV":
 http://localhost:7000/solr/gazetteer/select?q=name%3ABoston%20AND%20{!geofilt%20sfield=geo%20d=50%20pt=40.0,-71.0}&wt=csv
 
+
+
+Packaging
+---------------
+
+**Sonarqube Usage**
+
+As noted on Sonarqube's page -- [install a server (from docker)](https://docs.sonarqube.org/latest/setup/install-server/) first.
+
+1. Launch Sonarqube server from the docker-compose file provide. 
+2. Access localhost:9000 (default Sonarqube admin page)
+3. Create a project, defining a user and a user token
+4. Establish your Global Settings (`$HOME/.m2/settings.xml`) as noted in [documentation](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/)
+5.  Insert your Sonarqube project token in place of `$SONAR_TOKEN` in examples below.
+6. Optionally, add the `settings.xml` file to your global or user folder, i.e., `~/.m2/`.  The defaults work fine without it.
+
+For example, with the sonar qube plugin I launch an analysis:
+
+```
+    SONAR_TOKEN=abcdef01234.... 
+
+    pushd ./Xponents/Core
+    mvn sonar:sonar \
+      -Dsonar.sourceEncoding=UTF-8 \
+      -Dsonar.projectKey=opensextant-xponents-core \
+      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.login=$SONAR_TOKEN \
+      -Dsonar.inclusions=./src/main/java
+    
+    popd
+    pushd ./Xponents
+    mvn sonar:sonar \
+      -Dsonar.sourceEncoding=UTF-8 \
+      -Dsonar.projectKey=opensextant-xponents \
+      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.login=$SONAR_TOKEN \
+      -Dsonar.inclusions=./src/main/java
+      
+    popd
+    pushd ./XText
+    mvn sonar:sonar \
+      -Dsonar.sourceEncoding=UTF-8 \
+      -Dsonar.projectKey=opensextant-xtext \
+      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.login=$SONAR_TOKEN \
+      -Dsonar.inclusions=./src/main/java
+    popd    
+```
 
 

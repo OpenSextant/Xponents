@@ -14,6 +14,9 @@ if [ ! -d $TARGET ] ; then
 
   exit 1
 fi
+echo SONAR_TOKEN = 
+echo "IF none is provided, Sonar scan is skipped"
+read SONAR_TOKEN
 
 echo "              Xponents Docker                 "
 echo "=============================================="
@@ -47,6 +50,42 @@ mvn checkstyle:check findbugs:check  -Dmaven.repo.local=$LOCAL_REPO
 # Examples
 echo "++++++++++++++++ EXAMPLES ++++++++++++++++"
 (cd Examples ; mvn install -Dmaven.repo.local=../$LOCAL_REPO)
+
+
+# Code scan using Sonarqube:
+if [ -n "$SONAR_TOKEN" ]; then 
+
+    git init
+    git add .gitignore pom.xml Core/pom.xml Core/src src script python 
+    git commit -m "Trivial Sonar staging: All files must reside in git for Sonar"
+
+    echo "Sonar scanning Core API"
+    (cd Core &&   mvn  sonar:sonar \
+      -Dmaven.repo.local=../$LOCAL_REPO \
+      -Dsonar.sourceEncoding=UTF-8 \
+      -Dsonar.projectKey=opensextant-xponents-core \
+      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.login=$SONAR_TOKEN \
+      -Dsonar.inclusions=./src/main/java )
+    
+    echo "Sonar scanning Xponents SDK"
+    echo "--This is done OFFLINE to prove dependencies were acquired in pass above"
+    mvn -o sonar:sonar \
+      -Dmaven.repo.local=$LOCAL_REPO \
+      -Dsonar.sourceEncoding=UTF-8 \
+      -Dsonar.projectKey=opensextant-xponents \
+      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.login=$SONAR_TOKEN \
+      -Dsonar.inclusions=./src/main/java
+fi
+
+# One last time: go-offline
+#  -- Remove cache files from any Internet downloads
+#  -- Verify one last time we can make the project "go-offline"
+find $LOCAL_REPO  -name "*.sha1"  -exec rm {} \;
+find $LOCAL_REPO  -name "*.repositories"  -exec rm {} \;
+mvn dependency:go-offline -Dmaven.repo.local=$LOCAL_REPO
+
 
 # Docker
 echo "++++++++++++++++ DOCKER / Maven Offline ++++++++++++++++"
