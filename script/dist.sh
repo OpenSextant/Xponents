@@ -34,7 +34,7 @@ rm -rf $REL/log
 mkdir -p $REL/log
 
 rm $REL/doc/*.mp4
-rm $REL/script/dist.* 
+rm $REL/script/dist* 
 cp $basedir/Examples/Docker/* $REL/
 
 # cp -r $basedir/src $basedir/pom.xml $basedir/Core $REL/

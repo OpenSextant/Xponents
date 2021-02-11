@@ -31,25 +31,25 @@ docker build --tag opensextant:xponents-$VERSION .
 # Three layers Core API, SDK, and then Examples that pulls it all together along with XText.
 # Then also to provide Maven dev tools we include FindBugs, Checkstyle and JavaDoc plugins.
 # 
-# Running any of those plugins naturally pulls them down -- we stash them in $LOCAL_REPO
-LOCAL_REPO=maven-repo
+# Running any of those plugins naturally pulls them down -- we stash them in $REPO
+REPO=maven-repo
 
 echo "              Xponents Docker Offline         "
 echo "=============================================="
 
 # CORE
 echo "++++++++++++++++ CORE ++++++++++++++++"
-(cd Core && mvn install -Dmaven.repo.local=../$LOCAL_REPO)
+(cd Core && mvn install -Dmaven.repo.local=../$REPO)
 
 # SDK build
 echo "++++++++++++++++ SDK ++++++++++++++++"
-mvn -U clean install -Dopensextant.solr=./xponents-solr/solr7  -Dmaven.repo.local=$LOCAL_REPO
+mvn -U clean install -Dopensextant.solr=./xponents-solr/solr7  -Dmaven.repo.local=$REPO
 # SDK miscellany
-mvn checkstyle:check findbugs:check  -Dmaven.repo.local=$LOCAL_REPO
+mvn checkstyle:check findbugs:check  -Dmaven.repo.local=$REPO
 
 # Examples
 echo "++++++++++++++++ EXAMPLES ++++++++++++++++"
-(cd Examples ; mvn install -Dmaven.repo.local=../$LOCAL_REPO)
+(cd Examples ; mvn install -Dmaven.repo.local=../$REPO)
 
 
 # Code scan using Sonarqube:
@@ -61,7 +61,7 @@ if [ -n "$SONAR_TOKEN" ]; then
 
     echo "Sonar scanning Core API"
     (cd Core &&   mvn  sonar:sonar \
-      -Dmaven.repo.local=../$LOCAL_REPO \
+      -Dmaven.repo.local=../$REPO \
       -Dsonar.sourceEncoding=UTF-8 \
       -Dsonar.projectKey=opensextant-xponents-core \
       -Dsonar.host.url=http://localhost:9000 \
@@ -71,7 +71,7 @@ if [ -n "$SONAR_TOKEN" ]; then
     echo "Sonar scanning Xponents SDK"
     echo "--This is done OFFLINE to prove dependencies were acquired in pass above"
     mvn -o sonar:sonar \
-      -Dmaven.repo.local=$LOCAL_REPO \
+      -Dmaven.repo.local=$REPO \
       -Dsonar.sourceEncoding=UTF-8 \
       -Dsonar.projectKey=opensextant-xponents \
       -Dsonar.host.url=http://localhost:9000 \
@@ -82,9 +82,9 @@ fi
 # One last time: go-offline
 #  -- Remove cache files from any Internet downloads
 #  -- Verify one last time we can make the project "go-offline"
-find $LOCAL_REPO  -name "*.sha1"  -exec rm {} \;
-find $LOCAL_REPO  -name "*.repositories"  -exec rm {} \;
-mvn dependency:go-offline -Dmaven.repo.local=$LOCAL_REPO
+find ./$REPO  -name "*.sha1"  -exec rm {} \;
+find ./$REPO  -name "*.repositories"  -exec rm {} \;
+mvn dependency:go-offline -Dmaven.repo.local=$REPO
 
 
 # Docker
