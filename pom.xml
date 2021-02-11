@@ -498,8 +498,8 @@
             <additionalClasspathElement>${project.basedir}/solr/etc/gazetteer</additionalClasspathElement>
             <!-- for build/dev time -->
             <additionalClasspathElement>${project.basedir}/solr/solr7/gazetteer/conf</additionalClasspathElement>
-            <!-- for deploy/package/runtime -->
-            <additionalClasspathElement>${opensextant.solr}/gazetteer/conf</additionalClasspathElement>
+            <!-- for deploy/package/runtime use JAR -->
+            <additionalClasspathElement>${project.basedir}/lib/xponents-gazetteer-meta.jar</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>
