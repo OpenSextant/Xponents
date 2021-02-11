@@ -52,6 +52,26 @@ mvn checkstyle:check findbugs:check  -Dmaven.repo.local=$LOCAL_REPO
 docker build --tag opensextant:xponents-offline-$VERSION -f ./Dockerfile.offline .
 ```
 
+
+Now Test It.
+
+```
+# With OFFLINE image, you must use this sort of invocation:
+
+  docker run --rm -it --entrypoint /bin/sh mubaldino/opensextant:xponents-offline-3.3
+
+  #> mvn -o test -Dmaven.repo.local=$PWD/maven-repo
+
+# Otherwise...
+
+  docker run --rm -it --entrypoint /bin/sh mubaldino/opensextant:xponents-3.3
+
+  #> mvn test 
+
+
+
+```
+
 This default build provides only a running Xponents REST service.  The Solr Gazetteer (default port 7000) is not running, 
 but see below if you wish to run them together.  For heavy production use, it is better to keep these separate -- 
 data processing vs. rote reference data lookups.
@@ -111,7 +131,7 @@ As noted on Sonarqube's page -- [install a server (from docker)](https://docs.so
 5.  Insert your Sonarqube project token in place of `$SONAR_TOKEN` in examples below.
 6. Optionally, add the `settings.xml` file to your global or user folder, i.e., `~/.m2/`.  The defaults work fine without it.
 
-For example, with the sonar qube plugin I launch an analysis:
+For example, with the sonarqube plugin I launch an analysis:
 
 ```
     SONAR_TOKEN=abcdef01234.... 
