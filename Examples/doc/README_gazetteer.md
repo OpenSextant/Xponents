@@ -114,24 +114,23 @@ Here the Solr server will be running and we use pysolr to RESTfully query the ga
 
 ```
    XPT=$PWD
-   # From source:
-   cd Extraction/src/main/python 
+   cd ./python/
    python ./setup.py sdist 
 
    # Or just install distribution:
-   pip install --target $XPT/piplib ./dist/opensextant-1.1.7.tar.gz 
+   pip install --target $XPT/piplib ./dist/opensextant-1.2.4.tar.gz 
 
-   # env.
+   # Set path
    export PYTHONPATH=$XPT/piplib
 
 ```
 1. Run the Solr server,  `cd ./solr; mysolr.sh start 7000 `
 
 
-1.  Run the demo script, `./script/gazetteer.py`
+1.  Run the demo script, `python -m opensextant.gazetteer`
 
 ```
-python ./gazetteer.py  --solr http://localhost:7000/solr/gazetteer --lookup "San Francisco, CA, US"  --parse
+python -m opensextant.gazetteer  --solr http://localhost:7000/solr/gazetteer --lookup "San Francisco, CA, US"  --parse
 
 FOUND 10. Showing top 25
 San Francisco (USGS273473), US, 34.4069, -118.6120

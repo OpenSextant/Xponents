@@ -2,8 +2,9 @@
 See: https://packaging.python.org/en/latest/distributing.html
 """
 
-from setuptools import setup, find_packages
 from os import path
+
+from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 
@@ -13,7 +14,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='opensextant',
-    version='1.2.3',
+    version='1.2.4',
 
     description='OpenSextant APIs and Utilities',
     long_description=long_description,
@@ -53,7 +54,7 @@ setup(
     keywords='geography taxonomy tagging',
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    package_data={'opensextant': ['./resources/geonames.org/*.txt', './resources/*.csv','./resources/*.cfg']},
+    package_data={'opensextant': ['./resources/geonames.org/*.txt', './resources/*.csv', './resources/*.cfg']},
 
     install_requires=['pysolr>=3.6.0', 'chardet>=3.0.0', 'requests>=2.18']
 )
