@@ -15,6 +15,7 @@ do
 dot
 else
 echo
+era
 english
 good
 guy
@@ -68,3 +69,4 @@ may
 june
 september
 august
+vic

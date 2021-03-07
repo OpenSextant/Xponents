@@ -21,6 +21,9 @@ eval,abbrev
 lib,abbrev
 bio,abbrev
 eta,abbrev
+st,abbrev
+po,abbrev
+ci,abbrev
 tel,abbrev
 lat,abbrev
 lon,abbrev

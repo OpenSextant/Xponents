@@ -27,9 +27,9 @@
     <logger name="org.opensextant.extractors.poli" level="info">
     </logger>
     <!-- disable rules logging once you are comfortable things are working -->
-    <logger name="org.opensextant.extractors.geo.rules" level="debug">
+    <logger name="org.opensextant.extractors.geo.rules" level="info">
     </logger>
-    <logger name="org.opensextant.xlayer" level="debug">
+    <logger name="org.opensextant.xlayer" level="info">
     </logger>
 
 </configuration>

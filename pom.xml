@@ -120,7 +120,47 @@
       <version>1.15.0</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>fluent-hc</artifactId>
+      <version>4.5.13</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.4.14</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.5.13</version>
+    </dependency>
+    
     <!-- SOLR 7.x LIBS -->
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.10.6</version>
+    </dependency>
+    
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-core</artifactId>
@@ -498,7 +538,7 @@
             <additionalClasspathElement>${project.basedir}/solr/etc/gazetteer</additionalClasspathElement>
             <!-- for build/dev time -->
             <additionalClasspathElement>${project.basedir}/solr/solr7/gazetteer/conf</additionalClasspathElement>
-            <!-- for deploy/package/runtime use JAR -->
+            <!-- for deploy/package/runtime use JAR which will contain ALL gazetteer resources above. -->
             <additionalClasspathElement>${project.basedir}/lib/xponents-gazetteer-meta.jar</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
