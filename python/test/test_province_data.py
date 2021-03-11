@@ -6,10 +6,11 @@ Created on Dec 5, 2017
 """
 
 if __name__ == '__main__':
-    from opensextant.GeonamesUtility import load_provinces, get_province
+    from opensextant import load_provinces, get_province, load_countries, countries_by_iso
 
     print("Loading")
     load_provinces()
+    load_countries()
 
     tests = [('ES', '07'), ('US', '06'), ('NOTHING', 'X')]
     for prov in tests:
@@ -18,3 +19,6 @@ if __name__ == '__main__':
             print(prov, pl.name, pl.country_code)
         else:
             print(prov, "Not found")
+
+    print("Kosovo is a country? sovereign country? yes")
+    assert countries_by_iso.get("XK") is not None

@@ -1,5 +1,6 @@
-from opensextant.Extraction import TextMatch, render_match
-from opensextant.FlexPat import class_for, resource_for, RegexPatternManager, RegexPattern, PatternTestCase
+from opensextant import TextMatch, render_match
+
+from opensextant.FlexPat import class_for, resource_for
 
 # ========================
 # Basic Text span logic
@@ -38,8 +39,6 @@ m2 = TextMatch("nüttér", 22, 28)
 print(str(m2))
 print(len(m2.text), "chars long")
 
-
-
 # ========================
 # File loader mechanics.
 # ========================
@@ -48,9 +47,9 @@ print("Resource Loader mechanics")
 cls = class_for("opensextant.FlexPat.RegexPattern", instantiate=False)
 # Returns an instance, not just valid class name.
 assert cls is not None
-print("Invoke Class:", cls.__class__.__name__,  "Str():", cls)
+print("Invoke Class:", cls.__class__.__name__, "Str():", cls)
 cls_instance = cls("a", "b", "c")
-print("Instatiated:",  cls_instance.__class__.__name__, cls_instance)
+print("Instatiated:", cls_instance.__class__.__name__, cls_instance)
 
 fpath = resource_for("poli_patterns.cfg")
 assert fpath is not None
@@ -59,11 +58,11 @@ print("Found resource", fpath)
 print("FlexPat configuration stuff - basic parsing and init")
 
 from opensextant.extractors.poli import TelephoneNumber
+
 num = TelephoneNumber(" 987-654-4321 X x  ", 0, 14, label="TELEPHONE")
-print("BEFORE",str(num))
+print("BEFORE", str(num))
 num.normalize()
 print("AFTER", num.textnorm)
-
 
 from opensextant.extractors.poli import PatternsOfLifeManager
 from opensextant.FlexPat import PatternExtractor

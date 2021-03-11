@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import re
-from opensextant.Extraction import TextMatch, Extractor
+
+from opensextant import TextMatch, Extractor
 
 """
 FlexPat: regular-expression assistant. 
@@ -229,6 +230,32 @@ class PatternMatch(TextMatch):
         elif self.case == PatternMatch.LOWER_CASE:
             self.textnorm = self.textnorm.lower()
 
+    def get_value(self, k):
+        """
+        Get Slot value -- returns first one.
+        :param k:
+        :return:
+        """
+        grp = get_slot(self.match_groups, k)
+        if grp:
+            # tuple is group_name, value, start, end. Return value:
+            return grp[1]
+        return None
+
+
+def get_slot(grps, k):
+    """
+    Given array of match groups, return first key matching
+    :param grps:
+    :param k:
+    :return: tuple matching.
+    """
+    for g in grps:
+        key, v, x1, x2 = g
+        if key == k:
+            return g
+    return None
+
 
 class PatternTestCase:
     def __init__(self, tid, family, text):
@@ -425,8 +452,7 @@ class RegexPatternManager:
 
 def _digest_sub_groups(m, pattern_groups):
     """
-
-    :param match_offsets:  given SRE_Match.regs tuples, align found items with Pattern's groups
+    Reorganize regex groups internally.
     :param pattern_groups: ordered list of groups as they appear in RE
     :return: array only found item tuples:  (group, value, start, end)
     """
@@ -529,9 +555,9 @@ class PatternExtractor(Extractor):
             expect_valid_match = "FAIL" not in t.text
             output1 = self.extract_patterns(t.text, features=[t.family])
 
-            output=[]
+            output = []
             for m in output1:
-                if scope == "rule" and not t.id.startswith( m.pattern_id ):
+                if scope == "rule" and not t.id.startswith(m.pattern_id):
                     continue
                 output.append(m)
 

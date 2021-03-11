@@ -9,8 +9,7 @@ import json
 
 import requests
 import requests.exceptions
-from opensextant.Data import Place
-from opensextant.Extraction import TextMatch
+from opensextant import Place, TextMatch
 
 
 class XlayerClient:

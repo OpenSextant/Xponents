@@ -20,9 +20,9 @@
   prerequisites:    See XTax README
 
 """
-
 import os
-from opensextant.CommonsUtils import is_text
+
+from opensextant.utility import is_text, ConfigUtility
 
 __API_PATH = os.path.realpath(__file__)
 
@@ -168,7 +168,6 @@ class TaxCatalogBuilder:
         self._records = []
         self.count = 0
 
-        from opensextant.CommonsUtils import ConfigUtility
         # Load file
         self.utility = ConfigUtility(None)
         self.stopwords = set([])
