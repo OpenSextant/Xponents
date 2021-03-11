@@ -153,8 +153,8 @@ def levenshtein_distance(s, t):
     return d[(S - 1, T - 1)]
 
 
-BOOL_F_STR = {"false", "0", "n", "f", "no", "", "null"}
-BOOL_T_STR = {"true", "1", "y", "t", "yes"}
+BOOL_F_STR = {"false", 0, "0", "n", "f", "no", "", "null"}
+BOOL_T_STR = {"true", 1, "1", "y", "t", "yes"}
 
 
 def get_bool(token):

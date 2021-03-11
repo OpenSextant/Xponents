@@ -111,7 +111,7 @@ def as_place(r):
     if "adm1" in r:
         p.adm1 = r["adm1"]
     if "adm2" in r:
-        p.adm1 = r["adm2"]
+        p.adm2 = r["adm2"]
     p.is_ascii = is_ascii(p.name)
     return p
 
@@ -189,13 +189,21 @@ class DB:
                 `search_only` BIT DEFAULT 0                
             );
             
-            create INDEX n_idx on placenames ("name");
             create INDEX plid_idx on placenames ("place_id");               
+        """
+        self.conn.executescript(sql_script)
+        self.conn.commit()
+
+    def optimize(self):
+        self.reopen()
+        self.conn.execute("VACUUM")
+        indices = """
+            create INDEX n_idx on placenames ("name");
             create INDEX s_idx on placenames ("source");
             create INDEX c_idx on placenames ("cc");
             create INDEX fc_idx on placenames ("feat_class");
         """
-        self.conn.executescript(sql_script)
+        self.conn.executescript(indices)
         self.conn.commit()
 
     def reopen(self):
@@ -206,17 +214,17 @@ class DB:
         self.close()
 
         self.conn = sqlite3.connect(self.dbpath)
-        self.conn.execute(f'PRAGMA cache_size = {4 * 8092}')
+        self.conn.execute('PRAGMA cache_size =  8092')
         self.conn.execute("PRAGMA encoding = 'UTF-8'")
         self.conn.execute('PRAGMA synchronous = OFF')
-        self.conn.execute('PRAGMA journal_mode = OFF')
+        self.conn.execute('PRAGMA journal_mode = MEMORY')
+        self.conn.execute('PRAGMA temp_store = MEMORY')
         self.conn.row_factory = sqlite3.Row
 
     def close(self):
         try:
             if self.conn is not None:
                 self.__assess_queue(force=True)
-                self.conn.execute("VACUUM")
                 self.conn.close()
                 self.conn = None
         except:
@@ -253,11 +261,11 @@ class DB:
             insert into placenames (
                 id, place_id, name, name_type, name_group, 
                 lat, lon, geohash, feat_class, feat_code,
-                cc, FIPS_cc, adm1, adm2, source, script, name_bias, id_bias
+                cc, FIPS_cc, adm1, adm2, source, script, name_bias, id_bias, search_only
              ) values (
                 :id, :place_id, :name, :name_type, :name_group, 
                 :lat, :lon, :geohash, :feat_class, :feat_code,
-                :cc, :FIPS_cc, :adm1, :adm2, :source, :script, :name_bias, :id_bias)"""
+                :cc, :FIPS_cc, :adm1, :adm2, :source, :script, :name_bias, :id_bias, :search_only)"""
             self.conn.executemany(sql, self.queue)
             self.conn.commit()
             self.queue_count = 0
@@ -271,25 +279,24 @@ class DB:
         self.queue_count += len(arr)
         self.__assess_queue()
 
-    def get_places_by_id(self, plid):
+    def get_places_by_id(self, plid, limit=2):
         """
         Collect places and name_bias for gazetter ETL.
         Lookup place by ID as in "G1234567" for Geonames entry or "N123456789" for an NGA one, etc.
+
         :param plid: Place ID according to the convention of source initial + identifier
+        :param limit: limit queries because if we know we only one 2 or 3 we need not search database beyond that.
         :return:
         """
-        curs = self.conn.cursor()
-        curs.execute("select * from placenames where place_id = ?", (plid,))
         name_bias = dict()
         place = None
-        for row in curs:
+        for row in self.conn.execute(f"select * from placenames where place_id = ? limit {limit}", (plid,)):
             pl = as_place(row)
             if not place:
                 place = pl
-
             name_bias[pl.name.lower()] = pl.name_bias
-        curs.close()
         if place:
+            # "official place" is just first place encountered. This is not idempotent unless SQL query is more expclicit
             return place, name_bias
 
         return None, None
@@ -303,7 +310,7 @@ class DataSource:
 
     def __init__(self, dbf, debug=False):
         self.db = DB(dbf, commit_rate=10)
-        self.rate = 10000
+        self.rate = 1000000
         self.source_keys = []
         self.excluded_terms = set([])
         self.quiet = False
@@ -322,7 +329,7 @@ class DataSource:
         """
         pass
 
-    def normalize(self, sourcefile, limit=-1):
+    def normalize(self, sourcefile, limit=-1, optimize=False):
         """
         Given the spreadsheet or source file rip through it, ingesting contents into the master gazetteer.
         :param sourcefile: input file
@@ -347,6 +354,8 @@ class DataSource:
                 print("Error with insertion to DB")
                 print(format_exc(limit=5))
         self.db.close()
+        if optimize:
+            self.db.optimize()
 
         print("EXCLUSIONS: ", len(self.excluded_terms))
         if self.debug: print("EXCLUSIONS:", self.excluded_terms)

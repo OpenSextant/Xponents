@@ -326,7 +326,7 @@ def generate_name(basemeta, name, namenorm, place=None, name_biases={}, lang=Non
 
     :param basemeta:  geo point metadata to use a base entry
     :param name: name text
-    :param namenorm: Normalized name
+    :param namenorm: Normalized name of the NGA geonames entry
     :param place: Place object for existing OpenSextant place with name_bias / id_bias
     :param name_biases: all name_biases for this place
     :param lang: language ID group for given variant
@@ -356,7 +356,7 @@ def generate_name(basemeta, name, namenorm, place=None, name_biases={}, lang=Non
         gn["name_type"] = "A"
         gn["name_bias"] = 0.01
     elif namenorm and name_biases:
-        # All other names
+        # All other names  - Compare this name to the names/bias pairs provide from OpenSextant Gaz.
         this_name = name.lower()
         name_bias = _approximate_bias(name_biases, this_name)
         if this_name != namenorm:
@@ -384,9 +384,10 @@ if __name__ == "__main__":
     ap.add_argument("shapefile")
     ap.add_argument("--db", default="./tmp/master_gazetteer.sqlite")
     ap.add_argument("--debug", action="store_true", default=False)
+    ap.add_argument("--optimize", action="store_true", default=False)
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
 
     args = ap.parse_args()
 
     source = NatEarthAdminGazetteer(args.db, debug=args.debug)
-    source.normalize(args.shapefile, limit=int(args.max))
+    source.normalize(args.shapefile, limit=int(args.max), optimize=args.optimize)
