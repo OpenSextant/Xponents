@@ -57,7 +57,9 @@ index_taxcat () {
 index_gazetteer () {
   SOLR_URL=$1
   echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
-  ant -f build.xml $proxy index-gazetteer-solrj
+  ant $proxy index-gazetteer-solrj
+
+  python3 ./script/gaz_administrative_codes.py ./etc/gazetteer/additions/generated_admin_names_postal.ndjson $SOLR_URL --load
 
   sleep 2 
   echo "Generate Name Variants"
@@ -86,6 +88,8 @@ index_gazetteer () {
     curl --noproxy localhost  "$SOLR_URL/update?commit=true" \
        -H Content-type:application/json --data-binary @$f
   done
+
+
 
   # When done for the day,  optimize
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
@@ -134,7 +138,7 @@ popd
 
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
-  ant -f build.xml $proxy get-gaz-resources
+  ant $proxy get-gaz-resources
 
   echo "Harvesting World Factbook 'factoids'"
   python3 ./script/assemble_wfb_leaders.py
@@ -145,7 +149,7 @@ python3 ./script/assemble_person_filter.py
 
 if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
    # Collect Gazetteer Metadata: 
-   ant -f ./build.xml $proxy gaz-meta
+   ant $proxy gaz-meta
 fi
 
 sleep 2 
@@ -155,7 +159,7 @@ if [ $do_start -eq 1 ]; then
   ./mysolr.sh stop $SOLR_PORT
 
   if [ $do_clean -eq 1 ]; then 
-    ant -f ./build.xml $proxy clean init
+    ant $proxy clean init
   fi
 
   echo "Starting Solr $SERVER"
@@ -165,7 +169,7 @@ if [ $do_start -eq 1 ]; then
 fi
 
 if [ $do_data -eq 1 ] ; then 
-  ant -f build.xml $proxy taxcat-jrc
+  ant $proxy taxcat-jrc
 fi
 if [ $do_taxcat -eq 1 ]; then
   index_taxcat http://$SERVER/solr/taxcat

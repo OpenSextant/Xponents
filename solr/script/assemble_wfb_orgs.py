@@ -48,7 +48,7 @@ cached_file = '/tmp/wfb-orgs.html'
 html = None
 
 if load_cached and os.path.exists(cached_file):
-    with open(cached_file, 'rU', encoding="UTF-8") as fh:
+    with open(cached_file, 'r', encoding="UTF-8") as fh:
         html = fh.read()
 else:
     html_response = requests.get(base_url, verify=False)

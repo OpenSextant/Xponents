@@ -28,7 +28,7 @@ data_sets = [
 
 
 def index_names(taxcat, fpath, cat, tag, rownum):
-    with open(fpath, 'rU', encoding="UTF-8") as fh:
+    with open(fpath, 'r', encoding="UTF-8") as fh:
 
         for row in fh:
             if row.startswith("#") or not row.strip():
