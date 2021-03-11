@@ -60,12 +60,12 @@ creating the taxnode value.
 """
 import re
 
-from opensextant.CommonsUtils import is_ascii
-from opensextant.GeonamesUtility import load_us_provinces
+from opensextant.utility import is_ascii
 from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id
+from opensextant import load_us_provinces
 
 load_us_provinces()
-from opensextant.GeonamesUtility import usstates
+from opensextant import usstates
 
 ignore_provinces = []
 for adm1 in usstates:

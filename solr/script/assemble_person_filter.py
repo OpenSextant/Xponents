@@ -3,7 +3,7 @@ import csv
 import os
 import sys
 
-from opensextant.CommonsUtils import get_text
+from opensextant.utility import get_text
 
 print("Note - run from ./solr/ folder\nIngesting filter files")
 

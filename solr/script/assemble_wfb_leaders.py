@@ -32,12 +32,12 @@ import os
 import arrow
 import bs4
 import requests
-from opensextant.CommonsUtils import squeeze_whitespace
-from opensextant.GeonamesUtility import load_countries
+from opensextant.utility import squeeze_whitespace
+from opensextant import load_countries
 
 load_countries()
 
-from opensextant.GeonamesUtility import countries_by_iso
+from opensextant import countries_by_iso
 
 base_url = "https://www.cia.gov/library/publications/resources/world-leaders-1/{}.html"
 master = {}

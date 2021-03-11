@@ -40,7 +40,7 @@ The TaxCat/XTax strategy here is to use the following mapping:
     }
 """
 
-from opensextant.CommonsUtils import get_text
+from opensextant.utility import get_text
 from opensextant.TaxCat import Taxon, TaxCatalogBuilder
 
 
@@ -60,11 +60,11 @@ class Nationality(Taxon):
 
     def _make_tags(self):
         if self.country:
-            return ['cc+%s' % (self.country)]
+            return [f'cc+{self.country}']
         return []
 
     def __str__(self):
-        return "%d / %s (%s) %s" % (self.id, self.name, self.phrase, self.tags)
+        return f"{self.id} / {self.name} ({self.phrase}) {self.tags}"
 
 
 def create_entities(line):
@@ -87,16 +87,16 @@ def create_entities(line):
     # Preserve this logic for now. Not officially declaring a difference between ethnicity and nationality.
     # This data catalogues a mix.
     if is_ethnicity:
-        n = 'nationality.%s' % (name)
+        n = f"nationality.{name}"
         taxons.append(Nationality(n, name, None, is_valid))
     else:
         if ';' in cc:
             codes = cc.split(';')
             for c in codes:
-                n = 'nationality.%s' % (c)
+                n = f'nationality.{c}'
                 taxons.append(Nationality(n, name, c, is_valid))
         else:
-            n = 'nationality.%s' % (cc)
+            n = f'nationality.{cc}'
             taxons.append(Nationality(n, name, cc, is_valid))
 
     return taxons
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     builder.commit_rate = 100
 
     row_id = 0
-    fh = open(args.taxonomy, 'rU', encoding="UTF-8")
+    fh = open(args.taxonomy, 'r', encoding="UTF-8")
     for row in fh:
         if row.startswith("#"): continue
 
@@ -152,7 +152,7 @@ if __name__ == '__main__':
         if 0 < row_max < row_id:
             break
 
-    print("Created total of %d nationality tags" % (row_id))
+    print(f"Created total of {row_id} nationality tags")
     try:
         builder.save(flush=True)
         builder.optimize()

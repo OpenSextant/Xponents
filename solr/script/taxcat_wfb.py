@@ -165,7 +165,7 @@ if __name__ == '__main__':
     import argparse
     import glob
     from opensextant.TaxCat import TaxCatalogBuilder, get_starting_id
-    from opensextant.CommonsUtils import ConfigUtility
+    from opensextant.utility import ConfigUtility
 
     ap = argparse.ArgumentParser()
     ap.add_argument('--solr')
