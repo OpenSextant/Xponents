@@ -42,7 +42,10 @@ into the Solr server along with other reference data.
 1. Checkout Gazetteer ETL project
    * http://opensextant.github.io/Gazetteer/ 
    * Follow instructions to install Pentaho Kettle 6+ and Ant
-   * Tune the build.properties there.
+   * Tune the build.properties there. Specifically set the dates of downloadable NGA GNS and USGS data sets.  The date
+     in build.properties is `YYYYMMDD`:
+       - USGS: https://www.usgs.gov/core-science-systems/ngp/board-on-geographic-names/download-gnis-data
+       - NGA: http://geonames.nga.mil/gns/html/
 
 Desired layout:
 
@@ -192,11 +195,12 @@ to intervene and redo any steps.
 
 **Build Setup**
 Managing public domain data sets pulled down, scraped, harvested, etc. involves additional Python libraries
-that are not required by normal use of the `opensextant` package.  Add this Pip-installable items now.
+that are not required by normal use of the `opensextant` package.  Add this Pip-installable items now from the 
+Xponents root folder:
 
 ```shell script
 
-  pip3 install -U --target ./piplib lxml bs4 arrow requests
+  pip3 install -U --target ./piplib lxml bs4 arrow requests pycountry PyGeodesy
 
 ```
 

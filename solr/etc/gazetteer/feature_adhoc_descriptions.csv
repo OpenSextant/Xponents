@@ -1,0 +1,130 @@
+administration,A/ADM1
+administrative atoll,A/ADM1
+administrative county,A/ADM2
+administrative region,A/ADM1
+administrative state,A/ADM1
+administrative territory,A/ADM1
+administrative zone,A/ADM1
+arctic region,L/RGN
+area,A/ADM1
+atoll,P/PPLA
+automonous region,A/PCL
+autonomous city,P/PPLA
+autonomous commune,P/PPLA
+autonomous community,P/PPLA2
+autonomous district,A/ADM1
+autonomous municipality,A/ADM1
+autonomous province,A/ADM1
+autonomous region,A/ADM1
+autonomous republic,A/ADM1
+autonomous sector,A/ADM1
+autonomous territorial unit,A/ADM1
+autonomous territory,A/ADM1
+borough,P/PPLA
+canton,A/ADM1
+capital,P/PPLC
+capital city,P/PPLC
+capital district,P/PPLA
+capital metropolitan city,P/PPLC
+capital region,P/PPLC
+capital territory,P/PPLC
+centrally administered area,A/ADM2
+chains (of islands),A/ADM1
+city,P/PPL
+city corporation,P/PPL
+city with county rights,P/PPLA
+commissary,A/ADM1
+commissiary,A/ADM1
+commune,P/PPLA
+commune|municipality,P/PPLA
+constitutional province,A/ADM1
+council area,A/ADM2
+country,A/PLCI
+county,A/ADM2
+department,A/ADM1
+dependency,A/ADM1
+development region,A/ADM1
+district,A/ADM1
+district|regencies,A/ADM1
+division,A/ADM1
+economic prefecture,A/ADM1
+emirate,A/ADM1
+entity,A/PCL
+federal dependency,A/ADM1
+federal district,A/ADM1
+federal territories,A/ADM1
+federal territory,A/ADM1
+geographical entity,A/ADM1
+geographical region,L/RGN
+geographical unit,A/ADM1
+governorate,A/ADM2
+highly urbanized city,P/PPL
+independent borough,P/PPLA
+independent city,P/PPLA
+independent component city,P/PPLA
+independent municipality,P/PPLA
+indigenous region,A/ADM1
+indigenous territory,A/ADM2
+intendancy,A/ADM1
+island,A/ADM1
+island council,A/ADM1
+island group,A/ADM1
+kingdom,A/ADM2
+local council,A/ADM1
+london borough,P/PPLA
+metropolis,P/PPLA
+metropolitan borough,P/PPLA
+metropolitan cities,P/PPLA
+metropolitan city,P/PPLA
+metropolitan department,P/PPLA
+metropolitan district,P/PPLA
+metropolitan region,P/PPLA
+municipalities,A/ADM1
+municipality,P/PPLA
+municipality|governarate,P/PPLA
+nation,A/PLC
+national capital area,P/PPLC
+national territory,P/PPLA
+oblast,A/ADM1
+outlying area,A/ADM1
+overseas department,A/ADM1
+overseas region,A/ADM1
+overseas territorial collectivity,A/ADM1
+parish,A/ADM1
+popularates,A/ADM2
+prefecture,A/ADM1
+principality,P/PPLA
+province,A/ADM1
+provincial city,P/PPLA
+préfecture,A/ADM1
+quarter,A/ADM1
+rayon,A/ADM1
+region,A/ADM1
+regional council,A/ADM2
+republic,A/ADM1
+republican city,P/PPLA
+self-governed part,A/ADM1
+special administrative region,A/ADM1
+special city,P/PPLA
+special district,A/ADM1
+special island authority,A/ADM1
+special municipality,P/PPLA
+special region,A/ADM1
+special self-governing city,P/PPLA
+special zone,A/ADM1
+state,A/ADM1
+statistical region,A/ADM2
+territorial unit,A/ADM1
+territory,A/PCL
+town,P/PPL
+town council,A/ADM2
+township,P/PPL
+two-tier county,A/ADM2
+union territory,A/ADM1
+unitary authority,A/ADM1
+unitary district,A/ADM2
+unitary single-tier county,A/ADM2
+urban county,A/ADM2
+urban prefecture,P/PPLA
+voivodeship|province,A/ADM1
+zone,A/ADM2
