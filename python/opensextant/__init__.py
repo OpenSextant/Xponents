@@ -109,6 +109,8 @@ class Coordinate:
         self.mgrs = None
         self.lat = self.Y
         self.lon = self.X
+        # Set geohash on demand, otherwise it can be computed from lat,lon
+        self.geohash = None
 
         if row:
             if 'lat' in row and 'lon' in row:
@@ -127,6 +129,9 @@ class Coordinate:
         self.Y = float(lat)
         self.lat = self.Y
         self.lon = self.X
+
+    def format_coord(self):
+        return format_coord(self.Y, self.X)
 
     def __str__(self):
         if self.Y:
@@ -154,6 +159,9 @@ class Place(Coordinate):
 
     def __init__(self, pid, name, lat=None, lon=None):
         Coordinate.__init__(self, None, lat=lat, lon=lon)
+        # Internal DB or Gazetteer ID
+        self.id = None
+        # Public or standards Place ID, e.g., GNS, ISO, etc.
         self.place_id = pid
         self.name = name
 
@@ -164,6 +172,7 @@ class Place(Coordinate):
         self.name_type = None
         self.country = None
         self.country_code = None
+        self.country_code_fips = None
         self.feature_class = None
         self.feature_code = None
         self.adm1 = None
@@ -178,6 +187,10 @@ class Place(Coordinate):
         self.population = 0
         self.hierarchical_path = None
 
+        # Internal fields for gazetteer curation and text analytics:
+        self.name_group = ""
+        self.search_only = False
+
     def has_coordinate(self):
         return self.validate()
 
@@ -191,7 +204,7 @@ class Place(Coordinate):
         self.set(lat, lon)
 
     def __str__(self):
-        return '{}, {} @({})'.format(self.name, self.country_code, format_coord(self.Y, self.X))
+        return '{}, {} @({})'.format(self.name, self.country_code, self.format_coord())
 
 
 def load_countries(csvpath=None):

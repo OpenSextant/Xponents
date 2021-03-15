@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from traceback import format_exc
+from copy import copy
 
 import arrow
 import pysolr
@@ -88,12 +89,35 @@ def run_lookup(url, lookup, parse):
     return places
 
 
+GAZETTEER_TEMPLATE = {
+    'id': -1,
+    'place_id': -1,
+    'name': None,
+    # name_ar or name_cjk are filled in only if name is Arabic or CJK name group
+    'lat': 0, 'lon': 0,
+    # geo is the field to use for index.  lat/lon  are used for database.
+    'feat_class': None, 'feat_code': None,
+    'FIPS_cc': None, 'cc': None,
+    'adm1': None, 'adm2': None,
+    'source': None,
+    'script': None,
+    'name_bias': 0,
+    'id_bias': 0,
+    'name_type': "N",
+    'search_only': False
+}
+
+
 def as_place(r):
     """
     Convert dict to a Place object
     :param r: gazetteer row from Solr or SQlite.
     :return: Place
     """
+    keys = {}
+    if hasattr(r, "keys"):
+        keys = r.keys()
+
     lat, lon = 0, 0
     if "geo" in r:
         (lat, lon) = r['geo'].split(',')
@@ -108,12 +132,73 @@ def as_place(r):
     p.id_bias = r["id_bias"]
     p.name_bias = r["name_bias"]
     # optional fields:
-    if "adm1" in r:
+    if "FIPS_cc" in keys:
+        p.country_code_fips = r["FIPS_cc"]
+    if "adm1" in keys:
         p.adm1 = r["adm1"]
-    if "adm2" in r:
+    if "adm2" in keys:
         p.adm2 = r["adm2"]
+    if "geohash" in keys:
+        p.geohash = r["geohash"]
+    if "id" in keys:
+        p.id = r["id"]
+    if "source" in keys:
+        p.source = r["source"]
+    if "name_group" in keys:
+        p.name_group = r["name_group"]
+    if "search_only" in keys:
+        p.search_only = get_bool(r["search_only"])
+    if "name_type" in keys:
+        p.name_type = r["name_type"]
+
     p.is_ascii = is_ascii(p.name)
     return p
+
+
+def as_place_record(place):
+    """
+    Given a Place object, serialize it as a dict consistent with the Solr index schema.
+    :param place:
+    :return:
+    """
+    if not isinstance(place, Place):
+        return None
+    # Copy defaults offers nothing.
+    # rec = copy(GAZETTEER_TEMPLATE)
+    rec = {
+        "id":place.id,
+        "place_id":place.place_id,
+        "name":place.name,
+        "name_type":place.name_type,
+        "geo":place.format_coord(),
+        "feat_class": place.feature_class,
+        "feat_code":place.feature_code,
+        "cc": place.country_code,
+        "FIPS_cc": place.country_code_fips,
+        "source": place.source,
+        "search_only": place.search_only
+    }
+    # ADMIN level 1/2 boundary names:
+    if place.adm1 is not None:
+        rec["adm1"] = place.adm1
+    if place.adm2 is not None:
+        rec["adm2"] = place.adm2
+    # ID BIAS:
+    if place.id_bias is None:
+        rec["id_bias"] = 0
+    else:
+        rec["id_bias"] = place.id_bias
+    # NAME BIAS
+    if place.name_bias is None:
+        rec["name_bias"] = 0
+    else:
+        rec["name_bias"] = place.name_bias
+    # Name Group / Script tests:
+    if place.name_group == "ar":
+        rec["name_ar"] = place.name
+    elif place.name_group == "cjk":
+        rec["name_cjk"] = place.name
+    return rec
 
 
 def run_query(url, q):
@@ -183,7 +268,7 @@ class DB:
                 `lat` REAL NOT NULL,
                 `lon` REAL NOT NULL,
                 `geohash` TEXT NOT NULL,
-                `dup` BIT DEFAULT 0,
+                `duplicate` BOOLEAN DEFAULT 0,
                 `name_bias` REAL DEFAULT 0,
                 `id_bias` REAL DEFAULT 0,
                 `search_only` BIT DEFAULT 0                
@@ -202,6 +287,7 @@ class DB:
             create INDEX s_idx on placenames ("source");
             create INDEX c_idx on placenames ("cc");
             create INDEX fc_idx on placenames ("feat_class");
+            create INDEX dup_idx on placenames ("duplicate");
         """
         self.conn.executescript(indices)
         self.conn.commit()
@@ -301,6 +387,72 @@ class DB:
 
         return None, None
 
+    def list_countries(self):
+        arr = []
+        for cc in self.conn.execute("select distinct(cc) as CC from placenames"):
+            arr.append(cc["CC"])
+        return arr
+
+    def list_places(self, cc=None, fc=None, criteria=None, limit=-1):
+        """
+        Potentially massive array -- so this is just a Place generator.
+        :param cc: country code or ''
+        :param fc: feat class constraint with "*" wildcard, or ''
+        :param criteria: additional clause to constrain search, e.g. " AND duplicate=0 " to find non-dups.
+        :limit limit:  non-zero limit
+        :return: generator
+        """
+        sql = ["select * from placenames"]
+        _and = ""
+        if cc is not None or fc is not None:
+            sql.append("where")
+        if cc is not None:
+            sql.append(f"cc ='{cc}'")
+        if fc is not None:
+            if cc is not None:
+                _and = " and "
+            if "*" in fc:
+                sql.append(f"{_and}feat_class like '{fc.replace('*', '%')}'")
+            else:
+                sql.append(f"{_and}feat_class = '{fc}'")
+        if criteria:
+            # Include the " AND " yourself in critera
+            sql.append(criteria)
+        if limit > 0:
+            sql.append(f"limit {limit}")
+
+        # Query
+        sql_script = " ".join(sql)
+        for p in self.conn.execute(sql_script):
+            yield as_place(p)
+
+    def mark_duplicates(self, dups):
+        if not dups:
+            return False
+        step = 1000
+        for x1 in _array_blocks(dups, step=step):
+            x2 = x1+step
+            arg = ",".join([str(dup) for dup in dups[x1:x2]])
+            sql = f"update placenames set duplicate=1 where id in ({arg})"
+            self.conn.execute(sql)
+            self.conn.commit()
+        return True
+
+
+def _array_blocks(arr, step=1000):
+    """
+    Break up large arrays so we have predictable updates or queries.
+    :param arr:
+    :param step:
+    :return:
+    """
+    end = len(arr)
+    blocks = [0]
+    if end > step:
+        for start in range(step, end, step):
+            blocks.append(start)
+    return blocks
+
 
 class DataSource:
     """
@@ -360,6 +512,55 @@ class DataSource:
         print("EXCLUSIONS: ", len(self.excluded_terms))
         if self.debug: print("EXCLUSIONS:", self.excluded_terms)
         print(f"End {self.source_name}. {arrow.now()}")
+
+
+class GazetteerIndex:
+    """
+    GazetteerIndex provides a simple API to inject entries into the Gazetteer.
+    - Every 1000 records a batch is sent to Solr
+    - Every 1,000,0000 records a commit() call is sent to Solr
+
+    This may provide gazetteer specific functions, but as of v1.3 this is a generic Solr wrapper.
+    """
+    def __init__(self, server_url, debug=False):
+
+        from pysolr import Solr
+        self.server = Solr(server_url)
+        self.debug = debug
+
+        self.commit_rate = 1000000
+        self.add_rate = 1000
+
+        self._records = []
+        self.count = 0
+
+    def optimize(self):
+        if self.server and not self.debug:
+            self.server.optimize()
+
+    def save(self, done=False):
+        if self.debug:
+            return
+
+        # Send batch
+        if self._records and (done or self.count % self.add_rate == 0):
+            self.server.add(self._records)
+            self._records = []
+        # Commit
+        if done or self.count % self.commit_rate == 0:
+            self.server.commit()
+        return
+
+    def add(self, place):
+        """
+
+        :param place: Place object.
+        :return:
+        """
+        rec = as_place_record(place)
+        self._records.append(rec)
+        self.count += 1
+        self.save()
 
 
 if __name__ == "__main__":

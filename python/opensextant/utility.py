@@ -164,6 +164,12 @@ def get_bool(token):
     if isinstance(token, bool):
         return token
 
+    if isinstance(token, int):
+        if token > 0:
+            return True
+        if token == 0:
+            return False
+
     t = token.lower()
     if t in BOOL_F_STR:
         return False

@@ -2,7 +2,7 @@ import re
 from copy import copy
 
 from opensextant import is_administrative, is_populated
-from opensextant.gazetteer import DataSource, load_stopterms
+from opensextant.gazetteer import DataSource, load_stopterms, GAZETTEER_TEMPLATE
 from opensextant.utility import get_csv_reader, get_list, is_ascii, squeeze_whitespace, parse_float
 
 
@@ -52,16 +52,6 @@ header_names = ['Record_ID', 'PLACE_ID', 'PLACE_NAME', 'PLACE_NAME_EXPANDED', 'L
                 'SOURCE_NAME_ID', 'SCRIPT', 'PLACE_NAME_BIAS', 'PLACE_ID_BIAS', 'NAME_TYPE', 'NAME_TYPE_SYSTEM',
                 'SplitCategory', 'SEARCH_ONLY']
 
-GAZ_TEMPLATE = {
-    'id': -1, 'place_id': -1, 'name': None,
-    'lat': 0, 'lon': 0,
-    'feat_class': None, 'feat_code': None,
-    'FIPS_cc': None, 'cc': None,
-    'adm1': None, 'adm2': None,
-    'source': None, 'script': None,
-    'name_bias': 0, 'id_bias': 0,
-    'name_type': "N", 'search_only': False
-}
 
 GAZ_MAPPING = {
     'Record_ID': 'id',
@@ -97,25 +87,25 @@ SCRIPTS_CODE = {
     "HAN": "H",
     "COMMON": "C",
     "ARABIC": "A",
-    "CYRILLIC": "CY",
-    "HEBREW": "HE",
-    "HANGUL": "HG",
     "ARMENIAN": "AM",
-    "GREEK": "GK",
-    "DEVANAGARI": "DV",
     "BENGALI": "BN",
+    "CYRILLIC": "CY",
+    "DEVANAGARI": "DV",
+    "ETHIOPIC": "ET",
+    "GEORGIAN": "GE",
+    "GREEK": "GK",
     "GURMUKHI": "GM",
     "GUJARATI": "GU",
-    "TAMIL": "TA",
-    "KANNADA": "KN",
-    "MALAYALAM": "MY",
-    "SINHALA": "SI",
-    "THAI": "TH",
-    "GEORGIAN": "GE",
-    "ETHIOPIC": "ET",
-    "KHMER": "KM",
+    "HEBREW": "HE",
+    "HANGUL": "HG",
     "HIRAGANA": "HI",
-    "KATAKANA": "KA"
+    "KANNADA": "KN",
+    "KATAKANA": "KA",
+    "KHMER": "KM",
+"MALAYALAM": "MY",
+"SINHALA": "SI",
+     "TAMIL": "TA",
+"THAI": "TH",
 }
 
 
@@ -142,7 +132,7 @@ class OpenSextantGazetteer(DataSource):
                 self.rowcount += 1
                 if self.rowcount == 1:
                     continue
-                geo = copy(GAZ_TEMPLATE)
+                geo = copy(GAZETTEER_TEMPLATE)
 
                 for k in GAZ_MAPPING:
                     v = row.get(k)
