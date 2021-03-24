@@ -29,7 +29,6 @@ data_sets = [
 
 def index_names(taxcat, fpath, cat, tag, rownum):
     with open(fpath, 'r', encoding="UTF-8") as fh:
-
         for row in fh:
             if row.startswith("#") or not row.strip():
                 continue
@@ -38,10 +37,10 @@ def index_names(taxcat, fpath, cat, tag, rownum):
             entity.id = rownum
             entity.tags.append(tag)
             taxcat.add(cat, entity)
-            # print catalog_id, node
-            taxcat.save()
             if rownum % 100 == 0:
                 print("Row # ", rownum)
+        taxcat.save(flush=True)
+        taxcat.optimize()
 
     return rownum
 
@@ -61,6 +60,10 @@ if __name__ == '__main__':
 
     args = ap.parse_args()
 
+    print(f"""
+    TaxCat Builder for Taxonomy: {args.names}
+    """)
+
     test = False
     row_max = -1
     builder = TaxCatalogBuilder(server=args.solr)
@@ -70,9 +73,3 @@ if __name__ == '__main__':
 
     for cfg in data_sets:
         row_id = index_names(builder, cfg['path'], catalog_id, cfg['source'], row_id)
-
-    try:
-        builder.save(flush=True)
-        builder.optimize()
-    except Exception as err:
-        print(str(err))

@@ -35,7 +35,7 @@ USAGE:
 
     # python jrcnames.py  /patht/to/entities.txt   <solr url>
 
-'entities.txt' file is a simple, TAB delimited file containing a
+"entities.txt" file is a simple, TAB delimited file containing a
 universal ID, entity type, language and name variant.
 
     1000595 P       u       Dani+Ábalo
@@ -47,13 +47,13 @@ The TaxCat / XTax strategy here is to use the following mapping:
     phrase = name variant
     { 
       catalog = JRC,
-      taxnode = 'Person.Dani Abalo',
-      phrase =  'Dani Ábalo'
-      tags  = [ 'jrc=1000595', 'lang=u' ]
+      taxnode = "Person.Dani Abalo",
+      phrase =  "Dani Ábalo"
+      tags  = [ "jrc=1000595", "lang=u" ]
       
     }
       
-Apparently lang = 'u' implies the name is universal in all languages, as spelled.
+Apparently lang = "u" implies the name is universal in all languages, as spelled.
 Where possible the first universal name variant found will act as the taxon primary name, 
 creating the taxnode value.
 
@@ -90,60 +90,60 @@ no_id_counter = 0
 # popular use or ambiguity.  On very rare occasions there are instances of person names
 # That coincide with popular place names.  The person name is marked is not valid for tagging.
 NOISE = {
-    'north', 'south', 'east', 'west',
-    'start', 'end', 'total',
-    'times',
-    'the sun',
-    'the times',
-    'news agency',
-    'daily news',
-    'press agency',
-    'military intelligence',
-    'international studies',
-    'international trade',
-    'will meet',
-    'the nation',
-    'facebook',
-    'google',
-    'internet explorer',
-    'yahoo',
-    'twitter',
-    'youtube',
-    'people',
-    'they are',
-    'our own',
-    'just want',
-    'are you', 'all you',
-    'ps',
-    'pp',
-    'reach',
-    'armed forces',
-    'canal',
-    'the age',
-    'read more',
-    'presedential office',
-    'set fire',
-    'emergency',
-    'nature',
-    'status quo',
-    'the independent',
-    'gross domestic product',
-    'privacy policy',
-    'adobe reader',
-    'guiding principles',
-    'lessons learned',
-    'better life',
-    u'san diegó',  # not San Diego
-    'san diego',  # not San Diego
-    u'san franciscó',
-    'san francisco',
-    'corpus christi',
-    u'nuevo león',
-    u'nuevo léon',
-    'nuevo leon',
-    'san pedro',
-    'umm qasr',
-    'windows'
+    "north", "south", "east", "west",
+    "start", "end", "total",
+    "times",
+    "the sun",
+    "the times",
+    "news agency",
+    "daily news",
+    "press agency",
+    "military intelligence",
+    "international studies",
+    "international trade",
+    "will meet",
+    "the nation",
+    "facebook",
+    "google",
+    "internet explorer",
+    "yahoo",
+    "twitter",
+    "youtube",
+    "people",
+    "they are",
+    "our own",
+    "just want",
+    "are you", "all you",
+    "ps",
+    "pp",
+    "reach",
+    "armed forces",
+    "canal",
+    "the age",
+    "read more",
+    "presedential office",
+    "set fire",
+    "emergency",
+    "nature",
+    "status quo",
+    "the independent",
+    "gross domestic product",
+    "privacy policy",
+    "adobe reader",
+    "guiding principles",
+    "lessons learned",
+    "better life",
+    u"san diegó",  # not San Diego
+    "san diego",  # not San Diego
+    u"san franciscó",
+    "san francisco",
+    "corpus christi",
+    u"nuevo león",
+    u"nuevo léon",
+    "nuevo leon",
+    "san pedro",
+    "umm qasr",
+    "windows"
 }
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
@@ -151,8 +151,8 @@ NOISE = {
 FIXES = {
     # Somehow this entry was marked as a "p" (Person)
     # So it is remapped to "-" (Thing, default)
-    'Improvised Explosive Device': '-',
-    'Liberty Reserve': 'O',
+    "Improvised Explosive Device": "-",
+    "Liberty Reserve": "O",
 }
 
 apply_default_fixes = True
@@ -162,7 +162,7 @@ def check_validity(e):
     """
     @param e: a JRCEntity 
     """
-    phr = e.phrasenorm.replace(',', ' ')
+    phr = e.phrasenorm.replace(",", " ")
     if phr in NOISE:
         e.is_valid = False
     return
@@ -170,18 +170,18 @@ def check_validity(e):
 
 # Entries starting or ending with place markers, will be recategorized as a Place.xxxxx
 #
-PLACE_ENDING_FIXES = {'province', 'island', 'islands', 'district', 'peninsula', 'valley',
-                      'territory', 'county', 'city', 'state', 'township', 'village',
-                      'roads', 'avenue', 'avenida', 'prefecture', 'heights', 'springs', 'falls',
-                      'airport', 'aeropuerto', 'aeroporto', 'station', 'harbor', 'harbour', 'port'}
+PLACE_ENDING_FIXES = {"province", "island", "islands", "district", "peninsula", "valley",
+                      "territory", "county", "city", "state", "township", "village",
+                      "roads", "avenue", "avenida", "prefecture", "heights", "springs", "falls",
+                      "airport", "aeropuerto", "aeroporto", "station", "harbor", "harbour", "port"}
 
-PLACE_STARTING_FIXES = {'city', 'spin', 'town', 'fort', 'port'}
+PLACE_STARTING_FIXES = {"city", "spin", "town", "fort", "port"}
 
 # A large number of entities are marked as Person unnecessarily.
 # Org fixes: find any of these terms in a phrase and declare the phrase an org, if not already.
-ORG_FIXES = {'tribunal', 'council', 'shura', 'group', 'committee', 'senate', ' of state',
-             'departamento', 'department', 'transport', 'transit', 'musee', 'museum',
-             'museums', 'organization', 'authority', 'enterprise', 'institute', 'inc', 'llc'}
+ORG_FIXES = {"tribunal", "council", "shura", "group", "committee", "senate", " of state",
+             "departamento", "department", "transport", "transit", "musee", "museum",
+             "museums", "organization", "authority", "enterprise", "institute", "inc", "llc"}
 
 
 class JRCEntity(Taxon):
@@ -202,23 +202,23 @@ class JRCEntity(Taxon):
             tokens = self.phrasenorm.split()
             if tokens[-1] in PLACE_ENDING_FIXES:
                 # Place (T=terrain)
-                self.entity_type = 'T'
+                self.entity_type = "T"
                 print("Place Phrase fixed", self.phrase)
             elif tokens[0] in PLACE_STARTING_FIXES:
-                self.entity_type = 'T'
+                self.entity_type = "T"
                 print("Place Phrase fixed", self.phrase)
             elif tokens[-1] in ignore_provinces:
-                self.entity_type = 'T'
+                self.entity_type = "T"
                 print("Ignore Province name in token", self.phrase)
 
-            if self.entity_type == 'P':
-                if self.phrasenorm.startswith('liberty '):
+            if self.entity_type == "P":
+                if self.phrasenorm.startswith("liberty "):
                     # JRC tagging got this wrong 98% of the time. Most Liberty... phrases are Orgs, not Pers.
-                    self.entity_type = 'O'
+                    self.entity_type = "O"
                 else:
                     for tok in tokens:
                         if tok in ORG_FIXES:
-                            self.entity_type = 'O'
+                            self.entity_type = "O"
                             print("Org Phrase fixed", self.phrase)
                             break
 
@@ -232,42 +232,42 @@ class JRCEntity(Taxon):
         # General validity
         self.is_valid = l > 2
         # specifically acronyms.
-        self.is_acronym = variant.isupper() and is_ascii(variant) and ' ' not in variant and l <= 12
+        self.is_acronym = variant.isupper() and is_ascii(variant) and " " not in variant and l <= 12
         if self.is_acronym:
             print("Acronym?", variant)
 
         # taxon ID/name:
-        self.name = '%s.%s' % (self.entity_type, primary_name)
+        self.name = "%s.%s" % (self.entity_type, primary_name)
 
         self.tags = self._make_tags()
 
     def _make_id(self):
-        return str(self.entity_id) + "#" + self._variant_id()
+        return f"{self.entity_id}#{self._variant_id()}"
 
     def _variant_id(self):
         if not self.variant_id:
-            return '0'
-        return '%04x' % (self.variant_id)
+            return "0"
+        return "%04x" % (self.variant_id)
 
     def _make_tags(self):
 
         return [
-            'jrc_id+%d' % (self.entity_id),
-            'lang_id+%s' % (self.lang)
+            f"jrc_id+{self.entity_id}",
+            f"lang_id+{self.lang}"
         ]
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.phrase)
+        return f"{self.name} ({self.phrase})"
 
 
-other_types = {'U', 'T', 'E', 'p'}
+other_types = {"U", "T", "E", "p"}
 entity_map = {
-    'U': 'Unknown',
-    'T': 'Place',
-    'E': 'Event',
-    'O': 'Org',
-    'P': 'Person',
-    '-': 'Thing'
+    "U": "Unknown",
+    "T": "Place",
+    "E": "Event",
+    "O": "Org",
+    "P": "Person",
+    "-": "Thing"
 }
 
 
@@ -284,21 +284,22 @@ def create_entity(line, scan=False):
         return None
     parts = jrc_line_split.split(line, maxsplit=3)
     _id = parts[0]
-    if _id == '0':
-        if test: print("Ignore line? ID=0, ", line)
+    if _id == "0":
+        if test:
+            print("Ignore line? ID=0, ", line)
         no_id_counter += 1
         _id = no_id_counter + NO_ID_BASE
     else:
         _id = int(_id)
 
     if len(parts) != 4:
-        print("Must be 4 distinct whitespace-delimited fields '{}'".format(line))
+        print(f"Must be 4 distinct whitespace-delimited fields '{line}'")
         return None
 
     name = parts[3]
-    for a, b in [('+', ' '), ('&amp;', '&'), ('&quot;', '"')]:
+    for a, b in [("+", " "), ("&amp;", "&"), ("&quot;", '"')]:
         name = name.replace(a, b)
-    name = name.strip().strip('!').strip(';')
+    name = name.strip().strip("!").strip(";")
     lang = parts[2]
     etype = parts[1]
 
@@ -310,7 +311,7 @@ def create_entity(line, scan=False):
         # if etype in other_types:
         #    print line
         #    return None
-        lookup_id = "%s%d" % (lang, _id)
+        lookup_id = f"{lang}{_id}"
         if lookup_id not in nameset:
             nameset[lookup_id] = name
 
@@ -323,7 +324,7 @@ def create_entity(line, scan=False):
         return None
 
     primary_name = None
-    for lookup_id in ['u%d' % (_id), "%s%d" % (lang, _id)]:
+    for lookup_id in [f"u{_id}", f"{lang}{_id}"]:
         primary_name = nameset.get(lookup_id)
         if primary_name: break
 
@@ -346,24 +347,28 @@ def create_entity(line, scan=False):
     return e
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     """
     Index JRC Names entities as a lexicon useful for tagging text.
     """
-    catalog_id = 'JRC'
+    catalog_id = "JRC"
     start_id = get_starting_id("JRC")
 
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument('--taxonomy', required=True, help="Taxonomy file in JRCNames format")
-    ap.add_argument('--starting-id', help="Solr index row ID start")
-    ap.add_argument('--solr', help="Solr URL for taxcat index")
-    ap.add_argument('--max', help="Max # of rows to index; for testing")
-    ap.add_argument('--invalidate', action='store_true', default=False)
-    ap.add_argument('--no-fixes', action='store_true', default=False)
+    ap.add_argument("--taxonomy", required=True, help="Taxonomy file in JRCNames format")
+    ap.add_argument("--starting-id", help="Solr index row ID start")
+    ap.add_argument("--solr", help="Solr URL for taxcat index")
+    ap.add_argument("--max", help="Max # of rows to index; for testing")
+    ap.add_argument("--invalidate", action="store_true", default=False)
+    ap.add_argument("--no-fixes", action="store_true", default=False)
 
     args = ap.parse_args()
+
+    print(f"""
+    TaxCat Builder for Taxonomy: {args.taxonomy}
+    """)
 
     if args.starting_id:
         start_id = int(args.starting_id)
@@ -389,7 +394,7 @@ if __name__ == '__main__':
     # As solr has no notion of row ID and your uniqueness requirements.
     #
     row_id = 0
-    with open(args.taxonomy, 'r', encoding="UTF-8") as fh:
+    with open(args.taxonomy, "r", encoding="UTF-8") as fh:
         for row in fh:
             if row.startswith("#") or len(row.strip()) == 0: continue
 
@@ -404,7 +409,7 @@ if __name__ == '__main__':
     # Zero these counters:
     row_id = 0
     no_id_counter = 0
-    with open(args.taxonomy, 'r', encoding="UTF-8") as fh:
+    with open(args.taxonomy, "r", encoding="UTF-8") as fh:
         for row in fh:
             if row.startswith("#") or len(row.strip()) == 0: continue
 
@@ -420,8 +425,6 @@ if __name__ == '__main__':
                 continue
 
             builder.add(catalog_id, node)
-            # print catalog_id, node
-            builder.save()
 
             if row_id % 100000 == 0:
                 print("Row # ", row_id)
@@ -430,8 +433,5 @@ if __name__ == '__main__':
             if 0 < row_max < row_id:
                 break
 
-    try:
         builder.save(flush=True)
         builder.optimize()
-    except Exception as err:
-        print(str(err))

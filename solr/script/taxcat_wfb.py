@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from opensextant.TaxCat import Taxon, get_taxnode
+from opensextant.TaxCat import Taxon, get_taxnode, TaxCatalogBuilder, get_starting_id
+import json
 
-builder = None
 
 catalog = "WFB"  # WFB = World FactBook
 min_len = 4
@@ -83,6 +83,7 @@ class FactBookTaxon(Taxon):
         associating each alias with this Taxon.
 
         :param aliases: delimited list of aliases for a taxon.
+        :param stopwords: stopword set
         :return:
         """
         if not aliases:
@@ -116,6 +117,8 @@ def ingest_wfb_leaders(dct, filepath, stopwords=[]):
     TODO: merge multiple files into dct.
     :param dct: country keyed dictionary of entries
     :param filepath:
+    :param stopwords: stopword set
+
     :return:
     """
     with open(filepath, "r", encoding="UTF-8") as fh:
@@ -142,6 +145,8 @@ def ingest_wfb_orgs(dct, fpath, stopwords=[]):
     TODO: resolve multiple files that may have duplicative taxons/updates.
     :param dct:
     :param fpath:
+    :param stopwords: stopword set
+
     :return:
     """
     with open(fpath, "r", encoding="UTF-8") as fh:
@@ -158,23 +163,19 @@ def ingest_wfb_orgs(dct, fpath, stopwords=[]):
     return
 
 
-if __name__ == '__main__':
-
-    import json
-    # import os
-    import argparse
+def main_loop(url):
     import glob
-    from opensextant.TaxCat import TaxCatalogBuilder, get_starting_id
     from opensextant.utility import ConfigUtility
 
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--solr')
-    args = ap.parse_args()
+    print(f"""
+    TaxCat Builder for Taxonomy: WorldFactBook
+    """)
+
     util = ConfigUtility()
     all_stopwords = util.loadListFromFile("etc/taxcat/stopwords.txt")
     start_id = get_starting_id(catalog)
 
-    builder = TaxCatalogBuilder(server=args.solr, test=args.solr is None)
+    builder = TaxCatalogBuilder(server=url, test=url is None)
     if not args.solr:
         print("Running in Test mode only -- No indexing to Solr")
 
@@ -209,3 +210,11 @@ if __name__ == '__main__':
 
     builder.save(flush=True)
     builder.optimize()
+
+
+if __name__ == '__main__':
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--solr')
+    args = ap.parse_args()
+    main_loop(args.solr)
