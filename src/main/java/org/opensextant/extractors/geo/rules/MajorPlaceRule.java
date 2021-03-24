@@ -27,16 +27,18 @@ import org.opensextant.extractors.geo.PlaceEvidence;
 /**
  * Major Place rule -- fire this rule after Country rule.
  * Try to find all countries in scope first, then major places.
- * If you try to infer country from major places first you get a lot of false positives.
+ * If you try to infer country from major places first you get a lot of false
+ * positives.
  * Country name space is smaller and more reliable.
- * 
- * LOTS of caveats: these rules enforce the notion that country names are drivers here, and major places amplify.
- * IF we see a National Capital we can infer a country, provided no countries have been seen in document
- * IF we see a major place, add that evidence weighting it higher if the country of that major place is also
+ * LOTS of caveats: these rules enforce the notion that country names are
+ * drivers here, and major places amplify.
+ * IF we see a National Capital we can infer a country, provided no countries
+ * have been seen in document
+ * IF we see a major place, add that evidence weighting it higher if the country
+ * of that major place is also
  * mentioned in document.
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class MajorPlaceRule extends GeocodeRule {
 
@@ -49,12 +51,14 @@ public class MajorPlaceRule extends GeocodeRule {
     private static final int POP_MIN = 60000;
 
     /**
-     * Major Place assigns a score to places that are national capitals, provinces, or cities with sizable population.
-     * Log(population) adds up to one point to place weight. Population data is indexed by location/grid using geohash.
+     * Major Place assigns a score to places that are national capitals, provinces,
+     * or cities with sizable population.
+     * Log(population) adds up to one point to place weight. Population data is
+     * indexed by location/grid using geohash.
      * Source:geonames.org
-     * 
+     *
      * @param populationStats
-     *            optional population stats.
+     *                        optional population stats.
      */
     public MajorPlaceRule(Map<String, Integer> populationStats) {
         NAME = MAJ_PLACE_RULE;
@@ -64,7 +68,7 @@ public class MajorPlaceRule extends GeocodeRule {
 
     /**
      * Determine if this rule was applied to the candidate.
-     * 
+     *
      * @param pc
      * @return
      */
@@ -76,7 +80,8 @@ public class MajorPlaceRule extends GeocodeRule {
     }
 
     /**
-     * attach either a Capital or Admin region ID, giving it some weight based on various properties or context.
+     * attach either a Capital or Admin region ID, giving it some weight based on
+     * various properties or context.
      */
     @Override
     public void evaluate(final PlaceCandidate name, final Place geo) {
@@ -97,20 +102,21 @@ public class MajorPlaceRule extends GeocodeRule {
                 int pop = popStats.get(prefix);
                 if (pop > POP_MIN) {
                     geo.setPopulation(pop);
-                    // 
+                    //
                     // Natural log gives a better, slower curve for population weights.
                     // ln(POP_MIN=25000) = 10.1
-                    // ln(5000)   = 8.5     wt=-0.5    - Small village, population decrements score.
-                    // ln(13000)  = 9.5     wt= 0      - Inflection point. Cities larger, have some score increment. 
-                    //                                      Smaller population, score decrements.
-                    // ln(22,000) = 10.0    wt= 0      - e^10 = 22,000
-                    // ln(60,000) = 11.x    wt= 1
-                    // ln(165,000) = 12.x   wt= 2
-                    // ln(444,000) = 13.x   wt= 3       
+                    // ln(5000) = 8.5 wt=-0.5 - Small village, population decrements score.
+                    // ln(13000) = 9.5 wt= 0 - Inflection point. Cities larger, have some score
+                    // increment.
+                    // Smaller population, score decrements.
+                    // ln(22,000) = 10.0 wt= 0 - e^10 = 22,000
+                    // ln(60,000) = 11.x wt= 1
+                    // ln(165,000) = 12.x wt= 2
+                    // ln(444,000) = 13.x wt= 3
                     // Etc.
-                    // And to make scale even more gradual, wt - 1  or wt/2, wt/3
+                    // And to make scale even more gradual, wt - 1 or wt/2, wt/3
                     // These population stats cannot overtake all other rules entirely.
-                    // 
+                    //
                     int wt = (int) ((Math.log(geo.getPopulation()) - 10)) / 3;
                     ev = new PlaceEvidence(geo, POP, weight(wt, geo));
                 }
@@ -126,8 +132,9 @@ public class MajorPlaceRule extends GeocodeRule {
     }
 
     /**
-     * Infer the country if a major place is a capital and no other countries have been found yet.
-     * 
+     * Infer the country if a major place is a capital and no other countries have
+     * been found yet.
+     *
      * @param capital
      */
     public void inferCountry(final Place capital) {
@@ -146,7 +153,6 @@ public class MajorPlaceRule extends GeocodeRule {
     }
 
     /**
-     * 
      * @param g
      * @return
      */

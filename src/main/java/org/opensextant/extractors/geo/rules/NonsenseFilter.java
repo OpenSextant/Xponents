@@ -12,16 +12,16 @@ import org.opensextant.util.TextUtils;
 /**
  * Filter out nonsense tokens that match some city or state name.
  * Indicators are: irregular whitespace, mixed punctuation
- * This does not apply to longer matches. Default nonsense length is 10 chars or shorter.
- * 
+ * This does not apply to longer matches. Default nonsense length is 10 chars or
+ * shorter.
+ *
  * <pre>
  * // Do. do do
  * // ta-da
  * // doo doo
  * </pre>
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class NonsenseFilter extends GeocodeRule {
 
@@ -37,12 +37,12 @@ public class NonsenseFilter extends GeocodeRule {
         return wsRedux.matcher(n).replaceAll("");
     }
 
-    /** 
+    /**
      * See if name n2 is a phonetic match for a relative constant ph1.
      * phonetic(n2) = ph1 ?
-     * 
+     *
      * @param ph1 - phonetic redux of a name.
-     * @param n2 - a test name.
+     * @param n2  - a test name.
      * @return
      */
     protected static final boolean isPhoneticMatch(final String ph1, final String n2) {
@@ -52,7 +52,7 @@ public class NonsenseFilter extends GeocodeRule {
 
     /**
      * Evaluate the name in each list of names.
-     * 
+     *
      * <pre>
      * doo doo      - FAIL
      * St. Paul     - PASS
@@ -75,11 +75,10 @@ public class NonsenseFilter extends GeocodeRule {
              * is Nonsense?
              * For phrases upto MAX chars long:
              * + does it contain irregular punctuation?
-             *   //  "...in the south. Bend it backwards...";  
-             *   // South Bend is not intended there.
-             *  
+             * // "...in the south. Bend it backwards...";
+             * // South Bend is not intended there.
              * + does it contain a repeated syllable or word?:
-             *   // "doo doo", "bah bah" "to to"
+             * // "doo doo", "bah bah" "to to"
              */
             if (p.getLength() > MAX_NONSENSE_PHRASE_LEN) {
                 continue;
@@ -95,8 +94,8 @@ public class NonsenseFilter extends GeocodeRule {
                     continue;
                 }
             }
-            char ch = p.getText().charAt(0);           
-            if (p.isLower() ||  Character.isLowerCase(ch)) {
+            char ch = p.getText().charAt(0);
+            if (p.isLower() || Character.isLowerCase(ch)) {
                 String[] wds = tokenizer.split(p.getTextnorm());
                 HashSet<String> set = new HashSet<>();
                 for (String w : wds) {
@@ -112,9 +111,11 @@ public class NonsenseFilter extends GeocodeRule {
 
             /*
              * Still here? Check for short obscure matches where diacritics mismatch.
-             * Cannot eliminate a candidate based on a single location. But reduce score for those that 
-             * mismatch severely.  
-             * NOTE: Score on each geo location is accounted for in default score. I.E., edit distance between text match and geo name. 
+             * Cannot eliminate a candidate based on a single location. But reduce score for
+             * those that
+             * mismatch severely.
+             * NOTE: Score on each geo location is accounted for in default score. I.E.,
+             * edit distance between text match and geo name.
              */
             if (!p.isFilteredOut() && p.getLength() <= GENERIC_ONE_WORD) {
                 assessPhoneticMatch(p);
@@ -123,9 +124,11 @@ public class NonsenseFilter extends GeocodeRule {
     }
 
     /**
-     * Assess the validity of a match candidate with the geographic names associated with it.
-     * For example if you have ÄEÃ how well does it match Aeå, Aea or aeA?  
+     * Assess the validity of a match candidate with the geographic names associated
+     * with it.
+     * For example if you have ÄEÃ how well does it match Aeå, Aea or aeA?
      * this is intended for ruling out short crap phonetically.
+     *
      * @param p
      */
     public void assessPhoneticMatch(PlaceCandidate p) {
@@ -149,11 +152,12 @@ public class NonsenseFilter extends GeocodeRule {
                 break;
             }
 
-            /* Pattern: Official name has accented/emphasis markings on the name, such as:
-             *     `NAME   or NAME`
-             * Where NAME is some Latin transliteration of non-Latin script 
-             * RULE applies to names 5 characters or longer; Shorter than that 
-             * we find too much noise.   
+            /*
+             * Pattern: Official name has accented/emphasis markings on the name, such as:
+             * `NAME or NAME`
+             * Where NAME is some Latin transliteration of non-Latin script
+             * RULE applies to names 5 characters or longer; Shorter than that
+             * we find too much noise.
              */
             if (p.getLength() > MIN_PHONETIC_MATCH_LEN) {
                 if (geo.getNamenorm().contains(p.getTextnorm())) {
@@ -177,10 +181,10 @@ public class NonsenseFilter extends GeocodeRule {
         }
     }
 
-    //Abbreviated word:  WWW. SSSSS   word, period, single space, text
+    // Abbreviated word: WWW. SSSSS word, period, single space, text
     static Pattern validAbbrev = Pattern.compile("\\w+[.] \\S+");
-    // Punctuation abounds:  WWWWPPPP+  SSSS     word, punct, multiple spaces, text 
-    //                       Any phrase containing double quotes or long dashes.
+    // Punctuation abounds: WWWWPPPP+ SSSS word, punct, multiple spaces, text
+    // Any phrase containing double quotes or long dashes.
     static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+|[\"\u2014\u2015\u201C\u201D\u2033]");
     static Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
     static Pattern anyInvalidPunct = Pattern.compile("[[\\p{Punct}\u2014\u2015\u201C\u201D\u2033]&&[^-_.'`]]+");
@@ -191,9 +195,10 @@ public class NonsenseFilter extends GeocodeRule {
 
     /**
      * Find odd patterns of punctuation in names.
-     * We have to do this because we have over-matched in our tagger or 
-     * used aggressive tokenizer, which lets in all sorts of odd punctuation false-pos.
-     * 
+     * We have to do this because we have over-matched in our tagger or
+     * used aggressive tokenizer, which lets in all sorts of odd punctuation
+     * false-pos.
+     *
      * @param t
      * @return
      */
@@ -202,7 +207,8 @@ public class NonsenseFilter extends GeocodeRule {
         if (t.indexOf('<') >= 0 || t.indexOf('>') >= 0) {
             return true;
         }
-        // Edge case "A. B. C." is a valid match, but the last "." is not followed but space. So 
+        // Edge case "A. B. C." is a valid match, but the last "." is not followed but
+        // space. So
         // Add a single trailing space.
         Matcher abbr = validAbbrev.matcher(t);
         Matcher punct = invalidPunct.matcher(t);
@@ -228,11 +234,9 @@ public class NonsenseFilter extends GeocodeRule {
      * for each letter that occurs, look at the one before it.
      * Track how many times multiple non-text chars appear in a row
      * after a alphanum char.
-     * 
      * 'abc- xx123' FAIL: odd hyphenation
      * 'St. Paul' PASS: valid use of abbrev.
-     * 
-     * 
+     *
      * @param t
      * @return
      */
@@ -242,7 +246,7 @@ public class NonsenseFilter extends GeocodeRule {
         int ws = 0;
         char prev = 0;
         for (char c : t.toCharArray()) {
-            // A %    
+            // A %
             // A %^
             if (Character.isWhitespace(c)) {
                 ++ws;

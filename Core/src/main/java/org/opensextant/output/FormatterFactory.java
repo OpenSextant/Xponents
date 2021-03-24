@@ -16,14 +16,12 @@
  */
 package org.opensextant.output;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.opensextant.processing.ProcessingException;
 
 /**
- *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class FormatterFactory {
@@ -31,8 +29,9 @@ public class FormatterFactory {
     /**
      *
      */
-    private static final String[] OUTPUT_FORMATS = {"CSV", "GeoCSV", "FileGDB", "GDB", "JSON", "KML", "WKT", "Shapefile", "SHP"};
-    private static final Map<String,String> OUTPUT_FORMATS_LOOKUP = new HashMap<String,String>();
+    private static final String[] OUTPUT_FORMATS = { "CSV", "GeoCSV", "FileGDB", "GDB", "JSON", "KML", "WKT",
+            "Shapefile", "SHP" };
+    private static final Map<String, String> OUTPUT_FORMATS_LOOKUP = new HashMap<String, String>();
 
     static {
         for (String fmt : OUTPUT_FORMATS) {
@@ -47,7 +46,7 @@ public class FormatterFactory {
      * Check if this is a known format
      */
     public static boolean isSupported(String fmt) {
-        if (fmt==null){
+        if (fmt == null) {
             return false;
         }
         return OUTPUT_FORMATS_LOOKUP.containsKey(fmt.toLowerCase());
@@ -56,6 +55,7 @@ public class FormatterFactory {
     public static String[] getSupportedFormats() {
         return OUTPUT_FORMATS;
     }
+
     /**
      *
      */
@@ -71,7 +71,7 @@ public class FormatterFactory {
     public static ResultsFormatter getInstance(String fmt) throws ProcessingException {
 
         String formatterClass = OUTPUT_FORMATS_LOOKUP.get(fmt.toLowerCase());
-        if (formatterClass==null){
+        if (formatterClass == null) {
             throw new ProcessingException("Unsupported Formatter: " + fmt);
         }
 

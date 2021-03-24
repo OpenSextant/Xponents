@@ -1,15 +1,15 @@
 /*
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII                  
- * 
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ *
  * OpenSextant/Xponents sub-project
- *      __                              
- *  ___/ /___  ___  ___  ___  __ __ ___ 
+ *      __
+ *  ___/ /___  ___  ___  ___  __ __ ___
  * / _  // -_)/ -_)/ _ \/ -_)/ // // -_)
- * \_,_/ \__/ \__// .__/\__/ \_, / \__/ 
+ * \_,_/ \__/ \__// .__/\__/ \_, / \__/
  *               /_/        /___/
- *               
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII    
- * Copyright 2013, 2019 MITRE Corporation             
+ *
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ * Copyright 2013, 2019 MITRE Corporation
  */
 
 package org.opensextant.annotations;
@@ -24,9 +24,10 @@ import jodd.json.JsonArray;
 import jodd.json.JsonObject;
 
 /**
- * A base class for Record, Annotation and other structures. Common fields include: id, value, and
+ * A base class for Record, Annotation and other structures. Common fields
+ * include: id, value, and
  * attributes, which may be empty.
- * 
+ *
  * @author ubaldino
  */
 public abstract class DeepEyeData {
@@ -49,7 +50,8 @@ public abstract class DeepEyeData {
         }
     }
 
-    /** Converts internal JSON store to a key/value map.
+    /**
+     * Converts internal JSON store to a key/value map.
      */
     public Map<String, Object> getAttributes() {
 
@@ -79,7 +81,7 @@ public abstract class DeepEyeData {
 
     /**
      * utility -- get list from jsonarray.
-     * 
+     *
      * @param arr JSON array
      * @return
      */
@@ -100,8 +102,9 @@ public abstract class DeepEyeData {
     }
 
     /**
-     * Convert an array to a trivial map, [i1, i2, i3,...] ==&gt; { i1:"1", i2:"1", ...} UNUSED.
-     * 
+     * Convert an array to a trivial map, [i1, i2, i3,...] ==&gt; { i1:"1", i2:"1",
+     * ...} UNUSED.
+     *
      * @param obj JSON array
      * @return map representation of array
      */

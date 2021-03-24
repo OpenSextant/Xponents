@@ -50,9 +50,8 @@ public class SolrProxy extends SolrUtil {
 
     /**
      * A single method to help find a suitable value for SOLR HOME
-     *
      * If given is null, then system variables are checked.
-     * 
+     *
      * @param given solr home.
      */
     public static String deriveSolrHome(String given) throws ConfigException {
@@ -110,7 +109,7 @@ public class SolrProxy extends SolrUtil {
      * Initializes a Solr server from the SOLR_HOME environment variable.
      *
      * @param solr_home the solr_home
-     * @param core name of solr core
+     * @param core      name of solr core
      * @throws ConfigException cfg err
      */
     public SolrProxy(String solr_home, String core) throws ConfigException {
@@ -131,9 +130,8 @@ public class SolrProxy extends SolrUtil {
     }
 
     /**
-     *
      * Is Solr server instance allowed to write to index?
-     * 
+     *
      * @return true if index is intended to be writable.
      */
     public boolean isWritable() {
@@ -185,7 +183,7 @@ public class SolrProxy extends SolrUtil {
     /**
      * Search an OpenSextant solr gazetteer.
      *
-     * @param index solr server handle
+     * @param index   solr server handle
      * @param qparams search parameters
      * @return list of places
      * @throws SolrServerException on err
@@ -200,7 +198,7 @@ public class SolrProxy extends SolrUtil {
         SolrDocumentList docList = response.getResults();
 
         for (SolrDocument solrDoc : docList) {
-            places.add(SolrProxy.createPlace(solrDoc));
+            places.add(SolrUtil.createPlace(solrDoc));
         }
 
         return places;
@@ -256,7 +254,7 @@ public class SolrProxy extends SolrUtil {
      * Reopen an existing solr proxy.
      *
      * @throws ConfigException the config exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws IOException     Signals that an I/O exception has occurred.
      */
     public void openIndex() throws ConfigException, IOException {
         if (solrClient == null) {
@@ -271,7 +269,7 @@ public class SolrProxy extends SolrUtil {
     /**
      * Optimizes the Solr server.
      *
-     * @throws IOException on err
+     * @throws IOException         on err
      * @throws SolrServerException the solr server exception
      */
     public void optimize() throws IOException, SolrServerException {
@@ -289,7 +287,6 @@ public class SolrProxy extends SolrUtil {
      * Save and optionally records to server or index On failure, current
      * accumulating request is cleared and nullified to avoid retransmitting bad
      * data.
-     * 
      * In the event of a failure all records since last "saveIndex" would be
      * lost and should be resubmitted.
      *
@@ -319,7 +316,7 @@ public class SolrProxy extends SolrUtil {
      * Save and reopen.
      *
      * @throws ConfigException the config exception
-     * @throws IOException on err
+     * @throws IOException     on err
      */
     public void saveAndReopen() throws ConfigException, IOException {
         saveIndex(/* commit = */true);
@@ -328,7 +325,6 @@ public class SolrProxy extends SolrUtil {
 
     /**
      * @throws IOException
-     *
      */
     public void close() throws IOException {
         if (isWritable()) {

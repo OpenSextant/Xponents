@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author ubaldino
  */
 public class RegexPattern {
@@ -55,7 +54,9 @@ public class RegexPattern {
      */
     public boolean enabled = true;
 
-    /** Name of a Java class that extends TextMatch and implements user's normalization routines.
+    /**
+     * Name of a Java class that extends TextMatch and implements user's
+     * normalization routines.
      */
     public String match_classname = null;
     public Class<?> match_class = null;
@@ -64,9 +65,9 @@ public class RegexPattern {
     /**
      * Metadata for a Regular Expression pattern
      *
-     * @param _family  name of family
-     * @param _id   pattern id within family
-     * @param _description  optional description of pattern
+     * @param _family      name of family
+     * @param _id          pattern id within family
+     * @param _description optional description of pattern
      */
     public RegexPattern(String _family, String _id, String _description) {
         family = _family;
@@ -75,7 +76,6 @@ public class RegexPattern {
     }
 
     /**
-     *
      * @return string representation of the pattern
      */
     @Override

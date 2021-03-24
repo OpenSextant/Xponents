@@ -22,7 +22,6 @@ import java.util.Map;
 import org.opensextant.extraction.TextMatch;
 
 /**
- *
  * @author ubaldino
  */
 public class DateMatch extends TextMatch {
@@ -56,7 +55,9 @@ public class DateMatch extends TextMatch {
      */
     public enum TimeResolution {
 
-        NONE(-1, "U"), YEAR(1, "Y"), MONTH(2, "M"), WEEK(3, "W"), DAY(4, "D"), HOUR(5, "H"), MINUTE(6, "m"), SECOND(7, "s");
+        NONE(-1, "U"), YEAR(1, "Y"), MONTH(2, "M"), WEEK(3, "W"), DAY(4, "D"), HOUR(5, "H"), MINUTE(6, "m"),
+        SECOND(7, "s");
+
         public int level = -1;
         public String code = null;
 
@@ -64,7 +65,7 @@ public class DateMatch extends TextMatch {
             level = l;
             code = c;
         }
-    };
+    }
 
     // Enum representing YEAR, MON, WEEK, DAY, HR, MIN
     //
@@ -72,7 +73,10 @@ public class DateMatch extends TextMatch {
 
     /** Flag caller can use to classify if a date match is distant */
     public boolean isDistantPast = false;
-    /** Flag caller can use to classify if date is future relative to a given date, by default TODAY*/
+    /**
+     * Flag caller can use to classify if date is future relative to a given date,
+     * by default TODAY
+     */
     public boolean isFuture = false;
 
 }

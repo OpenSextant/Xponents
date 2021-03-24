@@ -2,9 +2,8 @@ package org.opensextant.extractors.geo.rules;
 
 /**
  * data structure to capture our assumptions about feature types.
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class FeatureClassMeta {
     public String label;
@@ -16,8 +15,8 @@ public class FeatureClassMeta {
     public double weight;
     /**
      * Mention Weight X Relative proportion
-     * 
-     * - common features are more likely to be mentioned. - certain features we know should outweigh
+     * - common features are more likely to be mentioned. - certain features we know
+     * should outweigh
      * others (e.g., Intermittent Streams are not often true positives.)
      */
     public double factor;
@@ -28,16 +27,18 @@ public class FeatureClassMeta {
     private final static int GAZETTEER_BASE_COUNT = 20000000;
 
     public FeatureClassMeta(String l, int c, double wt) {
-            this.label = l;
-            this.count = c;
-            this.weight = wt;
-            this.proportion = (double)this.count / GAZETTEER_BASE_COUNT;
+        this.label = l;
+        this.count = c;
+        this.weight = wt;
+        this.proportion = (double) this.count / GAZETTEER_BASE_COUNT;
 
-            // We have a number between 0 and 1 that increases with prevalence of feature type
-            // but is adjusted on aprior preference.
-            this.factor = this.weight * this.proportion;
-        }
+        // We have a number between 0 and 1 that increases with prevalence of feature
+        // type
+        // but is adjusted on aprior preference.
+        this.factor = this.weight * this.proportion;
+    }
 
+    @Override
     public String toString() {
         return String.format("%s %d%%, factor=%d", this.label, (int) 100 * this.proportion, this.factor);
     }

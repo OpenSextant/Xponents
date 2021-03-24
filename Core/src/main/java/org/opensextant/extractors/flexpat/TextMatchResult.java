@@ -22,7 +22,8 @@ import org.opensextant.extraction.TextMatch;
 
 /**
  * This result class holds all the results for a given text block.
- * Important:  When iterating over your results, matches, you should @see GeocoordMatch.is_submatch
+ * Important: When iterating over your results, matches, you should @see
+ * GeocoordMatch.is_submatch
  * to see if a match is part of another match.
  *
  * @author ubaldino
@@ -59,7 +60,6 @@ public class TextMatchResult {
     private StringBuilder msgTrace = new StringBuilder();
 
     /**
-     *
      * @param msg processing/matching message
      */
     public void add_trace(String msg) {
@@ -68,7 +68,6 @@ public class TextMatchResult {
     }
 
     /**
-     *
      * @return message buffer for matching
      */
     public String get_trace() {

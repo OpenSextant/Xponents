@@ -38,17 +38,18 @@ import com.cybozu.labs.langdetect.LangDetectException;
 /**
  * Wrapper around cybozu labs langdetect. This tool provides a simple
  * "guessLanguage", where default Cybozu LangDetect may fail to return a
- * response due to IO errors and/or may provide multiple guesses w/propabilities.
+ * response due to IO errors and/or may provide multiple guesses
+ * w/propabilities.
  * GuessLanguage here offers a fall back to look at unknown text to see if
  * it is in the ASCII or CJK families.
- * 
- * Use this API wrapper in conjunction with the Xponents TextUtils.getLanguage() routine and Language class
- * to facilitate connecting LangID output with actual ISO 639 standards code pages.
- * 
- * ISO 2-char and 3-char language IDs differ depending on the use -- historical/bibliographic vs. linguistic/locales.
- * 
- * @author ubaldino
+ * Use this API wrapper in conjunction with the Xponents TextUtils.getLanguage()
+ * routine and Language class
+ * to facilitate connecting LangID output with actual ISO 639 standards code
+ * pages.
+ * ISO 2-char and 3-char language IDs differ depending on the use --
+ * historical/bibliographic vs. linguistic/locales.
  *
+ * @author ubaldino
  */
 public class LangDetect {
 
@@ -56,8 +57,9 @@ public class LangDetect {
     private String profilePath = null;
 
     /**
-     * Default use requires you unpack LangDetect profiles here: /langdetect-profiles
-     * 
+     * Default use requires you unpack LangDetect profiles here:
+     * /langdetect-profiles
+     *
      * @throws ConfigException
      */
     public LangDetect() throws ConfigException {
@@ -72,7 +74,7 @@ public class LangDetect {
     /**
      * If you anticipate working with short text - queries, tweets, excerpts, etc.
      * Then indicate that here. text working size is in # of Chars.
-     * 
+     *
      * @param textSz
      * @throws ConfigException
      */
@@ -90,7 +92,8 @@ public class LangDetect {
     private int workingSize = -1;
 
     /**
-     * If working size, in CHARS, is less than 180 (20 8 char words + 1 whitespace word break);
+     * If working size, in CHARS, is less than 180 (20 8 char words + 1 whitespace
+     * word break);
      */
     public final static int DEFAULT_WORKING_SIZE = 20 * (8 + 1);
 
@@ -106,7 +109,8 @@ public class LangDetect {
      * a folder on disk, although I have a variation that could work with JAR
      * resources. So ordering classpath is important, but also folder itself
      * must exist.
-     * TODO: workingSize is used only to guide default profile directory - short message (sm) or not.
+     * TODO: workingSize is used only to guide default profile directory - short
+     * message (sm) or not.
      * In the future workingSize
      */
     public void initLangId() throws ConfigException {
@@ -121,7 +125,7 @@ public class LangDetect {
             File profilePathDir = null;
 
             /*
-             * Get directory from CLASSPATH or use absolute path given. 
+             * Get directory from CLASSPATH or use absolute path given.
              * Either way this results in a directory with langdetect profiles.
              */
             if (useClasspath) {
@@ -145,8 +149,8 @@ public class LangDetect {
 
     /**
      * API for LangDetect, cybozu.labs
-     * 
-     * @param text ISO language ID or Locale.  Straight from the Cybozu API
+     *
+     * @param text ISO language ID or Locale. Straight from the Cybozu API
      * @return
      * @throws LangDetectException
      */
@@ -158,11 +162,12 @@ public class LangDetect {
 
     /**
      * API for LangDetect, cybozu.labs.
-     * However, this does not return cybozu.Language object; this method returns its own LangID class
-     * 
+     * However, this does not return cybozu.Language object; this method returns its
+     * own LangID class
+     *
      * @param text
      * @param withProbabilities
-     *            true to include propabilities on results
+     *                          true to include propabilities on results
      * @return
      * @throws LangDetectException
      */
@@ -181,7 +186,7 @@ public class LangDetect {
 
     /**
      * Sort what was found; Returns LangID by highest score to lowest.
-     * 
+     *
      * @param lids
      * @return
      */
@@ -196,9 +201,10 @@ public class LangDetect {
 
     /**
      * Routine to guess the language ID
-     * Scrub data prior to guessing language. If you feed that non-language text (jargon, codes, tables, URLs, hashtags,
+     * Scrub data prior to guessing language. If you feed that non-language text
+     * (jargon, codes, tables, URLs, hashtags,
      * data) will interfere or overwhelm to volume of natural language text.
-     * 
+     *
      * @param data
      * @return
      */
@@ -226,7 +232,7 @@ public class LangDetect {
 
     /**
      * Look at raw bytes/characters to see which Unicode block they fall into.
-     * 
+     *
      * @param data
      * @return
      */
@@ -243,7 +249,7 @@ public class LangDetect {
             double cjkRatio = TextUtils.measureCJKText(data);
             if (cjkRatio > 0.10) {
                 return LANGUAGE_ID_GROUP_CJK;
-                // at least mark it as 
+                // at least mark it as
                 // Chinese/Japanese/Korean
             }
         }
@@ -255,10 +261,10 @@ public class LangDetect {
      * detecting if script of text is Japanese, Korean or Chinese.
      * Given Chinese Unicode block contains CJK unified ideographs, the presence of
      * Chinese characters does not indicate any of the three langugaes uniquely.
-     * 
-     * This is used only if CyboZu LangDetect fails OR if you want to detect language(s)
+     * This is used only if CyboZu LangDetect fails OR if you want to detect
+     * language(s)
      * in mixed text.
-     * 
+     *
      * @param data
      * @return
      */
@@ -301,13 +307,20 @@ public class LangDetect {
             langid.put(TextUtils.japaneseLang, new LangID(TextUtils.japaneseLang, cjkRatio(chars, cjk, j), false));
         }
         if (k > 0) {
-            langid.put(TextUtils.koreanLang, new LangID(TextUtils.koreanLang, cjkRatio(chars, cjk, k), false)); // This is primary only if Japanese is 0.
+            langid.put(TextUtils.koreanLang, new LangID(TextUtils.koreanLang, cjkRatio(chars, cjk, k), false)); // This
+                                                                                                                // is
+                                                                                                                // primary
+                                                                                                                // only
+                                                                                                                // if
+                                                                                                                // Japanese
+                                                                                                                // is 0.
         }
         if (c > 0) {
             // This is primary language
             langid.put(TextUtils.chineseLang,
                     new LangID(TextUtils.chineseLang, cjkRatio(chars, cjk, c), (j == 0 && k == 0)));
-            // Distinct chinese script === if and only if there are no Korean or Japanese characters.
+            // Distinct chinese script === if and only if there are no Korean or Japanese
+            // characters.
         }
 
         return langid;
@@ -317,19 +330,18 @@ public class LangDetect {
      * L = Unique C, J, or K characters
      * CJK = total CJK
      * TOT = total characters non-control or whitespace.
-     * 
      * ratio = 0.5 * (L/CJK + CJK/TOT)
-     * 
      * produces a number always less than 1.0
-     * 
-     * 1 Japanese char in 5 CJK chars out of a text of 20 characters (regardless of whitespace).
-     * 
-     * ratio is 1/2 * (1/5 + 5/20) === 9/40 ~ 0.21 is score for this text, with Japanese being the primary choice.
-     * 
+     * 1 Japanese char in 5 CJK chars out of a text of 20 characters (regardless of
+     * whitespace).
+     * ratio is 1/2 * (1/5 + 5/20) === 9/40 ~ 0.21 is score for this text, with
+     * Japanese being the primary choice.
      * ratio for Chinese would be:
-     * 1/2 * (4/5 + 5/20) === 21/40 ~ 0.51, which is higher than that for Japanese, however, as
-     * CJK share a common character base, you first measure if any J or K is present, and then C.
-     * 
+     * 1/2 * (4/5 + 5/20) === 21/40 ~ 0.51, which is higher than that for Japanese,
+     * however, as
+     * CJK share a common character base, you first measure if any J or K is
+     * present, and then C.
+     *
      * @param total
      * @param cjk
      * @param langCount
@@ -356,10 +368,11 @@ public class LangDetect {
         // Languages classified as such, will be ignored.
         ignoredLanguage.put("cjk", 0);
         ignoredLanguage.put("unk", 0);
-        // Arbitrary character count.  Less than N chars, LangDetect cannot reliably name the language.
+        // Arbitrary character count. Less than N chars, LangDetect cannot reliably name
+        // the language.
         ignoredLanguage.put("tl", -1); // About one line of text.
         ignoredLanguage.put("ro", -1); // About one line of text.
-        ignoredLanguage.put("ca", -1); // Very unusual to get Catalan.  Usually spanish or english.
+        ignoredLanguage.put("ca", -1); // Very unusual to get Catalan. Usually spanish or english.
         ignoredLanguage.put("it", -1);
         ignoredLanguage.put("fr", -1);
         ignoredLanguage.put("es", -1);
@@ -370,9 +383,10 @@ public class LangDetect {
     }
 
     /**
-     * Find best lang ID for short texts. By default this will not search for CJK language ID if CJK characters are
+     * Find best lang ID for short texts. By default this will not search for CJK
+     * language ID if CJK characters are
      * present.
-     * 
+     *
      * @param lang
      * @param naturalLanguage
      * @return
@@ -382,61 +396,62 @@ public class LangDetect {
     }
 
     /**
-     * A simple threshold for demarcating when we might infer simple language ID with minimal content.
-     * E.g. 16 chars of ASCII text ~ we can possibly say it is English.    However, this is really only making an guess.
+     * A simple threshold for demarcating when we might infer simple language ID
+     * with minimal content.
+     * E.g. 16 chars of ASCII text ~ we can possibly say it is English. However,
+     * this is really only making an guess.
      */
     public final static int MIN_LENGTH_UNK_TEXT_THRESHOLD = 16; /* Characters */
-    
+
     public static double MIN_LANG_DETECT_PROBABILITY = 0.60;
 
     /**
-     * 
-     * EXPERIMENTAL  , EXPERIMENTAL, EXPERIMENTAL
-     * 
-     * UPDATE, 2015. Using Cybozu LangDetect 1.3 (released June 2014) operates better on tweets
+     * EXPERIMENTAL , EXPERIMENTAL, EXPERIMENTAL
+     * UPDATE, 2015. Using Cybozu LangDetect 1.3 (released June 2014) operates
+     * better on tweets
      * than previous version. A lot of this confusion was related to the lack of
      * optimization early versions had for social media.
-     * 
      * ===============================
      * Not the proper method for general use. Lang ID is shunted for short text.
      * If lang is non-null, then "~lang" is returned for short text If lang is
      * null, we'll give it a shot. Short ~ two words of natural language, approx
      * 16 chars.
-     * 
      * Objective is to return a single, best lang-id. More general purpose
      * routines are TBD: e.g., validate all lang-id found by LangDetect or other
      * solution.
-     * 
+     *
      * <pre>
      * Workflow used here for ANY text:
      * - get natural language of text ( the data, less any URLs, hashtags, etc.)
      *   For large documents, this is not necessary. TODO: evaluate LangDetect or others
      *   on longer texts (Blog with comments) to find all languages, etc.
-     * 
+     *
      * - Text is too Short?  if lang is non-null, then return "~XX"
      * - Find if text contains CJK:
      *      if contains K or J,  then return respective langID
      *      else text is unified CJK chars which is at least Chinese.
-     * 
+     *
      * - Use LangDetect
      *      if Error, use alternate LangID detection
      *      if Good and answer &lt; 0.65 (threshold), then report "~XX", as "~" implies low confidence.
-     * 
+     *
      * - Have a "lang-id" from all of the above?
      *      if lang-id is a locale, e.g, en_au, en_gb,  zh_tw, cn_tw, etc.
      *      return just the language part;
-     * 
+     *
      *  Return a two-char ISO langID
      * </pre>
-     * 
+     *
      * @param lang
-     *            given lang ID or null
+     *                        given lang ID or null
      * @param naturalLanguage
-     *            text to determine lang ID; Caller must prepare this text, so consider using
-     *            DataUtility.scrubTweetText(t).trim();
+     *                        text to determine lang ID; Caller must prepare this
+     *                        text, so consider using
+     *                        DataUtility.scrubTweetText(t).trim();
      * @param findCJK
-     *            - if findCJK is true, then this will try to find the best language ID if Chinese/Japanese/Korean
-     *            characters exist at all.
+     *                        - if findCJK is true, then this will try to find the
+     *                        best language ID if Chinese/Japanese/Korean
+     *                        characters exist at all.
      * @return lang ID, possibly different than given lang ID.
      */
     public Language detectSocialMediaLang(String lang, String naturalLanguage, boolean findCJK) {
@@ -467,7 +482,10 @@ public class LangDetect {
         Map<String, LangID> langids = null;
         String langID = null;
 
-        /* If we're looking for CJK, then determine if a single character of CJK is present. */
+        /*
+         * If we're looking for CJK, then determine if a single character of CJK is
+         * present.
+         */
         boolean hasCJK = (findCJK ? TextUtils.hasCJKText(naturalLanguage) : false);
 
         int confidence = -1;
@@ -536,7 +554,7 @@ public class LangDetect {
 
             // For shorter texts, if ASCII, just assume this is english.
             // For UPPER CASE texts not ASCII, you need more content to rely on lang ID.
-            // 
+            //
             // LENGTH FILTER.
             if (chars < threshold && lang != null) {
                 if (isASCII) {
@@ -548,7 +566,7 @@ public class LangDetect {
                 return LANGUAGE_ID_GROUP_ENGLISH;
             }
 
-            // OKAY, you win Cybozu.  
+            // OKAY, you win Cybozu.
             // This is usually wrong. :(
             return TextUtils.getLanguage(langID);
         }
@@ -557,9 +575,8 @@ public class LangDetect {
 
         /*
          * Unanticipated Lang ID came back, as it is longer than 2-chars.
-         * NOTE,  Almost 100% of the time LangDetect reports "zh-tw" for any chinese
-         * tweets.   Traditional Chinese, really?  Cybozu needs more training there.
-         * 
+         * NOTE, Almost 100% of the time LangDetect reports "zh-tw" for any chinese
+         * tweets. Traditional Chinese, really? Cybozu needs more training there.
          */
         if (langID.length() > 2) {
             String langID_notLocale = lookupLanguage.get(langID);

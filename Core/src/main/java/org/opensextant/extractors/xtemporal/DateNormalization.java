@@ -25,7 +25,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
- *
  * @author ubaldino
  */
 public class DateNormalization {
@@ -33,20 +32,20 @@ public class DateNormalization {
     static final DateTime cal = DateTime.now(DateTimeZone.UTC);
     static final int YEAR = cal.getYear();
     static final int MILLENIUM = 2000;
-    static final int CURRENT_YY = YEAR - MILLENIUM;;
+    static final int CURRENT_YY = YEAR - MILLENIUM;
     static final int FUTURE_YY_THRESHOLD = CURRENT_YY + 2;
     static final int MAXIMUM_YEAR = 2030;
 
     // Use of year "15" would imply 1915 in this case.
     // Adjust 2-digit year threshold as needed.
-    // Java default is 80/20.  2000 - 2032 is the assumed year for "00" through "32"
+    // Java default is 80/20. 2000 - 2032 is the assumed year for "00" through "32"
     // "33" is 1933
     //
 
-    /** 
+    /**
      */
     public static int INVALID_DATE = -1;
-    /** 
+    /**
      */
     public static int INVALID_DAY = -2;
     /**
@@ -75,27 +74,23 @@ public class DateNormalization {
     }
 
     /*
-     *
-     * #DEFINE MON_ABBREV  JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEPT?|OCT|NOV|DEC
-    
-     #DEFINE MON_NAME   [A-Z]{3}\w{0,8}
-    
-     #DEFINE YEAR         [12]\d{3}
-     #DEFINE YY           \d\d
-     #DEFINE YEARYY       \d{2,4}
-     #DEFINE MM           [01]\d
-     #DEFINE DD           [0-3]\d
-     #DEFINE SHORT_TZ     [A-Z]
-    
-     #DEFINE hh    [0-2]\d
-     #DEFINE mm    [0-5]\d
-     #DEFINE DOM         [0-3]?\d
-     #DEFINE MONTH       [01]?\d
-     #DEFINE LONG_TZ     [A-Z]{3,5}
+     * #DEFINE MON_ABBREV JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEPT?|OCT|NOV|DEC
+     * #DEFINE MON_NAME [A-Z]{3}\w{0,8}
+     * #DEFINE YEAR [12]\d{3}
+     * #DEFINE YY \d\d
+     * #DEFINE YEARYY \d{2,4}
+     * #DEFINE MM [01]\d
+     * #DEFINE DD [0-3]\d
+     * #DEFINE SHORT_TZ [A-Z]
+     * #DEFINE hh [0-2]\d
+     * #DEFINE mm [0-5]\d
+     * #DEFINE DOM [0-3]?\d
+     * #DEFINE MONTH [01]?\d
+     * #DEFINE LONG_TZ [A-Z]{3,5}
      */
     /**
-     * For now this reports only DATE and standard TIME fields. Timezone is still TODO.
-     * 
+     * For now this reports only DATE and standard TIME fields. Timezone is still
+     * TODO.
      * TODO: throw NormalizationException
      *
      * @param elements pattern fields
@@ -126,7 +121,7 @@ public class DateNormalization {
         }
 
         /*
-         * Ensure consistency of DATE separators, for example avoid dates "14.15/22" 
+         * Ensure consistency of DATE separators, for example avoid dates "14.15/22"
          */
         String sep1 = elements.get("DSEP1");
         String sep2 = elements.get("DSEP2");
@@ -163,10 +158,13 @@ public class DateNormalization {
 
         // For normal M/D/Y patterns, set the default time to noon, UTC
         // Overall, we want to ensure that the general yyyy-mm-dd form is not impacted
-        // by time zone and default hour of 00:00;  -- this generally would yield a date format a day early for ALL US timezones.
+        // by time zone and default hour of 00:00; -- this generally would yield a date
+        // format a day early for ALL US timezones.
         //
-        // Time res:  the presence of a field, hh, mm, or ss means the pattern has that level of resolution.
-        // So even if time is 00:00:00Z  -- all zeroes -- the resolution is still SECONDS.
+        // Time res: the presence of a field, hh, mm, or ss means the pattern has that
+        // level of resolution.
+        // So even if time is 00:00:00Z -- all zeroes -- the resolution is still
+        // SECONDS.
         //
         int hour = normalize_time(elements, "hh");
         if (hour >= 0) {
@@ -228,7 +226,8 @@ public class DateNormalization {
     }
 
     /**
-     * Given a field hh, mm, or ss, get field from map and normalize/validate the value.
+     * Given a field hh, mm, or ss, get field from map and normalize/validate the
+     * value.
      *
      * @param elements the elements
      * @param tmField  the tm field
@@ -272,15 +271,15 @@ public class DateNormalization {
      */
     public static int normalize_year(java.util.Map<String, String> elements) {
 
-        // YEAR   yyyy
-        // YY       yy
-        // YEARYY   yy or yyyy
+        // YEAR yyyy
+        // YY yy
+        // YEARYY yy or yyyy
         String _YEAR = elements.get("YEAR");
-        //boolean _is_4digit = false;
+        // boolean _is_4digit = false;
         boolean _is_year = false;
 
         if (_YEAR != null) {
-            //year = yy;
+            // year = yy;
             return getIntValue(_YEAR);
         }
 
@@ -291,7 +290,7 @@ public class DateNormalization {
         if (_YY != null) {
             year = getIntValue(_YY);
             // NOTE: because we matched a YY field, this should ideally be in
-            //    an explicity format.
+            // an explicity format.
             _is_year = true;
         } else if (_YEARYY != null) {
             if (_YEARYY.startsWith("'")) {
@@ -300,11 +299,12 @@ public class DateNormalization {
             }
 
             if (_YEARYY.length() == 4) {
-                //_is_4digit = true;
+                // _is_4digit = true;
                 _is_year = true;
             } else if (_YEARYY.length() == 2) {
                 // Special case: 00 yields 2000
-                // this check here has no effect, as rule below considers "00" = 0, which is < FUTURE_YY_THRESHOLD
+                // this check here has no effect, as rule below considers "00" = 0, which is <
+                // FUTURE_YY_THRESHOLD
                 if ("00".equals(_YEARYY)) {
                     _is_year = true;
                 }
@@ -319,8 +319,8 @@ public class DateNormalization {
         }
 
         if (year <= FUTURE_YY_THRESHOLD) {
-            // TEST:  '12, '13, ... '15 == yield 2012, 2013, 2015 etc.
-            //   limit is deteremined by current year + fuzzy limit.
+            // TEST: '12, '13, ... '15 == yield 2012, 2013, 2015 etc.
+            // limit is deteremined by current year + fuzzy limit.
             // is '18 2018 or 1918? What is your YY limit?
             //
             year += MILLENIUM;
@@ -332,13 +332,14 @@ public class DateNormalization {
             year += 1900;
         } else if (!_is_year && year > 31 && year <= 99) {
             // Okay its NOT a year
-            //      its NOT a month
-            // so "44" => 1944 is best guess.  not 1844, not 0044...
-            // And to avoid conflict with Month numbers (1-31) the candidate year here is '32 or higher.
+            // its NOT a month
+            // so "44" => 1944 is best guess. not 1844, not 0044...
+            // And to avoid conflict with Month numbers (1-31) the candidate year here is
+            // '32 or higher.
             year += 1900;
         } else if (!_is_year) {
             // Given two digit year that is possible day of month,... ignore!
-            // JUN 17  -- no year given
+            // JUN 17 -- no year given
             // JUN '17 -- is a year
             return INVALID_DATE;
         }
@@ -355,8 +356,8 @@ public class DateNormalization {
      */
     public static int normalize_month(java.util.Map<String, String> elements) throws ParseException {
 
-        //  MM, MONTH  -- numeric 01-12
-        //  MON_ABBREV, MON_NAME  -- text
+        // MM, MONTH -- numeric 01-12
+        // MON_ABBREV, MON_NAME -- text
         //
         String MM = elements.get("MM");
         String MON = elements.get("MONTH");
@@ -383,8 +384,8 @@ public class DateNormalization {
      */
     public static int normalize_month_name(java.util.Map<String, String> elements) throws ParseException {
 
-        //  MM, MONTH  -- numeric 01-12
-        //  MON_ABBREV, MON_NAME  -- text
+        // MM, MONTH -- numeric 01-12
+        // MON_ABBREV, MON_NAME -- text
         //
         String ABBREV = elements.get("MON_ABBREV");
         String NAME = elements.get("MON_NAME");
@@ -397,13 +398,14 @@ public class DateNormalization {
             return INVALID_DATE;
         }
 
-        // How long is a month name really?  May is shortest, Deciembre or September are longest.
+        // How long is a month name really? May is shortest, Deciembre or September are
+        // longest.
         if (text.length() < 3 || text.length() > 11) {
             return INVALID_DATE;
         }
 
         // TODO: Standardize on month trigraph, e.g. ,DEC can get DECEMBER or DECIEMBRE
-        // False positivies:  "market 19" is not "mar 19" or "march 19"
+        // False positivies: "market 19" is not "mar 19" or "march 19"
         //
         DateTime mon = fmt_month.parseDateTime(text.substring(0, 3));
         return mon.getMonthOfYear();
@@ -430,7 +432,7 @@ public class DateNormalization {
         if (day > 0 && day <= 31) {
             return day;
         }
-        if (day==0 || day >31) {
+        if (day == 0 || day > 31) {
             return INVALID_DAY;
         }
 

@@ -52,7 +52,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
     protected static Set<String> includeCountrySet = null;
     protected static boolean includeAll = false;
     protected static String catField = "SplitCategory";
-    //protected static Set<String> stopTerms = null;
+    // protected static Set<String> stopTerms = null;
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected static long rowCount = 0;
     protected static long addCount = 0;
@@ -62,14 +62,11 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
     /**
      * NamedList? in Solr. What a horror. Okay, they work, but...
-     *
      * items found in solrconfig under the gaz update processor script:
-     *
      * include_category -- Tells the update processor which flavors of data to
      * keep category_field -- the field name where a row of data is categorized.
      * countries -- a list of countries to use. stopterms -- a list of terms
      * used to mark rows of data as "search_only"
-     *
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
@@ -78,7 +75,6 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
          * Load the exclusion names -- these are terms that are gazeteer
          * entries, e.g., gazetteer.name = <exclusion term>, that will be marked
          * as search_only = true.
-         *
          */
         try {
             termFilter = new TagFilter();
@@ -102,9 +98,9 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
         List<String> ic = (List<String>) p.get("include_category"); // array of
 
-        /* Optional: filter entries with a category list
-        *
-        */
+        /*
+         * Optional: filter entries with a category list
+         */
         // String
         if (ic != null) {
             logger.debug(logTag + "Found CAT={}", ic);
@@ -118,8 +114,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             logger.error(logTag + "No category found.");
         }
 
-        /* Optional: filter entries with a country list
-         *
+        /*
+         * Optional: filter entries with a country list
          */
         List<String> cc = (List<String>) p.get("countries");
         if (cc != null) {
@@ -150,6 +146,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
     /**
      * Test for short WWWW NNNN alphanumeric coded stuff.
+     *
      * @param nm
      * @param feat
      * @return
@@ -247,7 +244,8 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
             boolean search_only = false;
 
-            /* Trivially short ASCII names are not good for tagging. 
+            /*
+             * Trivially short ASCII names are not good for tagging.
              * But do not mark codes as search only.
              */
             String nm2 = nm.replace(".", "").trim();
@@ -266,8 +264,11 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 }
             }
 
-            /* Pattern: Short word followed by digit. XXXX NNN
-             * Approximately one word of text  Ignore things that are not major places - adm or ppl */
+            /*
+             * Pattern: Short word followed by digit. XXXX NNN
+             * Approximately one word of text Ignore things that are not major places - adm
+             * or ppl
+             */
             if (!search_only && nm2.length() <= 8) {
                 search_only = ignoreShortAlphanumeric(nm2, SolrUtil.getString(doc, "feat_class"));
             }
@@ -277,7 +278,6 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
              * convert to non-diacritic form, then lower case result. If result
              * is a stop term or exclusion term then it should be tagged
              * search_only
-             *
              */
             if (!search_only && nm.length() < 15) {
                 String nameNonDiacrtic = TextUtils.replaceDiacritics(nm).toLowerCase();
@@ -319,37 +319,32 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
             ++addCount;
 
             // pass it up the chain
-            logger.debug("Added DOC="+doc.getFieldValue("name"));
+            logger.debug("Added DOC=" + doc.getFieldValue("name"));
             super.processAdd(cmd);
         }
 
         /**
          * Parse off country codes that duplicate information in ADM boundary
          * code.
-         *
          * MX19 => '19', is sufficient. In cases where FIPS/ISO codes differ
          * (almost all!), then this is significant.
-         *
          * Searchability: use has to know that ADM1 code is using a given
          * standard. e.g., adm1 = 'IZ08', instead of the more flexible, cc='IQ',
          * adm1='08'
-         *
          * Hiearchical/Lexical organization: CC.ADM1 is useful to organize data,
          * but without this normalization, you might have 'IQ.IZ08' -- which is
          * not wrong, just confusing. IQ.08 is a little easier to parse.
-         *
          * So for now, the given Gazetteer entries are remapped to ISO coding.
-         *
          * Recommendation: we standardize on ISO country codes where possible.
          *
          * @param d
-         *            the gazetteer solr document.
+         *              the gazetteer solr document.
          * @param field
-         *            name of an ADMn field, ADM1, ADM2...etc.
+         *              name of an ADMn field, ADM1, ADM2...etc.
          * @param cc
-         *            ISO country code
+         *              ISO country code
          * @param fips
-         *            FIPS country code
+         *              FIPS country code
          */
         private void scrubCountryCode(SolrInputDocument d, String field, String cc, String fips) {
             String adm = SolrUtil.getString(d, field);
@@ -371,7 +366,6 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
 
             /*
              * Strip off FIPS.ADM1
-             *
              */
             if (adm.startsWith(fips)) {
                 d.setField(field, adm.substring(fips.length()));

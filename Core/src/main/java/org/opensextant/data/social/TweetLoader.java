@@ -16,14 +16,13 @@ import jodd.json.JsonParser;
 public class TweetLoader {
     /**
      * The internals of parsing a JSON file of tweets.
-     * 
      * You provide the receiver logic using JSONListener:
-     * 
+     *
      * <pre>
      *    myListener = JSONListener(){  readObject( String or JSON map); }
-     *    
+     *
      *    TweetLoader.readJSONByLine(file, myListener)
-     *    </pre>
+     * </pre>
      */
 
     public static int MAX_ERROR_COUNT = 100;
@@ -31,7 +30,7 @@ public class TweetLoader {
     /**
      * To read gzip/JSON files one row of JSON at a time.
      * This will tolerate up to MAX_ERROR_COUNT for parsing data files...
-     * 
+     *
      * @param jsonFile
      * @param ingester
      * @throws IOException
@@ -55,7 +54,6 @@ public class TweetLoader {
                 }
                 /*
                  * control logic. If reader/ingester is done, the close up stream and exit.
-                 * 
                  */
                 if (ingester.isDone()) {
                     break;

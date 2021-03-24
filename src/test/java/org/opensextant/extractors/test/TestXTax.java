@@ -13,21 +13,15 @@ import org.opensextant.util.FileUtility;
 /**
  * Demonstration of XTax - search the 'taxcat' catalog - tag data using the
  * 'taxcat' catalog
- * 
  * Prerequisite -- Build the JRC example catalog per Extraction/XTax/ notes
- * 
  * Run with JVM arg: -Dopensextant.solr=/path/to/your/xponents-solr
- * 
  * where that solr contains the taxcat core
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class TestXTax {
 
     /**
-     * 
-     *
      * @param args the arguments
      * @throws Exception the exception
      */

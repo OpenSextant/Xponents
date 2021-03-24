@@ -13,7 +13,7 @@ public class ProvinceNameSetter extends GeocodeRule {
 
     /**
      * Configure name helper if you want Province name resolution and other things..
-     * 
+     *
      * @throws IOException
      */
     public ProvinceNameSetter(GeonamesUtility geonamesUtil) throws IOException {
@@ -43,6 +43,7 @@ public class ProvinceNameSetter extends GeocodeRule {
     /**
      * Apply a Province name to a chosen place
      */
+    @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate pc : names) {
             if (pc.isFilteredOut()) {

@@ -1,15 +1,15 @@
 /*
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII                  
- * 
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ *
  * OpenSextant/Xponents sub-project
- *      __                              
- *  ___/ /___  ___  ___  ___  __ __ ___ 
+ *      __
+ *  ___/ /___  ___  ___  ___  __ __ ___
  * / _  // -_)/ -_)/ _ \/ -_)/ // // -_)
- * \_,_/ \__/ \__// .__/\__/ \_, / \__/ 
+ * \_,_/ \__/ \__// .__/\__/ \_, / \__/
  *               /_/        /___/
- *               
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII    
- * Copyright 2013, 2019 MITRE Corporation             
+ *
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ * Copyright 2013, 2019 MITRE Corporation
  */
 package org.opensextant.annotations;
 
@@ -18,33 +18,45 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A record is a representation of the raw original. It records a processing date (aka ingest date),
+ * A record is a representation of the raw original. It records a processing
+ * date (aka ingest date),
  * metadata, source ID, record ID, and a payload.
- * 
  * Conventions:
  * <ul>
- * <li>Record Identity is very important in the context of a full pipeline. If you can leverage the
+ * <li>Record Identity is very important in the context of a full pipeline. If
+ * you can leverage the
  * given identity of data, maintain that consistently.
- *
- * MD5 digest or UUID has been used often to create a compact identifier, for examples. If left
- * null, database systems can assign object IDs, but transactional webservices are not typically
- * responsible for generating missing identifiers. The lesson is that we should not ignore the use
- * of identifiers. For Record processing a record ID, if for nothing else, is practical for
+ * MD5 digest or UUID has been used often to create a compact identifier, for
+ * examples. If left
+ * null, database systems can assign object IDs, but transactional webservices
+ * are not typically
+ * responsible for generating missing identifiers. The lesson is that we should
+ * not ignore the use
+ * of identifiers. For Record processing a record ID, if for nothing else, is
+ * practical for
  * debugging and logging.</li>
- * <li>The metadata "attributes" are considered optional, but usually helpful. Record the raw
+ * <li>The metadata "attributes" are considered optional, but usually helpful.
+ * Record the raw
  * metadata as-is when you can.</li>
- * <li>If metadata attributes can be conditioned or normalized easily do that, e.g., tag data with
+ * <li>If metadata attributes can be conditioned or normalized easily do that,
+ * e.g., tag data with
  * ISO2 country code, rather than with country name or FIPS code.</li>
- * <li>The proc_date is usually determined at ingest time; It makes a good shard key for balancing
+ * <li>The proc_date is usually determined at ingest time; It makes a good shard
+ * key for balancing
  * the load of records across distributed storage/database.</li>
- * <li>Record "value" vs. "content": content was intended to capture the textual content of files,
- * knowing that trying to store raw binary content quickly leads to performance problems. For
- * file-based sources (file system/folder crawls, web crawls, etc) content would store a compressed
- * UTF-8 encoded byte-array; Record value would be the filepath to the original. However for
- * non-file based records, the use of .value may make more sense to record the most obvious innate
+ * <li>Record "value" vs. "content": content was intended to capture the textual
+ * content of files,
+ * knowing that trying to store raw binary content quickly leads to performance
+ * problems. For
+ * file-based sources (file system/folder crawls, web crawls, etc) content would
+ * store a compressed
+ * UTF-8 encoded byte-array; Record value would be the filepath to the original.
+ * However for
+ * non-file based records, the use of .value may make more sense to record the
+ * most obvious innate
  * value.</li>
  * </ul>
- * 
+ *
  * @author ubaldino
  */
 public class Record extends DeepEyeData {
@@ -54,14 +66,17 @@ public class Record extends DeepEyeData {
      */
     public String source_id = null;
     /**
-     * a processing date/time key that has as much resolution as you need This is a string because the
-     * lexical sort is likely easier to manage than using actual date/time field with date/time math.
+     * a processing date/time key that has as much resolution as you need This is a
+     * string because the
+     * lexical sort is likely easier to manage than using actual date/time field
+     * with date/time math.
      */
     public String procdate = null;
     public byte[] content = null;
 
     /**
-     * State flags indicate what state of processing the record is in or what processing has been
+     * State flags indicate what state of processing the record is in or what
+     * processing has been
      * applied to it.
      */
     public Map<String, Object> state = null;
@@ -69,9 +84,9 @@ public class Record extends DeepEyeData {
     public int stateMask = 0;
 
     /**
-     * Notes are any text messages you wish to attach to a record DeepEye is not responsible for how
+     * Notes are any text messages you wish to attach to a record DeepEye is not
+     * responsible for how
      * such a buffer is maintained.
-     * 
      * Not indexed.
      */
     public String notes = null;
@@ -137,8 +152,9 @@ public class Record extends DeepEyeData {
     }
 
     /**
-     * "tags" are meant to be used at a data set or collection level. I.e, a source may have records
-     * 
+     * "tags" are meant to be used at a data set or collection level. I.e, a source
+     * may have records
+     *
      * @param s tag string
      */
     public void addCollectionTag(String s) {
@@ -150,7 +166,7 @@ public class Record extends DeepEyeData {
 
     /**
      * Parses the given "a;b;c;..." format of tags into a Set.
-     * 
+     *
      * @param tlist list of tags
      */
     public void addCollectionTags(Collection<String> tlist) {
@@ -167,8 +183,6 @@ public class Record extends DeepEyeData {
     }
 
     /**
-     * 
-     * 
      * @param map list of tags
      */
     public void addCollectionTags(Map<String, Object> map) {

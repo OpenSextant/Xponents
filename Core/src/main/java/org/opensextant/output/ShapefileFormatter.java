@@ -32,7 +32,6 @@ import org.opensextant.processing.ProcessingException;
 public final class ShapefileFormatter extends GISDataFormatter {
 
     /**
-     *
      * @throws ProcessingException
      */
     public ShapefileFormatter() throws ProcessingException {
@@ -43,6 +42,7 @@ public final class ShapefileFormatter extends GISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
+     *
      * @throws Exception on err
      */
     @Override

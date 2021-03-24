@@ -13,18 +13,15 @@ public class NameRule extends GeocodeRule {
     public static String CITY = "QualifiedName.City";
     public static String ADM1 = "QualifiedName.Prov";
     public static String ADM2 = "QualifiedName.Dist";
-    
+
     public static Set<String> P_prefixes = new HashSet<>();
     public static Set<String> A1_suffixes = new HashSet<>();
     public static Set<String> A2_suffixes = new HashSet<>();
 
     static {
-        P_prefixes.addAll(TextUtils.string2list(
-                "town,city,village,hamlet,municipality", ","));
-        A1_suffixes.addAll(TextUtils.string2list(
-                "province,state,prefecture", ","));
-        A2_suffixes.addAll(TextUtils.string2list(
-                "district,county", ","));
+        P_prefixes.addAll(TextUtils.string2list("town,city,village,hamlet,municipality", ","));
+        A1_suffixes.addAll(TextUtils.string2list("province,state,prefecture", ","));
+        A2_suffixes.addAll(TextUtils.string2list("district,county", ","));
 
     }
 
@@ -33,6 +30,7 @@ public class NameRule extends GeocodeRule {
         this.NAME = "QualifiedName";
     }
 
+    @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
             /*
@@ -49,7 +47,7 @@ public class NameRule extends GeocodeRule {
             boolean isPlace = P_prefixes.contains(words[0]);
             boolean isAdmin1 = A1_suffixes.contains(words[words.length - 1]);
             boolean isAdmin2 = A2_suffixes.contains(words[words.length - 1]);
-            if (!isPlace && !isAdmin1 && !isAdmin2){
+            if (!isPlace && !isAdmin1 && !isAdmin2) {
                 // rule does not apply
                 continue;
             }
@@ -75,7 +73,7 @@ public class NameRule extends GeocodeRule {
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
         /*
-         * no-op        
+         * no-op
          */
     }
 

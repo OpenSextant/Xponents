@@ -26,7 +26,6 @@ import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 
 /**
- *
  * @author ubaldino
  */
 public class PatternManager extends RegexPatternManager {
@@ -38,6 +37,7 @@ public class PatternManager extends RegexPatternManager {
 
     /**
      * Pass in InputStream to provide yourself the most flexibility.
+     *
      * @param s io stream
      * @param n name of patterns file
      * @throws IOException
@@ -47,12 +47,11 @@ public class PatternManager extends RegexPatternManager {
     }
 
     /**
-     *
      * @throws IOException
      */
     @Override
     public void initialize(InputStream io) throws IOException {
-        pattern_family_state = new HashMap<Integer, Boolean>();        
+        pattern_family_state = new HashMap<Integer, Boolean>();
         super.initialize(io);
         enable_pattern_family(XTConstants.DATETIME_FAMILY, true);
         enable_pattern_family(XTConstants.MDY_FAMILY, true);
@@ -60,7 +59,6 @@ public class PatternManager extends RegexPatternManager {
     }
 
     /**
-     *
      * @param fam
      * @param rule
      * @param desc
@@ -72,7 +70,6 @@ public class PatternManager extends RegexPatternManager {
     }
 
     /**
-     *
      * @param pat
      * @return
      */
@@ -83,7 +80,6 @@ public class PatternManager extends RegexPatternManager {
     }
 
     /**
-     *
      * @param id
      * @param fam
      * @param text
@@ -110,7 +106,6 @@ public class PatternManager extends RegexPatternManager {
     }
 
     /**
-     *
      * @param fam
      * @param enabled
      */

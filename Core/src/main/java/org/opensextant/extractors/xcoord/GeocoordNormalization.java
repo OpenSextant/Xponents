@@ -42,7 +42,8 @@ public final class GeocoordNormalization {
     private static final boolean DMLON = false;
 
     /**
-     * The match object is normalized, setting the coord_text and other data from parsing "text" and
+     * The match object is normalized, setting the coord_text and other data from
+     * parsing "text" and
      * knowing which pattern family was matched.
      *
      * @param m      match
@@ -52,8 +53,10 @@ public final class GeocoordNormalization {
     public static void normalize_coordinate(GeocoordMatch m, Map<String, TextEntity> groups)
             throws NormalizationException {
 
-        // Hoaky Java 6 issue:  REGEX does not use named groups, so here we map both the value to
-        // a text/offset pair (in groups) and provide just the key/text pairs  (_elements)
+        // Hoaky Java 6 issue: REGEX does not use named groups, so here we map both the
+        // value to
+        // a text/offset pair (in groups) and provide just the key/text pairs
+        // (_elements)
         //
         Map<String, String> fieldValues = new HashMap<String, String>();
         for (String name : groups.keySet()) {
@@ -89,12 +92,12 @@ public final class GeocoordNormalization {
 
             /**
              * DD filters enabled.
-             *
              * To Disable: XCoord.RUNTIME_FLAGS XOR XConstants.DD_FILTERS_ON
              */
             if ((XCoord.RUNTIME_FLAGS & XConstants.DD_FILTERS_ON) > 0) {
                 /**
-                 * With FILTERS ON if lat/lon have no ALPHA hemisphere, i.e., ENSW and if lat/lon text for match
+                 * With FILTERS ON if lat/lon have no ALPHA hemisphere, i.e., ENSW and if
+                 * lat/lon text for match
                  * has no COORD symbology then this is likely not a DD coordinate -- filter out.
                  */
                 if (!ddlon.hemisphere.isAlpha() && !ddlat.hemisphere.isAlpha()) {
@@ -195,8 +198,8 @@ public final class GeocoordNormalization {
                 }
 
             } catch (java.lang.IllegalArgumentException parseErr) {
-                //.debug("Failed to parse MGRS pattern with text=" + m.getText() + " COORD?:"
-                //        + m.coord_text, parseErr);
+                // .debug("Failed to parse MGRS pattern with text=" + m.getText() + " COORD?:"
+                // + m.coord_text, parseErr);
                 // No normalization was possible as this match represents an invalid MGRS value
                 //
                 m.setFilteredOut(true);
@@ -228,7 +231,8 @@ public final class GeocoordNormalization {
     }
 
     /**
-     * Not all pattens might have filters. This "filter_out" implies you should evaluate the
+     * Not all pattens might have filters. This "filter_out" implies you should
+     * evaluate the
      * MatchFilter.stop() method on any implementation.
      *
      * @param m the match
@@ -257,15 +261,13 @@ public final class GeocoordNormalization {
             return true;
         }
 
-        // Apply MGRS filter -- IF static RUNTIME_FLAGS say it is enabled
         if (m.cce_family_id == XConstants.MGRS_PATTERN) {
+            // Apply MGRS filter -- IF static RUNTIME_FLAGS say it is enabled
             if ((XCoord.RUNTIME_FLAGS & XConstants.MGRS_FILTERS_ON) > 0) {
                 return MGRS_FILTER.stop(m);
             }
-        } /**
-           * Apply DMS filter also only if static flags say it is enabled.
-           */
-        else if (m.cce_family_id == XConstants.DMS_PATTERN) {
+        } else if (m.cce_family_id == XConstants.DMS_PATTERN) {
+            // Apply DMS filter also only if static flags say it is enabled. 
             if ((XCoord.RUNTIME_FLAGS & XConstants.DMS_FILTERS_ON) > 0) {
                 return DMS_FILTER.stop(m);
             }
@@ -275,8 +277,10 @@ public final class GeocoordNormalization {
     }
 
     /**
-     * Hueuristic for what style of fields are allowed in valid DD or DM/DMS coordinates. This evaluates
-     * if a lat/lon pair have disparate field specificity. A lat with Deg:Min should not be paired with
+     * Hueuristic for what style of fields are allowed in valid DD or DM/DMS
+     * coordinates. This evaluates
+     * if a lat/lon pair have disparate field specificity. A lat with Deg:Min should
+     * not be paired with
      * a lon with Deg:Min:Sec:Subsec for example.
      *
      * @param lat latitude
@@ -297,14 +301,15 @@ public final class GeocoordNormalization {
             return true;
         }
 
-        // Mismatched.  Degrees or subdegree fields may not be paired up with Second and/or subsecond fields.
+        // Mismatched. Degrees or subdegree fields may not be paired up with Second
+        // and/or subsecond fields.
         //
         if (lat.hasDegrees() && lon.hasSeconds() || lon.hasSeconds() && lat.hasDegrees()) {
             return false;
         }
 
         // This would be non-sensical
-        //  DD.dd  DDD MM.m
+        // DD.dd DDD MM.m
         if (lat.hasSubDegrees() && lon.hasSubMinutes()) {
             return false;
         }
@@ -312,7 +317,7 @@ public final class GeocoordNormalization {
             return false;
         }
 
-        // Okay, you got here,  you have possible SUBDEGRE
+        // Okay, you got here, you have possible SUBDEGRE
 
         return true;
     }

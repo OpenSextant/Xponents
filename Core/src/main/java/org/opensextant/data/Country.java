@@ -44,18 +44,19 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Country metadata provided on this class includes:
  * <ul>
- * <li>ISO-3166 country code 2-char and 3-char forms, aligned with US standard FIPS 10-4 codes 
+ * <li>ISO-3166 country code 2-char and 3-char forms, aligned with US standard
+ * FIPS 10-4 codes
  * </li>
  * <li>Country aliases: nick names, variant names, abbreviations
  * </li>
  * <li>Affiliated territories
  * </li>
- * <li>Timezone and  UTC offset for temporal calculations
+ * <li>Timezone and UTC offset for temporal calculations
  * </li>
  * <li>Primary and Secondary languages
  * </li>
- *</ul>
- * 
+ * </ul>
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class Country extends Place {
@@ -86,9 +87,9 @@ public class Country extends Place {
      * as the Place.name
      *
      * @param iso2
-     *            ISO 2-alpha code for this country
+     *             ISO 2-alpha code for this country
      * @param nm
-     *            Country name
+     *             Country name
      */
     public Country(String iso2, String nm) {
         super(iso2, nm);
@@ -103,22 +104,22 @@ public class Country extends Place {
     /**
      * Return name normalized, e.g., lowercase, w/out diacritics. 's, etc.
      */
+    @Override
     public String getNamenorm() {
         return namenorm;
     }
 
     /**
      * Country is also known as some list of aliases
-     * 
+     *
      * @param nm
-     *            Country name/alias
+     *           Country name/alias
      */
     public void addAlias(String nm) {
         aliases.add(nm);
     }
 
     /**
-     *
      * @return set of aliases
      */
     public Set<String> getAliases() {
@@ -126,13 +127,15 @@ public class Country extends Place {
     }
 
     /**
-     * Add a timezone and its offset. TZ labels vary, so variant labels are tracked as well.
+     * Add a timezone and its offset. TZ labels vary, so variant labels are tracked
+     * as well.
      * uppercase, lowercase
-     * 
+     *
      * @param label
-     *            TZ label
+     *                  TZ label
      * @param utcOffset
-     *            floating point UTC offset in decimal hours. e.g., 7.5, -3.0 = (GMT-0300), etc.
+     *                  floating point UTC offset in decimal hours. e.g., 7.5, -3.0
+     *                  = (GMT-0300), etc.
      */
     public void addTimezone(String label, double utcOffset) {
         timezones.put(label, utcOffset);
@@ -145,8 +148,9 @@ public class Country extends Place {
     }
 
     /**
-     * Refactor -- use JodaTime and the TZDB more formally. For now, tzdb tracks the timezone metadata.
-     * 
+     * Refactor -- use JodaTime and the TZDB more formally. For now, tzdb tracks the
+     * timezone metadata.
+     *
      * @param tz - Country.TZ object
      */
     public void addTimezone(TZ tz) {
@@ -182,11 +186,12 @@ public class Country extends Place {
 
         /**
          * Parse error will be thrown on invalid data.
-         * Nulls or empty fields are allowable.  
+         * Nulls or empty fields are allowable.
+         *
          * @param l   timezone label
-         * @param utc  UTC offset
-         * @param dst  UTC offset for Daylight savings
-         * @param raw  UTC offset
+         * @param utc UTC offset
+         * @param dst UTC offset for Daylight savings
+         * @param raw UTC offset
          */
         public TZ(String l, String utc, String dst, String raw) {
             label = l;
@@ -204,15 +209,15 @@ public class Country extends Place {
             return Double.parseDouble(v);
         }
 
+        @Override
         public String toString() {
             return String.format("%s %1.1f, %1.1f", label, utcOffset, dstOffset);
         }
     }
 
     /**
-     * 
      * @param tz
-     *            any reasonable TZ label. Case-insensitive.
+     *           any reasonable TZ label. Case-insensitive.
      * @return true if Country has this TZ
      */
     public boolean containsTimezone(String tz) {
@@ -226,9 +231,9 @@ public class Country extends Place {
      * Test if this Country contains the UTC offset. Make sure you never
      * pass a default of 0 (GMT+0) in, unless you really mean GMT0.
      * No validation on your offset parameter is done.
-     * 
+     *
      * @param offset
-     *            UTC offset in hours. Valid values are -12.0 to 12.0
+     *               UTC offset in hours. Valid values are -12.0 to 12.0
      * @return true if this Country contains the UTC offset.
      */
     public boolean containsUTCOffset(double offset) {
@@ -251,16 +256,15 @@ public class Country extends Place {
 
     /**
      * Country is also known as some list of aliases
-     * 
+     *
      * @param regionid
-     *            Region identifier or name.
+     *                 Region identifier or name.
      */
     public void addRegion(String regionid) {
         regions.add(regionid);
     }
 
     /**
-     *
      * @return set of regions in which this country belongs.
      */
     public Set<String> getRegions() {
@@ -291,10 +295,11 @@ public class Country extends Place {
 
     /**
      * When adding languages, please add the primary language FIRST.
-     * Languages may be langID or langID+locale. TODO: add separate attributes for locales.
-     * 
+     * Languages may be langID or langID+locale. TODO: add separate attributes for
+     * locales.
+     *
      * @param langid
-     *            language
+     *               language
      */
     public void addLanguage(String langid) {
         if (!languagesSet.contains(langid)) {
@@ -304,9 +309,8 @@ public class Country extends Place {
     }
 
     /**
-     * 
      * @param langid
-     *            language ID
+     *               language ID
      * @return if language (identified by ID l) is spoken
      */
     public boolean isSpoken(String langid) {
@@ -317,9 +321,11 @@ public class Country extends Place {
     }
 
     /**
-     * Certain island nations, areas, and territories that have ISO country codes may not have a language.
-     * 
-     * @return first language in languages list (per addLanguage()); null if no languages present.
+     * Certain island nations, areas, and territories that have ISO country codes
+     * may not have a language.
+     *
+     * @return first language in languages list (per addLanguage()); null if no
+     *         languages present.
      */
     public String getPrimaryLanguage() {
         if (languages.size() > 0) {
@@ -329,7 +335,6 @@ public class Country extends Place {
     }
 
     /**
-     * 
      * @param langid lang ID string
      * @return true if language given matches primary language
      */
@@ -342,7 +347,6 @@ public class Country extends Place {
     }
 
     /**
-     * 
      * @return collection of language IDs -- some may be unknown langIDs.
      */
     public Collection<String> getLanguages() {
@@ -350,11 +354,12 @@ public class Country extends Place {
     }
 
     /**
-     * A full list/map of all timezone labels mapped to UTC offsets present in this country.
-     * 
-     * Reference: geonames.org timezone table has timezones.txt; See our GeonamesUtility for how
+     * A full list/map of all timezone labels mapped to UTC offsets present in this
+     * country.
+     * Reference: geonames.org timezone table has timezones.txt; See our
+     * GeonamesUtility for how
      * data is populated here on Country object.
-     * 
+     *
      * @return map of TZ labels to UTC offsets.
      */
     public Map<String, Double> getAllTimezones() {
@@ -363,6 +368,7 @@ public class Country extends Place {
 
     /**
      * Return the full list of TZ.
+     *
      * @return full list of TZ as hashmap
      */
     public Map<String, TZ> getTZDatabase() {
@@ -379,9 +385,10 @@ public class Country extends Place {
 
     /**
      * Territory ownership is defined only by the data fed to this API;
-     * We do not make any political statements here. You can change the underlying flat file data
+     * We do not make any political statements here. You can change the underlying
+     * flat file data
      * country-names-xxxx.csv anyway you want.
-     * 
+     *
      * @param n name of country or territory
      * @return true if this country owns the named territory.
      */
@@ -399,8 +406,9 @@ public class Country extends Place {
     /**
      * List the territories for this country.
      * Returns an empty list if no territories associated.
-     * 
-     * @return list of Territories, that are Country objects flagged with isTerritory = true
+     *
+     * @return list of Territories, that are Country objects flagged with
+     *         isTerritory = true
      */
     public Collection<Country> getTerritories() {
         return territories;

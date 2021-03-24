@@ -13,13 +13,11 @@ import jodd.json.JsonArray;
 import jodd.json.JsonObject;
 
 /**
- * 
  * @author ubaldino
- *
  */
 public class TweetUtility {
 
-    private final static String JSON_NULL = "null";
+    private static final String JSON_NULL = "null";
 
     public static boolean isValue(String str) {
         return StringUtils.isNotBlank(str) && !JSON_NULL.equalsIgnoreCase(str);
@@ -30,9 +28,10 @@ public class TweetUtility {
     }
 
     /**
-     * Objective of this is to create a FLAT key/value map for a JSON or a simple HashMap to use.
+     * Objective of this is to create a FLAT key/value map for a JSON or a simple
+     * HashMap to use.
      *
-     * @param tw tweet obj
+     * @param tw         tweet obj
      * @param includeGeo include geo* fields
      * @param formatDate true if date should be in both text and epoch
      * @return JSON
@@ -89,7 +88,7 @@ public class TweetUtility {
          * UTC offset happens to be the only integer value.
          * special "unset" value is used here. Offset is in seconds
          */
-        if (tw.utcOffset != Tweet.UNSET_UTC_OFFSET) {
+        if (tw.utcOffset != Message.UNSET_UTC_OFFSET) {
             o.put("utc_offset", tw.utcOffset);
         }
 
@@ -118,19 +117,17 @@ public class TweetUtility {
             o.put("mentions", arr);
         }
 
-        /*Tweet geo:
-         * 
+        /*
+         * Tweet geo:
          * geo-name
          * geo-cc
          * lat
          * lon
-         * 
          * User geo:
          * ugeo-name
          * ugeo-cc
          * ulat
          * ulon
-         * 
          */
         if (includeGeo) {
 
@@ -154,7 +151,7 @@ public class TweetUtility {
 
     /**
      * TOOD: validate available data for this schema.
-     * 
+     *
      * @param o
      * @param geo
      * @param isUser
@@ -164,7 +161,8 @@ public class TweetUtility {
             return;
         }
 
-        // Name of a place or city.  If its a fictitious city, it may have other metadata.
+        // Name of a place or city. If its a fictitious city, it may have other
+        // metadata.
         // If only name given is just a country name, then only -cc is saved.
         if (isValue(geo.getPlaceName())) {
             o.put(isUser ? "ugeo-name" : "geo-name", geo.getPlaceName());
@@ -196,8 +194,8 @@ public class TweetUtility {
 
     /**
      * TOOD: validate available data for this schema.
-     * 
-     * @param attrs given attributes
+     *
+     * @param attrs  given attributes
      * @param isUser if attributes represent user profile
      * @return geocoding object populated with attribute data
      */
@@ -265,9 +263,9 @@ public class TweetUtility {
     /**
      * Serialize a user screen name / ID pairing., e.g. a mention of a friend.
      * If just screen name or ID is available, then each item is added separately.
-     * 
-     * @param a target array
-     * @param u user name
+     *
+     * @param a  target array
+     * @param u  user name
      * @param id mention
      */
     public static void insertMention(final JsonArray a, final String u, final String id) {

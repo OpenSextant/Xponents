@@ -38,18 +38,18 @@ import org.opensextant.util.TextUtils;
 
 /**
  * Place class represents all the metadata about a location.
- * Such location could be static data such as that in the gazetteer or something dynamic or fabricated on the fly. 
- * 
+ * Such location could be static data such as that in the gazetteer or something
+ * dynamic or fabricated on the fly.
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  * @author David P. Lutz, MITRE, dlutz at mitre dot org
  */
-public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
+public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding {
 
     /**
      * For normalization purposes tracking the Province may be helpful.
      * Coordinate and Place both share this common field. However no need to
      * create an intermediate parent-class yet.
-     *
      * Province is termed ADM1 -- or the first level of administrative boundary
      */
     protected String admin1 = null;
@@ -69,7 +69,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
      * Creates a new instance of Geobase
      *
      * @param placeId primary key or ID for this place
-     * @param nm place name
+     * @param nm      place name
      */
     public Place(String placeId, String nm) {
         super(placeId, null);
@@ -95,9 +95,10 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     protected char name_type = 0;
 
     private boolean isAbbreviation = false;
+
     public void setName_type(char t) {
         name_type = t;
-        isAbbreviation = GeonamesUtility.isAbbreviation(name_type);        
+        isAbbreviation = GeonamesUtility.isAbbreviation(name_type);
     }
 
     public char getName_type() {
@@ -108,9 +109,10 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     /**
      * Set the country object and the local country ID code.
-     * 
+     *
      * @param c Country object which contains or is associated with this Place.
      */
+    @Override
     public void setCountry(Country c) {
         country = c;
         if (country != null) {
@@ -120,7 +122,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     /**
      * get the country object; generally optional.
-     * 
+     *
      * @return the country object.
      */
     public Country getCountry() {
@@ -134,10 +136,11 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     /**
      * Compat: set country_id aka CountryCode
-     * 
+     *
      * @param cc a country code. Caller's choice as far as code code standard
-     *            used.
+     *           used.
      */
+    @Override
     public void setCountryCode(String cc) {
         country_id = cc;
     }
@@ -171,7 +174,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     /**
      * Wrapper around GeoBase.setKey for compat
-     * 
+     *
      * @param id place identity
      */
     public final void setPlaceID(String id) {
@@ -183,6 +186,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
         return getKey();
     }
 
+    @Override
     public final void setPlaceName(String nm) {
         setName(nm);
         if (this.name != null) {
@@ -190,7 +194,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
                 isASCIIName = TextUtils.isASCII(TextUtils.removePunctuation(getName()));
             } catch (Exception err) {
                 // Prefer not to silence errors here
-                // TODO: throw exception for name normalization and related name parsing. 
+                // TODO: throw exception for name normalization and related name parsing.
                 isASCIIName = false;
             }
 
@@ -235,7 +239,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     /**
      * Get the original source of this information.
-     * 
+     *
      * @return source gazetteer
      */
     public String getSource() {
@@ -281,7 +285,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * if feature class for this location is 'P' for populated place. TODO: Not
      * sure if this is part of Geocoding interface.
-     * 
+     *
      * @return true if feature class is typically populated
      */
     public boolean isPopulated() {
@@ -314,7 +318,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * The name bias is a measure of the a priori likelihood that a mention of
      * this place's name actually refers to a place.
-     * 
+     *
      * @return name bias
      */
     public Double getName_bias() {
@@ -322,7 +326,6 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     }
 
     /**
-     *
      * @param bias name bias, float
      */
     public void setName_bias(Double bias) {
@@ -332,7 +335,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * The ID bias is a measure of the a priori likelihood that a mention of
      * this name refers to this particular place.
-     * 
+     *
      * @return identity bias
      */
     public Double getId_bias() {
@@ -340,7 +343,6 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     }
 
     /**
-     *
      * @param bias identity bias
      */
     public void setId_bias(Double bias) {
@@ -364,7 +366,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * With multiple data sources there is no standard way of saying this place
      * == that place. So we compare features, locations, Ids, etc.
-     * 
+     *
      * @param other another Place
      * @return 1 if other is greater than current; 0 if equal, -1 if lesser
      */
@@ -378,7 +380,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
             return -1;
         }
 
-        // Geohash: Same general location?  Use 6 chars of geohash to get 2-3 KM resolution.
+        // Geohash: Same general location? Use 6 chars of geohash to get 2-3 KM
+        // resolution.
         if (other.hasCoordinate() && hasCoordinate()) {
             String g1 = geohash(other);
             String g2 = getGeohash();
@@ -402,13 +405,14 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
      *
      * @param prec, meters of error
      */
+    @Override
     public void setPrecision(int prec) {
         precision = prec;
     }
 
     /**
      * Get the relative precision of this feature; in meters of error
-     * 
+     *
      * @see setPrecision
      * @return precision, meters of error.
      */
@@ -423,6 +427,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
 
     protected String method = null;
 
+    @Override
     public void setMethod(String m) {
         method = m;
     }
@@ -445,9 +450,8 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     }
 
     /**
-     *
      * @param admName name of the administrative boundary that contains this
-     *            place.
+     *                place.
      */
     public void setAdminName(String admName) {
         this.adminName = admName;
@@ -502,6 +506,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
     /**
      * State-level postal code, the corresponds usually to ADM1
      */
+    @Override
     public String getAdmin1PostalCode() {
         return admin1PostalCode;
     }
@@ -510,6 +515,7 @@ public class Place extends GeoBase implements /*Comparable<Place>,*/ Geocoding {
      * City-level postal code, that may be something like a zip. Thinking
      * world-wide, not everyone calls these zipcodes, as in the US.
      */
+    @Override
     public String getPlacePostalCode() {
         return placePostalCode;
     }

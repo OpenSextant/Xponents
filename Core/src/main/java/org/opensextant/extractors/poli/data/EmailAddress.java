@@ -22,7 +22,7 @@ public class EmailAddress extends PoliMatch {
     @Override
     public void normalize() {
         super.normalize();
-        
+
         String name = this.match_groups.get("email_local_name");
         String domain = this.match_groups.get("email_domain");
 
@@ -31,16 +31,17 @@ public class EmailAddress extends PoliMatch {
             setFilteredOut(true);
             return;
         }
-        // Avoid loose definition of pattern should "a@b" match, it is not allowed. Length checks are important.
+        // Avoid loose definition of pattern should "a@b" match, it is not allowed.
+        // Length checks are important.
         // MAX length is assumed covered by pattern definition.
-        if (name.length()<2 || domain.length()<2) {
+        if (name.length() < 2 || domain.length() < 2) {
             setFilteredOut(true);
-            return;            
+            return;
         }
         if (domain.contains("..") || name.contains("..")) {
-            // Allowed only if respective part is quoted, e.g.,  "name..name"
+            // Allowed only if respective part is quoted, e.g., "name..name"
             setFilteredOut(true);
-            return;                        
+            return;
         }
     }
 }

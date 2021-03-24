@@ -19,9 +19,7 @@ package org.opensextant.extractors.xcoord;
 /**
  * Filtering matches is a matter of practicality.
  * This does not validate matches, per se
- *
  * You can implement this interface as a ValidationFilter(?)
- *
  * Implementer is left to choose if pass or stop is implemented;
  * ideally, pass(m) == !stop(m)
  *
@@ -29,13 +27,17 @@ package org.opensextant.extractors.xcoord;
  */
 public interface GeocoordMatchFilter {
 
-    /** pass a match
+    /**
+     * pass a match
+     *
      * @param m match
      * @return true if instance m is valid coordinate
      */
     boolean pass(GeocoordMatch m);
 
-    /** stop a match
+    /**
+     * stop a match
+     *
      * @param m match
      * @return true if instance m is NOT valid coordinate
      */

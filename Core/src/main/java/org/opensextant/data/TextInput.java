@@ -17,29 +17,34 @@
 package org.opensextant.data;
 
 /**
- * TextInput is a unit of data -- a tuple that represents the text and its language and an identifier
- * for downstream processing, export formatting, databasing results keyed by text identifier, etc.  
- * 
+ * TextInput is a unit of data -- a tuple that represents the text and its
+ * language and an identifier
+ * for downstream processing, export formatting, databasing results keyed by
+ * text identifier, etc.
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TextInput {
     public String buffer = null;
     public String id = null;
     public String langid = null;
-    /** writable flags that represent some basic assement of your input text. Default is mixed case where text
+    /**
+     * writable flags that represent some basic assement of your input text. Default
+     * is mixed case where text
      * is neither upper or lower.
      */
     public boolean isLower = false;
     public boolean isUpper = false;
 
-    /** A simple input.
+    /**
+     * A simple input.
      * If this input is to be used with the normal OpenSextant pipelines, the caller
      * must ensure the input text is UTF-8 encoded content.
      *
      * @param tid any identifier for the text buffer
      * @param buf any textual content; any format or encoding.
      */
-    public TextInput(String tid, String buf){
+    public TextInput(String tid, String buf) {
         this.id = tid;
         this.buffer = buf;
     }

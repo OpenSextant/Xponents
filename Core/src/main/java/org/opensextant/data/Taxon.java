@@ -23,18 +23,24 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A Taxon is an entry in a taxonomy, which could be as simple as a flat word list
- * or something with lots of structure.  The name attribute represents the hierarchical path for the Taxon.
+ * A Taxon is an entry in a taxonomy, which could be as simple as a flat word
+ * list
+ * or something with lots of structure. The name attribute represents the
+ * hierarchical path for the Taxon.
  * <ul>
  * <li>
- * "terms" are the phrases you wish to find in free text. This is the common vernacular that implies this taxon or concept.
- * e.g., "la piña" may be a term that we want to file under <code>"fruits.tropical.pineapple"</code>
+ * "terms" are the phrases you wish to find in free text. This is the common
+ * vernacular that implies this taxon or concept.
+ * e.g., "la piña" may be a term that we want to file under
+ * <code>"fruits.tropical.pineapple"</code>
  * </li>
  * <li>
- * "tags" are any metadata items associated with the terms or the taxon, e.g., source of terms, database identifier, 
+ * "tags" are any metadata items associated with the terms or the taxon, e.g.,
+ * source of terms, database identifier,
  * language of terms, contributing staff
  * </li>
- * </ul> 
+ * </ul>
+ *
  * @author ubaldino
  */
 public class Taxon {
@@ -85,9 +91,9 @@ public class Taxon {
     }
 
     public boolean hasTags() {
-        return (tagset!=null);
+        return (tagset != null);
     }
-    
+
     public void addTags(List<String> tlist) {
         if (tlist == null) {
             return;

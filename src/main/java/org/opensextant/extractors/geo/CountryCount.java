@@ -4,9 +4,8 @@ import org.opensextant.data.Country;
 
 /**
  * Country metrics
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class CountryCount {
     public int count = 1;
@@ -16,8 +15,10 @@ public class CountryCount {
 
     /**
      * given a total number of ALL country mentions,
-     * you can derive a ratio, e.g., text ABC is 45% about country1, 34% about country2, etc.
-     * Set total attribute before calling this. 
+     * you can derive a ratio, e.g., text ABC is 45% about country1, 34% about
+     * country2, etc.
+     * Set total attribute before calling this.
+     *
      * @return double
      */
     public double getRatio() {
@@ -25,7 +26,8 @@ public class CountryCount {
         return ratio;
     }
 
+    @Override
     public String toString() {
-        return String.format("%s (%d or %03.1f pct)", country.getCountryCode(), count, 100*getRatio());
+        return String.format("%s (%d or %03.1f pct)", country.getCountryCode(), count, 100 * getRatio());
     }
 }

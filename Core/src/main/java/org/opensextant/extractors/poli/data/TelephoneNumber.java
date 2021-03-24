@@ -20,7 +20,6 @@ import org.opensextant.extractors.poli.PoliMatch;
 import org.opensextant.util.TextUtils;
 
 /**
- *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TelephoneNumber extends PoliMatch {

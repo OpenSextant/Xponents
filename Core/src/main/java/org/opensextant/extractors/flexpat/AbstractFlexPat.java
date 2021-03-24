@@ -17,8 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * FlexPat Extractor -- given a set of pattern families, extract, filter and normalize matches.
- * 
+ * FlexPat Extractor -- given a set of pattern families, extract, filter and
+ * normalize matches.
+ *
  * @author ubaldino
  */
 public abstract class AbstractFlexPat implements Extractor {
@@ -46,13 +47,12 @@ public abstract class AbstractFlexPat implements Extractor {
     /**
      * Create a pattern manager given the input stream and the file name.
      *
-     * @param s stream of patterns config file
+     * @param s    stream of patterns config file
      * @param name app name
      * @return the regex pattern manager
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    protected abstract RegexPatternManager createPatternManager(InputStream s, String name)
-            throws IOException;
+    protected abstract RegexPatternManager createPatternManager(InputStream s, String name) throws IOException;
 
     public RegexPatternManager getPatternManager() {
         return patterns;
@@ -60,6 +60,7 @@ public abstract class AbstractFlexPat implements Extractor {
 
     /**
      * Configures whatever default patterns file is named.
+     *
      * @throws ConfigException config error, pattern file not found
      */
     @Override
@@ -129,11 +130,10 @@ public abstract class AbstractFlexPat implements Extractor {
     /**
      * Optional. Assign an identifier to each Text Match found. This is an MD5
      * of the match in-situ. If context is provided, it is used to generate the
-     * identity.  If a count is provided it is used.
-     *
+     * identity. If a count is provided it is used.
      * otherwise make use of just pattern ID + text value.
      *
-     * @param m a TextMatch
+     * @param m     a TextMatch
      * @param count incrementor used for uniqueness
      */
     protected void set_match_id(TextMatch m, int count) {
@@ -141,8 +141,7 @@ public abstract class AbstractFlexPat implements Extractor {
             if (m.getContextBefore() == null) {
                 m.match_id = TextUtils.text_id(String.format("%s,%s", m.pattern_id, m.getText()));
             } else if (count >= 0) {
-                m.match_id = TextUtils.text_id(String.format("%s,%s,%d", m.pattern_id, m.getText(),
-                        count));
+                m.match_id = TextUtils.text_id(String.format("%s,%s,%d", m.pattern_id, m.getText(), count));
             } else {
                 StringBuilder abc = new StringBuilder();
                 abc.append(m.getContextBefore());

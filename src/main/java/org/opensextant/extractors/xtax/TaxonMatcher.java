@@ -58,17 +58,19 @@ import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.util.SolrProxy;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 
 /**
- * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents. The phrases can be from
- * simple word lists or they can connect to a taxonomy of sorts -- the "taxcat" solr core (see
+ * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents. The
+ * phrases can be from
+ * simple word lists or they can connect to a taxonomy of sorts -- the "taxcat"
+ * solr core (see
  * Xponents/solr/taxcat and Xponents/XTax for implementation)
- *
- * JVM arg to use is "opensextant.solr" to point to the local path Less tested: solr.solr.home might
- * conflict with a Solr document server instead of this tagger. solr.url is good for RESTful
+ * JVM arg to use is "opensextant.solr" to point to the local path Less tested:
+ * solr.solr.home might
+ * conflict with a Solr document server instead of this tagger. solr.url is good
+ * for RESTful
  * integration, but not recommended
  *
  * @author Marc Ubaldino - ubaldino@mitre.org
@@ -100,7 +102,6 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     // private ProgressMonitor progressMonitor;
 
     /**
-     *
      * @throws IOException
      * @throws ConfigException
      */
@@ -136,8 +137,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     /**
      * Create a Taxon tag, which is filtered based on established catalog filters.
-     *
-     * Caller must implement their domain objects, POJOs... this callback handler only hashes them.
+     * Caller must implement their domain objects, POJOs... this callback handler
+     * only hashes them.
      *
      * @param refData solr doc
      * @return tag data
@@ -145,7 +146,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     @Override
     public Object createTag(SolrDocument refData) {
 
-        String _cat = SolrProxy.getString(refData, "catalog");
+        String _cat = SolrUtil.getString(refData, "catalog");
 
         // Filter out unused matching records.
         if (!tagAll && !this.catalogs.contains(_cat)) {
@@ -164,7 +165,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     /**
      * Parse the taxon reference data from a solr doc and return Taxon obj.
-     * 
+     *
      * @param refData solr doc
      * @return taxon obj
      */
@@ -223,7 +224,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Catalogs is a list of catalogs caller wants to tag for. If set, only taxon matches with the
+     * Catalogs is a list of catalogs caller wants to tag for. If set, only taxon
+     * matches with the
      * catalog ID in this list will be returned by tagText()
      */
     public Set<String> catalogs = new HashSet<String>();
@@ -250,9 +252,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     private TaxonFilter ruleFilter = new TaxonFilter();
 
     /**
-     * Add prefixes of types of taxons you do not want returned. e.g., "Place...." // exlclude will
+     * Add prefixes of types of taxons you do not want returned. e.g., "Place...."
+     * // exlclude will
      * allow "Org" and "Person" taxons to pass on thru
-     * 
+     *
      * @param prefix
      */
     public void excludeTaxons(String prefix) {
@@ -260,9 +263,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     * Light-weight usage: text in, matches out. Behaviors: ACRONYMS matching lower case terms will
+     * Light-weight usage: text in, matches out. Behaviors: ACRONYMS matching lower
+     * case terms will
      * automatically be omitted from results.
-     * 
+     *
      * @return Null if nothing found, otherwise a list of TextMatch objects
      */
     @Override
@@ -271,27 +275,26 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     /**
-     *
      * @param id  doc id
      * @param buf input text
      * @return list of matches or Null
      * @throws ExtractionException
      */
     private List<TextMatch> extractorImpl(String id, String buf) throws ExtractionException {
-        /* Implementation notes:
+        /*
+         * Implementation notes:
          * "tags" are instances of the matching text spans from your input buffer
          * "matchingDocs" are records from the taxonomy catalog. They have all the
          * metadata.
-         *
          * tags' ids array are pointers into matchingDocs, by Solr record ID.
-         *
          * "tagsCount":10, "tags":[
-         *   { "ids":[35], "endOffset":40, "startOffset":38},
-         *   { "ids":[750308, 2769912, 2770041, 10413973, 10417546], "endOffset":49, "startOffset":41},
+         * { "ids":[35], "endOffset":40, "startOffset":38},
+         * { "ids":[750308, 2769912, 2770041, 10413973, 10417546], "endOffset":49,
+         * "startOffset":41},
          * "matchingDocs":{
-         *   "numFound":75, "start":0,
-         *   "docs":[
-         *      {records matching}]
+         * "numFound":75, "start":0,
+         * "docs":[
+         * {records matching}]
          */
 
         String docid = (id != null ? id : NO_DOC_ID);
@@ -333,7 +336,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
                 continue;
             }
             /*
-             * Set Text and immediately determine if there is some validity 
+             * Set Text and immediately determine if there is some validity
              * to this match
              */
             m.setText(buf.substring(m.start, m.end));
@@ -373,7 +376,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     /**
      * Tag the input
-     * 
+     *
      * @param input TextInput
      * @return array of TextMatch or Null
      * @throws ExtractionException the extraction exception
@@ -418,7 +421,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     /**
      * search the current taxonomic catalog.
-     * 
+     *
      * @param qparams Solr parameters in full.
      * @return list of taxons
      * @throws SolrServerException on err

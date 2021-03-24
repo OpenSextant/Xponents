@@ -27,9 +27,11 @@ import java.util.Set;
 import org.apache.lucene.analysis.core.StopFilterFactory;
 import org.apache.lucene.analysis.util.ResourceLoader;
 
-/** Utility class to help access Lucene stop words, mainly as they exist in Solr index
- * stopword files are in either list form or snowball format.  getStopwords()
- */ 
+/**
+ * Utility class to help access Lucene stop words, mainly as they exist in Solr
+ * index
+ * stopword files are in either list form or snowball format. getStopwords()
+ */
 public class LuceneStopwords {
 
     static Set<String> SNOWBALL_SETS = new HashSet<>();
@@ -42,11 +44,15 @@ public class LuceneStopwords {
     }
 
     /**
-     * Simple wrapper around Lucene resource loading to access Solr-provided stop lists.
-     * @param loader classpath loader
-     * @param givenLang ISO 2-char language ID used by lucene for lang-specific filters (./lang)
+     * Simple wrapper around Lucene resource loading to access Solr-provided stop
+     * lists.
+     *
+     * @param loader    classpath loader
+     * @param givenLang ISO 2-char language ID used by lucene for lang-specific
+     *                  filters (./lang)
      * @return set of stopwords in Lucene API construct
-     * @throws IOException if resource files are not found in classpath (JAR or solr core ./conf/lang/
+     * @throws IOException if resource files are not found in classpath (JAR or solr
+     *                     core ./conf/lang/
      */
     public static Set<Object> getStopwords(ResourceLoader loader, String givenLang) throws IOException {
         String lang = givenLang.toLowerCase();

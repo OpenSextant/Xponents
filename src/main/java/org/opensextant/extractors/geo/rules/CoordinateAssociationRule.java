@@ -80,6 +80,7 @@ public class CoordinateAssociationRule extends GeocodeRule {
         }
     }
 
+    @Override
     public boolean isRelevant() {
         if (coordinates != null) {
             return !coordinates.isEmpty();

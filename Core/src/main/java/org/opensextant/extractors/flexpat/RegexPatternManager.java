@@ -37,21 +37,22 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p >
- * This is the culmination of various date/time extraction efforts in python and Java. This API
- * poses no assumptions on input data or on execution. Features of REGEX patterns file:
+ * This is the culmination of various date/time extraction efforts in python and
+ * Java. This API
+ * poses no assumptions on input data or on execution. Features of REGEX
+ * patterns file:
  * <ul>
  * <li>DEFINE - a component of a pattern to match</li>
  * <li>RULE - a complete pattern to match</li>
  * </ul>
- * This work started in Java 6 and has the limitation of Java 6 Regex, mainly that there are no
+ * This work started in Java 6 and has the limitation of Java 6 Regex, mainly
+ * that there are no
  * named groups available in matching.
- *
  * <p >
  * See XCoord PatternManager for a good example implementation.
- * 
+ *
  * @author dlutz (lutzdavp)
  * @author ubaldino
- *
  */
 public abstract class RegexPatternManager {
 
@@ -87,7 +88,6 @@ public abstract class RegexPatternManager {
     }
 
     /**
-     *
      * @return collection of patterns
      */
     public Collection<RegexPattern> get_patterns() {
@@ -105,7 +105,8 @@ public abstract class RegexPatternManager {
     }
 
     /**
-     * Implementation must create a RegexPattern given the basic RULE define, #RULE FAMILY RID REGEX
+     * Implementation must create a RegexPattern given the basic RULE define, #RULE
+     * FAMILY RID REGEX
      * PatternManager here adds compiled pattern and DEFINES.
      *
      * @param fam  family
@@ -116,7 +117,8 @@ public abstract class RegexPatternManager {
     protected abstract RegexPattern create_pattern(String fam, String rule, String desc);
 
     /**
-     * Implementation has the option to check a pattern; For now invalid patterns are only logged.
+     * Implementation has the option to check a pattern; For now invalid patterns
+     * are only logged.
      *
      * @param pat pattern object
      * @return true if pattern is valid
@@ -124,7 +126,8 @@ public abstract class RegexPatternManager {
     protected abstract boolean validate_pattern(RegexPattern pat);
 
     /**
-     * Implementation must create TestCases given the #TEST directive, #TEST RID TID TEXT
+     * Implementation must create TestCases given the #TEST directive, #TEST RID TID
+     * TEXT
      *
      * @param id   pattern id
      * @param fam  pattern family
@@ -141,13 +144,14 @@ public abstract class RegexPatternManager {
     public abstract void enable_pattern(RegexPattern p);
 
     /**
-     * default adapter -- you must override. This should be abstract, but not all pattern managers are
+     * default adapter -- you must override. This should be abstract, but not all
+     * pattern managers are
      * required to support this.
      *
      * @param name pattern name to enable.
      */
     public void enable_patterns(String name) {
-        //throw new Exception("not implemented");
+        // throw new Exception("not implemented");
     }
 
     /**
@@ -168,10 +172,12 @@ public abstract class RegexPatternManager {
     private StringBuilder configMessages = new StringBuilder();
 
     /**
-     * Initializes the pattern manager implementations. Reads the DEFINEs and RULEs from the pattern
-     * file and does the requisite substitutions. After initialization patterns HashMap will be
+     * Initializes the pattern manager implementations. Reads the DEFINEs and RULEs
+     * from the pattern
+     * file and does the requisite substitutions. After initialization patterns
+     * HashMap will be
      * populated.
-     * 
+     *
      * @param io stream
      * @throws IOException if patterns file can not be loaded and parsed
      */
@@ -238,7 +244,7 @@ public abstract class RegexPatternManager {
                     PatternTestCase tc = create_testcase(ruleKey + "#" + testcount, fam, testtext);
                     tc.setRemarks(testtext);
                     // testcount is a count of all tests, not just test within a rule family
-                    //testcases.add(new PatternTestCase(ruleKey + "#" + testcount, fam, testtext));
+                    // testcases.add(new PatternTestCase(ruleKey + "#" + testcount, fam, testtext));
                     testcases.add(tc);
                 } else if (line.startsWith("#CLASS")) {
                     fields = line.split("[\t ]+", 3);
@@ -297,7 +303,7 @@ public abstract class RegexPatternManager {
                 String elementName = tmpRulePattern.substring(elementStart + 1, elementEnd - 1);
                 pat.regex_groups.add(elementName);
 
-                //groupNames.put(tmpRuleName + "-" + groupNum, elementName);
+                // groupNames.put(tmpRuleName + "-" + groupNum, elementName);
                 if (debug) {
                     String subelementPattern = defines.get(elementName);
                     configMessages.append("\n\t");
@@ -308,7 +314,7 @@ public abstract class RegexPatternManager {
 
             for (String tmpDefineName : defines.keySet()) {
 
-                // NOTE:  Use of parens, "(expr)", is required to create groups within a pattern.
+                // NOTE: Use of parens, "(expr)", is required to create groups within a pattern.
                 String tmpDefinePattern = "(" + defines.get(tmpDefineName) + ")";
                 tmpDefineName = "<" + tmpDefineName + ">";
                 // use replace(tok, sub) not replaceAll(re, sub)
@@ -319,8 +325,8 @@ public abstract class RegexPatternManager {
                 configMessages.append("\nrulepattern=" + tmpRulePattern);
             }
 
-            //MCU: slash simplified.
-            //tmpRulePattern = tmpRulePattern.replaceAll("\\", "\\\\");
+            // MCU: slash simplified.
+            // tmpRulePattern = tmpRulePattern.replaceAll("\\", "\\\\");
 
             // at this point rule pattern should have had defines replaced
             // compile and insert into pattern hashmap
@@ -348,7 +354,8 @@ public abstract class RegexPatternManager {
     }// end initialize
 
     /**
-     * Instead of relying on a logging API, we now throw Exceptionsages for real configuration errors,
+     * Instead of relying on a logging API, we now throw Exceptionsages for real
+     * configuration errors,
      * and capture configuration details in a buffer if debug is on.
      *
      * @return the configuration debug
@@ -361,13 +368,16 @@ public abstract class RegexPatternManager {
     }
 
     /**
-     * NOTE: We're dealing with Java6's inability to use named groups. So we have to track FlexPat slots
-     * in line with Matcher fields matched. Essentially this comes down to a simple Name:Offset pairing;
+     * NOTE: We're dealing with Java6's inability to use named groups. So we have to
+     * track FlexPat slots
+     * in line with Matcher fields matched. Essentially this comes down to a simple
+     * Name:Offset pairing;
      * our limitation here is no nesting.
      *
      * @param p       pattern
      * @param matched matcher
-     * @return map containing the matched groups, as deciphered by Flexpat and the definitions in the
+     * @return map containing the matched groups, as deciphered by Flexpat and the
+     *         definitions in the
      *         patterns file
      */
     public Map<String, String> group_map(RegexPattern p, java.util.regex.Matcher matched) {
@@ -409,12 +419,14 @@ public abstract class RegexPatternManager {
     }
 
     /**
-     * This operates on the listed objects, flagging each match as distinct, overlapping with other
+     * This operates on the listed objects, flagging each match as distinct,
+     * overlapping with other
      * match or if it is completely contained within other match.
-     * 
+     *
      * @param matches a list of related matches from a single text
      * @deprecated use MatcherUtils.reduceMatches()
      */
+    @Deprecated
     public static void reduce_matches(List<TextMatch> matches) {
         reduceMatches(matches);
     }

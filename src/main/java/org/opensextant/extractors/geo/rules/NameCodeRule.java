@@ -25,15 +25,11 @@ import org.opensextant.extractors.geo.PlaceEvidence;
 
 /**
  * A rule that associates a CODE with a NAME, when the pattern
- *
  * "NAME, CODE" appears within N characters of each other.
- * 
- * If CODE.adm1 == NAME.adm1 and CODE is an ADM1 boundary, then flag this is significant.
- * 
- * 
+ * If CODE.adm1 == NAME.adm1 and CODE is an ADM1 boundary, then flag this is
+ * significant.
  *
  * @author ubaldino
- *
  */
 public class NameCodeRule extends GeocodeRule {
 
@@ -50,7 +46,7 @@ public class NameCodeRule extends GeocodeRule {
     private final static boolean ignoreShortLowercase(final PlaceCandidate pc) {
         return (pc.isLower() && pc.getLength() < 4);
     }
-    
+
     private final static boolean ignoreMixedCaseAbbreviation(final PlaceCandidate pc) {
         return (pc.isMixedCase() && pc.getLength() < 4);
     }
@@ -67,23 +63,24 @@ public class NameCodeRule extends GeocodeRule {
             }
             /*
              * CASE:
-             *    CODE text....    -(a) CODE is the first match in the doc; No preceeding NAME.      
-             *    ....text NAME    -(b) NAME is last match, no qualifying CODE follows
-             *    ... CODE ....    -(c) CODE is the only match in the doc.
-             *    
-             *    a and c are variations of each other.
-             *    b applies to the match, which may actually be a name or code. But we 
-             *    filter out unattached codes.  Names are left as is.
+             * CODE text.... -(a) CODE is the first match in the doc; No preceeding NAME.
+             * ....text NAME -(b) NAME is last match, no qualifying CODE follows
+             * ... CODE .... -(c) CODE is the only match in the doc.
+             * a and c are variations of each other.
+             * b applies to the match, which may actually be a name or code. But we
+             * filter out unattached codes. Names are left as is.
              */
             boolean isLast = x == names.size() - 1;
 
             boolean canIgnoreName = ignoreShortLowercase(name) || ignoreNonAdminCode(name);
             if (x == 0 || isLast) {
                 /*
-                 * end of line logic.  Either you have a dangling name or code, or you have a single candidate. 
-                 * but we still want to evaluate it.  This is one of the largest sources of noise.
-                 * 
-                 * Evaluate name as if it is the abbreviation, because it is last (or first and only).
+                 * end of line logic. Either you have a dangling name or code, or you have a
+                 * single candidate.
+                 * but we still want to evaluate it. This is one of the largest sources of
+                 * noise.
+                 * Evaluate name as if it is the abbreviation, because it is last (or first and
+                 * only).
                  */
                 if (canIgnoreName) {
                     name.setFilteredOut(true);
@@ -94,7 +91,7 @@ public class NameCodeRule extends GeocodeRule {
                 }
             }
 
-            PlaceCandidate code = names.get(x + 1); /* code or name of admin area*/
+            PlaceCandidate code = names.get(x + 1); /* code or name of admin area */
             if (code.isFilteredOut()) {
                 continue;
             }
@@ -116,7 +113,8 @@ public class NameCodeRule extends GeocodeRule {
              */
             if ((code.start - name.end) > MAX_CHAR_DIST) {
                 boolean canIgnoreCode = canIgnoreShortCode || ignoreNonAdminCode(code);
-                // And so we have NAME xxxx CODE, where CODE is clearly not attached to NAME lexically.
+                // And so we have NAME xxxx CODE, where CODE is clearly not attached to NAME
+                // lexically.
                 // Filter out such CODE noise.
                 if (canIgnoreCode) {
                     code.setFilteredOut(true);
@@ -128,7 +126,7 @@ public class NameCodeRule extends GeocodeRule {
             }
 
             /*
-             * Not supporting lowercase codes/abbreviations.  'la', 'is', 'un', etc.
+             * Not supporting lowercase codes/abbreviations. 'la', 'is', 'un', etc.
              */
             if (canIgnoreShortCode) {
                 continue;
@@ -160,19 +158,23 @@ public class NameCodeRule extends GeocodeRule {
                     continue;
                 }
 
-                // Provinces, states, districts, etc. Only. 
+                // Provinces, states, districts, etc. Only.
                 //
-                // Make sure you can match an province name or code with the gazetteer entries found:
-                //   Boston, Ma.  ==== for 'Ma', resolve to an abbreviation for Massachusetts
-                //                     Ignore places called 'Ma'
-                // 
-                // Place ('Ma') == will have gazetteer metadata indicating if this is a valid abbreviated code for a place. 
-                // PlaceCandidate('Ma.') will have textual metadata from given text indicating if it is a code, MA, or abbrev. 'Ma.'
-                // 
-                // These two situations must match here.   We ignore geo locations that do not fit this profile.
-                // 
+                // Make sure you can match an province name or code with the gazetteer entries
+                // found:
+                // Boston, Ma. ==== for 'Ma', resolve to an abbreviation for Massachusetts
+                // Ignore places called 'Ma'
+                //
+                // Place ('Ma') == will have gazetteer metadata indicating if this is a valid
+                // abbreviated code for a place.
+                // PlaceCandidate('Ma.') will have textual metadata from given text indicating
+                // if it is a code, MA, or abbrev. 'Ma.'
+                //
+                // These two situations must match here. We ignore geo locations that do not fit
+                // this profile.
+                //
                 boolean lexicalMatch = ((abbrev && geo.isAbbreviation()) || (!abbrev && !geo.isAbbreviation()));
-                // 
+                //
                 if (!lexicalMatch) {
                     continue;
                 }
@@ -183,8 +185,9 @@ public class NameCodeRule extends GeocodeRule {
                     continue;
                 }
 
-                // Quick determination if these two places have a containment or geopolitical connection
-                //                 
+                // Quick determination if these two places have a containment or geopolitical
+                // connection
+                //
                 boolean contains = name.presentInHierarchy(adm1);
                 if (!contains && country != null) {
                     contains = name.presentInCountry(country.getCountryCode());
@@ -195,24 +198,30 @@ public class NameCodeRule extends GeocodeRule {
                 }
 
                 logicalGeoMatchFound = true;
-                updateNameCodePair(name, code, geo, true /*comma*/);
+                updateNameCodePair(name, code, geo, true /* comma */);
             }
 
             /*
              * Found "Good Docktor, MD" --> likely medical doctor (MD), not Maryland.
-             * So if no geographic connection between NAME, CODE and CODE is an abbreviation, then omit CODE.
-             * If you actually have NAME, NAME, NAME, ... then you cannot omit subsequent NAMEs.
-             * 
-             * With NAME, CODE -- if CODE is an abbreviation but represents a Country, then let it pass, 
-             * as it is more common to see country names/GPEs abbreviated as personified actors.  Omit all other abbreviations, though.
-             *  
-             * with CODE CODE CODE ... you might have garbage text and would want to filter out chains of abbreviations.
-             * E.g.,   CO MA IN IA
+             * So if no geographic connection between NAME, CODE and CODE is an
+             * abbreviation, then omit CODE.
+             * If you actually have NAME, NAME, NAME, ... then you cannot omit subsequent
+             * NAMEs.
+             * With NAME, CODE -- if CODE is an abbreviation but represents a Country, then
+             * let it pass,
+             * as it is more common to see country names/GPEs abbreviated as personified
+             * actors. Omit all other abbreviations, though.
+             * with CODE CODE CODE ... you might have garbage text and would want to filter
+             * out chains of abbreviations.
+             * E.g., CO MA IN IA
              */
             if (abbrev) {
                 if (!logicalGeoMatchFound && !code.isCountry) {
                     code.setFilteredOut(true);
-                    /* NAME is actually an abbreviation and if it has no other evidence, then ignore this. */
+                    /*
+                     * NAME is actually an abbreviation and if it has no other evidence, then ignore
+                     * this.
+                     */
                     if (name.isAbbreviation && name.getEvidence().isEmpty()) {
                         name.setFilteredOut(true);
                     }
@@ -221,9 +230,9 @@ public class NameCodeRule extends GeocodeRule {
                 }
             }
         }
-        
-        /* Review items once more.
-         * 
+
+        /*
+         * Review items once more.
          */
         for (int x = 0; x < names.size(); ++x) {
             PlaceCandidate name = names.get(x);
@@ -233,14 +242,15 @@ public class NameCodeRule extends GeocodeRule {
             if (ignoreMixedCaseAbbreviation(name)) {
                 /*
                  * This is a short text span, no other evidence
-                 * Possibly an abbreviation.   Only valid CODEs attached to a NAME were already filtered out.
+                 * Possibly an abbreviation. Only valid CODEs attached to a NAME were already
+                 * filtered out.
                  * If this is an admin code, it is unattached.
-                 * 
-                 *   OMIT  "La", "Bo", "He", "Or" etc. as they matched things like
-                 *          LA -- Los Angeles  or Louisiana
-                 *          OR -- Oregon,
-                 *          etc.
-                 *   If there is no qualifying or contextual information for such matches, they are usually noise.
+                 * OMIT "La", "Bo", "He", "Or" etc. as they matched things like
+                 * LA -- Los Angeles or Louisiana
+                 * OR -- Oregon,
+                 * etc.
+                 * If there is no qualifying or contextual information for such matches, they
+                 * are usually noise.
                  */
                 for (Place geo : name.getPlaces()) {
                     if (geo.isAbbreviation()) {
@@ -249,7 +259,7 @@ public class NameCodeRule extends GeocodeRule {
                     }
                 }
             }
-        }        
+        }
     }
 
     private static boolean possiblyAbbreviation(final PlaceCandidate pc) {
@@ -257,10 +267,10 @@ public class NameCodeRule extends GeocodeRule {
             return pc.isAbbreviation;
         }
         // First determine if subsequent tokens indicate this is abbreviation or not.
-        //   Al.      possible.
-        //   Al<sp>   possible.
-        //   Al-      NO.
-        //   Al=      NO.
+        // Al. possible.
+        // Al<sp> possible.
+        // Al- NO.
+        // Al= NO.
         if (pc.postChar != 0) {
             if (pc.postChar == '.') {
                 return true;
@@ -279,28 +289,28 @@ public class NameCodeRule extends GeocodeRule {
 
     /**
      * Experimental filters.
-     * 
-     * Filter out singular, known Admin boundary or other abbreviations. ... mainly that are not
+     * Filter out singular, known Admin boundary or other abbreviations. ... mainly
+     * that are not
      * qualifying location names. Test examples include:
      * <ul>
      * <li>Co vs. CO vs. Colo.: Geraldine &amp; Co. or Geraldine, CO?</li>
      * <li>MD vs. Md. vs. ....: Maryland or Medical Doctor?</li>
      * </ul>
-     * 
+     *
      * @param pc
      * @return
      */
     private static boolean ignoreNonAdminCode(final PlaceCandidate pc) {
-        //  If found alone, unqualified what happens?
-        //  ------------------
-        //  ___ CO. ___       filter out
-        //  ___ Co  ___       filter out
-        //  ___ Colo. ___     filter out
-        //  ___ COLORADO ___  pass.
-        //  ___ Al ____       filter out
-        //  ___ La ____       filter out
-        //  ___ LA ____       pass
-        //  ___ L.A. __       pass
+        // If found alone, unqualified what happens?
+        // ------------------
+        // ___ CO. ___ filter out
+        // ___ Co ___ filter out
+        // ___ Colo. ___ filter out
+        // ___ COLORADO ___ pass.
+        // ___ Al ____ filter out
+        // ___ La ____ filter out
+        // ___ LA ____ pass
+        // ___ L.A. __ pass
         boolean abbrev = possiblyAbbreviation(pc);
         boolean matchFound = false;
         if (abbrev && pc.isCountry) {
@@ -316,7 +326,7 @@ public class NameCodeRule extends GeocodeRule {
                 }
             }
             if (abbrev && !geo.isAbbreviation()) {
-                // Keep looking.  given "CO", is "Cø." a match?
+                // Keep looking. given "CO", is "Cø." a match?
                 continue;
             }
 
@@ -326,12 +336,11 @@ public class NameCodeRule extends GeocodeRule {
             break;
         }
 
-        // 
+        //
         return !matchFound;
     }
 
     /**
-     * 
      * @param n
      * @param code
      * @param codeGeo
@@ -340,20 +349,22 @@ public class NameCodeRule extends GeocodeRule {
      */
     private void updateNameCodePair(PlaceCandidate n, PlaceCandidate code, Place codeGeo, boolean comma) {
         /*
-         * The code is matched with the name. 
+         * The code is matched with the name.
          */
         code.setFilteredOut(true);
         n.end = code.end;
         n.setTextOnly(String.format("%s%s%s", n.getText(), (comma ? ", " : " "), code.getText()));
         n.markValid();
-        //code.markValid();  == tjhe code itself is now, no longer a valid tag.
-        //                      downstream rules would promote this is it is marked valid, even if filtered out.
+        // code.markValid(); == tjhe code itself is now, no longer a valid tag.
+        // downstream rules would promote this is it is marked valid, even if filtered
+        // out.
 
-        /*   CITY, STATE
-         *   CITY, COUNTRY
+        /*
+         * CITY, STATE
+         * CITY, COUNTRY
          */
         // Associate the CODE to the NAME that precedes it.
-        // 
+        //
         PlaceEvidence ev = new PlaceEvidence();
         ev.setCountryCode(codeGeo.getCountryCode());
         ev.setAdmin1(codeGeo.getAdmin1());
@@ -379,7 +390,7 @@ public class NameCodeRule extends GeocodeRule {
 
         // Now choose which location for CITY (name) best suits this.
         // Actually increase score for all geos that match the criteria.
-        // 
+        //
         boolean matchFound = false;
         for (Place nameGeo : n.getPlaces()) {
             if (matchFound) {

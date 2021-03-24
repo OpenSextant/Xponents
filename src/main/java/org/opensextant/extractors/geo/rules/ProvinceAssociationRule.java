@@ -33,7 +33,6 @@ import org.opensextant.extractors.geo.PlaceCount;
  * only promotes matches.
  *
  * @author ubaldino
- *
  */
 public class ProvinceAssociationRule extends GeocodeRule {
 
@@ -60,26 +59,26 @@ public class ProvinceAssociationRule extends GeocodeRule {
     }
 
     /**
-     * 
+     *
      */
     @Override
-    public boolean isRelevant(){
+    public boolean isRelevant() {
         return !relevantProvinceID.isEmpty();
     }
-    
+
     /**
      * Evaluate all candidate place mentions by seeing if any resolved Province
      * contains any geo locations with the mentioned name.
-     * 
+     *
      * <pre>
      * given Bala (adm1=XU.45) province is in scope.
-     * 
+     *
      * assess the list of names = [Name1(@geo1, @geo2, @geo3)], Name2(,etc), etc];
-     * if any geo locations for Name1 occur also within the province of XU.45, raise the weighting of the location 
+     * if any geo locations for Name1 occur also within the province of XU.45, raise the weighting of the location
      * as a better answer to "where is Name1?"
-     * 
      * </pre>
      */
+    @Override
     public void evaluate(List<PlaceCandidate> names) {
         if (!isRelevant()) {
             return;
@@ -89,7 +88,7 @@ public class ProvinceAssociationRule extends GeocodeRule {
             /*
              * This was filtered out already so ignore.
              */
-            if (this.evaluateNameFilterOnly(name)){
+            if (this.evaluateNameFilterOnly(name)) {
                 continue;
             }
 

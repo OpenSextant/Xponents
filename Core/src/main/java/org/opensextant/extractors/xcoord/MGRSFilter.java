@@ -29,37 +29,43 @@ import org.opensextant.util.TextUtils;
 
 /**
  * MGRS Filters include ignoring these patterns:
- *
- * <ul> <li> 1234 </li> <li> 123456 </li> <li> 12345678 </li> <li> 1234567890
- * </li> <li> Recent calendar dates of the form ddMMMyyyy, "14DEC1990" (MGRS:
- * 14D EC 19 90 </li> <li> Recent calendar dates with time, ddMMHHmm,
- * "14DEC1200" Noon on 14DEC. </li> <li> </li>
- *
+ * <ul>
+ * <li>1234</li>
+ * <li>123456</li>
+ * <li>12345678</li>
+ * <li>1234567890
+ * </li>
+ * <li>Recent calendar dates of the form ddMMMyyyy, "14DEC1990" (MGRS:
+ * 14D EC 19 90</li>
+ * <li>Recent calendar dates with time, ddMMHHmm,
+ * "14DEC1200" Noon on 14DEC.</li>
+ * <li></li>
  * </ul>
  *
  * @author ubaldino
  */
 public class MGRSFilter implements GeocoordMatchFilter {
 
-    /** DateFormat used to check for dates that look like MGRS i.e. ddMMMyyyy
+    /**
+     * DateFormat used to check for dates that look like MGRS i.e. ddMMMyyyy
      */
     public List<DateFormat> df = new ArrayList<DateFormat>();
-    
+
     /** The today. */
     public Date today = new Date();
-    
+
     /** The max years ago. */
     public static int MAX_YEARS_AGO = 80; // If valid date/year found -- what is worth filtering?
-    
+
     /** The cal. */
     public Calendar cal = null;
-    
+
     /** The current year. */
     public int CURRENT_YEAR = 0;
-    
+
     /** The current yy. */
     public int CURRENT_YY = 0;
-    
+
     /** The ignore seq. */
     public Set<String> IGNORE_SEQ = new HashSet<String>();
 
@@ -116,11 +122,12 @@ public class MGRSFilter implements GeocoordMatchFilter {
 
     /** The Constant eol. */
     final static Pattern eol = Pattern.compile("[\r\n]");
-    
+
     /**
      * TODO: Document rules.
      * stop a match
-     * Note, use of case sensitivity filter is really limited to MGRS.  UTM might have the "m" units designation on matches; MGRS typically does not.
+     * Note, use of case sensitivity filter is really limited to MGRS. UTM might
+     * have the "m" units designation on matches; MGRS typically does not.
      *
      * @param m the m
      * @return true, if successful
@@ -128,7 +135,7 @@ public class MGRSFilter implements GeocoordMatchFilter {
     @Override
     public boolean stop(GeocoordMatch m) {
 
-        // Simple case filter.  44ger7780 is not really an MGRS.
+        // Simple case filter. 44ger7780 is not really an MGRS.
         //
         if (!TextUtils.isUpper(m.getText())) {
             return true;
@@ -139,8 +146,8 @@ public class MGRSFilter implements GeocoordMatchFilter {
             return true;
         }
 
-        String eolTest = m.getText().substring(0,5);
-        if (eol.matcher(eolTest).find()){
+        String eolTest = m.getText().substring(0, 5);
+        if (eol.matcher(eolTest).find()) {
             return true;
         }
 
@@ -153,8 +160,8 @@ public class MGRSFilter implements GeocoordMatchFilter {
 
         String _text = m.getText();
         // IGNORE rates or ratios spelled out:
-        //        # PER #
-        //  e.g., 4 PER 100
+        // # PER #
+        // e.g., 4 PER 100
         //
         String[] found = _text.split(" ");
         if (found.length > 2) {
@@ -162,7 +169,8 @@ public class MGRSFilter implements GeocoordMatchFilter {
                 return true;
             }
 
-            // Units of measure:  'sec' or 'Sec';  the term sec is more a word than an MGRS quad here.
+            // Units of measure: 'sec' or 'Sec'; the term sec is more a word than an MGRS
+            // quad here.
             //
             // 'dd sec ...' fail, filter out.
             // 'dd Sec ...' fail, filter out.
@@ -206,7 +214,7 @@ public class MGRSFilter implements GeocoordMatchFilter {
             }
             Date D = fmt.parse(dt);
 
-            // 30JAN2010   -- date 2 years ago, that is a valid MGRS pattern.
+            // 30JAN2010 -- date 2 years ago, that is a valid MGRS pattern.
             // Filter out.
             cal.setTime(D);
             int yr = cal.get(Calendar.YEAR);
@@ -219,8 +227,8 @@ public class MGRSFilter implements GeocoordMatchFilter {
                 yr += 1900;
             }
 
-            /* Filter out only recent years, not future years.
-             *
+            /*
+             * Filter out only recent years, not future years.
              */
             int pastYearDelta = CURRENT_YEAR - yr;
             if (pastYearDelta < MAX_YEARS_AGO && pastYearDelta > 0) {

@@ -1,6 +1,6 @@
 package org.opensextant.extractors.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.junit.Test;

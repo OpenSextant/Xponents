@@ -16,16 +16,18 @@ import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeodeticUtility;
 
 /**
- * A final geocoding pass or two. Loop through candidates and choose the location that best fits the
+ * A final geocoding pass or two. Loop through candidates and choose the
+ * location that best fits the
  * context.
- * 
- * As needed cache chosen entries to optimize, e.g. co-referrenced places aformentioned in document.
- * Ideally, consider choosing a best place for the particular instance of a name, but percolate that
- * to the other mentions of that same name. Is it the same place? No need to disambiguate it
+ * As needed cache chosen entries to optimize, e.g. co-referrenced places
+ * aformentioned in document.
+ * Ideally, consider choosing a best place for the particular instance of a
+ * name, but percolate that
+ * to the other mentions of that same name. Is it the same place? No need to
+ * disambiguate it
  * multiple times at this point.
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class LocationChooserRule extends GeocodeRule {
 
@@ -71,18 +73,19 @@ public class LocationChooserRule extends GeocodeRule {
      */
     public void evaluate(List<PlaceCandidate> names, Parameters preferences) {
 
-        // INPUTS: 
-        //    histogram of country mentions
-        //    resolved/relevant provinces (PlaceEvidence)
-        //    resolved/relevant locations attached to places (PlaceEvidence)
-        // 
-        // MEASURES:  
-        //    # of distinct countries == density, focus.  Is this document about one or two countries, 
-        //    or is it a world news report on everything.
+        // INPUTS:
+        // histogram of country mentions
+        // resolved/relevant provinces (PlaceEvidence)
+        // resolved/relevant locations attached to places (PlaceEvidence)
+        //
+        // MEASURES:
+        // # of distinct countries == density, focus. Is this document about one or two
+        // countries,
+        // or is it a world news report on everything.
         //
         countryContext = countryObserver.countryMentionCount();
         boundaryContext = boundaryObserver.placeMentionCount();
-        // 
+        //
         // PREFS:
         if (preferences != null) {
             if (preferences.preferredGeography.containsKey("countries")) {
@@ -93,9 +96,9 @@ public class LocationChooserRule extends GeocodeRule {
             }
         }
 
-        /* TODO:  DEBUG through location chooser using histograms 
+        /*
+         * TODO: DEBUG through location chooser using histograms
          * of found and resolved place metadata.
-         * 
          */
         if (log.isDebugEnabled()) {
             debuggingHistograms(names);
@@ -118,20 +121,25 @@ public class LocationChooserRule extends GeocodeRule {
                 continue;
             }
 
-            // + For each Name, stack evidence for a given geo or a class of geo (evidence applies to multiple candidate geos)
+            // + For each Name, stack evidence for a given geo or a class of geo (evidence
+            // applies to multiple candidate geos)
             // + Assign a weight for each geo based on innate features and evidence.
             // + Sort by final score
             // + Choose top score
-            // + Cache result for a given NAME = CHOSEN, so we don't repeat the same logic unnecessarily.
-            // 
+            // + Cache result for a given NAME = CHOSEN, so we don't repeat the same logic
+            // unnecessarily.
+            //
             for (Place geo : name.getPlaces()) {
                 evaluate(name, geo);
             }
             name.choose();
             if (name.getChosen() != null) {
                 this.assessConfidence(name);
-                /* Copy confidence AND method back to chosen place instance.  Method should be a richer reprensetation of
-                 * method for inferencing. e.g., a summary of major branch of rules by which name+location is identified and geolocated.
+                /*
+                 * Copy confidence AND method back to chosen place instance. Method should be a
+                 * richer reprensetation of
+                 * method for inferencing. e.g., a summary of major branch of rules by which
+                 * name+location is identified and geolocated.
                  */
                 name.getChosen().setConfidence(name.getConfidence());
                 name.getChosen().setMethod(PlaceGeocoder.METHOD_DEFAULT);
@@ -143,15 +151,15 @@ public class LocationChooserRule extends GeocodeRule {
     }
 
     /**
-     * What can we learn from assembling better stats at the document level? Evidence breaks down into
+     * What can we learn from assembling better stats at the document level?
+     * Evidence breaks down into
      * concrete locations vs. inferred.
-     * 
+     *
      * @param names
      */
     private void debuggingHistograms(List<PlaceCandidate> names) {
         /*
-         * TODO:  Is this histogram helpful.?
-         * 
+         * TODO: Is this histogram helpful.?
          * Uniqueness or popularity of a given name.
          */
         for (PlaceCandidate name : names) {
@@ -171,12 +179,12 @@ public class LocationChooserRule extends GeocodeRule {
 
         for (String cc : countryContext.keySet()) {
             CountryCount count = countryContext.get(cc);
-            //log.debug("Country: {}/{} ({})", cc, count.country, count.count);
+            // log.debug("Country: {}/{} ({})", cc, count.country, count.count);
             log.debug("Country: {}", count);
         }
 
         for (PlaceCount count : boundaryContext.values()) {
-            //log.debug("Boundary: {} ({})", count.place, count.count);
+            // log.debug("Boundary: {} ({})", count.place, count.count);
             log.debug("Boundary: {}", count);
             String cc = count.place.getCountryCode();
             CountryCount Ccnt = inferredCountries.get(cc);
@@ -197,39 +205,49 @@ public class LocationChooserRule extends GeocodeRule {
     protected static final double COUNTRY_CONTAINS_PLACE_WT = 1.0;
 
     /**
-     * An amount of points that would be distributed amongst feature types at each level, e.g., Country
+     * An amount of points that would be distributed amongst feature types at each
+     * level, e.g., Country
      * names, ADM1, ADM2, PPL names.
-     * 
-     * If you have 2 different countries, one mentioned 4 times and the other mentioned 10 times you
-     * might say the latter is more relevant regarding any ambiguous geography. With 14 mentions, that
-     * second country is weighted 10/14 = 0.71 of the GLOBAL_POINTS for disambiguation.
-     * 
-     * Note, that if only one country appears in context, then it is very possible that these global
-     * points will outweigh other over arching connections, such as rules for CITY,STATE or MAJOR PLACE
-     * (POPULATION). That is okay -- if one single country is mentioned at all, then that seems to be a
+     * If you have 2 different countries, one mentioned 4 times and the other
+     * mentioned 10 times you
+     * might say the latter is more relevant regarding any ambiguous geography. With
+     * 14 mentions, that
+     * second country is weighted 10/14 = 0.71 of the GLOBAL_POINTS for
+     * disambiguation.
+     * Note, that if only one country appears in context, then it is very possible
+     * that these global
+     * points will outweigh other over arching connections, such as rules for
+     * CITY,STATE or MAJOR PLACE
+     * (POPULATION). That is okay -- if one single country is mentioned at all, then
+     * that seems to be a
      * big anchoring point for lots of ambiguities.
      */
     private static final int GLOBAL_POINTS = 5;
 
     /**
-     * Preferred Country or Location -- when user supplies the context that may be missing.... We accept
+     * Preferred Country or Location -- when user supplies the context that may be
+     * missing.... We accept
      * that and weight such preference higher.
      */
     public static String PREF_COUNTRY = "PreferredCountry";
     public static String PREF_LOCATION = "PreferredLocation";
 
     /**
-     * Yet unchosen location. Consider given evidence first, creating some weight there, then
-     * introducing innate properties of possible locations, thereby amplifying the differences in the
+     * Yet unchosen location. Consider given evidence first, creating some weight
+     * there, then
+     * introducing innate properties of possible locations, thereby amplifying the
+     * differences in the
      * candidates.
-     * 
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
 
-        // With "preferred geography" we can influence in a subtle fashion ambiguous mentions, e.g., 
-        // If known geography is Ohio and we see mentions of Springfield without other context, we can 
-        // nudge choice of Springfield, OH as such.  Such as with a preferred location (geohash).
+        // With "preferred geography" we can influence in a subtle fashion ambiguous
+        // mentions, e.g.,
+        // If known geography is Ohio and we see mentions of Springfield without other
+        // context, we can
+        // nudge choice of Springfield, OH as such. Such as with a preferred location
+        // (geohash).
 
         if (preferredCountries != null && !preferredCountries.isEmpty()) {
             if (preferredCountries.contains(geo.getCountryCode())) {
@@ -241,7 +259,8 @@ public class LocationChooserRule extends GeocodeRule {
         if (preferredLocations != null && !preferredLocations.isEmpty()) {
             for (String gh : preferredLocations) {
                 if (geo.getGeohash().startsWith(gh)) {
-                    // Increment a full point for being within the geohash. Note geohash length of 4 or more chars is reasonably good resolution.
+                    // Increment a full point for being within the geohash. Note geohash length of 4
+                    // or more chars is reasonably good resolution.
                     name.incrementPlaceScore(geo, 1.0);
                     name.addRule(PREF_LOCATION);
                 }
@@ -249,7 +268,8 @@ public class LocationChooserRule extends GeocodeRule {
         }
 
         if (boundaryContext.isEmpty() && countryContext.isEmpty()) {
-            // So without context, there is nothing more we can do to influence the connection between 
+            // So without context, there is nothing more we can do to influence the
+            // connection between
             // the one named place and the candidate location
             return;
         }
@@ -268,8 +288,8 @@ public class LocationChooserRule extends GeocodeRule {
             name.incrementPlaceScore(geo, countryScalar * COUNTRY_CONTAINS_PLACE_WT);
         }
 
-        // Other local evidence.  
-        // 
+        // Other local evidence.
+        //
         for (PlaceEvidence ev : name.getEvidence()) {
             if (ev.wasEvaluated()) {
                 continue;
@@ -293,51 +313,66 @@ public class LocationChooserRule extends GeocodeRule {
     }
 
     /**
-     * 
+     *
      */
     public static final int MATCHCONF_BARE_ACRONYM = 10;
 
     /**
-     * The bare minimum confidence -- if rules negate confidence points, confidence may go below 20.
+     * The bare minimum confidence -- if rules negate confidence points, confidence
+     * may go below 20.
      */
     public static final int MATCHCONF_MINIMUM = 20;
 
     /**
-     * Absolute Confidence: Many Locations matched a single name. No country is in scope; No country
+     * Absolute Confidence: Many Locations matched a single name. No country is in
+     * scope; No country
      * mentioned in document, so this is very low confidence.
      */
     public static final int MATCHCONF_MANY_LOC = MATCHCONF_MINIMUM;
 
     /**
-     * Absolute Confidence: Many locations matched, with multiple countries in scope So, Many countries
+     * Absolute Confidence: Many locations matched, with multiple countries in scope
+     * So, Many countries
      * mentioned in document
      */
     public static final int MATCHCONF_MANY_COUNTRIES = 40;
     /**
-     * Absolute Confidence: Many locations matched, but one country in scope. So, 1 country mentioned in
+     * Absolute Confidence: Many locations matched, but one country in scope. So, 1
+     * country mentioned in
      * document
      */
     public static final int MATCHCONF_MANY_COUNTRY = 50;
 
     /**
-     * Absolute Confidence: Name, Region; City, State; Capital, Country; etc. Patterns of qualified
+     * Absolute Confidence: Name, Region; City, State; Capital, Country; etc.
+     * Patterns of qualified
      * places.
      */
     public static final int MATCHCONF_NAME_REGION = 75;
 
     /**
-     * Absolute Confidence: Unique name in gazetteer. Confidence is high, however this needs to be
+     * Absolute Confidence: Unique name in gazetteer. Confidence is high, however
+     * this needs to be
      * tempered by the number of gazetteers, coverage, and diversity
      */
     public static final int MATCHCONF_ONE_LOC = 70;
 
-    /** Absolute Confidence: Geographic location of a named place lines up with a coordinate in-scope */
+    /**
+     * Absolute Confidence: Geographic location of a named place lines up with a
+     * coordinate in-scope
+     */
     public static final int MATCHCONF_GEODETIC = 90;
 
-    /** Confidence Qualifier: The chosen place happens to be a major place, e.g., large city. */
+    /**
+     * Confidence Qualifier: The chosen place happens to be a major place, e.g.,
+     * large city.
+     */
     public static final int MATCHCONF_QUALIFIER_MAJOR_PLACE = 5;
 
-    /** Confidence Qualifier: The chosen place happens to be in a country mentioned in the document */
+    /**
+     * Confidence Qualifier: The chosen place happens to be in a country mentioned
+     * in the document
+     */
     public static final int MATCHCONF_QUALIFIER_COUNTRY_MENTIONED = 5;
 
     /**
@@ -347,21 +382,25 @@ public class LocationChooserRule extends GeocodeRule {
 
     /**
      * Confidence Qualifier: Name appears in only one country.
-     * 
      */
     public static final int MATCHCONF_QUALIFIER_UNIQUE_COUNTRY = 8;
 
-    /** Confidence Qualifier: The chosen place scored high compared to the runner up */
+    /**
+     * Confidence Qualifier: The chosen place scored high compared to the runner up
+     */
     public static final int MATCHCONF_QUALIFIER_HIGH_SCORE = 5;
     /**
-     * Confidence Qualifier: Start here if you have a lower case term that may be a place. -20 points or
-     * more for lower case matches, however feat_class P and A win back 5 points; others are less likely
+     * Confidence Qualifier: Start here if you have a lower case term that may be a
+     * place. -20 points or
+     * more for lower case matches, however feat_class P and A win back 5 points;
+     * others are less likely
      * places.
      */
     public static final int MATCHCONF_QUALIFIER_LOWERCASE = -15;
 
     /**
-     * A subtle boost for locations that were preferred -- especially helps when there is no inherent
+     * A subtle boost for locations that were preferred -- especially helps when
+     * there is no inherent
      * context and we must rely on the caller's intuition.
      */
     public static final int MATCHCONF_PREFERRED = 5;
@@ -371,23 +410,28 @@ public class LocationChooserRule extends GeocodeRule {
     }
 
     /**
-     * Confidence of your final chosen location for a given name is assembled as the sum of some
-     * absolute metric plus some additional qualifiers. The absolute provides some context at the
+     * Confidence of your final chosen location for a given name is assembled as the
+     * sum of some
+     * absolute metric plus some additional qualifiers. The absolute provides some
+     * context at the
      * document level, whereas the qualifiers are refinements.
-     * 
+     *
      * <pre>
      *  conf = A + Q1 + Q2...  // this may change.
      * </pre>
-     * 
+     *
      * @param pc
      */
     public void assessConfidence(PlaceCandidate pc) {
 
         /*
-         * Countries are used to qualify other place names by way of geographic boundaries.
-         * So the rules for assigning countries should not leverage place confidence too much, 
-         * otherwise this becomes an artificial feedback loop.  
-         * TODO: devise acceptable confidence for country name match vs. country code or other inference.
+         * Countries are used to qualify other place names by way of geographic
+         * boundaries.
+         * So the rules for assigning countries should not leverage place confidence too
+         * much,
+         * otherwise this becomes an artificial feedback loop.
+         * TODO: devise acceptable confidence for country name match vs. country code or
+         * other inference.
          */
         if (pc.isCountry) {
             if (pc.isAbbreviation) {
@@ -408,10 +452,10 @@ public class LocationChooserRule extends GeocodeRule {
 
         // This place candidate instance:
         // - total # of instances in gazetteer, e.g., getPlaces()
-        // - distinct countries for those places, e.g.,       
-        // 
+        // - distinct countries for those places, e.g.,
+        //
         // Mutually Exclusive conditions:
-        //======================
+        // ======================
         if (pc.hasRule(CoordinateAssociationRule.COORD_PROXIMITY_RULE)) {
             points = MATCHCONF_GEODETIC;
         } else if (pc.distinctLocationCount() == 1 && countryObserver.countryCount() > 0) {
@@ -440,9 +484,9 @@ public class LocationChooserRule extends GeocodeRule {
         points = (int) ((0.75 * points) + (0.25 * points * featWeight));
 
         // Any of these may occur.
-        //======================
+        // ======================
         //
-        // Lower case?  Eh... language dependent.  
+        // Lower case? Eh... language dependent.
         // If you have mixed case documents, then lower case matches
         // immediately get low-confidence.
         if (pc.isLower()) {
@@ -483,7 +527,8 @@ public class LocationChooserRule extends GeocodeRule {
             }
         } else if (pc.getSecondChoiceScore() > 0) {
             // NOT AMBIGUOUS, but is first score much higher than all others?
-            // That makes first choice more confident, especially in low-evidence situations.
+            // That makes first choice more confident, especially in low-evidence
+            // situations.
             double a = pc.getChosen().getScore();
             double b = pc.getSecondChoiceScore();
             double scoreRatio = a / b; // Top score = 40, second score = 25
@@ -496,21 +541,25 @@ public class LocationChooserRule extends GeocodeRule {
             points += MATCHCONF_QUALIFIER_UNIQUE_COUNTRY;
         }
 
-        // Is Major place?  Account for major place population separate from its designation.
+        // Is Major place? Account for major place population separate from its
+        // designation.
         if (pc.hasRule(MajorPlaceRule.POP)) {
             points += MATCHCONF_QUALIFIER_MAJOR_PLACE;
         }
         if (pc.hasRule(MajorPlaceRule.ADMIN) || pc.hasRule(MajorPlaceRule.CAPITAL)) {
             points += MATCHCONF_QUALIFIER_MAJOR_PLACE;
         }
-        // 
+        //
 
         if (this.countryObserver.countryObserved(pc.getChosen().getCountryCode())) {
             points += MATCHCONF_QUALIFIER_COUNTRY_MENTIONED;
         }
 
         if (textCase == LOWERCASE) {
-            /* Simple lower case boost:  ADD a point for every character past a basic acronym (2-4 chars long). */
+            /*
+             * Simple lower case boost: ADD a point for every character past a basic acronym
+             * (2-4 chars long).
+             */
             points += pc.getLength() - 4;
         }
 
@@ -528,20 +577,22 @@ public class LocationChooserRule extends GeocodeRule {
 
     private int assessLowConfidence(PlaceCandidate pc) {
         /*
-         * False positive tuning -- working with something that has only a default score.
-         * Acronyms, No Evidence, default score. All pretty much the same amount of confidence.
-         *
+         * False positive tuning -- working with something that has only a default
+         * score.
+         * Acronyms, No Evidence, default score. All pretty much the same amount of
+         * confidence.
          * <pre>
-         * TEXT   GEO MATCHED
-         * ----   ----------
-         * ABS    Abs          low confidence.  Acronym is intended. Mismatch.  If No other evidence, really low confidence
-         * Abs    Abs          good match
-         * Abs    ABS          not bad.  Id. matches ID for Idaho, for example.
-         * Abs.   Abs.         good match.  Abbreviation matched abbreviation.  TODO.
-         * Abs.   ABS          good match.  Abbreviation matched abbreviation or code.  TODO.
+         * TEXT GEO MATCHED
+         * ---- ----------
+         * ABS Abs low confidence. Acronym is intended. Mismatch. If No other evidence,
+         * really low confidence
+         * Abs Abs good match
+         * Abs ABS not bad. Id. matches ID for Idaho, for example.
+         * Abs. Abs. good match. Abbreviation matched abbreviation. TODO.
+         * Abs. ABS good match. Abbreviation matched abbreviation or code. TODO.
          * </pre>
          */
-        //boolean noEvidence = pc.getEvidence().isEmpty();
+        // boolean noEvidence = pc.getEvidence().isEmpty();
         boolean isAcronym = pc.isUpper();
         boolean isMisMatchedAcronym = (pc.isUpper() && !pc.getChosen().isUppercaseName())
                 || (!pc.isUpper() && pc.getChosen().isUppercaseName());

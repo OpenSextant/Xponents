@@ -13,6 +13,7 @@ import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.RuntimeTools;
 import org.opensextant.xlayer.server.TaggerResource;
+import org.restlet.Context;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
@@ -32,12 +33,14 @@ public class XponentsGeotagger extends TaggerResource {
      */
     public XponentsGeotagger() {
         super();
-        log = getContext().getCurrentLogger();
+        getContext();
+        log = Context.getCurrentLogger();
     }
 
     /**
      * get Xponents Exxtractor object from global attributes.
      */
+    @Override
     public Extractor getExtractor(String xid) {
         Object X = this.getApplication().getContext().getAttributes().get(xid);
         if (xid.equals("xgeo")) {
@@ -60,19 +63,21 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     /**
-     * Contract: docid optional; 'text' | 'doc-list' required. command: cmd=ping sends back a simple
+     * Contract: docid optional; 'text' | 'doc-list' required. command: cmd=ping
+     * sends back a simple
      * response
-     * 
-     * text = UTF-8 encoded text docid = user's provided document ID doc-list = An array of text
-     * 
+     * text = UTF-8 encoded text docid = user's provided document ID doc-list = An
+     * array of text
      * cmd=ping = report status.
-     * 
-     * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B', text='...',...] } The
-     * entire array must be parsable in memory as a single, traversible JSON object. We make no
-     * assumption about one-JSON object per line or anything about line-endings as separators.
-     * 
+     * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B',
+     * text='...',...] } The
+     * entire array must be parsable in memory as a single, traversible JSON object.
+     * We make no
+     * assumption about one-JSON object per line or anything about line-endings as
+     * separators.
      *
-     * @param params JSON parameters per REST API: docid, text, lang, features, options, and preferred_*
+     * @param params JSON parameters per REST API: docid, text, lang, features,
+     *               options, and preferred_*
      * @return the representation
      * @throws JSONException the JSON exception
      */
@@ -95,11 +100,12 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     /**
-     * HTTP GET -- vanilla. Do not use in production, unless you have really small data packages. This
+     * HTTP GET -- vanilla. Do not use in production, unless you have really small
+     * data packages. This
      * is useful for testing. Partial contract:
-     * 
-     * miscellany: 'cmd' = 'ping' |... other commands. processing: 'docid' = ?, 'text' = ?
-     * 
+     * miscellany: 'cmd' = 'ping' |... other commands. processing: 'docid' = ?,
+     * 'text' = ?
+     *
      * @param params JSON parameters. see process()
      * @return the representation
      */
@@ -123,6 +129,7 @@ public class XponentsGeotagger extends TaggerResource {
      * @param jobParams the job params
      * @return the representation
      */
+    @Override
     public Representation process(TextInput input, Parameters jobParams) {
 
         if (input == null || input.buffer == null) {
@@ -159,7 +166,7 @@ public class XponentsGeotagger extends TaggerResource {
 
     /**
      * Format matches as JSON
-     * 
+     *
      * @param matches   items to format
      * @param jobParams parameters
      * @return formatted json
@@ -181,9 +188,11 @@ public class XponentsGeotagger extends TaggerResource {
     public void filter(List<TextMatch> variousMatches, Parameters params) {
         // Determine what looks useful. Filter out things not worth
         // saving at all in data store.
-        //simpleFilter.filter(variousMatches);
+        // simpleFilter.filter(variousMatches);
 
-        /* HACK.  Prefer not to change the "filter" state based on output/visibility parameters.
+        /*
+         * HACK. Prefer not to change the "filter" state based on output/visibility
+         * parameters.
          * consider output options; filter out returns based on requested outputs.
          */
         if (!params.output_taxons) {

@@ -85,7 +85,7 @@ public class Tweet extends Message {
 
     /**
      * indicate if tweet is geolocated by an accurate coordinate.
-     * 
+     *
      * @return
      */
     public boolean isGeolocated() {
@@ -100,10 +100,10 @@ public class Tweet extends Message {
 
     /**
      * indicate if tweet has any Geo resolution at all, wether it was a given
-     * Lat/Lon or derived. Careful -- authorGeo and statusGeo are both mutable.
-     * If you geocode them directly while still on the Tweet instance, they will
-     * look like they were part of the given data.
-     * 
+     * Lat/Lon or derived. Careful -- authorGeo and statusGeo are both mutable. If
+     * you geocode them directly while still on the Tweet instance, they will look
+     * like they were part of the given data.
+     *
      * @return
      */
     public boolean isGeoinferenced() {
@@ -124,6 +124,7 @@ public class Tweet extends Message {
 
     /**
      * TODO: this is not clear.
+     *
      * @return
      */
     public String getGeoMethod() {
@@ -143,11 +144,9 @@ public class Tweet extends Message {
 
     public void applyGenericRules() {
         /*
-         * A reasonable assumption -- if the text of the language is A, then we
-         * can probbably assume the user's language is at least A. But not the
-         * other way around. A user may speak/write in multiple languages.
-         * userLang <<< lang
-         * 
+         * A reasonable assumption -- if the text of the language is A, then we can
+         * probbably assume the user's language is at least A. But not the other way
+         * around. A user may speak/write in multiple languages. userLang <<< lang
          * But we cannot infer userLang >>> lang
          */
         if (userLang == null && lang != null) {
@@ -155,19 +154,21 @@ public class Tweet extends Message {
         }
 
         /*
-         * Artifacts of working with JSON serialization, some Array, Object, and NullObject values
-         * result in odd string formats, although value may be effectively "null".  Possibly user 
-         * is typing in code or JSON into a text only field.  Can't say...
+         * Artifacts of working with JSON serialization, some Array, Object, and
+         * NullObject values result in odd string formats, although value may be
+         * effectively "null". Possibly user is typing in code or JSON into a text only
+         * field. Can't say...
          */
         authorDesc = fixNull(authorDesc);
         authorName = fixNull(authorName);
-        // Other nullity issues... in theory every tweet field could be null, but we only care about ones that are plain literals.
-        // Major concern is how to serialize on save(), e.g,. when saving to a JSON/noSQL db like mongo.
+        // Other nullity issues... in theory every tweet field could be null, but we
+        // only care about ones that are plain literals.
+        // Major concern is how to serialize on save(), e.g,. when saving to a
+        // JSON/noSQL db like mongo.
 
         /*
-         * IFF tags is unset, try to find tags. Otherwise we assume
-         * microblog-specific methods already provided all tags.
-         * 
+         * IFF tags is unset, try to find tags. Otherwise we assume microblog-specific
+         * methods already provided all tags.
          */
         if (tags == null) {
             tags = TextUtils.parseHashTags(text);
@@ -185,9 +186,8 @@ public class Tweet extends Message {
 
     /**
      * Set the date and an the standard "CREATED_AT" date/time format.
-     * 
-     * @param d
-     *            epoch
+     *
+     * @param d epoch
      */
     public void setDate(long d) {
         this.date = new Date(d);
@@ -200,7 +200,7 @@ public class Tweet extends Message {
 
     /**
      * Most commonly needed to parse TweetID from a GnipID
-     * 
+     *
      * @param gnipId
      * @return
      */
@@ -216,9 +216,8 @@ public class Tweet extends Message {
     }
 
     /**
-     * Find a best ID from many possible places where ID, id, id_str, etc,
-     * reside.
-     * 
+     * Find a best ID from many possible places where ID, id, id_str, etc, reside.
+     *
      * @param tw
      * @return
      * @throws MessageParseException
@@ -233,11 +232,9 @@ public class Tweet extends Message {
     }
 
     /**
-     * If "base data" has been filled in by other method, e.g., TW4J or other
-     * formal API, then avoid parsing the basics here: id, text ,author*, date,
-     * lang, are checked if null. Only if null will they each be found in JSON
-     * and parsed.
-     * 
+     * If "base data" has been filled in by other method, e.g., TW4J or other formal
+     * API, then avoid parsing the basics here: id, text ,author*, date, lang, are
+     * checked if null. Only if null will they each be found in JSON and parsed.
      */
     public void fromJSON(JsonObject tw) throws MessageParseException {
         /*
@@ -264,9 +261,8 @@ public class Tweet extends Message {
         parseRetweet(tw);
 
         /*
-         * Are "mentions" provided in entities, e.g., "entities.user_mentions"
-         * Or if data provider has enriched/expanded entities, override
-         * parseMentions
+         * Are "mentions" provided in entities, e.g., "entities.user_mentions" Or if
+         * data provider has enriched/expanded entities, override parseMentions
          */
 
         JsonObject ent = tw.getJsonObject(entitiesKey);
@@ -287,8 +283,8 @@ public class Tweet extends Message {
         setStatusGeo(tw, this);
         setUserGeo(tw, this);
 
-        /* last routine:  end with these general data inspection/fix-ups.
-         * 
+        /*
+         * last routine: end with these general data inspection/fix-ups.
          */
         applyGenericRules();
     }
@@ -301,7 +297,8 @@ public class Tweet extends Message {
 
         JsonObject rt = tw.getJsonObject("retweeted_status");
 
-        /* different sources/aggregators of Tweets report retweet flag differently.
+        /*
+         * different sources/aggregators of Tweets report retweet flag differently.
          */
         if (isValue(rt)) {
             retweetID = parseIds(rt.map());
@@ -327,9 +324,8 @@ public class Tweet extends Message {
 
     protected void parseDate(Map<?, ?> tw) {
         /*
-         * Date string tracking -- argh. Which one really matters dare we
-         * normalize one to the other?
-         * 
+         * Date string tracking -- argh. Which one really matters dare we normalize one
+         * to the other?
          */
         if (date != null) {
             return;
@@ -353,7 +349,7 @@ public class Tweet extends Message {
 
     protected void parseText(Map<?, ?> tw) throws MessageParseException {
         if (this.text != null) {
-            // Does not overwrite. 
+            // Does not overwrite.
             return;
         }
         if (tw.containsKey("text")) {
@@ -376,17 +372,17 @@ public class Tweet extends Message {
     }
 
     /**
-    * supports gnip.urls or topsy.urls fields
-    * 
-    * @param jsonArray
-    */
+     * supports gnip.urls or topsy.urls fields
+     *
+     * @param jsonArray
+     */
     public void parseURLs(List<?> jsonArray) {
         if (!Tweet.isValue(jsonArray)) {
             return;
         }
 
         for (int x = 0; x < jsonArray.size(); ++x) {
-            //JsonObject url = jsonArray.getJsonObject(x);
+            // JsonObject url = jsonArray.getJsonObject(x);
             Object obj = jsonArray.get(x);
             if (obj instanceof Map) {
                 Map url = (Map) obj;
@@ -400,7 +396,6 @@ public class Tweet extends Message {
     }
 
     /**
-     * 
      * @param json
      * @param tw
      * @return true if a location metadata was found and set.
@@ -457,7 +452,7 @@ public class Tweet extends Message {
 
     /**
      * TODO: investigate how close a user Profile geo compares with Status geo.
-     * 
+     *
      * @param json
      * @param tw
      */
@@ -511,18 +506,13 @@ public class Tweet extends Message {
 
         /*
          * "geo":{"type":"Point","coordinates":[51.51619,-0.21142]},
-         * 
          * "place":{"country_code":"GB","url":
          * "http://api.twitter.com/1/geo/id/9fea7e42e33c2145.json","country":
          * "United Kingdom",
          * "place_type":"city","bounding_box":{"type":"Polygon","coordinates":[[
          * [-0.22857,51.47716],[-0.22857,51.53035],[-0.14979,51.53035],[-0.14979
          * ,51.47716]]]}, "full_name":"Kensington and Chelsea, London"
-         * ,"attributes":{},"id":"9fea7e42e33c2145","name":
-         * "Kensington and Chelsea"}}
-         * 
-         * 
-         * 
+         * ,"attributes":{},"id":"9fea7e42e33c2145","name": "Kensington and Chelsea"}}
          * Gnip Raw:
          * {"type":"Polygon","coordinates":[[[-73.991486,-33.750576],[-32.378185
          * ,-33.750576],[-32.378185,5.27192],[-73.991486,5.27192]]]},
@@ -532,7 +522,7 @@ public class Tweet extends Message {
          */
     }
 
-    /** 
+    /**
      * @param p
      * @param aPlace
      */
@@ -541,9 +531,8 @@ public class Tweet extends Message {
         p.setFeatureCode(aPlace.getString("place_type"));
 
         /*
-         * When foreign country metadata is used, twitter codes will appear --
-         * so we prefer to use those; or maybe in addition to native lang
-         * values.
+         * When foreign country metadata is used, twitter codes will appear -- so we
+         * prefer to use those; or maybe in addition to native lang values.
          */
         if (aPlace.containsKey("twitter_country_code")) {
             p.setCountryCode(aPlace.getString("twitter_country_code"));
@@ -556,11 +545,10 @@ public class Tweet extends Message {
      * Order of coordinates is for geo = (LON, LAT) in twitter objects. for
      * coordinates = (LAT, LON) see
      * http://support.gnip.com/articles/filtering-twitter-data-by-location.html
-     * 
+     *
      * @param p
      * @param hasCoord
-     * @param latFirst
-     *            true if type of Point has lat as first field.
+     * @param latFirst true if type of Point has lat as first field.
      */
     protected static void setLatLon(Place p, JsonObject hasCoord, boolean latFirst) {
         JsonArray ll = hasCoord.getJsonArray("coordinates");
@@ -574,7 +562,6 @@ public class Tweet extends Message {
     }
 
     /**
-     * 
      * @param o
      * @return
      */
@@ -585,7 +572,7 @@ public class Tweet extends Message {
         if (o.isEmpty()) {
             return false;
         }
-        //if o.isNullObject() ?
+        // if o.isNullObject() ?
         return true;
     }
 
@@ -595,7 +582,7 @@ public class Tweet extends Message {
 
     /**
      * "", null, or "null" checking.
-     * 
+     *
      * @param o
      * @param k
      * @return
@@ -630,12 +617,11 @@ public class Tweet extends Message {
         authorID = tw_user.getString("screen_name");
         authorName = tw_user.getString("name");
         authorLocation = optString(tw_user, "location");
-        authorProfileID = optString(tw_user, "id_str");//Integer.toString(getInteger(tw_user, "id", -1));
+        authorProfileID = optString(tw_user, "id_str");// Integer.toString(getInteger(tw_user, "id", -1));
 
         /*
          * Note: this may need to parsed for an actual lat/lon or place name
          * User-defined locations can also be adhoc junk.
-         * 
          */
         if (authorLocation != null) {
             this.authorGeo = new Place(null, authorLocation);
@@ -716,7 +702,7 @@ public class Tweet extends Message {
 
     /**
      * Found user screen_names, no user ID
-     * 
+     *
      * @return list of found screen names
      */
     public Collection<String> getMentions() {
@@ -725,9 +711,9 @@ public class Tweet extends Message {
 
     /**
      * fully qualified Twitter user profiles: screen_name : user ID pairings.
-     * Multiple screen names could be associated with the same user ID (although
-     * not likley in a single tweet)
-     * 
+     * Multiple screen names could be associated with the same user ID (although not
+     * likley in a single tweet)
+     *
      * @return map
      */
     public List<Mention> getMentionIDs() {
@@ -737,7 +723,7 @@ public class Tweet extends Message {
     /**
      * If adding mentions one at a time, then only mention IDS map is used. if
      * profile uid is null, then screen_name, U = null will be mapped
-     * 
+     *
      * @param uname
      * @param uid
      */
@@ -754,11 +740,11 @@ public class Tweet extends Message {
         mentionIDs.add(m);
     }
 
-    final static Pattern twitterIdentity = Pattern.compile("@([\\w\\d_-]+)");
+    static final Pattern twitterIdentity = Pattern.compile("@([\\w\\d_-]+)");
 
     /**
      * Gets a entities.user_mentions from a normal Tweet.
-     * 
+     *
      * @param entities
      * @return map of screen_name to user profile ID
      */
@@ -786,9 +772,8 @@ public class Tweet extends Message {
 
     /**
      * From a tweet, get list of "@id"
-     * 
-     * @param msg
-     *            tweet or other text
+     *
+     * @param msg tweet or other text
      * @return
      */
     public static Set<String> parseMentions(String msg) {
@@ -826,7 +811,7 @@ public class Tweet extends Message {
     public void setLanguage(String l) {
         lang = l;
         if (lang != null) {
-            //isEnglish = TextUtils.isEnglish(lang);
+            // isEnglish = TextUtils.isEnglish(lang);
             isEnglish = "en".equals(lang);
         }
     }

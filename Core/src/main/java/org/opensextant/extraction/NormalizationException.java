@@ -17,7 +17,6 @@
 package org.opensextant.extraction;
 
 /**
- *
  * @author ubaldino
  */
 public class NormalizationException extends Exception {

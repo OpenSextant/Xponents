@@ -30,16 +30,16 @@ public class ProgressMonitorBase implements ProgressMonitor {
 
     @Override
     public void updateStepProgress(double progress) {
-       this.currentStepProgress = progress;
-       this.totalProgress = (int)((100.0/steps)*completedSteps + currentStepProgress);
-       fireProgressChanged();
+        this.currentStepProgress = progress;
+        this.totalProgress = (int) ((100.0 / steps) * completedSteps + currentStepProgress);
+        fireProgressChanged();
     }
 
     @Override
     public void completeStep() {
         completedSteps++;
         this.currentStepProgress = 0;
-        this.totalProgress = (int)((100.0/steps)*completedSteps);
+        this.totalProgress = (int) ((100.0 / steps) * completedSteps);
         fireProgressChanged();
     }
 
@@ -56,6 +56,7 @@ public class ProgressMonitorBase implements ProgressMonitor {
     public void addProgressListener(ProgressListener listener) {
         this.listeners.add(listener);
     }
+
     @Override
     public void removeProgressListener(ProgressListener listener) {
         this.listeners.remove(listener);

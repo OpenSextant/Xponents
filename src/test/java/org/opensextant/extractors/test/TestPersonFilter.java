@@ -1,6 +1,7 @@
 package org.opensextant.extractors.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -63,7 +64,7 @@ public class TestPersonFilter {
     /**
      * Call if you have a short name. This method does not have a length filter
      * assumed.
-     * 
+     *
      * @param matched entry or official name matched
      * @param signal  raw input
      * @return

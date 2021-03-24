@@ -40,6 +40,7 @@ public abstract class TaggerResource extends ServerResource {
     /**
      * operational parameter.
      */
+    @Override
     public void doInit() {
         operation = this.getAttribute("operation");
     }
@@ -63,9 +64,10 @@ public abstract class TaggerResource extends ServerResource {
     protected abstract Extractor getExtractor(String xid);
 
     /**
-     * Implement the processing of a single Input given some request parameters Based on the processing
+     * Implement the processing of a single Input given some request parameters
+     * Based on the processing
      * and the request, format response accordingly.
-     * 
+     *
      * @param input     signal
      * @param jobParams controls
      * @return JSON or other formatted response.
@@ -73,12 +75,12 @@ public abstract class TaggerResource extends ServerResource {
     public abstract Representation process(TextInput input, Parameters jobParams);
 
     /**
-     * Get parameters for processing? None currently, but may be: 
-     * - lower case tagging or filtering 
+     * Get parameters for processing? None currently, but may be:
+     * - lower case tagging or filtering
      * - coordinate parsing on|off
      * Get parameters for formatting. JSON, HTML, mainly.
      * Output represents filters + format.
-     * 
+     *
      * @param inputs arguments to RESTful request
      * @return Xponents Parameters
      */
@@ -124,7 +126,7 @@ public abstract class TaggerResource extends ServerResource {
 
     /**
      * Convenience helper to reset data.
-     * 
+     *
      * @param job job parameters
      */
     protected void resetParameters(Parameters job) {
@@ -142,23 +144,21 @@ public abstract class TaggerResource extends ServerResource {
         job.tag_patterns = false;
         job.addOutputFormat("json");
     }
-    
+
     /**
-     * 
      * @param a JSONArray
      * @return
      */
-    protected List<String> fromArray(JSONArray a){
+    protected List<String> fromArray(JSONArray a) {
         ArrayList<String> strings = new ArrayList<>();
-        Iterator<Object> iter  = a.iterator();
+        Iterator<Object> iter = a.iterator();
         while (iter.hasNext()) {
-            strings.add((String)iter.next());            
+            strings.add((String) iter.next());
         }
         return strings;
     }
 
     /**
-     * 
      * @param inputs the inputs
      * @return job parameters
      * @throws JSONException on error.
@@ -199,13 +199,13 @@ public abstract class TaggerResource extends ServerResource {
             job.tag_lowercase = opts.contains("lowercase");
             job.resolve_localities = opts.contains("revgeo") || opts.contains("resolve_localities");
         }
-        // 
-        // Geographic filters        
+        //
+        // Geographic filters
         if (inputs.has("preferred_countries")) {
-            job.preferredGeography.put("countries", fromArray(inputs.getJSONArray("preferred_countries")));            
+            job.preferredGeography.put("countries", fromArray(inputs.getJSONArray("preferred_countries")));
         }
         if (inputs.has("preferred_locations")) {
-            job.preferredGeography.put("geohashes", fromArray(inputs.getJSONArray("preferred_locations")));                        
+            job.preferredGeography.put("geohashes", fromArray(inputs.getJSONArray("preferred_locations")));
         }
         if (job.clean_input || job.tag_lowercase) {
             job.isdefault = false;

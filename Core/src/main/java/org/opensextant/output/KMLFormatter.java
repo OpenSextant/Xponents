@@ -26,13 +26,12 @@ import org.opensextant.processing.ProcessingException;
 /**
  * A formatter for KML output that uses GISCore API. This KML interpretation is
  * limited. Preferably use a more modern KML lib.
- * 
+ *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Jan 6, 2012
  */
 public final class KMLFormatter extends GISDataFormatter {
 
     /**
-     *
      * @throws ProcessingException
      */
     public KMLFormatter() throws ProcessingException {
@@ -46,6 +45,7 @@ public final class KMLFormatter extends GISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
+     *
      * @throws Exception on err
      */
     @Override

@@ -17,7 +17,6 @@ import org.restlet.routing.Router;
 
 /**
  * @author ubaldino
- *
  */
 public class XlayerRestlet extends XlayerApp {
 
@@ -26,7 +25,8 @@ public class XlayerRestlet extends XlayerApp {
 
     public XlayerRestlet(Context c) {
         super(c);
-        log = getContext().getCurrentLogger();
+        getContext();
+        log = Context.getCurrentLogger();
     }
 
     @Override
@@ -58,22 +58,23 @@ public class XlayerRestlet extends XlayerApp {
     private XTemporal dateTagger = null;
 
     /**
-     * 
      * @throws ConfigException
      */
+    @Override
     public void configure() throws ConfigException {
         // Default - process place/country mentions in document texts.
         //
         tagger = new PlaceGeocoder();
         Parameters taggerParams = new Parameters();
         taggerParams.resolve_localities = true;
-        tagger.setParameters(taggerParams); 
-        //See Xponents concept of Parameters
+        tagger.setParameters(taggerParams);
+        // See Xponents concept of Parameters
         tagger.enablePersonNameMatching(true);
         tagger.configure();
 
-        // TODO: refine this filter list.  Use "/filters/non-placenames,user.csv" going forward. 
-        // 
+        // TODO: refine this filter list. Use "/filters/non-placenames,user.csv" going
+        // forward.
+        //
         String userFilterPath = "/filters/non-placenames,user.csv";
         URL filterFile = getClass().getResource(userFilterPath);
         if (filterFile != null) {
@@ -89,9 +90,9 @@ public class XlayerRestlet extends XlayerApp {
         } else {
             info("Optional user filter not found.  User exclusion list is file=" + userFilterPath);
         }
-        
+
         // Support Dates
-        // 
+        //
         dateTagger = new XTemporal();
         dateTagger.configure();
     }

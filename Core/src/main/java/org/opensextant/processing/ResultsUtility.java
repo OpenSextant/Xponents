@@ -26,7 +26,6 @@ import org.opensextant.util.TextUtils;
 
 /**
  * Abstract class encapsulating basic results formatter functionality.
- *
  */
 public class ResultsUtility {
 
@@ -38,13 +37,13 @@ public class ResultsUtility {
     /**
      * Given the TextEntity, set the context on that object.
      * The text entity must have span (start, end attributes) set.
-     * 
+     *
      * @param content
-     *            entire text from which entity came from
+     *                 entire text from which entity came from
      * @param t
-     *            the entity
+     *                 the entity
      * @param doc_size
-     *            the doc_size
+     *                 the doc_size
      */
     public static void setPrePostContextFor(String content, TextEntity t, int doc_size) {
         if (t.getContextAfter() != null) {
@@ -62,11 +61,11 @@ public class ResultsUtility {
      * The text entity must have span (start, end attributes) set.
      *
      * @param content
-     *            the content
+     *                 the content
      * @param t
-     *            the t
+     *                 the t
      * @param doc_size
-     *            the doc_size
+     *                 the doc_size
      */
     public static void setContextFor(String content, TextEntity t, int doc_size) {
 
@@ -83,7 +82,7 @@ public class ResultsUtility {
      * Testers for TextMatch: isLocation macro.
      *
      * @param m
-     *            the m
+     *          the m
      * @return true, if is location
      */
     public static boolean isLocation(TextMatch m) {
@@ -101,7 +100,7 @@ public class ResultsUtility {
      * Testers for TextMatch: isDatetime macro.
      *
      * @param m
-     *            the m
+     *          the m
      * @return true, if is datetime
      */
     public static boolean isDatetime(TextMatch m) {
@@ -124,7 +123,7 @@ public class ResultsUtility {
      * Format confidence.
      *
      * @param d
-     *            the d
+     *          the d
      * @return the string
      */
     public static String formatConfidence(double d) {

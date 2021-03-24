@@ -4,9 +4,8 @@ import org.opensextant.data.Place;
 
 /**
  * Place metrics. Everything other than coords, countries, and filtered-out
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class PlaceCount {
     public int count = 1;
@@ -23,6 +22,7 @@ public class PlaceCount {
         return ratio;
     }
 
+    @Override
     public String toString() {
         return String.format("%s (%d or %03.1f pct)", place.getName(), count, 100 * getRatio());
     }

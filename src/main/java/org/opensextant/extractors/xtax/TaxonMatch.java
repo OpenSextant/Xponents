@@ -23,7 +23,6 @@ import org.opensextant.data.Taxon;
 import org.opensextant.util.TextUtils;
 
 /**
- *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class TaxonMatch extends org.opensextant.extraction.TextMatch {

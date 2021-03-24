@@ -19,6 +19,7 @@ import org.opensextant.data.Geocoding;
 import org.opensextant.data.Language;
 import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;
+import org.opensextant.data.social.Message;
 import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.extraction.ExtractionException;
@@ -39,21 +40,17 @@ import org.opensextant.util.TextUtils;
 /**
  * Pipeline focused on improving the location metadata for Tweets or Weibo or
  * other social media that has metadata about user or messaging location.
- * 
  * Assumptions: - microblog message has a User Profile or some subset of DeepEye
  * social media fields: 'ugeo*', 'geo*', etc.; See DeepEye social API for Tweet.
- * 
  * Tweet tw = DataUtility.fromDeepeye(R);
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class XponentGeocoder extends GeoInferencer {
 
     /**
      * For now "XpMeta" = geo processing tweets for province normalization. Any
      * possible geo indication is resolved down to a Province code.
-     * 
      * "XpGeotag" = full text geotagging/geocoding.
      */
     public XponentGeocoder() {
@@ -67,6 +64,7 @@ public class XponentGeocoder extends GeoInferencer {
     /**
      * does not infer place mentions from free text
      */
+    @Override
     public Collection<GeoInference> geoinferencePlaceMentions(Tweet tw)
             throws MessageParseException, ExtractionException {
         return null;
@@ -76,6 +74,7 @@ public class XponentGeocoder extends GeoInferencer {
      * Renders a string buffer with a final report -- provided you set or
      * increment the totalRecords value.
      */
+    @Override
     public String report() {
         String buf = String.format("%s Total Records:%d, Has Coords:%2.0f%%, Has TZ:%2.0f%%, Has Place: %2.0f%%",
                 this.inferencerID, totalRecords, pct(totalRecords, recordsWithCoord), pct(totalRecords, recordsWithTZ),
@@ -125,7 +124,6 @@ public class XponentGeocoder extends GeoInferencer {
 
         /*
          * DeepEye Text provides a wrapper around Cybozu LangDetect
-         * 
          */
         // langidTool = new LangDetect(AVERAGE_TEXT_SIZE);
 
@@ -209,6 +207,7 @@ public class XponentGeocoder extends GeoInferencer {
      * Geoinference user/author profile. Standard 'deepeye' annotation is "ugeo"
      * or "country"
      */
+    @Override
     public GeoInference geoinferenceTweetAuthor(Tweet tw) throws MessageParseException, ExtractionException {
         return processLocation(tw, (Place) tw.authorGeo, tw.id, "ugeo");
     }
@@ -217,28 +216,28 @@ public class XponentGeocoder extends GeoInferencer {
      * Geoinference the location of the message, e.g., where the message was
      * sent from. Standard 'deepeye' annotation is "geo"; most message locations
      * are coordinates or hard locations.
-     * 
+     *
      * @param tw
-     *            tweet as parsed by DeepEye
+     *           tweet as parsed by DeepEye
      * @return Geo or Country annotation
      * @throws MessageParseException
-     *             on parsing the tweet or JSON
+     *                               on parsing the tweet or JSON
      * @throws ExtractionException
-     *             on running geolocation routines
+     *                               on running geolocation routines
      */
+    @Override
     public GeoInference geoinferenceTweetStatus(Tweet tw) throws MessageParseException, ExtractionException {
         return processLocation(tw, (Place) tw.statusGeo, tw.id, "geo");
     }
 
     /**
      * Not common, but useful. Improve location resolution via various tricks
-     * 
+     *
      * @param g
      */
     public void parseFreeTextCoordinates(Place g) {
         /*
          * Render obvious coordinates
-         * 
          */
         if (g.getPlaceName() == null) {
             return;
@@ -268,7 +267,7 @@ public class XponentGeocoder extends GeoInferencer {
 
     /**
      * Derive the Province ID if given a hard location.
-     * 
+     *
      * @param g
      * @return true if Place object was embued with a Province ID and Country ID
      *         if relevant.
@@ -351,14 +350,14 @@ public class XponentGeocoder extends GeoInferencer {
      * Determine a starting set of countries -- if TZ/UTC is set, then use
      * that,... then improve scores where tweet language is spoken. Otherwise,
      * try where tweet lang is spoken.
-     * 
+     *
      * @param t
      * @return
      */
     public Map<String, InferredCountry> getInferredCountry(Tweet t) {
         Collection<String> countrySet = null;
 
-        if (Tweet.validateUTCOffset(t.utcOffset)) {
+        if (Message.validateUTCOffset(t.utcOffset)) {
             if (t.isDST) {
                 countrySet = this.countries.countriesInDSTOffset(t.utcOffset);
             } else {
@@ -432,9 +431,8 @@ public class XponentGeocoder extends GeoInferencer {
      * Employ PlaceGeocoder rule(s): When this rule is added to PlaceGeocoder,
      * it can disambiguate and score found places in free text. Alternatively
      * the rule can be used directly with a particular PlaceCandidate.
-     * 
-     * @author ubaldino
      *
+     * @author ubaldino
      */
     class UserProfileLocationRule extends GeocodeRule {
 
@@ -451,7 +449,7 @@ public class XponentGeocoder extends GeoInferencer {
             currentTweet = t;
             inferredCountries = null;
             timezone = null;
-            validTZ = Tweet.validTZ(currentTweet);
+            validTZ = Message.validTZ(currentTweet);
             if (g != null) {
                 currentGeo = g;
                 cc = g.getCountryCode();
@@ -471,13 +469,14 @@ public class XponentGeocoder extends GeoInferencer {
 
         /**
          * Custom rule evaluation. See comments below.
-         * 
+         *
          * @param name
-         *            - the candidate that builds up rules and scores.
+         *                        - the candidate that builds up rules and scores.
          * @param geo
-         *            - the individual gazetteer entry being considered.
+         *                        - the individual gazetteer entry being considered.
          * @param useEditDistance
-         *            true if you want to filter name matches by edit distance.
+         *                        true if you want to filter name matches by edit
+         *                        distance.
          */
         @Override
         public void evaluate(PlaceCandidate name, Place geo) {
@@ -493,11 +492,9 @@ public class XponentGeocoder extends GeoInferencer {
              * FEATURE SCORE: ================ Rank higher places that are
              * P/PPL, A/ADM*, or L/land/area, etc. Ignore all other feature
              * types.
-             * 
              * Rationale: Users type in short city or region name in user
              * profile. These are the most common features classes. H, R, T, V,
              * S can be ignored
-             * 
              * POINTS: +5
              */
             if (isUsableFeature(geo.getFeatureClass())) {
@@ -515,19 +512,15 @@ public class XponentGeocoder extends GeoInferencer {
              * user location. UTC offset is approx 1 hr per 15 deg longitude.
              * Ex. Boston (71W), GMT-0500 = 5 * -15 = -75. This is about within
              * 5 deg.
-             * 
              * If date of tweet occurs during Daylight savings (DST), then we
              * would want to try to use the normal UTC offset, e.g., GMT+0500
              * not GMT+0400. DST would yield a lon of 60 deg in this case. This
              * affects 6 months of the year.
-             * 
              * TOOD: Use of DST is country and TZ specific... so given the
              * country of the geo, find the timezone (using TZ label and DST
              * offset). If the current date/time is DST, then use the UTC offset
              * on that TZ instead of that from the tweet.
-             * 
              * For worldwide coverage this is more than using DST - 1hr.
-             *
              * POINTS +3
              */
             if (this.validTZ) {
@@ -543,10 +536,8 @@ public class XponentGeocoder extends GeoInferencer {
              * indicating country/state or country/state/county for example,
              * then any gazetteer entry matching that profile scores very high.
              * The hierarchical path is /CC/ADM1.
-             * 
              * If only country is given, then simply score gazetteer entries
              * from that country higher.
-             * 
              * POINTS +15 for /CC/ADM1 match + 5 for /CC match
              */
             if (currentGeo != null) {
@@ -569,10 +560,8 @@ public class XponentGeocoder extends GeoInferencer {
              * TZ+LANG+COUNTRY SCORE: ====================== Where only language
              * (of user and of text) are given and/or Timezone/UTC, we can infer
              * a narrow set of countries. That is:
-             * 
              * - Countries whose primary language matches that of the Tweet -
              * Countries that contain the Timezone/UTC offset of the Tweet
-             * 
              * POINTS +1 to +11, based on evidence
              */
             if (this.inferredCountries != null) {
@@ -589,10 +578,9 @@ public class XponentGeocoder extends GeoInferencer {
     /**
      * Use geographic hierarchy to find province related to this place. When
      * standard hierarchy look fails, try tagging name value as free text
-     * 
-     * 
+     *
      * @param g
-     *            place that has some name/prov/country or name/ADM1/CC hiearchy
+     *          place that has some name/prov/country or name/ADM1/CC hiearchy
      * @return confidence. greater than 0 means something was found.
      * @throws ExtractionException
      */
@@ -633,7 +621,6 @@ public class XponentGeocoder extends GeoInferencer {
          */
         /*
          * First query: Find Province.
-         * 
          */
 
         int conf = -1;
@@ -641,7 +628,6 @@ public class XponentGeocoder extends GeoInferencer {
         List<TextMatch> entities = null;
         /*
          * LANG ID of profile geography
-         * 
          */
         // Cleanup name -- remove punct and white space.
         boolean hasDigits = TextUtils.hasDigits(name);
@@ -690,7 +676,6 @@ public class XponentGeocoder extends GeoInferencer {
 
         /*
          * PLACE GEOTAGGING: identify possible places
-         * 
          * Language-specific
          */
 
@@ -731,7 +716,6 @@ public class XponentGeocoder extends GeoInferencer {
          * Other direct inferencing has not worked, so tree the text of the
          * user's location as free text. It likely contains multiple names,
          * numbers, non-places, and other descriptive words and symbols.
-         * 
          */
         try {
             entities = tagger.extract(lastTry);
@@ -805,13 +789,13 @@ public class XponentGeocoder extends GeoInferencer {
     /**
      * Special prequisites -- profileRule.reset() must be done before this is
      * called.
-     * 
+     *
      * @param nameAdjusted
-     *            the name parse and cleaned ahead of time.
+     *                     the name parse and cleaned ahead of time.
      * @param g
-     *            the place to be geocoded.
+     *                     the place to be geocoded.
      * @param gazNameField
-     *            the solr schema name to be used.
+     *                     the solr schema name to be used.
      * @return
      */
     private int inferPlaceByName(String nmGiven, Place g, String fld) {
@@ -819,14 +803,14 @@ public class XponentGeocoder extends GeoInferencer {
         try {
 
             String q = null;
-            /* Taking the liberty to use arbitrary punctuation ; to replace special chars
+            /*
+             * Taking the liberty to use arbitrary punctuation ; to replace special chars
              * Even if there are special chars we can still get something.
-             * ... But seriously, if you have a lot of punctuation in a given name, 
+             * ... But seriously, if you have a lot of punctuation in a given name,
              * this is not likely to end with anything meaningful. Just sayin'
-             * 
              * special crap chars;
-             *   \
-             *   "
+             * \
+             * "
              */
             String nm = TextUtils.fast_replace(nmGiven, "\\\"", ";");
             if (g.getCountryCode() != null) {
@@ -893,14 +877,14 @@ public class XponentGeocoder extends GeoInferencer {
         g.setPrecision(getFeaturePrecision(g.getFeatureClass(), g.getFeatureCode()));
         if (isCoord(chosen) && !chosen.isCountry()) {
             // Some gazetteer guesses are composite and may not have a location
-            // at all.  Just best guess at country and name.
+            // at all. Just best guess at country and name.
             g.setLatLon(chosen);
         }
     }
 
     /**
      * Trivial name filters.
-     * 
+     *
      * @param lowercaseName
      * @return
      */
@@ -939,9 +923,9 @@ public class XponentGeocoder extends GeoInferencer {
      * This is used only if we have a province name and no ADM1 code. Try to
      * find the ADM1 code for the user profile, first. then that will help
      * refine actual selection of a city of residence.
-     * 
+     *
      * @param prov province ADM1 query
-     * @param cc country code
+     * @param cc   country code
      * @return Province code, ADM1
      * @throws SolrServerException
      */
@@ -1010,11 +994,10 @@ public class XponentGeocoder extends GeoInferencer {
      * Trivial test to see if provided place description is as simple as a
      * country name, rather than a description of a place or non-place. This is
      * just a lookup, not a tagger.
-     * 
      * Place g is coded with the found country.
-     * 
+     *
      * @param g
-     *            given geo text
+     *          given geo text
      * @return if g could be geocoded with country.
      */
     public int inferCountryName(Geocoding g) {
@@ -1057,37 +1040,40 @@ public class XponentGeocoder extends GeoInferencer {
 
     /**
      * Detailed routine to uncover additional location information in tweet noise.
-     * Since SocGeo 1.13.8 we try to set a Province name in addition to ADM1 ID 
+     * Since SocGeo 1.13.8 we try to set a Province name in addition to ADM1 ID
+     *
      * @param tw
-     *            tweet
+     *                  tweet
      * @param g
-     *            a location on tweet, geo or user geo (ugeo)
+     *                  a location on tweet, geo or user geo (ugeo)
      * @param rid
-     *            Record ID from deepeye or other data ID.
+     *                  Record ID from deepeye or other data ID.
      * @param annotName
-     *            annotation type to store.
+     *                  annotation type to store.
      * @throws ExtractionException
      */
     public GeoInference processLocation(Tweet tw, Place g, String rid, String annotName) throws ExtractionException {
-        /* 
+        /*
          * GIVEN
          * =====================
-         * Place g represents the given geo metadata.  
+         * Place g represents the given geo metadata.
          * The objective is to geocode g directly, that is reset geocoding fields.
          */
         if (g == null) {
             return null;
         }
         // This data is the given geo information
-        // The final method will be set to the name of the rule that was best suited to he geo-inference.
-        // 
+        // The final method will be set to the name of the rule that was best suited to
+        // he geo-inference.
+        //
         g.setMethod("given");
 
         int confidence = 0;
         boolean resolved = false;
 
         /*
-         * INFER:  COUNTRY NAME from free text. And optionally capture Lat/Lon if possible.
+         * INFER: COUNTRY NAME from free text. And optionally capture Lat/Lon if
+         * possible.
          * =====================
          */
         if ((confidence = inferCountryName(g)) > 0) {
@@ -1098,11 +1084,11 @@ public class XponentGeocoder extends GeoInferencer {
                 ++recordsWithCoord;
                 G.confidence += 10;
                 /*
-                 * INFER:  PROVINCE ID
+                 * INFER: PROVINCE ID
                  * =====================
                  */
                 if (provinceID(g)) {
-                    // Note - confidence here is not that high, if user 
+                    // Note - confidence here is not that high, if user
                     // enters "name of country" in their profile, and have GPS turned on or not
                     // then they may have just chosen center-of-country as lat/lon location.
                     G.confidence += 10;
@@ -1122,21 +1108,21 @@ public class XponentGeocoder extends GeoInferencer {
         }
 
         /*
-         * PARSE:  COORDINATES
+         * PARSE: COORDINATES
          * =====================
          */
         parseFreeTextCoordinates(g);
 
-        /* 
-         * Resolve coordinates to a location.. near a city,... in a province... in a country
+        /*
+         * Resolve coordinates to a location.. near a city,... in a province... in a
+         * country
          * Possibly over water, e.g, I'm on a cruise.
-         * 
          * Objective -- Province ID, via reverse lookup.
          */
         if (isCoord(g)) {
             ++recordsWithCoord;
             /*
-             * INFER:  PROVINCE ID
+             * INFER: PROVINCE ID
              * =====================
              */
             if (provinceID(g)) {
@@ -1145,10 +1131,12 @@ public class XponentGeocoder extends GeoInferencer {
             }
         } else {
             /*
-             * INFER and/or PARSE:  Given the geo, TZ, text language and user language. and other data.
+             * INFER and/or PARSE: Given the geo, TZ, text language and user language. and
+             * other data.
              * =====================
              * Note -- this works if name of place and province are simple phrases.
-             * If it is a description, then the place must be tagged.  Choosing the best location
+             * If it is a description, then the place must be tagged. Choosing the best
+             * location
              * involves looking at TZ, UTC, and langauge where possible.
              */
             confidence = inferProvinceByHierarchy(tw, g);
@@ -1159,10 +1147,10 @@ public class XponentGeocoder extends GeoInferencer {
         }
 
         /*
-         * INFER:  last resort, guess at country at least using TZ and Language.
+         * INFER: last resort, guess at country at least using TZ and Language.
          * =====================
          */
-        if (Tweet.validTZ(tw)) {
+        if (Message.validTZ(tw)) {
             ++this.recordsWithTZ;
             if (!resolved) {
                 confidence = inferCountryTimezone(tw, g);
@@ -1170,13 +1158,15 @@ public class XponentGeocoder extends GeoInferencer {
             }
         }
 
-        // A mere convention -- if method yields only a country, then emit only a Country annot, not a full geocode.
+        // A mere convention -- if method yields only a country, then emit only a
+        // Country annot, not a full geocode.
         if (g.getMethod().endsWith("country")) {
             annotName = "country";
         }
 
-        /* Only if you were able to resolve something then should you create an annotation.
-         * 
+        /*
+         * Only if you were able to resolve something then should you create an
+         * annotation.
          */
         if (!resolved) {
             log.debug("\tUnresolved geo for: R={}, geo={}, tz={}", tw.id, g, tw.timezone);

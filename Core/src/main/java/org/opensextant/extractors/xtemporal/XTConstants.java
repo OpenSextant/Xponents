@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author ubaldino
  */
 public class XTConstants {
@@ -29,7 +28,7 @@ public class XTConstants {
      *
      */
     public static final int MDY_FAMILY = 0;
-    
+
     public static final int DMY_FAMILY = 2;
     /**
      *
@@ -68,7 +67,6 @@ public class XTConstants {
     }
 
     /**
-     *
      * @param key
      * @return
      */
@@ -81,7 +79,6 @@ public class XTConstants {
     }
 
     /**
-     *
      * @param id
      * @return
      */

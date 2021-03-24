@@ -1,9 +1,9 @@
 package org.opensextant.extractors.test;
 
-import org.opensextant.extractors.geo.GazetteerUpdateProcessorFactory;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.opensextant.extractors.geo.GazetteerUpdateProcessorFactory;
 
 public class TestGazFactory {
 

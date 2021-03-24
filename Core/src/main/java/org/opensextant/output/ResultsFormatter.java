@@ -22,13 +22,16 @@ import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
 
 /**
- * Interface for classes that generate output from corpora that have been processed by OpenSextant.
+ * Interface for classes that generate output from corpora that have been
+ * processed by OpenSextant.
+ *
  * @author Rich Markeloff, MITRE Corp.
- * Initial version created on Jul 13, 2011
+ *         Initial version created on Jul 13, 2011
  */
 public interface ResultsFormatter {
 
-    /** A more convenient way of passing in a list of parameters.
+    /**
+     * A more convenient way of passing in a list of parameters.
      */
     void setParameters(Parameters params);
 
@@ -39,24 +42,28 @@ public interface ResultsFormatter {
 
     /**
      * Set the path to the output directory.
+     *
      * @param pathname
      */
     void setOutputDir(String pathname);
 
     /**
      * Set the name of the output file.
+     *
      * @param filename
      */
     void setOutputFilename(String filename);
 
     /**
      * Get the type of output produced by this formatter.
+     *
      * @return type of output
      */
     String getOutputType();
 
     /**
      * Get the path to the output file.
+     *
      * @return file path of output
      */
     String getOutputFilepath();
@@ -77,14 +84,12 @@ public interface ResultsFormatter {
     void finish();
 
     /**
-     *
-     * @param f field 
+     * @param f field
      * @throws ConfigException if not consistent with schema
      */
     void addField(String f) throws ConfigException;
 
     /**
-     *
      * @param f field
      * @throws ConfigException if not consistent with schema
      */

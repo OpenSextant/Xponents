@@ -12,9 +12,7 @@ public class TestPlaceLookup {
     public static void defaultTest() throws ConfigException, ExtractionException {
         /*
          * Raw findings for 北京市 P: 北京市 (22, CN, ADM1)
-         * 
          * // now find all romanized names for that same name (may be different places).
-         * 
          * Romanized findings 7 P: Pei-p'ing Shih (22, CN, ADM1) P: Peiping Municipal
          * Administrative Area (22, CN, ADM1) P: Peiping Municipality (22, CN, ADM1) P:
          * Peking Municipality (22, CN, ADM1) P: Peking (22, CN, ADM1) P: Beijing Shi
@@ -44,7 +42,7 @@ public class TestPlaceLookup {
 
     /**
      * Lookup a place named N, and has parameters
-     * 
+     *
      * @param args
      */
     public static void main(String[] args) {

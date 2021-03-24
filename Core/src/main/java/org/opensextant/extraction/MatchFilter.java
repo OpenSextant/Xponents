@@ -39,7 +39,7 @@ public class MatchFilter {
     /**
      * Instantiates a new match filter.
      *
-     * @param stopfile    path to stopfile resource as it appears in CLASSPATH
+     * @param stopfile path to stopfile resource as it appears in CLASSPATH
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public MatchFilter(String stopfile) throws IOException {
@@ -54,10 +54,10 @@ public class MatchFilter {
     }
 
     /**
-     *  If value is in stop list, then filter it out.
+     * If value is in stop list, then filter it out.
      *
      * @param value the value
-     * @return true, if successful.  True if the value is null
+     * @return true, if successful. True if the value is null
      */
     public boolean filterOut(String value) {
         if (StringUtils.isBlank(value)) {

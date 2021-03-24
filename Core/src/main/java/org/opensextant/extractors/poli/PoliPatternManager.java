@@ -34,8 +34,8 @@ public final class PoliPatternManager extends RegexPatternManager {
 
     /**
      * Enable a family of patterns
-     * @param fam pat family to disable
      *
+     * @param fam pat family to disable
      */
     public void disable_patterns(String fam) {
         for (RegexPattern pat : patterns.values()) {
@@ -45,7 +45,9 @@ public final class PoliPatternManager extends RegexPatternManager {
         }
     }
 
-    /** You don't really want to enable All patterns... unless you are brute force testing all your patterns.
+    /**
+     * You don't really want to enable All patterns... unless you are brute force
+     * testing all your patterns.
      */
     @Override
     public void enableAll() {
@@ -74,9 +76,7 @@ public final class PoliPatternManager extends RegexPatternManager {
     }
 
     /**
-     *
      * Pattern Factory
-     *
      * Implementation must create a RegexPattern given the basic RULE define,
      * #RULE FAMILY RID REGEX PatternManager here adds compiled pattern and
      * DEFINES.
@@ -94,7 +94,7 @@ public final class PoliPatternManager extends RegexPatternManager {
 
     /**
      * Implementation has the option to check a pattern; For now invalid
-     * patterns are only logged.  All patterns in config file are valid.
+     * patterns are only logged. All patterns in config file are valid.
      * Override this as needed.
      *
      * @param repat pattern object
@@ -110,9 +110,9 @@ public final class PoliPatternManager extends RegexPatternManager {
      * Implementation must create TestCases given the #TEST directive, #TEST RID
      * TID TEXT
      *
-     * @param id  test ID
+     * @param id   test ID
      * @param text text for test
-     * @param fam pattern family to test
+     * @param fam  pattern family to test
      * @return test case
      */
     @Override
@@ -125,8 +125,8 @@ public final class PoliPatternManager extends RegexPatternManager {
      * from parsing "text" and knowing which pattern family was matched.
      *
      * @param pattern_id the pattern_id
-     * @param matchtext the matchtext
-     * @param groups the groups
+     * @param matchtext  the matchtext
+     * @param groups     the groups
      * @return the poli match
      * @deprecated logic for creation of a match is back in main PoLi match loop
      */

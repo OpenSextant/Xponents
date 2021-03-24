@@ -28,7 +28,7 @@ import org.supercsv.prefs.CsvPreference;
  * consider two different stop filters, Is "North" different than "north"?
  * This first pass filter should really filter out only text we know to be
  * false positives regardless of case.
- * 
+ *
  * Filter out unwanted tags via GazetteerETL data model or in Solr index. If
  * you believe certain items will always be filtered then set name_bias >
  * 0.0
@@ -48,29 +48,30 @@ public class TagFilter extends MatchFilter {
      */
     private Map<String, Set<Object>> langStopFilters = new HashMap<>();
 
-    //private Set<String> generalLangId = new HashSet<>();
+    // private Set<String> generalLangId = new HashSet<>();
 
     /**
      * NOTE: This expects the files are all available. This fails if resource
      * files are missing.
-     * 
+     *
      * @throws ConfigException if any file has a problem.
      */
     public TagFilter() throws IOException, ConfigException {
         super();
         nonPlaceStopTerms = new HashSet<>();
         String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", // GENERAL
-                "/filters/non-placenames,spa.csv", // SPANISH 
+                "/filters/non-placenames,spa.csv", // SPANISH
                 "/filters/non-placenames,deu.csv", // GERMAN
                 "/filters/non-placenames,acronym.csv" // ACRONYMS
         };
         for (String f : defaultNonPlaceFilters) {
             nonPlaceStopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
         }
-        //generalLangId.add(TextUtils.englishLang);
-        //generalLangId.add(TextUtils.spanishLang);
+        // generalLangId.add(TextUtils.englishLang);
+        // generalLangId.add(TextUtils.spanishLang);
 
-        /* NOTE: these stop word sets are of format='wordset'
+        /*
+         * NOTE: these stop word sets are of format='wordset'
          * Whereas other languages (es, it, etc.) are provided in format='snowball'
          * StopFilterFactory is needed to load snowball filters.
          */
@@ -86,8 +87,8 @@ public class TagFilter extends MatchFilter {
             return;
         }
         /*
-        * More optional lists.
-        */
+         * More optional lists.
+         */
         // KOREAN
         String url = "/lang/carrot2-stopwords.ko";
         String lg = "ko";
@@ -115,6 +116,7 @@ public class TagFilter extends MatchFilter {
 
     /**
      * Load default Lucene stop words to aid in language specific filtration.
+     *
      * @param langids
      * @throws IOException
      * @throws ConfigException
@@ -157,11 +159,9 @@ public class TagFilter extends MatchFilter {
      * (DEFAULT), all lower case matches are ignored; only mixed case or upper
      * case passes (b) If match term, t, is in stop word list it is filtered
      * out. Case is ignored.
-     * 
      * TODO: filter rules -- if text match is all lower case and filter is
      * case-sensitive, then this filters out any lower case matches. Not
      * optimal. This should take into account alpha-case of document.
-     * 
      * TODO: trivial for the general case, but important: stopTerms is hashed
      * only by lower case value, so native-case lookup is not possible.
      */
@@ -182,10 +182,9 @@ public class TagFilter extends MatchFilter {
 
     /**
      * Experimental.
-     * 
      * Using proper Language ID (ISO 2-char for now), determine if the given
      * term, t, is a stop term in that language.
-     * 
+     *
      * @param t
      * @param langId
      * @param docIsUpper true if input doc is mostly upper
@@ -194,7 +193,8 @@ public class TagFilter extends MatchFilter {
      */
     public boolean filterOut(PlaceCandidate t, String langId, boolean docIsUpper, boolean docIsLower) {
         /*
-         * Consider no given language ID -- only short, non-ASCII terms should be filtered out 
+         * Consider no given language ID -- only short, non-ASCII terms should be
+         * filtered out
          * against all stop filters; Otherwise there is some performance issues.
          */
         if (langId == null) {
@@ -204,17 +204,18 @@ public class TagFilter extends MatchFilter {
                 return assessAllFilters(t.getText().toLowerCase());
             }
         }
-        /* 
+        /*
          * Consider language specific stop filters.
-         * NOTE: LangID should not be 'CJK' or group.  langStopFilters keys stop terms by LangID
+         * NOTE: LangID should not be 'CJK' or group. langStopFilters keys stop terms by
+         * LangID
          */
         if (langStopFilters.containsKey(langId)) {
             Set<Object> terms = langStopFilters.get(langId);
             return terms.contains(t.getText().toLowerCase());
         }
 
-        /* EXPERIMENTAL.
-         * 
+        /*
+         * EXPERIMENTAL.
          * But if langID is given, we first consider if text in document
          * is possibly a Proper name of sort...
          * UPPERCASENAME -- possibly stop?
@@ -240,9 +241,11 @@ public class TagFilter extends MatchFilter {
 
         /*
          * FILTER out lower case matches for non-English, non-CJK texts.
-         * If document is mixed case.  That is we still expect/assume interesting
-         * place names to be proper names.  However, if you find longer name matches ~10 chars or longer
-         * as lower case names, then let them pass. 10 chars is arbitrary, but approx. 1 word threshold. 
+         * If document is mixed case. That is we still expect/assume interesting
+         * place names to be proper names. However, if you find longer name matches ~10
+         * chars or longer
+         * as lower case names, then let them pass. 10 chars is arbitrary, but approx. 1
+         * word threshold.
          */
         if (!cjk) {
             if (!docIsLower && !docIsUpper) {
@@ -255,8 +258,7 @@ public class TagFilter extends MatchFilter {
     }
 
     /**
-     * 
-     * @param langId lang ID to check.
+     * @param langId    lang ID to check.
      * @param termLower lower case term.
      * @return
      */
@@ -273,12 +275,18 @@ public class TagFilter extends MatchFilter {
 
     /**
      * Experimental. Hack.
-     * 
      * Due to bi-gram shingling with CJK languages - Chinese, Japanese, Korean -
      * the matcher really over-matches, e.g. For really short matches, let's
-     * rule out obvious bad matches. <pre> ... に た ... input text matched にた
-     * gazetteer place name. </pre> TOOD: make use of better tokenizer/matcher
+     * rule out obvious bad matches.
+     * 
+     * <pre>
+     *  ... に た ... input text matched にた
+     * gazetteer place name.
+     * </pre>
+     * 
+     * TOOD: make use of better tokenizer/matcher
      * in SolrTextTagger configuration for CJK
+     *
      * @param t
      * @return
      */
@@ -291,6 +299,7 @@ public class TagFilter extends MatchFilter {
 
     /**
      * Run a term (already lowercased) against all stop filters.
+     *
      * @param textnorm
      * @return
      */
@@ -305,10 +314,9 @@ public class TagFilter extends MatchFilter {
 
     /**
      * Exclusions have two columns in a CSV file. 'exclusion', 'category'
-     *
      * "#" in exclusion column implies a comment. Call is responsible for
      * getting I/O stream.
-     * 
+     *
      * @param filestream URL/file with exclusion terms
      * @return set of filter terms
      * @throws ConfigException if filter is not found
@@ -330,7 +338,10 @@ public class TagFilter extends MatchFilter {
                     continue;
                 }
                 String trimmed = term.trim();
-                /* Allow for case-sensitive filtration, if stop terms are listed in native case in resource files */
+                /*
+                 * Allow for case-sensitive filtration, if stop terms are listed in native case
+                 * in resource files
+                 */
                 stopTerms.add(trimmed);
                 stopTerms.add(trimmed.toLowerCase());
             }

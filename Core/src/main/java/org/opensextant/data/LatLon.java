@@ -17,7 +17,6 @@
 package org.opensextant.data;
 
 /**
- *
  * @author ubaldino
  */
 public interface LatLon {

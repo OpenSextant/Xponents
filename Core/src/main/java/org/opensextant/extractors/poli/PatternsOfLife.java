@@ -47,7 +47,6 @@ import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.util.TextUtils;
 
 /**
- *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class PatternsOfLife extends AbstractFlexPat {
@@ -103,7 +102,7 @@ public class PatternsOfLife extends AbstractFlexPat {
     }
 
     public List<TextMatch> extract(TextInput input, String family) {
-        TextMatchResult results = extract_patterns(input.buffer, input.id, family);        
+        TextMatchResult results = extract_patterns(input.buffer, input.id, family);
         return results.matches;
     }
 
@@ -117,13 +116,12 @@ public class PatternsOfLife extends AbstractFlexPat {
      * Extract patterns of a certain family from a block of text.
      *
      * @param text
-     *            - data to process
+     *                - data to process
      * @param text_id
-     *            - identifier for the data
+     *                - identifier for the data
      * @param family
-     *            - optional filter; to reuse the same PatManager but extract
-     *            certain patterns only.
-     *
+     *                - optional filter; to reuse the same PatManager but extract
+     *                certain patterns only.
      * @return PoliResult
      */
     public TextMatchResult extract_patterns(String text, String text_id, String family) {
@@ -201,7 +199,7 @@ public class PatternsOfLife extends AbstractFlexPat {
         }
 
         results.pass = !results.matches.isEmpty();
-        PoliPatternManager.reduce_matches(results.matches);
+        RegexPatternManager.reduce_matches(results.matches);
 
         return results;
     }

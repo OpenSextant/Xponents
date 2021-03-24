@@ -1,6 +1,6 @@
 package org.opensextant.extractors.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.text.ParseException;
 import java.util.Date;

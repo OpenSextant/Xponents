@@ -54,7 +54,7 @@ public interface Extractor {
      * Configure an Extractor using defaults for that extractor.
      *
      * @throws ConfigException
-     *             the config exception
+     *                         the config exception
      */
     void configure() throws ConfigException;
 
@@ -62,9 +62,9 @@ public interface Extractor {
      * Configure an Extractor using a config file named by a path.
      *
      * @param patfile
-     *            configuration file path
+     *                configuration file path
      * @throws ConfigException
-     *             the config exception
+     *                         the config exception
      */
     void configure(String patfile) throws ConfigException;
 
@@ -72,36 +72,39 @@ public interface Extractor {
      * Configure an Extractor using a config file named by a URL.
      *
      * @param patfile
-     *            configuration URL
+     *                configuration URL
      * @throws ConfigException
-     *             the config exception
+     *                         the config exception
      */
     void configure(java.net.URL patfile) throws ConfigException;
 
     /**
-     * Useuful for working with batches of inputs that have an innate row ID + buffer pairing.
+     * Useuful for working with batches of inputs that have an innate row ID +
+     * buffer pairing.
      *
      * @param input
-     *            text input
+     *              text input
      * @return the list of TextMatch
      * @throws ExtractionException
-     *             error if underlying extractor(s) fail
+     *                             error if underlying extractor(s) fail
      */
     List<TextMatch> extract(TextInput input) throws ExtractionException;
 
     /**
-     * Useful for working with text buffers adhoc. Fewer assumptions about input data here.
+     * Useful for working with text buffers adhoc. Fewer assumptions about input
+     * data here.
      *
      * @param input
-     *            text input, as a string
+     *              text input, as a string
      * @return the list of TextMatch
      * @throws ExtractionException
-     *             error if underlying extractor(s) fail
+     *                             error if underlying extractor(s) fail
      */
     List<TextMatch> extract(String input) throws ExtractionException;
 
     /**
-     * Resource management. This cleanup routine usually in turn calls some shutdown, disconnect, etc.
+     * Resource management. This cleanup routine usually in turn calls some
+     * shutdown, disconnect, etc.
      */
     void cleanup();
 

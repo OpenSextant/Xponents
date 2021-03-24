@@ -22,7 +22,6 @@ import org.apache.solr.client.solrj.request.RequestWriter;
 import org.apache.solr.common.params.SolrParams;
 
 /**
- *
  * @author dsmiley
  * @author ubaldino
  */
@@ -36,7 +35,7 @@ public class SolrTaggerRequest extends QueryRequest {
         this.input = text;
     }
 
-    /* Fixed in Solr 7.x */ 
+    /* Fixed in Solr 7.x */
     @Override
     public RequestWriter.ContentWriter getContentWriter(String expectedType) {
         return new RequestWriter.StringPayloadContentWriter(input, "text/plain; charset=UTF-8");

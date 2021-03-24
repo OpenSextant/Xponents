@@ -53,7 +53,6 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.FilenameUtils;
 
 /**
- *
  * @author ubaldino
  */
 public class FileUtility {
@@ -118,7 +117,7 @@ public class FileUtility {
 
     /**
      * Getting an input stream from a file.
-     * 
+     *
      * @param f   file object
      * @param enc encoding of text data
      * @return reader
@@ -141,9 +140,10 @@ public class FileUtility {
     }
 
     /**
-     * Simple check if a file is typed as a Spreadsheet Tab-delimited .txt files or .dat files may be
+     * Simple check if a file is typed as a Spreadsheet Tab-delimited .txt files or
+     * .dat files may be
      * valid spreadsheets, however this method does not look inside files.
-     * 
+     *
      * @param filepath path to file
      * @return true if file represents one of the various spreadsheet file formats
      */
@@ -153,8 +153,9 @@ public class FileUtility {
     }
 
     /**
-     * Using Commons getExtension(), determine if the filename represents an image media type.
-     * 
+     * Using Commons getExtension(), determine if the filename represents an image
+     * media type.
+     *
      * @param filepath path to file
      * @return if file represents any type of image
      */
@@ -167,8 +168,9 @@ public class FileUtility {
     }
 
     /**
-     * Checks file extension of given filepath to see if the format is a known video type.
-     * 
+     * Checks file extension of given filepath to see if the format is a known video
+     * type.
+     *
      * @param filepath file name or path
      * @return true if file is likely an video file format.
      */
@@ -181,8 +183,9 @@ public class FileUtility {
     }
 
     /**
-     * Checks file extension of given filepath to see if the format is a known audio type.
-     * 
+     * Checks file extension of given filepath to see if the format is a known audio
+     * type.
+     *
      * @param filepath file name or path
      * @return true if file is likely an audio file format.
      */
@@ -196,9 +199,10 @@ public class FileUtility {
 
     /**
      * Check if a file is an archive
-     * 
+     *
      * @param filepath path to file
-     * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
+     * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes
+     *         .tar.gz)
      */
     public static boolean isArchiveFile(String filepath) {
         final String testpath = filepath.toLowerCase();
@@ -208,9 +212,10 @@ public class FileUtility {
 
     /**
      * Allow checking of a file extention; NO prefix "."
-     * 
+     *
      * @param ext extension to test
-     * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes .tar.gz)
+     * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes
+     *         .tar.gz)
      */
     public static boolean isArchiveFileType(String ext) {
         final String x = ext.toLowerCase();
@@ -219,9 +224,8 @@ public class FileUtility {
 
     /**
      * Test is a path or file extension ends with .txt NPE if null is passed in.
-     * 
-     * @param filepath path or extension, including "."
      *
+     * @param filepath path or extension, including "."
      * @return true if is .txt or .TXT
      */
     public static boolean isPlainText(String filepath) {
@@ -229,7 +233,6 @@ public class FileUtility {
     }
 
     /**
-     *
      * @param filepath path to file
      * @return buffer from file
      * @throws IOException on error
@@ -239,7 +242,6 @@ public class FileUtility {
     }
 
     /**
-     *
      * @param filepath path to file
      * @return buffer from file
      * @throws IOException on error
@@ -297,7 +299,6 @@ public class FileUtility {
     }
 
     /**
-     *
      * @param filepath path to file
      * @return text buffer, UTF-8 decoded
      * @throws IOException on error
@@ -325,7 +326,6 @@ public class FileUtility {
     }
 
     /**
-     *
      * @param text     buffer to write
      * @param filepath path to file
      * @return status true if file was written
@@ -389,13 +389,14 @@ public class FileUtility {
 
     /**
      * Java oddity - recursive removal of a directory
-     * 
+     *
      * @param directory dir to remove
      * @return if all contents and dir itself was removed.
      * @author T. Allison, MITRE
      */
     public static boolean removeDirectory(File directory) {
-        //taken from http://www.java2s.com/Tutorial/Java/0180__File/Removeadirectoryandallofitscontents.htm
+        // taken from
+        // http://www.java2s.com/Tutorial/Java/0180__File/Removeadirectoryandallofitscontents.htm
 
         if (directory == null) {
             return false;
@@ -456,7 +457,6 @@ public class FileUtility {
     }
 
     /**
-     *
      * @param f the file in question.
      * @return the parent File of a given file.
      */
@@ -475,10 +475,11 @@ public class FileUtility {
     }
 
     /**
-     * get the base name of a file, given any file extension. This will find the right-most instance of
+     * get the base name of a file, given any file extension. This will find the
+     * right-most instance of
      * a file extension and return the left hand side of that as the file basename.
-     *
-     * commons io FilenameUtils says nothing about arbitrarily long file extensions, e.g.,
+     * commons io FilenameUtils says nothing about arbitrarily long file extensions,
+     * e.g.,
      * file.a.b.c.txt split into ("file" + "a.b.c.txt")
      *
      * @param p   path
@@ -501,7 +502,8 @@ public class FileUtility {
     }
 
     /**
-     * On occasion file path may contain unicode chars, however as the is encoded, it may not be
+     * On occasion file path may contain unicode chars, however as the is encoded,
+     * it may not be
      * decodable by OS/FS.
      *
      * @param path path to normalize
@@ -513,7 +515,7 @@ public class FileUtility {
 
     /**
      * Another utility to deal with unicode in filenames
-     * 
+     *
      * @param fname name to clean
      * @return cleaner filenname
      */
@@ -537,7 +539,8 @@ public class FileUtility {
     }
 
     /**
-     * Get a directory that does not conflict with an existing directory. Returns null if that is not
+     * Get a directory that does not conflict with an existing directory. Returns
+     * null if that is not
      * possible within the maxDups.
      *
      * @param dir        directory
@@ -592,7 +595,7 @@ public class FileUtility {
 
     /**
      * Tests for valid filename chars for simple normalization A-Z, a-z, _-, 0-9,
-     * 
+     *
      * @param c character to allow
      * @return given character or replacement char
      */
@@ -623,7 +626,8 @@ public class FileUtility {
         final String val = System.getProperty("os.name");
 
         /**
-         * if (val == null) { //log.warn("Could not verify OS name"); return false; } else {
+         * if (val == null) { //log.warn("Could not verify OS name"); return false; }
+         * else {
          * //log.debug("Operating System is " + val); }
          */
         return (val != null ? val.contains("Windows") : false);
@@ -665,8 +669,9 @@ public class FileUtility {
     }
 
     /**
-     * The do all method. Load the dictionary from stream This closes the stream when done.
-     * 
+     * The do all method. Load the dictionary from stream This closes the stream
+     * when done.
+     *
      * @param io             stream
      * @param case_sensitive true if data should be loaded preserving case
      * @return set of phrases from file.
@@ -710,7 +715,7 @@ public class FileUtility {
 
     //
     //
-    //  Working with file types
+    // Working with file types
     //
     //
     private static final HashMap<String, String> filetypeMap = new HashMap<String, String>();
@@ -787,7 +792,7 @@ public class FileUtility {
         filetypeMap.put("msg", MESSAGE_MIMETYPE);
         filetypeMap.put("sms", MESSAGE_MIMETYPE);
 
-        //Apps
+        // Apps
         filetypeMap.put("do", APP_MIMETYPE);
         filetypeMap.put("aspx", APP_MIMETYPE);
         filetypeMap.put("asp", APP_MIMETYPE);
@@ -818,9 +823,10 @@ public class FileUtility {
     }
 
     /**
-     * Get a plain language name of the type of file. E.g., document, image, spreadsheet, web page.
+     * Get a plain language name of the type of file. E.g., document, image,
+     * spreadsheet, web page.
      * Rather than the MIME type technical descriptor.
-     * 
+     *
      * @param url item to describe
      * @return plain language description of the URL
      */
@@ -829,15 +835,15 @@ public class FileUtility {
             return NOT_AVAILABLE;
         }
 
-        //------------
+        // ------------
 
-        /*  path:   http://a/b.htm
-         *
+        /*
+         * path: http://a/b.htm
          */
         final String test = url.toLowerCase();
 
-        /*  path:   /a/b/
-         *
+        /*
+         * path: /a/b/
          */
         if (url.endsWith("/") && !test.startsWith("http")) {
             return FOLDER_MIMETYPE;
@@ -854,7 +860,7 @@ public class FileUtility {
         }
 
         /*
-         * path:  .../abc.rss
+         * path: .../abc.rss
          */
         if (test.contains("rss")) {
             return FEED_MIMETYPE;
@@ -865,7 +871,7 @@ public class FileUtility {
         }
 
         /*
-         *   path:   /some/default/path
+         * path: /some/default/path
          */
         if (url.contains("/")) {
             return FOLDER_MIMETYPE;
@@ -878,11 +884,13 @@ public class FileUtility {
     }
 
     /**
-     * Check if path or URL is a webpage. This is helpful for looking at found URLs in unstructured
+     * Check if path or URL is a webpage. This is helpful for looking at found URLs
+     * in unstructured
      * data.
      *
      * @param link a URL
-     * @return true if link looks like a URL (ie., if it starts with http: or https:)
+     * @return true if link looks like a URL (ie., if it starts with http: or
+     *         https:)
      */
     public static boolean isWebURL(String link) {
         if (link == null) {
@@ -897,7 +905,7 @@ public class FileUtility {
 
     /**
      * Tell if the file is JSON/Gzip
-     * 
+     *
      * @param path input file path
      * @return true if is file ends with json.gz or contains json and ends with .gz
      */

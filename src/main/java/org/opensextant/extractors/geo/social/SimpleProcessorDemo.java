@@ -1,9 +1,9 @@
 /*
- *   __________   ____   ____   ____  ____  
- *  /  ___/  _ \_/ ___\ / ___\_/ __ \/  _ \ 
+ *   __________   ____   ____   ____  ____
+ *  /  ___/  _ \_/ ___\ / ___\_/ __ \/  _ \
  *  \___ (  <_> )  \___/ /_/  >  ___(  <_> )
- * /____  >____/ \___  >___  / \___  >____/ 
- *      \/           \/_____/      \/       
+ * /____  >____/ \___  >___  / \___  >____/
+ *      \/           \/_____/      \/
  *
  *      Social Media Geo-Inferencing
  *                 OpenSextant
@@ -43,31 +43,34 @@ import jodd.json.JsonObject;
 /**
  * SimpleProcessor is a demonstration of some geoinferencing techniques:
  * <ul>
- * <li>Tagging Free text: deep geotagging and geocoding of natural language text such as social media excerpts
+ * <li>Tagging Free text: deep geotagging and geocoding of natural language text
+ * such as social media excerpts
  * </li>
- * <li>Inferring location based on metadata: geographic reasoning on metadata innate in social media, given or derived</li>
+ * <li>Inferring location based on metadata: geographic reasoning on metadata
+ * innate in social media, given or derived</li>
  * <li>Other techniques from publications or internal R&amp;D.
  * </ul>
- * 
  * <p>
  * Usage:
  * <p>
- *   While the demo() or main() method are the entry points for this executable, 
- *   the <code> readObject( JSONObject ) </code> method is the primary demonstration detail.
- *   It shows:
- *   <ul>
- *   <li>how we have prepared a tweet or other data for inferencing (mainly langID, 
- *   parsing of data into JSON and then into a Tweet API object, etc)
- *   </li>
- *   <li>how the various stack of inferencing phases are called
- *   </li>
- *   <li>finally, once you have annotations (geo or other), you can then save them somewhere.
- *   </li>
- *   </ul>
- *  <p>
- *    
+ * While the demo() or main() method are the entry points for this executable,
+ * the <code> readObject( JSONObject ) </code> method is the primary
+ * demonstration detail.
+ * It shows:
+ * <ul>
+ * <li>how we have prepared a tweet or other data for inferencing (mainly
+ * langID,
+ * parsing of data into JSON and then into a Tweet API object, etc)
+ * </li>
+ * <li>how the various stack of inferencing phases are called
+ * </li>
+ * <li>finally, once you have annotations (geo or other), you can then save them
+ * somewhere.
+ * </li>
+ * </ul>
+ * <p>
+ * 
  * @author ubaldino
- *
  */
 public class SimpleProcessorDemo implements JSONListener {
 
@@ -80,7 +83,7 @@ public class SimpleProcessorDemo implements JSONListener {
     /**
      * This captures the staging and tear down mechanics for a job
      * SimpleProcessor is a demonstration of the workflow for geo-inferencing.
-     * 
+     *
      * @param args
      */
     public static void demo(String... args) {
@@ -89,7 +92,6 @@ public class SimpleProcessorDemo implements JSONListener {
         /*
          * Run the shutdown implementation for any exit situation. Normal
          * System.exit() or if user calls Ctrl-C or Kill HUP
-         * 
          * Objective is to shutdown cleanly.
          */
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -108,8 +110,9 @@ public class SimpleProcessorDemo implements JSONListener {
             usage();
         }
 
-        // If configured,... run some processing.  
-        // For demonstration simplicity, data is processed (tagged, filtered, output) as it is read in.
+        // If configured,... run some processing.
+        // For demonstration simplicity, data is processed (tagged, filtered, output) as
+        // it is read in.
         //
         if (looper.configured) {
             try {
@@ -184,12 +187,12 @@ public class SimpleProcessorDemo implements JSONListener {
      * <p>
      * Items setup: Parse Arguments, Configure input sources/files, configure
      * requested geoinferencers, configure language ID tool.
-     * 
+     *
      * @param args
      * @return false if startup failed.
      * @throws ConfigException
-     *             if startup is attempted by encounters IO or other
-     *             Configuration errors.
+     *                         if startup is attempted by encounters IO or other
+     *                         Configuration errors.
      */
     public boolean startup(String[] args) throws ConfigException {
         if (args.length == 0) {
@@ -209,12 +212,11 @@ public class SimpleProcessorDemo implements JSONListener {
                 // Initialize once!
                 langidTool = new LangDetect(GeoInferencer.AVERAGE_TEXT_SIZE);
 
-                /* If you need to point LangDetect to its profiles
+                /*
+                 * If you need to point LangDetect to its profiles
                  * some place other than in the CLASSPATH, then use
-                 * 
-                 *  LangDetect( sz, "/path/to/directory/profiles.sm" );
-                 *  
-                 *  for example.
+                 * LangDetect( sz, "/path/to/directory/profiles.sm" );
+                 * for example.
                  */
             }
 
@@ -288,9 +290,9 @@ public class SimpleProcessorDemo implements JSONListener {
 
     /**
      * Command line argument parsing.
-     * 
+     *
      * @param args
-     *            cmd line args
+     *             cmd line args
      * @return status of parsing -1=help; -2=bad argument, 0=normal.
      * @throws ConfigException
      */
@@ -363,10 +365,8 @@ public class SimpleProcessorDemo implements JSONListener {
     /**
      * that is, if preferJSON==true then sf.net.json will be used to parse the
      * line and send JSONObject to your reader.
-     * 
      * If you do not prefer JSON, then the raw String is passed for you to parse
      * with readObject(String)
-     * 
      * Generally ignore this.
      */
     @Override
@@ -381,11 +381,9 @@ public class SimpleProcessorDemo implements JSONListener {
     /**
      * This is a much abbreviated demonstration. Usually: read all data and
      * condition it on ingest - process data as much as possible in parallel
-     * 
      * This method shows reading data from a file, processing it using 1 to N
      * number of inferencers and then outputing the the annotations from
      * processing... all in a very serial fashion.
-     * 
      * This is only for demonstration.
      */
     @Override
@@ -444,9 +442,7 @@ public class SimpleProcessorDemo implements JSONListener {
                          * Lastly some items are not geodetic -- that is,
                          * very low confidence items are likely not
                          * geospatial.
-                         * 
                          * tags: person, org, country, geo, place
-                         * 
                          */
                         saveAnnotation(a1);
                         // Use Contributor to figure out relevance...
@@ -467,21 +463,22 @@ public class SimpleProcessorDemo implements JSONListener {
 
     /**
      * Guess at the real language of the message.
-     * 
+     *
      * @param tw
      * @return
      */
     protected String guessLanguage(Tweet tw) {
         /*
-         * Identify a reasonable language of text. If lang ID was given in data, you could trust it.... or not.
+         * Identify a reasonable language of text. If lang ID was given in data, you
+         * could trust it.... or not.
          */
-        //if (!tw.isASCII && tw.lang == null) {
+        // if (!tw.isASCII && tw.lang == null) {
         String naturalLanguage = TextUtils.parseNaturalLanguage(tw.getText());
         Language L = langidTool.detectSocialMediaLang(tw.lang, naturalLanguage);
         if (L != null) {
             return L.getCode();
         }
-        //}
+        // }
         return tw.lang;
     }
 
@@ -489,7 +486,7 @@ public class SimpleProcessorDemo implements JSONListener {
      * Save a conditioned version of the tweet capturing mainly the data used as
      * input for processing. All extra data in tweet is tossed -- as we assume
      * you have it all stored somewhere.
-     * 
+     *
      * @param tw
      * @throws IOException
      */
@@ -505,7 +502,7 @@ public class SimpleProcessorDemo implements JSONListener {
 
     /**
      * Save output for annotations.
-     * 
+     *
      * @param a
      * @throws IOException
      */
@@ -529,6 +526,7 @@ public class SimpleProcessorDemo implements JSONListener {
 
     /**
      * Unused API method.
+     *
      * @deprecated
      */
     @Override
@@ -540,7 +538,7 @@ public class SimpleProcessorDemo implements JSONListener {
 
     /**
      * Convenience handler to open file, compressed or not.
-     * 
+     *
      * @param f
      * @return
      * @throws IOException

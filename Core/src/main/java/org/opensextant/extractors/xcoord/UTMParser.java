@@ -21,7 +21,6 @@ import java.util.Map;
 import org.opensextant.geodesy.UTM;
 
 /**
- *
  * @author ubaldino
  */
 public class UTMParser {
@@ -37,8 +36,7 @@ public class UTMParser {
 
     /**
      * TODO: Needs lots of false positive filtering mainly using context. Did
-     * text indicate this is UTM?  Where there units, e.g., "m"?
-     *
+     * text indicate this is UTM? Where there units, e.g., "m"?
      * Those things are currently optional.
      *
      * @param text
@@ -49,7 +47,7 @@ public class UTMParser {
 
         String z = elements.get("UTMZone");
         String z1 = elements.get("UTMZoneZZ");  // 0-5\d
-        String z2 = elements.get("UTMZoneZ");   //    \d
+        String z2 = elements.get("UTMZoneZ");   // \d
         if (z == null) {
             z = (z1 != null ? z1 : z2);
         }
@@ -64,7 +62,7 @@ public class UTMParser {
         if (b == null) {
             return null;
         }
-        // TODO:  is 'n' valid for UTM band?
+        // TODO: is 'n' valid for UTM band?
 
         char h = b.charAt(0);
         if (h != UTM_NORTH && h != UTM_SOUTH) {

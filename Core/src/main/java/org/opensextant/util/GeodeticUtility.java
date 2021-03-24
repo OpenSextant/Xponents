@@ -99,8 +99,7 @@ public class GeodeticUtility {
     }
 
     /**
-     * 
-     * @param xy a geocoding 
+     * @param xy a geocoding
      * @return true if geocoding has a non-zero coordinate
      */
     public static boolean isCoord(Geocoding xy) {
@@ -109,8 +108,9 @@ public class GeodeticUtility {
 
     /**
      * Just tests if location is not 0,0 ... if provided as floating point objects
-     * Java has rounding error off in 0.0000001 place. Close enough to 0,0 counts as zero-coordinate.
-     * 
+     * Java has rounding error off in 0.0000001 place. Close enough to 0,0 counts as
+     * zero-coordinate.
+     *
      * @param lat latitude
      * @param lon longitude
      * @return true if coordinate is set and is other than (0,0)
@@ -191,16 +191,12 @@ public class GeodeticUtility {
     /**
      * Precision -- this is a first draft attempt at assigning some error bars
      * to geocoding results.
-     *
      * TODO: move this to a configuration file
-     *
      * feat/code: prec # precision is meters of error for a given gazetteer
      * entry with feat/code)
-     *
      * A/ADM1: 50000 # ADM1 is generally +/- 50km, world wide P/PPL: 1000 # city
      * is generally +/- 1km within center point P/PPLC: 10000 # major capital
      * city is 10km of error, etc.
-     *
      */
     public static final Map<String, Integer> FEATURE_PRECISION = new HashMap<String, Integer>();
     public static final Map<String, Integer> FEATURE_GEOHASH_PRECISION = new HashMap<String, Integer>();
@@ -229,6 +225,7 @@ public class GeodeticUtility {
     /**
      * For a given feature type and code, determine what sort of resolution or
      * precision should be considered for that place, approximately.
+     *
      * @param feat_type major feature type
      * @param feat_code minor feature type or designation
      * @return precision approx error in meters for a given feature. -1 if no
@@ -260,6 +257,7 @@ public class GeodeticUtility {
     /**
      * For a given Geonames feature class/designation provide a guess about how
      * long geohash should be. Geohash in this use is very approximate
+     *
      * @param feat_type major feature type
      * @param feat_code minor feature type or designation
      * @return prefix length for a geohash, e.g., for a province in general is 3
@@ -290,6 +288,7 @@ public class GeodeticUtility {
     /**
      * The most simplistic parsing and validation of "lat lon" or "lat, lon" any
      * amount of whitespace is allowed, provided the lat lon order is there.
+     *
      * @param lat_lon string form of a simple lat/lon, e.g., "Y X"; No symbols
      * @return LatLon object
      * @throws ParseException if string is unparsable
@@ -319,6 +318,7 @@ public class GeodeticUtility {
 
     /**
      * Parse coordinate from object
+     *
      * @param lat latitude
      * @param lon longitude
      * @return LatLon object
@@ -340,6 +340,7 @@ public class GeodeticUtility {
 
     /**
      * Create a string representation of a decimal lat/lon.
+     *
      * @param yx LatLon object
      * @return "lat, lon" formatted with 4 decimal places; that is an average
      *         amount of precision for common XY=&gt; String uses.
@@ -349,7 +350,6 @@ public class GeodeticUtility {
     }
 
     /**
-     * 
      * @param yx lat,lon obj
      * @return geohash representation of the lat,lon
      */

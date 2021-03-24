@@ -17,9 +17,11 @@
 package org.opensextant.extraction;
 
 /**
- * This is a holder for tracking various common measures: No. of Calls, Amount of time, No. of bytes
- * Delta quantities (addBytes, addTime, addTimeSince), etc. cannot represent negative quantities.
- * 
+ * This is a holder for tracking various common measures: No. of Calls, Amount
+ * of time, No. of bytes
+ * Delta quantities (addBytes, addTime, addTimeSince), etc. cannot represent
+ * negative quantities.
+ *
  * @author ubaldino
  */
 public class ExtractionMetrics {
@@ -34,9 +36,9 @@ public class ExtractionMetrics {
 
     /**
      * A named metric
-     * 
+     *
      * @param nm
-     *            name of metric
+     *           name of metric
      */
     public ExtractionMetrics(String nm) {
         this.name = nm;
@@ -44,13 +46,13 @@ public class ExtractionMetrics {
 
     @Override
     public String toString() {
-        return String.format("Metric %s calls=%d,  avg time=%3d (ms), tot time=%d (ms), tot bytes=%d",
-                name, getCallCount(), getAverageTime(), getTotalTime(), getByteCount());
+        return String.format("Metric %s calls=%d,  avg time=%3d (ms), tot time=%d (ms), tot bytes=%d", name,
+                getCallCount(), getAverageTime(), getTotalTime(), getByteCount());
     }
 
     /**
      * avg time spent for this metric in milliseconds
-     * 
+     *
      * @return average time
      */
     public int getAverageTime() {
@@ -61,9 +63,9 @@ public class ExtractionMetrics {
 
     /**
      * Add just a time delta.
-     * 
+     *
      * @param delta
-     *            milliseconds span
+     *              milliseconds span
      */
     public void addTime(long delta) {
         if (delta >= 0) {
@@ -74,9 +76,9 @@ public class ExtractionMetrics {
 
     /**
      * Add time delta using NOW - time.
-     * 
+     *
      * @param epoch
-     *            milliseconds epoch
+     *              milliseconds epoch
      */
     public void addTimeSince(long epoch) {
         long delta = System.currentTimeMillis() - epoch;
@@ -88,11 +90,11 @@ public class ExtractionMetrics {
 
     /**
      * Add just a time delta.
-     * 
+     *
      * @param delta
-     *            milliseconds span
+     *              milliseconds span
      * @param calls
-     *            number of calls for this metric that occured over delta
+     *              number of calls for this metric that occured over delta
      */
 
     public void addTime(long delta, int calls) {

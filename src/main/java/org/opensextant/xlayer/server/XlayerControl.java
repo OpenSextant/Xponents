@@ -4,6 +4,7 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.processing.Parameters;
+import org.restlet.Context;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
@@ -12,7 +13,8 @@ public class XlayerControl extends TaggerResource {
 
     public XlayerControl() {
         super();
-        log = getContext().getCurrentLogger();
+        getContext();
+        log = Context.getCurrentLogger();
     }
 
     public void stop() {
@@ -26,10 +28,11 @@ public class XlayerControl extends TaggerResource {
     /**
      * get Xponents Exxtractor object from global attributes.
      */
+    @Override
     public Extractor getExtractor(String xid) {
         /*
-         * xid argument is ignored.  This default case, only the 'xgeo' object is queried to stop it.
-         * 
+         * xid argument is ignored. This default case, only the 'xgeo' object is queried
+         * to stop it.
          */
         PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext().getAttributes().get("xgeo");
         if (xgeo == null) {
@@ -46,10 +49,9 @@ public class XlayerControl extends TaggerResource {
 
     /**
      * /control/OPERATION, for example:
-     * 
-     *  /control/ping
-     *  /control/stop
-     * 
+     * /control/ping
+     * /control/stop
+     *
      * @param params
      * @return
      */

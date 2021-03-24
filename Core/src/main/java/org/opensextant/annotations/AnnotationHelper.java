@@ -1,15 +1,15 @@
 /*
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII                  
- * 
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ *
  * OpenSextant/Xponents sub-project
- *      __                              
- *  ___/ /___  ___  ___  ___  __ __ ___ 
+ *      __
+ *  ___/ /___  ___  ___  ___  __ __ ___
  * / _  // -_)/ -_)/ _ \/ -_)/ // // -_)
- * \_,_/ \__/ \__// .__/\__/ \_, / \__/ 
+ * \_,_/ \__/ \__// .__/\__/ \_, / \__/
  *               /_/        /___/
- *               
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII    
- * Copyright 2013, 2019 MITRE Corporation             
+ *
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ * Copyright 2013, 2019 MITRE Corporation
  */
 package org.opensextant.annotations;
 
@@ -37,37 +37,39 @@ import jodd.json.JsonObject;
 
 /**
  * <pre>
- * Basis for this optional helper class was three or four different projects using DeepEye as 
+ * Basis for this optional helper class was three or four different projects using DeepEye as
  * a model for persisting annotations from the typical Named Entity and Geo/Time extraction work.
- * 
+ *
  * Common annotation practices include:
- * - All annotations should have both their own ID as well as a Record ID;  this involves tracking unique annots for a given doc. 
+ * - All annotations should have both their own ID as well as a Record ID;  this involves tracking unique annots for a given doc.
  *   The intent of DeepEye identifiers is that they are unique within a system or a data set, not necessarily UUID:
  *     - Record IDs should be related to their source identifier
  *     - Annotation IDs should be deterministic based on metadata tuple: MD5( name + value + contrib + rec_id ) or a similar predictable, reproducible hash
- * - Caching an consolidating repetitive annotations. Example:  seeing 'U.S.' 100 times in a 
- *   single document as a "GPE" or as a "geo" can be overwhelming.  Is it 100 individual annots, 
+ * - Caching an consolidating repetitive annotations. Example:  seeing 'U.S.' 100 times in a
+ *   single document as a "GPE" or as a "geo" can be overwhelming.  Is it 100 individual annots,
  *   or 1 annotation for GPE and 1 annotation for the geo.  Each annotation tracks as many offsets as it needs.
- *   As individual instances in the document vary in attributes or other metadata, then those 
+ *   As individual instances in the document vary in attributes or other metadata, then those
  *   should be considered unique annotations.
  * - Allow common doc-level annotations, such as a topic tag, even when there is no offset or text span in question. "Span-less" annotations.
- * 
+ *
  * Advice for what to persist to a DeepEye database:
  * - its costly or complex to compute
  * - its helpful to aggregate many raw extracted values to review over a large data set
- * 
+ *
  * Consider not storing:
- * - annotations that are trivial to compute at runtime, e.g., indexing a derived metadata tag, 
+ * - annotations that are trivial to compute at runtime, e.g., indexing a derived metadata tag,
  *   such as converting 'US' to 'United States'
  * - NLP artifacts such as tokens like pronouns or other parts of speech.  These might be
- * - Filtered values  -- if you are filtering out certain data in all your analyses or downstream 
+ * - Filtered values  -- if you are filtering out certain data in all your analyses or downstream
  *   operations, consider filtering out such things before you store them blindly.
  * </pre>
- * 
- * SEE ALSO: Xponents SDK class org.opensextant.output.Transform: this utility class offers more ideas on standard JSON representations for REST.
- *    whereas this utility is aimed at a more reliable pure representation of the match data for storing/retrieving from a data store. 
+ *
+ * SEE ALSO: Xponents SDK class org.opensextant.output.Transform: this utility
+ * class offers more ideas on standard JSON representations for REST.
+ * whereas this utility is aimed at a more reliable pure representation of the
+ * match data for storing/retrieving from a data store.
+ *
  * @author ubaldino
- * 
  */
 public class AnnotationHelper {
 
@@ -82,7 +84,8 @@ public class AnnotationHelper {
     }
 
     /**
-     * Given encoded annotations from db, decode them and yield a flattened set of annotations, e.g.,
+     * Given encoded annotations from db, decode them and yield a flattened set of
+     * annotations, e.g.,
      * for use with MAT
      *
      * @param codedAnnots the coded annots
@@ -99,10 +102,11 @@ public class AnnotationHelper {
             if (a.attrs == null) {
                 annots.add(a);
             } else if (a.attrs.containsKey("offsets")) {
-                // ATTRS not null, if 'offsets' is used, decoded it. This annoation appears at those offsets.
+                // ATTRS not null, if 'offsets' is used, decoded it. This annoation appears at
+                // those offsets.
                 annots.addAll(decodeOffsets(a, a.attrs.getString("offsets")));
             } else {
-                // No attributes, no offset, etc. 
+                // No attributes, no offset, etc.
                 // This is just an ordinary annotation for the document. E.g., classifier label.
                 annots.add(a);
             }
@@ -151,7 +155,6 @@ public class AnnotationHelper {
 
     /**
      * Take a list of numbers and convert to Integer list
-     * 
      * "1;5;89;777" =&gt; List&lt;&gt; [ 1, 5, 89, 777 ].
      *
      * @param list the list
@@ -167,7 +170,8 @@ public class AnnotationHelper {
     }
 
     /**
-     * Generate annotations in a linear fashion. Given the optimized Annotation, A, create duplicate
+     * Generate annotations in a linear fashion. Given the optimized Annotation, A,
+     * create duplicate
      * annotations, each with an offset from the list of offsets.
      *
      * @param meta       the meta
@@ -205,18 +209,17 @@ public class AnnotationHelper {
 
     /**
      * New, required format for an annotation ID: Md5 hash made up of:
-     * 
+     *
      * <pre>
      *    rec_id + contributor + type + value
-     * 
+     *
      *    Distinct entities from a single contributor for a single document will be recorded (and overwritten over time).
      *    Reprocessing data will overwrite a new value.
-     * 
+     *
      *     Doc abc has a NAMEX = 'the diplomat', provided by xyz extractor.
-     * 
+     *
      *     key is MD5( 'abc;xyz;NAMEX;the diplomat' )
      *     Multiple occurrences of the same value in the same document must be recorded as "atts.offsets" = [n1,n2,n3...] offsets
-     * 
      * </pre>
      *
      * @param rec_id  the rec_id
@@ -236,17 +239,19 @@ public class AnnotationHelper {
     }
 
     /**
-     * Reset() clears the internal cache. Ideally, you hit reset on each new Record in a loop.
+     * Reset() clears the internal cache. Ideally, you hit reset on each new Record
+     * in a loop.
      */
     public void reset() {
         deepEyeEntities.clear();
     }
 
     /**
-     * optimization: keep list of annotations stored in database to a minimum. deepeEyeEntities is a
-     * hash of Annotation organized by distinct name/value pairs. The offsets of the entity values is
+     * optimization: keep list of annotations stored in database to a minimum.
+     * deepeEyeEntities is a
+     * hash of Annotation organized by distinct name/value pairs. The offsets of the
+     * entity values is
      * the only thing that appears to change.
-     * 
      */
     private Map<String, Annotation> deepEyeEntities = new HashMap<String, Annotation>();
 
@@ -303,11 +308,13 @@ public class AnnotationHelper {
     }
 
     /**
-     * Cache entity annotation - in Memory; Note, the actual ID or key in database is usually composed
-     * of name+value+contrib. NOTE: these are normalized case-insensitive values. NOTE: If annotation
+     * Cache entity annotation - in Memory; Note, the actual ID or key in database
+     * is usually composed
+     * of name+value+contrib. NOTE: these are normalized case-insensitive values.
+     * NOTE: If annotation
      * already exists, then all we do is add the start offset to the existing entry.
-     * 
      * Name and value must not be null.
+     *
      * @param ea    your annotation
      * @param start offset into your doc.
      * @throws NullPointerException if name and value are not set on Annotation.
@@ -316,8 +323,8 @@ public class AnnotationHelper {
         String key = cacheKey(ea.name, ea.value.toLowerCase());
         Annotation eaCurr = deepEyeEntities.get(key);
 
-        /* 
-         * Only additional metadata here is offset. 
+        /*
+         * Only additional metadata here is offset.
          */
         if (eaCurr != null) {
             eaCurr.addOffset(start);
@@ -339,7 +346,8 @@ public class AnnotationHelper {
     }
 
     /**
-     * Cache Key helps distinguish a distinct entity/value pair. Caller could decide if LOC="Boston" and
+     * Cache Key helps distinguish a distinct entity/value pair. Caller could decide
+     * if LOC="Boston" and
      * LOC="BOSTON" are different or the same by passing in the lower case value.
      *
      * @param n the n
@@ -351,11 +359,13 @@ public class AnnotationHelper {
     }
 
     /**
-     * Careful -- no guarntee that two entity annotations could share the same type/value
+     * Careful -- no guarntee that two entity annotations could share the same
+     * type/value
      * unintentionally.
-     * 
-     * e.g., if "tx" type annot implies a taxon from one contrib and "tx" means a transaction from
-     * another, then you the developer should choose more distinct entity type codes.
+     * e.g., if "tx" type annot implies a taxon from one contrib and "tx" means a
+     * transaction from
+     * another, then you the developer should choose more distinct entity type
+     * codes.
      *
      * @param etype entity type
      * @param value value
@@ -406,7 +416,6 @@ public class AnnotationHelper {
     }
 
     /**
-     * 
      * @param contrib
      * @param type
      * @param val
@@ -423,8 +432,10 @@ public class AnnotationHelper {
     }
 
     /**
-     * Create an annotation for a Taxon node that has a found value, val, in document, docid at offset.
-     * Taxon match has a type and a contributor, usually the tagger or extractor that processed the
+     * Create an annotation for a Taxon node that has a found value, val, in
+     * document, docid at offset.
+     * Taxon match has a type and a contributor, usually the tagger or extractor
+     * that processed the
      * document.
      *
      * @param contrib the contrib
@@ -449,8 +460,8 @@ public class AnnotationHelper {
 
     /**
      * Recreates a Taxon from a stored annotation. Required fields:
-     * 
-     * a.attrs[name] -- taxon node name a.attrs[cat] -- catalog a.name -- Not used here. a.value -- the
+     * a.attrs[name] -- taxon node name a.attrs[cat] -- catalog a.name -- Not used
+     * here. a.value -- the
      * value of the matched text.
      *
      * @param a the a
@@ -468,17 +479,19 @@ public class AnnotationHelper {
     }
 
     /**
-     * Tracking a country name match of some sort. You know this is a country, eh,... so please enrich
-     * with the country code here. We know you can always find out the country code later from a given
+     * Tracking a country name match of some sort. You know this is a country,
+     * eh,... so please enrich
+     * with the country code here. We know you can always find out the country code
+     * later from a given
      * country name/match, however this may be context specific.
-     * 
-     * Georgia / GE -- putting the country code here gives more confidence that you found Georgia, the
-     * country and not the US state You might have other means for deriving the country code for a given
+     * Georgia / GE -- putting the country code here gives more confidence that you
+     * found Georgia, the
+     * country and not the US state You might have other means for deriving the
+     * country code for a given
      * value, e.g.,
-     * 
-     * for example you found "GOI" a geopolitical entity you infer to be Govt. of India, so you emit
+     * for example you found "GOI" a geopolitical entity you infer to be Govt. of
+     * India, so you emit
      * "IN" as the country code.
-     * 
      * create( xxx, 'GPE', 'GOI', ..., 'IN' )
      *
      * @param contrib      the contrib
@@ -502,10 +515,12 @@ public class AnnotationHelper {
     }
 
     /**
-     * Returns an instance of a Country object using annotation value as country name, and attr[cc]
-     * optionally as code. This does not reproduce a full Country object as if queried from
+     * Returns an instance of a Country object using annotation value as country
+     * name, and attr[cc]
+     * optionally as code. This does not reproduce a full Country object as if
+     * queried from
+     *
      * @see org.opensextant.util.GeonamesUtility#getCountry(String)
-     * 
      * @param a annot
      * @return the country
      */
@@ -519,7 +534,8 @@ public class AnnotationHelper {
     }
 
     /**
-     * Encode geocoding annotations to be saved. This schema follows from EH/GLINT/Glare, etc.
+     * Encode geocoding annotations to be saved. This schema follows from
+     * EH/GLINT/Glare, etc.
      *
      * @param contrib the contrib
      * @param type    the type
@@ -572,8 +588,8 @@ public class AnnotationHelper {
     }
 
     /**
-     * Decode: Geocoding See OpenSextant Geocoding interface. Here required annotation fields are:
-     * 
+     * Decode: Geocoding See OpenSextant Geocoding interface. Here required
+     * annotation fields are:
      * lat, lon, prec cc, adm1, place feat_class, feat_code method
      *
      * @param a the a
@@ -616,14 +632,13 @@ public class AnnotationHelper {
         geo.setFeatureCode(a.attrs.getString("feat_code", null));
 
         // Optional items:
-        //geo.setName(a.attrs.optString("place"));
+        // geo.setName(a.attrs.optString("place"));
         geo.setAdmin1Name(a.attrs.getString("adm1_name", null));
         geo.setAdmin2Name(a.attrs.getString("adm2_name", null));
 
         /*
          * Choose finest grained admin name.
          * First ADM2 name then ADM1 name...
-         * 
          */
         if (geo.getAdmin2Name() != null) {
             geo.setAdminName(geo.getAdmin2Name());
@@ -664,7 +679,7 @@ public class AnnotationHelper {
 
     /**
      * Same createTemporalEntityAnnotation, just with len param.
-     * 
+     *
      * @param contrib
      * @param type
      * @param val

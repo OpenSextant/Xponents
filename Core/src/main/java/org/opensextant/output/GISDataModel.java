@@ -52,8 +52,8 @@ public class GISDataModel {
     /**
      * Instantiates a new GIS data model.
      *
-     * @param jobName the job name
-     * @param includeOffsets the include offsets
+     * @param jobName           the job name
+     * @param includeOffsets    the include offsets
      * @param includeCoordinate the include coordinate
      */
     public GISDataModel(String jobName, boolean includeOffsets, boolean includeCoordinate) {
@@ -63,10 +63,10 @@ public class GISDataModel {
     /**
      * Instantiates a new GIS data model.
      *
-     * @param jobName the job name
-     * @param includeOffsets the include offsets
+     * @param jobName           the job name
+     * @param includeOffsets    the include offsets
      * @param includeCoordinate the include coordinate
-     * @param buildSchema the build schema
+     * @param buildSchema       the build schema
      */
     public GISDataModel(String jobName, boolean includeOffsets, boolean includeCoordinate, boolean buildSchema) {
         super();
@@ -87,7 +87,7 @@ public class GISDataModel {
      * Adds the place data.
      *
      * @param row row of data
-     * @param g geocoding
+     * @param g   geocoding
      */
     protected void addPlaceData(Feature row, Geocoding g) {
         addColumn(row, OpenSextantSchema.ISO_COUNTRY, g.getCountryCode());
@@ -109,7 +109,7 @@ public class GISDataModel {
      * Adds the precision.
      *
      * @param row row of data
-     * @param g geocoding
+     * @param g   geocoding
      */
     protected void addPrecision(Feature row, Geocoding g) {
         addColumn(row, OpenSextantSchema.PRECISION, g.getPrecision());
@@ -118,7 +118,7 @@ public class GISDataModel {
     /**
      * Adds the confidence.
      *
-     * @param row row of data
+     * @param row  row of data
      * @param conf confidence
      */
     protected void addConfidence(Feature row, int conf) {
@@ -129,7 +129,7 @@ public class GISDataModel {
      * Adds the offsets.
      *
      * @param row data
-     * @param m match metadata
+     * @param m   match metadata
      */
     protected void addOffsets(Feature row, TextMatch m) {
         addColumn(row, OpenSextantSchema.START_OFFSET, m.start);
@@ -140,7 +140,7 @@ public class GISDataModel {
      * Adds the lat lon. to the given data row.
      *
      * @param row data
-     * @param g geocoding
+     * @param g   geocoding
      */
     protected void addLatLon(Feature row, Geocoding g) {
         addColumn(row, OpenSextantSchema.LAT, g.getLatitude());
@@ -150,12 +150,11 @@ public class GISDataModel {
     /**
      * If the caller has additional data to attach to records, allow them to add
      * fields to schema at runtime and map their data to keys on GeocodingResult
-     * 
      * Similarly, you could have Geocoding row-level attributes unique to the
      * geocoding whereas attrs on GeocodingResult are global for all geocodings
      * in that result set.
      *
-     * @param row the row
+     * @param row           the row
      * @param rowAttributes the row attributes
      * @throws ConfigException the config exception
      */
@@ -178,8 +177,8 @@ public class GISDataModel {
     /**
      * Adds the file paths.
      *
-     * @param row data
-     * @param recordFile original file
+     * @param row            data
+     * @param recordFile     original file
      * @param recordTextFile text version of original
      */
     protected void addFilePaths(Feature row, String recordFile, String recordTextFile) {
@@ -210,7 +209,7 @@ public class GISDataModel {
      * Adds the context.
      *
      * @param row the row
-     * @param g the g
+     * @param g   the g
      */
     protected void addContext(Feature row, TextMatch g) {
         addColumn(row, OpenSextantSchema.CONTEXT, g.getContext());
@@ -220,7 +219,7 @@ public class GISDataModel {
      * Adds the match text.
      *
      * @param row the row
-     * @param g the g
+     * @param g   the g
      */
     protected void addMatchText(Feature row, TextMatch g) {
         addColumn(row, OpenSextantSchema.MATCH_TEXT, g.getText());
@@ -230,7 +229,7 @@ public class GISDataModel {
      * Allows caller to add a method or pattern id of sorts to denote how match
      * was derived.
      *
-     * @param row the row
+     * @param row    the row
      * @param method the method
      */
     protected void addMatchMethod(Feature row, String method) {
@@ -240,7 +239,7 @@ public class GISDataModel {
     /**
      * Adds the match method.
      *
-     * @param row the row
+     * @param row   the row
      * @param match the match
      */
     protected void addMatchMethod(Feature row, TextMatch match) {
@@ -257,12 +256,11 @@ public class GISDataModel {
      * And only matches that pass any filters are enriched with context and
      * other metadaa.
      *
-     *
-     * @param id the id
-     * @param g the g
-     * @param m the m
+     * @param id            the id
+     * @param g             the g
+     * @param m             the m
      * @param rowAttributes the row attributes
-     * @param res the res
+     * @param res           the res
      * @return the list
      * @throws ConfigException schema configuration error
      */
@@ -402,8 +400,8 @@ public class GISDataModel {
      * if null.
      *
      * @param row the row
-     * @param f the f
-     * @param d the d
+     * @param f   the f
+     * @param d   the d
      */
     protected void addColumn(Feature row, SimpleField f, Object d) {
         if (d == null) {
@@ -418,8 +416,8 @@ public class GISDataModel {
      * Add a column of data to output; Field is validated.
      *
      * @param row the row
-     * @param f the f
-     * @param d the d
+     * @param f   the f
+     * @param d   the d
      */
     protected void addColumn(Feature row, SimpleField f, int d) {
         if (canAdd(f)) {
@@ -431,8 +429,8 @@ public class GISDataModel {
      * Add a column of data to output; Field is validated.
      *
      * @param row the row
-     * @param f the field name
-     * @param d value
+     * @param f   the field name
+     * @param d   value
      */
     protected void addColumn(Feature row, SimpleField f, double d) {
         if (canAdd(f)) {

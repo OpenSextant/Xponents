@@ -19,7 +19,6 @@ package org.opensextant.extractors.poli.data;
 import org.opensextant.extractors.poli.PoliMatch;
 
 /**
- *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class MACAddress extends PoliMatch {
@@ -30,21 +29,20 @@ public class MACAddress extends PoliMatch {
     }
 
     @Override
-    public void normalize(){
+    public void normalize() {
         super.normalize();
         this.textnorm = this.textnorm.replace('-', ':');
     }
 
     /*
-    public MACAddress(String m) {
-        super(m);
-        normal_case = PoliMatch.LOWER_CASE;
-    }
-
-    public MACAddress(java.util.Map<String, String> elements, String m) {
-        this(m);
-        this.normalize();
-        this.textnorm = this.textnorm.replace('-', ':');
-    }
-    */
+     * public MACAddress(String m) {
+     * super(m);
+     * normal_case = PoliMatch.LOWER_CASE;
+     * }
+     * public MACAddress(java.util.Map<String, String> elements, String m) {
+     * this(m);
+     * this.normalize();
+     * this.textnorm = this.textnorm.replace('-', ':');
+     * }
+     */
 }

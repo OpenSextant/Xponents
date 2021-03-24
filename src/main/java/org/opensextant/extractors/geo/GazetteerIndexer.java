@@ -128,12 +128,12 @@ public class GazetteerIndexer {
 
     /**
      * Initialize various filter parameters.
-     * 
+     *
      * @param f
      * @param schema
      * @param delim
      * @throws SolrServerException if solr I/O error occurs.
-     * @throws ConfigException bad data in cells
+     * @throws ConfigException     bad data in cells
      */
     public void index(File f, String schema, String delim) throws SolrServerException, IOException {
 
@@ -144,7 +144,6 @@ public class GazetteerIndexer {
 
             /*
              * Get column headings.
-             * 
              */
             sourceColumn = splitter.split(iter.nextLine());
             int x = 0;
@@ -207,8 +206,9 @@ public class GazetteerIndexer {
      * if its values match the desired "include category" -- if we keep it, we
      * filter it and mark "search_only" if needed. -- finally, ensure geo =
      * lat,lon format
+     *
      * @throws ConfigException if name type in row is bad: only abbrev and name
-     *             are known.
+     *                         are known.
      */
 
     private SolrInputDocument mapGazetteerEntry(String[] row) throws ConfigException {
@@ -323,7 +323,6 @@ public class GazetteerIndexer {
          * For relatively short terms that may also be stopterms, first convert
          * to non-diacritic form, then lower case result. If result is a stop
          * term or exclusion term then it should be tagged search_only
-         *
          */
         if (!search_only && nm.length() < 15) {
             String nameNonDiacrtic = TextUtils.replaceDiacritics(nm).toLowerCase();
@@ -395,21 +394,17 @@ public class GazetteerIndexer {
 
     /**
      * NamedList? in Solr. What a horror. Okay, they work, but...
-     *
      * items found in solrconfig under the gaz update processor script:
-     *
      * include_category -- Tells the update processor which flavors of data to
      * keep category_field -- the field name where a row of data is categorized.
      * countries -- a list of countries to use. stopterms -- a list of terms
      * used to mark rows of data as "search_only"
-     *
      */
     public void init(String includeCategory, String countryList, String categoryField) {
         /*
          * Load the exclusion names -- these are terms that are gazeteer
          * entries, e.g., gazetteer.name = <exclusion term>, that will be marked
          * as search_only = true.
-         *
          */
         try {
             termFilter = new TagFilter();
@@ -425,7 +420,6 @@ public class GazetteerIndexer {
 
         /*
          * Optional: filter entries with a category list
-         *
          */
         // String
         if (ic != null) {
@@ -442,7 +436,6 @@ public class GazetteerIndexer {
 
         /*
          * Optional: filter entries with a country list
-         *
          */
         List<String> cc = TextUtils.string2list(countryList, ",");
         if (cc != null) {
@@ -461,7 +454,7 @@ public class GazetteerIndexer {
 
     /**
      * Test for short WWWW NNNN alphanumeric coded stuff.
-     * 
+     *
      * @param nm
      * @param feat
      * @return
@@ -475,25 +468,20 @@ public class GazetteerIndexer {
 
     /**
      * Parse off country codes that duplicate information in ADM boundary code.
-     *
      * MX19 => '19', is sufficient. In cases where FIPS/ISO codes differ (almost
      * all!), then this is significant.
-     *
      * Searchability: use has to know that ADM1 code is using a given standard.
      * e.g., adm1 = 'IZ08', instead of the more flexible, cc='IQ', adm1='08'
-     *
      * Hiearchical/Lexical organization: CC.ADM1 is useful to organize data, but
      * without this normalization, you might have 'IQ.IZ08' -- which is not
      * wrong, just confusing. IQ.08 is a little easier to parse.
-     *
      * So for now, the given Gazetteer entries are remapped to ISO coding.
-     *
      * Recommendation: we standardize on ISO country codes where possible.
      *
-     * @param d the gazetteer solr document.
+     * @param d     the gazetteer solr document.
      * @param field name of an ADMn field, ADM1, ADM2...etc.
-     * @param cc ISO country code
-     * @param fips FIPS country code
+     * @param cc    ISO country code
+     * @param fips  FIPS country code
      */
     private void scrubCountryCode(SolrInputDocument d, String field, String cc, String fips) {
         String adm = SolrUtil.getString(d, field);
@@ -515,7 +503,6 @@ public class GazetteerIndexer {
 
         /*
          * Strip off FIPS.ADM1
-         *
          */
         if (adm.startsWith(fips)) {
             d.setField(field, adm.substring(fips.length()));

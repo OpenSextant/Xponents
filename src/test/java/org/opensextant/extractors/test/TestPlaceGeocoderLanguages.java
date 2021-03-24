@@ -19,9 +19,10 @@ public class TestPlaceGeocoderLanguages extends TestPlaceGeocoder {
     /**
      * Language-specific parsing will involve more testing... For now, just making
      * it available is enough.
-     * 
+     *
      * @throws IOException
      */
+    @Override
     public void tagEvaluation() throws IOException {
 
         String[] textsMiddleEastScripts = {

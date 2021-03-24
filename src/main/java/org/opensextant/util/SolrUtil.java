@@ -31,12 +31,10 @@ import org.opensextant.data.Place;
  * Utility functions better suited in their own class.
  *
  * @author ubaldino
- *
  */
 public class SolrUtil {
 
     /**
-     *
      * @param d solr doc
      * @param f field name
      * @return a list of strings for this field from that document.; Or null if
@@ -83,11 +81,12 @@ public class SolrUtil {
 
     /**
      * get integer value from input document.
+     *
      * @param d doc
      * @param f field name
      * @return int
      */
-    public static int getInteger(SolrInputDocument d, String f){
+    public static int getInteger(SolrInputDocument d, String f) {
         Object obj = d.getFieldValue(f);
         if (obj == null) {
             return 0;
@@ -123,6 +122,7 @@ public class SolrUtil {
 
     /**
      * Get a floating point object from a record
+     *
      * @return NaN if null
      */
     public static Float getFloat(SolrDocument d, String f) {
@@ -152,7 +152,7 @@ public class SolrUtil {
             return Float.valueOf(obj.toString());
         }
     }
-    
+
     /**
      * Get a Date object from a record
      *
@@ -189,7 +189,7 @@ public class SolrUtil {
 
     /**
      * Get a String object from a record on input.
-     * 
+     *
      * @param solrDoc solr input document
      */
     public static String getString(SolrInputDocument solrDoc, String name) {
@@ -203,6 +203,7 @@ public class SolrUtil {
 
     /**
      * Get a String object from a record
+     *
      * @param solrDoc SolrDocument from index
      */
     public static String getString(SolrDocument solrDoc, String name) {
@@ -221,7 +222,6 @@ public class SolrUtil {
     }
 
     /**
-     *
      * Get a double from a record
      */
     public static double getDouble(SolrDocument solrDoc, String name) {
@@ -231,7 +231,7 @@ public class SolrUtil {
         }
         if (obj instanceof StoredField) {
             return ((StoredField) obj).numericValue().floatValue();
-        }        
+        }
         if (obj instanceof Number) {
             Number number = (Number) obj;
             return number.doubleValue();
@@ -277,13 +277,12 @@ public class SolrUtil {
     /*
      * ===============================================
      * Higher order routines -- createPlace, populatePlace
-     * 
-     * 
      * ===============================================
      */
 
     /**
      * Creates the bare minimum Gazetteer Place record
+     *
      * @param gazEntry a solr document of key/value pairs
      * @return Place obj
      */
@@ -296,8 +295,9 @@ public class SolrUtil {
 
     /**
      * Populate the data card.
+     *
      * @param gazEntry solr doc
-     * @param bean place obj to populate
+     * @param bean     place obj to populate
      */
     public static void populatePlace(SolrDocument gazEntry, Place bean) {
         String nt = getString(gazEntry, "name_type");

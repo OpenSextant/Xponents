@@ -19,6 +19,7 @@ public class TaxonFilter extends MatchFilter {
     /**
      * Find any reason to filter out Taxons.
      */
+    @Override
     public boolean filterOut(String val) {
         if (irregularPunctPatterns(val)) {
             return true;

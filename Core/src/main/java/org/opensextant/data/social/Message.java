@@ -8,17 +8,21 @@ import org.opensextant.data.Geocoding;
 import org.opensextant.util.TextUtils;
 
 /**
- * Micro Message is the basis for any sort microblog message, SMS, or tweet or other social media post.
+ * Micro Message is the basis for any sort microblog message, SMS, or tweet or
+ * other social media post.
  * These attributes have some conventions:
  * <ul>
- * <li>Author data (author* attributes) are synonmous with User Profile, Poster, etc.
+ * <li>Author data (author* attributes) are synonmous with User Profile, Poster,
+ * etc.
  * Otherwise the attribute is more related to the message itself.
  * </li>
- * <li>This structure represents data which maybe given or raw; or which may be processed or inferred.
- * it is up to the developer to decide how to navigate the differences between such differences.
+ * <li>This structure represents data which maybe given or raw; or which may be
+ * processed or inferred.
+ * it is up to the developer to decide how to navigate the differences between
+ * such differences.
  * </li>
  * </ul>
- * 
+ *
  * @author ubaldino
  */
 public class Message {
@@ -32,7 +36,8 @@ public class Message {
      */
     public String authorName = null;
     /**
-     * the numeric ID for a user/author profile. As users are able to change display names at-will.
+     * the numeric ID for a user/author profile. As users are able to change display
+     * names at-will.
      */
     public String authorProfileID = null;
     /**
@@ -75,7 +80,8 @@ public class Message {
     public String dateText = null;
     /**
      * Timezone label of the timestamp, e.g., Europe/London, or just London
-     * or "Canada and Atlantic (EST)". There are some standard labels, but these labels
+     * or "Canada and Atlantic (EST)". There are some standard labels, but these
+     * labels
      * do not always line up with well-known TZ databases.
      */
     public String timezone = null;
@@ -86,7 +92,8 @@ public class Message {
      */
     public int utcOffset = UNSET_UTC_OFFSET;
     /**
-     * isDST = is Daylight Savings Time = true if we think the message timestamp is in a
+     * isDST = is Daylight Savings Time = true if we think the message timestamp is
+     * in a
      * period of DST recognized by the country of origin, or UTC offset.
      */
     public boolean isDST = false;
@@ -120,7 +127,8 @@ public class Message {
      */
     public String userLang = null;
     /**
-     * Language of the message; not usually given unless inferred by someone or something.
+     * Language of the message; not usually given unless inferred by someone or
+     * something.
      */
     public String lang = null;
     /**
@@ -143,13 +151,13 @@ public class Message {
 
     /**
      * A simple message with an ID, text and a timestamp.
-     * 
+     *
      * @param _id
-     *            ID
+     *             ID
      * @param text
-     *            message
+     *             message
      * @param tm
-     *            timestamp
+     *             timestamp
      */
     public Message(String _id, String text, Date tm) {
         this.id = _id;
@@ -179,19 +187,20 @@ public class Message {
 
     /**
      * Get the natural language version of the raw text.
+     *
      * @return
      */
     public String getTextNatural() {
         return this.textNatural;
     }
-    
+
     public void setTextNatural(String t) {
         this.textNatural = t;
     }
 
     /**
      * Set UTC and TZ after date is set.
-     * 
+     *
      * @param utc UTC offset in SECONDS
      */
     public void setUTCOffset(int utc) {
@@ -212,7 +221,7 @@ public class Message {
 
     /**
      * UTC offset as hours. Convert from seconds
-     * 
+     *
      * @param o
      * @return
      */
@@ -221,12 +230,12 @@ public class Message {
     }
 
     /**
-    * detect if Tweet has UTC offset or TZ
-    * 
-    * @param t
-    *            tweet obj
-    * @return
-    */
+     * detect if Tweet has UTC offset or TZ
+     *
+     * @param t
+     *          tweet obj
+     * @return
+     */
     public static boolean validTZ(Tweet t) {
         if (StringUtils.isNotBlank(t.timezone)) {
             return true;

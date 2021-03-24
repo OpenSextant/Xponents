@@ -23,12 +23,13 @@ import org.opensextant.util.GeonamesUtility;
 
 /**
  * Variant
- * TODO: Ideally, we would chain something like inferredLoc = geocode(Tweet, User, etc) then
- * use the outputs from that to then mentionLocs = geocode(text, given=inferredLoc).
- * 
- * But what a ridiculously intricate pipeline that gets to be,... and you quickly loose the
+ * TODO: Ideally, we would chain something like inferredLoc = geocode(Tweet,
+ * User, etc) then
+ * use the outputs from that to then mentionLocs = geocode(text,
+ * given=inferredLoc).
+ * But what a ridiculously intricate pipeline that gets to be,... and you
+ * quickly loose the
  * generality of applying this to other data; already heavily Tweet-dependent.
- * 
  */
 public class XponentTextGeotagger extends XponentGeocoder {
 
@@ -45,11 +46,11 @@ public class XponentTextGeotagger extends XponentGeocoder {
     @Override
     public void configure() throws ConfigException {
 
-        //new GazetteerMatcher(true /*allow lowercase tagging*/);
+        // new GazetteerMatcher(true /*allow lowercase tagging*/);
         tagger = new PlaceGeocoder(true);
 
         tagger.enablePersonNameMatching(true);
-        // If you really do not want to miss  anything -- look at this flag:
+        // If you really do not want to miss anything -- look at this flag:
         // tagger.setAllowLowerCaseAbbreviations(true);
         Parameters xponentsParams = new Parameters();
         // Default Parameters; Unlike geocoding tweet user/status.
@@ -60,7 +61,8 @@ public class XponentTextGeotagger extends XponentGeocoder {
         tagger.setParameters(xponentsParams);
 
         /*
-         * To filter out trivial places from tweet messages, try adding a mentionFilter file:
+         * To filter out trivial places from tweet messages, try adding a mentionFilter
+         * file:
          */
         String userFilterPath = "/twitter/exclude-placenames.txt";
         URL filterFile = getClass().getResource(userFilterPath);
@@ -80,7 +82,8 @@ public class XponentTextGeotagger extends XponentGeocoder {
 
         tagger.configure();
 
-        // Configure tagger first. Then add your custom rules on top of other default rules.
+        // Configure tagger first. Then add your custom rules on top of other default
+        // rules.
         profileRule = new UserProfileLocationRule();
         tagger.addRule(profileRule);
 
@@ -104,9 +107,9 @@ public class XponentTextGeotagger extends XponentGeocoder {
      * This routine does not look at Author.
      *
      * @param tw Tweet API object
-     * @return the annotation with  geo-inference
+     * @return the annotation with geo-inference
      * @throws MessageParseException on data parsing error
-     * @throws ExtractionException on tagging erorr
+     * @throws ExtractionException   on tagging erorr
      */
     @Override
     public GeoInference geoinferenceTweetAuthor(Tweet tw) throws MessageParseException, ExtractionException {
@@ -115,16 +118,17 @@ public class XponentTextGeotagger extends XponentGeocoder {
 
     /**
      * Geotag and Geocode mentions in the message of a tweet.
-     * This may make use of Tweet metadata for disambiguation, not just the message content.
-     * 
+     * This may make use of Tweet metadata for disambiguation, not just the message
+     * content.
+     *
      * @param tw
-     *            tweet as parsed by DeepEye. This will use Tweet.lang to direct tagging/tokenization.
-     * 
+     *           tweet as parsed by DeepEye. This will use Tweet.lang to direct
+     *           tagging/tokenization.
      * @return Geo or Country annotation
      * @throws MessageParseException
-     *             on parsing the tweet or JSON
+     *                               on parsing the tweet or JSON
      * @throws ExtractionException
-     *             on running geolocation routines
+     *                               on running geolocation routines
      */
     @Override
     public GeoInference geoinferenceTweetStatus(Tweet tw) throws MessageParseException, ExtractionException {
@@ -132,18 +136,22 @@ public class XponentTextGeotagger extends XponentGeocoder {
     }
 
     /**
-     * Content-based geotagging. Given the tweet status message, find all place mentions
-     * geocoding what is meaningful. Trivial finds are likely omitted or marked with low confidence.
+     * Content-based geotagging. Given the tweet status message, find all place
+     * mentions
+     * geocoding what is meaningful. Trivial finds are likely omitted or marked with
+     * low confidence.
      */
+    @Override
     public Collection<GeoInference> geoinferencePlaceMentions(Tweet tw)
             throws MessageParseException, ExtractionException {
         return processLocationMentions(tw, (Place) tw.authorGeo, tw.id, "geo");
     }
 
     /**
-     * WARNING: Copy of Deepeye Pipes default geotag filter. Adapt this rule/filter to
+     * WARNING: Copy of Deepeye Pipes default geotag filter. Adapt this rule/filter
+     * to
      * items found in tweets.
-     * 
+     *
      * @param m
      * @return
      */
@@ -169,7 +177,8 @@ public class XponentTextGeotagger extends XponentGeocoder {
     private List<TextMatch> otherMatches = new ArrayList<>();
 
     /**
-     * This works best if your tweet provides a natural language text, Tweet.setTextNatural()
+     * This works best if your tweet provides a natural language text,
+     * Tweet.setTextNatural()
      */
     public Collection<GeoInference> processLocationMentions(Tweet tw, Place g, String rid, String annotName)
             throws ExtractionException {
@@ -180,12 +189,13 @@ public class XponentTextGeotagger extends XponentGeocoder {
         String text = tw.getTextNatural() != null ? tw.getTextNatural() : tw.getText();
         TextInput data = new TextInput(rid, text);
 
-        /* Your calling pipeline either already did lang-id or you trust the given metadata.
+        /*
+         * Your calling pipeline either already did lang-id or you trust the given
+         * metadata.
          * Meaningful lang ID:
-         * 
-         *  lang = 'ar'                    =  Arabic tokenizer/tagging 
-         *  lang = 'zh' | 'ja' | 'ko'      =  CJK tokenizer/tagging
-         *  lang = 'en' | null | anything else. = Whitespace, default 
+         * lang = 'ar' = Arabic tokenizer/tagging
+         * lang = 'zh' | 'ja' | 'ko' = CJK tokenizer/tagging
+         * lang = 'en' | null | anything else. = Whitespace, default
          */
         data.langid = tw.lang;
 
@@ -193,10 +203,8 @@ public class XponentTextGeotagger extends XponentGeocoder {
          * ==========================
          * TAGGING / GEOCODING:
          * ==========================
-         * 
-         * NOTE:  User Profile Rule is mixed in here to consider how Author Profile Geo
+         * NOTE: User Profile Rule is mixed in here to consider how Author Profile Geo
          * (lang/TZ/UTC/Country) are used to adapt the rank of ambiguous places found.
-         * 
          */
         List<TextMatch> matches = tagger.extract(data);
 
@@ -212,14 +220,14 @@ public class XponentTextGeotagger extends XponentGeocoder {
          * Super loop: Iterate through all found entities. record Taxons as
          * person or orgs record Geo tags as country, place, or geo. geo =
          * geocoded place or parsed coordinate (MGRS, DMS, etc)
-         * 
          */
         for (TextMatch name : matches) {
 
-            /*            
+            /*
              * ==========================
-             * ANNOTATIONS: non-geographic entities that are filtered out, but worth tracking
-             * ==========================             
+             * ANNOTATIONS: non-geographic entities that are filtered out, but worth
+             * tracking
+             * ==========================
              */
             if (name instanceof TaxonMatch) {
                 otherMatches.add(name);
@@ -297,7 +305,8 @@ public class XponentTextGeotagger extends XponentGeocoder {
             G.end = name.end;
 
             // set inference name so it is clear.
-            //  country = Name or Code;  geo = named location with lat/lon;  place = just a name.
+            // country = Name or Code; geo = named location with lat/lon; place = just a
+            // name.
             if (place.isCountry) {
                 G.inferenceName = "country";
             } else {

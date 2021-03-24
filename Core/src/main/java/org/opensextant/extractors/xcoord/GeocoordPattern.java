@@ -16,11 +16,9 @@
  */
 package org.opensextant.extractors.xcoord;
 
-
 import org.opensextant.extractors.flexpat.RegexPattern;
 
 /**
- *
  * @author ubaldino
  */
 public class GeocoordPattern extends RegexPattern {
@@ -30,8 +28,8 @@ public class GeocoordPattern extends RegexPattern {
      * Only as defined in your configured patterns, e.g., "DM", "DMS";
      * However this set of values should align with XConstants enumerations.
      */
-    public String cce_family  = null;
-    
+    public String cce_family = null;
+
     /**
      * Only as defined in your configured patterns, e.g., the "01" in "DM-01"
      */
@@ -43,12 +41,11 @@ public class GeocoordPattern extends RegexPattern {
     public int cce_family_id = -1;
 
     /**
-     *
      * @param _fam
      * @param _variant
      * @param _description
      */
-    public GeocoordPattern(String _fam, String _variant, String _description){
+    public GeocoordPattern(String _fam, String _variant, String _description) {
         super(_fam, _fam + "-" + _variant, _description);
 
         cce_family = _fam;

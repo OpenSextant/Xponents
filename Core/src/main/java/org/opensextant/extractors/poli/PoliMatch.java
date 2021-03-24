@@ -21,7 +21,6 @@ import java.util.Map;
 import org.opensextant.extraction.TextMatch;
 
 /**
- *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class PoliMatch extends TextMatch {
@@ -58,7 +57,6 @@ public class PoliMatch extends TextMatch {
     /**
      * Trim whitespace and convert found text to alpha case configured for this
      * object.
-     *
      */
     public void normalize() {
         if (this.text == null) {

@@ -28,7 +28,6 @@ import org.opensextant.util.TextUtils;
 
 /**
  * A property sheet.
- *
  * For now I'm using attributes directly to facilitate compile-time stuff.
  * But a property sheet of k,v pairs may help later
  *
@@ -44,22 +43,30 @@ public class Parameters extends java.util.Properties {
     public boolean tag_countries = true;
     public boolean tag_places = true;
     public boolean tag_coordinates = true;
-    /** Generic flag to represent tagging non-Geo names, e.g., names of persons, orgs and things */
+    /**
+     * Generic flag to represent tagging non-Geo names, e.g., names of persons, orgs
+     * and things
+     */
     public boolean tag_names = true;
     public boolean tag_taxons = false;
     public boolean tag_patterns = false;
     public boolean tag_lowercase = false;
     public boolean clean_input = false;
 
-    /** Reverse Geo here is accommodated by resolving Provinces and Localities when a
-     * geodetic coordinate is encountered in text.  The containing province and/or closest 
-     * feature is reported.  Country code and ADM1 code, and Province Name are inferred
-     * and set on coordinate object, improving the contextual information for the rest of the processing. 
+    /**
+     * Reverse Geo here is accommodated by resolving Provinces and Localities when a
+     * geodetic coordinate is encountered in text. The containing province and/or
+     * closest
+     * feature is reported. Country code and ADM1 code, and Province Name are
+     * inferred
+     * and set on coordinate object, improving the contextual information for the
+     * rest of the processing.
      */
     public boolean resolve_localities = false;
 
-    /** By default Country Names will not be included in GIS products
-     *  They should appear in CSV, though.
+    /**
+     * By default Country Names will not be included in GIS products
+     * They should appear in CSV, though.
      */
     public boolean output_countries = true;
     public boolean output_places = true;
@@ -67,11 +74,13 @@ public class Parameters extends java.util.Properties {
     public boolean output_taxons = true;
     public boolean output_patterns = true;
     public boolean output_filtered = false;
-    /** Default is to not generate Geohash
+    /**
+     * Default is to not generate Geohash
      */
     public boolean output_geohash = false;
 
-    /** Is the concept of duplicate filtering more general than for just coords?
+    /**
+     * Is the concept of duplicate filtering more general than for just coords?
      */
     public boolean output_coordinate_duplicates = true;
 
@@ -83,18 +92,19 @@ public class Parameters extends java.util.Properties {
     public String outputFile = null;
 
     private Set<String> formats = new HashSet<String>();
-    
+
     /**
-     * A way of relaying arbitrary geographic filters to an extraction routine indicating that useful answers for 
+     * A way of relaying arbitrary geographic filters to an extraction routine
+     * indicating that useful answers for
      * disambiguation for tie-breakers come from these cues.
-     * 
      * "countries" = [c1, c2, c3, ...]
      * "geohash" = [g1, g2, g3, ...]
      */
-    public HashMap<String, List<String>> preferredGeography = new HashMap<>(); 
+    public HashMap<String, List<String>> preferredGeography = new HashMap<>();
 
-    /**  You the caller must explicitly set isdefault = false;
-     *   forcing you to actually look at these parameters.
+    /**
+     * You the caller must explicitly set isdefault = false;
+     * forcing you to actually look at these parameters.
      */
     public boolean isdefault = true;
 
@@ -104,7 +114,9 @@ public class Parameters extends java.util.Properties {
     /* DEFAULT RUNTIME FLAGS: */
     public static int RUNTIME_FLAGS = FLAG_EXTRACT_CONTEXT;
 
-    /** Processing will support multiple output formats
+    /**
+     * Processing will support multiple output formats
+     *
      * @param fmt requested format
      */
     public void addOutputFormat(String fmt) {
@@ -129,6 +141,7 @@ public class Parameters extends java.util.Properties {
 
     /**
      * Generates a simple job date/time key for the job
+     *
      * @return 12-digit processing date format date+time
      */
     public static String getJobTimestamp() {

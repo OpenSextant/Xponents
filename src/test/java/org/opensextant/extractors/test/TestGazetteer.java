@@ -31,7 +31,6 @@ public class TestGazetteer {
      * Do a basic test -- This main prog makes use of the default JVM arg for solr:
      * -Dopensextant.solr=/path/to/solr
      *
-     *
      * @param args the arguments
      * @throws Exception the exception
      */
@@ -101,7 +100,7 @@ public class TestGazetteer {
     /**
      * Test placesAt and closest functions to find and sort within reason places
      * near a given location.
-     * 
+     *
      * @param lat
      * @param lon
      * @param radius

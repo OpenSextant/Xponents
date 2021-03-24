@@ -33,7 +33,7 @@ public class ContextualOrganizationRule extends GeocodeRule {
 
             // X-reference this city name that occurs in an organization name,
             // with any state or division "ADM2" or "ADM1" references.
-            // E.g.,  "Xyz City Council" where city "Xyz City" may reside in a state "S"
+            // E.g., "Xyz City Council" where city "Xyz City" may reside in a state "S"
             // mentioned elsewhere in document.
             for (Place geo : name.getPlaces()) {
                 if (boundaryObserver.placeMentionCount().containsKey(geo.getHierarchicalPath())) {
@@ -45,9 +45,11 @@ public class ContextualOrganizationRule extends GeocodeRule {
             }
         }
 
-        /* Re-evaluate items that may have been filtered because the name appeared in an organization
-         * name where the org name was not necessarily geographically relevant until now.
-         *
+        /*
+         * Re-evaluate items that may have been filtered because the name appeared in an
+         * organization
+         * name where the org name was not necessarily geographically relevant until
+         * now.
          */
         for (PlaceCandidate name : names) {
             if (name.isFilteredOut() && reEval.contains(name.getTextnorm())) {

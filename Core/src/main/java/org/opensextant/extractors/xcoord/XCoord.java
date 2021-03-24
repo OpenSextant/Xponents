@@ -31,6 +31,8 @@
 // */
 package org.opensextant.extractors.xcoord;
 
+import static org.opensextant.extraction.MatcherUtils.reduceMatches;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -39,7 +41,6 @@ import java.util.regex.Matcher;
 
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
- import static org.opensextant.extraction.MatcherUtils.reduceMatches;
 import org.opensextant.extraction.NormalizationException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.AbstractFlexPat;
@@ -61,8 +62,7 @@ public class XCoord extends AbstractFlexPat {
      * false-positive filters for coordinate types; (b) extract context around
      * coordinate.
      */
-    public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS
-            | XConstants.FLAG_EXTRACT_CONTEXT;
+    public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS | XConstants.FLAG_EXTRACT_CONTEXT;
     protected static String DEFAULT_XCOORD_CFG = "/geocoord_patterns.cfg";
 
     /**
@@ -111,7 +111,7 @@ public class XCoord extends AbstractFlexPat {
      * most common extraction;
      *
      * @param input
-     *            text input
+     *              text input
      * @return the list of matches
      */
     @Override
@@ -126,7 +126,7 @@ public class XCoord extends AbstractFlexPat {
      * most common extraction;
      *
      * @param input_buf
-     *            text
+     *                  text
      * @return the list of matches
      */
     @Override
@@ -165,7 +165,7 @@ public class XCoord extends AbstractFlexPat {
      * Enable matching of DMS patterns
      *
      * @param flag
-     *            on/off
+     *             on/off
      */
     public void match_DMS(boolean flag) {
         ((PatternManager) patterns).enable_CCE_family(XConstants.DMS_PATTERN, flag);
@@ -175,7 +175,7 @@ public class XCoord extends AbstractFlexPat {
      * Enable matching of DM patterns
      *
      * @param flag
-     *            on/off
+     *             on/off
      */
     public void match_DM(boolean flag) {
         ((PatternManager) patterns).enable_CCE_family(XConstants.DM_PATTERN, flag);
@@ -185,7 +185,7 @@ public class XCoord extends AbstractFlexPat {
      * Enable matching of DD patterns
      *
      * @param flag
-     *            on/off
+     *             on/off
      */
     public void match_DD(boolean flag) {
         ((PatternManager) patterns).enable_CCE_family(XConstants.DD_PATTERN, flag);
@@ -195,7 +195,7 @@ public class XCoord extends AbstractFlexPat {
      * Enable matching of MGRS patterns
      *
      * @param flag
-     *            on/off
+     *             on/off
      */
     public void match_MGRS(boolean flag) {
         ((PatternManager) patterns).enable_CCE_family(XConstants.MGRS_PATTERN, flag);
@@ -205,7 +205,7 @@ public class XCoord extends AbstractFlexPat {
      * Enable matching of UTM patterns
      *
      * @param flag
-     *            on/off
+     *             on/off
      */
     public void match_UTM(boolean flag) {
         ((PatternManager) patterns).enable_CCE_family(XConstants.UTM_PATTERN, flag);
@@ -216,9 +216,9 @@ public class XCoord extends AbstractFlexPat {
      * objects carry both the original text ID and their own match ID
      *
      * @param text
-     *            text to match against
+     *                text to match against
      * @param text_id
-     *            identifier for text.
+     *                identifier for text.
      * @return
      */
     public TextMatchResult extract_coordinates(String text, String text_id) {
@@ -228,7 +228,7 @@ public class XCoord extends AbstractFlexPat {
     /**
      * Strictly internal heuristic.
      * ABC&lt;coord&gt;123 -- coordinate pattern found buried in alpha-numeric text.
-     * 
+     *
      * @param buf
      * @param offset
      * @return
@@ -257,11 +257,11 @@ public class XCoord extends AbstractFlexPat {
      * messages appear in TextMatchResultSet only when debug = ON.
      *
      * @param text
-     *            text to match
+     *                text to match
      * @param text_id
-     *            id for text
+     *                id for text
      * @param family
-     *            pattern family or XConstants.ALL_PATTERNS
+     *                pattern family or XConstants.ALL_PATTERNS
      * @return TextMatchResultSet result set. If input is null, result set is
      *         null
      */
@@ -317,16 +317,14 @@ public class XCoord extends AbstractFlexPat {
 
                 if ((RUNTIME_FLAGS & XConstants.CONTEXT_FILTERS_ON) > 0) {
                     if (this.filterOutContext(text, coord.start)) {
-                        log.debug("Filtered out noisy match, {} found by {}", coord.getText(),
-                                pat.id);
+                        log.debug("Filtered out noisy match, {} found by {}", coord.getText(), pat.id);
                         continue;
                     }
                 }
 
                 // Normalize
                 try {
-                    GeocoordNormalization.normalize_coordinate(coord,
-                            patterns.group_matches(pat, match));
+                    GeocoordNormalization.normalize_coordinate(coord, patterns.group_matches(pat, match));
                 } catch (NormalizationException normErr) {
                     if (debug) {
                         // Quietly ignore
@@ -343,8 +341,8 @@ public class XCoord extends AbstractFlexPat {
                 //
                 if (GeocoordNormalization.filter_out(coord)) {
                     if (debug) {
-                        results.message = "Filtered out coordinate pattern=" + pat.id + " value='"
-                                + coord.getText() + "'";
+                        results.message = "Filtered out coordinate pattern=" + pat.id + " value='" + coord.getText()
+                                + "'";
                         log.info("Normalization Filter fired, MSG=" + results.message);
                     }
                     continue;
@@ -357,8 +355,7 @@ public class XCoord extends AbstractFlexPat {
                  */
                 if ((XCoord.RUNTIME_FLAGS & XConstants.FLAG_EXTRACT_CONTEXT) > 0) {
                     // returns indices for two windows before and after match
-                    int[] slices = TextUtils.get_text_window(coord.start, coord.getLength(),
-                            bufsize, match_width);
+                    int[] slices = TextUtils.get_text_window(coord.start, coord.getLength(), bufsize, match_width);
 
                     // This sets the context window before/after.
                     //

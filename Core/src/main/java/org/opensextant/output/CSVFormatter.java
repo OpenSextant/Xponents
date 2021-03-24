@@ -126,8 +126,9 @@ public class CSVFormatter extends AbstractFormatter {
 
     /**
      * Pull in data from match into the output schema (map)
+     *
      * @param row input row to write
-     * @param m  given match has more metadata
+     * @param m   given match has more metadata
      */
     public void buildRow(Map<String, String> row, TextMatch m) {
 
@@ -146,9 +147,9 @@ public class CSVFormatter extends AbstractFormatter {
     protected void buildSchema() throws ConfigException {
 
         if (!this.includeOffsets) {
-            //field_order.add("start");
-            //field_order.add("end");
-            //} else {
+            // field_order.add("start");
+            // field_order.add("end");
+            // } else {
             fieldOrder.remove("start");
             fieldOrder.remove("end");
         }
@@ -195,7 +196,8 @@ public class CSVFormatter extends AbstractFormatter {
     protected List<String> fieldOrder = new ArrayList<String>();
 
     /**
-     * Default fields for generic CSV output. If GIS output is desired, then use GeoCSV formatter.
+     * Default fields for generic CSV output. If GIS output is desired, then use
+     * GeoCSV formatter.
      */
     protected final void defaultFields() {
 

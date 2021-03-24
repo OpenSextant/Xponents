@@ -35,16 +35,14 @@ public class ExtractionException extends Exception {
     }
 
     /**
-     *
-     * @param msg error message
-     * @param cause  root cause
+     * @param msg   error message
+     * @param cause root cause
      */
     public ExtractionException(String msg, Throwable cause) {
         super(msg, cause);
     }
 
     /**
-     *
      * @param msg error message
      */
     public ExtractionException(String msg) {

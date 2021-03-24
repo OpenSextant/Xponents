@@ -21,7 +21,6 @@ import java.util.Date;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 
 /**
- *
  * @author ubaldino
  */
 public class TestCase extends PatternTestCase {
@@ -32,12 +31,11 @@ public class TestCase extends PatternTestCase {
     public Date date = null;
 
     /**
-     *
-     * @param id test identifier or tag
-     * @param fam pattern family
+     * @param id   test identifier or tag
+     * @param fam  pattern family
      * @param text text to test with
      */
-    public TestCase(String id, String fam, String text){
+    public TestCase(String id, String fam, String text) {
         super(id, fam, text);
     }
 

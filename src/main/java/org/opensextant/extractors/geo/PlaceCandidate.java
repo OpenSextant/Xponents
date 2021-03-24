@@ -42,6 +42,7 @@ import org.opensextant.util.TextUtils;
  * <li>bestPlace - Of all the places with the same/similar names, which place is
  * it?
  * </ul>
+ *
  * @author ubaldino
  * @author dlutz, based on OpenSextant Toolbox
  */
@@ -66,33 +67,15 @@ public class PlaceCandidate extends TextMatch {
     /**
      * Default weighting increments.
      */
-    private static final String[] CLASS_SCALE = {
-            "A:3",
-            "P:2",
-            "L:1",
-            "R:0",
-            "H:1",
-            "V:0",
-            "T:1"
-    };
+    private static final String[] CLASS_SCALE = { "A:3", "P:2", "L:1", "R:0", "H:1", "V:0", "T:1" };
 
     private static final String[] DESIGNATION_SCALE = {
-            /* Places: cities, villages, ruins, etc.*/
-            "PPLC:12",
-            "PPLA:8",
-            "PPLG:7",
-            "PPL:5",
-            "PPLL:2",
-            "PPLQ:2",
-            "PPLX:2",
+            /* Places: cities, villages, ruins, etc. */
+            "PPLC:12", "PPLA:8", "PPLG:7", "PPL:5", "PPLL:2", "PPLQ:2", "PPLX:2",
             /* Administrative regions */
-            "ADM1:9",
-            "ADM2:8",
-            "ADM3:7",
+            "ADM1:9", "ADM2:8", "ADM3:7",
             /* Other geographic features */
-            "ISL:4",
-            "ISLS:5"
-    };
+            "ISL:4", "ISLS:5" };
 
     private static final Map<String, Integer> classWeight = new HashMap<>();
     private static final Map<String, Integer> designationWeight = new HashMap<>();
@@ -110,18 +93,20 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
+     *
      */
     // basic constructor
     public PlaceCandidate() {
     }
 
     /**
-     * Using a scale of 0 to 100, indicate how confident we are that the chosen place is best.
-     * Note this is different than the individual score assigned to each candidate place.
+     * Using a scale of 0 to 100, indicate how confident we are that the chosen
+     * place is best.
+     * Note this is different than the individual score assigned to each candidate
+     * place.
      * We just need one final confidence measure for this place mention.
      *
-     * @param c 
+     * @param c
      */
     public void setConfidence(int c) {
         confidence = c;
@@ -130,7 +115,7 @@ public class PlaceCandidate extends TextMatch {
     /**
      * see setConfidence.
      *
-     * @return 
+     * @return
      */
     public int getConfidence() {
         return confidence;
@@ -140,7 +125,7 @@ public class PlaceCandidate extends TextMatch {
      * If caller is willing to claim an explicit choice, so be it. Otherwise
      * unchosen places go to disambiguation.
      *
-     * @param geo 
+     * @param geo
      */
     public void choose(Place geo) {
         if (geo instanceof ScoredPlace) {
@@ -152,7 +137,6 @@ public class PlaceCandidate extends TextMatch {
             }
         }
     }
-
 
     // ---- the getters and setters ---------
     //
@@ -177,12 +161,12 @@ public class PlaceCandidate extends TextMatch {
          */
         setPrematchTokens(TextUtils.tokensRight(sourceBuffer.substring(window[0], window[1])));
         setPostmatchTokens(TextUtils.tokensLeft(sourceBuffer.substring(window[2], window[3])));
-        
-        if (window[1]!=0) {
-            preChar=sourceBuffer.charAt(window[1]); /* offset greater than 0 */
+
+        if (window[1] != 0) {
+            preChar = sourceBuffer.charAt(window[1]); /* offset greater than 0 */
         }
-        if (window[2]!=sourceBuffer.length()) {
-            preChar=sourceBuffer.charAt(window[2]);/* offset less than doc end */
+        if (window[2] != sourceBuffer.length()) {
+            preChar = sourceBuffer.charAt(window[2]);/* offset less than doc end */
         }
     }
 
@@ -191,34 +175,34 @@ public class PlaceCandidate extends TextMatch {
      * abbreviation, and acronym.
      */
     public boolean isCountry = false;
-    
+
     /**
-     * 
+     *
      */
     public boolean isContinent = false;
-    
+
     /**
-     * 
+     *
      */
     public boolean isPerson = false;
-    
+
     /**
-     * 
+     *
      */
     public boolean isOrganization = false;
-    
+
     /**
-     * 
+     *
      */
     public boolean isAbbreviation = false;
-    
+
     /**
-     * 
+     *
      */
     public boolean isAcronym = false;
-    
+
     /**
-     * 
+     *
      */
     public boolean hasDiacritics = false;
 
@@ -226,7 +210,7 @@ public class PlaceCandidate extends TextMatch {
      * After candidate has been scored and all, the final best place is the
      * geocoding result for the given name in context.
      *
-     * @return 
+     * @return
      */
     public Geocoding getGeocoding() {
         choose();
@@ -234,18 +218,14 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public ScoredPlace getChosen() {
         return choice1;
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public ScoredPlace getFirstChoice() {
         return getChosen();
@@ -254,7 +234,6 @@ public class PlaceCandidate extends TextMatch {
     /**
      * Get the most highly ranked Place, or Null if empty list.
      * Typical usage:
-     * 
      * choose() // this does work. performance cost.
      * getChosen() // this is a getter; no performance cost
      */
@@ -271,24 +250,24 @@ public class PlaceCandidate extends TextMatch {
         tmp.addAll(scoredPlaces.values());
         Collections.sort(tmp);
 
-        int last=tmp.size()-1;
+        int last = tmp.size() - 1;
         choice1 = tmp.get(last);
-        if (tmp.size() > 1) {            
-            choice2 = tmp.get(last-1);
-            secondPlaceScore = tmp.get(last-1).getScore();
+        if (tmp.size() > 1) {
+            choice2 = tmp.get(last - 1);
+            secondPlaceScore = tmp.get(last - 1).getScore();
         }
     }
 
     /**
-     * This only makes sense if you tried choose() first 
+     * This only makes sense if you tried choose() first
      * to sort scored places.
-     * 
+     *
      * @return
      */
     public boolean isAmbiguous() {
         if (choice2 != null && choice1 != null) {
-            // float == float  does this work in Java?  7.125 == 7.125 ? 
-            // 
+            // float == float does this work in Java? 7.125 == 7.125 ?
+            //
             // first place Not better than second place?
             return !(choice1.getScore() > choice2.getScore());
         }
@@ -299,7 +278,7 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * Only call after choose() operation.
-     * 
+     *
      * @return
      */
     public double getSecondChoiceScore() {
@@ -307,27 +286,21 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public ScoredPlace getSecondChoice() {
         return choice2;
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public Collection<ScoredPlace> getPlaces() {
         return scoredPlaces.values();
     }
 
     /**
-     * 
-     *
-     * @param place 
+     * @param place
      */
     // add a new place with a default score
     public void addPlace(ScoredPlace place) {
@@ -336,9 +309,7 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public boolean hasDefaultRuleOnly() {
         return rules.contains("DefaultScore") && rules.size() == 1;
@@ -346,8 +317,8 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * Each place has an ID, but this candidate scoring mechanism must score
-     * distinct ID+NAME tuples.  As name variances play into scoring and choosing.
-     * 
+     * distinct ID+NAME tuples. As name variances play into scoring and choosing.
+     *
      * @param p
      * @return
      */
@@ -356,10 +327,8 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @param place 
-     * @param score 
+     * @param place
+     * @param score
      */
     // add a new place with a specific score
     public void addPlace(ScoredPlace place, Double score) {
@@ -375,30 +344,32 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
+     *
      */
     public static final double NAME_WEIGHT = 0.2;
-    
+
     /**
-     * 
+     *
      */
     public static final double FEAT_WEIGHT = 0.1;
-    
+
     /**
-     * 
+     *
      */
     public static final double LOCATION_BIAS_WEIGHT = 0.7;
 
     /**
      * Given this candidate, how do you score the provided place
-     * just based on those place properties (and not on context, document properties,
+     * just based on those place properties (and not on context, document
+     * properties,
      * or other evidence)?
-     * 
      * This 'should' produce a base score of something between 0 and 1.0, or 0..10.
-     * These scores do not necessarily need to stay in that range, as they are all relative.
-     * However, as rules fire and compare location data it is better to stay in a known range
+     * These scores do not necessarily need to stay in that range, as they are all
+     * relative.
+     * However, as rules fire and compare location data it is better to stay in a
+     * known range
      * for sanity sake.
-     * 
+     *
      * @param g
      * @return
      */
@@ -413,25 +384,23 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * Produce a goodness score in the range 0 to 1.0
-     * 
      * Trivial examples of name matching:
-     * 
+     *
      * <pre>
      *  given some patterns, 'geo' match Text
-     * 
-     *   case 1. 'Alberta' matches ALBERTA or alberta just fine. 
-     *   case 2. 'La' matches LA, however, knowing "LA" is a acronym/abbreviation 
+     *
+     *   case 1. 'Alberta' matches ALBERTA or alberta just fine.
+     *   case 2. 'La' matches LA, however, knowing "LA" is a acronym/abbreviation
      *       adds to the score of any geo that actually is "LA"
      *   case 3. 'Afghanestan' matches Afghanistan, but decrement because it is not perfectly spelled.
-     * 
      * </pre>
-     * 
+     *
      * @param g
      * @return
      */
     protected double scoreName(Place g) {
         int startingScore = getTextnorm().length();
-        
+
         int editDist = LevenshteinDistance.getDefaultInstance().apply(getTextnorm(), g.getNamenorm());
         int score = startingScore - editDist;
         if (isUpper() && (g.isAbbreviation() || TextUtils.isUpper(g.getName()))) {
@@ -454,7 +423,7 @@ public class PlaceCandidate extends TextMatch {
     /**
      * A preference for features that are major places or boundaries.
      * This yields a feature score on a 0 to 1.0 point scale.
-     * 
+     *
      * @param g
      * @return
      */
@@ -474,10 +443,8 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @param place 
-     * @param score 
+     * @param place
+     * @param score
      */
     // increment the score of an existing place
     public void incrementPlaceScore(Place place, Double score) {
@@ -491,10 +458,8 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @param place 
-     * @param score 
+     * @param place
+     * @param score
      */
     // set the score of an existing place
     public void setPlaceScore(ScoredPlace place, Double score) {
@@ -506,37 +471,29 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public Collection<String> getRules() {
         return rules;
     }
 
     /**
-     * 
-     *
-     * @param rule 
-     * @return 
+     * @param rule
+     * @return
      */
     public boolean hasRule(String rule) {
         return rules.contains(rule);
     }
 
     /**
-     * 
-     *
-     * @param rule 
+     * @param rule
      */
     public void addRule(String rule) {
         rules.add(rule);
     }
 
     /**
-     * 
-     *
-     * @param evidence 
+     * @param evidence
      */
     public void addEvidence(PlaceEvidence evidence) {
         this.evidence.add(evidence);
@@ -546,26 +503,22 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @param rule 
-     * @param weight 
-     * @param ev 
+     * @param rule
+     * @param weight
+     * @param ev
      */
     public void addEvidence(String rule, double weight, Place ev) {
         addEvidence(new PlaceEvidence(ev, rule, weight));
     }
 
     /**
-     * 
-     *
-     * @param rule 
-     * @param weight 
-     * @param cc 
-     * @param adm1 
-     * @param fclass 
-     * @param fcode 
-     * @param geo 
+     * @param rule
+     * @param weight
+     * @param cc
+     * @param adm1
+     * @param fclass
+     * @param fcode
+     * @param geo
      */
     // some convenience methods to add evidence
     public void addEvidence(String rule, double weight, String cc, String adm1, String fclass, String fcode,
@@ -593,7 +546,7 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * Add country evidence and increment score immediately.
-     * 
+     *
      * @param rule
      * @param weight
      * @param cc
@@ -607,16 +560,14 @@ public class PlaceCandidate extends TextMatch {
         this.evidence.add(ev);
 
         ev.setEvaluated(true);
-        this.incrementPlaceScore(geo, /*1 x */ weight);
+        this.incrementPlaceScore(geo, /* 1 x */ weight);
     }
 
     /**
-     * 
-     *
-     * @param rule 
-     * @param weight 
-     * @param adm1 
-     * @param cc 
+     * @param rule
+     * @param weight
+     * @param adm1
+     * @param cc
      */
     public void addAdmin1Evidence(String rule, double weight, String adm1, String cc) {
         PlaceEvidence ev = new PlaceEvidence();
@@ -628,11 +579,9 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @param rule 
-     * @param weight 
-     * @param fclass 
+     * @param rule
+     * @param weight
+     * @param fclass
      */
     public void addFeatureClassEvidence(String rule, double weight, String fclass) {
         PlaceEvidence ev = new PlaceEvidence();
@@ -643,11 +592,9 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @param rule 
-     * @param weight 
-     * @param fcode 
+     * @param rule
+     * @param weight
+     * @param fcode
      */
     public void addFeatureCodeEvidence(String rule, double weight, String fcode) {
         PlaceEvidence ev = new PlaceEvidence();
@@ -659,7 +606,7 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * Add evidence and increment score immediately.
-     * 
+     *
      * @param rule
      * @param weight
      * @param coord
@@ -675,32 +622,26 @@ public class PlaceCandidate extends TextMatch {
         //
         ev.setEvaluated(true);
         this.incrementPlaceScore(geo, weight * proximityScore);
-        // The indirect connection between found coord and closest geo candidate 
-        // is assessed here.  The score for geo has already be incremented.
+        // The indirect connection between found coord and closest geo candidate
+        // is assessed here. The score for geo has already be incremented.
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public List<PlaceEvidence> getEvidence() {
         return this.evidence;
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public boolean hasPlaces() {
         return !this.scoredPlaces.isEmpty();
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     // an overide of toString to get a meaningful representation of this PC
     @Override
@@ -711,8 +652,8 @@ public class PlaceCandidate extends TextMatch {
     /**
      * If you need a full print out of the data, use summarize(true);.
      *
-     * @param dumpAll 
-     * @return 
+     * @param dumpAll
+     * @return
      */
     public String summarize(boolean dumpAll) {
         StringBuilder tmp = new StringBuilder(getText());
@@ -765,7 +706,7 @@ public class PlaceCandidate extends TextMatch {
     /**
      * Given a path, 'a.b' ( province b in country a),
      * see if this name is present there.
-     * 
+     *
      * @param path
      * @return
      */
@@ -774,10 +715,8 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @param cc 
-     * @return 
+     * @param cc
+     * @return
      */
     public boolean presentInCountry(String cc) {
         return this.countries.contains(cc);
@@ -786,23 +725,22 @@ public class PlaceCandidate extends TextMatch {
     /**
      * How many different countries contain this name?.
      *
-     * @return 
+     * @return
      */
     public int distinctCountryCount() {
         return this.countries.size();
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public int distinctLocationCount() {
         return this.scoredPlaces.size(); // These are keyed by PLACE ID, essentially location.
     }
 
     /**
-     * Mark candidate as valid to protect it from being filtered out by downstream rules.
+     * Mark candidate as valid to protect it from being filtered out by downstream
+     * rules.
      */
     public void markValid() {
         markedValid = true;
@@ -810,6 +748,7 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * if candidate was marked as valid. IF valid, then avoid filters.
+     *
      * @return
      */
     public boolean isValid() {
@@ -817,9 +756,7 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * 
-     *
-     * @return 
+     * @return
      */
     public boolean hasEvidence() {
         return !this.evidence.isEmpty();

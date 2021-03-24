@@ -34,7 +34,9 @@ package org.opensextant.data;
 import org.opensextant.util.GeodeticUtility;
 
 /**
- * An intermediary between the simple LatLon and other conceptual classes: Place, Country, etc.
+ * An intermediary between the simple LatLon and other conceptual classes:
+ * Place, Country, etc.
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class GeoBase implements LatLon {
@@ -58,8 +60,9 @@ public class GeoBase implements LatLon {
 
     /**
      * Creates a new instance of GeoBase
+     *
      * @param placeId place Id
-     * @param nm place name
+     * @param nm      place name
      */
     public GeoBase(String placeId, String nm) {
         this.key = placeId;
@@ -79,7 +82,8 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     * legacy nomenclature.  Place ID is better.
+     * legacy nomenclature. Place ID is better.
+     *
      * @param k place Id
      */
     public void setKey(String k) {
@@ -94,23 +98,25 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     * @return  name of location
+     * @return name of location
      */
     public String getName() {
         return name;
     }
-    public String getNamenorm(){
-        if (namenorm==null){
-            if (name!=null){
+
+    public String getNamenorm() {
+        if (namenorm == null) {
+            if (name != null) {
                 namenorm = name.toLowerCase();
             }
         }
         return namenorm;
     }
-    
 
-    /** Generic label -- anything more sophisticated needs attention
+    /**
+     * Generic label -- anything more sophisticated needs attention
      * E.g. to use Key + Name or just Key for a label would be very specific
+     *
      * @return string repr of the location
      */
     @Override
@@ -156,8 +162,10 @@ public class GeoBase implements LatLon {
 
     private String geohash;
 
-    /** Set and get Geohash -- this is delegated to caller
-     *  as core processing need not have a geohash generated when lat/lon is set.
+    /**
+     * Set and get Geohash -- this is delegated to caller
+     * as core processing need not have a geohash generated when lat/lon is set.
+     *
      * @param gh geohash
      */
     public void setGeohash(String gh) {
@@ -165,14 +173,15 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     *
      * @return geohash
      */
     public String getGeohash() {
         return geohash;
     }
 
-    /** Convenience method
+    /**
+     * Convenience method
+     *
      * @param geo lat/lon pair
      */
     public void setLatLon(LatLon geo) {
@@ -181,10 +190,12 @@ public class GeoBase implements LatLon {
     }
 
     /**
-     * Convenience method for checking if lat/lon was set to other than 0,0 (default)
+     * Convenience method for checking if lat/lon was set to other than 0,0
+     * (default)
+     *
      * @return true if instance has non-zero coordinates.
      */
-    public boolean hasCoordinate(){
+    public boolean hasCoordinate() {
         return GeodeticUtility.isValidNonZeroCoordinate(latitude, this.longitude);
     }
 }

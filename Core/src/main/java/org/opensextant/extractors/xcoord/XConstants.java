@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author ubaldino
  */
 public final class XConstants {
@@ -69,12 +68,20 @@ public final class XConstants {
 
     /** RUNTIME FLAGS: filter DMS coordinates */
     public static final int DMS_FILTERS_ON = 0x01;
-    /** RUNTIME FLAGS: filter Decimal Degree coordinates -- primarily for bare floating point numbers w/out hemisphere or other symbols
+    /**
+     * RUNTIME FLAGS: filter Decimal Degree coordinates -- primarily for bare
+     * floating point numbers w/out hemisphere or other symbols
      */
     public static final int DD_FILTERS_ON = 0x02;
-    /** RUNTIME FLAGS: filter MGRS coordinates -- date patterns and NUM PER NUM  patterns e.g., the ratio "4 per 4000" is not MGRS*/
+    /**
+     * RUNTIME FLAGS: filter MGRS coordinates -- date patterns and NUM PER NUM
+     * patterns e.g., the ratio "4 per 4000" is not MGRS
+     */
     public static final int MGRS_FILTERS_ON = 0x04;
-    /** RUNTIME FLAGS:  filter out coordinate matches that appear embedded in other text, e.g., ABC45.44,77.1W */
+    /**
+     * RUNTIME FLAGS: filter out coordinate matches that appear embedded in other
+     * text, e.g., ABC45.44,77.1W
+     */
     public static final int CONTEXT_FILTERS_ON = 0x20;
     /** RUNTIME FLAGS: filter all coordinate patterns that have filters */
     public static final int FLAG_ALL_FILTERS = (MGRS_FILTERS_ON | DD_FILTERS_ON | DMS_FILTERS_ON | CONTEXT_FILTERS_ON);
@@ -111,6 +118,7 @@ public final class XConstants {
 
     /**
      * Get the CCE family for the given string/key
+     *
      * @param nm
      * @return
      */
@@ -126,6 +134,7 @@ public final class XConstants {
 
     /**
      * Get the CCE family for the given XConstants enum id
+     *
      * @param id
      * @return
      */

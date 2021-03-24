@@ -26,7 +26,6 @@ import org.opensextant.util.TextUtils;
 
 /**
  * @author ubaldino
- *
  */
 public class PrecisionScales {
 
@@ -93,6 +92,7 @@ public class PrecisionScales {
 
     /**
      * Return XCoord precision (+/- meters) in latitude.
+     *
      * @param lat string representing latitude
      * @return precision
      */
@@ -115,8 +115,9 @@ public class PrecisionScales {
 
     /**
      * Count the number of decimal places in a lat or lon text string.
+     *
      * @param lat string representing latitude
-     * @return  number of digits in lat, as a proxy for precision
+     * @return number of digits in lat, as a proxy for precision
      */
     public static int count_DD_digits(String lat) {
         if (lat == null) {
@@ -151,12 +152,15 @@ public class PrecisionScales {
     public static float DMS_SEC_PREC = 15; // +/- 0.03 KM at equator, 60th of a minute
 
     /**
-     * set precision on a DMS text coordinate -- simply if the Match latitude "has seconds" 
-     * then its precision is seconds, otherwise if it has minutes, then it is precise to +/- 1 minute, 
-     * etc. 
+     * set precision on a DMS text coordinate -- simply if the Match latitude "has
+     * seconds"
+     * then its precision is seconds, otherwise if it has minutes, then it is
+     * precise to +/- 1 minute,
+     * etc.
      * Default precision is half-degree ~ +/- 55KM.
-     * Prior implementation was based on digit counting, whereas with decimal degrees you must count digits
-     * to infer precision. 
+     * Prior implementation was based on digit counting, whereas with decimal
+     * degrees you must count digits
+     * to infer precision.
      *
      * @param m DMS match
      */
@@ -173,7 +177,6 @@ public class PrecisionScales {
     }
 
     /**
-     *
      * @param m MGRS match
      */
     public static void setMGRSPrecision(GeocoordMatch m) {
@@ -193,7 +196,6 @@ public class PrecisionScales {
     }
 
     /**
-     *
      * @param m UTM match
      */
     public static void setUTMPrecision(GeocoordMatch m) {
@@ -203,58 +205,57 @@ public class PrecisionScales {
 
     /**
      * Precision appears in pairs, as we tolerate some typo/errors in MGRs.
-     *
      */
-    public static float[] MGRS_precision_list = { 1000000, // 0 length MGRS -- no meaning. 
-            100000, // 1  GZD
-            100000, // 2  GZD
-            100000, // 3  GZD
-            100000, // 4  Q
-            100000, // 5  Q
-            100000, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
+    public static float[] MGRS_precision_list = { 1000000, // 0 length MGRS -- no meaning.
+            100000, // 1 GZD
+            100000, // 2 GZD
+            100000, // 3 GZD
+            100000, // 4 Q
+            100000, // 5 Q
+            100000, // 6, same as 5; odd # of chars usually means typo. This would be first char in
+                    // E/N'ing
             // ---------------------------
-            10000, //  DEC PREC:  1 digit
+            10000, // DEC PREC: 1 digit
             10000, //
-            1000, //             3 digits
+            1000, // 3 digits
             1000, // MINUTES PREC 3 digits
-            100, //              4 digits
-            100, //              4
+            100, // 4 digits
+            100, // 4
             10, // SECONDS PREC 6 digits
             10, 1, 1, 0.1f, // 16
             0.1f // 17
     };
 
-    public static float[] MGRS_offset_precision_list = { 
-            100000, // NONE. 0 or 1 digit of precision is meaningless.
+    public static float[] MGRS_offset_precision_list = { 100000, // NONE. 0 or 1 digit of precision is meaningless.
             100000, // NONE.
-            10000, //  DEC PREC:  1 digit
+            10000, // DEC PREC: 1 digit
             10000, //
-            1000, //             4 digits
+            1000, // 4 digits
             1000, // MINUTES PREC 4 or 5 digits
-            100, //              6 digits
-            100, //              7
+            100, // 6 digits
+            100, // 7
             10, // SECONDS PREC 8 digits. Goes to 99999
             10, //
-            1   // 1-meter precision eeeee nnnnn 
-            };
+            1   // 1-meter precision eeeee nnnnn
+    };
 
     /**
      *
      */
-    public static int[] MGRS2DEC_digits = { 0,
-            0, // 1  GZD
-            0, // 2  GZD
-            0, // 3  GZD
-            0, // 4  Q
-            0, // 5  Q
-            0, // 6, same as 5; odd # of chars usually means typo.  This would be first char in E/N'ing
-            // ---------------------------
-            1, //  DEC PREC:  1 digit
+    public static int[] MGRS2DEC_digits = { 0, 0, // 1 GZD
+            0, // 2 GZD
+            0, // 3 GZD
+            0, // 4 Q
+            0, // 5 Q
+            0, // 6, same as 5; odd # of chars usually means typo. This would be first char in
+               // E/N'ing
+               // ---------------------------
+            1, // DEC PREC: 1 digit
             1, //
-            3, //             3 digits
+            3, // 3 digits
             3, // MINUTES PREC 3 digits
-            4, //              4 digits
-            4, //              4
+            4, // 4 digits
+            4, // 4
             6, // SECONDS PREC 6 digits
             6, 7, 7, 8, // 16
             8 // 17
@@ -262,6 +263,7 @@ public class PrecisionScales {
 
     /**
      * For now default UTM precision to +/- 100m
+     *
      * @param utm UTM string
      * @return precision
      */
@@ -276,8 +278,10 @@ public class PrecisionScales {
      */
     private static final DecimalFormat[] formatters;
 
-    /* Static initialization here creates and caches all the numeric formatters
-     * TODO: however at runtime the formatters are cloned (as of v1.6a) so is there any benefit?
+    /*
+     * Static initialization here creates and caches all the numeric formatters
+     * TODO: however at runtime the formatters are cloned (as of v1.6a) so is there
+     * any benefit?
      */
     static {
         formatters = new DecimalFormat[12];
@@ -292,7 +296,8 @@ public class PrecisionScales {
     /**
      * This was deemed to be more Java like, however performs 10x slower than
      * format2() -- which unfortunately rounds too early.
-     * @param f  value
+     *
+     * @param f      value
      * @param digits digits to include in format
      * @return formatted value.
      */
@@ -300,10 +305,11 @@ public class PrecisionScales {
         if (digits >= formatters.length) {
             return "" + f;
         }
-        //Clone the formatter so that it's thread-safe
+        // Clone the formatter so that it's thread-safe
         // TODO: well, we would do this clone for every time this method is called.
-        //     to make such things MT-safe and prevent too much impact on performance, we should do a
-        //     more thorough implementation review of such static variables.
+        // to make such things MT-safe and prevent too much impact on performance, we
+        // should do a
+        // more thorough implementation review of such static variables.
         DecimalFormat df = (DecimalFormat) formatters[digits].clone();
         return df.format(f);
     }

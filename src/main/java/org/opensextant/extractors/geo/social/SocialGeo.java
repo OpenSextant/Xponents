@@ -1,10 +1,10 @@
 
 /*
- *   __________   ____   ____   ____  ____  
- *  /  ___/  _ \_/ ___\ / ___\_/ __ \/  _ \ 
+ *   __________   ____   ____   ____  ____
+ *  /  ___/  _ \_/ ___\ / ___\_/ __ \/  _ \
  *  \___ (  <_> )  \___/ /_/  >  ___(  <_> )
- * /____  >____/ \___  >___  / \___  >____/ 
- *      \/           \/_____/      \/       
+ * /____  >____/ \___  >___  / \___  >____/
+ *      \/           \/_____/      \/
  *
  *      Social Media Geo-Inferencing
  *             OpenSextant
@@ -24,6 +24,7 @@ import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
+import org.opensextant.data.social.Message;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.extractors.geo.SolrGazetteer;
 import org.opensextant.extractors.xcoord.GeocoordPrecision;
@@ -34,9 +35,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A base-class that has the various hooks for logging, dev/test/evaluation,
  * common dictionaries/resources, and helpful connectivity items.
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public abstract class SocialGeo {
 
@@ -58,7 +58,7 @@ public abstract class SocialGeo {
 
     /**
      * Configure your implementation.
-     * 
+     *
      * @throws ConfigException
      */
     public abstract void configure() throws ConfigException;
@@ -70,7 +70,7 @@ public abstract class SocialGeo {
 
     /**
      * Generally useful test of string values.
-     * 
+     *
      * @param v
      * @return
      */
@@ -79,37 +79,38 @@ public abstract class SocialGeo {
     }
 
     /**
-     * This score as a boost for any sort of disambiguation of ties or close scores in predictions.
-     * 
+     * This score as a boost for any sort of disambiguation of ties or close scores
+     * in predictions.
+     *
      * <pre>
-     *  
+     *
      * Points:  A Country may score in 0 or more of these three categories: TZ, UTC, LANG.
-     * 
+     *
      *      TZ
      * +3 - Country contains timezone named by Tweet.timezone
-     * 
+     *
      *      UTC
-     * +3 - Country contains UTC offset named by Tweet.utcOffset (Hours); 
+     * +3 - Country contains UTC offset named by Tweet.utcOffset (Hours);
      * +4 - Or if Tweet is in period of DST and Country observes that DST offset.
      *      This is slightly less believable because users apparently do not always adjust TZ and time on devices.
-     *      Just the same, if country uses DST and so is user, then that is more significant than without 
-     *      
+     *      Just the same, if country uses DST and so is user, then that is more significant than without
+     *
      *      LANG
      * +3 - Language of User and of Text are both Primary language of Country
      * +2 - either language is Primary language of Country
      * +1 - language of text is spoken in Country
-     * 
+     *
      *      LON
      *      TODO:  consider (Country.LatLon ~ Tweet.UTC) ? within 5 degrees.  Countries vary by size this
      *      makes little sense.  But for Cities and States it makes more sense.
-     * 
+     *
      * MAX score is 3 + 4 + 3 = 10
      * </pre>
-     * 
+     *
      * @param C
-     *            a country prediction for the tweet.
+     *           a country prediction for the tweet.
      * @param tw
-     *            the tweet
+     *           the tweet
      * @return score 1 to ~20
      */
     public int scoreCountryPrediction(Country C, Tweet tw) {
@@ -121,9 +122,9 @@ public abstract class SocialGeo {
         int score = 0;
 
         // We value the positional information from TZ
-        // However this provides some notion of latitude/longitude, 
+        // However this provides some notion of latitude/longitude,
         // Where TZ offers mainly just longitude.
-        // 
+        //
         if (isValue(tw.timezone)) {
             if (C.containsTimezone(tw.timezone)) {
                 score += 3;
@@ -132,11 +133,11 @@ public abstract class SocialGeo {
 
         // We value the positional information from UTC offset
         // Between DST and non-DST periods in the year,
-        // There is only a slight difference in weight: 
+        // There is only a slight difference in weight:
         // If a user's clock changes with DST, then we favor countries
         // that recognize the time change over ones that don't.
-        // 
-        if (Tweet.validateUTCOffset(tw.utcOffset)) {
+        //
+        if (Message.validateUTCOffset(tw.utcOffset)) {
             if (tw.isDST && C.containsDSTOffset(tw.utcOffsetHours)) {
                 score += 4;
             } else if (C.containsUTCOffset(tw.utcOffsetHours)) {
@@ -173,42 +174,44 @@ public abstract class SocialGeo {
     }
 
     /**
-     * Populate the allCountries listing. Not all pipeline apps make use of SolrGazetteer or do geo work
+     * Populate the allCountries listing. Not all pipeline apps make use of
+     * SolrGazetteer or do geo work
      * so this is not part of setup.
-     * 
+     *
      * @param gaz
      */
     public void populateAllCountries(SolrGazetteer gaz) {
-        // SolrGazetteer has full Country metadata, like 
+        // SolrGazetteer has full Country metadata, like
         // GeonamesUtility lists offical countries (with TZ, region, aliases, codes)
-        // SolrGazetteer lists more aliases/name variants.  
+        // SolrGazetteer lists more aliases/name variants.
         // So have Map( variant =&gt; Country ), where Country is official one.
-        // 
+        //
         allCountries = new HashMap<>();
 
         // Gather 'Official names'
         for (Country C : countries.getCountries()) {
             // NAME: 'United States of America'
             allCountries.put(C.getName().toLowerCase(), C);
-            // ISO alpha-2  'US'
+            // ISO alpha-2 'US'
             allCountries.put(C.CC_ISO2.toLowerCase(), C);
-            // ISO alpha-3  'USA'
+            // ISO alpha-3 'USA'
             allCountries.put(C.CC_ISO3.toLowerCase(), C);
         }
 
-        // Gather name variants from anything that looks like PCLI or PCLI* in gazetteer:
-        // 
+        // Gather name variants from anything that looks like PCLI or PCLI* in
+        // gazetteer:
+        //
         for (String cc : gaz.getCountries().keySet()) {
             Country alt = gaz.getCountries().get(cc);
             Country C = countries.getCountry(cc);
             // NAME: 'United States of America'
             allCountries.put(alt.getName().toLowerCase(), C);
-            // ISO alpha-2  'US'
+            // ISO alpha-2 'US'
             allCountries.put(alt.CC_ISO2.toLowerCase(), C);
-            // ISO alpha-3  'USA'
+            // ISO alpha-3 'USA'
             allCountries.put(alt.CC_ISO3.toLowerCase(), C);
             for (String a : alt.getAliases()) {
-                // Aliases:  'U.S.A', 'US of A', 'America', etc.
+                // Aliases: 'U.S.A', 'US of A', 'America', etc.
                 //
                 allCountries.put(a.toLowerCase(), C);
             }
@@ -216,10 +219,12 @@ public abstract class SocialGeo {
     }
 
     /**
-     * Geonames Helpers.  Attach Province name if useful. 
-     * Ideally keep data coded in databases, and render name at presentation or export time, if needed.
-     * But no need to store superfluous name data that is just a reflection of things that are coded.
-     * 
+     * Geonames Helpers. Attach Province name if useful.
+     * Ideally keep data coded in databases, and render name at presentation or
+     * export time, if needed.
+     * But no need to store superfluous name data that is just a reflection of
+     * things that are coded.
+     *
      * @throws IOException
      */
     public void loadProvinceNames() throws IOException {
@@ -233,7 +238,7 @@ public abstract class SocialGeo {
 
     /**
      * Lookup US States.
-     * 
+     *
      * @param name
      * @return
      */
@@ -243,9 +248,9 @@ public abstract class SocialGeo {
 
     /**
      * A dot-separated code, country code + FIPS numeric
-     * 
+     *
      * @param code
-     *            CC.FF
+     *             CC.FF
      * @return
      */
     public Place getUSStateByCode(String code) {
@@ -253,7 +258,8 @@ public abstract class SocialGeo {
     }
 
     /**
-     * CAVEAT:  For now this only loads US states, despite us loading
+     * CAVEAT: For now this only loads US states, despite us loading
+     *
      * @throws IOException
      */
     public void loadUSStates() throws IOException {
@@ -273,7 +279,6 @@ public abstract class SocialGeo {
     }
 
     /**
-     * 
      * @param nm
      * @return
      */
@@ -294,7 +299,8 @@ public abstract class SocialGeo {
 
     /**
      * set Province name from given codes on somePlace.
-     * @param somePlace Place object with CC and ADM1 codes set. 
+     *
+     * @param somePlace Place object with CC and ADM1 codes set.
      */
     public void setProvinceName(Place somePlace) {
         /* don't need it. */
@@ -316,31 +322,35 @@ public abstract class SocialGeo {
     /**
      * Try to find closest P/PPL* (city or village) within 5 km. Or a local
      * site or landmark.
-     * 
-     * If not try at a radius = 10, then at 30 KM, and still if not, try a region, say ADM1
+     * If not try at a radius = 10, then at 30 KM, and still if not, try a region,
+     * say ADM1
      * or ADM2 place boundary if one is nearby within 100 KM. If NOT, ... then
      * maybe you are in a remote, sparse territory or over water.
-     * 
-     * TODO: Province ID is helpful for many things -- missing ADM1 codes is a general problem.
-     *   Fix missing ADM1 codes in gazetteer, e.g., use ESRI free data, geonames.org, etc.
-     *   NOTE: there are not any missing ADM1 codes; USGS is solid.
-     * 
+     * TODO: Province ID is helpful for many things -- missing ADM1 codes is a
+     * general problem.
+     * Fix missing ADM1 codes in gazetteer, e.g., use ESRI free data, geonames.org,
+     * etc.
+     * NOTE: there are not any missing ADM1 codes; USGS is solid.
      * TODO: Solr 4.x has a major memory problem when trying to find closest points.
-     * In theory it should be indexed rather well, however for geodetic search it tries to load ALL 
-     * the index for that 'geo' field into RAM (based on experience).  From there it can sort geodetically
-     * to find a closest point.  This is not helpful -- so as a work around this recursive search outward
-     * finds any items close by (SolrGazetteer.placeAt() sorts results outside of Solr). The issue is
-     * that the search returns only first 25 rows of unsorted results, then sorts geodetically.
-     * So for this work around try to minimize results by select feature types or something.
-     * 
-     *      
+     * In theory it should be indexed rather well, however for geodetic search it
+     * tries to load ALL
+     * the index for that 'geo' field into RAM (based on experience). From there it
+     * can sort geodetically
+     * to find a closest point. This is not helpful -- so as a work around this
+     * recursive search outward
+     * finds any items close by (SolrGazetteer.placeAt() sorts results outside of
+     * Solr). The issue is
+     * that the search returns only first 25 rows of unsorted results, then sorts
+     * geodetically.
+     * So for this work around try to minimize results by select feature types or
+     * something.
+     *
      * @param gaz
-     *            an intialized SolrGazetteer
+     *                    an intialized SolrGazetteer
      * @param poi
-     *            point of interest
+     *                    point of interest
      * @param requireADM1 true if ADM1 level resolution is desired.
      * @return a single place that appears to be closest to POI
-     * 
      * @throws SolrServerException
      * @throws IOException
      */
@@ -355,7 +365,7 @@ public abstract class SocialGeo {
         if (!requireADM1 && city != null) {
             return city;
         }
-        /* 
+        /*
          * Looking for a positive Province ID using ADM1, if requested.
          * This searches recursively until a good entry is found.
          */
@@ -384,7 +394,7 @@ public abstract class SocialGeo {
         }
 
         /*
-         * Find city within 30KM  -- If previous searches did not succeed with ADM1, 
+         * Find city within 30KM -- If previous searches did not succeed with ADM1,
          * use previously found entry by add ADM1 from here if possible.
          */
         Place city3 = gaz.placeAt(poi, 30, "(P A)");
@@ -395,8 +405,9 @@ public abstract class SocialGeo {
         if (requireADM1 && city3 != null) {
             if (city3.getAdmin1() != null && city != null) {
                 /*
-                 * We've gone too far afield in search of province ID. 
-                 * Return original city, which was closest. Caller may have to use ADM1=0 (country default)
+                 * We've gone too far afield in search of province ID.
+                 * Return original city, which was closest. Caller may have to use ADM1=0
+                 * (country default)
                  */
                 if (city.getCountryCode() != null) {
                     // At 30 KM, we're more cautious about inheriting CC across entries.
@@ -415,7 +426,7 @@ public abstract class SocialGeo {
         }
 
         /*
-         * Anything? within 50km. Gave up on ADM1 requirement here... 
+         * Anything? within 50km. Gave up on ADM1 requirement here...
          */
         List<Place> anyPlaces = gaz.placesAt(poi, 50);
         if (anyPlaces != null) {
@@ -425,7 +436,8 @@ public abstract class SocialGeo {
             }
         }
 
-        /* Admin Region?
+        /*
+         * Admin Region?
          */
         Place region = gaz.placeAt(poi, 100, "A");
         return region;
@@ -434,7 +446,7 @@ public abstract class SocialGeo {
     /**
      * facilitate getting a simple precision metric. +/- 1m is sufficient for
      * tracking points extracted from text.
-     * 
+     *
      * @param geo
      * @param prec
      */

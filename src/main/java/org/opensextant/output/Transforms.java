@@ -22,15 +22,19 @@ import jodd.json.JsonObject;
 public class Transforms {
 
     /**
-     * Convert JSON object for an annotation into a Xponents TextMatch instance. Parsing data from
-     * JSON/REST representations has very limited capability compared to using Java API for processing
+     * Convert JSON object for an annotation into a Xponents TextMatch instance.
+     * Parsing data from
+     * JSON/REST representations has very limited capability compared to using Java
+     * API for processing
      * routines directly.
-     * 
+     *
      * @param data
      * @return TextMatch object represented by json annotation
-     * @see org.opensextant.annotations.AnnotationHelper utility and package. This Annotation approach is more general 
-     * with respect to the data model overall.  This Transforms utility is about transforming matches directly to JSON output
-     * ready for RESTful response. 
+     * @see org.opensextant.annotations.AnnotationHelper utility and package. This
+     *      Annotation approach is more general
+     *      with respect to the data model overall. This Transforms utility is about
+     *      transforming matches directly to JSON output
+     *      ready for RESTful response.
      */
     public static TextMatch parseAnnotation(Object data) {
         if (!(data instanceof JsonObject)) {
@@ -66,9 +70,7 @@ public class Transforms {
             /*
              * TODO: GeocoordMatch needs to support setters for Geocoding here. missing
              * reverse geo info
-             * 
              * cc, adm1
-             * 
              */
             m = coord;
             break;
@@ -121,7 +123,7 @@ public class Transforms {
 
     /**
      * First stab at deserializing JSON date annotation.
-     * 
+     *
      * @param d datematch
      * @param a json annot
      */
@@ -134,7 +136,7 @@ public class Transforms {
 
     /**
      * Parse out a taxon from JSON/REST
-     * 
+     *
      * @param x a taxon object
      * @param t type of taxon
      * @param a JSON annotation
@@ -152,9 +154,10 @@ public class Transforms {
 
     /**
      * Given an existing JSON object, add geocoding metadata to it.
-     * 
+     *
      * @param geo  geocoding object
-     * @param node JsonObject representing the serialized JSON for an Xlayer or other annotation.
+     * @param node JsonObject representing the serialized JSON for an Xlayer or
+     *             other annotation.
      */
     public static final void createGeocoding(Geocoding geo, JsonObject node) {
         if (geo.getCountryCode() != null) {
@@ -211,11 +214,14 @@ public class Transforms {
     }
 
     /**
-     * Given a JSON object, parse fields relevant to the geocoding and populate that JSON data TODO:
-     * implement Parsing reverse geocoding structures related_place_name and nearest_places
-     * 
+     * Given a JSON object, parse fields relevant to the geocoding and populate that
+     * JSON data TODO:
+     * implement Parsing reverse geocoding structures related_place_name and
+     * nearest_places
+     *
      * @param geo  geocoding object
-     * @param node JsonObject representing the serialized JSON for an Xlayer or other annotation.
+     * @param node JsonObject representing the serialized JSON for an Xlayer or
+     *             other annotation.
      */
     public static final void parseGeocoding(Place geo, JsonObject node) {
         if (node.containsKey("cc")) {
@@ -260,7 +266,7 @@ public class Transforms {
 
     /**
      * Copy the basic match information
-     * 
+     *
      * @param m
      * @return
      */
@@ -279,7 +285,7 @@ public class Transforms {
      * Cutoff confidence for geocoding results:
      */
     public static int DEFAULT_LOWER_CONFIDENCE = 10;
-    
+
     public static JsonObject toJSON(final List<TextMatch> matches, final Parameters jobParams) {
         Logger log = LoggerFactory.getLogger(Transforms.class);
 
@@ -295,7 +301,6 @@ public class Transforms {
          * Super loop: Iterate through all found entities. record Taxons as person or
          * orgs record Geo tags as country, place, or geo. geo = geocoded place or
          * parsed coordinate (MGRS, DMS, etc)
-         * 
          */
         for (TextMatch name : matches) {
 
@@ -305,9 +310,9 @@ public class Transforms {
             }
 
             /*
-             * ========================== 
+             * ==========================
              * ANNOTATIONS: non-geographic entities that are
-             * filtered out, but worth tracking 
+             * filtered out, but worth tracking
              * ==========================
              */
             if (name instanceof TaxonMatch) {
@@ -352,7 +357,7 @@ public class Transforms {
             }
 
             /*
-             * ========================== 
+             * ==========================
              * ANNOTATIONS: coordinates
              * ==========================
              */
@@ -370,7 +375,7 @@ public class Transforms {
             Place resolvedPlace = place.getChosen();
 
             /*
-             * ========================== 
+             * ==========================
              * ANNOTATIONS: countries, places, etc.
              * ==========================
              */
@@ -418,7 +423,6 @@ public class Transforms {
     }
 
     /**
-     * 
      * @param map
      * @param resolvedPlace
      */

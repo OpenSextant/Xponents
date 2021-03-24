@@ -7,10 +7,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import jodd.json.JsonArray;
-import jodd.json.JsonObject;
-import jodd.json.JsonParser;
-
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.output.Transforms;
@@ -26,6 +22,10 @@ import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jodd.json.JsonArray;
+import jodd.json.JsonObject;
+import jodd.json.JsonParser;
+
 public class XlayerClient extends Application {
 
     protected URL serviceAddress = null;
@@ -37,11 +37,11 @@ public class XlayerClient extends Application {
     private static final int ONE_SEC = 1000;
 
     /** 1 minute */
-    public static final String SO_TIMEOUT_STRING =  Integer.valueOf(60 * ONE_SEC).toString();
+    public static final String SO_TIMEOUT_STRING = Integer.valueOf(60 * ONE_SEC).toString();
     /** 1 minutes */
     public static final String READ_TIMEOUT_STRING = Integer.valueOf(60 * ONE_SEC).toString();
     /* 5 seconds */
-    public static final String CONN_TIMEOUT_STRING =  Integer.valueOf(5 * ONE_SEC).toString();
+    public static final String CONN_TIMEOUT_STRING = Integer.valueOf(5 * ONE_SEC).toString();
     protected JsonParser jsonp = JsonParser.create();
 
     public XlayerClient(URL serviceAddr) throws ConfigException {
@@ -57,7 +57,6 @@ public class XlayerClient extends Application {
          * Not-so-super convincing timeout settings documented here:
          * http://restlet.com/technical-resources/restlet-framework/javadocs/2.3
          * /jse/engine/org/restlet/engine/connector/HttpClientHelper.html
-         * 
          * Hard to find complete info on timeouts for HTTP in restlet.
          */
         serviceContext.getParameters().add(new Parameter("socketTimeout", SO_TIMEOUT_STRING));
@@ -66,10 +65,10 @@ public class XlayerClient extends Application {
     }
 
     /**
-     * 
-     * @param docid id
-     * @param text input text
-     * @param viewFilteredOut true if user wants to print filtered out items for diagnostics.
+     * @param docid           id
+     * @param text            input text
+     * @param viewFilteredOut true if user wants to print filtered out items for
+     *                        diagnostics.
      * @return list of matches
      * @throws IOException on error
      */
@@ -79,15 +78,19 @@ public class XlayerClient extends Application {
         JsonObject content = new JsonObject();
         content.put("text", text);
         content.put("docid", docid);
-        String featureSet = "places,coordinates,countries,persons,orgs,reverse-geocode,dates" +  (viewFilteredOut ? ",filtered_out":"");
+        String featureSet = "places,coordinates,countries,persons,orgs,reverse-geocode,dates"
+                + (viewFilteredOut ? ",filtered_out" : "");
         content.put("features", featureSet);
-        /* Coordinates mainly are XY locations; Reverse Geocode them to find what country the location resides */
+        /*
+         * Coordinates mainly are XY locations; Reverse Geocode them to find what
+         * country the location resides
+         */
         StringWriter data = new StringWriter();
 
         try {
             Representation repr = new JsonRepresentation(content.toString());
             repr.setCharacterSet(CharacterSet.UTF_8);
-            //log.debug("CLIENT {} {}", serviceAddress, client);
+            // log.debug("CLIENT {} {}", serviceAddress, client);
             // Process and read response fully.
             Representation response = client.post(repr, MediaType.APPLICATION_JSON);
             response.write(data);

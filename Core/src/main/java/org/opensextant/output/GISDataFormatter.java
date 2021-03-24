@@ -31,15 +31,19 @@ import org.opensextant.giscore.output.IGISOutputStream;
 import org.opensextant.processing.ProcessingException;
 
 /**
- * This is the base class for classes that convert document annotations to GISCore features.
- * Subclasses differ chiefly by choice of text string for the description field. For some types of
- * documents (e.g., news articles) the sentence containing the annotation is a good choice, but for
- * other types (e.g., spreadsheets) sentence splitting may not be successful and the line of text
+ * This is the base class for classes that convert document annotations to
+ * GISCore features.
+ * Subclasses differ chiefly by choice of text string for the description field.
+ * For some types of
+ * documents (e.g., news articles) the sentence containing the annotation is a
+ * good choice, but for
+ * other types (e.g., spreadsheets) sentence splitting may not be successful and
+ * the line of text
  * containing the annotation is a better choice.
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Dec 20, 2011
- *
- * @author Marc C. Ubaldino, MITRE Corp. Refactored, redesigned package using GISCore, 2013.
+ * @author Marc C. Ubaldino, MITRE Corp. Refactored, redesigned package using
+ *         GISCore, 2013.
  */
 public abstract class GISDataFormatter extends AbstractFormatter {
 
@@ -59,7 +63,6 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     protected GISDataModel gisDataModel;
     protected boolean allowNonGeo = false; /* For vanilla CSV, where match does not have lat/lon */
     protected boolean useFileHyperlink = false;
-
 
     /**
      *
@@ -134,7 +137,6 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     }
 
     /**
-     *
      * @throws Exception
      */
     @Override
@@ -223,7 +225,6 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     }
 
     /**
-     *
      * @param fld
      */
     @Override

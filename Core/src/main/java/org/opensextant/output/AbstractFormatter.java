@@ -42,7 +42,7 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
     public void setParameters(Parameters params) {
         outputParams = params;
     }
-    
+
     // Allow customization of "geocoding" object.
     protected MatchInterpreter geoInterpreter = null;
 
@@ -51,9 +51,11 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
         this.geoInterpreter = mi;
     }
 
-    /** The default geocoding interpretation is here. 
+    /**
+     * The default geocoding interpretation is here.
      * This works for simple stuff like Coordinate extraction
      */
+    @Override
     public Geocoding getGeocoding(TextMatch m) {
         Geocoding geocoding = null;
         if (m instanceof Geocoding) {
@@ -61,7 +63,6 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
         }
         return geocoding;
     }
-
 
     /**
      *
@@ -83,19 +84,20 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
      */
     public boolean debug = false;
     /**
-     * Schema-specific stuff.  GIS formats would not make use of offsets.
+     * Schema-specific stuff. GIS formats would not make use of offsets.
      * CSV format is only one where offsets make sense.
      */
     public boolean includeOffsets = false;
     /**
      * GIS formats may optionally include coordinates as fields.
      * GDB and SHP have a Point geometry which carries the lat/lon already.
-     *
      * KML, CSV, JSON, etc. it makes sense to include these explicitly.
      */
     public boolean includeCoordinate = false;
 
-    /** A basic job name that reflects file name
+    /**
+     * A basic job name that reflects file name
+     *
      * @return
      */
     @Override
@@ -128,6 +130,7 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
 
     /**
      * Write to a file and return HTML containing a link to the file.
+     *
      * @param res result to write
      * @throws ProcessingException processing or formatting error
      */
@@ -143,7 +146,6 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
     }
 
     /**
-     *
      * @return file name with extension
      */
     protected String createOutputFileName() {
@@ -158,7 +160,8 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
         return this.outputType;
     }
 
-    /** This is checked only by internal classes as they create output streams.
+    /**
+     * This is checked only by internal classes as they create output streams.
      */
     protected void deleteOutput(File previousRun) {
         if (previousRun.exists()) {
@@ -166,7 +169,8 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
         }
     }
 
-    /**  uniform helper for overwrite check.
+    /**
+     * uniform helper for overwrite check.
      */
     protected void checkOverwrite(File item) throws ProcessingException {
         if (this.overwrite) {
@@ -187,17 +191,18 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
     /**
      * Create the output stream appropriate for the output type.
      * IO is created using the filename represented by getOutputFilepath()
+     *
      * @throws Exception
      */
     protected abstract void createOutputStreams() throws Exception;
 
     /**
-     *
      * @throws Exception
      */
     protected abstract void closeOutputStreams() throws Exception;
 
-    /** Write your geocoding result directly to output
+    /**
+     * Write your geocoding result directly to output
      * Result should carry ExtractionResult.recordFile as a URI for original.
      *
      * @param rowdata the data to write out

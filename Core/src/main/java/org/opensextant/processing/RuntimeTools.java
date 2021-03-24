@@ -4,6 +4,7 @@ public class RuntimeTools {
 
     /**
      * Easily digestible version of memory report.
+     *
      * @return KB of memory
      */
     public static final int reportMemory() {

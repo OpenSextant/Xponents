@@ -28,7 +28,7 @@ public class TestPlaceGeocoderGeoBoundaries extends TestPlaceGeocoder {
     /**
      * Language-specific parsing will involve more testing... For now, just making
      * it available is enough.
-     * 
+     *
      * @throws IOException
      */
     public void tagEvaluation(String[] testText) throws IOException {

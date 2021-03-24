@@ -43,6 +43,7 @@ public class PersonNameFilter extends GeocodeRule {
     /**
      * Constructor for general usage if you know your files might come from file
      * system or JAR.
+     *
      * @param names
      * @param persTitles
      * @param persSuffixes
@@ -71,7 +72,7 @@ public class PersonNameFilter extends GeocodeRule {
      * Default constructor here used resource paths (which are retrieved as
      * getResourceAsStream() Instead of retrieving resource URLs or files. This
      * works best if you know your resource files will come from JAR only.
-     * 
+     *
      * @param namesPath
      * @param persTitlesPath
      * @param persSuffixesPath
@@ -115,9 +116,10 @@ public class PersonNameFilter extends GeocodeRule {
     }
 
     /**
-     * Simple check for a span of text to see if it is purely whitespace or not at the given offsets, [x1..x2}
+     * Simple check for a span of text to see if it is purely whitespace or not at
+     * the given offsets, [x1..x2}
      * Include left side, not right side-character.
-     * 
+     *
      * @param buf buf to splice
      * @param x1  offset to start at
      * @param x2  offset to stop at.
@@ -135,16 +137,18 @@ public class PersonNameFilter extends GeocodeRule {
     /**
      * Use known person names to distinguish well-known persons that may or may
      * not overlap in in the text and the namespace.
-     * 
-     * <pre> Hillary Clinton visited New York state today. </pre>
-     * 
+     *
+     * <pre>
+     *  Hillary Clinton visited New York state today.
+     * </pre>
+     *
      * So, Clinton is part of a well known celebrity, and is not referring to
      * Clinton, NY a town in upstate. We identify all such person names and mark
      * any overlaps and co-references that coincide with tagged place names.
-     * 
+     *
      * @param placeNames places to NEgate
-     * @param persons named persons in doc
-     * @param orgs named orgs in doc
+     * @param persons    named persons in doc
+     * @param orgs       named orgs in doc
      */
     public void evaluateNamedEntities(final TextInput input, final List<PlaceCandidate> placeNames,
             final List<TaxonMatch> persons, final List<TaxonMatch> orgs) {
@@ -173,9 +177,11 @@ public class PersonNameFilter extends GeocodeRule {
                 // "General Murtagh Memorial Square" PERSON within PLACE (valid
                 // place name)
                 //
-                // Avoid marking as relevant if there is non-whitespace separating the PLACE and the NAME.
-                // E.g.,  Alexandria, Virgina; Bob and Mary of ....
-                // So, "Virginia; Bob" is not a valid qualifying "first last" name pattern given the punctuation.
+                // Avoid marking as relevant if there is non-whitespace separating the PLACE and
+                // the NAME.
+                // E.g., Alexandria, Virgina; Bob and Mary of ....
+                // So, "Virginia; Bob" is not a valid qualifying "first last" name pattern given
+                // the punctuation.
 
                 String rule = null;
                 if (pc.isWithin(name)) {
@@ -207,18 +213,21 @@ public class PersonNameFilter extends GeocodeRule {
             for (TaxonMatch name : orgs) {
                 if (pc.isSameMatch(name)) {
                     // Org is 'name'
-                    //  where  name is a city 
+                    // where name is a city
                     pc.setFilteredOut(true);
                     resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule("ResolvedOrg");
                 } else {
                     if (pc.isWithin(name) && !pc.isCountry) {
                         // Special conditions:
-                        //    City name in the name of a Building or Landmark is worth saving as a location.
-                        // But short one-word names appearing in organization names, may be false positives
-                        // After more evaluation, it seems like presence of a city name in an organization name is good 
+                        // City name in the name of a Building or Landmark is worth saving as a
+                        // location.
+                        // But short one-word names appearing in organization names, may be false
+                        // positives
+                        // After more evaluation, it seems like presence of a city name in an
+                        // organization name is good
                         // evidence to leverage.
-                        // 
+                        //
                         pc.addRule(NAME_IN_ORG_RULE);
                     }
                 }
@@ -233,7 +242,7 @@ public class PersonNameFilter extends GeocodeRule {
     public static final String NAME_IN_ORG_RULE = "NameInOrg";
 
     /**
-     * 
+     *
      */
     @Override
     public boolean evaluateNameFilterOnly(PlaceCandidate name) {
@@ -245,9 +254,7 @@ public class PersonNameFilter extends GeocodeRule {
         /*
          * If you have already associated an Admin code with this name, then do
          * not filter out
-         *
          * Eugene, OR Jackson, MI
-         *
          * TODO: Euguene, Oregon etc.
          */
         if (name.hasRule(NameCodeRule.NAME_ADMCODE_RULE) || name.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
@@ -264,7 +271,6 @@ public class PersonNameFilter extends GeocodeRule {
         /**
          * Name matches not yet filtered out, but may be co-referrenced to prior
          * mention
-         * 
          */
         if (resolvedPersons.containsKey(name.getTextnorm())) {
             name.setFilteredOut(true);

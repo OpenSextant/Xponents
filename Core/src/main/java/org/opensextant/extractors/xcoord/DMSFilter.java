@@ -27,11 +27,9 @@ import java.util.List;
  * DMS Filters include ignoring these patterns: dd-dd-dd HH:MM:ss (where
  * dd-dd-dd HH-MM-ss would be a valid coordinate as the field separators for
  * lat/lon are the same).
- *
  * Assumption: Date fields are separated by / and -; Time fields are separated
  * by : So if you have a lat/lon with a [date] [time] pattern it is most likely
  * not a [lat] [lon] pattern.
- *
  * As of 2012 Fall -- DMS-02 is very open ended pattern and matches parts of
  * dates
  *
@@ -42,10 +40,7 @@ public class DMSFilter implements GeocoordMatchFilter {
     /**
      *
      */
-    public static final String[] general_formats = {
-        "yy-dd-mm HH:MM:ss",
-        "mm-dd-yy HH:MM:ss"
-    };
+    public static final String[] general_formats = { "yy-dd-mm HH:MM:ss", "mm-dd-yy HH:MM:ss" };
     /**
      *
      */
@@ -87,14 +82,13 @@ public class DMSFilter implements GeocoordMatchFilter {
     @Override
     public boolean stop(GeocoordMatch m) {
 
-
         // We can pass patterns matching raw text that do not start
-        // with numbers.  The date formats filtered here are strictly numeric dates+time
+        // with numbers. The date formats filtered here are strictly numeric dates+time
         // If I see N42-44 or +42-44 etc... for example, then we can exit now.
         //
         String _text = m.getText();
         char ch = _text.charAt(0);
-        if (!Character.isDigit(ch)){
+        if (!Character.isDigit(ch)) {
             return false;
         }
 

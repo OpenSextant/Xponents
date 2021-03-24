@@ -32,10 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
- * the Solr server. <p > This class is not thread-safe. It could be made to be
+ * the Solr server.
+ * <p >
+ * This class is not thread-safe. It could be made to be
  * with little effort.
  *
  * @author David Smiley - dsmiley@mitre.org
@@ -69,6 +70,7 @@ public abstract class SolrMatcherSupport implements Closeable {
     /**
      * Close solr resources.
      */
+    @Override
     public void close() {
         if (solr != null) {
             try {
@@ -108,7 +110,7 @@ public abstract class SolrMatcherSupport implements Closeable {
      * server.
      *
      * @throws ConfigException if solr server cannot be established from local
-     *             index or from http server
+     *                         index or from http server
      */
     public void initialize() throws ConfigException {
         solr = new SolrProxy(getCoreName());
@@ -142,10 +144,10 @@ public abstract class SolrMatcherSupport implements Closeable {
      * Solr call: tag input buffer, returning all candiate reference data that
      * matched during tagging.
      *
-     * @param buffer text to tag
-     * @param docid id for text, only for tracking purposes
+     * @param buffer     text to tag
+     * @param docid      id for text, only for tracking purposes
      * @param refDataMap - a map of reference data in solr, It will store
-     *            caller's domain objects. e.g., rec.id =&gt; domain(rec)
+     *                   caller's domain objects. e.g., rec.id =&gt; domain(rec)
      * @return solr response
      * @throws ExtractionException tagger error
      */
@@ -168,7 +170,7 @@ public abstract class SolrMatcherSupport implements Closeable {
             public void streamSolrDocument(final SolrDocument solrDoc) {
                 String id = SolrUtil.getString(solrDoc, "id");
                 // create a domain object for the given tag;
-                // this callback handler caches such domain obj in simple k/v  map.
+                // this callback handler caches such domain obj in simple k/v map.
                 Object domainObj = createTag(solrDoc);
                 if (domainObj != null) {
                     refDataMap.put(id, domainObj);

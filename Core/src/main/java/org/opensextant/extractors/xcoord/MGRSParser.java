@@ -24,18 +24,19 @@ import org.opensextant.geodesy.MGRS;
 import org.opensextant.util.TextUtils;
 
 /**
- *
  * @author ubaldino
  */
 public class MGRSParser {
 
     /**
      * Given the match parse MGRS as best as can be done.
-     * TODO: provide level of confidence.  Items that match MGRS scheme perfectly are more likely to be MGRS than those that
-     * are not perfect matches, e.g. typos, inadvertent text wrapping, whitespace etc.
+     * TODO: provide level of confidence. Items that match MGRS scheme perfectly are
+     * more likely to be MGRS than those that
+     * are not perfect matches, e.g. typos, inadvertent text wrapping, whitespace
+     * etc.
      *
-     * @param rawtext the rawtext
-     * @param _text text normalized, optionally
+     * @param rawtext  the rawtext
+     * @param _text    text normalized, optionally
      * @param elements matched groups within regex pattern
      * @return array of possible MGRS interpretations.
      */
@@ -57,7 +58,7 @@ public class MGRSParser {
         // Trivial test: 44 DEG 34 is not an MGRS pattern.
         if (text.length() < 6) {
             // less than 6 chars long this is either a zone with no offset
-            //  or some sort of false positive.  Pattern should not match this
+            // or some sort of false positive. Pattern should not match this
             return null;
         }
 
@@ -70,7 +71,7 @@ public class MGRSParser {
         }
 
         // If we matched an obvious and invalid month
-        // as an MGRS, then fail early.  Otherwise MGRSFilter
+        // as an MGRS, then fail early. Otherwise MGRSFilter
         // will parse out more complex patterns that are date + time
         // NOTE: an MGRS pattern may indeed look like a date+time in some cases but it
         // can actually be a valid MGRS. Take care not to filter out too aggressively.
@@ -87,8 +88,8 @@ public class MGRSParser {
             return null;
         }
 
-        // GZD Rule:  00 not allowed in 5-digit GZD
-        //             0 not allowed in 4-digit
+        // GZD Rule: 00 not allowed in 5-digit GZD
+        // 0 not allowed in 4-digit
         int num1 = parseInt(gzd.substring(0, 1));
         int num2 = parseInt(gzd.substring(0, 2));
 
@@ -106,19 +107,24 @@ public class MGRSParser {
             return null;
         }
 
-        //---------------------------------------|
+        // ---------------------------------------|
         //
-        // MGRS precision is 1m.  Quad is 100,000m sq so resolution is 5 digits + 5 digits with optional whitespace
-        // 99999n 99999e  -- in MGRS we never see "m" units or N/E denoted explicitly
+        // MGRS precision is 1m. Quad is 100,000m sq so resolution is 5 digits + 5
+        // digits with optional whitespace
+        // 99999n 99999e -- in MGRS we never see "m" units or N/E denoted explicitly
         // Occassionally, newlines or whitespace are interspersed in offset
         // minimal:
         // dd
-        // ddddd ddddd  with an additional one or two white spaces.   The offsets start and end with numbers. Only whitespace between is optional.
-        // ddddd dddddd  additional digit in Easting  -- trailing 6th digit is a typo; trim off
-        // dddddd ddddd  additional digit in Northing -- trailing 6th digit is a typo; trim off
-        // ddddddddddd   Typo introduces ambiguity -- only correct thing is to split on halfway point +/- 1 digit and emit two answers
-        // dd\nddd ddddd  Newline early in offset
-        //---------------------------------------|
+        // ddddd ddddd with an additional one or two white spaces. The offsets start and
+        // end with numbers. Only whitespace between is optional.
+        // ddddd dddddd additional digit in Easting -- trailing 6th digit is a typo;
+        // trim off
+        // dddddd ddddd additional digit in Northing -- trailing 6th digit is a typo;
+        // trim off
+        // ddddddddddd Typo introduces ambiguity -- only correct thing is to split on
+        // halfway point +/- 1 digit and emit two answers
+        // dd\nddd ddddd Newline early in offset
+        // ---------------------------------------|
         String ne = elements.get("Easting_Northing");
         int digits = TextUtils.count_digits(ne);
         boolean odd_len = ((digits & 0x0001) == 1);
@@ -128,21 +134,23 @@ public class MGRSParser {
         }
 
         if (!odd_len) {
-            //----------------------------
+            // ----------------------------
             // Completely normal MGRS with even number of digits.
             //
-            // By this point you should have passed in normalized coordinate text - no whitespace
-            //----------------------------
+            // By this point you should have passed in normalized coordinate text - no
+            // whitespace
+            // ----------------------------
             //
             return new MGRS[] { new MGRS(text) };
         } else {
-            //----------------------------
+            // ----------------------------
             // Slightly obscure case that is possibly a typo or Easting/Northing disturbed.
             //
-            // The following logic for parsing is predominantly related to managing typos and rare cases.
+            // The following logic for parsing is predominantly related to managing typos
+            // and rare cases.
             // < 5% of the instances seen fall into this category.
             //
-            //----------------------------
+            // ----------------------------
 
             int space_count = TextUtils.count_ws(ne);
             String nenorm;
@@ -153,17 +161,17 @@ public class MGRSParser {
             if (space_count == 0) {
                 nenorm = ne;
 
-                // ddddddddd   odd number of digits, no spaces.
-                // answer 1:  dddd ddddd  ==> N=dddd0
-                // answer 2:  ddddd dddd  ==> E=dddd0
+                // ddddddddd odd number of digits, no spaces.
+                // answer 1: dddd ddddd ==> N=dddd0
+                // answer 2: ddddd dddd ==> E=dddd0
                 int midpoint = (nenorm.length() / 2);
                 mgrs1 = new StringBuilder(ne);
-                mgrs1.insert(midpoint, "0"); // N=dddd0,  add 0
+                mgrs1.insert(midpoint, "0"); // N=dddd0, add 0
                 mgrs1.insert(0, Q);
                 mgrs1.insert(0, gzd);
 
                 StringBuilder mgrs2 = new StringBuilder(ne);
-                mgrs2.append("0"); // E=dddd0  add 0
+                mgrs2.append("0"); // E=dddd0 add 0
                 mgrs2.insert(0, Q);
                 mgrs2.insert(0, gzd);
 
@@ -175,7 +183,8 @@ public class MGRSParser {
             int ws_index = nenorm.indexOf(" ");
             int midpoint = (nenorm.length() / 2);
 
-            // Even Split -- meaning easting northing appear to be good. But one needs to be fixed.
+            // Even Split -- meaning easting northing appear to be good. But one needs to be
+            // fixed.
             // boolean even_split = Math.abs( midpoint - ws_index ) <= 1;
             // Given one of
             // dddd ddddd
@@ -208,27 +217,27 @@ public class MGRSParser {
             }
 
             // Given
-            //   ddd dd d
-            //   ddddd ddd dd
-            //   etc.
-            //   You have a bunch of MGRS digits broken up by whitespace.
-            //   This is really obscure case where formatting or content conversion
-            //      or word processing interferred with the MGRS text.
+            // ddd dd d
+            // ddddd ddd dd
+            // etc.
+            // You have a bunch of MGRS digits broken up by whitespace.
+            // This is really obscure case where formatting or content conversion
+            // or word processing interferred with the MGRS text.
             //
-            //  This is < 0.1% of the cases
+            // This is < 0.1% of the cases
             //
             nenorm = TextUtils.delete_whitespace(ne);
-            // ddddddddd   odd number of digits, no spaces.
-            // answer 1:  dddd ddddd  ==> N=dddd0
-            // answer 2:  ddddd dddd  ==> E=dddd0
+            // ddddddddd odd number of digits, no spaces.
+            // answer 1: dddd ddddd ==> N=dddd0
+            // answer 2: ddddd dddd ==> E=dddd0
             midpoint = (nenorm.length() / 2);
             mgrs1 = new StringBuilder(nenorm);
-            mgrs1.insert(midpoint, "0"); // N=dddd0,  add 0
+            mgrs1.insert(midpoint, "0"); // N=dddd0, add 0
             mgrs1.insert(0, Q);
             mgrs1.insert(0, gzd);
 
             StringBuilder mgrs2 = new StringBuilder(nenorm);
-            mgrs2.append("0"); // E=dddd0  add 0
+            mgrs2.append("0"); // E=dddd0 add 0
             mgrs2.insert(0, Q);
             mgrs2.insert(0, gzd);
 
@@ -237,29 +246,26 @@ public class MGRSParser {
     }
 
     /**
-     * A hueuristic from looking at real data, real text artifacts - typos, line endings, whitespace wrapping, etc.
-     *
+     * A hueuristic from looking at real data, real text artifacts - typos, line
+     * endings, whitespace wrapping, etc.
      * Acceptable Northing/Eastings:
      * dd dd
      * dddd dddd
-     *
-     * typos: (odd number of digits;  whitespace or not.)
+     * typos: (odd number of digits; whitespace or not.)
      * ddd dd
      * ddddd
-     *
      * Not valid:
+     * dd dd\nd odd digits and has line endings
      *
-     * dd dd\nd   odd digits and has line endings
-     *
-     * @param ne NE string, e.g,. 56789 01234
+     * @param ne        NE string, e.g,. 56789 01234
      * @param oddLength if len is odd
      * @return if easting/northing is valid
      */
     protected static boolean isValidEastingNorthing(String ne, boolean oddLength) {
-        // PARSE RULE:  ignore abnormal MGRS patterns with line endings in the match
+        // PARSE RULE: ignore abnormal MGRS patterns with line endings in the match
         //
-        //  The MGRS easting/northing is messy and contains line endings.
-        //  Abort. This is not likely an MGRS worth anything.
+        // The MGRS easting/northing is messy and contains line endings.
+        // Abort. This is not likely an MGRS worth anything.
         //
 
         boolean containsEOL = (ne.contains("\n") || ne.contains("\r"));
@@ -272,7 +278,7 @@ public class MGRSParser {
 
         // NO:
         // dd dd\ndd
-        // YES:  normal text wrap on offset.
+        // YES: normal text wrap on offset.
         // dd\ndd
         if (wsCount > 1 && containsEOL) {
             return false;
@@ -285,7 +291,6 @@ public class MGRSParser {
     }
 
     /**
-     *
      * @param x an integer string
      * @return int for the string
      */
@@ -298,28 +303,32 @@ public class MGRSParser {
     }
 
     /**
-     * While date/month patterns match the MGRS format, there are certain months that are just too common
+     * While date/month patterns match the MGRS format, there are certain months
+     * that are just too common
      * to believe they are relevant MGRS patterns.
-     *
      */
     private static final Set<String> ignoreMonths = new HashSet<String>();
     static {
         ignoreMonths.add("jan");  // Lat band that is mostly water; Southern Africa
         ignoreMonths.add("feb");  // ditto; almost always water.
-        //ignoreMonths.add("mar");  // Valid Congo, Brazil.
+        // ignoreMonths.add("mar"); // Valid Congo, Brazil.
 
         ignoreMonths.add("apr");  // Invalid zone, first letter is C-X; Not likely to ever match
         ignoreMonths.add("aug");  // ditto
 
         // Other months, however have to be parsed. If they are dates
-        // AND runtime flags have MGRS Filters enabled, then dates will be filtered out usually.
+        // AND runtime flags have MGRS Filters enabled, then dates will be filtered out
+        // usually.
         //
     }
 
     /**
      * Filter out well-known date patterns that are not valid MGRS;
-     * MGRS Filter may additionally parse out more patterns. But we generate an MGRS object here
-     * we can filter such things out ahead of time, avoiding the inevitable exception.
+     * MGRS Filter may additionally parse out more patterns. But we generate an MGRS
+     * object here
+     * we can filter such things out ahead of time, avoiding the inevitable
+     * exception.
+     *
      * @param t
      * @return
      */

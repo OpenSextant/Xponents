@@ -18,6 +18,7 @@ package org.opensextant.extractors.xcoord;
 
 /**
  * Represent a Hemisphere symbol and value.
+ *
  * @author ubaldino
  */
 public class Hemisphere {
@@ -26,9 +27,11 @@ public class Hemisphere {
     public String symbol = null;
 
     /**
-     * Hemisphere polarity - N, E = +1;  S, W = -1.
-     * polarity default is 0, because any choice to use -1 or +1 as a default should be set by 
-     * interpreter or application using this class.  Polarity = 0 means you have a bug or lack of initialization logic.
+     * Hemisphere polarity - N, E = +1; S, W = -1.
+     * polarity default is 0, because any choice to use -1 or +1 as a default should
+     * be set by
+     * interpreter or application using this class. Polarity = 0 means you have a
+     * bug or lack of initialization logic.
      */
     public int polarity = 0;
 
@@ -37,15 +40,15 @@ public class Hemisphere {
      *
      * @return true, if is alphabetic
      */
-    public boolean isAlpha(){
-        if (symbol == null){
+    public boolean isAlpha() {
+        if (symbol == null) {
             return false;
         }
-        if (symbol.isEmpty()){
+        if (symbol.isEmpty()) {
             return false;
         }
 
-        // Java 7:  isAlphabetic()
+        // Java 7: isAlphabetic()
         return Character.isLetter(symbol.charAt(0));
     }
 }

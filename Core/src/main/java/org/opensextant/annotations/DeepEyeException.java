@@ -1,27 +1,28 @@
 /*
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII                  
- * 
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ *
  * OpenSextant/Xponents sub-project
- *      __                              
- *  ___/ /___  ___  ___  ___  __ __ ___ 
+ *      __
+ *  ___/ /___  ___  ___  ___  __ __ ___
  * / _  // -_)/ -_)/ _ \/ -_)/ // // -_)
- * \_,_/ \__/ \__// .__/\__/ \_, / \__/ 
+ * \_,_/ \__/ \__// .__/\__/ \_, / \__/
  *               /_/        /___/
- *               
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII    
- * Copyright 2013, 2019 MITRE Corporation             
+ *
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ * Copyright 2013, 2019 MITRE Corporation
  */
 package org.opensextant.annotations;
 
 /**
- * Exception used when there is a user or system error related to data serialization or any sort of
+ * Exception used when there is a user or system error related to data
+ * serialization or any sort of
  * Java object - to JSONification error.
- * 
+ *
  * @author ubaldino
  */
 public class DeepEyeException extends Exception {
 
-    private final static long serialVersionUID = 1234567890l;
+    private final static long serialVersionUID = 1234567890L;
 
     public DeepEyeException(Exception ex) {
         super(ex);

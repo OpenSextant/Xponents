@@ -29,25 +29,19 @@ import org.opensextant.extractors.flexpat.RegexPatternManager;
  * <p>
  * This is the culmination of various coordinate extraction efforts in python
  * and Java. This API poses no assumptions on input data or on execution.
- *
- *
  * <p >
  * Common Coordinate Enumeration (CCE) is a concept for enumerating the
  * coordinate representations. See XConstants for details.
- *
  * The basics of CCE include a family (DD, DMS, MGRS, etc.) and style (
  * enumerated in patterns config file).
- *
- *
  * <p >
  * Features of REGEX patterns file:
  * <ul>
  * <li>DEFINE - a component of a coord pattern to match</li>
  * <li>RULE - a complete pattern to match</li>
- * <li>TEST - an example of the text the pattern should match in part or whole.</li>
+ * <li>TEST - an example of the text the pattern should match in part or
+ * whole.</li>
  * </ul>
- *
- *
  * <p >
  * The Rules file: The Rules is an external text file containing rules
  * consisting of regular expressions used to identify geocoords. Below is an
@@ -71,8 +65,7 @@ import org.opensextant.extractors.flexpat.RegexPatternManager;
  * "DD-01" might be the eighth test in the pattern file, so the test will be
  * labeled internally as DD-01#8.
  *
- *
- * @author dlutz, MITRE  creator  (lutzdavp)
+ * @author dlutz, MITRE creator (lutzdavp)
  * @author ubaldino, MITRE adaptor
  * @author swainza
  */
@@ -88,7 +81,6 @@ public final class PatternManager extends RegexPatternManager {
     public Map<Integer, Boolean> CCE_family_state = new HashMap<Integer, Boolean>();
 
     /**
-     *
      * @throws IOException
      */
     @Override
@@ -99,7 +91,6 @@ public final class PatternManager extends RegexPatternManager {
     }
 
     /**
-     *
      * @param cce_fam
      * @param enabled
      */

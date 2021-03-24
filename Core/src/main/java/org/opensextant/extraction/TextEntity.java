@@ -54,12 +54,12 @@ public class TextEntity {
      * char offset of entity; location in document where entity ends.
      */
     public int end = -1;
-    
-    /** char immediately after span*/
-    public char postChar=0;
-    
-    /** char immediately before span*/
-    public char preChar=0;
+
+    /** char immediately after span */
+    public char postChar = 0;
+
+    /** char immediately before span */
+    public char preChar = 0;
 
     // Use this
     private String context = null;
@@ -83,6 +83,7 @@ public class TextEntity {
 
     /**
      * Simple Span representation.
+     *
      * @param x1 start offset
      * @param x2 end offset
      */
@@ -93,7 +94,7 @@ public class TextEntity {
 
     /**
      * sets the value of the TextEntity
-     * 
+     *
      * @param t text
      */
     public void setText(String t) {
@@ -102,8 +103,9 @@ public class TextEntity {
             isLower = TextUtils.isLower(text);
             isUpper = TextUtils.isUpper(text);
 
-            // Worth tracking if matched text is ASCII only. If name or entity has diacritics then
-            // you may look at it differently.  
+            // Worth tracking if matched text is ASCII only. If name or entity has
+            // diacritics then
+            // you may look at it differently.
             //
             try {
                 isASCII = TextUtils.isASCII(TextUtils.removePunctuation(text));
@@ -116,6 +118,7 @@ public class TextEntity {
     /**
      * Set just the value, without incurring the cost of other metrics or flags
      * about the text that likely are unchanged.
+     *
      * @param t the text
      */
     public void setTextOnly(String t) {
@@ -128,7 +131,7 @@ public class TextEntity {
 
     /**
      * If non-punctuation content is purely ASCII vs. Latin1 vs. unicode.
-     * 
+     *
      * @return true if text value is purely ASCII
      */
     public boolean isASCII() {
@@ -137,7 +140,7 @@ public class TextEntity {
 
     /**
      * test If text (that has a case sense) is ALL lower case
-     * 
+     *
      * @return true if all lower.
      */
     public boolean isLower() {
@@ -146,22 +149,23 @@ public class TextEntity {
 
     /**
      * test If text (that has a case sense) is ALL upper case
-     * 
+     *
      * @return true if all upper.
      */
     public boolean isUpper() {
         return isUpper;
     }
+
     /**
      * test if text is mixed case.
+     *
      * @return true if neither allower or all upper.
      */
-    public boolean isMixedCase(){
+    public boolean isMixedCase() {
         return !isUpper && !isLower;
     }
 
     /**
-     *
      * @return text, value of a TextEntity
      */
     public String getText() {
@@ -170,7 +174,7 @@ public class TextEntity {
 
     /**
      * get the length of the matched text
-     * 
+     *
      * @return int, length
      */
     public int getLength() {
@@ -187,9 +191,9 @@ public class TextEntity {
      */
     /**
      * Set the context with before and after windows
-     * 
+     *
      * @param before text before match
-     * @param after text after match
+     * @param after  text after match
      */
     public void setContext(String before, String after) {
         this.prematch = before;
@@ -205,7 +209,7 @@ public class TextEntity {
 
     /**
      * Set the context buffer from a single window
-     * 
+     *
      * @param window textual window
      */
     public void setContext(String window) {
@@ -213,7 +217,6 @@ public class TextEntity {
     }
 
     /**
-     *
      * @return context buffer regardless if it is singular context or separate
      *         pre/post match
      */
@@ -222,7 +225,6 @@ public class TextEntity {
     }
 
     /**
-     *
      * @return text before match
      */
     public String getContextBefore() {
@@ -230,7 +232,6 @@ public class TextEntity {
     }
 
     /**
-     *
      * @return text after match
      */
     public String getContextAfter() {
@@ -238,7 +239,6 @@ public class TextEntity {
     }
 
     /**
-     *
      * @return string representation of entity
      */
     @Override
@@ -250,7 +250,9 @@ public class TextEntity {
         }
     }
 
-    /** Assess if an offset is within this span 
+    /**
+     * Assess if an offset is within this span
+     *
      * @param x offest to test
      * @return if this entity contains the offset
      */
@@ -262,7 +264,6 @@ public class TextEntity {
     }
 
     /**
-     *
      * @param m match/entity object to copy
      */
     public void copy(TextEntity m) {
@@ -275,7 +276,7 @@ public class TextEntity {
         this.is_overlap = m.is_overlap;
         this.is_submatch = m.is_submatch;
 
-        // These are private.  maybe should use this.setA(m.getA())
+        // These are private. maybe should use this.setA(m.getA())
         this.postmatch = m.postmatch;
         this.prematch = m.prematch;
         this.context = m.context;
@@ -289,7 +290,7 @@ public class TextEntity {
     /**
      * Assuming simple whitespace separation or other simple delimiters, is this
      * term following the argument entity?
-     * 
+     *
      * @param t other entity
      * @return true if t occurs after the current entity
      */
@@ -300,7 +301,7 @@ public class TextEntity {
     /**
      * Assuming simple whitespace separation or other simple delimiters, is this
      * term preceeding the argument entity?
-     * 
+     *
      * @param t other TextEntity
      * @return true if t is before the current entity
      */

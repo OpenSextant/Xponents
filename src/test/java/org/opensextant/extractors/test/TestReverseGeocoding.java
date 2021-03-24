@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.TextInput;
-import org.opensextant.processing.RuntimeTools;
 import org.opensextant.util.TextUtils;
 
 import gnu.getopt.LongOpt;

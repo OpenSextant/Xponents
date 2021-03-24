@@ -35,7 +35,8 @@ import org.opensextant.geodesy.MGRS;
 import org.opensextant.util.GeodeticUtility;
 
 /**
- * GeocoordMatch holds all the annotation data for the actual raw and normalized coordinate.
+ * GeocoordMatch holds all the annotation data for the actual raw and normalized
+ * coordinate.
  *
  * @see org.opensextant.extraction.TextMatch base class
  * @author ubaldino
@@ -84,7 +85,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     private MGRS mgrs = null;
     private String gridzone = null;
     /**
-     * TODO: improve parsing of matching fields, e.g., 1N 2deg 3"W Or use to detect imbalanced matches
+     * TODO: improve parsing of matching fields, e.g., 1N 2deg 3"W Or use to detect
+     * imbalanced matches
      * where punctuation like dashes are give aways: -1 34-32-55
      */
     private boolean balancedPrecision = false;
@@ -120,7 +122,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     /**
      * Allow pattern rules to determine by any means if match is balanced.
      *
-     * @param b if coordinate has balanced data/resolution e.g., MGRS with even digits of offset
+     * @param b if coordinate has balanced data/resolution e.g., MGRS with even
+     *          digits of offset
      */
     public void setBalanced(boolean b) {
         balancedPrecision = b;
@@ -137,7 +140,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     /**
      * If you are given a vetted XY, use that.
-     * 
+     *
      * @param yx latlon
      */
     public void setLatLon(LatLon yx) {
@@ -149,8 +152,9 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     /**
      * GeoBase interface.
-     * 
-     * @return null always. The raw matched object does not automatically provide an admin name.
+     *
+     * @return null always. The raw matched object does not automatically provide an
+     *         admin name.
      *         Override if other behavior is desired.
      */
     @Override
@@ -254,7 +258,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
     /**
      * Note: this should only be called once.
-     * 
+     *
      * @param s offset position
      */
     protected void setRelativeOffset(int s) {
@@ -264,8 +268,10 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Evaluate DMS patterns only... evaluate if match contains dashes as field separators or as
-     * hemispheres. Or both. If match contains dash sep on lat, but not in lon, then the match is
+     * Evaluate DMS patterns only... evaluate if match contains dashes as field
+     * separators or as
+     * hemispheres. Or both. If match contains dash sep on lat, but not in lon, then
+     * the match is
      * invalid. This suggests the match is not a geocoordinate.
      *
      * @return true if coordinate is invalid because
@@ -313,7 +319,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
 
         // DD-MM-SSH DDD-MM-SSH okay as DMS, but not DM.
         // DD-MM-SSS...H DDD-MM-SSS...H okay as DM, but not DMS.
-        // 
+        //
         if (this.cce_family_id == XConstants.DM_PATTERN) {
             if ("-".equals(fields.get("dmLatSep")) && "-".equals(fields.get("dmLonSep"))) {
                 String latField3 = fields.get("fractMinLat");
@@ -408,10 +414,11 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Precision value is in Meters. No more than 0.001 METER is really relevant -- since this is really
-     * information extraction it is very doubtful that you will have any confidence about extraction
+     * Precision value is in Meters. No more than 0.001 METER is really relevant --
+     * since this is really
+     * information extraction it is very doubtful that you will have any confidence
+     * about extraction
      * millimeter accuracy.
-     *
      *
      * @return string number of whole meters of precision
      */
@@ -434,6 +441,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      *
      * @param m the new precision
      */
+    @Override
     public void setPrecision(int m) {
         precision.precision = m;
     }
@@ -469,7 +477,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     protected List<GeocoordMatch> interpretations = null;
 
     /**
-     * The current instance is the main match. But should you be able to parse out additional
+     * The current instance is the main match. But should you be able to parse out
+     * additional
      * interpretations, add them
      *
      * @param m2 secondary match
@@ -515,7 +524,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Note the coordinate nature of this TextMatch/Geocoding takes precedence over other flags isPlace,
+     * Note the coordinate nature of this TextMatch/Geocoding takes precedence over
+     * other flags isPlace,
      * isCountry, etc.
      *
      * @return true.
@@ -546,13 +556,17 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * TOOD: convey a realistic confidence metric for what was actually matched. e.g. MGRS confidence
-     * when there are multiple interpretations may result in lower confidence or whenever the parser
-     * suspects there is a typo in the match or if the match contains items that are characteristic of
+     * TOOD: convey a realistic confidence metric for what was actually matched.
+     * e.g. MGRS confidence
+     * when there are multiple interpretations may result in lower confidence or
+     * whenever the parser
+     * suspects there is a typo in the match or if the match contains items that are
+     * characteristic of
      * false positives.
      *
      * @return the confidence
      */
+    @Override
     public int getConfidence() {
         return confidence;
     }
@@ -562,7 +576,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     private Country country = null;
 
     /**
-     * Optional: nearest places. Should be sorted by distance, nearest to furthest. This is offered as
+     * Optional: nearest places. Should be sorted by distance, nearest to furthest.
+     * This is offered as
      * an enrichment opportunity, but attribute remains null unless used.
      */
     private ArrayList<Place> nearestPlaces = null;
@@ -609,7 +624,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     /**
      * Gets the country code.
      *
-     * @return null unless related place is set, then country code is inferred from related place.
+     * @return null unless related place is set, then country code is inferred from
+     *         related place.
      */
     @Override
     public String getCountryCode() {
@@ -630,6 +646,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      *
      * @param cc the new country code
      */
+    @Override
     public void setCountryCode(String cc) {
         this.countryCode = cc;
     }
@@ -639,6 +656,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      *
      * @param c the new country
      */
+    @Override
     public void setCountry(Country c) {
         this.country = c;
     }
@@ -646,7 +664,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     /**
      * Gets the admin 1.
      *
-     * @return null unless related place is set, then ADM1 code is inferred from related place.
+     * @return null unless related place is set, then ADM1 code is inferred from
+     *         related place.
      */
     @Override
     public String getAdmin1() {
@@ -723,6 +742,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      *
      * @param n the new place name
      */
+    @Override
     public void setPlaceName(String n) {
         name = n;
     }
@@ -738,10 +758,12 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * This reuses TextMatch.pattern_id attr; Use get/setMethod() or pattern_id as needed.
-     * 
+     * This reuses TextMatch.pattern_id attr; Use get/setMethod() or pattern_id as
+     * needed.
+     *
      * @param patId pattern ID
      */
+    @Override
     public void setMethod(String patId) {
         pattern_id = patId;
     }
@@ -805,7 +827,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Null implementation -- Geocoding interface. Coordinates from XCoord do not automatically report
+     * Null implementation -- Geocoding interface. Coordinates from XCoord do not
+     * automatically report
      * name of admin boundaries.
      *
      * @return the admin 1 name
@@ -819,7 +842,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Null implementation -- Geocoding interface Coordinates from XCoord do not automatically report
+     * Null implementation -- Geocoding interface Coordinates from XCoord do not
+     * automatically report
      * name of admin boundaries.
      *
      * @return the admin 2 name
@@ -833,12 +857,15 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Create a Place version of this coordinate -- that is, once we've found the coordinate match if
-     * the match data is no longer needed we can produce a geodetic Place from the TextMatch. This is
-     * helpful when you are more interested in the Place metadata, e.g. plot the TextMatch; enrich the
+     * Create a Place version of this coordinate -- that is, once we've found the
+     * coordinate match if
+     * the match data is no longer needed we can produce a geodetic Place from the
+     * TextMatch. This is
+     * helpful when you are more interested in the Place metadata, e.g. plot the
+     * TextMatch; enrich the
      * TextMatch, etc
-     * 
-     * But note, if you need match confidence, match offsets, etc. you retain this TextMatch instance
+     * But note, if you need match confidence, match offsets, etc. you retain this
+     * TextMatch instance
      *
      * @return the place
      */
@@ -868,6 +895,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      *
      * @return true, if successful
      */
+    @Override
     public boolean hasCoordinate() {
         return GeodeticUtility.isValidNonZeroCoordinate(this.latitude, this.longitude);
     }
@@ -880,16 +908,19 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      *
      * @return the admin 1 postal code
      */
+    @Override
     public String getAdmin1PostalCode() {
         return admin1PostalCode;
     }
 
     /**
-     * City-level postal code, that may be something like a zip. Thinking world-wide, not everyone calls
+     * City-level postal code, that may be something like a zip. Thinking
+     * world-wide, not everyone calls
      * these zipcodes, as in the US.
      *
      * @return the place postal code
      */
+    @Override
     public String getPlacePostalCode() {
         return placePostalCode;
     }
@@ -913,9 +944,12 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Becuase coordinate parsing is pretty deterministic, for now the confidence defaults to a high
-     * value. TODO: introduce qualitative measures of goodness as far as if detected pattern is reliable
-     * vs. loose; or if the geocoding has multiple interpretations due to ambiguous fields. Etc.
+     * Becuase coordinate parsing is pretty deterministic, for now the confidence
+     * defaults to a high
+     * value. TODO: introduce qualitative measures of goodness as far as if detected
+     * pattern is reliable
+     * vs. loose; or if the geocoding has multiple interpretations due to ambiguous
+     * fields. Etc.
      */
     private int confidence = 90;
 

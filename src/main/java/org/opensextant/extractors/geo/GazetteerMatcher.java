@@ -62,10 +62,11 @@ import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
- * the Solr server. <p > This class is not thread-safe. It could be made to be
+ * the Solr server.
+ * <p >
+ * This class is not thread-safe. It could be made to be
  * with little effort.
  *
  * @author David Smiley - dsmiley@mitre.org
@@ -108,9 +109,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     }
 
     /**
-     * 
      * @param lowercaseAllowed variant is case insensitive.
-     * 
      * @throws ConfigException on err
      */
     public GazetteerMatcher(boolean lowercaseAllowed) throws ConfigException {
@@ -182,7 +181,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
     /**
      * For use within package or by subclass
-     * 
+     *
      * @return internal gazetteer instance
      */
     public SolrGazetteer getGazetteer() {
@@ -193,11 +192,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * A flag that will allow us to tag "in" or "in." as a possible
      * abbreviation. By default such things are not abbreviations, e.g., Indiana
      * is typically IN or In. or Ind., for example. Oregon, OR or Ore. etc.
-     *
      * but almost never 'in' or 'or' for those cases.
      *
      * @param b flag true = allow lower case abbreviations to be tagged, e.g.,
-     *            as in social media or
+     *          as in social media or
      */
     public void setAllowLowerCaseAbbreviations(boolean b) {
         this.allowLowercaseAbbrev = b;
@@ -222,9 +220,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
     /**
      * Default advanced search.
-     * 
+     *
      * @see #searchAdvanced(String, boolean, int)
-     * 
      * @param place
      * @param as_solr
      * @return
@@ -239,14 +236,16 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * ScoredPlace which is immediately usable with scoring and ranking matches.
      * The score for a ScoredPlace is created when added to PlaceCandidate: a
      * default score is created for the place.
-     * 
-     * <pre> Usage: pc = PlaceCandidate(); list =
+     *
+     * <pre>
+     *  Usage: pc = PlaceCandidate(); list =
      * gaz.searchAdvanced("name:Boston", true) // solr fielded query used as-is.
-     * for ScoredPlace p: list: pc.addPlace( p ) </pre>
-     * 
-     * @param place the place string or text; or a Solr query
+     * for ScoredPlace p: list: pc.addPlace( p )
+     * </pre>
+     *
+     * @param place   the place string or text; or a Solr query
      * @param as_solr the as_solr
-     * @param maxLen max length of gazetteer place names.
+     * @param maxLen  max length of gazetteer place names.
      * @return places List of scoreable place entries
      * @throws SolrServerException the solr server exception
      */
@@ -265,7 +264,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         List<ScoredPlace> places = new ArrayList<>();
         for (SolrDocument solrDoc : response.getResults()) {
             /*
-             * Length Filter.  Alternative: store name as string in solr, vice full text field 
+             * Length Filter. Alternative: store name as string in solr, vice full text
+             * field
              */
             if (maxLen > 0) {
                 String nm = SolrUtil.getString(solrDoc, "name");
@@ -285,7 +285,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * matches phrases in the buffer.
      *
      * @param buffer text
-     * @param docid ID
+     * @param docid  ID
      * @return list of place candidates
      * @throws ExtractionException on err
      */
@@ -295,13 +295,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
     /**
      * Tag names specifically with Chinese tokenizaiton
-     * 
+     *
      * @param buffer text
-     * @param docid ID
+     * @param docid  ID
      * @return list of place candidates
      * @since 2.7.11
      * @throws ExtractionException on err
-     * 
      * @deprecated Use tagText(TextInput) with a language ID set on argument.
      */
     @Deprecated
@@ -309,15 +308,15 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         TextInput in = new TextInput(docid, buffer);
         // May not actually be true, but this is not necessary.
         // Best if caller names language explicitly.
-        in.langid=TextUtils.chineseLang;
+        in.langid = TextUtils.chineseLang;
         return tagText(in, false, CJK_TAG_FIELD);
     }
 
     /**
      * Tag place names in arabic.
-     * 
+     *
      * @param buffer text
-     * @param docid ID
+     * @param docid  ID
      * @since 2.7.11
      * @return list of place candidates
      * @throws ExtractionException on err
@@ -332,7 +331,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     }
 
     /**
-     * 
      * @param buffer
      * @param docid
      * @param tagOnly
@@ -356,7 +354,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public static final String CJK_TAG_FIELD = "name_tag_cjk";
 
     /**
-     * Use Solr param 'field = name_tag_ar for Arabic. TODO: Generalize this or expand so Farsi and Urdu are managed separately.
+     * Use Solr param 'field = name_tag_ar for Arabic. TODO: Generalize this or
+     * expand so Farsi and Urdu are managed separately.
      */
     public static final String AR_TAG_FIELD = "name_tag_ar";
 
@@ -371,7 +370,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return tagText(in, tagOnly, fld);
     }
 
-    protected static final HashMap<String,String> lang2nameField = new HashMap<>();
+    protected static final HashMap<String, String> lang2nameField = new HashMap<>();
     static {
         /* Asian scripts Chinese, Japanese, Korean */
         lang2nameField.put("zh", CJK_TAG_FIELD);
@@ -384,10 +383,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         lang2nameField.put("fa", AR_TAG_FIELD);
         lang2nameField.put("ur", AR_TAG_FIELD);
     }
-    
+
     /**
      * More convenient way of passing input args, using tuple TextInput (buffer,
      * docid, langid)
+     *
      * @param t
      * @param tagOnly
      * @return geocoded matches. see tagText()
@@ -398,7 +398,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         if (t.langid != null) {
             String testField = lang2nameField.get(t.langid);
             if (testField != null) {
-                fld  = testField;
+                fld = testField;
             }
         }
         return tagText(t, tagOnly, fld);
@@ -410,15 +410,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * no Place objects attached. Names of contients are passed back as matches,
      * with geo matches. Continents are filtered out by default.
      *
-     * @param input text object
+     * @param input   text object
      * @param tagOnly True if you wish to get the matched phrases only. False if
-     *            you want the full list of Place Candidates.
-     * @param fld gazetteer field to use for tagging
+     *                you want the full list of Place Candidates.
+     * @param fld     gazetteer field to use for tagging
      * @return place_candidates List of place candidates
      * @throws ExtractionException on err
      */
-    public List<PlaceCandidate> tagText(TextInput input, boolean tagOnly, String fld)
-            throws ExtractionException {
+    public List<PlaceCandidate> tagText(TextInput input, boolean tagOnly, String fld) throws ExtractionException {
         // "tagsCount":10, "tags":[{ "ids":[35], "endOffset":40,
         // "startOffset":38},
         // { "ids":[750308, 2769912, 2770041, 10413973, 10417546],
@@ -433,7 +432,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         this.defaultFilterCount = 0;
         this.userFilterCount = 0;
         String buffer = input.buffer;
-        // during post-processing tags we may have to distinguish between tagging/tokenizing 
+        // during post-processing tags we may have to distinguish between
+        // tagging/tokenizing
         // general vs. cjk vs. ar. But not yet though.
         // boolean useGeneralMode = DEFAULT_TAG_FIELD.equals(fld);
 
@@ -450,7 +450,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         int[] textMetrics = TextUtils.measureCase(buffer);
         input.isUpper = TextUtils.isUpperCaseDocument(textMetrics);
         input.isLower = TextUtils.isLowerCaseDocument(textMetrics);
-        
+
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
 
@@ -464,10 +464,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * text span and all the gazetteer record IDs that are associated to
          * that span. The text could either be a name, a code or some other
          * abbreviation.
-         *
          * For practical reasons the default behavior is to filter trivial spans
          * given the gazetteer data that is returned for them.
-         *
          * WARNING: lots of optimizations occur here due to the potentially
          * large volume of tags and gazetteer data that is involved. And this is
          * relatively early in the pipline.
@@ -509,8 +507,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 }
             }
 
-            // Then filter out trivial matches. E.g., Us is filtered out. vs. US would. 
-            // be allowed. If lowercase abbreviations are allowed, then all matches are passed.               
+            // Then filter out trivial matches. E.g., Us is filtered out. vs. US would.
+            // be allowed. If lowercase abbreviations are allowed, then all matches are
+            // passed.
             if (len < 3) {
                 if (!allowLowercaseAbbrev) {
                     if (TextUtils.isASCII(matchText) && StringUtils.isAllLowerCase(matchText)) {
@@ -548,7 +547,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             /*
              * Filter out tags that user determined ahead of time as not-places
              * for their context.
-             *
              */
             if (userfilter != null) {
                 if (userfilter.filterOut(pc.getTextnorm())) {
@@ -561,7 +559,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             /*
              * Continent filter is needed, as many mentions of contients confuse
              * real geotagging/geocoding.
-             * 
              */
             if (continents.filterOut(pc.getTextnorm())) {
                 pc.isContinent = true;
@@ -590,10 +587,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * Found UPPER CASE text in a mixed-cased document.
              * Conservatively, this is likely an acronym or some heading.
              * But possibly still a valid place name.
-             * HEURISTIC: acronyms are relatively short. 
+             * HEURISTIC: acronyms are relatively short.
              * HEURISTIC: region codes can be acronyms and are valid places
-             * 
-             * using such place candidates you may score short acronym matches lower than fully named ones.
+             * using such place candidates you may score short acronym matches lower than
+             * fully named ones.
              * when inferring boundaries (states, provinces, etc)
              */
             if (!input.isUpper && pc.isUpper() && len < 5) {
@@ -607,7 +604,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             @SuppressWarnings("unchecked")
             List<Object> placeRecordIds = (List<Object>) tag.get("ids");
             namesMatched.clear();
-            //double maxNameBias = 0.0;
+            // double maxNameBias = 0.0;
             for (Object solrId : placeRecordIds) {
                 // Yes, we must cast here.
                 // As long as createTag generates the correct type stored in
@@ -645,14 +642,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * likely an ending. E.g., "U.S." or "U.S" are trivial examples;
                  * "US" is more ambiguous, as we need to know if document is
                  * upperCase.
-                 * 
                  * Any place abbreviation will trigger isAbbreviation = true
-                 * 
-                 * "IF YOU FIND US HERE"  the term 'US' is ambiguous here, so 
+                 * "IF YOU FIND US HERE" the term 'US' is ambiguous here, so
                  * it is not classified as an abbreviation. Otherwise if you have
                  * "My organization YAK happens to coincide with a place named Yak.
-                 * But we first must determine if 'YAK' is a valid abbreviation for an actual place.
-                 * HEURISTIC: place abbreviations are relatively short, e.g. one short word(len=5 or less)
+                 * But we first must determine if 'YAK' is a valid abbreviation for an actual
+                 * place.
+                 * HEURISTIC: place abbreviations are relatively short, e.g. one short
+                 * word(len=5 or less)
                  */
                 if (len < AVERAGE_ABBREV_LEN && !pc.isAbbreviation) {
                     assessAbbreviation(pc, pGeo, postChar, input.isUpper);
@@ -713,6 +710,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * If apos preceeds a MATCH, e.g. 'MATCH, then check if MATCH is "s xxxxx"
      * NOTE: looking for a fast character check without too much String
      * operations.
+     *
      * @param c
      * @param t
      * @return true this starts with the 'S,'T, 'D in a contraction.
@@ -726,34 +724,38 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     }
 
     private void assessAbbreviation(PlaceCandidate pc, ScoredPlace pGeo, char postChar, boolean docIsUPPER) {
-        /* - Block re-entry to this logic. If Match is already marked as ABBREV, 
+        /*
+         * - Block re-entry to this logic. If Match is already marked as ABBREV,
          * then no need to review
          * - We don't consider abbreviations longer than N=7 chars.
-         * - If matched geo-location does not represent an abbreviation than this does not apply.
-         * 
-         * - postchar = 0 (null) means there is no chars after the match because Match is at end of text buffer.
+         * - If matched geo-location does not represent an abbreviation than this does
+         * not apply.
+         * - postchar = 0 (null) means there is no chars after the match because Match
+         * is at end of text buffer.
          */
         if (!pGeo.isAbbreviation() || postChar == 0) {
             return;
         }
 
         if (postChar == '.') {
-            // Add the post-punctuation to the match ONLY if a potential GEO matches. 
+            // Add the post-punctuation to the match ONLY if a potential GEO matches.
             pc.isAbbreviation = true;
             pc.end += 1;
             pc.setTextOnly(String.format("%s.", pc.getText()));
         } else if (pc.getText().contains(".")) {
-            /* TODO: contains abbreviation. E.g. ,'St. Paul' is not fully 
+            /*
+             * TODO: contains abbreviation. E.g. ,'St. Paul' is not fully
              * an abbreviation.
              */
             pc.isAbbreviation = true;
         } else if (!docIsUPPER && pc.isUpper()) {
-            /* Hack Warning: NOT everything UPPERCASE in a document
-             * is an abbrev. 
+            /*
+             * Hack Warning: NOT everything UPPERCASE in a document
+             * is an abbrev.
              */
             // Upper case place matched
             pc.isAbbreviation = true;
-            // Matched text is UPPER in a non-upper case document                        
+            // Matched text is UPPER in a non-upper case document
             pc.isAcronym = true;
         }
         // Lower or mixed-case abbreviations without "." are not
@@ -785,7 +787,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public static ScoredPlace createPlace(SolrDocument gazEntry) {
 
         // Creates for now org.opensextant.placedata.Place
-        //Place bean = SolrProxy.createPlace(gazEntry);
+        // Place bean = SolrProxy.createPlace(gazEntry);
         String plid = SolrUtil.getString(gazEntry, "place_id");
         String nm = SolrUtil.getString(gazEntry, "name");
         ScoredPlace bean = new ScoredPlace(plid, nm);
@@ -852,7 +854,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 continue;
             }
         }
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Countries found: {}", countries.toString());
             log.debug("Places found: {}", places.toString());

@@ -19,7 +19,6 @@ package org.opensextant.extractors.flexpat;
 import org.opensextant.extraction.TextMatch;
 
 /**
- *
  * @author ubaldino
  */
 public class PatternTestCase {
@@ -55,7 +54,6 @@ public class PatternTestCase {
     public String remarks = null;
 
     /**
-     *
      * @param _id     pattern identifier
      * @param _family family of pattern
      * @param _text   text for test case
@@ -68,7 +66,9 @@ public class PatternTestCase {
     }
 
     /**
-     * Set the test remarks and IFF the word "fail" is in the comment, the test is indicated as a true negative.
+     * Set the test remarks and IFF the word "fail" is in the comment, the test is
+     * indicated as a true negative.
+     *
      * @param rmks
      */
     public void setRemarks(String rmks) {

@@ -31,7 +31,7 @@ public abstract class GeocodeRule {
 
     public final static int UPPERCASE = 2;
     public final static int LOWERCASE = 1;
-    
+
     public int weight = 0; /* of 10, approximately */
     public String NAME = null;
 
@@ -63,7 +63,7 @@ public abstract class GeocodeRule {
     /**
      * Override if rule instance has another view of relevance, e.g.
      * coordinate rule: no coords found, so rule.isRelevant() is FALSE.
-     * 
+     *
      * @return
      */
     public boolean isRelevant() {
@@ -71,15 +71,17 @@ public abstract class GeocodeRule {
     }
 
     /*
-     * Override as needed. static method, because caller need not have an instance of rule
+     * Override as needed. static method, because caller need not have an instance
+     * of rule
      * to determine if rule was applied to the candidate.
-     * Child rules cannot override static method here, so by convention, rules can implement isRuleFor as needed. 
+     * Child rules cannot override static method here, so by convention, rules can
+     * implement isRuleFor as needed.
      * @param pc
      * @return
      */
-    //public static boolean isRuleFor(PlaceCandidate pc) {
-    //    return false;
-    //}
+    // public static boolean isRuleFor(PlaceCandidate pc) {
+    // return false;
+    // }
 
     public boolean sameCountry(Place p1, Place p2) {
         if (p1 == null || p2 == null) {
@@ -93,7 +95,7 @@ public abstract class GeocodeRule {
 
     /**
      * Quick test to see if two places are contained within the same boundary.
-     * 
+     *
      * @param p1
      * @param p2
      * @return
@@ -112,7 +114,7 @@ public abstract class GeocodeRule {
 
     /**
      * Override here as needed.
-     * 
+     *
      * @param name
      * @return
      */
@@ -131,9 +133,8 @@ public abstract class GeocodeRule {
     }
 
     /**
-     *
      * @param names
-     *            list of found place names
+     *              list of found place names
      */
     public void evaluate(List<PlaceCandidate> names) {
         if (!isRelevant()) {
@@ -167,12 +168,15 @@ public abstract class GeocodeRule {
 
     /**
      * Certain names appear often around the world... in such cases
-     * we can pare back and evaluate only significant places (e.g., cities and states)
+     * we can pare back and evaluate only significant places (e.g., cities and
+     * states)
      * and avoid say streams and roadways by the same name.
-     * 
-     * If a name, N, occurs in more than 100 to 250 places, then consider only feature classes A and P.
-     * The exact distinct count is up for debate. Lower count means we filter out random places sooner
+     * If a name, N, occurs in more than 100 to 250 places, then consider only
+     * feature classes A and P.
+     * The exact distinct count is up for debate. Lower count means we filter out
+     * random places sooner
      * for common city/village names.
+     *
      * @param name
      * @param geo
      * @return
@@ -192,13 +196,14 @@ public abstract class GeocodeRule {
 
     /**
      * The one evaluation scheme that all rules must implement.
-     * Given a single text match and a location, consider if the geo is a good geocoding
+     * Given a single text match and a location, consider if the geo is a good
+     * geocoding
      * for the match.
-     * 
+     *
      * @param name
-     *            matched name in text
+     *             matched name in text
      * @param geo
-     *            gazetteer entry or location
+     *             gazetteer entry or location
      */
     public abstract void evaluate(PlaceCandidate name, Place geo);
 

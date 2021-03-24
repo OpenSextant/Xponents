@@ -22,7 +22,6 @@ public class XlayerClientTester {
                 /*
                  * Prepare request. Text must be UTF-8 encoded. Note -- readFile() here assumes
                  * the file is unicode content
-                 * 
                  */
                 String text = FileUtility.readFile(args[1]);
                 String docid = args[1];
@@ -32,7 +31,6 @@ public class XlayerClientTester {
                  * TextMatch objects. For each particular TextMatch (Xponents Basic API), you
                  * have some common fields related to the text found, and then class-specific
                  * fields and objects you need to evaluate yourself.
-                 * 
                  * The XlayerClient process() method makes use of Transforms helper class to
                  * digest JSON annotations into Java API TextMatch objects of various flavors.
                  */

@@ -47,9 +47,10 @@ import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 
 /**
- * Date/Time pattern extractor -- detects, parses, normalizes dates. Found date/time are DateMatch
+ * Date/Time pattern extractor -- detects, parses, normalizes dates. Found
+ * date/time are DateMatch
  * (TextMatch) objects
- * 
+ *
  * @author ubaldino
  */
 public class XTemporal extends AbstractFlexPat {
@@ -58,8 +59,10 @@ public class XTemporal extends AbstractFlexPat {
     public static final String DEFAULT_XTEMP_CFG = "/datetime_patterns.cfg";
 
     /**
-     * Application constants -- note the notion of TODAY is relative to the caller's notion of TODAY. If
-     * you are processing data from the past but have a sense of what TODAY is, then when found dates
+     * Application constants -- note the notion of TODAY is relative to the caller's
+     * notion of TODAY. If
+     * you are processing data from the past but have a sense of what TODAY is, then
+     * when found dates
      * fall on either side of that they will be relative PAST and relative FUTURE.
      */
     public static Date TODAY = new Date();
@@ -84,7 +87,8 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * Extractor interface: extractors are responsible for cleaning up after themselves.
+     * Extractor interface: extractors are responsible for cleaning up after
+     * themselves.
      */
     @Override
     public void cleanup() {
@@ -116,7 +120,8 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * Support the standard Extractor interface. This provides access to the most common extraction;
+     * Support the standard Extractor interface. This provides access to the most
+     * common extraction;
      *
      * @param input text
      * @return list of TextMatch
@@ -128,7 +133,8 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * Support the standard Extractor interface. This provides access to the most common extraction;
+     * Support the standard Extractor interface. This provides access to the most
+     * common extraction;
      *
      * @param input_buf text
      * @return list of TextMatch
@@ -140,7 +146,8 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * A direct call to extract dates; which is useful for diagnostics and development/testing.
+     * A direct call to extract dates; which is useful for diagnostics and
+     * development/testing.
      *
      * @param text    text
      * @param text_id text ID
@@ -217,7 +224,7 @@ public class XTemporal extends AbstractFlexPat {
         /*
          * Reduce duplicates, then mark them as filtered out.
          */
-        PatternManager.reduce_matches(results.matches);
+        RegexPatternManager.reduce_matches(results.matches);
         for (TextMatch dt : results.matches) {
             if (dt.is_duplicate || dt.is_submatch) {
                 dt.setFilteredOut(true);
@@ -256,7 +263,7 @@ public class XTemporal extends AbstractFlexPat {
 
     /**
      * Optionally reset your context... what is TODAY with respect to your data?
-     * 
+     *
      * @param d date
      */
     public void setToday(Date d) {
@@ -277,8 +284,10 @@ public class XTemporal extends AbstractFlexPat {
     }
 
     /**
-     * This is a very subjective topic -- if a date is distant past or not is relative to your context
-     * If you use the DateMatch flags for distant past and future, then you are likely going to want to
+     * This is a very subjective topic -- if a date is distant past or not is
+     * relative to your context
+     * If you use the DateMatch flags for distant past and future, then you are
+     * likely going to want to
      * set Today and Distant Past Year
      */
     private static int DISTANT_PAST_YEAR = 1950;
@@ -288,7 +297,8 @@ public class XTemporal extends AbstractFlexPat {
     private static long DISTANT_PAST_YMD_THRESHOLD = (MINIMUM_YEAR_YMD - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
 
     /**
-     * Given the set MAX_DATE_CUTOFF_YEAR, determine if the date epoch is earlier than this.
+     * Given the set MAX_DATE_CUTOFF_YEAR, determine if the date epoch is earlier
+     * than this.
      *
      * @param epoch epoch since 1970-01-01
      * @return true, if is future
@@ -340,7 +350,7 @@ public class XTemporal extends AbstractFlexPat {
      * @return true if date is distant
      */
     public boolean isDistantPastYMD(Date dt) {
-        //return dt.getTime() < DISTANT_PAST_YMD_THRESHOLD;
+        // return dt.getTime() < DISTANT_PAST_YMD_THRESHOLD;
         DateTime jodadt = new DateTime(dt);
         return jodadt.getYear() < MINIMUM_YEAR_YMD;
     }

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.opensextant.ConfigException;
 import org.opensextant.giscore.events.SimpleField;
+
 /**
  * GISCore-based output schema.
  *
@@ -38,15 +39,21 @@ public final class OpenSextantSchema {
     public static final SimpleField FEATURE_CLASS = new SimpleField("feat_class", SimpleField.Type.STRING);
     /** Geonames style feature coding */
     public static final SimpleField FEATURE_CODE = new SimpleField("feat_code", SimpleField.Type.STRING);
-    /** confidence 0.000 to 1.000 suggests our confidence that we code the MATCH TEXT to the right LAT/LON
-     *  this is a string for now to keep the actual sig-figs accurate.
+    /**
+     * confidence 0.000 to 1.000 suggests our confidence that we code the MATCH TEXT
+     * to the right LAT/LON
+     * this is a string for now to keep the actual sig-figs accurate.
      */
     public static final SimpleField CONFIDENCE = new SimpleField("confidence", SimpleField.Type.STRING);
-    /** Number of meters of error in coordinate of location.  Example, a city location match is likely to be 1-2 KM of error
-     * depending on which gazetteer is referenced.  A coordinate's precision is implied by number of decimal places, etc.
+    /**
+     * Number of meters of error in coordinate of location. Example, a city location
+     * match is likely to be 1-2 KM of error
+     * depending on which gazetteer is referenced. A coordinate's precision is
+     * implied by number of decimal places, etc.
      */
     public static final SimpleField PRECISION = new SimpleField("precision", SimpleField.Type.INT);
-    /** the name in the Gazetteer entry; which aligns with the MATCH TEXT
+    /**
+     * the name in the Gazetteer entry; which aligns with the MATCH TEXT
      */
     public static final SimpleField PLACE_NAME = new SimpleField("placename", SimpleField.Type.STRING);
 
@@ -57,9 +64,13 @@ public final class OpenSextantSchema {
     public static final SimpleField FILEPATH = new SimpleField(FILEPATH_FLD, SimpleField.Type.STRING);
     public static final SimpleField FILENAME = new SimpleField("filename", SimpleField.Type.STRING);
     public static final SimpleField TEXTPATH = new SimpleField("textpath", SimpleField.Type.STRING);
-    //private static SimpleField prematchField = new SimpleField("prematch", SimpleField.Type.STRING);
-    //private static SimpleField postmatchField = new SimpleField("postmatch", SimpleField.Type.STRING);
-    /** A text window around the MATCH TEXT delineated by START/END offsets.  Default window size is +/- 150 characters
+    // private static SimpleField prematchField = new SimpleField("prematch",
+    // SimpleField.Type.STRING);
+    // private static SimpleField postmatchField = new SimpleField("postmatch",
+    // SimpleField.Type.STRING);
+    /**
+     * A text window around the MATCH TEXT delineated by START/END offsets. Default
+     * window size is +/- 150 characters
      */
     public static final SimpleField CONTEXT = new SimpleField("context", SimpleField.Type.STRING);
     public static final SimpleField START_OFFSET = new SimpleField("start", SimpleField.Type.INT);
@@ -100,13 +111,15 @@ public final class OpenSextantSchema {
         return F;
     }
 
-    /** Cache an arbitrary date field in schema
+    /**
+     * Cache an arbitrary date field in schema
      */
     public static void addDateField(String f) {
         fields.put(f, new SimpleField(f, SimpleField.Type.DATE));
     }
 
-    /** Cache an arbitrary text field in schema
+    /**
+     * Cache an arbitrary text field in schema
      */
     public static void addTextField(String f) {
         fields.put(f, new SimpleField(f, SimpleField.Type.STRING));

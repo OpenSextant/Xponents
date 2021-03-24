@@ -1,15 +1,15 @@
 /*
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII                  
- * 
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ *
  * OpenSextant/Xponents sub-project
- *      __                              
- *  ___/ /___  ___  ___  ___  __ __ ___ 
+ *      __
+ *  ___/ /___  ___  ___  ___  __ __ ___
  * / _  // -_)/ -_)/ _ \/ -_)/ // // -_)
- * \_,_/ \__/ \__// .__/\__/ \_, / \__/ 
+ * \_,_/ \__/ \__// .__/\__/ \_, / \__/
  *               /_/        /___/
- *               
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII    
- * Copyright 2013, 2019 MITRE Corporation             
+ *
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ * Copyright 2013, 2019 MITRE Corporation
  */
 
 package org.opensextant.annotations;
@@ -24,14 +24,16 @@ import java.util.TreeSet;
 /**
  * An annotation is at least a typed name/value pair created by something.
  * <p>
- * Creator is called "contributor" because lots of parties can contribute annotations to this pool.
+ * Creator is called "contributor" because lots of parties can contribute
+ * annotations to this pool.
  * <p>
  * Every annotation belongs to some record (ident by rec_id)<br>
  * Every annotation instance has an ID itself.
  * <p>
- * Offset and attributes are optional, as some annotations apply to entire records, rather than data
+ * Offset and attributes are optional, as some annotations apply to entire
+ * records, rather than data
  * at a certain offset.
- * 
+ *
  * @author ubaldino
  */
 public class Annotation extends DeepEyeData {
@@ -45,7 +47,8 @@ public class Annotation extends DeepEyeData {
     /** optional offset */
     public long offset = -1;
     /**
-     * optional, but recommended length. If offset is set or attrs.offsets are used, then ideally length
+     * optional, but recommended length. If offset is set or attrs.offsets are used,
+     * then ideally length
      * should be set
      */
     private int len = 0;
@@ -98,7 +101,7 @@ public class Annotation extends DeepEyeData {
 
     /**
      * Compute length, as logic is related to defaults, if value is set or not. etc.
-     * 
+     *
      * @return
      */
     public int getLength() {
@@ -113,7 +116,7 @@ public class Annotation extends DeepEyeData {
 
     /**
      * Compute span end offset.
-     * 
+     *
      * @return end offset (long)
      */
     public long getEndOffset() {
@@ -126,8 +129,10 @@ public class Annotation extends DeepEyeData {
     }
 
     /**
-     * Add offset information (offset, len, offsets, etc ) into the representation of this annotation.
-     * Some annotations may have a more complex view of offset, e.g., EntityAnnotation overrides this.
+     * Add offset information (offset, len, offsets, etc ) into the representation
+     * of this annotation.
+     * Some annotations may have a more complex view of offset, e.g.,
+     * EntityAnnotation overrides this.
      */
     protected void addOffsetTo(Map<String, Object> repr) {
         this.addOffsetAttribute();
@@ -152,7 +157,8 @@ public class Annotation extends DeepEyeData {
     }
 
     /**
-     * add annot.offset = x or annot.attrs.offsets = "x1;x2;x3"... a string list, not a JSON obj.
+     * add annot.offset = x or annot.attrs.offsets = "x1;x2;x3"... a string list,
+     * not a JSON obj.
      */
     public void addOffsetAttribute() {
         // offset attr already done.
@@ -165,9 +171,10 @@ public class Annotation extends DeepEyeData {
                 addOffset((int) this.offset);
             }
             this.newAttributes();
-            // Save List<>( 1, 8, 222, 456 ) as "1;8;222;456",   Should the format of this optimization change, 
+            // Save List<>( 1, 8, 222, 456 ) as "1;8;222;456", Should the format of this
+            // optimization change,
             // CommonAnnotationHelper utility should help manage that.
-            // 
+            //
             attrs.put("offsets", AnnotationHelper.encodeOffsets(offsets));
             offset = -1;
             offsetsEncoded = true;
@@ -183,7 +190,8 @@ public class Annotation extends DeepEyeData {
     }
 
     /**
-     * This is provided mainly for testing. The EntityAnnotation class is not intended for reuse e.g.,
+     * This is provided mainly for testing. The EntityAnnotation class is not
+     * intended for reuse e.g.,
      * populate an instance and then reset offsets alone. Use sparingly.
      */
     public void resetOffsets() {
@@ -196,7 +204,7 @@ public class Annotation extends DeepEyeData {
 
     /**
      * Generate a key-value representation of the object with its current values.
-     * 
+     *
      * @return Map
      */
     @Override
@@ -212,8 +220,8 @@ public class Annotation extends DeepEyeData {
         dbo.put("value", this.value);
         dbo.put("contrib", this.contrib);
 
-        /* OPTIONAL fields attrs, source_id, etc. will appear if filled in.
-         * 
+        /*
+         * OPTIONAL fields attrs, source_id, etc. will appear if filled in.
          */
         addOffsetTo(dbo);
 

@@ -19,7 +19,6 @@ package org.opensextant.extractors.xtemporal;
 import org.opensextant.extractors.flexpat.RegexPattern;
 
 /**
- *
  * @author ubaldino
  */
 public class DateTimePattern extends RegexPattern {
@@ -29,14 +28,12 @@ public class DateTimePattern extends RegexPattern {
      */
     public int family_id = -1;
 
-
     /**
-     *
      * @param fam
      * @param id
      * @param desc
      */
-    public DateTimePattern(String fam, String id, String desc){
+    public DateTimePattern(String fam, String id, String desc) {
         super(fam, fam + "-" + id, desc);
 
         family_id = XTConstants.getPatternFamily(family);

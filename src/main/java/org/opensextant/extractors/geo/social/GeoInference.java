@@ -8,11 +8,10 @@ import org.opensextant.data.Geocoding;
  * This is a light wrapper around TextMatch + Geocoding interfaces.
  * Place and GeocoordMatch objects are primary geocode payload,
  * but adds inferencing metadata at top level more clearly.
- * 
- *  The intent is to allow other tools use GeoInference as an API object
- *  that is independent of information extraction/matching technique or pipeline.
- * @author ubaldino
+ * The intent is to allow other tools use GeoInference as an API object
+ * that is independent of information extraction/matching technique or pipeline.
  *
+ * @author ubaldino
  */
 public class GeoInference {
 
@@ -31,7 +30,8 @@ public class GeoInference {
      */
     public int confidence = 0;
     /**
-     * a short label for this type of location. E.g. device-location, user-profile-loc, geo, etc.
+     * a short label for this type of location. E.g. device-location,
+     * user-profile-loc, geo, etc.
      */
     public String inferenceName = null;
     /**
@@ -39,7 +39,7 @@ public class GeoInference {
      */
     public Map<String, Object> attributes = null;
     /**
-     * offset bounds.  Borrowed from TextMatch.
+     * offset bounds. Borrowed from TextMatch.
      */
     public int start = -1;
     public int end = -1;

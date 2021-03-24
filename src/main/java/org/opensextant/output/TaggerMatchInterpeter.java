@@ -6,14 +6,14 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 
 public class TaggerMatchInterpeter implements MatchInterpreter {
 
-
     /**
      * Trivial override of the default Match Interpreter on GISDataFormatter.
      * See Examples for usage.
-     * 
+     *
      * @param m
      * @return
      */
+    @Override
     public Geocoding getGeocoding(TextMatch m) {
         Geocoding geocoding = null;
         if (m instanceof Geocoding) {

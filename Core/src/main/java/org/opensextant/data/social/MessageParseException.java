@@ -3,7 +3,7 @@ package org.opensextant.data.social;
 public class MessageParseException extends Exception {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 

@@ -17,10 +17,9 @@
 package org.opensextant.processing;
 
 /**
- *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
-public class ProcessingException  extends Exception {
+public class ProcessingException extends Exception {
 
     protected static final long serialVersionUID = 20001981L;
 

@@ -20,14 +20,11 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 
 /**
- *
  * @author ubaldino
  */
 public class TestCase extends PatternTestCase {
 
-
     /**
-     *
      * @param _id
      * @param _family
      * @param _text

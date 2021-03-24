@@ -27,16 +27,15 @@ import org.opensextant.processing.ProcessingException;
  * A results formatter for shapefile output.
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Jan 6, 2012
- * history
- * -------
- * - Changed this variety of CSV to be Geo-specific; Other non-geo data could be
- *   written to CSV easily.
- *
+ *         history
+ *         -------
+ *         - Changed this variety of CSV to be Geo-specific; Other non-geo data
+ *         could be
+ *         written to CSV easily.
  */
 public final class GeoCSVFormatter extends GISDataFormatter {
 
     /**
-     *
      * @throws ProcessingException
      */
     public GeoCSVFormatter() throws ProcessingException {
@@ -51,6 +50,7 @@ public final class GeoCSVFormatter extends GISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
+     *
      * @throws Exception on err
      */
     @Override

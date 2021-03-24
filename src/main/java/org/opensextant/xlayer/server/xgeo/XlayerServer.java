@@ -10,7 +10,6 @@ import org.restlet.data.Protocol;
 
 /**
  * @author ubaldino
- *
  */
 public class XlayerServer extends Component {
 
@@ -33,7 +32,7 @@ public class XlayerServer extends Component {
         Map<String, Object> settings = new HashMap<>();
         ctx.setAttributes(settings);
         XlayerRestlet service = new XlayerRestlet(ctx);
-        /* 
+        /*
          * Configure ports, protocols, security
          */
         getServers().add(Protocol.HTTP, port);
@@ -46,7 +45,6 @@ public class XlayerServer extends Component {
     }
 
     /**
-     * 
      * @param args
      */
     public static void main(String[] args) {

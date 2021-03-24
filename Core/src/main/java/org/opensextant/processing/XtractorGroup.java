@@ -40,10 +40,8 @@ import org.slf4j.LoggerFactory;
  * </pre>
  *
  * Configure any Extractor; add it to the stack here;
- *
  * Once you have added Extractors to your XtractorGroup, call
  * XtractorGroup.setup()
- *
  * Since a single processor of several may throw an exception, while others
  * succeed, The API does not throw exceptions failing a document completely. If
  * you need access to exceptions thrown by each processor or formatter, then you
@@ -109,7 +107,7 @@ public class XtractorGroup {
          */
         for (Extractor x : extractors) {
             try {
-                List<TextMatch> results = x.extract(input);                
+                List<TextMatch> results = x.extract(input);
                 if (results != null) {
                     oneResultSet.addAll(results);
                 }

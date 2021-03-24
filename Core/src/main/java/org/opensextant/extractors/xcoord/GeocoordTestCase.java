@@ -19,13 +19,11 @@ package org.opensextant.extractors.xcoord;
 import org.opensextant.extractors.flexpat.PatternTestCase;
 
 /**
- *
  * @author ubaldino
  */
 public class GeocoordTestCase extends PatternTestCase {
 
     /**
-     *
      * @param _id
      * @param _family
      * @param _text

@@ -41,6 +41,7 @@ public class GDBFormatter extends GISDataFormatter {
 
     /**
      * Create the output stream appropriate for the output type.
+     *
      * @throws Exception on err
      */
     @Override

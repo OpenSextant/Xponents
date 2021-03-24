@@ -26,16 +26,18 @@ import org.opensextant.extractors.langid.LangDetect;
 
 /**
  * A geoinferencer infers location on users and their messages.
- * This is a DeepEye-based API where Tweets, Records, and Annotations are the main inputs and outputs.
- * 
- * @author ubaldino
+ * This is a DeepEye-based API where Tweets, Records, and Annotations are the
+ * main inputs and outputs.
  *
+ * @author ubaldino
  */
 public abstract class GeoInferencer extends SocialGeo {
 
     /**
-     * Avg text size (in chars) of tweets -- in 2014, I measured this to be about 90 chars. At that
-     * tweets with URLs dominate it seems, so actual natural language text avg size may be less.
+     * Avg text size (in chars) of tweets -- in 2014, I measured this to be about 90
+     * chars. At that
+     * tweets with URLs dominate it seems, so actual natural language text avg size
+     * may be less.
      */
     public static int AVERAGE_TEXT_SIZE = 90;
     protected LangDetect langidTool = null;
@@ -43,8 +45,9 @@ public abstract class GeoInferencer extends SocialGeo {
 
     /**
      * NOTE: the langID tool from Cybozu can only be loaded once per JVM.
-     * So it is initialized once by the data ingester, and then passed in here for use by the processor.
-     * 
+     * So it is initialized once by the data ingester, and then passed in here for
+     * use by the processor.
+     *
      * @param lid
      */
     public void setLanguageID(LangDetect lid) {
@@ -52,11 +55,12 @@ public abstract class GeoInferencer extends SocialGeo {
     }
 
     /**
-     * Infer author's location. Result is a geocoding annotation that contains lat, lon, Country and
+     * Infer author's location. Result is a geocoding annotation that contains lat,
+     * lon, Country and
      * other gazetteer metadata.
-     * 
+     *
      * @param tw
-     *            DeepEye Social Tweet
+     *           DeepEye Social Tweet
      * @return annot DeepEye Annotation
      * @throws MessageParseException
      * @throws ExtractionException
@@ -64,12 +68,13 @@ public abstract class GeoInferencer extends SocialGeo {
     public abstract GeoInference geoinferenceTweetAuthor(Tweet tw) throws MessageParseException, ExtractionException;
 
     /**
-     * Infer location of message, if any such metadata is present. Result is a geocoding annotation that contains lat,
+     * Infer location of message, if any such metadata is present. Result is a
+     * geocoding annotation that contains lat,
      * lon, Country and
      * other gazetteer metadata.
-     * 
+     *
      * @param tw
-     *            DeepEye Social Tweet
+     *           DeepEye Social Tweet
      * @return inference
      * @throws MessageParseException
      * @throws ExtractionException
@@ -77,9 +82,11 @@ public abstract class GeoInferencer extends SocialGeo {
     public abstract GeoInference geoinferenceTweetStatus(Tweet tw) throws MessageParseException, ExtractionException;
 
     /**
-     * Extract and geocode any mentioned places, countries, coordinates in social media text.
-     * For now, this takes a Tweet and uses AUTHOR profile location to help disambiguate found ambiguous tags.
-     * 
+     * Extract and geocode any mentioned places, countries, coordinates in social
+     * media text.
+     * For now, this takes a Tweet and uses AUTHOR profile location to help
+     * disambiguate found ambiguous tags.
+     *
      * @param tw
      * @return
      */
@@ -87,8 +94,10 @@ public abstract class GeoInferencer extends SocialGeo {
             throws MessageParseException, ExtractionException;
 
     /**
-     * If there  are by-products of geotagging or inferencing that are worth retrieving, 
+     * If there are by-products of geotagging or inferencing that are worth
+     * retrieving,
      * they can be retrieved as "additional matches"
+     *
      * @return
      */
     public abstract Collection<TextMatch> getAdditionalMatches();
@@ -113,7 +122,9 @@ public abstract class GeoInferencer extends SocialGeo {
 
     /**
      * Processing report; This could be more structured ala ExtractionMetrics
-     * for now this is just a final message from the implementation about general performance.
+     * for now this is just a final message from the implementation about general
+     * performance.
+     *
      * @return
      */
     public abstract String report();

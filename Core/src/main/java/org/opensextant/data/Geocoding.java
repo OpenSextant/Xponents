@@ -32,35 +32,38 @@
 package org.opensextant.data;
 
 /**
- * An interface that describes any data that can be geocoded -- the metadata behind deriving 
- * location is as important as the actual location is.  Important features include location precision, confidence and method.
- * For confidence, the Xponents convention is a 100 point integer scale.  
- * For precision, report the accuracy of your geocoding in terms of meters of error, e.g., <code>precision  = 5000 (m)</code>
+ * An interface that describes any data that can be geocoded -- the metadata
+ * behind deriving
+ * location is as important as the actual location is. Important features
+ * include location precision, confidence and method.
+ * For confidence, the Xponents convention is a 100 point integer scale.
+ * For precision, report the accuracy of your geocoding in terms of meters of
+ * error, e.g., <code>precision  = 5000 (m)</code>
  * suggests your geocoding around point (Y,X) has an error of 5 KM.
- * 
+ *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public interface Geocoding extends LatLon {
 
-    //-------------------
-    // High level flags: These attributes outline what this geocoding represents - a place, landmark, site, coordinate, etc.
-    //-------------------
+    // -------------------
+    // High level flags: These attributes outline what this geocoding represents - a
+    // place, landmark, site, coordinate, etc.
+    // -------------------
     /**
-     * 
      * @return true if geocoding represents a named place
      */
     public boolean isPlace();
 
     /**
      * isCoordinate: if this object represents a coordinate
-     * 
+     *
      * @return true if geocoding represents a coordinate
      */
     public boolean isCoordinate();
 
     /**
      * has Coordinate: if this named place object has a coordinate.
-     * 
+     *
      * @return true if geocoding represents has a valid lat, lon
      */
     public boolean hasCoordinate();
@@ -71,19 +74,21 @@ public interface Geocoding extends LatLon {
 
     /**
      * Precision - radius in meters of possible error
+     *
      * @return precision error radius
      */
     public int getPrecision();
 
     /**
      * Precision - radius in meters of possible error
+     *
      * @param m meters of error
      */
     public void setPrecision(int m);
 
-    //---------------------
+    // ---------------------
     // entity metadata:
-    //---------------------
+    // ---------------------
     public String getCountryCode();
 
     public void setCountryCode(String cc);
@@ -110,13 +115,17 @@ public interface Geocoding extends LatLon {
 
     public void setPlaceName(String n);
 
-    /** State-level postal code, the corresponds usually to ADM1 
+    /**
+     * State-level postal code, the corresponds usually to ADM1
+     *
      * @return optional postal code
      */
     public String getAdmin1PostalCode();
 
-    /** City-level postal code, that may be something like a zip. 
-     * Thinking world-wide, not everyone calls these zipcodes, as in the US. 
+    /**
+     * City-level postal code, that may be something like a zip.
+     * Thinking world-wide, not everyone calls these zipcodes, as in the US.
+     *
      * @return optional postal code
      */
     public String getPlacePostalCode();
@@ -131,16 +140,18 @@ public interface Geocoding extends LatLon {
     /**
      * Confidence metric is a normalized 100-point scale.
      * Xponents conventions are simple, so value of confidence is an integer.
+     *
      * @return value on a 100 point scale.
      */
     public int getConfidence();
 
     /**
      * Set confidence, a value on a 100 point scale, 0-100.
-     * Yes values above or below scale are allowed, however 
-     * it may be difficult to compare such values.  The intent is to normalize
+     * Yes values above or below scale are allowed, however
+     * it may be difficult to compare such values. The intent is to normalize
      * all confidence metrics to this relative scale for your application.
-     * @param c confidence 
+     *
+     * @param c confidence
      */
     public void setConfidence(int c);
 }

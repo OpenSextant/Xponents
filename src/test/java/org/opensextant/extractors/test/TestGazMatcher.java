@@ -19,13 +19,11 @@ import org.opensextant.util.GeodeticUtility;
 
 /**
  * Setup for testing:
- * 
  * - build Gazeteer project - load data into ./solr/gazetteer solr core - run
  * this test main, -Dopensextant.solr=<path to gazetteer solr home> one
  * argument, then input file to test.
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class TestGazMatcher {
 
@@ -150,9 +148,7 @@ public class TestGazMatcher {
     /**
      * Do a basic test. Requirements include setting opensextant.solr to solr core
      * home. (Xponents/solr, by default) USAGE:
-     * 
      * TestGazMatcher file
-     * 
      * Prints: all matched, filtered place mentions distinct places distinct
      * countries
      */

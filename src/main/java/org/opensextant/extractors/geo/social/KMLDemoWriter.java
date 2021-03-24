@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opensextant.data.Language;
+import org.opensextant.data.social.Message;
 //import org.opensextant.data.Place;
 //import org.mitre.deepeye.Annotation;
 import org.opensextant.data.social.Tweet;
@@ -27,16 +28,16 @@ import org.opensextant.util.TextUtils;
 /**
  * A cleaner approach to outputting geocoding data to KML using GISCore.
  * See also Xponents GISDataFormatter, FormatterFactory.getInstance("KML")
- * See also Xponents-Examples where the concept of GIS outputs is somewhat generalized, but
+ * See also Xponents-Examples where the concept of GIS outputs is somewhat
+ * generalized, but
  * not very flexible.
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public class KMLDemoWriter implements Closeable {
 
     protected IGISOutputStream outputStream = null;
-    Namespace gxNs = Namespace.getNamespace("gx", IKml.NS_GOOGLE_KML_EXT);;
+    Namespace gxNs = Namespace.getNamespace("gx", IKml.NS_GOOGLE_KML_EXT);
     Namespace kmlNs = Namespace.getNamespace(IKml.KML_NS);
 
     public KMLDemoWriter(String path) throws IOException {
@@ -48,7 +49,7 @@ public class KMLDemoWriter implements Closeable {
             outputStream = GISFactory.getOutputStream(DocumentType.KML, fos);
             DocumentStart ds = new DocumentStart(DocumentType.KML);
             ds.getNamespaces().add(kmlNs);
-            //ds.getNamespaces().add(gxNs);
+            // ds.getNamespaces().add(gxNs);
             outputStream.write(ds);
             outputStream.write(new ContainerStart());
         } catch (Exception err) {
@@ -62,8 +63,8 @@ public class KMLDemoWriter implements Closeable {
     static Map<String, Style> styles = new HashMap<>();
 
     static {
-        //ugeoStyle.setBalloonStyle(Color.BLUE, null, null, null);
-        //geoStyle.setBalloonStyle(Color.ORANGE, null, null, null);
+        // ugeoStyle.setBalloonStyle(Color.BLUE, null, null, null);
+        // geoStyle.setBalloonStyle(Color.ORANGE, null, null, null);
         ugeoStyle.setIconStyle(Color.CYAN, 0.8);
         geoStyle.setIconStyle(Color.ORANGE, 0.8);
         mentionGeoStyle.setIconStyle(Color.MAGENTA, 0.8);
@@ -74,20 +75,21 @@ public class KMLDemoWriter implements Closeable {
 
     /**
      * Save off a tweet and its geo.
-     * TODO:  confidence number should be more standardized and put into a 0..100 scale
-     * ahead of time. Currently, 'confidence' might be a raw score as in ADNA 
-     * 
+     * TODO: confidence number should be more standardized and put into a 0..100
+     * scale
+     * ahead of time. Currently, 'confidence' might be a raw score as in ADNA
+     *
      * @param t
-     *            tweet
+     *          tweet
      * @param a
-     *            annotation which must have a coordinate "lat", "lon"
+     *          annotation which must have a coordinate "lat", "lon"
      */
     public void write(Tweet t, GeoInference a) {
 
         Feature f = new Feature();
         // LABEL -- Place name + Inference
         String locName = a.geocode.getPlaceName();
-        
+
         String label = String.format("%s %s (%s, %d%%)", a.inferenceName, locName, a.contributor, a.confidence);
         f.setName(label);
         f.setStyle(styles.get(a.inferenceName));
@@ -104,7 +106,7 @@ public class KMLDemoWriter implements Closeable {
         if (t.timezone != null) {
             text.append(String.format("<br>TZ=%s", t.timezone));
         }
-        if (t.utcOffset != Tweet.UNSET_UTC_OFFSET) {
+        if (t.utcOffset != Message.UNSET_UTC_OFFSET) {
             text.append(String.format("<br>UTC=%s", t.utcOffsetHours));
         }
         // Given Geo-data

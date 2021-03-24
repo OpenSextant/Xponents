@@ -27,23 +27,29 @@ import org.opensextant.data.Place;
  * that class.
  *
  * @author dlutz
- * 
  */
 public final class PlaceEvidence extends Place implements Comparable<Object> {
 
     /**
      * SCOPE - Where did this evidence come from wrt to the PlaceCandidate it is
-     * part of? <ul> <li>APRIORI - derived from the gazetteer only, not from any
-     * information in the document </li> <li>LOCAL - directly associated with
-     * this instance of PC </li> <li>COREF - associated with another (related)
-     * PC in the document </li> <li>MERGED - came from the merger of multiple
-     * PlaceEvidences (future use) </li> <li>DOCUMENT - in the same document but
-     * has no other direct association </li> </ul>
+     * part of?
+     * <ul>
+     * <li>APRIORI - derived from the gazetteer only, not from any
+     * information in the document</li>
+     * <li>LOCAL - directly associated with
+     * this instance of PC</li>
+     * <li>COREF - associated with another (related)
+     * PC in the document</li>
+     * <li>MERGED - came from the merger of multiple
+     * PlaceEvidences (future use)</li>
+     * <li>DOCUMENT - in the same document but
+     * has no other direct association</li>
+     * </ul>
      */
     public enum Scope {
 
         APRIORI, LOCAL, COREF, MERGED, DOCUMENT
-    };
+    }
 
     // private static final long serialVersionUID = 2389068067890L;
     // The rule which found the evidence
@@ -66,7 +72,7 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
         this.setCountryCode(ev.getCountryCode());
         this.setFeatureClass(ev.getFeatureClass());
         this.setFeatureCode(ev.getFeatureCode());
-        //this.setGeocoord(old.getGeocoord());
+        // this.setGeocoord(old.getGeocoord());
         this.setLatitude(ev.getLatitude());
         this.setLongitude(ev.getLongitude());
         this.setPlaceName(ev.getPlaceName());
@@ -81,12 +87,12 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
         this.setCountryCode(ev.getCountryCode());
         this.setFeatureClass(ev.getFeatureClass());
         this.setFeatureCode(ev.getFeatureCode());
-        //this.setGeocoord(old.getGeocoord());
+        // this.setGeocoord(old.getGeocoord());
         this.setLatitude(ev.getLatitude());
         this.setLongitude(ev.getLongitude());
         this.setPlaceName(ev.getPlaceName());
         this.setRule(rule);
-        //this.setScope(scope);
+        // this.setScope(scope);
         this.setWeight(wt);
     }
 

@@ -63,7 +63,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
 
     /**
      * try a series of known tests.
-     * 
+     *
      * @throws IOException
      */
     public void tagEvaluation() throws IOException {
@@ -103,7 +103,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
 
     /**
      * see TestGazMatcher documentation
-     * 
+     *
      * @param args
      */
     public static void main(String[] args) {

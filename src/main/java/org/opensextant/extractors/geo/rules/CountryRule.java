@@ -28,11 +28,11 @@ public class CountryRule extends GeocodeRule {
 
     /**
      * Assess which candidate tags are references to countries.
-     * 
+     *
      * @param name
-     *            list of candidates to evaluate for country evidence.
+     *             list of candidates to evaluate for country evidence.
      * @param geo
-     *            country/geo to evaluate
+     *             country/geo to evaluate
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
@@ -42,7 +42,7 @@ public class CountryRule extends GeocodeRule {
         }
 
         // Otherwise this is some country name or reference.
-        // 
+        //
         if (name.isAcronym || name.isAbbreviation) {
             name.addCountryEvidence("CountryCode", weight, geo.getCountryCode(), geo);
         } else {

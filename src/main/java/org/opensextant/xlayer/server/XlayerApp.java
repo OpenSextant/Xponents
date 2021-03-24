@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.io.IOUtils;
 import org.opensextant.ConfigException;
 import org.restlet.Application;
@@ -13,11 +14,11 @@ import org.restlet.Context;
 import org.restlet.Restlet;
 
 /**
- * XlayerApp is an abstract "Webapp" running inside the Server.... well, you must implement one
+ * XlayerApp is an abstract "Webapp" running inside the Server.... well, you
+ * must implement one
  * first.
- * 
- * @author ubaldino
  *
+ * @author ubaldino
  */
 public abstract class XlayerApp extends Application {
 
@@ -27,7 +28,8 @@ public abstract class XlayerApp extends Application {
 
     public XlayerApp(Context c) {
         super(c);
-        log = getContext().getCurrentLogger();
+        getContext();
+        log = Context.getCurrentLogger();
     }
 
     public static String getVersion(String buf) {
@@ -45,7 +47,7 @@ public abstract class XlayerApp extends Application {
 
     /**
      * Banner at start improves visibility of your product.
-     * 
+     *
      * @throws IOException
      */
     protected void banner() throws IOException {
@@ -84,7 +86,6 @@ public abstract class XlayerApp extends Application {
     public abstract Restlet createInboundRoot();
 
     /**
-     * 
      * @throws ConfigException
      */
     public abstract void configure() throws ConfigException;

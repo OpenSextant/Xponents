@@ -21,7 +21,7 @@ import org.opensextant.data.Place;
 /**
  * A class to hold a Place and a score together. Used by PlaceCandidate to rank
  * places.
- * 
+ *
  * @author dlutz
  * @author ubaldino
  */
