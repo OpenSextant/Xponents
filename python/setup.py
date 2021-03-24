@@ -56,5 +56,5 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     package_data={'opensextant': ['./resources/geonames.org/*.txt', './resources/*.csv', './resources/*.cfg']},
 
-    install_requires=['pysolr>=3.6.0', 'chardet>=3.0.0', 'requests>=2.18', 'PyGeodesy>=21.3.3']
+    install_requires=['pysolr>=3.6.0', 'chardet>=3.0.0', 'requests>=2.18', 'arrow>=1.0.3', 'PyGeodesy>=21.3.3']
 )

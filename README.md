@@ -2,27 +2,35 @@ Back to [OpenSextant](http://opensextant.org)
 
 Xponents, A Toolkit for Geotagging World-wide Geography
 ========
-* **Author:** Marc Ubaldino, MITRE, (mubaldino@gmail.com, ubaldino@mitre.org). Summer 2019.
-* **Docker:** [OpenSextant on Docker](https://hub.docker.com/r/mubaldino/opensextant) Xponents builds featuring geotagger REST API and full Worldwide Gazetter
-* **Citing:** Ubaldino, M (MITRE Corporation), __"OpenSextant Xponents: Geotagging Toolkit for World-wide Geography"__, 2019. https://opensextant.github.io/Xponents/
+* **Author:** Marc Ubaldino, MITRE, (mubaldino@gmail.com, ubaldino@mitre.org). Spring 2021.
+* **Citation:** Ubaldino, M (MITRE Corporation), __"OpenSextant Xponents: Geotagging Toolkit for World-wide Geography"__, 2019. https://opensextant.github.io/Xponents/
 * **Lecture** **["Geographic Literacy in Text Analytics: Developing and Applying OpenSextant", Jan 2020](https://gis.harvard.edu/event/geographic-literacy-text-analytics-developing-and-applying-opensextant)**
-* **Video:** **["Discoverying World Geography in Your Data"](https://youtu.be/44v2WljG1R0?t=1805)**,
+* **Video:** **["Discoverying World Geography in Your Data"](https://youtu.be/44v2WljG1R0?t=1805)**
+* **Docker:** [OpenSextant on Docker](https://hub.docker.com/r/mubaldino/opensextant) 
 
+About our nomenclature -- **OpenSextant** is a family of projects 
+for geotagging and other NLP and information extraction work.  **Xponents**
+is an actively developed implementation of our OpenSextant mindset around 
+geotagging: be accurate, be simple, be extensible and show the work.
 
-Xponents is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example as depicted in Figure 1:
+**Xponents** is a set of information extraction libraries including to extract and normalize geographic entities, date/time patterns, keywords/taxonomies, and various patterns.  For example as depicted in Figure 1 where a tourist spots in the French country side are detected and geolocated.  That's easy 
+when there is only one such known location with that name. It becomes challenging when we try to detect such names in any language in any part of the world.   Is "McDonald's" a farm or a restaurant?  
+Which one is the right one -- there's thousands of restaurant locations by that name.
 
 ![General topics in our geotagging workflow](./doc/geocoding-workflow.png)
 
-**Figure 1. A General Tagging and Coding Paradigm.**
+**Figure 1. A General Tagging and Coding Paradigm**
 
+This table below loosely portrays the scenarios in which Xponents operates -- parsing 
+and conditioning knowable geo/temporal references in text into usable data structures.
 
-| text|extracted entity|notional output with normalization|
-|---|---|---|
-|_"Boise, ID is fun!"_|Place names, geocoded| `geo = { match:"Boise ID",`<br>` adm1:"US.16",`<br>` lat=43.61, lon=-116.20,`<br>` feat_code:"PPL", confidence=78}` <br> And associated rules for the location resolution
-|_"Born on 30 DECIEMBRE 1990 ... "_ |Normalized date and time| `date = { match="30 DECIEMBRE 1990",`<br>` date_norm="1990-12-30"}` 
-|_"Epicenter at 01°44'N 101°22'E ..."_  |  Geo Coordinates| `coord = { match="01°44'N 101°22'E",`<br>` lat=1.733, lon=101.367,`<br>` pattern="DM-01"}`  
-|_"The Swiss delegation..."_ | Keywords | `taxon = { match="Swiss", id="nationality.CHI" }`
-|_"User accessed IP 233.12.0.11"_| Patterns | `pattern= { match="233.12.0.11", pattern_id="IPADDRESS" }`
+| input text|notional output with normalization|
+|---|---|
+|_"Boise, ID is fun!"_|**Place names, geocoded**:<br>`geo = { match:"Boise ID", adm1:"US.16",`<br>` lat=43.61, lon=-116.20,`<br>` feat_code:"PPL", confidence=78}` 
+|_"Born on 30 DECIEMBRE 1990 ... "_ |**Normalized date/time**:<br>`date = { match="30 DECIEMBRE 1990",`<br>` date_norm="1990-12-30"}` 
+|_"Epicenter at 01°44'N 101°22'E ..."_  |**Geo Coordinates**:<br>`coord = { match="01°44'N 101°22'E",`<br>` lat=1.733, lon=101.367,`<br>` pattern="DM-01"}`  
+|_"The Swiss delegation..."_ | **Keywords:**<br>`taxon = { match="Swiss", id="nationality.CHI" }`
+|_"User accessed IP 233.12.0.11"_|**Patterns:**<br>`pattern= { match="233.12.0.11", pattern_id="IPADDRESS" }`
 
 Define your own patterns or compose your own Extractor apps.  As a Java API, the following application classes implement the extraction above:
 
@@ -32,32 +40,18 @@ Define your own patterns or compose your own Extractor apps.  As a Java API, the
 * **PoLi**: Patterns of Life ~ develop and test entity tagging based on regular expressions
 * **TaxonMatcher**: Tag a list of known keywords or structured vocabularies aka taxonomic nomenclature.
 
-These extractors are in the `org.opensextant.extractors` packages, and demonstrated in the Examples sub-project using Groovy.  These libraries and builds are located in Maven Central and in Docker Hub.  Here is a quick overview of the organization of the project:
+Here are some fast-tracks for applying Xponents:
 
-- **`Core`:** The core Xponents API for pattern matching (coordinates, dates, etc), text utilities, simple classes around social media, languaged ID, and geographic metadata. Additionally tying this all together is an essential Xponents Data Model (`org.opensextant.data` [Core JavaDoc](https://opensextant.github.io/Xponents/doc/core-apidocs/))
-- **`Xponents SDK`:** the root project here that provide the advanced geoparsing, geotagger, keyword tagger, Xlayer (REST API), and other application components. This is very dependent on understanding the fundamentals in Core. [SDK JavaDoc](https://opensextant.github.io/Xponents/doc/sdk-apidocs/)
-- **`Examples:`** demonstrations of using various input/output solutions, e.g. `BasicGeoTemporalProcessing` is a command line app that uses [`XText`](https://github.com/OpenSextant/XText/) to crawl and grab text from your media, process geo entities, and then output them as Shapefile, KML, or CSV files.
+A. Geotagging and everything -- Deploy the Docker service as prescribed on our [Docker Hub](https://hub.docker.com/r/mubaldino/opensextant).  Consult at least the Python client `opensextant.xlayer` as noted in the Docker page and in the Python setup below.
 
-To start using Xponents now, consider your use case:
+B. Pattern extraction -- The Python library `opensextant.FlexPat` or its Java counterpart `org.opensextant.extractors.flexpat` -- offer a lean and effective manner to develop a regular-expression
+pipeline.  In either case minimal dependencies are needed.  See Python setup below.
 
-* **Deploy a REST service** for all this geo/temporal entity extraction: Use the Docker Hub image here: https://hub.docker.com/r/mubaldino/opensextant 
-* **Build your own Java 8+ app** against Xponents SDK: use Maven here:
+C. Geotagging and everything,.... but for some reason you feel that you need to build 
+it all yourself. You'll need to follow the notes here in `BUILD.md` and in `./solr/README.md`. 
+The typical approach is to deploy the docker instance of xponents and interact with it using the Python client, `opensextant.xlayer`.  The `xponents-service.sh` demonstrates how to run the 
+REST service with or without Docker.
 
-```
-  <!-- Xponents Core API -->
-  <dependency>
-    <groupId>org.opensextant</groupId>
-    <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.3.5</version>
-  </dependency>
-
-  <!-- Xponents SDK API -->
-  <dependency>
-    <groupId>org.opensextant</groupId>
-    <artifactId>opensextant-xponents</artifactId>
-    <version>3.3.5</version>
-  </dependency>
-```
 
 Video: Lucene/Solr Revolution 2017 Conference Talk
 ---------------------------------------
@@ -65,24 +59,199 @@ Video: Lucene/Solr Revolution 2017 Conference Talk
 presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
 <!-- https://www.youtube.com/watch?v=44v2WljG1R0  -->
 
-Demonstration &amp; Download
+
+Methodology
 ---------------------------------------
-So, you can download and try out a full build. But return here to read the rest of the story.  
-The demonstrations only give you a sense of outputs 
-for simple inputs.  A lot of actual usage will involve tuning your inputs (cleanup, language ID, etc)
-and interpreting your outputs (e.g., filtering, cross-referencing, etc.).
-
-Download the SDK, then walk through examples -- these resources are intended for developers with some Java or Python
-experience, and some NLP or GIS background. But the examples and download should work with only the **Java 8+** 
-installed on your system. **Python 3.6+** is required for the few Python examples.
-
-* See [Examples](./Examples/README.md).  Some examples here require a full SDK build.
-* Download SDK builds -- to start using a full release, for now you have to acquire the binary from Docker Hub (2GB image as listed above) or build it yourself. 
+The **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
+the Xponents methodology to geotagging and geocoding that pertains to coordinate extraction and general geotagging, i.e., XCoord and PlaceGeocoder, respectively.
 
 
-Developing with Xponents
------------------------
-The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.  This library tool chest contains the following ideas and capabilities:
+Code Examples
+---------------------------------------
+
+Using **XCoord** and **PlaceGeocoder** here are two examples of extracting 
+geographic entities from this made-up text: 
+
+```
+    String text = "Earthquake epicenter occurred at 39.56N, -123.45W or "+
+                  "an hour west of the Mendocino National Forest ";    
+    
+    // INIT
+    //==================
+    XCoord xcoord = new XCoord();    
+    xcoord.configure();        
+    SolrGazetteer gaz = new SolrGazetteer();
+    
+    // EXTRACT
+    //==================
+    List<TextMatch> coords = xcoord.extract( text );
+    
+    for (TextMatch match : coords) {
+       /* if match instanceof GeocoordMatch do something. 
+       */
+       print("FOUND:" + match);
+       print("Near named place " + gaz.placeAt(match));
+    }
+    
+    /* "Do something" might produce this output:  print the location found could
+     *  be reverse geocoded to Arnold, CA, US
+     */
+     -=-=-=-=-=-=-==-=-=-=-=-=-=
+        FOUND: 39.56N, -123.45W @(33:49) matched by DD-02
+        Near named place Arnold (ADM1=06, CC=US, FEAT=PPL)
+     -=-=-=-=-=-=-==-=-=-=-=-=-=
+```
+
+Now with the same text as above, the second and more complex example applies the PlaceGeocoder:
+
+```
+    // INIT
+    //==================
+    tagger = new PlaceGeocoder();
+    Parameters xponentsParams = new Parameters();
+    xponentsParams.resolve_localities = true;
+    tagger.setParameters(xponentsParams);
+    tagger.configure();
+    
+    /* In this example, ""Mendocino National Forest" is found and is 
+     * coded as { cc=US, adm1="06",...} representing that the forest 
+     * is in California ("US.06"). To actually resolve "US.06" to a named 
+     * province we need the resolve_localities flag ON. There is a small 
+     * performance hit which adds up if you do this for every place found.
+     */      
+    
+    // EXTRACT
+    //==================
+    List<TextMatch> allPlaces = tagger.extract( text );
+    for (TextMatch match : allPlaces) {    
+       /* PlaceGeocoder yields many types of entities!!
+          if match instanceof GeocoordMatch, PlaceCandidate, TaxonMatch, etc.
+              then do something. 
+       */
+    }
+    
+    /* These examples print to stdout, but imagine saving to a database, 
+     * exporting KML or a spreadsheet on the fly
+     */     
+    -=-=-=-=-=-=-STDOUT==-=-=-=-=-=-=
+    ....
+    Name:Mendocino National Forest
+    Rules = [DefaultScore]
+        geocoded @ Mendocino National Forest (06, US, FRST), score=20.56 with conf=93
+    MENTIONS DISTINCT PLACES == 1
+    [Mendocino National Forest]
+    MENTIONS COUNTRIES == 0
+    []
+    MENTIONS COORDINATES == 1
+    [39.56N, -123.45W]
+    ....
+    -=-=-=-=-=-=-==-=-=-=-=-=-=
+```
+
+Java versus Python Libraries
+----------------------------
+
+Python and Java functionality overlaps but is still drastically differe.  The Core API resembles 
+the Python library somewhat.
+
+* `opensextant` (v1.3) Python API offers data utilities; Solr clients for TaxCat and Gazetteer;
+  basic data models for text spans, place objects, etc.  Xponents REST client (`xlayer`) which interacts with the Java Xponents REST service.
+* Xponents Core API (v3.3) Java library provides most of the functionality as in the Python library. 
+  It offers more complete Unicode utilities and other metadata resources such as Country, Timezone, 
+  and Language metadata
+* Xponents SDK API (v3.3) provides the Solr and client/server integrations for Gazetteer, 
+  TaxCat and PlaceGeocoder.
+
+
+Setup
+----------------------------
+As mentioned above to work with just pattern extraction, the Core API is needed. 
+But to do anything more, like geotagging, the SDK API is needed along with the instance of 
+Solr as prescribed in the `./solr` folder.  Here are some useful pre-requisites:
+
+- Java 8+ (Java 15+ preferred)
+- Maven 3.5+ and Ant 1.10+
+- Python 3.8+
+
+
+**Maven**
+
+Insert these dependencies into your POM depending on what you need.
+```
+  <!-- Xponents Core API -->
+  <dependency>
+    <groupId>org.opensextant</groupId>
+    <artifactId>opensextant-xponents-core</artifactId>
+    <version>3.3.7</version>
+  </dependency>
+
+  <!-- Xponents SDK API -->
+  <dependency>
+    <groupId>org.opensextant</groupId>
+    <artifactId>opensextant-xponents</artifactId>
+    <version>3.3.7</version>
+  </dependency>
+```
+
+For reference: [OpenSextant Xponents on Maven](https://search.maven.org/search?q=a:opensextant-xponents).  For that matter, the only relevant artifacts in our `org.opensextant` group are:
+
+* `geodesy 2.0.1`   - Geodetic operations and coordinate system calculations
+* `giscore 2.0.2`  - GIS I/O
+* `opensextant-xponents-core  3.3.*` - This Core API
+* `opensextant-xponents       3.3.*` - This Solr-based tagger SDK
+* `opensextant-xponents-xtext 3.3.*` - XText, the text extraction toolkit
+
+
+
+**Python**
+
+Someday we'll just post this to PyPi. 
+
+```shell script
+
+    pushd ./python
+    python3 ./setup.py sdist
+    popd
+
+    # Install built lib with dependencies to ./piplib
+    pip3 install -U --target ./piplib ./python/dist/opensextant-1.3*.tar.gz 
+    pip3 install -U --target ./piplib lxml bs4 arrow requests
+    
+    # Note - if working with a distribution release, the built Python 
+    # package is in ./python/ (not ./python/dist/)
+
+    # * IMPORTANT *
+    export PYTHONPATH=$PWD/piplib
+    
+    # Adjust the "--target piplib" and the PYTHONPATH according to how 
+    # you like it. 
+```
+
+Demonstration
+---------------------
+See the [Examples](./Examples/README.md) material that you can use 
+from within the Docker image or from a full checkout/build of the project.  Pipeline 
+topics covered there are :
+
+- Basic geo/temporal extraction
+- XText file-to-text conversion tool. More info is at [`XText`](https://github.com/OpenSextant/XText/). XText is included in this distribution
+- GIS map layer generation
+- Language ID
+- Social media geo-inferencing
+- [Xponents REST](./doc/README_Xlayer_REST.md) interaction as described here   
+- etc.
+
+
+API Documentation and Developer Notes
+--------------------------------------
+
+These extractors are in the `org.opensextant.extractors` packages, and demonstrated in the Examples sub-project using Groovy.  These libraries and builds are located in Maven Central and in Docker Hub.  Here is a quick overview of the organization of the project:
+
+- **`Core API`** ([Core JavaDoc](https://opensextant.github.io/Xponents/doc/core-apidocs/)):  covers pattern matching (coordinates, dates, etc), text utilities, simple classes around social media, languaged ID, and geographic metadata.  The data model classes are central to all things Xponents.
+- **` SDK`** ([SDK JavaDoc](https://opensextant.github.io/Xponents/doc/sdk-apidocs/))) provides the advanced geoparsing, geotagger, keyword tagger, and any client/server integration. 
+
+
+**Xponents Philosophy**:  The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.  This library tool chest contains the following ideas and capabilities:
 
 * **Extractors for Text:** The focus of Xponents is working with unstructured text in any language: conditioning, extracting entities, tagging, coding it.  These extractors include:
   * `PlaceGeocoder` a geotagger/geocoder for ALL geographic entities in free-text of any size.
@@ -99,126 +268,6 @@ The intent of Xponents is to provide the extraction without too much infrastruct
   * `SolrGazetteer` provides a clean API to query gazetteer data using Solr query mechanics and Xponents data classes. The index is optimized for full text search and geospatial queries
   * `GazetteerMatcher` provides a direct API around the text tagging capability (via [SolrTextTagger](https://github.com/OpenSextant/SolrTextTagger)) beneath the SolrGazetteer.
 * **GIS Formatters:**  The immediate satisfaction of processing some challenging data and then producing a map visual from that is undeniable.  However, our GIS outputter options offer more than just the immediate map plot:  the output schema includes a decent combination of source information, match metadata, and geocoding so you can review  what was found while in the map view.  
-  
-Methodology
----------------------------------------
-The **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
-the Xponents methodology to geotagging and geocoding that pertains to coordinate extraction and general geotagging, i.e., XCoord and PlaceGeocoder, respectively.
-
-Code Examples
----------------------------------------
-
-Here are two examples of extracting geographic entities from this made-up text: 
-
-```
-
-    String text = "Earthquake epicenter occurred at 39.56N, -123.45W or "+
-                  "an hour west of the Mendocino National Forest ";    
-    
-    // INIT
-    //==================
-    XCoord xcoord = new XCoord();
-    
-    /* configure() may take an optional patterns file;  default is rather comprehensive. */
-    xcoord.configure(  );        
-    
-    // EXTRACT
-    //==================
-    List<TextMatch> coords = xcoord.extract( text );
-    
-    for (TextMatch match : coords) {
-    
-       /* if match instanceof GeocoordMatch
-            do something. 
-       */
-    }
-    
-    /* "Do something" might produce this output:  print the location found could
-     *  be reverse geocoded to Arnold, CA, US
-     */
-     -=-=-=-=-=-=-==-=-=-=-=-=-=
-        FOUND: 39.56N, -123.45W @(33:49) matched by DD-02
-        Coordinate at place named Arnold (ADM1=06, CC=US, FEAT=PPL)
-     -=-=-=-=-=-=-==-=-=-=-=-=-=
-```
-
-Now with the same text as above, the second and more complex example applies the PlaceGeocoder:
-
-```
-    // INIT
-    //==================
-    tagger = new PlaceGeocoder();
-    Parameters xponentsParams = new Parameters();
-            
-    /* Province ID helps convert raw coded info into plain language.
-     * Its not enabled by default.  But, say we find "Mendocino National Forest"
-     * the find is returned with cc=US, adm1="06"... 
-     * the 'resolve_provinces' renders adm1="06" into adm1_name="California".  
-     * This is a second lookup for every match, so it can be expensive.
-     */
-    xponentsParams.resolve_provinces = true;
-    tagger.setParameters(xponentsParams);
-    tagger.configure();
-    
-    ...
-    
-    // EXTRACT
-    //==================
-    List<TextMatch> allPlaces = tagger.extract( text );
-    for (TextMatch match : allPlaces) {
-    
-       /* if match instanceof GeocoordMatch, PlaceCandidate, TaxonMatch, etc.
-             PlaceGeocoder yields many types of entities!! then do something. 
-       */
-    }
-    
-    /* And now imagine the do something printed output to the console or saved 
-     data to a database,  ... or exported the findings immediately to a map file....
-     Below is just the raw console output from running.  There is a lot of metadata 
-     for you to filter and work with.     
-     */
-     
-    -=-=-=-=-=-=-STDOUT==-=-=-=-=-=-=
-    ....
-    Name:Mendocino National Forest
-    Rules = [DefaultScore]
-        geocoded @ Mendocino National Forest (06, US, FRST), score=20.56 with conf=93
-    MENTIONS DISTINCT PLACES == 1
-    [Mendocino National Forest]
-    MENTIONS COUNTRIES == 0
-    []
-    MENTIONS COORDINATES == 1
-    [39.56N, -123.45W]
-    ....
-    -=-=-=-=-=-=-==-=-=-=-=-=-=
-```
-
-Modes of Integration
-----------------------------------------
-
-* **Java**: [Examples](./Examples) sub-project illustrates the essential Java API setup and classes. See Maven notes below. 
-* **REST**:  See [Xlayer](./doc/README_Xlayer_REST.md) sub-project, which provides a wrapper around `PlaceGeocoder`, `LangDetect` and other items with some default settings.
-* **Python**:  `./python/opensextant` provides a small subset of Xponent functionality as utilities and data classes that facilitate interacting the the gazetteer, RESTful Extractors, and other simple tasks. Extraction is not implemented in Python.
-* **MapReduce**:  (Deprecated) For Xponents 2.9, some demonstrations were done to show how to package and create a Mapper to geotag social media, or any data record that had a "text" field.  See [MapReduce](./Examples/MapReduce)
-* **Pipelines**:  For raw content (e.g., folders or other stream of data) consider using **XText** project which will help you render data to plain text that can be fed to Xponents Extractors.  See [Examples](./Examples)
-
-Developer Quick Start
------------------------
-[Xponents Javadoc](./doc/apidocs/)
-
-This is primarily a Maven-based project, and so here are our Maven artifacts.
-For those using other build platforms, you can find our published artifacts at 
-[OpenSextant Xponents on Maven](https://search.maven.org/search?q=a:opensextant-xponents)
-
-* Java 8+, Maven 3+, and Ant 1.10+ are required. Maven Version 3.5 is highly recommended.  
-
-For that matter, the only relevant artifacts in our `org.opensextant` group are:
-
-* `geodesy 2.0.1`   - Geodetic operations and coordinate system calculations
-* `giscore 2.0.2`  - GIS I/O
-* `opensextant-xponents-core  3.3.*` - This Core API
-* `opensextant-xponents       3.3.*` - This Solr-based tagger SDK
-* `opensextant-xponents-xtext 3.3.*` - XText, the text extraction toolkit
 
 
 Build

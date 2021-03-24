@@ -292,7 +292,7 @@ public class SolrGazetteer {
 
         Logger log = LoggerFactory.getLogger(SolrGazetteer.class);
         ModifiableSolrParams ctryparams = new ModifiableSolrParams();
-        ctryparams.set(CommonParams.FL, "id,name,cc,FIPS_cc,ISO3_cc,adm1,adm2,feat_class,feat_code,geo,name_type");
+        ctryparams.set(CommonParams.FL, "id,name,cc,FIPS_cc,adm1,adm2,feat_class,feat_code,geo,name_type");
 
         /* TODO: Consider different behaviors for PCLI vs. PCL[DFS] */
         ctryparams.set("q", "+feat_class:A +feat_code:(PCLI OR PCLIX OR TERR) +name_type:N");
@@ -328,7 +328,9 @@ public class SolrGazetteer {
             log.info("Unknown country in gazetteer, that is not in flat files. C={}", C);
 
             countryCodeMap.put(C.getCountryCode(), C);
-            countryCodeMap.put(C.CC_ISO3, C);
+            if (C.CC_ISO3!=null) {                
+                countryCodeMap.put(C.CC_ISO3, C);
+            }
         }
 
         return countryCodeMap;
@@ -352,9 +354,7 @@ public class SolrGazetteer {
         C.setLongitude(xy[1]);
 
         String fips = SolrUtil.getString(gazEntry, "FIPS_cc");
-        String iso3 = SolrUtil.getString(gazEntry, "ISO3_cc");
         C.CC_FIPS = fips;
-        C.CC_ISO3 = iso3;
 
         C.setName_type(SolrUtil.getChar(gazEntry, "name_type"));
 

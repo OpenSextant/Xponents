@@ -50,7 +50,7 @@ Xponents root folder:
 
     # Install built lib with dependencies to ./python
     pip3 install -U --target ./piplib ./python/dist/opensextant-1.3*.tar.gz 
-    pip3 install -U --target ./piplib lxml bs4 arrow requests pycountry PyGeodesy
+    pip3 install -U --target ./piplib lxml bs4 arrow requests
     
     # Note - if working with a distribution release, the built Python package is in ./python/ (not ./python/dist/)
 
