@@ -124,7 +124,7 @@ Packaging
 
 As noted on Sonarqube's page -- [install a server (from docker)](https://docs.sonarqube.org/latest/setup/install-server/) first.
 
-1. Launch Sonarqube server from the docker-compose file provide. 
+1. Launch Sonarqube server from the docker-compose file provided. 
 2. Access localhost:9000 (default Sonarqube admin page)
 3. Create a project, defining a user and a user token
 4. Establish your Global Settings (`$HOME/.m2/settings.xml`) as noted in [documentation](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/)

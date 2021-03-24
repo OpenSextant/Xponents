@@ -170,14 +170,6 @@
     <!-- ISO country code is 'cc' -->
     <field name="cc" type="string" />
     <field name="FIPS_cc" type="string" />
-    <!-- <field name="ISO3_cc" type="string" /> -->
-    <!--
-     @deprecation
-     Optimizations: each distinct country code standard is stored once.
-     cc is ISO 2-alpha;  as of OpSx v1.5 ISO_cc is no longer used.
-    <field name="ISO_cc"   type="string" />
-    <copyField source="ISO_cc" dest="cc" />
-     -->
 
     <field name="adm1" type="string" />
     <field name="adm2" type="string" />
@@ -185,8 +177,6 @@
     <!-- Name type is a flag that tells us if an entry is a code, abbrev (A), or a name (N) -->
     <field name="name_type" type="string" />
 
-    <!--  TODO: Make use of Currently unused fields, e.g., source is source of gazetteer records, e.g., NGA, user, USGS, etc.
-     -->
     <field name="source" type="string" />
 
     <!-- Script of name, CJK, ARABIC, LATIN, ARMENIAN, CYRILLIC, etc. -->
@@ -194,6 +184,7 @@
 
     <!--
 
+    Legacy Schema - Merged Gazetteer file for OpenSextant 1.5 thru Xponents 3.2.
     "Record_ID":12803368, X
     "PLACE_ID":"USGS1992110", Y
     "PLACE_NAME":"San Fernando", Y

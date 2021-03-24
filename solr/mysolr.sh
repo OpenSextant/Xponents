@@ -5,9 +5,11 @@ SOLR_HOME=./solr7
 
 PORT=$2
 case "$1" in 
+
  'start')
     $SOLR_INSTALL/bin/solr start  -p $PORT -s $SOLR_HOME  -m 3g -q
  ;;
+
  'stop')
     $SOLR_INSTALL/bin/solr stop -p $PORT
 

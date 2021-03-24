@@ -2,7 +2,7 @@
 #
 #
 VER=3.3
-BUILD_VER=3.3.5
+BUILD_VER=3.3.7
 SOLR_DIST=./solr7-dist
 
 script=`dirname $0;`
@@ -13,12 +13,20 @@ basedir=`cd -P $script/..; echo $PWD`
 
 unset PYTHONPATH
 
+# Stop default Solr before copying.
+pushd $basedir/solr
+./mysolr.sh stop 7000
+popd
+
+# Make Python library
 pushd $basedir/python
 rm -rf ./dist/*
 python3 ./setup.py sdist
 
+# Package project
 pushd $basedir/script
 
+# Pre-build the project before running this script.
 ant -f ./dist.xml package-dist
 
 REL=$basedir/dist/Xponents-$VER
@@ -35,15 +43,18 @@ mkdir -p $REL/log
 
 rm $REL/doc/*.mp4
 rm $REL/script/dist* 
-cp $basedir/Examples/Docker/* $REL/
+cp -r $basedir/dev.env $basedir/Examples/Docker/* $REL/
+
 
 # cp -r $basedir/src $basedir/pom.xml $basedir/Core $REL/
 
 cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER
 Date:      `date`
-Gazetteer: Xponents Solr 2020-Q1
-  Sources: NGA,  2020-JAN
-           USGS, 2019-NOV
+Gazetteer: Xponents Solr 2021-Q2
+  Sources: NGA,  2021-MAR
+           USGS, 2021-JAN
+           Geonames.org, 2021-MAR
+           NaturalEarth, 2021-MAR
 EOF
 

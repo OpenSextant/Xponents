@@ -1,13 +1,10 @@
 # Please copy this to "build.properties"  which will provide settings for your workspace.
 # 
 # JAR version number, include -SNAPSHOT or whatever:
-xponents.build.v=3.3.7-SNAPSHOT
+xponents.build.v=3.3.7
 # General version of SDK:
 xponents.version=3.3
 #
-# Gazetteer catalog.  Specify the path to the merged file.  
-# Merged.txt is usually the file name in OpenSextant/Gazetteer
-gazetteer.data.file=/path/to/merged.csv
 # Currently unused:
 # carrot.workspace=/path/to/carrot2/workspace
 

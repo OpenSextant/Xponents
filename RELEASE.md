@@ -23,6 +23,21 @@ Name matching depends on:
 RELEASES
 ==============
 
+# 2021
+
+**Xponents 3.3.7 Vamp**
+
+* Opensextant v1.3 python library updated and streamlined for Python3 conventions
+* Gazetteer curation refactored and added serious sources such as Geonames.org and NaturalEarth
+* Xponents Solr Gazetteer quarterly release, 2021-Q1
+
+
+**Xponents 3.3.6 Sonar**
+
+* Added Docker notes on Sonarqube scanner and fixed basic javadoc and unit test issues
+
+
+
 # 2020
 
 **Xponents 3.3.5 Clarity**

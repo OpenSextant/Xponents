@@ -21,11 +21,7 @@ Then you can begin working with the Tagger API (opensextant-xponents)
 
 4\. Build a full Gazetteer from scratch.
 
-Separately acquire the Gazetteer "Merged Gazetteer" data file:
-<!-- * Download from GitHub: https://github.com/OpenSextant/DataReleases (no longer available) OR -->
-* Build from source https://github.com/OpenSextant/Gazetteer
-
-5\. Next, follow the instructions in `./solr` to generate your copy of a working Solr index
+`./solr/README.md` captures all the mechanics of building the Gazettter from checkout.
 
 6\. Distribution and Packaging: `ant -f ./script/dist.xml dist`
 

@@ -115,6 +115,9 @@
   <target name="copy-solr7">
     <copy todir="${solr.release}/" overwrite="true">
       <fileset dir="${xponents.home}/solr">
+        <!-- temporary files or legacy items that do not need to come over -->
+        <exclude name="tmp/**" />
+        <exclude name="etc/taxcat/data/**" />
         <exclude name="solr4/**" />
         <exclude name="solr6/**" />
         <exclude name="solr7-dist/contrib/**" />
