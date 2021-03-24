@@ -155,10 +155,10 @@
     <module name="LocalVariableName">
     </module>
     <module name="MemberName">
-      <property name="severity" value="error"/>
+      <property name="severity" value="warning"/>
     </module>
     <module name="MethodName">
-      <property name="severity" value="error"/>
+      <property name="severity" value="warning"/>
     </module>
     <module name="MethodTypeParameterName">
       <property name="severity" value="error"/>

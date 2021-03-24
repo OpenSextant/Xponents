@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.3.7-SNAPSHOT</version>
+  <version>3.3.7</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -369,7 +369,7 @@
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.3.7-SNAPSHOT</version>
+      <version>3.3.7</version>
     </dependency>
   </dependencies>
   <build>
