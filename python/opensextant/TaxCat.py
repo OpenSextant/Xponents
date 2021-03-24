@@ -163,7 +163,7 @@ class TaxCatalogBuilder:
         self._record_count = 0
         self._byte_count = 0
         self._add_byte_count = 0
-        self.commit_rate = -1
+        self.commit_rate = 1000
 
         self._records = []
         self.count = 0
@@ -199,20 +199,16 @@ class TaxCatalogBuilder:
             self.server.optimize()
 
     def save(self, flush=False):
-        if self.test: return
+        if self.test:
+            return
         if not self.server:
             print("No server")
             return
-        if not flush:
-            qty = len(self._records)
-            if self.commit_rate > 0:
-                if (qty % self.commit_rate != 0) or qty < self.commit_rate:
-                    return
 
-        self.server.add(self._records)
-        self.server.commit()
-        self._records = []
-
+        if flush or (0 < self.count and self.count % self.commit_rate == 0):
+            self.server.add(self._records)
+            self.server.commit()
+            self._records.clear()
         return
 
     def add(self, catalog, taxon):
@@ -230,6 +226,7 @@ class TaxCatalogBuilder:
             rec['name_type'] = 'A'
 
         self._records.append(rec)
+        self.save()
 
     def add_wordlist(self, catalog, datafile, start_id, taxnode=None, minlen=1):
         """ Given a simple one column word list file, each row of data is added
@@ -279,5 +276,5 @@ class TaxCatalogBuilder:
                     t.is_acronym = True
 
                 self.add(catalog, t)
-
+            self.save(flush=True)
             print(f"COUNT: {self.count}")

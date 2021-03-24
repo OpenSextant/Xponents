@@ -1,5 +1,7 @@
 from opensextant.gazetteer import DB
 from arrow import now
+
+# Performance tests to compare getting places by different SQL queries.
 db = DB(dbpath="tmp/master_gazetteer_010.sqlite")
 
 plid = "N123456"

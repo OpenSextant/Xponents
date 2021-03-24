@@ -1,7 +1,6 @@
 import os
 import sqlite3
 from traceback import format_exc
-from copy import copy
 
 import arrow
 import pysolr
@@ -18,7 +17,36 @@ GAZETTEER_SOURCES = {
     "NE": "NE",  # Natural Earth.
     "GEONAMES": "OG",  # OpenSextant geonames
     "Geonames.org": "OG",  # OpenSextant geonames
-    "XPONENTS": "X"  # Xponents Adhoc
+    "XPONENTS": "X",  # Xponents Adhoc or generated
+    "XpGen": "X",
+    "XP": "X"
+}
+
+SCRIPT_CODES = {
+    None: "",
+    "LATIN": "L",
+    "HAN": "H",
+    "COMMON": "C",
+    "ARABIC": "A",
+    "ARMENIAN": "AM",
+    "BENGALI": "BN",
+    "CYRILLIC": "CY",
+    "DEVANAGARI": "DV",
+    "ETHIOPIC": "ET",
+    "GEORGIAN": "GE",
+    "GREEK": "GK",
+    "GURMUKHI": "GM",
+    "GUJARATI": "GU",
+    "HEBREW": "HE",
+    "HANGUL": "HG",
+    "HIRAGANA": "HI",
+    "KANNADA": "KN",
+    "KATAKANA": "KA",
+    "KHMER": "KM",
+    "MALAYALAM": "MY",
+    "SINHALA": "SI",
+    "TAMIL": "TA",
+    "THAI": "TH",
 }
 
 
@@ -128,7 +156,9 @@ def as_place(r):
     p.country_code = r["cc"]
     p.feature_class = r["feat_class"]
     p.feature_code = r["feat_code"]
-    p.id = r["id"]
+    if "id" in r:
+        # Required if coming or going into a database:
+        p.id = r["id"]
     p.id_bias = r["id_bias"]
     p.name_bias = r["name_bias"]
     # optional fields:
@@ -155,10 +185,11 @@ def as_place(r):
     return p
 
 
-def as_place_record(place):
+def as_place_record(place, target="index"):
     """
     Given a Place object, serialize it as a dict consistent with the Solr index schema.
     :param place:
+    :param target: index or db
     :return:
     """
     if not isinstance(place, Place):
@@ -166,18 +197,19 @@ def as_place_record(place):
     # Copy defaults offers nothing.
     # rec = copy(GAZETTEER_TEMPLATE)
     rec = {
-        "id":place.id,
-        "place_id":place.place_id,
-        "name":place.name,
-        "name_type":place.name_type,
-        "geo":place.format_coord(),
+        "id": place.id,
+        "place_id": place.place_id,
+        "name": place.name,
+        "name_type": place.name_type,
         "feat_class": place.feature_class,
-        "feat_code":place.feature_code,
+        "feat_code": place.feature_code,
         "cc": place.country_code,
         "FIPS_cc": place.country_code_fips,
         "source": place.source,
+        "script": place.name_script,
         "search_only": place.search_only
     }
+
     # ADMIN level 1/2 boundary names:
     if place.adm1 is not None:
         rec["adm1"] = place.adm1
@@ -193,11 +225,23 @@ def as_place_record(place):
         rec["name_bias"] = 0
     else:
         rec["name_bias"] = place.name_bias
-    # Name Group / Script tests:
-    if place.name_group == "ar":
-        rec["name_ar"] = place.name
-    elif place.name_group == "cjk":
-        rec["name_cjk"] = place.name
+
+    if target == "index":
+        # Preserve innate precision on Lat/Lon: e.g., "4.5,-118.4" is result if only that amount of precision is present
+        rec["geo"] = ",".join([str(place.lat), str(place.lon)]),
+        # Name Group / Script tests:
+        if place.name_group == "ar":
+            rec["name_ar"] = place.name
+        elif place.name_group == "cjk":
+            rec["name_cjk"] = place.name
+    elif target == "db":
+        # Required fields:
+        rec["name_group"] = place.name_group
+        rec["lat"] = place.lat
+        rec["lon"] = place.lon
+        rec["adm1"] = place.adm1
+        rec["adm2"] = place.adm2
+
     return rec
 
 
@@ -283,11 +327,11 @@ class DB:
         self.reopen()
         self.conn.execute("VACUUM")
         indices = """
-            create INDEX n_idx on placenames ("name");
-            create INDEX s_idx on placenames ("source");
-            create INDEX c_idx on placenames ("cc");
-            create INDEX fc_idx on placenames ("feat_class");
-            create INDEX dup_idx on placenames ("duplicate");
+            create INDEX IF NOT EXISTS n_idx on placenames ("name");
+            create INDEX IF NOT EXISTS s_idx on placenames ("source");
+            create INDEX IF NOT EXISTS c_idx on placenames ("cc");
+            create INDEX IF NOT EXISTS fc_idx on placenames ("feat_class");
+            create INDEX IF NOT EXISTS dup_idx on placenames ("duplicate");
         """
         self.conn.executescript(indices)
         self.conn.commit()
@@ -333,9 +377,15 @@ class DB:
         if v:
             dct["search_only"] = 1
 
-    def add_place(self, dct):
+    def add_place(self, obj):
         """ Add one place
+        :param obj: a place dictionary.  If arg is a Place object it is converted to dictionary first.
         """
+        dct = None
+        if isinstance(obj, Place):
+            dct = as_place_record(obj, target="db")
+        else:
+            dct = obj
         self._prep_place(dct)
         self.queue.append(dct)
         self.queue_count += 1
@@ -382,7 +432,8 @@ class DB:
                 place = pl
             name_bias[pl.name.lower()] = pl.name_bias
         if place:
-            # "official place" is just first place encountered. This is not idempotent unless SQL query is more expclicit
+            # This is first place encountered.
+            # This is not idempotent unless SQL query is more explicit
             return place, name_bias
 
         return None, None
@@ -431,7 +482,7 @@ class DB:
             return False
         step = 1000
         for x1 in _array_blocks(dups, step=step):
-            x2 = x1+step
+            x2 = x1 + step
             arg = ",".join([str(dup) for dup in dups[x1:x2]])
             sql = f"update placenames set duplicate=1 where id in ({arg})"
             self.conn.execute(sql)
@@ -463,6 +514,7 @@ class DataSource:
     def __init__(self, dbf, debug=False):
         self.db = DB(dbf, commit_rate=10)
         self.rate = 1000000
+        self.rowcount = 0
         self.source_keys = []
         self.excluded_terms = set([])
         self.quiet = False
@@ -470,16 +522,18 @@ class DataSource:
         self.debug = debug
 
     def purge(self):
+        print(f"Purging entries for {self.source_name}")
         for k in self.source_keys:
+            print(f"\tsource ID = {k}")
             self.db.purge({"source": k})
 
     def process_source(self, sourcefile):
         """
         generator yielding DB geo dictionary to be stored.
-        :param sourcefile:
-        :return:
+        :param sourcefile: Raw data file
+        :return: generator of Place object or dict of Place schema
         """
-        pass
+        yield None
 
     def normalize(self, sourcefile, limit=-1, optimize=False):
         """
@@ -487,7 +541,8 @@ class DataSource:
         :param sourcefile: input file
         :return:
         """
-        self.rowcount = 0
+
+        print("\n============================")
         print(f"Start {self.source_name}. {arrow.now()}")
         for geo in self.process_source(sourcefile):
             if self.rowcount % self.rate == 0 and not self.quiet:
@@ -509,8 +564,10 @@ class DataSource:
         if optimize:
             self.db.optimize()
 
+        print("ROWS: ", self.rowcount)
         print("EXCLUSIONS: ", len(self.excluded_terms))
-        if self.debug: print("EXCLUSIONS:", self.excluded_terms)
+        if self.debug:
+            print("EXCLUSIONS:", self.excluded_terms)
         print(f"End {self.source_name}. {arrow.now()}")
 
 
@@ -522,6 +579,7 @@ class GazetteerIndex:
 
     This may provide gazetteer specific functions, but as of v1.3 this is a generic Solr wrapper.
     """
+
     def __init__(self, server_url, debug=False):
 
         from pysolr import Solr

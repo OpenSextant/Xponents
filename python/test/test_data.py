@@ -19,15 +19,15 @@ print(str(pl))
 print("Text manipulation and testing"
       "=====================================")
 
-from opensextant import PY3
+#from opensextant import PY3
 from opensextant.utility import is_ascii, is_text, bytes2unicode
 
-assert not is_ascii(('ée'))
-assert not is_ascii((u'ée'))
-if not PY3:
-    assert not is_ascii(unicode(u'ée'))
+assert not is_ascii('ée')
+assert not is_ascii(u'ée')
+# if not PY3:
+#    assert not is_ascii(unicode(u'ée'))
 
-assert is_ascii(('EE'))
+assert is_ascii('EE')
 
 assert not is_text(0)
 assert is_text("abc")

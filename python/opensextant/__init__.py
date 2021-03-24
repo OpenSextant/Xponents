@@ -53,7 +53,7 @@ def format_coord(lat, lon):
     :param lon: longitude
     :return: string
     """
-    return '{:2.6f},{:3.6f}'.format(float(lat), float(lon))
+    return '{:2.5f},{:3.5f}'.format(float(lat), float(lon))
 
 
 def validate_lat(f):
@@ -133,6 +133,9 @@ class Coordinate:
     def format_coord(self):
         return format_coord(self.Y, self.X)
 
+    def string_coord(self):
+        return ",".join((str(self.lat), str(self.lon)))
+
     def __str__(self):
         if self.Y:
             return format_coord(self.Y, self.X)
@@ -170,6 +173,7 @@ class Place(Coordinate):
         self.adm1_postalcode = None  # Province Postal CODE?
         self.place_postalcode = None  # ZIP CODE?
         self.name_type = None
+        self.name_script = None  # Code or label, e.g. L or LATIN
         self.country = None
         self.country_code = None
         self.country_code_fips = None
@@ -204,7 +208,7 @@ class Place(Coordinate):
         self.set(lat, lon)
 
     def __str__(self):
-        return '{}, {} @({})'.format(self.name, self.country_code, self.format_coord())
+        return '{}, {} @({})'.format(self.name, self.country_code, self.string_coord())
 
 
 def load_countries(csvpath=None):
