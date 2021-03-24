@@ -1,5 +1,6 @@
 name	:	Xponents Solr Index
-version	:	3.0
-date	:	20180704
-date-str:	Tue Jul  4 19:19:18 EDT 2018
-release-tag:	2018Q3
+version	:	3.3
+date	:	20200324
+date-str:	Tue Mar 23 21:18:14 EDT 2021
+release-tag:	2021Q1
+method: SQLite Master

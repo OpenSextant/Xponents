@@ -2,9 +2,8 @@ import re
 from copy import copy
 
 from opensextant import is_administrative, is_populated
-from opensextant.gazetteer import DataSource, load_stopterms, GAZETTEER_TEMPLATE
+from opensextant.gazetteer import DataSource, load_stopterms, GAZETTEER_TEMPLATE, SCRIPT_CODES
 from opensextant.utility import get_csv_reader, get_list, is_ascii, squeeze_whitespace, parse_float
-
 
 short_alphanum = re.compile(r"\w+.+\d+")
 punct = re.compile("[-`'\"‘’]")
@@ -52,7 +51,6 @@ header_names = ['Record_ID', 'PLACE_ID', 'PLACE_NAME', 'PLACE_NAME_EXPANDED', 'L
                 'SOURCE_NAME_ID', 'SCRIPT', 'PLACE_NAME_BIAS', 'PLACE_ID_BIAS', 'NAME_TYPE', 'NAME_TYPE_SYSTEM',
                 'SplitCategory', 'SEARCH_ONLY']
 
-
 GAZ_MAPPING = {
     'Record_ID': 'id',
     'PLACE_ID': 'place_id',
@@ -79,33 +77,6 @@ NAME_TYPE = {
     "name": "N",
     "abbrev": "A",
     "code": "A"
-}
-
-SCRIPTS_CODE = {
-    None: "",
-    "LATIN": "L",
-    "HAN": "H",
-    "COMMON": "C",
-    "ARABIC": "A",
-    "ARMENIAN": "AM",
-    "BENGALI": "BN",
-    "CYRILLIC": "CY",
-    "DEVANAGARI": "DV",
-    "ETHIOPIC": "ET",
-    "GEORGIAN": "GE",
-    "GREEK": "GK",
-    "GURMUKHI": "GM",
-    "GUJARATI": "GU",
-    "HEBREW": "HE",
-    "HANGUL": "HG",
-    "HIRAGANA": "HI",
-    "KANNADA": "KN",
-    "KATAKANA": "KA",
-    "KHMER": "KM",
-"MALAYALAM": "MY",
-"SINHALA": "SI",
-     "TAMIL": "TA",
-"THAI": "TH",
 }
 
 
@@ -157,7 +128,7 @@ class OpenSextantGazetteer(DataSource):
                     scripts = get_list(script.strip("[").strip("]"), delim=",")
                     scripts_code = set([])
                     for scr in scripts:
-                        scripts_code.add(SCRIPTS_CODE.get(scr, scr))
+                        scripts_code.add(SCRIPT_CODES.get(scr, scr))
                         if scr == "ARABIC":
                             geo["name_ar"] = nm
                             name_grp = "ar"
@@ -226,5 +197,5 @@ if __name__ == "__main__":
 
     args = ap.parse_args()
 
-    source = OpenSextantGazetteer(args.db,     debug = args.debug)
+    source = OpenSextantGazetteer(args.db, debug=args.debug)
     source.normalize(args.mergedfile, limit=int(args.max), optimize=args.optimize)

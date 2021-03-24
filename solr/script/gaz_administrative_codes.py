@@ -384,10 +384,9 @@ if __name__ == "__main__":
     ap.add_argument("shapefile")
     ap.add_argument("--db", default="./tmp/master_gazetteer.sqlite")
     ap.add_argument("--debug", action="store_true", default=False)
-    ap.add_argument("--optimize", action="store_true", default=False)
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
 
     args = ap.parse_args()
 
     source = NatEarthAdminGazetteer(args.db, debug=args.debug)
-    source.normalize(args.shapefile, limit=int(args.max), optimize=args.optimize)
+    source.normalize(args.shapefile, limit=int(args.max))

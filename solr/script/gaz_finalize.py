@@ -6,10 +6,11 @@ class Finalizer:
         self.db = DB(dbf)
         self.debug = debug
 
-    def finalize(self, limit=-1):
+    def finalize(self, limit=-1, optimize=False):
         """
         Finalize the gazetteer database to include an cleanup, deduplication, etc.
         :param limit: per-country limit used for testing.
+        :param optimize: to force a SQLite optimize or not.
         :return:
         """
         #
@@ -46,6 +47,10 @@ class Finalizer:
             self.db.mark_duplicates(duplicates)
         print("Complete De-duplicating")
 
+        if optimize:
+            print("Optimizing SQLite DB")
+            self.db.optimize()
+
     def _collect_duplicates(self, sql, keys, dups, label="NA"):
         for row in self.db.conn.execute(sql):
             fc = row["feat_class"]
@@ -59,7 +64,7 @@ class Finalizer:
                 # Unique entry
                 keys.add(k)
 
-    def index(self, url, ignore_features=None, limit=-1):
+    def index(self, url, ignore_features=None, ignore_digits=True, limit=-1):
         import re
         from opensextant.gazetteer import GazetteerIndex
         indexer = GazetteerIndex(url)
@@ -73,6 +78,8 @@ class Finalizer:
             print(f"Country '{cc}'")
             for pl in self.db.list_places(cc=cc, criteria=" and duplicate=0", limit=limit):
                 if filter_out_feature(pl, filters):
+                    continue
+                if ignore_digits and pl.name.isdigit():
                     continue
                 indexer.add(pl)
         print(f"Indexed {indexer.count}")
@@ -104,11 +111,18 @@ if __name__ == "__main__":
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--solr", help="Solr URL")
+    ap.add_argument("--optimize", action="store_true", default=False)
+    ap.add_argument("--dedup", action="store_true", default=False)
 
     args = ap.parse_args()
 
     gaz = Finalizer(args.db, debug=args.debug)
     if args.solr:
-        gaz.index(args.solr, ignore_features={"H/WLL.*", "H/STM.*"}, limit=int(args.max))
-    else:
-        gaz.finalize(limit=int(args.max))
+        #  Features not as present in general data include: WELLS, STREAMS, SPRINGS, HILLS.
+        #
+        gaz.index(args.solr,
+                  ignore_features={"H/WLL.*", "H/STM.*", "H/SPNG.*", "T/HLL.*"},
+                  ignore_digits=True,
+                  limit=int(args.max))
+    elif args.dedup:
+        gaz.finalize(limit=int(args.max), optimize=args.optimize)

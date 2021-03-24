@@ -28,41 +28,84 @@ You have a few options:
 * **Option 2.** Checkout Xponents and Gazetteer projects and build from latest source and data.
    * You want the full experience, all the pain of building from source.
 
-For options 2 and 3 above, you'll follow the remainder of these instructions to build Xponents SDK 
+For options 2 you'll follow the remainder of these instructions to build Xponents SDK 
 with Solr indices populated.  Either way, where Python is referred in any instructions we are referring 
-to Python 3.6+ only.  `python` and `pip` may be further qualified as `python3` and `pip3` in many scripts.
+to Python 3.8+ only.  `python` and `pip` may be further qualified as `python3` and `pip3` in many scripts.  
+In either case, review the Build Setup notes here and follow them best as you can.
+
+
+**Build Setup - Python, Java, etc**
+
+Managing public domain data sets pulled down, scraped, harvested, etc. involves additional Python libraries
+that are not required by normal use of the `opensextant` package.  Add this Pip-installable items now from the 
+Xponents root folder:
+
+```shell script
+
+    cd Xponents
+
+    pushd ./python
+    python3 ./setup.py sdist
+    popd
+
+    # Install built lib with dependencies to ./python
+    pip3 install -U --target ./piplib ./python/dist/opensextant-1.3*.tar.gz 
+    pip3 install -U --target ./piplib lxml bs4 arrow requests pycountry PyGeodesy
+    
+    # Note - if working with a distribution release, the built Python package is in ./python/ (not ./python/dist/)
+
+    * IMPORTANT *
+    export PYTHONPATH=$PWD/piplib
+    
+    # Or chose any other means you want to set your effective Python environment.
+```
+
 
 
 Option 2.  Build Gazetteer From Scatch
 ---------------------------------------------
 
+Here is an overview of this data curation process:
+
+- OpenSextant Gazetteer merged data is a base layer for all geographic names ~ countries, cities, continents and other features. 
+ The main sources are US NGA and USGS to cover world wide geography
+- Secondary sources (Geonames.org, Natural Earth, Adhoc entries, Generated name variants)  are assembled from these Xponents scripts
+- With all data collected, each data set is loaded into SQLite with specific source identifiers
+- With the master SQLite gazetteer complete entries can be de-duplicated, marked and optimized
+- Finally, the master gazetter entries (non-duplicates) are funneled to the default Xponents Solr instance 
+
+The steps here represent the journey of how to produce this behemoth -- a process we are constantly trying to streamline 
+and automate.
+
 A quick overview: Generate the raw gazetteer flat file `MergedGazetteer`, then load that 
 into the Solr server along with other reference data.
 
-1. Checkout Gazetteer ETL project
-   * http://opensextant.github.io/Gazetteer/ 
-   * Follow instructions to install Pentaho Kettle 6+ and Ant
+1. Checkout Gazetteer ETL project,  http://opensextant.github.io/Gazetteer/
+   
+   * Follow instructions to install Pentaho Kettle 6+, Java 8 and Ant
    * Tune the build.properties there. Specifically set the dates of downloadable NGA GNS and USGS data sets.  The date
-     in build.properties is `YYYYMMDD`:
+     in build.properties is formatted as `YYYYMMDD` and is a different release date for each source:
        - USGS: https://www.usgs.gov/core-science-systems/ngp/board-on-geographic-names/download-gnis-data
        - NGA: http://geonames.nga.mil/gns/html/
+    * **TIME**: Expect the above process to take 30-60 minutes once all software is installed and working.
+    * **OUTPUT**: `MergedGazetteer.txt`  (`Gazetteer/GazetteerETL/GeoData/Merged/MergedGazetteer.txt`)
 
-Desired layout:
+Required layout of projects:
 
 ```
   ./Xponents/     (git project)
   ./Xponents/solr (this folder)
-  ./Gazetteer/    (git project)
+  ./Gazetteer/    (git project)  -- build-gazetteer.sh script refers to this relative folder
 ```
 
 Now run these steps to acquire gazetteer data from USGS and NGA:
 
 ```shell script
   cd Gazetter
-  ant setProxy nga.data
-  ant setProxy usgs.data
+  ant nga.data
+  ant usgs.data
 
-  # Remove setProxy if you have no http_proxy to worry about.
+  # Add setProxy if you have an http_proxy setting.
 ```
 
 Separately run the ETL in the Gazetter project.
@@ -74,25 +117,23 @@ for some tuning of JVM and other parameters, such as logging, etc.
   ./build-gazetteer.sh 
 ```
 
-**TIME:** Expect the above process to take 30-60 minutes once all software is installed and working.
+2. Collect and Ingest Secondary Sources
 
-**OUTPUT**: Now find the absolute path to the output `MergedGazetteer.txt`  (`Gazetteer/GazetteerETL/GeoData/Merged/MergedGazetteer.txt`)
+This SQLite master curation process is central to the Xponents gazetteer/geotagger.  
+All of the metadata and source data is channeled through this and optimized. 
+The raw SQLite master is approaching 7.5 GB or more containing about 45 million place names.
+By contrast the resulting Solr index is about 3.0 GB with 23 million placenames. The optimization steps are essential
+to managing size and comprehensive coverage.
 
+```shell script
 
-Next, load this flat file into the Solr server. 
-First, copy `build.template` as `build.properties`
+  cd Xponents/solr
+  ./build-sqlite-master.sh data 
+  
+  # A simple test attempts to pull in only 300,000 rows of data to see how things work.
+  # ./build-sqlite-master.sh test   
 
 ```
-  gazetteer.data.file   -- set the absolute path to the MergedGazetteer.txt 
-
-  solr.home             -- set the location of your solr home; the "gazetteer" Solr core is the output
-                           Default: ./solr7  (as this is relative to the Xponents/solr/ dir)
-
-  proxy                 -- set your HTTP proxy host, or leave blank if none. 
-```
-
-Finally, walk through the following section on "Building and Running Xponents Solr", which provides
-this last bit of configuration in 4 steps.
 
 
 Building and Running Xponents Solr
@@ -132,39 +173,6 @@ reviewing Solr index configurations.
 ```
 
 
-**Step 2. Build Prerequisite Libraries**
-
-The gazetteer build scripts use some Ant, but mainly Python.
-You'll see the Ant script just automates invocation of scripted steps.
-The Python libraries provide a platform to help us add any type of
-lexicon data to the Solr indexes for tagging.  These Python libs 
-are used in `./build.sh` and in any other scripts such as `./script/taxcat_jrcnames.py`
-
-And as far as Xponents Java, just build the full project, `cd ../; mvn install`
-
-From Source:
-
-```shell script
-    pushd ../python
-    python ./setup.py sdist
-    popd
-    pushd ../
-    # Install built lib with dependencies to ./python
-    pip3 install -U --target ./piplib ./python/dist/opensextant-1.2*.tar.gz 
-    popd
-```
-
-From Distribution:
-
-```
-    pip install -U --target ./piplib python/opensextant-1.2*.tar.gz
-```
-
-NOTE: In Python Development mode where the opensextant libs are in development:
-
-```shell script
-    export PYTHONPATH=/path/to/Xponents/piplib
-```
   
 **Step 3. Configure and Deployment Paths**
 
@@ -193,16 +201,6 @@ The `build.sh` script is the central brain behind the data assembly.  Use that s
 alone to build and manage indices, however if there are problems see the individual steps below
 to intervene and redo any steps. 
 
-**Build Setup**
-Managing public domain data sets pulled down, scraped, harvested, etc. involves additional Python libraries
-that are not required by normal use of the `opensextant` package.  Add this Pip-installable items now from the 
-Xponents root folder:
-
-```shell script
-
-  pip3 install -U --target ./piplib lxml bs4 arrow requests pycountry PyGeodesy
-
-```
 
 **MAINTENANCE USE:**
 
@@ -366,6 +364,21 @@ a reasonable feature model.
 
 References:
 * Acheson, De Sabbata, Purvesa   "A quantitative analysis of global gazetteers: Patterns of coverage for common feature types". 2017.  https://www.sciencedirect.com/science/article/pii/S0198971516302496 
+
+Deprecated Notes
+-----------------------------
+The build properties is no longer required. It has been obsoleted by the SQLite master.
+
+First, copy `build.template` as `build.properties`
+
+```
+  gazetteer.data.file   -- set the absolute path to the MergedGazetteer.txt 
+
+  solr.home             -- set the location of your solr home; the "gazetteer" Solr core is the output
+                           Default: ./solr7  (as this is relative to the Xponents/solr/ dir)
+
+  proxy                 -- set your HTTP proxy host, or leave blank if none. 
+```
 
 
 

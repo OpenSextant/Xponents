@@ -170,7 +170,7 @@
     <!-- ISO country code is 'cc' -->
     <field name="cc" type="string" />
     <field name="FIPS_cc" type="string" />
-    <field name="ISO3_cc" type="string" />
+    <!-- <field name="ISO3_cc" type="string" /> -->
     <!--
      @deprecation
      Optimizations: each distinct country code standard is stored once.
@@ -181,8 +181,7 @@
 
     <field name="adm1" type="string" />
     <field name="adm2" type="string" />
-    <field name="adm3" type="string" />
-
+    
     <!-- Name type is a flag that tells us if an entry is a code, abbrev (A), or a name (N) -->
     <field name="name_type" type="string" />
 

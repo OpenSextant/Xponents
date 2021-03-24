@@ -103,8 +103,6 @@ def create_entities(line):
 
 
 if __name__ == '__main__':
-    """
-    """
     start_id = 0
     catalog_id = 'nationality'
 
@@ -132,31 +130,27 @@ if __name__ == '__main__':
     builder.commit_rate = 100
 
     row_id = 0
-    fh = open(args.taxonomy, 'r', encoding="UTF-8")
-    for row in fh:
-        if row.startswith("#"): continue
+    with open(args.taxonomy, 'r', encoding="UTF-8") as fh:
+        for row in fh:
+            if row.startswith("#"):
+                continue
 
-        for taxon in create_entities(row):
-            # increment
-            row_id = row_id + 1
-            # ".id" must be an Integer for text tagger
-            taxon.id = start_id + row_id
+            for taxon in create_entities(row):
+                # increment
+                row_id = row_id + 1
+                # ".id" must be an Integer for text tagger
+                taxon.id = start_id + row_id
 
-            builder.add(catalog_id, taxon)
+                builder.add(catalog_id, taxon)
 
-            if row_id % 100 == 0:
-                print("Row # ", row_id)
-            if test:
-                print(str(taxon))
+                if row_id % 100 == 0:
+                    print("Row # ", row_id)
+                if test:
+                    print(str(taxon))
 
-        if 0 < row_max < row_id:
-            break
+                if 0 < row_max < row_id:
+                    break
 
-    print(f"Created total of {row_id} nationality tags")
-    try:
+        print(f"Created total of {row_id} nationality tags")
         builder.save(flush=True)
         builder.optimize()
-    except Exception as err:
-        print(str(err))
-
-    fh.close()

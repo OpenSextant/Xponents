@@ -14,7 +14,7 @@ export NO_PROXY=$noproxy
 cur=`dirname $0 `
 XPONENTS=`cd -P $cur/..; echo $PWD`
 
-export PYTHONPATH=$XPONENTS/piplib
+export PYTHONPATH=$XPONENTS/python:$XPONENTS/piplib
 GAZ_CONF=etc/gazetteer
 SOLR_CORE_VER=solr7
 
@@ -26,19 +26,19 @@ fi
 
 index_taxcat () {
   SOLR_URL=$1
+  TAXCAT=./etc/taxcat
   echo "Populate nationalities taxonomy in XTax"
   # you must set your PYTHONPATH to include required libraries built from ../python
-  python3  ./script/gaz_nationalities.py  --taxonomy $GAZ_CONF/filters/nationalities.csv --solr $SOLR_URL --starting-id 0
+  python3  ./script/gaz_nationalities.py  --taxonomy $TAXCAT/nationalities.csv --solr $SOLR_URL --starting-id 0
   sleep 1 
 
   echo "Populate core JRC Names 'entities' data file, c.2014"
-  JRC_DATA=./etc/taxcat/data
   JRC_SCRIPT=./script/taxcat_jrcnames.py
-  python3 $JRC_SCRIPT --taxonomy $JRC_DATA/entities.txt  --solr $SOLR_URL
+  python3 $JRC_SCRIPT --taxonomy $TAXCAT/data/entities.txt  --solr $SOLR_URL
   sleep 1
 
   # This file is manually curated, not sourced from JRC (EU). But the format is the same.
-  JRC_ADHOC=./etc/taxcat/entities-adhoc.txt
+  JRC_ADHOC=$TAXCAT/entities-adhoc.txt
   python3 $JRC_SCRIPT --taxonomy $JRC_ADHOC  --solr $SOLR_URL --no-fixes
   sleep 1
 
@@ -56,19 +56,15 @@ index_taxcat () {
 
 index_gazetteer () {
   SOLR_URL=$1
-  echo "Ingest OpenSextant Gazetteer... could take 1 hr" 
-  ant $proxy index-gazetteer-solrj
 
-  python3 ./script/gaz_administrative_codes.py ./etc/gazetteer/additions/generated_admin_names_postal.ndjson $SOLR_URL --load
+  if [ ! -f "./tmp/master_gazetteer.sqlite" ]; then
+    echo "Missing Master Gazetter SQLite file"
+    exit 1
+  fi
 
-  sleep 2 
-  echo "Generate Name Variants"
-  python3 ./script/gaz_generate_variants.py  --solr $SOLR_URL --output $GAZ_CONF/additions/generated-variants.json
+  # From SQLite master, Index
+  python3 ./script/gaz_finalize.py --solr $SOLR_URL
 
-  # Finally add adhoc entries from JSON formatted files.
-  #
-  # Yes, this depends on curl. Could re-implement as Ant call.
-  # This could be: http://ant-contrib.sourceforge.net/tasks/tasks/post_task.html
   #
   echo "Alter some entries"
   # custom fixes: 'Calif.' abbreviation is not coded properly.
@@ -76,20 +72,6 @@ index_gazetteer () {
   # ADHOC gazetter offers "washington dc" which confuses things.
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<delete><query>name:%22washington+dc%22+AND+place_id:(USGS531871+USGS1702382)</query></delete>"
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit/>"
-  echo "Add some others"
-  curl --noproxy localhost  "$SOLR_URL/update?commit=true" \
-   -H Content-type:application/json --data-binary @$GAZ_CONF/additions/adhoc-US-city-nicknames.json
-  curl --noproxy localhost  "$SOLR_URL/update?commit=true" \
-   -H Content-type:application/json --data-binary @$GAZ_CONF/additions/adhoc-world-city-nicknames.json
-  curl --noproxy localhost  "$SOLR_URL/update?commit=true" \
-   -H Content-type:application/json --data-binary @$GAZ_CONF/additions/adhoc-country-names.json
-
-  for f in $GAZ_CONF/additions/generated-*.json ; do
-    curl --noproxy localhost  "$SOLR_URL/update?commit=true" \
-       -H Content-type:application/json --data-binary @$f
-  done
-
-
 
   # When done for the day,  optimize
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
@@ -132,9 +114,10 @@ while [ "$1" != "" ]; do
   esac
 done
 
-pushd ../
-mvn dependency:copy-dependencies
-popd
+# No longer required:
+#pushd ../
+#mvn dependency:copy-dependencies
+#popd
 
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
