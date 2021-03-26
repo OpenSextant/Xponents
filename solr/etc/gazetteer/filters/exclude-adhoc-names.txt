@@ -76,6 +76,49 @@ dicks
 manny
 pepe
 paco
+alberts
+alfred
+ariel
+barclay
+bouchard
+bremer
+caesar
+casey
+collins
+david
+dooley
+dow
+eggers
+faulk
+feng
+forman
+george
+giuliani
+griffiths
+halsey
+hamid
+harper
+harris
+hussein
+hyatt
+ibrahim
+iverson
+kagan
+kahn
+kaine
+keegan
+lynch
+manning
+merrill
+murry
+o'connor
+o'neal
+rockefeller
+rooney
+tracy
+uday
+wadsworth
+walther
 # Various Spanish last names
 reyes
 hernandez
@@ -136,3 +179,15 @@ samael
 samiel
 viktoria
 wilhelm
+# Generics
+baron
+diplomat
+diplomats
+felon
+firefighters
+neighbors
+neighbour
+sheik
+the president
+the vice president
+veteran

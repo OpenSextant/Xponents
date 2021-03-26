@@ -1,2282 +1,3088 @@
 exclusion,category
-baz,abbrev
-doc,abbrev
-meta,abbrev
-ed,abbrev
+# Not Mobile:, but mobil
 #id,abbrev
-ibid,abbrev
-imo,abbrev
+acme,abbrev
+adv,abbrev
+alt,abbrev
 asap,abbrev
-cid,abbrev
-coll,abbrev
-natl,abbrev
-tid,abbrev
-toc,abbrev
-tos,abbrev
-max,abbrev
-proj,abbrev
-pharma,abbrev
-rel,abbrev
-eval,abbrev
-lib,abbrev
+astro,abbrev
+aux,abbrev
+baz,abbrev
 bio,abbrev
-eta,abbrev
-st,abbrev
-po,abbrev
-ci,abbrev
-tel,abbrev
-lat,abbrev
-lon,abbrev
-res,abbrev
-robo,abbrev
-sub,abbrev
-topo,abbrev
-fig,abbrev
-ref,abbrev
-bros,abbrev
-conop,abbrev
-temp,abbrev
-eng,abbrev
-fam,abbrev
-lil,abbrev
-sim,abbrev
-demi,abbrev
 biz,abbrev
 bro,abbrev
-mag,abbrev
-siz,abbrev
-tix,abbrev
-expo,abbrev
-recap,abbrev
-tot,abbrev
-mod,abbrev
-pros,abbrev
-tum,abbrev
-glo,abbrev
-acme,abbrev
-sys,abbrev
-xin,abbrev
-sic,abbrev
-ortho,abbrev
-rec,abbrev
-alt,abbrev
-astro,abbrev
+bros,abbrev
 chem,abbrev
+ci,abbrev
+cid,abbrev
+coll,abbrev
+conop,abbrev
+demi,abbrev
+doc,abbrev
+ed,abbrev
+eng,abbrev
+eta,abbrev
+etc,abbrev
+eval,abbrev
+expo,abbrev
+fam,abbrev
+fig,abbrev
+glo,abbrev
+ibid,abbrev
+imo,abbrev
+lat,abbrev
+lib,abbrev
+lil,abbrev
+lon,abbrev
+mag,abbrev
+max,abbrev
 mbit,abbrev
-cont,contraction
-ive,contraction
-dont,contraction
-isnt,contraction
-slick,adjective
-supreme,adjective
-imperial,adjective
-keen,adjective
-graphic,adjective
-excelsior,adjective
-alpine,adjective
-harder,adjective
-urban,adjective
+meta,abbrev
+mili,abbrev
+mod,abbrev
+natl,abbrev
+ortho,abbrev
+para,abbrev
+pharma,abbrev
+pjs,abbrev
+po,abbrev
+proj,abbrev
+pros,abbrev
+rec,abbrev
+recap,abbrev
+ref,abbrev
+rel,abbrev
+res,abbrev
+robo,abbrev
+sic,abbrev
+sim,abbrev
+siz,abbrev
+st,abbrev
+sub,abbrev
+svcs,abbrev
+sys,abbrev
+tel,abbrev
+temp,abbrev
+tid,abbrev
+tix,abbrev
+toc,abbrev
+topo,abbrev
+tos,abbrev
+tot,abbrev
+trix,abbrev
+tum,abbrev
+univ,abbrev
+utc,abbrev
+xin,abbrev
+# mobile,adjective
+absolute,adjective
+academic,adjective
+actual,adjective
+aerial,adjective
 allied,adjective
-inter,adjective
-comercial,adjective
-commercial,adjective
-noname,adjective
-collegiate,adjective
-mini,adjective
-covert,adjective
-quick,adjective
-rapid,adjective
-early,adjective
-hasty,adjective
-vintage,adjective
-experimental,adjective
-trojan,adjective
-indo,adjective
-jew,adjective
-jewish,adjective
-latino,adjective
+alone,adjective
+alpine,adjective
 amish,adjective
+anal,adjective
+angered,adjective
+anglo,adjective
+annual,adjective
+astray,adjective
+auto,adjective
+avian,adjective
+axial,adjective
+bad,adjective
 baltic,adjective
-oceanic,adjective
-pan american,adjective
-panamerican,adjective
-pan-american,adjective
-trans,adjective
-civil,adjective
-marine,adjective
-state-run,adjective
+bare,adjective
+beautiful,adjective
+best,adjective
+big,adjective
+bigger,adjective
 bland,adjective
 blank,adjective
-electric,adjective
-hydro,adjective
-homo,adjective
-daily,adjective
-annual,adjective
-united,adjective
-royal,adjective
-main,adjective
-vice,adjective
-industrial,adjective
-free,adjective
-libre,adjective
-fine,adjective
-fair,adjective
-good,adjective
-bad,adjective
-dear,adjective
-gross,adjective
-joint,adjective
-young,adjective
-strong,adjective
-grand,adjective
-little,adjective
-higher,adjective
-prime,adjective
-premier,adjective
-best,adjective
-large,adjective
-tall,adjective
-wild,adjective
-provincial,adjective
-medical,adjective
-congressional,adjective
-english,adjective
-french,adjective
-malay,adjective
-anglo,adjective
-sino,adjective
-serial,adjective
-freed,adjective
-mega,adjective
-minor,adjective
-loving,adjective
-glad,adjective
-smart,adjective
-strange,adjective
-sweet,adjective
-happy,adjective
-neo,adjective
-naval,adjective
-maritime,adjective
-regional,adjective
-mono,adjective
-solar,adjective
-shorter,adjective
-lucky,adjective
-papal,adjective
-oral,adjective
-olympic,adjective
-confederate,adjective
-cirrus,adjective
-done,adjective
-auto,adjective
-corporal,adjective
-liberal,adjective
-# Not Mobile:, but mobil
-# mobile,adjective
-mobil,adjective
-micro,adjective
-prospective,adjective
-municipal,adjective
-lone,adjective
-consolidated,adjective
-penal,adjective
-consular,adjective
-tri,adjective
-wooden,adjective
-lunar,adjective
-small,adjective
-swift,adjective
-virgin,adjective
-martial,adjective
-poly,adjective
-anal,adjective
-slim,adjective
-fancy,adjective
-titanic,adjective
-divine,adjective
-lenten,adjective
-meek,adjective
-fried,adjective
-chic,adjective
-red hot,adjective
-petite,adjective
-hippy,adjective
-faux,adjective
-corny,adjective
-crisp,adjective
-californian,adjective
-cornish,adjective
+bold,adjective
+bony,adjective
+bovine,adjective
+brief,adjective
+brilliant,adjective
+broke,adjective
+broken,adjective
 buff,adjective
+burnt,adjective
+busy,adjective
+californian,adjective
+cheap,adjective
+chic,adjective
+cirrus,adjective
+civil,adjective
+collegiate,adjective
+comercial,adjective
+commercial,adjective
+common,adjective
+concise,adjective
+confederate,adjective
+congressional,adjective
+consolidated,adjective
+consular,adjective
+cool,adjective
+cornish,adjective
+corny,adjective
+corporal,adjective
+covert,adjective
+cozy,adjective
+crisp,adjective
+cultural,adjective
+daily,adjective
+dandy,adjective
+dark,adjective
+dear,adjective
+deep,adjective
+dismal,adjective
+divine,adjective
+done,adjective
+driven,adjective
+dry,adjective
+dual,adjective
+due,adjective
+early,adjective
+easy,adjective
+electric,adjective
+elementary,adjective
+english,adjective
+ever,adjective
+every,adjective
+everyday,adjective
+excelsior,adjective
+experimental,adjective
+extreme,adjective
+fair,adjective
+fake,adjective
+fancy,adjective
+far,adjective
+faux,adjective
+fine,adjective
+first world,adjective
+fiscal,adjective
+foremost,adjective
+free,adjective
+freed,adjective
+french,adjective
+fried,adjective
+fuming,adjective
+given,adjective
+glad,adjective
+gone,adjective
+good,adjective
+grand,adjective
+graphic,adjective
+grim,adjective
+gross,adjective
+handy,adjective
+happy,adjective
+hard,adjective
+harder,adjective
+hardy,adjective
+hasty,adjective
+high,adjective
+high level,adjective
+higher,adjective
+hippy,adjective
+honest,adjective
+hungry,adjective
+hydro,adjective
+imperial,adjective
+indo,adjective
+industrial,adjective
+innate,adjective
+inner,adjective
+inter,adjective
+international,adjective
+jew,adjective
+jewish,adjective
+joint,adjective
+just,adjective
+keen,adjective
+kind,adjective
+laden,adjective
+large,adjective
+last,adjective
+late,adjective
+latino,adjective
+latter,adjective
+legal,adjective
+lenten,adjective
+less,adjective
+liberal,adjective
+libre,adjective
+little,adjective
+lone,adjective
+long,adjective
+loving,adjective
+loyal,adjective
+lucky,adjective
+lunar,adjective
+main,adjective
+main stream,adjective
+mainstream,adjective
+malay,adjective
+marine,adjective
+maritime,adjective
+martial,adjective
+massive,adjective
+materiale,adjective
+mean,adjective
+medical,adjective
+meek,adjective
+mega,adjective
+messy,adjective
+micro,adjective
+mini,adjective
+minor,adjective
+mobil,adjective
+mobile,adjective
+modern,adjective
+mono,adjective
+moral,adjective
+much,adjective
+municipal,adjective
+mutual,adjective
+nasty,adjective
+naval,adjective
+neo,adjective
+next,adjective
+nice,adjective
+noname,adjective
+novel,adjective
+oceanic,adjective
+old,adjective
+old school,adjective
+olympic,adjective
+only,adjective
+oral,adjective
+ours,adjective
+outer,adjective
+outright,adjective
+overall,adjective
+overlooking,adjective
+pan american,adjective
+pan-american,adjective
+panamerican,adjective
+papal,adjective
+paramount,adjective
+penal,adjective
+perfect,adjective
+petite,adjective
+pleasant,adjective
+poly,adjective
+popular,adjective
+premier,adjective
+pretty,adjective
+prime,adjective
+private,adjective
+prospective,adjective
+proven,adjective
+provincial,adjective
+public,adjective
+pure,adjective
+quick,adjective
+radical,adjective
+rapid,adjective
+rare,adjective
+real,adjective
+red hot,adjective
+regional,adjective
+relevant,adjective
+residential,adjective
+resolute,adjective
 rich,adjective
 rife,adjective
-paramount,adjective
-worthy,adjective
-dandy,adjective
-handy,adjective
-main stream,adjective
-avian,adjective
-pleasant,adjective
+rising,adjective
+rival,adjective
+riverfront,adjective
+roman,adjective
+rotten,adjective
+royal,adjective
+rural,adjective
+safe,adjective
+sandy,adjective
+seldom,adjective
+serial,adjective
+severe,adjective
+shaky,adjective
+short,adjective
+shorter,adjective
+silly,adjective
+simple,adjective
+single,adjective
+sino,adjective
+slick,adjective
+slim,adjective
+small,adjective
+smart,adjective
+sober,adjective
+social,adjective
+solar,adjective
+sole,adjective
+solid,adjective
+sour,adjective
+sovereign,adjective
+spoken,adjective
+state-run,adjective
+stellar,adjective
+stolen,adjective
+strange,adjective
+strong,adjective
+stuck,adjective
+sudden,adjective
+superb,adjective
+superior,adjective
+supreme,adjective
+sure,adjective
+sweet,adjective
+swift,adjective
+tall,adjective
+taller,adjective
+the independent,adjective
+thermal,adjective
+titanic,adjective
+token,adjective
+torn,adjective
+trans,adjective
+tri,adjective
+trojan,adjective
+unique,adjective
+united,adjective
+unknown,adjective
+uphill,adjective
+upper,adjective
+urban,adjective
+used,adjective
+useful,adjective
+vast,adjective
 vegan,adjective
+vice,adjective
+vile,adjective
+vintage,adjective
+virgin,adjective
+vital,adjective
+warm,adjective
+wide,adjective
+wild,adjective
+willing,adjective
+windswept,adjective
+wooden,adjective
+worthy,adjective
+young,adjective
+bent,adjective
 bon,adjective.fre
-priviet,phrase.rus
 nouveau,adjective.fre
-de novo,adjective.ita
-santi,adjective.ita
-dolce,adjective.ita
-buona,adjective.ita
-novo,adjective.ita
 bello,adjective.ita
+buona,adjective.ita
+de novo,adjective.ita
+dolce,adjective.ita
 forte,adjective.ita
-bom,adjective.por
+novo,adjective.ita
+santi,adjective.ita
 boa,adjective.por
+bom,adjective.por
+apart,adverb
+fully,adverb
+likely,adverb
+often,adverb
 shortly,adverb
-kangaroo,animal
-alligator,animal
-eagles,animal
-snail,animal
-leopard,animal
-zebra,animal
-mice,animal
-spider,animal
-tiger,animal
-lion,animal
+very,adverb
 ahi,animal
-hawks,animal
-butterfly,animal
-snake,animal
-ram,animal
-shark,animal
-duck,animal
-dove,animal
-penguin,animal
-panther,animal
-turtle,animal
-frog,animal
-coyote,animal
+alligator,animal
 anaconda,animal
 ape,animal
-bug,animal
-beetle,animal
 bat,animal
+beaver,animal
+beetle,animal
+bug,animal
+butterfly,animal
+camel,animal
+cougar,animal
+coyote,animal
+crab,animal
+crow,animal
+dove,animal
+duck,animal
+eagles,animal
 foxes,animal
+frog,animal
+goose,animal
 gopher,animal
+gorilla,animal
+hawks,animal
+kangaroo,animal
+leopard,animal
+lion,animal
+mice,animal
 mink,animal
 mosquito,animal
 panda,animal
+panther,animal
+penguin,animal
+pig,animal
 raccoon,animal
+ram,animal
+rodent,animal
 seabird,animal
-wolfs,animal
+shark,animal
+snail,animal
+snake,animal
+spider,animal
+tiger,animal
 tuna,animal
-camel,animal
-cougar,animal
-crab,animal
-crow,animal
+turtle,animal
+warthog,animal
+wolfs,animal
+zebra,animal
+parakeet,animal
+terrier,animal
+chien,animal.fre
+ago,article
+also,article
+how,article
+not,article
 the,article
+too,article
+who,article
 moi,article.fre
 qui,article.fre
 sans,article.fre
-che,article.ita
 cé,article.ita
-tras,article.ita
-uni,article.ita
+che,article.ita
 gli,article.ita
 tra,article.ita
+tras,article.ita
+uni,article.ita
 tudo,article.por
-aquarius,astrology
 acuario,astrology
+aquarius,astrology
 aries,astrology
-libra,astrology
-gemini,astrology
-scorpio,astrology
-pisces,astrology
-taurus,astrology
-sagittarius,astrology
 capricorn,astrology
 capricornio,astrology
-virgo,astrology
+gemini,astrology
+libra,astrology
+pisces,astrology
+sagittarius,astrology
+scorpio,astrology
 tauro,astrology
-color,noun
+taurus,astrology
+virgo,astrology
 black,color
 blue,color
+bronze,color
+brown,color
+cobalt,color
+crimson,color
+cyan,color
+gray,color
 green,color
+grey,color
+magenta,color
 maroon,color
+orange,color
+purple,color
 red,color
 rouge,color
+tan,color
 white,color
 yellow,color
-brown,color
-orange,color
-gray,color
-grey,color
-bronze,color
-tan,color
-cobalt,color
-cyan,color
-magenta,color
 blanc,color.fra
 nero,color.ita
 democracy,concept.politics
 kingdom,concept.politics
+adam and eve,concept.religion
+ala,concept.religion
+allah,concept.religion
 christ,concept.religion
-jesus,concept.religion
-passover,concept.religion
 creed,concept.religion
-god,concept.religion
 devil,concept.religion
-spirit,concept.religion
+god,concept.religion
 holy,concept.religion
+jesus,concept.religion
 jihad,concept.religion
 karma,concept.religion
-rectors,concept.religion
-lent,concept.religion
-adam and eve,concept.religion
-allah,concept.religion
-ala,concept.religion
-quran,concept.religion
 koran,concept.religion
+lent,concept.religion
+passover,concept.religion
+quran,concept.religion
+spirit,concept.religion
+cont,contraction
+dont,contraction
+isnt,contraction
+ive,contraction
+you're,contraction
+bottom,directional
+east,directional
+east central,directional
+eastern,directional
+left,directional
 north,directional
-northern,directional
+north central,directional
+north east,directional
+north eastern,directional
+north west,directional
+north western,directional
 north-east,directional
 north-eastern,directional
-north eastern,directional
-north east,directional
-northeast,directional
 north-west,directional
 north-western,directional
-north western,directional
-north west,directional
+northeast,directional
+northern,directional
 northwest,directional
+right,directional
 south,directional
-south-east,directional
+south central,directional
 south east,directional
-southeast,directional
-south-west,directional
-south-western,directional
-south western,directional
 south west,directional
+south western,directional
+southeast,directional
+southeastern,directional
+southern,directional
 southwest,directional
 southwestern,directional
-southern,directional
-west,directional
-western,directional
-east,directional
-eastern,directional
-east central,directional
-west central,directional
-north central,directional
-south central,directional
 top,directional
-bottom,directional
-right,directional
-left,directional
-first,enum
-second,enum
-third,enum
-fourth,enum
-fifth,enum
-sixth,enum
-seventh,enum
+west,directional
+west central,directional
+western,directional
+hanta,disease
+eight,enum
 eighth,enum
-ninth,enum
-tenth,enum
-primary,enum
-secondary,enum
-number #1,enum
-number #2,enum
+fifteen,enum
+fifth,enum
+first,enum
+five,enum
+four,enum
+fourth,enum
 ii,enum
 iii,enum
 iv,enum
+ix,enum
+million,enum
+nine,enum
+ninety,enum
+ninth,enum
+num,enum
+number #1,enum
+number #2,enum
+number 1,enum
+number 2,enum
+number one,enum
+number two,enum
+one,enum
+one hundred,enum
+ones,enum
+primary,enum
+second,enum
+secondary,enum
+seven,enum
+seventeen,enum
+seventh,enum
+six,enum
+sixth,enum
+ten,enum
+tenth,enum
+third,enum
+two,enum
 v,enum
 vi,enum
 vii,enum
 viii,enum
-ix,enum
-number 1,enum
 secondo,enum.ita
 sei,enum.ita
-fries,food
-latte,food
-lattes,food
-taco,food
-strawberry,food
-pineapple,food
-burgers,food
-chive,food
-sushi,food
-spice,food
-peanut,food
-lemon,food
-peach,food
-pita,food
-raspberry,food
-chili,food
-pepper,food
-panini,food
-cinnamon,food
-mango,food
-angus,food
-cocoa,food
-blueberry,food
-chai,food
+golden age,era
+ale,food
 almond,food
+angus,food
+avocado,food
+blueberry,food
+burgers,food
+butternut,food
+chai,food
+chili,food
+chive,food
+cinnamon,food
 citrus,food
+cocoa,food
+corndog,food
 cracker,food
 crawfish,food
-corndog,food
-butternut,food
-olive,food
-jam,food
-ale,food
-avocado,food
+cream,food
 cucumber,food
+fries,food
+jam,food
+latte,food
+lattes,food
+lemon,food
+mango,food
+olive,food
+olives,food
 pancake,food
+panini,food
+peach,food
+peanut,food
+pepper,food
+pineapple,food
+pita,food
+raspberry,food
+salami,food
+salmon,food
+spice,food
+strawberry,food
+sushi,food
+taco,food
+banana,food
 christmas,holiday
 good friday,holiday
-valentines,holiday
-valentine's,holiday
 mardi gras,holiday
-pic,internet
-packer,internet
+valentine's,holiday
+valentines,holiday
+access point,internet
+acer,internet
+alibaba,internet
 api,internet
 apis,internet
-serv,internet
-pref,internet
-nav,internet
-login,internet
-cam,internet
-wireless,internet
-weibo,internet
-gamer,internet
-siri,internet
-java,internet
-blackberry,internet
-ubuntu,internet
-jabber,internet
-sirius,internet
-fico,internet
-vid,internet
-naver,internet
-hacker,internet
-hacking,verb
-tor,internet
-hulu,internet
-vines,internet
-var,internet
-arg,internet
-dev,internet
-char,internet
-proc,internet
 apps,internet
+arg,internet
 arial,internet
-botnet,internet
-gecko,internet
-mcafee,internet
-borland,internet
-seagate,internet
-thunderbird,internet
-firebird,internet
 auth,internet
-hitachi,internet
 avatar,internet
-enigma,internet
-fedora,internet
-eudora,internet
-hex,internet
+blackberry,internet
 bool,internet
-shard,internet
-solaris,internet
-entry point,internet
-access point,internet
-power point,internet
-ezine,internet
-alibaba,internet
-foursquare,internet
+borland,internet
+botnet,internet
+cam,internet
+char,internet
+cobol,internet
 dell,internet
-acer,internet
+dev,internet
+enigma,internet
+entry point,internet
 epson,internet
+eudora,internet
+ezine,internet
+fedora,internet
+fico,internet
+firebird,internet
+foursquare,internet
+gamer,internet
+gecko,internet
+hacker,internet
+hex,internet
+hitachi,internet
+hulu,internet
+jabber,internet
+java,internet
+login,internet
+mcafee,internet
+modem,internet
+nav,internet
+naver,internet
+packer,internet
+pic,internet
+power point,internet
+pref,internet
+proc,internet
+seagate,internet
+serv,internet
+shard,internet
+siri,internet
+sirius,internet
+solaris,internet
+thunderbird,internet
+tor,internet
+ubuntu,internet
+var,internet
+vid,internet
+vines,internet
+weibo,internet
+wireless,internet
+hak,junk
+kun,junk
+nitro,junk
+pak,junk
+proto,junk
+uls,junk
+xe,junk
+arabic,language
+canis,latin
+coli,latin
 deus,latin
-december,month
-dec,month
-november,month
-nov,month
-october,month
-oct,month
-sept,month
-september,month
-aug,month
-august,month
-jul,month
-july,month
-jun,month
-june,month
-may,month
+homo,latin
+philo,latin
+synopsis,latin
 apr,month
 april,month
-mar,month
-march,month
+aug,month
+august,month
+dec,month
+december,month
 feb,month
 february,month
 jan,month
 january,month
-dragon,myth
-krypton,myth
-gotham,myth
-thor,myth
-nirvana,myth
+jul,month
+july,month
+jun,month
+june,month
+mar,month
+march,month
+may,month
+nov,month
+november,month
+oct,month
+october,month
+sept,month
+september,month
 bigfoot,myth
-papa,person.label
-gal,person.label
-test,noun
-maternity,noun
-woe,noun
-crook,noun
-crooks,noun
-helm,noun
-fiat,noun
-steward,noun
-pinnacle,noun
-paragon,noun
-marker,noun
-primer,noun
-loyalist,noun
-guess,noun
-grub,noun
-brink,noun
-trades,noun
-champion,noun
-chess board,noun
-aces,noun
-box,noun
-ant,noun
-triple,noun
-burger,noun
-grant,noun
-weasel,noun
-rash,noun
-row,noun
-fir,noun
-rift,noun
-carrier,noun
-sample,noun
-burden,noun
-joiner,noun
-gap,noun
-speed,noun
-weeks,noun
-round,noun
-mirror,noun
-edge,noun
-sharing,verb
-bang,verb
-bangs,verb
-trim,verb
-provost,noun
-cult,noun
-joy,noun
-pact,noun
-yule,noun
-fresh water,noun
-cloud,noun
-nuke,noun
-puke,noun
-strain,noun
-biology,noun
-welfare,noun
-shadow,noun
-band,noun
-laboratory,noun
-chamber,noun
+dragon,myth
+excalibur,myth
+gotham,myth
+krypton,myth
+nirvana,myth
+thor,myth
+accord,noun
 accounting,noun
-ledger,noun
-exodus,noun
-grave,noun
-apology,noun
-rogue,noun
-phantom,noun
-magazine,noun
-code,noun
-workshop,noun
-hair,noun
-hammer,noun
-ham,noun
-guideline,noun
-guide,noun
-book,noun
-fish,noun
-dolphin,noun
-trout,noun
-total,noun
-eagle,noun
-shell,noun
-chance,noun
-jesuit,noun
-stalker,noun
-car,noun
-ride,noun
-van,noun
-salad,noun
-stone,noun
-stock,noun
-block,noun
-cable,noun
-marks,noun
-board,noun
-bunch,noun
-bin,noun
+ace,noun
+aces,noun
+achilles,noun
+acorn,noun
+addition,noun
+administration,noun
+advent,noun
+adventure,noun
+agency,noun
+ages,noun
+air,noun
 airline,noun
-gazette,noun
-arch,noun
-mass,noun
-massacre,noun
-calendar,noun
-comedy,noun
-count,noun
-index,noun
-counts,noun
-defence,noun
-civil defense,noun
-civil defence,noun
-civil servants,noun
-defense,noun
-health services,noun
-asylum,noun
-revolution,noun
-gang,noun
-angst,noun
-war,noun
-wars,noun
-scud,noun
-sides,noun
-sextet,noun
-allies,noun
+airlines,noun
 alliance,noun
-mariner,noun
-mission,noun
-legion,noun
-ministries,noun
-co-operative,noun
-cooperative,noun
-ops,noun
+allies,noun
+alumina,noun
+anchor,noun
+angst,noun
+ant,noun
+anthem,noun
+antiquities,noun
+apology,noun
+aquarium,noun
+arcangel,noun
+arch,noun
+archive,noun
+arena,noun
+aria,noun
+armada,noun
+army,noun
+arrival,noun
+art,noun
+arts,noun
+ash,noun
+assembly,noun
+asylum,noun
+atlas,noun
+attaché,noun
+aviation,noun
+avnil,noun
+award,noun
+azalea,noun
+babe,noun
+baby,noun
+back,noun
+backer,noun
+bacon,noun
+bale,noun
+ballad,noun
+ballet,noun
+ballots,noun
+balls,noun
+band,noun
+bane,noun
+bankers,noun
+banner,noun
+bans,noun
+barge,noun
+barrel,noun
+barrell,noun
+basel,noun
+basher,noun
+basis,noun
+bath,noun
+bats,noun
+battery,noun
 battle,noun
 battles,noun
-tank,noun
-cache,noun
-map,noun
-review,noun
-overview,noun
-manual,noun
-false,noun
-true,noun
-truth,noun
-hope,noun
-price,noun
-means,noun
-hand,noun
-health,noun
-pizza,noun
-lack,noun
-love,noun
-bride,noun
-darling,noun
-mind,noun
-labor,noun
-law,noun
-laws,noun
-light,noun
-treaty,noun
-salt,noun
-dot,noun
-wing,noun
-sentinel,noun
-national defense,noun
-national council,noun
-congress,noun
-tribunal,noun
-national assembly,noun
-committees,noun
-committee,noun
-power,noun
-powers,noun
-storm,noun
-hurricane,noun
-device,noun
-science,noun
-engineering,noun
-physics,noun
-optics,noun
-boron,noun
-petro,noun
-petroleum,noun
-telegraph,noun
-crystal,noun
-ring,noun
-wall,noun
-wood,noun
-firewood,noun
-oak,noun
-coal,noun
-rice,noun
-noodle,noun
-story,noun
-sales,noun
-table,noun
-diary,noun
-wiki,noun
-commerce,noun
-bond,noun
-bill,noun
-wallet,noun
-fortune,noun
-revenue,noun
-finance,noun
-pound,noun
-pounds,noun
-dollar,noun
-cash,noun
-money,noun
-gold,noun
-bling,noun
-silver,noun
-finale,noun
-yuan,noun
-gold star,noun
-medal,noun
-memorial,noun
-service,noun
-trip,noun
-moron,noun
-visa,noun
-telephone,noun
-peace,noun
-proclamation,noun
-pride,noun
-harmony,noun
-medicine,noun
-trio,noun
-heaven,noun
-hell,noun
-art,noun
-security,noun
-heritage,noun
-honor,noun
-jazz,noun
-kiss,noun
-worth,noun
-reunion,noun
-archive,noun
-tribune,noun
-herald,noun
-monitor,noun
-journal,noun
-beacon,noun
-examiner,noun
-chronicle,noun
-forum,noun
-radio,noun
-tech,noun
-prize,noun
-prix,noun
-hall,noun
-cancer,noun
-day,noun
-fleet,noun
-poll,noun
-pool,noun
-pond,noun
-moto,noun
-administration,noun
-pasta,noun
-treat,noun
-toon,noun
-tour,noun
-tours,noun
-tram,noun
-sound,noun
-slate,noun
-rock,noun
-rocks,noun
-cave,noun
-root,noun
-rainbow,noun
-railway,noun
-railroad,noun
-wheat,noun
-tapas,noun
-wisker,noun
-wick,noun
-tray,noun
-tales,noun
-patent,noun
-pack,noun
-scout,noun
-opera,noun
-math,noun
-crown,noun
-concerto,noun
-conquest,noun
-nda,noun
-cruise,noun
-ace,noun
-pie,noun
-seal,noun
-seals,noun
-cab,noun
-bear,noun
-crocodile,noun
-viper,noun
-belt buckle,noun
-craft,noun
-coward,noun
-covenant,noun
-courier,noun
-bacon,noun
-backer,noun
-ash,noun
-oracle,noun
-photo,noun
-rover,noun
-sands,noun
-shura,noun
-slack,noun
-satellite channel,noun
-observatory,noun
-memo,noun
-forestry,noun
-belt,noun
-ferry,noun
-beam,noun
-bliss,noun
-garden,noun
-gateway,noun
-gallery,noun
-holiday,noun
-hornet,noun
-insurance,noun
-knights,noun
-millenium,noun
-millennium,noun
-childs,noun
-cat,noun
-colt,noun
-vet,noun
-veterans,noun
-rabbit,noun
-doe,noun
-charter,noun
-chart,noun
-bulletin,noun
-shooting,noun
-panel,noun
-reception,noun
-soil,noun
-cop,noun
-duo,noun
-bull,noun
-forge,noun
-cafe,noun
-bistro,noun
-canon,noun
-cannon,noun
-clearinghouse,noun
-falcon,noun
-gender,noun
-miles,noun
-jubilee,noun
-miner,noun
-mining,noun
-avnil,noun
-gold mine,noun
-goldmine,noun
-fox,noun
-diploma,noun
-cactus,noun
-maker,noun
-mint,noun
-romance,noun
-tag,noun
-bicentennial,noun
-brand,noun
-cap,noun
 beach,noun
-flower,noun
-steel,noun
-arena,noun
-babe,noun
-boss,noun
-spree,noun
-pet,noun
-yoga,noun
-kings,noun
-buzz,noun
+beacon,noun
+beam,noun
+bear,noun
+bears,noun
+beers,noun
+belt,noun
+belt buckle,noun
+bench,noun
+bests,noun
+bib,noun
+bicentennial,noun
+bigot,noun
+bigs,noun
+bike,noun
 bikini,noun
-kitchen,noun
-maiden,noun
-salon,noun
-ghost,noun
-chef,noun
-logo,noun
-logos,noun
+bill,noun
+billing,noun
+bin,noun
+bingo,noun
+biology,noun
+bistro,noun
+black belt,noun
+black diamond,noun
+black gold,noun
+blackhead,noun
+blacks,noun
+blast,noun
+bling,noun
+bliss,noun
+block,noun
+bluegrass,noun
 blues,noun
-dame,noun
-doll,noun
-cotton,noun
-derby,noun
+board,noun
+bog,noun
+boing,noun
+bolt,noun
+bond,noun
+bonds,noun
+bone,noun
+bones,noun
+bonus,noun
+book,noun
+boos,noun
+boron,noun
+boss,noun
+bounds,noun
+box,noun
+boxer,noun
+boxes,noun
+boy,noun
+boys,noun
 bra,noun
-pastor,noun
-paradise,noun
-hoe,noun
-gob,noun
-tee,noun
+brain,noun
+brains,noun
+branches,noun
+brand,noun
+brass,noun
+bribes,noun
+bricks,noun
+bride,noun
+brink,noun
+brush,noun
+bull,noun
+bullet,noun
+bulletin,noun
+bullseye,noun
+bully,noun
+bum,noun
+bunch,noun
+burden,noun
+burger,noun
+burrow,noun
+bush,noun
+business,noun
+butcher,noun
+butt,noun
+buttermilk,noun
+button,noun
+butts,noun
+buzz,noun
+cab,noun
+cabaret,noun
+cabin,noun
+cable,noun
+cache,noun
+cactus,noun
+cafe,noun
 ćafe,noun
 Ćafe,noun
-elf,noun
-bath,noun
-button,noun
-jag,noun
-nail,noun
-bench,noun
-yard,noun
-la radio,noun
-keys,noun
-mat,noun
-lock,noun
-bale,noun
-kinder,noun
-azalea,noun
-disco,noun
-mill,noun
-funk,noun
-dish,noun
-mafia,noun
-sweepstakes,noun
-turbo,noun
-pad,noun
-joker,noun
-hook,noun
-tab,noun
-tiempo,noun
-zona,noun
-la nueva,noun
-weed,noun
-champs,noun
-bone,noun
-frame,noun
-sprite,noun
-rider,noun
-corner,noun
-sapphire,noun
-blackhead,noun
-saga,noun
-flood,noun
-plate,noun
-bingo,noun
-vibe,noun
-champ,noun
-pinky,noun
-zen,noun
-usher,noun
-grill,noun
-palm,noun
-marble,noun
-dew,noun
-armada,noun
-yankee,noun
-fatih,noun
-parent,noun
-titan,noun
-tsunami,noun
-sand,noun
-resurrection,noun
-dial,noun
-sessions,noun
-blacks,noun
-gem,noun
-combo,noun
-comandante,noun
-stamp,noun
-bum,noun
-banner,noun
-spike,noun
-dammit,noun
-harness,noun
 cage,noun
-muse,noun
-tees,noun
-ballet,noun
-stud,noun
-thong,noun
-cowboy,noun
-mut,noun
-cottage,noun
-cheek,noun
-basel,noun
-bane,noun
-bib,noun
-castaway,noun
-crest,noun
-ceres,noun
+calendar,noun
+caller,noun
+calvary,noun
 cameo,noun
-bog,noun
-coronation,noun
-black gold,noun
-black diamond,noun
-acorn,noun
+cancer,noun
+cannon,noun
+canoe,noun
+canon,noun
+cap,noun
+car,noun
+carrier,noun
+cars,noun
+cart,noun
+carton,noun
+cash,noun
+castaway,noun
 caster,noun
-clipper,noun
-coats,noun
-boing,noun
-bluegrass,noun
+cat,noun
 catnip,noun
-coal mine,noun
-bigot,noun
-black belt,noun
+cave,noun
+celebrations,noun
+cent,noun
 ceramics,noun
+cereal,noun
+ceres,noun
+chain,noun
+chair,noun
+chalk,noun
+chamber,noun
+champ,noun
+champion,noun
+champs,noun
+chance,noun
+chaos,noun
+charity,noun
+charm,noun
+chart,noun
+charter,noun
+chat,noun
+check,noun
+cheek,noun
+chef,noun
+chess board,noun
+childs,noun
+chin,noun
+chip,noun
+chlorine,noun
+chronicle,noun
+circle,noun
+civil defence,noun
+civil defense,noun
+civil servants,noun
+class,noun
+clearinghouse,noun
+clinic,noun
+clipper,noun
+cloud,noun
+clover,noun
+club,noun
+co-operative,noun
+coal,noun
+coal mine,noun
+coats,noun
 cobblestone,noun
-achilles,noun
-basher,noun
-cornerstone,noun
-buttermilk,noun
-cabaret,noun
-secession,noun
-corners,noun
-crews,noun
-generals,noun
-hopper,noun
-hull,noun
-parachute,noun
-ransom,noun
-samples,noun
-trace,noun
-ages,noun
-antiquities,noun
-beers,noun
-bonds,noun
-bounds,noun
-butcher,noun
-cabin,noun
+cockpit,noun
+code,noun
+coffins,noun
+cold water,noun
 colony,noun
+color,noun
+colt,noun
+comandante,noun
+combo,noun
+comedy,noun
+comfort,noun
+commerce,noun
+committee,noun
+committees,noun
+communications,noun
+compendium,noun
+complaint,noun
 compound,noun
+concerto,noun
+concession,noun
+congress,noun
+conquest,noun
+constitution,noun
+content,noun
+contest,noun
 cooks,noun
 coop,noun
+cooperative,noun
+cop,noun
+cord,noun
+core,noun
+cork,noun
+corn,noun
+corner,noun
+corners,noun
+cornerstone,noun
+coronation,noun
+corps,noun
+cottage,noun
+cotton,noun
 couch,noun
+count,noun
+counts,noun
+coup,noun
+coupe,noun
+courier,noun
+courtesy,noun
 cousins,noun
-dinosaur,noun
+covenant,noun
+coward,noun
+cowboy,noun
+craft,noun
+crafts,noun
+crap,noun
+credit card,noun
+credo,noun
+crescent,noun
+crest,noun
+crew,noun
+crews,noun
+crochet,noun
+crocodile,noun
+crook,noun
+crooks,noun
+crown,noun
+cruise,noun
+crystal,noun
+cult,noun
+cultures,noun
+cutter,noun
+cyclone,noun
+dairy,noun
+dame,noun
+dammit,noun
+dangers,noun
+darling,noun
+date,noun
+dating,noun
+day,noun
+daylight,noun
+days,noun
+deception,noun
+deer,noun
+defence,noun
+defense,noun
+defiance,noun
 demos,noun
+derby,noun
+desperation,noun
+device,noun
+dew,noun
+dial,noun
+diary,noun
+diligence,noun
+dinosaur,noun
+diploma,noun
+disco,noun
+discovery,noun
+dish,noun
+ditch,noun
 diva,noun
 dixie,noun
+doe,noun
+dogs,noun
 dole,noun
+doll,noun
+dollar,noun
+dolphin,noun
+dolphins,noun
+dong,noun
+door,noun
+dot,noun
+downfall,noun
 drain,noun
-gist,noun
-holy city,noun
-hen,noun
-hospice,noun
-lick,noun
-medic,noun
-oilfield,noun
-outlaw,noun
-pall,noun
-pup,noun
-pursuer,noun
-purser,noun
-rapport,noun
-red line,noun
-shores,noun
-siren,noun
-spear,noun
-sonar,noun
-stamps,noun
-stern,noun
-sum,noun
-survey,noun
-verge,noun
-vest,noun
-arcangel,noun
-billing,noun
-port authority,noun
-residency,noun
-carton,noun
-cold water,noun
-dairy,noun
+drama,noun
+duo,noun
+eagle,noun
+edge,noun
+edition,noun
+education,noun
+electron,noun
+elf,noun
+embargo,noun
+encore,noun
+end,noun
+engineering,noun
+enterprise,noun
+equity,noun
 errata,noun
-gram,noun
-hatch,noun
-hygiene,noun
-narco,noun
-refs,noun
-viking,noun
 essay,noun
-tux,noun
-charity,noun
-mercy,noun
-visa,noun
-credit card,noun
+evening,noun
+evening news,noun
+evil,noun
+evolution,noun
+examiner,noun
+executive,noun
+executives,noun
+exodus,noun
+exploits,noun
+fact,noun
+factor,noun
+falcon,noun
+false,noun
+fame,noun
+family,noun
+fantasy,noun
+farewell,noun
+fate,noun
+fatih,noun
+feeder,noun
+feeders,noun
+feet,noun
+fellowship,noun
+ferry,noun
+fiat,noun
+fidelity,noun
+file,noun
+film,noun
+finale,noun
+finance,noun
+fines,noun
+finger,noun
+fins,noun
+fir,noun
+firewood,noun
+fish,noun
+flack,noun
+flag,noun
+flashing,noun
+fleet,noun
+flights,noun
+flood,noun
+floor,noun
+floors,noun
+flower,noun
+foci,noun
+focus,noun
+food,noun
+forces,noun
+fore,noun
+forestry,noun
+forever,noun
+forge,noun
+fork,noun
+forth,noun
+fortune,noun
+forum,noun
+forward,noun
+fox,noun
+frame,noun
+freedom,noun
+fresh water,noun
+front,noun
+front door,noun
+funk,noun
+fusion,noun
+gallery,noun
+game,noun
+gaming,noun
+gang,noun
+gap,noun
+garb,noun
+garden,noun
+gas,noun
+gasoline,noun
+gateway,noun
+gazette,noun
+gear,noun
+gem,noun
+gender,noun
+generals,noun
+germ,noun
+ghost,noun
+gift,noun
+gist,noun
+gob,noun
+gold,noun
+gold mine,noun
+gold star,noun
+goldmine,noun
+goods,noun
+gram,noun
+grant,noun
+grants,noun
+grass,noun
+grave,noun
+gravel,noun
+gravity,noun
+grill,noun
+grip,noun
+grub,noun
+guess,noun
+guide,noun
+guideline,noun
+guild,noun
+gum,noun
+gun,noun
+guns,noun
+hair,noun
+half,noun
+hall,noun
+ham,noun
+hammer,noun
+hand,noun
+harmony,noun
+hassle,noun
+hat,noun
+hatch,noun
 haven,noun
+haze,noun
+head,noun
+health,noun
+health services,noun
+heat,noun
+heaven,noun
+hedge,noun
+hell,noun
+helm,noun
+helmet,noun
+hen,noun
+herald,noun
+heritage,noun
+hints,noun
+hoe,noun
+holiday,noun
+holy city,noun
+homes,noun
+honor,noun
+hook,noun
+hope,noun
+hopper,noun
+hornet,noun
+hospice,noun
+hours,noun
+hull,noun
+human,noun
+hurricane,noun
+hygiene,noun
+idea,noun
+independence,noun
+index,noun
+industry,noun
+insight,noun
+insurance,noun
+intelligence,noun
+issue,noun
+jag,noun
+jazz,noun
+jazz,noun
+jesuit,noun
+job,noun
+joiner,noun
+joiner,noun
+joker,noun
+journal,noun
+joy,noun
+jubilee,noun
+jury,noun
+keys,noun
+kilo,noun
+kinder,noun
+kings,noun
+kiss,noun
+kitchen,noun
+knights,noun
+la nueva,noun
+la radio,noun
+label,noun
+labor,noun
+laboratory,noun
+labour,noun
+lack,noun
+lamps,noun
+laser,noun
+later,noun
+laundry,noun
+law,noun
+lawn,noun
+laws,noun
+ledger,noun
+legacy,noun
+legend,noun
+legion,noun
+letter,noun
+level,noun
+lever,noun
+liberation,noun
+lick,noun
+light,noun
+limb,noun
+limit,noun
+line,noun
+lions,noun
+lips,noun
+list,noun
+liver,noun
+load,noun
+lobby,noun
+lock,noun
+logo,noun
+logos,noun
+looker,noun
+loom,noun
+loop,noun
+lottery,noun
+lotto,noun
+love,noun
+loyalist,noun
+mach,noun
+mafia,noun
+magazine,noun
+maiden,noun
+mail,noun
+main camp,noun
+maker,noun
 man,noun
+management,noun
+mange,noun
+manifesto,noun
+manual,noun
+map,noun
+maple,noun
+mapper,noun
+marble,noun
+mariner,noun
+marker,noun
+marks,noun
+mask,noun
+mass,noun
+massacre,noun
+masses,noun
+massing,noun
+mast,noun
+mat,noun
+maternity,noun
+math,noun
+maximum,noun
+maze,noun
+means,noun
+mech,noun
+medal,noun
+media,noun
+medic,noun
+medicine,noun
+meeting,noun
+memo,noun
+memorial,noun
+memory,noun
 men,noun
 mens,noun
-atlas,noun
-anthem,noun
-aquarium,noun
-bolt,noun
-clinic,noun
-clover,noun
-courtesy,noun
-cork,noun
-coupe,noun
-credo,noun
-crafts,noun
-mach,noun
-mech,noun
-barrell,noun
-barrel,noun
+menu,noun
+mercy,noun
+mess,noun
+miles,noun
+milestones,noun
+mill,noun
+millenium,noun
+millennium,noun
+mind,noun
+miner,noun
+mineral,noun
+mining,noun
+ministries,noun
+mint,noun
+mirage,noun
+mirror,noun
+mission,noun
+mistake,noun
+mode,noun
+model,noun
+money,noun
+monitor,noun
+monster,noun
+monument,noun
+moonwalk,noun
+moron,noun
+motion,noun
+moto,noun
+motor,noun
+mouse,noun
+muscle,noun
+muse,noun
+music,noun
+mut,noun
+mutation,noun
+muzzle,noun
+nail,noun
+name,noun
+nape,noun
+narco,noun
+national assembly,noun
+national council,noun
+national defense,noun
+navigator,noun
+nda,noun
+nets,noun
+never,noun
+newspaper,noun
+night,noun
+noodle,noun
+nostalgia,noun
+now,noun
+nuke,noun
+oak,noun
+observatory,noun
+oil,noun
+oilfield,noun
+old home,noun
+olds,noun
+one day,noun
+onset,noun
+opera,noun
+ops,noun
+optics,noun
+oracle,noun
+organ,noun
+out,noun
+outlaw,noun
+overtime,noun
+overview,noun
+pack,noun
+pact,noun
+pad,noun
+page,noun
+pages,noun
+pain,noun
+pall,noun
+palm,noun
+panel,noun
+parachute,noun
+paradise,noun
+paragon,noun
+parent,noun
+parking,noun
+parole,noun
+part,noun
+pasta,noun
+pastor,noun
+patent,noun
+payment,noun
+peace,noun
+penalty,noun
+perseverance,noun
+pest,noun
+pet,noun
+petro,noun
+petroleum,noun
+pets,noun
+phantom,noun
+photo,noun
+physics,noun
+pie,noun
+piece,noun
+piles,noun
+pill,noun
+pine,noun
+pinky,noun
+pinnacle,noun
+pioneer,noun
+pizza,noun
+places,noun
+plans,noun
+plaque,noun
+plastic,noun
+plate,noun
+plates,noun
+platinum,noun
+pod,noun
+poll,noun
+pond,noun
+pool,noun
+port authority,noun
+pound,noun
+pounds,noun
+poverty,noun
+power,noun
+powers,noun
+preparation,noun
+price,noun
+pride,noun
+primate,noun
+primer,noun
+privilege,noun
+prix,noun
+prize,noun
+proclamation,noun
+profit,noun
+progress,noun
+prohibition,noun
+project,noun
+protection,noun
+provost,noun
+puke,noun
+pun,noun
+pup,noun
+purser,noun
+pursuer,noun
+pyramid,noun
+quality,noun
+rabbit,noun
+radio,noun
+raffles,noun
+raft,noun
+raids,noun
+rail,noun
+railroad,noun
+railway,noun
+rainbow,noun
+ramp,noun
+rank,noun
+ransom,noun
+rapport,noun
+rash,noun
+razor,noun
+rear,noun
+reception,noun
+red line,noun
+refinery,noun
+refs,noun
+residency,noun
+resource,noun
+rest,noun
+resurrection,noun
+retirement,noun
+reunion,noun
+revenue,noun
+review,noun
+revival,noun
+revolution,noun
+reward,noun
+rice,noun
+ride,noun
+rider,noun
+rift,noun
+ring,noun
+rock,noun
+rocks,noun
+rogue,noun
+roles,noun
+romance,noun
+room,noun
+root,noun
+roots,noun
+round,noun
+rover,noun
+row,noun
+rummy,noun
+ruse,noun
+sack,noun
+sacs,noun
+safety,noun
+saga,noun
+sail,noun
+sake,noun
+salad,noun
+salary,noun
+sales,noun
+salon,noun
+salt,noun
+sample,noun
+samples,noun
+sand,noun
+sands,noun
+sap,noun
+sapphire,noun
+satellite,noun
+satellite channel,noun
+science,noun
+sciences,noun
+scout,noun
+scud,noun
+scum,noun
+seal,noun
+seals,noun
+secession,noun
+secret,noun
+security,noun
+seizure,noun
+sentinel,noun
+separation,noun
+service,noun
+sessions,noun
+sextet,noun
+shadow,noun
+shaft,noun
+shale,noun
+sheets,noun
+shelf,noun
+shell,noun
+shields,noun
+shoe,noun
+shooting,noun
+shopping,noun
+shops,noun
+shores,noun
+shoulder,noun
+shura,noun
+sickle,noun
+sides,noun
+sight,noun
+silver,noun
+siren,noun
+size,noun
+skull,noun
+slack,noun
+slashes,noun
+slate,noun
+sluice,noun
+smelter,noun
+smile,noun
+snow,noun
+soil,noun
+solitaire,noun
+solo,noun
+sonar,noun
+soul,noun
+sound,noun
+space,noun
+sparks,noun
+spear,noun
+speculation,noun
+speed,noun
+spike,noun
+splinter,noun
+spree,noun
+sprite,noun
+stage,noun
+stains,noun
+stake,noun
+stalker,noun
+stamp,noun
+stamps,noun
+standard,noun
+stargazer,noun
+status,noun
+steel,noun
+stern,noun
+steward,noun
+stock,noun
+stone,noun
+stores,noun
+storm,noun
+story,noun
+strain,noun
+striker,noun
+stud,noun
+style,noun
+success,noun
+sum,noun
+surplus,noun
+surprise,noun
+survey,noun
+sweepstakes,noun
+system,noun
+tab,noun
+table,noun
+tactic,noun
+tag,noun
+tales,noun
+tank,noun
+tapas,noun
+tape,noun
+tapes,noun
+taps,noun
+task,noun
+tech,noun
+tee,noun
+tees,noun
+telegraph,noun
+telephone,noun
+television,noun
+tender,noun
+term,noun
+test,noun
+testing,noun
+thong,noun
+thumb,noun
+tiempo,noun
+ties,noun
+time,noun
+tires,noun
+titan,noun
+toll,noun
+tomahawk,noun
+tone,noun
+toon,noun
+tooth,noun
+total,noun
+tour,noun
+touring,noun
+tours,noun
+trace,noun
+tractor,noun
+trades,noun
+tradition,noun
+traffic,noun
+tram,noun
+travel,noun
+tray,noun
+treasures,noun
+treat,noun
+treaty,noun
+tree,noun
+trial,noun
+tribe,noun
+tribunal,noun
+tribune,noun
+trio,noun
+trip,noun
+triple,noun
+trout,noun
+true,noun
+truth,noun
+tsunami,noun
+tube,noun
+tubs,noun
+tums,noun
+turbo,noun
+turnout,noun
+tux,noun
+union,noun
+unit,noun
+unity,noun
+utility,noun
+vacation,noun
+van,noun
+ventures,noun
+verge,noun
+vessel,noun
+vest,noun
+vet,noun
+veterans,noun
+vibe,noun
+victory,noun
+video,noun
+viking,noun
+viper,noun
+virus,noun
+visa,noun
+visa,noun
+vision,noun
+wall,noun
+wallet,noun
+war,noun
+wars,noun
+wave,noun
+waves,noun
+way,noun
+weakens,noun
+wear,noun
+weasel,noun
+wedge,noun
+weed,noun
+week,noun
+weeks,noun
+welfare,noun
+well water,noun
+wests,noun
+wheat,noun
+wheel,noun
+wick,noun
+wiki,noun
+wind,noun
+wing,noun
+wisker,noun
+woe,noun
+wood,noun
+workshop,noun
+world trade,noun
+worth,noun
+wrist,noun
+yankee,noun
+yard,noun
+yoga,noun
+yuan,noun
+yule,noun
+zen,noun
+zenith,noun
+zona,noun
+assay,noun
+fife,noun
+iron,noun
+karat,noun
+nerve,noun
+plane,noun
+radar,noun
+sodium,noun
+plateau,noun
+marche,noun.fra
 l'heure,noun.fre
-ligue,noun.fre
 la maison,noun.fre
+ligue,noun.fre
 amor,noun.ita
-liga,noun.ita
-la liga,noun.ita
 amore,noun.ita
-volta,noun.ita
-la vita,noun.ita
 domani,noun.ita
+la liga,noun.ita
+la vita,noun.ita
+liga,noun.ita
 maestro,noun.ita
+volta,noun.ita
 het,noun.nld
-minha,noun.por
-minha,noun.por
 aeroport,noun.por
+minha,noun.por
+minha,noun.por
+checkers,noun.sport
+cricket,noun.sport
 golf,noun.sport
 pong,noun.sport
-skeet,noun.sport
 rugby,noun.sport
-sprint,noun.sport
+skeet,noun.sport
 sports,noun.sport
-cricket,noun.sport
-checkers,noun.sport
-tycoon,person.label
-missionary,person.label
-marshal,person.label
-comrade,person.label
-foreman,person.label
-bachelor,person.label
-friar,person.label
-lone wolf,person.label
-vip,person.label
-patriot,person.label
-male,person.label
-mom,person.label
-dad,person.label
-daddy,person.label
-manager,person.label
-master,person.label
-senior,person.label
-junior,person.label
-congressman,person.label
-singer,person.label
-race,person.label
-guest,person.label
-peoples,person.label
-speaker,person.label
-secretariat,person.label
-uncle,person.label
-good friend,person.label
-friend,person.label
-wizard,person.label
-chap,person.label
-folk,person.label
-chick,person.label
-dude,person.label
-driver,person.label
-mr,person.label
-ms,person.label
-mrs,person.label
-miss,person.label
-sir,person.label
-lord,person.label
-sr,person.label
-srs,person.label
-sra,person.label
-msr,person.label
-msgr,person.label
-secretary,person.label
-undersecretary,person.label
-sec,person.label
-scy,person.label
-dr,person.label
-drs,person.label
-doctor,person.label
-doctors,person.label
-engineer,person.label
-nurse,person.label
-ph.d,person.label
-phd,person.label
-professor,person.label
-prof,person.label
-reverend,person.label
-rev,person.label
-priest,person.label
-nun,person.label
-prophet,person.label
-aka,person.label
+sprint,noun.sport
 a.k.a,person.label
-father,person.label
-mother,person.label
-brother,person.label
-sister,person.label
-brothers,person.label
-sisters,person.label
-cousin,person.label
-child,person.label
-son,person.label
-sons,person.label
-daughter,person.label
-daughters,person.label
-king,person.label
-queen,person.label
-prince,person.label
-princess,person.label
-duke,person.label
-duchess,person.label
-sultan,person.label
-mayor,person.label
+ag,person.label
+aka,person.label
+ambassador,person.label
+arab,person.label
+ass,person.label
+assistant,person.label
+assoc,person.label
+associate,person.label
+asst,person.label
 attorney,person.label
 attorney general,person.label
-ag,person.label
-quartermaster,person.label
+bachelor,person.label
 barrister,person.label
-lawyer,person.label
-register,person.label
-registrar,person.label
-staff,person.label
-elder,person.label
-chief,person.label
-spokesperson,person.label
-spokesman,person.label
-spokeswoman,person.label
-officer,person.label
-inspector,person.label
-ambassador,person.label
-constable,person.label
-sheriff,person.label
-minister,person.label
-president,person.label
-chancellor,person.label
-presidente,person.label
-pres,person.label
-govenor,person.label
-governor,person.label
-governors,person.label
-gov,person.label
-marshall,person.label
-director,person.label
-dir,person.label
-deputy,person.label
-dep,person.label
-dean,person.label
-associate,person.label
-assoc,person.label
-assistant,person.label
-asst,person.label
-commissioner,person.label
-commodore,person.label
-merchant,person.label
-cmr,person.label
-cmsr,person.label
-commis,person.label
-comm,person.label
-senator,person.label
-sen,person.label
-counsel,person.label
-esquire,person.label
-esq,person.label
-justice,person.label
-judge,person.label
-hon,person.label
-tf,person.label
-poc,person.label
-pal,person.label
-arab,person.label
-christian,person.label
-vp,person.label
-ceo,person.label
-ceos,person.label
-person,person.label
-chairman,person.label
-fugitive,person.label
-criminal,person.label
-captive,person.label
-hostage,person.label
-volunteer,person.label
-guard,person.label
-guardian,person.label
-mate,person.label
-insurgent,person.label
-inmate,person.label
-prisoner,person.label
-resident,person.label
-residents,person.label
-student,person.label
-students,person.label
-protester,person.label
-protesters,person.label
-celebrant,person.label
-star,person.label
-guy,person.label
-celebrity,person.label
-corporal,person.label
-nco,person.label
-nazi,person.label
-sergeant,person.label
-grad,person.label
-gul,person.label
-govenors,person.label
-monk,person.label
-teen,person.label
-citizen,person.label
-mum,person.label
-sis,person.label
-prez,person.label
-bubba,person.label
 brit,person.label
 brits,person.label
-ass,person.label
+brother,person.label
+brothers,person.label
+bubba,person.label
+captive,person.label
 cardinal,person.label
+ceasar,person.label
+celebrant,person.label
+celebrity,person.label
+ceo,person.label
+ceos,person.label
+chairman,person.label
+chancellor,person.label
+chap,person.label
+chick,person.label
+chief,person.label
+child,person.label
+christian,person.label
+citizen,person.label
+cmr,person.label
+cmsr,person.label
 collector,person.label
+comm,person.label
+commis,person.label
+commissioner,person.label
+commodore,person.label
+comrade,person.label
+congressman,person.label
+constable,person.label
+corporal,person.label
+counsel,person.label
+cousin,person.label
+criminal,person.label
+csar,person.label
+czar,person.label
+dad,person.label
+daddy,person.label
+daughter,person.label
+daughters,person.label
+dean,person.label
+dep,person.label
+deputy,person.label
+dir,person.label
+director,person.label
+doctor,person.label
+doctors,person.label
+dr,person.label
+driver,person.label
+drs,person.label
+duchess,person.label
+dude,person.label
+duke,person.label
+elder,person.label
+engineer,person.label
+esq,person.label
+esquire,person.label
+father,person.label
+folk,person.label
+folks,person.label
+fool,person.label
+foreman,person.label
+friar,person.label
+friend,person.label
+fugitive,person.label
+gal,person.label
+good friend,person.label
+gov,person.label
+govenor,person.label
+govenors,person.label
+governor,person.label
+governors,person.label
+grad,person.label
+grandson,person.label
+guard,person.label
+guardian,person.label
+guest,person.label
+gul,person.label
+guy,person.label
+gypsy,person.label
+hero,person.label
+hon,person.label
+host,person.label
+hostage,person.label
+independents,person.label
+inmate,person.label
+inspector,person.label
+insurgent,person.label
+judge,person.label
+junior,person.label
+justice,person.label
+killer,person.label
+king,person.label
+lawyer,person.label
+leader,person.label
+liar,person.label
+lone wolf,person.label
+lord,person.label
 ma am,person.label
 ma'am,person.label
 madam,person.label
-pir,person.label.mideast
-rabbi,person.label.mideast
-imam,person.label.mideast
-mullah,person.label.mideast
-mulla,person.label.mideast
+male,person.label
+manager,person.label
+marshal,person.label
+marshall,person.label
+master,person.label
+mate,person.label
+mayor,person.label
+merchant,person.label
+minister,person.label
+miss,person.label
+missionary,person.label
+mom,person.label
+monk,person.label
+mother,person.label
+mr,person.label
+mrs,person.label
+ms,person.label
+msgr,person.label
+msr,person.label
+mum,person.label
+nazi,person.label
+nco,person.label
+nun,person.label
+nurse,person.label
+officer,person.label
+old man,person.label
+pal,person.label
+papa,person.label
+partner,person.label
+patriot,person.label
+peoples,person.label
+person,person.label
+ph.d,person.label
+phd,person.label
+player,person.label
+players,person.label
+poc,person.label
+pres,person.label
+president,person.label
+presidente,person.label
+prez,person.label
+priest,person.label
+prince,person.label
+princess,person.label
+principal,person.label
+prisoner,person.label
+prof,person.label
+professor,person.label
+prophet,person.label
+protester,person.label
+protesters,person.label
+quartermaster,person.label
+queen,person.label
+race,person.label
+rangers,person.label
+rectors,person.label
+register,person.label
+registrar,person.label
+resident,person.label
+residents,person.label
+rev,person.label
+reverend,person.label
+rocker,person.label
+royals,person.label
+scholars,person.label
+scy,person.label
+sec,person.label
+secretariat,person.label
+secretary,person.label
+sen,person.label
+senator,person.label
+senior,person.label
+sergeant,person.label
+servant,person.label
+sheriff,person.label
+singer,person.label
+sir,person.label
+sis,person.label
+sister,person.label
+sisters,person.label
+skipper,person.label
+son,person.label
+sons,person.label
+sorcerer,person.label
+speaker,person.label
+spokesman,person.label
+spokesperson,person.label
+spokeswoman,person.label
+spy,person.label
+sr,person.label
+sra,person.label
+srs,person.label
+staff,person.label
+staffs,person.label
+star,person.label
+student,person.label
+students,person.label
+sultan,person.label
+teen,person.label
+tf,person.label
+twin,person.label
+two brothers,person.label
+two sisters,person.label
+tycoon,person.label
+uncle,person.label
+undersecretary,person.label
+user,person.label
+usher,person.label
+vip,person.label
+volunteer,person.label
+voters,person.label
+vp,person.label
+wizard,person.label
+bozos,person.label
+hindu,person.label
+muslim,person.label
+moslem,person.label
+atty,person.label
+amir,person.label.mideast
+amira,person.label.mideast
+amr,person.label.mideast
 caliph,person.label.mideast
-kaliph,person.label.mideast
+emir,person.label.mideast
+emr,person.label.mideast
+faris,person.label.mideast
+farisa,person.label.mideast
+imam,person.label.mideast
 kalif,person.label.mideast
+kaliph,person.label.mideast
 khalif,person.label.mideast
 khalifah,person.label.mideast
 malik,person.label.mideast
 malika,person.label.mideast
-emir,person.label.mideast
-amr,person.label.mideast
-emr,person.label.mideast
-amir,person.label.mideast
-amira,person.label.mideast
-mushir,person.label.mideast
-mushira,person.label.mideast
-musaitira,person.label.mideast
-qadi,person.label.mideast
-qadiya,person.label.mideast
-naquib,person.label.mideast
-naqib,person.label.mideast
-shayk,person.label.mideast
-sheikh,person.label.mideast
-faris,person.label.mideast
-farisa,person.label.mideast
 maulan,person.label.mideast
 mu'allim,person.label.mideast
+mulla,person.label.mideast
+mullah,person.label.mideast
+musaitira,person.label.mideast
+mushir,person.label.mideast
+mushira,person.label.mideast
+naqib,person.label.mideast
+naquib,person.label.mideast
+pir,person.label.mideast
+qadi,person.label.mideast
+qadiya,person.label.mideast
+rabbi,person.label.mideast
 sayyid,person.label.mideast
 sayyida,person.label.mideast
-general,person.label.rank
-gen,person.label.rank
-admiral,person.label.rank
+shayk,person.label.mideast
+sheikh,person.label.mideast
+1lt,person.label.rank
+1sg,person.label.rank
+2lt,person.label.rank
+a1c,person.label.rank
 adm,person.label.rank
-captain,person.label.rank
-skipper,person.label
-cpt,person.label.rank
-colonel,person.label.rank
-col,person.label.rank
-capt,person.label.rank
-lieutenant,person.label.rank
-lieut,person.label.rank
-lt,person.label.rank
+admiral,person.label.rank
 airman,person.label.rank
 amn,person.label.rank
-seargent,person.label.rank
-sgt,person.label.rank
-vadm,person.label.rank
-radm,person.label.rank
-cmd,person.label.rank
-cdr,person.label.rank
-lcdr,person.label.rank
-major,person.label.rank
-majors,person.label.rank
-maj,person.label.rank
-mg,person.label.rank
 bg,person.label.rank
-lg,person.label.rank
 bgen,person.label.rank
-lgen,person.label.rank
-ltg,person.label.rank
-ltgen,person.label.rank
-cpl,person.label.rank
-lcpl,person.label.rank
-ltc,person.label.rank
-1lt,person.label.rank
-2lt,person.label.rank
-sgt,person.label.rank
-ssgt,person.label.rank
+capt,person.label.rank
+captain,person.label.rank
+cdr,person.label.rank
+cmd,person.label.rank
 cmsgt,person.label.rank
-smsgt,person.label.rank
-msgt,person.label.rank
-tsgt,person.label.rank
-pfc,person.label.rank
-pvt,person.label.rank
-pv2,person.label.rank
-spc,person.label.rank
-ssg,person.label.rank
-sfc,person.label.rank
-msg,person.label.rank
-1sg,person.label.rank
-sgm,person.label.rank
+col,person.label.rank
+colonel,person.label.rank
+cpl,person.label.rank
+cpo,person.label.rank
+cpt,person.label.rank
 csm,person.label.rank
-sma,person.label.rank
 cw1,person.label.rank
 cw2,person.label.rank
 cw3,person.label.rank
 cw4,person.label.rank
 cw5,person.label.rank
-po3,person.label.rank
-po2,person.label.rank
+gen,person.label.rank
+general,person.label.rank
+lcdr,person.label.rank
+lcpl,person.label.rank
+lg,person.label.rank
+lgen,person.label.rank
+lieut,person.label.rank
+lieutenant,person.label.rank
+lt,person.label.rank
+ltc,person.label.rank
+ltg,person.label.rank
+ltgen,person.label.rank
+maj,person.label.rank
+major,person.label.rank
+majors,person.label.rank
+mg,person.label.rank
+msg,person.label.rank
+msgt,person.label.rank
+pfc,person.label.rank
 po1,person.label.rank
-cpo,person.label.rank
-a1c,person.label.rank
-goto,phrase
-a pool,phrase
-start point,phrase
-end point,phrase
-ps,phrase
-eek,phrase
-as a,phrase
-end of the road,phrase
-up and down,phrase
-up-to-date,phrase
-up to date,phrase
-pros,phrase
-cons,phrase
-a small world,phrase
-bah bah,phrase
-story building,phrase
-building a,phrase
-phase one,phrase
-old west,phrase
-a school,phrase
-our school,phrase
-our house,phrase
-milestone,phrase
-limbo,phrase
-rican,phrase
-mea,phrase.latin
-pro,phrase
-rad,phrase
-zip,phrase
-rep,phrase
-pep,phrase
-doo,phrase
-gold rush,phrase
-a la,phrase
-a-la,phrase
-a camp,phrase
-commando,phrase
-int,phrase
-reps,phrase
-state run,phrase
-reg,phrase
-amen,phrase
-two states,phrase
-three states,phrase
-nota bene,phrase
-as self,phrase
+po2,person.label.rank
+po3,person.label.rank
+pv2,person.label.rank
+pvt,person.label.rank
+radm,person.label.rank
+seargent,person.label.rank
+sfc,person.label.rank
+sgm,person.label.rank
+sgt,person.label.rank
+sgt,person.label.rank
+sma,person.label.rank
+smsgt,person.label.rank
+spc,person.label.rank
+ssg,person.label.rank
+ssgt,person.label.rank
+tsgt,person.label.rank
+vadm,person.label.rank
+cross country,pheaW
 a bad,phrase
-snafu,phrase
-small town,phrase
-tiny town,phrase
-big town,phrase
-new one,phrase
-new state,phrase
-new city,phrase
-little city,phrase
-new house,phrase
-new home,phrase
-new deal,phrase
-new way,phrase
-back way,phrase
-easy way,phrase
-happy new year,phrase
-by chance,phrase
-a peak,phrase
-top two,phrase
-hello,phrase
-duh,phrase
-ditto,phrase
-ha,phrase
-hah,phrase
-dis,phrase
-def,phrase
-yes,phrase
-oui,phrase.fre
-doh,phrase
-yup,phrase
-yea,phrase
-yeah,phrase
-un to,phrase
-us a,phrase
-or a,phrase
-at a,phrase
-i do,phrase
-to a point,phrase
-to to,phrase
-home city,phrase
-home town,phrase
-long way,phrase
-last chance,phrase
-olive branch,phrase
-rendezvous point,phrase
-good point,phrase
-main point,phrase
-focal point,phrase
-one point,phrase
-zero point,phrase
-final point,phrase
-boiling point,phrase
-turning point,phrase
-first point,phrase
-second point,phrase
-tipping point,phrase
-western point,phrase
-eastern point,phrase
-points of view,phrase
-point of view,phrase
-point a,phrase
-point b,phrase
-low bar,phrase
-high bar,phrase
-let alone,phrase
-two points,phrase
-good faith,phrase
-ray of hope,phrase
-run-up,phrase
-the run-up,phrase
-man in,phrase
-wow,phrase
-heck,phrase
-imho,phrase
-hehe,phrase
-nope,phrase
-din,phrase
-roundup,phrase
-round-up,phrase
-hey,phrase
-end of the world,phrase
-far north,phrase
-goodnight,phrase
-knife point,phrase
-last hope,phrase
-left hand,phrase
-upper hand,phrase
-log jam,phrase
-may day,phrase
-med,phrase
-ba,phrase
-je,phrase
-tis,phrase
-ta,phrase
-the city,phrase
-rock bottom,phrase
-lite,phrase
-breaking point,phrase
-damn,phrase
-haha,phrase
-nah,phrase
-yay,phrase
-np,phrase
-on point,phrase
-sos,phrase
-oye,phrase
-dah,phrase
-aye,phrase
-a young,phrase
-boo,phrase
-bah,phrase
-bam,phrase
-goodluck,phrase
-dab,phrase
-gee,phrase
-alo,phrase
-wah,phrase
-dang,phrase
-lov,phrase
-one man,phrase
-yeh,phrase
-my cam,phrase
-ole,phrase
-yah,phrase
-yum,phrase
-chillin,phrase
-til,phrase
-pooh,phrase
-naw,phrase
-half way,phrase
-welcome home,phrase
-home run,phrase
-at church,phrase
-bub,phrase
-brightside,phrase
 a better view,phrase
+a camp,phrase
+a do,phrase
+a la,phrase
+a peak,phrase
+a pool,phrase
+a school,phrase
+a small world,phrase
+a young,phrase
+a-la,phrase
+aha,phrase
+akin,phrase
+alas,phrase
+alo,phrase
+aloha,phrase
+amen,phrase
+as a,phrase
+as self,phrase
+at a,phrase
+at church,phrase
+at home,phrase
+aye,phrase
+ba,phrase
+back way,phrase
+bah,phrase
+bah bah,phrase
+bam,phrase
+ban him,phrase
+ban that,phrase
+best view,phrase
+big town,phrase
+black and white,phrase
+black box,phrase
+blah,phrase
+boiling point,phrase
+boo,phrase
+break away,phrase
+breaking point,phrase
 bright star,phrase
-hum,phrase
+brightside,phrase
+bub,phrase
+building a,phrase
+by chance,phrase
+by the way,phrase
+chillin,phrase
+commando,phrase
+cons,phrase
+cubby hole,phrase
+cut off,phrase
+dab,phrase
+dah,phrase
+damn,phrase
+dang,phrase
+def,phrase
+din,phrase
+dis,phrase
+ditto,phrase
+do not use,phrase
+doh,phrase
+doo,phrase
+duh,phrase
+eastern point,phrase
+easy way,phrase
+eek,phrase
 else,phrase
 else's,phrase
-a do,phrase
+end of the road,phrase
+end of the world,phrase
+end point,phrase
+far north,phrase
+final point,phrase
+first point,phrase
+focal point,phrase
+for you,phrase
+gee,phrase
+global reach,phrase
+go home,phrase
+gold rush,phrase
+good enough,phrase
+good faith,phrase
+good luck,phrase
+good night,phrase
+good point,phrase
+goodluck,phrase
+goodnight,phrase
+goto,phrase
+ha,phrase
+hah,phrase
+haha,phrase
+half way,phrase
+happy new year,phrase
+heck,phrase
+hehe,phrase
+hello,phrase
+here and now,phrase
+hey,phrase
+high bar,phrase
+home city,phrase
+home run,phrase
+home town,phrase
 hoo,phrase
-small point,phrase
-shallow water,phrase
+hum,phrase
+i do,phrase
+imho,phrase
+in an,phrase
+int,phrase
+je,phrase
+knife point,phrase
+kool,phrase
+last chance,phrase
+last hope,phrase
+last resort,phrase
+left hand,phrase
+let alone,phrase
+limbo,phrase
+lite,phrase
+little bit,phrase
+little city,phrase
+little town,phrase
+log jam,phrase
+long road,phrase
+long run,phrase
+long way,phrase
+looking forward,phrase
+looking glass,phrase
+lov,phrase
+low bar,phrase
+main point,phrase
+man in,phrase
+may day,phrase
+may view,phrase
+med,phrase
+miles away,phrase
+milestone,phrase
+much much,phrase
+multi,phrase
+my cam,phrase
+my home,phrase
+my son,phrase
+my teacher,phrase
+nah,phrase
+naw,phrase
 neg,phrase
+new city,phrase
+new deal,phrase
+new home,phrase
+new house,phrase
+new one,phrase
 new post,phrase
-alas,phrase
-aha,phrase
-aloha,phrase
+new state,phrase
+new way,phrase
+no no,phrase
+nope,phrase
+nota bene,phrase
+np,phrase
+old west,phrase
+ole,phrase
+olive branch,phrase
+on point,phrase
+one man,phrase
+one point,phrase
+one stop,phrase
+or a,phrase
+our house,phrase
+our school,phrase
+out back,phrase
+oye,phrase
+pep,phrase
+phase one,phrase
+point a,phrase
+point b,phrase
+point of view,phrase
+points of view,phrase
+pooh,phrase
+pro,phrase
+pros,phrase
+ps,phrase
+rad,phrase
+ray of hope,phrase
+reg,phrase
+rendezvous point,phrase
+rep,phrase
+reps,phrase
+rican,phrase
+rock bottom,phrase
+round-up,phrase
+roundup,phrase
+run up,phrase
+safe haven,phrase
+safe passage,phrase
+second point,phrase
+shallow water,phrase
+she can,phrase
+small point,phrase
+small town,phrase
+snafu,phrase
+so to,phrase
+sos,phrase
+start point,phrase
+state run,phrase
+story building,phrase
+ta,phrase
+task force,phrase
+the adobe,phrase
+the best,phrase
+the boom,phrase
+the borders,phrase
+the bottom,phrase
+the branch,phrase
+the bridges,phrase
+the center,phrase
+the chair,phrase
+the city,phrase
+the hunt,phrase
+the index,phrase
+the international,phrase
+the light,phrase
+the long,phrase
+the mere,phrase
+the mission,phrase
+the nose,phrase
+the ocean,phrase
+the one,phrase
+the park,phrase
+the point,phrase
+the pope,phrase
+the post,phrase
+the pot,phrase
+the rest,phrase
+the run-up,phrase
+the white,phrase
+three states,phrase
+til,phrase
+tiny town,phrase
+tipping point,phrase
+tis,phrase
+to a point,phrase
+to to,phrase
+top two,phrase
+turning point,phrase
+two points,phrase
+two states,phrase
+two ways,phrase
+un to,phrase
+up and down,phrase
+up to date,phrase
+up-to-date,phrase
+upper hand,phrase
+us a,phrase
 voila,phrase
+wah,phrase
+welcome home,phrase
+western point,phrase
+white water,phrase
+why not,phrase
+wide range,phrase
+will go,phrase
+wow,phrase
+yah,phrase
+yay,phrase
+yea,phrase
+yeah,phrase
+yeh,phrase
+yes,phrase
+yum,phrase
+yup,phrase
+zero point,phrase
+zip,phrase
+mechanical engineering,phrase
+he he,phrase
+divide the,phrase
+on an island,phrase
+on in,phrase
+see you,phrase
+um um,phrase
+why not,phrase
 merci,phrase.fre
+oui,phrase.fre
 basta,phrase.ita
-ce,phrase.ita
-grazie,phrase.ita
-pronto,phrase.ita
-buon,phrase.ita
 bene,phrase.ita
-pra,phrase.ita
+buon,phrase.ita
+ce,phrase.ita
 fa,phrase.ita
-nao,phrase.por
+grazie,phrase.ita
+pra,phrase.ita
+pronto,phrase.ita
+mea,phrase.latin
+bom,phrase.por
 bom dia,phrase.por
-sem,phrase.por
-nao,phrase.por
 bom dia,phrase.por
 espero,phrase.por
-sem,phrase.por
-bom,phrase.por
 falar,phrase.por
-cosmos,place.astro
-mars,place.astro
-orion,place.astro
+nao,phrase.por
+nao,phrase.por
+sem,phrase.por
+sem,phrase.por
+priviet,phrase.rus
 comet,place.astro
+cosmos,place.astro
 galaxy,place.astro
-mercury,place.astro
-venus,place.astro
 jupiter,place.astro
-saturn,place.astro
-uranus,place.astro
+mars,place.astro
+mercury,place.astro
+orion,place.astro
 pluto,place.astro
 polaris,place.astro
-spa,place.civil
-boutique,place.civil
-gardens,place.civil
-brig,place.civil
-resort,place.civil
-resort island,place.civil
-sanctuary,place.civil
-palace,place.civil
-mosque,place.civil
-bunker,place.civil
-harbour,place.civil
-harbor,place.civil
-pipeline,place.civil
-jail,place.civil
-arbor,place.civil
-checkpoint,place.civil
-holy ground,place.civil
-interchange,place.civil
-stadium,place.civil
-health center,place.civil
-community center,place.civil
-media center,place.civil
-zoo,place.civil
-rotary,place.civil
-castle,place.civil
-plaza,place.civil
-annex,place.civil
-fountain,place.civil
-dock,place.civil
-suite,place.civil
-city hall,place.civil
-depot,place.civil
-basin,place.civil
-hotel,place.civil
-hamlet,place.civil
-school,place.civil
-trade school,place.civil
-schools,place.civil
-middle school,place.civil
-high school,place.civil
-headquarters,place.civil
-academy,place.civil
-nursing home,place.civil
-science foundation,place.civil
-real-estate,place.civil
-real estate,place.civil
-estates,place.civil
-state line,place.civil
-dam,place.civil
-levy,place.civil
-office,place.civil
-casino,place.civil
-quarry,place.civil
-tower,place.civil
-bridge,place.civil
-fort,place.civil
-fortress,place.civil
-passage,place.civil
-tunnel,place.civil
-airport,place.civil
-shipyard,place.civil
-quad,place.civil
-square,place.civil
-manor,place.civil
-museum,place.civil
-pier,place.civil
-commons,place.civil
-state area,place.civil
-mall,place.civil
-embassy,place.civil
-consulate,place.civil
-complex,place.civil
-plant,place.civil
-factory,place.civil
-college,place.civil
-university,place.civil
-national university,place.civil
-university school,place.civil
-state school,place.civil
-primary school,place.civil
-secondary school,place.civil
-campus,place.civil
-company,place.civil
-organization,place.civil
-home,place.civil
-church,place.civil
-temple,place.civil
-court,place.civil
-market,place.civil
-courts,place.civil
-postal,place.civil
-post office,place.civil
-government office,place.civil
-prison,place.civil
-investment bank,place.civil
-station,place.civil
-fire station,place.civil
-police station,place.civil
-train station,place.civil
-radio station,place.civil
-trail,place.civil
-lab,place.civil
-farm,place.civil
-ranch,place.civil
-store,place.civil
-auditorium,place.civil
-pub,place.civil
-shrine,place.civil
-district court,place.civil
-district courts,place.civil
-court of appeal,place.civil
-court of appeals,place.civil
-farms,place.civil
-orchard,place.civil
-grove,place.civil
-groves,place.civil
-hospital,place.civil
-inner city,place.civil
-el centro,place.civil
-mart,place.civil
-mines,place.civil
-monitoring station,place.civil
-resovoir,place.civil
-reservoir,place.civil
+saturn,place.astro
+uranus,place.astro
+venus,place.astro
 a reservoir,place.civil
-parkway,place.civil
-state land,place.civil
-landing,place.civil
-downtown,place.civil
-federal building,place.civil
-park,place.civil
-public park,place.civil
-motel,place.civil
-house,place.civil
-lodge,place.civil
-greenhouse,place.civil
-major bank,place.civil
-theme park,place.civil
-chapel,place.civil
-brewery,place.civil
+academy,place.civil
 activity center,place.civil
-supreme court,place.civil
-canal,place.civil
-library,place.civil
-broadway,place.civil
-downtown,place.civil
-town hall,place.civil
-warehouse,place.civil
-uptown,place.civil
-elementary school,place.civil
-cathedral,place.civil
+airfield,place.civil
+airport,place.civil
 alley,place.civil
-city centre,place.civil
-basilica,place.civil
-club house,place.civil
-city center,place.civil
-causeway,place.civil
 amphitheater,place.civil
-corner store,place.civil
-courthouse,place.civil
+annex,place.civil
+arbor,place.civil
+arcade,place.civil
+arsenal,place.civil
+auditorium,place.civil
+ball field,place.civil
+basilica,place.civil
+basin,place.civil
+battlefield,place.civil
+boulevard,place.civil
+boutique,place.civil
+boys school,place.civil
+brewery,place.civil
+bridge,place.civil
+brig,place.civil
+broadway,place.civil
+bunker,place.civil
+campus,place.civil
+canal,place.civil
+capitol,place.civil
+care clinic,place.civil
+casino,place.civil
+castle,place.civil
+cathedral,place.civil
+causeway,place.civil
+chapel,place.civil
+checkpoint,place.civil
+church,place.civil
+cir,place.civil
+city center,place.civil
+city centre,place.civil
+city hall,place.civil
+club house,place.civil
+college,place.civil
+commons,place.civil
+community center,place.civil
+company,place.civil
+complex,place.civil
+consulate,place.civil
 convent,place.civil
 corner shop,place.civil
-arsenal,place.civil
-airfield,place.civil
-arcade,place.civil
-battlefield,place.civil
+corner store,place.civil
+court,place.civil
+court of appeal,place.civil
+court of appeals,place.civil
+courthouse,place.civil
+courts,place.civil
+dam,place.civil
+deli,place.civil
+depot,place.civil
+district court,place.civil
+district courts,place.civil
+dock,place.civil
+downtown,place.civil
+downtown,place.civil
+el centro,place.civil
+elementary school,place.civil
+embassy,place.civil
+empire,place.civil
+estates,place.civil
+factory,place.civil
+farm,place.civil
+farms,place.civil
+federal building,place.civil
+fire station,place.civil
+fort,place.civil
+fortress,place.civil
+fountain,place.civil
+gardens,place.civil
+girls school,place.civil
+government office,place.civil
+greenhouse,place.civil
+ground zero,place.civil
+grove,place.civil
+groves,place.civil
+hamlet,place.civil
+harbor,place.civil
+harbour,place.civil
+headquarters,place.civil
+health center,place.civil
+high school,place.civil
+holy ground,place.civil
+home,place.civil
 hometown,place.civil
-public library,place.civil
-public school,place.civil
-seminary,place.civil
-quadrangle,place.civil
-port of entry,place.civil
+hospital,place.civil
+hotel,place.civil
+house,place.civil
+inner city,place.civil
 institut,place.civil
-quarantine,place.civil
-summer home,place.civil
+interchange,place.civil
+investment bank,place.civil
+jail,place.civil
+junction,place.civil
+lab,place.civil
+landing,place.civil
+landmark,place.civil
+levy,place.civil
+library,place.civil
+lodge,place.civil
+major bank,place.civil
+mall,place.civil
+manor,place.civil
+market,place.civil
+mart,place.civil
+media center,place.civil
+middle school,place.civil
+mines,place.civil
+monitoring station,place.civil
+mosque,place.civil
+motel,place.civil
+museum,place.civil
+national university,place.civil
+nursing home,place.civil
+office,place.civil
+orchard,place.civil
+organization,place.civil
 overlook,place.civil
+palace,place.civil
+park,place.civil
+parkway,place.civil
+passage,place.civil
+pier,place.civil
+pipeline,place.civil
+plant,place.civil
+plaza,place.civil
+police station,place.civil
 port city,place.civil
-boulevard,place.civil
-capitol,place.civil
-country,place.general
-reef,place.general
-oasis,place.general
-well,place.general
-volcano,place.general
-desert,place.general
-land,place.general
-island,place.general
-islands,place.general
-lagoon,place.general
-islet,place.general
-valley,place.general
-ridge,place.general
-route,place.general
-ave,place.general
-roads,place.general
-peninsula,place.general
-sea,place.general
-area,place.general
-state,place.general
-city,place.general
-town,place.general
-towns,place.general
-township,place.general
-settlement,place.general
+port of entry,place.civil
+post office,place.civil
+postal,place.civil
+primary school,place.civil
+prison,place.civil
+pub,place.civil
+public library,place.civil
+public park,place.civil
+public school,place.civil
+quad,place.civil
+quadrangle,place.civil
+quarantine,place.civil
+quarry,place.civil
+quarters,place.civil
+radio station,place.civil
+ranch,place.civil
+real estate,place.civil
+real-estate,place.civil
+reservoir,place.civil
+residence,place.civil
+resort,place.civil
+resort island,place.civil
+resovoir,place.civil
+rotary,place.civil
+sanctuary,place.civil
+school,place.civil
+schools,place.civil
+science foundation,place.civil
+secondary school,place.civil
+seminary,place.civil
+shipyard,place.civil
+shrine,place.civil
+spa,place.civil
+square,place.civil
+stadium,place.civil
+state area,place.civil
+state land,place.civil
+state line,place.civil
+state school,place.civil
+station,place.civil
+store,place.civil
+studio,place.civil
+subway,place.civil
+suite,place.civil
+summer home,place.civil
+supreme court,place.civil
+temple,place.civil
+the lane,place.civil
+the launch,place.civil
+the levels,place.civil
+the location,place.civil
+the mine,place.civil
+the well,place.civil
+theme park,place.civil
+tower,place.civil
+town hall,place.civil
+trade school,place.civil
+traffic stop,place.civil
+trail,place.civil
+train station,place.civil
+tunnel,place.civil
+university,place.civil
+university school,place.civil
+uptown,place.civil
+warehouse,place.civil
+warehouses,place.civil
+watergate,place.civil
+zoo,place.civil
+international airport,place.civil
+air base,place.civil
+airport complex,place.civil
+airstrip,place.civil
+border town,place.civil
+casinos,place.civil
+centres,place.civil
+churches,place.civil
+dental clinic,place.civil
+dining facility,place.civil
+farm house,place.civil
+government building,place.civil
+halfway house,place.civil
+labor camp,place.civil
+mansion,place.civil
+ports,place.civil
+supermarket,place.civil
+the village,place.civil
+villages,place.civil
+ville,place.civil
+a mountain,place.general
+a river,place.general
 a village,place.general
-village,place.general
-municipality,place.general
-suburb,place.general
-region,place.general
-geo,place.general
-world,place.general
-new world,place.general
-southern region,place.general
-northern region,place.general
-earth,place.general
-globe,place.general
-global,place.general
-trail,place.general
-pass,place.general
-location,place.general
-locale,place.general
-locality,place.general
-parcel,place.general
-parish,place.general
 acre,place.general
 acres,place.general
-territory,place.general
-continental,place.general
-district,place.general
-section,place.general
-center,place.general
-interior,place.general
-province,place.general
-governorate,place.general
-department,place.general
-burg,place.general
-borough,place.general
-county,place.general
-parts,place.general
-estate,place.general
-prefecture,place.general
-federation,place.general
-federal,place.general
-zone,place.general
-tract,place.general
-delegation,place.general
-division,place.general
-quarter,place.general
-republic,place.general
-site,place.general
-hill,place.general
-mount,place.general
 alps,place.general
-peak,place.general
-summit,place.general
-the summit,place.general
-mountain,place.general
-a mountain,place.general
-gulf,place.general
-garage,place.general
-forest,place.general
-jungle,place.general
-field,place.general
-fields,place.general
+area,place.general
+ave,place.general
+avenue,place.general
+avenues,place.general
+bank,place.general
+bar,place.general
+bay,place.general
+border,place.general
+borders,place.general
+borough,place.general
+branch,place.general
+bridges,place.general
+burg,place.general
+burg,place.general
+camp,place.general
+camps,place.general
+cape,place.general
+cascades,place.general
+case,place.general
+cay,place.general
+center,place.general
+centre,place.general
+channel,place.general
 cinema,place.general
+city,place.general
+coast,place.general
+continent,place.general
+continental,place.general
+country,place.general
+county,place.general
+creek,place.general
 cross,place.general
 crossing,place.general
 crossroads,place.general
+delegation,place.general
+delta,place.general
+department,place.general
+desert,place.general
+district,place.general
+division,place.general
+earth,place.general
+east coast,place.general
+east side,place.general
+elsewhere,place.general
+estate,place.general
+falls,place.general
+far east,place.general
+federal,place.general
+federation,place.general
+field,place.general
+fields,place.general
+forest,place.general
+four way,place.general
+garage,place.general
+gate,place.general
+geo,place.general
+global,place.general
+globe,place.general
+governorate,place.general
+gulf,place.general
+hill,place.general
+hills,place.general
+hollow,place.general
+horn,place.general
+interior,place.general
 interstate,place.general
-nation,place.general
-sector,place.general
-bar,place.general
-bank,place.general
-case,place.general
+island,place.general
+islands,place.general
+islet,place.general
+jungle,place.general
+key,place.general
+lagoon,place.general
+lake,place.general
+lakes,place.general
+land,place.general
+locale,place.general
+locality,place.general
+location,place.general
 metro,place.general
 metropolis,place.general
 metropolitan,place.general
-avenue,place.general
-street,place.general
-terrace,place.general
-road,place.general
-path,place.general
-pike,place.general
-gate,place.general
-bridges,place.general
-points,place.general
-point,place.general
-channel,place.general
-centre,place.general
-delta,place.general
-border,place.general
-northern city,place.general
-southern city,place.general
+mideast,place.general
+midwest,place.general
+mount,place.general
+mountain,place.general
+municipality,place.general
+nation,place.general
+new world,place.general
+north side,place.general
 northern border,place.general
-southern border,place.general
-borders,place.general
-turnpike,place.general
-stream,place.general
-lake,place.general
-lakes,place.general
-river,place.general
-shore,place.general
-straits,place.general
-water,place.general
-waterway,place.general
-waterfall,place.general
-waterways,place.general
-coast,place.general
-horn,place.general
-cape,place.general
-key,place.general
+northern city,place.general
+northern region,place.general
+oasis,place.general
 ocean,place.general
-port,place.general
-camp,place.general
-shelter,place.general
-bay,place.general
-hollow,place.general
-falls,place.general
-branch,place.general
-spring,place.general
+parcel,place.general
+parish,place.general
+parts,place.general
+pass,place.general
+path,place.general
+peak,place.general
+peninsula,place.general
+pike,place.general
 plain,place.general
 plains,place.general
-midwest,place.general
-mideast,place.general
-far east,place.general
-west coast,place.general
-east coast,place.general
-the west coast,place.general
-the east coast,place.general
-north side,place.general
-south side,place.general
-east side,place.general
-west side,place.general
-three-way,place.general
-four-way,place.general
-three way,place.general
-four way,place.general
-a river,place.general
-small river,place.general
-hills,place.general
-continent,place.general
-burg,place.general
-cascades,place.general
-creek,place.general
+point,place.general
+points,place.general
+pole,place.general
+port,place.general
+prefecture,place.general
+province,place.general
+quarter,place.general
 rain forest,place.general
-cay,place.general
-monde,place.general.fra
+reef,place.general
+region,place.general
+republic,place.general
+ridge,place.general
+river,place.general
+rivers,place.general
+road,place.general
+roads,place.general
+route,place.general
+routes,place.general
+ruin,place.general
+ruins,place.general
+sea,place.general
+section,place.general
+sector,place.general
+settlement,place.general
+shelter,place.general
+shore,place.general
+site,place.general
+small river,place.general
+south side,place.general
+southern border,place.general
+southern city,place.general
+southern region,place.general
+spring,place.general
+state,place.general
+straits,place.general
+stream,place.general
+street,place.general
+suburb,place.general
+summit,place.general
+terrace,place.general
+territory,place.general
+the county,place.general
+the court,place.general
+the east coast,place.general
+the embassy,place.general
+the farm,place.general
+the home,place.general
+the horizon,place.general
+the hospital,place.general
+the summit,place.general
+the west coast,place.general
+three way,place.general
+town,place.general
+towns,place.general
+township,place.general
+tract,place.general
+trail,place.general
+turnpike,place.general
+universe,place.general
+valley,place.general
+village,place.general
+volcano,place.general
+water,place.general
+waterfall,place.general
+waterway,place.general
+waterways,place.general
+well,place.general
+west coast,place.general
+west side,place.general
+world,place.general
+zone,place.general
 departement,place.general.fra
+monde,place.general.fra
 cita,place.general.ita
 distrito,place.general.ita
+arrondissement,place.general.non-english
+cercle,place.general.non-english
+commune,place.general.non-english
+gouvernorat,place.general.non-english
 krai,place.general.non-english
 kraj,place.general.non-english
 kray,place.general.non-english
-gouvernorat,place.general.non-english
-commune,place.general.non-english
-cercle,place.general.non-english
+locacion,place.general.non-english
 mintaqat,place.general.non-english
-tinh,place.general.non-english
-republica,place.general.non-english
-respublika,place.general.non-english
-arrondissement,place.general.non-english
-territoire,place.general.non-english
 muhafazah,place.general.non-english
 muhafazat,place.general.non-english
+republica,place.general.non-english
+respublika,place.general.non-english
+sitio,place.general.non-english
+territoire,place.general.non-english
+tinh,place.general.non-english
 veleyat,place.general.non-english
 wilayat,place.general.non-english
-sitio,place.general.non-english
-locacion,place.general.non-english
 estao,place.general.por
 oblast,place.general.rus
 voblast,place.general.rus
 partido,place.general.spa
-atlantis,place.legend
-pacific,place.ocean
-atlantic,place.ocean
 saharan,place.landmass
+atlantis,place.legend
+atlantic,place.ocean
+pacific,place.ocean
+zulu,place.timezone
 in,preposition
+ci sono,preposition.ita
+ecco,preposition.ita
+lei,pronoun.ita
+islam,religion
 autumn,season
 fall,season
+midsummer,season
+midwinter,season
 spring,season
 summer,season
-midsummer,season
 winter,season
-midwinter,season
-pussy,slang
-dat,slang
-wha,slang
-porno,slang
+yep,season
+cong,slang
 cuz,slang
-yall,slang
-y'all,slang
+dat,slang
 lemme,slang
-la copa,sport
-masters,sport
-sumo,sport
-polo,sport
-mets,sport
-marathon,sport
-celtic,sport
-bowling,sport
-dodgers,sport
+porno,slang
+pussy,slang
+sup,slang
+wha,slang
+y'all,slang
+yall,slang
+yt,slang
 bills,sport
-bucks,sport
-packers,sport
-colts,sport
-rams,sport
-padres,sport
-bruins,sport
-cavaliers,sport
-ski,sport
+bowling,sport
 browns,sport
+bruins,sport
+bucks,sport
+cavaliers,sport
+celtic,sport
+colts,sport
+dodgers,sport
 frisbee,sport
-select,stopword.web
-printer,stopword.web
-explorer,stopword.web
-outlook,stopword.web
-atlas,stopword.web
-apache,stopword.web
-ajax,stopword.web
-demo,stopword.web
-stat,stopword.web
-rfc,stopword.web
-lua,stopword.web
-kanji,stopword.web
-hanja,stopword.web
-kana,stopword.web
-seminar,stopword.web
-perf,stopword.web
-null,stopword.web
-web,stopword.web
-python,stopword.web
-excel,stopword.web
-word,stopword.web
-os,stopword.web
-bing,stopword.web
-safari,stopword.web
-ebay,stopword.web
-xbox,stopword.web
-cookie,stopword.web
-alpha,stopword.web
-beta,stopword.web
-gamma,stopword.web
-click,stopword.web
-link,stopword.web
-lol,stopword.web
-information technology,stopword.web
-telecom,stopword.web
-google,stopword.web
-getty,stopword.web
-amazon,stopword.web
+hockey,sport
+la copa,sport
+marathon,sport
+masters,sport
+mets,sport
+packers,sport
+padres,sport
+polo,sport
+rams,sport
+ski,sport
+sumo,sport
 adobe,stopword.web
+ajax,stopword.web
+alpha,stopword.web
+amazon,stopword.web
+apache,stopword.web
 apple,stopword.web
+atlas,stopword.web
+beta,stopword.web
+bing,stopword.web
+català,stopword.web
+click,stopword.web
+cookie,stopword.web
+demo,stopword.web
+deutsch,stopword.web
+diff,stopword.web
+div,stopword.web
+ebay,stopword.web
+español,stopword.web
+excel,stopword.web
+explorer,stopword.web
 flash,stopword.web
-startup,stopword.web
 font,stopword.web
 fonts,stopword.web
-pointer,stopword.web
-info,stopword.web
-diff,stopword.web
-perl,stopword.web
-pagina,stopword.web
 foto,stopword.web
-español,stopword.web
-việt,stopword.web
-català,stopword.web
-norsk,stopword.web
-português,stopword.web
 français,stopword.web
-deutsch,stopword.web
-русский,stopword.web
-italiano,stopword.web
+gamma,stopword.web
+getty,stopword.web
+google,stopword.web
 guru,stopword.web
-div,stopword.web
-I,stopword.wordnet
-a,stopword.wordnet
-an,stopword.wordnet
-as,stopword.wordnet
-at,stopword.wordnet
-by,stopword.wordnet
-he,stopword.wordnet
-his,stopword.wordnet
+hanja,stopword.web
+info,stopword.web
+information technology,stopword.web
+italiano,stopword.web
+kana,stopword.web
+kanji,stopword.web
+link,stopword.web
+lol,stopword.web
+lua,stopword.web
+norsk,stopword.web
+null,stopword.web
+os,stopword.web
+outlook,stopword.web
+pagina,stopword.web
+perf,stopword.web
+perl,stopword.web
+pointer,stopword.web
+português,stopword.web
+printer,stopword.web
+python,stopword.web
+rfc,stopword.web
+safari,stopword.web
+select,stopword.web
+seminar,stopword.web
+startup,stopword.web
+stat,stopword.web
+telecom,stopword.web
+việt,stopword.web
+web,stopword.web
+word,stopword.web
+xbox,stopword.web
+русский,stopword.web
 #me,stopword.wordnet
 #or,stopword.wordnet
-thou,stopword.wordnet
-against,stopword.wordnet
-amid,stopword.wordnet
-amidst,stopword.wordnet
-among,stopword.wordnet
-amongst,stopword.wordnet
-and,stopword.wordnet
-anybody,stopword.wordnet
-anyone,stopword.wordnet
-because,stopword.wordnet
-beside,stopword.wordnet
-circa,stopword.wordnet
-despite,stopword.wordnet
-during,stopword.wordnet
-everybody,stopword.wordnet
-everyone,stopword.wordnet
-for,stopword.wordnet
-from,stopword.wordnet
-her,stopword.wordnet
-hers,stopword.wordnet
-herself,stopword.wordnet
-him,stopword.wordnet
-himself,stopword.wordnet
-hisself,stopword.wordnet
-idem,stopword.wordnet
-if,stopword.wordnet
-into,stopword.wordnet
-it,stopword.wordnet
-its,stopword.wordnet
-itself,stopword.wordnet
-myself,stopword.wordnet
-nor,stopword.wordnet
-of,stopword.wordnet
-oneself,stopword.wordnet
-onto,stopword.wordnet
-our,stopword.wordnet
-ourself,stopword.wordnet
-ourselves,stopword.wordnet
-per,stopword.wordnet
-she,stopword.wordnet
-since,stopword.wordnet
-than,stopword.wordnet
-that,stopword.wordnet
-the,stopword.wordnet
-thee,stopword.wordnet
-theirs,stopword.wordnet
-them,stopword.wordnet
-themselves,stopword.wordnet
-they,stopword.wordnet
-thine,stopword.wordnet
-this,stopword.wordnet
-thyself,stopword.wordnet
-to,stopword.wordnet
-tother,stopword.wordnet
-toward,stopword.wordnet
-towards,stopword.wordnet
-unless,stopword.wordnet
-until,stopword.wordnet
-still,stopword.wordnet
-upon,stopword.wordnet
-versus,stopword.wordnet
-via,stopword.wordnet
-we,stopword.wordnet
-what,stopword.wordnet
-whatall,stopword.wordnet
-whereas,stopword.wordnet
-which,stopword.wordnet
-whichever,stopword.wordnet
-whichsoever,stopword.wordnet
-whoever,stopword.wordnet
-whom,stopword.wordnet
-whomever,stopword.wordnet
-whomso,stopword.wordnet
-whomsoever,stopword.wordnet
-whose,stopword.wordnet
-whosoever,stopword.wordnet
-with,stopword.wordnet
-without,stopword.wordnet
-ye,stopword.wordnet
-you,stopword.wordnet
-you-all,stopword.wordnet
-yours,stopword.wordnet
-yourself,stopword.wordnet
-yourselves,stopword.wordnet
+a,stopword.wordnet
 aboard,stopword.wordnet
 about,stopword.wordnet
 above,stopword.wordnet
 across,stopword.wordnet
 after,stopword.wordnet
+against,stopword.wordnet
 all,stopword.wordnet
 along,stopword.wordnet
 alongside,stopword.wordnet
 although,stopword.wordnet
+amid,stopword.wordnet
+amidst,stopword.wordnet
+among,stopword.wordnet
+amongst,stopword.wordnet
+an,stopword.wordnet
+and,stopword.wordnet
 another,stopword.wordnet
 anti,stopword.wordnet
 any,stopword.wordnet
+anybody,stopword.wordnet
+anyone,stopword.wordnet
 anything,stopword.wordnet
 around,stopword.wordnet
+as,stopword.wordnet
 astride,stopword.wordnet
+at,stopword.wordnet
 aught,stopword.wordnet
 bar,stopword.wordnet
 barring,stopword.wordnet
+because,stopword.wordnet
 before,stopword.wordnet
 behind,stopword.wordnet
 below,stopword.wordnet
 beneath,stopword.wordnet
+beside,stopword.wordnet
 besides,stopword.wordnet
 between,stopword.wordnet
 beyond,stopword.wordnet
 both,stopword.wordnet
 but,stopword.wordnet
+by,stopword.wordnet
+circa,stopword.wordnet
 concerning,stopword.wordnet
 considering,stopword.wordnet
+despite,stopword.wordnet
 down,stopword.wordnet
+during,stopword.wordnet
 each,stopword.wordnet
 either,stopword.wordnet
 enough,stopword.wordnet
+everybody,stopword.wordnet
+everyone,stopword.wordnet
 except,stopword.wordnet
 excepting,stopword.wordnet
 excluding,stopword.wordnet
 few,stopword.wordnet
 fewer,stopword.wordnet
 following,stopword.wordnet
+for,stopword.wordnet
+from,stopword.wordnet
+he,stopword.wordnet
+her,stopword.wordnet
+here,stopword.wordnet
+hers,stopword.wordnet
+herself,stopword.wordnet
+him,stopword.wordnet
+himself,stopword.wordnet
+his,stopword.wordnet
+hisself,stopword.wordnet
+I,stopword.wordnet
+idem,stopword.wordnet
+if,stopword.wordnet
 ilk,stopword.wordnet
 in,stopword.wordnet
 including,stopword.wordnet
 inside,stopword.wordnet
+into,stopword.wordnet
+it,stopword.wordnet
+its,stopword.wordnet
+itself,stopword.wordnet
 like,stopword.wordnet
 many,stopword.wordnet
 maybe,stopword.wordnet
@@ -2284,365 +3090,546 @@ mine,stopword.wordnet
 minus,stopword.wordnet
 more,stopword.wordnet
 most,stopword.wordnet
+myself,stopword.wordnet
 naught,stopword.wordnet
 near,stopword.wordnet
 neither,stopword.wordnet
 nobody,stopword.wordnet
 none,stopword.wordnet
+nor,stopword.wordnet
 nothing,stopword.wordnet
 notwithstanding,stopword.wordnet
+of,stopword.wordnet
 off,stopword.wordnet
 on,stopword.wordnet
+oneself,stopword.wordnet
+onto,stopword.wordnet
 opposite,stopword.wordnet
 other,stopword.wordnet
 otherwise,stopword.wordnet
+our,stopword.wordnet
+ourself,stopword.wordnet
+ourselves,stopword.wordnet
 outside,stopword.wordnet
 over,stopword.wordnet
 own,stopword.wordnet
 past,stopword.wordnet
 pending,stopword.wordnet
+per,stopword.wordnet
 plus,stopword.wordnet
 regarding,stopword.wordnet
 round,stopword.wordnet
 save,stopword.wordnet
 self,stopword.wordnet
 several,stopword.wordnet
+she,stopword.wordnet
+since,stopword.wordnet
 so,stopword.wordnet
 some,stopword.wordnet
 somebody,stopword.wordnet
 someone,stopword.wordnet
 something,stopword.wordnet
-somewhere,stopword.wordnet
+sometimes,stopword.wordnet
 somewhat,stopword.wordnet
+somewhere,stopword.wordnet
+still,stopword.wordnet
 such,stopword.wordnet
 suchlike,stopword.wordnet
 sundry,stopword.wordnet
-here,stopword.wordnet
+than,stopword.wordnet
+that,stopword.wordnet
+the,stopword.wordnet
+thee,stopword.wordnet
+theirs,stopword.wordnet
+them,stopword.wordnet
+themselves,stopword.wordnet
 there,stopword.wordnet
+they,stopword.wordnet
+thine,stopword.wordnet
+this,stopword.wordnet
+thou,stopword.wordnet
 though,stopword.wordnet
 through,stopword.wordnet
 throughout,stopword.wordnet
+thyself,stopword.wordnet
 till,stopword.wordnet
+to,stopword.wordnet
+tother,stopword.wordnet
+toward,stopword.wordnet
+towards,stopword.wordnet
 twain,stopword.wordnet
 under,stopword.wordnet
 underneath,stopword.wordnet
+unless,stopword.wordnet
 unlike,stopword.wordnet
+until,stopword.wordnet
 up,stopword.wordnet
+upon,stopword.wordnet
 various,stopword.wordnet
-vis-a-vis,stopword.wordnet
+versus,stopword.wordnet
+via,stopword.wordnet
+vis a vis,stopword.wordnet
+we,stopword.wordnet
+what,stopword.wordnet
+whatall,stopword.wordnet
 whatever,stopword.wordnet
 whatsoever,stopword.wordnet
-why,stopword.wordnet
 when,stopword.wordnet
+whereas,stopword.wordnet
 wherewith,stopword.wordnet
 wherewithal,stopword.wordnet
+which,stopword.wordnet
+whichever,stopword.wordnet
+whichsoever,stopword.wordnet
 while,stopword.wordnet
+whoever,stopword.wordnet
+whom,stopword.wordnet
+whomever,stopword.wordnet
+whomso,stopword.wordnet
+whomsoever,stopword.wordnet
+whose,stopword.wordnet
+whosoever,stopword.wordnet
+why,stopword.wordnet
+with,stopword.wordnet
 within,stopword.wordnet
+without,stopword.wordnet
 worth,stopword.wordnet
+ye,stopword.wordnet
 yet,stopword.wordnet
 yon,stopword.wordnet
 yonder,stopword.wordnet
-rip,verb
-punt,verb
-hop,verb
+you,stopword.wordnet
+you all,stopword.wordnet
+yours,stopword.wordnet
+yourself,stopword.wordnet
+yourselves,stopword.wordnet
+lam,transliteration
+tao,transliteration
+abate,verb
 able,verb
+act,verb
+advance,verb
+aging,verb
+aiding,verb
+allege,verb
+are,verb
+argue,verb
+arrest,verb
+ask,verb
+avert,verb
+balance,verb
 ban,verb
 ban on,verb
+bang,verb
+banging,verb
+bangs,verb
+banning,verb
 bash,verb
-budge,verb
 be,verb
 be in,verb
-do,verb
-bid,verb
-bloom,verb
-call,verb
-carry,verb
-knew,verb
-cope,verb
-hail,verb
-ponder,verb
-retreat,verb
-harden,verb
-see,verb
-sell,verb
-tell,verb
-punch,verb
-reform,verb
-fielding,verb
-will,verb
-wash,verb
-hurt,verb
-wake,verb
-stoke,verb
-to do,verb
-so do,verb
-settle,verb
-research,verb
-press,verb
-heard,verb
-mark,verb
-skip,verb
-orient,verb
-rid,verb
-pop,verb
-pan,verb
-held,verb
-deal,verb
-wait,verb
-post,verb
-cancel,verb
-dispatch,verb
-trump,verb
-delete,verb
+been,verb
+began,verb
+begin,verb
+belong,verb
+betting,verb
 beware,verb
-let,verb
-gag,verb
-bluff,verb
-jab,verb
+bid,verb
+bite,verb
+bloom,verb
 blow,verb
-create,verb
-ruled,verb
-rap,verb
-woke,verb
-lay,verb
-sit,verb
-zoom,verb
-nag,verb
-wale,verb
-tote,verb
-snipe,verb
-woo,verb
-peep,verb
-dodge,verb
-dunk,verb
-troll,verb
-slaughter,verb
-clinch,verb
-mock,verb
-aging,verb
+bluff,verb
+boil,verb
+born,verb
+bred,verb
+bring,verb
+budge,verb
+burning,verb
 bury,verb
-dig,verb
-parse,verb
-reset,verb
-shook,verb
-shun,verb
-simmers,verb
-sells,verb
-rains,verb
-serenade,verb
-setup,verb
-rushing,verb
+busting,verb
+buy,verb
+call,verb
+can,verb
+cancel,verb
+care,verb
+carry,verb
+cast,verb
+change,verb
+charge,verb
 chase,verb
-prod,verb
+chew,verb
+cite,verb
+clear,verb
+climbing,verb
+clinch,verb
+clip,verb
+clone,verb
+close,verb
+come,verb
+control,verb
+cook,verb
+cope,verb
+copy,verb
+cover,verb
+create,verb
 cus,verb
 cuss,verb
+cuts,verb
+cutting,verb
+deal,verb
+delete,verb
+denting,verb
+design,verb
+devise,verb
+did,verb
+dig,verb
+dispatch,verb
+dive,verb
+do,verb
+docking,verb
+dodge,verb
+draft,verb
+drank,verb
+draw,verb
+drill,verb
+dunk,verb
+enter,verb
+exchange,verb
+express,verb
+fail,verb
+favor,verb
+fed,verb
+feed,verb
+fell,verb
+fielding,verb
+fill,verb
+filling,verb
+find,verb
+flee,verb
+flying,verb
+force,verb
+forget,verb
+gag,verb
+gain,verb
+gave,verb
+get,verb
+gets,verb
+goes,verb
+got,verb
+grade,verb
+groom,verb
+hacking,verb
+had,verb
+hail,verb
+harden,verb
+harm,verb
+harms,verb
+harness,verb
+has,verb
+hate,verb
+have,verb
+having,verb
+heal,verb
+healing,verb
+hear,verb
+heard,verb
+held,verb
+hop,verb
+hoping,verb
+hunting,verb
+hurt,verb
+hush,verb
+imagine,verb
+is,verb
+jab,verb
+killing,verb
+knew,verb
+knock,verb
+know,verb
+laid,verb
+lay,verb
+lead,verb
+learned,verb
+led,verb
+let,verb
+lies,verb
+liking,verb
+listen,verb
+live,verb
+locate,verb
+losing,verb
+made,verb
+make,verb
+makes,verb
+mark,verb
+meet,verb
+mend,verb
+mock,verb
+must,verb
+nag,verb
+orient,verb
+pan,verb
+parse,verb
+passing,verb
+peep,verb
+petting,verb
+ponder,verb
+pop,verb
+poses,verb
+possess,verb
+post,verb
+pray,verb
+press,verb
+prey,verb
+printing,verb
+prod,verb
+proves,verb
+punch,verb
+punt,verb
+push,verb
+put,verb
+putting,verb
+raiding,verb
+rains,verb
+ran,verb
+rang,verb
+rap,verb
+rate,verb
+rates,verb
+record,verb
+records,verb
+recruit,verb
+reform,verb
+rely,verb
+rent,verb
+rescue,verb
+research,verb
+reset,verb
+retreat,verb
+retrieve,verb
+return,verb
+rid,verb
+rip,verb
+rots,verb
+ruled,verb
+run,verb
+running,verb
+runs,verb
+rushing,verb
+say,verb
+says,verb
+scale,verb
+scan,verb
+scares,verb
+see,verb
+seen,verb
+sees,verb
+sell,verb
+selling,verb
+sells,verb
+send,verb
+sending,verb
+sense,verb
+sent,verb
+serenade,verb
+serve,verb
+settle,verb
+setup,verb
+sever,verb
+shape,verb
+share,verb
+sharing,verb
+shield,verb
+shook,verb
+shove,verb
+shun,verb
+shut,verb
+simmering,verb
+simmers,verb
+sit,verb
+skip,verb
+slap,verb
+slaughter,verb
+snipe,verb
+so do,verb
+solve,verb
+sort,verb
+spit,verb
+split,verb
+staining,verb
+stand,verb
+start,verb
+stay,verb
+step,verb
+stoke,verb
+stole,verb
+supply,verb
+sway,verb
+sweep,verb
+swell,verb
+target,verb
+tear,verb
+tell,verb
+tend,verb
+to do,verb
+to go,verb
+tote,verb
+trade,verb
+train,verb
+trim,verb
+troll,verb
+trump,verb
+tune,verb
+turn,verb
+twist,verb
+unite,verb
+uses,verb
+utter,verb
+veto,verb
+vie,verb
+view,verb
+wait,verb
+waits,verb
+wake,verb
+wale,verb
+walk,verb
+wandering,verb
+want,verb
+warns,verb
+was,verb
+wash,verb
+watch,verb
+welcome,verb
+will,verb
+win,verb
+wish,verb
+woke,verb
+wonder,verb
+woo,verb
+zoom,verb
 espero,verb.por
 falar,verb.por
 quer,verb.por
-quero,verb.por
 queremos,verb.por
+quero,verb.por
 veja,verb.por
 vem,verb.por
+kalashnikov,weapon
+ordnance,weapon
+grenade,weapon
+fri,weekday
+friday,weekday
 mon,weekday
-tue,weekday
-tues,weekday
-wed,weekday
-weds,weekday
+monday,weekday
+sat,weekday
+saturday,weekday
+sun,weekday
+sunday,weekday
 thu,weekday
 thur,weekday
 thurs,weekday
-fri,weekday
-sat,weekday
-sun,weekday
-monday,weekday
-tuesday,weekday
-wednesday,weekday
 thursday,weekday
-friday,weekday
-saturday,weekday
-sunday,weekday
-buick,well-known.brand
-tesla,well-known.brand
-nike,well-known.brand
-samsung,well-known.brand
-vaio,well-known.brand
-uber,well-known.brand
-über,well-known.brand
-kobe,well-known.brand
-elle,well-known.brand
-honda,well-known.brand
-ferrari,well-known.brand
+tue,weekday
+tues,weekday
+tuesday,weekday
+wed,weekday
+wednesday,weekday
+weds,weekday
 audi,well-known.brand
-oreo,well-known.brand
-gaga,well-known.brand
-mcdonalds,well-known.brand
-nissan,well-known.brand
-lego,well-known.brand
-boeing,well-known.brand
-volkswagen,well-known.brand
-shakespeare,well-known.brand
-lenovo,well-known.brand
-puma,well-known.brand
-dior,well-known.brand
-kodak,well-known.brand
 bloomberg,well-known.brand
-nokia,well-known.brand
-doppler,well-known.brand
-olympus,well-known.brand
-rolling stone,well-known.brand
-rollingstone,well-known.brand
-suzuki,well-known.brand
-rolex,well-known.brand
-reebok,well-known.brand
-mustang,well-known.brand
+boeing,well-known.brand
+buick,well-known.brand
 cadillac,well-known.brand
 camaro,well-known.brand
+dior,well-known.brand
+doppler,well-known.brand
+elle,well-known.brand
+ferrari,well-known.brand
+gaga,well-known.brand
+honda,well-known.brand
+kobe,well-known.brand
+kodak,well-known.brand
+lego,well-known.brand
+lenovo,well-known.brand
+mcdonalds,well-known.brand
 monsanto,well-known.brand
-foia,well-known.concept
+mustang,well-known.brand
+nike,well-known.brand
+nissan,well-known.brand
+nokia,well-known.brand
+olympus,well-known.brand
+oreo,well-known.brand
+puma,well-known.brand
+reebok,well-known.brand
+rolex,well-known.brand
+rolling stone,well-known.brand
+rollingstone,well-known.brand
+samsung,well-known.brand
+shakespeare,well-known.brand
+suzuki,well-known.brand
+tesla,well-known.brand
+uber,well-known.brand
+über,well-known.brand
+vaio,well-known.brand
+volkswagen,well-known.brand
 american flag,well-known.concept
-pepsi,well-known.concept
-coca-cola,well-known.concept
-martini,well-known.concept
 coca,well-known.concept
-cola,well-known.concept
 coca cola,well-known.concept
+coca-cola,well-known.concept
+cola,well-known.concept
 disney,well-known.concept
+energy,well-known.concept
+foia,well-known.concept
+martini,well-known.concept
+pepsi,well-known.concept
 zodiac,well-known.concept
 dengue,well-known.disease
-mers,well-known.disease
-lyme,well-known.disease
 ebola,well-known.disease
+lyme,well-known.disease
+mers,well-known.disease
 zika,well-known.disease
 alaaddin,well-known.fiction
-aladin,well-known.fiction
 aladdin,well-known.fiction
+aladin,well-known.fiction
 batman,well-known.fiction
 darth,well-known.fiction
-vader,well-known.fiction
+little red,well-known.fiction
 sherlock,well-known.fiction
 simpsons,well-known.fiction
-little red,well-known.fiction
+vader,well-known.fiction
 apollo,well-known.mythology
-zeus,well-known.mythology
-midas,well-known.mythology
 aslan,well-known.mythology
-sears,well-known.org
-reuters,well-known.org
-coke,well-known.org
+midas,well-known.mythology
+zeus,well-known.mythology
+orbiter,well-known.name
 ap,well-known.org
 api,well-known.org
-united nations,well-known.org
-nato,well-known.org
-nobel,well-known.org
-toyota,well-known.org
 chevrolet,well-known.org
+coke,well-known.org
+dod,well-known.org
 gallup,well-known.org
-red cross,well-known.org
+gop,well-known.org
+irs,well-known.org
+nato,well-known.org
 ngo,well-known.org
 ngos,well-known.org
-gop,well-known.org
+nobel,well-known.org
+red cross,well-known.org
+reuters,well-known.org
+sears,well-known.org
 sox,well-known.org
-usaid,well-known.org
-dod,well-known.org
-irs,well-known.org
+toyota,well-known.org
 tsa,well-known.org
-obama,well-known.person
-modi,well-known.person
-einstein,well-known.person
-uncle sam,well-known.person
-ringo,well-known.person
-yoda,well-known.person
-mozart,well-known.person
-ghandi,well-known.person
-gandhi,well-known.person
-shaq,well-known.person
-han,well-known.person
+united nations,well-known.org
+usaid,well-known.org
 ali,well-known.person
-crescent,noun
-chew,verb
-monument,noun
-farewell,noun
-ditch,noun
-fork,noun
-junction,place.civil
-cir,place.civil
-burrow,noun
-shale,noun
-salmon,food
-olives,food
-sap,noun
-czar,person.label
-csar,person.label
-ceasar,person.label
-ruin,place.general
-ruins,place.general
-akin,phrase
-bankers,noun
-vie,verb
-deli,place.civil
-ball field,place.civil
-girls school,place.civil
-boys school,place.civil
-ecco,preposition.ita
-ci sono,preposition.ita
-tomahawk,noun
-lei,pronoun.ita
-hak,junk
-pak,junk
-lotto,noun
-aria,noun
-num,enum
-sup,slang
-uls,junk
-kun,junk
-xe,junk
-burning,verb
-jazz,noun
-easy,adjective
-looker,noun
-utter,verb
-status,noun
-navigator,noun
-pod,noun
-kilo,noun
-chin,noun
-kool,phrase
-guild,noun
-goose,animal
-gorilla,animal
-beaver,animal
-mange,noun
-proto,junk
-nitro,junk
-pioneer,noun
-cutter,noun
-fidelity,noun
-black box,phrase
-cyclone,noun
-pyramid,noun
-excalibur,myth
-marche,noun.fra
-stargazer,noun
-bullseye,noun
-cobol,internet
-mirage,noun
-joiner,noun
-ramp,noun
-pine,noun
-maple,noun
-mapper,noun
-pest,noun
-ballad,noun
-solitaire,noun
-lam,transliteration
-tao,transliteration
-striker,noun
-zulu,place.timezone
-well water,noun
-liberation,noun
-orbiter,well-known.name
-mast,noun
-main camp,noun
-sheets,noun
-bush,noun
-snow,noun
+einstein,well-known.person
+gandhi,well-known.person
+ghandi,well-known.person
+han,well-known.person
+modi,well-known.person
+mozart,well-known.person
+obama,well-known.person
+ringo,well-known.person
+shaq,well-known.person
+uncle sam,well-known.person
+yoda,well-known.person

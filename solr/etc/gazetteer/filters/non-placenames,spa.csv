@@ -127,6 +127,7 @@ economía,noun
 educación,noun
 el acuerdo,noun
 aire,noun
+el,preposition.spa
 el aire,noun
 el amor,noun
 el arte,noun
@@ -179,6 +180,7 @@ esto,article
 estudiantes,noun
 euro,noun
 europa,noun
+farmacia,place.civil
 felicidades,noun
 feliz,noun
 fiesta,noun
@@ -484,10 +486,12 @@ camino,verb
 campana,noun
 cero,enum.spa
 cento,enum.spa
+centro,place.civil
 cena,noun.spa
 corre,verb
 corte,adjective.spa
 corrientes,noun
+cuadra,place.civil
 dar,verb
 digo,verb
 gana,verb

@@ -52,10 +52,13 @@ duchess
 mayor
 master
 manager
+atty
 attorney
 attorney general
 ag
 barrister
+baron
+baroness
 lawyer
 register
 registrar
@@ -69,6 +72,7 @@ officer
 inspector
 ambassador
 constable
+contessa
 sheriff
 minister
 president
@@ -88,6 +92,10 @@ associate
 assoc
 assistant
 asst
+commander
+cmdr
+commandant
+cmdt
 commissioner
 cmr
 cmsr

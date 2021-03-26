@@ -14,11 +14,24 @@
 # Name is in native script or ASCII; insert "+" in lieu of whitespace. Not important.
 
 # ----------EXISTING JRC-------------------
-# ----------- < 999999 range---------------
+# ----------- < 1999999 range---------------
 #
 58      P       u       Tayyip
 453     P       u       Merkel
 1698324 P       u       Snowden
+#
+37 P   u   Ronald Reagan
+37 P   u   President Ronald Reagan
+
+2042 P   u   President Donald Trump
+2042 P   u   Donald Trump
+2042 P   u   The Donald
+2042 P   u   Donald J Trump
+
+60731 P   u   Mike Pence
+60731 P   u   Govenor Pence
+60731 P   u   Vice President Pence
+
 
 
 
@@ -124,6 +137,9 @@
 #
 2000024	O	u	Mozambique National Resistance
 2000024	O	u	Renamo
+#
+2000025 T   u   Fatwa
+2000025 T   u   Fatwah
 
 
 
@@ -206,6 +222,44 @@
 2100023	O	u	Missile Defense Agency
 2100023	O	u	MDA
 #
+# Generic US terms
+2100025	O	u	Attorney General's Office
+#
+2100026	O	u	Centers for Disease Control
+2100026	O	u	Center for Disease Control
+2100026	O	u	CDC
+#
+2100027	O	u	Board of Education
+2100027	O	u	Board of Ed
+#
+2100028	O	u	CNN
+#
+2100029	O	u	Los Angeles Police Department
+2100029	O	u	LAPD
+#
+2100030	O	u	Coast Guard
+2100030	O	u	US Coast Guard
+2100030	O	u	USCG
+#
+2100031	O	u	Department of the Treasury
+2100031	O	u	US Treasury
+2100031	O	u	The Treasury
+#
+2100032	O	u	Department of the Interior
+#
+2100033	O	u	Department of Trade and Industry
+#
+2100034	O	u	Fish and Game
+#
+2100035	O	u	Marines
+#
+2100036 O   u   American Bar
+2100036 O   u   American Bar Association
+#
+2100037 O   u   Armed Forces Institute of Pathology
+
+
+#
 #
 # 2,101,***  US Terms for foreign entities
 2101001	O	u	Government+of+India
@@ -258,3 +312,25 @@
 #
 2102015	O	u	United Services Automobile Association
 2102015	O	u	USAA
+
+# More Generics
+2200001	O	u	Bank of Commerce
+2200002	O	u	bureau
+2200003	O	u	central banks
+2200004	O	u	centres
+2200005	O	u	police
+2200006	O	u	Republic Bank
+2200007	O	u	senate
+2200008	O	u	stock exchange
+2200011	O	u	Wall Street
+#
+2200013	O	u	Xinhua
+#
+2200014	O	u	house of parliament
+#
+2200015	O	u	ministry of Health
+2200015	O	u	MoH
+#
+2200016	O	u	Wall Street Journal
+2200016	O	u	WSJ
+
