@@ -369,8 +369,10 @@ class ConfigUtility:
 
     def loadDataFromFile(self, path, delim):
         """
-          Load columnar data from a file.
-          Returns array of non-comment rows.
+
+        :param path: file path
+        :param delim: delimiter
+        :return: Array of tuples.
         """
         if not os.path.exists(path):
             raise Exception('File does not exist, FILE=%s' % path)

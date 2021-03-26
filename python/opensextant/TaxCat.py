@@ -179,7 +179,7 @@ class TaxCatalogBuilder:
 
         print("Loading stopwords ", stopfile)
         _stopwords_list = self.utility.loadListFromFile(stopfile)
-        self.stopwords.add(_stopwords_list)
+        self.stopwords.update(_stopwords_list)
 
     def set_server(self, svr):
         self.server_url = svr

@@ -64,7 +64,7 @@ def load_stopterms(project_dir="."):
               "etc/gazetteer/filters/non-placenames,acronym.csv"]:
         terms = loader.loadDataFromFile(os.path.join(project_dir, f), ",")
         for t in terms:
-            stopterms.add(t[0])
+            stopterms.add(t[0].lower())
     return stopterms
 
 
