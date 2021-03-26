@@ -345,14 +345,13 @@ def get_country(code, standard="ISO"):
     if not code or not isinstance(code, str):
         return None
 
+    if not __loaded:
+        load_countries()
+
     lookup = code.upper()
     if standard == "ISO":
-        if not __loaded:
-            load_countries()
         return countries_by_iso.get(lookup)
     elif standard == "FIPS":
-        if not __loaded:
-            load_countries()
         return countries_by_fips.get(lookup)
     else:
         raise Exception("That standards body '{}' is not known for code {}".format(standard, code))
