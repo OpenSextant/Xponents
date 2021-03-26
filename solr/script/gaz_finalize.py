@@ -1,5 +1,6 @@
-from opensextant.gazetteer import DB
+from opensextant.gazetteer import DB, load_stopterms
 
+stopwords = {}
 
 class Finalizer:
     def __init__(self, dbf, debug=False):
@@ -67,6 +68,10 @@ class Finalizer:
     def index(self, url, ignore_features=None, ignore_digits=True, limit=-1):
         import re
         from opensextant.gazetteer import GazetteerIndex
+        global stopwords
+
+        print("Xponents Gazetteer Finalizer: INDEX")
+        stopwords = load_stopterms()
         indexer = GazetteerIndex(url)
         #
         filters = []
@@ -81,9 +86,21 @@ class Finalizer:
                     continue
                 if ignore_digits and pl.name.isdigit():
                     continue
+                # Mark generic stopwords as search only
+                if not pl.search_only:
+                    if filter_out_term(pl.name):
+                        pl.search_only = True
                 indexer.add(pl)
         print(f"Indexed {indexer.count}")
         indexer.save(done=True)
+
+
+def filter_out_term(txt):
+    """
+    :param txt: Place name or any text
+    :return: True if term is present in stopwords.
+    """
+    return txt.lower() in stopwords
 
 
 def filter_out_feature(pl, feats):

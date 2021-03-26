@@ -59,8 +59,9 @@ creating the taxnode value.
 
 """
 import re
+import os
 
-from opensextant.utility import is_ascii
+from opensextant.utility import is_ascii, has_cjk
 from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id
 from opensextant import load_us_provinces
 
@@ -230,7 +231,7 @@ class JRCEntity(Taxon):
         self.id = self._make_id()
         l = len(variant)
         # General validity
-        self.is_valid = l > 2
+        self.is_valid = l > 2 or has_cjk(variant)
         # specifically acronyms.
         self.is_acronym = variant.isupper() and is_ascii(variant) and " " not in variant and l <= 12
         if self.is_acronym:
@@ -387,7 +388,9 @@ if __name__ == "__main__":
 
     # Commit rows every 10,000 entries.
     builder.commit_rate = 10000
-    builder.stopwords = set([])
+
+    stopterms_file = os.path.join("etc", "taxcat", "stopwords.txt")
+    builder.add_stopwords(stopterms_file)
 
     # Completely arbitrary starting row ID 
     # Manage your own Catalog regsitry for starting rows
@@ -423,6 +426,10 @@ if __name__ == "__main__":
 
             if only_mark_invalid and node.is_valid:
                 continue
+
+            if node.phrasenorm in builder.stopwords:
+                # Keep the term, but indicate it is not valid for tagging
+                node.is_valid = False
 
             builder.add(catalog_id, node)
 
