@@ -475,7 +475,14 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
         admin2Name = n;
     }
 
+    /**
+     * This ensures at least a default hierarchichal path is set.
+     */
     public String getHierarchicalPath() {
+        if (this.hierarchicalPath == null) {
+            defaultHierarchicalPath();
+        }
+
         return hierarchicalPath;
     }
 
@@ -483,7 +490,7 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
         this.hierarchicalPath = p;
     }
 
-    public void defaultHierarchicalPath() {
+    public void defaultHierarchicalPath() {        
         if (country_id != null && admin1 != null) {
             this.hierarchicalPath = GeonamesUtility.getHASC(this.country_id, this.admin1);
         }

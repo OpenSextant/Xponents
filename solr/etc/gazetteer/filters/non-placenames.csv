@@ -819,7 +819,8 @@ beacon,noun
 beam,noun
 bear,noun
 bears,noun
-beers,noun
+beers,food
+stout,food
 belt,noun
 belt buckle,noun
 bench,noun
@@ -1146,7 +1147,7 @@ floors,noun
 flower,noun
 foci,noun
 focus,noun
-food,noun
+food,food
 forces,noun
 fore,noun
 forestry,noun
@@ -3504,6 +3505,7 @@ win,verb
 wish,verb
 woke,verb
 wonder,verb
+won,verb
 woo,verb
 zoom,verb
 espero,verb.por
@@ -3633,3 +3635,7 @@ ringo,well-known.person
 shaq,well-known.person
 uncle sam,well-known.person
 yoda,well-known.person
+national,adjective
+foot,noun
+friends,noun
+the road,place.civil

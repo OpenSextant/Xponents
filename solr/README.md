@@ -300,6 +300,27 @@ must be available in the `CLASSPATH`
 Expert Topics
 ================
 
+Inspection of Filtered Out
+--------------------------------
+
+It is important to periodically look at terms and situations where a phrase is marked for avoiding tagging or something
+that will prevent a tag from getting back to the user.  Filtration happens in two manners at least:
+
+1. Phrase in raw reference data is excluded by ingest scripts for some reason
+2. Phrase is determined to be not valid or "search_only" -- it is included in the Solr index, but not used in tagging by default.
+3. Phrase is tagged, but post-tagging stop filters or other tests remove the phrase from output.  
+  Most commonly this is usually done by using the TextMatch class  'filteredOut()' method (Javav) or attribute (Python)
+
+Look at terms marked as search_only in the gazetter and not valid in taxcat:
+
+* Gazetteer: http://localhost:7000/solr/gazetteer/select?facet.field=name&facet=on&q=search_only:true&rows=1000&fl=name,cc&facet.mincount=1&facet.limit=1000&facet.sort=count&wt=json
+* TaxCat: http://localhost:7000/solr/taxcat/select?facet.field=phrase&facet=on&q=valid:false&rows=1000&fl=taxnode,phrase&facet.mincount=1&facet.limit=1000&facet.sort=count&wt=json
+
+Set `"wt=csv"` to see CSV format.  This JSON output is setup to list facet patterns of most frequent terms.
+
+
+
+
 TaxCat index ~ Taxonomic Catalog
 ---------------------------------
 This step falls under the category of geotagger tuning.  E.g., see Extraction PlaceGeocoder class
