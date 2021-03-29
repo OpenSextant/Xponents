@@ -20,7 +20,7 @@ package org.opensextant.extractors.geo.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.locationtech.spatial4j.io.GeohashUtils;
+import static org.opensextant.util.GeodeticUtility.geohash;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
 import org.opensextant.extraction.TextMatch;
@@ -122,12 +122,12 @@ public class CoordinateAssociationRule extends GeocodeRule {
 
             // if geohash geo matches one ore more coordinates,
             // score up geo appropriately.
-            String geo_gh = GeohashUtils.encodeLatLon(geo.getLatitude(), geo.getLongitude());
+            String geo_gh = geohash(geo);
             String grid = geo_gh.substring(0, DEFAULT_THRESHOLD_DIGITS);
 
             for (Geocoding ll : coordinates) {
 
-                String gh = GeohashUtils.encodeLatLon(ll.getLatitude(), ll.getLongitude());
+                String gh = geohash(ll);
 
                 // is within
                 if (gh.startsWith(grid)) {

@@ -254,7 +254,7 @@ public class PlaceCandidate extends TextMatch {
         choice1 = tmp.get(last);
         if (tmp.size() > 1) {
             choice2 = tmp.get(last - 1);
-            secondPlaceScore = tmp.get(last - 1).getScore();
+            secondPlaceScore = choice2.getScore();
         }
     }
 

@@ -33,8 +33,7 @@ public class FeatureClassMeta {
         this.proportion = (double) this.count / GAZETTEER_BASE_COUNT;
 
         // We have a number between 0 and 1 that increases with prevalence of feature
-        // type
-        // but is adjusted on aprior preference.
+        // type but is adjusted on a-priori preference.
         this.factor = this.weight * this.proportion;
     }
 

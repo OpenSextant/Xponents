@@ -53,7 +53,7 @@ public class NameRule extends GeocodeRule {
             }
 
             for (Place geo : name.getPlaces()) {
-                if (filterOutBySize(name, geo)) {
+                if (filterOutByFrequency(name, geo)) {
                     continue;
                 }
                 if (isPlace && geo.isPopulated()) {
