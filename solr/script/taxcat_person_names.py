@@ -54,14 +54,13 @@ if __name__ == '__main__':
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument('--names')
     ap.add_argument('--starting-id', default=0)
     ap.add_argument('--solr')
 
     args = ap.parse_args()
 
     print(f"""
-    TaxCat Builder for Taxonomy: {args.names}
+    TaxCat Builder for Taxonomy: Person Names
     """)
 
     test = False

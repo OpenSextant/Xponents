@@ -39,6 +39,12 @@ public class PersonNameFilter extends GeocodeRule {
     private Set<String> nameFilter = null;
     private Set<String> titles = null;
     private Set<String> suffixes = null;
+    private static final int AVG_WORD = 7;
+
+    /** Locations that are some number of words long AND have lat/lon
+     * should be allowed to pass as geocodings even when they overlap with organizational names. 
+     */
+    private static final int LONG_NAME_LEN = 3 * AVG_WORD; 
 
     /**
      * Constructor for general usage if you know your files might come from file
@@ -210,6 +216,14 @@ public class PersonNameFilter extends GeocodeRule {
                 continue;
             }
 
+            /*
+             * Ignore terms like Boston City Hall if that is marked as both Org and Location
+             * Let location pass as-is.
+             */
+            if (pc.getLength()>LONG_NAME_LEN) {
+                continue;
+            }
+
             for (TaxonMatch name : orgs) {
                 if (pc.isSameMatch(name)) {
                     // Org is 'name'
@@ -217,19 +231,18 @@ public class PersonNameFilter extends GeocodeRule {
                     pc.setFilteredOut(true);
                     resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule("ResolvedOrg");
-                } else {
-                    if (pc.isWithin(name) && !pc.isCountry) {
-                        // Special conditions:
-                        // City name in the name of a Building or Landmark is worth saving as a
-                        // location.
-                        // But short one-word names appearing in organization names, may be false
-                        // positives
-                        // After more evaluation, it seems like presence of a city name in an
-                        // organization name is good
-                        // evidence to leverage.
-                        //
-                        pc.addRule(NAME_IN_ORG_RULE);
-                    }
+                } else if  (pc.isWithin(name) && !pc.isCountry) {
+                    // Special conditions:
+                    // City name in the name of a Building or Landmark is worth saving as a
+                    // location.
+                    // But short one-word names appearing in organization names, may be false
+                    // positives
+                    // After more evaluation, it seems like presence of a city name in an
+                    // organization name is good evidence to leverage.
+                    //
+                    pc.setFilteredOut(true);                    
+                    resolvedOrgs.put(pc.getTextnorm(), name.getText());
+                    pc.addRule(NAME_IN_ORG_RULE);
                 }
             }
         }

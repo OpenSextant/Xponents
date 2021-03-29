@@ -70,3 +70,4 @@ june
 september
 august
 vic
+camp

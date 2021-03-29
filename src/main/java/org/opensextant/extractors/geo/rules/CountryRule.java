@@ -21,9 +21,12 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 
 public class CountryRule extends GeocodeRule {
 
+    private static final String CNAME = "Country.name";
+    private static final String CCODE = "Country.code";
+
     public CountryRule() {
         weight = 1;
-        NAME = "CountryName";
+        NAME = "Country";
     }
 
     /**
@@ -38,16 +41,39 @@ public class CountryRule extends GeocodeRule {
     public void evaluate(PlaceCandidate name, Place geo) {
 
         if (!geo.isCountry()) {
+            // This gate should prevent evaluation on every location.
             return;
         }
 
+        // Cases on Name sense:
+        // - AL -- must match Geo "AL" that is acronynm
+        // - Al   -> Stop word in Spanish or Arabic transliteration
+        // - al   -> "" "" 
+        // - Al.  -> inconclusive
+        // - Ala. -> Alabama, not a country
+        // - Alb. -> Albania
+        // etc.
+
         // Otherwise this is some country name or reference.
+        // Name case must match for any code to align.
         //
-        if (name.isAcronym || name.isAbbreviation) {
-            name.addCountryEvidence("CountryCode", weight, geo.getCountryCode(), geo);
+        if (name.isAcronym && name.isUpper() && geo.isUppercaseName()) {
+            // "AL" = "AL"
+            name.addCountryEvidence(CCODE, weight, geo.getCountryCode(), geo);
+        } else if (name.getLength() > 3) {
+            if (name.isAbbreviation && geo.isAbbreviation()) {
+                // "Alb"   = "Alb." (For Albania, for example)
+                // "U.S.A" = "u.s.a."
+                name.addCountryEvidence(CCODE, weight, geo.getCountryCode(), geo);
+            } else {
+                // "Albania" = "ALBANIA" 
+                name.addCountryEvidence(CNAME, weight + 2, geo.getCountryCode(), geo);
+            }
         } else {
-            name.addCountryEvidence(NAME, weight + 2, geo.getCountryCode(), geo);
+            name.isCountry = false;
+            return;
         }
+
         name.choose(geo);
         log("Chose Country", name.getText());
 

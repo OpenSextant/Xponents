@@ -17,6 +17,8 @@
 
 package org.opensextant.extractors.geo.rules;
 
+import static org.opensextant.util.GeodeticUtility.geohash;
+
 import java.util.List;
 
 import org.opensextant.data.Place;
@@ -39,6 +41,7 @@ public abstract class GeocodeRule {
     protected LocationObserver coordObserver = null;
     protected BoundaryObserver boundaryObserver = null;
     protected Logger log = LoggerFactory.getLogger(getClass());
+    protected boolean locationOnly = false;
 
     protected void log(String msg) {
         log.debug("{}: {}", NAME, msg);
@@ -68,6 +71,17 @@ public abstract class GeocodeRule {
      */
     public boolean isRelevant() {
         return true;
+    }
+
+    /**
+     * Create a location ID useful for tracking distinct named features by location.
+     * This is not generalizable.  It produces a looser identity such as "the city at location": P/PPL/f57yah5
+     * @param p
+     * @return feature+location hash
+     */
+    protected String internalPlaceID(Place p) {
+        return (p.getFeatureClass() == null ? p.getPlaceID()
+                : String.format("%s/%s/%s", p.getFeatureClass(), p.getFeatureCode(), p.getGeohash()));
     }
 
     /*
@@ -112,6 +126,12 @@ public abstract class GeocodeRule {
         return p1.getHierarchicalPath() != null ? p1.getHierarchicalPath().equals(p2.getHierarchicalPath()) : false;
     }
 
+    public static void setGeohash(Place loc) {
+        if (loc.getGeohash() == null) {
+            loc.setGeohash(geohash(loc));
+        }
+    }
+    
     /**
      * Override here as needed.
      *
@@ -154,7 +174,7 @@ public abstract class GeocodeRule {
             }
 
             for (Place geo : name.getPlaces()) {
-                if (filterOutBySize(name, geo)) {
+                if (filterOutByFrequency(name, geo)) {
                     continue;
                 }
                 evaluate(name, geo);
@@ -181,7 +201,7 @@ public abstract class GeocodeRule {
      * @param geo
      * @return
      */
-    protected boolean filterOutBySize(PlaceCandidate name, Place geo) {
+    protected boolean filterOutByFrequency(PlaceCandidate name, Place geo) {
         if (name.distinctLocationCount() > 100) {
             if (geo.isPopulated() || geo.isAdministrative()) {
                 // allow P places and A boundaries to pass through.

@@ -294,17 +294,12 @@ public class LocationChooserRule extends GeocodeRule {
             if (ev.wasEvaluated()) {
                 continue;
             }
-            ev.defaultHierarchicalPath();
-
             // Evaluate evidence
-            if ((ev.getAdmin1() != null && geo.getAdmin1() != null)) {
-                if (geo.getHierarchicalPath().equals(ev.getHierarchicalPath())) {
-                    name.incrementPlaceScore(geo, ADMIN_CONTAINS_PLACE_WT);
-                }
-            } else {
-                if (geo.getCountryCode().equals(ev.getCountryCode())) {
-                    name.incrementPlaceScore(geo, COUNTRY_CONTAINS_PLACE_WT);
-                }
+            boolean compareAdmin = ev.getAdmin1() != null && geo.getAdmin1() != null;
+            if (compareAdmin && geo.getHierarchicalPath().equals(ev.getHierarchicalPath())) {
+                name.incrementPlaceScore(geo, ADMIN_CONTAINS_PLACE_WT);
+            } else if (geo.getCountryCode()!=null && geo.getCountryCode().equals(ev.getCountryCode())) {
+                name.incrementPlaceScore(geo, COUNTRY_CONTAINS_PLACE_WT);
             }
 
             ev.setEvaluated(true);

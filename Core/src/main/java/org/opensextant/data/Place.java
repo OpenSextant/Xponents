@@ -490,9 +490,23 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
         this.hierarchicalPath = p;
     }
 
-    public void defaultHierarchicalPath() {        
+    /**
+     * This sets the default to non-null value. Default hieararchy is:
+     * 
+     * <pre>
+     * CC.ADM1
+     * CC
+     * "" (empty string)
+     * </pre>
+     */
+    public void defaultHierarchicalPath() {
         if (country_id != null && admin1 != null) {
             this.hierarchicalPath = GeonamesUtility.getHASC(this.country_id, this.admin1);
+        } else if (country_id != null) {
+            this.hierarchicalPath = this.country_id;
+            // GeonamesUtility.getHASC(this.country_id, "0"); CC.0 ?
+        } else {
+            this.hierarchicalPath = "";
         }
     }
 
