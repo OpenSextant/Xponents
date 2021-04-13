@@ -314,6 +314,58 @@ def trivial_bias(name):
     return float("{:0.3}".format(score))
 
 
+# Helpful hints on parsing Unicode phrases. Reference:
+# http://www.rgagnon.com/javadetails/java-0456.html
+ALPHAMAP_PLAIN_ASCII = "".join([
+    "AaEeIiOoUu",  # grave
+    "AaEeIiOoUuYy",  # acute
+    "AaEeIiOoUuYy",  # circumflex
+    "AaOoNn",  # tilde
+    "AaEeIiOoUuYy",  # umlaut
+    "Aa",  # ring
+    "Cc",  # cedilla
+    "OoUu",  # double acute
+    "Oo",  # Scandanavian o
+    "AaEe",  # A/E wiht micron
+])
+
+ALPHAMAP_UNICODE = "".join([
+    "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9",  # grave
+    "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD",  # acute
+    "\u00C2\u00E2\u00CA\u00EA\u00CE\u00EE\u00D4\u00F4\u00DB\u00FB\u0176\u0177",  # circumflex
+    "\u00C3\u00E3\u00D5\u00F5\u00D1\u00F1",  # tilde
+    "\u00C4\u00E4\u00CB\u00EB\u00CF\u00EF\u00D6\u00F6\u00DC\u00FC\u0178\u00FF",  # umlaut
+    "\u00C5\u00E5",  # ring
+    "\u00C7\u00E7",  # cedilla
+    "\u0150\u0151\u0170\u0171",  # double acute
+    "\u00D8\u00F8",  # Scandanavian o Øø
+    "\u0100\u0101\u0112\u0113",  # E-bar, A-bar
+])
+
+COMMON_DIACRITC_HASHMARKS = re.compile("[\"'`\u00B4\u2018\u2019]")
+
+
+def replace_diacritics(s):
+    """
+    remove accents from a string and replace with ASCII equivalent Reference:
+    http://www.rgagnon.com/javadetails/java-0456.html Caveat: This implementation is not exhaustive.
+    Port from Xponents class TextUtils.java
+    :param s:
+    :return:
+    """
+    if not s:
+        return ""
+    str_prepped = COMMON_DIACRITC_HASHMARKS.sub("'", s)
+    buf = []
+    for c in str_prepped:
+        if c in ALPHAMAP_UNICODE:
+            offset = ALPHAMAP_UNICODE.index(c)
+            buf.append(ALPHAMAP_PLAIN_ASCII[offset])
+        else:
+            buf.append(c)
+    return "".join(buf)
+
+
 # /---------------------------------------
 #  FILE UTILITIES
 # /---------------------------------------

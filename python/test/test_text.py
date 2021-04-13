@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from opensextant.utility import fast_replace, levenshtein_distance, has_cjk, has_arabic, trivial_bias
+from opensextant.utility import fast_replace, levenshtein_distance, has_cjk, has_arabic, trivial_bias, replace_diacritics
 
 test = fast_replace("Bloody mess, it is.", ".", ' ')
 print(test)
@@ -19,5 +19,8 @@ assert has_cjk("该比赛上，太平洋联盟队以3比5负于中央联盟队")
 print("Text has Middle-eastern / Arabic/Farsi content:")
 assert has_arabic("أخبارطهران / 5 اذار /مارس /ارنا- صرح وزير الخارجية الايراني محمد جواد ظريف انه سيعلن قريبا عن خطوة ايران البناءة ") == True
 
-nm = 'Gáza kormányzóság'
+# Diacritic Name that has odd quote at end:
+nm = 'Gáza kormányzóság‘´'
 print(trivial_bias(nm))
+
+print(nm, "=>", replace_diacritics(nm))

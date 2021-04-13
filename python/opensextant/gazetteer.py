@@ -489,6 +489,15 @@ class DB:
             self.conn.commit()
         return True
 
+    def mark_search_only(self, pid):
+        """
+        Toggle bit for search only.
+        :param pid: Place ID
+        """
+        sql = f"update placenames set search_only=1 where id=?"
+        self.conn.execute(sql, (pid,))
+        self.conn.commit()
+
 
 def _array_blocks(arr, step=1000):
     """
