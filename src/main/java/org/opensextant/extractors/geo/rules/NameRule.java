@@ -39,15 +39,16 @@ public class NameRule extends GeocodeRule {
             if (name.isFilteredOut() || name.getChosen() != null) {
                 continue;
             }
-            if (name.getTextnorm().length() < 10) {
+            
+            if (name.getTextnorm().length() < 10 || name.getWordCount() < 2) {
                 continue;
             }
 
-            String[] words = name.getTextnorm().split(" ");
+            String[] words = name.getTokens();
             boolean isPlace = P_prefixes.contains(words[0]);
             boolean isAdmin1 = A1_suffixes.contains(words[words.length - 1]);
             boolean isAdmin2 = A2_suffixes.contains(words[words.length - 1]);
-            if (!isPlace && !isAdmin1 && !isAdmin2) {
+            if (!(isPlace || isAdmin1 || isAdmin2)) {
                 // rule does not apply
                 continue;
             }
@@ -57,14 +58,11 @@ public class NameRule extends GeocodeRule {
                     continue;
                 }
                 if (isPlace && geo.isPopulated()) {
-                    name.addRule(CITY);
-                    name.incrementPlaceScore(geo, 1.0);
+                    name.incrementPlaceScore(geo, 1.0, CITY);
                 } else if (isAdmin1 && geo.isAdmin1()) {
-                    name.addRule(ADM1);
-                    name.incrementPlaceScore(geo, 1.0);
+                    name.incrementPlaceScore(geo, 1.0, ADM1);
                 } else if (isAdmin2 && geo.isAdministrative()) {
-                    name.addRule(ADM2);
-                    name.incrementPlaceScore(geo, 1.0);
+                    name.incrementPlaceScore(geo, 1.0, ADM2);
                 }
             }
         }

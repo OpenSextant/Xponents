@@ -498,8 +498,7 @@ public class XponentGeocoder extends GeoInferencer {
              * POINTS: +5
              */
             if (isUsableFeature(geo.getFeatureClass())) {
-                name.incrementPlaceScore(geo, 5.0);
-                name.addRule("SocGeo:Feature");
+                name.incrementPlaceScore(geo, 5.0, "SocGeo:Feature");
             } else {
                 return;
             }
@@ -526,8 +525,7 @@ public class XponentGeocoder extends GeoInferencer {
             if (this.validTZ) {
                 int utc_lon = GeonamesUtility.approximateLongitudeForUTCOffset(currentTweet.utcOffsetHours);
                 if (Math.abs(geo.getLongitude() - utc_lon) < UTC_LON_WINDOW) {
-                    name.incrementPlaceScore(geo, 3.0);
-                    name.addRule("SocGeo:TZ+Lon");
+                    name.incrementPlaceScore(geo, 3.0, "SocGeo:TZ+Lon");
                 }
             }
 
@@ -543,15 +541,13 @@ public class XponentGeocoder extends GeoInferencer {
             if (currentGeo != null) {
                 if (currentGeo.getHierarchicalPath() != null) {
                     if (currentGeo.getHierarchicalPath().equals(geo.getHierarchicalPath())) {
-                        name.incrementPlaceScore(geo, 15.0);
-                        name.addRule("SocGeo:Country+Admin1");
+                        name.incrementPlaceScore(geo, 15.0, "SocGeo:Country+Admin1");
                         log.debug("\tadd HASC evidence");
                     }
                 }
             } else if (this.cc != null) {
                 if (cc.equals(geo.getCountryCode())) {
-                    name.incrementPlaceScore(geo, 5.0);
-                    name.addRule("SocGeo:Country");
+                    name.incrementPlaceScore(geo, 5.0, "SocGeo:Country");
                     log.debug("\tadd CC");
                 }
             }
@@ -567,8 +563,7 @@ public class XponentGeocoder extends GeoInferencer {
             if (this.inferredCountries != null) {
                 InferredCountry ic = inferredCountries.get(geo.getCountryCode());
                 if (ic != null && ic.validMatch) {
-                    name.incrementPlaceScore(geo, (double) ic.score);
-                    name.addRule("SocGeo:TZ+Lang");
+                    name.incrementPlaceScore(geo, (double) ic.score, "SocGeo:TZ+Lang");
                     log.debug("\tadd TZ+Lang evidence");
                 }
             }
@@ -823,6 +818,8 @@ public class XponentGeocoder extends GeoInferencer {
             if (!places.isEmpty()) {
                 PlaceCandidate pc = new PlaceCandidate();
                 pc.setText(nm);
+                // TOOD: assess text sense -- if context is UPPER, lower or Mixed.
+                pc.inferTextSense(false, false);
                 ScoredPlace chosen = null;
 
                 for (ScoredPlace p : places) {

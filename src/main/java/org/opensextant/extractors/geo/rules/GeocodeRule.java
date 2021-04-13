@@ -31,8 +31,9 @@ import org.slf4j.LoggerFactory;
 
 public abstract class GeocodeRule {
 
-    public final static int UPPERCASE = 2;
-    public final static int LOWERCASE = 1;
+    public static final int AVG_WORD_LEN = 8;
+    public static final int UPPERCASE = 2;
+    public static final int LOWERCASE = 1;
 
     public int weight = 0; /* of 10, approximately */
     public String NAME = null;
@@ -75,7 +76,9 @@ public abstract class GeocodeRule {
 
     /**
      * Create a location ID useful for tracking distinct named features by location.
-     * This is not generalizable.  It produces a looser identity such as "the city at location": P/PPL/f57yah5
+     * This is not generalizable. It produces a looser identity such as "the city at
+     * location": P/PPL/f57yah5
+     * 
      * @param p
      * @return feature+location hash
      */
@@ -131,7 +134,7 @@ public abstract class GeocodeRule {
             loc.setGeohash(geohash(loc));
         }
     }
-    
+
     /**
      * Override here as needed.
      *
@@ -153,8 +156,7 @@ public abstract class GeocodeRule {
     }
 
     /**
-     * @param names
-     *              list of found place names
+     * @param names list of found place names
      */
     public void evaluate(List<PlaceCandidate> names) {
         if (!isRelevant()) {

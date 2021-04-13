@@ -16,6 +16,9 @@
  */
 package org.opensextant.extractors.geo;
 
+import java.util.Set;
+import java.util.HashSet;
+
 import org.opensextant.data.Place;
 
 /**
@@ -28,6 +31,7 @@ import org.opensextant.data.Place;
 public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
 
     private double score = 0.0;
+    private Set<String> rules = null;
 
     public ScoredPlace(String plid, String nm) {
         super(plid, nm);
@@ -37,12 +41,38 @@ public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
         return score;
     }
 
-    public void setScore(double score) {
-        this.score = score;
-    }
-
     public void incrementScore(double d) {
         score += d;
+    }
+
+    /**
+     * Increment the score for a given rule exactly once.
+     * TODO: expand this to allow incremental scores for Document level vs. local
+     * span-level
+     * scoring of specific location candidates.
+     * 
+     * @param d    score
+     * @param rule rule name
+     */
+    public void incrementScore(double d, String rule) {
+        if (!hasRule(rule)) {
+            score += d;
+            addRule(rule);
+        }
+    }
+
+    public boolean hasRule(String r) {
+        if (rules == null) {
+            return false;
+        }
+        return rules.contains(r);
+    }
+
+    public void addRule(String r) {
+        if (rules == null) {
+            rules = new HashSet<>();
+        }
+        rules.add(r);
     }
 
     /**

@@ -19,25 +19,35 @@ import org.opensextant.extractors.geo.PlaceCandidate;
  * likely to be the best location.
  * Note -- other evidence and context has to overwhelm certain feature stats
  * here.
+ * TODO: this overtakes the "DefaultScore" component from "scoreFeature()"
  *
  * @author ubaldino
  */
 public class FeatureRule extends GeocodeRule {
 
-    private static FeatureClassMeta[] fcmeta = { 
-            new FeatureClassMeta("A", 700000, 5.0), 
-            new FeatureClassMeta("P", 10000000, 2.0),
-            new FeatureClassMeta("S", 2700000, 0.8),
-            new FeatureClassMeta("T", 2300000, 0.8),
-            new FeatureClassMeta("L", 700000, 0.8),
-            new FeatureClassMeta("V", 85000, 0.8), 
-            new FeatureClassMeta("R", 65000, 0.7),
-            new FeatureClassMeta("U", 12000, 0.5), 
-            new FeatureClassMeta("H", 3200000, 0.7),
+    private static FeatureClassMeta[] fcmeta = {
+            /*
+             * Example: 3.5% of placenames are Administrative boundaries.
+             * But they are significant and more likely to be mentioned because of that.
+             * So they are weighted heavier per entry. A resulting factor of wt x proportion
+             * = factor
+             * For "A" class names, 10.0 x 0.035 = 0.35 factor
+             * Keeping Cities/Towns as a 1.0 weight; Adjust others relative to that.
+             **/
+            new FeatureClassMeta("A", 700000, 11.0),
+            new FeatureClassMeta("P", 10000000, 1.0),
+            new FeatureClassMeta("P/PPLX", 10000000, 0.7), // Ruins and unused historical names.
+            new FeatureClassMeta("S", 2700000, 0.7),
+            new FeatureClassMeta("T", 2300000, 0.6),
+            new FeatureClassMeta("L", 700000, 0.7),
+            new FeatureClassMeta("V", 85000, 0.6),
+            new FeatureClassMeta("R", 65000, 0.5),
+            new FeatureClassMeta("U", 12000, 0.1),
+            new FeatureClassMeta("H", 3200000, 0.5),
             new FeatureClassMeta("H/RSV", 100000, 0.3),
-            new FeatureClassMeta("H/STM", 1600000, 0.2), 
-            new FeatureClassMeta("H/SPNG", 100000, 0.2), 
-            new FeatureClassMeta("H/WLL", 100000, 0.1) };
+            new FeatureClassMeta("H/STM", 1600000, 0.02),
+            new FeatureClassMeta("H/SPNG", 100000, 0.02),
+            new FeatureClassMeta("H/WLL", 100000, 0.01) };
 
     public static HashMap<String, FeatureClassMeta> featWeights = new HashMap<>();
 
@@ -47,19 +57,32 @@ public class FeatureRule extends GeocodeRule {
         }
     }
 
+    static final int[] FEAT_RESOLUTION = { 6, 5, 1 };
+
     /**
      * Find feature metadata if we have it.
      */
     public static FeatureClassMeta lookupFeature(Place geo) {
-        String ft = String.format("%s/%s", geo.getFeatureClass(), geo.getFeatureCode());
-        if (ft.length() > 5) {
-            ft = ft.substring(0, 5);
+        String fullFeature = String.format("%s/%s", geo.getFeatureClass(), geo.getFeatureCode());
+
+        String ft;
+        for (int ftlen : FEAT_RESOLUTION) {
+            ft = fullFeature;
+            if (fullFeature.length() > ftlen) {
+                ft = fullFeature.substring(0, ftlen);
+            }
+            FeatureClassMeta fc = featWeights.get(ft);
+            if (fc != null) {
+                return fc;
+            }
         }
-        FeatureClassMeta fc = featWeights.get(ft);
-        if (fc == null) {
-            fc = featWeights.get(geo.getFeatureClass());
-        }
-        return fc;
+        return null;
+    }
+
+    public static final String FEAT_RULE = "Feature";
+
+    public FeatureRule() {
+        this.NAME = FEAT_RULE;
     }
 
     /**
@@ -77,6 +100,6 @@ public class FeatureRule extends GeocodeRule {
             return;
         }
 
-        name.incrementPlaceScore(geo, 10 * fc.factor);
+        name.incrementPlaceScore(geo, 10 * fc.factor, NAME);
     }
 }

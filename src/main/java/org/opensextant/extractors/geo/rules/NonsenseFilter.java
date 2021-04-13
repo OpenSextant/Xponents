@@ -2,6 +2,7 @@ package org.opensextant.extractors.geo.rules;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,8 +26,6 @@ import org.opensextant.util.TextUtils;
  */
 public class NonsenseFilter extends GeocodeRule {
 
-    public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
-
     private static int MAX_NONSENSE_PHRASE_LEN = 20;
     private static int MIN_PHONETIC_MATCH_LEN = 4;
     public static final int GENERIC_ONE_WORD = 10; // Chars in average word.
@@ -35,6 +34,21 @@ public class NonsenseFilter extends GeocodeRule {
 
     protected static final String phoneticRedux(final String n) {
         return wsRedux.matcher(n).replaceAll("");
+    }
+
+    private static boolean lowerInitial(String s) {
+        return Character.isLowerCase(s.charAt(0));
+    }
+
+    /**
+     * Test for simple abbreviations.
+     * 
+     * @param s
+     * @return
+     */
+    private static boolean isValidAbbreviation(String s) {
+        String test = dotAbbrev.matcher(s).replaceAll("");
+        return TextUtils.isASCII(test);
     }
 
     /**
@@ -51,6 +65,18 @@ public class NonsenseFilter extends GeocodeRule {
     }
 
     /**
+     * Trivial Articles in lowercase -- when these appear prefixed in place matches
+     * they are usually false positives. e.g., "the hotel"
+     */
+    private static Set<String> TRIVIAL_ARTICLES = new HashSet<>();
+    static {
+        TRIVIAL_ARTICLES.add("the");
+        TRIVIAL_ARTICLES.add("a");
+        TRIVIAL_ARTICLES.add("an");
+        TRIVIAL_ARTICLES.add("le");
+    }
+
+    /**
      * Evaluate the name in each list of names.
      *
      * <pre>
@@ -62,26 +88,37 @@ public class NonsenseFilter extends GeocodeRule {
     @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate p : names) {
-            if (p.isValid()) {
-                continue;
-            }
-            if (irregularPunctPatterns(p.getText())) {
-                p.setFilteredOut(true);
-                p.addRule("Nonsense,Punct");
+            if (p.isValid() || p.getTokens() == null) {
+                // isValid: this place was marked by other rules as valid
+                // tokens: in general trivial geo name references (continents) are not analyzed
+                // and tokens may be null.
                 continue;
             }
 
             /*
-             * is Nonsense?
-             * For phrases upto MAX chars long:
-             * + does it contain irregular punctuation?
-             * // "...in the south. Bend it backwards...";
-             * // South Bend is not intended there.
-             * + does it contain a repeated syllable or word?:
-             * // "doo doo", "bah bah" "to to"
+             * For performance reasons longer phrases are not assessed for non-sense.
              */
             if (p.getLength() > MAX_NONSENSE_PHRASE_LEN) {
                 continue;
+            }
+            
+            /* Look at valid and invalid punctuation patterns */
+            if (assessPunctuation(p)) {
+                continue;
+            }
+
+            /*
+             * Ignore phrases starting with trivial articles or mismatching initial case.
+             */
+            if (p.getWordCount() == 2) {
+                String tok1 = p.getTokens()[0];
+                String tok2 = p.getTokens()[1];
+                if (p.isLower() || (lowerInitial(tok1) && !lowerInitial(tok2))) {
+                    if (TRIVIAL_ARTICLES.contains(tok1)) {
+                        p.setFilteredOut(true);
+                        continue;
+                    }
+                }
             }
 
             /*
@@ -90,21 +127,24 @@ public class NonsenseFilter extends GeocodeRule {
             if (p.getLength() < GENERIC_ONE_WORD) {
                 if (trivialNumerics.matcher(p.getText()).matches()) {
                     p.setFilteredOut(true);
-                    p.addRule("Nonsense,Numbers");
+                    p.addRule("Nonsense Numbers");
                     continue;
-                }
+                }              
             }
-            char ch = p.getText().charAt(0);
-            if (p.isLower() || Character.isLowerCase(ch)) {
-                String[] wds = tokenizer.split(p.getTextnorm());
+
+            /*
+             * Ignore repeated lowercase terms. "ha ha ha"
+             */
+            if (p.isLower() || lowerInitial(p.getText())) {
                 HashSet<String> set = new HashSet<>();
-                for (String w : wds) {
-                    if (set.contains(w)) {
+                for (String w : p.getTokens()) {
+                    String wl = w.toLowerCase();
+                    if (set.contains(wl)) {
                         p.setFilteredOut(true);
-                        p.addRule("Nonsense,Repeated,Lower");
+                        p.addRule("Nonsense Repeated-Lower");
                         break;
                     } else {
-                        set.add(w);
+                        set.add(wl);
                     }
                 }
             }
@@ -121,6 +161,52 @@ public class NonsenseFilter extends GeocodeRule {
                 assessPhoneticMatch(p);
             }
         }
+    }
+
+    
+    /**
+     * optimize punctuation detection and filtration.
+     * 
+     * @param p
+     * @return
+     */
+    public static boolean assessPunctuation(PlaceCandidate p) {
+        Matcher m = anyPunctuation.matcher(p.getText());
+        int punct = 0;
+        while (m.find()) {
+            ++punct;
+        }
+        if (punct == 0) {
+            return false;
+        }
+
+        /*
+         * Place name has punctuation from here on...
+         */
+        if (isValidAbbreviation(p.getText())) {
+            p.addRule("Valid Punct");
+            return true;
+        }
+
+        // Allow things like S. Ana
+        boolean normal = regularAbbreviationPatterns(p.getText());
+        // Don't allow things like X. G"willaker
+        boolean abnormal = isIrregularPunct(punct, p.getLength());
+
+        if (!normal && abnormal) {
+            p.setFilteredOut(true);
+            p.addRule("Nonsense Punct");
+            return true;
+        } else if (abnormal) {
+
+            // Does phrase carry low-signal, high punctuation count?
+            // Ho-ho-ho-ho!!! => matches village "Ho-ho"
+            //
+            p.setFilteredOut(true);
+            p.addRule("Nonsense Punct");
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -181,6 +267,11 @@ public class NonsenseFilter extends GeocodeRule {
         }
     }
 
+    // Pattern to identify cues like "N. " or "Ft. " in lieu of "North " or "Fort "
+    private static final Pattern anyValidAbbrev = Pattern.compile("[EFMNSW][A-Z]{0,2}\\.\\s+",
+            Pattern.CASE_INSENSITIVE);
+    private static final Pattern dotAbbrev = Pattern.compile("\\.\\s*");
+
     // Abbreviated word: WWW. SSSSS word, period, single space, text
     static Pattern validAbbrev = Pattern.compile("\\w+[.] \\S+");
     // Punctuation abounds: WWWWPPPP+ SSSS word, punct, multiple spaces, text
@@ -188,46 +279,53 @@ public class NonsenseFilter extends GeocodeRule {
     static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+|[\"\u2014\u2015\u201C\u201D\u2033]");
     static Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
     static Pattern anyInvalidPunct = Pattern.compile("[[\\p{Punct}\u2014\u2015\u201C\u201D\u2033]&&[^-_.'`]]+");
+    static Pattern anyPunctuation = Pattern.compile("([\\p{Punct}\u2014\u2015\u201C\u201D\u2033]{1})");
+
+    /**
+     * Approximation of Per-character punctuation noise.
+     * 1 punctuation diacritic per character is a maximum.
+     * 
+     * @param t text
+     * @return
+     */
+    public static boolean irregularPunctCount(String t) {
+        return irregularPunctCount(t, 5);
+    }
+
+    public static boolean isIrregularPunct(int punct, int strLength) {
+        return isIrregularPunct(punct, strLength, 5);
+    }
+
+    public static boolean isIrregularPunct(int punct, int strLength, int validCharRate) {
+        if (punct == 0) {
+            return false;
+        }
+        return (strLength / punct) < validCharRate;
+    }
+
+    public static boolean irregularPunctCount(String t, int validCharRate) {
+        Matcher m = anyPunctuation.matcher(t);
+        int punct = 0;
+        while (m.find()) {
+            ++punct;
+        }
+        if (punct == 0) {
+            return false;
+        }
+
+        // Approximately 1 punctuation char for every 5 words is a sign it is noise.
+        // 10 chars with 3 punctuation chars is 3.33 chars per punct char.
+        // 10 chars with 2 punctuation chars is 5.00 -- this seems like a reasonable
+        // limit.
+        return (t.length() / punct) < validCharRate;
+    }
 
     public static boolean irregularPunctPatterns(final String t) {
         return anyInvalidPunct.matcher(t).find();
     }
 
-    /**
-     * Find odd patterns of punctuation in names.
-     * We have to do this because we have over-matched in our tagger or
-     * used aggressive tokenizer, which lets in all sorts of odd punctuation
-     * false-pos.
-     *
-     * @param t
-     * @return
-     */
-    public static boolean irregularPunctPatternsComplicated(final String t) {
-        // HTML, Internet trash: <,>
-        if (t.indexOf('<') >= 0 || t.indexOf('>') >= 0) {
-            return true;
-        }
-        // Edge case "A. B. C." is a valid match, but the last "." is not followed but
-        // space. So
-        // Add a single trailing space.
-        Matcher abbr = validAbbrev.matcher(t);
-        Matcher punct = invalidPunct.matcher(t);
-        int a = 0;
-        int p = 0;
-        while (abbr.find()) {
-            ++a;
-        }
-        if (t.endsWith(".")) {
-            ++a;
-        }
-
-        while (punct.find()) {
-            ++p;
-        }
-        if (a >= 0 && p == 0 || (a >= p)) {
-            return false;
-        }
-        return (p > 0);
+    public static boolean regularAbbreviationPatterns(final String t) {
+        return anyValidAbbrev.matcher(t).find();
     }
 
     /**

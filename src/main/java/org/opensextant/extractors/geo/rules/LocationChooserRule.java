@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
+
 import org.opensextant.data.Country;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.CountryCount;
@@ -14,6 +16,7 @@ import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeodeticUtility;
+import org.opensextant.util.TextUtils;
 
 /**
  * A final geocoding pass or two. Loop through candidates and choose the
@@ -231,6 +234,8 @@ public class LocationChooserRule extends GeocodeRule {
      */
     public static String PREF_COUNTRY = "PreferredCountry";
     public static String PREF_LOCATION = "PreferredLocation";
+    public static String COUNTRY_CONTAINS = "Location.InCountry";
+    public static String ADMIN_CONTAINS = "Location.InAdmin";
 
     /**
      * Yet unchosen location. Consider given evidence first, creating some weight
@@ -252,8 +257,7 @@ public class LocationChooserRule extends GeocodeRule {
         if (preferredCountries != null && !preferredCountries.isEmpty()) {
             if (preferredCountries.contains(geo.getCountryCode())) {
                 // Get a half-point for being within the country
-                name.incrementPlaceScore(geo, 0.5);
-                name.addRule(PREF_COUNTRY);
+                name.incrementPlaceScore(geo, 0.5, PREF_COUNTRY);
             }
         }
         if (preferredLocations != null && !preferredLocations.isEmpty()) {
@@ -261,19 +265,18 @@ public class LocationChooserRule extends GeocodeRule {
                 if (geo.getGeohash().startsWith(gh)) {
                     // Increment a full point for being within the geohash. Note geohash length of 4
                     // or more chars is reasonably good resolution.
-                    name.incrementPlaceScore(geo, 1.0);
-                    name.addRule(PREF_LOCATION);
+                    name.incrementPlaceScore(geo, 1.0, PREF_LOCATION);
                 }
             }
         }
 
         if (boundaryContext.isEmpty() && countryContext.isEmpty()) {
             // So without context, there is nothing more we can do to influence the
-            // connection between
-            // the one named place and the candidate location
+            // connection between the one named place and the candidate location
             return;
         }
 
+        // Put more confidence in countries that are mentioned more frequently by name.
         double countryScalar = 1.0;
         CountryCount ccnt = countryContext.get(geo.getCountryCode());
         if (ccnt != null) {
@@ -283,9 +286,9 @@ public class LocationChooserRule extends GeocodeRule {
         // Choose either boundary or country context to add in for this location.
         // This is inferred stuff from the document at large.
         if (geo.getHierarchicalPath() != null && boundaryContext.containsKey(geo.getHierarchicalPath())) {
-            name.incrementPlaceScore(geo, countryScalar * ADMIN_CONTAINS_PLACE_WT);
+            name.incrementPlaceScore(geo, countryScalar * ADMIN_CONTAINS_PLACE_WT, ADMIN_CONTAINS);
         } else if (countryContext.containsKey(geo.getCountryCode())) {
-            name.incrementPlaceScore(geo, countryScalar * COUNTRY_CONTAINS_PLACE_WT);
+            name.incrementPlaceScore(geo, countryScalar * COUNTRY_CONTAINS_PLACE_WT, COUNTRY_CONTAINS);
         }
 
         // Other local evidence.
@@ -295,16 +298,29 @@ public class LocationChooserRule extends GeocodeRule {
                 continue;
             }
             // Evaluate evidence
-            boolean compareAdmin = ev.getAdmin1() != null && geo.getAdmin1() != null;
-            if (compareAdmin && geo.getHierarchicalPath().equals(ev.getHierarchicalPath())) {
-                name.incrementPlaceScore(geo, ADMIN_CONTAINS_PLACE_WT);
-            } else if (geo.getCountryCode()!=null && geo.getCountryCode().equals(ev.getCountryCode())) {
-                name.incrementPlaceScore(geo, COUNTRY_CONTAINS_PLACE_WT);
+            if (withinSameBoundary(geo, ev)) {
+                name.incrementPlaceScore(geo, ADMIN_CONTAINS_PLACE_WT, ADMIN_CONTAINS);
+            } else if (inCountry(ev.getCountryCode(), geo)) {
+                name.incrementPlaceScore(geo, COUNTRY_CONTAINS_PLACE_WT, COUNTRY_CONTAINS);
             }
 
             ev.setEvaluated(true);
             log.debug("\tEvidence: {} {}", ev, ev.getAdmin1());
         }
+    }
+    
+    private static boolean withinSameBoundary(Place p1, Place p2) {
+        if (p1.getAdmin1()==null || p2.getAdmin1()==null) {
+            return false;
+        }
+        return p1.getHierarchicalPath().equals(p2.getHierarchicalPath());
+    }
+    
+    private static boolean inCountry(String cc, Place geo) {
+        if (cc==null || geo.getCountryCode()==null) {
+            return false;
+        }
+        return geo.getCountryCode().equals(cc);
     }
 
     /**
@@ -386,12 +402,10 @@ public class LocationChooserRule extends GeocodeRule {
     public static final int MATCHCONF_QUALIFIER_HIGH_SCORE = 5;
     /**
      * Confidence Qualifier: Start here if you have a lower case term that may be a
-     * place. -20 points or
-     * more for lower case matches, however feat_class P and A win back 5 points;
-     * others are less likely
-     * places.
+     * place. -10 points or more for lower case matches, however feat_class P and A
+     * win back 5 points; others are less likely places.
      */
-    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -15;
+    public static final int MATCHCONF_QUALIFIER_LOWERCASE = -10;
 
     /**
      * A subtle boost for locations that were preferred -- especially helps when
@@ -469,8 +483,16 @@ public class LocationChooserRule extends GeocodeRule {
             points = MATCHCONF_MANY_LOC;
         }
 
+        // FEATURE WEIGHT
+        // ================
         // Pro-rate this a-priori confidence as 75% + (feature-weight*25%)
-        //
+        // Rationale - Given the default points that typically start at "minimum
+        // threshold",
+        // The feature-weight detracts a few points based on type of feature the chosen
+        // location is.
+        // IF there is enough supporting evidence, the confidence will naturally
+        // increase, otherwise
+        // that confidence stays below threshold.
         double featWeight = 0;
         FeatureClassMeta fc = FeatureRule.lookupFeature(pc.getChosen());
         if (fc != null) {
@@ -487,21 +509,36 @@ public class LocationChooserRule extends GeocodeRule {
         if (pc.isLower()) {
             points += MATCHCONF_QUALIFIER_LOWERCASE;
             if (pc.getChosen().isAdministrative()) {
-                points += 10;
+                points += 15;
             } else if (pc.getChosen().isPopulated()) {
-                points += 5;
+                points += 10;
             }
         }
 
         /*
-         * If we find random places that are short in length (1,2,3 chars)
-         * then we mark them down in confidence. Send them along but low-confidence.
-         * Administrative names, though may be short -- allow them to pass as-is.
+         * Short names that are non-Admin boundaries, consider if they have
+         * little or no supporting evidence. Decrement their points.
          */
-        if (!pc.getChosen().isAdministrative() && pc.getLength() < 5) {
-            if (pc.getEvidence().isEmpty() && pc.hasDefaultRuleOnly()) {
+        if (!pc.getChosen().isAdministrative() && pc.getLength() < AVG_WORD_LEN) {
+            if (pc.getEvidence().isEmpty() && hasOnlyDefaultRules(pc)) {
                 points -= 10;
             }
+            if (pc.isLower() && textCase != LOWERCASE) {
+                points -= 5;
+            }
+        }
+
+        // NAME depth
+        // ================
+        // Given length and tokens how unique is this match?
+        // Award points to longer names
+        // which helps raise confidence when looking at varied case texts.
+        // One point per 5 characters + 1 point per word.
+        // TODO: Generalize beyond CJK vs non-CJK.
+        if (TextUtils.hasCJKText(pc.getText())) {
+            points += pc.getLength() + pc.getWordCount();
+        } else {
+            points += (pc.getLength() / 5) + pc.getWordCount();
         }
 
         // TODO: work through ambiguities -- true ties.
@@ -594,7 +631,7 @@ public class LocationChooserRule extends GeocodeRule {
 
         int points = MATCHCONF_MINIMUM;
 
-        if (pc.hasDefaultRuleOnly() && isMisMatchedAcronym) {
+        if (hasOnlyDefaultRules(pc) && isMisMatchedAcronym) {
             points = MATCHCONF_BARE_ACRONYM;
         } else if (isAcronym) {
             // Acronym with some evidence.

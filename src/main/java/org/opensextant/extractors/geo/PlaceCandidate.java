@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.opensextant.data.Geocoding;
@@ -55,7 +56,7 @@ public class PlaceCandidate extends TextMatch {
     // the places along with their disambiguation scores
     private final Map<String, ScoredPlace> scoredPlaces = new HashMap<>();
     // the list of PlaceEvidences accumulated from the document about this PC
-    private final List<PlaceEvidence> evidence = new ArrayList<>();
+    private final HashMap<String, PlaceEvidence> evidence = new HashMap<>();
     // The chosen, best place:
     private ScoredPlace choice1 = null;
     private ScoredPlace choice2 = null;
@@ -95,7 +96,6 @@ public class PlaceCandidate extends TextMatch {
     /**
      *
      */
-    // basic constructor
     public PlaceCandidate() {
     }
 
@@ -115,7 +115,7 @@ public class PlaceCandidate extends TextMatch {
     /**
      * see setConfidence.
      *
-     * @return
+     * @return confidence
      */
     public int getConfidence() {
         return confidence;
@@ -143,6 +143,7 @@ public class PlaceCandidate extends TextMatch {
 
     private String[] preTokens = null;
     private String[] postTokens = null;
+    private String[] tokens = null;
     private final int DEFAULT_TOKEN_SIZE = 40;
 
     /**
@@ -210,7 +211,7 @@ public class PlaceCandidate extends TextMatch {
      * After candidate has been scored and all, the final best place is the
      * geocoding result for the given name in context.
      *
-     * @return
+     * @return the chosen geocoding
      */
     public Geocoding getGeocoding() {
         choose();
@@ -262,7 +263,7 @@ public class PlaceCandidate extends TextMatch {
      * This only makes sense if you tried choose() first
      * to sort scored places.
      *
-     * @return
+     * @return true if two choices are tied
      */
     public boolean isAmbiguous() {
         if (choice2 != null && choice1 != null) {
@@ -279,21 +280,21 @@ public class PlaceCandidate extends TextMatch {
     /**
      * Only call after choose() operation.
      *
-     * @return
+     * @return score
      */
     public double getSecondChoiceScore() {
         return secondPlaceScore;
     }
 
     /**
-     * @return
+     * @return ScoredPlace, choice2
      */
     public ScoredPlace getSecondChoice() {
         return choice2;
     }
 
     /**
-     * @return
+     * @return all values of scored places. Not a copy
      */
     public Collection<ScoredPlace> getPlaces() {
         return scoredPlaces.values();
@@ -302,18 +303,12 @@ public class PlaceCandidate extends TextMatch {
     /**
      * @param place
      */
-    // add a new place with a default score
     public void addPlace(ScoredPlace place) {
         this.addPlace(place, defaultScore(place));
-        this.rules.add("DefaultScore");
+        this.rules.add(DEFAULT_SCORE);
     }
 
-    /**
-     * @return
-     */
-    public boolean hasDefaultRuleOnly() {
-        return rules.contains("DefaultScore") && rules.size() == 1;
-    }
+    public static final String DEFAULT_SCORE = "DefaultScore";
 
     /**
      * Each place has an ID, but this candidate scoring mechanism must score
@@ -330,15 +325,15 @@ public class PlaceCandidate extends TextMatch {
      * @param place
      * @param score
      */
-    // add a new place with a specific score
     public void addPlace(ScoredPlace place, Double score) {
-        place.setScore(score);
+        place.incrementScore(score);
         this.scoredPlaces.put(makeKey(place), place);
 
         // 'US.CA' or 'US.06', etc.
-        this.hierarchicalPaths.add(place.getHierarchicalPath());
         // 'US'
+        // Not "" or null allowed here:
         if (place.getCountryCode() != null) {
+            this.hierarchicalPaths.add(place.getHierarchicalPath());
             this.countries.add(place.getCountryCode());
         }
     }
@@ -371,7 +366,7 @@ public class PlaceCandidate extends TextMatch {
      * for sanity sake.
      *
      * @param g
-     * @return
+     * @return objective score for the gazetteer entry
      */
     public double defaultScore(Place g) {
         double sn = scoreName(g);
@@ -396,7 +391,7 @@ public class PlaceCandidate extends TextMatch {
      * </pre>
      *
      * @param g
-     * @return
+     * @return score for a given name based on all of its diacritics
      */
     protected double scoreName(Place g) {
         int startingScore = getTextnorm().length();
@@ -425,7 +420,7 @@ public class PlaceCandidate extends TextMatch {
      * This yields a feature score on a 0 to 1.0 point scale.
      *
      * @param g
-     * @return
+     * @return feature score
      */
     protected double scoreFeature(Place g) {
 
@@ -445,33 +440,37 @@ public class PlaceCandidate extends TextMatch {
     /**
      * @param place
      * @param score
+     * @deprecated Avoid incrementing location score without citing the reason. Use
+     *             {@link #incrementPlaceScore(Place, Double, String)}
      */
-    // increment the score of an existing place
+    @Deprecated
     public void incrementPlaceScore(Place place, Double score) {
         ScoredPlace currentScore = this.scoredPlaces.get(makeKey(place));
         if (currentScore != null) {
             currentScore.incrementScore(score);
-        } else {
-            // logger.error("Tried to increment a score for a non-existent
-            // Place");
         }
     }
 
     /**
+     * Consolidate attaching Rules to this name when also scoring candidate
+     * locations.
+     * This operation says a given Place deserves a certain increment in score for a
+     * certain reason.
+     * 
      * @param place
      * @param score
+     * @param rule
      */
-    // set the score of an existing place
-    public void setPlaceScore(ScoredPlace place, Double score) {
-        if (!this.scoredPlaces.containsKey(makeKey(place))) {
-            // log.error("Tried to increment a score for a non-existent Place");
-            return;
+    public void incrementPlaceScore(Place place, Double score, String rule) {
+        addRule(rule);
+        ScoredPlace geo = this.scoredPlaces.get(makeKey(place));
+        if (geo != null) {
+            geo.incrementScore(score, rule);
         }
-        addPlace(place, score);
     }
 
     /**
-     * @return
+     * @return all rules
      */
     public Collection<String> getRules() {
         return rules;
@@ -479,7 +478,7 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * @param rule
-     * @return
+     * @return true if candidate has seen this rule already
      */
     public boolean hasRule(String rule) {
         return rules.contains(rule);
@@ -493,12 +492,25 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * @param evidence
+     * @param ev evidence
+     * @return internal ID for evidence (rule + location)
      */
-    public void addEvidence(PlaceEvidence evidence) {
-        this.evidence.add(evidence);
-        if (evidence.getRule() != null) {
-            this.rules.add(evidence.getRule());
+    protected static String getEvidenceID(PlaceEvidence ev) {
+        String rule = ev.getRule();
+        String pid = ev.getPlaceID() != null ? ev.getPlaceID() : "x";
+        return String.format("%s/%s", rule, pid);
+    }
+
+    /**
+     * @param ev evidence object
+     */
+    public void addEvidence(PlaceEvidence ev) {
+        String evid = getEvidenceID(ev);
+        if (!evidence.containsKey(evid)) {
+            evidence.put(evid, ev);
+            if (ev.getRule() != null) {
+                this.rules.add(ev.getRule());
+            }
         }
     }
 
@@ -509,39 +521,6 @@ public class PlaceCandidate extends TextMatch {
      */
     public void addEvidence(String rule, double weight, Place ev) {
         addEvidence(new PlaceEvidence(ev, rule, weight));
-    }
-
-    /**
-     * @param rule
-     * @param weight
-     * @param cc
-     * @param adm1
-     * @param fclass
-     * @param fcode
-     * @param geo
-     */
-    // some convenience methods to add evidence
-    public void addEvidence(String rule, double weight, String cc, String adm1, String fclass, String fcode,
-            LatLon geo) {
-        PlaceEvidence ev = new PlaceEvidence();
-        ev.setRule(rule);
-        ev.setWeight(weight);
-        if (cc != null) {
-            ev.setCountryCode(cc);
-        }
-        if (adm1 != null) {
-            ev.setAdmin1(adm1);
-        }
-        if (fclass != null) {
-            ev.setFeatureClass(fclass);
-        }
-        if (fcode != null) {
-            ev.setFeatureCode(fcode);
-        }
-        if (geo != null) {
-            ev.setLatLon(geo);
-        }
-        this.evidence.add(ev);
     }
 
     /**
@@ -557,10 +536,11 @@ public class PlaceCandidate extends TextMatch {
         ev.setRule(rule);
         ev.setWeight(weight);
         ev.setCountryCode(cc);
-        this.evidence.add(ev);
+        ev.setPlaceID(cc);
+        addEvidence(ev);
 
         ev.setEvaluated(true);
-        this.incrementPlaceScore(geo, /* 1 x */ weight);
+        this.incrementPlaceScore(geo, weight, ev.getRule());
     }
 
     /**
@@ -575,7 +555,8 @@ public class PlaceCandidate extends TextMatch {
         ev.setWeight(weight);
         ev.setAdmin1(adm1);
         ev.setCountryCode(cc);
-        this.evidence.add(ev);
+        ev.setPlaceID(adm1);
+        this.addEvidence(ev);
     }
 
     /**
@@ -588,7 +569,8 @@ public class PlaceCandidate extends TextMatch {
         ev.setRule(rule);
         ev.setWeight(weight);
         ev.setFeatureClass(fclass);
-        this.evidence.add(ev);
+        ev.setPlaceID(String.format("fc-%s", fclass)); /* Fake internal place ID */
+        addEvidence(ev);
     }
 
     /**
@@ -601,7 +583,8 @@ public class PlaceCandidate extends TextMatch {
         ev.setRule(rule);
         ev.setWeight(weight);
         ev.setFeatureCode(fcode);
-        this.evidence.add(ev);
+        ev.setPlaceID(String.format("fc-%s", fcode)); /* Fake internal place ID */
+        addEvidence(ev);
     }
 
     /**
@@ -618,32 +601,32 @@ public class PlaceCandidate extends TextMatch {
         ev.setRule(rule);
         ev.setWeight(weight);
         ev.setLatLon(coord);
-        this.evidence.add(ev);
+        ev.setPlaceID(geo.getPlaceID()); /* coord_text should be set for valid coordinates */
+        addEvidence(ev);
         //
         ev.setEvaluated(true);
-        this.incrementPlaceScore(geo, weight * proximityScore);
+        this.incrementPlaceScore(geo, weight * proximityScore, "Coordinate.Proximity");
         // The indirect connection between found coord and closest geo candidate
         // is assessed here. The score for geo has already be incremented.
     }
 
     /**
-     * @return
+     * @return the current evidence
      */
-    public List<PlaceEvidence> getEvidence() {
-        return this.evidence;
+    public Collection<PlaceEvidence> getEvidence() {
+        return this.evidence.values();
     }
 
     /**
-     * @return
+     * @return true if candidate has any associated potential locations
      */
     public boolean hasPlaces() {
         return !this.scoredPlaces.isEmpty();
     }
 
     /**
-     * @return
+     * @return string representation of candidate
      */
-    // an overide of toString to get a meaningful representation of this PC
     @Override
     public String toString() {
         return summarize(false);
@@ -653,11 +636,12 @@ public class PlaceCandidate extends TextMatch {
      * If you need a full print out of the data, use summarize(true);.
      *
      * @param dumpAll
-     * @return
+     * @return summary of evidence, rules and chosen location
      */
     public String summarize(boolean dumpAll) {
         StringBuilder tmp = new StringBuilder(getText());
-        tmp.append(String.format("(C=%d, N=%d)", this.getConfidence(), this.scoredPlaces.size()));
+        tmp.append(String.format("(C=%d, N=%d, filtered=%s)", getConfidence(), scoredPlaces.size(),
+                isFilteredOut() ? "Out" : "In"));
         tmp.append("\nRules=");
         tmp.append(rules.toString());
         tmp.append("\nEvidence=");
@@ -674,33 +658,31 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
-     * @return the preTokens
+     * @return the preceding tokens
      */
     public String[] getPrematchTokens() {
         return preTokens;
     }
 
     /**
-     * @param tok
-     *            the preTokens to set
+     * @param toks set preceding tokens
      */
-    public void setPrematchTokens(String[] tok) {
-        this.preTokens = tok;
+    public void setPrematchTokens(String[] toks) {
+        this.preTokens = toks;
     }
 
     /**
-     * @return the postTokens
+     * @return tokens following name span
      */
     public String[] getPostmatchTokens() {
         return postTokens;
     }
 
     /**
-     * @param tok
-     *            the postTokens to set
+     * @param toks set following tokens
      */
-    public void setPostmatchTokens(String[] tok) {
-        this.postTokens = tok;
+    public void setPostmatchTokens(String[] toks) {
+        this.postTokens = toks;
     }
 
     /**
@@ -708,15 +690,15 @@ public class PlaceCandidate extends TextMatch {
      * see if this name is present there.
      *
      * @param path
-     * @return
+     * @return true if given path is represented by candidates' potential locations
      */
     public boolean presentInHierarchy(String path) {
         return path != null && this.hierarchicalPaths.contains(path);
     }
 
     /**
-     * @param cc
-     * @return
+     * @param cc country code
+     * @return true if candidate has potential locations for the given country code.
      */
     public boolean presentInCountry(String cc) {
         return this.countries.contains(cc);
@@ -725,14 +707,14 @@ public class PlaceCandidate extends TextMatch {
     /**
      * How many different countries contain this name?.
      *
-     * @return
+     * @return count of distinct country codes inferred
      */
     public int distinctCountryCount() {
         return this.countries.size();
     }
 
     /**
-     * @return
+     * @return distinct locations by ID, not by geodetic location
      */
     public int distinctLocationCount() {
         return this.scoredPlaces.size(); // These are keyed by PLACE ID, essentially location.
@@ -749,16 +731,62 @@ public class PlaceCandidate extends TextMatch {
     /**
      * if candidate was marked as valid. IF valid, then avoid filters.
      *
-     * @return
+     * @return true if rules have marked this candidate valid
      */
     public boolean isValid() {
         return markedValid;
     }
 
     /**
-     * @return
+     * @return true if candidate has any evidence.
      */
     public boolean hasEvidence() {
         return !this.evidence.isEmpty();
+    }
+
+    public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
+
+    public static int ABBREVIATION_MAX_LEN = 5;
+    private int wordCount = 0;
+
+    /**
+     * a basic whitespace, punctuation delimited count of grams
+     * Set ONLY after inferTextSense() is invoked
+     */
+    public int getWordCount() {
+        return wordCount;
+    }
+
+    /**
+     * text hueristics
+     * 
+     * @param contextisLower True if text around mention is mainly lowercase
+     * @param contextisUpper True if text around mention is mainly uppercase
+     */
+    public void inferTextSense(boolean contextisLower, boolean contextisUpper) {
+
+        if (getText() == null) {
+            return;
+        }
+        this.tokens = tokenizer.split(getText());
+        this.wordCount = tokens.length;
+        this.hasDiacritics = TextUtils.hasDiacritics(getText());
+        /*
+         * Old logic had harmful consequences on By-lines etc: Keep scope of this
+         * narrow.
+         */
+        if (!contextisUpper && isUpper() && 0 < getLength() && getLength() < ABBREVIATION_MAX_LEN) {
+            this.isAcronym = true;
+            this.isAbbreviation = true;
+        }
+    }
+
+    /**
+     * Tokens in word. Only after inferTextSense() is invoked.
+     * 
+     * @return
+     */
+    public String[] getTokens() {
+        return tokens;
     }
 }

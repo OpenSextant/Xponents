@@ -27,6 +27,7 @@ import org.opensextant.data.Place;
  * that class.
  *
  * @author dlutz
+ * @author ubaldino
  */
 public final class PlaceEvidence extends Place implements Comparable<Object> {
 
@@ -68,6 +69,7 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
     // copy constructor
     public PlaceEvidence(PlaceEvidence ev) {
         this();
+        this.setPlaceID(ev.getPlaceID());
         this.setAdmin1(ev.getAdmin1());
         this.setCountryCode(ev.getCountryCode());
         this.setFeatureClass(ev.getFeatureClass());
@@ -83,6 +85,7 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
 
     public PlaceEvidence(Place ev, String rule, double wt) {
         this();
+        this.setPlaceID(ev.getPlaceID());
         this.setAdmin1(ev.getAdmin1());
         this.setCountryCode(ev.getCountryCode());
         this.setFeatureClass(ev.getFeatureClass());
@@ -104,14 +107,12 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
         evaluated = b;
     }
 
-    // compare to other evidence by strength
     @Override
     public int compareTo(Object other) {
         if (!(other instanceof PlaceEvidence)) {
             return 0;
         }
         PlaceEvidence tmp = (PlaceEvidence) other;
-        // return this.weight.compareTo(tmp.weight);
         if (tmp.weight == weight) {
             return 0;
         } else if (weight > tmp.weight) {
@@ -155,9 +156,9 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
         return (this.getFeatureClass().equals(geo.getFeatureClass())
                 && this.getFeatureCode().equals(geo.getFeatureCode()));
     }
-
-    // Override toString to get a reasonable string label for this PlaceEvidence
+    
     /**
+     * Provide a reasonable string label for this PlaceEvidence
      * @author ubaldino
      */
     @Override

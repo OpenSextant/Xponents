@@ -16,9 +16,10 @@
  */
 package org.opensextant.extractors.geo.rules;
 
-import static org.opensextant.util.GeodeticUtility.geohash;
-
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
@@ -46,9 +47,12 @@ public class MajorPlaceRule extends GeocodeRule {
     public static final String CAPITAL = "MajorPlace.Captial";
     public static final String ADMIN = "MajorPlace.Admin";
     public static final String POP = "MajorPlace.Population";
+    public static final String MENTIONED_COUNTRY = "MajorPlace.InCountry";
     private Map<String, Integer> popStats = null;
     private static final int GEOHASH_RESOLUTION = 5;
-    private static final int POP_MIN = 60000;
+    private static final int POP_MIN = 50000;
+
+    Set<String> visitedPlaces = new HashSet<>();
 
     /**
      * Major Place assigns a score to places that are national capitals, provinces,
@@ -56,7 +60,12 @@ public class MajorPlaceRule extends GeocodeRule {
      * Log(population) adds up to one point to place weight. Population data is
      * indexed by location/grid using geohash.
      * Source:geonames.org
-     *
+     * Population stats are deterministic -- they do not change during the
+     * processing
+     * and they are not context specific. So we only assess population per location
+     * ONCE
+     * not per mention.
+     * 
      * @param populationStats
      *                        optional population stats.
      */
@@ -64,6 +73,76 @@ public class MajorPlaceRule extends GeocodeRule {
         NAME = MAJ_PLACE_RULE;
         weight = 2;
         popStats = populationStats;
+        locationOnly = true;
+    }
+
+    @Override
+    public void reset() {
+        visitedPlaces.clear();
+    }
+
+    @Override
+    public void evaluate(List<PlaceCandidate> names) {
+        for (PlaceCandidate name : names) {
+            /*
+             * Prerequisite rule is NameCode rule -- this should
+             * have fired on all names prior to this. Names/Abbreviations "markedValid()"
+             * will be assessed.
+             */
+            if (name.isFilteredOut()) {
+                continue;
+            }
+            if (ignoreAbbreviations(name)) {
+                continue;
+            }
+
+            boolean isAbbrev = name.getLength() < 4 && name.isASCII() && name.isUpper();
+            boolean matchedAdmin = false;
+
+            for (Place geo : name.getPlaces()) {
+                if (filterOutByFrequency(name, geo)) {
+                    continue;
+                }
+
+                // Check for mismatched case -- BKA matching Bka (site feature)
+                if (isAbbrev) {
+                    if (geo.isAdministrative() && geo.isAbbreviation()) {
+                        matchedAdmin = true;
+                    } else {
+                        continue;
+                    }
+                }
+
+                evaluate(name, geo);
+                if (name.getChosen() != null) {
+                    // DONE
+                    break;
+                }
+            }
+
+            // IF no geo lines up with the abbrevation eliminate it.
+            if (isAbbrev && !matchedAdmin) {
+                name.setFilteredOut(true);
+            }
+        }
+    }
+
+    /**
+     * If candidate is marked valid - allow
+     * If candidate is abbreviation and not valid, explicitly filter out --
+     * we don't care about loose references to places.
+     * "CITY, MD" is valid if city is in Maryland, but
+     * "NAME, MD" may be a name of a doctor for example.
+     * 
+     * @param pc
+     * @return flag
+     */
+    private static boolean ignoreAbbreviations(PlaceCandidate pc) {
+        if (pc.isAbbreviation && !pc.isValid()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -85,40 +164,63 @@ public class MajorPlaceRule extends GeocodeRule {
      */
     @Override
     public void evaluate(final PlaceCandidate name, final Place geo) {
+
+        setGeohash(geo);
+
+        String pid = this.internalPlaceID(geo);
+        if (visitedPlaces.contains(pid)) {
+            return;
+        }
+        visitedPlaces.add(pid);
         PlaceEvidence ev = null;
         if (geo.isNationalCapital()) {
             // IFF no countries are mentioned, Capitals are good proxies for country.
             inferCountry(geo);
-            ev = new PlaceEvidence(geo, CAPITAL, weight(weight + 2, geo));
+            ev = new PlaceEvidence(geo, CAPITAL, weight + 2);
         } else if (geo.isAdmin1()) {
-            ev = new PlaceEvidence(geo, ADMIN, weight(weight, geo));
+            ev = new PlaceEvidence(geo, ADMIN, weight);
             inferBoundary(geo);
         } else if (popStats != null && geo.isPopulated()) {
-            String gh = geohash(geo);
-            geo.setGeohash(gh);
+            String gh = geo.getGeohash();
             String prefix = gh.substring(0, GEOHASH_RESOLUTION);
             if (popStats.containsKey(prefix)) {
 
                 int pop = popStats.get(prefix);
                 if (pop > POP_MIN) {
                     geo.setPopulation(pop);
+                    // Looking for a scale that is able compare major cities by population.
+                    // A city of 50K vs. 75K is not much different. But a city of 500K
+                    // is much more likely to be mentioned.
+                    // Log scales give a lot of weight to smaller numbers, and pure linear
+                    // proportion
+                    // is not helpful (hard to say a city of 5 million is 100x more likely to be
+                    // mentioned
+                    // than one of 50K. This scale uses order of magnitude, but slides it and
+                    // squishes it.
+                    // To a number that fits meaningfully in the range of 0 to 1.0
                     //
-                    // Natural log gives a better, slower curve for population weights.
-                    // ln(POP_MIN=25000) = 10.1
-                    // ln(5000) = 8.5 wt=-0.5 - Small village, population decrements score.
-                    // ln(13000) = 9.5 wt= 0 - Inflection point. Cities larger, have some score
-                    // increment.
-                    // Smaller population, score decrements.
-                    // ln(22,000) = 10.0 wt= 0 - e^10 = 22,000
-                    // ln(60,000) = 11.x wt= 1
-                    // ln(165,000) = 12.x wt= 2
-                    // ln(444,000) = 13.x wt= 3
-                    // Etc.
-                    // And to make scale even more gradual, wt - 1 or wt/2, wt/3
-                    // These population stats cannot overtake all other rules entirely.
+                    // Weight (Population) = 1/10 * (ln(Population) - 10)
                     //
-                    int wt = (int) ((Math.log(geo.getPopulation()) - 10)) / 3;
-                    ev = new PlaceEvidence(geo, POP, weight(wt, geo));
+                    // power of E equated to city population:
+                    // 10 = 22K
+                    // 11 = 58K
+                    // 12 = 168K
+                    // 13 = 440K
+                    // 14 = 1.2m
+                    // 15 = 3.2m
+                    // 16 = 8.8m
+                    // Bounds -- 50K minimum, The power law allows scale to grow quickly
+                    // 50K -> weight = 10.82/10 = 1.082
+                    // 500K -> weight = 13.11/10 = 1.311
+                    // 5000K -> weight = 15.42/10 = 1.542
+                    // But lopping off the base order of magnitude (-10) smooths out the scale
+                    // and makes it fit in a range of 0 to 1.0 approximately
+                    // 50K -> weight = 10.82/10 - 1 = 0.082
+                    // 500K -> weight = 13.11/10 - 1 = 0.311
+                    // 5000K -> weight = 15.42/10 - 1 = 0.542
+                    //
+                    double wt = Math.log(geo.getPopulation()) - 10;
+                    ev = new PlaceEvidence(geo, POP, wt);
                 }
             }
         }
@@ -127,7 +229,18 @@ public class MajorPlaceRule extends GeocodeRule {
             name.markValid(); /* Protects this name from stop filters following this rule. */
             ev.setEvaluated(true);
             name.addEvidence(ev);
-            name.incrementPlaceScore(geo, ev.getWeight() * 0.1);
+            name.incrementPlaceScore(geo, ev.getWeight(), ev.getRule());
+            log.debug("PlaceEvidence score {}, on Place {}", ev.getWeight(), geo);
+
+            if (this.countryObserver != null) {
+                if (this.countryObserver.countryObserved(geo.getCountryCode())) {
+                    PlaceEvidence ev2 = new PlaceEvidence(geo, MENTIONED_COUNTRY, 2.0);
+                    name.addEvidence(ev2);
+                    name.incrementPlaceScore(geo, ev2.getWeight(), ev2.getRule());
+                    log.debug("PlaceEvidence - Mentioned Country score {}, on Place {}", ev2.getWeight(), geo);
+                }
+            }
+
         }
     }
 
@@ -150,19 +263,5 @@ public class MajorPlaceRule extends GeocodeRule {
         if (this.boundaryObserver != null) {
             this.boundaryObserver.boundaryLevel1InScope(prov);
         }
-    }
-
-    /**
-     * @param g
-     * @return
-     */
-    private int weight(final int wt, final Place g) {
-        int adjusted = wt;
-        if (this.countryObserver != null) {
-            if (this.countryObserver.countryObserved(g.getCountryCode())) {
-                ++adjusted;
-            }
-        }
-        return adjusted;
     }
 }

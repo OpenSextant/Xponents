@@ -293,58 +293,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return tagText(buffer, docid, false);
     }
 
-    /**
-     * Tag names specifically with Chinese tokenizaiton
-     *
-     * @param buffer text
-     * @param docid  ID
-     * @return list of place candidates
-     * @since 2.7.11
-     * @throws ExtractionException on err
-     * @deprecated Use tagText(TextInput) with a language ID set on argument.
-     */
-    @Deprecated
-    public List<PlaceCandidate> tagCJKText(String buffer, String docid) throws ExtractionException {
-        TextInput in = new TextInput(docid, buffer);
-        // May not actually be true, but this is not necessary.
-        // Best if caller names language explicitly.
-        in.langid = TextUtils.chineseLang;
-        return tagText(in, false, CJK_TAG_FIELD);
-    }
-
-    /**
-     * Tag place names in arabic.
-     *
-     * @param buffer text
-     * @param docid  ID
-     * @since 2.7.11
-     * @return list of place candidates
-     * @throws ExtractionException on err
-     * @deprecated Use tagText(TextInput) with a language ID set on argument.
-     */
-    @Deprecated
-    public List<PlaceCandidate> tagArabicText(String buffer, String docid) throws ExtractionException {
-        TextInput in = new TextInput(docid, buffer);
-        in.langid = TextUtils.arabicLang;
-
-        return tagText(in, false, AR_TAG_FIELD);
-    }
-
-    /**
-     * @param buffer
-     * @param docid
-     * @param tagOnly
-     * @return
-     * @throws ExtractionException
-     * @deprecated Use tagText(TextInput) with a language ID set on argument.
-     */
-    @Deprecated
-    public List<PlaceCandidate> tagArabicText(String buffer, String docid, boolean tagOnly) throws ExtractionException {
-        TextInput in = new TextInput(docid, buffer);
-        in.langid = TextUtils.arabicLang;
-        return tagText(in, tagOnly);
-    }
-
     /** Most languages */
     public static final String DEFAULT_TAG_FIELD = "name_tag";
 
@@ -414,7 +362,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @param tagOnly True if you wish to get the matched phrases only. False if
      *                you want the full list of Place Candidates.
      * @param fld     gazetteer field to use for tagging
-     * @return place_candidates List of place candidates
+     * @return place_candidates List of place candidates which may be empty if
+     *         nothing is found.
      * @throws ExtractionException on err
      */
     public List<PlaceCandidate> tagText(TextInput input, boolean tagOnly, String fld) throws ExtractionException {
@@ -444,7 +393,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         QueryResponse response = tagTextCallSolrTagger(buffer, input.id, beanMap);
         if (beanMap.isEmpty()) {
             // Nothing found.
-            return null;
+            return new ArrayList<>();
         }
 
         int[] textMetrics = TextUtils.measureCase(buffer);
@@ -593,12 +542,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * fully named ones.
              * when inferring boundaries (states, provinces, etc)
              */
-            if (!input.isUpper && pc.isUpper() && len < 5) {
-                pc.isAcronym = true;
-                pc.isAbbreviation = true;
-            }
-            pc.hasDiacritics = TextUtils.hasDiacritics(pc.getText());
-
+            pc.inferTextSense(input.isLower, input.isUpper);
             pc.setSurroundingTokens(buffer);
 
             @SuppressWarnings("unchecked")
@@ -733,30 +677,32 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * - postchar = 0 (null) means there is no chars after the match because Match
          * is at end of text buffer.
          */
-        if (!pGeo.isAbbreviation() || postChar == 0) {
+        if (pc.isAbbreviation) {
             return;
         }
-
-        if (postChar == '.') {
-            // Add the post-punctuation to the match ONLY if a potential GEO matches.
-            pc.isAbbreviation = true;
-            pc.end += 1;
-            pc.setTextOnly(String.format("%s.", pc.getText()));
-        } else if (pc.getText().contains(".")) {
-            /*
-             * TODO: contains abbreviation. E.g. ,'St. Paul' is not fully
-             * an abbreviation.
-             */
-            pc.isAbbreviation = true;
-        } else if (!docIsUPPER && pc.isUpper()) {
-            /*
-             * Hack Warning: NOT everything UPPERCASE in a document
-             * is an abbrev.
-             */
-            // Upper case place matched
-            pc.isAbbreviation = true;
-            // Matched text is UPPER in a non-upper case document
-            pc.isAcronym = true;
+        
+        if (pGeo.isAbbreviation() && postChar > 0) {
+            if (postChar == '.') {
+                // Add the post-punctuation to the match ONLY if a potential GEO matches.
+                pc.isAbbreviation = true;
+                pc.end += 1;
+                pc.setTextOnly(String.format("%s.", pc.getText()));
+            } else if (pc.getText().contains(".")) {
+                /*
+                 * TODO: contains abbreviation. E.g. ,'St. Paul' is not fully
+                 * an abbreviation.
+                 */
+                pc.isAbbreviation = true;
+            } else if (!docIsUPPER && pc.isUpper()) {
+                /*
+                 * Hack Warning: NOT everything UPPERCASE in a document
+                 * is an abbrev.
+                 */
+                // Upper case place matched
+                pc.isAbbreviation = true;
+                // Matched text is UPPER in a non-upper case document
+                pc.isAcronym = true;
+            }
         }
         // Lower or mixed-case abbreviations without "." are not
         // tagged Mr, Us, etc.
@@ -833,7 +779,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 if (p.isCountry()) {
                     Integer count = countries.get(namekey);
                     if (count == null) {
-                        count = new Integer(1);
+                        count = Integer.valueOf(1);
                         countries.put(namekey, count);
                     }
                     ++count;
@@ -843,7 +789,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 } else {
                     Integer count = places.get(namekey);
                     if (count == null) {
-                        count = new Integer(1);
+                        count = Integer.valueOf(1);
                         places.put(namekey, count);
                     }
                     ++count;

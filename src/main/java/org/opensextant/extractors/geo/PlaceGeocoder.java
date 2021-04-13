@@ -53,6 +53,7 @@ import org.opensextant.extractors.geo.rules.CoordinateAssociationRule;
 import org.opensextant.extractors.geo.rules.CountryRule;
 import org.opensextant.extractors.geo.rules.FeatureRule;
 import org.opensextant.extractors.geo.rules.GeocodeRule;
+import org.opensextant.extractors.geo.rules.HeatMapRule;
 import org.opensextant.extractors.geo.rules.LocationChooserRule;
 import org.opensextant.extractors.geo.rules.MajorPlaceRule;
 import org.opensextant.extractors.geo.rules.NameCodeRule;
@@ -85,7 +86,7 @@ import org.slf4j.LoggerFactory;
 public class PlaceGeocoder extends GazetteerMatcher
         implements Extractor, CountryObserver, BoundaryObserver, LocationObserver {
 
-    public static final String VERSION = "3.3";
+    public static final String VERSION = "3.4";
     public static final String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
 
     /**
@@ -200,16 +201,14 @@ public class PlaceGeocoder extends GazetteerMatcher
      * <ul>
      * <li>CountryRule -- tag all country names</li>
      * <li>NameCodeRule -- parse any Name, CODE, or Name1, Name2 patterns for
-     * "Place, AdminPlace"
-     * evidence</li>
+     * "Place, AdminPlace" evidence</li>
      * <li>PersonNameRule -- annotate, negate any patterns or matches that appear to
      * be known celebrity
      * persons or organizations. Qualified places are not negated, e.g., "Euguene,
      * Oregon" is a place;
      * "Euguene" with no other evidence is a person name.</li>
      * <li>CoordRule -- if requested, parse any coordinate patterns; Reverse geocode
-     * Country +
-     * Province.</li>
+     * Country + Province.</li>
      * <li>ProvinceAssociationRule -- associate places with Province inferred by
      * coordinates.</li>
      * <li>MajorPlaceRule -- identify major places by feature type, class or
@@ -242,10 +241,11 @@ public class PlaceGeocoder extends GazetteerMatcher
         /* assess NAME, CODE patterns */
         nameWithAdminRule = new NameCodeRule();
         nameWithAdminRule.setBoundaryObserver(this);
+        nameWithAdminRule.setCountryObserver(this);
 
         // Nonsense is filtered out, rather than scored and ranked low.
         nonsenseFilter = new NonsenseFilter();
-        rules.add(nonsenseFilter);
+        addRule(nonsenseFilter);
 
         /**
          * Files for Place Name filter are editable, as you likely have different ideas
@@ -275,30 +275,28 @@ public class PlaceGeocoder extends GazetteerMatcher
             adm1Rule = new ProvinceAssociationRule();
             adm1Rule.setCountryObserver(this);
 
-            rules.add(coordRule);
-            rules.add(adm1Rule);
+            addRule(coordRule);
+            addRule(adm1Rule);
         }
 
         // Major Places
-        //
         try {
             Map<String, Integer> popstats = GeonamesUtility
                     .mapPopulationByLocation(GeonamesUtility.loadMajorCities("/geonames.org/cities15000.txt"));
             majorPlaceRule = new MajorPlaceRule(popstats);
         } catch (IOException err) {
-            log.error("Xponents 2.8: cities population data is used for geocoding. Will continue without it.");
-            majorPlaceRule = new MajorPlaceRule(null);
+            throw new ConfigException("Missing City population data", err);
         }
         majorPlaceRule.setCountryObserver(this);
         majorPlaceRule.setBoundaryObserver(this);
-        rules.add(majorPlaceRule);
+        addRule(majorPlaceRule);
 
         /*
          * Account for situations like "Eugene, OR" person name followed by a stopword.
          * Valid, fully-qualified city name so we have to allow it to be evaluated first
          * before filtering it out.
          */
-        rules.add(personNameRule);
+        addRule(personNameRule);
 
         // Names of Orgs and Persons.
         //
@@ -330,14 +328,17 @@ public class PlaceGeocoder extends GazetteerMatcher
         //
         placeInOrgRule = new ContextualOrganizationRule();
         placeInOrgRule.setBoundaryObserver(this);
-        rules.add(placeInOrgRule);
+        addRule(placeInOrgRule);
 
         // Simple patterns such as city of x or abc county.
         //
-        rules.add(new NameRule());
+        addRule(new NameRule());
 
         // Feature classification rule:
-        rules.add(new FeatureRule());
+        addRule(new FeatureRule());
+        HeatMapRule heatmapper = new HeatMapRule();
+        addRule(heatmapper);
+        heatmapper.setCountryObserver(this);
 
         chooser = new LocationChooserRule();
         chooser.setCountryObserver(this);
@@ -423,7 +424,6 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         personNameRule.reset();
         countryRule.reset();
-        majorPlaceRule.reset();
         chooser.reset();
         for (GeocodeRule r : rules) {
             r.reset();
@@ -636,7 +636,7 @@ public class PlaceGeocoder extends GazetteerMatcher
                 // If you matched a Person name or an Organization ACRONYM
                 // add the TaxonMatch (TextMatch) to negate place
                 // name spans that are not places.
-                if (node.startsWith("person.")) {
+                if (node.startsWith("person")) {
                     persons.add(tag);
                     break;
                 } else if (node.startsWith("org.")) {
@@ -671,7 +671,7 @@ public class PlaceGeocoder extends GazetteerMatcher
                     // but appear as proper names may be valid first or last names
                     //
                     boolean sillyOrShort = tm.isLower() || tm.getLength() < 4;
-                    if (this.filter.filterOut(input.langid, tag.getText().toLowerCase()) && sillyOrShort) {
+                    if (this.filter.filterOut(input.langid, tag.getTextnorm()) && sillyOrShort) {
                         continue;
                     }
                     persons.add(tag);

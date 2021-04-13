@@ -23,6 +23,8 @@ import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
 
+import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
+
 /**
  * A rule that associates a CODE with a NAME, when the pattern
  * "NAME, CODE" appears within N characters of each other.
@@ -33,7 +35,14 @@ import org.opensextant.extractors.geo.PlaceEvidence;
  */
 public class NameCodeRule extends GeocodeRule {
 
-    private static int MAX_CHAR_DIST = 4;
+    /**
+     * Character distance between NAME CODE -- this is a simple distance
+     * metric to avoid guessing or parsing what is between the NAME CODE or NAME
+     * NAME
+     * E.g., San Francisco, Uraguay - 2 char distance. Allow up to 3
+     * E.g., San Francisco to Uraguay - 4 char distance.
+     */
+    private static int MAX_CHAR_DIST = 5;
 
     public static final String NAME_ADMCODE_RULE = "AdminCode";
     public static final String NAME_ADMNAME_RULE = "AdminName";
@@ -51,6 +60,10 @@ public class NameCodeRule extends GeocodeRule {
         return (pc.isMixedCase() && pc.getLength() < 4);
     }
 
+    public static boolean isRuleFor(PlaceCandidate name) {
+        return name.hasRule(NAME_ADMCODE_RULE) || name.hasRule(NameCodeRule.NAME_ADMNAME_RULE);
+    }
+
     /**
      * Requirement: List of place candidate is a linked list.
      */
@@ -59,6 +72,16 @@ public class NameCodeRule extends GeocodeRule {
         for (int x = 0; x < names.size(); ++x) {
             PlaceCandidate name = names.get(x);
             if (name.isFilteredOut()) {
+                continue;
+            }
+
+            /*
+             * COUNTRY, STATE is not supported under this rule.
+             * E.g., Uruguay, Argentina ... This looks like a list of countries
+             * However Uruguay is a district in Argentina; Just as Georgia is a state in US
+             * and also a country name.
+             */
+            if (name.isCountry) {
                 continue;
             }
             /*
@@ -93,15 +116,6 @@ public class NameCodeRule extends GeocodeRule {
 
             PlaceCandidate code = names.get(x + 1); /* code or name of admin area */
             if (code.isFilteredOut()) {
-                continue;
-            }
-            /*
-             * COUNTRY, STATE is not supported under this rule.
-             * E.g., Uruguay, Argentina ... This looks like a list of countries
-             * However Uruguay is a district in Argentina; Just as Georgia is a state in US
-             * and also a country name.
-             */
-            if (name.isCountry) {
                 continue;
             }
 
@@ -140,6 +154,15 @@ public class NameCodeRule extends GeocodeRule {
                     continue;
                 }
             }
+            /*
+             * ignore the trivial case of where a Name may be repeated.
+             * Ex.
+             * New York, New York -- fine.
+             * New York # New York -- ignore association.
+             */
+            if (!comma && name.isSameNorm(code)) {
+                continue;
+            }
 
             /*
              * by this point a place name tag should be marked as a name or
@@ -154,7 +177,7 @@ public class NameCodeRule extends GeocodeRule {
                 if (logicalGeoMatchFound) {
                     break;
                 }
-                if (!geo.isAdministrative() || geo.getCountryCode() == null) {
+                if (!geo.isUpperAdmin() || geo.getCountryCode() == null) {
                     continue;
                 }
 
@@ -222,11 +245,11 @@ public class NameCodeRule extends GeocodeRule {
                      * NAME is actually an abbreviation and if it has no other evidence, then ignore
                      * this.
                      */
-                    if (name.isAbbreviation && name.getEvidence().isEmpty()) {
+                    if (name.isAbbreviation && hasOnlyDefaultRules(name)) {
                         name.setFilteredOut(true);
                     }
                 } else {
-                    log.debug("Let one through.{}", code);
+                    log.debug("Abbrev/code allowed: {}", code);
                 }
             }
         }
@@ -234,8 +257,7 @@ public class NameCodeRule extends GeocodeRule {
         /*
          * Review items once more.
          */
-        for (int x = 0; x < names.size(); ++x) {
-            PlaceCandidate name = names.get(x);
+        for (PlaceCandidate name : names) {
             if (name.isFilteredOut() || name.hasEvidence()) {
                 continue;
             }
@@ -258,7 +280,13 @@ public class NameCodeRule extends GeocodeRule {
                         break;
                     }
                 }
+            } else if ((!name.isCountry && name.isAbbreviation || name.isAcronym) && !name.isValid()) {
+                // Filter out all trivial abbreviations not already associated with a city.
+                // e.g., I went to see my MD
+                //
+                name.setFilteredOut(true);
             }
+
         }
     }
 
@@ -280,7 +308,7 @@ public class NameCodeRule extends GeocodeRule {
             }
         }
         // Very limited scope assessment of "abbreviation" == 2 chars.
-        if (pc.getLength() <= 3) {
+        if (pc.getLength() < 3) {
             return true;
         }
 
@@ -385,6 +413,12 @@ public class NameCodeRule extends GeocodeRule {
             boundaryObserver.boundaryLevel1InScope(codeGeo);
         }
 
+        /*
+         * Example -- "Houston, TX"
+         * adm1 = ("TX").adm1 "US.48", for example.
+         * Loop through all locations for "Houston" and score the ones that match
+         * "US.48" higher.
+         */
         String adm1 = codeGeo.getHierarchicalPath();
         Place country = code.isCountry ? code.getChosen() : null;
 
@@ -400,13 +434,11 @@ public class NameCodeRule extends GeocodeRule {
                 continue;
             }
             if (adm1 != null && adm1.equals(nameGeo.getHierarchicalPath())) {
-                n.incrementPlaceScore(nameGeo, ev.getWeight());
+                n.incrementPlaceScore(nameGeo, ev.getWeight(), ev.getRule());
                 matchFound = true;
-            } else if (country != null) {
-                if (sameCountry(nameGeo, country)) {
-                    n.incrementPlaceScore(nameGeo, ev.getWeight());
-                    matchFound = true;
-                }
+            } else if (country != null && sameCountry(nameGeo, country)) {
+                n.incrementPlaceScore(nameGeo, ev.getWeight(), ev.getRule());
+                matchFound = true;
             }
         }
     }

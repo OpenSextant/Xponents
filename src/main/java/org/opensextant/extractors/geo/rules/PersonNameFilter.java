@@ -41,10 +41,12 @@ public class PersonNameFilter extends GeocodeRule {
     private Set<String> suffixes = null;
     private static final int AVG_WORD = 7;
 
-    /** Locations that are some number of words long AND have lat/lon
-     * should be allowed to pass as geocodings even when they overlap with organizational names. 
+    /**
+     * Locations that are some number of words long AND have lat/lon
+     * should be allowed to pass as geocodings even when they overlap with
+     * organizational names.
      */
-    private static final int LONG_NAME_LEN = 3 * AVG_WORD; 
+    private static final int LONG_NAME_LEN = 3 * AVG_WORD;
 
     /**
      * Constructor for general usage if you know your files might come from file
@@ -178,30 +180,27 @@ public class PersonNameFilter extends GeocodeRule {
             }
 
             for (TaxonMatch name : persons) {
-                // "General Murtagh" PLACE=murtagh within PERSON (not a valid
-                // place name)
-                // "General Murtagh Memorial Square" PERSON within PLACE (valid
-                // place name)
-                //
-                // Avoid marking as relevant if there is non-whitespace separating the PLACE and
-                // the NAME.
-                // E.g., Alexandria, Virgina; Bob and Mary of ....
-                // So, "Virginia; Bob" is not a valid qualifying "first last" name pattern given
-                // the punctuation.
 
                 String rule = null;
+                // Case: LOC in NAME
+                // LOC: "Murtagh" in PERSON: "General Murtagh"
                 if (pc.isWithin(name)) {
                     rule = "ResolvedPerson";
-                } else if (pc.isBefore(name)) {
+                } else if (pc.isBefore(name) && pc.getWordCount() == 1) {
                     if (hasNonWhitespace(input.buffer, pc.end, name.start)) {
                         continue;
                     }
                     rule = "ResolvedPerson.PreceedingName";
                 } else if (pc.isAfter(name)) {
-                    rule = "ResolvedPerson.SucceedingName";
                     if (hasNonWhitespace(input.buffer, name.end, pc.start)) {
                         continue;
                     }
+                    rule = "ResolvedPerson.SucceedingName";
+                } else if (name.isWithin(pc)) {
+                    // Ignore person names that are sub-matches
+                    // NAME: Murtagh in LOC: "General Murtagh Memorial Square"
+                    pc.addRule("Contains.PersonName");
+                    name.setFilteredOut(true);
                 }
 
                 if (rule != null) {
@@ -220,18 +219,18 @@ public class PersonNameFilter extends GeocodeRule {
              * Ignore terms like Boston City Hall if that is marked as both Org and Location
              * Let location pass as-is.
              */
-            if (pc.getLength()>LONG_NAME_LEN) {
+            if (pc.getLength() > LONG_NAME_LEN) {
                 continue;
             }
 
             for (TaxonMatch name : orgs) {
                 if (pc.isSameMatch(name)) {
-                    // Org is 'name'
-                    // where name is a city
                     pc.setFilteredOut(true);
                     resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule("ResolvedOrg");
-                } else if  (pc.isWithin(name) && !pc.isCountry) {
+                } else if (pc.isWithin(name) && !pc.isCountry) {
+                    // LOC: "Memorial Square" in ORG: "Friends of Memorial Square"
+
                     // Special conditions:
                     // City name in the name of a Building or Landmark is worth saving as a
                     // location.
@@ -240,9 +239,12 @@ public class PersonNameFilter extends GeocodeRule {
                     // After more evaluation, it seems like presence of a city name in an
                     // organization name is good evidence to leverage.
                     //
-                    pc.setFilteredOut(true);                    
+                    pc.setFilteredOut(true);
                     resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule(NAME_IN_ORG_RULE);
+                } else if (name.isWithin(pc)) {
+                    name.setFilteredOut(true);
+                    pc.addRule("Contains.OrgName");
                 }
             }
         }
@@ -255,7 +257,11 @@ public class PersonNameFilter extends GeocodeRule {
     public static final String NAME_IN_ORG_RULE = "NameInOrg";
 
     /**
-     *
+     * Evaluate the place name purely based on previous rules or the lexical nature
+     * of the name, and not any geography.
+     * 
+     * @return True if name is evaluated sufficiently by this rule. False implies
+     *         continue evaluating.
      */
     @Override
     public boolean evaluateNameFilterOnly(PlaceCandidate name) {
@@ -270,14 +276,12 @@ public class PersonNameFilter extends GeocodeRule {
          * Eugene, OR Jackson, MI
          * TODO: Euguene, Oregon etc.
          */
-        if (name.hasRule(NameCodeRule.NAME_ADMCODE_RULE) || name.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
+        if (NameCodeRule.isRuleFor(name)) {
             name.setFilteredOut(false);
-            // Filter = True means, stop evaluating
             return true;
         }
         if (MajorPlaceRule.isRuleFor(name)) {
             name.setFilteredOut(false);
-            // Filter = True means, stop evaluating
             return true;
         }
 
