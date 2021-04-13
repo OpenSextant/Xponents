@@ -2,8 +2,8 @@ package org.opensextant.extractors.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Set;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
@@ -65,14 +65,19 @@ public class TestPlaceGeocoder extends TestGazMatcher {
      * try a series of known tests.
      *
      * @throws IOException
+     * @throws URISyntaxException 
      */
-    public void tagEvaluation() throws IOException {
+    public void tagEvaluation() throws IOException, URISyntaxException {
 
-        Set<String> texts = FileUtility.loadDictionary("/data/placename-tests.txt", true);
+        File f = new File(TestPlaceGeocoder.class.getResource("/data/placename-tests.txt").toURI());
+        String texts = FileUtility.readFile(f, "UTF-8");
         // Call as many times as you have documents...
         //
         try {
-            for (String t : texts) {
+            for (String t : texts.split("\n")) {
+                if (t.strip().isBlank()) {
+                    continue;
+                }
                 print("TEST:\t" + t + "\n=====================");
                 List<TextMatch> matches = geocoder.extract(t);
                 summarizeFindings(matches);

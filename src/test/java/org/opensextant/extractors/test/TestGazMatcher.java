@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.opensextant.data.Place;
+import org.opensextant.data.TextInput;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.GazetteerMatcher;
@@ -174,7 +175,9 @@ public class TestGazMatcher {
             }
 
             docContent = "Is there some city in 刘家埝 written in Chinese?";
-            matches = sm.tagCJKText(docContent, "main-test");
+            TextInput doc = new TextInput("test#1", docContent);
+            doc.langid = "zh";
+            matches = sm.tagText(doc, false);
             for (PlaceCandidate pc : matches) {
                 printGeoTags(pc);
             }
@@ -184,10 +187,16 @@ public class TestGazMatcher {
             for (PlaceCandidate pc : matches) {
                 printGeoTags(pc);
             }
-            String buf = FileUtility.readFile(args[0]);
-            matches = sm.tagText(buf, "main-test", true);
+            
+            if (args.length==1) {
+                print("Processing file "+args[0] );
+                String buf = FileUtility.readFile(args[0]);
+                matches = sm.tagText(buf, "main-test", true);
+                summarizeFindings(copyFrom(matches));
+            } else {
+                System.out.println("Provide a file argument to test");
+            }
 
-            summarizeFindings(copyFrom(matches));
         } catch (Exception err) {
             err.printStackTrace();
         } finally {

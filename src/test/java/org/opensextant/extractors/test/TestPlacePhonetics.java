@@ -60,6 +60,14 @@ public class TestPlacePhonetics {
         print("Place Match 'ÄEÃ' -- valid geo for candidate.");
 
     }
+    
+    @Test
+    public void testPunct() {
+        NonsenseFilter filter = new NonsenseFilter();
+        String test = "ho - -- ho";
+        print("Detect abnormal punctuation");
+        assertTrue(filter.irregularPunctCount(test));
+    }
 
     @Test
     public void testASCII() {
