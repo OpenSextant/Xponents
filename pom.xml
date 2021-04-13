@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.3.7</version>
+  <version>3.4.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -153,14 +153,14 @@
       <artifactId>httpmime</artifactId>
       <version>4.5.13</version>
     </dependency>
-    
+
     <!-- SOLR 7.x LIBS -->
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.10.6</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-core</artifactId>
@@ -369,7 +369,7 @@
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.3.7</version>
+      <version>3.4.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
@@ -534,12 +534,13 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <additionalClasspathElements>
+            <!-- NOTE: These resources for gazetteer mainly are the master data.
+            The data is COPIED to ./src/main/resources before JAR is published or snapshot-deployed.
+            -->
             <additionalClasspathElement>${project.basedir}/etc</additionalClasspathElement>
             <additionalClasspathElement>${project.basedir}/solr/etc/gazetteer</additionalClasspathElement>
             <!-- for build/dev time -->
             <additionalClasspathElement>${project.basedir}/solr/solr7/gazetteer/conf</additionalClasspathElement>
-            <!-- for deploy/package/runtime use JAR which will contain ALL gazetteer resources above. -->
-            <additionalClasspathElement>${project.basedir}/lib/xponents-gazetteer-meta.jar</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>
