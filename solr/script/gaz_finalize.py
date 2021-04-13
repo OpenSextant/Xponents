@@ -11,7 +11,7 @@ class Finalizer:
     def finalize(self, limit=-1, optimize=False):
         """
         Finalize the gazetteer database to include an cleanup, deduplication, etc.
-        :param limit: per-country limit used for testing.
+        :param limit: (Unused) per-country limit used for testing.
         :param optimize: to force a SQLite optimize or not.
         :return:
         """
@@ -104,7 +104,7 @@ class Finalizer:
 
 def filter_out_term(pl):
     """
-    :param txt: Place name or any text
+    :param pl: Place name or any text
     :return: True if term is present in stopwords.
     """
     txt = pl.name

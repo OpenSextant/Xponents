@@ -450,7 +450,7 @@ class DB:
         :param cc: country code or ''
         :param fc: feat class constraint with "*" wildcard, or ''
         :param criteria: additional clause to constrain search, e.g. " AND duplicate=0 " to find non-dups.
-        :limit limit:  non-zero limit
+        :param limit:  non-zero limit
         :return: generator
         """
         sql = ["select * from placenames"]
@@ -548,6 +548,8 @@ class DataSource:
         """
         Given the spreadsheet or source file rip through it, ingesting contents into the master gazetteer.
         :param sourcefile: input file
+        :param limit: non-zero limit for testing
+        :param optimize: if database should be optimized when done.
         :return:
         """
 
