@@ -12,11 +12,12 @@
   <property name="gaz.data" value="${basedir}/etc/gazetteer/" />
   <property name="gaz.conf" value="${solr.home}/gazetteer/conf" />
   <property name="gaz.tmp" value="${basedir}/tmp" />
+  <property name="xponents.jar" value="${basedir}/../target/opensextant-xponents-${xponents.v}.jar" />
+  <property name="resources.lib" value="${basedir}/../src/main/resources" />
 
   <path id="runtime.classpath">
+    <pathelement location="${xponents.jar}" />
     <pathelement location="${basedir}/../lib/*" />
-    <pathelement location="${basedir}/../target/opensextant-xponents-${xponents.v}.jar" />
-    <pathelement location="${solr.home}/lib/xponents-gazetteer-meta.jar" />
   </path>
 
   <target name="proxy">
@@ -82,11 +83,14 @@
 
   <target name="gaz-meta" depends="gaz-stopwords">
     <!-- depends="stopwords" -->
-    <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true">
+    <!-- <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true"> -->
+    <copy todir="${resources.lib}">
       <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**" />
-      <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/**" />
+      <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/*.*" />
       <fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**" />
-    </jar>
+      <fileset dir="${solr.home}/../etc/gazetteer" includes="additions/**" />
+    </copy>
+
   </target>
 
   <!-- Too bad this source data is compromised, as of 2017.  Should be a 5 MB gzip file with 600K entries  -->
@@ -103,7 +107,7 @@
     <move file="${jrc.data}/entities" tofile="${jrc.data}/entities.txt" />
   </target>
 
-  <target name="init" depends="setup,gaz-meta,copy-libs">
+  <target name="init" depends="setup,copy-libs">
   </target>
 
   <target name="clean" description="Delete indexed data">

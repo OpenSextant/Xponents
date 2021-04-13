@@ -58,12 +58,12 @@ Where possible the first universal name variant found will act as the taxon prim
 creating the taxnode value.
 
 """
-import re
 import os
+import re
 
-from opensextant.utility import is_ascii, has_cjk
-from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id
 from opensextant import load_us_provinces
+from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id
+from opensextant.utility import is_ascii, has_cjk
 
 load_us_provinces()
 from opensextant import usstates
@@ -173,6 +173,7 @@ def check_validity(e):
 #
 PLACE_ENDING_FIXES = {"province", "island", "islands", "district", "peninsula", "valley",
                       "territory", "county", "city", "state", "township", "village",
+                      "center", "square", "university", "college",
                       "roads", "avenue", "avenida", "prefecture", "heights", "springs", "falls",
                       "airport", "aeropuerto", "aeroporto", "station", "harbor", "harbour", "port"}
 

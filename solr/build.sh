@@ -85,11 +85,16 @@ do_clean=0
 do_data=0
 do_taxcat=1
 do_gazetteer=1
+do_meta=0
 proxy='' 
 while [ "$1" != "" ]; do
  case $1 in 
   'data')
      do_data=1
+     shift
+     ;;
+  'meta')
+     do_meta=1
      shift
      ;;
   'start')
@@ -116,10 +121,10 @@ while [ "$1" != "" ]; do
   esac
 done
 
-# No longer required:
-#pushd ../
-#mvn dependency:copy-dependencies
-#popd
+if [ ! -d $XPONENTS/target ]; then
+  echo "In build mode, you must build the project libraries first" 
+  exit 1
+fi
 
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
@@ -130,11 +135,9 @@ if [ $do_data -eq 1 ] ; then
   python3 ./script/assemble_wfb_orgs.py
 fi
 
-python3 ./script/assemble_person_filter.py
-
-if [ ! -e ./$SOLR_CORE_VER/lib/xponents-gazetteer-meta.jar ] ; then 
-   # Collect Gazetteer Metadata: 
-   ant $proxy gaz-meta
+if [ $do_meta -eq 1 ] ; then 
+  python3 ./script/assemble_person_filter.py
+  ant $proxy gaz-meta
 fi
 
 sleep 2 

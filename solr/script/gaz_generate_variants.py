@@ -17,29 +17,8 @@ many times only the short form is used:  St. Louis,...
 """
 
 debug = False
-splitter = re.compile(u"[-.`'\u2019\s]+", re.UNICODE | re.IGNORECASE)
+splitter = re.compile("[-.`'\u2019\\s]+", re.UNICODE | re.IGNORECASE)
 ORIGINALS_BLOCK = 20000000
-
-
-def tester():
-    res = splitter.split("Saint Bob's Pond")
-    res = splitter.split("Saint Bob' Pond")
-    res = splitter.split("Sant' Bob Pond")
-    print(res)
-
-    replacements = {}
-
-    term = 'saint'
-    replacements[term] = 'st. '
-    pat = r"({}[-`'\u2019\s]+)".format(term)
-    regex = re.compile(pat, re.UNICODE | re.IGNORECASE)
-
-    test = 'Saint-Pryvé-Saint-Mesmin'
-    repl = replacements[term].capitalize()
-    nVar = regex.sub(repl, test)
-    nVar = nVar.replace('-', ' ').strip()
-    nVar = nVar.replace('  ', ' ')
-    print(nVar)
 
 
 class NameGenerator:

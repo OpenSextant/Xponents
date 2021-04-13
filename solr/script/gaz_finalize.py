@@ -1,4 +1,5 @@
 from opensextant.gazetteer import DB, load_stopterms
+from opensextant.utility import replace_diacritics
 
 stopwords = {}
 
@@ -67,12 +68,14 @@ class Finalizer:
 
     def index(self, url, ignore_features=None, ignore_digits=True, limit=-1):
         import re
+        from time import sleep
         from opensextant.gazetteer import GazetteerIndex
         global stopwords
 
         print("Xponents Gazetteer Finalizer: INDEX")
         stopwords = load_stopterms()
         indexer = GazetteerIndex(url)
+        indexer.commit_rate = 100000
         #
         filters = []
         for f in ignore_features:
@@ -88,19 +91,35 @@ class Finalizer:
                     continue
                 # Mark generic stopwords as search only
                 if not pl.search_only:
-                    if filter_out_term(pl.name):
+                    if filter_out_term(pl):
+                        print(f"\tsearch only: {pl.name} (source: {pl.source})")
                         pl.search_only = True
+                        self.db.mark_search_only(pl.id)
                 indexer.add(pl)
+            # 10 second pause
+            sleep(10)
         print(f"Indexed {indexer.count}")
         indexer.save(done=True)
 
 
-def filter_out_term(txt):
+def filter_out_term(pl):
     """
     :param txt: Place name or any text
     :return: True if term is present in stopwords.
     """
-    return txt.lower() in stopwords
+    txt = pl.name
+    txtnorm = txt.lower()
+    if txtnorm in stopwords:
+        return True
+
+    # UPPER case abbreviations allowed only for administrative boundaries
+    if pl.is_upper and len(pl.name) < 4 and pl.feature_class != "A":
+        return True
+
+    if replace_diacritics(txtnorm).strip("'") in stopwords:
+        return True
+
+    return False
 
 
 def filter_out_feature(pl, feats):
@@ -111,6 +130,15 @@ def filter_out_feature(pl, feats):
     :return:
     """
     if not pl.feature_code:
+        return False
+
+    plen = len(pl.name)
+    # Names of about 20 chars long are non-trivial
+    if plen > 20:
+        return False
+
+    # Allow 3-word features or longer -- that is relatively unique.
+    if len(pl.name.split()) > 2:
         return False
 
     fc = f"{pl.feature_class}/{pl.feature_code}"

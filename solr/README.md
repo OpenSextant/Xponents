@@ -82,7 +82,7 @@ into the Solr server along with other reference data.
 
 1. Checkout Gazetteer ETL project,  http://opensextant.github.io/Gazetteer/
    
-   * Follow instructions to install Pentaho Kettle 6+, Java 8 and Ant
+   * Follow instructions to install Pentaho Kettle 6+, Java 8 to Java 12, and Ant.  Solr 7.x does not appear to work well with Java 13+
    * Tune the build.properties there. Specifically set the dates of downloadable NGA GNS and USGS data sets.  The date
      in build.properties is formatted as `YYYYMMDD` and is a different release date for each source:
        - USGS: https://www.usgs.gov/core-science-systems/ngp/board-on-geographic-names/download-gnis-data
@@ -204,7 +204,7 @@ to intervene and redo any steps.
 
 **MAINTENANCE USE:**
 
-To update the Gazetteer Meta JAR (`xponents-gazetteer-meta.jar`) in between major quarterly releases, consider these few steps:
+To update the Gazetteer Meta resources consider these few steps:
 
 1. Follow notes above to setup.
 2. Update Person names filter
@@ -216,6 +216,14 @@ To update the Gazetteer Meta JAR (`xponents-gazetteer-meta.jar`) in between majo
   python3 ./script/assemble_person_filter.py 
   ant gaz-meta
 ```
+
+As of Xponents 3.4 and later, the resources are included in the main Xponents SDK JAR `opensextant-xponents.X.x.x.jar`.
+Prior to this `xponents-gazetteer-meta.jar` was a separate JAR required to be in the classpath.
+Customizations "live" to the gazetteer meta can be accommodated in your application if you are able to control your 
+`CLASSPATH` and override resource files.  The main meta folders include:
+
+* `/lang/`  -- Lucene and other stopword sets
+* `/filters/` -- exclusions for tagging and downstream tuning.
 
 
 **FIRST USE:** 

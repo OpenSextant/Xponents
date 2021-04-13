@@ -37,7 +37,7 @@ def index_names(taxcat, fpath, cat, tag, rownum):
             entity.id = rownum
             entity.tags.append(tag)
             taxcat.add(cat, entity)
-            if rownum % 100 == 0:
+            if rownum % 1000 == 0:
                 print("Row # ", rownum)
         taxcat.save(flush=True)
         taxcat.optimize()
@@ -67,8 +67,8 @@ if __name__ == '__main__':
     row_max = -1
     builder = TaxCatalogBuilder(server=args.solr)
     builder.commit_rate = 100
-
     row_id = int(args.starting_id)
+    builder.server.delete(q=f"catalog:{catalog_id}", commit=True)
 
     for cfg in data_sets:
         row_id = index_names(builder, cfg['path'], catalog_id, cfg['source'], row_id)
