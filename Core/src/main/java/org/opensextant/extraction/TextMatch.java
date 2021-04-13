@@ -77,6 +77,30 @@ public class TextMatch extends TextEntity {
 
         this.pattern_id = m.pattern_id;
     }
+    
+    /**
+     * Case-insensitive comparison to another string
+     * @param m match
+     * @return trut if 
+     */
+    public boolean isSame(String m) {
+        if (m==null || text == null) {
+            return false;
+        }
+        return getText().equalsIgnoreCase(m);
+    }
+    
+    /**
+     * Compare the normalized string for this match to that of another.
+     * @param m
+     * @return true if getTextnorm()s yield same string.
+     */
+    public boolean isSameNorm(TextMatch m) {
+        if (m==null || text == null) {
+            return false;
+        }
+        return getTextnorm().equals(m.getTextnorm());
+    }
 
     private boolean filteredOut = false;
 

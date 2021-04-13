@@ -160,7 +160,7 @@ abstract public class AbstractGenericFormatter implements ResultsFormatter {
     /**
      * This is checked only by internal classes as they create output streams.
      *
-     * @param previous_run file path of previous output
+     * @param prevOutput file path of previous output
      */
     protected void deleteOutput(File prevOutput) {
         if (prevOutput.exists()) {
@@ -171,8 +171,7 @@ abstract public class AbstractGenericFormatter implements ResultsFormatter {
     /**
      * uniform helper for overwrite check.
      *
-     * @param item
-     *             the item
+     * @param item target output file
      * @throws ProcessingException if unable to overwrite file
      */
     protected void checkOverwrite(File item) throws ProcessingException {

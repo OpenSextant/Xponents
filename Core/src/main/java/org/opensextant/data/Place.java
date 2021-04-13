@@ -281,6 +281,11 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
     public boolean isAdministrative() {
         return GeonamesUtility.isAdministrative(featureClass);
     }
+    
+    /** macro for detecting ADM1 or ADM2 */
+    public boolean isUpperAdmin() {
+        return GeonamesUtility.isUpperAdminLevel(getFeatureCode());
+    }
 
     /**
      * if feature class for this location is 'P' for populated place. TODO: Not
