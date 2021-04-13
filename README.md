@@ -156,10 +156,10 @@ the Python library somewhat.
 
 * `opensextant` (v1.3) Python API offers data utilities; Solr clients for TaxCat and Gazetteer;
   basic data models for text spans, place objects, etc.  Xponents REST client (`xlayer`) which interacts with the Java Xponents REST service.
-* Xponents Core API (v3.3) Java library provides most of the functionality as in the Python library. 
+* Xponents Core API (v3.4) Java library provides most of the functionality as in the Python library. 
   It offers more complete Unicode utilities and other metadata resources such as Country, Timezone, 
   and Language metadata
-* Xponents SDK API (v3.3) provides the Solr and client/server integrations for Gazetteer, 
+* Xponents SDK API (v3.4) provides the Solr and client/server integrations for Gazetteer, 
   TaxCat and PlaceGeocoder.
 
 
@@ -182,14 +182,14 @@ Insert these dependencies into your POM depending on what you need.
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.3.7</version>
+    <version>3.4.0</version>
   </dependency>
 
   <!-- Xponents SDK API -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.3.7</version>
+    <version>3.4.0</version>
   </dependency>
 ```
 
@@ -197,9 +197,9 @@ For reference: [OpenSextant Xponents on Maven](https://search.maven.org/search?q
 
 * `geodesy 2.0.1`   - Geodetic operations and coordinate system calculations
 * `giscore 2.0.2`  - GIS I/O
-* `opensextant-xponents-core  3.3.*` - This Core API
-* `opensextant-xponents       3.3.*` - This Solr-based tagger SDK
-* `opensextant-xponents-xtext 3.3.*` - XText, the text extraction toolkit
+* `opensextant-xponents-core  3.4.*` - This Core API
+* `opensextant-xponents       3.4.*` - This Solr-based tagger SDK
+* `opensextant-xponents-xtext 3.4.*` - XText, the text extraction toolkit
 
 
 

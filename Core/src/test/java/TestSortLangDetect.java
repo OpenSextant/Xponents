@@ -24,6 +24,7 @@ public class TestSortLangDetect {
         System.out.println("DESCENDING SORT");
         // So, sort as provided here is best: This returns LangID highest to lowest.
         List<LangID> sorted = LangDetect.sort(lids);
+        assert(sorted.get(0).score == 99);
         for (LangID l : sorted) {
             System.out.println("L=" + l);
         }

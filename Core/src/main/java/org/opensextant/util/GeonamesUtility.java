@@ -1050,6 +1050,20 @@ public class GeonamesUtility {
     public static boolean isAdmin1(String featCode) {
         return "ADM1".equalsIgnoreCase(featCode);
     }
+    
+    public static boolean isAdmin2(String featCode) {
+        return "ADM2".equalsIgnoreCase(featCode);
+    }
+    
+    /**
+     * Macro for reasoning with upper common levels of boundaries - province, districts.
+     * @param featCode
+     * @return
+     */
+    public static boolean isUpperAdminLevel(String featCode) {
+        return isAdmin1(featCode) || isAdmin2(featCode);
+    }
+
 
     /**
      * Is this Place a National Capital?

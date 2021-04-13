@@ -1,6 +1,7 @@
 package org.opensextant.annotations.test;
 
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.opensextant.annotations.Annotation;
 import org.opensextant.annotations.AnnotationHelper;
 import org.opensextant.data.Place;
@@ -16,6 +17,7 @@ public class EntityAnnotTests {
         AnnotationHelper util = new AnnotationHelper();
 
         Annotation ea = new Annotation("test-id");
+        ea.value = "not null here.";
 
         // This cache overwrites what is in memory.
         util.cacheAnnotation(ea);
@@ -30,7 +32,7 @@ public class EntityAnnotTests {
         try {
             util.cacheAnnotation(ea, 99);
         } catch (Exception err) {
-
+            fail("Ba hoo - failed to cache annotation");
         }
         ea.name = "person";
         ea.value = "Mick Jagger";
@@ -45,6 +47,7 @@ public class EntityAnnotTests {
 
         ea = new Annotation("test");
         ea.addOffset(4);
+        ea.addOffset(14);
 
         // Normal: once:
         ea.addOffsetAttribute();
@@ -59,6 +62,8 @@ public class EntityAnnotTests {
         Place geo = new Place();
         AnnotationHelper.createGeocodingAnnotation("tester", "geolocationABC", "ABC City Hall", 12, "test-doc-123",
                 geo);
+
+        assert (ea.attrs.containsKey("offsets"));
 
     }
 

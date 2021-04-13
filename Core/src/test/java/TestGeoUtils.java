@@ -1,4 +1,4 @@
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +13,6 @@ import org.opensextant.util.GeonamesUtility;
 
 /**
  * @author ubaldino
- *
  */
 public class TestGeoUtils {
 
@@ -75,6 +74,7 @@ public class TestGeoUtils {
         // File("./src/test/resources/cities15000.zip")));
         List<Place> cities = GeonamesUtility.loadMajorCities("/geonames.org/cities15000.txt");
 
+        assertTrue(cities.size() > 0);
         print("Cities with pop = " + cities.size());
         int x = 0;
         for (Place p : cities) {

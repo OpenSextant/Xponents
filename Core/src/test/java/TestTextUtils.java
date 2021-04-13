@@ -28,7 +28,9 @@ public class TestTextUtils {
 
     @Test
     public void testTokens() {
-        print(StringUtils.join(TextUtils.tokensRight("\n     "), ","));
+        String[] toks = TextUtils.tokensRight("\n     ");
+        assert(toks.length == 1); /* Not null */
+        print(StringUtils.join(toks, ","));
     }
 
     @Test

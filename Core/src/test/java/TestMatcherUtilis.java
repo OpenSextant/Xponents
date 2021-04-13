@@ -41,6 +41,7 @@ public class TestMatcherUtilis {
         print("======\n" + text);
         spans = MatcherUtils.findTagSpans(text);
         print(spans.toString());
+        assert(true);
     }
 
     public static void testSomeSpans(String buf) throws IOException {
