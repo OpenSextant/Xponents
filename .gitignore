@@ -5,10 +5,11 @@ piplib
 maven-repo/
 dist/
 
-# Others data
-src/main/resources/geonames.org/
-src/main/resources/ISO-639-2_utf-8.txt
-etc/langdetect
+# Generated data or Downloaded resources.
+# Do not check in gazetteer metadata from ./solr/etc/ -- It is copied to src/main/resources to prepare JAR
+src/main/resources/additions/
+src/main/resources/filters/
+src/main/resources/lang/
 Core/src/main/resources/geonames.org/
 Core/src/main/resources/ISO-639-2_utf-8.txt
 Core/etc/langdetect

@@ -1,9 +1,9 @@
 # Please copy this to "build.properties"  which will provide settings for your workspace.
 # 
 # JAR version number, include -SNAPSHOT or whatever:
-xponents.build.v=3.3.7
+xponents.build.v=3.4.0-SNAPSHOT
 # General version of SDK:
-xponents.version=3.3
+xponents.version=3.4
 #
 # Currently unused:
 # carrot.workspace=/path/to/carrot2/workspace

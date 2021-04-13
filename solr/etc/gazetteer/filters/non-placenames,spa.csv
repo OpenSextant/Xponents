@@ -1,4 +1,23 @@
 exclusion,category
+a su,phrase
+este,article
+por,article
+la frontera,place.civil
+en la,phrase
+de la,phrase
+mucho,verb
+buscar,verb
+tiene,verb
+uno,number
+dos,number
+tres,number
+cuatro,number
+cinco,number
+seis,number
+siete,number
+ocho,number
+nueve,number
+diez,number
 #la,article
 a al,phrase
 a la,phrase

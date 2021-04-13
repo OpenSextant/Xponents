@@ -4,7 +4,14 @@ Geocoder's Handbook for Xponents
 
 **Copyright** OpenSextant.org, 2017
 
+**Updated** 2021
+
 **Video**: **["Discoverying World Geography in Your Data"](https://www.youtube.com/watch?v=44v2WljG1R0)**,  presented at Lucene/Solr Revolution 2017 in Las Vegas 14 September, 2017. In video, at minute 29:50. This is a 12 minute talk
+
+Contents:
+- Tagging Conventions: what is extracted and considered in the tagger pipeline.
+- Geocoding Rules: how discrete pieces of evidence are reasoned to arrive a location decision.
+- **Examples.  Parsing and reasoning on _"San Antonio, TX"_
 
 Welcome to Xponents.  We realize geocoding text or data can be tedious and mind numbing.
 Hopefully this handbook will help you walk through the techniques defined in Xponents
@@ -135,6 +142,76 @@ so far, and the candidate has a location in that province, then score that locat
   * Choose the highest scoring location for each candidate
   * Assign confidence to each choice based on document scoped evidence as well as those rules attached to the particular mention
 
+Examples
+=========
 
+TestPlaceGeocoder is a test routine that helps execute discrete test and evaluation activies, for example:
+* process a single file,
+* process block of text or 
+* run through the `/data/placename-tests.txt`. (in `src/test/resources`). 
+
+All of these are means of feeding the geotagger to find out -- in detail --
+how decisions are made, what is missed and what false positives are emitted.  There may be serious, systematic errors in rules or just missing reference gazetteer data.   All of these scenarios need to be 
+assessed with library and reference data changes.
+
+Let's look at the style of output in debug mode.  `logback.xml` 
+controls logging: By default geocoding and geotagging classes are in 
+`DEBUG` mode.  
+
+Okay.  Look at the text `San Antonio, TX`. 
+
+Consider variants that may change your mindset around decisions:
+
+* `S. Antonio, TX`
+* `SAN ANTONIO TX`
+* `SAN ANTONIO TEXAS`
+* `San Antonio, Texas, Mexico`
+* `San Antonio near the Texas-Mexico border`
+* `San \n    Antonio, Austin and other cities in southern Texas`
+* `san antonio, texas`
+* `SanAnt`
+* etc. 
+
+Return back to the variant mentioned above: `San Antonio, TX`. 
+Xponents teases this apart with an evolving set of rules. The important notes include:
+
+* **Name-Code rule:** `NAME, ADMIN-CODE` where the administrative boundary code represents the place that contains the named place, `NAME`.
+* **Major Place rule:** Cities named `San Antonio` number in the range of 200, but the city in Texas, USA has a significant population
+* **Feature rule:** Populated places (`P/PPL` coding for example) and administrative boundaries (`A/ADM1` for `TX` or `Texas, USA`). 
+* **Collocation rules:** while not present in this example, the mention of other related or nearby places such as `Austin` helps improve the confidence around the connection between cities or sites located in the same district or province or other spatial proximity.
+* **Text rules:** Case, punctuation, whitespace (or lack of), abbreviations
+and other situations are all considered to either filter in/out mentions or to change the confidence in our location decision.
+* **Co-reference or entity collisions**: Names, names, names.  Where person or organization names appear *in* the location name, we can ignore them safely, e.g., `Antonio`. But if the location name appears as a subset of the tag, then we should ignore the location tag, e.g. `San Antonio Pharma Group` is a likely company possibly with no specific geographic reference.
+
+The list goes on.  The list is always growing as more opportunities are 
+observed.  Lots of those opportunities come with additional meta-data or
+reference data.  The raw output of the `TestPlaceGeocoder` evaluation is below:
+
+```
+
+MENTIONS ALL == 3
+Name:Antonio, Type:taxon
+	(filtered out: Antonio)
+Name:San Antonio, TX, Type:generic
+Rules = [
+  Contains.PersonName, 
+  AdminCode, 
+  DefaultScore, 
+  MajorPlace.Population, 
+  CollocatedNames.boundary, 
+  Feature, 
+  Location.InAdmin]
+	geocoded @ San Antonio (48, US, PPL), score=26.31 with conf=81, at [29.4241,-98.4936]
+	geocoded @ San Antonio (24, MX, PPL), score=15.54 second place
+Name:TX, Type:generic
+Filtered Out.  Rules = [DefaultScore]
+MENTIONS DISTINCT PLACES == 1
+[San Antonio, TX]
+MENTIONS COUNTRIES == 0
+[]
+MENTIONS COORDINATES == 0
+[]
+
+```
 
   
