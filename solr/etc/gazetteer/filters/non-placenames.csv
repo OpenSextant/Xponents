@@ -89,6 +89,7 @@ trix,abbrev
 tum,abbrev
 univ,abbrev
 utc,abbrev
+vol,abbrev
 wal,abbrev
 xin,abbrev
 # mobile,adj
@@ -172,6 +173,7 @@ early,adj
 easy,adj
 electric,adj
 elementary,adj
+elite,adj
 english,adj
 ever,adj
 every,adj
@@ -215,6 +217,7 @@ honest,adj
 hot,adj
 hungry,adj
 hydro,adj
+ideal,adj
 imperial,adj
 indo,adj
 industrial,adj
@@ -417,7 +420,6 @@ windswept,adj
 wooden,adj
 worthy,adj
 young,adj
-elite,adj
 bon,adj.fre
 nouveau,adj.fre
 bello,adj.ita
@@ -522,6 +524,7 @@ taurus,astrology
 virgo,astrology
 arm,bodypart
 arms,bodypart
+eye,bodypart
 hind,bodypart
 leg,bodypart
 lung,bodypart
@@ -557,6 +560,7 @@ creed,concept.religion
 devil,concept.religion
 god,concept.religion
 holy,concept.religion
+islam,concept.religion
 jesus,concept.religion
 jihad,concept.religion
 karma,concept.religion
@@ -566,7 +570,6 @@ passover,concept.religion
 quran,concept.religion
 sharia,concept.religion
 spirit,concept.religion
-islam,concept.religion
 cont,contraction
 dont,contraction
 isnt,contraction
@@ -982,7 +985,6 @@ cable,noun
 cache,noun
 cactus,noun
 cafe,noun
-ćafe,noun
 cage,noun
 calendar,noun
 caller,noun
@@ -1200,7 +1202,6 @@ exploits,noun
 fact,noun
 factor,noun
 falcon,noun
-false,noun
 fame,noun
 family,noun
 fan,noun
@@ -1261,6 +1262,7 @@ front,noun
 front door,noun
 funk,noun
 fusion,noun
+ćafe,noun
 gallery,noun
 game,noun
 gaming,noun
@@ -1426,6 +1428,7 @@ lottery,noun
 lotto,noun
 love,noun
 loyalist,noun
+luck,noun
 mach,noun
 mafia,noun
 magazine,noun
@@ -1749,6 +1752,7 @@ sides,noun
 sight,noun
 signal,noun
 silver,noun
+sin,noun
 siren,noun
 size,noun
 skiff,noun
@@ -1872,7 +1876,6 @@ trio,noun
 trip,noun
 triple,noun
 trout,noun
-true,noun
 truth,noun
 tsunami,noun
 tube,noun
@@ -1943,6 +1946,8 @@ yule,noun
 zen,noun
 zenith,noun
 zona,noun
+FALSE,noun
+TRUE,noun
 marche,noun.fra
 l'heure,noun.fre
 la maison,noun.fre
@@ -3142,6 +3147,7 @@ sports,sport
 sprint,sport
 sumo,sport
 tao,stopword.por
+русский,stopword.web
 adobe,stopword.web
 ajax,stopword.web
 alpha,stopword.web
@@ -3201,7 +3207,6 @@ việt,stopword.web
 web,stopword.web
 word,stopword.web
 xbox,stopword.web
-русский,stopword.web
 #me,stopword.wordnet
 #or,stopword.wordnet
 a,stopword.wordnet
@@ -3405,10 +3410,10 @@ you all,stopword.wordnet
 yours,stopword.wordnet
 yourself,stopword.wordnet
 yourselves,stopword.wordnet
-golden age,time
 century,time
 date,time
 dates,time
+golden age,time
 gallon,unit
 abate,verb
 able,verb
@@ -3787,6 +3792,7 @@ tuesday,weekday
 wed,weekday
 wednesday,weekday
 weds,weekday
+über,well-known.brand
 audi,well-known.brand
 bloomberg,well-known.brand
 boeing,well-known.brand
@@ -3822,7 +3828,6 @@ shakespeare,well-known.brand
 suzuki,well-known.brand
 tesla,well-known.brand
 uber,well-known.brand
-über,well-known.brand
 vaio,well-known.brand
 volkswagen,well-known.brand
 american flag,well-known.concept
@@ -3838,6 +3843,7 @@ pepsi,well-known.concept
 zodiac,well-known.concept
 dengue,well-known.disease
 ebola,well-known.disease
+flu,well-known.disease
 hanta,well-known.disease
 lyme,well-known.disease
 mers,well-known.disease
