@@ -3,7 +3,7 @@
   <head>
   </head>
   <body>
-    <h1>Social Geoinferencing</h1>
+    <h2>Social Geoinferencing</h2>
     <p>In 2013 when OpenSextant was first released, we had a demo of how
       to parse tweets. That was fun.&nbsp;&nbsp; Since then, what we've
       done with Xponents here is to develop a methodology for
@@ -47,27 +47,24 @@
       other algorithms could extract and report discrete location
       intelligence.<br>
     </p>
-    <p><b>SimpleProcessorDemo</b> demonstrates using the <b>TweetLoader</b>
+    <p><b>SocialGeoDemo</b> demonstrates using the <b>TweetLoader</b>
       to load JSON formatted data, process it, and output it as CSV or
       KML (using <b>KMLDemoWriter</b> and the stock OpenSextant output
       schema)<br>
     </p>
     <p><br>
     </p>
-    <h2>SimpleProcessorDemo usage:<br>
+    <h2>SocialGeoDemo usage:<br>
     </h2>
-    <code>&nbsp;&nbsp;&nbsp; mkdir -p output<br>
-      <br>
-      &nbsp;&nbsp;&nbsp; j</code><code>ava --cp lib/* </code><code><code>-Dopensextant.solr=./solr/solr7
-        -Xmx2g -Xms2g \</code><code><br>
-        &nbsp; </code></code><code><code></code><code>&nbsp; org.opensextant.extractors.geo.social.</code>SimpleProcessorDemo
-      \</code><code></code><br>
-    <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --phase
-      xponents-text --in src/test/resources/sample-tweets.json \</code><br>
-    <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --out
-      ./output/sample-tweets+geocoded.json \<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --kml&nbsp;
-      ./output/sample-tweets.kml</code><br>
+    <pre>&nbsp;&nbsp;&nbsp;
+      mkdir -p output
+      &nbsp;java --cp lib/* -Dopensextant.solr=./solr/solr7
+            -Xmx2g -Xms2g \
+        &nbsp;   SocialGeoDemo \
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --phase xponents-text --in src/test/resources/sample-tweets.json \
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --out ./output/sample-tweets+geocoded.json \
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--kml&nbsp; ./output/sample-tweets.kml
+    </pre><br>
     <br>
     The output is then a Geocoded JSON file as well as a KML file.&nbsp;
     <br>

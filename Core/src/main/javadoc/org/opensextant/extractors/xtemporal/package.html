@@ -5,11 +5,11 @@
     <meta content="Marc Ubaldino" name="author">
   </head>
   <body>
-    <h1> XTemporal: Date and Time Pattern Extraction </h1>
+    <h2> XTemporal: Date and Time Pattern Extraction </h2>
     XTemporal allows you to extract and normalize date/time
     patterns.&nbsp; Current library is seven (7) most common date
     patterns.&nbsp; This shadows developments with FlexPat and XCoord.
-    <h1>Usage</h1>
+    <h2>Usage</h2>
     <p>From the command line you can quickly test XCoord on a set of
       given test cases or provide a file of your own.<br>
     </p>
@@ -21,11 +21,9 @@
     <p>Programmatically, the essential usage is:<br>
     </p>
     <pre style="margin-left: 40px;"> XTemporal xdt = new XTemporal(true);<br>      <br> xdt.configure();<br> xdt.test("/text/file.txt");<br><br> XTempResult res = xdt.extract_dates(buf, id);<br>	<br> // print our res.matches<br></pre>
-    <h1>Pattern Definition</h1>
+    <h2>Pattern Definition</h2>
     <p>(coming)&nbsp; See ./src/main/resources/datetime_patterns.cfg<br>
       <br>
     </p>
-    <h1><br>
-    </h1>
   </body>
 </html>
