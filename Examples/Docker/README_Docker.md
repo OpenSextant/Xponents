@@ -142,7 +142,7 @@ For example, with the sonarqube plugin I launch an analysis:
       -Dsonar.projectKey=opensextant-xponents-core \
       -Dsonar.host.url=http://localhost:9000 \
       -Dsonar.login=$SONAR_TOKEN \
-      -Dsonar.inclusions=./src/main/java
+      -Dsonar.inclusions="**/*.java"
     
     popd
     pushd ./Xponents
@@ -151,7 +151,7 @@ For example, with the sonarqube plugin I launch an analysis:
       -Dsonar.projectKey=opensextant-xponents \
       -Dsonar.host.url=http://localhost:9000 \
       -Dsonar.login=$SONAR_TOKEN \
-      -Dsonar.inclusions=./src/main/java
+      -Dsonar.inclusions="**/*.java"
       
     popd
     pushd ./XText
@@ -160,7 +160,7 @@ For example, with the sonarqube plugin I launch an analysis:
       -Dsonar.projectKey=opensextant-xtext \
       -Dsonar.host.url=http://localhost:9000 \
       -Dsonar.login=$SONAR_TOKEN \
-      -Dsonar.inclusions=./src/main/java
+      -Dsonar.inclusions="**/*.java"
     popd    
 ```
 

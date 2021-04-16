@@ -11,9 +11,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- *    Copyright 2013-2015 The MITRE Corporation.
+ *    Copyright 2013-2019 The MITRE Corporation.
  */
-package org.opensextant.extractors.geo;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +32,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
 import org.opensextant.ConfigException;
+import org.opensextant.extractors.geo.TagFilter;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
@@ -41,6 +41,10 @@ import org.slf4j.LoggerFactory;
 
 import gnu.getopt.Getopt;
 
+/**
+ * @deprecated GazetteerIndexer is replaced by Python/SQLite scripts for producing master gazetter
+ */
+ @Deprecated
 public class GazetteerIndexer {
 
     public static void main(String... args) {

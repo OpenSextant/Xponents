@@ -9,7 +9,6 @@
  *                 OpenSextant
  */
 
-package org.opensextant.extractors.geo.social;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,6 +30,7 @@ import org.opensextant.data.social.TweetLoader;
 import org.opensextant.data.social.TweetUtility;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extractors.langid.LangDetect;
+import org.opensextant.extractors.geo.social.*;
 import org.opensextant.output.Transforms;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.TextUtils;
@@ -72,13 +72,13 @@ import jodd.json.JsonObject;
  * 
  * @author ubaldino
  */
-public class SimpleProcessorDemo implements JSONListener {
+public class SocialGeoDemo implements JSONListener {
 
     public static void main(String[] args) {
-        SimpleProcessorDemo.demo(args);
+        SocialGeoDemo.demo(args);
     }
 
-    protected static final Logger log = LoggerFactory.getLogger(SimpleProcessorDemo.class);
+    protected static final Logger log = LoggerFactory.getLogger(SocialGeoDemo.class);
 
     /**
      * This captures the staging and tear down mechanics for a job
@@ -87,7 +87,7 @@ public class SimpleProcessorDemo implements JSONListener {
      * @param args
      */
     public static void demo(String... args) {
-        final SimpleProcessorDemo looper = new SimpleProcessorDemo();
+        final SocialGeoDemo looper = new SocialGeoDemo();
 
         /*
          * Run the shutdown implementation for any exit situation. Normal

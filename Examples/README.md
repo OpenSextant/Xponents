@@ -29,6 +29,12 @@ The complete set of command line demos includes:
             
 ```
 
+For example try the XCoord coordinate extraction on provided test data:
+
+```
+  ./script/xponents-demo.sh   xcoord -t ./test/Coord_Patterns_Truth_Text.txt
+```
+
 Xponents demonstrations reside here: `Examples/src/main/java/org/opensextant/examples/` or in
 `./src/test/java/`.  The main Java source is intended to be the official API, free of runtime decisions.
 This set of demonstrations demonstrates how to use various APIs.  Significant Java examples include:
