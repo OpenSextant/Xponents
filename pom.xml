@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.4.0-SNAPSHOT</version>
+  <version>3.4.0</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -69,12 +69,12 @@
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.6</version>
+        <version>2.8.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.11</version>
+        <version>3.12.0</version>
       </dependency>
       <!-- JUnit -->
       <dependency>
@@ -292,7 +292,7 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
+      <version>3.1.0</version>
       <scope>runtime</scope>
     </dependency>
     <!-- Required Solr plugins: SolrTextTagger goes into solr6 or sol7 lib; 
@@ -322,6 +322,8 @@
       <groupId>gnu.getopt</groupId>
       <artifactId>java-getopt</artifactId>
       <version>1.0.13</version>
+      <scope>runtime</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -369,7 +371,7 @@
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.4.0-SNAPSHOT</version>
+      <version>3.4.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -534,9 +536,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <additionalClasspathElements>
-            <!-- NOTE: These resources for gazetteer mainly are the master data.
-            The data is COPIED to ./src/main/resources before JAR is published or snapshot-deployed.
-            -->
+            <!-- NOTE: These resources for gazetteer mainly are the master 
+              data. The data is COPIED to ./src/main/resources before JAR is published 
+              or snapshot-deployed. -->
             <additionalClasspathElement>${project.basedir}/etc</additionalClasspathElement>
             <additionalClasspathElement>${project.basedir}/solr/etc/gazetteer</additionalClasspathElement>
             <!-- for build/dev time -->
