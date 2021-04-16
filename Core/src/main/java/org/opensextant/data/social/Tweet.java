@@ -395,19 +395,22 @@ public class Tweet extends Message {
         }
     }
 
+    public static String LOCATION_FLD = "location";
+    public static String COORD_FLD = "coordinates";
+    
     /**
      * @param json
      * @param tw
      * @return true if a location metadata was found and set.
      */
     public static boolean setUserGeo(JsonObject json, Tweet tw) {
-        JsonObject loc = json.getJsonObject("location");
+        JsonObject loc = json.getJsonObject(LOCATION_FLD);
         boolean _loc = isValue(loc);
 
         boolean _xy = false;
         JsonObject xy = null;
         if (tw.geoEnabled) {
-            xy = json.getJsonObject("coordinates");
+            xy = json.getJsonObject(COORD_FLD);
             _xy = isValue(xy);
         }
 
@@ -458,13 +461,13 @@ public class Tweet extends Message {
      */
     public static void setStatusGeo(JsonObject json, Tweet tw) {
 
-        JsonObject loc = json.getJsonObject("location");
+        JsonObject loc = json.getJsonObject(LOCATION_FLD);
         boolean _loc = isValue(loc);
 
         boolean _xy = false;
         JsonObject xy = null;
         if (tw.geoEnabled) {
-            xy = json.getJsonObject("coordinates");
+            xy = json.getJsonObject(COORD_FLD);
             _xy = isValue(xy);
         }
 
@@ -551,7 +554,7 @@ public class Tweet extends Message {
      * @param latFirst true if type of Point has lat as first field.
      */
     protected static void setLatLon(Place p, JsonObject hasCoord, boolean latFirst) {
-        JsonArray ll = hasCoord.getJsonArray("coordinates");
+        JsonArray ll = hasCoord.getJsonArray(COORD_FLD);
         if (latFirst) {
             p.setLatitude(ll.getDouble(0));
             p.setLongitude(ll.getDouble(1));
@@ -616,7 +619,7 @@ public class Tweet extends Message {
     public void setUser(JsonObject tw_user) {
         authorID = tw_user.getString("screen_name");
         authorName = tw_user.getString("name");
-        authorLocation = optString(tw_user, "location");
+        authorLocation = optString(tw_user, LOCATION_FLD);
         authorProfileID = optString(tw_user, "id_str");// Integer.toString(getInteger(tw_user, "id", -1));
 
         /*
@@ -647,8 +650,8 @@ public class Tweet extends Message {
         authorName = tw_user.getString("displayName");
         authorProfileID = parseId(tw_user.getString("id"));
         authorLocation = null;
-        if (tw_user.containsKey("location")) {
-            JsonObject authLocation = tw_user.getJsonObject("location");
+        if (tw_user.containsKey(LOCATION_FLD)) {
+            JsonObject authLocation = tw_user.getJsonObject(LOCATION_FLD);
             this.authorGeo = new Place(null, authLocation.getString("displayName"));
         }
 
@@ -784,7 +787,7 @@ public class Tweet extends Message {
         Set<String> ids = null;
         while (m.find()) {
             if (ids == null) {
-                ids = new HashSet<String>();
+                ids = new HashSet<>();
             }
             ids.add(m.group());
         }

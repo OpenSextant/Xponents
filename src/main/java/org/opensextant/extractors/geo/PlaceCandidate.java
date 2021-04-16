@@ -752,6 +752,7 @@ public class PlaceCandidate extends TextMatch {
     /**
      * a basic whitespace, punctuation delimited count of grams
      * Set ONLY after inferTextSense() is invoked
+     * @return token word count
      */
     public int getWordCount() {
         return wordCount;

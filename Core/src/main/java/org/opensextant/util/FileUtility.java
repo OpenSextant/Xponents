@@ -66,7 +66,7 @@ public class FileUtility {
      * @throws IOException if file had IO errors.
      */
     public static boolean writeFile(String buffer, String fname) throws IOException {
-        return writeFile(buffer, fname, "UTF-8", false);
+        return writeFile(buffer, fname, default_encoding, false);
     }
 
     /**
@@ -681,7 +681,7 @@ public class FileUtility {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, default_encoding))) {
 
-            final Set<String> dict = new HashSet<String>();
+            final Set<String> dict = new HashSet<>();
             String newline = null;
             String test = null;
             while ((newline = reader.readLine()) != null) {

@@ -92,7 +92,7 @@ public class AnnotationHelper {
      * @return the list
      */
     public static List<Annotation> decodeAnnotations(List<Annotation> codedAnnots) {
-        List<Annotation> annots = new ArrayList<Annotation>();
+        List<Annotation> annots = new ArrayList<>();
         for (Annotation a : codedAnnots) {
             if (a.offset >= 0) {
                 annots.add(a);
@@ -101,10 +101,10 @@ public class AnnotationHelper {
             // If no attrs, just add Annotation.
             if (a.attrs == null) {
                 annots.add(a);
-            } else if (a.attrs.containsKey("offsets")) {
+            } else if (a.attrs.containsKey(Annotation.OFFSETS_FLD)) {
                 // ATTRS not null, if 'offsets' is used, decoded it. This annoation appears at
                 // those offsets.
-                annots.addAll(decodeOffsets(a, a.attrs.getString("offsets")));
+                annots.addAll(decodeOffsets(a, a.attrs.getString(Annotation.OFFSETS_FLD)));
             } else {
                 // No attributes, no offset, etc.
                 // This is just an ordinary annotation for the document. E.g., classifier label.
@@ -125,10 +125,10 @@ public class AnnotationHelper {
             return a.offset;
         }
 
-        if (a.attrs == null || a.attrs.containsKey("offsets")) {
+        if (a.attrs == null || a.attrs.containsKey(Annotation.OFFSETS_FLD)) {
             return -1;
         }
-        String val = a.attrs.getString("offsets");
+        String val = a.attrs.getString(Annotation.OFFSETS_FLD);
         if (StringUtils.isBlank(val)) {
             return -1;
         }
@@ -161,7 +161,7 @@ public class AnnotationHelper {
      * @return the list
      */
     public static List<Integer> decodeOffsets(String list) {
-        List<Integer> numarray = new ArrayList<Integer>();
+        List<Integer> numarray = new ArrayList<>();
         String[] nums = list.split(NUM_SEP);
         for (String n : nums) {
             numarray.add(Integer.parseInt(n));
@@ -179,13 +179,13 @@ public class AnnotationHelper {
      * @return the list
      */
     public static List<Annotation> decodeOffsets(Annotation meta, String offsetList) {
-        List<Annotation> annots = new ArrayList<Annotation>();
+        List<Annotation> annots = new ArrayList<>();
         List<Integer> _offsets = decodeOffsets(offsetList);
 
         // Shallow hashmap, not complex.
         JsonObject copyAttrs = new JsonObject();
         copyAttrs.mergeIn(meta.attrs);
-        copyAttrs.remove("offsets");
+        copyAttrs.remove(Annotation.OFFSETS_FLD);
 
         for (Integer x : _offsets) {
             // COPY annotation "meta" to "a"
@@ -224,16 +224,16 @@ public class AnnotationHelper {
      *
      * @param rec_id  the rec_id
      * @param contrib the contrib
-     * @param _type   the _type
+     * @param atype   the atype
      * @param val     the val
      * @return the annotation id
      */
-    public static String getAnnotationId(String rec_id, String contrib, String _type, String val) {
+    public static String getAnnotationId(String rec_id, String contrib, String atype, String val) {
         try {
-            return TextUtils.text_id(String.format("%s;%s;%s;%s", rec_id, contrib, _type, val));
+            return TextUtils.text_id(String.format("%s;%s;%s;%s", rec_id, contrib, atype, val));
         } catch (Exception err) {
             // This is an ODD and rare error to have with an MD5 or other digest.
-            err.printStackTrace();
+            logger.error("Obscure hashing error R={}", rec_id,  err);
         }
         return null;
     }
@@ -617,7 +617,7 @@ public class AnnotationHelper {
                 }
                 geo.setPrecision(prec);
                 if (geo.getPrecision() <= 0) {
-                    logger.info("Location should have precision: " + a.attrs);
+                    logger.info("Location should have precision: {}", a.attrs);
                 }
             } else {
                 logger.info("GEOLOCATION warning: 0,0: ID={}, {}", a.rec_id, a.attrs);

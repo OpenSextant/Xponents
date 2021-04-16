@@ -46,8 +46,8 @@ public class GISDataModel {
     protected boolean useFileHyperlink = false;
 
     protected Schema schema = null;
-    protected List<String> field_order = new ArrayList<String>();
-    public Set<String> field_set = new HashSet<String>();
+    protected List<String> field_order = new ArrayList<>();
+    public Set<String> field_set = new HashSet<>();
 
     /**
      * Instantiates a new GIS data model.
@@ -298,7 +298,7 @@ public class GISDataModel {
         }
 
         // this is a list for M x N times
-        List<Feature> features = new ArrayList<Feature>();
+        List<Feature> features = new ArrayList<>();
         features.add(row);
 
         return features;

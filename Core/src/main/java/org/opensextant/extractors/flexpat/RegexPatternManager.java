@@ -16,8 +16,6 @@
  */
 package org.opensextant.extractors.flexpat;
 
-import static org.opensextant.extraction.MatcherUtils.reduceMatches;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +28,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.opensextant.ConfigException;
 import org.opensextant.extraction.TextEntity;
-import org.opensextant.extraction.TextMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +77,7 @@ public abstract class RegexPatternManager {
     /**
      *
      */
-    public List<PatternTestCase> testcases = new ArrayList<PatternTestCase>();
+    public List<PatternTestCase> testcases = new ArrayList<>();
 
     public RegexPatternManager(InputStream s, String n) throws IOException {
         this.patternFile = n;
@@ -183,8 +181,8 @@ public abstract class RegexPatternManager {
      */
     public void initialize(InputStream io) throws IOException {
 
-        patterns = new HashMap<String, RegexPattern>();
-        patterns_list = new ArrayList<RegexPattern>();
+        patterns = new HashMap<>();
+        patterns_list = new ArrayList<>();
 
         // the #DEFINE statements as name and regex
         HashMap<String, String> defines = new HashMap<String, String>();
@@ -192,7 +190,7 @@ public abstract class RegexPatternManager {
         // the #RULE statements as name and a sequence of DEFINES and regex bits
         HashMap<String, String> rules = new HashMap<String, String>();
         HashMap<String, String> matcherClasses = new HashMap<String, String>();
-        List<String> rule_order = new ArrayList<String>();
+        List<String> rule_order = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, "UTF-8"))) {
 
@@ -208,12 +206,20 @@ public abstract class RegexPatternManager {
                     // line should be
                     // #DEFINE<tab><defineName><tab><definePattern>
                     fields = line.split("[\t ]+", 3);
+                    if (fields.length!=3) {
+                        throw new ConfigException(String.format("DEFINE entry must have 3 fields for LINE: %s", line));
+                    }
+                    
                     defines.put(fields[1].trim(), fields[2].trim());
                 } // Is it a rule statement?
                 else if (line.startsWith("#RULE")) {
                     // line should be
                     // #RULE<tab><rule_fam><tab><rule_id><tab><pattern>
                     fields = line.split("[\t ]+", 4);
+                    if (fields.length!=4) {
+                        throw new ConfigException(String.format("RULE entry must have 4 fields for LINE: %s", line));
+                    }
+                    
 
                     String fam = fields[1].trim();
                     String ruleName = fields[2].trim();
@@ -231,8 +237,11 @@ public abstract class RegexPatternManager {
                         rules.put(ruleKey, rulePattern);
                         rule_order.add(ruleKey);
                     }
-                } else if (testing & line.startsWith("#TEST")) {
+                } else if (testing && line.startsWith("#TEST")) {
                     fields = line.split("[\t ]+", 4);
+                    if (fields.length!=4) {
+                        throw new ConfigException(String.format("TEST entry must have 4 fields for LINE: %s", line));
+                    }
                     ++testcount;
 
                     String fam = fields[1].trim();
@@ -248,6 +257,9 @@ public abstract class RegexPatternManager {
                     testcases.add(tc);
                 } else if (line.startsWith("#CLASS")) {
                     fields = line.split("[\t ]+", 3);
+                    if (fields.length!=3) {
+                        throw new ConfigException(String.format("CLASS entry must have 3 fields for LINE: %s", line));
+                    }
 
                     String fam = fields[1].trim();
                     matcherClasses.put(fam, fields[2].trim());
@@ -416,18 +428,5 @@ public abstract class RegexPatternManager {
         }
 
         return pairs;
-    }
-
-    /**
-     * This operates on the listed objects, flagging each match as distinct,
-     * overlapping with other
-     * match or if it is completely contained within other match.
-     *
-     * @param matches a list of related matches from a single text
-     * @deprecated use MatcherUtils.reduceMatches()
-     */
-    @Deprecated
-    public static void reduce_matches(List<TextMatch> matches) {
-        reduceMatches(matches);
     }
 }

@@ -225,7 +225,7 @@ public class Message {
      * @param o
      * @return
      */
-    public static final double UTCOffsetHours(int o) {
+    public static final double toUTCOffsetHours(int o) {
         return o / 3600;
     }
 

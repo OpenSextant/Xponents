@@ -1,3 +1,5 @@
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +26,7 @@ public class TestSortLangDetect {
         System.out.println("DESCENDING SORT");
         // So, sort as provided here is best: This returns LangID highest to lowest.
         List<LangID> sorted = LangDetect.sort(lids);
-        assert(sorted.get(0).score == 99);
+        assertEquals(99, sorted.get(0).score);
         for (LangID l : sorted) {
             System.out.println("L=" + l);
         }

@@ -54,7 +54,7 @@ abstract public class AbstractGenericFormatter implements ResultsFormatter {
     public boolean debug = false;
 
     /** Distinct set of fields in your output schema. */
-    protected HashSet<String> fieldSet = new HashSet<String>();
+    protected HashSet<String> fieldSet = new HashSet<>();
 
     /**
      * Adds the field.
@@ -81,7 +81,7 @@ abstract public class AbstractGenericFormatter implements ResultsFormatter {
     }
 
     /** The field_order. */
-    protected List<String> fieldOrder = new ArrayList<String>();
+    protected List<String> fieldOrder = new ArrayList<>();
 
     /**
      * Default fields for generic CSV output. If GIS output is desired, then use

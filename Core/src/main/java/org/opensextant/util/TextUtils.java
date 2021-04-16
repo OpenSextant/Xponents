@@ -713,7 +713,7 @@ public class TextUtils {
             return null;
         }
 
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         String[] _vals = s.split(delim);
         for (String v : _vals) {
             String val = v.trim();
@@ -1012,9 +1012,9 @@ public class TextUtils {
         // ' 27 APOSTROPHE
         // . 2e FULL STOP
         // ` 60 GRAVE ACCENT
-        // � b4 ACUTE ACCENT
-        // � 2018 LEFT SINGLE QUOTATION MARK
-        // � 2019 RIGHT SINGLE QUOTATION MARK
+        // * b4 ACUTE ACCENT
+        // * 2018 LEFT SINGLE QUOTATION MARK
+        // * 2019 RIGHT SINGLE QUOTATION MARK
         return CLEAN_WORD_PUNCT.matcher(tmp).replaceAll(" ").trim();
     }
 
@@ -1663,7 +1663,7 @@ public class TextUtils {
         while (tagmatch.find()) {
             String tag = tagmatch.group();
             if (tagList == null) {
-                tagList = new HashSet<String>();
+                tagList = new HashSet<>();
             }
 
             tagList.add(normalize ? tag.toLowerCase() : tag);
@@ -1673,7 +1673,7 @@ public class TextUtils {
         while (tagmatch.find()) {
             String tag = tagmatch.group();
             if (tagList == null) {
-                tagList = new HashSet<String>();
+                tagList = new HashSet<>();
             }
 
             tagList.add(normalize ? tag.toLowerCase() : tag);

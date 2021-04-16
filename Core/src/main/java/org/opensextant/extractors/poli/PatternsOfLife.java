@@ -31,8 +31,11 @@
 // */
 package org.opensextant.extractors.poli;
 
+import static org.opensextant.extraction.MatcherUtils.reduceMatches;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +131,7 @@ public class PatternsOfLife extends AbstractFlexPat {
 
         TextMatchResult results = new TextMatchResult();
         results.result_id = text_id;
-        results.matches = new ArrayList<TextMatch>();
+        results.matches = new ArrayList<>();
         int bufsize = text.length();
 
         PoliMatch poliMatch = null;
@@ -155,15 +158,13 @@ public class PatternsOfLife extends AbstractFlexPat {
                     poliMatch = new PoliMatch(fields, match.group());
                 } else {
                     try {
-                        poliMatch = (PoliMatch) repat.match_class.newInstance();
+                        poliMatch = null;
+                        poliMatch = (PoliMatch) repat.match_class.getDeclaredConstructor().newInstance();
                         poliMatch.setText(match.group());
                         poliMatch.setGroups(fields);
-                    } catch (InstantiationException classErr1) {
-                        poliMatch = null;
-                        log.error("Could not create... ", classErr1);
-                    } catch (IllegalAccessException classErr2) {
-                        poliMatch = null;
-                        log.error("Could not create... ", classErr2);
+                    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                            | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                        log.error("Could not create class  ", e);
                     }
                 }
 
@@ -199,7 +200,7 @@ public class PatternsOfLife extends AbstractFlexPat {
         }
 
         results.pass = !results.matches.isEmpty();
-        RegexPatternManager.reduce_matches(results.matches);
+        reduceMatches(results.matches);
 
         return results;
     }

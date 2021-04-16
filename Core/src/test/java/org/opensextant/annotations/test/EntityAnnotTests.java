@@ -55,7 +55,11 @@ public class EntityAnnotTests {
         ea.addOffsetAttribute();
         ea.addOffsetAttribute();
         print("" + ea.attrs + " offset=" + ea.offset);
+        
 
+        print("Annotation ID:" + AnnotationHelper.getAnnotationId(ea.rec_id, ea.contrib, ea.name, ea.value));
+        print("Annotation ID:" + AnnotationHelper.getAnnotationId(ea.rec_id, ea.contrib, ea.name, null));
+        
         /*
          * 
          */

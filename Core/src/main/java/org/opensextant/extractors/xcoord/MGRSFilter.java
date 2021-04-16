@@ -49,7 +49,7 @@ public class MGRSFilter implements GeocoordMatchFilter {
     /**
      * DateFormat used to check for dates that look like MGRS i.e. ddMMMyyyy
      */
-    public List<DateFormat> df = new ArrayList<DateFormat>();
+    public List<DateFormat> df = new ArrayList<>();
 
     /** The today. */
     public Date today = new Date();
@@ -67,7 +67,7 @@ public class MGRSFilter implements GeocoordMatchFilter {
     public int CURRENT_YY = 0;
 
     /** The ignore seq. */
-    public Set<String> IGNORE_SEQ = new HashSet<String>();
+    public Set<String> IGNORE_SEQ = new HashSet<>();
 
     /**
      * Instantiates a new MGRS filter.

@@ -31,6 +31,8 @@
 // */
 package org.opensextant.extractors.xtemporal;
 
+import static org.opensextant.extraction.MatcherUtils.reduceMatches;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -156,7 +158,7 @@ public class XTemporal extends AbstractFlexPat {
     public TextMatchResult extract_dates(String text, String text_id) {
 
         TextMatchResult results = new TextMatchResult();
-        results.matches = new ArrayList<TextMatch>();
+        results.matches = new ArrayList<>();
         results.result_id = text_id;
 
         int found = 0;
@@ -224,7 +226,7 @@ public class XTemporal extends AbstractFlexPat {
         /*
          * Reduce duplicates, then mark them as filtered out.
          */
-        RegexPatternManager.reduce_matches(results.matches);
+        reduceMatches(results.matches);
         for (TextMatch dt : results.matches) {
             if (dt.is_duplicate || dt.is_submatch) {
                 dt.setFilteredOut(true);
@@ -294,7 +296,9 @@ public class XTemporal extends AbstractFlexPat {
     private static long DISTANT_PAST_THRESHOLD = (DISTANT_PAST_YEAR - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
 
     private static final int MINIMUM_YEAR_YMD = 1800;
-    private static long DISTANT_PAST_YMD_THRESHOLD = (MINIMUM_YEAR_YMD - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
+    /* An idea:
+     *    DISTANT_PAST_YMD_THRESHOLD = (MINIMUM_YEAR_YMD - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
+     */
 
     /**
      * Given the set MAX_DATE_CUTOFF_YEAR, determine if the date epoch is earlier
@@ -354,5 +358,4 @@ public class XTemporal extends AbstractFlexPat {
         DateTime jodadt = new DateTime(dt);
         return jodadt.getYear() < MINIMUM_YEAR_YMD;
     }
-
 }

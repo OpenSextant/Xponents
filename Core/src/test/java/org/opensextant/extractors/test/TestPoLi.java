@@ -9,8 +9,11 @@ import org.opensextant.extractors.poli.PatternsOfLife;
 public class TestPoLi {
 
     public static void usage() {
-        System.out.println("\tPatternsOfLife  -f          -- run all system tests\n"
-                + "\tPatternsOfLife  -u  <file>  -- run user tests on given text file.");
+        System.out.println(""
+                + "\n\tPatternsOfLife  -f          -- run all system tests\n"
+                + "\n\tPatternsOfLife  -u  <file>  -- run user tests on given text file."
+                + "\n\tPatternsOfLife  -c  <file>  -- run tests in patterns config file."
+                );
     }
 
     /**

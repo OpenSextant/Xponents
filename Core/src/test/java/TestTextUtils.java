@@ -29,7 +29,7 @@ public class TestTextUtils {
     @Test
     public void testTokens() {
         String[] toks = TextUtils.tokensRight("\n     ");
-        assert(toks.length == 1); /* Not null */
+        assertEquals(1, toks.length); /* Not null */
         print(StringUtils.join(toks, ","));
     }
 

@@ -85,7 +85,7 @@ public class Taxon {
             return;
         }
         if (termset == null) {
-            termset = new HashSet<String>();
+            termset = new HashSet<>();
         }
         termset.addAll(Arrays.asList(t));
     }
@@ -99,7 +99,7 @@ public class Taxon {
             return;
         }
         if (tagset == null) {
-            tagset = new HashSet<String>();
+            tagset = new HashSet<>();
         }
         tagset.addAll(tlist);
     }
@@ -110,14 +110,14 @@ public class Taxon {
         }
 
         if (tagset == null) {
-            tagset = new HashSet<String>();
+            tagset = new HashSet<>();
         }
         tagset.add(t);
     }
 
     public void addTerm(String t) {
         if (termset == null) {
-            termset = new HashSet<String>();
+            termset = new HashSet<>();
         }
         termset.add(t);
     }
@@ -127,7 +127,7 @@ public class Taxon {
             return;
         }
         if (termset == null) {
-            termset = new HashSet<String>();
+            termset = new HashSet<>();
         }
         termset.addAll(tlist);
     }

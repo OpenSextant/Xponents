@@ -105,10 +105,8 @@ public class GeoBase implements LatLon {
     }
 
     public String getNamenorm() {
-        if (namenorm == null) {
-            if (name != null) {
-                namenorm = name.toLowerCase();
-            }
+        if (namenorm == null && name != null) {
+            namenorm = name.toLowerCase();
         }
         return namenorm;
     }

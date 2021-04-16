@@ -54,11 +54,11 @@ public class XtractorGroup {
     /**
      * API: child implementations have access to the core list of extractors.
      */
-    protected List<Extractor> extractors = new ArrayList<Extractor>();
+    protected List<Extractor> extractors = new ArrayList<>();
     /**
      * API: child implementations have access to the core list of extractors.
      */
-    protected List<ResultsFormatter> formatters = new ArrayList<ResultsFormatter>();
+    protected List<ResultsFormatter> formatters = new ArrayList<>();
     /**
      * API: child implementations should recreate their own logger.
      */
@@ -67,7 +67,7 @@ public class XtractorGroup {
      * API: child implementations have access to accumulated errors; reset()
      * clears errors and other state.
      */
-    protected List<String> currErrors = new ArrayList<String>();
+    protected List<String> currErrors = new ArrayList<>();
 
     protected ProgressMonitor progressMonitor = new ProgressMonitorBase();
 
@@ -99,7 +99,7 @@ public class XtractorGroup {
      * meta attributes, then you would use this approach
      */
     public List<TextMatch> process(TextInput input) {
-        List<TextMatch> oneResultSet = new ArrayList<TextMatch>();
+        List<TextMatch> oneResultSet = new ArrayList<>();
         progressMonitor.setNumberOfSteps(extractors.size());
 
         /**

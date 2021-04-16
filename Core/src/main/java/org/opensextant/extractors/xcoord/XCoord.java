@@ -275,7 +275,7 @@ public class XCoord extends AbstractFlexPat {
 
         TextMatchResult results = new TextMatchResult();
         results.result_id = text_id;
-        results.matches = new ArrayList<TextMatch>();
+        results.matches = new ArrayList<>();
 
         int patternsComplete = 0;
         int found = 0;

@@ -30,7 +30,6 @@ import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
 /**
- *
  * @author ubaldino
  */
 public class TestXCoord {
@@ -39,7 +38,6 @@ public class TestXCoord {
     private XCoord xcoord = null;
 
     /**
-     *
      * @param xc
      */
     public TestXCoord(XCoord xc) {
@@ -57,7 +55,6 @@ public class TestXCoord {
     }
 
     /**
-     *
      * @param file
      */
     public void fileTests(String file) {
@@ -183,9 +180,7 @@ public class TestXCoord {
 
     /**
      * This will accomodate any test file that has at least the following style:
-     *
      * FAMILY-XXX COORDINATE TEXT "FAIL"
-     *
      * Where the first FAMILY token is
      *
      * @param coordfile
@@ -202,7 +197,8 @@ public class TestXCoord {
 
             String _file = coordfile.trim();
             String fname = FilenameUtils.getBaseName(_file);
-            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname + "-lines.csv");
+            String rptFile = "./results/xcoord_" + fname + "-lines.csv";
+            TestXCoordReporter tester = new TestXCoordReporter(rptFile);
 
             java.io.LineNumberReader in = getLineReader(coordfile);
             String line = null;
@@ -272,9 +268,7 @@ public class TestXCoord {
 
     /**
      * This will accomodate any test file that has at least the following style:
-     *
      * FAMILY-XXX COORDINATE TEXT "FAIL"
-     *
      * Where the first FAMILY token is
      *
      * @param coordfile
@@ -290,7 +284,8 @@ public class TestXCoord {
         try {
 
             // String _file = coordfile.trim();
-            TestXCoordReporter tester = new TestXCoordReporter("./results/xcoord_" + fname + "-rows.csv");
+            String rptFile = "./results/xcoord_" + fname + "-rows.csv";
+            TestXCoordReporter tester = new TestXCoordReporter(rptFile);
             //
             tester.full_report = false;
 
@@ -358,6 +353,7 @@ public class TestXCoord {
             tester.close_report();
 
             log.info("=== FILE TESTS DONE ===");
+            log.info("===" + rptFile);
 
         } catch (Exception err) {
             log.error("TEST BY LINES", err);
@@ -514,11 +510,13 @@ public class TestXCoord {
 
     public static void usage() {
 
-        String USAGE = "" + "TestXCoord  -f       -- system tests" + "TestXCoord  -i TEXT  -- user test "
-                + "TestXCoord  -t FILE  -- user test with file; one test per line"
-                + "TestXCoord  -t FILE  -- user test with file"
-                + "TestXCoord  -a       -- adhoc tests, e.g., recompiling code and testing"
-                + "TestXCoord  -h       -- help. ";
+        String USAGE = ""
+                + "\n\tTestXCoord  -f       -- system tests"
+                + "\n\tTestXCoord  -i TEXT  -- user test "
+                + "\n\tTestXCoord  -t FILE  -- user test with file; one test per line"
+                + "\n\tTestXCoord  -t FILE  -- user test with file"
+                + "\n\tTestXCoord  -a       -- adhoc tests, e.g., recompiling code and testing"
+                + "\n\tTestXCoord  -h       -- help. ";
         System.out.println(USAGE);
 
     }

@@ -9,7 +9,7 @@ public class ProgressMonitorBase implements ProgressMonitor {
     private double currentStepProgress = 0;
     private double totalProgress = 0;
     private int completedSteps = 0;
-    private List<ProgressListener> listeners = new ArrayList<ProgressListener>();
+    private List<ProgressListener> listeners = new ArrayList<>();
 
     public ProgressMonitorBase() {
         super();

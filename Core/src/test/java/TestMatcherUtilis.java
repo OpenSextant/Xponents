@@ -1,4 +1,6 @@
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -41,7 +43,7 @@ public class TestMatcherUtilis {
         print("======\n" + text);
         spans = MatcherUtils.findTagSpans(text);
         print(spans.toString());
-        assert(true);
+        assertEquals(4, spans.size());
     }
 
     public static void testSomeSpans(String buf) throws IOException {

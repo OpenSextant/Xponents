@@ -91,7 +91,7 @@ public class Parameters extends java.util.Properties {
     public String inputFile = null;
     public String outputFile = null;
 
-    private Set<String> formats = new HashSet<String>();
+    private Set<String> formats = new HashSet<>();
 
     /**
      * A way of relaying arbitrary geographic filters to an extraction routine

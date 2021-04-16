@@ -889,7 +889,7 @@ public class GeonamesUtility {
     /**
      *
      */
-    public static final Set<String> COUNTRY_ADM0 = new HashSet<String>();
+    public static final Set<String> COUNTRY_ADM0 = new HashSet<>();
     /**
      *
      */

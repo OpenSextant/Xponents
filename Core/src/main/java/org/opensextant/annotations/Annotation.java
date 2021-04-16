@@ -143,8 +143,10 @@ public class Annotation extends DeepEyeData {
             }
         }
     }
+    
+    public static String OFFSETS_FLD= "offsets";
 
-    private TreeSet<Integer> offsets = new TreeSet<Integer>();
+    private TreeSet<Integer> offsets = new TreeSet<>();
     private boolean offsetsEncoded = false;
 
     public void addOffset(int x) {
@@ -175,7 +177,7 @@ public class Annotation extends DeepEyeData {
             // optimization change,
             // CommonAnnotationHelper utility should help manage that.
             //
-            attrs.put("offsets", AnnotationHelper.encodeOffsets(offsets));
+            attrs.put(OFFSETS_FLD, AnnotationHelper.encodeOffsets(offsets));
             offset = -1;
             offsetsEncoded = true;
             return;
@@ -198,7 +200,7 @@ public class Annotation extends DeepEyeData {
         offsets.clear();
         offsetsEncoded = false;
         if (attrs != null) {
-            this.attrs.remove("offsets");
+            this.attrs.remove(OFFSETS_FLD);
         }
     }
 

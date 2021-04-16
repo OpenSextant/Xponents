@@ -9,7 +9,7 @@ public class RuleTool {
      * @param pc
      * @return
      */
-    protected static boolean hasOnlyDefaultRules(PlaceCandidate pc) {
+    public static boolean hasOnlyDefaultRules(PlaceCandidate pc) {
         int ruleCount = pc.getRules().size();
         return (pc.hasRule(PlaceCandidate.DEFAULT_SCORE) && ruleCount == 1)
                 || (pc.hasRule(PlaceCandidate.DEFAULT_SCORE) && pc.hasRule(FeatureRule.FEAT_RULE) && ruleCount == 2);

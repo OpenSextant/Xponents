@@ -1,17 +1,4 @@
 /**
- * <pre>
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
- *
- * OpenSextant/Xponents sub-project
- *      __
- *  ___/ /___  ___  ___  ___  __ __ ___
- * / _  // -_)/ -_)/ _ \/ -_)/ // // -_)
- * \_,_/ \__/ \__// .__/\__/ \_, / \__/
- *               /_/        /___/
- *
- * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
- * Copyright 2013, 2019 MITRE Corporation
- * </pre>
  * 
  * DeepEye is an approach for simplifying typical NLP annotation exchanges. It
  * represents a
@@ -61,5 +48,18 @@
  * is only an interface
  * specification without implementation.</li>
  * </ul>
- */
+ * <pre>
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ *
+ * OpenSextant/Xponents sub-project
+ *      __
+ *  ___/ /___  ___  ___  ___  __ __ ___
+ * / _  // -_)/ -_)/ _ \/ -_)/ // // -_)
+ * \_,_/ \__/ \__// .__/\__/ \_, / \__/
+ *               /_/        /___/
+ *
+ * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+ * Copyright 2013-2021 MITRE Corporation
+ * </pre>
+ **/
 package org.opensextant.annotations;

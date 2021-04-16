@@ -47,7 +47,7 @@ public class ExtractionResult {
     /**
      *
      */
-    public List<TextMatch> matches = new ArrayList<TextMatch>();
+    public List<TextMatch> matches = new ArrayList<>();
 
     public ExtractionResult() {
     }

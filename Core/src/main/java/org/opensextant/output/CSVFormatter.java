@@ -37,7 +37,7 @@ public class CSVFormatter extends AbstractFormatter {
 
     private CsvMapWriter writer = null;
 
-    private HashSet<String> fieldSet = new HashSet<String>();
+    private HashSet<String> fieldSet = new HashSet<>();
 
     public CSVFormatter() {
         this.outputExtension = ".csv";
@@ -193,7 +193,7 @@ public class CSVFormatter extends AbstractFormatter {
         }
     }
 
-    protected List<String> fieldOrder = new ArrayList<String>();
+    protected List<String> fieldOrder = new ArrayList<>();
 
     /**
      * Default fields for generic CSV output. If GIS output is desired, then use

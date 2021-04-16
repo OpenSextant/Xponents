@@ -47,7 +47,7 @@ public class DMSFilter implements GeocoordMatchFilter {
     /**
      *
      */
-    public List<DateFormat> general_dates = new ArrayList<DateFormat>();
+    public List<DateFormat> general_dates = new ArrayList<>();
 
     /**
      *

@@ -18,7 +18,6 @@ public class TestXTemporal {
     }
 
     /**
-     * 
      * @param file
      */
     public void test(String file) {
@@ -128,13 +127,15 @@ public class TestXTemporal {
      *
      */
     public static void usage() {
-        System.out.println("\tXTemporal -f     -- run system tests." + "\n\tMore operations coming...");
+        System.out.println(""
+                + "\n\tXTemporal -f      -- run system tests."
+                + "\n\tXTemporal -t FILE -- user tests using FILE"
+                + "\n\tXTemporal -a      -- adhoc tests in debugger");
     }
 
     private static XTemporal xdt = null;
 
     /**
-     * 
      * @param args
      */
     public static void main(String[] args) {

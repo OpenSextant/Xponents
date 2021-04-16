@@ -83,8 +83,8 @@ public abstract class AbstractFlexPat implements Extractor {
         if (patfile == null) {
             throw new ConfigException("Null path not allowed. no defaults.");
         }
-        try {
-            patterns = createPatternManager(new FileInputStream(patfile), patfile);
+        try (InputStream strm = new FileInputStream(patfile)){
+            patterns = createPatternManager(strm, patfile);
         } catch (Exception loaderr) {
             String msg = "Could not load patterns file FILE=" + patfile;
             throw new ConfigException(msg, loaderr);
@@ -102,8 +102,8 @@ public abstract class AbstractFlexPat implements Extractor {
         if (patfile == null) {
             throw new ConfigException("URL for pattern defs not found. ");
         }
-        try {
-            patterns = createPatternManager(patfile.openStream(), patfile.getFile());
+        try (InputStream strm = patfile.openStream()) {
+            patterns = createPatternManager(strm, patfile.getFile());
         } catch (Exception loaderr) {
             throw new ConfigException("Could not load patterns file URL=" + patfile, loaderr);
         }

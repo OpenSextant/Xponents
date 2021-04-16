@@ -40,7 +40,7 @@ public class RegexPattern {
     /**
      *
      */
-    public List<String> regex_groups = new ArrayList<String>();
+    public List<String> regex_groups = new ArrayList<>();
     /**
      *
      */

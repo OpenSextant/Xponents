@@ -40,12 +40,11 @@ public class TweetLoader {
         if (!jsonFile.exists()) {
             throw new IOException("File does not exist; not opening...");
         }
-        BufferedReader reader = null;
+        //BufferedReader reader = null;
         Logger log = LoggerFactory.getLogger(TweetLoader.class);
-        JsonParser jsonp = JsonParser.create();
         int errors = 0;
-        try {
-            reader = new BufferedReader(FileUtility.getInputStreamReader(jsonFile, "UTF-8"));
+        try (BufferedReader reader = new BufferedReader(FileUtility.getInputStreamReader(jsonFile, "UTF-8"))){
+            JsonParser jsonp = JsonParser.create();
             String line;
             while ((line = reader.readLine()) != null) {
                 if (isBlank(line)) {
@@ -79,11 +78,6 @@ public class TweetLoader {
                         throw new IOException("Exceeded max errors,... Exiting read", someErr);
                     }
                 }
-            }
-
-        } finally {
-            if (reader != null) {
-                reader.close();
             }
         }
     }

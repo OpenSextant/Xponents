@@ -485,7 +485,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      */
     public void addOtherInterpretation(GeocoordMatch m2) {
         if (interpretations == null) {
-            interpretations = new ArrayList<GeocoordMatch>();
+            interpretations = new ArrayList<>();
         }
         interpretations.add(m2);
     }
