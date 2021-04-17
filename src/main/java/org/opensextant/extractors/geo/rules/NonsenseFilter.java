@@ -180,18 +180,19 @@ public class NonsenseFilter extends GeocodeRule {
             return false;
         }
 
+        // Don't allow things like X. G"willaker
+        boolean abnormal = isIrregularPunct(punct, p.getLength());
+
         /*
          * Place name has punctuation from here on...
          */
-        if (isValidAbbreviation(p.getText())) {
+        if (isValidAbbreviation(p.getText()) && ! abnormal) {
             p.addRule("Valid Punct");
             return true;
         }
 
         // Allow things like S. Ana
         boolean normal = regularAbbreviationPatterns(p.getText());
-        // Don't allow things like X. G"willaker
-        boolean abnormal = isIrregularPunct(punct, p.getLength());
 
         if (!normal && abnormal) {
             p.setFilteredOut(true);
@@ -276,7 +277,6 @@ public class NonsenseFilter extends GeocodeRule {
     static Pattern validAbbrev = Pattern.compile("\\w+[.] \\S+");
     // Punctuation abounds: WWWWPPPP+ SSSS word, punct, multiple spaces, text
     // Any phrase containing double quotes or long dashes.
-    static Pattern invalidPunct = Pattern.compile("[\\p{Punct}&&[^'`]]+\\s+|[\"\u2014\u2015\u201C\u201D\u2033]");
     static Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
     static Pattern anyInvalidPunct = Pattern.compile("[[\\p{Punct}\u2014\u2015\u201C\u201D\u2033]&&[^-_.'`]]+");
     static Pattern anyPunctuation = Pattern.compile("([\\p{Punct}\u2014\u2015\u201C\u201D\u2033]{1})");
@@ -313,11 +313,13 @@ public class NonsenseFilter extends GeocodeRule {
             return false;
         }
 
+        String content = TextUtils.delete_whitespace(t);
         // Approximately 1 punctuation char for every 5 words is a sign it is noise.
         // 10 chars with 3 punctuation chars is 3.33 chars per punct char.
         // 10 chars with 2 punctuation chars is 5.00 -- this seems like a reasonable
-        // limit.
-        return (t.length() / punct) < validCharRate;
+        // limit.  Compare Non-whitespace characters to punctuation count.
+        //
+        return (content.length() / punct) < validCharRate;
     }
 
     public static boolean irregularPunctPatterns(final String t) {

@@ -25,17 +25,18 @@ RELEASES
 
 # 2021
 
-**Xponents 3.3.7 Vamp**
+**Xponents 3.4.0 Vamp**
 
 * Opensextant v1.3 python library updated and streamlined for Python3 conventions
 * Gazetteer curation refactored and added serious sources such as Geonames.org and NaturalEarth
 * Xponents Solr Gazetteer quarterly release, 2021-Q1
+* Geolocation precision improvements based in GeocodeRules used in PlaceGeocoder
+* Sonar Scan: Java8 code style and compliance fixes throughout.
 
 
 **Xponents 3.3.6 Sonar**
 
 * Added Docker notes on Sonarqube scanner and fixed basic javadoc and unit test issues
-
 
 
 # 2020

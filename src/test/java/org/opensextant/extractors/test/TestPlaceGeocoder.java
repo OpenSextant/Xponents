@@ -74,12 +74,12 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         // Call as many times as you have documents...
         //
         try {
-            for (String t : texts.split("\n")) {
-                if (t.strip().isBlank()) {
+            for (String txt : texts.split("\n")) {
+                if (txt.strip().isBlank()) {
                     continue;
                 }
-                print("TEST:\t" + t + "\n=====================");
-                List<TextMatch> matches = geocoder.extract(t);
+                print("TEST:\t" + txt + "\n=====================");
+                List<TextMatch> matches = geocoder.extract(txt);
                 summarizeFindings(matches);
                 print("\n");
             }

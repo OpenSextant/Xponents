@@ -7,16 +7,9 @@ Then you can begin working with the Tagger API (opensextant-xponents)
 
 1\. Setup project. 
 
-a. Copy  `build.template` to `build.properties`.  Adjust as needed per instructions in file
-  Separately download a copy of Carrot2 3.16 to get additional stopwords from that workspace. 
-  https://github.com/carrot2/carrot2/releases/tag/release%2F3.16.3
-  Set the `carrot.workspace` path -- this helps automate getting additional stopwords.
-
-b. Setup script:
 ```
   ./setup.sh
 ```
-
 
 2\. Setup Core API to build and test:
 
