@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module opensextant.utility</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="opensextant.html"><font color="#ffffff">opensextant</font></a>.utility</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/utility.py">/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/utility.py</a></font></td></tr></table>
+    <p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright&nbsp;2012-2020&nbsp;The&nbsp;MITRE&nbsp;Corporation.<br>
+&nbsp;<br>
+&nbsp;&nbsp;Licensed&nbsp;under&nbsp;the&nbsp;Apache&nbsp;License,&nbsp;Version&nbsp;2.0&nbsp;(the&nbsp;"License");&nbsp;you&nbsp;may&nbsp;not<br>
+&nbsp;&nbsp;use&nbsp;this&nbsp;file&nbsp;except&nbsp;in&nbsp;compliance&nbsp;with&nbsp;the&nbsp;License.&nbsp;You&nbsp;may&nbsp;obtain&nbsp;a&nbsp;copy&nbsp;of<br>
+&nbsp;&nbsp;the&nbsp;License&nbsp;at<br>
+&nbsp;<br>
+&nbsp;&nbsp;<a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a><br>
+&nbsp;<br>
+&nbsp;&nbsp;Unless&nbsp;required&nbsp;by&nbsp;applicable&nbsp;law&nbsp;or&nbsp;agreed&nbsp;to&nbsp;in&nbsp;writing,&nbsp;software<br>
+&nbsp;&nbsp;distributed&nbsp;under&nbsp;the&nbsp;License&nbsp;is&nbsp;distributed&nbsp;on&nbsp;an&nbsp;"AS&nbsp;IS"&nbsp;BASIS,&nbsp;WITHOUT<br>
+&nbsp;&nbsp;WARRANTIES&nbsp;OR&nbsp;CONDITIONS&nbsp;OF&nbsp;ANY&nbsp;KIND,&nbsp;either&nbsp;express&nbsp;or&nbsp;implied.&nbsp;See&nbsp;the<br>
+&nbsp;&nbsp;License&nbsp;for&nbsp;the&nbsp;specific&nbsp;language&nbsp;governing&nbsp;permissions&nbsp;and&nbsp;limitations&nbsp;under<br>
+&nbsp;&nbsp;the&nbsp;License.<br>
+&nbsp;<br>
+&nbsp;&nbsp;=============================================================================<br>
+&nbsp;<br>
+@author:&nbsp;ubaldino<br>
+&nbsp;<br>
+OpenSextant&nbsp;utilities</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="csv.html">csv</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="opensextant.utility.html#ConfigUtility">ConfigUtility</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ConfigUtility">class <strong>ConfigUtility</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ConfigUtility">ConfigUtility</a>(config=None,&nbsp;rootdir='.')<br>
+&nbsp;<br>
+A&nbsp;utility&nbsp;to&nbsp;load&nbsp;parameter&nbsp;lists,&nbsp;CSV&nbsp;files,&nbsp;word&nbsp;lists,&nbsp;etc.&nbsp;from&nbsp;a&nbsp;folder&nbsp;*dir*<br>
+&nbsp;<br>
+functions&nbsp;here&nbsp;take&nbsp;an&nbsp;Oxygen&nbsp;cfg&nbsp;parameter&nbsp;keyword&nbsp;or&nbsp;a&nbsp;file&nbsp;path.<br>
+If&nbsp;the&nbsp;keyword&nbsp;is&nbsp;valid&nbsp;and&nbsp;points&nbsp;to&nbsp;a&nbsp;valid&nbsp;file&nbsp;path,&nbsp;then&nbsp;the&nbsp;file&nbsp;path&nbsp;is&nbsp;used.<br>
+In&nbsp;otherwords,&nbsp;keywords&nbsp;are&nbsp;aliases&nbsp;for&nbsp;a&nbsp;file&nbsp;on&nbsp;disk.<br>
+&nbsp;<br>
+&nbsp;&nbsp;Ex.&nbsp;&nbsp;'mywords'&nbsp;=&nbsp;'.\cfg\mywords_v03_filtered.txt'<br>
+&nbsp;<br>
+&nbsp;&nbsp;oxygen.cfg&nbsp;file&nbsp;would&nbsp;have&nbsp;this&nbsp;mapping.&nbsp;&nbsp;Your&nbsp;code&nbsp;just&nbsp;references&nbsp;'mywords'&nbsp;to&nbsp;load&nbsp;it.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="ConfigUtility-__init__"><strong>__init__</strong></a>(self, config=None, rootdir='.')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="ConfigUtility-loadCSVFile"><strong>loadCSVFile</strong></a>(self, keyword, delim)</dt><dd><tt>Load&nbsp;a&nbsp;named&nbsp;CSV&nbsp;file.&nbsp;&nbsp;If&nbsp;the&nbsp;name&nbsp;is&nbsp;not&nbsp;a&nbsp;cfg&nbsp;parameter,&nbsp;the&nbsp;keyword&nbsp;name&nbsp;*is*&nbsp;the&nbsp;file.</tt></dd></dl>
+
+<dl><dt><a name="ConfigUtility-loadDataFromFile"><strong>loadDataFromFile</strong></a>(self, path, delim)</dt><dd><tt>:param&nbsp;path:&nbsp;file&nbsp;path<br>
+:param&nbsp;delim:&nbsp;delimiter<br>
+:return:&nbsp;Array&nbsp;of&nbsp;tuples.</tt></dd></dl>
+
+<dl><dt><a name="ConfigUtility-loadFile"><strong>loadFile</strong></a>(self, keyword)</dt><dd><tt>Load&nbsp;a&nbsp;named&nbsp;word&nbsp;list&nbsp;file.<br>
+If&nbsp;the&nbsp;name&nbsp;is&nbsp;not&nbsp;a&nbsp;cfg&nbsp;parameter,&nbsp;the&nbsp;keyword&nbsp;name&nbsp;*is*&nbsp;the&nbsp;file.</tt></dd></dl>
+
+<dl><dt><a name="ConfigUtility-loadListFromFile"><strong>loadListFromFile</strong></a>(self, path)</dt><dd><tt>Load&nbsp;text&nbsp;data&nbsp;from&nbsp;a&nbsp;file.<br>
+Returns&nbsp;array&nbsp;of&nbsp;non-comment&nbsp;rows.&nbsp;One&nbsp;non-whitespace&nbsp;row&nbsp;per&nbsp;line.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-bytes2unicode"><strong>bytes2unicode</strong></a>(buf, encoding=None)</dt><dd><tt>Convert&nbsp;bytes&nbsp;2&nbsp;unicode&nbsp;by&nbsp;guessing&nbsp;character&nbsp;set.<br>
+:param&nbsp;buf:<br>
+:param&nbsp;encoding:<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-ensure_dirs"><strong>ensure_dirs</strong></a>(fpath)</dt><dd><tt>Given&nbsp;a&nbsp;file&nbsp;path,&nbsp;ensure&nbsp;parent&nbsp;folders&nbsp;exist.<br>
+If&nbsp;path&nbsp;is&nbsp;intended&nbsp;to&nbsp;be&nbsp;a&nbsp;directory&nbsp;--&nbsp;use&nbsp;os.makedirs(path)&nbsp;instead.<br>
+May&nbsp;throw&nbsp;exception&nbsp;--&nbsp;caller&nbsp;should&nbsp;handle.<br>
+&nbsp;<br>
+:path:&nbsp;path&nbsp;a&nbsp;file</tt></dd></dl>
+ <dl><dt><a name="-fast_replace"><strong>fast_replace</strong></a>(t, sep, sub=None)</dt><dd><tt>Replace&nbsp;separators&nbsp;(sep)&nbsp;with&nbsp;substitute&nbsp;char,&nbsp;sub.&nbsp;Many-to-one&nbsp;substitute.<br>
+&nbsp;<br>
+"a.b,&nbsp;c"&nbsp;SEP='.,'<br>
+:param&nbsp;t:&nbsp;&nbsp;input&nbsp;text<br>
+:param&nbsp;sep:&nbsp;string&nbsp;of&nbsp;chars&nbsp;to&nbsp;replace<br>
+:param&nbsp;sub:&nbsp;replacement&nbsp;char<br>
+:return:&nbsp;&nbsp;text&nbsp;with&nbsp;separators&nbsp;replaced</tt></dd></dl>
+ <dl><dt><a name="-get_bool"><strong>get_bool</strong></a>(token)</dt></dl>
+ <dl><dt><a name="-get_csv_reader"><strong>get_csv_reader</strong></a>(fh, columns, delim=',')</dt></dl>
+ <dl><dt><a name="-get_csv_writer"><strong>get_csv_writer</strong></a>(fh, columns, delim=',')</dt></dl>
+ <dl><dt><a name="-get_list"><strong>get_list</strong></a>(text, delim=',', lower=False)</dt><dd><tt>Take&nbsp;a&nbsp;string&nbsp;and&nbsp;return&nbsp;trim&nbsp;segments&nbsp;given&nbsp;the&nbsp;delimiter:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"A,&nbsp;&nbsp;B,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C"&nbsp;=&gt;&nbsp;["A",&nbsp;"B",&nbsp;"C"]<br>
+:param&nbsp;text:<br>
+:param&nbsp;delim:&nbsp;delimiter&nbsp;str<br>
+:param&nbsp;lower:&nbsp;True&nbsp;if&nbsp;you&nbsp;want&nbsp;items&nbsp;lowercased<br>
+:return:&nbsp;array</tt></dd></dl>
+ <dl><dt><a name="-get_number"><strong>get_number</strong></a>(token)</dt><dd><tt>Turn&nbsp;leading&nbsp;part&nbsp;of&nbsp;a&nbsp;string&nbsp;into&nbsp;a&nbsp;number,&nbsp;if&nbsp;possible.</tt></dd></dl>
+ <dl><dt><a name="-get_text"><strong>get_text</strong></a>(t)</dt><dd><tt>Default&nbsp;is&nbsp;to&nbsp;return&nbsp;Unicode&nbsp;string&nbsp;from&nbsp;raw&nbsp;data</tt></dd></dl>
+ <dl><dt><a name="-get_text_window"><strong>get_text_window</strong></a>(offset, matchlen, textsize, width)</dt><dd><tt>prepreprepre&nbsp;MATCH&nbsp;postpostpost<br>
+^&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^&nbsp;&nbsp;&nbsp;^&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^<br>
+l-width&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l&nbsp;&nbsp;&nbsp;l+len&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;l+len+width<br>
+left_y&nbsp;&nbsp;left_x&nbsp;&nbsp;&nbsp;right_x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;right_y</tt></dd></dl>
+ <dl><dt><a name="-guess_encoding"><strong>guess_encoding</strong></a>(text)</dt><dd><tt>Given&nbsp;bytes,&nbsp;determine&nbsp;the&nbsp;character&nbsp;set&nbsp;encoding<br>
+@return:&nbsp;dict&nbsp;with&nbsp;encoding&nbsp;and&nbsp;confidence</tt></dd></dl>
+ <dl><dt><a name="-has_arabic"><strong>has_arabic</strong></a>(text)</dt><dd><tt>infer&nbsp;if&nbsp;text&nbsp;has&nbsp;Arabic&nbsp;/&nbsp;Middle-eastern&nbsp;scripts&nbsp;~&nbsp;Urdu,&nbsp;Farsi,&nbsp;Arabic.<br>
+:param&nbsp;text:<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-has_cjk"><strong>has_cjk</strong></a>(text)</dt><dd><tt>infer&nbsp;if&nbsp;chinese&nbsp;(unihan),&nbsp;korean&nbsp;(hangul)&nbsp;or&nbsp;japanese&nbsp;(hirgana)&nbsp;characters&nbsp;are&nbsp;present<br>
+:param&nbsp;text:&nbsp;<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-has_digit"><strong>has_digit</strong></a>(text)</dt><dd><tt>Used&nbsp;primarily&nbsp;to&nbsp;report&nbsp;places&nbsp;and&nbsp;appears&nbsp;to&nbsp;be&nbsp;critical&nbsp;for<br>
+name&nbsp;filtering&nbsp;when&nbsp;doing&nbsp;phonetics.</tt></dd></dl>
+ <dl><dt><a name="-is_ascii"><strong>is_ascii</strong></a>(s)</dt></dl>
+ <dl><dt><a name="-is_text"><strong>is_text</strong></a>(t)</dt><dd><tt>#&nbsp;---------------------------------------<br>
+#&nbsp;&nbsp;TEXT&nbsp;UTILITIES<br>
+#&nbsp;---------------------------------------</tt></dd></dl>
+ <dl><dt><a name="-is_value"><strong>is_value</strong></a>(v)</dt><dd><tt>Working&nbsp;more&nbsp;with&nbsp;pandas&nbsp;or&nbsp;sci&nbsp;libraries&nbsp;--&nbsp;you&nbsp;run&nbsp;into&nbsp;various&nbsp;types&nbsp;of&nbsp;default&nbsp;"Null"&nbsp;values.<br>
+This&nbsp;checks&nbsp;to&nbsp;see&nbsp;if&nbsp;value&nbsp;is&nbsp;non-trivial,&nbsp;non-empty.<br>
+:param&nbsp;v:<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-isnan"><strong>isnan</strong></a>(x, /)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;x&nbsp;is&nbsp;a&nbsp;NaN&nbsp;(not&nbsp;a&nbsp;number),&nbsp;and&nbsp;False&nbsp;otherwise.</tt></dd></dl>
+ <dl><dt><a name="-levenshtein_distance"><strong>levenshtein_distance</strong></a>(s, t)</dt><dd><tt>Wikipedia&nbsp;page&nbsp;on&nbsp;Levenshtein&nbsp;Edit&nbsp;Distance<br>
+https://en.wikipedia.org/wiki/Levenshtein_distance<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;fastest,&nbsp;simplest&nbsp;of&nbsp;3&nbsp;methods&nbsp;documented&nbsp;for&nbsp;Python.</tt></dd></dl>
+ <dl><dt><a name="-parse_float"><strong>parse_float</strong></a>(v)</dt></dl>
+ <dl><dt><a name="-replace_diacritics"><strong>replace_diacritics</strong></a>(s)</dt><dd><tt>remove&nbsp;accents&nbsp;from&nbsp;a&nbsp;string&nbsp;and&nbsp;replace&nbsp;with&nbsp;ASCII&nbsp;equivalent&nbsp;Reference:<br>
+<a href="http://www.rgagnon.com/javadetails/java-0456.html">http://www.rgagnon.com/javadetails/java-0456.html</a>&nbsp;Caveat:&nbsp;This&nbsp;implementation&nbsp;is&nbsp;not&nbsp;exhaustive.<br>
+Port&nbsp;from&nbsp;Xponents&nbsp;class&nbsp;TextUtils.java<br>
+:param&nbsp;s:<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-scrub_eol"><strong>scrub_eol</strong></a>(t)</dt></dl>
+ <dl><dt><a name="-squeeze_whitespace"><strong>squeeze_whitespace</strong></a>(s)</dt></dl>
+ <dl><dt><a name="-trivial_bias"><strong>trivial_bias</strong></a>(name)</dt><dd><tt>Deteremine&nbsp;unique&nbsp;a&nbsp;name&nbsp;is&nbsp;using&nbsp;length&nbsp;and&nbsp;character&nbsp;set&nbsp;and&nbsp;#&nbsp;of&nbsp;words</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>ALPHAMAP_PLAIN_ASCII</strong> = 'AaEeIiOoUuAaEeIiOoUuYyAaEeIiOoUuYyAaOoNnAaEeIiOoUuYyAaCcOoUuOoAaEe'<br>
+<strong>ALPHAMAP_UNICODE</strong> = 'ÀàÈèÌìÒòÙùÁáÉéÍíÓóÚúÝýÂâÊêÎîÔôÛûŶŷÃãÕõÑñÄäËëÏïÖöÜüŸÿÅåÇçŐőŰűØøĀāĒē'<br>
+<strong>BOOL_F_STR</strong> = {0, '', 'false', 'f', 'null', '0', ...}<br>
+<strong>BOOL_T_STR</strong> = {1, 'y', '1', 'yes', 't', 'true'}<br>
+<strong>CHARDET_LATIN2_ENCODING</strong> = 'ISO-8859-1'<br>
+<strong>COMMON_DIACRITC_HASHMARKS</strong> = re.compile('["\'`´‘’]')<br>
+<strong>reSqueezeWhiteSpace</strong> = re.compile('\\s+', re.MULTILINE)<br>
+<strong>version</strong> = 'v3'</td></tr></table>
+</body></html>

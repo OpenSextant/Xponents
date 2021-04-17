@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module opensextant.gazetteer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="opensextant.html"><font color="#ffffff">opensextant</font></a>.gazetteer</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/gazetteer.py">/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/gazetteer.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="arrow.html">arrow</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="pysolr.html">pysolr</a><br>
+</td><td width="25%" valign=top><a href="sqlite3.html">sqlite3</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#DB">DB</a>
+</font></dt><dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#DataSource">DataSource</a>
+</font></dt><dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#GazetteerIndex">GazetteerIndex</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DB">class <strong>DB</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DB">DB</a>(dbpath,&nbsp;commit_rate=1000)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DB-__init__"><strong>__init__</strong></a>(self, dbpath, commit_rate=1000)</dt><dd><tt>Save&nbsp;items&nbsp;to&nbsp;SQlite&nbsp;db&nbsp;at&nbsp;the&nbsp;commit_rate&nbsp;given.&nbsp;&nbsp;Call&nbsp;close&nbsp;to&nbsp;finalize&nbsp;any&nbsp;partial&nbsp;batches<br>
+and&nbsp;save&nbsp;database.<br>
+&nbsp;<br>
+:param&nbsp;dbpath:<br>
+:param&nbsp;commit_rate:</tt></dd></dl>
+
+<dl><dt><a name="DB-add_place"><strong>add_place</strong></a>(self, obj)</dt><dd><tt>Add&nbsp;one&nbsp;place<br>
+:param&nbsp;obj:&nbsp;a&nbsp;place&nbsp;dictionary.&nbsp;&nbsp;If&nbsp;arg&nbsp;is&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a>&nbsp;it&nbsp;is&nbsp;converted&nbsp;to&nbsp;dictionary&nbsp;first.</tt></dd></dl>
+
+<dl><dt><a name="DB-add_places"><strong>add_places</strong></a>(self, arr)</dt><dd><tt>Add&nbsp;a&nbsp;list&nbsp;of&nbsp;places.</tt></dd></dl>
+
+<dl><dt><a name="DB-close"><strong>close</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="DB-create"><strong>create</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="DB-get_places_by_id"><strong>get_places_by_id</strong></a>(self, plid, limit=2)</dt><dd><tt>Collect&nbsp;places&nbsp;and&nbsp;name_bias&nbsp;for&nbsp;gazetter&nbsp;ETL.<br>
+Lookup&nbsp;place&nbsp;by&nbsp;ID&nbsp;as&nbsp;in&nbsp;"G1234567"&nbsp;for&nbsp;Geonames&nbsp;entry&nbsp;or&nbsp;"N123456789"&nbsp;for&nbsp;an&nbsp;NGA&nbsp;one,&nbsp;etc.<br>
+&nbsp;<br>
+:param&nbsp;plid:&nbsp;Place&nbsp;ID&nbsp;according&nbsp;to&nbsp;the&nbsp;convention&nbsp;of&nbsp;source&nbsp;initial&nbsp;+&nbsp;identifier<br>
+:param&nbsp;limit:&nbsp;limit&nbsp;queries&nbsp;because&nbsp;if&nbsp;we&nbsp;know&nbsp;we&nbsp;only&nbsp;one&nbsp;2&nbsp;or&nbsp;3&nbsp;we&nbsp;need&nbsp;not&nbsp;search&nbsp;database&nbsp;beyond&nbsp;that.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DB-list_countries"><strong>list_countries</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="DB-list_places"><strong>list_places</strong></a>(self, cc=None, fc=None, criteria=None, limit=-1)</dt><dd><tt>Potentially&nbsp;massive&nbsp;array&nbsp;--&nbsp;so&nbsp;this&nbsp;is&nbsp;just&nbsp;a&nbsp;Place&nbsp;generator.<br>
+:param&nbsp;cc:&nbsp;country&nbsp;code&nbsp;or&nbsp;''<br>
+:param&nbsp;fc:&nbsp;feat&nbsp;class&nbsp;constraint&nbsp;with&nbsp;"*"&nbsp;wildcard,&nbsp;or&nbsp;''<br>
+:param&nbsp;criteria:&nbsp;additional&nbsp;clause&nbsp;to&nbsp;constrain&nbsp;search,&nbsp;e.g.&nbsp;"&nbsp;AND&nbsp;duplicate=0&nbsp;"&nbsp;to&nbsp;find&nbsp;non-dups.<br>
+:param&nbsp;limit:&nbsp;&nbsp;non-zero&nbsp;limit<br>
+:return:&nbsp;generator</tt></dd></dl>
+
+<dl><dt><a name="DB-mark_duplicates"><strong>mark_duplicates</strong></a>(self, dups)</dt></dl>
+
+<dl><dt><a name="DB-mark_search_only"><strong>mark_search_only</strong></a>(self, pid)</dt><dd><tt>Toggle&nbsp;bit&nbsp;for&nbsp;search&nbsp;only.<br>
+:param&nbsp;pid:&nbsp;Place&nbsp;ID</tt></dd></dl>
+
+<dl><dt><a name="DB-optimize"><strong>optimize</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="DB-purge"><strong>purge</strong></a>(self, q)</dt></dl>
+
+<dl><dt><a name="DB-reopen"><strong>reopen</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DataSource">class <strong>DataSource</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DataSource">DataSource</a>(dbf,&nbsp;debug=False)<br>
+&nbsp;<br>
+Gazetteer&nbsp;Data&nbsp;Source&nbsp;abstraction&nbsp;--&nbsp;provides&nbsp;guidelines&nbsp;on&nbsp;how&nbsp;to&nbsp;inject<br>
+data&nbsp;into&nbsp;a&nbsp;common,&nbsp;normalized&nbsp;gazetteer.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DataSource-__init__"><strong>__init__</strong></a>(self, dbf, debug=False)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="DataSource-normalize"><strong>normalize</strong></a>(self, sourcefile, limit=-1, optimize=False)</dt><dd><tt>Given&nbsp;the&nbsp;spreadsheet&nbsp;or&nbsp;source&nbsp;file&nbsp;rip&nbsp;through&nbsp;it,&nbsp;ingesting&nbsp;contents&nbsp;into&nbsp;the&nbsp;master&nbsp;gazetteer.<br>
+:param&nbsp;sourcefile:&nbsp;input&nbsp;file<br>
+:param&nbsp;limit:&nbsp;non-zero&nbsp;limit&nbsp;for&nbsp;testing<br>
+:param&nbsp;optimize:&nbsp;if&nbsp;database&nbsp;should&nbsp;be&nbsp;optimized&nbsp;when&nbsp;done.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DataSource-process_source"><strong>process_source</strong></a>(self, sourcefile)</dt><dd><tt>generator&nbsp;yielding&nbsp;<a href="#DB">DB</a>&nbsp;geo&nbsp;dictionary&nbsp;to&nbsp;be&nbsp;stored.<br>
+:param&nbsp;sourcefile:&nbsp;Raw&nbsp;data&nbsp;file<br>
+:return:&nbsp;generator&nbsp;of&nbsp;Place&nbsp;<a href="builtins.html#object">object</a>&nbsp;or&nbsp;dict&nbsp;of&nbsp;Place&nbsp;schema</tt></dd></dl>
+
+<dl><dt><a name="DataSource-purge"><strong>purge</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="GazetteerIndex">class <strong>GazetteerIndex</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#GazetteerIndex">GazetteerIndex</a>(server_url,&nbsp;debug=False)<br>
+&nbsp;<br>
+<a href="#GazetteerIndex">GazetteerIndex</a>&nbsp;provides&nbsp;a&nbsp;simple&nbsp;API&nbsp;to&nbsp;inject&nbsp;entries&nbsp;into&nbsp;the&nbsp;Gazetteer.<br>
+-&nbsp;Every&nbsp;1000&nbsp;records&nbsp;a&nbsp;batch&nbsp;is&nbsp;sent&nbsp;to&nbsp;Solr<br>
+-&nbsp;Every&nbsp;1,000,0000&nbsp;records&nbsp;a&nbsp;commit()&nbsp;call&nbsp;is&nbsp;sent&nbsp;to&nbsp;Solr<br>
+&nbsp;<br>
+This&nbsp;may&nbsp;provide&nbsp;gazetteer&nbsp;specific&nbsp;functions,&nbsp;but&nbsp;as&nbsp;of&nbsp;v1.3&nbsp;this&nbsp;is&nbsp;a&nbsp;generic&nbsp;Solr&nbsp;wrapper.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="GazetteerIndex-__init__"><strong>__init__</strong></a>(self, server_url, debug=False)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="GazetteerIndex-add"><strong>add</strong></a>(self, place)</dt><dd><tt>:param&nbsp;place:&nbsp;Place&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="GazetteerIndex-optimize"><strong>optimize</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="GazetteerIndex-save"><strong>save</strong></a>(self, done=False)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-as_place"><strong>as_place</strong></a>(r)</dt><dd><tt>Convert&nbsp;dict&nbsp;to&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a><br>
+:param&nbsp;r:&nbsp;gazetteer&nbsp;row&nbsp;from&nbsp;Solr&nbsp;or&nbsp;SQlite.<br>
+:return:&nbsp;Place</tt></dd></dl>
+ <dl><dt><a name="-as_place_record"><strong>as_place_record</strong></a>(place, target='index')</dt><dd><tt>Given&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a>,&nbsp;serialize&nbsp;it&nbsp;as&nbsp;a&nbsp;dict&nbsp;consistent&nbsp;with&nbsp;the&nbsp;Solr&nbsp;index&nbsp;schema.<br>
+:param&nbsp;place:<br>
+:param&nbsp;target:&nbsp;index&nbsp;or&nbsp;db<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-load_stopterms"><strong>load_stopterms</strong></a>(project_dir='.')</dt><dd><tt>Load&nbsp;default&nbsp;stop&nbsp;terms&nbsp;from&nbsp;source&nbsp;tree&nbsp;for&nbsp;project&nbsp;build.<br>
+:param&nbsp;project_dir:&nbsp;The&nbsp;location&nbsp;of&nbsp;Xponents/solr&nbsp;source&nbsp;tree.<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-print_places"><strong>print_places</strong></a>(arr, limit=25)</dt></dl>
+ <dl><dt><a name="-run_lookup"><strong>run_lookup</strong></a>(url, lookup, parse)</dt><dd><tt>Gazetteer&nbsp;demo&nbsp;mimics&nbsp;some&nbsp;of&nbsp;the&nbsp;logic&nbsp;in&nbsp;XponentsGazetteerQuery<br>
+try&nbsp;"San&nbsp;Francisco,&nbsp;CA,&nbsp;US"</tt></dd></dl>
+ <dl><dt><a name="-run_query"><strong>run_query</strong></a>(url, q)</dt><dd><tt>Expert&nbsp;mode:&nbsp;&nbsp;Run&nbsp;a&nbsp;solr&nbsp;query&nbsp;to&nbsp;see&nbsp;what&nbsp;you&nbsp;get&nbsp;back.&nbsp;<br>
+requires&nbsp;you&nbsp;know&nbsp;the&nbsp;schema</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>GAZETTEER_SOURCES</strong> = {'ADHOC': 'OA', 'GEONAMES': 'OG', 'Geonames.org': 'OG', 'NE': 'NE', 'NGA': 'N', 'NGA-AUTOFIXED': 'NF', 'USGS': 'U', 'USGS-AUTOFIXED': 'UF', 'XP': 'X', 'XPONENTS': 'X', ...}<br>
+<strong>GAZETTEER_TEMPLATE</strong> = {'FIPS_cc': None, 'adm1': None, 'adm2': None, 'cc': None, 'feat_class': None, 'feat_code': None, 'id': -1, 'id_bias': 0, 'lat': 0, 'lon': 0, ...}<br>
+<strong>SCRIPT_CODES</strong> = {None: '', 'LATIN': 'L', 'HAN': 'H', 'COMMON': 'C', 'ARABIC': 'A', 'ARMENIAN': 'AM', 'BENGALI': 'BN', 'CYRILLIC': 'CY', 'DEVANAGARI': 'DV', 'ETHIOPIC': 'ET', ...}</td></tr></table>
+</body></html>

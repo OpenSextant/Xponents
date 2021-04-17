@@ -1,7 +1,6 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html><head><title>Python: module opensextant.xlayer</title>
-<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
@@ -9,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="opensextant.html"><font color="#ffffff">opensextant</font></a>.xlayer</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/piplib/opensextant/xlayer.py">/Users/ubaldino/workspace/opensource/Xponents/piplib/opensextant/xlayer.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/xlayer.py">/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/xlayer.py</a></font></td></tr></table>
     <p><tt>Created&nbsp;on&nbsp;Mar&nbsp;14,&nbsp;2016<br>
 &nbsp;<br>
 @author:&nbsp;ubaldino</tt></p>
@@ -20,7 +19,7 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="simplejson.html">simplejson</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="json.html">json</a><br>
 </td><td width="25%" valign=top><a href="requests.html">requests</a><br>
 </td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -30,42 +29,80 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
 <dt><font face="helvetica, arial"><a href="opensextant.xlayer.html#XlayerClient">XlayerClient</a>
 </font></dt></dl>
+</dd>
+</dl>
  <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="XlayerClient">class <strong>XlayerClient</strong></a></font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="XlayerClient">class <strong>XlayerClient</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
-<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#XlayerClient">XlayerClient</a>(server,&nbsp;options='')<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="XlayerClient-__init__"><strong>__init__</strong></a>(self, server, options<font color="#909090">=''</font>)</dt><dd><tt>@param&nbsp;server:&nbsp;URL&nbsp;for&nbsp;the&nbsp;service<br>
-@keyword&nbsp;&nbsp;options:&nbsp;&nbsp;a&nbsp;comma-separated&nbsp;list&nbsp;of&nbsp;options&nbsp;to&nbsp;send&nbsp;with&nbsp;each&nbsp;request.&nbsp;&nbsp;There&nbsp;are&nbsp;no&nbsp;default&nbsp;options&nbsp;supported.</tt></dd></dl>
+<dl><dt><a name="XlayerClient-__init__"><strong>__init__</strong></a>(self, server, options='')</dt><dd><tt>@param&nbsp;server:&nbsp;URL&nbsp;for&nbsp;the&nbsp;service.&nbsp;&nbsp;&nbsp;E.g.,&nbsp;<a href="http://SERVER/xlayer/rest/process">http://SERVER/xlayer/rest/process</a>.<br>
+@keyword&nbsp;&nbsp;options:&nbsp;&nbsp;STRING.&nbsp;a&nbsp;comma-separated&nbsp;list&nbsp;of&nbsp;options&nbsp;to&nbsp;send&nbsp;with&nbsp;each&nbsp;request.<br>
+There&nbsp;are&nbsp;no&nbsp;default&nbsp;options&nbsp;supported.</tt></dd></dl>
 
-<dl><dt><a name="XlayerClient-ping"><strong>ping</strong></a>(self)</dt></dl>
+<dl><dt><a name="XlayerClient-ping"><strong>ping</strong></a>(self, timeout=30)</dt><dd><tt>Timeout&nbsp;of&nbsp;30&nbsp;seconds&nbsp;is&nbsp;used&nbsp;here&nbsp;so&nbsp;calls&nbsp;do&nbsp;not&nbsp;hang&nbsp;indefinitely.<br>
+:return:&nbsp;True&nbsp;if&nbsp;successful.</tt></dd></dl>
 
-<dl><dt><a name="XlayerClient-process"><strong>process</strong></a>(self, docid, text, features<font color="#909090">=['geo']</font>)</dt><dd><tt>SERVICE&nbsp;parameters:<br>
-docid&nbsp;and&nbsp;text&nbsp;--&nbsp;obvious<br>
+<dl><dt><a name="XlayerClient-process"><strong>process</strong></a>(self, docid, text, features=['geo'], timeout=10, preferred_countries=None, preferred_locations=None)</dt><dd><tt>Process&nbsp;text,&nbsp;extracting&nbsp;some&nbsp;entities<br>
 &nbsp;<br>
-features&nbsp;=&nbsp;"f,f,f,f"&nbsp;&nbsp;String&nbsp;of&nbsp;comma-separated&nbsp;features<br>
-options&nbsp;&nbsp;=&nbsp;"o,o,o,o"&nbsp;&nbsp;String&nbsp;of&nbsp;comma-separated&nbsp;features<br>
+&nbsp;&nbsp;features&nbsp;=&nbsp;"f,f,f,f"&nbsp;&nbsp;String&nbsp;of&nbsp;comma-separated&nbsp;features<br>
+&nbsp;&nbsp;options&nbsp;&nbsp;=&nbsp;"o,o,o,o"&nbsp;&nbsp;String&nbsp;of&nbsp;comma-separated&nbsp;features<br>
 &nbsp;<br>
-features&nbsp;are&nbsp;places,&nbsp;coordinates,&nbsp;countries,&nbsp;orgs,&nbsp;persons,&nbsp;patterns.&nbsp;<br>
+&nbsp;&nbsp;features&nbsp;are&nbsp;places,&nbsp;coordinates,&nbsp;countries,&nbsp;orgs,&nbsp;persons,&nbsp;patterns.&nbsp;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;feature&nbsp;aliases&nbsp;"geo"&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;get&nbsp;All&nbsp;Geographic&nbsp;entities&nbsp;(places,coordinates,countries)<br>
+&nbsp;&nbsp;feature&nbsp;"taxons"&nbsp;can&nbsp;get&nbsp;at&nbsp;any&nbsp;Taxon&nbsp;"taxons",&nbsp;"persons",&nbsp;"orgs"<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;options&nbsp;are&nbsp;not&nbsp;observed&nbsp;by&nbsp;Xlayer&nbsp;"Xgeo",&nbsp;but&nbsp;you&nbsp;can&nbsp;adapt&nbsp;your&nbsp;own&nbsp;service<br>
+&nbsp;&nbsp;to&nbsp;accomodate&nbsp;such&nbsp;options.&nbsp;&nbsp;&nbsp;Possible&nbsp;options&nbsp;are&nbsp;clean_input,&nbsp;lowercase,&nbsp;for&nbsp;example:<br>
 &nbsp;<br>
-feature&nbsp;aliases&nbsp;"geo"&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;get&nbsp;All&nbsp;Geographic&nbsp;entities&nbsp;(places,coordinates,countries)<br>
-feature&nbsp;"taxons"&nbsp;can&nbsp;get&nbsp;at&nbsp;any&nbsp;Taxon&nbsp;"taxons",&nbsp;"persons",&nbsp;"orgs"<br>
-&nbsp;<br>
-options&nbsp;are&nbsp;not&nbsp;observed&nbsp;by&nbsp;Xlayer&nbsp;"Xgeo",&nbsp;but&nbsp;you&nbsp;can&nbsp;adapt&nbsp;your&nbsp;own&nbsp;service<br>
-to&nbsp;accomodate&nbsp;such&nbsp;options.&nbsp;&nbsp;&nbsp;Possible&nbsp;options&nbsp;are&nbsp;clean_input,&nbsp;lowercase,&nbsp;for&nbsp;example:<br>
-&nbsp;<br>
-*&nbsp;clean_input&nbsp;scrubs&nbsp;the&nbsp;input&nbsp;text&nbsp;if&nbsp;it&nbsp;has&nbsp;HTML&nbsp;or&nbsp;other&nbsp;content&nbsp;in&nbsp;it.<br>
-*&nbsp;lowercase&nbsp;allows&nbsp;the&nbsp;tagging&nbsp;to&nbsp;pass&nbsp;on&nbsp;through&nbsp;lower&nbsp;case&nbsp;matches.<br>
-&nbsp;<br>
-but&nbsp;interpretation&nbsp;of&nbsp;"clean&nbsp;text"&nbsp;and&nbsp;"lower&nbsp;case"&nbsp;support&nbsp;is&nbsp;subjective.<br>
-so&nbsp;they&nbsp;are&nbsp;not&nbsp;supported&nbsp;out&nbsp;of&nbsp;the&nbsp;box&nbsp;here.</tt></dd></dl>
+&nbsp;&nbsp;*&nbsp;clean_input&nbsp;scrubs&nbsp;the&nbsp;input&nbsp;text&nbsp;if&nbsp;it&nbsp;has&nbsp;HTML&nbsp;or&nbsp;other&nbsp;content&nbsp;in&nbsp;it.<br>
+&nbsp;&nbsp;*&nbsp;lowercase&nbsp;allows&nbsp;the&nbsp;tagging&nbsp;to&nbsp;pass&nbsp;on&nbsp;through&nbsp;lower&nbsp;case&nbsp;matches.<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;but&nbsp;interpretation&nbsp;of&nbsp;"clean&nbsp;text"&nbsp;and&nbsp;"lower&nbsp;case"&nbsp;support&nbsp;is&nbsp;subjective.<br>
+&nbsp;&nbsp;so&nbsp;they&nbsp;are&nbsp;not&nbsp;supported&nbsp;out&nbsp;of&nbsp;the&nbsp;box&nbsp;here.<br>
+:param&nbsp;docid:&nbsp;identifier&nbsp;of&nbsp;transaction<br>
+:param&nbsp;text:&nbsp;Unicode&nbsp;text&nbsp;to&nbsp;process<br>
+:param&nbsp;features:&nbsp;LIST&nbsp;of&nbsp;geo&nbsp;OR&nbsp;[places,&nbsp;coordinates,&nbsp;countries],&nbsp;orgs,&nbsp;persons,&nbsp;patterns,&nbsp;taxons<br>
+:param&nbsp;timeout:&nbsp;default&nbsp;to&nbsp;10&nbsp;seconds;&nbsp;If&nbsp;you&nbsp;think&nbsp;your&nbsp;processing&nbsp;takes&nbsp;longer,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adjust&nbsp;if&nbsp;you&nbsp;see&nbsp;exceptions.<br>
+:param&nbsp;preferred_countries:&nbsp;Array&nbsp;of&nbsp;country&nbsp;codes&nbsp;representing&nbsp;those&nbsp;which&nbsp;are&nbsp;preferred&nbsp;fall&nbsp;backs&nbsp;when<br>
+&nbsp;&nbsp;&nbsp;&nbsp;there&nbsp;are&nbsp;ambiguous&nbsp;location&nbsp;names.<br>
+:param&nbsp;preferred_locations:&nbsp;&nbsp;Array&nbsp;of&nbsp;geohash&nbsp;representing&nbsp;general&nbsp;area&nbsp;of&nbsp;desired&nbsp;preferred&nbsp;matches<br>
+:return:&nbsp;array&nbsp;of&nbsp;TextMatch&nbsp;objects&nbsp;or&nbsp;empty&nbsp;array.</tt></dd></dl>
 
-<dl><dt><a name="XlayerClient-stop"><strong>stop</strong></a>(self)</dt></dl>
+<dl><dt><a name="XlayerClient-stop"><strong>stop</strong></a>(self, timeout=30)</dt><dd><tt>Timeout&nbsp;of&nbsp;30&nbsp;seconds&nbsp;is&nbsp;used&nbsp;here&nbsp;so&nbsp;calls&nbsp;do&nbsp;not&nbsp;hang&nbsp;indefinitely.<br>
+The&nbsp;service&nbsp;URL&nbsp;is&nbsp;inferred:&nbsp;&nbsp;/process&nbsp;and&nbsp;/control&nbsp;endpoints&nbsp;should&nbsp;be&nbsp;next&nbsp;to&nbsp;each&nbsp;other.<br>
+:return:&nbsp;True&nbsp;if&nbsp;successful&nbsp;or&nbsp;if&nbsp;"Connection&nbsp;aborted"&nbsp;ConnectionError&nbsp;occurs</tt></dd></dl>
 
-</td></tr></table></td></tr></table>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-print_results"><strong>print_results</strong></a>(arr)</dt><dd><tt>:param&nbsp;arr:&nbsp;array&nbsp;of&nbsp;Annotations&nbsp;or&nbsp;TextMatch<br>
+:return:</tt></dd></dl>
+</td></tr></table>
 </body></html>

@@ -1,0 +1,10 @@
+org.opensextant.extraction
+org.opensextant.extractors.geo
+org.opensextant.extractors.geo.rules
+org.opensextant.extractors.geo.social
+org.opensextant.extractors.xtax
+org.opensextant.output
+org.opensextant.util
+org.opensextant.xlayer
+org.opensextant.xlayer.server
+org.opensextant.xlayer.server.xgeo

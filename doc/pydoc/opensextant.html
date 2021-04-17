@@ -1,0 +1,373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: package opensextant</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>opensextant</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/__init__.py">/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/__init__.py</a></font></td></tr></table>
+    <p><tt>#&nbsp;-*-&nbsp;coding:&nbsp;utf-8&nbsp;-*-</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Package Contents</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="opensextant.FlexPat.html">FlexPat</a><br>
+<a href="opensextant.TaxCat.html">TaxCat</a><br>
+</td><td width="25%" valign=top><a href="opensextant.advas_phonetics.html">advas_phonetics</a><br>
+<a href="opensextant.extractors.html"><strong>extractors</strong>&nbsp;(package)</a><br>
+</td><td width="25%" valign=top><a href="opensextant.gazetteer.html">gazetteer</a><br>
+<a href="opensextant.phonetics.html">phonetics</a><br>
+</td><td width="25%" valign=top><a href="opensextant.utility.html">utility</a><br>
+<a href="opensextant.xlayer.html">xlayer</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="abc.html#ABC">abc.ABC</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="opensextant.html#Extractor">Extractor</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="opensextant.html#Coordinate">Coordinate</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="opensextant.html#Place">Place</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="opensextant.html#Country">Country</a>
+</font></dt><dt><font face="helvetica, arial"><a href="opensextant.html#TextEntity">TextEntity</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="opensextant.html#TextMatch">TextMatch</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Coordinate">class <strong>Coordinate</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Coordinate">Coordinate</a>(row,&nbsp;lat=None,&nbsp;lon=None)<br>
+&nbsp;<br>
+Convenient&nbsp;class&nbsp;for&nbsp;Lat/Lon&nbsp;pair.<br>
+Expects&nbsp;a&nbsp;row&nbsp;dict&nbsp;with&nbsp;'lat'&nbsp;and&nbsp;'lon',<br>
+or&nbsp;kwd&nbsp;args&nbsp;'lat',&nbsp;'lon'<br>
+@param&nbsp;row&nbsp;default&nbsp;dictionary<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Coordinate-__init__"><strong>__init__</strong></a>(self, row, lat=None, lon=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Coordinate-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="Coordinate-format_coord"><strong>format_coord</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Coordinate-set"><strong>set</strong></a>(self, lat, lon)</dt><dd><tt>Set&nbsp;the&nbsp;location&nbsp;lat,&nbsp;lon</tt></dd></dl>
+
+<dl><dt><a name="Coordinate-string_coord"><strong>string_coord</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Coordinate-validate"><strong>validate</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Country">class <strong>Country</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Country">Country</a>&nbsp;metadata<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Country-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Country-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Extractor">class <strong>Extractor</strong></a>(<a href="abc.html#ABC">abc.ABC</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Helper&nbsp;class&nbsp;that&nbsp;provides&nbsp;a&nbsp;standard&nbsp;way&nbsp;to&nbsp;create&nbsp;an&nbsp;<a href="abc.html#ABC">ABC</a>&nbsp;using<br>
+inheritance.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="opensextant.html#Extractor">Extractor</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Extractor-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Extractor-extract"><strong>extract</strong></a>(self, text, **kwargs)</dt><dd><tt>:param&nbsp;text:&nbsp;Unicode&nbsp;text&nbsp;input<br>
+:keyword&nbsp;features:&nbsp;an&nbsp;array&nbsp;of&nbsp;features&nbsp;to&nbsp;extract,&nbsp;e.g.,&nbsp;"coordinate",&nbsp;"place",&nbsp;"MONEY"<br>
+:return:&nbsp;array&nbsp;of&nbsp;<a href="#TextMatch">TextMatch</a></tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset({'extract'})</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Place">class <strong>Place</strong></a>(<a href="opensextant.html#Coordinate">Coordinate</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Place">Place</a>(pid,&nbsp;name,&nbsp;lat=None,&nbsp;lon=None)<br>
+&nbsp;<br>
+Location&nbsp;or&nbsp;GeoBase<br>
++&nbsp;<a href="#Coordinate">Coordinate</a><br>
++&nbsp;<a href="#Place">Place</a><br>
++&nbsp;<a href="#Country">Country</a><br>
+&nbsp;<br>
+or<br>
+Location<br>
++&nbsp;<a href="#Coordinate">Coordinate</a><br>
+&nbsp;&nbsp;&nbsp;+&nbsp;<a href="#Place">Place</a><br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;etc.&nbsp;&nbsp;Not&nbsp;sure&nbsp;of&nbsp;the&nbsp;best&nbsp;data&nbsp;model&nbsp;for&nbsp;inheritance.<br>
+This&nbsp;Python&nbsp;API&nbsp;hopes&nbsp;to&nbsp;simplify&nbsp;the&nbsp;concepts&nbsp;in&nbsp;the&nbsp;Java&nbsp;API.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="opensextant.html#Place">Place</a></dd>
+<dd><a href="opensextant.html#Coordinate">Coordinate</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Place-__init__"><strong>__init__</strong></a>(self, pid, name, lat=None, lon=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Place-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="Place-get_location"><strong>get_location</strong></a>(self)</dt><dd><tt>Returns&nbsp;(LAT,&nbsp;LON)&nbsp;tuple<br>
+@return:&nbsp;tuple,&nbsp;(lat,lon)</tt></dd></dl>
+
+<dl><dt><a name="Place-has_coordinate"><strong>has_coordinate</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Place-set_location"><strong>set_location</strong></a>(self, lat, lon)</dt></dl>
+
+<hr>
+Methods inherited from <a href="opensextant.html#Coordinate">Coordinate</a>:<br>
+<dl><dt><a name="Place-format_coord"><strong>format_coord</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Place-set"><strong>set</strong></a>(self, lat, lon)</dt><dd><tt>Set&nbsp;the&nbsp;location&nbsp;lat,&nbsp;lon</tt></dd></dl>
+
+<dl><dt><a name="Place-string_coord"><strong>string_coord</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Place-validate"><strong>validate</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="opensextant.html#Coordinate">Coordinate</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TextEntity">class <strong>TextEntity</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#TextEntity">TextEntity</a>(text,&nbsp;start,&nbsp;end)<br>
+&nbsp;<br>
+A&nbsp;Text&nbsp;span.<br>
+&nbsp;<br>
+classes&nbsp;and&nbsp;routines&nbsp;that&nbsp;align&nbsp;with&nbsp;Java&nbsp;org.opensextant.data&nbsp;and&nbsp;org.opensextant.extraction<br>
+&nbsp;<br>
+*&nbsp;<a href="#TextEntity">TextEntity</a>:&nbsp;represents&nbsp;a&nbsp;span&nbsp;of&nbsp;text<br>
+*&nbsp;<a href="#TextMatch">TextMatch</a>:&nbsp;a&nbsp;<a href="#TextEntity">TextEntity</a>&nbsp;matched&nbsp;by&nbsp;a&nbsp;particular&nbsp;routine.&nbsp;&nbsp;This&nbsp;is&nbsp;the&nbsp;basis&nbsp;for&nbsp;most&nbsp;all<br>
+extractors&nbsp;and&nbsp;annotators&nbsp;in&nbsp;OpenSetant.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="TextEntity-__init__"><strong>__init__</strong></a>(self, text, start, end)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="TextEntity-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="TextEntity-contains"><strong>contains</strong></a>(self, x1)</dt><dd><tt>if&nbsp;this&nbsp;span&nbsp;contains&nbsp;an&nbsp;offset&nbsp;x1<br>
+:param&nbsp;x1:</tt></dd></dl>
+
+<dl><dt><a name="TextEntity-exact_match"><strong>exact_match</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="TextEntity-is_after"><strong>is_after</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="TextEntity-is_before"><strong>is_before</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="TextEntity-is_within"><strong>is_within</strong></a>(self, t)</dt><dd><tt>if&nbsp;the&nbsp;given&nbsp;annotation,&nbsp;t,&nbsp;contains&nbsp;this<br>
+:param&nbsp;t:<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="TextEntity-overlaps"><strong>overlaps</strong></a>(self, t)</dt><dd><tt>Determine&nbsp;if&nbsp;t&nbsp;overlaps&nbsp;self.&nbsp;&nbsp;If&nbsp;Right&nbsp;or&nbsp;Left&nbsp;match,&nbsp;t&nbsp;overlaps&nbsp;if&nbsp;it&nbsp;is&nbsp;longer.<br>
+If&nbsp;t&nbsp;is&nbsp;contained&nbsp;entirely&nbsp;within&nbsp;self,&nbsp;then&nbsp;it&nbsp;is&nbsp;not&nbsp;considered&nbsp;overlap&nbsp;--&nbsp;it&nbsp;is&nbsp;Contained&nbsp;within.<br>
+:param&nbsp;t:<br>
+:return:</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TextMatch">class <strong>TextMatch</strong></a>(<a href="opensextant.html#TextEntity">TextEntity</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#TextMatch">TextMatch</a>(*args,&nbsp;label=None)<br>
+&nbsp;<br>
+An&nbsp;entity&nbsp;matched&nbsp;by&nbsp;some&nbsp;tagger;&nbsp;it&nbsp;is&nbsp;a&nbsp;text&nbsp;span&nbsp;with&nbsp;lots&nbsp;of&nbsp;metadata.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="opensextant.html#TextMatch">TextMatch</a></dd>
+<dd><a href="opensextant.html#TextEntity">TextEntity</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="TextMatch-__init__"><strong>__init__</strong></a>(self, *args, label=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="TextMatch-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="TextMatch-normalize"><strong>normalize</strong></a>(self)</dt><dd><tt>Optional,&nbsp;but&nbsp;recommended&nbsp;routine&nbsp;to&nbsp;normalize&nbsp;the&nbsp;matched&nbsp;data.<br>
+That&nbsp;is,&nbsp;parse&nbsp;fields,&nbsp;uppercase,&nbsp;streamline&nbsp;punctuation,&nbsp;etc.<br>
+As&nbsp;well,&nbsp;given&nbsp;such&nbsp;normalization&nbsp;result,&nbsp;this&nbsp;is&nbsp;the&nbsp;opportunity&nbsp;to&nbsp;additionally<br>
+validate&nbsp;the&nbsp;match.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="TextMatch-populate"><strong>populate</strong></a>(self, attrs)</dt><dd><tt>Populate&nbsp;a&nbsp;<a href="#TextMatch">TextMatch</a>&nbsp;to&nbsp;normalize&nbsp;the&nbsp;set&nbsp;of&nbsp;attributes&nbsp;--&nbsp;separate&nbsp;class&nbsp;fields&nbsp;on&nbsp;<a href="#TextMatch">TextMatch</a>&nbsp;from&nbsp;additional<br>
+optional&nbsp;attributes.<br>
+:param&nbsp;attrs:<br>
+:return:</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="opensextant.html#TextEntity">TextEntity</a>:<br>
+<dl><dt><a name="TextMatch-contains"><strong>contains</strong></a>(self, x1)</dt><dd><tt>if&nbsp;this&nbsp;span&nbsp;contains&nbsp;an&nbsp;offset&nbsp;x1<br>
+:param&nbsp;x1:</tt></dd></dl>
+
+<dl><dt><a name="TextMatch-exact_match"><strong>exact_match</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="TextMatch-is_after"><strong>is_after</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="TextMatch-is_before"><strong>is_before</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="TextMatch-is_within"><strong>is_within</strong></a>(self, t)</dt><dd><tt>if&nbsp;the&nbsp;given&nbsp;annotation,&nbsp;t,&nbsp;contains&nbsp;this<br>
+:param&nbsp;t:<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="TextMatch-overlaps"><strong>overlaps</strong></a>(self, t)</dt><dd><tt>Determine&nbsp;if&nbsp;t&nbsp;overlaps&nbsp;self.&nbsp;&nbsp;If&nbsp;Right&nbsp;or&nbsp;Left&nbsp;match,&nbsp;t&nbsp;overlaps&nbsp;if&nbsp;it&nbsp;is&nbsp;longer.<br>
+If&nbsp;t&nbsp;is&nbsp;contained&nbsp;entirely&nbsp;within&nbsp;self,&nbsp;then&nbsp;it&nbsp;is&nbsp;not&nbsp;considered&nbsp;overlap&nbsp;--&nbsp;it&nbsp;is&nbsp;Contained&nbsp;within.<br>
+:param&nbsp;t:<br>
+:return:</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="opensextant.html#TextEntity">TextEntity</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
+&nbsp;<br>
+Unlike&nbsp;atan(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbsp;y&nbsp;are&nbsp;considered.</tt></dd></dl>
+ <dl><dt><a name="-cos"><strong>cos</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;cosine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
+ <dl><dt><a name="-distance_cartesian"><strong>distance_cartesian</strong></a>(x1, y1, x2, y2)</dt><dd><tt>Given&nbsp;X1,&nbsp;Y1&nbsp;and&nbsp;X2,&nbsp;Y2&nbsp;provide&nbsp;the&nbsp;2-D&nbsp;Cartesian&nbsp;distance&nbsp;between&nbsp;two&nbsp;points.</tt></dd></dl>
+ <dl><dt><a name="-distance_haversine"><strong>distance_haversine</strong></a>(ddlon1, ddlat1, ddlon2, ddlat2)</dt><dd><tt>Returns&nbsp;distance&nbsp;in&nbsp;kilometers&nbsp;for&nbsp;given&nbsp;decimal&nbsp;degree&nbsp;Lon/Lat&nbsp;(X,Y)&nbsp;pair<br>
+&nbsp;<br>
+<a href="http://www.movable-type.co.uk/scripts/latlong.html">http://www.movable-type.co.uk/scripts/latlong.html</a></tt></dd></dl>
+ <dl><dt><a name="-format_coord"><strong>format_coord</strong></a>(lat, lon)</dt><dd><tt>2.6,&nbsp;3.6&nbsp;format.<br>
+:param&nbsp;lat:&nbsp;latitude<br>
+:param&nbsp;lon:&nbsp;longitude<br>
+:return:&nbsp;string</tt></dd></dl>
+ <dl><dt><a name="-get_country"><strong>get_country</strong></a>(code, standard='ISO')</dt><dd><tt>:param&nbsp;code:&nbsp;2-&nbsp;or&nbsp;3-alpha&nbsp;code.<br>
+:param&nbsp;standard:&nbsp;'ISO'&nbsp;or&nbsp;'FIPS'<br>
+:return:&nbsp;&nbsp;<a href="#Country">Country</a>&nbsp;<a href="builtins.html#object">object</a></tt></dd></dl>
+ <dl><dt><a name="-get_province"><strong>get_province</strong></a>(cc, adm1)</dt><dd><tt>REQUIRES&nbsp;you&nbsp;<a href="#-load_provinces">load_provinces</a>()&nbsp;first.</tt></dd></dl>
+ <dl><dt><a name="-is_administrative"><strong>is_administrative</strong></a>(feat)</dt></dl>
+ <dl><dt><a name="-is_populated"><strong>is_populated</strong></a>(feat)</dt></dl>
+ <dl><dt><a name="-load_countries"><strong>load_countries</strong></a>(csvpath=None)</dt><dd><tt>parses&nbsp;Xponents&nbsp;Basics/src/main/resource&nbsp;CSV&nbsp;file&nbsp;country-names-2015.csv<br>
+putting&nbsp;out&nbsp;an&nbsp;array&nbsp;of&nbsp;<a href="#Country">Country</a>&nbsp;objects.</tt></dd></dl>
+ <dl><dt><a name="-load_provinces"><strong>load_provinces</strong></a>()</dt></dl>
+ <dl><dt><a name="-load_us_provinces"><strong>load_us_provinces</strong></a>()</dt></dl>
+ <dl><dt><a name="-load_world_adm1"><strong>load_world_adm1</strong></a>()</dt></dl>
+ <dl><dt><a name="-make_HASC"><strong>make_HASC</strong></a>(cc, adm1)</dt></dl>
+ <dl><dt><a name="-radians"><strong>radians</strong></a>(x, /)</dt><dd><tt>Convert&nbsp;angle&nbsp;x&nbsp;from&nbsp;degrees&nbsp;to&nbsp;radians.</tt></dd></dl>
+ <dl><dt><a name="-render_match"><strong>render_match</strong></a>(m)</dt><dd><tt>:param&nbsp;m:&nbsp;<a href="#TextMatch">TextMatch</a><br>
+:return:&nbsp;dict</tt></dd></dl>
+ <dl><dt><a name="-sin"><strong>sin</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;sine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
+ <dl><dt><a name="-sqrt"><strong>sqrt</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;square&nbsp;root&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-validate_lat"><strong>validate_lat</strong></a>(f)</dt></dl>
+ <dl><dt><a name="-validate_lon"><strong>validate_lon</strong></a>(f)</dt></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>EARTH_RADIUS_WGS84</strong> = 6378<br>
+<strong>PY3</strong> = True<br>
+<strong>adm1_by_hasc</strong> = {}<br>
+<strong>countries</strong> = []<br>
+<strong>countries_by_fips</strong> = {}<br>
+<strong>countries_by_iso</strong> = {}<br>
+<strong>countries_by_name</strong> = {}<br>
+<strong>usstates</strong> = {}</td></tr></table>
+</body></html>
