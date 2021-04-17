@@ -17,7 +17,6 @@ case $CMD in
     echo $*
     cd $basedir
     logfile=$basedir/log/xlayer-stderr.log
-    stdout=$basedir/log/xlayer.log
     CLASSPATH="$basedir/etc:$basedir/lib/*"
     XPONENTS_SOLR=${XPONENTS_SOLR:-$basedir/xponents-solr}
 

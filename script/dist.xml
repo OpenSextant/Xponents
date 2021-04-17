@@ -125,7 +125,7 @@
         <exclude name="solr7-dist/server/logs/**" />
       </fileset>
     </copy>
-    <copy file="${xponents.home}/build.template" tofile="${release}/build.properties" overwrite="true" />
+    <copy file="${xponents.home}/build.properties" todir="${release}" overwrite="true" />
   </target>
 
   <target name="copy-data">
@@ -135,7 +135,6 @@
       </fileset>
     </copy>
     <unzip src="${xponents.home}/etc/langdetect-profiles-v3.zip" dest="${release}/etc" />
-
   </target>
 
   <target name="copy-script">
@@ -183,8 +182,9 @@
     <copy todir="${release}/doc/">
       <fileset dir="${xponents.home}/doc" />
     </copy>
-    <copy todir="${release}/doc/Examples/" file="${xponents.home}/Examples/README.md" />
-    <copy todir="${release}/doc/Examples/" file="${xponents.home}/Examples/doc/README_gazetteer.md" />
+    <copy todir="${release}/doc/" file="${xponents.home}/Examples/README_filegdb_ouput_format.md" />
+    <copy todir="${release}/doc/" file="${xponents.home}/Examples/README_Examples.md" />
+    <copy todir="${release}/doc/" file="${xponents.home}/Examples/README_gazetteer.md" />
   </target>
 
   <target name="dist" depends="mkdirs, build, build-examples, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
