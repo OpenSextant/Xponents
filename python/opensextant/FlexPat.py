@@ -4,38 +4,6 @@ import re
 
 from opensextant import TextMatch, Extractor
 
-"""
-FlexPat: regular-expression assistant. 
-Create a pattern library that is easy to read, adapt, test and share.... let alone execute and diagnose.
-
-FlexPat is a configuration-based approach to employing regular expressions. Using the well-defined
-syntax design your entity patterns in families of RULEs. 
-
-Repetitive fields or sub-patterns are defined with DEFINEs -- compose RULEs with your DEFINEs, other litterals
-and regular expressions.  DEFINES are formal groups that are available after matching so you can use those named groups
-for validation.   ((Yes, Python has named groups in re module; but to support any programming language we cannot
-rely on named groups still.))
-
-For each RULE family you have rule variations. For each variation you should have TEST cases that provide example
-texts containing true positives and true negatives.  TEST cases intended to either NOT match or match, but invalidate
-the match should be marked as "FAIL". 
-
-Specific uses:
-
-* opensextant.extractors.poli:  a refactoring of the Java PatternsOfLife extractor. The idea here is to demonstrate
-  how to manage many RULE families, but call them as needed easily.
-
-* opensextant.extractors.xcoord: TBD. These topics would demonstrate an extractor app intended to run all RULEs, 
-  indiscriminately to find all possible entities. XCoord (Java) is for geo coordinate extraction & normalization.
-
-* opensextant.extractors.xtemporal: TBD. ditto. XTemporal is for date/time extraction & normalization.
-
-Complete user manual TBD 2019.
-
-TODO:
-* limitation  -- RULE patterns may not have other unnamed groups "()" literally in the pattern. Only groups allowed
-  are those in DEFINE. 
-"""
 
 NOT_SUBMATCH = 0
 IS_SUBMATCH = 1
@@ -137,7 +105,7 @@ def reduce_matches_dict(matches):
 def resource_for(resource_name):
     """
 
-    :param resource_name: name of a file in your resource path; Default: opensextant/resource/NAME
+    :param resource_name: name of a file in your resource path; Default: opensextant/resources/NAME
     :return: file path.
     """
     import opensextant
@@ -279,8 +247,12 @@ def get_config_file(cfg, modfile):
     raise FileNotFoundError("No such file {} at {}".format(cfg, patterns_file))
 
 
-# from abc import ABC, abstractmethod
 class RegexPatternManager:
+    """
+    RegexPatternManager is the patterns configuration file parser.
+    See documentation: https://opensextant.github.io/Xponents/doc/Patterns.md
+
+    """
     def __init__(self, patterns_cfg, module_file=None, debug=False, testing=False):
         self.families = set([])
         self.patterns = {}
@@ -471,10 +443,48 @@ def _digest_sub_groups(m, pattern_groups):
 
 
 class PatternExtractor(Extractor):
+    """
+        Discussion: Read first https://opensextant.github.io/Xponents/doc/Patterns.md
+
+        Example:
+        ```
+        from opensextant.extractors.poli import PatternsOfLifeManager
+        from opensextant.FlexPat import PatternExtractor
+
+        # INIT
+        #=====================
+        # Invoke a particular REGEX rule set, here poli_patterns.cfg
+        # @see https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/resources/poli_patterns.cfg
+        mgr = PatternsOfLifeManager("poli_patterns.cfg")
+        pex = PatternExtractor(mgr)
+
+        # DEV/TEST
+        #=====================
+        # "default_test()" is useful to run during development and
+        # encourages you to capture critical pattern variants in your "TEST" data.
+        # Look at your pass/fail situations -- what test cases are failing your rule?
+        test_results = pex.default_tests()
+        print("TEST RESULTS")
+        for result in test_results:
+            print(repr(result))
+
+        # RUN
+        #=====================
+        real_results = pex.extract(".... text blob 1-800-123-4567...")
+        print("REAL RESULTS")
+        for result in real_results:
+            print(repr(result))
+            print("\tRAW DICT:", render_match(result))
+        ```
+    """
 
     def __init__(self, pattern_manager):
         """
-        Construct a RegexPatternManager externally, then pass that in here.
+        invoke RegexPatternManager(your_cfg_file) or implement a custom RegexPatternManager (rare).
+        NOTE - `PatternsOfLifeManager` is a  particular subclass of RegexPatternManager becuase
+        it is manipulating the input patterns config file which is shared with the Java demo.
+        The `CLASS` names unfortunately are specific to Python or Java.
+
         :param pattern_manager: RegexPatternManager
         """
         Extractor.__init__(self)

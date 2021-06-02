@@ -45,7 +45,8 @@ Here are some fast-tracks for applying Xponents:
 A. Geotagging and everything -- Deploy the Docker service as prescribed on our [Docker Hub](https://hub.docker.com/r/mubaldino/opensextant).  Consult at least the Python client `opensextant.xlayer` as noted in the Docker page and in the Python setup below.
 
 B. Pattern extraction -- The Python library `opensextant.FlexPat` or its Java counterpart `org.opensextant.extractors.flexpat` -- offer a lean and effective manner to develop a regular-expression
-pipeline.  In either case minimal dependencies are needed.  See Python setup below.
+pipeline.  In either case minimal dependencies are needed.  See Python setup below. Complete FlexPat 
+overview is available at [Patterns.md](./doc/Patterns.md)
 
 C. Geotagging and everything,.... but for some reason you feel that you need to build 
 it all yourself. You'll need to follow the notes here in `BUILD.md` and in `./solr/README.md`. 
@@ -229,12 +230,13 @@ Someday we'll just post this to PyPi.
 
 Demonstration
 ---------------------
-See the [Examples](./Examples/README.md) material that you can use 
+See the [Examples](./doc/README_Examples.md) material that you can use 
 from within the Docker image or from a full checkout/build of the project.  Pipeline 
 topics covered there are :
 
 - Basic geo/temporal extraction
 - XText file-to-text conversion tool. More info is at [`XText`](https://github.com/OpenSextant/XText/). XText is included in this distribution
+- Gazetteer interaction for querying and updates are provided on [README_gazetteer](./doc/README_gazetteer.md)  
 - GIS map layer generation
 - Language ID
 - Social media geo-inferencing

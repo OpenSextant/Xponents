@@ -57,8 +57,38 @@
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt><a href="#PatternExtractor">PatternExtractor</a>(pattern_manager)<br>
 &nbsp;<br>
-Helper&nbsp;class&nbsp;that&nbsp;provides&nbsp;a&nbsp;standard&nbsp;way&nbsp;to&nbsp;create&nbsp;an&nbsp;ABC&nbsp;using<br>
-inheritance.<br>&nbsp;</tt></td></tr>
+Discussion:&nbsp;Read&nbsp;first&nbsp;https://opensextant.github.io/Xponents/doc/Patterns.md<br>
+&nbsp;<br>
+Example:<br>
+```<br>
+from&nbsp;opensextant.extractors.poli&nbsp;import&nbsp;PatternsOfLifeManager<br>
+from&nbsp;opensextant.FlexPat&nbsp;import&nbsp;<a href="#PatternExtractor">PatternExtractor</a><br>
+&nbsp;<br>
+#&nbsp;INIT<br>
+#=====================<br>
+#&nbsp;Invoke&nbsp;a&nbsp;particular&nbsp;REGEX&nbsp;rule&nbsp;set,&nbsp;here&nbsp;poli_patterns.cfg<br>
+#&nbsp;@see&nbsp;https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/resources/poli_patterns.cfg<br>
+mgr&nbsp;=&nbsp;PatternsOfLifeManager("poli_patterns.cfg")<br>
+pex&nbsp;=&nbsp;<a href="#PatternExtractor">PatternExtractor</a>(mgr)<br>
+&nbsp;<br>
+#&nbsp;DEV/TEST<br>
+#=====================<br>
+#&nbsp;"default_test()"&nbsp;is&nbsp;useful&nbsp;to&nbsp;run&nbsp;during&nbsp;development&nbsp;and<br>
+#&nbsp;encourages&nbsp;you&nbsp;to&nbsp;capture&nbsp;critical&nbsp;pattern&nbsp;variants&nbsp;in&nbsp;your&nbsp;"TEST"&nbsp;data.<br>
+#&nbsp;Look&nbsp;at&nbsp;your&nbsp;pass/fail&nbsp;situations&nbsp;--&nbsp;what&nbsp;test&nbsp;cases&nbsp;are&nbsp;failing&nbsp;your&nbsp;rule?<br>
+test_results&nbsp;=&nbsp;pex.<a href="#PatternExtractor-default_tests">default_tests</a>()<br>
+print("TEST&nbsp;RESULTS")<br>
+for&nbsp;result&nbsp;in&nbsp;test_results:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(repr(result))<br>
+&nbsp;<br>
+#&nbsp;RUN<br>
+#=====================<br>
+real_results&nbsp;=&nbsp;pex.<a href="#PatternExtractor-extract">extract</a>("....&nbsp;text&nbsp;blob&nbsp;1-800-123-4567...")<br>
+print("REAL&nbsp;RESULTS")<br>
+for&nbsp;result&nbsp;in&nbsp;real_results:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(repr(result))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RAW&nbsp;DICT:",&nbsp;render_match(result))<br>
+```<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="opensextant.FlexPat.html#PatternExtractor">PatternExtractor</a></dd>
@@ -68,7 +98,11 @@ inheritance.<br>&nbsp;</tt></td></tr>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="PatternExtractor-__init__"><strong>__init__</strong></a>(self, pattern_manager)</dt><dd><tt>Construct&nbsp;a&nbsp;<a href="#RegexPatternManager">RegexPatternManager</a>&nbsp;externally,&nbsp;then&nbsp;pass&nbsp;that&nbsp;in&nbsp;here.<br>
+<dl><dt><a name="PatternExtractor-__init__"><strong>__init__</strong></a>(self, pattern_manager)</dt><dd><tt>invoke&nbsp;<a href="#RegexPatternManager">RegexPatternManager</a>(your_cfg_file)&nbsp;or&nbsp;implement&nbsp;a&nbsp;custom&nbsp;<a href="#RegexPatternManager">RegexPatternManager</a>&nbsp;(rare).<br>
+NOTE&nbsp;-&nbsp;`PatternsOfLifeManager`&nbsp;is&nbsp;a&nbsp;&nbsp;particular&nbsp;subclass&nbsp;of&nbsp;<a href="#RegexPatternManager">RegexPatternManager</a>&nbsp;becuase<br>
+it&nbsp;is&nbsp;manipulating&nbsp;the&nbsp;input&nbsp;patterns&nbsp;config&nbsp;file&nbsp;which&nbsp;is&nbsp;shared&nbsp;with&nbsp;the&nbsp;Java&nbsp;demo.<br>
+The&nbsp;`CLASS`&nbsp;names&nbsp;unfortunately&nbsp;are&nbsp;specific&nbsp;to&nbsp;Python&nbsp;or&nbsp;Java.<br>
+&nbsp;<br>
 :param&nbsp;pattern_manager:&nbsp;<a href="#RegexPatternManager">RegexPatternManager</a></tt></dd></dl>
 
 <dl><dt><a name="PatternExtractor-default_tests"><strong>default_tests</strong></a>(self, scope='rule')</dt><dd><tt>Default&nbsp;Tests&nbsp;run&nbsp;all&nbsp;TEST&nbsp;cases&nbsp;for&nbsp;each&nbsp;RULE&nbsp;in&nbsp;patterns&nbsp;config.<br>
@@ -242,7 +276,8 @@ Data descriptors defined here:<br>
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt><a href="#RegexPatternManager">RegexPatternManager</a>(patterns_cfg,&nbsp;module_file=None,&nbsp;debug=False,&nbsp;testing=False)<br>
 &nbsp;<br>
-#&nbsp;from&nbsp;abc&nbsp;import&nbsp;ABC,&nbsp;abstractmethod<br>&nbsp;</tt></td></tr>
+<a href="#RegexPatternManager">RegexPatternManager</a>&nbsp;is&nbsp;the&nbsp;patterns&nbsp;configuration&nbsp;file&nbsp;parser.<br>
+See&nbsp;documentation:&nbsp;https://opensextant.github.io/Xponents/doc/Patterns.md<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="RegexPatternManager-__init__"><strong>__init__</strong></a>(self, patterns_cfg, module_file=None, debug=False, testing=False)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>

@@ -41,7 +41,7 @@ popd
 msg "Prepare Python API docs" 
 # ----------------------
 pushd $basedir/doc/pydoc/
-pydoc3 -w opensextant opensextant.xlayer opensextant.utility opensextant.phonetics \
+pydoc3 -w opensextant opensextant.xlayer opensextant.utility opensextant.phonetics  opensextant.advas_phonetics \
    opensextant.gazetteer opensextant.extractors opensextant.TaxCat opensextant.FlexPat
 popd
 

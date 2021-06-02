@@ -8,8 +8,8 @@
 # ----------------------------------------------------------
 #
 # changed 2005-01-24
-# 2012-01-01 adapted to support various Unicode transliterations in Metaphone
-# 2021-03-25 migreted to Xponents here
+# 2012-01-01 MU adapted to support various Unicode transliterations in Metaphone
+# 2021-03-25 MU migrated to Xponents here
 
 import re
 

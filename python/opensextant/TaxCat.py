@@ -1,31 +1,12 @@
 # -*- coding: utf-8 -*-
 """
- 
-                Copyright 2014 The MITRE Corporation.
- 
-  Licensed under the Apache License, Version 2.0 (the "License"); you may not
-  use this file except in compliance with the License. You may obtain a copy of
-  the License at
- 
-  http://www.apache.org/licenses/LICENSE-2.0
- 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-  License for the specific language governing permissions and limitations under
-  the License.
- 
-  =============================================================================
   A simple interface to creating a taxonomic catalog ("taxcat") for OpenSextant TaxMatcher  to use.
   prerequisites:    See XTax README
-
 """
 import os
-
 from opensextant.utility import is_text, ConfigUtility
 
 __API_PATH = os.path.realpath(__file__)
-
 SOLR_SERVER = "http://localhost:7000/solr/taxcat"
 
 
@@ -106,7 +87,6 @@ def add_value(f, val, case=0):
 CASE_LOWER = 1
 CASE_UPPER = 2
 
-"""
 # Catalogs must be registered -- Solr has no concept of how to manage string-based record IDs
 # that is something you must manage as you create your combined catalog,
 #
@@ -115,7 +95,6 @@ CASE_UPPER = 2
 # start catalog X at 1,000,000 and let other smaller catalogs start at 0 or at less than 1 million
 # start the next catalog at 3,000,000 to give X some breathing room.
 #
-"""
 CATALOG_REGISTRY = {
     "DEFAULT": 0,
     "WFB": 100000,
