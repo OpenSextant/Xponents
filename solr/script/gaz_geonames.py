@@ -97,7 +97,7 @@ def generated_entries(geo, names):
         grp = ""
         if has_cjk(n):
             loc["name_cjk"] = n
-            grp = "ar"
+            grp = "cjk"
             loc["name_bias"] = _format(nm_bias + 0.10)
         elif has_arabic(n):
             loc["name_ar"] = n
