@@ -87,12 +87,12 @@ This FlexPat uses a "patterns configuration" file, which contains the clauses fo
   - pattern family: a logical grouping of like patterns that may have subtle variations, e.g.,  
          `MDY` has about 6 total month-day-year patterns. But all such variants are easily referenced by naming the pattern
     family `MDY`.
-  - `TEST`:  a single example of the pattern to be detected, parsed and/or normalized by the `RULE`. 
-       A `# FAIL` comment trailing the test by convention is used to denote a test case that should NOT be detected by 
-    the `RULE`. Alternatively, the pattern may detect, but through the `CLASS` `.normalize()` implementation the 
-    `RULE` will yield a pattern match that is filtered out.   There are two chances to succeed here -- `RULE` detect
-    or not detect the match, `CLASS` normalization validates or invalidates the match.  This is the value of filling
-    out as many `TEST` test cases as possible to touch on variants.
+  - `TEST`:  is a single example of the pattern+variant to be detected, parsed and/or normalized by the `RULE`. 
+       By convention a `FAIL` comment trailing the test is used to denote a test case that should NOT be detected by 
+    the `RULE`. Alternatively, the pattern may detect a match, but through the `CLASS` `.normalize()` implementation the 
+    `RULE` will yield a pattern match that is _filtered out_.   In conclusion, there are two chances to succeed here 
+    -- (a) `RULE` detect or not detect the match, and/or (b) `CLASS` normalization validates or invalidates the match.  
+    This is the value of filling out as many `TEST` test cases as possible to touch on variants.
   - `CLASS`: An optional custom class that subclasses `PatternMatch` to carry REGEX subgroups and allow for additional
     normalization, validation, etc.
 
@@ -104,10 +104,10 @@ Code References and Examples
 =========
 
 * Java: 
-  ** FlexPat overview in Java. https://opensextant.github.io/Xponents/doc/core-apidocs/org/opensextant/extractors/flexpat/package-summary.html
+  * [FlexPat overview in Java](https://opensextant.github.io/Xponents/doc/core-apidocs/org/opensextant/extractors/flexpat/package-summary.html). 
 * Python: 
-  ** FlexPat API https://opensextant.github.io/Xponents/doc/pydoc/opensextant.FlexPat.html
+  * [FlexPat API](https://opensextant.github.io/Xponents/doc/pydoc/opensextant.FlexPat.html)
 * Testing:
-  ** XCoord example: Invoked using `./script/xponents-demo.sh`, [TestXCoord.java](https://github.com/OpenSextant/Xponents/blob/master/Core/src/test/java/org/opensextant/extractors/test/TestXCoord.java)
-  ** FlexPat example: https://github.com/OpenSextant/Xponents/blob/master/python/test/test_flexpat.py
+  * XCoord example: Invoked using `./script/xponents-demo.sh`, [TestXCoord.java](https://github.com/OpenSextant/Xponents/blob/master/Core/src/test/java/org/opensextant/extractors/test/TestXCoord.java)
+  * [FlexPat example](https://github.com/OpenSextant/Xponents/blob/master/python/test/test_flexpat.py)
 
