@@ -39,6 +39,8 @@ XCoord
    - MGRS ~ Quad/Zone/Easting/Northing
    - UTM ~  Zone/Band/Easthing/Northing
 
+**FILES**:  **[Coord Patterns](./XCoord_Patterns.htm)**, Patterns Config: **[geocoord_patterns.cfg](https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/resources/geocoord_patterns.cfg)**.
+
 XTemporal 
 -----------
 `XTemporal` a date/time extractor and normalizer that finds dates and date/time patterns, implemented 
@@ -47,6 +49,8 @@ XTemporal
    - DMY, DMYT ~ Day/Month/Year/Time ~ `22 SEPT 2017 0700Z`
    - YMD ~ Year/Month/Day ~ `2017-09-22`
    - DTM ~ Date+Time ~ `2017-09-22T0700-0500`
+
+**FILES**: Patterns Config: **[datetime_patterns.cfg](https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/resources/datetime_patterns.cfg)**
 
 PoLi
 -----------
@@ -60,6 +64,7 @@ PoLi
    - URLs and IP Addresses - Internet locations are parsed for prototcol, domain and addresses are resolved to a city
     or ISP if possible. 
      
+**FILES**: Patterns Config: **[poli_patterns.cfg](https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/resources/poli_patterns.cfg)**
 
 Developing with FlexPat
 -----------------------
