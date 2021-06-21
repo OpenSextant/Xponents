@@ -268,7 +268,7 @@ def load_countries(csvpath=None):
 def load_us_provinces():
     pkg_dir = os.path.dirname(os.path.abspath(__file__))
     csvpath = os.path.join(pkg_dir, 'resources', 'us-state-metadata.csv')
-    with open(csvpath, 'rU', encoding="UTF-8") as fh:
+    with open(csvpath, 'r', encoding="UTF-8") as fh:
         columns = ["POSTAL_CODE", "ADM1_CODE", "STATE", "LAT", "LON", "FIPS_CC", "ISO2_CC"]
         io = get_csv_reader(fh, columns)
         for row in io:
@@ -335,26 +335,29 @@ def get_province(cc, adm1):
     return adm1_by_hasc.get(make_HASC(cc, adm1))
 
 
-def get_country(code, standard="ISO"):
+def get_country(namecode, standard="ISO"):
     """
-
+    Get Country object given a name, ISO or FIPS code.  For codes, you must be
+    clear about which standard the code is based in. Some code collisions exist.
     :param code: 2- or 3-alpha code.
-    :param standard: 'ISO' or 'FIPS'
+    :param standard: 'ISO' or 'FIPS', 'name'
     :return:  Country object
     """
-    if not code or not isinstance(code, str):
+    if not namecode or not isinstance(namecode, str):
         return None
 
     if not __loaded:
         load_countries()
 
-    lookup = code.upper()
+    lookup = namecode.upper()
     if standard == "ISO":
         return countries_by_iso.get(lookup)
     elif standard == "FIPS":
         return countries_by_fips.get(lookup)
+    elif standard == "name":
+        return countries_by_name.get(namecode.lower())
     else:
-        raise Exception("That standards body '{}' is not known for code {}".format(standard, code))
+        raise Exception("That standards body '{}' is not known for code {}".format(standard, namecode))
 
 
 def is_administrative(feat):
