@@ -10,7 +10,7 @@
     <properties>
        <xponents.v>2.9.9</xponents.v>
        <hadoop.v>2.6.2</hadoop.v>
-       <solr.version>4.10.4</solr.version>
+       <solr.version>8.8.2</solr.version>
     </properties>
     <dependencies>
         <dependency>
