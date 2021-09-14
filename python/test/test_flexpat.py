@@ -1,6 +1,6 @@
 from opensextant import TextMatch, render_match
 
-from opensextant.FlexPat import class_for, resource_for
+from opensextant.FlexPat import PatternMatch, class_for, resource_for
 
 # ========================
 # Basic Text span logic
@@ -38,6 +38,12 @@ print(str(m2))
 m2 = TextMatch("nüttér", 22, 28)
 print(str(m2))
 print(len(m2.text), "chars long")
+
+buf = "yummy butter#nüttér is yet anuther food you sputter"
+m2 = PatternMatch("nüttér", 13, 18)
+m2.add_surrounding_text(buf, len(buf), length=7)
+print(m2.pre_text, m2.post_text)
+assert m2.post_text is not None and m2.pre_text is not None
 
 # ========================
 # File loader mechanics.

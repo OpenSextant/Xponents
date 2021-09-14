@@ -33,6 +33,7 @@ class Country:
         self.cc_fips = None
         self.name = None
         self.namenorm = None
+        self.name_type = None
         self.aliases = []
         self.is_territory = False
         self.is_unique_name = False
@@ -211,6 +212,32 @@ class Place(Coordinate):
         return '{}, {} @({})'.format(self.name, self.country_code, self.string_coord())
 
 
+def as_place(ctry: Country, name: str, name_type="N", oid=None):
+    """
+    Convert to Place.
+    :param ctry: Country object
+    :param name: the name to use
+    :param name_type:
+    :param oid: row ID
+    :return:
+    """
+    pl = Place(ctry.cc_iso2, name)
+    pl.id = oid
+    pl.name_type = name_type
+    pl.feature_class = "A"
+    pl.feature_code = "PCLI"
+    pl.name_bias = 0.0
+    pl.id_bias = 0.0
+    pl.country_code = ctry.cc_iso2
+    pl.country_code_fips = ctry.cc_fips
+    pl.adm1 = "0"
+    pl.source = "ISO"
+    if ctry.is_territory:
+        pl.feature_code = "PCL"
+    pl.set_location(ctry.lat, ctry.lon)
+    return pl
+
+
 def load_countries(csvpath=None):
     """ parses Xponents Basics/src/main/resource CSV file country-names-2015.csv
         putting out an array of Country objects.
@@ -339,7 +366,7 @@ def get_country(namecode, standard="ISO"):
     """
     Get Country object given a name, ISO or FIPS code.  For codes, you must be
     clear about which standard the code is based in. Some code collisions exist.
-    :param code: 2- or 3-alpha code.
+    :param namecode: 2- or 3-alpha code.
     :param standard: 'ISO' or 'FIPS', 'name'
     :return:  Country object
     """
@@ -360,14 +387,30 @@ def get_country(namecode, standard="ISO"):
         raise Exception("That standards body '{}' is not known for code {}".format(standard, namecode))
 
 
-def is_administrative(feat):
+def is_administrative(feat: str):
     if not feat: return False
     return "A" == feat.upper()
 
 
-def is_populated(feat):
+def is_populated(feat: str):
     if not feat: return False
     return "P" == feat.upper()
+
+
+def is_abbreviation(obj):
+    """
+    Determine if something is an abbreviation.
+    For object classes, "name_type=A" implies abbreviation.
+    Otherwise if text ends with "." we'll conclude so.
+    :param obj:
+    :return: True if obj is inferred to be an abbreviation
+    """
+    if not obj: return False
+    if isinstance(obj, (Place, Country)):
+        return obj.name_type == "A"
+    elif isinstance(obj, str):
+        return obj.endswith(".")
+    return False
 
 
 class TextEntity:

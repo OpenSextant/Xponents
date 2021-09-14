@@ -4,6 +4,7 @@
   prerequisites:    See XTax README
 """
 import os
+
 from opensextant.utility import is_text, ConfigUtility
 
 __API_PATH = os.path.realpath(__file__)

@@ -40,6 +40,18 @@ def is_text(t):
     return isinstance(t, str)
 
 
+def is_code(t: str, nlen=3):
+    """
+    Test if a string is an ASCII code typically 1-3 chars in len.
+    :param t: text
+    :param nlen: threshold for string len
+    :return:
+    """
+    if not t:
+        return False
+    return len(t) <= nlen and is_ascii(t) and t.isupper()
+
+
 def is_ascii(s):
     try:
         return all(ord(c) < 128 for c in s)
@@ -305,7 +317,7 @@ def has_arabic(text):
 
 
 def trivial_bias(name):
-    """ Deteremine unique a name is using length and character set and # of words
+    """ Experimental: Deteremine unique a name is using length and character set and # of words
     """
     l_points = len(name) / 3
     word_points = len(name.split())

@@ -392,6 +392,7 @@ def nysiis(term):
         "sch": "sss"
     }
 
+    table_value_len = 0
     for table_entry in table.keys():
         table_value = table[table_entry]  # get table value
         table_value_len = len(table_value)  # calculate its length

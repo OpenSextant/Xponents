@@ -4,9 +4,11 @@ from traceback import format_exc
 
 import arrow
 import pysolr
-from opensextant import Place
+from opensextant import Place, Country
 from opensextant.utility import ensure_dirs, is_ascii, ConfigUtility, get_bool
 from pygeodesy.geohash import encode as geohash_encode
+
+DEFAULT_MASTER = "master_gazetteer.sqlite"
 
 GAZETTEER_SOURCES = {
     "NGA": "N",
@@ -19,7 +21,9 @@ GAZETTEER_SOURCES = {
     "Geonames.org": "OG",  # OpenSextant geonames
     "XPONENTS": "X",  # Xponents Adhoc or generated
     "XpGen": "X",
-    "XP": "X"
+    "XP": "X",
+    "GP": "GP",  # Geonames Postal
+    "G": "G"
 }
 
 SCRIPT_CODES = {
@@ -48,6 +52,10 @@ SCRIPT_CODES = {
     "TAMIL": "TA",
     "THAI": "TH",
 }
+
+
+def get_default_db():
+    return os.path.join(".", "tmp", DEFAULT_MASTER)
 
 
 def load_stopterms(project_dir="."):
@@ -370,7 +378,10 @@ class DB:
         src = dct["source"]
         dct["source"] = GAZETTEER_SOURCES.get(src, src)
         # 6 geohash prefix is about 100m to 200m error. precision=8 is 1m precision.
-        dct["geohash"] = geohash_encode(dct["lat"], dct["lon"], precision=6)
+        if "lat" in dct:
+            dct["geohash"] = geohash_encode(dct["lat"], dct["lon"], precision=6)
+        else:
+            print("Geoname has no location", dct)
 
         v = get_bool(dct.get("search_only"))
         dct["search_only"] = 0
@@ -536,10 +547,11 @@ class DataSource:
             print(f"\tsource ID = {k}")
             self.db.purge({"source": k})
 
-    def process_source(self, sourcefile):
+    def process_source(self, sourcefile, limit=-1):
         """
         generator yielding DB geo dictionary to be stored.
         :param sourcefile: Raw data file
+        :param limit: limit of number of records to process
         :return: generator of Place object or dict of Place schema
         """
         yield None
@@ -554,8 +566,8 @@ class DataSource:
         """
 
         print("\n============================")
-        print(f"Start {self.source_name}. {arrow.now()}")
-        for geo in self.process_source(sourcefile):
+        print(f"Start {self.source_name}. {arrow.now()}  FILE={sourcefile}")
+        for geo in self.process_source(sourcefile, limit=limit):
             if self.rowcount % self.rate == 0 and not self.quiet:
                 print(f"Row {self.rowcount}")
             if 0 < limit < self.rowcount:
@@ -563,12 +575,12 @@ class DataSource:
                 break
             try:
                 self.db.add_place(geo)
-            except sqlite3.IntegrityError as err:
+            except sqlite3.IntegrityError:
                 print("Data integrity issue")
                 print(format_exc(limit=5))
                 print(self.db.queue)
                 break
-            except Exception as err:
+            except Exception:
                 print("Error with insertion to DB")
                 print(format_exc(limit=5))
         self.db.close()
@@ -593,8 +605,7 @@ class GazetteerIndex:
 
     def __init__(self, server_url, debug=False):
 
-        from pysolr import Solr
-        self.server = Solr(server_url)
+        self.server = pysolr.Solr(server_url)
         self.debug = debug
 
         self.commit_rate = 1000000
@@ -630,6 +641,44 @@ class GazetteerIndex:
         self._records.append(rec)
         self.count += 1
         self.save()
+
+
+class GazetteerSearch:
+    def __init__(self, server_url):
+        """
+        TODO: BETA - looking to abstract Solr().search() function for common types of queries.
+            For now getting a list of country name variants is easy enough.
+        :param server_url:  URL with path to `/solr/gazetteer' index
+        """
+        self.index_url = server_url
+        self.server = pysolr.Solr(self.index_url)
+
+    def get_countries(self, max_namelen=30):
+        """
+        Searches gazetteer for Country metadata
+        TODO: dovetail Country metadata (lang, timezone, codes, etc) with
+            Country place data.
+        TODO: Document different uses for GazetteerSearch.get_countries() from API get_country()
+        TODO: Review differences in Place() schema and Country() schema for name variants,
+            e.g., Country variants presented as abbreviations, codes or names need to be distinguished as such.
+        :param max_namelen:
+        :return:
+        """
+        countries = []
+        hits = self.server.search("feat_class:A AND feat_code:PCL*", **{"rows": 30000})
+        for country in hits:
+            nm = country['name']
+            if len(nm) > max_namelen:
+                continue
+            C = Country()
+            C.name = nm
+            C.cc_iso2 = country['cc']
+            C.cc_fips = country.get('FIPS_cc')
+            C.name_type = country.get('name_type')
+            feat_code = country.get('feat_code')
+            C.is_territory = feat_code != "PCLI" or "territo" in nm.lower()  # is NOT independent
+            countries.append(C)
+        return countries
 
 
 if __name__ == "__main__":

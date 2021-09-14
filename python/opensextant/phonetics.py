@@ -10,8 +10,8 @@ Requirements: advas.phonetics library is used here; but a modified version of it
 """
 
 from string import ascii_lowercase, digits
-from opensextant.utility import levenshtein_distance
 
+from opensextant.utility import levenshtein_distance
 # Metaphone via Advanced Search (advas);  Modified by Marc Ubaldino
 #
 from .advas_phonetics import metaphone
@@ -245,4 +245,3 @@ def match_filter_phonetically(target, targetlen, test, testlen, max_len_diff, ma
         return False
 
     return True
-

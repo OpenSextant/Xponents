@@ -4,7 +4,6 @@ import re
 
 from opensextant import TextMatch, Extractor
 
-
 NOT_SUBMATCH = 0
 IS_SUBMATCH = 1
 IS_DUPLICATE = 2
@@ -175,8 +174,33 @@ class PatternMatch(TextMatch):
         self.case = PatternMatch.FOUND_CASE
         self.match_groups = match_groups
         self.variant_id = None
+        # Optionally -- back fill as much surrounding text as you want for
+        # normalizer/validator routines. Use pre_text, post_text
+        self.pre_text = None
+        self.post_text = None
         if self.pattern_id and "-" in self.pattern_id:
             self.variant_id = self.pattern_id.split("-", 1)[1]
+
+    def add_surrounding_text(self, text, text_len, length=16):
+        """
+        Given this match's span and the text it was derived from,
+        populate pre_text, post_text with some # of chars specified by length.
+
+        :param text: The text in which this match was found.
+        :param text_len: the length of the text buffer.  (avoid repeating len(text))
+        :param length:  the pre/post text length to attach.
+        :return:
+        """
+        if self.start > 0:
+            x1 = self.start - length
+            if x1 < 0:
+                x1 = 0
+            self.pre_text = text[x1:self.start]
+        if self.end > 0:
+            x1 = self.end + length
+            if x1 > text_len:
+                x1 = text_len
+            self.post_text = text[self.end:x1]
 
     def attributes(self):
         """
@@ -253,6 +277,7 @@ class RegexPatternManager:
     See documentation: https://opensextant.github.io/Xponents/doc/Patterns.md
 
     """
+
     def __init__(self, patterns_cfg, module_file=None, debug=False, testing=False):
         self.families = set([])
         self.patterns = {}
@@ -499,6 +524,7 @@ class PatternExtractor(Extractor):
     def extract_patterns(self, text, **kwargs):
         """
         Given some text input, apply all relevant pattern families against the text.
+        Surrounding text is added to each match for post-processing.
         :param text:
         :param kwargs:
         :return:
@@ -507,6 +533,7 @@ class PatternExtractor(Extractor):
         if not features:
             features = self.pattern_manager.families
 
+        tlen = len(text)
         results = []
         for fam in features:
             if fam not in self.pattern_manager.families:
@@ -524,6 +551,8 @@ class PatternExtractor(Extractor):
                                                     pattern_id=pat.id,
                                                     label=pat.family,
                                                     match_groups=digested_groups)
+                        # surrounding text may be used by normalization and validation
+                        domainObj.add_surrounding_text(text, tlen, length=20)
                         domainObj.normalize()
                         results.append(domainObj)
                     else:
@@ -531,6 +560,7 @@ class PatternExtractor(Extractor):
                                                   pattern_id=pat.id,
                                                   label=pat.family,
                                                   match_groups=digested_groups)
+                        genericObj.add_surrounding_text(text, tlen, length=20)
                         results.append(genericObj)
 
         # Determine if any matches are redundant.  Mark redundancies as "filtered out".
