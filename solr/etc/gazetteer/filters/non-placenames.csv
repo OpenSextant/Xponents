@@ -556,6 +556,8 @@ white,color
 yellow,color
 blanc,color.fre
 nero,color.ita
+stripe,noun
+pin,stopword.web
 democracy,concept.politics
 kingdom,concept.politics
 adam and eve,concept.religion
@@ -2805,6 +2807,7 @@ interchange,place.civil
 international airport,place.civil
 investment bank,place.civil
 jail,place.civil
+jetty,place.civil
 junction,place.civil
 lab,place.civil
 labor camp,place.civil
