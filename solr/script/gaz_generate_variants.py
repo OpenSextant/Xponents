@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-from opensextant.gazetteer import DB, DataSource, as_place, SCRIPT_CODES
+from opensextant.gazetteer import DB, DataSource, get_default_db, as_place, SCRIPT_CODES
 from opensextant.utility import get_csv_reader
 
 """
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     from argparse import ArgumentParser
 
     ap = ArgumentParser()
-    ap.add_argument("--db", default="./tmp/master_gazetteer.sqlite")
+    ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
 

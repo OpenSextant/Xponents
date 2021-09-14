@@ -1,12 +1,18 @@
-from opensextant.gazetteer import DB, load_stopterms
+import re
+from time import sleep
+
+from opensextant import Place, load_countries, countries, as_place
+from opensextant.gazetteer import DB, load_stopterms, GazetteerIndex, get_default_db
 from opensextant.utility import replace_diacritics
 
 stopwords = {}
+
 
 class Finalizer:
     def __init__(self, dbf, debug=False):
         self.db = DB(dbf)
         self.debug = debug
+        self.inter_country_delay = 10
 
     def finalize(self, limit=-1, optimize=False):
         """
@@ -66,10 +72,25 @@ class Finalizer:
                 # Unique entry
                 keys.add(k)
 
-    def index(self, url, ignore_features=None, ignore_digits=True, limit=-1):
-        import re
-        from time import sleep
-        from opensextant.gazetteer import GazetteerIndex
+    def index_country_codes(self, url, starting_id=20000000):
+        load_countries()
+        indexer = GazetteerIndex(url)
+        # offset into postal index:
+        count = 0
+        for C in countries:
+            # We won't use FIPS codes for tagging.
+            pl = as_place(C, C.name, oid=starting_id + count, name_type="N" )
+            indexer.add(pl)
+            count += 1
+            pl = as_place(C, C.cc_iso2, oid=starting_id + count, name_type="C" )
+            indexer.add(pl)
+            count += 1
+            pl = as_place(C, C.cc_iso3, oid=starting_id + count, name_type="C" )
+            indexer.add(pl)
+        indexer.save(done=True)
+
+    def index(self, url, features=None, ignore_features=None, ignore_digits=True, ignore_names=False,
+              use_stopfilters=True, limit=-1):
         global stopwords
 
         print("Xponents Gazetteer Finalizer: INDEX")
@@ -78,31 +99,55 @@ class Finalizer:
         indexer.commit_rate = 100000
         #
         filters = []
-        for f in ignore_features:
-            filters.append(re.compile(f))
+        if ignore_features:
+            for f in ignore_features:
+                filters.append(re.compile(f))
+        inclusion_filters = []
+        if features:
+            for f in features:
+                inclusion_filters.append(re.compile(f))
+
+        default_criteria = " and duplicate=0"
+        if ignore_names:
+            default_criteria = " and duplicate=0 and name_type!='N'"
         # For each row in DB, index to Solr.  Maybe organize batches by row ID where dup=0.
         countries = self.db.list_countries()
         for cc in countries:
             print(f"Country '{cc}'")
-            for pl in self.db.list_places(cc=cc, criteria=" and duplicate=0", limit=limit):
+            for pl in self.db.list_places(cc=cc, criteria=default_criteria, limit=limit):
                 if filter_out_feature(pl, filters):
                     continue
                 if ignore_digits and pl.name.isdigit():
                     continue
+                if not filter_in_feature(pl, inclusion_filters):
+                    continue
                 # Mark generic stopwords as search only
                 if not pl.search_only:
-                    if filter_out_term(pl):
+                    if use_stopfilters and filter_out_term(pl):
                         print(f"\tsearch only: {pl.name} (source: {pl.source})")
                         pl.search_only = True
                         self.db.mark_search_only(pl.id)
                 indexer.add(pl)
-            # 10 second pause
-            sleep(10)
+            sleep(self.inter_country_delay)
         print(f"Indexed {indexer.count}")
         indexer.save(done=True)
 
 
-def filter_out_term(pl):
+class PostalIndexer(Finalizer):
+    def __init__(self, dbf, **kwargs):
+        Finalizer.__init__(self, dbf, **kwargs)
+        self.inter_country_delay = 1
+
+    def finalize(self, limit=-1, optimize=False):
+        # No optimization on postal codes.
+        pass
+
+    def index(self, url, ignore_digits=False, **kwargs):
+        # Finalizer indexes postal data as-is.  No digit or stop filters.
+        Finalizer.index(self, url, ignore_digits=False, **kwargs)
+
+
+def filter_out_term(pl:Place):
     """
     :param pl: Place name or any text
     :return: True if term is present in stopwords.
@@ -122,9 +167,12 @@ def filter_out_term(pl):
     return False
 
 
-def filter_out_feature(pl, feats):
+def filter_out_feature(pl:Place, feats):
     """
-
+    Filter out places by their feature type or by their name traits.
+    Long names (> 20 chars) and/or (>2 words) are relatively unique and not filtered.
+    Otherwise places are filtered if their feature code+class are designated as not useful
+    for a particular task.  Eg., we don't want to tag short river names or streams (H/STM)...ever.
     :param pl: Place object
     :param feats: Pattern
     :return:
@@ -148,26 +196,55 @@ def filter_out_feature(pl, feats):
     return False
 
 
+def filter_in_feature(pl:Place, feats):
+    """
+
+    :param pl: Place
+    :param feats: feature filters (regex)
+    :return:
+    """
+    if not feats:
+        return True
+    fc = f"{pl.feature_class}/{pl.feature_code}"
+    for feat_filter in feats:
+        if feat_filter.match(fc):
+            return True
+    return False
+
+
 if __name__ == "__main__":
     from argparse import ArgumentParser
 
+
     ap = ArgumentParser()
-    ap.add_argument("--db", default="./tmp/master_gazetteer.sqlite")
+    ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--solr", help="Solr URL")
     ap.add_argument("--optimize", action="store_true", default=False)
     ap.add_argument("--dedup", action="store_true", default=False)
+    ap.add_argument("--postal", action="store_true", default=False)
 
     args = ap.parse_args()
 
-    gaz = Finalizer(args.db, debug=args.debug)
     if args.solr:
         #  Features not as present in general data include: WELLS, STREAMS, SPRINGS, HILLS.
         #
-        gaz.index(args.solr,
-                  ignore_features={"H/WLL.*", "H/STM.*", "H/SPNG.*", "T/HLL.*"},
-                  ignore_digits=True,
-                  limit=int(args.max))
+        if args.postal:
+            # Postal Codes
+            gaz = PostalIndexer(args.db, debug=args.debug)
+            gaz.stop_filters = None
+            gaz.index(args.solr,
+                      ignore_digits=False,
+                      use_stopfilters=False,
+                      limit=int(args.max))
+        else:
+            gaz = Finalizer(args.db, debug=args.debug)
+            gaz.index(args.solr,
+                      ignore_features={"H/WLL.*", "H/STM.*", "H/SPNG.*", "T/HLL.*"},
+                      ignore_digits=True,
+                      limit=int(args.max))
+
     elif args.dedup:
+        gaz = Finalizer(args.db, debug=args.debug)
         gaz.finalize(limit=int(args.max), optimize=args.optimize)

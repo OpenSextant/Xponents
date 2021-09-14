@@ -5,8 +5,8 @@ from copy import copy
 
 import shapefile
 from opensextant import get_country
-from opensextant.gazetteer import DataSource, load_stopterms
-from opensextant.utility import is_ascii, trivial_bias, get_list
+from opensextant.gazetteer import DataSource, get_default_db, load_stopterms
+from opensextant.utility import is_ascii, is_code, trivial_bias, get_list
 
 #
 stopterms = load_stopterms()
@@ -335,6 +335,7 @@ def generate_name(basemeta, name, namenorm, place=None, name_biases={}, lang=Non
     :return: cleaned up geoname dict
     """
     gn = copy(basemeta)
+    namelen = len(name)
     gn["name"] = name
     gn["name_type"] = "N"
     gn["search_only"] = False
@@ -346,12 +347,12 @@ def generate_name(basemeta, name, namenorm, place=None, name_biases={}, lang=Non
     if name.lower() in stopterms:
         gn["search_only"] = True
 
-    if postal and name == postal:
+    if is_code(name) or (postal and name == postal):
         # Postal codes
-        gn["name_type"] = "A"
+        gn["name_type"] = "C"
         gn["name_bias"] = 0
         gn["search_only"] = False  # Allow because this is a POSTAL code.
-    elif len(name) <= 7 and ("." in name or name.isupper()):
+    elif namelen <= 7 and ("." in name or name.isupper()):
         # Postal or other abbreviations
         gn["name_type"] = "A"
         gn["name_bias"] = 0.01
@@ -363,7 +364,7 @@ def generate_name(basemeta, name, namenorm, place=None, name_biases={}, lang=Non
             if lang in NOT_LEXICAL_COMPARABLE_SCRIPT or (name_bias < 0 and lang == "xx"):
                 name_bias = 0.10
             if lang not in NOT_LEXICAL_COMPARABLE_SCRIPT:
-                lendiff = len(name) - len(namenorm)
+                lendiff = namelen - len(namenorm)
                 name_bias += lendiff * 0.01
             if place:
                 if place.is_ascii and not is_ascii(name):
@@ -372,8 +373,9 @@ def generate_name(basemeta, name, namenorm, place=None, name_biases={}, lang=Non
     else:
         gn["name_bias"] = trivial_bias(name)
 
-    if gn["name_type"] == "A":
-        if debug: print("Postal code:", name)
+    if debug:
+        if gn["name_type"] == {"A", "C"}:
+            print("Postal code:", name)
     return gn
 
 
@@ -382,7 +384,7 @@ if __name__ == "__main__":
 
     ap = ArgumentParser()
     ap.add_argument("shapefile")
-    ap.add_argument("--db", default="./tmp/master_gazetteer.sqlite")
+    ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
 

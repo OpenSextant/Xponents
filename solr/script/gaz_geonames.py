@@ -7,8 +7,8 @@ The main 'geoname' table has the following fields :
 from copy import copy
 
 from opensextant import get_country
-from opensextant.gazetteer import DataSource, load_stopterms
-from opensextant.utility import get_list, has_cjk, has_arabic, trivial_bias, is_value, get_csv_reader, parse_float
+from opensextant.gazetteer import DataSource, get_default_db, load_stopterms
+from opensextant.utility import get_list, has_cjk, has_arabic, trivial_bias, is_value, is_code, get_csv_reader, parse_float
 
 schema = """
 geonameid         : integer id of record in geonames database
@@ -90,6 +90,10 @@ def generated_entries(geo, names):
     for n in names:
         loc = copy(geo)
         loc["name"] = n
+        nt = loc["name_type"]
+        if nt == "N":
+            if is_code(n):
+                loc["name_type"]= "C"
         if n.lower() in stopterms:
             loc["search_only"] = True
         nm_bias = trivial_bias(n)
@@ -187,7 +191,7 @@ if __name__ == "__main__":
 
     ap = ArgumentParser()
     ap.add_argument("geonames")
-    ap.add_argument("--db", default="./tmp/master_gazetteer.sqlite")
+    ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--optimize", action="store_true", default=False)

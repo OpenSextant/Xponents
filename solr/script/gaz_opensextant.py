@@ -2,7 +2,7 @@ import re
 from copy import copy
 
 from opensextant import is_administrative, is_populated
-from opensextant.gazetteer import DataSource, load_stopterms, GAZETTEER_TEMPLATE, SCRIPT_CODES
+from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, GAZETTEER_TEMPLATE, SCRIPT_CODES
 from opensextant.utility import get_csv_reader, get_list, is_ascii, squeeze_whitespace, parse_float
 
 short_alphanum = re.compile(r"\w+.+\d+")
@@ -190,7 +190,7 @@ if __name__ == "__main__":
 
     ap = ArgumentParser()
     ap.add_argument("mergedfile")
-    ap.add_argument("--db", default="./tmp/master_gazetteer.sqlite")
+    ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--optimize", action="store_true", default=False)
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
