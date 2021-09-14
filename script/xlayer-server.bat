@@ -21,7 +21,7 @@ REM Alternatively, we could deploy as a Tomcat or other webapp
 
 if "%COMMAND%" == "start" (
     echo "START Xponents REST"
-    java -Dopensextant.solr="%XPONENTS_SOLR%\solr7" -Xmx2g -Xms2g ^
+    java -Dopensextant.solr="%XPONENTS_SOLR%\solr7" -Xmx4g -Xms4g ^
           -XX:+UseParallelGC -server ^
           -Dlogback.configurationFile="%basedir%\etc\logback.xml" ^
           -classpath "%basedir%\etc;%basedir%\lib\*" ^

@@ -41,6 +41,9 @@ build.properties
 /*.ipr
 /*.iws
 /.idea/
+/Core/.idea/
+/Core/*.ipr
+/Core/*.iws
 
 #Netbeans
 nb-configuration.xml
@@ -52,3 +55,7 @@ nbproject/
 *.war
 *.zip
 *.pyc
+
+# Solr indices:
+index/
+*.sqlite

@@ -20,7 +20,7 @@ case $CMD in
     CLASSPATH="$basedir/etc:$basedir/lib/*"
     XPONENTS_SOLR=${XPONENTS_SOLR:-$basedir/xponents-solr}
 
-    nohup java -Dopensextant.solr=$XPONENTS_SOLR/solr7 -Xmx2g -Xms2g \
+    nohup java -Dopensextant.solr=$XPONENTS_SOLR/solr7 -Xmx4g -Xms4g \
         -XX:+UseParallelGC -server \
         -Dlogback.configurationFile=$basedir/etc/logback.xml \
         -classpath "$CLASSPATH" org.opensextant.xlayer.server.xgeo.XlayerServer $XLAYER_PORT  >$logfile 2>&1 &
