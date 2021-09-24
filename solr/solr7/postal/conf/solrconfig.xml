@@ -1131,7 +1131,12 @@
             <bool name="matchText">true</bool>
             <str name="echoParams">ALL</str>
             <str name="fl">place_id,name,cc</str>
-            <str name="fq">name_type:C</str>
+            <!-- 
+               N: United States   (name)
+               C: CO              (code)
+               A: Ala.            (abbrev)
+              -->
+            <str name="fq">name_type:(A C N)</str>
         </lst>
     </requestHandler>
 
