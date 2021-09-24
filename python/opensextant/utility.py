@@ -49,7 +49,8 @@ def is_code(t: str, nlen=3):
     """
     if not t:
         return False
-    return len(t) <= nlen and is_ascii(t) and t.isupper()
+    # TODO: [A-Z0-9]{1,}
+    return len(t) <= nlen and is_ascii(t) and t.isupper() and "." not in t
 
 
 def is_ascii(s):

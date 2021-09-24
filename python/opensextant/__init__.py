@@ -305,13 +305,14 @@ def load_us_provinces():
             adm1_code = row["ADM1_CODE"][2:]
             place_id = make_HASC(cc, adm1_code)
             postal_id = make_HASC(cc, row["POSTAL_CODE"])
-            adm1 = Place(place_id, row["STATE"])
+            adm1 = Place(place_id, row["STATE"], lat=row["LAT"], lon=row["LON"])
             adm1.feature_class = "A"
             adm1.feature_code = "ADM1"
             adm1.name_type = "N"
 
             adm1.country_code = cc
             adm1.adm1 = adm1_code
+            adm1.adm1_postalcode = row["POSTAL_CODE"]
             adm1.source = "OpenSextant"
 
             usstates[place_id] = adm1
@@ -342,7 +343,7 @@ def load_world_adm1():
             cc_adm1 = adm1Splitter.split(row[0], 2)
             adm1.country_code = cc_adm1[0]
             adm1.adm1 = cc_adm1[1]
-            adm1.source = "geonames.org"
+            adm1.source = "G" # Geonames.org coded.
             hasc = make_HASC(adm1.country_code, adm1.adm1)
             if adm1.country_code == "US":
                 adm1.source = "USGS"

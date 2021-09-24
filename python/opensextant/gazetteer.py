@@ -144,6 +144,25 @@ GAZETTEER_TEMPLATE = {
 }
 
 
+def parse_admin_code(adm1):
+    """
+    :param adm1: admin level 1 code
+    :return: ADM1 code if possible.
+    """
+    if not adm1:
+        return ""
+
+    code = ""
+    if "?" in adm1:
+        code = "0"
+    elif "." in adm1:
+        cc2, code = adm1.split(".")
+    # Normalize Country-level.  Absent ADM1 levels are assigned "0" anyway
+    if code.strip() in {"", None, "0", "00"}:
+        code = "0"
+    return code
+
+
 def as_place(r):
     """
     Convert dict to a Place object
@@ -273,7 +292,7 @@ def print_places(arr, limit=25):
 
 
 class DB:
-    def __init__(self, dbpath, commit_rate=1000):
+    def __init__(self, dbpath, commit_rate=1000, debug=False):
         """
         Save items to SQlite db at the commit_rate given.  Call close to finalize any partial batches
         and save database.
@@ -286,6 +305,7 @@ class DB:
         self.queue = []
         self.queue_count = 0
         self.commit_rate = commit_rate
+        self.debug = debug
         if not os.path.exists(dbpath):
             ensure_dirs(dbpath)
             self.reopen()
@@ -450,6 +470,10 @@ class DB:
         return None, None
 
     def list_countries(self):
+        """
+        List distinct country codes in DB.
+        :return: list of country codes.
+        """
         arr = []
         for cc in self.conn.execute("select distinct(cc) as CC from placenames"):
             arr.append(cc["CC"])
@@ -485,6 +509,8 @@ class DB:
 
         # Query
         sql_script = " ".join(sql)
+        if self.debug:
+            print(sql_script)
         for p in self.conn.execute(sql_script):
             yield as_place(p)
 
@@ -498,6 +524,38 @@ class DB:
             sql = f"update placenames set duplicate=1 where id in ({arg})"
             self.conn.execute(sql)
             self.conn.commit()
+        return True
+
+    def update_name_type(self, arr:list, t:str):
+        """
+        Change the name type in bulk.
+        :param arr: bulk array of placenames to change
+        :param t: type code 'A', 'N', 'C'
+        :return:
+        """
+        if not arr:
+            return False
+        step = 1000
+        for x1 in _array_blocks(arr, step=step):
+            x2 = x1 + step
+            arg = ",".join([str(pl) for pl in arr[x1:x2]])
+            sql = f"update placenames set name_type='{t}' where id in ({arg})"
+            self.conn.execute(sql)
+            self.conn.commit()
+        return True
+
+    def update_admin1_code(self, cc, from_code, to_code):
+        if not cc:
+            print("NULL country code operations must be done manually, carefully.")
+            return False
+        sql = f"update placenames set adm1='{to_code}' where cc='{cc}' and adm1='{from_code}'"
+        if from_code == 'NULL':
+            sql = f"update placenames set adm1='{to_code}' where cc='{cc}' and adm1 is NULL"
+
+        if self.debug:
+            print(sql)
+        self.conn.execute(sql)
+        self.conn.commit()
         return True
 
     def mark_search_only(self, pid):
