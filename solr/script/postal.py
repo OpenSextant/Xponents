@@ -1,10 +1,10 @@
-from copy import copy
 import sqlite3
+from copy import copy
+
 import arrow
 from opensextant import Place, get_country
 from opensextant.gazetteer import DataSource, get_default_db, as_place_record
 from opensextant.utility import get_csv_reader, is_ascii
-
 
 """
 Country rules:
@@ -49,14 +49,14 @@ VARIANT_BASE = 10000000
 GEONAMES_POSTAL = "GP"
 
 
-def variants(pl:Place):
+def variants(pl: Place):
     """
     Generate trivial name variants such as SY25001 from SY25 001
     :param pl:
     :return:
     """
     if not " " in pl.name:
-        return [pl,]
+        return [pl, ]
 
     nm = pl.name.replace(" ", "")
     pl2 = copy(pl)
@@ -99,8 +99,10 @@ class PostalGazetteer(DataSource):
                 print("Reached non-zero limit for testing.")
                 break
             try:
+                # !!! PER SQLITE: https://www.sqlite.org/faq.html  -- use Single Quotes for query on columns.
+                #
                 # Copy over country and province codes at a high level.
-                sub_query = " AND feat_code='ADM1' AND (name_type='C' OR name_type='A') "
+                sub_query = " AND name_group='' AND feat_code='ADM1' AND (name_type='C' OR name_type='A') "
                 _ctry_meta = []
                 for pl in master_db.db.list_places(cc=cc, fc="A", criteria=sub_query):
                     self.rowcount += 1
@@ -108,7 +110,8 @@ class PostalGazetteer(DataSource):
                     entry = as_place_record(pl, target="db")
                     entry["id"] = self.starting_row + self.rowcount
                     _ctry_meta.append(entry)
-                sub_query = " AND feat_code like 'PCL%' "
+                # Part II. Countries
+                sub_query = " AND name_group='' AND feat_code like 'PCL%' "
                 for pl in master_db.db.list_places(cc=cc, fc="A", criteria=sub_query):
                     # Grab countries -- Looking for POSTAL variations of country names.
                     if not is_ascii(pl.name) or len(pl.name) > 25:
@@ -141,16 +144,17 @@ class PostalGazetteer(DataSource):
         :return:
         """
         cache = {}
-        country = None
+        cc = None
+        adm_codes = {}
         with open(sourcefile, "r", encoding="UTF-8") as fh:
             df = get_csv_reader(fh, delim="\t", columns=header_names)
             for row in df:
                 self.rowcount += 1
-                if not country:
-                    country = row["cc"]
+                if not cc:
+                    cc = row["cc"]
 
-                if row["cc"] != country or self.done(limit):
-                    print("Saving country", country)
+                if row["cc"] != cc or self.done(limit):
+                    print("Saving country", cc)
                     # When file changes country code we know we are done with a country
                     for postal in cache.values():
                         for var in variants(postal):
@@ -158,8 +162,12 @@ class PostalGazetteer(DataSource):
                     if self.done(limit):
                         # Return.
                         break
+                    adm_codes.clear()
                     cache.clear()
-                    country = row["cc"]
+                    cc = row["cc"]
+
+                if not adm_codes:
+                    adm_codes = ref.admin_boundaries(cc)
 
                 pl = Place(None, row["postal_code"])
                 pl.id = self.starting_row + self.rowcount
@@ -172,10 +180,14 @@ class PostalGazetteer(DataSource):
                     # Do we track lat/lon?
                     continue
 
+                # Re-map ADM1 code now.
+                if pl.adm1 in adm_codes:
+                    pl.adm1 = adm_codes[pl.adm1]
+
                 self.place_count += 1
                 pl.set_location(row["latitude"], row["longitude"])
                 pl.name_group = "postal"
-                pl.name_type = "C" # Abbreviation or code.
+                pl.name_type = "C"  # Abbreviation or code.
                 pl.feature_code = "POST"
                 pl.feature_class = "A"  # This designates an Administrative region, artifically assigned by humans.
                 pl.source = GEONAMES_POSTAL
@@ -197,6 +209,24 @@ class PostalGazetteer(DataSource):
                     yield var
 
 
+class ReferenceGaz(DataSource):
+    def __init__(self):
+        DataSource.__init__(self, get_default_db())
+        # self.db.debug = True
+        print("Collecting consistent ADM1 codes to use internally on postal code entries.")
+        self._country_adm1 = dict()
+        for cc in self.db.list_countries():
+            dct = dict()
+            dct["default"] = "default"
+            for pl in self.db.list_places(cc, 'A',
+                                          criteria=" and name_group is '' and name_type = 'C' and feat_code = 'ADM1' "):
+                dct[pl.name] = pl.adm1
+            self._country_adm1[cc] = dct
+
+    def admin_boundaries(self, cc):
+        return self._country_adm1.get(cc)
+
+
 if __name__ == "__main__":
     import sys
     from argparse import ArgumentParser
@@ -208,16 +238,21 @@ if __name__ == "__main__":
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--optimize", action="store_true", default=False)
-    ap.add_argument("--copy-admin", action="store_true", default=False )
+    ap.add_argument("--copy-admin", action="store_true", default=False)
     args = ap.parse_args()
 
+    # This master gazetteer DB acts as a code book for all other gazetteers.
+    # Geonames Postal Codes are ISO Alphanumeric, not ISO numeric, e.g., "SL" instead "16" for ADM1 boundary in Germany
+    # This causes great disconnect so we must remap all postal code data where possible from postal to master gaz.
     source = PostalGazetteer(args.db, debug=args.debug)
     source.starting_row = int(args.starting_row)
     if args.copy_admin:
+        # DO LAST:
         # DO LAST:
         if source.starting_row == 0:
             print("You need to provide a non-zero starting row for copying other data.")
             sys.exit(1)
         source.copy_administrative_codes(get_default_db(), limit=int(args.max), optimize=args.optimize)
     else:
+        ref = ReferenceGaz()
         source.normalize(args.postal, limit=int(args.max), optimize=args.optimize)

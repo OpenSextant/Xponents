@@ -38,13 +38,17 @@ if [ "$do_test" -eq 1 ] ; then
   python3 ./script/gaz_opensextant.py ./tmp/MergedGazetteer.txt --max 300000 --db $DB
   python3 ./script/gaz_geonames.py ./tmp/allCountries.txt  --max 300000 --db $DB
   python3 ./script/gaz_administrative_codes.py ./tmp/ne_10m_admin_1_states_provinces/ne_10m_admin_1_states_provinces.shp  --db $DB
+  python3 ./script/gaz_fix_country_coding.py "US"
   python3 ./script/gaz_generate_variants.py --db $DB
+  python3 ./script/gaz_country_meta.py 21000000 --max 10
   python3 ./script/gaz_finalize.py  --dedup --optimize
 else
   # PRODUCTION
   python3 ./script/gaz_opensextant.py ./tmp/MergedGazetteer.txt
   python3 ./script/gaz_geonames.py ./tmp/allCountries.txt
   python3 ./script/gaz_administrative_codes.py ./tmp/ne_10m_admin_1_states_provinces/ne_10m_admin_1_states_provinces.shp
+  python3 ./script/gaz_fix_country_coding.py "US"
   python3 ./script/gaz_generate_variants.py
+  python3 ./script/gaz_country_meta.py 21000000
   python3 ./script/gaz_finalize.py  --dedup  --optimize
 fi

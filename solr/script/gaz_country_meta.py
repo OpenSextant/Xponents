@@ -29,6 +29,7 @@ class CountryGazetteer(DataSource):
             for C2 in self.db.list_places(cc=C.cc_iso2, fc="A", criteria=" AND lat!=0.0 AND feat_code like 'PCL%'", limit=1):
                 C.lat = C2.lat
                 C.lon = C2.lon
+                C.adm1 = "0"
                 pid = C2.place_id
                 break
 

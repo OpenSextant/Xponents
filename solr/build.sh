@@ -80,11 +80,28 @@ index_gazetteer () {
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
 }
 
+index_postal(){
+  SOLR_URL=$1
+
+  if [ ! -f "./tmp/postal_gazetteer.sqlite" ]; then
+    echo "Missing Postal Gazetter SQLite file"
+    exit 1
+  fi
+
+  # From SQLite master, Index
+  python3 ./script/gaz_finalize.py --solr $SOLR_URL --postal --db ./tmp/postal_gazetteer.sqlite
+
+  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit/>"
+  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
+  curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
+}
+
 do_start=0
 do_clean=0
 do_data=0
 do_taxcat=1
 do_gazetteer=1
+do_postal=0
 do_meta=0
 proxy='' 
 while [ "$1" != "" ]; do
@@ -115,6 +132,12 @@ while [ "$1" != "" ]; do
      shift
      ;;
   'gazetteer')
+     do_taxcat=0
+     shift
+     ;;
+   'postal')
+     do_postal=1
+     do_gazetteer=0
      do_taxcat=0
      shift
      ;;
@@ -164,6 +187,9 @@ if [ $do_taxcat -eq 1 ]; then
 fi
 if [ $do_gazetteer -eq 1 ]; then
   index_gazetteer http://$SERVER/solr/gazetteer
+fi
+if [ $do_postal -eq 1 ]; then 
+  index_postal http://$SERVER/solr/postal
 fi
 
 echo "Gazetteer and TaxCat built, however Solr $SERVER is still running...." 

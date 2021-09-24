@@ -2,7 +2,7 @@ import re
 from copy import copy
 
 from opensextant import is_administrative, is_populated
-from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, GAZETTEER_TEMPLATE, SCRIPT_CODES
+from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, parse_admin_code, GAZETTEER_TEMPLATE, SCRIPT_CODES
 from opensextant.utility import get_csv_reader, get_list, is_ascii, squeeze_whitespace, parse_float
 
 short_alphanum = re.compile(r"\w+.+\d+")
@@ -33,15 +33,16 @@ def scrub_country_code(loc, adm_field, iso_cc, fips_cc):
     """
     adm = loc.get(adm_field)
     if not adm:
+        loc[adm_field] = ''
         return
     if iso_cc and adm.startswith(iso_cc):
         adm_ = adm[len(iso_cc):]
-        loc[adm_field] = adm_
+        loc[adm_field] = parse_admin_code(adm_)
         return
     if fips_cc and adm.startswith(fips_cc):
         # TODO: Not sure this works well.
         adm_ = adm[len(fips_cc):]
-        loc[adm_field] = adm_
+        loc[adm_field] = parse_admin_code(adm_)
     return
 
 
@@ -76,7 +77,7 @@ NAME_TYPE = {
     None: "N",
     "name": "N",
     "abbrev": "A",
-    "code": "A"
+    "code": "C"
 }
 
 

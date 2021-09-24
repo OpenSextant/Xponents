@@ -4,8 +4,8 @@ import os
 from copy import copy
 
 import shapefile
-from opensextant import get_country
-from opensextant.gazetteer import DataSource, get_default_db, load_stopterms
+from opensextant import get_country, Country
+from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, parse_admin_code
 from opensextant.utility import is_ascii, is_code, trivial_bias, get_list
 
 #
@@ -80,25 +80,6 @@ def parse_feature_type(r, alt_names, debug=False):
     return "A", "UNK"
 
 
-def parse_admin_code(r):
-    """
-    :param r: shapefile row
-    :return: ADM1 code if possible.
-    """
-    adm1 = r["gn_a1_code"]
-    if not adm1:
-        return ""
-
-    code = ""
-    if "?" in adm1:
-        code = "0"
-    elif "." in adm1:
-        cc2, code = adm1.split(".")
-        if not code:
-            code = "0"
-    return code
-
-
 def derive_abbreviations(nameset):
     """
 
@@ -155,6 +136,25 @@ def _schema(shp):
     print("Schema")
     for f in shp.fields:
         print(f[0], f[1])
+
+
+def assign_admin_levels(geo, country:Country, adm1:str, alt_adm1:str):
+    """
+    NaturalEarth has some odd codings.
+    For UK/GB it has top level provinces WLS, ENG, SCT, NIR as other codes, but not as ADM1
+    :param geo:
+    :param country:
+    :param adm1:
+    :param alt_adm1:
+    :return:
+    """
+    geo["adm1"] = adm1
+    geo["adm2"] = ""
+    geo["cc"] = country.cc_iso2
+    if alt_adm1:
+        if "GB" == country.cc_iso2:
+            geo["adm1"] = alt_adm1
+            geo["adm2"] = adm1
 
 
 class NatEarthAdminGazetteer(DataSource):
@@ -258,7 +258,8 @@ class NatEarthAdminGazetteer(DataSource):
                 all_script.update(anglo_script)
 
                 # ADMIN or other code.
-                adm1 = parse_admin_code(row)
+                gu_a3 = row["gu_a3"]
+                adm1 = parse_admin_code(row["gn_a1_code"])
                 if self.debug: print(names, "/", cc, "ADM1=", adm1)
 
                 # Geographic codings:  Features, location, IDs
@@ -267,6 +268,8 @@ class NatEarthAdminGazetteer(DataSource):
                 fc, ft = parse_feature_type(row, labels, debug=self.debug)
                 lat, lon = row["latitude"], row["longitude"]
                 plid = row["gns_id"]
+                if plid == "-1":
+                    plid = None
                 namenorm = ""
                 if plid:
                     plid = f"N{plid}"
@@ -286,12 +289,10 @@ class NatEarthAdminGazetteer(DataSource):
                 geo["lat"] = lat
                 geo["lon"] = lon
                 geo["place_id"] = plid
-                geo["adm1"] = adm1
-                geo["adm2"] = ""
+                assign_admin_levels(geo, C, adm1, alt_adm1 = gu_a3)
                 geo["feat_class"] = fc
                 geo["feat_code"] = ft
                 geo["FIPS_cc"] = C.cc_fips
-                geo["cc"] = C.cc_iso2
                 # entry["ISO3_cc"] = C.cc_iso3
                 if official_place:
                     geo["id_bias"] = official_place.id_bias
