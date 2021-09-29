@@ -173,12 +173,6 @@ public class PlaceGeocoder extends GazetteerMatcher
         throw new ConfigException("Configure by URL Not available");
     }
 
-    public void reportMemory() {
-        Runtime R = Runtime.getRuntime();
-        long usedMemory = R.totalMemory() - R.freeMemory();
-        log.info("CURRENT MEM USAGE(K)=" + (int) (usedMemory / 1024));
-    }
-
     /**
      * We have some emerging metrics to report out...
      */
@@ -583,10 +577,8 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * If no geo matches are found, we still parse the data if person name matching
-     * is enabled.
-     * Poor-man's named-entity extraction
+     * is enabled. Poor-man's named-entity extraction
      *
-     * @param docCase 0=unknown, 1=lower, 2=upper
      * @throws ExtractionException
      */
     private void parseKnownNonPlaces(TextInput input, List<PlaceCandidate> candidates, List<TextMatch> matches) {

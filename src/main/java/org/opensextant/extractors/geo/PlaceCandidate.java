@@ -16,22 +16,15 @@
  */
 package org.opensextant.extractors.geo;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.util.TextUtils;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * A PlaceCandidate represents a portion of a document which has been identified
@@ -61,14 +54,16 @@ public class PlaceCandidate extends TextMatch {
     private ScoredPlace choice1 = null;
     private ScoredPlace choice2 = null;
     private int confidence = 0;
-    private Set<String> hierarchicalPaths = new HashSet<>();
-    private Set<String> countries = new HashSet<>();
+    private final Set<String> hierarchicalPaths = new HashSet<>();
+    private final Set<String> countries = new HashSet<>();
     private boolean markedValid = false;
+    private HashMap<String, PlaceCandidate> related = null;
+    private boolean derived = false;
 
     /**
      * Default weighting increments.
      */
-    private static final String[] CLASS_SCALE = { "A:3", "P:2", "L:1", "R:0", "H:1", "V:0", "T:1" };
+    private static final String[] CLASS_SCALE = {"A:3", "P:2", "L:1", "R:0", "H:1", "V:0", "T:1"};
 
     private static final String[] DESIGNATION_SCALE = {
             /* Places: cities, villages, ruins, etc. */
@@ -76,7 +71,7 @@ public class PlaceCandidate extends TextMatch {
             /* Administrative regions */
             "ADM1:9", "ADM2:8", "ADM3:7",
             /* Other geographic features */
-            "ISL:4", "ISLS:5" };
+            "ISL:4", "ISLS:5"};
 
     private static final Map<String, Integer> classWeight = new HashMap<>();
     private static final Map<String, Integer> designationWeight = new HashMap<>();
@@ -97,6 +92,21 @@ public class PlaceCandidate extends TextMatch {
      *
      */
     public PlaceCandidate() {
+    }
+
+    /**
+     * Mark this candidate as something that was derived by special rules and to treat it
+     * differently, e.g., in formatting output or other situations.  A derivation may correct
+     * or subsume other non-derived mentions.
+     *
+     * @param b
+     */
+    public void setDerived(boolean b) {
+        derived = b;
+    }
+
+    public boolean isDerived() {
+        return derived;
     }
 
     /**
@@ -138,13 +148,34 @@ public class PlaceCandidate extends TextMatch {
         }
     }
 
+    /**
+     * Connect another match to this one, usually something cooccurring or collocated with this match
+     *
+     * @param pc
+     */
+    public void addRelated(PlaceCandidate pc) {
+        if (related == null) {
+            related = new HashMap<>();
+        }
+        String key = String.format("%s#%d", pc.getText(), pc.start);
+        related.put(key, pc);
+    }
+
+    public Collection<PlaceCandidate> getRelated() {
+        if (related == null) {
+            return null;
+        }
+        return related.values();
+    }
+
+
     // ---- the getters and setters ---------
     //
 
     private String[] preTokens = null;
     private String[] postTokens = null;
     private String[] tokens = null;
-    private final int DEFAULT_TOKEN_SIZE = 40;
+    protected static int DEFAULT_TOKEN_SIZE = 40;
 
     /**
      * Get some sense of tokens surrounding match. Possibly optimize this by
@@ -193,7 +224,10 @@ public class PlaceCandidate extends TextMatch {
     public boolean isOrganization = false;
 
     /**
-     *
+     * Match types - Abbreviation/Code, Acronym or normal (unknown).
+     * From found text we can only tell from case sense and punctuation if the intended
+     * part of speech is normal name/text or something coded such as an abbreviation, alphnum, or acronym.
+     * For these reason "isAbbreviation" accounts for abbreviations and codes.
      */
     public boolean isAbbreviation = false;
 
@@ -226,6 +260,21 @@ public class PlaceCandidate extends TextMatch {
     }
 
     /**
+     * Unlike choose(Place), setChosen(Place) just sets the value.
+     * choose() attempts to pull the ScoredPlace from internal cache.
+     *
+     * @param geo
+     */
+    public void setChosen(Place geo) {
+        if (geo instanceof ScoredPlace) {
+            choice1 = (ScoredPlace) geo;
+        } else {
+            choice1 = new ScoredPlace(null, null);
+            geo.copyTo(choice1);
+        }
+    }
+
+    /**
      * @return
      */
     public ScoredPlace getFirstChoice() {
@@ -247,8 +296,7 @@ public class PlaceCandidate extends TextMatch {
             return;
         }
 
-        List<ScoredPlace> tmp = new ArrayList<>();
-        tmp.addAll(scoredPlaces.values());
+        List<ScoredPlace> tmp = new ArrayList<>(scoredPlaces.values());
         Collections.sort(tmp);
 
         int last = tmp.size() - 1;
@@ -431,7 +479,7 @@ public class PlaceCandidate extends TextMatch {
         int score = DEFAULT_DESIGNATION_WT;
         wt = classWeight.get(g.getFeatureClass());
         if (wt != null) {
-            score += wt.intValue();
+            score += wt;
         }
 
         return (float) score / 10;
@@ -441,7 +489,7 @@ public class PlaceCandidate extends TextMatch {
      * @param place
      * @param score
      * @deprecated Avoid incrementing location score without citing the reason. Use
-     *             {@link #incrementPlaceScore(Place, Double, String)}
+     * {@link #incrementPlaceScore(Place, Double, String)}
      */
     @Deprecated
     public void incrementPlaceScore(Place place, Double score) {
@@ -456,7 +504,7 @@ public class PlaceCandidate extends TextMatch {
      * locations.
      * This operation says a given Place deserves a certain increment in score for a
      * certain reason.
-     * 
+     *
      * @param place
      * @param score
      * @param rule
@@ -639,13 +687,13 @@ public class PlaceCandidate extends TextMatch {
      * @return summary of evidence, rules and chosen location
      */
     public String summarize(boolean dumpAll) {
-        StringBuilder tmp = new StringBuilder(getText());
-        tmp.append(String.format("(C=%d, N=%d, filtered=%s)", getConfidence(), scoredPlaces.size(),
+        StringBuilder tmp = new StringBuilder(getText() != null ? getText() : "<null>");
+        tmp.append(String.format("(CONF=%d, N=%d, filtered=%s)", getConfidence(), scoredPlaces.size(),
                 isFilteredOut() ? "Out" : "In"));
         tmp.append("\nRules=");
-        tmp.append(rules.toString());
+        tmp.append(rules);
         tmp.append("\nEvidence=");
-        tmp.append(evidence.toString());
+        tmp.append(evidence);
         if (dumpAll) {
             tmp.append("\nPlaces=\n");
             for (ScoredPlace p : scoredPlaces.values()) {
@@ -752,6 +800,7 @@ public class PlaceCandidate extends TextMatch {
     /**
      * a basic whitespace, punctuation delimited count of grams
      * Set ONLY after inferTextSense() is invoked
+     *
      * @return token word count
      */
     public int getWordCount() {
@@ -760,7 +809,7 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * text hueristics
-     * 
+     *
      * @param contextisLower True if text around mention is mainly lowercase
      * @param contextisUpper True if text around mention is mainly uppercase
      */
@@ -784,10 +833,97 @@ public class PlaceCandidate extends TextMatch {
 
     /**
      * Tokens in word. Only after inferTextSense() is invoked.
-     * 
+     *
      * @return
      */
     public String[] getTokens() {
         return tokens;
+    }
+
+    private HashMap<String, Place> linkedGeography = null;
+
+    /**
+     * Get the collection of geographic slots geolocated.  E.g.,
+     * for a "Town Hall" building location you might link the Place object representing the "city" slot.
+     *
+     * @return
+     */
+    public HashMap<String, Place> getLinkedGeography() {
+        return linkedGeography;
+    }
+
+    public void setLinkedGeography(HashMap<String, Place> geography) {
+        linkedGeography = geography;
+    }
+
+    /**
+     * Foricbly link geography to the given slot.
+     *
+     * @param otherMention
+     * @param slot
+     * @param geo
+     * @see #linkGeography(PlaceCandidate, String, String)
+     */
+    public void linkGeography(PlaceCandidate otherMention, String slot, Place geo) {
+        addRelated(otherMention);
+        linkGeography(slot, geo);
+    }
+
+    public void linkGeography(String slot, Place geo) {
+        if (linkedGeography == null) {
+            linkedGeography = new HashMap<>();
+        }
+        linkedGeography.put(slot, geo);
+    }
+
+    public boolean hasLinkedGeography(String slot) {
+        if (linkedGeography == null) {
+            return false;
+        }
+        return linkedGeography.containsKey(slot);
+    }
+
+    /**
+     * Link geographic mention from other part of the document. E.g.,
+     * for a "Town Hall" building location you might link the PlaceCandidate mention object representing the "city" slot.
+     * <p>
+     * method added to support PostalGeocoder.  TBD.
+     *
+     * @param otherMention
+     * @param slot
+     * @param featPrefix
+     * @return True if any link was made or already existed.
+     */
+    public boolean linkGeography(PlaceCandidate otherMention, String slot, String featPrefix) {
+
+        if (hasLinkedGeography(slot)) {
+            // This check is not necessary ... how many linkages could be made?
+            return true;
+        }
+
+        Place geo = getChosen();
+        Place otherGeo = otherMention.getChosen();
+        if (geo != null && otherGeo != null) {
+            if (otherGeo.getFeatureDesignation().startsWith(featPrefix)) {
+                if (geo.sameBoundary(otherGeo)) {
+                    linkGeography(slot, otherGeo);
+                    return true;
+                }
+            }
+        }
+
+        // Dare we cache the sorted scoredPlaces for each mention/otherMention?
+        //
+        for (Place someGeo : scoredPlaces.values()) {
+            for (Place someOtherGeo : otherMention.getPlaces()) {
+                if (someOtherGeo.getFeatureDesignation().startsWith(featPrefix)) {
+                    if (someGeo.sameBoundary(someOtherGeo)) {
+                        linkGeography(slot, someOtherGeo);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

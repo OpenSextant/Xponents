@@ -8,11 +8,14 @@ import java.util.List;
 import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.geo.PlaceGeocoder;
 
-public class TestPlaceGeocoderGeoBoundaries extends TestPlaceGeocoder {
+public class TestPlaceGeocoderGeoBoundaries extends TestGazMatcher {
 
     public TestPlaceGeocoderGeoBoundaries() throws ConfigException {
         super();
+        geocoder = new PlaceGeocoder();
+        geocoder.configure();
     }
 
     class TestPhrase {
@@ -80,7 +83,7 @@ public class TestPlaceGeocoderGeoBoundaries extends TestPlaceGeocoder {
         } catch (Exception err) {
             err.printStackTrace();
         }
-        tester.cleanup();
+        tester.geocoder.cleanup();
 
         System.exit(0);
     }
