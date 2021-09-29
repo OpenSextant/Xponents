@@ -97,8 +97,7 @@ public class SolrUtil {
         } else if (obj instanceof Integer) {
             return ((Integer) obj).intValue();
         } else {
-            Integer v = Integer.valueOf(obj.toString());
-            return v.intValue();
+            return Integer.parseInt(obj.toString());
         }
     }
 
@@ -116,7 +115,7 @@ public class SolrUtil {
         } else if (obj instanceof Long) {
             return ((Long) obj);
         } else {
-            return Long.valueOf(obj.toString());
+            return Long.parseLong(obj.toString());
         }
     }
 
@@ -253,8 +252,8 @@ public class SolrUtil {
 
         final double[] xyPair = { 0.0, 0.0 };
         String[] lat_lon = xy.split(",", 2);
-        xyPair[0] = Double.valueOf(lat_lon[0]);
-        xyPair[1] = Double.valueOf(lat_lon[1]);
+        xyPair[0] = Double.parseDouble(lat_lon[0]);
+        xyPair[1] = Double.parseDouble(lat_lon[1]);
 
         return xyPair;
     }
@@ -268,8 +267,8 @@ public class SolrUtil {
 
         final double[] xyPair = { 0.0, 0.0 };
         String[] lat_lon = xy.split(",", 2);
-        xyPair[0] = Double.valueOf(lat_lon[0]);
-        xyPair[1] = Double.valueOf(lat_lon[1]);
+        xyPair[0] = Double.parseDouble(lat_lon[0]);
+        xyPair[1] = Double.parseDouble(lat_lon[1]);
 
         return xyPair;
     }
@@ -302,11 +301,8 @@ public class SolrUtil {
     public static void populatePlace(SolrDocument gazEntry, Place bean) {
         String nt = getString(gazEntry, "name_type");
         if (nt != null) {
-            if ("code".equals(nt)) {
-                bean.setName_type('A');
-            } else {
-                bean.setName_type(nt.charAt(0));
-            }
+            // Name types are flags - A(abbrev), N(name), C(code)
+            bean.setName_type(nt.charAt(0));
         }
 
         bean.setCountryCode(getString(gazEntry, "cc"));

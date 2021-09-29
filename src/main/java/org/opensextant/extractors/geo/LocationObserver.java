@@ -15,7 +15,7 @@ public interface LocationObserver {
      *
      * @param geo
      */
-    public void locationInScope(Geocoding geo);
+    void locationInScope(Geocoding geo);
 
     /**
      * The place know by the ID, p.getKey() or p.getPlaceID()
@@ -24,5 +24,5 @@ public interface LocationObserver {
      * @param p
      * @return
      */
-    public boolean placeObserved(Place p);
+    boolean placeObserved(Place p);
 }

@@ -27,8 +27,10 @@ import org.opensextant.util.TextUtils;
  */
 public class TaxonMatch extends org.opensextant.extraction.TextMatch {
 
+    public static String TAXON_LABEL = "taxon";
+
     public TaxonMatch() {
-        this.type = "taxon";
+        this.type = TAXON_LABEL;
         this.producer = "XTax";
     }
 
@@ -38,6 +40,10 @@ public class TaxonMatch extends org.opensextant.extraction.TextMatch {
         if (t != null) {
             this.hasDiacritics = TextUtils.hasDiacritics(t);
         }
+    }
+
+    public boolean isDefault(){
+        return TAXON_LABEL.equals(type);
     }
 
     public boolean hasDiacritics = false;

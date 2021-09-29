@@ -112,11 +112,11 @@ public class KMLDemoWriter implements Closeable {
         // Given Geo-data
         if (t.authorGeo != null) {
             text.append("<br>ugeo=");
-            text.append(t.authorGeo.toString());
+            text.append(t.authorGeo);
         }
         if (t.statusGeo != null) {
             text.append("<br>geo=");
-            text.append(t.statusGeo.toString());
+            text.append(t.statusGeo);
         }
         f.setDescription(text.toString());
 

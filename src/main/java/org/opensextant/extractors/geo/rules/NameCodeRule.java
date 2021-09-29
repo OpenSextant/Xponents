@@ -52,11 +52,11 @@ public class NameCodeRule extends GeocodeRule {
         weight = 3;
     }
 
-    private final static boolean ignoreShortLowercase(final PlaceCandidate pc) {
+    private static boolean ignoreShortLowercase(final PlaceCandidate pc) {
         return (pc.isLower() && pc.getLength() < 4);
     }
 
-    private final static boolean ignoreMixedCaseAbbreviation(final PlaceCandidate pc) {
+    private static boolean ignoreMixedCaseAbbreviation(final PlaceCandidate pc) {
         return (pc.isMixedCase() && pc.getLength() < 4);
     }
 
@@ -372,7 +372,6 @@ public class NameCodeRule extends GeocodeRule {
      * @param n
      * @param code
      * @param codeGeo
-     * @param resolvedCountry
      * @param comma
      */
     private void updateNameCodePair(PlaceCandidate n, PlaceCandidate code, Place codeGeo, boolean comma) {

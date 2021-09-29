@@ -1,8 +1,8 @@
 package org.opensextant.extractors.geo;
 
-import java.util.Map;
-
 import org.opensextant.data.Place;
+
+import java.util.Map;
 
 /**
  * Emit a boundary event when you come across a concrete reference to a
@@ -13,9 +13,9 @@ import org.opensextant.data.Place;
  */
 public interface BoundaryObserver {
 
-    public void boundaryLevel1InScope(Place p);
+    void boundaryLevel1InScope(Place p);
 
-    public void boundaryLevel2InScope(Place p);
+    void boundaryLevel2InScope(Place p);
 
     /*
      * TODO: Ocean boundaries or coastal/island boundaries in scope?
@@ -28,5 +28,5 @@ public interface BoundaryObserver {
      *
      * @return counts for boundary places mentioned or inferred
      */
-    public Map<String, PlaceCount> placeMentionCount();
+    Map<String, PlaceCount> placeMentionCount();
 }

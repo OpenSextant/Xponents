@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -133,14 +134,14 @@ public class TagFilter extends MatchFilter {
     private void loadStopSet(URL url, String langid) throws IOException, ConfigException {
         try (InputStream strm = url.openStream()) {
             HashSet<Object> stopTerms = new HashSet<>();
-            for (String line : IOUtils.readLines(strm, Charset.forName("UTF-8"))) {
+            for (String line : IOUtils.readLines(strm, StandardCharsets.UTF_8)) {
                 if (line.trim().startsWith("#")) {
                     continue;
                 }
                 stopTerms.add(line.trim().toLowerCase());
             }
             if (stopTerms.isEmpty()) {
-                throw new ConfigException("No terms found in stop filter file " + url.toString());
+                throw new ConfigException("No terms found in stop filter file " + url);
             }
             langStopFilters.put(langid, stopTerms);
         }

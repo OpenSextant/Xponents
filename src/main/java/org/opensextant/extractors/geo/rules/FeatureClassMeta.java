@@ -39,6 +39,6 @@ public class FeatureClassMeta {
 
     @Override
     public String toString() {
-        return String.format("%s %d%%, factor=%d", this.label, (int) 100 * this.proportion, this.factor);
+        return String.format("%s %f%%, factor=%f", this.label, (int) 100 * this.proportion, this.factor);
     }
 }

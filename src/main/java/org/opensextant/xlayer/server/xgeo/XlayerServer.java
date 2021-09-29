@@ -1,12 +1,12 @@
 package org.opensextant.xlayer.server.xgeo;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.restlet.Component;
 import org.restlet.Context;
 import org.restlet.data.Protocol;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ubaldino

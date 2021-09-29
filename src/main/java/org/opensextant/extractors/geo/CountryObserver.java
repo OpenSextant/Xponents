@@ -10,14 +10,14 @@ public interface CountryObserver {
      *
      * @param cc country code
      */
-    public void countryInScope(String cc);
+    void countryInScope(String cc);
 
     /**
      * Use a country object to signal a country was mentioned or is in scope
      *
      * @param C country object
      */
-    public void countryInScope(Country C);
+    void countryInScope(Country C);
 
     /**
      * Have you seen this country before?
@@ -25,7 +25,7 @@ public interface CountryObserver {
      * @param cc country code
      * @return true if observer saw country
      */
-    public boolean countryObserved(String cc);
+    boolean countryObserved(String cc);
 
     /**
      * Have you seen this country before?
@@ -34,14 +34,14 @@ public interface CountryObserver {
      * @return true if observer saw country
      */
 
-    public boolean countryObserved(Country C);
+    boolean countryObserved(Country C);
 
-    public int countryCount();
+    int countryCount();
 
     /**
      * Calculates totals and ratios for the discovered set of countries.
      *
      * @return map of country code : counts
      */
-    public Map<String, CountryCount> countryMentionCount();
+    Map<String, CountryCount> countryMentionCount();
 }
