@@ -31,15 +31,6 @@ package org.opensextant.extractors.geo;
 // OpenSextant GazetteerMatcher
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 // */
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrRequest;
@@ -61,11 +52,21 @@ import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The
  * <code>SOLR_HOME</code> environment variable must be set to the location of
  * the Solr server.
- * <p >
+ * <p>
  * This class is not thread-safe. It could be made to be
  * with little effort.
  *
@@ -100,6 +101,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * does not exist
      */
     private boolean allowLowerCase = false;
+    private boolean enableCaseFilter = true;
+    private boolean enableCodeHunter = false;
+
     // All of these Solr-parameters for tagging are not user-tunable.
     private final ModifiableSolrParams params = new ModifiableSolrParams();
     private SolrGazetteer gazetteer = null;
@@ -188,6 +192,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return this.gazetteer;
     }
 
+    public void reportMemory() {
+        Runtime R = Runtime.getRuntime();
+        long usedMemory = R.totalMemory() - R.freeMemory();
+        log.info("CURRENT MEM USAGE(K)=" + (int) (usedMemory / 1024));
+    }
+
     /**
      * A flag that will allow us to tag "in" or "in." as a possible
      * abbreviation. By default such things are not abbreviations, e.g., Indiana
@@ -201,10 +211,29 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         this.allowLowercaseAbbrev = b;
     }
 
+    /**
+     * Enable/disable the match filter for lower case matches.
+     * Primarily lower case text matches are filtered against stopword lists and length filters.
+     *
+     * @param b flag
+     */
     public void setAllowLowerCase(boolean b) {
         this.allowLowerCase = b;
         this.filter.enableCaseSensitive(!b);
         /* Allow lower case, means we ignore any case-sensitive filtering */
+    }
+
+    /**
+     * Enable/disable the document-level case filter.
+     *
+     * @param b flag
+     */
+    public void setEnableCaseFilter(boolean b) {
+        this.enableCaseFilter = b;
+    }
+
+    public void setEnableCodeHunter(boolean b) {
+        this.enableCodeHunter = b;
     }
 
     /**
@@ -221,11 +250,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /**
      * Default advanced search.
      *
-     * @see #searchAdvanced(String, boolean, int)
      * @param place
      * @param as_solr
      * @return
      * @throws SolrServerException
+     * @see #searchAdvanced(String, boolean, int)
      */
     public List<ScoredPlace> searchAdvanced(String place, boolean as_solr) throws SolrServerException, IOException {
         return searchAdvanced(place, as_solr, -1);
@@ -269,7 +298,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              */
             if (maxLen > 0) {
                 String nm = SolrUtil.getString(solrDoc, "name");
-                if (nm.length() > maxLen) {
+                if (nm != null && nm.length() > maxLen) {
                     continue;
                 }
             }
@@ -293,7 +322,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return tagText(buffer, docid, false);
     }
 
-    /** Most languages */
+    /**
+     * Most languages
+     */
     public static final String DEFAULT_TAG_FIELD = "name_tag";
 
     /**
@@ -319,6 +350,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     }
 
     protected static final HashMap<String, String> lang2nameField = new HashMap<>();
+
     static {
         /* Asian scripts Chinese, Japanese, Korean */
         lang2nameField.put("zh", CJK_TAG_FIELD);
@@ -363,7 +395,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      *                you want the full list of Place Candidates.
      * @param fld     gazetteer field to use for tagging
      * @return place_candidates List of place candidates which may be empty if
-     *         nothing is found.
+     * nothing is found.
      * @throws ExtractionException on err
      */
     public List<PlaceCandidate> tagText(TextInput input, boolean tagOnly, String fld) throws ExtractionException {
@@ -426,7 +458,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // names matched is used only for debugging, currently.
         Set<String> namesMatched = new HashSet<>();
 
-        tagLoop: for (NamedList<?> tag : tags) {
+        tagLoop:
+        for (NamedList<?> tag : tags) {
 
             int x1 = (Integer) tag.get("startOffset");
             int x2 = (Integer) tag.get("endOffset");
@@ -459,12 +492,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would.
             // be allowed. If lowercase abbreviations are allowed, then all matches are
             // passed.
-            if (len < 3) {
-                if (!allowLowercaseAbbrev) {
-                    if (TextUtils.isASCII(matchText) && StringUtils.isAllLowerCase(matchText)) {
-                        ++this.defaultFilterCount;
-                        continue;
-                    }
+            if (len < 3 && !(allowLowercaseAbbrev|enableCodeHunter)) {
+                if (TextUtils.isASCII(matchText) && StringUtils.isAllLowerCase(matchText)) {
+                    ++this.defaultFilterCount;
+                    continue;
                 }
             }
 
@@ -523,7 +554,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * TagFilter here checks only languages other than English, Spanish
              * and Vietnamese.
              */
-            if (filter.filterOut(pc, input.langid, input.isUpper, input.isLower)) {
+            if (this.enableCaseFilter && filter.filterOut(pc, input.langid, input.isUpper, input.isLower)) {
                 ++this.defaultFilterCount;
                 log.debug("STOPWORD {} {}", input.langid, pc.getText());
                 continue;
@@ -595,8 +626,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * HEURISTIC: place abbreviations are relatively short, e.g. one short
                  * word(len=5 or less)
                  */
-                if (len < AVERAGE_ABBREV_LEN && !pc.isAbbreviation) {
-                    assessAbbreviation(pc, pGeo, postChar, input.isUpper);
+                if (!enableCodeHunter) {
+                    if (len < AVERAGE_ABBREV_LEN && !pc.isAbbreviation) {
+                        assessAbbreviation(pc, pGeo, postChar, input.isUpper);
+                    }
                 }
 
                 if (log.isDebugEnabled()) {
@@ -680,7 +713,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         if (pc.isAbbreviation) {
             return;
         }
-        
+
         if (pGeo.isAbbreviation() && postChar > 0) {
             if (postChar == '.') {
                 // Add the post-punctuation to the match ONLY if a potential GEO matches.
@@ -779,7 +812,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 if (p.isCountry()) {
                     Integer count = countries.get(namekey);
                     if (count == null) {
-                        count = Integer.valueOf(1);
+                        count = 1;
                         countries.put(namekey, count);
                     }
                     ++count;
@@ -789,7 +822,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 } else {
                     Integer count = places.get(namekey);
                     if (count == null) {
-                        count = Integer.valueOf(1);
+                        count = 1;
                         places.put(namekey, count);
                     }
                     ++count;
@@ -802,8 +835,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Countries found: {}", countries.toString());
-            log.debug("Places found: {}", places.toString());
+            log.debug("Countries found: {}", countries);
+            log.debug("Places found: {}", places);
         }
     }
 

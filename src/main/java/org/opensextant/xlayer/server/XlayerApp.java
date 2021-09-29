@@ -1,17 +1,17 @@
 package org.opensextant.xlayer.server;
 
+import org.apache.commons.io.IOUtils;
+import org.opensextant.ConfigException;
+import org.restlet.Application;
+import org.restlet.Context;
+import org.restlet.Restlet;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.IOUtils;
-import org.opensextant.ConfigException;
-import org.restlet.Application;
-import org.restlet.Context;
-import org.restlet.Restlet;
 
 /**
  * XlayerApp is an abstract "Webapp" running inside the Server.... well, you
@@ -22,7 +22,9 @@ import org.restlet.Restlet;
  */
 public abstract class XlayerApp extends Application {
 
-    /** The log. */
+    /**
+     * The log.
+     */
     protected Logger log = null;
     protected String version = "3";
 

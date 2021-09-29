@@ -87,19 +87,6 @@ public abstract class GeocodeRule {
                 : String.format("%s/%s/%s", p.getFeatureClass(), p.getFeatureCode(), p.getGeohash()));
     }
 
-    /*
-     * Override as needed. static method, because caller need not have an instance
-     * of rule
-     * to determine if rule was applied to the candidate.
-     * Child rules cannot override static method here, so by convention, rules can
-     * implement isRuleFor as needed.
-     * @param pc
-     * @return
-     */
-    // public static boolean isRuleFor(PlaceCandidate pc) {
-    // return false;
-    // }
-
     public boolean sameCountry(Place p1, Place p2) {
         if (p1 == null || p2 == null) {
             return false;
@@ -126,7 +113,7 @@ public abstract class GeocodeRule {
                 return true;
             }
         }
-        return p1.getHierarchicalPath() != null ? p1.getHierarchicalPath().equals(p2.getHierarchicalPath()) : false;
+        return p1.getHierarchicalPath() != null &&  p1.getHierarchicalPath().equals(p2.getHierarchicalPath());
     }
 
     public static void setGeohash(Place loc) {
