@@ -413,8 +413,8 @@ public class FileUtility {
         // Some JVMs return null for File.list() when the
         // directory is empty.
         if (list != null) {
-            for (int i = 0; i < list.length; i++) {
-                final File entry = new File(directory, list[i]);
+            for (String s : list) {
+                final File entry = new File(directory, s);
                 if (entry.isDirectory()) {
                     if (!removeDirectory(entry)) {
                         return false;

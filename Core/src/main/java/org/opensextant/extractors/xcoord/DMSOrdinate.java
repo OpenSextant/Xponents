@@ -16,7 +16,6 @@
  */
 package org.opensextant.extractors.xcoord;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -176,7 +175,7 @@ public final class DMSOrdinate {
      *
      * @param matchStart offset of match into doc
      */
-    protected void setRelativeOffsets(int matchStart) {
+    public void setRelativeOffsets(int matchStart) {
         if (offsetDeg >= 0) {
             offsetDeg = offsetDeg - matchStart;
 
@@ -225,19 +224,7 @@ public final class DMSOrdinate {
      *
      */
     public boolean has_seconds = false;
-    /**
-     *
-     */
-    protected static final DecimalFormat field = new DecimalFormat("00");
-    /**
-     *
-     */
-    protected static final DecimalFormat field3 = new DecimalFormat("000");
-    // Decimal format out to 6 places for min/sec DMS fields.
-    /**
-     *
-     */
-    protected static final DecimalFormat fieldDec = new DecimalFormat("00.######");
+
 
     /**
      * Get back a normalized version of what you found. Yield zero-padded version of
@@ -588,7 +575,7 @@ public final class DMSOrdinate {
      * @param elements fields
      * @param islat    true if match represents latitude
      */
-    protected void normalize_hemisphere(String t, java.util.Map<String, String> elements, boolean islat) {
+    void normalize_hemisphere(String t, java.util.Map<String, String> elements, boolean islat) {
 
         int hemi = (islat ? getLatHemisphereSign(elements) : getLonHemisphereSign(elements));
 
@@ -731,11 +718,11 @@ public final class DMSOrdinate {
     }
 
     /**
-     * @see getLonHemisphereSign
+     * @see #getLonHemisphereSign(Map)
      * @param elements list of trimmed components of the match
      * @return polarity of hemisphere from fields
      */
-    protected int getLatHemisphereSign(java.util.Map<String, String> elements) {
+    public int getLatHemisphereSign(java.util.Map<String, String> elements) {
 
         findHemiOffset(hemiLatFields);
 
@@ -768,7 +755,7 @@ public final class DMSOrdinate {
      * @param elements list of trimmed components of the match
      * @return polarity of hemisphere from fields
      */
-    protected int getLonHemisphereSign(java.util.Map<String, String> elements) {
+    public int getLonHemisphereSign(java.util.Map<String, String> elements) {
         findHemiOffset(hemiLonFields);
 
         String hemiLon = elements.get("hemiLon");

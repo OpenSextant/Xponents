@@ -187,7 +187,6 @@ public class Annotation extends DeepEyeData {
         //
         if (offset < 0 && offsets.size() == 1) {
             this.offset = offsets.first();
-            return;
         }
     }
 

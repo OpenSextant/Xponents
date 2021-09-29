@@ -16,8 +16,6 @@
  */
 package org.opensextant.output;
 
-import java.io.File;
-
 import org.apache.commons.io.FileUtils;
 import org.opensextant.data.Geocoding;
 import org.opensextant.extraction.ExtractionResult;
@@ -26,6 +24,8 @@ import org.opensextant.processing.Parameters;
 import org.opensextant.processing.ProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * Abstract class encapsulating basic results formatter functionality.
@@ -38,6 +38,9 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
     protected Parameters outputParams = null;
     public boolean overwrite = false;
 
+    /**
+     * Note - output parameters use tag_XYZ flags to indicate date to include or exclude
+     */
     @Override
     public void setParameters(Parameters params) {
         outputParams = params;
@@ -46,7 +49,9 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
     // Allow customization of "geocoding" object.
     protected MatchInterpreter geoInterpreter = null;
 
-    /** Override means for how geocoding is determined per row. */
+    /**
+     * Override means for how geocoding is determined per row.
+     */
     public void setMatchInterpeter(MatchInterpreter mi) {
         this.geoInterpreter = mi;
     }
@@ -69,7 +74,9 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
      */
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private String filename = "unset";
-    /** File extension for callers to know. */
+    /**
+     * File extension for callers to know.
+     */
     public String outputExtension = null;
     /**
      *

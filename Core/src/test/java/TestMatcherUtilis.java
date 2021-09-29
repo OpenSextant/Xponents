@@ -1,5 +1,5 @@
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +19,37 @@ public class TestMatcherUtilis {
 
     private static void print(String s) {
         System.out.println(s);
+    }
+
+    @Test
+    public void testTextEntity(){
+        print("Test Overlaps and Proximity");
+        TextEntity a  = new TextEntity( 5, 10);
+        TextEntity b  = new TextEntity( 25, 40);
+        TextEntity c  = new TextEntity( 7, 10); // right align with a
+        TextEntity d  = new TextEntity( 7, 12); // overlap, skew right with a
+
+        assertTrue( a.isWithinChars(a, 0)); // Identity test.
+        assertTrue( a.isWithinChars(a, 4));
+
+        //  a NOT within 4 chars of b
+        assertFalse( a.isWithinChars(b, 4));
+        //  test invalid distance
+        assertFalse( a.isWithinChars(b, -4));
+        // test valid case -- a <> b 15 chars, edge case
+        assertTrue( a.isWithinChars(b, 15));
+        assertTrue( b.isWithinChars(a, 15));
+        // test valid case -- a <> b 14 chars, edge case
+        assertFalse( a.isWithinChars(b, 14));
+        assertFalse( b.isWithinChars(a, 14));
+        // test valid case -- b <> a 20 chars
+        assertTrue( a.isWithinChars(b, 20));
+        assertTrue( b.isWithinChars(a, 20));
+
+        assertTrue( a.isOverlap(a) );
+        assertTrue( a.isOverlap(c) );
+        assertTrue( a.isOverlap(d) );
+
     }
 
     @Test

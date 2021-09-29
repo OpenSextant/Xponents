@@ -177,7 +177,7 @@ public class Tweet extends Message {
 
     public static String fixNull(final String v) {
         if (v != null) {
-            if (v.toLowerCase().equals("[null]")) {
+            if (v.equalsIgnoreCase("[null]")) {
                 return null;
             }
         }

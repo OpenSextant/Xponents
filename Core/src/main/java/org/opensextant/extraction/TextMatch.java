@@ -128,4 +128,11 @@ public class TextMatch extends TextEntity {
         return textnorm;
     }
 
+    /** Users of this class should set a non-default type via setType(String), otherwise
+     * the match remains default and generic.
+     * @return
+     */
+    public boolean isDefault(){
+        return (type==null || "generic".equals(type));
+    }
 }

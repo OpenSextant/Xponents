@@ -342,7 +342,7 @@ public abstract class RegexPatternManager {
 
             // at this point rule pattern should have had defines replaced
             // compile and insert into pattern hashmap
-            pat.regex = Pattern.compile(tmpRulePattern.toString(), Pattern.CASE_INSENSITIVE);
+            pat.regex = Pattern.compile(tmpRulePattern, Pattern.CASE_INSENSITIVE);
 
             enable_pattern(pat);
 

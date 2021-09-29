@@ -55,10 +55,14 @@ public class TextEntity {
      */
     public int end = -1;
 
-    /** char immediately after span */
+    /**
+     * char immediately after span
+     */
     public char postChar = 0;
 
-    /** char immediately before span */
+    /**
+     * char immediately before span
+     */
     public char preChar = 0;
 
     // Use this
@@ -66,13 +70,21 @@ public class TextEntity {
     // OR this
     private String prematch = null;
     private String postmatch = null;
-    /** */
+    /**
+     *
+     */
     public String match_id = null;
-    /** If this entity is contained completely within some other */
+    /**
+     * If this entity is contained completely within some other
+     */
     public boolean is_submatch = false;
-    /** If this entity is a overlaps with some other */
+    /**
+     * If this entity is a overlaps with some other
+     */
     public boolean is_overlap = false;
-    /** If this entity is a duplicate of some other */
+    /**
+     * If this entity is a duplicate of some other
+     */
     public boolean is_duplicate = false;
 
     /**
@@ -218,7 +230,7 @@ public class TextEntity {
 
     /**
      * @return context buffer regardless if it is singular context or separate
-     *         pre/post match
+     * pre/post match
      */
     public String getContext() {
         return this.context;
@@ -324,8 +336,39 @@ public class TextEntity {
     public boolean isOverlap(TextEntity t) {
         // t overlaps with self on the left side
         // OR t overlaps with self on right side
-        //
-        return (end > t.end && start > t.start && start < t.end) || (end < t.end && start < t.start && end > t.start);
+        //       Aaaa      start_diff = end - t.end (>0)
+        //     Bbbb
+        if (isSameMatch(t)){
+            // A perfect overlap.  If you intend to test for sameness, call this separately.
+            return true;
+        }
+
+        return (end >= t.end && start >= t.start && start <= t.end) ||
+                //  Aaaa
+                //    Bbbb
+                (end <= t.end && start <= t.start && end >= t.start);
     }
 
+    /**
+     * Proximity test between this text span and another
+     * This is A; B is input. use nchars=2
+     * <pre>
+     *    AaaaaaaB               // B next to A
+     *           BbbbbbA         // B before A
+     *           Bbbbb     A     // A far from A
+     *    Aaaaaa B               // B within nchars of A
+     *        AaaBbbaaa          // B is inside A, so they are "within"
+     *
+     * </pre>
+     *
+     * @param t      TextEntity span
+     * @param nchars number of characters
+     * @return True if given entity span is within nchars, left or right
+     */
+    public boolean isWithinChars(TextEntity t, int nchars) {
+        if (isOverlap(t)) {
+            return true;
+        }
+        return Math.abs(this.start - t.end) <= nchars || Math.abs(t.start - this.end) <= nchars;
+    }
 }

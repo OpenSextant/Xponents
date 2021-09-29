@@ -80,6 +80,6 @@ public class RegexPattern {
      */
     @Override
     public String toString() {
-        return id + ", Pattern:" + regex.pattern().toString();
+        return id + ", Pattern:" + regex.pattern();
     }
 }

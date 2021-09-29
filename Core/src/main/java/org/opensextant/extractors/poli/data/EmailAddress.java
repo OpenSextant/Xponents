@@ -41,7 +41,6 @@ public class EmailAddress extends PoliMatch {
         if (domain.contains("..") || name.contains("..")) {
             // Allowed only if respective part is quoted, e.g., "name..name"
             setFilteredOut(true);
-            return;
         }
     }
 }

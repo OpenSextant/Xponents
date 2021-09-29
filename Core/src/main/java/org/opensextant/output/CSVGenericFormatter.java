@@ -79,7 +79,7 @@ public class CSVGenericFormatter extends AbstractGenericFormatter {
 
     @Override
     protected void createOutputStreams() throws Exception {
-        fio = new FileWriter(new File(getOutputFilepath()));
+        fio = new FileWriter(getOutputFilepath());
     }
 
     @Override
@@ -142,7 +142,7 @@ public class CSVGenericFormatter extends AbstractGenericFormatter {
             return;
         }
         if (canAdd(f)) {
-            row.put(f, d.toString());
+            row.put(f, d);
         }
     }
 

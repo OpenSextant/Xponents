@@ -806,7 +806,6 @@ public class TextUtils {
         for (char ch : buf.toCharArray()) {
             if (eval && remove.indexOf(ch) >= 0) {
                 ++x;
-                continue;
             } else {
                 eval = false; // shunt the evaluation of the chars.
             }
@@ -1549,7 +1548,7 @@ public class TextUtils {
         gzipInputStream.close();
         out.close();
 
-        return new String(out.toByteArray(), charset);
+        return out.toString(charset);
     }
 
     /**

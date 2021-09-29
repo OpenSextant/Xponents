@@ -15,25 +15,6 @@
 */
 package org.opensextant.util;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.opensextant.util.GeodeticUtility.geohash;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Country;
 import org.opensextant.data.Language;
@@ -42,6 +23,15 @@ import org.opensextant.data.Place;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.opensextant.util.GeodeticUtility.geohash;
 
 /**
  * @author ubaldino
@@ -87,6 +77,16 @@ public class GeonamesUtility {
         return StringUtils.capitalize(c.toLowerCase(Locale.ENGLISH));
     }
 
+    public static String getFeatureDesignation(String cls, String code) {
+        if (cls == null && code == null) {
+            return "";
+        }
+        if (code == null) {
+            return cls;
+        }
+        return String.format("%s/%s", cls, code);
+    }
+
     /**
      * Find a readable name or description of a class/code
      *
@@ -95,8 +95,7 @@ public class GeonamesUtility {
      * @return name for a feature/code pair
      */
     public String getFeatureName(String cls, String code) {
-        String lookup = String.format("%s/%s", cls, code);
-        return features.get(lookup);
+        return features.get(getFeatureDesignation(cls, code));
     }
 
     /**
@@ -251,7 +250,7 @@ public class GeonamesUtility {
      * @param utc UTC offset
      * @return approximated longitude, in degrees
      */
-    public static final int approximateLongitudeForUTCOffset(final int utc) {
+    public static int approximateLongitudeForUTCOffset(final int utc) {
         int normalized = (utc > 12 ? utc - 24 : utc);
 
         return 15 * normalized; /* 360 deg / 24 hr = 15deg per UTC offset hour */
@@ -299,15 +298,15 @@ public class GeonamesUtility {
      * that DST convention.
      * E.g., Boston and New York US standard time: GMT-0500, DST: GMT-0400
      *
-     * @see #countriesInUTCOffset(double)
      * @param dst DST offset
      * @return list of country codes observing DST at that offset
+     * @see #countriesInUTCOffset(double)
      */
     public Collection<String> countriesInDSTOffset(double dst) {
         return dst2cc.get(dst);
     }
 
-    public static final boolean isValue(final String s) {
+    public static boolean isValue(final String s) {
         return StringUtils.isNotBlank(s);
     }
 
@@ -411,11 +410,11 @@ public class GeonamesUtility {
     public static List<Place> loadMajorCities(InputStream strm) throws IOException {
 
         // IMPLEMENTATION QUIRK: SuperCSV failed to parse the rows of data
-        // as they contain unescaped " chars. TAB delimited file, but cells contain ".
+        // as they contain unescaped " chars. TAB delimited file, but cells contain quotes (").
         // Hmm.
         List<Place> cities = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(strm, "UTF-8"))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(strm, StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
 
@@ -1004,8 +1003,10 @@ public class GeonamesUtility {
         return (KNOWN_NAME_COLLISIONS.get(nm) != null);
     }
 
-    public static final char ABBREVIATION_TYPE = 'A';
+    public static final char ABBREV_TYPE = 'A';
     public static final char NAME_TYPE = 'N';
+    public static final char CODE_TYPE = 'C';
+
 
     /**
      * Check if name type is an Abbreviation
@@ -1013,12 +1014,12 @@ public class GeonamesUtility {
      * @param name_type code
      * @return true if code is abbreviation
      */
-    public static boolean isAbbreviation(char name_type) {
-        return name_type == ABBREVIATION_TYPE;
+    public static boolean isName(char name_type) {
+        return NAME_TYPE == name_type;
     }
 
-    public static final boolean isCode(String name_type) {
-        return "code".equals(name_type);
+    public static boolean isCode(char name_type) {
+        return CODE_TYPE == name_type;
     }
 
     /**
@@ -1027,8 +1028,8 @@ public class GeonamesUtility {
      * @param name_type OpenSextant code
      * @return true if code is abbreviation
      */
-    public static boolean isAbbreviation(String name_type) {
-        return name_type.charAt(0) == ABBREVIATION_TYPE;
+    public static boolean isAbbreviation(char name_type) {
+        return ABBREV_TYPE == name_type;
     }
 
     /**
@@ -1050,13 +1051,14 @@ public class GeonamesUtility {
     public static boolean isAdmin1(String featCode) {
         return "ADM1".equalsIgnoreCase(featCode);
     }
-    
+
     public static boolean isAdmin2(String featCode) {
         return "ADM2".equalsIgnoreCase(featCode);
     }
-    
+
     /**
      * Macro for reasoning with upper common levels of boundaries - province, districts.
+     *
      * @param featCode
      * @return
      */
@@ -1131,12 +1133,20 @@ public class GeonamesUtility {
         return "P".equalsIgnoreCase(featClass);
     }
 
-    public static boolean isSpot(String fc) {
+    public static boolean isSpot(final String fc) {
         return "S".equalsIgnoreCase(fc);
     }
 
-    public static boolean isLand(String fc) {
+    public static boolean isLand(final String fc) {
         return "L".equalsIgnoreCase(fc);
+    }
+
+    public static boolean isPostal(final Place g) {
+        return "POST".equals(g.getFeatureCode());
+    }
+
+    public static boolean isPostal(final String fc) {
+        return "POST".equals(fc);
     }
 
     /*
@@ -1370,7 +1380,7 @@ public class GeonamesUtility {
             }
         }
 
-        /**
+        /*
          * Special case: First language / country pairs seen, denote those as PRIMARY
          * language. As
          * geonames.org lists languages spoken by order of population of speakers.
@@ -1381,7 +1391,7 @@ public class GeonamesUtility {
         }
     }
 
-    private static final Pattern langidSplit = Pattern.compile("[-_]");
+    private final static Pattern langidSplit = Pattern.compile("[-_]");
 
     /**
      * Parse lang ID from Locale. Internal method; Ensure argument is not null;
@@ -1390,7 +1400,6 @@ public class GeonamesUtility {
      * @return language family
      */
     protected static String getLang(final String langid) {
-        String l = langidSplit.split(langid)[0];
-        return l;
+        return langidSplit.split(langid)[0];
     }
 }
