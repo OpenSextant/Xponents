@@ -30,11 +30,11 @@
 //
 package org.opensextant.data;
 
-import static org.opensextant.util.GeodeticUtility.geohash;
-
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
+
+import static org.opensextant.util.GeodeticUtility.geohash;
 
 /**
  * Place class represents all the metadata about a location.
@@ -66,7 +66,7 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
     private boolean isUppercaseName = false;
 
     /**
-     * Creates a new instance of Geobase
+     * Creates a new instance of GeoBase
      *
      * @param placeId primary key or ID for this place
      * @param nm      place name
@@ -84,6 +84,36 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
         super(lat, lon);
     }
 
+    /**
+     * Copy the basic gazetteer metadata to
+     *
+     * @param p
+     */
+    public void copyTo(Place p) {
+
+        // General Name info
+        p.setPlaceID(p.getPlaceID());
+        p.setPlaceName(this.getPlaceName());
+        p.setName_type(this.getName_type());
+        p.setSource(this.getSource());
+
+        // Geo feature
+        p.setFeatureClass(this.getFeatureClass());
+        p.setFeatureCode(this.getFeatureCode());
+
+        // Geo location
+        p.setLatLon(this);
+        p.setGeohash(this.getGeohash());
+        p.setCountry(this.getCountry());
+        p.setCountryCode(this.getCountryCode());
+        p.setAdmin1(this.getAdmin1());
+        p.setAdmin2(this.getAdmin2());
+
+        // Inferred metadata.
+        p.setConfidence(this.getConfidence());
+        p.setPrecision(this.getPrecision());
+    }
+
     public boolean isASCIIName() {
         return this.isASCIIName;
     }
@@ -95,10 +125,12 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
     protected char name_type = 0;
 
     private boolean isAbbreviation = false;
+    private boolean isCode = false;
 
     public void setName_type(char t) {
         name_type = t;
         isAbbreviation = GeonamesUtility.isAbbreviation(name_type);
+        isCode = GeonamesUtility.isCode(name_type);
     }
 
     public char getName_type() {
@@ -170,6 +202,29 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
 
     public void setFeatureCode(String featCode) {
         this.featureCode = featCode;
+    }
+
+    private String featureDesig = null;
+
+    /**
+     * Returns a dynamically formatted feature string C/CODE  for class/code.
+     */
+    public String getFeatureDesignation() {
+        if (featureDesig == null) {
+            featureDesig = GeonamesUtility.getFeatureDesignation(getFeatureClass(), getFeatureCode());
+        }
+        return featureDesig;
+    }
+
+    /**
+     * Check if CC.AA coding of the features is the same.
+     *
+     * @param otherGeo
+     * @return
+     */
+    public boolean sameBoundary(Place otherGeo) {
+        return (otherGeo != null &&
+                this.getHierarchicalPath().equals(otherGeo.getHierarchicalPath()));
     }
 
     /**
@@ -257,6 +312,10 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
         return isAbbreviation;
     }
 
+    public boolean isCode() {
+        return isCode;
+    }
+
     /**
      * Is this Place a Country?
      *
@@ -281,8 +340,10 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
     public boolean isAdministrative() {
         return GeonamesUtility.isAdministrative(featureClass);
     }
-    
-    /** macro for detecting ADM1 or ADM2 */
+
+    /**
+     * macro for detecting ADM1 or ADM2
+     */
     public boolean isUpperAdmin() {
         return GeonamesUtility.isUpperAdminLevel(getFeatureCode());
     }
@@ -300,8 +361,7 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
     /**
      * Is this Place a State or Province?
      *
-     * @return - true if this is a State, Province or other first level admin
-     *         area
+     * @return - true if this is a State, Province or other first level admin area
      */
     public boolean isAdmin1() {
         return GeonamesUtility.isAdmin1(getFeatureCode());
@@ -406,7 +466,7 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
     /**
      * Xponents version of precision is number of meters of error,
      * approximately. precision = 15 means the lat/lon on this Place object is
-     * within 15 m of the true location.
+     * within 15 m of the true location.  Likewise, a precision of "50000" means 50Km of error in the location.
      *
      * @param prec, meters of error
      */
@@ -418,8 +478,8 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
     /**
      * Get the relative precision of this feature; in meters of error
      *
-     * @see setPrecision
      * @return precision, meters of error.
+     * @see #setPrecision(int)
      */
     @Override
     public int getPrecision() {
@@ -497,7 +557,7 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
 
     /**
      * This sets the default to non-null value. Default hieararchy is:
-     * 
+     *
      * <pre>
      * CC.ADM1
      * CC

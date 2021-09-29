@@ -43,6 +43,8 @@ public class Parameters extends java.util.Properties {
     public boolean tag_countries = true;
     public boolean tag_places = true;
     public boolean tag_coordinates = true;
+    public boolean tag_postal = false;
+
     /**
      * Generic flag to represent tagging non-Geo names, e.g., names of persons, orgs
      * and things
@@ -68,11 +70,6 @@ public class Parameters extends java.util.Properties {
      * By default Country Names will not be included in GIS products
      * They should appear in CSV, though.
      */
-    public boolean output_countries = true;
-    public boolean output_places = true;
-    public boolean output_coordinates = true;
-    public boolean output_taxons = true;
-    public boolean output_patterns = true;
     public boolean output_filtered = false;
     /**
      * Default is to not generate Geohash

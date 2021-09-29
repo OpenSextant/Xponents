@@ -161,11 +161,11 @@ public abstract class GISDataFormatter extends AbstractFormatter {
         Geocoding geocoding = geoInterpreter.getGeocoding(geo);
 
         if (geocoding != null) {
-            if (!outputParams.output_coordinates && geocoding.isCoordinate()) {
+            if (!outputParams.tag_coordinates && geocoding.isCoordinate()) {
                 return true;
-            } else if (!outputParams.output_countries && geocoding.isCountry()) {
+            } else if (!outputParams.tag_countries && geocoding.isCountry()) {
                 return true;
-            } else if (!outputParams.output_places && geocoding.isPlace()) {
+            } else if (!outputParams.tag_places && geocoding.isPlace()) {
                 return true;
             }
         }
