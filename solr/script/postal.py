@@ -7,6 +7,15 @@ from opensextant.gazetteer import DataSource, get_default_db, as_place_record
 from opensextant.utility import get_csv_reader, is_ascii
 
 """
+
+Postal Code Gazetteer
+
+The main sources of codes include:
+- Geonames postal dumps
+- Variations on the postal codes, e.g., removal of spaces to form a new variation of a postal code.
+- ISO and other boundary codes/abbreviations from master gazetteer
+
+
 Country rules:
 * For Canada we have only the first letters of the full postal codes (for copyright reasons)
 * For Chile we have only the first digits of the full postal codes (for copyright reasons)
@@ -102,7 +111,7 @@ class PostalGazetteer(DataSource):
                 # !!! PER SQLITE: https://www.sqlite.org/faq.html  -- use Single Quotes for query on columns.
                 #
                 # Copy over country and province codes at a high level.
-                sub_query = " AND name_group='' AND feat_code='ADM1' AND (name_type='C' OR name_type='A') "
+                sub_query = " AND name_group='' AND duplicate=0 AND feat_code='ADM1' AND (name_type='C' OR name_type='A') "
                 _ctry_meta = []
                 for pl in master_db.db.list_places(cc=cc, fc="A", criteria=sub_query):
                     self.rowcount += 1
@@ -111,7 +120,7 @@ class PostalGazetteer(DataSource):
                     entry["id"] = self.starting_row + self.rowcount
                     _ctry_meta.append(entry)
                 # Part II. Countries
-                sub_query = " AND name_group='' AND feat_code like 'PCL%' "
+                sub_query = " AND name_group='' AND duplicate=0 AND feat_code like 'PCL%' "
                 for pl in master_db.db.list_places(cc=cc, fc="A", criteria=sub_query):
                     # Grab countries -- Looking for POSTAL variations of country names.
                     if not is_ascii(pl.name) or len(pl.name) > 25:
@@ -210,12 +219,17 @@ class PostalGazetteer(DataSource):
 
 
 class ReferenceGaz(DataSource):
-    def __init__(self):
+    def __init__(self, country=None):
         DataSource.__init__(self, get_default_db())
         # self.db.debug = True
         print("Collecting consistent ADM1 codes to use internally on postal code entries.")
         self._country_adm1 = dict()
-        for cc in self.db.list_countries():
+        cclist = []
+        if country:
+            cclist.append(country)
+        else:
+            cclist = self.db.list_countries()
+        for cc in cclist:
             dct = dict()
             dct["default"] = "default"
             for pl in self.db.list_places(cc, 'A',
@@ -239,6 +253,8 @@ if __name__ == "__main__":
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--optimize", action="store_true", default=False)
     ap.add_argument("--copy-admin", action="store_true", default=False)
+    ap.add_argument("--country", help="Country code to focus on")
+
     args = ap.parse_args()
 
     # This master gazetteer DB acts as a code book for all other gazetteers.
@@ -248,11 +264,10 @@ if __name__ == "__main__":
     source.starting_row = int(args.starting_row)
     if args.copy_admin:
         # DO LAST:
-        # DO LAST:
         if source.starting_row == 0:
             print("You need to provide a non-zero starting row for copying other data.")
             sys.exit(1)
         source.copy_administrative_codes(get_default_db(), limit=int(args.max), optimize=args.optimize)
     else:
-        ref = ReferenceGaz()
+        ref = ReferenceGaz(country=args.country)
         source.normalize(args.postal, limit=int(args.max), optimize=args.optimize)

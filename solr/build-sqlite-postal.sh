@@ -37,18 +37,18 @@ fi
 if [ "$do_test" -eq 1 ] ; then
   DB=./tmp/postal_test.sqlite
   python3 ./script/postal.py ./tmp/postal/allCountries.txt 0 --db $DB --max 1000
-  python3 ./script/postal.py ./tmp/postal/CA_full.txt 2000000 --db $DB --max 1000
-  python3 ./script/postal.py ./tmp/postal/NL_full.txt 3000000 --db $DB --max 1000
-  python3 ./script/postal.py ./tmp/postal/GB_full.txt 4000000 --db $DB --max 1000
+  python3 ./script/postal.py ./tmp/postal/CA_full.txt 2000000 --db $DB --max 1000 --country CA
+  python3 ./script/postal.py ./tmp/postal/NL_full.txt 3000000 --db $DB --max 1000 --country NL
+  python3 ./script/postal.py ./tmp/postal/GB_full.txt 4000000 --db $DB --max 1000 --country GB
   python3 ./script/postal.py XX 6000000 --db $DB --max 1000  --copy-admin
 
 else
   # PRODUCTION
   DB=./tmp/postal_gazetteer.sqlite
   python3 ./script/postal.py ./tmp/postal/allCountries.txt 0 --db $DB
-  python3 ./script/postal.py ./tmp/postal/CA_full.txt 2000000 --db $DB
-  python3 ./script/postal.py ./tmp/postal/NL_full.txt 3000000 --db $DB
-  python3 ./script/postal.py ./tmp/postal/GB_full.txt 4000000 --db $DB --optimize
-  python3 ./script/postal.py XX                       6000000 --db $DB --copy-admin
+  python3 ./script/postal.py ./tmp/postal/CA_full.txt 2000000 --db $DB --country CA
+  python3 ./script/postal.py ./tmp/postal/NL_full.txt 3000000 --db $DB --country NL
+  python3 ./script/postal.py ./tmp/postal/GB_full.txt 4000000 --db $DB --country GB
+  python3 ./script/postal.py XX                       6000000 --db $DB --copy-admin --optimize
 
 fi
