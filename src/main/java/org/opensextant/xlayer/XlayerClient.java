@@ -37,11 +37,11 @@ public class XlayerClient extends Application {
     private static final int ONE_SEC = 1000;
 
     /** 1 minute */
-    public static final String SO_TIMEOUT_STRING = Integer.valueOf(60 * ONE_SEC).toString();
+    public static final String SO_TIMEOUT_STRING = Integer.toString(60 * ONE_SEC);
     /** 1 minutes */
-    public static final String READ_TIMEOUT_STRING = Integer.valueOf(60 * ONE_SEC).toString();
+    public static final String READ_TIMEOUT_STRING = Integer.toString(60 * ONE_SEC);
     /* 5 seconds */
-    public static final String CONN_TIMEOUT_STRING = Integer.valueOf(5 * ONE_SEC).toString();
+    public static final String CONN_TIMEOUT_STRING = Integer.toString(5 * ONE_SEC);
     protected JsonParser jsonp = JsonParser.create();
 
     public XlayerClient(URL serviceAddr) throws ConfigException {

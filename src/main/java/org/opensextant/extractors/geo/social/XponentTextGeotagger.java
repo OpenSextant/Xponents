@@ -167,11 +167,7 @@ public class XponentTextGeotagger extends XponentGeocoder {
             return false;
         }
 
-        if (m.isLower() /* && m.getText().length() <= 3 && !m.isAbbreviation */) {
-            return true;
-        }
-
-        return false;
+        return m.isLower();
     }
 
     private List<TextMatch> otherMatches = new ArrayList<>();

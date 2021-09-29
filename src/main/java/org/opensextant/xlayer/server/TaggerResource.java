@@ -1,15 +1,5 @@
 package org.opensextant.xlayer.server;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,13 +12,25 @@ import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ServerResource;
 
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 public abstract class TaggerResource extends ServerResource {
 
-    /** The log. */
+    /**
+     * The log.
+     */
     protected Logger log = null;
-    /** The test mode. */
+    /**
+     * The test mode.
+     */
     protected static final boolean testMode = false;
-    /** The prod mode. */
+    /**
+     * The prod mode.
+     */
     protected static final boolean prodMode = !testMode;
 
     public TaggerResource() {
@@ -106,19 +108,21 @@ public abstract class TaggerResource extends ServerResource {
     }
 
     protected void parseParameters(Parameters p, Set<String> kv) {
-        p.tag_coordinates = p.output_coordinates = kv.contains("coordinates");
-        p.tag_countries = p.output_countries = kv.contains("countries");
-        p.tag_places = p.output_places = kv.contains("places");
+        p.tag_coordinates = kv.contains("coordinates");
+        p.tag_countries = kv.contains("countries");
+        p.tag_places = kv.contains("places");
+        p.tag_postal = kv.contains("postal");
 
         if (kv.contains("geo")) {
-            p.tag_coordinates = p.output_coordinates = true;
-            p.tag_countries = p.output_countries = true;
-            p.tag_places = p.output_places = true;
+            p.tag_coordinates = true;
+            p.tag_countries = true;
+            p.tag_places = true;
+            p.tag_postal = true;
         }
 
         // Request tagging on demand.
-        p.tag_taxons = p.output_taxons = (kv.contains("taxons") || kv.contains("orgs") || kv.contains("persons"));
-        p.tag_patterns = p.output_patterns = kv.contains("patterns") || kv.contains("dates");
+        p.tag_taxons = (kv.contains("taxons") || kv.contains("orgs") || kv.contains("persons"));
+        p.tag_patterns = kv.contains("patterns") || kv.contains("dates");
 
         p.output_filtered = kv.contains("filtered_out");
 
@@ -130,18 +134,17 @@ public abstract class TaggerResource extends ServerResource {
      * @param job job parameters
      */
     protected void resetParameters(Parameters job) {
-        job.output_coordinates = false;
-        job.output_countries = false;
-        job.output_places = false;
-        job.output_geohash = false;
-        job.output_filtered = false;
-
         job.tag_lowercase = false;
         job.tag_coordinates = false;
         job.tag_countries = false;
         job.tag_places = false;
+        job.tag_postal = false;
+
         job.tag_taxons = false;
         job.tag_patterns = false;
+        job.output_geohash = false;
+        job.output_filtered = false;
+
         job.addOutputFormat("json");
     }
 
@@ -165,9 +168,6 @@ public abstract class TaggerResource extends ServerResource {
      */
     protected Parameters fromRequest(JSONObject inputs) throws JSONException {
         Parameters job = new Parameters();
-        job.output_coordinates = false;
-        job.output_countries = true;
-        job.output_places = true;
         job.tag_coordinates = false;
         job.tag_countries = true;
         job.tag_places = true;
