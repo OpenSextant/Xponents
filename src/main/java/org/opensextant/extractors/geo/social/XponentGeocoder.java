@@ -474,9 +474,6 @@ public class XponentGeocoder extends GeoInferencer {
          *                        - the candidate that builds up rules and scores.
          * @param geo
          *                        - the individual gazetteer entry being considered.
-         * @param useEditDistance
-         *                        true if you want to filter name matches by edit
-         *                        distance.
          */
         @Override
         public void evaluate(PlaceCandidate name, Place geo) {
@@ -661,7 +658,7 @@ public class XponentGeocoder extends GeoInferencer {
                     g.setAdmin1(adm1); // Found likely province.
                 }
             } catch (Exception err) {
-                log.error("Failed to find province ID given metadata {}", err);
+                log.error("Failed to find province ID given metadata", err);
             }
         }
 
@@ -782,14 +779,13 @@ public class XponentGeocoder extends GeoInferencer {
     }
 
     /**
-     * Special prequisites -- profileRule.reset() must be done before this is
-     * called.
+     * Special prequisites -- profileRule.reset() must be done before this is called.
      *
-     * @param nameAdjusted
+     * @param nmGiven
      *                     the name parse and cleaned ahead of time.
      * @param g
      *                     the place to be geocoded.
-     * @param gazNameField
+     * @param fld
      *                     the solr schema name to be used.
      * @return
      */
