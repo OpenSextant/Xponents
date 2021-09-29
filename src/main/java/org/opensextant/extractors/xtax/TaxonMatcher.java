@@ -274,6 +274,21 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         return extractorImpl(null, input_buf);
     }
 
+    public static String[] commonTaxonLabels = {"org", "person", "nationality"};
+
+    private static void assignType(TaxonMatch m, Taxon node){
+        if (!m.isDefault()) {
+            return;
+        }
+        String taxon_name = node.name.toLowerCase();
+        for (String l : commonTaxonLabels){
+            if (taxon_name.startsWith(l)) {
+                m.setText(l);
+                break;
+            }
+        }
+    }
+
     /**
      * @param id  doc id
      * @param buf input text
@@ -360,6 +375,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
                 }
 
                 m.addTaxon(tx);
+                assignType(m, tx);
             }
 
             // If the match has valid taxons add the match to the
