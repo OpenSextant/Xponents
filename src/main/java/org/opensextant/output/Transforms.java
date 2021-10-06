@@ -1,7 +1,7 @@
 package org.opensextant.output;
 
-import java.util.List;
-
+import jodd.json.JsonArray;
+import jodd.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
@@ -16,8 +16,9 @@ import org.opensextant.util.GeodeticUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jodd.json.JsonArray;
-import jodd.json.JsonObject;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class Transforms {
 
@@ -31,10 +32,10 @@ public class Transforms {
      * @param data
      * @return TextMatch object represented by json annotation
      * @see org.opensextant.annotations.AnnotationHelper utility and package. This
-     *      Annotation approach is more general
-     *      with respect to the data model overall. This Transforms utility is about
-     *      transforming matches directly to JSON output
-     *      ready for RESTful response.
+     * Annotation approach is more general
+     * with respect to the data model overall. This Transforms utility is about
+     * transforming matches directly to JSON output
+     * ready for RESTful response.
      */
     public static TextMatch parseAnnotation(Object data) {
         if (!(data instanceof JsonObject)) {
@@ -47,70 +48,70 @@ public class Transforms {
         String text = a.getString("matchtext");
         switch (typ) {
 
-        case "place":
-            PlaceCandidate placeMatch = new PlaceCandidate();
-            Place geo = new Place();
-            placeMatch.setText(text);
-            Transforms.parseGeocoding(geo, a);
-            placeMatch.setConfidence(a.getInteger("confidence", -1));
-            placeMatch.choose(geo);
+            case "place":
+                PlaceCandidate placeMatch = new PlaceCandidate();
+                Place geo = new Place();
+                placeMatch.setText(text);
+                Transforms.parseGeocoding(geo, a);
+                placeMatch.setConfidence(a.getInteger("confidence", -1));
+                placeMatch.choose(geo);
 
-            m = placeMatch;
-            break;
+                m = placeMatch;
+                break;
 
-        case "coordinate":
-            GeocoordMatch coord = new GeocoordMatch();
-            Place coordLoc = new Place();
-            coord.setText(text);
-            // How awful:.... need to parse Coord directly
-            Transforms.parseGeocoding(coordLoc, a);
-            coord.setLatLon(coordLoc);
-            coord.setMethod(coordLoc.getMethod());
+            case "coordinate":
+                GeocoordMatch coord = new GeocoordMatch();
+                Place coordLoc = new Place();
+                coord.setText(text);
+                // How awful:.... need to parse Coord directly
+                Transforms.parseGeocoding(coordLoc, a);
+                coord.setLatLon(coordLoc);
+                coord.setMethod(coordLoc.getMethod());
 
-            /*
-             * TODO: GeocoordMatch needs to support setters for Geocoding here. missing
-             * reverse geo info
-             * cc, adm1
-             */
-            m = coord;
-            break;
+                /*
+                 * TODO: GeocoordMatch needs to support setters for Geocoding here. missing
+                 * reverse geo info
+                 * cc, adm1
+                 */
+                m = coord;
+                break;
 
-        case "country":
-            PlaceCandidate countryMatch = new PlaceCandidate();
-            Place cc = new Place();
-            countryMatch.setText(text);
-            cc.setName(text);
-            countryMatch.setConfidence(a.getInteger("confidence", -1));
-            cc.setCountryCode(a.getString("cc"));
-            countryMatch.isCountry = true;
-            countryMatch.choose(cc);
-            m = countryMatch;
+            case "country":
+                PlaceCandidate countryMatch = new PlaceCandidate();
+                Place cc = new Place();
+                countryMatch.setText(text);
+                cc.setName(text);
+                countryMatch.setConfidence(a.getInteger("confidence", -1));
+                cc.setCountryCode(a.getString("cc"));
+                countryMatch.isCountry = true;
+                countryMatch.choose(cc);
+                m = countryMatch;
 
-            break;
+                break;
 
-        case "person":
-            m = new TaxonMatch();
-            Transforms.parseTaxon((TaxonMatch) m, "person", a);
-            break;
+            case "person":
+                m = new TaxonMatch();
+                Transforms.parseTaxon((TaxonMatch) m, "person", a);
+                break;
 
-        case "org":
-            m = new TaxonMatch();
-            Transforms.parseTaxon((TaxonMatch) m, "org", a);
-            break;
+            case "org":
+                m = new TaxonMatch();
+                Transforms.parseTaxon((TaxonMatch) m, "org", a);
+                break;
 
-        case "taxon":
-            m = new TaxonMatch();
-            Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
-            break;
+            case "taxon":
+                m = new TaxonMatch();
+                Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
+                break;
 
-        case "date":
-            DateMatch dt = new DateMatch();
-            Transforms.parseDate(dt, a);
-            m = dt;
-            break;
+            case "date":
+                DateMatch dt = new DateMatch();
+                Transforms.parseDate(dt, a);
+                m = dt;
+                break;
 
-        default:
-            throw new jodd.json.JsonException("Unknown Annotation " + typ);
+            default:
+                throw new jodd.json.JsonException("Unknown Annotation " + typ);
         }
 
         m.setType(typ);
@@ -282,6 +283,16 @@ public class Transforms {
     }
 
     /**
+     * Return seconds of epoch.
+     *
+     * @param d
+     * @return
+     */
+    private static int asSeconds(final Date d) {
+        return (int) (d.getTime() / 1000);
+    }
+
+    /**
      * Cutoff confidence for geocoding results:
      */
     public static int DEFAULT_LOWER_CONFIDENCE = 10;
@@ -316,19 +327,12 @@ public class Transforms {
              * ==========================
              */
             if (name instanceof TaxonMatch) {
-                if (jobParams.output_taxons) {
+                if (jobParams.tag_taxons) {
                     TaxonMatch match = (TaxonMatch) name;
                     ++tagCount;
                     for (Taxon n : match.getTaxons()) {
                         JsonObject node = populateMatch(name);
-                        String t = "taxon";
-                        String taxon_name = n.name.toLowerCase();
-                        if (taxon_name.startsWith("org")) {
-                            t = "org";
-                        } else if (taxon_name.startsWith("person")) {
-                            t = "person";
-                        }
-                        node.put("type", t);
+                        node.put("type", match.getType());
                         node.put("taxon", n.name); // Name of taxon
                         node.put("catalog", n.catalog); // Name of catalog or source
                         node.put("filtered-out", name.isFilteredOut());
@@ -350,6 +354,10 @@ public class Transforms {
                 DateMatch dt = (DateMatch) name;
                 node.put("type", "date");
                 node.put("date-normalized", dt.datenorm_text);
+                if (dt.datenorm != null) {
+                    // Java/Unix Date Epoch in Seconds.
+                    node.put("timestamp", asSeconds(dt.datenorm));
+                }
                 node.put("pattern-id", dt.pattern_id);
                 node.put("filtered-out", name.isFilteredOut());
                 resultArray.add(node);
@@ -398,7 +406,9 @@ public class Transforms {
                 Transforms.createGeocoding(resolvedPlace, node);
                 node.put("name", resolvedPlace.getPlaceName());
                 addProvinceName(node, resolvedPlace);
-                node.put("type", "place");
+                // "Related" or linked geography is for Postal or other use cases.
+                addRelatedGeography(node, place);
+                node.put("type", name.getType());
                 node.put("confidence", place.getConfidence());
                 node.put("rules", StringUtils.join(place.getRules(), ";"));
                 if (place.getConfidence() <= DEFAULT_LOWER_CONFIDENCE) {
@@ -406,11 +416,10 @@ public class Transforms {
                 }
             } else {
                 node.put("name", name.getText());
-                node.put("type", "place");
+                node.put("type", name.getType());
                 node.put("confidence", 15); /* A low confidence */
                 node.put("filtered-out", name.isFilteredOut());
                 node.put("rules", StringUtils.join(place.getRules(), ";"));
-
             }
             node.put("filtered-out", place.isFilteredOut());
             resultArray.add(node);
@@ -432,5 +441,21 @@ public class Transforms {
             return;
         }
         map.put("province-name", adm1Name);
+    }
+
+    /**
+     * @param map
+     * @param mention
+     */
+    private static void addRelatedGeography(JsonObject map, PlaceCandidate mention) {
+        if (mention.isDerived() && mention.getLinkedGeography() != null) {
+            JsonObject relatedInfo = new JsonObject();
+            HashMap<String, Place> slots = mention.getLinkedGeography();
+            for (String slot : slots.keySet()) {
+                Place linkedPlace = slots.get(slot);
+                relatedInfo.put(slot, linkedPlace.getPlaceName());
+            }
+            map.put("related", relatedInfo);
+        }
     }
 }
