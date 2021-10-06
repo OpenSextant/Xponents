@@ -133,6 +133,35 @@ def print_results(arr):
             print(a)
 
 
+def print_match(match:TextMatch):
+    """
+
+    :param match:
+    :return:
+    """
+    filtered = ""
+    if match.filtered_out:
+        filtered = "FILTERED-OUT"
+    if match.label == "place":
+        cc = match.attrs.get("cc")
+        fc = match.attrs.get("feat_class")
+        fcode = match.attrs.get("feat_code")
+        print(match, f"\t\t\tcountry:{cc}, feature:{fc}/{fcode} {filtered}")
+    else:
+        print(match, f"\n\tATTRS{match.attrs} {filtered}")
+
+
+def process_text(txt, docid="$DOC-ID$", features=[], preferred_countries=[], preferred_locations=[]):
+    result = xtractor.process(docid, txt, features=features,
+                              timeout=90,
+                              preferred_countries=preferred_countries,
+                              preferred_locations=preferred_locations)
+    print(f"=========DOCID {docid}")
+    print("Matches\n============")
+    for match in result:
+        print_match(match)
+
+
 if __name__ == '__main__':
     import os
     import sys
@@ -140,11 +169,11 @@ if __name__ == '__main__':
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("--service-url", help="XLayer server URL to /process endpoint")
+    ap.add_argument("input", help="your input")
+    ap.add_argument("--service-url", help="XLayer server host:port", default="localhost:5757")
     ap.add_argument("--docid", help="your doc id")
-    ap.add_argument("--inputfile", help="your input")
     ap.add_argument("--lines", action="store_true", help="process your inputfile as one line per call")
-    ap.add_argument("--text", help="UTF-8 string to process")
+    ap.add_argument("--text", action="store_true", help="<input> arg is a UTF-8 string to process")
     ap.add_argument("--options",
                     help="your service options to send with each request, e.g., 'lowercase,clean_input,revgeo'",
                     default=None)
@@ -154,7 +183,11 @@ if __name__ == '__main__':
     ap.add_argument("--debug", default=False, action="store_true")
     args = ap.parse_args()
 
-    xtractor = XlayerClient(args.service_url, options=args.options)
+    service_url = args.service_url
+    if not args.service_url.startswith("http"):
+        service_url = f"http://{args.service_url}/xlayer/rest/process"
+
+    xtractor = XlayerClient(service_url, options=args.options)
     xtractor.debug = args.debug
     feat = ["geo"]
     countries = None
@@ -177,56 +210,43 @@ if __name__ == '__main__':
     # Support for arbitrary amounts of text
     #
     if args.text:
-        _id = "test doc#1"
-        _text = args.text
-        result = xtractor.process(_id, _text, features=feat,
-                                  timeout=90,
-                                  preferred_countries=countries,
-                                  preferred_locations=locations)
-        print("==============")
-        print("INPUT: from text argument")
-        print("Annotations\n============")
-        print_results(result)
+        process_text(args.input, docid="test-doc-#123", features=feat,
+                                  preferred_countries=countries, preferred_locations=locations)
     # ======================================
     # Support data as one text record per line in a file
     #                
-    elif args.lines and args.inputfile:
-        print("INPUT: from individual lines from inputfile")
+    elif args.lines or args.input.endswith(".json"):
+        print("INPUT: from individual lines from input file")
+        is_json = args.input.endswith(".json")
         try:
-            with open(args.inputfile, 'r', encoding="UTF-8") as fh:
+            with open(args.input, 'r', encoding="UTF-8") as fh:
                 lineNum = 0
                 for line in fh:
+                    text = line.strip()
                     lineNum += 1
-                    _id = "line{}".format(lineNum)
-                    print("=============={}:".format(_id))
-                    _text = line.strip()
-                    result = xtractor.process(_id, _text, features=feat,
-                                              timeout=90,
-                                              preferred_countries=countries,
-                                              preferred_locations=locations)
-                    print("Annotations\n============")
-                    print_results(result)
+                    if is_json:
+                        if not text or text.startswith("#"):
+                            continue
+                        text = json.loads(text).get("text")
+                        if not text:
+                            print("'text' value required in JSON")
+                            continue
+
+                    docid = "line{}".format(lineNum)
+                    process_text(text, docid=docid, features=feat,
+                                 preferred_countries=countries,  preferred_locations=locations)
+
         except Exception as runErr:
             print(format_exc(limit=5))
 
     # ======================================
     # Use a single file as the source text to process
     #                
-    elif args.inputfile:
-        _id = os.path.basename(args.inputfile)
-        if args.docid:
-            _id = args.docid
+    elif args.input:
+        docid = os.path.basename(args.input)
         try:
-            with open(args.inputfile, 'r', encoding="UTF-8") as fh:
-                _text = fh.read()
-                _text = _text.strip()
-                result = xtractor.process(_id, _text, features=feat,
-                                          timeout=90,
-                                          preferred_countries=countries,
-                                          preferred_locations=locations)
-                print("==============")
-                print("INPUT: from text inputfile")
-                print("Annotations\n============")
-                print_results(result)
+            with open(args.input, 'r', encoding="UTF-8") as fh:
+                process_text(fh.read(), docid=docid, features=feat,
+                             preferred_countries=countries, preferred_locations=locations)
         except Exception as runErr:
             print(format_exc(limit=5))

@@ -388,6 +388,12 @@ def get_country(namecode, standard="ISO"):
         raise Exception("That standards body '{}' is not known for code {}".format(standard, namecode))
 
 
+def is_country(feat_code: str):
+    """Test a feature code"""
+    if not feat_code: return False
+    return feat_code.startswith("PCL")
+
+
 def is_administrative(feat: str):
     if not feat: return False
     return "A" == feat.upper()

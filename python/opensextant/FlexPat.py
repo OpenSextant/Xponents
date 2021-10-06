@@ -174,12 +174,26 @@ class PatternMatch(TextMatch):
         self.case = PatternMatch.FOUND_CASE
         self.match_groups = match_groups
         self.variant_id = None
+        self.is_valid = True
+        self.confidence = -1
+
         # Optionally -- back fill as much surrounding text as you want for
         # normalizer/validator routines. Use pre_text, post_text
         self.pre_text = None
         self.post_text = None
         if self.pattern_id and "-" in self.pattern_id:
             self.variant_id = self.pattern_id.split("-", 1)[1]
+
+    def copy_attrs(self, arr):
+        """
+        Default copy of match group slots.  Does not work for every situation.
+        :param arr:
+        :return:
+        """
+        for k in arr:
+            val = self.get_value(k)
+            if val:
+                self.attrs[k] = val
 
     def add_surrounding_text(self, text, text_len, length=16):
         """
