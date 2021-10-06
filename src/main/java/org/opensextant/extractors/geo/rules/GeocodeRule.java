@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -135,11 +135,8 @@ public abstract class GeocodeRule {
         // Some rules may choose early -- and that would prevent other rules
         // from adding evidence
         // In this scheme.
-        if (name.getChosen() != null) {
-            // DONE
-            return true;
-        }
-        return false;
+        // DONE
+        return name.getChosen() != null;
     }
 
     /**
@@ -192,11 +189,8 @@ public abstract class GeocodeRule {
      */
     protected boolean filterOutByFrequency(PlaceCandidate name, Place geo) {
         if (name.distinctLocationCount() > 100) {
-            if (geo.isPopulated() || geo.isAdministrative()) {
-                // allow P places and A boundaries to pass through.
-                return false;
-            }
-            return true; // Filter out everything else.
+            // allow P places and A boundaries to pass through.
+            return !geo.isPopulated() && !geo.isAdministrative();// Filter out everything else.
         }
 
         // Okay, no optimization needed.

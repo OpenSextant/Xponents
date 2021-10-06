@@ -60,7 +60,7 @@ public class SolrGazetteer {
      * attribute that should be
      * thread safe and shareable across instances of SolrMatcher
      */
-    private ModifiableSolrParams params = new ModifiableSolrParams();
+    private final ModifiableSolrParams params = new ModifiableSolrParams();
     private SolrProxy solr = null;
 
     /**
@@ -73,12 +73,12 @@ public class SolrGazetteer {
      * need a helpful lookup
      * to get ISO code for lookup.
      */
-    private Map<String, String> countryFIPS_ISO = new HashMap<String, String>();
+    private final Map<String, String> countryFIPS_ISO = new HashMap<>();
 
     /**
      * Geodetic search parameters.
      */
-    private ModifiableSolrParams geoLookup = createGeodeticLookupParams(1000);
+    private final ModifiableSolrParams geoLookup = createGeodeticLookupParams(1000);
 
     /**
      * Instantiates a new solr gazetteer.

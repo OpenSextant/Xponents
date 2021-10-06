@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
@@ -104,7 +104,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
         // String
         if (ic != null) {
             logger.debug(logTag + "Found CAT={}", ic);
-            includeCategorySet = new HashSet<String>();
+            includeCategorySet = new HashSet<>();
             List<String> val = TextUtils.string2list(ic.get(0), ",");
             includeCategorySet.addAll(val);
             if (includeCategorySet.contains("all")) {
@@ -202,6 +202,10 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
              * =======================================================
              */
             String nm = SolrUtil.getString(doc, "name");
+            if (nm == null){
+                logger.info("Name field may not be empty.");
+                return;
+            }
             if (!includeAll && includeCategorySet != null) {
                 String cat = (String) doc.getFieldValue(catField);
                 if (cat == null) {
@@ -213,9 +217,9 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 }
             }
             String nt = SolrUtil.getString(doc, "name_type");
-            boolean isName = (nt != null ? "N".equals(nt) : false);
+            boolean isName = (nt != null && "N".equals(nt));
 
-            /**
+            /*
              * Cleanup scripts.
              */
             String nameScript = SolrUtil.getString(doc, "script");

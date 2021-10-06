@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +46,7 @@ public class TagFilter extends MatchFilter {
     /*
      * Select languages for experimentation.
      */
-    private Map<String, Set<Object>> langStopFilters = new HashMap<>();
+    private final Map<String, Set<Object>> langStopFilters = new HashMap<>();
 
     // private Set<String> generalLangId = new HashSet<>();
 
@@ -57,7 +56,7 @@ public class TagFilter extends MatchFilter {
      *
      * @throws ConfigException if any file has a problem.
      */
-    public TagFilter() throws IOException, ConfigException {
+    public TagFilter() throws IOException {
         super();
         nonPlaceStopTerms = new HashSet<>();
         String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", // GENERAL
@@ -81,7 +80,7 @@ public class TagFilter extends MatchFilter {
         loadLanguageStopwords(langSet);
     }
 
-    private boolean loadCustomStops = false;
+    private final boolean loadCustomStops = false;
 
     private void loadCustomStopwords() throws IOException {
         if (!loadCustomStops) {
@@ -131,7 +130,7 @@ public class TagFilter extends MatchFilter {
         loadCustomStopwords();
     }
 
-    private void loadStopSet(URL url, String langid) throws IOException, ConfigException {
+    private void loadStopSet(URL url, String langid) throws IOException {
         try (InputStream strm = url.openStream()) {
             HashSet<Object> stopTerms = new HashSet<>();
             for (String line : IOUtils.readLines(strm, StandardCharsets.UTF_8)) {
@@ -173,9 +172,7 @@ public class TagFilter extends MatchFilter {
         }
 
         if (filter_stopwords) {
-            if (nonPlaceStopTerms.contains(t.toLowerCase())) {
-                return true;
-            }
+            return nonPlaceStopTerms.contains(t.toLowerCase());
         }
 
         return false;
@@ -250,9 +247,7 @@ public class TagFilter extends MatchFilter {
          */
         if (!cjk) {
             if (!docIsLower && !docIsUpper) {
-                if (t.isLower() && t.getLength() < 10) {
-                    return true;
-                }
+                return t.isLower() && t.getLength() < 10;
             }
         }
         return false;
@@ -292,10 +287,7 @@ public class TagFilter extends MatchFilter {
      * @return
      */
     private boolean filterOutCJK(PlaceCandidate t) {
-        if (t.getLength() < 5 && TextUtils.count_ws(t.getText()) > 0) {
-            return true;
-        }
-        return false;
+        return t.getLength() < 5 && TextUtils.count_ws(t.getText()) > 0;
     }
 
     /**
@@ -332,7 +324,7 @@ public class TagFilter extends MatchFilter {
             CsvMapReader termreader = new CsvMapReader(termsIO, CsvPreference.EXCEL_PREFERENCE);
             String[] columns = termreader.getHeader(true);
             Map<String, String> terms = null;
-            HashSet<String> stopTerms = new HashSet<String>();
+            HashSet<String> stopTerms = new HashSet<>();
             while ((terms = termreader.read(columns)) != null) {
                 String term = terms.get("exclusion");
                 if (StringUtils.isBlank(term) || term.startsWith("#")) {

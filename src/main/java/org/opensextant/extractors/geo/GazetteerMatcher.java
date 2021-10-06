@@ -421,7 +421,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         long t0 = System.currentTimeMillis();
         log.debug("TEXT SIZE = {}", buffer.length());
         params.set("field", fld);
-        Map<Object, Object> beanMap = new HashMap<Object, Object>(100);
+        Map<Object, Object> beanMap = new HashMap<>(100);
         QueryResponse response = tagTextCallSolrTagger(buffer, input.id, beanMap);
         if (beanMap.isEmpty()) {
             // Nothing found.
@@ -453,7 +453,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          */
         log.debug("DOC={} TAGS SIZE={}", input.id, tags.size());
 
-        TreeMap<Integer, PlaceCandidate> candidates = new TreeMap<Integer, PlaceCandidate>();
+        TreeMap<Integer, PlaceCandidate> candidates = new TreeMap<>();
 
         // names matched is used only for debugging, currently.
         Set<String> namesMatched = new HashSet<>();
@@ -509,7 +509,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // Eliminate any newlines and extra whitespace in match
             matchText = TextUtils.squeeze_whitespace(matchText);
 
-            /**
+            /*
              * Filter out trivial tags. Due to normalization, we tend to get
              * lots of false positives that can be eliminated early. This is
              * testing matches against the most general set of stop words.
@@ -636,7 +636,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     namesMatched.add(pGeo.getName());
                 }
 
-                /**
+                /*
                  * Country names are the only names you can reasonably set ahead
                  * of time. All other names need to be assessed in context.
                  * Negate country names, e.g., "Georgia", by exception.
@@ -677,7 +677,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         this.filteredTotal += this.defaultFilterCount + this.userFilterCount;
         this.matchedTotal += candidates.size();
 
-        return new ArrayList<PlaceCandidate>(candidates.values());
+        return new ArrayList<>(candidates.values());
     }
 
     private static final String CONTRACTIONS = "SsTtDd";
@@ -782,8 +782,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         }
 
         log.debug("DOC=" + docid + " PLACE CANDIDATES SIZE = " + candidates.size());
-        Map<String, Integer> countries = new HashMap<String, Integer>();
-        Map<String, Integer> places = new HashMap<String, Integer>();
+        Map<String, Integer> countries = new HashMap<>();
+        Map<String, Integer> places = new HashMap<>();
         int nullCount = 0;
 
         // This loops through findings and reports out just Country names for

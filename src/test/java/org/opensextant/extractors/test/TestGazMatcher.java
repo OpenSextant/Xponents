@@ -244,7 +244,7 @@ public class TestGazMatcher {
             int lineNum = 0;
             while ((line = reader.readLine()) != null) {
                 ++lineNum;
-                if (isBlank(line)) {
+                if (isBlank(line) || line.trim().startsWith("#")) {
                     // Eat up ^M (\r) or other whitespace.
                     continue;
                 }

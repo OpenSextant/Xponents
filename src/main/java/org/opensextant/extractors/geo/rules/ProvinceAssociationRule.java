@@ -36,7 +36,7 @@ import org.opensextant.extractors.geo.PlaceCount;
  */
 public class ProvinceAssociationRule extends GeocodeRule {
 
-    private Map<String, Place> relevantProvinceID = new HashMap<>();
+    private final Map<String, Place> relevantProvinceID = new HashMap<>();
 
     public ProvinceAssociationRule() {
         weight = 5;

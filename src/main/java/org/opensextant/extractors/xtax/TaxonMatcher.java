@@ -16,7 +16,7 @@
  */
 package org.opensextant.extractors.xtax;
 
-///** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
 //_____                                ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
@@ -29,8 +29,8 @@ package org.opensextant.extractors.xtax;
 //               \/_/
 //
 //OpenSextant TaxonMatcher
-//*  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-//*/
+//  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+//
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ import org.opensextant.util.TextUtils;
  */
 public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
-    private static ModifiableSolrParams params;
+    private static final ModifiableSolrParams params;
 
     static {
         params = new ModifiableSolrParams();
@@ -98,7 +98,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     private boolean tagAll = true;
-    private boolean filterNonAcronyms = true;
+    private final boolean filterNonAcronyms = true;
     // private ProgressMonitor progressMonitor;
 
     /**
@@ -153,10 +153,13 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
             return null;
         }
         if (!taxonExclusionFilter.isEmpty()) {
-            String name = SolrUtil.getString(refData, "taxnode").toLowerCase();
-            for (String t : taxonExclusionFilter) {
-                if (name.startsWith(t)) {
-                    return null;
+            String name = SolrUtil.getString(refData, "taxnode");
+            if (name !=null ) {
+                name = name.toLowerCase();
+                for (String t : taxonExclusionFilter) {
+                    if (name.startsWith(t)) {
+                        return null;
+                    }
                 }
             }
         }
@@ -228,7 +231,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * matches with the
      * catalog ID in this list will be returned by tagText()
      */
-    public Set<String> catalogs = new HashSet<String>();
+    public Set<String> catalogs = new HashSet<>();
 
     public void addCatalogFilters(String[] cats) {
         catalogs.addAll(Arrays.asList(cats));
@@ -247,14 +250,13 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         tagAll = true;
     }
 
-    private Set<String> taxonExclusionFilter = new HashSet<String>();
+    private final Set<String> taxonExclusionFilter = new HashSet<>();
 
-    private TaxonFilter ruleFilter = new TaxonFilter();
+    private final TaxonFilter ruleFilter = new TaxonFilter();
 
     /**
      * Add prefixes of types of taxons you do not want returned. e.g., "Place...."
-     * // exlclude will
-     * allow "Org" and "Person" taxons to pass on thru
+     * exlclude will allow "Org" and "Person" taxons to pass on thru
      *
      * @param prefix
      */
@@ -283,7 +285,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         String taxon_name = node.name.toLowerCase();
         for (String l : commonTaxonLabels){
             if (taxon_name.startsWith(l)) {
-                m.setText(l);
+                m.setType(l);
                 break;
             }
         }
@@ -314,14 +316,14 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
         String docid = (id != null ? id : NO_DOC_ID);
 
-        Map<Object, Object> beanMap = new HashMap<Object, Object>(100);
+        Map<Object, Object> beanMap = new HashMap<>(100);
         QueryResponse response = tagTextCallSolrTagger(buf, docid, beanMap);
         /* Exit early if catalog or taxon filters yield no entries */
         if (beanMap.isEmpty()) {
             return null;
         }
 
-        List<TextMatch> matches = new ArrayList<TextMatch>();
+        List<TextMatch> matches = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");

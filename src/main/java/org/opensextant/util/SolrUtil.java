@@ -41,7 +41,7 @@ public class SolrUtil {
      *         none found.
      */
     public static List<String> getStrings(SolrDocument d, String f) {
-        List<String> vals = new LinkedList<String>();
+        List<String> vals = new LinkedList<>();
 
         Collection<Object> objlist = d.getFieldValues(f);
         if (objlist == null) {

@@ -6,7 +6,6 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.langid.LangDetect;
-import org.opensextant.processing.Parameters;
 import org.opensextant.util.TextUtils;
 
 import java.io.IOException;

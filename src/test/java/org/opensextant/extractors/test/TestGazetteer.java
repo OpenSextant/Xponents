@@ -60,8 +60,6 @@ public class TestGazetteer {
 
                 String q = String.format("name:%s AND -feat_code:PCL* AND -feat_code:TERR", C.getName());
                 List<Place> country_name_matches = gaz.search(q, true);
-                // System.out.println("Matched names for " + C.getName() +
-                // ":\t");
                 String cname = TextUtils.removeDiacritics(C.getName()).toLowerCase();
 
                 done.put(cname, false);

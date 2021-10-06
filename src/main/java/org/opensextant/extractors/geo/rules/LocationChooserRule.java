@@ -1,5 +1,12 @@
 package org.opensextant.extractors.geo.rules;
 
+import org.opensextant.data.Country;
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.*;
+import org.opensextant.processing.Parameters;
+import org.opensextant.util.GeodeticUtility;
+import org.opensextant.util.TextUtils;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -7,28 +14,13 @@ import java.util.Map;
 
 import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
 
-import org.opensextant.data.Country;
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.CountryCount;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.PlaceCount;
-import org.opensextant.extractors.geo.PlaceEvidence;
-import org.opensextant.extractors.geo.PlaceGeocoder;
-import org.opensextant.processing.Parameters;
-import org.opensextant.util.GeodeticUtility;
-import org.opensextant.util.TextUtils;
-
 /**
- * A final geocoding pass or two. Loop through candidates and choose the
- * location that best fits the
- * context.
- * As needed cache chosen entries to optimize, e.g. co-referrenced places
- * aformentioned in document.
- * Ideally, consider choosing a best place for the particular instance of a
- * name, but percolate that
- * to the other mentions of that same name. Is it the same place? No need to
- * disambiguate it
- * multiple times at this point.
+ * A final geocoding pass or two. Loop through candidates and choose the location that best fits the context.
+ * As needed cache chosen entries to optimize, e.g. co-referrenced places aformentioned in document.
+ *
+ * Ideally, consider choosing a best place for the particular instance of a name, but
+ * percolate that to the other mentions of that same name. Is it the same place? No need to
+ * disambiguate it multiple times at this point.
  *
  * @author ubaldino
  */
@@ -39,10 +31,10 @@ public class LocationChooserRule extends GeocodeRule {
      */
     private Map<String, CountryCount> countryContext = null;
     private Map<String, PlaceCount> boundaryContext = null;
-    private Map<String, PlaceCount> namespace = new HashMap<>();
-    private HashMap<String, CountryCount> inferredCountries = new HashMap<>();
-    private HashSet<String> preferredCountries = new HashSet<>();
-    private HashSet<String> preferredLocations = new HashSet<>();
+    private final Map<String, PlaceCount> namespace = new HashMap<>();
+    private final HashMap<String, CountryCount> inferredCountries = new HashMap<>();
+    private final HashSet<String> preferredCountries = new HashSet<>();
+    private final HashSet<String> preferredLocations = new HashSet<>();
 
     private int textCase = 0;
 
@@ -50,16 +42,8 @@ public class LocationChooserRule extends GeocodeRule {
         textCase = c;
     }
 
-    /**
-     * These are accumulated.
-     */
-    private Map<String, Place> documentResolvedLocations = new HashMap<>();
-    private Map<String, PlaceCandidate> documentCandidates = new HashMap<>();
-
     @Override
     public void reset() {
-        documentResolvedLocations.clear();
-        documentCandidates.clear();
         namespace.clear();
         inferredCountries.clear();
         preferredCountries.clear();
@@ -68,7 +52,7 @@ public class LocationChooserRule extends GeocodeRule {
 
     @Override
     public void evaluate(List<PlaceCandidate> names) {
-        evaluate(names, (Parameters) null);
+        evaluate(names, null);
     }
 
     /**
@@ -101,7 +85,7 @@ public class LocationChooserRule extends GeocodeRule {
 
         /*
          * TODO: DEBUG through location chooser using histograms
-         * of found and resolved place metadata.
+         *      of found and resolved place metadata.
          */
         if (log.isDebugEnabled()) {
             debuggingHistograms(names);
@@ -119,19 +103,15 @@ public class LocationChooserRule extends GeocodeRule {
             }
 
             if (name.getChosen() != null) {
-                // documentResolvedLocations.put(name.getTextnorm(), name.getChosen());
-                // CACHE?
-                // DONE
                 continue;
             }
 
             // + For each Name, stack evidence for a given geo or a class of geo (evidence
-            // applies to multiple candidate geos)
+            //     applies to multiple candidate geos)
             // + Assign a weight for each geo based on innate features and evidence.
             // + Sort by final score
             // + Choose top score
-            // + Cache result for a given NAME = CHOSEN, so we don't repeat the same logic
-            // unnecessarily.
+            // + Cache result for a given NAME = CHOSEN, so we don't repeat the same logic unnecessarily.
             //
             for (Place geo : name.getPlaces()) {
                 evaluate(name, geo);
@@ -148,7 +128,7 @@ public class LocationChooserRule extends GeocodeRule {
                  */
                 name.getChosen().setConfidence(name.getConfidence());
                 name.getChosen().setMethod(PlaceGeocoder.METHOD_DEFAULT);
-                documentResolvedLocations.put(name.getTextnorm(), name.getChosen());
+                // TOOD: Track resolved places documentResolvedLocations.put(name.getTextnorm(), name.getChosen());
             } else {
                 log.info("Place name is ambiguous: {} in N={} places", name.getText(), name.distinctLocationCount());
             }
@@ -157,8 +137,7 @@ public class LocationChooserRule extends GeocodeRule {
 
     /**
      * What can we learn from assembling better stats at the document level?
-     * Evidence breaks down into
-     * concrete locations vs. inferred.
+     * Evidence breaks down into concrete locations vs. inferred.
      *
      * @param names
      */
@@ -211,21 +190,15 @@ public class LocationChooserRule extends GeocodeRule {
 
     /**
      * An amount of points that would be distributed amongst feature types at each
-     * level, e.g., Country
-     * names, ADM1, ADM2, PPL names.
+     * level, e.g., Country names, ADM1, ADM2, PPL names.
      * If you have 2 different countries, one mentioned 4 times and the other
-     * mentioned 10 times you
-     * might say the latter is more relevant regarding any ambiguous geography. With
-     * 14 mentions, that
-     * second country is weighted 10/14 = 0.71 of the GLOBAL_POINTS for
-     * disambiguation.
+     * mentioned 10 times you might say the latter is more relevant regarding any ambiguous geography.
+     * With 14 mentions, that
+     * second country is weighted 10/14 = 0.71 of the GLOBAL_POINTS for disambiguation.
      * Note, that if only one country appears in context, then it is very possible
-     * that these global
-     * points will outweigh other over arching connections, such as rules for
-     * CITY,STATE or MAJOR PLACE
-     * (POPULATION). That is okay -- if one single country is mentioned at all, then
-     * that seems to be a
-     * big anchoring point for lots of ambiguities.
+     * that these global points will outweigh other over arching connections, such as rules for
+     * CITY,STATE or MAJOR PLACE (POPULATION). That is okay -- if only one single country is mentioned
+     * then that seems to be a big anchoring point for lots of ambiguities.
      */
     private static final int GLOBAL_POINTS = 5;
 
@@ -240,11 +213,9 @@ public class LocationChooserRule extends GeocodeRule {
     public static String ADMIN_CONTAINS = "Location.InAdmin";
 
     /**
-     * Yet unchosen location. Consider given evidence first, creating some weight
-     * there, then
+     * Yet unchosen location. Consider given evidence first, creating some weight there, then
      * introducing innate properties of possible locations, thereby amplifying the
-     * differences in the
-     * candidates.
+     * differences in the candidates.
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
@@ -310,16 +281,16 @@ public class LocationChooserRule extends GeocodeRule {
             log.debug("\tEvidence: {} {}", ev, ev.getAdmin1());
         }
     }
-    
+
     private static boolean withinSameBoundary(Place p1, Place p2) {
-        if (p1.getAdmin1()==null || p2.getAdmin1()==null) {
+        if (p1.getAdmin1() == null || p2.getAdmin1() == null) {
             return false;
         }
         return p1.getHierarchicalPath().equals(p2.getHierarchicalPath());
     }
-    
+
     private static boolean inCountry(String cc, Place geo) {
-        if (cc==null || geo.getCountryCode()==null) {
+        if (cc == null || geo.getCountryCode() == null) {
             return false;
         }
         return geo.getCountryCode().equals(cc);
@@ -338,21 +309,18 @@ public class LocationChooserRule extends GeocodeRule {
 
     /**
      * Absolute Confidence: Many Locations matched a single name. No country is in
-     * scope; No country
-     * mentioned in document, so this is very low confidence.
+     * scope; No country mentioned in document, so this is very low confidence.
      */
     public static final int MATCHCONF_MANY_LOC = MATCHCONF_MINIMUM;
 
     /**
      * Absolute Confidence: Many locations matched, with multiple countries in scope
-     * So, Many countries
-     * mentioned in document
+     * So, Many countries mentioned in document
      */
     public static final int MATCHCONF_MANY_COUNTRIES = 40;
     /**
      * Absolute Confidence: Many locations matched, but one country in scope. So, 1
-     * country mentioned in
-     * document
+     * country mentioned in document
      */
     public static final int MATCHCONF_MANY_COUNTRY = 50;
 
@@ -411,8 +379,7 @@ public class LocationChooserRule extends GeocodeRule {
 
     /**
      * A subtle boost for locations that were preferred -- especially helps when
-     * there is no inherent
-     * context and we must rely on the caller's intuition.
+     * there is no inherent context and we must rely on the caller's intuition.
      */
     public static final int MATCHCONF_PREFERRED = 5;
 
@@ -422,10 +389,8 @@ public class LocationChooserRule extends GeocodeRule {
 
     /**
      * Confidence of your final chosen location for a given name is assembled as the
-     * sum of some
-     * absolute metric plus some additional qualifiers. The absolute provides some
-     * context at the
-     * document level, whereas the qualifiers are refinements.
+     * sum of some absolute metric plus some additional qualifiers. The absolute provides some
+     * context at the document level, whereas the qualifiers are refinements.
      *
      * <pre>
      *  conf = A + Q1 + Q2...  // this may change.
@@ -487,14 +452,11 @@ public class LocationChooserRule extends GeocodeRule {
 
         // FEATURE WEIGHT
         // ================
-        // Pro-rate this a-priori confidence as 75% + (feature-weight*25%)
-        // Rationale - Given the default points that typically start at "minimum
-        // threshold",
-        // The feature-weight detracts a few points based on type of feature the chosen
-        // location is.
+        // Pro-rate this a-priori confidence as 75% + (feature-weight * 25%)
+        // Rationale - Given the default points that typically start at "minimum threshold",
+        // The feature-weight detracts a few points based on type of feature the chosen location is.
         // IF there is enough supporting evidence, the confidence will naturally
-        // increase, otherwise
-        // that confidence stays below threshold.
+        // increase, otherwise that confidence stays below threshold.
         double featWeight = 0;
         FeatureClassMeta fc = FeatureRule.lookupFeature(pc.getChosen());
         if (fc != null) {

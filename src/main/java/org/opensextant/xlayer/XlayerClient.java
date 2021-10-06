@@ -101,7 +101,7 @@ public class XlayerClient extends Application {
             log.debug("POST: response  {}", json.toString());
             JsonObject meta = json.getJsonObject("response");
             JsonArray annots = json.getJsonArray("annotations");
-            List<TextMatch> matches = new ArrayList<TextMatch>();
+            List<TextMatch> matches = new ArrayList<>();
             for (int x = 0; x < annots.size(); ++x) {
                 JsonObject m = annots.getJsonObject(x);
                 matches.add(Transforms.parseAnnotation(m));
@@ -114,9 +114,7 @@ public class XlayerClient extends Application {
             } else {
                 throw restErr;
             }
-        } catch (java.net.SocketException err) {
-            throw err; // This never happens. Restlet wraps everything.
-        } finally {
+        }  finally {
             client.release();
         }
     }

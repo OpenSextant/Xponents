@@ -112,7 +112,7 @@ public class HeatMapRule extends GeocodeRule {
 
         List<PlaceCandidate> tracking = mentionMap.get(geo.getPlaceID());
         if (tracking == null) {
-            tracking = new ArrayList<PlaceCandidate>();
+            tracking = new ArrayList<>();
             mentionMap.put(geo.getPlaceID(), tracking);
         }
         if (!tracking.contains(name)) {

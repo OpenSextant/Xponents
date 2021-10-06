@@ -15,6 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -275,7 +276,7 @@ public abstract class SocialGeo {
     }
 
     protected double getConfidence(double c) {
-        return new BigDecimal(c).setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return new BigDecimal(c).setScale(3, RoundingMode.FLOOR).doubleValue();
     }
 
     /**

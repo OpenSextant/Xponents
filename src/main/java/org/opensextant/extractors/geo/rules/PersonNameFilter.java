@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -97,8 +97,8 @@ public class PersonNameFilter extends GeocodeRule {
         }
     }
 
-    private Map<String, String> resolvedPersons = new HashMap<>();
-    private Map<String, String> resolvedOrgs = new HashMap<>();
+    private final Map<String, String> resolvedPersons = new HashMap<>();
+    private final Map<String, String> resolvedOrgs = new HashMap<>();
     private static final Pattern delPeriod = Pattern.compile("\\.+$");
 
     /** Delete ending "."or "..." */
@@ -285,7 +285,7 @@ public class PersonNameFilter extends GeocodeRule {
             return true;
         }
 
-        /**
+        /*
          * Name matches not yet filtered out, but may be co-referrenced to prior
          * mention
          */

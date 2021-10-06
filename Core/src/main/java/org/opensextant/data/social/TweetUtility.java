@@ -134,7 +134,7 @@ public class TweetUtility {
             insertGeo(o, tw.statusGeo, false);
             insertGeo(o, tw.authorGeo, true);
 
-            /**
+            /*
              * geo-method = given, GI or LL
              * given
              * GI = geo-inferenced

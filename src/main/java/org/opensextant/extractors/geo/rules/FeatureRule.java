@@ -25,7 +25,7 @@ import org.opensextant.extractors.geo.PlaceCandidate;
  */
 public class FeatureRule extends GeocodeRule {
 
-    private static FeatureClassMeta[] fcmeta = {
+    private static final FeatureClassMeta[] fcmeta = {
             /*
              * Example: 3.5% of placenames are Administrative boundaries.
              * But they are significant and more likely to be mentioned because of that.

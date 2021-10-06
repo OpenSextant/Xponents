@@ -170,7 +170,7 @@ public class XponentTextGeotagger extends XponentGeocoder {
         return m.isLower();
     }
 
-    private List<TextMatch> otherMatches = new ArrayList<>();
+    private final List<TextMatch> otherMatches = new ArrayList<>();
 
     /**
      * This works best if your tweet provides a natural language text,

@@ -59,7 +59,7 @@ public class TaxonMatch extends org.opensextant.extraction.TextMatch {
         }
 
         if (taxons == null) {
-            taxons = new ArrayList<Taxon>();
+            taxons = new ArrayList<>();
         }
         taxons.add(t);
     }

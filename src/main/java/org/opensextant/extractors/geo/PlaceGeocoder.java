@@ -145,7 +145,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     /*
      * ordered list of rules.
      */
-    private List<GeocodeRule> rules = new ArrayList<>();
+    private final List<GeocodeRule> rules = new ArrayList<>();
 
     @Override
     public String getName() {
@@ -427,20 +427,20 @@ public class PlaceGeocoder extends GazetteerMatcher
     /**
      * Countries mentioned, inferred, or otherwise relevant
      */
-    private Map<String, CountryCount> relevantCountries = new HashMap<>();
+    private final Map<String, CountryCount> relevantCountries = new HashMap<>();
     /**
      * Provinces mentioned, inferred or otherwise relevant.
      */
-    private Map<String, PlaceCount> relevantProvinces = new HashMap<>();
+    private final Map<String, PlaceCount> relevantProvinces = new HashMap<>();
     /**
      * Places inferred by their proximity to concrete coordinate references.
      */
-    private Map<String, Place> relevantLocations = new HashMap<>();
+    private final Map<String, Place> relevantLocations = new HashMap<>();
 
     /**
      * Mentions of nationalities or cultures that indicate specific countries.
      */
-    private Map<String, String> nationalities = new HashMap<>();
+    private final Map<String, String> nationalities = new HashMap<>();
 
     /**
      * If all you are doing is geotagging (just identifying places), then
@@ -451,8 +451,8 @@ public class PlaceGeocoder extends GazetteerMatcher
      *
      * @since 2.8.3
      */
-    private boolean geocode = true;
-    private boolean tagOnly = !geocode;
+    private final boolean geocode = true;
+    private final boolean tagOnly = !geocode;
 
     /**
      * See {@link #extract(TextInput, Parameters)} below.
@@ -495,7 +495,7 @@ public class PlaceGeocoder extends GazetteerMatcher
             this.setAllowLowerCase(jobParams.tag_lowercase);
         }
 
-        List<TextMatch> matches = new ArrayList<TextMatch>();
+        List<TextMatch> matches = new ArrayList<>();
         List<TextMatch> coordinates = null;
 
         // 0. GEOTAG raw text. Flag tag-only = false, in otherwords do extra work for

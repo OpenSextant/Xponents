@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,7 +14,6 @@
  * the License.
  *
  */
-
 package org.opensextant.extractors.geo.rules;
 
 import java.util.ArrayList;

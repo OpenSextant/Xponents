@@ -124,8 +124,6 @@ public class CSVGenericFormatter extends AbstractGenericFormatter {
         this.fieldSet.addAll(fieldOrder);
     }
 
-    /**
-     */
     protected boolean canAdd(String f) {
         if (f == null) {
             return false;

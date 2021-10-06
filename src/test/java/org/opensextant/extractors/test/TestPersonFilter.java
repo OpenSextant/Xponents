@@ -1,6 +1,7 @@
 package org.opensextant.extractors.test;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.net.URL;
@@ -55,10 +56,10 @@ public class TestPersonFilter {
 
     @Test
     public void testNonsenseShortPhrases() {
-        assertTrue(isMismatchedShortName("Eï", "ei"));
-        assertTrue(isMismatchedShortName("Eï", "Ei"));
-        assertTrue(isMismatchedShortName("S A", "S. a'"));
-        assertTrue(!isMismatchedShortName("In", "In."));
+        assertTrue(isMismatchedShortName("Eï", "ei", 0));
+        assertTrue(isMismatchedShortName("Eï", "Ei", 0));
+        assertTrue(isMismatchedShortName("S A", "S. a'", 2));
+        assertTrue(!isMismatchedShortName("In", "In.", 1));
     }
 
     /**
@@ -69,9 +70,9 @@ public class TestPersonFilter {
      * @param signal  raw input
      * @return
      */
-    public static boolean isMismatchedShortName(String matched, String signal) {
+    public static boolean isMismatchedShortName(String matched, String signal, int punctCount) {
         boolean isShort = signal.length() < 8;
-        boolean badMatch = NonsenseFilter.irregularPunctPatterns(signal);
+        boolean badMatch = NonsenseFilter.isIrregularPunct(punctCount, signal.length(), 5);
         boolean hasDiacritics = TextUtils.hasDiacritics(matched);
         boolean signalDiacrtics = TextUtils.hasDiacritics(signal);
         boolean misMatchDiacritics = signalDiacrtics != hasDiacritics;
@@ -79,24 +80,52 @@ public class TestPersonFilter {
         return isShort && (badMatch || misMatchDiacritics);
     }
 
+    private static PlaceCandidate span(String t){
+        PlaceCandidate pc = new PlaceCandidate();
+        pc.setText(t);
+        pc.start = 0;
+        pc.end = pc.getText().length();
+        return  pc;
+    }
+
     @Test
     public void testNonsensePhrases() {
         print("Test punctuation in names");
 
+        assertTrue(NonsenseFilter.isValidAbbreviation("A.B.C."));
+        assertTrue(NonsenseFilter.isValidAbbreviation("A.B-C"));
+        assertFalse(NonsenseFilter.isValidAbbreviation("A.B/C"));
+        assertFalse(NonsenseFilter.isValidAbbreviation("A<>C"));
+
         /* Invalid names due to punctuation oddities. */
-        assertTrue(NonsenseFilter.irregularPunctPatterns("”")); /* Double quotes - fail automatically */
-        assertTrue(NonsenseFilter.irregularPunctPatterns("bust”—a-move")); /* Double quotes - fail automatically */
-        assertTrue(NonsenseFilter.irregularPunctPatterns("bust— a-move")); /* Unicode Dash with spaces */
-        assertTrue(NonsenseFilter.irregularPunctPatterns("south\", bend"));
-        assertTrue(NonsenseFilter.irregularPunctPatterns("south\",bend")); /* No space? but has double quotes */
+        /* TODO revisit punct testers  */
+//        assertTrue(NonsenseFilter.irregularPunctPatterns("”")); /* Double quotes - fail automatically */
+//        assertTrue(NonsenseFilter.irregularPunctPatterns("bust”—a-move")); /* Double quotes - fail automatically */
+//        assertTrue(NonsenseFilter.irregularPunctPatterns("bust— a-move")); /* Unicode Dash with spaces */
+//        assertTrue(NonsenseFilter.irregularPunctPatterns("south\", bend"));
+//        assertTrue(NonsenseFilter.irregularPunctPatterns("south\",bend")); /* No space? but has double quotes */
 
         /* Valid names. */
-        assertTrue(!NonsenseFilter.irregularPunctPatterns("St. Paul"));
-        assertTrue(!NonsenseFilter.irregularPunctPatterns("to-to"));
-        assertTrue(!NonsenseFilter.irregularPunctPatterns("U. S. A."));
-        assertTrue(!NonsenseFilter.irregularPunctPatterns("U.S.A."));
-        assertTrue(!NonsenseFilter.irregularPunctPatterns("L` Oreal"));
-        assertTrue(!NonsenseFilter.irregularPunctPatterns("L`Oreal"));
+//        assertTrue(!NonsenseFilter.irregularPunctPatterns("St. Paul"));
+//        assertTrue(!NonsenseFilter.irregularPunctPatterns("to-to"));
+//        assertTrue(!NonsenseFilter.irregularPunctPatterns("U. S. A."));
+//        assertTrue(!NonsenseFilter.irregularPunctPatterns("U.S.A."));
+//        assertTrue(!NonsenseFilter.irregularPunctPatterns("L` Oreal"));
+//        assertTrue(!NonsenseFilter.irregularPunctPatterns("L`Oreal"));
+
+        /* assessPunctuation() should at least hit on some punctuation in these cases */
+        assertTrue(NonsenseFilter.assessPunctuation(span("St. Paul")));
+        assertTrue(NonsenseFilter.assessPunctuation(span("U.S.A.")));
+        assertTrue(NonsenseFilter.assessPunctuation(span("E.E-U.U.")));
+        assertTrue(NonsenseFilter.assessPunctuation(span("E.E x/x U.U."))); // True -- there was punctuation acted on.
+
+        PlaceCandidate pc = span("ho-ho-ho!");
+        assertTrue(NonsenseFilter.assessPunctuation(pc));
+        assertTrue(pc.isFilteredOut());
+
+        pc = span("ho.ho.ho!");
+        assertTrue(NonsenseFilter.assessPunctuation(pc));
+        assertTrue(pc.isFilteredOut());
     }
 
     @Test

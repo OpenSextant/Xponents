@@ -42,7 +42,7 @@ public class NameCodeRule extends GeocodeRule {
      * E.g., San Francisco, Uraguay - 2 char distance. Allow up to 3
      * E.g., San Francisco to Uraguay - 4 char distance.
      */
-    private static int MAX_CHAR_DIST = 5;
+    private static final int MAX_CHAR_DIST = 5;
 
     public static final String NAME_ADMCODE_RULE = "AdminCode";
     public static final String NAME_ADMNAME_RULE = "AdminName";
@@ -308,11 +308,7 @@ public class NameCodeRule extends GeocodeRule {
             }
         }
         // Very limited scope assessment of "abbreviation" == 2 chars.
-        if (pc.getLength() < 3) {
-            return true;
-        }
-
-        return false;
+        return pc.getLength() < 3;
     }
 
     /**

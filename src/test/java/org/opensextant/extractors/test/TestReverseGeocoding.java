@@ -1,9 +1,6 @@
 package org.opensextant.extractors.test;
 
-import java.io.File;
-
 import org.apache.commons.lang3.StringUtils;
-import org.opensextant.data.TextInput;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.processing.Parameters;
 
