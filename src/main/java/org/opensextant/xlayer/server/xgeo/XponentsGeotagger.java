@@ -1,12 +1,12 @@
 package org.opensextant.xlayer.server.xgeo;
 
-import java.util.List;
-
+import jodd.json.JsonObject;
 import org.json.JSONException;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.extractors.geo.PostalGeocoder;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.Transforms;
@@ -21,7 +21,9 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 
-import jodd.json.JsonObject;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A RESTFul application of PlaceGeocoder
@@ -37,44 +39,42 @@ public class XponentsGeotagger extends TaggerResource {
         log = Context.getCurrentLogger();
     }
 
+    private static final String[] extractors = {"xgeo", "xtemp", "xpostal"};
+    private static final HashSet extractorSet = new HashSet<>();
+
+    static {
+        extractorSet.addAll(Arrays.asList(extractors));
+    }
+
     /**
      * get Xponents Exxtractor object from global attributes.
      */
     @Override
     public Extractor getExtractor(String xid) {
         Object X = this.getApplication().getContext().getAttributes().get(xid);
-        if (xid.equals("xgeo")) {
-            PlaceGeocoder xgeo = (PlaceGeocoder) X;
-            if (xgeo == null) {
-                info("Misconfigured, no context-level geocoder pipeline initialized");
-                return null;
-            }
-            return xgeo;
-        } else if (xid.equals("xtemp")) {
-            XTemporal xt = (XTemporal) X;
-            if (xt == null) {
-                info("Misconfigured, no context-level date/time pipeline initialized");
-                return null;
-            }
-            return xt;
+        if (X == null) {
+            /* key not present */
+            error(String.format("No such extractor %s; It is either mis-configured or not available.", xid), null);
+            return null;
         }
+        if (extractorSet.contains(xid)) {
+            return (Extractor) X;
+        }
+        /* key present, but invalid */
         error("No such extractor " + xid, null);
+
         return null;
     }
 
     /**
-     * Contract: docid optional; 'text' | 'doc-list' required. command: cmd=ping
-     * sends back a simple
-     * response
-     * text = UTF-8 encoded text docid = user's provided document ID doc-list = An
-     * array of text
+     * Contract: docid optional; 'text' | 'doc-list' required.
+     * command: cmd=ping sends back a simple response
+     * text = UTF-8 encoded text docid = user's provided document ID
+     * doc-list = An array of text
      * cmd=ping = report status.
-     * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B',
-     * text='...',...] } The
-     * entire array must be parsable in memory as a single, traversible JSON object.
-     * We make no
-     * assumption about one-JSON object per line or anything about line-endings as
-     * separators.
+     * Where json-array contains { docs=[ {docid='A', text='...'}, {docid='B', text='...',...] }
+     * The entire array must be parsable in memory as a single, traversible JSON object.
+     * We make no assumption about one-JSON object per line or anything about line-endings as separators.
      *
      * @param params JSON parameters per REST API: docid, text, lang, features,
      *               options, and preferred_*
@@ -146,8 +146,26 @@ public class XponentsGeotagger extends TaggerResource {
                     XTemporal xt = (XTemporal) getExtractor("xtemp");
                     matches.addAll(xt.extract(input));
                 }
+                if (jobParams.tag_postal) {
+                    // TODO: PostalGeocoder code may operate with older index
+                    //       but extractor will be null here if that *postal* index is not present.
+                    PostalGeocoder pg = (PostalGeocoder) getExtractor("xpostal");
+                    if (pg != null) {
+                        List<TextMatch> postalMatches = pg.extract(input);
+                        // Associate raw geotags with Postal matches, so any Postal codes are fully geolocated.
+                        // Filter out any postal code that does not line up with other geography in input text.
+                        if (!postalMatches.isEmpty()) {
+                            // 1. link postal geotags with other non-postal geotags.
+                            PostalGeocoder.associateMatches(matches, postalMatches);
+                            // 2. regenerate new spans and geocodes;  This may filter in/out geotags.
+                            List<TextMatch> derivedMatches = PostalGeocoder.deriveMatches(postalMatches, input);
+                            // 3. add the superset of postal+derived tags.
+                            matches.addAll(derivedMatches);
+                        }
+                    }
+                }
                 if (isDebug()) {
-                    debug(String.format("CURRENT MEM USAGE(K)=", RuntimeTools.reportMemory()));
+                    debug(String.format("CURRENT MEM USAGE(K)=%d", RuntimeTools.reportMemory()));
                 }
                 /*
                  * formulate matches as JSON output.
@@ -186,24 +204,15 @@ public class XponentsGeotagger extends TaggerResource {
      * @param variousMatches matches to filter
      */
     public void filter(List<TextMatch> variousMatches, Parameters params) {
-        // Determine what looks useful. Filter out things not worth
-        // saving at all in data store.
-        // simpleFilter.filter(variousMatches);
-
-        /*
-         * HACK. Prefer not to change the "filter" state based on output/visibility
-         * parameters.
-         * consider output options; filter out returns based on requested outputs.
+        /* TODO: filter other matches more seriously.
+         *  Marking Taxons as filteredOut is a hack.
          */
-        if (!params.output_taxons) {
+        if (!params.tag_taxons) {
             for (TextMatch m : variousMatches) {
-                if (m.isFilteredOut()) {
-                    continue;
-                } else if (m instanceof TaxonMatch) {
+                if (m instanceof TaxonMatch) {
                     m.setFilteredOut(true);
                 }
             }
         }
     }
-
 }

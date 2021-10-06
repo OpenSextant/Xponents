@@ -4,7 +4,6 @@ import org.restlet.Component;
 import org.restlet.Context;
 import org.restlet.data.Protocol;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,11 +17,11 @@ public class XlayerServer extends Component {
         return "Usage:\n\t\tXlayerServer <port>";
     }
 
-    public XlayerServer() throws IOException {
+    public XlayerServer() {
         this(8888);
     }
 
-    public XlayerServer(int port) throws IOException {
+    public XlayerServer(int port) {
         /* customize app before attaching */
         Context ctx = new Context();
 

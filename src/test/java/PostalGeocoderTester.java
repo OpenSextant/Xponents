@@ -42,17 +42,22 @@ public class PostalGeocoderTester extends TestGazMatcher {
 
 
     public static void main(String[] args) {
+        PostalGeocoderTester tester = null;
         try {
-            PostalGeocoderTester tester = new PostalGeocoderTester();
+            tester = new PostalGeocoderTester();
             tester.parseOptions(args);
             if (tester.params.inputFile != null && tester.params.inputFile.endsWith(".json")) {
                 tester.tagBatch(tester.params.inputFile);
             } else {
                 tester.tagText(tester.inputText);
             }
-            tester.geocoder.cleanup();
         } catch (Exception err) {
             err.printStackTrace();
         }
+        if (tester!=null) {
+            tester.geocoder.cleanup();
+            tester.preTagger.cleanup();
+        }
+        System.exit(0);
     }
 }

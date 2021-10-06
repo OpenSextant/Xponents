@@ -8,6 +8,8 @@ import org.restlet.Restlet;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -41,8 +43,7 @@ public abstract class XlayerApp extends Application {
         Pattern pat = Pattern.compile("VERSION:\\s+(.+)\n");
         Matcher m = pat.matcher(buf);
         if (m.find()) {
-            String ver = m.group(1);
-            return ver;
+            return m.group(1);
         }
         return null;
     }
@@ -55,7 +56,7 @@ public abstract class XlayerApp extends Application {
     protected void banner() throws IOException {
         URL obj = XlayerApp.class.getResource("/banner.txt");
         if (obj != null) {
-            String version_banner = IOUtils.toString(obj.openStream(), "UTF-8");
+            String version_banner = IOUtils.toString(obj.openStream(), StandardCharsets.UTF_8);
             this.version = getVersion(version_banner);
             info("\n" + version_banner);
         } else {
@@ -66,7 +67,7 @@ public abstract class XlayerApp extends Application {
     protected void error(String msg, Exception err) {
         log.severe(msg + " ERR: " + err.getMessage());
         if (isDebug()) {
-            log.fine("" + err.getStackTrace());
+            log.fine(Arrays.toString(err.getStackTrace()));
         }
     }
 

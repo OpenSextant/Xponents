@@ -763,7 +763,7 @@ public class XponentGeocoder extends GeoInferencer {
         if (profileRule.inferredCountries != null) {
             InferredCountry ic = profileRule.inferredCountries.get(chosen.getCountryCode());
             boolean mismatch = (ic == null);
-            boolean valid = (ic != null ? ic.validMatch : false);
+            boolean valid = (ic != null && ic.validMatch);
             if (!valid) {
                 if (!"US".equalsIgnoreCase(chosen.getCountryCode())) {
                     log.debug("\t Stop here, tweet={}", tw);

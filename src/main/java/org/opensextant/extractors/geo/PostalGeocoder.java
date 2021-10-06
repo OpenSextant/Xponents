@@ -314,6 +314,10 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
                 linkGeography(postal, other, "admin", "A/ADM");
                 linkGeography(postal, other, "country", "A/PCL");
             }
+            // Linkages above will re-score geographic connections between postal ~ city, admin, country.
+            //   In the end you will have 4 possible geolocations to choose from, the postal coding be the most specific.
+            postal.setChosen(null);
+            postal.choose();
         }
     }
 
@@ -325,11 +329,14 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
 
         // Dare we cache the sorted scoredPlaces for each mention/otherMention?
         //
+        // "postal" geo  ~ "02144"   ( KR.11 or US.MA )
         for (Place geo : postal.getPlaces()) {
+            //  slot = "admin",  if otherMention is "Massachussetts", then selected postal geo is "02144"(US.MA)
             for (Place otherGeo : otherMention.getPlaces()) {
                 if (otherGeo.getFeatureDesignation().startsWith(featPrefix)) {
                     if (geo.sameBoundary(otherGeo)) {
                         postal.linkGeography(otherMention, slot, otherGeo);
+                        postal.incrementPlaceScore(geo, 5.0, String.format("PostalAssociation/%s", slot));
                         return true;
                     }
                 }
@@ -368,15 +375,13 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
                 continue;
             }
             PlaceCandidate mention = (PlaceCandidate) m;
-            if (mention.getRelated() != null) {
+            if (mention.isAnchor() && mention.getRelated() != null) {
                 PlaceCandidate newSpan = deriveMention(mention, mention.getRelated(), t);
                 newSpan.setType(m.getType());
                 derived.add(newSpan);
-            } else {
-                if (unqualifiedPostalLocation(mention)) {
-                    // Unpaired Postal code.
-                    mention.setFilteredOut(true);
-                }
+            } else if (unqualifiedPostalLocation(mention)) {
+                // Unpaired Postal code.
+                mention.setFilteredOut(true);
             }
         }
         return derived;
@@ -391,15 +396,18 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
      * Order of preference of linked geography slots. For any given A/POSTAL feature
      * we are trying to fully flesh out these slots.
      */
-    public static final String[] KNOWN_GEO_SLOTS = {"city", "admin", "country"};
+    public static final String[] KNOWN_GEO_SLOTS = {"city", "postal", "admin", "country"};
 
     /**
      * Take a given mention that has related mentions and compose a new expanded mention.
      * for example, given:
-     * <p>
-     * QUE  789123   (postal tagger)
-     * Montreal   xxx  xxxxxx  CANADA  (place tagger)
-     * "Montreal   QUE  789123  CANADA"  (derived mention)
+     * <pre>
+     *    QUE  789123   (postal tagger)
+     *    Montreal   xxx  xxxxxx  CANADA  (place tagger)
+     *    "Montreal   QUE  789123  CANADA"  (derived mention)
+     * </pre>
+     * To be clear, this anchors on "postal" codes specifically and expands from there.
+     * This will not use the city or province to expand in that direction.
      *
      * @param anchor
      * @param spans
@@ -416,13 +424,17 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
 
         // Assemble geolocation first based on prior linked geography.
         //  .... IF for some odd reason this is empty, then fall back on individual spans chosen().
-        HashMap<String, Place> geolocation = anchor.getLinkedGeography();
-        if (geolocation != null) {
-            mention.setLinkedGeography(geolocation);
+        // Set Geolocation
+        mention.setLinkedGeography(anchor.getLinkedGeography());
+        if (anchor.getChosen() != null) {
+            // Shortcut -- add a previously Scored, chosen place to a new mention.
+            mention.addPlace(anchor.getChosen(), 0.0); /* addPlace with incremental score of 0 */
+            mention.choose();
+        } else if (anchor.getLinkedGeography() != null) {
             for (String knownSlot : KNOWN_GEO_SLOTS) {
-                Place geo = geolocation.get(knownSlot);
-                if (geo != null) {
-                    mention.setChosen(geo);
+                if (anchor.hasLinkedGeography(knownSlot)) {
+                    // TODO: Will this ever fire?
+                    mention.setChosen(anchor.getLinkedGeography().get(knownSlot));
                     break;
                 }
             }
@@ -448,6 +460,9 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
 
         // Set confidence; Average confidence + 10 points per linked mention.
         mention.setConfidence(confidence + 10 * spans.size());
+        for (String rl : anchor.getRules()) {
+            mention.addRule(rl);
+        }
         mention.addRule("PostalAddressDerivation");
 
         // Set location

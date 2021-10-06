@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -138,11 +138,7 @@ public class MajorPlaceRule extends GeocodeRule {
      * @return flag
      */
     private static boolean ignoreAbbreviations(PlaceCandidate pc) {
-        if (pc.isAbbreviation && !pc.isValid()) {
-            return true;
-        }
-
-        return false;
+        return pc.isAbbreviation && !pc.isValid();
     }
 
     /**
@@ -152,10 +148,7 @@ public class MajorPlaceRule extends GeocodeRule {
      * @return
      */
     public static boolean isRuleFor(PlaceCandidate pc) {
-        if (pc.hasRule(ADMIN) || pc.hasRule(POP) || pc.hasRule(CAPITAL)) {
-            return true;
-        }
-        return false;
+        return pc.hasRule(ADMIN) || pc.hasRule(POP) || pc.hasRule(CAPITAL);
     }
 
     /**

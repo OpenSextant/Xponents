@@ -59,6 +59,7 @@ public class PlaceCandidate extends TextMatch {
     private boolean markedValid = false;
     private HashMap<String, PlaceCandidate> related = null;
     private boolean derived = false;
+    private boolean anchor = false;
 
     /**
      * Default weighting increments.
@@ -107,6 +108,19 @@ public class PlaceCandidate extends TextMatch {
 
     public boolean isDerived() {
         return derived;
+    }
+
+    /**
+     * Mark this mention as an anchor to build from, e.g., given a postal code expand the tag to gather
+     * the related mentions for city, province, etc. vice versa.  In such situations you want one anchor
+     * in such a tuple.
+     */
+    public void markAnchor() {
+        anchor = true;
+    }
+
+    public boolean isAnchor() {
+        return anchor;
     }
 
     /**
@@ -266,7 +280,10 @@ public class PlaceCandidate extends TextMatch {
      * @param geo
      */
     public void setChosen(Place geo) {
-        if (geo instanceof ScoredPlace) {
+        if (geo == null) {
+            choice1 = null;
+            choice2 = null;
+        } else if (geo instanceof ScoredPlace) {
             choice1 = (ScoredPlace) geo;
         } else {
             choice1 = new ScoredPlace(null, null);
@@ -293,9 +310,18 @@ public class PlaceCandidate extends TextMatch {
             return;
         }
         if (scoredPlaces.isEmpty()) {
+            // Nothing to choose.
+            return;
+        }
+        if (scoredPlaces.size() == 1) {
+            // Just one to choose -- optimization.
+            choice1 = scoredPlaces.values().iterator().next();
+            choice2 = null;
+            secondPlaceScore = 0;
             return;
         }
 
+        // More than one -- sort by score.
         List<ScoredPlace> tmp = new ArrayList<>(scoredPlaces.values());
         Collections.sort(tmp);
 

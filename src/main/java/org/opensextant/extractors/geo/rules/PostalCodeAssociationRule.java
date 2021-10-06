@@ -27,10 +27,7 @@ public class PostalCodeAssociationRule extends GeocodeRule {
             return true;
         }
         /* POST ADM1 */
-        if ((geo2.isAdmin1() || geo2.isCountry()) && GeonamesUtility.isPostal(geo1)) {
-            return true;
-        }
-        return false;
+        return (geo2.isAdmin1() || geo2.isCountry()) && GeonamesUtility.isPostal(geo1);
     }
 
     /**
@@ -45,12 +42,19 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                     continue;
                 }
                 boolean geo1Postal = GeonamesUtility.isPostal(geo1); /* If postal, then geo2 must be other */
+                boolean geo2Postal = GeonamesUtility.isPostal(geo2); /* If postal, then geo1 must be other */
                 // Geographic checks:
                 if (sameBoundary(geo1, geo2)) {
                     // Use this to collect evidence. Boundary for geo1 and geo2 are the same.
                     this.boundaryObserver.boundaryLevel1InScope(geo1);
                     p1.markValid();
                     p2.markValid();
+                    if (geo1Postal){
+                        p1.markAnchor();
+                    }
+                    if (geo2Postal){
+                        p2.markAnchor();
+                    }
                     p1.linkGeography(p2, geo1Postal ? "admin" : "postal", geo2);
                     p2.linkGeography(p1, geo1Postal ? "postal" : "admin", geo1);
                     p1.incrementPlaceScore(geo1, 5.0, POSTAL_ASSOC_RULE);
@@ -61,6 +65,12 @@ public class PostalCodeAssociationRule extends GeocodeRule {
 
                     p1.markValid();
                     p2.markValid();
+                    if (geo1Postal){
+                        p1.markAnchor();
+                    }
+                    if (geo2Postal){
+                        p2.markAnchor();
+                    }
                     p1.linkGeography(p2, geo1Postal ? "country" : "postal", geo2);
                     p2.linkGeography(p1, geo1Postal ? "postal" : "country", geo1);
                     p1.incrementPlaceScore(geo1, 3.0, POSTAL_ASSOC_RULE);

@@ -63,7 +63,7 @@ public abstract class TaggerResource extends ServerResource {
         return new JsonRepresentation(ping);
     }
 
-    protected abstract Extractor getExtractor(String xid);
+    public abstract Extractor getExtractor(String xid);
 
     /**
      * Implement the processing of a single Input given some request parameters
@@ -89,13 +89,12 @@ public abstract class TaggerResource extends ServerResource {
     protected Parameters fromRequest(Form inputs) {
         Parameters job = new Parameters();
         String list = inputs.getValues("features");
-        Set<String> features = new HashSet<>();
         job.tag_coordinates = true;
         job.tag_countries = true;
         job.tag_places = true;
 
         if (isNotBlank(list)) {
-            features.addAll(TextUtils.string2list(list.toLowerCase(), ","));
+            HashSet<String> features = new HashSet<>(TextUtils.string2list(list.toLowerCase(), ","));
             parseParameters(job, features);
         }
 
@@ -117,7 +116,6 @@ public abstract class TaggerResource extends ServerResource {
             p.tag_coordinates = true;
             p.tag_countries = true;
             p.tag_places = true;
-            p.tag_postal = true;
         }
 
         // Request tagging on demand.
@@ -125,7 +123,6 @@ public abstract class TaggerResource extends ServerResource {
         p.tag_patterns = kv.contains("patterns") || kv.contains("dates");
 
         p.output_filtered = kv.contains("filtered_out");
-
     }
 
     /**
@@ -154,9 +151,8 @@ public abstract class TaggerResource extends ServerResource {
      */
     protected List<String> fromArray(JSONArray a) {
         ArrayList<String> strings = new ArrayList<>();
-        Iterator<Object> iter = a.iterator();
-        while (iter.hasNext()) {
-            strings.add((String) iter.next());
+        for (Object o : a) {
+            strings.add((String) o);
         }
         return strings;
     }
@@ -183,18 +179,13 @@ public abstract class TaggerResource extends ServerResource {
             resetParameters(job);
 
             String list = inputs.getString("features");
-            Set<String> features = new HashSet<>();
-
-            // JSONArray list = inputs.getJSONArray("features");
-            features.addAll(TextUtils.string2list(list.toLowerCase(), ","));
-
+            Set<String> features = new HashSet<>(TextUtils.string2list(list.toLowerCase(), ","));
             this.parseParameters(job, features);
         }
 
         if (inputs.has("options")) {
             String list = inputs.getString("options");
-            Set<String> opts = new HashSet<>();
-            opts.addAll(TextUtils.string2list(list.toLowerCase(), ","));
+            Set<String> opts = new HashSet<>(TextUtils.string2list(list.toLowerCase(), ","));
             job.clean_input = opts.contains("clean_input");
             job.tag_lowercase = opts.contains("lowercase");
             job.resolve_localities = opts.contains("revgeo") || opts.contains("resolve_localities");
@@ -240,7 +231,7 @@ public abstract class TaggerResource extends ServerResource {
         } else {
             log.severe(msg + " ERR:" + err.getMessage());
             if (isDebug()) {
-                log.fine("" + err.getStackTrace());
+                log.fine(Arrays.toString(err.getStackTrace()));
             }
         }
     }

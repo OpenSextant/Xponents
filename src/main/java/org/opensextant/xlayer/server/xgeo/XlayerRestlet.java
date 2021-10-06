@@ -1,12 +1,9 @@
 package org.opensextant.xlayer.server.xgeo;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.logging.Logger;
-
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.extractors.geo.PostalGeocoder;
 import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.XlayerApp;
@@ -15,12 +12,18 @@ import org.restlet.Context;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.logging.Logger;
+
 /**
+ * Xlayer Restlet app constructs the application, initializes resources, etc.
+ * Actual logic is REST paths for /process --> XponentsGeotagger
+ *
  * @author ubaldino
  */
 public class XlayerRestlet extends XlayerApp {
 
-    /** The log. */
     protected Logger log = null;
 
     public XlayerRestlet(Context c) {
@@ -39,8 +42,15 @@ public class XlayerRestlet extends XlayerApp {
             banner();
             configure();
             Context ctx = getContext();
-            ctx.getAttributes().put("xgeo", tagger);
-            ctx.getAttributes().put("xtemp", dateTagger);
+            if (tagger != null) {
+                ctx.getAttributes().put("xgeo", tagger);
+            }
+            if (dateTagger != null) {
+                ctx.getAttributes().put("xtemp", dateTagger);
+            }
+            if (postalGeocoder != null) {
+                ctx.getAttributes().put("xpostal", postalGeocoder);
+            }
             ctx.getAttributes().put("version", this.version);
             info("%%%%   Xponents Geo Phase Configured");
         } catch (Exception err) {
@@ -56,6 +66,7 @@ public class XlayerRestlet extends XlayerApp {
 
     private PlaceGeocoder tagger = null;
     private XTemporal dateTagger = null;
+    private PostalGeocoder postalGeocoder = null;
 
     /**
      * @throws ConfigException
@@ -95,5 +106,14 @@ public class XlayerRestlet extends XlayerApp {
         //
         dateTagger = new XTemporal();
         dateTagger.configure();
+
+        // NEW: Tag Postal Codes -- if available.
+        try {
+            postalGeocoder = new PostalGeocoder();
+            postalGeocoder.configure();
+        } catch (Exception err) {
+            /* */
+            error("Postal index/tagger is available in Xponents 3.5+ Solr Index", err);
+        }
     }
 }
