@@ -224,6 +224,7 @@ hungry,adj
 hydro,adj
 ideal,adj
 imperial,adj
+indian,adj
 indo,adj
 industrial,adj
 innate,adj
@@ -281,6 +282,7 @@ modern,adj
 mono,adj
 moral,adj
 much,adj
+muddy,adj
 municipal,adj
 mutual,adj
 nasty,adj
@@ -578,6 +580,7 @@ passover,concept.religion
 quran,concept.religion
 sharia,concept.religion
 spirit,concept.religion
+sins,concept.religion
 cont,contraction
 dont,contraction
 isnt,contraction
@@ -685,6 +688,7 @@ chive,food
 cinnamon,food
 citrus,food
 cocoa,food
+coconuts,food
 corndog,food
 cracker,food
 crawfish,food
@@ -772,6 +776,7 @@ power point,internet
 pref,internet
 proc,internet
 seagate,internet
+scams,internet
 serv,internet
 shard,internet
 siri,internet
@@ -1848,6 +1853,7 @@ stone,noun
 stores,noun
 storm,noun
 story,noun
+storey,noun
 strain,noun
 striker,noun
 stud,noun
@@ -2715,6 +2721,7 @@ bridge,place.civil
 brig,place.civil
 broadway,place.civil
 bunker,place.civil
+bureau,place.civil
 campus,place.civil
 canal,place.civil
 capital,place.civil
@@ -2784,9 +2791,12 @@ ground zero,place.civil
 grove,place.civil
 groves,place.civil
 guest house,place.civil
+gym,place.civil
+halls,place.civil
 halfway house,place.civil
 hamlet,place.civil
 harbor,place.civil
+marina,place.civil
 harbour,place.civil
 headquarters,place.civil
 health center,place.civil
