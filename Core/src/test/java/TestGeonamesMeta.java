@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.opensextant.data.Country;
 import org.opensextant.data.Place;
 import org.opensextant.util.GeonamesUtility;
 
@@ -14,6 +15,40 @@ public class TestGeonamesMeta {
         System.out.println(m);
     }
 
+    @Test
+    public void testCountryLoader() throws IOException {
+        GeonamesUtility util = new GeonamesUtility();
+
+        Country pl;
+        // Country/Territory queries:
+        pl = util.getCountry("RU");
+        assertTrue(pl != null);
+        pl = util.getCountry("PJ");
+        assertTrue(pl == null);
+        pl = util.getCountryByFIPS("RU");
+        assertTrue(pl == null);
+        pl = util.getCountryByFIPS("RS");
+        assertTrue(pl != null);
+        pl = util.getCountryByFIPS("PJ");
+        assertTrue(pl != null);
+
+        pl = util.getCountry("PSE");
+        assertTrue(pl != null);
+        pl = util.getCountryByFIPS("WE");
+        assertTrue(pl != null);
+        pl = util.getCountryByFIPS("PS");
+        assertTrue(pl != null);
+        pl = util.getCountryByFIPS("GZ");
+        assertTrue(pl != null);
+
+        // US, Outlying Minor islands, Howland Island
+        pl = util.getCountry("US");
+        assertTrue(pl != null);
+        pl = util.getCountry("UM");
+        assertTrue(pl != null);
+        pl = util.getCountryByFIPS("HQ");
+        assertTrue(pl != null);
+    }
     @Test
     public void testMetadata() throws IOException {
         GeonamesUtility util = new GeonamesUtility();

@@ -5,6 +5,9 @@ import org.junit.Test;
 import org.opensextant.data.Language;
 import org.opensextant.extractors.langid.LangDetect;
 
+import java.io.File;
+import java.net.URL;
+
 public class TestLangID {
 
     private static LangDetect langid = null;
@@ -19,7 +22,8 @@ public class TestLangID {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        langid = new LangDetect(100, "./etc/langdetect/profiles.sm");
+        URL folder = LangDetect.class.getResource("/langdetect/profiles.sm");
+        langid = new LangDetect(100, new File(folder.toURI()).toString());
     }
 
     public static void print(String t, Language l) {
