@@ -36,9 +36,11 @@
   <target name="copy-resources">
     <copy file="${java.resources}/us-state-metadata.csv" todir="${pylib.resources}" />
     <copy file="${java.resources}/country-names-2015.csv" todir="${pylib.resources}" />
+    <copy file="${java.resources}/country-names-2021.csv" todir="${pylib.resources}" />
     <copy file="${java.resources}/geocoord_patterns.cfg" todir="${pylib.resources}" />
     <copy file="${java.resources}/datetime_patterns.cfg" todir="${pylib.resources}" />
     <copy file="${java.resources}/poli_patterns.cfg" todir="${pylib.resources}" />
+    <copy file="${geonames.resources}/cities15000.txt" todir="${pylib.resources}/geonames.org/" />
   </target>
 
   <target name="setup" depends="proxy,get-meta,copy-resources,unpack-langid" />
