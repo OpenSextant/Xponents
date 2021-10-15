@@ -7,8 +7,8 @@ The main 'geoname' table has the following fields :
 from copy import copy
 
 from opensextant import get_country
-from opensextant.gazetteer import DataSource, get_default_db, load_stopterms
-from opensextant.utility import get_list, has_cjk, has_arabic, trivial_bias, is_value, is_code, get_csv_reader, parse_float
+from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, PlaceHeuristics
+from opensextant.utility import get_list, has_cjk, has_arabic, is_value, is_code, get_csv_reader
 
 schema = """
 geonameid         : integer id of record in geonames database
@@ -50,9 +50,12 @@ GEONAMES_GAZ_TEMPLATE = {
     "feat_code": None,
     "FIPS_cc": None,
     "cc": None,
+    "lat": None,
+    "lon": None,
+    "geohash": None,
+
     # Inject constant data at ingest time -- "source" = G for Geonames.org
     "source": GEONAMES_SOURCE,
-    "script": None,
     # Default bias tuning
     "name_bias": 0,
     # ID Bias is not used much
@@ -72,44 +75,26 @@ MAP_GN_OPENSEXTANT = {
     "admin2_code": "adm2"
 }
 
-stopterms = load_stopterms(project_dir=".")
+stopterms = load_stopterms()
 
+
+def render_distinct_names(arr):
+    """
+
+    :param arr:
+    :return: set of names
+    """
+    # Trivial remapping - replace unicode diacritics with normal ASCII
+    # These conventions can be source specific....
+    names = {}
+    for nm in arr:
+        if nm:
+            nm = nm.replace("\u2019", "'").rstrip(".").strip()
+            names[nm.lower()] = nm
+    return set(names.values())
 
 def _format(f):
     return float("{:0.3}".format(f))
-
-
-def generated_entries(geo, names):
-    """
-    Generate all possible entries.
-    :param geo:  metadata
-    :param names:  just the names in a set
-    :return:
-    """
-    entries = []
-    for n in names:
-        loc = copy(geo)
-        loc["name"] = n
-        nt = loc["name_type"]
-        if nt == "N":
-            if is_code(n):
-                loc["name_type"]= "C"
-        if n.lower() in stopterms:
-            loc["search_only"] = True
-        nm_bias = trivial_bias(n)
-        loc["name_bias"] = nm_bias
-        grp = ""
-        if has_cjk(n):
-            loc["name_cjk"] = n
-            grp = "cjk"
-            loc["name_bias"] = _format(nm_bias + 0.10)
-        elif has_arabic(n):
-            loc["name_ar"] = n
-            grp = "ar"
-            loc["name_bias"] = _format(nm_bias + 0.10)
-        loc["name_group"] = grp
-        entries.append(loc)
-    return entries
 
 
 class GeonamesOrgGazetteer(DataSource):
@@ -117,8 +102,9 @@ class GeonamesOrgGazetteer(DataSource):
         DataSource.__init__(self, dbf, **kwargs)
         self.source_keys = [GEONAMES_SOURCE]
         self.source_name = "Geonames.org"
+        self.estimator = PlaceHeuristics()
 
-    def process_source(self, sourcefile):
+    def process_source(self, sourcefile, limit=-1):
         """
         :param sourcefile: Geonames allCountries source file or any other file of the same schema.
         :return: Yields geoname dict
@@ -145,9 +131,7 @@ class GeonamesOrgGazetteer(DataSource):
                 names = set([])
                 variants = gn["alternatenames"]
                 if is_value(variants):
-                    # print(variants)
-                    for nm in get_list(variants, delim=","):
-                        names.add(nm)
+                    names = render_distinct_names(get_list(variants, delim=","))
                 nm = gn["asciiname"]
                 if is_value(nm):
                     names.add(nm)
@@ -164,26 +148,33 @@ class GeonamesOrgGazetteer(DataSource):
                     continue
 
                 geo["place_id"] = f"G{plid}"
+                self.add_location(geo, geo["lat"], geo["lon"])
                 cc = geo["cc"]
                 C = get_country(cc)
                 if C:
                     geo["FIPS_cc"] = C.cc_fips
                 else:
                     print(f"Unknown code '{cc}'")
-                Y,X = geo["lat"], geo["lon"]
-                geo["lat"] = parse_float(Y)
-                geo["lon"] = parse_float(X)
-                # Avoid confusing row counts as 1 row = 1 or more names.
-                _this_namecount = 0
-                self.quiet = False
-                for entry in generated_entries(geo, names):
+
+                geo["id_bias"] = self.estimator.location_bias(geo["geohash"], geo["feat_class"], geo["feat_code"])
+                for nm in names:
                     namecount += 1
-                    _this_namecount += 1
-                    self.quiet = _this_namecount > 1
-                    entry["id"] = GENERATED_BLOCK + namecount
-                    if entry.get("search_only"):
-                        self.excluded_terms.add(entry["name"])
-                    yield entry
+
+                    loc = geo.copy()
+                    loc["name"] = nm
+                    nt = loc["name_type"]
+                    if nt == "N" and is_code(nm):
+                        loc["name_type"] = "C"
+                    grp = ""
+                    if has_cjk(nm):
+                        grp = "cjk"
+                    elif has_arabic(nm):
+                        grp = "ar"
+
+                    loc["name_group"] = grp
+                    loc["name_bias"] = self.estimator.name_bias(nm, loc["feat_class"], grp)
+                    loc["id"] = GENERATED_BLOCK + namecount
+                    yield loc
 
 
 if __name__ == "__main__":

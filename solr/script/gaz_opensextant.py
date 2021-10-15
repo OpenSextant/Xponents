@@ -1,8 +1,9 @@
 import re
 from copy import copy
 
-from opensextant import is_administrative, is_populated
-from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, parse_admin_code, GAZETTEER_TEMPLATE, SCRIPT_CODES
+from opensextant import is_administrative, is_populated, is_country
+from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, parse_admin_code, \
+    GAZETTEER_TEMPLATE, SCRIPT_CODES, DEFAULT_COUNTRY_ID_BIAS
 from opensextant.utility import get_csv_reader, get_list, is_ascii, squeeze_whitespace, parse_float
 
 short_alphanum = re.compile(r"\w+.+\d+")
@@ -80,6 +81,24 @@ NAME_TYPE = {
     "code": "C"
 }
 
+DEFAULT_ADM_NAME_BIAS = 0.10
+
+
+def correct_bias(pl):
+    """
+    Adjust the name_bias of administrative names if they have been previoiusly marked as negative
+    :param pl:
+    :return:
+    """
+    if is_administrative(pl.get("feat_class")) and len(pl["name"]) >= 5:
+        nm_bias = pl.get("name_bias")
+        if nm_bias and nm_bias < 0:
+            if is_country(pl.get("feat_code")):
+                pl["name_bias"] = DEFAULT_COUNTRY_ID_BIAS
+            else:
+                pl["name_bias"] = DEFAULT_ADM_NAME_BIAS
+            print("Corrected bias: ", pl["name"], nm_bias)
+
 
 class OpenSextantGazetteer(DataSource):
     def __init__(self, dbf, **kwargs):
@@ -91,7 +110,7 @@ class OpenSextantGazetteer(DataSource):
             "OG", "OA"  # Geonames and Adhoc items derived by OpenSextant Gazetteer
         ]
 
-    def process_source(self, sourcefile):
+    def process_source(self, sourcefile, limit=-1):
         """
         ingest the standard merged file from the Gazetteer project
         :param sourcefile: the Merged gazetteer file
@@ -182,6 +201,8 @@ class OpenSextantGazetteer(DataSource):
                 geo['lon'] = parse_float(geo['lon'])
                 geo['id_bias'] = parse_float(geo['id_bias'])
                 geo['name_bias'] = parse_float(geo['name_bias'])
+                # TODO: this bias and universal gazetteer model needs to be fixed.
+                correct_bias(geo)
 
                 yield geo
 

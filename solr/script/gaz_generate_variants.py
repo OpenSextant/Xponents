@@ -32,7 +32,7 @@ class NameGenerator:
 
 
 # This source ID
-XPGEN = "XP"
+XPGEN = "X"
 
 
 class GeneralNameVariants(NameGenerator):
@@ -162,7 +162,7 @@ class AdhocNameVariants(DataSource):
         self.source_name = "Xponents Adhoc Names"
         self.source_keys = ["X"]
 
-    def process_source(self, sourcefile):
+    def process_source(self, sourcefile, limit=-1):
         """
         ingest the standard merged file from the Gazetteer project
         :param sourcefile: the Merged gazetteer file

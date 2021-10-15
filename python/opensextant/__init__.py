@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from math import sqrt, sin, cos, radians, atan2
 
 from opensextant.utility import get_csv_reader, get_bool
+from pygeodesy.geohash import encode as geohash_encode
 
 PY3 = sys.version_info.major == 3
 countries = []
@@ -21,30 +22,6 @@ def make_HASC(cc, adm1):
     if not adm1:
         adm1 = '0'
     return '{}.{}'.format(cc, adm1)
-
-
-class Country:
-    """  Country metadata
-    """
-
-    def __init__(self):
-        self.cc_iso2 = None
-        self.cc_iso3 = None
-        self.cc_fips = None
-        self.name = None
-        self.namenorm = None
-        self.name_type = None
-        self.aliases = []
-        self.is_territory = False
-        self.is_unique_name = False
-        self.timezones = []
-        self.languages = set([])
-        self.primary_language = None
-        self.lat = 0
-        self.lon = 0
-
-    def __str__(self):
-        return u'{} ({})'.format(self.name, self.cc_iso2)
 
 
 def format_coord(lat, lon):
@@ -189,7 +166,7 @@ class Place(Coordinate):
         self.id_bias = 0.0
         self.precision = -1
         self.method = None
-        self.population = 0
+        self.population = -1
         self.hierarchical_path = None
 
         # Internal fields for gazetteer curation and text analytics:
@@ -212,6 +189,31 @@ class Place(Coordinate):
         return '{}, {} @({})'.format(self.name, self.country_code, self.string_coord())
 
 
+class Country(Coordinate):
+    """  Country metadata
+    """
+
+    def __init__(self):
+        self.cc_iso2 = None
+        self.cc_iso3 = None
+        self.cc_fips = None
+        self.place_id = None
+        self.name = None
+        self.namenorm = None
+        self.name_type = None
+        self.aliases = []
+        self.is_territory = False
+        self.is_unique_name = False
+        self.timezones = []
+        self.languages = set([])
+        self.primary_language = None
+        self.lat = 0
+        self.lon = 0
+
+    def __str__(self):
+        return u'{} ({})'.format(self.name, self.cc_iso2)
+
+
 def as_place(ctry: Country, name: str, name_type="N", oid=None):
     """
     Convert to Place.
@@ -223,6 +225,7 @@ def as_place(ctry: Country, name: str, name_type="N", oid=None):
     """
     pl = Place(ctry.cc_iso2, name)
     pl.id = oid
+    pl.place_id = ctry.place_id
     pl.name_type = name_type
     pl.feature_class = "A"
     pl.feature_code = "PCLI"
@@ -239,15 +242,16 @@ def as_place(ctry: Country, name: str, name_type="N", oid=None):
 
 
 def load_countries(csvpath=None):
-    """ parses Xponents Basics/src/main/resource CSV file country-names-2015.csv
+    """ parses Xponents Core/src/main/resource CSV file country-names-2015.csv
         putting out an array of Country objects.
     """
     if not csvpath:
         pkg_dir = os.path.dirname(os.path.abspath(__file__))
-        csvpath = os.path.join(pkg_dir, 'resources', 'country-names-2015.csv')
+        csvpath = os.path.join(pkg_dir, 'resources', 'country-names-2021.csv')
 
+    count = 0
     with open(csvpath, 'r', encoding="UTF-8") as fh:
-        columns = "country_name,FIPS_cc,ISO2_cc,ISO3_cc,unique_name,territory".split(',')
+        columns = "country_name,FIPS_cc,ISO2_cc,ISO3_cc,unique_name,territory,latitude,longitude".split(',')
         fio = get_csv_reader(fh, columns)
         for row in fio:
 
@@ -256,21 +260,25 @@ def load_countries(csvpath=None):
                 continue
             if row['country_name'] == 'country_name':
                 continue
-
+            count += 1
             C = Country()
             C.name = row.get('country_name')
             C.cc_iso2 = row.get('ISO2_cc').upper()
             C.cc_iso3 = row.get('ISO3_cc').upper()
             C.cc_fips = row.get('FIPS_cc').upper()
 
+            # Internal data set "place ID"
+            C.place_id = f"C{C.cc_iso2}#{C.cc_fips}#{count}"
+
             C.is_name_unique = get_bool(row.get('unique_name'))
             C.is_territory = get_bool(row.get('territory'))
             C.namenorm = C.name.lower()
+            C.set(row.get("latitude"), row.get("longitude"))
 
             countries.append(C)
 
     for C in countries:
-        if not C.is_territory:
+        if not C.is_territory and C.cc_iso2 not in countries_by_iso:
             countries_by_iso[C.cc_iso2] = C
             countries_by_iso[C.cc_iso3] = C
 
@@ -279,17 +287,20 @@ def load_countries(csvpath=None):
 
         countries_by_name[C.namenorm] = C
 
-    intl = Country()
-    intl.name = "International"
-    intl.cc_iso2 = "ZZ"
-    intl.cc_iso3 = "ZZZ"
-    countries_by_iso["ZZ"] = intl
-
-    # WE, PS, GAZ, etc. and a handful of other oddities are worth noting and remapping.
-
     global __loaded
-    __loaded = len(countries_by_iso) > 0
+    __loaded = len(countries_by_iso) > 1
     return None
+
+
+def get_us_province(adm1:str):
+    """
+
+    :param adm1:  ADM1 code or for territories,
+    :return:
+    """
+    if not usstates:
+        raise Exception("Run load_us_provinces() first")
+    return usstates.get(adm1)
 
 
 def load_us_provinces():
@@ -303,6 +314,8 @@ def load_us_provinces():
 
             cc = row["ISO2_CC"]
             adm1_code = row["ADM1_CODE"][2:]
+            postal_code = row["POSTAL_CODE"]
+            # HASC path
             place_id = make_HASC(cc, adm1_code)
             postal_id = make_HASC(cc, row["POSTAL_CODE"])
             adm1 = Place(place_id, row["STATE"], lat=row["LAT"], lon=row["LON"])
@@ -315,6 +328,9 @@ def load_us_provinces():
             adm1.adm1_postalcode = row["POSTAL_CODE"]
             adm1.source = "OpenSextant"
 
+            # Code alone:
+            usstates[adm1_code] = adm1
+            usstates[postal_code] = adm1
             usstates[place_id] = adm1
             usstates[postal_id] = adm1
 
@@ -386,6 +402,40 @@ def get_country(namecode, standard="ISO"):
         return countries_by_name.get(namecode.lower())
     else:
         raise Exception("That standards body '{}' is not known for code {}".format(standard, namecode))
+
+
+def load_major_cities():
+    """
+    Loads City geo/demographic information -- this does not try to parse all name variants.
+    :return:
+    """
+    pkg_dir = os.path.dirname(os.path.abspath(__file__))
+    csvpath = os.path.join(pkg_dir, 'resources', 'geonames.org', 'cities15000.txt')
+
+    from csv import reader
+    with open(csvpath, 'r', encoding="UTF-8") as fh:
+        rdr = reader(fh, dialect="excel", delimiter="\t")
+        cities = []
+        for line in rdr:
+            if len(line) != 19:
+                continue
+            if not line[4]:
+                print("Not location info for City ~ ", line[0])
+                continue
+            #          ID       NAME     LAT                 LON
+            pl = Place(line[0], line[1], lat=float(line[4]), lon=float(line[5]))
+            pl.feature_class = line[6]
+            pl.feature_code = line[7]
+            pl.country_code = line[8]
+            pl.adm1 = line[10]
+            pl.adm2 = line[11]
+            pl.geohash = geohash_encode(pl.lat, pl.lon, precision=5)
+            try:
+                pl.population = int(line[14])
+            except:
+                pass
+            cities.append(pl)
+    return cities
 
 
 def is_country(feat_code: str):

@@ -1,7 +1,7 @@
 import re
 from time import sleep
 
-from opensextant import Place, load_countries, countries, as_place
+from opensextant import Place, load_countries, countries, as_place, is_administrative, is_populated
 from opensextant.gazetteer import DB, load_stopterms, GazetteerIndex, get_default_db
 from opensextant.utility import replace_diacritics
 
@@ -34,7 +34,7 @@ class Finalizer:
         #  - by Country
         #    - by feature class or empty non-feature.  ... Resolve any low-quality entries with empty feature.
         countries = self.db.list_countries()
-        BASE_SOURCES = {"OA", "OG", "U", "UF", "N", "NF"}
+        BASE_SOURCES = {"OA", "OG", "U", "UF", "N", "NF", "ISO"}
         for cc in countries:
             # Collect entries with
             print(f"Country '{cc}'")
@@ -73,6 +73,12 @@ class Finalizer:
                 keys.add(k)
 
     def index_country_codes(self, url, starting_id=20000000):
+        """
+        :deprecated:  data is used in database, so we'll get it from there anyway.
+        :param url:
+        :param starting_id:
+        :return:
+        """
         load_countries()
         indexer = GazetteerIndex(url)
         # offset into postal index:
@@ -157,12 +163,20 @@ def filter_out_term(pl:Place):
     if txtnorm in stopwords:
         return True
 
+    admin_feat = is_administrative(pl.feature_class)
+    pop_feat = is_populated(pl.feature_class)
     # UPPER case abbreviations allowed only for administrative boundaries
-    if pl.is_upper and len(pl.name) < 4 and pl.feature_class != "A":
+    if pl.is_upper and len(pl.name) < 4 and not admin_feat:
         return True
 
     if replace_diacritics(txtnorm).strip("'") in stopwords:
         return True
+
+    # Ignore trivial feature names: e.g., s"The Spot"
+    if not (pop_feat or admin_feat) and txtnorm.startswith("the "):
+        tokens = txtnorm.split(" ")
+        if tokens[1] in stopwords and len(tokens) == 2:
+            return True
 
     return False
 
@@ -214,7 +228,6 @@ def filter_in_feature(pl:Place, feats):
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
-
 
     ap = ArgumentParser()
     ap.add_argument("--db", default=get_default_db())

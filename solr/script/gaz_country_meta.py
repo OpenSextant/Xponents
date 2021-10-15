@@ -2,10 +2,12 @@ from opensextant.gazetteer import DataSource, get_default_db
 from opensextant import  load_countries, countries, as_place
 
 
+SOURCE_ID = "ISO" # Really "ISO plus"
+
 class CountryGazetteer(DataSource):
     def __init__(self, dbf, **kwargs):
         DataSource.__init__(self, dbf, **kwargs)
-        self.source_keys = ["ISO"]
+        self.source_keys = [SOURCE_ID]
         self.source_name = "ISO Country Meta"
         self.starting_row = -1
         self.place_count = 0
@@ -19,41 +21,26 @@ class CountryGazetteer(DataSource):
         :return:
         """
         load_countries()
-        cdone = set([])
         count = 0
         self.purge()
         for C in countries:
-            if C.cc_iso2 in cdone:
-                continue
-            pid = None
-            for C2 in self.db.list_places(cc=C.cc_iso2, fc="A", criteria=" AND lat!=0.0 AND feat_code like 'PCL%'", limit=1):
-                C.lat = C2.lat
-                C.lon = C2.lon
-                C.adm1 = "0"
-                pid = C2.place_id
-                break
-
             # We won't use FIPS codes for tagging.
             pl = as_place(C, C.name.lower().capitalize(), oid=self.starting_row + count, name_type="N")
-            if pid:
-                pl.place_id = pid
             pl.name_bias = 0.20
+            pl.source = SOURCE_ID
             self.db.add_place(pl)
             count += 1
 
             pl = as_place(C, C.cc_iso2, oid=self.starting_row + count, name_type="C")
-            if pid:
-                pl.place_id = pid
+            pl.source = SOURCE_ID
             self.db.add_place(pl)
             count += 1
 
             pl = as_place(C, C.cc_iso3, oid=self.starting_row + count, name_type="C")
-            if pid:
-                pl.place_id = pid
+            pl.source = SOURCE_ID
             self.db.add_place(pl)
             count += 1
 
-            cdone.add(C.cc_iso2)
             if count > limit > 0:
                 break
         self.db.close()

@@ -48,5 +48,9 @@ class TestReferenceData(TestCase):
         assert countries_by_iso.get("XK") is not None
 
 
+    def test_cities(self):
+        from opensextant import load_major_cities
+        data = load_major_cities()
+        print(len(data))
 if __name__ == '__main__':
     main()

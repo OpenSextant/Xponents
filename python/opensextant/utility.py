@@ -319,11 +319,15 @@ def has_arabic(text):
 
 def trivial_bias(name):
     """ Experimental: Deteremine unique a name is using length and character set and # of words
+
+    Abcd           4/2 + 1 + 0   x 0.02  = 0.06
+    Abcde fghi    10/2 + 2 + 0   x 0.02  = 0.14
+    Abcdé fghi    10/2 + 2 + 1   x 0.02  = 0.16
     """
-    l_points = len(name) / 3
+    l_points = len(name) / 2
     word_points = len(name.split())
     charset_points = 1 if not is_ascii(name) else 0
-    score = (l_points + word_points + charset_points) * 0.03
+    score = (l_points + word_points + charset_points) * 0.02
     return float("{:0.3}".format(score))
 
 
@@ -409,7 +413,7 @@ class ConfigUtility:
     If the keyword is valid and points to a valid file path, then the file path is used.
     In otherwords, keywords are aliases for a file on disk.
 
-      Ex.  'mywords' = '.\cfg\mywords_v03_filtered.txt'
+      Ex.  'mywords' = './cfg/mywords_v03_filtered.txt'
 
       oxygen.cfg file would have this mapping.  Your code just references 'mywords' to load it.
     """

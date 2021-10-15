@@ -4,8 +4,8 @@ import os
 from copy import copy
 
 import shapefile
-from opensextant import get_country, Country
-from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, parse_admin_code
+from opensextant import get_country, Country, is_abbreviation
+from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, parse_admin_code, PlaceHeuristics
 from opensextant.utility import is_ascii, is_code, trivial_bias, get_list
 
 #
@@ -33,10 +33,9 @@ SUBDIV_GAZ_TEMPLATE = {
     "cc": None,
     "source": "NE",
     # Default bias tuning
-    "name_bias": 0.15,
-    "id_bias": 0.20,
+    "name_bias": 0.10,
+    "id_bias": 0.10,
     "name_type": "N",
-    "script": "",
     "name_group": ""
 }
 
@@ -138,7 +137,7 @@ def _schema(shp):
         print(f[0], f[1])
 
 
-def assign_admin_levels(geo, country:Country, adm1:str, alt_adm1:str):
+def assign_admin_levels(geo, country: Country, adm1: str, alt_adm1: str):
     """
     NaturalEarth has some odd codings.
     For UK/GB it has top level provinces WLS, ENG, SCT, NIR as other codes, but not as ADM1
@@ -167,8 +166,9 @@ class NatEarthAdminGazetteer(DataSource):
         self.source_keys = ["NE"]
         self.rate = 1000
         self.source_name = "NaturalEarth"
+        self.estimator = PlaceHeuristics()
 
-    def process_source(self, sourcefile):
+    def process_source(self, sourcefile, limit=-1):
         """
         :param sourcefile: Shapefile from Natural Earth
         :return:
@@ -265,41 +265,30 @@ class NatEarthAdminGazetteer(DataSource):
                 # Geographic codings:  Features, location, IDs
                 labels = set([row["woe_label"], row["woe_name"]])
                 labels.update(all_script)
+                namenorm = ""
                 fc, ft = parse_feature_type(row, labels, debug=self.debug)
-                lat, lon = row["latitude"], row["longitude"]
                 plid = row["gns_id"]
                 if plid == "-1":
                     plid = None
-                namenorm = ""
                 if plid:
                     plid = f"N{plid}"
-                    official_place, name_biases = self.db.get_places_by_id(plid)
-                    if official_place:
-                        namenorm = official_place.name.lower()
-                    else:
-                        if self.debug: print("Missing place", row["name"], row['featurecla'], row['ne_id'])
-
-                if not plid:
+                else:
                     plid = f"NE{row['ne_id']}"
-                    if self.debug:
-                        print("Backfill missing GNS ID", names)
+                    if self.debug: print("Backfill missing GNS ID", names)
 
                 # Create template for new entry from this row -- metadata here is constant
                 geo = copy(SUBDIV_GAZ_TEMPLATE)
-                geo["lat"] = lat
-                geo["lon"] = lon
+                self.add_location(geo, row["latitude"], row["longitude"])
                 geo["place_id"] = plid
-                assign_admin_levels(geo, C, adm1, alt_adm1 = gu_a3)
+                assign_admin_levels(geo, C, adm1, alt_adm1=gu_a3)
                 geo["feat_class"] = fc
                 geo["feat_code"] = ft
                 geo["FIPS_cc"] = C.cc_fips
-                # entry["ISO3_cc"] = C.cc_iso3
-                if official_place:
-                    geo["id_bias"] = official_place.id_bias
+
+                geo["id_bias"] = self.estimator.location_bias(geo["geohash"], fc, ft)
 
                 # Name data here is variable -- so create a new entry for each distinct name.
                 distinct_names = set([])
-                self.quiet = False
                 for lang, nameset in [("", anglo_script),
                                       ("xx", general_script),
                                       ("ar", arabic_script),
@@ -308,76 +297,22 @@ class NatEarthAdminGazetteer(DataSource):
                         if nm.lower() in distinct_names:
                             continue
                         distinct_names.add(nm.lower())
-                        self.quiet = len(distinct_names) > 1
-                        entry = generate_name(geo, nm, namenorm, place=official_place, debug=self.debug,
-                                              name_biases=name_biases, lang=lang, postal=postal)
+                        entry = geo.copy()
                         count += 1
+
                         entry["id"] = GENERATED_BLOCK + count
-                        if entry.get("search_only"):
-                            self.excluded_terms.add(nm)
+                        entry["name"] = nm
+                        name_grp = lang
+                        if lang == "xx":
+                            name_grp = ""
+                        entry["name_grp"] = name_grp
+                        entry["name_bias"] = self.estimator.name_bias(nm, fc, name_grp)
+                        if is_code(nm):
+                            entry["name_type"] = "C"
+                        elif is_abbreviation(nm):
+                            entry["name_type"] = "A"
 
                         yield entry
-
-
-def generate_name(basemeta, name, namenorm, place=None, name_biases={}, lang=None, postal=None, debug=False):
-    """
-    Sketchy algorithm on choosing some decent metadata to support geotagging rules.
-
-    ** EXPERIMENTAL **
-
-    :param basemeta:  geo point metadata to use a base entry
-    :param name: name text
-    :param namenorm: Normalized name of the NGA geonames entry
-    :param place: Place object for existing OpenSextant place with name_bias / id_bias
-    :param name_biases: all name_biases for this place
-    :param lang: language ID group for given variant
-    :param postal: postal code if one was given in row
-    :param debug: debug
-    :return: cleaned up geoname dict
-    """
-    gn = copy(basemeta)
-    namelen = len(name)
-    gn["name"] = name
-    gn["name_type"] = "N"
-    gn["search_only"] = False
-    gn["name_bias"] = 0.15
-    if lang == "xx":
-        gn["name_group"] = ""
-    else:
-        gn["name_group"] = lang
-    if name.lower() in stopterms:
-        gn["search_only"] = True
-
-    if is_code(name) or (postal and name == postal):
-        # Postal codes
-        gn["name_type"] = "C"
-        gn["name_bias"] = 0
-        gn["search_only"] = False  # Allow because this is a POSTAL code.
-    elif namelen <= 7 and ("." in name or name.isupper()):
-        # Postal or other abbreviations
-        gn["name_type"] = "A"
-        gn["name_bias"] = 0.01
-    elif namenorm and name_biases:
-        # All other names  - Compare this name to the names/bias pairs provide from OpenSextant Gaz.
-        this_name = name.lower()
-        name_bias = _approximate_bias(name_biases, this_name)
-        if this_name != namenorm:
-            if lang in NOT_LEXICAL_COMPARABLE_SCRIPT or (name_bias < 0 and lang == "xx"):
-                name_bias = 0.10
-            if lang not in NOT_LEXICAL_COMPARABLE_SCRIPT:
-                lendiff = namelen - len(namenorm)
-                name_bias += lendiff * 0.01
-            if place:
-                if place.is_ascii and not is_ascii(name):
-                    name_bias += 0.05
-        gn["name_bias"] = float("{:0.3}".format(name_bias))
-    else:
-        gn["name_bias"] = trivial_bias(name)
-
-    if debug:
-        if gn["name_type"] == {"A", "C"}:
-            print("Postal code:", name)
-    return gn
 
 
 if __name__ == "__main__":

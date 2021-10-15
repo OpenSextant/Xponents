@@ -1,14 +1,30 @@
 import os
 import sqlite3
+from math import log as natlog
 from traceback import format_exc
 
 import arrow
 import pysolr
-from opensextant import Place, Country
-from opensextant.utility import ensure_dirs, is_ascii, ConfigUtility, get_bool
-from pygeodesy.geohash import encode as geohash_encode
+from opensextant import Place, Country, geohash_encode
+from opensextant.utility import ensure_dirs, is_ascii, ConfigUtility, get_bool, trivial_bias, replace_diacritics, \
+    parse_float
 
 DEFAULT_MASTER = "master_gazetteer.sqlite"
+DEFAULT_COUNTRY_ID_BIAS = 0.49
+
+GAZETTEER_SOURCE_ID = {
+    "ISO",  # ISO-3166 metadata
+    "N",  # NGA
+    "NF",  # NGA fixed
+    "U",  # USGS
+    "UF",  # USGS fixed
+    "OA",  # OpenSextant Adhoc
+    "OG",  # OpenSextant geonames.org derived
+    "G",  # Geonames.org
+    "GP"  # Geonames.org Postal
+    "X",  # Xponents
+    "NE"  # Natural Earth
+}
 
 GAZETTEER_SOURCES = {
     "NGA": "N",
@@ -26,6 +42,7 @@ GAZETTEER_SOURCES = {
     "G": "G"
 }
 
+# Scripts, not languages per se.
 SCRIPT_CODES = {
     None: "",
     "LATIN": "L",
@@ -50,7 +67,33 @@ SCRIPT_CODES = {
     "MALAYALAM": "MY",
     "SINHALA": "SI",
     "TAMIL": "TA",
-    "THAI": "TH",
+    "THAI": "TH"
+}
+
+# FIPS code to ISO CC
+# Extend to other territory codes
+US_TERRITORY_MAP = {
+    "FIPS": {
+        "AQ": "AS",
+        "GQ": "GU",
+        "CQ": "MP",
+        "RQ": "PR",
+        "VI": "VI",
+        "FQ": "UM",
+        "DQ": "UM",
+        "HQ": "UM",
+        "JQ": "UM",
+        "WQ": "UM",
+        "MQ": "UM"
+    },
+    "ISO": {
+        # Reverse is not true for all cases:  ISO to FIPS
+        # "UM": "UM",
+        "PR": "RQ",
+        "MP": "CQ",
+        "GU": "CQ",
+        "AS": "AQ"
+    }
 }
 
 
@@ -58,7 +101,7 @@ def get_default_db():
     return os.path.join(".", "tmp", DEFAULT_MASTER)
 
 
-def load_stopterms(project_dir="."):
+def load_stopterms(project_dir=".", lower=True):
     """
     Load default stop terms from source tree for project build.
     :param project_dir: The location of Xponents/solr source tree.
@@ -72,7 +115,10 @@ def load_stopterms(project_dir="."):
               "etc/gazetteer/filters/non-placenames,acronym.csv"]:
         terms = loader.loadDataFromFile(os.path.join(project_dir, f), ",")
         for t in terms:
-            stopterms.add(t[0].lower())
+            if lower:
+                stopterms.add(t[0].lower())
+            else:
+                stopterms.add(t[0])
     return stopterms
 
 
@@ -136,7 +182,7 @@ GAZETTEER_TEMPLATE = {
     'FIPS_cc': None, 'cc': None,
     'adm1': None, 'adm2': None,
     'source': None,
-    'script': None,
+    # 'script': None,
     'name_bias': 0,
     'id_bias': 0,
     'name_type': "N",
@@ -152,7 +198,7 @@ def parse_admin_code(adm1):
     if not adm1:
         return ""
 
-    code = ""
+    code = adm1
     if "?" in adm1:
         code = "0"
     elif "." in adm1:
@@ -233,7 +279,7 @@ def as_place_record(place, target="index"):
         "cc": place.country_code,
         "FIPS_cc": place.country_code_fips,
         "source": place.source,
-        "script": place.name_script,
+        # "script": place.name_script,
         "search_only": place.search_only
     }
 
@@ -330,7 +376,6 @@ class DB:
                 `name_type` TEXT NOT NULL,
                 `name_group` TEXT NULL,
                 `source` TEXT NOT NULL,
-                `script` TEXT NULL,
                 `feat_class` TEXT NOT NULL,
                 `feat_code` TEXT NOT NULL,
                 `cc` TEXT NULL,
@@ -385,6 +430,9 @@ class DB:
                 self.__assess_queue(force=True)
                 self.conn.close()
                 self.conn = None
+        except sqlite3.IntegrityError:
+            print("Data integrity issue")
+            print(format_exc(limit=5))
         except:
             self.conn = None
 
@@ -398,18 +446,18 @@ class DB:
         src = dct["source"]
         dct["source"] = GAZETTEER_SOURCES.get(src, src)
         # 6 geohash prefix is about 100m to 200m error. precision=8 is 1m precision.
-        if "lat" in dct:
+        if "lat" in dct and not dct.get("geohash"):
             dct["geohash"] = geohash_encode(dct["lat"], dct["lon"], precision=6)
-        else:
-            print("Geoname has no location", dct)
-
-        v = get_bool(dct.get("search_only"))
-        dct["search_only"] = 0
-        if v:
+        #
+        # print("Geoname has no location", dct)
+        if "search_only" not in dct:
             dct["search_only"] = 1
+            nb = dct.get("name_bias", 0)
+            dct["search_only"] = nb < 0
 
     def add_place(self, obj):
-        """ Add one place
+        """
+        Add one place
         :param obj: a place dictionary.  If arg is a Place object it is converted to dictionary first.
         """
         dct = None
@@ -428,11 +476,11 @@ class DB:
             insert into placenames (
                 id, place_id, name, name_type, name_group, 
                 lat, lon, geohash, feat_class, feat_code,
-                cc, FIPS_cc, adm1, adm2, source, script, name_bias, id_bias, search_only
+                cc, FIPS_cc, adm1, adm2, source, name_bias, id_bias, search_only
              ) values (
                 :id, :place_id, :name, :name_type, :name_group, 
                 :lat, :lon, :geohash, :feat_class, :feat_code,
-                :cc, :FIPS_cc, :adm1, :adm2, :source, :script, :name_bias, :id_bias, :search_only)"""
+                :cc, :FIPS_cc, :adm1, :adm2, :source, :name_bias, :id_bias, :search_only)"""
             self.conn.executemany(sql, self.queue)
             self.conn.commit()
             self.queue_count = 0
@@ -526,7 +574,7 @@ class DB:
             self.conn.commit()
         return True
 
-    def update_name_type(self, arr:list, t:str):
+    def update_name_type(self, arr: list, t: str):
         """
         Change the name type in bulk.
         :param arr: bulk array of placenames to change
@@ -590,7 +638,7 @@ class DataSource:
     """
 
     def __init__(self, dbf, debug=False):
-        self.db = DB(dbf, commit_rate=10)
+        self.db = DB(dbf, commit_rate=100)
         self.rate = 1000000
         self.rowcount = 0
         self.source_keys = []
@@ -613,6 +661,16 @@ class DataSource:
         :return: generator of Place object or dict of Place schema
         """
         yield None
+
+    def add_location(self, geo, lat, lon):
+        if lat and lon:
+            geo["lat"] = parse_float(lat)
+            geo["lon"] = parse_float(lon)
+        else:
+            print("No location on ROW", geo.get("place_id"))
+        if "lat" in geo:
+            geo["geohash"] = geohash_encode(geo["lat"], geo["lon"], precision=6)
+        return geo
 
     def normalize(self, sourcefile, limit=-1, optimize=False):
         """
@@ -737,6 +795,161 @@ class GazetteerSearch:
             C.is_territory = feat_code != "PCLI" or "territo" in nm.lower()  # is NOT independent
             countries.append(C)
         return countries
+
+
+class PlaceHeuristics:
+    def __init__(self):
+        from opensextant import load_major_cities
+        from opensextant import make_HASC
+        self.debug = False
+        self.cities = {}
+        self.cities_spatial = {}  # keyed by geohash
+        self.stopwords = load_stopterms()
+        self.MAX_NAMELEN = 50
+        self.stat_charcount = 0
+        self.stat_namecount = 0
+        self.feature_wt = {
+            "A": 10,
+            "P": 9,
+            "S": 7,
+            "T": 6,
+            "L": 7,
+            "V": 7,
+            "R": 5,
+            "H": 7,
+            "U": 3,
+            "P/PPLX": 7,
+            "P/PPLH": 7,
+            "H/STM": 3,
+            "H/WLL": 3
+        }
+
+        # Look up cities by CC.ADM1
+        for city in load_major_cities():
+            key = make_HASC(city.country_code, city.adm1)
+            if key in self.cities:
+                self.cities[key].append(city)
+            else:
+                self.cities[key] = [city]
+
+            key = city.geohash
+            if city.population > 0:
+                if key not in self.cities_spatial:
+                    self.cities_spatial[key] = 0
+                elif self.debug:
+                    print("Dense cities around ", key, city)
+                self.cities_spatial[key] += city.population
+
+    def estimate_bias(self, geo, name_group=""):
+        """
+        Primary Estimator of id_bias and name_bias.
+
+        id_bias   -- a location bias to pre-rank city by feature/population
+        name_bias -- a metric ranging from -1 to 1, that represents the validity of a tagging the name/phrase
+                     in a general context.  The result is binary  search_only = name_bias < 0. This means
+                     that geo names that are search_only are not taggable.
+        :param geo:
+        :param name_group:
+        :return:
+        """
+        geo["id_bias"] = self.location_bias(geo["geohash"], geo["feat_class"], geo["feat_code"])
+        geo["name_bias"] = self.name_bias(geo["name"], geo["feat_class"], name_group)
+
+    def get_feature_scale(self, fc, dsg):
+        #  Location bias is 70% population, 30% feature type
+        #
+        if not dsg:
+            return self.feature_wt.get(fc, 5)
+
+        fckey = f"{fc}/{dsg}"
+        for l in [6, 5]:
+            fc_scale = self.feature_wt.get(fckey[0:l])
+            if fc_scale:
+                return fc_scale
+
+        return self.feature_wt.get(fc, 5)
+
+    def location_bias(self, loc, fc, dsg):
+        """
+        A location is pre-disposed by its feature type and population/popularity.
+        E.g., large cities are mentioned more often in news or documents than less populated cities.
+        Factors:
+
+        Feature gradient     A, P, ..... U.  More populated features have higer bias
+        Population gradient  log(pop)  scales bias higher
+
+        :param loc: geohash(5)
+        :param fc:  feat class
+        :param dsg: feat code designation
+        :return:
+        """
+        pop_wt = 0
+        fc_scale = self.get_feature_scale(fc, dsg)
+
+        if loc:
+            # Lookup against Major Cities uses geohash 5-char prefix
+            lockey = loc[0:5]
+            if lockey in self.cities_spatial:
+                population = self.cities_spatial[lockey]
+                pop_wt = natlog(population) - 10
+
+        # For PLACES  this helps differentiate P/PPL by population
+        # Between PLACES and BOUNDARIES the population component may rank places
+        # higher than a boundary by the same name.
+        #
+        # 1/10 of the weighted sums.  Get the ID BIAS to range 0..1
+        return ((0.7 * pop_wt) + (0.3 * fc_scale)) / 10
+
+    def name_bias(self, geoname: str, feat_class: str, name_group: str):
+        """
+        Given a geoname we look at the instance of the name variant and if it is something trivially
+        colliding with stopwords in other languages then we consider omitting it.
+
+        very positive bias   - long unique name, diacritic or in non-ASCII script
+        positive bias        - normal location name, multiple words or grams
+        neutral              - possibly a place name, but is case-dependent, e.g., person name or generic monument name.
+        negative bias        - a stopword or trivial version of a stopword, `Åre`
+        very negative bias   - a very rare or extremely long version of a place name, nonsense
+
+        Conclusion: Any Negative name_bias term will NOT be tagged, although it is present in gazetteer.
+
+        CODE and ABBREV are not biased -- they are simply not full names.
+
+        :param geoname:
+        :param feat:  F/CCC*  formatted string to filter on.
+        :return:  floating point number between -1 and 1
+        """
+        if name_group in {'cjk', 'ar'}:
+            return trivial_bias(geoname) + 0.10
+
+        self.stat_namecount += 1
+        namelen = len(geoname)
+        self.stat_charcount += namelen
+
+        if 20 < namelen < self.MAX_NAMELEN:
+            return trivial_bias(geoname)
+        elif namelen >= self.MAX_NAMELEN:
+            # Name is too long to consider tagging; Unlikely to appear in this form.
+            return -0.1
+
+        # Test shorter names
+        norm = geoname.lower()
+        if norm in self.stopwords:
+            return -1
+
+        # "The Bar", "The Point"
+        test = f"the {norm}"
+        if test in self.stopwords:
+            return -0.5
+
+        if feat_class != "A":
+            test = replace_diacritics(norm)
+            if norm != test:
+                if test in self.stopwords:
+                    return -0.5
+
+        # Return a positive value.
+        return trivial_bias(norm)
 
 
 if __name__ == "__main__":
