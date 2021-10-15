@@ -285,7 +285,7 @@ public class Country extends Place {
 
     @Override
     public String toString() {
-        if (!isTerritory && !hasTerritories()) {
+        if (!isTerritory) {
             return String.format("%s (%s,%s,%s)", getName(), CC_ISO3, CC_ISO2, CC_FIPS);
         } else {
             // Some other country claims this land as a territory.

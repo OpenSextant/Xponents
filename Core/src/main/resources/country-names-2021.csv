@@ -259,7 +259,7 @@ KINGMAN REEF,KQ,UM,UMI,true,true,6.410,-162.367
 MIDWAY ISLANDS,MQ,UM,UMI,true,true,28.205,-177.361
 NAVASSA ISLAND,BQ,UM,UMI,false,true,18.403,-75.013
 PALMYRA ATOLL,LQ,UM,UMI,false,true,5.881,-162.073
-United States Minor Outlying Islands,*,UM,UMI,true,false,16.000,-170.000
+United States Minor Outlying Islands,*,UM,UMI,true,true,16.000,-170.000
 WAKE ISLAND,WQ,UM,UMI,false,true,19.282,166.650
 UNITED STATES,US,US,USA,true,false,37.090,-95.713
 URUGUAY,UY,UY,URY,false,false,-32.523,-55.766

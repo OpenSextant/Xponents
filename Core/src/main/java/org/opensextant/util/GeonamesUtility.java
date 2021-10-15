@@ -20,6 +20,8 @@ import org.opensextant.data.Country;
 import org.opensextant.data.Language;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
@@ -37,6 +39,8 @@ import static org.opensextant.util.GeodeticUtility.geohash;
  * @author ubaldino
  */
 public class GeonamesUtility {
+
+    private static Logger logger = LoggerFactory.getLogger(GeonamesUtility.class);
 
     private final Map<String, Country> isoCountries = new HashMap<>();
     private final Map<String, Country> fipsCountries = new HashMap<>();
@@ -477,7 +481,7 @@ public class GeonamesUtility {
     }
 
     private void loadCountryNameMap() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2015.csv");
+        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2021.csv");
         java.io.Reader countryIO = new InputStreamReader(io);
         CsvMapReader countryMap = new CsvMapReader(countryIO, CsvPreference.EXCEL_PREFERENCE);
         String[] columns = countryMap.getHeader(true);
@@ -487,16 +491,16 @@ public class GeonamesUtility {
             String cc = country_names.get("ISO2_cc");
             String iso3 = country_names.get("ISO3_cc");
             String fips = country_names.get("FIPS_cc");
-            iso2fips.put(cc, fips); // ISO2
-            iso2fips.put(iso3, fips);
-            fips2iso.put(fips, cc);
 
             if (n == null || cc == null) {
                 continue;
             }
 
-            cc = cc.toUpperCase(Locale.ENGLISH);
-            fips = fips.toUpperCase(Locale.ENGLISH);
+            double lat = Double.parseDouble(country_names.get("latitude"));
+            double lon = Double.parseDouble(country_names.get("longitude"));
+
+            cc = cc.toUpperCase();
+            fips = fips.toUpperCase();
 
             // Unique Name? E.g., "Georgia" country name is not unique.
             // This flag helps inform Disambiguation choose countries and places.
@@ -506,7 +510,7 @@ public class GeonamesUtility {
             // FIPS could be *, but as long as we use ISO2, we're fine. if
             // ("*".equals(cc)){ cc = fips.toUpperCase(); }
 
-            // Normalize: "US" =&gt; "united states of america"
+            // Normalize: "US" => "united states of america"
             defaultCountryNames.put(cc, n.toLowerCase(Locale.ENGLISH));
 
             Country C = new Country(cc, n);
@@ -515,6 +519,19 @@ public class GeonamesUtility {
             C.CC_ISO3 = iso3;
             C.setUniqueName(isUniq);
             C.isTerritory = isTerr;
+            C.setLatitude(lat); C.setLongitude(lon);
+
+
+            // TOOD: Resolve the code mapping situation for simple lookups.
+            // FIPS -> ISO mapping is 1:1
+            fips2iso.put(fips, cc);
+            if (!C.isTerritory || (!iso2fips.containsKey(cc) && !iso2fips.containsKey(iso3) && C.isTerritory)) {
+                // ISO -> FIPS is 1 : many, so only map it here if it is unique.
+                iso2fips.put(cc, fips); // ISO2
+                iso2fips.put(iso3, fips);
+            } else {
+                logger.debug("Territory not mapped in iso/fips %s, %s", fips, cc );
+            }
 
             // ISO
             if (!C.isTerritory) {

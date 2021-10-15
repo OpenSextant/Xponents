@@ -135,7 +135,7 @@ public class TextUtils {
             + "\u00C7\u00E7" // cedilla
             + "\u0150\u0151\u0170\u0171" // double acute
             + "\u00D8\u00F8" // Scandanavian o Øø
-            + "\u0100\u0101\u0112\u0113" // E-bar, A-bar
+            + "\u0100\u0101\u0112\u0113" // A-bar,  E-bar
     ;
 
     private static final String COMMON_DIACRITC_HASHMARKS = "\"'`\u00B4\u2018\u2019";

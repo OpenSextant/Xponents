@@ -133,6 +133,24 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
         isCode = GeonamesUtility.isCode(name_type);
     }
 
+    /**
+     * test if Place is a "Name" -- not a code/abbrev or other.  Tests name_type == "N"
+     *
+     * @return
+     */
+    public boolean isName() {
+        return name_type == 'N';
+    }
+
+    /**
+     * Alias for "isAbbreviation() || isCode()"
+     *
+     * @return
+     */
+    public boolean isShortName() {
+        return isAbbreviation || isCode;
+    }
+
     public char getName_type() {
         return name_type;
     }
