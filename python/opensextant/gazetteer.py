@@ -417,6 +417,7 @@ class DB:
             create INDEX IF NOT EXISTS ng_idx on placenames ("name_group");
             create INDEX IF NOT EXISTS s_idx on placenames ("source");
             create INDEX IF NOT EXISTS c_idx on placenames ("cc");
+            create INDEX IF NOT EXISTS a1_idx on placenames ("adm1");
             create INDEX IF NOT EXISTS fc_idx on placenames ("feat_class");
             create INDEX IF NOT EXISTS ft_idx on placenames ("feat_code");
             create INDEX IF NOT EXISTS dup_idx on placenames ("duplicate");

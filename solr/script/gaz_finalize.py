@@ -84,6 +84,8 @@ class Finalizer:
                 for name in names:
                     if name.lower() in names_done:
                         continue
+                    if len(name) < 5:
+                        continue
                     print(f"ADJUST: {name}")
                     name_bias = estimate_name_bias(name)
                     # ADJUSTED here is an approximation.
