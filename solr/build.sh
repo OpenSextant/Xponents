@@ -65,15 +65,10 @@ index_gazetteer () {
   fi
 
   # From SQLite master, Index
-  python3 ./script/gaz_finalize.py --solr $SOLR_URL
+  python3 ./script/gaz_finalize.py index --solr $SOLR_URL
 
   #
   echo "Alter some entries"
-  # custom fixes: 'Calif.' abbreviation is not coded properly.
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<delete><query>name_tag:calif+AND+cc:US+AND+adm1:06</query></delete>"
-  # ADHOC gazetter offers "washington dc" which confuses things.
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<delete><query>name:%22washington+dc%22+AND+place_id:(U531871+U1702382)</query></delete>"
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit/>"
 
   # When done for the day,  optimize
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
@@ -89,9 +84,8 @@ index_postal(){
   fi
 
   # From SQLite master, Index
-  python3 ./script/gaz_finalize.py --solr $SOLR_URL --postal --db ./tmp/postal_gazetteer.sqlite
+  python3 ./script/gaz_finalize.py index --solr $SOLR_URL --postal --db ./tmp/postal_gazetteer.sqlite
 
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit/>"
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
 }
@@ -160,6 +154,8 @@ fi
 
 if [ $do_meta -eq 1 ] ; then 
   python3 ./script/assemble_person_filter.py
+  # temporary Java/TLS issues with getting stopwords from https://github....; Run gaz-stopwords separately.
+  ant $proxy gaz-stopwords
   ant $proxy gaz-meta
 fi
 
