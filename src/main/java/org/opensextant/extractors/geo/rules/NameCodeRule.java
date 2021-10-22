@@ -17,6 +17,7 @@
 
 package org.opensextant.extractors.geo.rules;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.opensextant.data.Place;
@@ -56,7 +57,7 @@ public class NameCodeRule extends GeocodeRule {
         return (pc.isLower() && pc.getLength() < 4);
     }
 
-    private static boolean ignoreMixedCaseAbbreviation(final PlaceCandidate pc) {
+    private static boolean ignoreShortMixedCase(final PlaceCandidate pc) {
         return (pc.isMixedCase() && pc.getLength() < 4);
     }
 
@@ -64,14 +65,32 @@ public class NameCodeRule extends GeocodeRule {
         return name.hasRule(NAME_ADMCODE_RULE) || name.hasRule(NameCodeRule.NAME_ADMNAME_RULE);
     }
 
+    private HashSet<String> ignoreTerms = new HashSet<>();
+
+    @Override
+    public void reset(){
+        ignoreTerms.clear();
+    }
+
+    private void trackIgnoreTerms(PlaceCandidate nm){
+        ignoreTerms.add(nm.getText());
+    }
+
     /**
      * Requirement: List of place candidate is a linked list.
      */
     @Override
     public void evaluate(final List<PlaceCandidate> names) {
+        reset();
         for (int x = 0; x < names.size(); ++x) {
             PlaceCandidate name = names.get(x);
             if (name.isFilteredOut()) {
+                continue;
+            }
+            /* Optimization: */
+            if (ignoreTerms.contains(name.getText())){
+                name.setFilteredOut(true);
+                name.addRule("IgnoredPrecedent");
                 continue;
             }
 
@@ -81,9 +100,10 @@ public class NameCodeRule extends GeocodeRule {
              * However Uruguay is a district in Argentina; Just as Georgia is a state in US
              * and also a country name.
              */
-            if (name.isCountry) {
+            if (name.isCountry && !name.isAbbreviation) {
                 continue;
             }
+
             /*
              * CASE:
              * CODE text.... -(a) CODE is the first match in the doc; No preceeding NAME.
@@ -95,18 +115,16 @@ public class NameCodeRule extends GeocodeRule {
              */
             boolean isLast = x == names.size() - 1;
 
-            boolean canIgnoreName = ignoreShortLowercase(name) || ignoreNonAdminCode(name);
+            boolean canIgnoreName = ignoreShortLowercase(name) || ignoreNonAdminCode(name, name.isAbbreviation);
             if (x == 0 || isLast) {
                 /*
-                 * end of line logic. Either you have a dangling name or code, or you have a
-                 * single candidate.
-                 * but we still want to evaluate it. This is one of the largest sources of
-                 * noise.
-                 * Evaluate name as if it is the abbreviation, because it is last (or first and
-                 * only).
+                 * end of line logic. Either you have a dangling name or code, or you have a single candidate.
+                 * but we still want to evaluate it. This is one of the largest sources of noise.
+                 * Evaluate name as if it is the abbreviation, because it is last (or first and only).
                  */
                 if (canIgnoreName) {
                     name.setFilteredOut(true);
+                    trackIgnoreTerms(name);
                     continue;
                 }
                 if (isLast) {
@@ -120,21 +138,25 @@ public class NameCodeRule extends GeocodeRule {
             }
 
             boolean canIgnoreShortCode = ignoreShortLowercase(code);
+            boolean abbrev = possiblyAbbreviation(code);
+
             /*
              * Test if SOMENAME, CODE is the case. a1.....a2.b1.., where b1 > a2
              * > a1, but distance is minimal from end of name to start of code.
              * If we see a standalone country code, we'll allow it to pass.
              */
             if ((code.start - name.end) > MAX_CHAR_DIST) {
-                boolean canIgnoreCode = canIgnoreShortCode || ignoreNonAdminCode(code);
+                boolean canIgnoreCode = canIgnoreShortCode || ignoreNonAdminCode(code, abbrev);
                 // And so we have NAME xxxx CODE, where CODE is clearly not attached to NAME
                 // lexically.
                 // Filter out such CODE noise.
                 if (canIgnoreCode) {
                     code.setFilteredOut(true);
+                    trackIgnoreTerms(code);
                 }
                 if (canIgnoreName) {
                     name.setFilteredOut(true);
+                    trackIgnoreTerms(name);
                 }
                 continue;
             }
@@ -172,7 +194,6 @@ public class NameCodeRule extends GeocodeRule {
             Place country = code.isCountry ? code.getChosen() : null;
             log.debug("{} name, code: {} in {}?", NAME, name.getText(), code.getText());
             boolean logicalGeoMatchFound = false;
-            boolean abbrev = possiblyAbbreviation(code);
             for (Place geo : code.getPlaces()) {
                 if (logicalGeoMatchFound) {
                     break;
@@ -196,7 +217,7 @@ public class NameCodeRule extends GeocodeRule {
                 // These two situations must match here. We ignore geo locations that do not fit
                 // this profile.
                 //
-                boolean lexicalMatch = ((abbrev && geo.isAbbreviation()) || (!abbrev && !geo.isAbbreviation()));
+                boolean lexicalMatch = ((abbrev && geo.isShortName()) || (!abbrev && !geo.isShortName()));
                 //
                 if (!lexicalMatch) {
                     continue;
@@ -241,12 +262,13 @@ public class NameCodeRule extends GeocodeRule {
             if (abbrev) {
                 if (!logicalGeoMatchFound && !code.isCountry) {
                     code.setFilteredOut(true);
+                    trackIgnoreTerms(code);
                     /*
-                     * NAME is actually an abbreviation and if it has no other evidence, then ignore
-                     * this.
+                     * NAME is actually an abbreviation and if it has no other evidence, then ignore this.
                      */
                     if (name.isAbbreviation && hasOnlyDefaultRules(name)) {
                         name.setFilteredOut(true);
+                        trackIgnoreTerms(name);
                     }
                 } else {
                     log.debug("Abbrev/code allowed: {}", code);
@@ -255,13 +277,13 @@ public class NameCodeRule extends GeocodeRule {
         }
 
         /*
-         * Review items once more.
+         * Review items once more.  Note -- no need to track ignored terms from here.
          */
         for (PlaceCandidate name : names) {
             if (name.isFilteredOut() || name.hasEvidence()) {
                 continue;
             }
-            if (ignoreMixedCaseAbbreviation(name)) {
+            if (ignoreShortMixedCase(name)) {
                 /*
                  * This is a short text span, no other evidence
                  * Possibly an abbreviation. Only valid CODEs attached to a NAME were already
@@ -275,18 +297,18 @@ public class NameCodeRule extends GeocodeRule {
                  * are usually noise.
                  */
                 for (Place geo : name.getPlaces()) {
-                    if (geo.isAbbreviation()) {
+                    if (geo.isShortName()) {
                         name.setFilteredOut(true);
                         break;
                     }
                 }
-            } else if ((!name.isCountry && name.isAbbreviation || name.isAcronym) && !name.isValid()) {
-                // Filter out all trivial abbreviations not already associated with a city.
-                // e.g., I went to see my MD
+            } else if ((!name.isCountry && (name.isAbbreviation || name.isAcronym)) && !name.isValid()) {
+                // Check any name that is not already been validated.
+                // If Not Country, but is ABBREV, then omit all trivial abbreviations not already associated with a city.
+                // e.g., "I went to see my MD"
                 //
                 name.setFilteredOut(true);
             }
-
         }
     }
 
@@ -321,10 +343,11 @@ public class NameCodeRule extends GeocodeRule {
      * <li>MD vs. Md. vs. ....: Maryland or Medical Doctor?</li>
      * </ul>
      *
-     * @param pc
+     * @param pc match
+     * @param abbrev predetermine if match is possibly an abbreviation.
      * @return
      */
-    private static boolean ignoreNonAdminCode(final PlaceCandidate pc) {
+    private static boolean ignoreNonAdminCode(final PlaceCandidate pc, boolean abbrev) {
         // If found alone, unqualified what happens?
         // ------------------
         // ___ CO. ___ filter out
@@ -335,7 +358,6 @@ public class NameCodeRule extends GeocodeRule {
         // ___ La ____ filter out
         // ___ LA ____ pass
         // ___ L.A. __ pass
-        boolean abbrev = possiblyAbbreviation(pc);
         boolean matchFound = false;
         if (abbrev && pc.isCountry) {
             // Ignore standalone references to country codes for this filtration.
@@ -395,7 +417,7 @@ public class NameCodeRule extends GeocodeRule {
         n.markValid(); // and prevent downstream filters from filtering this out
 
         int wt = weight + (comma ? 2 : 0);
-        if (codeGeo.isAbbreviation() && (code.isAbbreviation || code.isAcronym)) {
+        if (codeGeo.isShortName() && (code.isAbbreviation || code.isAcronym)) {
             ev.setRule(NAME_ADMCODE_RULE);
             ev.setWeight(wt + 1);
         } else {
@@ -438,13 +460,6 @@ public class NameCodeRule extends GeocodeRule {
         }
     }
 
-    /**
-     * No-op.
-     */
     @Override
-    public void evaluate(PlaceCandidate name, Place geo) {
-        // no-op
-
-    }
-
+    public void evaluate(PlaceCandidate name, Place geo) { /* no-op*/ }
 }

@@ -72,7 +72,7 @@ public class TestPersonFilter {
      */
     public static boolean isMismatchedShortName(String matched, String signal, int punctCount) {
         boolean isShort = signal.length() < 8;
-        boolean badMatch = NonsenseFilter.isIrregularPunct(punctCount, signal.length(), 5);
+        boolean badMatch = NonsenseFilter.isIrregularPunct(punctCount, signal.length(), 3);
         boolean hasDiacritics = TextUtils.hasDiacritics(matched);
         boolean signalDiacrtics = TextUtils.hasDiacritics(signal);
         boolean misMatchDiacritics = signalDiacrtics != hasDiacritics;
@@ -116,6 +116,7 @@ public class TestPersonFilter {
         /* assessPunctuation() should at least hit on some punctuation in these cases */
         assertTrue(NonsenseFilter.assessPunctuation(span("St. Paul")));
         assertTrue(NonsenseFilter.assessPunctuation(span("U.S.A.")));
+        assertTrue(NonsenseFilter.assessPunctuation(span("USA . [1")));
         assertTrue(NonsenseFilter.assessPunctuation(span("E.E-U.U.")));
         assertTrue(NonsenseFilter.assessPunctuation(span("E.E x/x U.U."))); // True -- there was punctuation acted on.
 
@@ -124,6 +125,14 @@ public class TestPersonFilter {
         assertTrue(pc.isFilteredOut());
 
         pc = span("ho.ho.ho!");
+        assertTrue(NonsenseFilter.assessPunctuation(pc));
+        assertTrue(pc.isFilteredOut());
+
+        pc = span("2)  YY");
+        assertTrue(NonsenseFilter.assessPunctuation(pc));
+        assertTrue(pc.isFilteredOut());
+
+        pc = span("USA . [A]");
         assertTrue(NonsenseFilter.assessPunctuation(pc));
         assertTrue(pc.isFilteredOut());
     }

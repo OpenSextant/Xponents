@@ -201,6 +201,17 @@ public class NonsenseFilter extends GeocodeRule {
             return true;
         }
 
+        // Ignore short names that start with numbers ... actual gazetteer data, but usually not right.
+        if (shortNumericText(p.getText())){
+            p.setFilteredOut(true);
+            return true;
+        }
+        // Ignore names of any length that have odd, common punctuation
+        if (irregularCommonPunct(p.getText())){
+            p.setFilteredOut(true);
+            return true;
+        }
+
         // Don't allow things like X. G"willaker
         boolean abnormal = isIrregularPunct(punct, p.getLength());
         // Allow things like S. Ana
@@ -302,8 +313,30 @@ public class NonsenseFilter extends GeocodeRule {
     private static final Pattern nonAbbrevPunct = Pattern.compile("[^\\w\\s.-]+");
 
     static Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
-    static Pattern anyPunct = Pattern.compile("([\\p{Punct}\u2014\u2015\u201C\u201D\u2033])"); /* find onw char */
+    static Pattern anyPunct = Pattern.compile("[\\p{Punct}\u2014\u2015\u201C\u201D\u2033]"); /* find onw char */
+    static Pattern commonPunct = Pattern.compile("[()\\[\\]!&$]");
 
+    /**
+     * 5th Street  -- fine.
+     * 5th A       -- ambiguous
+     * 5) Bullet   -- no good.
+     *
+     * @param t
+     * @return
+     */
+    public static boolean shortNumericText(String t) {
+        return (t.length() <= GENERIC_ONE_WORD && Character.isDigit(t.charAt(0)));
+    }
+
+    /**
+     * If common punctuation (), [], !, &, $ are found within the match, then the name is not likely the right thing.
+     *
+     * @param t
+     * @return
+     */
+    public static boolean irregularCommonPunct(String t) {
+        return commonPunct.matcher(t).find();
+    }
 
     public static boolean isIrregularPunct(int punct, int strLength) {
         return isIrregularPunct(punct, strLength, 5);
