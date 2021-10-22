@@ -430,14 +430,12 @@ public class PlaceCandidate extends TextMatch {
     /**
      * Given this candidate, how do you score the provided place
      * just based on those place properties (and not on context, document
-     * properties,
-     * or other evidence)?
+     * properties, or other evidence)?
      * This 'should' produce a base score of something between 0 and 1.0, or 0..10.
      * These scores do not necessarily need to stay in that range, as they are all
      * relative.
      * However, as rules fire and compare location data it is better to stay in a
-     * known range
-     * for sanity sake.
+     * known range for sanity sake.
      *
      * @param g
      * @return objective score for the gazetteer entry
@@ -445,9 +443,9 @@ public class PlaceCandidate extends TextMatch {
     public double defaultScore(Place g) {
         double sn = scoreName(g);
         double sf = scoreFeature(g);
-        double sb = g.getId_bias();
+        int sb = g.getId_bias(); /* v3.5: 100 point scale. Multiply by 0.01 */
 
-        double baseScore = (NAME_WEIGHT * sn) + (FEAT_WEIGHT * sf) + (LOCATION_BIAS_WEIGHT * sb);
+        double baseScore = (NAME_WEIGHT * sn) + (FEAT_WEIGHT * sf) + (LOCATION_BIAS_WEIGHT * sb * 0.01);
         return 10 * baseScore;
     }
 

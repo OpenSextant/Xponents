@@ -28,7 +28,7 @@ public class TestPlacePhonetics {
         String[] names = { /* "ÄEÃ" */ "aea", "Aeå" };
         for (String n : names) {
             ScoredPlace geo = new ScoredPlace("nothing" + n, n);
-            geo.setId_bias(0.5);
+            geo.setId_bias(50);
             geo.setFeatureClass("P");
             geo.setFeatureCode("PPLX");
             pc.addPlace(geo);
@@ -51,7 +51,7 @@ public class TestPlacePhonetics {
          */
         String n = "ÄEÃ";
         ScoredPlace geo = new ScoredPlace("nothing" + n, n);
-        geo.setId_bias(0.5);
+        geo.setId_bias(50);
         geo.setFeatureClass("P");
         geo.setFeatureCode("PPLX");
         pc.addPlace(geo);
@@ -74,7 +74,7 @@ public class TestPlacePhonetics {
         String[] names = { "'OK", "øk", "ØK" };
         for (String n : names) {
             ScoredPlace geo = new ScoredPlace("nothing" + n, n);
-            geo.setId_bias(0.5);
+            geo.setId_bias(50);
             geo.setFeatureClass("P");
             geo.setFeatureCode("PPLX");
             pc.addPlace(geo);
@@ -93,7 +93,7 @@ public class TestPlacePhonetics {
 
         String n = "OK";
         ScoredPlace geo = new ScoredPlace("nothing" + n, n);
-        geo.setId_bias(0.5);
+        geo.setId_bias(50);
         geo.setFeatureClass("P");
         geo.setFeatureCode("PPLX");
         pc.addPlace(geo);

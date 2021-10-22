@@ -1131,7 +1131,7 @@
             <bool name="matchText">true</bool>
             <str name="echoParams">ALL</str>
             <str name="fl">place_id,name,cc</str>
-            <str name="fq">(+name_bias:[0 TO *] AND -search_only:true AND name_type:N) OR name_type:C OR name_type:A</str>
+            <str name="fq">-search_only:true AND name_type:(N A C)</str>
         </lst>
     </requestHandler>
 

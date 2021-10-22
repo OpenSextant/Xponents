@@ -319,7 +319,7 @@ public class SolrUtil {
         bean.setLatitude(xy[0]);
         bean.setLongitude(xy[1]);
 
-        bean.setName_bias(getDouble(gazEntry, "name_bias"));
-        bean.setId_bias(getDouble(gazEntry, "id_bias"));
+        // bean.setName_bias(getDouble(gazEntry, "name_bias"));
+        bean.setId_bias(getInteger(gazEntry, "id_bias"));
     }
 }

@@ -395,8 +395,8 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
     }
 
     // the a priori estimates
-    private Double name_bias;
-    private Double id_bias;
+    private int name_bias;
+    private int id_bias;
 
     /**
      * The name bias is a measure of the a priori likelihood that a mention of
@@ -404,14 +404,14 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
      *
      * @return name bias
      */
-    public Double getName_bias() {
+    public int getName_bias() {
         return name_bias;
     }
 
     /**
      * @param bias name bias, float
      */
-    public void setName_bias(Double bias) {
+    public void setName_bias(int bias) {
         name_bias = bias;
     }
 
@@ -421,14 +421,14 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
      *
      * @return identity bias
      */
-    public Double getId_bias() {
+    public int getId_bias() {
         return id_bias;
     }
 
     /**
      * @param bias identity bias
      */
-    public void setId_bias(Double bias) {
+    public void setId_bias(int bias) {
         id_bias = bias;
     }
 

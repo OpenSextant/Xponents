@@ -156,7 +156,7 @@ public class SolrGazetteer {
          * are set for each lookup.
          */
         ModifiableSolrParams p = new ModifiableSolrParams();
-        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type");
         p.set(CommonParams.ROWS, rows);
 
         /*
@@ -179,7 +179,7 @@ public class SolrGazetteer {
         // What?
         p.set(CommonParams.Q, "*:*");
         // Which fields:
-        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type");
         // Max Rows:
         p.set(CommonParams.ROWS, rows);
 
@@ -199,7 +199,7 @@ public class SolrGazetteer {
 
         params.set(CommonParams.Q, "*:*");
         params.set(CommonParams.FL,
-                "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+                "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type");
         try {
             this.countryCodes = loadCountries(solr.getInternalSolrClient());
         } catch (SolrServerException loadErr) {
@@ -344,6 +344,7 @@ public class SolrGazetteer {
         Country C = new Country(code, name);
         if ("TERR".equals(featCode)) {
             C.isTerritory = true;
+            /* "PCL" (political entity) is another likely territory feature code. */
             // Other conditions?
         }
         // Set this once. Yes, indeed we would see this metadata repeated for

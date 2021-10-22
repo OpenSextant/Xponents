@@ -139,7 +139,6 @@
      -->
     <!-- TODO: Phonetic name matching later.
     <field name="name_phoneme"  type="phonetic"               stored="false"  omitTermFreqAndPositions="true" omitNorms="true"/>
-
     <copyField source="name" dest="name_phoneme" />
      -->
 
@@ -151,16 +150,15 @@
     <field name="lat"  stored="false" indexed="false" type="ignored" />
     <field name="lon"  stored="false" indexed="false" type="ignored" /> 
 
-    <!-- see update-script.js -->
     <field name="search_only" type="boolean" indexed="true" stored="false" />
-
-    <field name="SplitCategory" stored="false" indexed="false" type="ignored" /> 
 
     <!-- Name and ID bias stats are generated ahead of time and built in using ETL scripts
       these numbers offer tuning for downstream geocoding rules
      -->
-    <field name="name_bias" type="pfloat" />
-    <field name="id_bias" type="pfloat" />
+    <!-- Legacy fields that feed biasing: SplitCategory, name_bias, script - fields that provide
+        flags or statistics on name linguisitcs
+      -->
+    <field name="id_bias" type="pint" />
 
     <!-- Geonames style Feature Class - A, P, L, H, V, S, T, R -->
     <field name="feat_class" type="string" />
@@ -178,9 +176,6 @@
     <field name="name_type" type="string" />
 
     <field name="source" type="string" />
-
-    <!-- Script of name, CJK, ARABIC, LATIN, ARMENIAN, CYRILLIC, etc. -->
-    <field name="script" type="string" stored="false" multiValued="true"/>
 
     <!--
 

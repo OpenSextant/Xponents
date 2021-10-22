@@ -53,14 +53,7 @@ import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The
@@ -154,7 +147,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * Setup matcher params.
          */
         params.set(CommonParams.FL,
-                "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,name_bias,id_bias,name_type");
+                "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type");
         params.set("tagsLimit", 100000);
         params.set(CommonParams.ROWS, 100000);
         params.set("subTags", false);
@@ -492,7 +485,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would.
             // be allowed. If lowercase abbreviations are allowed, then all matches are
             // passed.
-            if (len < 3 && !(allowLowercaseAbbrev|enableCodeHunter)) {
+            if (len < 3 && !(allowLowercaseAbbrev | enableCodeHunter)) {
                 if (TextUtils.isASCII(matchText) && StringUtils.isAllLowerCase(matchText)) {
                     ++this.defaultFilterCount;
                     continue;
@@ -579,12 +572,25 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             @SuppressWarnings("unchecked")
             List<Object> placeRecordIds = (List<Object>) tag.get("ids");
             namesMatched.clear();
-            // double maxNameBias = 0.0;
+
+            /* Very common names -- will be filtered to mainly A, P */
+            boolean largeGeoCount = placeRecordIds.size() > 100;
+
             for (Object solrId : placeRecordIds) {
                 // Yes, we must cast here.
                 // As long as createTag generates the correct type stored in
                 // beanMap we are fine.
                 ScoredPlace pGeo = (ScoredPlace) beanMap.get(solrId);
+                if (largeGeoCount){
+                    if  (!(pGeo.isAdministrative() || pGeo.isPopulated())) {
+                        // Omit non-major places
+                        continue;
+                    }
+                    if (pGeo.getFeatureCode().endsWith("X") || pGeo.getFeatureCode().endsWith("H")){
+                        // Omit Ruins or historical features.  Not perfect match here.
+                        continue;
+                    }
+                }
                 log.debug("{} = {}", pc.getText(), pGeo);
                 // assert pGeo != null;
 
