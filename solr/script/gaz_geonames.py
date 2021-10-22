@@ -97,6 +97,21 @@ def _format(f):
     return float("{:0.3}".format(f))
 
 
+def add_country(geo:dict):
+    cc = geo["cc"]
+    if cc:
+        C = get_country(cc)
+        if C:
+            geo["FIPS_cc"] = C.cc_fips
+        else:
+            print(f"Unknown code '{cc}'")
+    else:
+        cc = "ZZ"
+        geo["cc"] = cc
+        geo["FIPS_cc"] = cc
+        geo["adm1"] = "0"
+
+
 class GeonamesOrgGazetteer(DataSource):
     def __init__(self, dbf, **kwargs):
         DataSource.__init__(self, dbf, **kwargs)
@@ -107,6 +122,7 @@ class GeonamesOrgGazetteer(DataSource):
     def process_source(self, sourcefile, limit=-1):
         """
         :param sourcefile: Geonames allCountries source file or any other file of the same schema.
+        :param limit: limit of number of records to process
         :return: Yields geoname dict
         """
         header_names = []
@@ -149,32 +165,26 @@ class GeonamesOrgGazetteer(DataSource):
 
                 geo["place_id"] = f"G{plid}"
                 self.add_location(geo, geo["lat"], geo["lon"])
-                cc = geo["cc"]
-                C = get_country(cc)
-                if C:
-                    geo["FIPS_cc"] = C.cc_fips
-                else:
-                    print(f"Unknown code '{cc}'")
-
+                add_country(geo)
                 geo["id_bias"] = self.estimator.location_bias(geo["geohash"], geo["feat_class"], geo["feat_code"])
                 for nm in names:
                     namecount += 1
 
-                    loc = geo.copy()
-                    loc["name"] = nm
-                    nt = loc["name_type"]
+                    g = geo.copy()
+                    g["name"] = nm
+                    nt = g["name_type"]
                     if nt == "N" and is_code(nm):
-                        loc["name_type"] = "C"
+                        g["name_type"] = "C"
                     grp = ""
                     if has_cjk(nm):
                         grp = "cjk"
                     elif has_arabic(nm):
                         grp = "ar"
 
-                    loc["name_group"] = grp
-                    loc["name_bias"] = self.estimator.name_bias(nm, loc["feat_class"], grp)
-                    loc["id"] = GENERATED_BLOCK + namecount
-                    yield loc
+                    g["name_group"] = grp
+                    g["name_bias"] = self.estimator.name_bias(nm, g["feat_class"], g["feat_code"], name_group=grp)
+                    g["id"] = GENERATED_BLOCK + namecount
+                    yield g
 
 
 if __name__ == "__main__":

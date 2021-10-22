@@ -1,9 +1,10 @@
+import os
 import re
 from time import sleep
 
 from opensextant import Place, load_countries, countries, as_place, is_administrative, is_populated
-from opensextant.gazetteer import DB, load_stopterms, GazetteerIndex, get_default_db
-from opensextant.utility import replace_diacritics
+from opensextant.gazetteer import DB, estimate_name_bias, GazetteerIndex, get_default_db
+from opensextant.utility import replace_diacritics, load_list
 
 stopwords = {}
 
@@ -14,11 +15,102 @@ class Finalizer:
         self.debug = debug
         self.inter_country_delay = 10
 
-    def finalize(self, limit=-1, optimize=False):
+    def adjust_place_id(self):
+        self.db.create_indices()
+        decisions = {}
+        for pl in self.db.list_places(criteria=" where place_id = 'N-1'"):
+            if not pl.geohash:
+                continue
+            # NE outputs place id of NULL or "-1".  This should rectify that by pulling in a decent place ID
+            # Geohash is a horrible way to filter data -- certain states just sit on the boundary of certain boxes.
+            for ghlen in [3, 2, 1, 0]:
+                gh = pl.geohash[0:ghlen]
+                key = f"{pl.country_code}#{pl.adm1}#{pl.feature_class}#{pl.feature_code}#{gh}"
+                distinct_ids = set([])
+                if key in decisions:
+                    distinct_ids.add(decisions[key])
+                else:
+                    # Avoid too much SQL queries ... record decisions made
+                    criteria = f""" and feat_code='{pl.feature_code}'
+                       and adm1 = '{pl.adm1}'
+                       and place_id != 'N-1' 
+                       and geohash like '{gh}%'
+                    """
+                    for model_pl in self.db.list_places(cc=pl.country_code, fc=pl.feature_class, criteria=criteria):
+                        distinct_ids.add(model_pl.place_id)
+                        #
+                    print("IDS for:", pl.name, distinct_ids)
+                if len(distinct_ids) == 1:
+                    plid = distinct_ids.pop()
+                    decisions[key] = plid
+                    self.db.update_place_id(pl.id, plid)
+                    break
+                elif len(distinct_ids) > 1:
+                    print("Ambiguous place ID resolution - no adjustment: ", pl.name, pl.country_code)
+        self.db.commit()
+
+    def adjust_bias(self):
+        self.db.create_indices()
+        print("Adjust Biasing")
+        # Fix significant place names:  When loading gazetteer data for the first time,
+        # you do not have a global awareness of names/geography -- so things like biasing "common words" in wordstats
+        # leads us to mark valid common city names as "too common" and they are filtered out.
+        # Example: if you encounter "Beijing" (P/PPLX) is seen first and is marked as a common word
+        # and then "Beijing" (P/PPLC) is seen and exempted.  You have two conflicting conclusions on the name "Beijing".
+        # The result being that only the captial Beijing will ever be used in tagging.
+        # FIX: loop through all names fc = "A" and P/PPLC, major cities population 200,000 or greater.
+        #    re-mark the name_bias to positive if determined to be common words previously.
+        names_done = set([])
+        count_adjusted = 0
+
+        flag_fix_major_place_names = True
+        flag_fix_admin_codes = False  # Addressed in-line through PlaceHueristics
+
+        if flag_fix_major_place_names:
+            # ============================================
+            # Find Names < 30 chars in general name_group where the names represent significant features.
+            # Recode those feature/names so ANY row by that name is not excluded by the "too common" judgement
+            sql_clause = """ where
+                name_type='N' 
+                and name_group='' 
+                and LENGTH(name) < 30 
+                and feat_class in ('A', 'P') 
+                and feat_code in ('ADM1', 'PPLC', 'PCL', 'PCLI') 
+                and name NOT like '% %' 
+                and name_bias < 0"""
+
+            for pl in self.db.list_places(criteria=sql_clause):
+                names = {pl.name, replace_diacritics(pl.name)}
+                for name in names:
+                    if name.lower() in names_done:
+                        continue
+                    print(f"ADJUST: {name}")
+                    name_bias = estimate_name_bias(name)
+                    # ADJUSTED here is an approximation.
+                    count_adjusted += 1
+                    # For each name, remark each name and it variants.
+                    self.db.update_bias_by_name(name_bias, name)
+                    names_done.add(name.lower())
+            self.db.commit()
+
+        if flag_fix_admin_codes:
+            # ============================================
+            flip_ids = []
+            non_place_codes = os.path.join('etc', 'gazetteer', 'filters', 'non-placenames,admin-codes.csv')
+            IGNORE_CODES = set(load_list(non_place_codes))
+            for pl in self.db.list_places(fc="A",
+                                          criteria=" and name_type='C' and feat_code in ('ADM1','ADM2') and search_only=1"):
+                if pl.name in IGNORE_CODES:
+                    continue
+                flip_ids.append(pl.id)
+                print(pl)
+            # Any rows found -- flip their search status.
+            self.db.update_bias(10, flip_ids)
+            self.db.commit()
+
+    def deduplicate(self):
         """
         Finalize the gazetteer database to include an cleanup, deduplication, etc.
-        :param limit: (Unused) per-country limit used for testing.
-        :param optimize: to force a SQLite optimize or not.
         :return:
         """
         #
@@ -33,9 +125,10 @@ class Finalizer:
         # Easiest way to break down gazetteer is:
         #  - by Country
         #    - by feature class or empty non-feature.  ... Resolve any low-quality entries with empty feature.
-        countries = self.db.list_countries()
+        self.db.optimize()
+        cc_list = self.db.list_countries()
         BASE_SOURCES = {"OA", "OG", "U", "UF", "N", "NF", "ISO"}
-        for cc in countries:
+        for cc in cc_list:
             # Collect entries with
             print(f"Country '{cc}'")
             # base sources via OpenSextant gazetteer:  OA, OG, U, UF, N, NF
@@ -44,20 +137,16 @@ class Finalizer:
             keys = set([])
             duplicates = []
             # Collect all duplicate names within USGS and NGA base layers
-            sql = f"""select id, feat_class, feat_code, source, geohash, name, place_id, id_bias, name_bias 
+            sql = f"""select id, feat_class, source, geohash, name, place_id 
                            from placenames where cc='{cc}' and source in ({base_sources}) and duplicate=0"""
             self._collect_duplicates(sql, keys, duplicates, label="Base")
 
             # De-duplicate other sources that leverage USGS/NGA as base sources.
-            sql = f"""select id, feat_class, feat_code, source, geohash, name, place_id, id_bias, name_bias 
+            sql = f"""select id, feat_class, source, geohash, name, place_id 
                            from placenames where cc='{cc}' and source not in ({base_sources}) and duplicate=0"""
             self._collect_duplicates(sql, keys, duplicates, label="Other Sources")
             self.db.mark_duplicates(duplicates)
         print("Complete De-duplicating")
-
-        if optimize:
-            print("Optimizing SQLite DB")
-            self.db.optimize()
 
     def _collect_duplicates(self, sql, keys, dups, label="NA"):
         for row in self.db.conn.execute(sql):
@@ -85,22 +174,19 @@ class Finalizer:
         count = 0
         for C in countries:
             # We won't use FIPS codes for tagging.
-            pl = as_place(C, C.name, oid=starting_id + count, name_type="N" )
+            pl = as_place(C, C.name, oid=starting_id + count, name_type="N")
             indexer.add(pl)
             count += 1
-            pl = as_place(C, C.cc_iso2, oid=starting_id + count, name_type="C" )
+            pl = as_place(C, C.cc_iso2, oid=starting_id + count, name_type="C")
             indexer.add(pl)
             count += 1
-            pl = as_place(C, C.cc_iso3, oid=starting_id + count, name_type="C" )
+            pl = as_place(C, C.cc_iso3, oid=starting_id + count, name_type="C")
             indexer.add(pl)
         indexer.save(done=True)
 
-    def index(self, url, features=None, ignore_features=None, ignore_digits=True, ignore_names=False,
-              use_stopfilters=True, limit=-1):
-        global stopwords
+    def index(self, url, features=None, ignore_features=None, ignore_digits=True, ignore_names=False, limit=-1):
 
         print("Xponents Gazetteer Finalizer: INDEX")
-        stopwords = load_stopterms()
         indexer = GazetteerIndex(url)
         indexer.commit_rate = 100000
         #
@@ -117,8 +203,8 @@ class Finalizer:
         if ignore_names:
             default_criteria = " and duplicate=0 and name_type!='N'"
         # For each row in DB, index to Solr.  Maybe organize batches by row ID where dup=0.
-        countries = self.db.list_countries()
-        for cc in countries:
+        cc_list = self.db.list_countries()
+        for cc in cc_list:
             print(f"Country '{cc}'")
             for pl in self.db.list_places(cc=cc, criteria=default_criteria, limit=limit):
                 if filter_out_feature(pl, filters):
@@ -127,14 +213,18 @@ class Finalizer:
                     continue
                 if not filter_in_feature(pl, inclusion_filters):
                     continue
-                # Mark generic stopwords as search only
-                if not pl.search_only:
-                    if use_stopfilters and filter_out_term(pl):
-                        print(f"\tsearch only: {pl.name} (source: {pl.source})")
-                        pl.search_only = True
-                        self.db.mark_search_only(pl.id)
                 indexer.add(pl)
             sleep(self.inter_country_delay)
+        print(f"Indexed {indexer.count}")
+        indexer.save(done=True)
+
+    def index_codes(self, url):
+        print("Xponents Gazetteer Finalizer: INDEX CODES, ABBREV")
+        indexer = GazetteerIndex(url)
+        indexer.commit_rate = 100000
+        default_criteria = " where duplicate=0 and name_type!='N'"
+        for pl in self.db.list_places(criteria=default_criteria):
+            indexer.add(pl)
         print(f"Indexed {indexer.count}")
         indexer.save(done=True)
 
@@ -144,7 +234,7 @@ class PostalIndexer(Finalizer):
         Finalizer.__init__(self, dbf, **kwargs)
         self.inter_country_delay = 1
 
-    def finalize(self, limit=-1, optimize=False):
+    def finalize(self, limit=-1):
         # No optimization on postal codes.
         pass
 
@@ -153,7 +243,7 @@ class PostalIndexer(Finalizer):
         Finalizer.index(self, url, ignore_digits=False, **kwargs)
 
 
-def filter_out_term(pl:Place):
+def filter_out_term(pl: Place):
     """
     :param pl: Place name or any text
     :return: True if term is present in stopwords.
@@ -181,7 +271,7 @@ def filter_out_term(pl:Place):
     return False
 
 
-def filter_out_feature(pl:Place, feats):
+def filter_out_feature(pl: Place, feats):
     """
     Filter out places by their feature type or by their name traits.
     Long names (> 20 chars) and/or (>2 words) are relatively unique and not filtered.
@@ -210,7 +300,7 @@ def filter_out_feature(pl:Place, feats):
     return False
 
 
-def filter_in_feature(pl:Place, feats):
+def filter_in_feature(pl: Place, feats):
     """
 
     :param pl: Place
@@ -230,17 +320,19 @@ if __name__ == "__main__":
     from argparse import ArgumentParser
 
     ap = ArgumentParser()
+    ap.add_argument("operation", help="adjust-id, dedup, adjust-bias, index -- pick one.  Run all three in that order")
+
     ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--solr", help="Solr URL")
     ap.add_argument("--optimize", action="store_true", default=False)
-    ap.add_argument("--dedup", action="store_true", default=False)
     ap.add_argument("--postal", action="store_true", default=False)
 
     args = ap.parse_args()
 
-    if args.solr:
+    gaz = None
+    if args.operation == "index" and args.solr:
         #  Features not as present in general data include: WELLS, STREAMS, SPRINGS, HILLS.
         #
         if args.postal:
@@ -258,6 +350,17 @@ if __name__ == "__main__":
                       ignore_digits=True,
                       limit=int(args.max))
 
-    elif args.dedup:
+    elif args.operation == "adjust-id":
         gaz = Finalizer(args.db, debug=args.debug)
-        gaz.finalize(limit=int(args.max), optimize=args.optimize)
+        gaz.adjust_place_id()
+    elif args.operation == "adjust-bias":
+        gaz = Finalizer(args.db, debug=args.debug)
+        gaz.adjust_bias()
+    elif args.operation == "dedup":
+        gaz = Finalizer(args.db, debug=args.debug)
+        gaz.deduplicate()
+
+    # Finish up.
+    if args.optimize and gaz:
+        gaz.db.optimize()
+        gaz.db.close()

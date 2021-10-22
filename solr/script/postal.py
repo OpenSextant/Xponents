@@ -111,7 +111,7 @@ class PostalGazetteer(DataSource):
                 # !!! PER SQLITE: https://www.sqlite.org/faq.html  -- use Single Quotes for query on columns.
                 #
                 # Copy over country and province codes at a high level.
-                sub_query = " AND name_group='' AND duplicate=0 AND feat_code='ADM1' AND (name_type='C' OR name_type='A') "
+                sub_query = " AND name_group='' AND duplicate=0 AND feat_code='ADM1' AND name_type in ('C', 'A') "
                 _ctry_meta = []
                 for pl in master_db.db.list_places(cc=cc, fc="A", criteria=sub_query):
                     self.rowcount += 1

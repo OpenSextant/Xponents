@@ -28,7 +28,7 @@ class USFixer:
             if 0 < limit < count:
                 print("User limit reached")
                 break
-
+        self.db.commit()
         self.db.close()
 
 

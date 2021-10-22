@@ -1,6 +1,8 @@
 #!/bin/bash
 
-XPONENTS=../
+script=`dirname $0;`
+basedir=`cd -P $script/..; echo $PWD`
+XPONENTS=$basedir
 export PYTHONPATH=$XPONENTS/python:$XPONENTS/piplib
 export PYTHONUNBUFFERED=1
 
@@ -32,8 +34,6 @@ else
   exit 1
 fi
 
-# SOLR=http://localhost:7000/solr/postal
-
 if [ "$do_test" -eq 1 ] ; then
   DB=./tmp/postal_test.sqlite
   python3 ./script/postal.py ./tmp/postal/allCountries.txt 0 --db $DB --max 1000
@@ -45,10 +45,15 @@ if [ "$do_test" -eq 1 ] ; then
 else
   # PRODUCTION
   DB=./tmp/postal_gazetteer.sqlite
+  echo POSTAL/GEONAMES       `date`
   python3 ./script/postal.py ./tmp/postal/allCountries.txt 0 --db $DB
+  echo POSTAL/CANADA         `date`
   python3 ./script/postal.py ./tmp/postal/CA_full.txt 2000000 --db $DB --country CA
+  echo POSTAL/NETHERLANDS    `date`
   python3 ./script/postal.py ./tmp/postal/NL_full.txt 3000000 --db $DB --country NL
+  echo POSTAL/UK            `date`
   python3 ./script/postal.py ./tmp/postal/GB_full.txt 4000000 --db $DB --country GB
+  echo POSTAL/ADMIN CODES   `date`
   python3 ./script/postal.py XX                       6000000 --db $DB --copy-admin --optimize
 
 fi

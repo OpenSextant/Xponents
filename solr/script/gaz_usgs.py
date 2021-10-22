@@ -1,6 +1,5 @@
 import os
 
-from opensextant import geohash_encode
 from opensextant.gazetteer import get_default_db, DataSource, PlaceHeuristics, US_TERRITORY_MAP
 from opensextant.utility import get_csv_reader, get_list
 
@@ -83,7 +82,7 @@ def lookup_feature(fc: str):
     lookup = fc.lower()
     if lookup in FEAT_MAP:
         return FEAT_MAP.get(lookup)
-    return (None, None)
+    return None, None
 
 
 def adjust_country_territory(entry, debug=False):
@@ -124,13 +123,13 @@ class USGSGazetteer(DataSource):
         self.source_keys = [USGS_SOURCE_ID]
         load_feature_map()
         self.estimator = PlaceHeuristics()
+        self.rate = 1000000
 
     def process_source(self, sourcefile, limit=-1):
         with open(sourcefile, "r", encoding="UTF-8") as fh:
             reader = get_csv_reader(fh, columns=HEADER, delim="|")
             self.purge()
             name_count = GENERATED_BLOCK
-            name_grp = ""
             for row in reader:
                 self.rowcount += 1
                 if self.rowcount == 1:

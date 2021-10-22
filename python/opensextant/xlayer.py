@@ -133,7 +133,7 @@ def print_results(arr):
             print(a)
 
 
-def print_match(match:TextMatch):
+def print_match(match: TextMatch):
     """
 
     :param match:
@@ -211,7 +211,7 @@ if __name__ == '__main__':
     #
     if args.text:
         process_text(args.input, docid="test-doc-#123", features=feat,
-                                  preferred_countries=countries, preferred_locations=locations)
+                     preferred_countries=countries, preferred_locations=locations)
     # ======================================
     # Support data as one text record per line in a file
     #                
@@ -232,9 +232,9 @@ if __name__ == '__main__':
                             print("'text' value required in JSON")
                             continue
 
-                    docid = "line{}".format(lineNum)
-                    process_text(text, docid=docid, features=feat,
-                                 preferred_countries=countries,  preferred_locations=locations)
+                    test_id = "line{}".format(lineNum)
+                    process_text(text, docid=test_id, features=feat,
+                                 preferred_countries=countries, preferred_locations=locations)
 
         except Exception as runErr:
             print(format_exc(limit=5))
@@ -243,10 +243,10 @@ if __name__ == '__main__':
     # Use a single file as the source text to process
     #                
     elif args.input:
-        docid = os.path.basename(args.input)
+        file_id = os.path.basename(args.input)
         try:
             with open(args.input, 'r', encoding="UTF-8") as fh:
-                process_text(fh.read(), docid=docid, features=feat,
+                process_text(fh.read(), docid=file_id, features=feat,
                              preferred_countries=countries, preferred_locations=locations)
         except Exception as runErr:
             print(format_exc(limit=5))

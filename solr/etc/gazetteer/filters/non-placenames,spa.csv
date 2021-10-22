@@ -56,6 +56,8 @@ arte,noun
 si,phrase
 asi,article
 # ayer,noun
+hasta,stopword.spa
+horas,noun
 ayuda,noun
 azul,color.spa
 baja,preposition.spa
@@ -65,6 +67,7 @@ banda,noun.spa
 bando,noun
 barrios,place.civil.spa
 besar,verb
+beso,noun
 bienvenido,phrase
 blanco,color.spa
 boca,noun

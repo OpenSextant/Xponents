@@ -74,14 +74,24 @@
     <!-- Get Gazetteer data in addition to OpenSextant source -->
     <target name="gaz-sources">
         <mkdir dir="${gaz.tmp}"/>
-        <get dest="${gaz.tmp}">
+        <input addproperty="nga_release_date">NGA gazetteer date?
+        </input>
+
+        <get dest="${gaz.tmp}" verbose="true" usetimestamp="true" >
             <url url="https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_1_states_provinces.zip"/>
+            <url url="http://download.geonames.org/export/dump/cities15000.zip" />
             <url url="https://download.geonames.org/export/dump/allCountries.zip"/>
+            <url url="https://geonames.nga.mil/gns/html/cntyfile/geonames_${nga_release_date}.zip"/>
+            <url url="https://geonames.usgs.gov/docs/stategaz/NationalFile.zip"/>
+            <!-- <url url="https://geonames.usgs.gov/docs/stategaz/GOVT_UNITS.zip"/> 3500 county names, no locations -->
         </get>
 
         <!-- Unpack it all -->
-        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/allCountries.zip"/>
         <unzip dest="${gaz.tmp}/ne_10m_admin_1_states_provinces" src="${gaz.tmp}/ne_10m_admin_1_states_provinces.zip"/>
+        <unzip dest="${gaz.tmp}" src="cities15000.zip"/>
+        <unzip dest="${gaz.tmp}" src="allCountries.zip"/>
+        <unzip dest="${gaz.tmp}" src="geonames_${nga_release_date}.zip" />
+        <unzip dest="${gaz.tmp}" src="NationalFile.zip" />
 
     </target>
 
@@ -107,9 +117,8 @@
         </get>
     </target>
 
-    <target name="gaz-meta" depends="gaz-stopwords">
+    <target name="gaz-meta" >
         <!-- depends="stopwords" -->
-        <!-- <jar destfile="${solr.home}/lib/xponents-gazetteer-meta.jar" update="true"> -->
         <copy todir="${resources.lib}">
             <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**"/>
             <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/*.*"/>
@@ -139,10 +148,12 @@
     <target name="clean" description="Delete indexed data">
         <delete dir="${solr.home}/gazetteer/data"/>
         <delete dir="${solr.home}/taxcat/data"/>
+        <delete dir="${solr.home}/postal/data"/>
         <delete dir="${solr.home}/lib"/>
 
         <mkdir dir="${solr.home}/gazetteer/data"/>
         <mkdir dir="${solr.home}/taxcat/data"/>
+        <mkdir dir="${solr.home}/postal/data"/>
         <mkdir dir="${solr.home}/lib"/>
     </target>
 </project>

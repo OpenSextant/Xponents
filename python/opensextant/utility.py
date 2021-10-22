@@ -53,12 +53,28 @@ def is_code(t: str, nlen=3):
     return len(t) <= nlen and is_ascii(t) and t.isupper() and "." not in t
 
 
+def is_abbreviation(nm: str):
+    """
+    Determine if something is an abbreviation.
+    Otherwise if text ends with "." we'll conclude so.
+
+    Examples:
+        Ala.     YES
+        Ala      NO
+        S. Bob   NO   -- abbreviated, yes, but this is more like a contraction.
+        S. B.    YES
+
+    :param nm: textual name
+    :return: True if obj is inferred to be an abbreviation
+    """
+    return nm.endswith(".")
+
+
 def is_ascii(s):
     try:
         return all(ord(c) < 128 for c in s)
     except:
         pass
-
     return False
 
 
@@ -496,6 +512,29 @@ class ConfigUtility:
                 termlist.append(line.lower())
 
             return termlist
+
+
+def load_list(path, lower=False):
+    """
+      Load text data from a file.
+      Returns array of non-comment rows. One non-whitespace row per line.
+      :param path: file to load.
+      :param lower: Lowercased is optional.
+      :return: array of terms
+    """
+    if not os.path.exists(path):
+        raise Exception('File does not exist, FILE=%s' % path)
+
+    with open(path, 'r', encoding="UTF-8") as fh:
+        termlist = []
+        for line in fh:
+            line = line.strip()
+            if line.startswith('#') or not line:
+                continue
+
+            termlist.append(line.lower() if lower else line)
+
+        return termlist
 
 
 def ensure_dirs(fpath):

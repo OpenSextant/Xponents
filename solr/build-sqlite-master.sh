@@ -31,9 +31,13 @@ if [ "$do_data" -eq 1 ]; then
 fi
 
 # GLOB NationalFile*
-USGS_FILE=`ls tmp/NationalFile_202*`
+USGS_FILE=`ls ./tmp/NationalFile_202*`
 
-for f in  "./tmp/Countries.txt" $USGS_FILE "./tmp/allCountries.txt" "./tmp/ne_10m_admin_1_states_provinces" ; do
+for f in  $USGS_FILE \
+    "./tmp/Countries.txt" \
+    "./tmp/allCountries.txt" \
+    "./tmp/ne_10m_admin_1_states_provinces" \
+    "./tmp/wordstats.sqlite"; do
   if [ -e "$f" ]; then
     echo "All is good, resource exists: $f"
   else
@@ -44,17 +48,17 @@ done
 
 if [ "$do_test" -eq 1 ] ; then
   DB=./tmp/test.sqlite
-  # Legacy:
-  # python3 ./script/gaz_opensextant.py ./tmp/MergedGazetteer.txt --max 100000 --db $DB
-  python3 ./script/gaz_usgs.py ${USGS_FILE} --max 10000 --db $DB
-  python3 ./script/gaz_nga.py ./tmp/Countries.txt --max 10000 --db $DB
+  python3 ./script/gaz_usgs.py ${USGS_FILE} --max 100000 --db $DB
+  python3 ./script/gaz_nga.py ./tmp/Countries.txt --max 100000 --db $DB
 
-  python3 ./script/gaz_geonames.py ./tmp/allCountries.txt  --max 10000 --db $DB
-  python3 ./script/gaz_administrative_codes.py ./tmp/ne_10m_admin_1_states_provinces/ne_10m_admin_1_states_provinces.shp  --db $DB --max 10000
+  python3 ./script/gaz_geonames.py ./tmp/allCountries.txt  --max 100000 --db $DB
+  python3 ./script/gaz_administrative_codes.py ./tmp/ne_10m_admin_1_states_provinces/ne_10m_admin_1_states_provinces.shp  --db $DB --max 100000
   python3 ./script/gaz_fix_country_coding.py "US" --db $DB
   python3 ./script/gaz_generate_variants.py --db $DB
-  python3 ./script/gaz_country_meta.py 21000000 --max 100
-  python3 ./script/gaz_finalize.py  --dedup --optimize
+  python3 ./script/gaz_country_meta.py --db $DB
+  python3 ./script/gaz_finalize.py  adjust-id --db $DB
+  python3 ./script/gaz_finalize.py  adjust-bias --db $DB
+  python3 ./script/gaz_finalize.py  dedup --optimize --db $DB
 else
   # PRODUCTION  -- RAW SOURCES
   # ==========================
@@ -88,10 +92,17 @@ else
 
   echo COUNTRIES      `date`
   LOG=./tmp/gaz_country_meta${datekey}.log
-  python3 ./script/gaz_country_meta.py 21000000 > $LOG
+  python3 ./script/gaz_country_meta.py > $LOG
 
-  echo OPTIMIZE       `date`
-  python3 ./script/gaz_finalize.py  --dedup  --optimize
+  echo ADJUST        `date`
+  LOG=./tmp/gaz_adjustments_${datekey}.log
+  python3 ./script/gaz_finalize.py  adjust-id > $LOG
+  python3 ./script/gaz_finalize.py  adjust-bias >> $LOG
+  echo `date`
+
+  echo OPTIMIZE/DEDUP  `date`
+  LOG=./tmp/gaz_dedup_${datekey}.log
+  python3 ./script/gaz_finalize.py  dedup  --optimize > $LOG
   echo `date`
 
 fi

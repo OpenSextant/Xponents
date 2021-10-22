@@ -190,10 +190,12 @@ class Place(Coordinate):
 
 
 class Country(Coordinate):
-    """  Country metadata
+    """
+    Country metadata
     """
 
     def __init__(self):
+        Coordinate.__init__(self, None)
         self.cc_iso2 = None
         self.cc_iso3 = None
         self.cc_fips = None
@@ -207,8 +209,6 @@ class Country(Coordinate):
         self.timezones = []
         self.languages = set([])
         self.primary_language = None
-        self.lat = 0
-        self.lon = 0
 
     def __str__(self):
         return u'{} ({})'.format(self.name, self.cc_iso2)
@@ -292,7 +292,7 @@ def load_countries(csvpath=None):
     return None
 
 
-def get_us_province(adm1:str):
+def get_us_province(adm1: str):
     """
 
     :param adm1:  ADM1 code or for territories,
@@ -359,7 +359,7 @@ def load_world_adm1():
             cc_adm1 = adm1Splitter.split(row[0], 2)
             adm1.country_code = cc_adm1[0]
             adm1.adm1 = cc_adm1[1]
-            adm1.source = "G" # Geonames.org coded.
+            adm1.source = "G"  # Geonames.org coded.
             hasc = make_HASC(adm1.country_code, adm1.adm1)
             if adm1.country_code == "US":
                 adm1.source = "USGS"
@@ -383,6 +383,8 @@ def get_country(namecode, standard="ISO"):
     """
     Get Country object given a name, ISO or FIPS code.  For codes, you must be
     clear about which standard the code is based in. Some code collisions exist.
+    "ZZ" will NOT be returned for the empty code -- if you pass in a NULL or empty
+    country code you may have a data quality issue.
     :param namecode: 2- or 3-alpha code.
     :param standard: 'ISO' or 'FIPS', 'name'
     :return:  Country object
@@ -452,22 +454,6 @@ def is_administrative(feat: str):
 def is_populated(feat: str):
     if not feat: return False
     return "P" == feat.upper()
-
-
-def is_abbreviation(obj):
-    """
-    Determine if something is an abbreviation.
-    For object classes, "name_type=A" implies abbreviation.
-    Otherwise if text ends with "." we'll conclude so.
-    :param obj:
-    :return: True if obj is inferred to be an abbreviation
-    """
-    if not obj: return False
-    if isinstance(obj, (Place, Country)):
-        return obj.name_type == "A"
-    elif isinstance(obj, str):
-        return obj.endswith(".")
-    return False
 
 
 class TextEntity:

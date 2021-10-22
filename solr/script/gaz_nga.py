@@ -1,5 +1,5 @@
-from opensextant import load_countries, get_country, geohash_encode
-from opensextant.gazetteer import get_default_db, parse_admin_code, DataSource, PlaceHeuristics
+from opensextant import load_countries, get_country
+from opensextant.gazetteer import get_default_db, parse_admin_code, DataSource, PlaceHeuristics, name_group_for
 from opensextant.utility import get_csv_reader
 
 load_countries()
@@ -121,11 +121,12 @@ class NGAGeonames(DataSource):
                 geo["feat_class"] = row["FC"]
                 geo["feat_code"] = row["DSG"]
                 self.add_location(geo, row["LAT"], row["LONG"])
-                lang_code = row["LC"]
-                name_grp = lang_script(lang_code)
-                geo["name_group"] = name_grp
-                if lang_code and not geo["name_group"] and self.debug:
-                    print("Language", row["LC"])
+                # This lang code and name group end up not being useful, as they are not consistent.
+                # lang_code = row["LC"]
+                # name_grp = lang_script(lang_code)
+                # geo["name_group"] = name_grp
+                # if lang_code and not geo["name_group"] and self.debug:
+                #    print("Language", row["LC"])
 
                 # About 50,000 entries in NGA GNIS are dual-country.
                 countries = parse_country(row["CC1"])
@@ -142,14 +143,18 @@ class NGAGeonames(DataSource):
                         else:
                             geo["adm1"] = adm1
 
-                        entry = geo.copy()
-                        entry["name"] = distinct_names[nm]
-                        entry["id"] = name_count
-                        entry["cc"] = ctry.cc_iso2
-                        entry["FIPS_cc"] = ctry.cc_fips
-                        entry["name_bias"] =  self.estimator.name_bias(entry["name"], entry["feat_class"], name_grp)
+                        g = geo.copy()
+                        g["name"] = distinct_names[nm]
+                        g["id"] = name_count
+                        g["cc"] = ctry.cc_iso2
+                        g["FIPS_cc"] = ctry.cc_fips
+                        verify_name_grp = name_group_for(nm)
+                        g["name_group"] = verify_name_grp
+                        g["name_bias"] =  self.estimator.name_bias(g["name"],
+                                                                   g["feat_class"], g["feat_code"],
+                                                                   name_group=verify_name_grp)
 
-                        yield entry
+                        yield g
 
 
 if __name__ == "__main__":

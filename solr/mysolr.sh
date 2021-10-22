@@ -16,7 +16,7 @@ case "$1" in
     echo "Now deleting local write locks"
     sleep 2
 
-    for IDX in gazetteer taxcat; do 
+    for IDX in gazetteer taxcat postal; do 
       echo INDEX LOCK: $IDX
       rm -i $SOLR_HOME/$IDX/data/index/write.lock
     done

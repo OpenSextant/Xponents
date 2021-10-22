@@ -1,5 +1,4 @@
 exclusion,category
-#id,abbrev
 a.k.a,abbrev
 ab,abbrev
 acme,abbrev
@@ -111,6 +110,7 @@ asian,adj
 astray,adj
 auto,adj
 avian,adj
+aware,adj
 axial,adj
 bad,adj
 baltic,adj
@@ -126,11 +126,13 @@ bold,adj
 bony,adj
 boring,adj
 bovine,adj
+brave,adj
 brief,adj
 brilliant,adj
 broke,adj
 broken,adj
 buff,adj
+bulk,adj
 burnt,adj
 busy,adj
 californian,adj
@@ -187,9 +189,11 @@ experimental,adj
 extreme,adj
 fair,adj
 fake,adj
+fallen,adj
 fancy,adj
 far,adj
 fast,adj
+fatal,adj
 faux,adj
 fine,adj
 first world,adj
@@ -200,6 +204,7 @@ free,adj
 freed,adj
 french,adj
 fried,adj
+full,adj
 fuming,adj
 given,adj
 glad,adj
@@ -220,6 +225,7 @@ higher,adj
 hippy,adj
 honest,adj
 hot,adj
+huge,adj
 hungry,adj
 hydro,adj
 ideal,adj
@@ -254,8 +260,11 @@ local,adj
 lone,adj
 long,adj
 loose,adj
+lost,adj
+lots,adj
 loving,adj
 low,adj
+lower,adj
 loyal,adj
 lucky,adj
 lunar,adj
@@ -274,6 +283,7 @@ meek,adj
 mega,adj
 messy,adj
 micro,adj
+middle,adj
 mini,adj
 minor,adj
 mobil,adj
@@ -285,11 +295,13 @@ much,adj
 muddy,adj
 municipal,adj
 mutual,adj
+nasal,adj
 nasty,adj
 natal,adj
 national,adj
 naval,adj
 neo,adj
+neutral,adj
 new,adj
 next,adj
 nice,adj
@@ -300,7 +312,9 @@ old,adj
 old school,adj
 olympic,adj
 only,adj
+open,adj
 oral,adj
+original,adj
 ours,adj
 outer,adj
 outright,adj
@@ -312,6 +326,7 @@ pan-american,adj
 panamerican,adj
 papal,adj
 paramount,adj
+patient,adj
 penal,adj
 perfect,adj
 persian,adj
@@ -319,11 +334,13 @@ petite,adj
 pleasant,adj
 plenty,adj
 poly,adj
+poor,adj
 popular,adj
 premier,adj
 pretty,adj
 prime,adj
 private,adj
+proper,adj
 prospective,adj
 proven,adj
 provincial,adj
@@ -352,6 +369,7 @@ rural,adj
 safe,adj
 same,adj
 sandy,adj
+secure,adj
 seldom,adj
 serial,adj
 severe,adj
@@ -376,6 +394,7 @@ sore,adj
 sour,adj
 sovereign,adj
 spoken,adj
+stable,adj
 state-run,adj
 stellar,adj
 stolen,adj
@@ -448,6 +467,7 @@ very,adverb
 ahi,animal
 alligator,animal
 anaconda,animal
+animal,animal
 ape,animal
 bat,animal
 beaver,animal
@@ -470,9 +490,11 @@ goose,animal
 gopher,animal
 gorilla,animal
 hawks,animal
+horse,animal
 kangaroo,animal
 leopard,animal
 lion,animal
+mammal,animal
 mice,animal
 mink,animal
 mosquito,animal
@@ -532,11 +554,17 @@ taurus,astrology
 virgo,astrology
 arm,bodypart
 arms,bodypart
+body,bodypart
 eye,bodypart
+eyes,bodypart
+gills,bodypart
 hind,bodypart
 leg,bodypart
 lung,bodypart
+neck,bodypart
 nose,bodypart
+skin,bodypart
+tail,bodypart
 black,color
 blue,color
 bronze,color
@@ -558,8 +586,6 @@ white,color
 yellow,color
 blanc,color.fre
 nero,color.ita
-stripe,noun
-pin,stopword.web
 democracy,concept.politics
 kingdom,concept.politics
 adam and eve,concept.religion
@@ -579,8 +605,8 @@ lent,concept.religion
 passover,concept.religion
 quran,concept.religion
 sharia,concept.religion
-spirit,concept.religion
 sins,concept.religion
+spirit,concept.religion
 cont,contraction
 dont,contraction
 isnt,contraction
@@ -628,13 +654,18 @@ delight,emotion
 happy,emotion
 rage,emotion
 sad,emotion
+double,enum
+dozen,enum
 eight,enum
 eighth,enum
+eleven,enum
+fifteen,enum
 fifteen,enum
 fifth,enum
 first,enum
 five,enum
 four,enum
+fourteen,enum
 fourth,enum
 ii,enum
 iii,enum
@@ -665,6 +696,8 @@ sixth,enum
 ten,enum
 tenth,enum
 third,enum
+thirteen,enum
+twelve,enum
 two,enum
 v,enum
 vi,enum
@@ -675,6 +708,7 @@ sei,enum.ita
 ale,food
 almond,food
 angus,food
+apples,food
 avocado,food
 banana,food
 beans,food
@@ -701,6 +735,7 @@ latte,food
 lattes,food
 lemon,food
 mango,food
+milk,food
 olive,food
 olives,food
 pancake,food
@@ -775,8 +810,8 @@ portal,internet
 power point,internet
 pref,internet
 proc,internet
-seagate,internet
 scams,internet
+seagate,internet
 serv,internet
 shard,internet
 siri,internet
@@ -807,6 +842,7 @@ deus,latin
 homo,latin
 philo,latin
 synopsis,latin
+edema,medical
 nickel,money
 apr,month
 april,month
@@ -837,7 +873,7 @@ ace,noun
 aces,noun
 achilles,noun
 acorn,noun
-add,verb
+action,noun
 addition,noun
 administration,noun
 ads,noun
@@ -867,6 +903,7 @@ arena,noun
 aria,noun
 armada,noun
 arming,noun
+armor,noun
 armour,noun
 army,noun
 arrival,noun
@@ -904,6 +941,7 @@ barrel,noun
 barrell,noun
 base,noun
 basel,noun
+bases,noun
 basher,noun
 basis,noun
 bath,noun
@@ -943,6 +981,7 @@ blast,noun
 bling,noun
 bliss,noun
 block,noun
+blood,noun
 bluegrass,noun
 blues,noun
 board,noun
@@ -1023,6 +1062,7 @@ carrier,noun
 cars,noun
 cart,noun
 carton,noun
+cases,noun
 cash,noun
 castaway,noun
 caster,noun
@@ -1080,6 +1120,7 @@ coats,noun
 cobblestone,noun
 cockpit,noun
 code,noun
+codes,noun
 coffins,noun
 cold water,noun
 colony,noun
@@ -1087,6 +1128,7 @@ color,noun
 colt,noun
 coma,noun
 comandante,noun
+combat,noun
 combo,noun
 comedy,noun
 comfort,noun
@@ -1125,6 +1167,7 @@ counts,noun
 coup,noun
 coupe,noun
 courier,noun
+course,noun
 courtesy,noun
 cousins,noun
 covenant,noun
@@ -1151,13 +1194,16 @@ cultures,noun
 curfew,noun
 curve,noun
 cutter,noun
+cycle,noun
 cyclone,noun
 cylinder,noun
 dairy,noun
 dame,noun
 dammit,noun
+danger,noun
 dangers,noun
 darling,noun
+data,noun
 dating,noun
 day,noun
 daylight,noun
@@ -1169,6 +1215,7 @@ defense,noun
 defiance,noun
 demos,noun
 derby,noun
+desk,noun
 desperation,noun
 device,noun
 dew,noun
@@ -1198,6 +1245,7 @@ dot,noun
 downfall,noun
 drain,noun
 drama,noun
+drug,noun
 drum,noun
 drums,noun
 duo,noun
@@ -1206,6 +1254,7 @@ economy,noun
 edge,noun
 edition,noun
 education,noun
+effort,noun
 electron,noun
 elf,noun
 embargo,noun
@@ -1213,6 +1262,7 @@ encore,noun
 end,noun
 engineering,noun
 enterprise,noun
+entry,noun
 equity,noun
 errata,noun
 essay,noun
@@ -1254,6 +1304,7 @@ fines,noun
 finger,noun
 fins,noun
 fir,noun
+fire,noun
 firewood,noun
 fish,noun
 flack,noun
@@ -1288,6 +1339,7 @@ friends,noun
 friendship,noun
 front,noun
 front door,noun
+funding,noun
 funk,noun
 fusion,noun
 gallery,noun
@@ -1310,6 +1362,7 @@ germ,noun
 ghost,noun
 gift,noun
 gist,noun
+goal,noun
 gob,noun
 gold,noun
 gold mine,noun
@@ -1392,8 +1445,10 @@ jazz,noun
 jazz,noun
 jesuit,noun
 job,noun
+jobs,noun
 joiner,noun
 joiner,noun
+joke,noun
 joker,noun
 journal,noun
 joy,noun
@@ -1447,6 +1502,7 @@ liquid,noun
 list,noun
 lithium,noun
 liver,noun
+lives,noun
 load,noun
 lobby,noun
 lock,noun
@@ -1474,6 +1530,7 @@ management,noun
 mange,noun
 manifesto,noun
 manifold,noun
+manner,noun
 manpower,noun
 manual,noun
 map,noun
@@ -1512,6 +1569,7 @@ menu,noun
 mercy,noun
 merit,noun
 mess,noun
+message,noun
 meter,noun
 mile,noun
 miles,noun
@@ -1557,6 +1615,7 @@ national assembly,noun
 national council,noun
 national defense,noun
 navigator,noun
+navy,noun
 nda,noun
 nerve,noun
 nets,noun
@@ -1600,6 +1659,7 @@ pains,noun
 pall,noun
 palm,noun
 panel,noun
+paper,noun
 parachute,noun
 paradise,noun
 paragon,noun
@@ -1649,6 +1709,7 @@ plate,noun
 plateau,noun
 plates,noun
 platinum,noun
+plug,noun
 pod,noun
 police,noun
 poll,noun
@@ -1708,10 +1769,13 @@ reclamation,noun
 red line,noun
 refinery,noun
 refs,noun
+relief,noun
 residency,noun
 resource,noun
 rest,noun
+result,noun
 resurrection,noun
+retaliation,noun
 retirement,noun
 reunion,noun
 revenue,noun
@@ -1729,6 +1793,7 @@ rings,noun
 rock,noun
 rocks,noun
 rogue,noun
+role,noun
 roles,noun
 romance,noun
 room,noun
@@ -1784,6 +1849,7 @@ shadow,noun
 shaft,noun
 shale,noun
 sham,noun
+sheet,noun
 sheets,noun
 shelf,noun
 shell,noun
@@ -1824,6 +1890,8 @@ solo,noun
 sonar,noun
 soul,noun
 sound,noun
+source,noun
+sources,noun
 space,noun
 sparks,noun
 spat,noun
@@ -1841,6 +1909,7 @@ stake,noun
 stalker,noun
 stamp,noun
 stamps,noun
+stance,noun
 standard,noun
 staple,noun
 stargazer,noun
@@ -1849,14 +1918,17 @@ steel,noun
 stern,noun
 steward,noun
 stock,noun
+stocks,noun
 stone,noun
 stores,noun
+storey,noun
 storm,noun
 story,noun
-storey,noun
 strain,noun
 striker,noun
+stripe,noun
 stud,noun
+stuff,noun
 style,noun
 success,noun
 sum,noun
@@ -1906,6 +1978,7 @@ tomahawk,noun
 tone,noun
 toon,noun
 tooth,noun
+topic,noun
 total,noun
 tour,noun
 touring,noun
@@ -1923,6 +1996,7 @@ treasures,noun
 treat,noun
 treaty,noun
 tree,noun
+trend,noun
 trial,noun
 tribe,noun
 tribunal,noun
@@ -1938,6 +2012,7 @@ tube,noun
 tubs,noun
 tums,noun
 turbo,noun
+turf,noun
 turnout,noun
 tux,noun
 union,noun
@@ -1970,6 +2045,7 @@ wars,noun
 wave,noun
 waves,noun
 way,noun
+ways,noun
 weakens,noun
 wear,noun
 weasel,noun
@@ -2002,10 +2078,10 @@ yule,noun
 zen,noun
 zenith,noun
 zona,noun
-marche,noun.fre
 l'heure,noun.fre
 la maison,noun.fre
 ligue,noun.fre
+marche,noun.fre
 amor,noun.ita
 amore,noun.ita
 domani,noun.ita
@@ -2016,6 +2092,8 @@ maestro,noun.ita
 volta,noun.ita
 het,noun.nld
 aeroport,noun.por
+group,people
+society,people
 ag,person.label
 ally,person.label
 ambassador,person.label
@@ -2166,6 +2244,8 @@ nunn,person.label
 nurse,person.label
 officer,person.label
 old man,person.label
+old man,person.label
+old woman,person.label
 pal,person.label
 papa,person.label
 partner,person.label
@@ -2175,7 +2255,9 @@ peoples,person.label
 person,person.label
 ph.d,person.label
 phd,person.label
+pilot,person.label
 pirate,person.label
+planner,person.label
 player,person.label
 players,person.label
 poc,person.label
@@ -2213,6 +2295,7 @@ secretariat,person.label
 secretary,person.label
 sen,person.label
 senator,person.label
+sender,person.label
 senior,person.label
 sergeant,person.label
 servant,person.label
@@ -2223,6 +2306,7 @@ sis,person.label
 sister,person.label
 sisters,person.label
 skipper,person.label
+soldier,person.label
 son,person.label
 sons,person.label
 sorcerer,person.label
@@ -2521,6 +2605,7 @@ no no,phrase
 nope,phrase
 nota bene,phrase
 np,phrase
+okay,phrase
 old west,phrase
 ole,phrase
 olive branch,phrase
@@ -2792,11 +2877,10 @@ grove,place.civil
 groves,place.civil
 guest house,place.civil
 gym,place.civil
-halls,place.civil
 halfway house,place.civil
+halls,place.civil
 hamlet,place.civil
 harbor,place.civil
-marina,place.civil
 harbour,place.civil
 headquarters,place.civil
 health center,place.civil
@@ -2830,6 +2914,7 @@ major bank,place.civil
 mall,place.civil
 manor,place.civil
 mansion,place.civil
+marina,place.civil
 market,place.civil
 mart,place.civil
 media center,place.civil
@@ -2954,6 +3039,7 @@ area c,place.general
 area one,place.general
 area three,place.general
 area two,place.general
+areas,place.general
 atol,place.general
 atoll,place.general
 ave,place.general
@@ -3138,12 +3224,12 @@ west coast,place.general
 west side,place.general
 world,place.general
 zone,place.general
-departement,place.general.fre
-monde,place.general.fre
 arrondissement,place.general.fre
 cercle,place.general.fre
 commune,place.general.fre
+departement,place.general.fre
 gouvernorat,place.general.fre
+monde,place.general.fre
 territoire,place.general.fre
 cita,place.general.ita
 distrito,place.general.ita
@@ -3172,6 +3258,7 @@ zulu,place.timezone
 in,preposition
 ci sono,preposition.ita
 ecco,preposition.ita
+those,pronoun
 lei,pronoun.ita
 autumn,season
 fall,season
@@ -3180,7 +3267,7 @@ midwinter,season
 spring,season
 summer,season
 winter,season
-yep,season
+yep,slang
 cong,slang
 cuz,slang
 dat,slang
@@ -3225,6 +3312,10 @@ sport,sport
 sports,sport
 sprint,sport
 sumo,sport
+again,stopword
+away,stopword
+then,stopword
+thus,stopword
 tao,stopword.por
 adobe,stopword.web
 ajax,stopword.web
@@ -3271,6 +3362,7 @@ outlook,stopword.web
 pagina,stopword.web
 perf,stopword.web
 perl,stopword.web
+pin,stopword.web
 pointer,stopword.web
 printer,stopword.web
 python,stopword.web
@@ -3286,8 +3378,6 @@ web,stopword.web
 word,stopword.web
 xbox,stopword.web
 русский,stopword.web
-#me,stopword.wordnet
-#or,stopword.wordnet
 a,stopword.wordnet
 aboard,stopword.wordnet
 about,stopword.wordnet
@@ -3372,6 +3462,7 @@ itself,stopword.wordnet
 like,stopword.wordnet
 many,stopword.wordnet
 maybe,stopword.wordnet
+me,stopword.wordnet
 mine,stopword.wordnet
 minus,stopword.wordnet
 more,stopword.wordnet
@@ -3391,6 +3482,7 @@ on,stopword.wordnet
 oneself,stopword.wordnet
 onto,stopword.wordnet
 opposite,stopword.wordnet
+or,stopword.wordnet
 other,stopword.wordnet
 otherwise,stopword.wordnet
 our,stopword.wordnet
@@ -3456,6 +3548,7 @@ versus,stopword.wordnet
 via,stopword.wordnet
 vis a vis,stopword.wordnet
 we,stopword.wordnet
+were,stopword.wordnet
 what,stopword.wordnet
 whatall,stopword.wordnet
 whatever,stopword.wordnet
@@ -3493,16 +3586,21 @@ century,time
 date,time
 dates,time
 golden age,time
+hour,time
+noon,time
+present,time
 wartime,time
 gallon,unit
 abate,verb
 able,verb
 act,verb
+add,verb
 advance,verb
 aging,verb
 aid,verb
 aiding,verb
 allege,verb
+appeal,verb
 are,verb
 argue,verb
 arrest,verb
@@ -3521,11 +3619,13 @@ be in,verb
 been,verb
 began,verb
 begin,verb
+begun,verb
 belong,verb
 betting,verb
 beware,verb
 bid,verb
 bite,verb
+blame,verb
 bloom,verb
 blow,verb
 bluff,verb
@@ -3534,6 +3634,7 @@ bolster,verb
 born,verb
 bred,verb
 bring,verb
+broker,verb
 budge,verb
 burn,verb
 burning,verb
@@ -3545,6 +3646,7 @@ came,verb
 can,verb
 cancel,verb
 care,verb
+cares,verb
 carry,verb
 cast,verb
 change,verb
@@ -3552,6 +3654,7 @@ charge,verb
 chase,verb
 chew,verb
 cite,verb
+clash,verb
 clear,verb
 climbing,verb
 clinch,verb
@@ -3559,6 +3662,8 @@ clip,verb
 clone,verb
 close,verb
 come,verb
+command,verb
+contact,verb
 control,verb
 cook,verb
 cooling,verb
@@ -3574,10 +3679,12 @@ cutting,verb
 dance,verb
 dare,verb
 deal,verb
+decide,verb
 delete,verb
 denting,verb
 design,verb
 desire,verb
+deter,verb
 devise,verb
 did,verb
 dig,verb
@@ -3587,6 +3694,7 @@ dive,verb
 do,verb
 docking,verb
 dodge,verb
+does,verb
 draft,verb
 drank,verb
 draw,verb
@@ -3617,8 +3725,10 @@ gain,verb
 gave,verb
 get,verb
 gets,verb
+give,verb
 go,verb
 goes,verb
+going,verb
 got,verb
 grade,verb
 grading,verb
@@ -3632,6 +3742,7 @@ harm,verb
 harms,verb
 harness,verb
 has,verb
+hasten,verb
 hate,verb
 have,verb
 having,verb
@@ -3640,6 +3751,7 @@ healing,verb
 hear,verb
 heard,verb
 held,verb
+hide,verb
 hit,verb
 hop,verb
 hoping,verb
@@ -3670,28 +3782,35 @@ listen,verb
 lit,verb
 live,verb
 locate,verb
+lose,verb
 losing,verb
 lure,verb
 made,verb
 mailing,verb
 make,verb
 makes,verb
+making,verb
 mark,verb
 meet,verb
 mend,verb
 met,verb
 mixing,verb
 mock,verb
+move,verb
 must,verb
 nag,verb
+need,verb
+offer,verb
 orient,verb
 pan,verb
 parse,verb
 passing,verb
+paste,verb
 pay,verb
 peep,verb
 pertain,verb
 petting,verb
+play,verb
 ponder,verb
 pop,verb
 poses,verb
@@ -3702,6 +3821,8 @@ press,verb
 prey,verb
 printing,verb
 prod,verb
+promise,verb
+protest,verb
 proves,verb
 punch,verb
 punt,verb
@@ -3727,6 +3848,7 @@ relax,verb
 rely,verb
 rendezvous,verb
 rent,verb
+request,verb
 rescue,verb
 research,verb
 reset,verb
@@ -3743,6 +3865,7 @@ run,verb
 running,verb
 runs,verb
 rushing,verb
+said,verb
 saw,verb
 say,verb
 says,verb
@@ -3750,6 +3873,7 @@ scale,verb
 scan,verb
 scares,verb
 see,verb
+seem,verb
 seen,verb
 sees,verb
 sell,verb
@@ -3781,6 +3905,7 @@ slap,verb
 slaughter,verb
 snipe,verb
 so do,verb
+sold,verb
 solve,verb
 sort,verb
 spin,verb
@@ -3793,10 +3918,13 @@ stay,verb
 step,verb
 stoke,verb
 stole,verb
+strike,verb
 supply,verb
 sway,verb
 sweep,verb
 swell,verb
+take,verb
+taken,verb
 target,verb
 tax,verb
 tear,verb

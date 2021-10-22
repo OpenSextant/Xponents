@@ -4,9 +4,9 @@ import os
 from copy import copy
 
 import shapefile
-from opensextant import get_country, Country, is_abbreviation
+from opensextant import get_country, Country
 from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, parse_admin_code, PlaceHeuristics
-from opensextant.utility import is_ascii, is_code, trivial_bias, get_list
+from opensextant.utility import is_code, is_abbreviation, get_list
 
 #
 stopterms = load_stopterms()
@@ -171,6 +171,7 @@ class NatEarthAdminGazetteer(DataSource):
     def process_source(self, sourcefile, limit=-1):
         """
         :param sourcefile: Shapefile from Natural Earth
+        :param limit:
         :return:
         """
         if not os.path.exists(sourcefile):
@@ -265,7 +266,6 @@ class NatEarthAdminGazetteer(DataSource):
                 # Geographic codings:  Features, location, IDs
                 labels = set([row["woe_label"], row["woe_name"]])
                 labels.update(all_script)
-                namenorm = ""
                 fc, ft = parse_feature_type(row, labels, debug=self.debug)
                 plid = row["gns_id"]
                 if plid == "-1":
@@ -297,22 +297,22 @@ class NatEarthAdminGazetteer(DataSource):
                         if nm.lower() in distinct_names:
                             continue
                         distinct_names.add(nm.lower())
-                        entry = geo.copy()
+                        g = geo.copy()
                         count += 1
 
-                        entry["id"] = GENERATED_BLOCK + count
-                        entry["name"] = nm
+                        g["id"] = GENERATED_BLOCK + count
+                        g["name"] = nm
                         name_grp = lang
                         if lang == "xx":
                             name_grp = ""
-                        entry["name_grp"] = name_grp
-                        entry["name_bias"] = self.estimator.name_bias(nm, fc, name_grp)
+                        g["name_grp"] = name_grp
                         if is_code(nm):
-                            entry["name_type"] = "C"
+                            g["name_type"] = "C"
                         elif is_abbreviation(nm):
-                            entry["name_type"] = "A"
+                            g["name_type"] = "A"
+                        g["name_bias"] = self.estimator.name_bias(nm, fc, ft, name_group=name_grp, name_type=g["name_type"])
 
-                        yield entry
+                        yield g
 
 
 if __name__ == "__main__":

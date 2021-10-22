@@ -22,7 +22,6 @@
     <mkdir dir="${tmp}" />
 
     <get src="http://download.geonames.org/export/dump/admin1CodesASCII.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
-    <get src="http://download.geonames.org/export/dump/admin1CodesASCII.txt" dest="${pylib.resources}/geonames.org" verbose="true" usetimestamp="true" />
     <get src="http://download.geonames.org/export/dump/timeZones.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
     <get src="http://download.geonames.org/export/dump/countryInfo.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
     <get src="http://download.geonames.org/export/dump/cities15000.zip" dest="${tmp}" verbose="true" usetimestamp="true" />
@@ -41,6 +40,7 @@
     <copy file="${java.resources}/datetime_patterns.cfg" todir="${pylib.resources}" />
     <copy file="${java.resources}/poli_patterns.cfg" todir="${pylib.resources}" />
     <copy file="${geonames.resources}/cities15000.txt" todir="${pylib.resources}/geonames.org/" />
+    <copy file="${geonames.resources}/admin1CodesASCII.txt" todir="${pylib.resources}/geonames.org/" />
   </target>
 
   <target name="setup" depends="proxy,get-meta,copy-resources,unpack-langid" />

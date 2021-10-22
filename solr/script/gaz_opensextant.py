@@ -114,6 +114,7 @@ class OpenSextantGazetteer(DataSource):
         """
         ingest the standard merged file from the Gazetteer project
         :param sourcefile: the Merged gazetteer file
+        :param limit: limit of number of records to process
         :return:
         """
         with open(sourcefile, "r", encoding="UTF-8") as fh:

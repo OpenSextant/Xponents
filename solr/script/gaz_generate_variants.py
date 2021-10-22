@@ -18,7 +18,7 @@ many times only the short form is used:  St. Louis,...
 
 debug = False
 splitter = re.compile("[-.`'\u2019\\s]+", re.UNICODE | re.IGNORECASE)
-ORIGINALS_BLOCK = 20000000
+GENERATED_BLOCK = 25000000
 
 
 class NameGenerator:
@@ -81,7 +81,7 @@ class GeneralNameVariants(NameGenerator):
                     variant = variant.replace('-', ' ').replace('  ', ' ')
 
                     print(f"\tVariant: {variant}")
-                    pl.id = ORIGINALS_BLOCK + count
+                    pl.id = GENERATED_BLOCK + count
                     pl.name = variant
                     pl.source = XPGEN
                     self.db.add_place(pl)
@@ -149,7 +149,7 @@ class SaintNameVariants(NameGenerator):
                     variant = variant.replace('-', ' ').replace('  ', ' ')
 
                     print(f"\tVariant: {variant}")
-                    pl.id = ORIGINALS_BLOCK + count
+                    pl.id = GENERATED_BLOCK + count
                     pl.name = variant
                     pl.source = XPGEN
                     self.db.add_place(pl)
@@ -160,12 +160,13 @@ class AdhocNameVariants(DataSource):
     def __init__(self, dbf, **kwargs):
         DataSource.__init__(self, dbf, **kwargs)
         self.source_name = "Xponents Adhoc Names"
-        self.source_keys = ["X"]
+        self.source_keys = [XPGEN]
 
     def process_source(self, sourcefile, limit=-1):
         """
         ingest the standard merged file from the Gazetteer project
         :param sourcefile: the Merged gazetteer file
+        :param limit: limit of number of records to process
         :return:
         """
         header_names = ['place_id', 'name', 'feat_class', 'feat_code', 'adm1',
@@ -178,7 +179,7 @@ class AdhocNameVariants(DataSource):
                     continue
                 self.rowcount += 1
                 pl = as_place(row)
-                pl.id = ORIGINALS_BLOCK + self.rowcount
+                pl.id = GENERATED_BLOCK + self.rowcount
                 pl.search_only = 0
                 pl.name_group = ""
                 pl.adm2 = ""
