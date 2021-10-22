@@ -226,10 +226,14 @@ public class TestGazMatcher {
     protected Extractor geocoder;
 
     protected void tagText(TextInput t) throws ExtractionException {
+        TestGazMatcher.printMemory();
+
         print("TEST:\t" + t.buffer + "\n=====================");
         List<TextMatch> matches = geocoder.extract(t);
         summarizeFindings(matches);
         print("\n");
+
+        TestGazMatcher.printMemory();
     }
 
     protected void tagBatch(String filename) throws IOException {
@@ -238,6 +242,9 @@ public class TestGazMatcher {
         if (!jsonFile.exists()) {
             throw new IOException("File does not exist; not opening...");
         }
+
+        TestGazMatcher.printMemory();
+
         JsonParser jsonp = JsonParser.create();
         try (BufferedReader reader = new BufferedReader(FileUtility.getInputStreamReader(jsonFile, "UTF-8"))) {
             String line;
@@ -260,6 +267,7 @@ public class TestGazMatcher {
         } catch (Exception ioerr) {
             ioerr.printStackTrace();
         }
+        TestGazMatcher.printMemory();
     }
 
     public Parameters params = new Parameters();

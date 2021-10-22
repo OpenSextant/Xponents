@@ -22,7 +22,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         Parameters testParams = new Parameters();
         testParams.resolve_localities = true;
         testParams.tag_coordinates = true;
-        PlaceGeocoder geocoderImpl = new PlaceGeocoder(true);
+        PlaceGeocoder geocoderImpl = new PlaceGeocoder(false);
         geocoderImpl.setParameters(testParams);
         geocoderImpl.enablePersonNameMatching(true);
         geocoderImpl.setAllowLowerCaseAbbreviations(false);

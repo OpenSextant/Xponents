@@ -217,7 +217,7 @@ public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFacto
                 }
             }
             String nt = SolrUtil.getString(doc, "name_type");
-            boolean isName = (nt != null && "N".equals(nt));
+            boolean isName = "N".equals(nt);
 
             /*
              * Cleanup scripts.

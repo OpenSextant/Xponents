@@ -106,7 +106,7 @@ public abstract class SolrMatcherSupport implements Closeable {
 
     /**
      * Initialize. This capability is not supporting taggers/matchers using HTTP
-     * server. For now it is intedended to be in-memory, local embedded solr
+     * server. For now, it is intedended to be in-memory, local embedded solr
      * server.
      *
      * @throws ConfigException if solr server cannot be established from local

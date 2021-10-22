@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import gnu.getopt.Getopt;
 
 /**
- * @deprecated GazetteerIndexer is replaced by Python/SQLite scripts for producing master gazetter
+ * @deprecated GazetteerIndexer is replaced by Python/SQLite scripts for producing master gazetteer
  */
  @Deprecated
 public class GazetteerIndexer {
@@ -104,7 +104,7 @@ public class GazetteerIndexer {
     }
 
     public static void usage() {
-        System.out.println("nothuibng herae;kd");
+        System.out.println("Deprecated and Unsupported routine");
     }
 
     public GazetteerIndexer(String url) {

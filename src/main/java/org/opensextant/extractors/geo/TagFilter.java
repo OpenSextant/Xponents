@@ -30,8 +30,7 @@ import org.supercsv.prefs.CsvPreference;
  * false positives regardless of case.
  *
  * Filter out unwanted tags via GazetteerETL data model or in Solr index. If
- * you believe certain items will always be filtered then set name_bias >
- * 0.0
+ * you believe certain items will always be filtered OUT then set name_bias < 0
  */
 
 public class TagFilter extends MatchFilter {
