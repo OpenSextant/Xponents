@@ -66,7 +66,6 @@ if __name__ == '__main__':
     test = False
     row_max = -1
     builder = TaxCatalogBuilder(server=args.solr)
-    builder.commit_rate = 100
     row_id = int(args.starting_id)
     builder.server.delete(q=f"catalog:{catalog_id}", commit=True)
 

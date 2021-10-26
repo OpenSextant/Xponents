@@ -143,7 +143,8 @@ class TaxCatalogBuilder:
         self._record_count = 0
         self._byte_count = 0
         self._add_byte_count = 0
-        self.commit_rate = 1000
+        self.add_rate = 1000
+        self.commit_rate = -1
 
         self._records = []
         self.count = 0
@@ -185,10 +186,12 @@ class TaxCatalogBuilder:
             print("No server")
             return
 
-        if flush or (0 < self.count and self.count % self.commit_rate == 0):
+        if flush or (0 < self.count and self.count % self.add_rate == 0):
             self.server.add(self._records)
-            self.server.commit()
             self._records.clear()
+
+            if flush:
+                self.server.commit()
         return
 
     def add(self, catalog, taxon):

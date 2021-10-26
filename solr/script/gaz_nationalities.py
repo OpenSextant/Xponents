@@ -109,7 +109,7 @@ if __name__ == '__main__':
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument('--taxonomy', required=True)
+    ap.add_argument('taxonomy', help="nationalities file")
     ap.add_argument('--starting-id')
     ap.add_argument('--solr')
     ap.add_argument('--max')
@@ -125,9 +125,6 @@ if __name__ == '__main__':
 
     if args.max:
         row_max = int(args.max)
-
-    # Commit rows every N entries
-    builder.commit_rate = 100
 
     row_id = 0
     with open(args.taxonomy, 'r', encoding="UTF-8") as fh:

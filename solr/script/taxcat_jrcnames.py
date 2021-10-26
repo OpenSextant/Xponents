@@ -173,7 +173,7 @@ def check_validity(e):
 #
 PLACE_ENDING_FIXES = {"province", "island", "islands", "district", "peninsula", "valley",
                       "territory", "county", "city", "state", "township", "village",
-                      "center", "square", "university", "college",
+                      "center", "square", "university", "college", "park", "center",
                       "roads", "avenue", "avenida", "prefecture", "heights", "springs", "falls",
                       "airport", "aeropuerto", "aeroporto", "station", "harbor", "harbour", "port"}
 
@@ -181,9 +181,9 @@ PLACE_STARTING_FIXES = {"city", "spin", "town", "fort", "port"}
 
 # A large number of entities are marked as Person unnecessarily.
 # Org fixes: find any of these terms in a phrase and declare the phrase an org, if not already.
-ORG_FIXES = {"tribunal", "council", "shura", "group", "committee", "senate", " of state",
+ORG_FIXES = {"tribunal", "council", "shura", "group", "committee", "commission", "senate", " of state",
              "departamento", "department", "transport", "transit", "musee", "museum",
-             "museums", "organization", "authority", "enterprise", "institute", "inc", "llc"}
+             "museums", "organization", "authority", "enterprise", "institute", "ltd", "inc", "llc"}
 
 
 class JRCEntity(Taxon):
@@ -359,7 +359,7 @@ if __name__ == "__main__":
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("--taxonomy", required=True, help="Taxonomy file in JRCNames format")
+    ap.add_argument("taxonomy",  help="Taxonomy file in JRCNames format")
     ap.add_argument("--starting-id", help="Solr index row ID start")
     ap.add_argument("--solr", help="Solr URL for taxcat index")
     ap.add_argument("--max", help="Max # of rows to index; for testing")
@@ -386,9 +386,6 @@ if __name__ == "__main__":
         row_max = int(args.max)
     elif test:
         row_max = 100000
-
-    # Commit rows every 10,000 entries.
-    builder.commit_rate = 10000
 
     stopterms_file = os.path.join("etc", "taxcat", "stopwords.txt")
     builder.add_stopwords(stopterms_file)
