@@ -32,8 +32,8 @@ import os
 import arrow
 import bs4
 import requests
-from opensextant.utility import squeeze_whitespace
 from opensextant import load_countries
+from opensextant.utility import squeeze_whitespace
 
 load_countries()
 

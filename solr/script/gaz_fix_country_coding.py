@@ -1,5 +1,5 @@
-from opensextant.gazetteer import get_default_db, DB
 from opensextant import load_us_provinces
+from opensextant.gazetteer import get_default_db, DB
 
 
 class USFixer:
@@ -12,7 +12,7 @@ class USFixer:
         """
         self.db = DB(dbf, debug=debug)
 
-    def fix(self, limit = -1):
+    def fix(self, limit=-1):
         load_us_provinces()
         distinct = set([])
         count = 0
@@ -23,7 +23,7 @@ class USFixer:
             us_state = usstates[st]
             if us_state.adm1 in distinct:
                 continue
-            self.db.update_admin1_code("US", us_state.adm1,  us_state.adm1_postalcode)
+            self.db.update_admin1_code("US", us_state.adm1, us_state.adm1_postalcode)
             distinct.add(us_state.adm1)
             if 0 < limit < count:
                 print("User limit reached")
@@ -46,4 +46,3 @@ if __name__ == "__main__":
         USFixer(args.db, debug=args.debug).fix(limit=int(args.max))
     else:
         print("Only country needing fixin' is US.")
-

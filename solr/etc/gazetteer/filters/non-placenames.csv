@@ -383,6 +383,8 @@ single,adj
 sino,adj
 slick,adj
 slim,adj
+sly,adj
+shy,adj
 small,adj
 smart,adj
 sober,adj
@@ -2530,6 +2532,7 @@ good point,phrase
 goodluck,phrase
 goodnight,phrase
 goto,phrase
+go-to,phrase
 ha,phrase
 hah,phrase
 haha,phrase

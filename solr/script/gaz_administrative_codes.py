@@ -264,7 +264,7 @@ class NatEarthAdminGazetteer(DataSource):
                 if self.debug: print(names, "/", cc, "ADM1=", adm1)
 
                 # Geographic codings:  Features, location, IDs
-                labels = set([row["woe_label"], row["woe_name"]])
+                labels = {row["woe_label"], row["woe_name"]}
                 labels.update(all_script)
                 fc, ft = parse_feature_type(row, labels, debug=self.debug)
                 plid = row["gns_id"]
@@ -310,7 +310,8 @@ class NatEarthAdminGazetteer(DataSource):
                             g["name_type"] = "C"
                         elif is_abbreviation(nm):
                             g["name_type"] = "A"
-                        g["name_bias"] = self.estimator.name_bias(nm, fc, ft, name_group=name_grp, name_type=g["name_type"])
+                        g["name_bias"] = self.estimator.name_bias(nm, fc, ft,
+                                                                  name_group=name_grp, name_type=g["name_type"])
 
                         yield g
 

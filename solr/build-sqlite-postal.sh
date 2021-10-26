@@ -45,6 +45,8 @@ if [ "$do_test" -eq 1 ] ; then
 else
   # PRODUCTION
   DB=./tmp/postal_gazetteer.sqlite
+  # start fresh:
+  rm -f $DB
   echo POSTAL/GEONAMES       `date`
   python3 ./script/postal.py ./tmp/postal/allCountries.txt 0 --db $DB
   echo POSTAL/CANADA         `date`

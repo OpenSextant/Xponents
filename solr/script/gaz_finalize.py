@@ -2,18 +2,58 @@ import os
 import re
 from time import sleep
 
-from opensextant import Place, load_countries, countries, as_place, is_administrative, is_populated
+from opensextant import Place
 from opensextant.gazetteer import DB, estimate_name_bias, GazetteerIndex, get_default_db
 from opensextant.utility import replace_diacritics, load_list
 
-stopwords = {}
+
+def filter_out_feature(pl: Place, feats):
+    """
+    Filter out places by their feature type or by their name traits.
+    Long names (> 20 chars) and/or (>2 words) are relatively unique and not filtered.
+    Otherwise places are filtered if their feature code+class are designated as not useful
+    for a particular task.  Eg., we don't want to tag short river names or streams (H/STM)...ever.
+    :param pl: Place object
+    :param feats: Pattern
+    :return:
+    """
+    if not pl.feature_code:
+        return False
+
+    # Ignore trivial names:
+    plen = len(pl.name)
+    if plen < 2:
+        return True
+
+    fc = f"{pl.feature_class}/{pl.feature_code}"
+    for feat_filter in feats:
+        if feat_filter.match(fc):
+            return True
+
+    return False
+
+
+def filter_in_feature(pl: Place, feats):
+    """
+
+    :param pl: Place
+    :param feats: feature filters (regex)
+    :return:
+    """
+    if not feats:
+        return True
+    fc = f"{pl.feature_class}/{pl.feature_code}"
+    for feat_filter in feats:
+        if feat_filter.match(fc):
+            return True
+    return False
 
 
 class Finalizer:
     def __init__(self, dbf, debug=False):
         self.db = DB(dbf)
         self.debug = debug
-        self.inter_country_delay = 10
+        self.inter_country_delay = 2
 
     def adjust_place_id(self):
         self.db.create_indices()
@@ -127,7 +167,7 @@ class Finalizer:
         # Easiest way to break down gazetteer is:
         #  - by Country
         #    - by feature class or empty non-feature.  ... Resolve any low-quality entries with empty feature.
-        self.db.optimize()
+        self.db.create_indices()
         cc_list = self.db.list_countries()
         BASE_SOURCES = {"OA", "OG", "U", "UF", "N", "NF", "ISO"}
         for cc in cc_list:
@@ -163,34 +203,12 @@ class Finalizer:
                 # Unique entry
                 keys.add(k)
 
-    def index_country_codes(self, url, starting_id=20000000):
-        """
-        :deprecated:  data is used in database, so we'll get it from there anyway.
-        :param url:
-        :param starting_id:
-        :return:
-        """
-        load_countries()
-        indexer = GazetteerIndex(url)
-        # offset into postal index:
-        count = 0
-        for C in countries:
-            # We won't use FIPS codes for tagging.
-            pl = as_place(C, C.name, oid=starting_id + count, name_type="N")
-            indexer.add(pl)
-            count += 1
-            pl = as_place(C, C.cc_iso2, oid=starting_id + count, name_type="C")
-            indexer.add(pl)
-            count += 1
-            pl = as_place(C, C.cc_iso3, oid=starting_id + count, name_type="C")
-            indexer.add(pl)
-        indexer.save(done=True)
-
     def index(self, url, features=None, ignore_features=None, ignore_digits=True, ignore_names=False, limit=-1):
 
         print("Xponents Gazetteer Finalizer: INDEX")
         indexer = GazetteerIndex(url)
-        indexer.commit_rate = 100000
+        # indexer.commit_rate = 100000
+        indexer.commit_rate = -1
         #
         filters = []
         if ignore_features:
@@ -217,13 +235,16 @@ class Finalizer:
                     continue
                 indexer.add(pl)
             sleep(self.inter_country_delay)
+            # Done with country
+            indexer.save(done=True)
+
         print(f"Indexed {indexer.count}")
         indexer.save(done=True)
 
     def index_codes(self, url):
         print("Xponents Gazetteer Finalizer: INDEX CODES, ABBREV")
         indexer = GazetteerIndex(url)
-        indexer.commit_rate = 100000
+        indexer.commit_rate = -1
         default_criteria = " where duplicate=0 and name_type!='N'"
         for pl in self.db.list_places(criteria=default_criteria):
             indexer.add(pl)
@@ -243,79 +264,6 @@ class PostalIndexer(Finalizer):
     def index(self, url, ignore_digits=False, **kwargs):
         # Finalizer indexes postal data as-is.  No digit or stop filters.
         Finalizer.index(self, url, ignore_digits=False, **kwargs)
-
-
-def filter_out_term(pl: Place):
-    """
-    :param pl: Place name or any text
-    :return: True if term is present in stopwords.
-    """
-    txt = pl.name
-    txtnorm = txt.lower()
-    if txtnorm in stopwords:
-        return True
-
-    admin_feat = is_administrative(pl.feature_class)
-    pop_feat = is_populated(pl.feature_class)
-    # UPPER case abbreviations allowed only for administrative boundaries
-    if pl.is_upper and len(pl.name) < 4 and not admin_feat:
-        return True
-
-    if replace_diacritics(txtnorm).strip("'") in stopwords:
-        return True
-
-    # Ignore trivial feature names: e.g., s"The Spot"
-    if not (pop_feat or admin_feat) and txtnorm.startswith("the "):
-        tokens = txtnorm.split(" ")
-        if tokens[1] in stopwords and len(tokens) == 2:
-            return True
-
-    return False
-
-
-def filter_out_feature(pl: Place, feats):
-    """
-    Filter out places by their feature type or by their name traits.
-    Long names (> 20 chars) and/or (>2 words) are relatively unique and not filtered.
-    Otherwise places are filtered if their feature code+class are designated as not useful
-    for a particular task.  Eg., we don't want to tag short river names or streams (H/STM)...ever.
-    :param pl: Place object
-    :param feats: Pattern
-    :return:
-    """
-    if not pl.feature_code:
-        return False
-
-    plen = len(pl.name)
-    # Names of about 20 chars long are non-trivial
-    if plen > 20:
-        return False
-
-    # Allow 3-word features or longer -- that is relatively unique.
-    if len(pl.name.split()) > 2:
-        return False
-
-    fc = f"{pl.feature_class}/{pl.feature_code}"
-    for feat_filter in feats:
-        if feat_filter.match(fc):
-            return True
-    return False
-
-
-def filter_in_feature(pl: Place, feats):
-    """
-
-    :param pl: Place
-    :param feats: feature filters (regex)
-    :return:
-    """
-    if not feats:
-        return True
-    fc = f"{pl.feature_class}/{pl.feature_code}"
-    for feat_filter in feats:
-        if feat_filter.match(fc):
-            return True
-    return False
 
 
 if __name__ == "__main__":
@@ -341,16 +289,14 @@ if __name__ == "__main__":
             # Postal Codes
             gaz = PostalIndexer(args.db, debug=args.debug)
             gaz.stop_filters = None
-            gaz.index(args.solr,
-                      ignore_digits=False,
-                      use_stopfilters=False,
-                      limit=int(args.max))
+            gaz.index(args.solr, ignore_digits=False, limit=int(args.max))
         else:
             gaz = Finalizer(args.db, debug=args.debug)
-            gaz.index(args.solr,
-                      ignore_features={"H/WLL.*", "H/STM.*", "H/SPNG.*", "T/HLL.*"},
-                      ignore_digits=True,
-                      limit=int(args.max))
+            gaz.index(args.solr, ignore_digits=True, limit=int(args.max),
+                      ignore_features={"H/WLL.*",
+                                       "H/STM[ABCDHIQSBX]+",
+                                       "H/SPNG.*",
+                                       "T/HLL.*"})
 
     elif args.operation == "adjust-id":
         gaz = Finalizer(args.db, debug=args.debug)

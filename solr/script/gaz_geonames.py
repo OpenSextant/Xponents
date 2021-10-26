@@ -89,9 +89,12 @@ def render_distinct_names(arr):
     names = {}
     for nm in arr:
         if nm:
+            if "(historical)" in nm:
+                nm = nm.replace("(historical)", "").strip()
             nm = nm.replace("\u2019", "'").rstrip(".").strip()
             names[nm.lower()] = nm
     return set(names.values())
+
 
 def _format(f):
     return float("{:0.3}".format(f))

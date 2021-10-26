@@ -62,6 +62,10 @@ if [ "$do_test" -eq 1 ] ; then
 else
   # PRODUCTION  -- RAW SOURCES
   # ==========================
+  # start fresh:
+  DB=./tmp/master_gazetteer.sqlite
+  rm -f $DB
+
   datekey=`date +%Y%m%d`
   echo USGS      `date`
   LOG=./tmp/gaz_usgs_${datekey}.log

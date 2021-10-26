@@ -29,19 +29,19 @@ index_taxcat () {
   TAXCAT=./etc/taxcat
   echo "Populate nationalities taxonomy in XTax"
   # you must set your PYTHONPATH to include required libraries built from ../python
-  python3  ./script/gaz_nationalities.py  --taxonomy $TAXCAT/nationalities.csv --solr $SOLR_URL --starting-id 0
+  python3  ./script/gaz_nationalities.py   $TAXCAT/nationalities.csv --solr $SOLR_URL --starting-id 0
   sleep 1 
 
   echo "Populate core JRC Names 'entities' data file, c.2014"
   # These entries go in 3,000,000 to 5,000,000 range.
   JRC_SCRIPT=./script/taxcat_jrcnames.py
-  python3 $JRC_SCRIPT --taxonomy $TAXCAT/data/entities.txt  --solr $SOLR_URL
+  python3 $JRC_SCRIPT  $TAXCAT/data/entities.txt  --solr $SOLR_URL
   sleep 1
 
   # This file is manually curated, not sourced from JRC (EU). But the format is the same.
   # Start at 5,000,000 range.
   JRC_ADHOC=$TAXCAT/entities-adhoc.txt
-  python3 $JRC_SCRIPT --taxonomy $JRC_ADHOC  --solr $SOLR_URL --no-fixes --starting-id 5000000
+  python3 $JRC_SCRIPT $JRC_ADHOC  --solr $SOLR_URL --no-fixes --starting-id 5000000
   sleep 1
 
   # Arbitrary row ID scheme, but we have various catalogs that should have reserved row-id space based on size.

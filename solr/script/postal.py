@@ -101,40 +101,35 @@ class PostalGazetteer(DataSource):
         #
         # Guidelines -- Copy over source data from DBF, but reassign row ID to be consistent with this
         # postal db
-        for cc in self.db.list_countries():
-            if self.rowcount % self.rate == 0 and not self.quiet:
-                print(f"Row {self.rowcount}")
-            if 0 < limit < self.rowcount:
-                print("Reached non-zero limit for testing.")
-                break
-            try:
-                # !!! PER SQLITE: https://www.sqlite.org/faq.html  -- use Single Quotes for query on columns.
-                #
-                # Copy over country and province codes at a high level.
-                sub_query = " AND name_group='' AND duplicate=0 AND feat_code='ADM1' AND name_type in ('C', 'A') "
-                _ctry_meta = []
-                for pl in master_db.db.list_places(cc=cc, fc="A", criteria=sub_query):
-                    self.rowcount += 1
-                    # Grab admin-level-1
-                    entry = as_place_record(pl, target="db")
-                    entry["id"] = self.starting_row + self.rowcount
-                    _ctry_meta.append(entry)
-                # Part II. Countries
-                sub_query = " AND name_group='' AND duplicate=0 AND feat_code like 'PCL%' "
-                for pl in master_db.db.list_places(cc=cc, fc="A", criteria=sub_query):
-                    # Grab countries -- Looking for POSTAL variations of country names.
-                    if not is_ascii(pl.name) or len(pl.name) > 25:
-                        continue
-                    self.rowcount += 1
-                    entry = as_place_record(pl, target="db")
-                    entry["id"] = self.starting_row + self.rowcount
-                    _ctry_meta.append(entry)
-                self.db.add_places(_ctry_meta)
-                print(f"\tCC {cc} added {len(_ctry_meta)}")
-                self.rowcount += len(_ctry_meta)
-            except sqlite3.IntegrityError as err:
-                print(err)
-                break
+        cc_list = self.db.list_countries()
+        cc_sql_arr = ", ".join([ f"'{cc}'" for cc in cc_list])
+        try:
+            # !!! PER SQLITE: https://www.sqlite.org/faq.html  -- use Single Quotes for query on columns.
+            #
+            # Copy over country and province codes at a high level.
+            sub_query = f" AND name_group='' AND duplicate=0 AND feat_code='ADM1' AND name_type in ('C', 'A') AND cc in ({cc_sql_arr})"
+            _ctry_meta = []
+            for pl in master_db.db.list_places(fc="A", criteria=sub_query):
+                self.rowcount += 1
+                # Grab admin-level-1
+                entry = as_place_record(pl, target="db")
+                entry["id"] = self.starting_row + self.rowcount
+                _ctry_meta.append(entry)
+            # Part II. Countries
+            sub_query = f" AND name_group='' AND duplicate=0 AND feat_code like 'PCL%' AND cc in ({cc_sql_arr})"
+            for pl in master_db.db.list_places(fc="A", criteria=sub_query):
+                # Grab countries -- Looking for POSTAL variations of country names.
+                if not is_ascii(pl.name) or len(pl.name) > 25:
+                    continue
+                self.rowcount += 1
+                entry = as_place_record(pl, target="db")
+                entry["id"] = self.starting_row + self.rowcount
+                _ctry_meta.append(entry)
+            self.db.add_places(_ctry_meta)
+            # print(f"\tCC {cc} added {len(_ctry_meta)}")
+            print(f"For Countries {cc_sql_arr}, Added {len(_ctry_meta)} entries of Administrative codes")
+        except sqlite3.IntegrityError as err:
+            print(err)
         master_db.db.close()
 
         if optimize:
@@ -220,6 +215,16 @@ class PostalGazetteer(DataSource):
 
 class ReferenceGaz(DataSource):
     def __init__(self, country=None):
+        """
+            Reference Gazetteer is a lean view of just Province data from each country.  Organized as such:
+                {
+                    C1: { ADM_NAME : ADM1, ...},
+                    C2: { ADM_NAME : ADM1, ...},...
+                }
+
+            ADM_NAME is the postal code of sorts for the province.
+            ADM1 is the numeric ID.
+        """
         DataSource.__init__(self, get_default_db())
         # self.db.debug = True
         print("Collecting consistent ADM1 codes to use internally on postal code entries.")
@@ -236,6 +241,7 @@ class ReferenceGaz(DataSource):
                                           criteria=" and name_group is '' and name_type = 'C' and feat_code = 'ADM1' "):
                 dct[pl.name] = pl.adm1
             self._country_adm1[cc] = dct
+        self.db.close()
 
     def admin_boundaries(self, cc):
         return self._country_adm1.get(cc)
