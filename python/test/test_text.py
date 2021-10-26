@@ -30,11 +30,11 @@ class TestText(TestCase):
 
     def test_diacritics(self):
         # Diacritic Name that has odd quote at end:
-        nm = 'Gáza kormányzóság‘´'
+        nm = 'Gáza kormányzósá\u0123‘´'
 
         print(trivial_bias(nm))
 
-        stripped = "Gaza kormanyzosag"
+        stripped = "Gaza kormanyzosag''"
         stripped_test = replace_diacritics(nm)
         print(nm, "=>", stripped_test)
         assert stripped_test == stripped

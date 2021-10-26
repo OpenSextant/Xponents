@@ -7,7 +7,7 @@ import arrow
 import pysolr
 from opensextant import Place, Country, geohash_encode, load_major_cities, is_administrative
 from opensextant.utility import ensure_dirs, is_ascii, has_cjk, has_arabic, \
-    ConfigUtility, get_bool, trivial_bias, replace_diacritics, parse_float, load_list
+    ConfigUtility, get_bool, trivial_bias, replace_diacritics, strip_quotes, parse_float, load_list
 from opensextant.wordstats import WordStats
 
 DEFAULT_MASTER = "master_gazetteer.sqlite"
@@ -381,6 +381,10 @@ class DB:
             print("Query not implemented ", q)
 
     def create(self):
+        """
+        Create the placenames table and default indices used for ETL - place_id, source, country, and ADM1
+        :return:
+        """
         sql_script = """
             create TABLE placenames (
                 `id` INTEGER PRIMARY KEY,
@@ -405,11 +409,18 @@ class DB:
             );
             
             create INDEX plid_idx on placenames ("place_id");               
+            create INDEX s_idx on placenames ("source");
+            create INDEX c_idx on placenames ("cc");
+            create INDEX a1_idx on placenames ("adm1");
         """
         self.conn.executescript(sql_script)
         self.conn.commit()
 
     def create_indices(self):
+        """
+        Create additional indices that are used for advanced ETL functions and optimization.
+        :return:
+        """
         self.reopen()
         indices = """
             create INDEX IF NOT EXISTS n_idx on placenames ("name");
@@ -454,6 +465,7 @@ class DB:
         try:
             if self.conn is not None:
                 self.__assess_queue(force=True)
+                self.conn.commit()
                 self.conn.close()
                 self.conn = None
         except sqlite3.IntegrityError:
@@ -594,7 +606,7 @@ class DB:
     def mark_duplicates(self, dups):
         if not dups:
             return False
-        step = 5000
+        step = 1000
         for x1 in _array_blocks(dups, step=step):
             x2 = x1 + step
             arg = ",".join([str(dup) for dup in dups[x1:x2]])
@@ -781,7 +793,7 @@ class GazetteerIndex:
             self.server.add(self._records)
             self._records = []
         # Commit
-        if done or self.count % self.commit_rate == 0:
+        if done or (self.count % self.commit_rate == 0 and self.commit_rate > 0):
             self.server.commit()
         return
 
@@ -852,7 +864,7 @@ class PlaceHeuristics:
         self.stat_namecount = 0
         # Terms appearing in GoogleBooks 8,000,000 or more are consider not tag-worthy for geography, in general
         self.wordlookup = WordStats(get_default_wordstats())
-        self.wordlookup.load_common(threshold=8000000)
+        self.wordlookup.load_common(threshold=6000000)
 
         # Path relative to ./solr/
         fpath = os.path.join('etc', 'gazetteer', 'filters', 'non-placenames,admin-codes.csv')
@@ -1060,7 +1072,7 @@ class PlaceHeuristics:
             # is a common word, but not associated often with a location
             return -1
         else:
-            test = replace_diacritics(norm)
+            test = strip_quotes(replace_diacritics(norm))
             if norm != test:
                 if self.wordlookup.is_common(test):
                     return -1

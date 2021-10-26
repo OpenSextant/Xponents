@@ -347,6 +347,7 @@ def trivial_bias(name):
     return float("{:0.3}".format(score))
 
 
+# TODO: Convert Solr ASCII folding filter file to this array
 # Helpful hints on parsing Unicode phrases. Reference:
 # http://www.rgagnon.com/javadetails/java-0456.html
 ALPHAMAP_PLAIN_ASCII = "".join([
@@ -359,7 +360,11 @@ ALPHAMAP_PLAIN_ASCII = "".join([
     "Cc",  # cedilla
     "OoUu",  # double acute
     "Oo",  # Scandanavian o
-    "AaEe",  # A/E wiht micron
+    "EeEeEeEe", # Various E latin-1
+    "GgGgGgGg", #g
+    "AaEeIiOoUu",  # A/E with macron
+    "AaBbMmNn", # A, B, M, N with dot ~ commonly seen
+    "DdRr" # D, R with under-bar
 ])
 
 ALPHAMAP_UNICODE = "".join([
@@ -372,7 +377,11 @@ ALPHAMAP_UNICODE = "".join([
     "\u00C7\u00E7",  # cedilla
     "\u0150\u0151\u0170\u0171",  # double acute
     "\u00D8\u00F8",  # Scandanavian o Øø
-    "\u0100\u0101\u0112\u0113",  # E-bar, A-bar
+    "\u0114\u0115\u0116\u0117\u0118\u0119\u011A\u011B", # Various E latin-1: E
+    "\u011C\u011D\u011E\u011F\u0120\u0121\u0122\u0123", # g
+    "\u0100\u0101\u0112\u0113\u012A\u012B\u014C\u014D\u016A\u016B",  # AEIOU macron: A-bar,  E-bar, etc.
+    "\u1E00\u1E01\u1E02\u1E03\u1E40\u1E41\u1E44\u1E45", # A, B, M, N with dot ~ commonly seen
+    "\u1E0E\u1E0F\u1E5E\u1E5F" # D, R with under-bar
 ])
 
 COMMON_DIACRITC_HASHMARKS = re.compile("[\"'`\u00B4\u2018\u2019]")
@@ -397,6 +406,13 @@ def replace_diacritics(s):
         else:
             buf.append(c)
     return "".join(buf)
+
+
+def strip_quotes(t):
+    """
+    Run replace_diacritics first -- this routine only attempts to remove normal quotes ~ ', "
+    """
+    return t.strip('"').strip("'")
 
 
 # /---------------------------------------

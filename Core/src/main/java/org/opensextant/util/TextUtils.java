@@ -30,28 +30,6 @@
 //
 package org.opensextant.util;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
 import org.apache.commons.text.StringEscapeUtils;
 import org.joda.time.Instant;
 import org.opensextant.data.Language;
@@ -60,6 +38,18 @@ import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
+
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.Normalizer;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * @author ubaldino
@@ -123,8 +113,14 @@ public class TextUtils {
             + "Cc" // cedilla
             + "OoUu" // double acute
             + "Oo" // Scandanavian o
-            + "AaEe" // A/E wiht micron
+            + "EeEeEeEe" // Various E latin-1
+            + "GgGgGgGg" // g
+            + "AaEeIiOoUu" // AEIOU with macron
+            + "AaBbMmNn" // A, B, M, N with dot ~ commonly seen
+            + "DdRr" // D, R with under-bar
+
     ;
+
 
     private static final String ALPHAMAP_UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" // grave
             + "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD" // acute
@@ -135,7 +131,12 @@ public class TextUtils {
             + "\u00C7\u00E7" // cedilla
             + "\u0150\u0151\u0170\u0171" // double acute
             + "\u00D8\u00F8" // Scandanavian o Øø
-            + "\u0100\u0101\u0112\u0113" // A-bar,  E-bar
+            + "\u0114\u0115\u0116\u0117\u0118\u0119\u011A\u011B" // Various E latin-1: E
+            + "\u011C\u011D\u011E\u011F\u0120\u0121\u0122\u0123" // g
+            + "\u0100\u0101\u0112\u0113\u012A\u012B\u014C\u014D\u016A\u016B" // AEIOU macron: A-bar,  E-bar, etc.
+            + "\u1E00\u1E01\u1E02\u1E03\u1E40\u1E41\u1E44\u1E45" // A, B, M, N with dot ~ commonly seen
+            + "\u1E0E\u1E0F\u1E5E\u1E5F" // D, R with under-bar
+
     ;
 
     private static final String COMMON_DIACRITC_HASHMARKS = "\"'`\u00B4\u2018\u2019";
@@ -553,7 +554,7 @@ public class TextUtils {
         // Method 2: measure upper case against just char content.
         //
         // Method 2 seems best.
-        int content = counts[0] /* + counts[3] */ ;
+        int content = counts[0] /* + counts[3] */;
         float uc = ((float) counts[1] / content);
         if (content < 100) {
             return uc > 0.50;
@@ -625,7 +626,7 @@ public class TextUtils {
             right_x = right_y;
         }
 
-        int[] slice = { left_x, left_y, right_x, right_y };
+        int[] slice = {left_x, left_y, right_x, right_y};
 
         return slice;
     }
@@ -655,7 +656,7 @@ public class TextUtils {
             right = textsize;
         }
 
-        int[] slice = { left, right };
+        int[] slice = {left, right};
 
         return slice;
     }
@@ -1047,8 +1048,8 @@ public class TextUtils {
             // initLanguageData(); // Barely useful -- this pulls out lang
             // Locales.
             initLOCLanguageData(); // LOC language data is a list of all known
-                                   // languages w/ISO codes.
-                                   // initICULanguageData(); ICU did not seem to be the right solution.
+            // languages w/ISO codes.
+            // initICULanguageData(); ICU did not seem to be the right solution.
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -1106,7 +1107,7 @@ public class TextUtils {
         java.io.Reader featIO = new InputStreamReader(io, "UTF-8");
         CsvListReader langReader = new CsvListReader(featIO, new CsvPreference.Builder('"', '|', "\n").build());
 
-        CellProcessor[] cells = { new Optional(), new Optional(), new Optional(), new Optional(), new NotNull() };
+        CellProcessor[] cells = {new Optional(), new Optional(), new Optional(), new Optional(), new NotNull()};
         List<Object> lang = null;
 
         /*
@@ -1683,12 +1684,12 @@ public class TextUtils {
     /**
      * see default implementation below
      *
-     * @see #parseNaturalLanguage(String)
-     *      replace HTML, URLs removed, Tags and entity markers (@ and #) stripped;
-     *      Tags and entities
-     *      left in place.
      * @param raw raw text
      * @return cleaner looking text
+     * @see #parseNaturalLanguage(String)
+     * replace HTML, URLs removed, Tags and entity markers (@ and #) stripped;
+     * Tags and entities
+     * left in place.
      */
     public static String parseNaturalLanguage(String raw) {
         return parseNaturalLanguage(raw, true, true, true, true);
@@ -1727,7 +1728,7 @@ public class TextUtils {
      * @return text less entities.
      */
     public static String parseNaturalLanguage(final String raw, boolean unescapeHtml, boolean remURLs, boolean remTags,
-            boolean remEntities) {
+                                              boolean remEntities) {
         String text = raw;
         if (remURLs) {
             text = urlHTTPPattern.matcher(text).replaceAll(" ");
