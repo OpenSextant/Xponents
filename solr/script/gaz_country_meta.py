@@ -17,8 +17,11 @@ class CountryGazetteer(DataSource):
 
     def name_bias(self, pl:Place):
         if pl.country_code == "ZZ":
-            return -100
-        return self.estimator.name_bias(pl.name, pl.feature_class, pl.feature_code, name_type=pl.name_type)
+            pl.name_bias = -100
+        else:
+            pl.name_bias = self.estimator.name_bias(pl.name, pl.feature_class, pl.feature_code, name_type=pl.name_type)
+        if pl.name_bias < 0:
+            pl.search_only = True
 
     def normalize(self, sourcefile, limit=-1, optimize=False):
         """
@@ -33,23 +36,24 @@ class CountryGazetteer(DataSource):
         self.purge()
         print("Assessing countries")
         for C in countries:
+
             # We won't use FIPS codes for tagging.  ID values are faked up.
             pl = as_place(C, C.name.lower().capitalize(), oid=self.starting_row + count, name_type="N")
-            pl.name_bias = self.name_bias(pl)
+            self.name_bias(pl)
             pl.id_bias = DEFAULT_COUNTRY_ID_BIAS
             pl.source = SOURCE_ID
             self.db.add_place(pl)
             count += 1
 
             pl = as_place(C, C.cc_iso2, oid=self.starting_row + count, name_type="C")
-            pl.name_bias = self.name_bias(pl)
+            self.name_bias(pl)
             pl.id_bias = DEFAULT_COUNTRY_ID_BIAS
             pl.source = SOURCE_ID
             self.db.add_place(pl)
             count += 1
 
             pl = as_place(C, C.cc_iso3, oid=self.starting_row + count, name_type="C")
-            pl.name_bias = self.name_bias(pl)
+            self.name_bias(pl)
             pl.id_bias = DEFAULT_COUNTRY_ID_BIAS
             pl.source = SOURCE_ID
             self.db.add_place(pl)
