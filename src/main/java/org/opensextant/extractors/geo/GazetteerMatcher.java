@@ -451,9 +451,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // names matched is used only for debugging, currently.
         Set<String> namesMatched = new HashSet<>();
 
-        tagLoop:
         for (NamedList<?> tag : tags) {
 
+            boolean validMatch = true;
             int x1 = (Integer) tag.get("startOffset");
             int x2 = (Integer) tag.get("endOffset");
             int len = x2 - x1;
@@ -485,8 +485,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would.
             // be allowed. If lowercase abbreviations are allowed, then all matches are
             // passed.
-            if (len < 3 && !(allowLowercaseAbbrev | enableCodeHunter)) {
-                if (TextUtils.isASCII(matchText) && StringUtils.isAllLowerCase(matchText)) {
+            if (len <= AVERAGE_ABBREV_LEN && !(allowLowercaseAbbrev | enableCodeHunter)) {
+                if (TextUtils.isASCII(matchText) && TextUtils.isLower(matchText)) {
                     ++this.defaultFilterCount;
                     continue;
                 }
@@ -540,7 +540,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 continue;
             }
 
-            /**
+            /*
              * Further testing is done if lang ID is provided AND if we have a
              * stop list for that language. Otherwise, short terms are filtered
              * out if they appear in any lang stop list. NOTE: internally
@@ -555,16 +555,13 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             /*
              * Everything Else.
              * ============================
-             */
-            /*
              * Found UPPER CASE text in a mixed-cased document.
              * Conservatively, this is likely an acronym or some heading.
              * But possibly still a valid place name.
              * HEURISTIC: acronyms are relatively short.
              * HEURISTIC: region codes can be acronyms and are valid places
              * using such place candidates you may score short acronym matches lower than
-             * fully named ones.
-             * when inferring boundaries (states, provinces, etc)
+             * fully named ones when inferring boundaries (states, provinces, etc)
              */
             pc.inferTextSense(input.isLower, input.isUpper);
             pc.setSurroundingTokens(buffer);
@@ -577,63 +574,51 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             boolean largeGeoCount = placeRecordIds.size() > 100;
 
             for (Object solrId : placeRecordIds) {
-                // Yes, we must cast here.
-                // As long as createTag generates the correct type stored in
-                // beanMap we are fine.
+                /* beanMap is populated by createTag() */
                 ScoredPlace pGeo = (ScoredPlace) beanMap.get(solrId);
-                if (largeGeoCount){
-                    if  (!(pGeo.isAdministrative() || pGeo.isPopulated())) {
+                if (pGeo == null) {
+                    log.error("Place object not found for row ID {}", solrId);
+                    continue;
+                }
+                /* OPTIMIZE: Pare down very large location matches */
+                if (largeGeoCount) {
+                    if (!(pGeo.isAdministrative() || pGeo.isPopulated())) {
                         // Omit non-major places
                         continue;
                     }
-                    if (pGeo.getFeatureCode().endsWith("X") || pGeo.getFeatureCode().endsWith("H")){
+                    if (pGeo.getFeatureCode().endsWith("X") || pGeo.getFeatureCode().endsWith("H")) {
                         // Omit Ruins or historical features.  Not perfect match here.
                         continue;
                     }
                 }
                 log.debug("{} = {}", pc.getText(), pGeo);
-                // assert pGeo != null;
 
-                // Optimization: abbreviation filter.
-                //
-                // Do not add PlaceCandidates for lower case tokens that are
-                // marked as Abbreviations, unless flagged to do so.
-                //
-                // DEFAULT behavior is to avoid lower case text that is tagged
-                // as an abbreviation in gazetteer,
-                //
-                // Common terms: in, or, oh, me, us, we, etc. Are all not
-                // typically place names or valid abbreviations in text.
-                //
-                if (pGeo.isAbbreviation() && len < AVERAGE_ABBREV_LEN) {
-                    // If this is an abbreviation, then allow it only if we match uppercase
-                    if (!allowLowercaseAbbrev && pc.isLower()) {
-                        log.debug("Ignore lower case term={}", pc.getText());
-                        continue tagLoop;
-                    } else if (allowLowercaseAbbrev && pc.isMixedCase()) {
-                        continue tagLoop;
-                    }
+                /* TEST: "In" (Text) match "IN" (Place) ?
+                 * TEST: "`Îs" (Text) match "IS" (Place) ?
+                 */
+                if (pGeo.isCode() && !pGeo.getName().equals(pc.getText())) {
+                    validMatch = false;
+                    break;
                 }
 
-                /*
-                 * If text match contains "." and it matches any abbreviation,
-                 * mark the candidate as an abbrev. TODO: Possibly best confirm
-                 * this by sentence detection, as well. However, this pertains
-                 * to text spans that contain "." within the bounds, and not
-                 * likely an ending. E.g., "U.S." or "U.S" are trivial examples;
-                 * "US" is more ambiguous, as we need to know if document is
-                 * upperCase.
-                 * Any place abbreviation will trigger isAbbreviation = true
-                 * "IF YOU FIND US HERE" the term 'US' is ambiguous here, so
-                 * it is not classified as an abbreviation. Otherwise if you have
-                 * "My organization YAK happens to coincide with a place named Yak.
-                 * But we first must determine if 'YAK' is a valid abbreviation for an actual
-                 * place.
-                 * HEURISTIC: place abbreviations are relatively short, e.g. one short
-                 * word(len=5 or less)
+                /* Short matches on lowercase abbreviations
+                 * TEST: "Abc." (Text) matches "Abc" (Place)   normal
+                 * TEST: "Abc" (Text) matches "Abc." (Place)   normal
+                 * TEST: "abc" (Text) matches "abc" (Place)    allowLowercaseAbbrev = True
                  */
-                if (!enableCodeHunter) {
-                    if (len < AVERAGE_ABBREV_LEN && !pc.isAbbreviation) {
+                if (len < AVERAGE_ABBREV_LEN) {
+                    validMatch = pGeo.isAbbreviation() && (!allowLowercaseAbbrev && !pc.isLower());
+
+                    // This should invalidate matching trivial "me", "oh", "we", etc. in mixed case text
+                    // If allowLowercaseAbbrev is enabled, then
+                    if (!validMatch) {
+                        break;
+                    }
+
+                    // If Code Hunter is enabled we do not attempt too much here.
+                    if (!enableCodeHunter && !pc.isAbbreviation) {
+                        // Adjust flags for potential abbreviation matches
+                        // Example: Colo (Text) match ? Colo. (Place)
                         assessAbbreviation(pc, pGeo, postChar, input.isUpper);
                     }
                 }
@@ -658,18 +643,14 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 }
             }
 
-            // If geocoding, skip this PlaceCandidate if has no places (e.g. due
-            // to filtering)
-            if (geocode && !pc.hasPlaces()) {
-                log.debug("Place has no places={}", pc.getText());
-                continue;
+            // Only add PlaceCandidate if it has associated locations after filtering
+            if (geocode && validMatch && pc.hasPlaces()) {
+                candidates.put(pc.start, pc);
+                log.debug("Text {} matched {}", pc.getText(), namesMatched);
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Text {} matched {}", pc.getText(), namesMatched);
-                }
+                log.debug("Place has no places={}", pc.getText());
             }
 
-            candidates.put(pc.start, pc);
         } // for tag
         long t3 = System.currentTimeMillis();
 
@@ -716,11 +697,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
          * - postchar = 0 (null) means there is no chars after the match because Match
          * is at end of text buffer.
          */
-        if (pc.isAbbreviation) {
+        if (postChar <= 0) {
             return;
         }
 
-        if (pGeo.isAbbreviation() && postChar > 0) {
+        // Assess geoname only if it is an abbreviation.
+        if (pGeo.isAbbreviation()) {
             if (postChar == '.') {
                 // Add the post-punctuation to the match ONLY if a potential GEO matches.
                 pc.isAbbreviation = true;
@@ -792,11 +774,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         Map<String, Integer> places = new HashMap<>();
         int nullCount = 0;
 
-        // This loops through findings and reports out just Country names for
-        // now.
+        // This loops through findings and reports out just Country names for now.
         for (PlaceCandidate candidate : candidates) {
-            boolean dobreak = false;
-            String namekey = TextUtils.normalizeTextEntity(candidate.getText()); // .toLowerCase();
+            String namekey = TextUtils.normalizeTextEntity(candidate.getText());
             if (namekey == null) {
                 // Why is this Null?
                 countries.put("null", ++nullCount);
@@ -810,11 +790,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     continue;
                 }
 
-                /*
-                 * if (p.isAbbreviation()) { log.debug(
-                 * "Ignore all abbreviations for now " + candidate.getText());
-                 * dobreak = true; break; }
-                 */
                 if (p.isCountry()) {
                     Integer count = countries.get(namekey);
                     if (count == null) {
@@ -823,7 +798,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     }
                     ++count;
                     countries.put(namekey, count);
-                    dobreak = true;
                     break;
                 } else {
                     Integer count = places.get(namekey);
@@ -834,9 +808,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     ++count;
                     places.put(namekey, count);
                 }
-            }
-            if (dobreak) {
-                continue;
             }
         }
 
