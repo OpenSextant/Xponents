@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.opensextant.ConfigException;
 import org.opensextant.extractors.geo.PlaceCandidate;
@@ -52,6 +53,13 @@ public class TestPersonFilter {
                 print("\tInvalid: " + m.group());
             }
         }
+    }
+
+    @Test
+    public void testJavaAPI(){
+        assertTrue(TextUtils.isLower("bass-player"));
+        assertTrue(StringUtils.isAllLowerCase("bassplayer"));
+        assertFalse(StringUtils.isAllLowerCase("bass player"));
     }
 
     @Test

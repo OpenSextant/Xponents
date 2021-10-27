@@ -118,9 +118,7 @@ public class TextUtils {
             + "AaEeIiOoUu" // AEIOU with macron
             + "AaBbMmNn" // A, B, M, N with dot ~ commonly seen
             + "DdRr" // D, R with under-bar
-
     ;
-
 
     private static final String ALPHAMAP_UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" // grave
             + "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD" // acute
@@ -452,12 +450,15 @@ public class TextUtils {
      * @return true if text is Upper
      */
     public static boolean isUpper(String dat) {
-        return checkCase(dat, 2);
+        return checkCase(dat, CASE_UPPER);
     }
 
     public static boolean isLower(String dat) {
-        return checkCase(dat, 1);
+        return checkCase(dat, CASE_LOWER);
     }
+
+    public final static int CASE_LOWER = 1;
+    public final static int CASE_UPPER = 2;
 
     /**
      * detects if string alpha chars are purely lower case.
@@ -476,14 +477,14 @@ public class TextUtils {
             if (!Character.isLetter(c)) {
                 continue;
             }
-            if (textcase == 1) {
+            if (textcase == CASE_LOWER) {
                 if (Character.isUpperCase(c)) {
                     // Checking for lower case; Fail if upper case is found.
                     return false;
                 } else if (Character.isLowerCase(c)) {
                     ++caseCount;
                 }
-            } else if (textcase == 2) {
+            } else if (textcase == CASE_UPPER) {
                 if (Character.isLowerCase(c)) {
                     // Checking for upper case; Fail if lower case is found.
                     return false;
