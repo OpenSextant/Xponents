@@ -50,7 +50,7 @@ Xponents root folder:
 
     # Install built lib with dependencies to ./python
     pip3 install -U --target ./piplib ./python/dist/opensextant-1.3*.tar.gz 
-    pip3 install -U --target ./piplib lxml bs4 arrow requests
+    pip3 install -U --target ./piplib lxml bs4 arrow requests pyshp
     
     # Note - if working with a distribution release, the built Python package is in ./python/ (not ./python/dist/)
 
@@ -70,6 +70,7 @@ Here is an overview of this data curation process:
 - OpenSextant Gazetteer merged data is a base layer for all geographic names ~ countries, cities, continents and other features. 
  The main sources are US NGA and USGS to cover world wide geography
 - Secondary sources (Geonames.org, Natural Earth, Adhoc entries, Generated name variants)  are assembled from these Xponents scripts
+- A one-time collection of `wordstats` is needed to identify common terms that collide with location names.
 - With all data collected, each data set is loaded into SQLite with specific source identifiers
 - With the master SQLite gazetteer complete entries can be de-duplicated, marked and optimized
 - Finally, the master gazetter entries (non-duplicates) are funneled to the default Xponents Solr instance 
@@ -77,44 +78,27 @@ Here is an overview of this data curation process:
 The steps here represent the journey of how to produce this behemoth -- a process we are constantly trying to streamline 
 and automate.
 
-A quick overview: Generate the raw gazetteer flat file `MergedGazetteer`, then load that 
-into the Solr server along with other reference data.
 
-1. Checkout Gazetteer ETL project,  http://opensextant.github.io/Gazetteer/
-   
-   * Follow instructions to install Pentaho Kettle 6+, Java 8 to Java 12, and Ant.  Solr 7.x does not appear to work well with Java 13+
-   * Tune the build.properties there. Specifically set the dates of downloadable NGA GNS and USGS data sets.  The date
-     in build.properties is formatted as `YYYYMMDD` and is a different release date for each source:
-       - USGS: https://www.usgs.gov/core-science-systems/ngp/board-on-geographic-names/download-gnis-data
-       - NGA: http://geonames.nga.mil/gns/html/
-    * **TIME**: Expect the above process to take 30-60 minutes once all software is installed and working.
-    * **OUTPUT**: `MergedGazetteer.txt`  (`Gazetteer/GazetteerETL/GeoData/Merged/MergedGazetteer.txt`)
+1. Data Collection
 
-Required layout of projects:
+```shell
 
-```
-  ./Xponents/     (git project)
-  ./Xponents/solr (this folder)
-  ./Gazetteer/    (git project)  -- build-gazetteer.sh script refers to this relative folder
+    ant get-gaz-resources
+    ant gaz-stopwords
+    ant gaz-sources
+    
 ```
 
-Now run these steps to acquire gazetteer data from USGS and NGA:
+In parallel, run the wordstats collection ONCE.  This material does not change. You end up with about a 1.0 GB 
+SQLite file with unigram counts from GooleBooks Ngrams project.
 
-```shell script
-  cd Gazetter
-  ant nga.data
-  ant usgs.data
-
-  # Add setProxy if you have an http_proxy setting.
-```
-
-Separately run the ETL in the Gazetter project.
-This Xponents script emulates the Gazetteer's own ant script, but allows 
-for some tuning of JVM and other parameters, such as logging, etc.
-
-```shell script
-  cd Xponents/solr
-  ./build-gazetteer.sh 
+```shell
+    ./script/wordstats.sh download
+    ./script/wordstats.sh assemble
+    
+    # Once fully debugged this script may change to streaming or delete download files when done.
+    # You may remove the ./tmp/wordstats/*.gz content once this script has completed.
+    # Output: ./tmp/wordstats.sqlite
 ```
 
 2. Collect and Ingest Secondary Sources
@@ -134,7 +118,6 @@ to managing size and comprehensive coverage.
   # ./build-sqlite-master.sh test   
 
 ```
-
 
 Building and Running Xponents Solr
 =================================
@@ -160,10 +143,10 @@ Using the latest Solr distribution would involve updating Maven POM, possibly, a
 reviewing Solr index configurations.
 
 ```shell script
-    wget http://archive.apache.org/dist/lucene/solr/7.7.2/solr-7.7.2.zip
-    unzip solr-7.7.2.zip
+    wget http://archive.apache.org/dist/lucene/solr/7.7.3/solr-7.7.3.zip
+    unzip solr-7.7.3.zip
     SOLR_DIST=./solr7-dist
-    mv ./solr-7.7.2  $SOLR_DIST
+    mv ./solr-7.7.3  $SOLR_DIST
 
     rm -rf $SOLR_DIST/example $SOLR_DIST/server/solr/configsets $SOLR_DIST/contrib $SOLR_DIST/dist/test-framework
 
@@ -173,7 +156,6 @@ reviewing Solr index configurations.
 ```
 
 
-  
 **Step 3. Configure and Deployment Paths**
 
 By default, you have this runtime environment in check-out or in distribution:
@@ -183,12 +165,9 @@ By default, you have this runtime environment in check-out or in distribution:
 
 We refer to **Xponents Solr** informally as `XP_SOLR`, which is `./Xponents/solr` in source tree, 
 but in distribution it defaults to `./Xponents-VER/xponents-solr` to distinguish it from the raw source.
-Because Gazetteer and related metadata is constantly updated, this folder in distribution or in 
-your runtime may be versioned as `/path/to/xponents-solr-YYYYQQ` for clarity.
 The typical release schedule for the `XP_SOLR` distribution is quarterly.
 The OpenSextant/Xponents JVM argument used to set this index path is `opensextant.solr` which 
 must be set to the `solr7` index folder, i.e. `XP_SOLR/solr7`.  This may be an absolute or relative path.
-
 
 Keep the `./xponents-solr/` folder in tact, although only the `solr7` index folder is used at 
 runtime -- The other folders provide a fully operational Solr Server.
@@ -255,6 +234,8 @@ gazetteer you are likely ready to go start using Xponents SDK.
    # gazetteer = regenerate only the gazetteer index
    
    # taxcat    = regenerate only the taxcat index
+   
+   # postal    = regenerate only the postal index
 
 ```
 
@@ -327,8 +308,6 @@ Look at terms marked as search_only in the gazetter and not valid in taxcat:
 Set `"wt=csv"` to see CSV format.  This JSON output is setup to list facet patterns of most frequent terms.
 
 
-
-
 TaxCat index ~ Taxonomic Catalog
 ---------------------------------
 This step falls under the category of geotagger tuning.  E.g., see Extraction PlaceGeocoder class
@@ -393,77 +372,3 @@ a reasonable feature model.
 
 References:
 * Acheson, De Sabbata, Purvesa   "A quantitative analysis of global gazetteers: Patterns of coverage for common feature types". 2017.  https://www.sciencedirect.com/science/article/pii/S0198971516302496 
-
-Deprecated Notes
------------------------------
-The build properties is no longer required. It has been obsoleted by the SQLite master.
-
-First, copy `build.template` as `build.properties`
-
-```
-  gazetteer.data.file   -- set the absolute path to the MergedGazetteer.txt 
-
-  solr.home             -- set the location of your solr home; the "gazetteer" Solr core is the output
-                           Default: ./solr7  (as this is relative to the Xponents/solr/ dir)
-
-  proxy                 -- set your HTTP proxy host, or leave blank if none. 
-```
-
-
-
-Honing Gazetteer Index 
----------------------------------
-Size matters.  So does content.  Your gazetteer should contain named locations and other data
-you want to use in your application.  For example, An application for a complete worldwide name search suggests you have a full gazetteer; An application of lightweight desktop geocoding suggests 
-you have the basics plus some other data, but much less than the full version.
-
-If you don't care about size move onto next section.
-Regardless, this section is deprecated given this tuning is no longer supported:
-* Xponents 2.9+ we got away from using Ant to RESTfully post data to Solr and invoke the update-script
- (java or javascript solution).  And with that the filtration on SplitCategory went with it.
-
-Merged gazetteer file sizes:  
-* 2.1 GB with 16.5 million entries.   (as of 2016)
-* 2.3 GB with 18.5 million entries.   (as of 2018)
-
-Proprotions of categories of entries -- which could help you decide how to balance SDK size with geographic coverage.
-
-```
-  SplitCategory
-  --------------
-  Full gazetteer: 100.0 %   
-  General          30.0 %    Well-known + all administrative boundaries and populated places.
-  Wellknown         1.0 %    Basic + major cities
-  Basic          :  0.1 %    countries + territories + Level-1 provinces
-  Rare             40.0 %    Uncommonly seen names, numeric entries, mostly unpopulated places or other features.
-```
-
-``` DEPRECATED FILTERS BELOW```
-
-To adjust content (and therefore size), use the FILE: solrN/gazetteer/conf/solrconfig.xml 
-Look at the 'update-script' 'params' section, which has an include_category parameter.  
-The choices for this parameter are:
-
-```
- // NO filtering done within Solr; NOTE: Your Gazetteer ETL output may have already filtered records
- // So, the term 'all' here is relative to what you send into Solr
- // 
- include_category = all
-
-      OR
-
- include_category = [cat list] 
-
- where cat list is one or more of these in a comma-separated list. Case matters.
-
-    Basic           countries and provinces (ADM1)
-    Wellknown       major cities and all admin boundaries
-    general         unspecified 'SplitCategory', i.e., empty column
-    NonLatin        non-Latin scripts and languages
-
-    update-script params format:
-          <!-- A comment here about your inclusions -->
-          <str name="include_category">[cat,cat,cat,...]</str>
-
-```
-
