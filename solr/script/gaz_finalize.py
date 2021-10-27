@@ -309,6 +309,7 @@ if __name__ == "__main__":
         gaz.deduplicate()
 
     # Finish up.
-    if args.optimize and gaz:
-        gaz.db.optimize()
+    if gaz:
+        if args.optimize:
+            gaz.db.optimize()
         gaz.db.close()

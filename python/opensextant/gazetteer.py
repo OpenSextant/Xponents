@@ -380,6 +380,15 @@ class DB:
         else:
             print("Query not implemented ", q)
 
+    def delete_places(self, q):
+        """
+        :param q: query starting with "WHERE...."
+        :return:
+        """
+        if not q:
+            raise Exception("Query required silly")
+        self.conn.execute(f"delete from placenames {q}")
+
     def create(self):
         """
         Create the placenames table and default indices used for ETL - place_id, source, country, and ADM1
@@ -465,7 +474,6 @@ class DB:
         try:
             if self.conn is not None:
                 self.__assess_queue(force=True)
-                self.conn.commit()
                 self.conn.close()
                 self.conn = None
         except sqlite3.IntegrityError:

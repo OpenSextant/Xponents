@@ -84,6 +84,10 @@ else
   LOG=./tmp/gaz_administrative_codes_${datekey}.log
   python3 ./script/gaz_administrative_codes.py ./tmp/ne_10m_admin_1_states_provinces/ne_10m_admin_1_states_provinces.shp > $LOG
 
+  # OMISSIONS
+  echo OMISSIONS: Remove selected uncommon/problematic name variations
+  python3 ./script/gaz_exclusions.py ./etc/gazetteer/filters/exclude-features.csv
+
   # DERIVATIONS
   # ==========================
   echo US STATE CODES `date`
