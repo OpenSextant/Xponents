@@ -38,7 +38,7 @@
               file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar"/>
     </target>
 
-    <target name="get-gaz-resources">
+    <target name="gaz-resources">
         <mkdir dir="${gaz.data}/filters/census"/>
         <get dest="${gaz.data}/filters/census">
             <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.male.first"/>

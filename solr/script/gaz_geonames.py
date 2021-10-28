@@ -91,7 +91,7 @@ def render_distinct_names(arr):
         if nm:
             if "(historical)" in nm:
                 nm = nm.replace("(historical)", "").strip()
-            nm = nm.replace("\u2019", "'").rstrip(".").strip()
+            nm = nm.replace("\u2019", "'").strip()
             names[nm.lower()] = nm
     return set(names.values())
 

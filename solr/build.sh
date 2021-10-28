@@ -145,7 +145,7 @@ fi
 
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
-  ant $proxy get-gaz-resources
+  ant $proxy gaz-resources
 
   echo "Harvesting World Factbook 'factoids'"
   python3 ./script/assemble_wfb_leaders.py

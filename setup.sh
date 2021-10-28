@@ -19,9 +19,8 @@ msg "Build Python libraries"
 
 msg "Install Python resources"
 # Install built lib with dependencies to ./python
-pip3 install -U --target ./piplib ./python/dist/opensextant-1.3*.tar.gz
-pip3 install -U --target ./piplib lxml bs4 arrow requests
-
+pip3 install -U --target ./piplib lxml bs4 arrow requests pyshp
+pip3 install -U --target ./piplib ./python/dist/opensextant-1.4*.tar.gz
 
 msg "Assemble basic JAR resources"
 . ./dev.env
