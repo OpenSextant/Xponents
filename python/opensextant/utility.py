@@ -26,6 +26,7 @@ import os
 import re
 from io import StringIO
 from math import isnan
+from .unicode import LATIN1_FOLDING
 
 from chardet import detect as detect_charset
 
@@ -40,7 +41,7 @@ def is_text(t):
     return isinstance(t, str)
 
 
-def is_code(t: str, nlen=3):
+def is_code(t: str, nlen=6):
     """
     Test if a string is an ASCII code typically 1-3 chars in len.
     :param t: text
@@ -387,7 +388,22 @@ ALPHAMAP_UNICODE = "".join([
 COMMON_DIACRITC_HASHMARKS = re.compile("[\"'`\u00B4\u2018\u2019]")
 
 
-def replace_diacritics(s):
+def replace_diacritics(txt:str):
+    """
+    Leverage the OpenSextant traditional ASCII Folding map for now.
+    Yes encoded("ascii", "ignore") may do this....
+    :param txt:
+    :return: a non-diacritic version of the text
+    """
+    str_prepped = COMMON_DIACRITC_HASHMARKS.sub("'", txt)
+
+    buf = []
+    for ch in str_prepped:
+        buf.append( LATIN1_FOLDING.get(ch, ch) )
+    return "".join(buf)
+
+
+def replace_diacritics_v1(s):
     """
     remove accents from a string and replace with ASCII equivalent Reference:
     http://www.rgagnon.com/javadetails/java-0456.html Caveat: This implementation is not exhaustive.

@@ -1047,7 +1047,9 @@ class PlaceHeuristics:
         namelen = len(geoname)
         self.stat_charcount += namelen
 
-        if 30 < namelen < self.MAX_NAMELEN:
+        if namelen < 2:
+            return -0.1
+        elif 30 < namelen < self.MAX_NAMELEN:
             return trivial_bias(geoname)
         elif namelen >= self.MAX_NAMELEN:
             # Name is too long to consider tagging; Unlikely to appear in this form.
@@ -1063,10 +1065,18 @@ class PlaceHeuristics:
         if norm in self.stopwords:
             return -1
 
-        # "The Bar", "The Point"
+        # Name is "Bar"...
+        # test if "The Bar" is a stopword
         test = f"the {norm}"
         if test in self.stopwords:
             return -0.5
+
+        # Name is "The Bar"
+        # test if "bar" is a stopword
+        if norm.startswith("the "):
+            test = norm[4:].strip()
+            if test in self.stopwords:
+                return -0.5
 
         # TODO: add non-diacritic name to this test?
         is_popular_city_name = self.is_significant(feat_code) or self.is_large_city(norm)

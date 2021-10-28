@@ -39,6 +39,9 @@ class TestText(TestCase):
         print(nm, "=>", stripped_test)
         assert stripped_test == stripped
 
+        nm = 'Ḩajjār'
+        print(nm, "=>", replace_diacritics(nm))
+
 
 if __name__ == '__main__':
     main()
