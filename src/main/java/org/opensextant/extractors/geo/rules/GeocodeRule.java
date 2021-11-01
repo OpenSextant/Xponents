@@ -17,10 +17,6 @@
 
 package org.opensextant.extractors.geo.rules;
 
-import static org.opensextant.util.GeodeticUtility.geohash;
-
-import java.util.List;
-
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.BoundaryObserver;
 import org.opensextant.extractors.geo.CountryObserver;
@@ -28,6 +24,10 @@ import org.opensextant.extractors.geo.LocationObserver;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+import static org.opensextant.util.GeodeticUtility.geohash;
 
 public abstract class GeocodeRule {
 
@@ -78,7 +78,7 @@ public abstract class GeocodeRule {
      * Create a location ID useful for tracking distinct named features by location.
      * This is not generalizable. It produces a looser identity such as "the city at
      * location": P/PPL/f57yah5
-     * 
+     *
      * @param p
      * @return feature+location hash
      */
@@ -113,12 +113,20 @@ public abstract class GeocodeRule {
                 return true;
             }
         }
-        return p1.getHierarchicalPath() != null &&  p1.getHierarchicalPath().equals(p2.getHierarchicalPath());
+        return p1.getHierarchicalPath() != null && p1.getHierarchicalPath().equals(p2.getHierarchicalPath());
     }
 
     public static void setGeohash(Place loc) {
         if (loc.getGeohash() == null) {
             loc.setGeohash(geohash(loc));
+        }
+    }
+
+    public void sameLexicalName(PlaceCandidate name, Place geo) {
+        if (geo.getName().equals(name.getText())) {
+            name.incrementPlaceScore(geo, 1.5, NameRule.LEX1);
+        } else if (geo.getName().equalsIgnoreCase(name.getText())) {
+            name.incrementPlaceScore(geo, 1.0, NameRule.LEX2);
         }
     }
 
@@ -203,10 +211,8 @@ public abstract class GeocodeRule {
      * geocoding
      * for the match.
      *
-     * @param name
-     *             matched name in text
-     * @param geo
-     *             gazetteer entry or location
+     * @param name matched name in text
+     * @param geo  gazetteer entry or location
      */
     public abstract void evaluate(PlaceCandidate name, Place geo);
 

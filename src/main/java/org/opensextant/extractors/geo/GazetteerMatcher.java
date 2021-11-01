@@ -32,7 +32,6 @@ package org.opensextant.extractors.geo;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 // */
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -87,7 +86,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private long filteredTotal = 0;
     private long matchedTotal = 0;
     private boolean allowLowercaseAbbrev = false;
-    private static final int AVERAGE_ABBREV_LEN = 6;
+    private static int AVERAGE_ABBREV_LEN = 6; /* Typical acronym or abbreviation len */
+    private static int PHRASE_LEN = 20; /* Two short words */
 
     /*
      * enable trure for data such as tweets, blogs, etc. where case varies or
@@ -485,7 +485,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would.
             // be allowed. If lowercase abbreviations are allowed, then all matches are
             // passed.
-            if (len <= AVERAGE_ABBREV_LEN && !(allowLowercaseAbbrev | enableCodeHunter)) {
+            if (len <= PHRASE_LEN && !(allowLowerCase | allowLowercaseAbbrev | enableCodeHunter)) {
                 if (TextUtils.isASCII(matchText) && TextUtils.isLower(matchText)) {
                     ++this.defaultFilterCount;
                     continue;
@@ -596,7 +596,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 /* TEST: "In" (Text) match "IN" (Place) ?
                  * TEST: "`Îs" (Text) match "IS" (Place) ?
                  */
-                if (pGeo.isCode() && !pGeo.getName().equals(pc.getText())) {
+                if (pGeo.isCode() && !pGeo.getName().equalsIgnoreCase(pc.getText())) {
                     validMatch = false;
                     break;
                 }
@@ -605,9 +605,16 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * TEST: "Abc." (Text) matches "Abc" (Place)   normal
                  * TEST: "Abc" (Text) matches "Abc." (Place)   normal
                  * TEST: "abc" (Text) matches "abc" (Place)    allowLowercaseAbbrev = True
+                 * TEST: "abc" (Text) matches "abc" (Place)    else if Place represents an abbreviation , then filter out
                  */
                 if (len < AVERAGE_ABBREV_LEN) {
-                    validMatch = pGeo.isAbbreviation() && (!allowLowercaseAbbrev && !pc.isLower());
+                    if (pc.isLower()) {
+                        if (allowLowercaseAbbrev || allowLowerCase) {
+                            validMatch = true; /* lower case allowed in certain circumstance */
+                        } else {
+                            validMatch = false; /* no lower case allowed */
+                        }
+                    }
 
                     // This should invalidate matching trivial "me", "oh", "we", etc. in mixed case text
                     // If allowLowercaseAbbrev is enabled, then

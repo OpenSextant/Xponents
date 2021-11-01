@@ -55,6 +55,7 @@ public class LocationChooserRule extends GeocodeRule {
         evaluate(names, null);
     }
 
+
     /**
      * Walk the entire list.
      */
@@ -67,8 +68,7 @@ public class LocationChooserRule extends GeocodeRule {
         //
         // MEASURES:
         // # of distinct countries == density, focus. Is this document about one or two
-        // countries,
-        // or is it a world news report on everything.
+        // countries, or is it a world news report on everything.
         //
         countryContext = countryObserver.countryMentionCount();
         boundaryContext = boundaryObserver.placeMentionCount();
@@ -180,9 +180,7 @@ public class LocationChooserRule extends GeocodeRule {
                 ++Ccnt.count;
             }
         }
-
         log.debug("Places: {}/{}", namespace.size(), namespace);
-
     }
 
     protected static final double ADMIN_CONTAINS_PLACE_WT = 3.0;
