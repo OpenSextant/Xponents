@@ -818,7 +818,7 @@ public class PlaceCandidate extends TextMatch {
 
     public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
 
-    public static int ABBREVIATION_MAX_LEN = 5;
+    public static int ABBREVIATION_MAX_LEN = 6;
     private int wordCount = 0;
 
     /**
@@ -846,10 +846,9 @@ public class PlaceCandidate extends TextMatch {
         this.wordCount = tokens.length;
         this.hasDiacritics = TextUtils.hasDiacritics(getText());
         /*
-         * Old logic had harmful consequences on By-lines etc: Keep scope of this
-         * narrow.
+         * Old logic had harmful consequences on By-lines etc: Keep scope of this narrow.
          */
-        if (!contextisUpper && isUpper() && 0 < getLength() && getLength() < ABBREVIATION_MAX_LEN) {
+        if (!contextisUpper && isUpper() && 0 < getLength() && getLength() <= ABBREVIATION_MAX_LEN) {
             this.isAcronym = true;
             this.isAbbreviation = true;
         }

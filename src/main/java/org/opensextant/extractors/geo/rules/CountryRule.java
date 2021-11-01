@@ -19,6 +19,8 @@ package org.opensextant.extractors.geo.rules;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 
+import java.util.List;
+
 public class CountryRule extends GeocodeRule {
 
     private static final String CNAME = "Country.name";
@@ -29,13 +31,42 @@ public class CountryRule extends GeocodeRule {
         NAME = "Country";
     }
 
+    @Override
+    public void evaluate(List<PlaceCandidate> names) {
+
+        for (PlaceCandidate name : names) {
+            // We do not want mixed case acronym/code/abbreviation matches.
+            if (name.isMixedCase() && name.getLength() < 4) {
+                name.setFilteredOut(true);
+                name.isCountry = false;
+                continue;
+            }
+            for (Place geo : name.getPlaces()) {
+                if (filterOutByFrequency(name, geo)) {
+                    continue;
+                }
+                evaluate(name, geo);
+            }
+
+            if (name.isCountry) {
+                name.choose();
+                Place ctry = name.getChosen();
+                if (ctry != null) {
+                    // This should always be true -- should not be null.
+                    name.addCountryEvidence(CNAME, weight + 0.0, ctry.getCountryCode(), ctry);
+                    if (countryObserver != null) {
+                        countryObserver.countryInScope(ctry.getCountryCode());
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Assess which candidate tags are references to countries.
      *
-     * @param name
-     *             list of candidates to evaluate for country evidence.
-     * @param geo
-     *             country/geo to evaluate
+     * @param name list of candidates to evaluate for country evidence.
+     * @param geo  country/geo to evaluate
      */
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
@@ -57,29 +88,35 @@ public class CountryRule extends GeocodeRule {
         // Otherwise this is some country name or reference.
         // Name case must match for any code to align.
         //
-        if (name.isAcronym && name.isUpper() && geo.isUppercaseName()) {
-            // "AL" = "AL"
-            name.addCountryEvidence(CCODE, weight, geo.getCountryCode(), geo);
+        if (name.isAcronym && name.isUpper() && name.getLength() == 3 &&
+                (geo.isCode() || geo.isUppercaseName())) {
+            // "ALB" (name) == "ALB" (geo)
+            // "AL"  => ambiguous
+            addCountryCode(name, geo);
+            log("Chose Country", name.getText());
         } else if (name.getLength() > 3) {
+            // Check on Lexical matching to help choose best name match to location.
+            sameLexicalName(name, geo);
+
             if (name.isAbbreviation && geo.isAbbreviation()) {
                 // "Alb"   = "Alb." (For Albania, for example)
                 // "U.S.A" = "u.s.a."
-                name.addCountryEvidence(CCODE, weight, geo.getCountryCode(), geo);
+                addCountryCode(name, geo);
             } else {
-                // "Albania" = "ALBANIA" 
-                name.addCountryEvidence(CNAME, weight + 2, geo.getCountryCode(), geo);
+                // "Albania" = "ALBANIA"
+                addCountryName(name, geo);
             }
-        } else {
-            name.isCountry = false;
-            return;
+            log("Chose Country", name.getText());
         }
+    }
 
-        name.choose(geo);
-        log("Chose Country", name.getText());
+    void addCountryName(PlaceCandidate name, Place geo) {
+        name.isCountry = true;
+        name.incrementPlaceScore(geo, weight + 2.0, CNAME);
+    }
 
-        if (countryObserver != null) {
-            countryObserver.countryInScope(geo.getCountryCode());
-        }
-
+    void addCountryCode(PlaceCandidate name, Place geo) {
+        name.isCountry = true;
+        name.incrementPlaceScore(geo, weight + 0.0, CCODE);
     }
 }

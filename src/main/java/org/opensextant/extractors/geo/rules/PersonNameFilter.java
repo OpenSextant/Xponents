@@ -162,7 +162,7 @@ public class PersonNameFilter extends GeocodeRule {
             final List<TaxonMatch> persons, final List<TaxonMatch> orgs) {
 
         for (PlaceCandidate pc : placeNames) {
-            if (pc.isFilteredOut() || pc.isCountry) {
+            if (pc.isFilteredOut() || pc.isCountry || pc.isValid()) {
                 continue;
             }
 

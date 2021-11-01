@@ -31,37 +31,14 @@
 // */
 package org.opensextant.extractors.geo;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
-import org.opensextant.data.Country;
-import org.opensextant.data.Geocoding;
-import org.opensextant.data.Place;
-import org.opensextant.data.Taxon;
-import org.opensextant.data.TextInput;
+import org.opensextant.data.*;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.ExtractionMetrics;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extractors.geo.rules.ContextualOrganizationRule;
-import org.opensextant.extractors.geo.rules.CoordinateAssociationRule;
-import org.opensextant.extractors.geo.rules.CountryRule;
-import org.opensextant.extractors.geo.rules.FeatureRule;
-import org.opensextant.extractors.geo.rules.GeocodeRule;
-import org.opensextant.extractors.geo.rules.HeatMapRule;
-import org.opensextant.extractors.geo.rules.LocationChooserRule;
-import org.opensextant.extractors.geo.rules.MajorPlaceRule;
-import org.opensextant.extractors.geo.rules.NameCodeRule;
-import org.opensextant.extractors.geo.rules.NameRule;
-import org.opensextant.extractors.geo.rules.NonsenseFilter;
-import org.opensextant.extractors.geo.rules.PersonNameFilter;
-import org.opensextant.extractors.geo.rules.ProvinceAssociationRule;
-import org.opensextant.extractors.geo.rules.ProvinceNameSetter;
+import org.opensextant.extractors.geo.rules.*;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.extractors.xtax.TaxonMatch;
@@ -69,6 +46,12 @@ import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple variation on the geocoding algorithms: geotag all possible things
@@ -313,12 +296,9 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         // Un-filter city names that can be resolved if other ADMIN places line up.
         // E.g., "Cleveland Caveliers" filters out Cleveland, but if Cleveland is
-        // mentioned alone
-        // then Cleveland itself will be promoted to a location. E.g., sports teams
-        // travel
-        // so mention of "Cleveland Caveliers visiting Seattle" would not geolocate this
-        // to Ohio
-        // unless the city or state was mentioned separately.
+        // mentioned alone then Cleveland itself will be promoted to a location. E.g., sports teams
+        // travel so mention of "Cleveland Caveliers visiting Seattle" would not geolocate this
+        // to Ohio unless the city or state was mentioned separately.
         //
         placeInOrgRule = new ContextualOrganizationRule();
         placeInOrgRule.setBoundaryObserver(this);
@@ -559,6 +539,8 @@ public class PlaceGeocoder extends GazetteerMatcher
         if (provinceNameSetter != null) {
             provinceNameSetter.evaluate(candidates);
         }
+        updateRelatedNames(candidates);
+
         // For each candidate, if PlaceCandidate.chosen is not null,
         // add chosen (Geocoding) to matches
         // Otherwise add PlaceCandidates to matches.
@@ -573,6 +555,36 @@ public class PlaceGeocoder extends GazetteerMatcher
         this.matcherTotalTimes.addTimeSince(t1);
 
         return matches;
+    }
+
+    /**
+     * Reconnect match sequences "NAME, ADMIN"  or "NAME, CODE"
+     */
+    private void updateRelatedNames(List<PlaceCandidate> candidates) {
+        for (PlaceCandidate pc : candidates) {
+            if (pc.getRelated() == null) {
+                continue;
+            }
+
+            for (PlaceCandidate related : pc.getRelated()) {
+                Place geo = pc.getChosen();
+                if (related.getChosen() == null){
+                    // This happens rarely if a name is marked as a Taxon, Person or Org.
+                    continue;
+                }
+                Place relatedGeo = related.getChosen();
+
+                String admHierarchy = geo.getHierarchicalPath();
+                if (admHierarchy.equals(relatedGeo.getHierarchicalPath())
+                        && !geo.isAdmin1()
+                        && relatedGeo.isAdministrative()) {
+                    pc.end = related.end;
+                    related.setFilteredOut(true);
+                    pc.setTextOnly(String.format("%s, %s", pc.getText(), related.getText()));
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -883,7 +895,7 @@ public class PlaceGeocoder extends GazetteerMatcher
      * e.g., What state is
      * (x,y) in? Found locations are sorted by distance to point.
      */
-    public static final int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /* km */ ;
+    public static final int COORDINATE_PROXIMITY_CITY_THRESHOLD = 25 /* km */;
     public static final int COORDINATE_PROXIMITY_ADM1_THRESHOLD = 50 /* km */;
 
     /**

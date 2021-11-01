@@ -396,13 +396,8 @@ public class NameCodeRule extends GeocodeRule {
         /*
          * The code is matched with the name.
          */
-        code.setFilteredOut(true);
-        n.end = code.end;
-        n.setTextOnly(String.format("%s%s%s", n.getText(), (comma ? ", " : " "), code.getText()));
-        n.markValid();
-        // code.markValid(); == tjhe code itself is now, no longer a valid tag.
-        // downstream rules would promote this is it is marked valid, even if filtered
-        // out.
+        n.addRelated(code);
+        code.markValid();
 
         /*
          * CITY, STATE

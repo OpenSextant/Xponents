@@ -1,18 +1,20 @@
 package org.opensextant.extractors.geo.rules;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.util.TextUtils;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class NameRule extends GeocodeRule {
 
     public static String CITY = "QualifiedName.City";
     public static String ADM1 = "QualifiedName.Prov";
     public static String ADM2 = "QualifiedName.Dist";
+    public static String LEX1 = "LexicalMatch";
+    public static String LEX2 = "LexicalMatch.NoCase";
 
     public static Set<String> P_prefixes = new HashSet<>();
     public static Set<String> A1_suffixes = new HashSet<>();
@@ -39,24 +41,25 @@ public class NameRule extends GeocodeRule {
             if (name.isFilteredOut() || name.getChosen() != null) {
                 continue;
             }
-            
-            if (name.getTextnorm().length() < 10 || name.getWordCount() < 2) {
-                continue;
-            }
 
-            String[] words = name.getTokens();
-            boolean isPlace = P_prefixes.contains(words[0]);
-            boolean isAdmin1 = A1_suffixes.contains(words[words.length - 1]);
-            boolean isAdmin2 = A2_suffixes.contains(words[words.length - 1]);
-            if (!(isPlace || isAdmin1 || isAdmin2)) {
-                // rule does not apply
-                continue;
+            boolean isPlace = false;
+            boolean isAdmin1 = false;
+            boolean isAdmin2 = false;
+
+            if (name.getTextnorm().length() > 12 || name.getWordCount() >= 2) {
+                String tok1 = name.getTokens()[0].toLowerCase();
+                String tok2 = name.getTokens()[name.getWordCount() - 1].toLowerCase();
+                isPlace = P_prefixes.contains(tok1);
+                isAdmin1 = A1_suffixes.contains(tok2);
+                isAdmin2 = A2_suffixes.contains(tok2);
             }
 
             for (Place geo : name.getPlaces()) {
                 if (filterOutByFrequency(name, geo)) {
                     continue;
                 }
+                sameLexicalName(name, geo);
+
                 if (isPlace && geo.isPopulated()) {
                     name.incrementPlaceScore(geo, 1.0, CITY);
                 } else if (isAdmin1 && geo.isAdmin1()) {
