@@ -19,8 +19,8 @@ class GazetteerUtility(Finalizer):
         row_ids = []
         fixed_name_bias = None
         for pl in self.db.list_places(criteria=f"WHERE {query}"):
-            if len(pl.name) < 2:
-                continue
+            #if len(pl.name) < 2:
+            #    continue
 
             print("Add PLACE: ", pl)
             nm_bias = estimator.name_bias(pl.name, pl.feature_class, pl.feature_code,

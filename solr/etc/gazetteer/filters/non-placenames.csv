@@ -324,6 +324,7 @@ pale,adj
 pan american,adj
 pan-american,adj
 panamerican,adj
+panoramic,adj
 papal,adj
 paramount,adj
 patient,adj
@@ -365,10 +366,12 @@ riverfront,adj
 roman,adj
 rotten,adj
 royal,adj
+rude,adj
 rural,adj
 safe,adj
 same,adj
 sandy,adj
+sane,adj
 secure,adj
 seldom,adj
 serial,adj
@@ -377,6 +380,7 @@ shady,adj
 shaky,adj
 short,adj
 shorter,adj
+shy,adj
 silly,adj
 simple,adj
 single,adj
@@ -384,7 +388,6 @@ sino,adj
 slick,adj
 slim,adj
 sly,adj
-shy,adj
 small,adj
 smart,adj
 sober,adj
@@ -420,6 +423,7 @@ thin,adj
 titanic,adj
 token,adj
 torn,adj
+tough,adj
 trans,adj
 tri,adj
 trojan,adj
@@ -438,6 +442,7 @@ vegan,adj
 vice,adj
 vile,adj
 vintage,adj
+viral,adj
 virgin,adj
 vital,adj
 warm,adj
@@ -565,6 +570,7 @@ leg,bodypart
 lung,bodypart
 neck,bodypart
 nose,bodypart
+saliva,bodypart
 skin,bodypart
 tail,bodypart
 black,color
@@ -606,7 +612,9 @@ koran,concept.religion
 lent,concept.religion
 passover,concept.religion
 quran,concept.religion
+satan,concept.religion
 sharia,concept.religion
+shia,concept.religion
 sins,concept.religion
 spirit,concept.religion
 cont,contraction
@@ -718,6 +726,7 @@ beers,food
 blueberry,food
 burgers,food
 butternut,food
+cake,food
 chai,food
 chili,food
 chive,food
@@ -928,6 +937,7 @@ baby,noun
 back,noun
 backer,noun
 bacon,noun
+bait,noun
 bale,noun
 ballad,noun
 ballet,noun
@@ -972,6 +982,7 @@ billing,noun
 bin,noun
 bingo,noun
 biology,noun
+birthday,noun
 bistro,noun
 bit,noun
 black belt,noun
@@ -1124,6 +1135,7 @@ cockpit,noun
 code,noun
 codes,noun
 coffins,noun
+coin,noun
 cold water,noun
 colony,noun
 color,noun
@@ -1191,6 +1203,7 @@ crooks,noun
 crown,noun
 cruise,noun
 crystal,noun
+cube,noun
 cult,noun
 cultures,noun
 curfew,noun
@@ -1245,6 +1258,7 @@ dong,noun
 door,noun
 dot,noun
 downfall,noun
+downside,noun
 drain,noun
 drama,noun
 drug,noun
@@ -1441,6 +1455,7 @@ insight,noun
 insurance,noun
 intelligence,noun
 iron,noun
+irony,noun
 issue,noun
 jag,noun
 jazz,noun
@@ -1517,9 +1532,11 @@ loop,noun
 loss,noun
 lottery,noun
 lotto,noun
+lounge,noun
 love,noun
 loyalist,noun
 luck,noun
+lump,noun
 mach,noun
 mafia,noun
 magazine,noun
@@ -1611,6 +1628,7 @@ mutation,noun
 muzzle,noun
 nail,noun
 name,noun
+naming,noun
 nape,noun
 narco,noun
 national assembly,noun
@@ -1674,6 +1692,7 @@ pastor,noun
 patent,noun
 payment,noun
 peace,noun
+peer,noun
 penalty,noun
 pens,noun
 perseverance,noun
@@ -1713,6 +1732,7 @@ plates,noun
 platinum,noun
 plug,noun
 pod,noun
+polar,noun
 police,noun
 poll,noun
 pond,noun
@@ -1789,6 +1809,7 @@ reward,noun
 rice,noun
 ride,noun
 rider,noun
+rifle,noun
 rift,noun
 ring,noun
 rings,noun
@@ -1952,6 +1973,7 @@ tapes,noun
 taps,noun
 task,noun
 tasker,noun
+taxi,noun
 tech,noun
 tee,noun
 tees,noun
@@ -2023,6 +2045,7 @@ unity,noun
 utility,noun
 vacation,noun
 van,noun
+vanguard,noun
 venture,noun
 ventures,noun
 verge,noun
@@ -2330,6 +2353,7 @@ teen,person.label
 tf,person.label
 tourist,person.label
 traders,person.label
+trainer,person.label
 twin,person.label
 two brothers,person.label
 two sisters,person.label
@@ -2440,6 +2464,7 @@ ssg,person.label.rank
 ssgt,person.label.rank
 tsgt,person.label.rank
 vadm,person.label.rank
+as-is,phase
 a bad,phrase
 a better view,phrase
 a camp,phrase
@@ -2523,6 +2548,7 @@ fro,phrase
 gee,phrase
 global reach,phrase
 go home,phrase
+go-to,phrase
 gold rush,phrase
 good enough,phrase
 good faith,phrase
@@ -2532,7 +2558,6 @@ good point,phrase
 goodluck,phrase
 goodnight,phrase
 goto,phrase
-go-to,phrase
 ha,phrase
 hah,phrase
 haha,phrase
@@ -2615,6 +2640,7 @@ olive branch,phrase
 on an island,phrase
 on in,phrase
 on point,phrase
+on to,phrase
 one man,phrase
 one point,phrase
 one stop,phrase
@@ -3270,10 +3296,11 @@ midwinter,season
 spring,season
 summer,season
 winter,season
-yep,slang
 cong,slang
 cuz,slang
 dat,slang
+gonna,slang
+gotta,slang
 lam,slang
 lemme,slang
 porno,slang
@@ -3282,6 +3309,7 @@ sup,slang
 wha,slang
 y'all,slang
 yall,slang
+yep,slang
 yt,slang
 bills,sport
 bowling,sport
@@ -3704,6 +3732,7 @@ draw,verb
 dream,verb
 drill,verb
 dunk,verb
+echo,verb
 emit,verb
 enter,verb
 exchange,verb
@@ -3718,6 +3747,8 @@ fielding,verb
 fill,verb
 filling,verb
 find,verb
+firing,verb
+fix,verb
 flee,verb
 fly,verb
 flying,verb
@@ -3747,6 +3778,7 @@ harness,verb
 has,verb
 hasten,verb
 hate,verb
+hate to,verb
 have,verb
 having,verb
 heal,verb
@@ -3816,6 +3848,7 @@ petting,verb
 play,verb
 ponder,verb
 pop,verb
+pose,verb
 poses,verb
 possess,verb
 post,verb
@@ -3832,11 +3865,13 @@ punt,verb
 push,verb
 put,verb
 putting,verb
+quote,verb
 raiding,verb
 rains,verb
 ran,verb
 rang,verb
 rap,verb
+rape,verb
 rate,verb
 rates,verb
 reach,verb
@@ -3919,6 +3954,7 @@ stand,verb
 start,verb
 stay,verb
 step,verb
+stir,verb
 stoke,verb
 stole,verb
 strike,verb
@@ -3935,6 +3971,7 @@ tell,verb
 tend,verb
 to do,verb
 to go,verb
+toss,verb
 tote,verb
 trade,verb
 train,verb
@@ -3950,6 +3987,7 @@ turn,verb
 twist,verb
 undo,verb
 unite,verb
+urge,verb
 use,verb
 uses,verb
 utter,verb
@@ -4122,3 +4160,4 @@ obama,well-known.person
 ringo,well-known.person
 shaq,well-known.person
 uncle sam,well-known.person
+uranium,well-known.science
