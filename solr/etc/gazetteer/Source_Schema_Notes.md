@@ -1,3 +1,53 @@
+# Gazetteer Curation and Data Model
+
+
+Xponents SQLite ETL Schema
+------------------
+
+```shell
+
+sqlite TABLE placenames (
+
+	id              -- integer row ID used here and in Solr index 
+	place_id        -- source place ID        
+	name	        -- the place name, abbreviation or code. Any text, really	
+	name_type       -- type of name N, A, C, respectively        
+	name_group	    -- coarse grouping by language script/tokenization model. 
+	                  general (""), Arabic ("ar"), and Chinese/Japanese/Korean ("cjk")	
+	source	        -- source catalog ID
+	feat_class      -- geonames-based feature class 
+	feat_code       -- geonames-based feature coding
+ 	cc              -- ISO 3166 country code (2-alpha) or "*"
+	FIPS_cc         -- FIPS 10-4 country code (2-alpha) or "*"
+	adm1            -- ISO-based Admin Level 1 boundary code. FIPS enumerations are remapped to US postal ADM1
+	adm2            -- Admin Level 2 boundary code. Not always provided
+	lat, lon        -- WGS84 decimal latitude/longitude 
+	geohash         -- 6-character geohash
+	duplicate       -- distinct base names are default as duplicate=0; 
+	                   duplicates on the KEY=<country+name+feature+geohash> are marked as duplicate=1
+	name_bias       -- Internal name bias from -100 to 100 indicating if a name is worth tagging or for searching only
+	id_bias         -- Internal place ID bias indicating *our* preference for this particular name+location pair 
+	                   when that name appears 
+	search_only     -- Flag to indicate this geography should be carried along with Gazetteer, but not used for tagging
+
+
+INDICES on columns above help speed curation and Solr indexing:
+
+*  place_id
+*  source
+*  cc
+*  adm1
+*  name
+*  name_type
+*  name_group
+*  feat_class
+*  feat_code
+*  duplicate
+*  search_only
+
+
+```
+
 
 Geonames
 ----------

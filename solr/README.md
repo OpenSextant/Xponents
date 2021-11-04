@@ -22,16 +22,33 @@ Getting started
 You have a few options:
 
 * **Option 1.** Download Xponents SDK release (libraries, docs, and pre-built Xponents Solr)
-   * You just want the capability. No hassle.
+   * i.e., You just want the capability. No hassle.
    * https://github.com/OpenSextant/Xponents/releases will have library releases; Maven Central has JARs/javaodcs
-   * https://hub.docker.com/r/mubaldino/opensextant will have Xponents 3.2 and later as a full running service.
-* **Option 2.** Checkout Xponents and Gazetteer projects and build from latest source and data.
-   * You want the full experience, all the pain of building from source.
+   * https://hub.docker.com/r/mubaldino/opensextant will have Xponents 3.x and later as a full running service.
+* **Option 2.** Checkout Xponents  projects and build from latest source and data.
+   * i.e., You want the full experience, all the pain of building from source.
 
-For options 2 you'll follow the remainder of these instructions to build Xponents SDK 
+For option 1. You need not do anything more with these instructions.
+
+For option 2 you'll follow the remainder of these instructions to build Xponents SDK 
 with Solr indices populated.  Either way, where Python is referred in any instructions we are referring 
 to Python 3.8+ only.  `python` and `pip` may be further qualified as `python3` and `pip3` in many scripts.  
 In either case, review the Build Setup notes here and follow them best as you can.
+
+**Expectations around Data**
+
+|Source ID|Data Source|ETL Time|Place Name Count|
+|-----|----|----|----|
+|N|NGA GNIS|25 min|16.6 million|
+|U|USGS `NationalFile`|5 min|2.3 million|
+|U|US FIPS state postal/numeric codes and names|1 min|150+|
+|G|Geonames|25 min|23+ million|
+|NE|NaturalEarth Admin Boundaries|25 min|73K|
+|ISO|ISO 3166|1 min|850+|
+|X|Xponents Derived|5 min|235K|
+|-|Geonames Postal|30 min|7 million|
+
+**Distinct Place Names:** 24 million
 
 
 **Build Setup - Python, Java, etc**
@@ -43,21 +60,17 @@ Xponents root folder:
 ```shell script
 
     cd Xponents
+    ./setup.sh 
 
-    pushd ./python
-    python3 ./setup.py sdist
-    popd
-
-    # Install built lib with dependencies to ./python
-    pip3 install -U --target ./piplib ./python/dist/opensextant-1.3*.tar.gz 
-    pip3 install -U --target ./piplib lxml bs4 arrow requests pyshp
-    
     # Note - if working with a distribution release, the built Python package is in ./python/ (not ./python/dist/)
+    # Note - chose any means you want to set your effective Python environment; I use the PYTHONPATH var
 
-    * IMPORTANT *
     export PYTHONPATH=$PWD/piplib
+
+    # or 
+
+    . ./dev.env
     
-    # Or chose any other means you want to set your effective Python environment.
 ```
 
 
@@ -67,8 +80,7 @@ Option 2.  Build Gazetteer From Scatch
 
 Here is an overview of this data curation process:
 
-- OpenSextant Gazetteer merged data is a base layer for all geographic names ~ countries, cities, continents and other features. 
- The main sources are US NGA and USGS to cover world wide geography
+ The main sources are ISO 3166, US NGA and USGS to cover world wide geography
 - Secondary sources (Geonames.org, Natural Earth, Adhoc entries, Generated name variants)  are assembled from these Xponents scripts
 - A one-time collection of `wordstats` is needed to identify common terms that collide with location names.
 - With all data collected, each data set is loaded into SQLite with specific source identifiers
@@ -79,11 +91,13 @@ The steps here represent the journey of how to produce this behemoth -- a proces
 and automate.
 
 
-1. Data Collection
+**1. Data Collection**
 
 ```shell
 
-    ant get-gaz-resources
+    # cd ./solr
+
+    ant gaz-resources
     ant gaz-stopwords
     ant gaz-sources
     
@@ -101,33 +115,47 @@ SQLite file with unigram counts from GooleBooks Ngrams project.
     # Output: ./tmp/wordstats.sqlite
 ```
 
-2. Collect and Ingest Secondary Sources
+**2. Collect and Ingest Secondary Sources**
 
 This SQLite master curation process is central to the Xponents gazetteer/geotagger.  
 All of the metadata and source data is channeled through this and optimized. 
 The raw SQLite master is approaching 7.5 GB or more containing about 45 million place names.
-By contrast the resulting Solr index is about 3.0 GB with 23 million placenames. The optimization steps are essential
-to managing size and comprehensive coverage.
+By contrast the resulting Solr index is about 3.0 GB with 25 million placenames. 
+The optimization steps are essential to managing size and comprehensive coverage.
 
 ```shell script
 
   cd Xponents/solr
-  ./build-sqlite-master.sh data 
+  ./build-sqlite-master.sh 
   
-  # A simple test attempts to pull in only 300,000 rows of data to see how things work.
+  # A simple test attempts to pull in only 100,000 rows of data from each source to see how things work.
   # ./build-sqlite-master.sh test   
 
 ```
+
+**3. Postal Gazetteer**
+
+The Postal gazetteer/tagger has its own sources (postal codes) but also pulls in metadata
+for worldwide provinces from the master gazetteer. Make sure your master gazetteer (or test file)
+completes successfully above. 
+
+```shell
+
+  ./build-sqlite-postal.sh 
+  
+```
+
 
 Building and Running Xponents Solr
 =================================
 
 This is a stock instance of Solr 7.x with a number of custom solr cores.
-For now the main cores are:  `taxcat` and `gazetteer`.  They are populated like this:
+The main cores are:  `taxcat`, `gazetteer`, and `postal`.  They are populated by the `build.sh` script
+using their SQLite databases as the intermediate data:
 
-* `gazetteer`:  All the notes above on producing the flat file, but also additional sources of data and filters are 
-  integrated by this `./solr/build.sh` script.
-* `taxcat`:  `./solr/build.sh` conducts all the data downloads and loading.  See [XTax README](`./solr/etc/taxcat/README.md`)
+* `gazetteer`:  99.9% of the `tmp/master_gazetteer.sqlite` distinct entries will be indexed into the Solr gazetteer.  A limited number of default filters omit odd names ~ short names, names of obscure hyrological features (wells, intermittent streams, etc).  Duplicate place names (feature + name + location + country) are not indexed.
+* `taxcat`:  Taxcat will contain taxonomic entries such as well-known named entities, nationalities, generic person names, and other useful lexica.   See [XTax README](`./solr/etc/taxcat/README.md`)
+* `postal`: The postal index is populated straight from `tmp/postal_gazetteer.sqlite`
 
 These notes here are for the general situation just establishing Solr and iterating through common tasks.
 
@@ -175,7 +203,8 @@ runtime -- The other folders provide a fully operational Solr Server.
 
 **Step 4. Build Indices**
 
-The build process can be brittle, so let's educate you and you can make decisions on your own. See comments on each option/directive
+The build process can be brittle, so let's get educated so you can make decisions on your own. 
+
 The `build.sh` script is the central brain behind the data assembly.  Use that script 
 alone to build and manage indices, however if there are problems see the individual steps below
 to intervene and redo any steps. 
@@ -183,7 +212,7 @@ to intervene and redo any steps.
 
 **MAINTENANCE USE:**
 
-To update the Gazetteer Meta resources consider these few steps:
+To update the Gazetteer Meta resources review these few steps:
 
 1. Follow notes above to setup.
 2. Update Person names filter
@@ -194,20 +223,24 @@ To update the Gazetteer Meta resources consider these few steps:
   cd ./solr
   python3 ./script/assemble_person_filter.py 
   ant gaz-meta
+  
+  cd ..
+  mvn install
 ```
 
-As of Xponents 3.4 and later, the resources are included in the main Xponents SDK JAR `opensextant-xponents.X.x.x.jar`.
-Prior to this `xponents-gazetteer-meta.jar` was a separate JAR required to be in the classpath.
-Customizations "live" to the gazetteer meta can be accommodated in your application if you are able to control your 
-`CLASSPATH` and override resource files.  The main meta folders include:
+NOTE: Regarding `gaz-meta`, the geotagger and other resources leverage things from the CLASSPATH ( via `opensextant-xponents-*jar` or from file system).  In releases Xponents v3.3 and earlier there was a 
+separate JAR file for these resources.  The main meta folders include:
 
 * `/lang/`  -- Lucene and other stopword sets
 * `/filters/` -- exclusions for tagging and downstream tuning.
+* other content possibly
 
 
 **FIRST USE:** 
 ```shell script
-    build.sh  start clean data 
+    build.sh  start clean data gazetteer
+    build.sh  taxcat
+    build.sh  postal
 ```
 IF you have gotten to this step and feel confident things look good, this one invocation of `build.sh`
 should allow you to run steps 4a, 4b, and 4c below all in one command.  STOP HERE.  If the above succeeded, check 
@@ -257,7 +290,7 @@ gazetteer you are likely ready to go start using Xponents SDK.
 
 This will pull down data sets used by Gazetteer and TaxCat taggers and resources using the Ant tasks:
 
-* `ant get-gaz-resources `
+* `ant gaz-resources `
 * `ant taxcat-jrc `
 
 
@@ -274,13 +307,11 @@ running it will be started.  Access Solr URL is http://localhost:7000/solr
 
 
 CLASSPATH NOTE: "Filters" are important to gazetteer tuning.  I refer to "/filters/"  resources in 
-taggers and data processing.  Filters are packed in the `xponents-gazetteer.jar` and is required for 
-both running Solr-server gazetteer operations and normal Xponents library operations.  This JAR
-must be available in the `CLASSPATH`
+taggers and data processing.  Filters are packed in the main SDK JAR.
 
 ```shell script
    
-   # Copy Xponents gazetteer meta-files to runtime location
+   # Copy Xponents gazetteer meta-files to Maven resource location
    #
    ant gaz-meta
 ```
@@ -371,4 +402,5 @@ and informing the confidence in that conclusion.  More test data is needed to ob
 a reasonable feature model.  
 
 References:
+
 * Acheson, De Sabbata, Purvesa   "A quantitative analysis of global gazetteers: Patterns of coverage for common feature types". 2017.  https://www.sciencedirect.com/science/article/pii/S0198971516302496 

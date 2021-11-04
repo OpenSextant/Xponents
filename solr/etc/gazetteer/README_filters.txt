@@ -20,12 +20,14 @@ Middle Eastern titles were derived from various sources including:
 
  http://heraldry.sca.org/laurel/names/arabic-naming2.htm
 
-WordNet stop words were derived from Ted Pedersen, 
+WordNet stop words were derived from Ted Pedersen,
+
    http://www.d.umn.edu/~tpederse/Group01/WordNet/words.txt
 
 
 US Census 2010 (http://census.gov) supplied the surnames data.
 http://www.census.gov/topics/population/genealogy/data/1990_census/1990_census_namefiles.html
+
 First names are located at:
   http://www2.census.gov/topics/genealogy/1990surnames/dist.male.first
   http://www2.census.gov/topics/genealogy/1990surnames/dist.female.first

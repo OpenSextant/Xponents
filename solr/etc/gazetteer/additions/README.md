@@ -13,9 +13,8 @@ Possibly choose an id (based of the solr entry) add 20,000,000 to it.
 Then for any additional items increment that value.
 
 - name_type = A or N for abbreviation or name.
-- name_bias = non-zero 0.001 to 1.000, higher the value suggests it is weighted more (more likely an used name)
+- name_bias = 1 to 100, higher the value suggests it is weighted more (more likely an used name)
 - source = "X" for Xponents
-
 
 4. Wait til you are ready to run full `build-sqlite-master.sh test`  OR attempt this 
  with the Python routine: `python3 ./script/gaz_generate_variants.py --db test.sqlite`
