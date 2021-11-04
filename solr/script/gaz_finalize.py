@@ -102,6 +102,7 @@ class Finalizer:
         #    re-mark the name_bias to positive if determined to be common words previously.
         names_done = set([])
         count_adjusted = 0
+        # admin_names = self.db.list_admin_names()
 
         flag_fix_major_place_names = True
         flag_fix_admin_codes = False  # Addressed in-line through PlaceHueristics
@@ -111,20 +112,21 @@ class Finalizer:
             # Find Names < 30 chars in general name_group where the names represent significant features.
             # Recode those feature/names so ANY row by that name is not excluded by the "too common" judgement
             sql_clause = """ where
-                name_type='N' 
+                source in ('U', 'N', 'G')
+                and name_type='N' 
                 and name_group='' 
                 and LENGTH(name) < 30 
                 and feat_class in ('A', 'P') 
                 and feat_code in ('ADM1', 'PPLC', 'PCL', 'PCLI') 
-                and name NOT like '% %' 
-                and name_bias < 0"""
+                and name NOT like '% %' order by name
+                """
 
             for pl in self.db.list_places(criteria=sql_clause):
                 names = {pl.name, replace_diacritics(pl.name)}
                 for name in names:
                     if name.lower() in names_done:
                         continue
-                    if len(name) < 5:
+                    if len(name) < 4:
                         continue
                     print(f"ADJUST: {name}")
                     name_bias = estimate_name_bias(name)

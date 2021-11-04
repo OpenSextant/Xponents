@@ -12,7 +12,7 @@ class GazetteerUtility(Finalizer):
         Finalizer.__init__(self, dbf)
 
     def index_sql(self, url, query, fix=False):
-        estimator = PlaceHeuristics()
+        estimator = PlaceHeuristics(self.db)
         print("Xponents Gazetteer Finalizer: INDEX")
         indexer = GazetteerIndex(url)
 

@@ -8,7 +8,7 @@ from copy import copy
 
 from opensextant import get_country
 from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, PlaceHeuristics
-from opensextant.utility import get_list, has_cjk, has_arabic, is_value, is_code, get_csv_reader
+from opensextant.utility import get_list, has_cjk, has_arabic, is_value, is_code, is_abbreviation, get_csv_reader
 
 schema = """
 geonameid         : integer id of record in geonames database
@@ -120,7 +120,7 @@ class GeonamesOrgGazetteer(DataSource):
         DataSource.__init__(self, dbf, **kwargs)
         self.source_keys = [GEONAMES_SOURCE]
         self.source_name = "Geonames.org"
-        self.estimator = PlaceHeuristics()
+        self.estimator = PlaceHeuristics(self.db)
 
     def process_source(self, sourcefile, limit=-1):
         """
@@ -176,8 +176,11 @@ class GeonamesOrgGazetteer(DataSource):
                     g = geo.copy()
                     g["name"] = nm
                     nt = g["name_type"]
-                    if nt == "N" and is_code(nm):
-                        g["name_type"] = "C"
+                    if nt == "N":
+                        if is_code(nm):
+                            g["name_type"] = "C"
+                        elif is_abbreviation(nm):
+                            g["name_type"] = "A"
                     grp = ""
                     if has_cjk(nm):
                         grp = "cjk"

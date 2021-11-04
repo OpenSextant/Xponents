@@ -5,7 +5,7 @@ from traceback import format_exc
 
 import arrow
 import pysolr
-from opensextant import Place, Country, geohash_encode, load_major_cities, is_administrative
+from opensextant import Place, Country, geohash_encode, load_major_cities
 from opensextant.utility import ensure_dirs, is_ascii, has_cjk, has_arabic, \
     ConfigUtility, get_bool, trivial_bias, replace_diacritics, strip_quotes, parse_float, load_list
 from opensextant.wordstats import WordStats
@@ -607,6 +607,20 @@ class DB:
         for p in self.conn.execute(sql_script):
             yield as_place(p)
 
+    def list_admin_names(self, sources=['U', 'N', 'G']) -> set:
+        """
+        Lists all admin level1 names.
+        :param sources: list of source IDs defaulting to those for USGS, NGA, Geonames.org
+        :return: set of names, lowerased
+        """
+        source_criteria = ','.join([f"'{s}'" for s in sources])
+        sql = f"""select distinct(name) AS NAME from placenames where  feat_class = 'A' and feat_code = 'ADM1' 
+              and source in ({source_criteria}) and name_group='' and name_type='N'"""
+        names = set([])
+        for nm in self.conn.execute(sql):
+            names.add(nm['NAME'].lower())
+        return names
+
     def update_place_id(self, rowid, plid):
         sql = "update placenames set place_id=? where rowid=?"
         self.conn.execute(sql, (plid, rowid,))
@@ -860,11 +874,16 @@ def estimate_name_bias(nm):
 
 
 class PlaceHeuristics:
-    def __init__(self):
+    def __init__(self, dbref: DB):
+        """
+
+        :param dbref: DB instance
+        """
         self.debug = False
         self.cities = set([])
         self.cities_large = set([])
         self.cities_spatial = {}  # keyed by geohash
+        self.provinces = {}
         self.stopwords = load_stopterms()
         self.POPULATION_THRESHOLD = 200000
         self.MAX_NAMELEN = 50
@@ -899,9 +918,11 @@ class PlaceHeuristics:
             "H/WLL": 2
         }
 
-        # Look up cities by CC.ADM1
+        # This is a set (list) of distinct names for ADM1 level names.
+        # This obviously changes as you build out the master gazetteer as in the beginning it has NOTHING.
+        self.provinces = dbref.list_admin_names()
+
         for city in load_major_cities():
-            # key = make_HASC(city.country_code, city.adm1)
             self.cities.add(city.name.lower())
             if city.population > self.POPULATION_THRESHOLD:
                 self.cities_large.add(city.name.lower())
@@ -917,8 +938,34 @@ class PlaceHeuristics:
     def is_large_city(self, name):
         return name in self.cities_large
 
-    def is_significant(self, feat):
+    def is_significant(self, feat) -> bool:
         return feat in self.exempt_features
+
+    def is_province_name(self, name) -> bool:
+        """
+        Report if a name is that of a province, regardless of whether the location repreents something else.
+        E.g.
+            "Florida" is a city (lesser known) or a state (well known).   Therefore it is a popular name.
+        :param name:
+        :return:
+        """
+        return name in self.provinces
+
+    def is_stopword(self, name: str) -> bool:
+        if name in self.stopwords:
+            return True
+
+        # Name is "Bar"...
+        # test if "The Bar" is a stopword
+        if f"the {name}" in self.stopwords:
+            return True
+
+        # Name is "The Bar"
+        # test if "bar" is a stopword
+        if name.startswith("the "):
+            if name[4:].strip() in self.stopwords:
+                return True
+        return False
 
     def estimate_bias(self, geo, name_group=""):
         """
@@ -1039,13 +1086,18 @@ class PlaceHeuristics:
             return trivial_bias(geoname) + 0.10
 
         self.stat_namecount += 1
-
-        if name_type == "C" and is_administrative(feat_class):
-            if geoname.upper() in self.stopwords_admin_codes:
-                return -1
-
         namelen = len(geoname)
         self.stat_charcount += namelen
+
+        # if name_type == "C" and is_administrative(feat_class):
+        # Quick checks:
+        if namelen < 5:
+            # Check for administrative codes that are most commonly stopterms or other meanings
+            if geoname.upper() in self.stopwords_admin_codes:
+                return -1
+            # Omit pure digit names
+            if geoname.isdigit():
+                return -1
 
         if namelen < 2:
             return -0.1
@@ -1062,41 +1114,41 @@ class PlaceHeuristics:
         if norm in self.exempted_names:
             return self.exempted_names[norm]
 
-        if norm in self.stopwords:
-            return -1
-
-        # Name is "Bar"...
-        # test if "The Bar" is a stopword
-        test = f"the {norm}"
-        if test in self.stopwords:
-            return -0.5
-
-        # Name is "The Bar"
-        # test if "bar" is a stopword
-        if norm.startswith("the "):
-            test = norm[4:].strip()
-            if test in self.stopwords:
-                return -0.5
+        # SECOND -- figure out if name is significant and popular because it is a popular place
+        #           rather than just a common word.
 
         # TODO: add non-diacritic name to this test?
-        is_popular_city_name = self.is_significant(feat_code) or self.is_large_city(norm)
+        norm2 = strip_quotes(replace_diacritics(norm))
+        is_popular_place = self.is_significant(feat_code) or \
+                           self.is_large_city(norm) or \
+                           self.is_province_name(norm) or \
+                           self.is_province_name(norm2)
 
-        # Example: "Moscow (P/PPLC)" significant. Name is exempted.
+        # Example: "Moscow (P/PPLC)" significant. Name is exempted (significant feature)
         #          "Moscow (A/ADM2)" not significant; But it is flagged as "common"...and omitted without this:
-        if is_popular_city_name:
+        #          "Florida (P/PPL)" is not a common place
+        #          "Florida (A/ADM1)" is a significant place.  Note "Large Cities" vs. ADMIN-LEVEL1 boundaries are different lookups
+        if is_popular_place:
             self.exempted_names[norm] = trivial_bias(geoname)
             return self.exempted_names[norm]
+        elif self.is_stopword(norm):
+            return -1
         elif self.wordlookup.is_common(norm):
             # is a common word, but not associated often with a location
             return -1
         else:
-            test = strip_quotes(replace_diacritics(norm))
-            if norm != test:
-                if self.wordlookup.is_common(test):
-                    return -1
+            # Much deeper checks on about 90% of the names
+            # Omit short diacritic names that are typically stopwords.  These are partial biases
+            # since we are now checking if the non-diacritic version is filtered.
+            if norm != norm2:
+                if self.wordlookup.is_common(norm2):
+                    return -0.9
 
-                if test in self.stopwords:
+                if norm2 in self.stopwords:
                     return -0.5
+
+                if norm2.upper() in self.stopwords_admin_codes:
+                    return -0.6
 
         # Return a positive value.
         return trivial_bias(norm)

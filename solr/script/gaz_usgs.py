@@ -121,9 +121,9 @@ class USGSGazetteer(DataSource):
         DataSource.__init__(self, dbf, **kwargs)
         self.source_name = "USGS Gazetteer"
         self.source_keys = [USGS_SOURCE_ID]
-        load_feature_map()
-        self.estimator = PlaceHeuristics()
+        self.estimator = PlaceHeuristics(self.db)
         self.rate = 1000000
+        load_feature_map()
 
     def process_source(self, sourcefile, limit=-1):
         with open(sourcefile, "r", encoding="UTF-8") as fh:

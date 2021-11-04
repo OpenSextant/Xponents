@@ -75,7 +75,7 @@ def render_distinct_names(entry):
     for fld in ["SHORT_FORM", "FULL_NAME_ND_RO", "FULL_NAME_RO"]:
         nm = entry.get(fld)
         if nm:
-            nm = nm.replace("\u2019", "'").rstrip(".").strip()
+            nm = nm.replace("\u2019", "'").strip()
             names[nm.lower()] = nm
     return names
 
@@ -102,7 +102,7 @@ class NGAGeonames(DataSource):
         DataSource.__init__(self, dbf, **kwargs)
         self.source_keys = [NGA_SOURCE_ID]
         self.source_name = "NGA GNIS"
-        self.estimator = PlaceHeuristics()
+        self.estimator = PlaceHeuristics(self.db)
 
     def process_source(self, sourcefile, limit=-1):
         with open(sourcefile, "r", encoding="UTF-8") as fh:

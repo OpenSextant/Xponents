@@ -7,14 +7,8 @@ export PYTHONPATH=$XPONENTS/python:$XPONENTS/piplib
 export PYTHONUNBUFFERED=1
 
 do_test=0
-do_data=0
 while [ "$1" != "" ]; do
  case $1 in
-  'data')
-     do_data=1
-     shift
-     ;;
-
   'test')
     do_test=1
     shift
@@ -25,10 +19,6 @@ while [ "$1" != "" ]; do
     ;; 
  esac
 done
-
-if [ "$do_data" -eq 1 ]; then
-  ant gaz-sources
-fi
 
 # GLOB NationalFile*
 USGS_FILE=`ls ./tmp/NationalFile_202*`
@@ -42,6 +32,7 @@ for f in  $USGS_FILE \
     echo "All is good, resource exists: $f"
   else
     echo "Missing resource, $f"
+    echo "See README on sources and wordstats"
     exit 1
   fi
 done
@@ -67,6 +58,13 @@ else
   rm -f $DB
 
   datekey=`date +%Y%m%d`
+
+  # Geonames is FIRST, because it has better consistent coverage for all names
+  echo GEONAMES       `date`
+  LOG=./tmp/gaz_geonames_${datekey}.log
+  python3 ./script/gaz_geonames.py ./tmp/allCountries.txt > $LOG
+
+  # Note - USGS does not provide ADM1 names for US States in NationalFile.
   echo USGS      `date`
   LOG=./tmp/gaz_usgs_${datekey}.log
   python3 ./script/gaz_usgs.py $USGS_FILE > $LOG
@@ -75,10 +73,6 @@ else
   echo NGA GNIS  `date`
   LOG=./tmp/gaz_nga_${datekey}.log
   python3 ./script/gaz_nga.py ./tmp/Countries.txt > $LOG
-
-  echo GEONAMES       `date`
-  LOG=./tmp/gaz_geonames_${datekey}.log
-  python3 ./script/gaz_geonames.py ./tmp/allCountries.txt > $LOG
 
   echo ADMIN CODES    `date`
   LOG=./tmp/gaz_administrative_codes_${datekey}.log

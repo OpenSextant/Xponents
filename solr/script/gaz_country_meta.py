@@ -13,7 +13,7 @@ class CountryGazetteer(DataSource):
         self.starting_row = -1
         self.place_count = 0
         print("Loading metadata")
-        self.estimator = PlaceHeuristics()
+        self.estimator = PlaceHeuristics(self.db)
 
     def name_bias(self, pl:Place):
         if pl.country_code == "ZZ":

@@ -166,7 +166,7 @@ class NatEarthAdminGazetteer(DataSource):
         self.source_keys = ["NE"]
         self.rate = 1000
         self.source_name = "NaturalEarth"
-        self.estimator = PlaceHeuristics()
+        self.estimator = PlaceHeuristics(self.db)
 
     def process_source(self, sourcefile, limit=-1):
         """
