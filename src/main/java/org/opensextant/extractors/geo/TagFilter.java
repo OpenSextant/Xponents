@@ -1,16 +1,5 @@
 package org.opensextant.extractors.geo;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.util.ClasspathResourceLoader;
@@ -22,6 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 /*
  * We can filter out trivial place name matches that we know to be close to
  * false positives 100% of the time. E.g,. "way", "back", "north" You might
@@ -171,7 +171,7 @@ public class TagFilter extends MatchFilter {
         }
 
         if (filter_stopwords) {
-            return nonPlaceStopTerms.contains(t.toLowerCase());
+            return nonPlaceStopTerms.contains(t.toLowerCase().replace('-', ' '));
         }
 
         return false;

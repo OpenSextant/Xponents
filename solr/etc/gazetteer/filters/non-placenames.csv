@@ -93,6 +93,10 @@ utc,abbrev
 vol,abbrev
 wal,abbrev
 xin,abbrev
+dept,abbrev
+ie,abbrev
+bloody,adj
+blond,adj
 # mobile,adj
 absolute,adj
 academic,adj
@@ -322,7 +326,6 @@ overall,adj
 overlooking,adj
 pale,adj
 pan american,adj
-pan-american,adj
 panamerican,adj
 panoramic,adj
 papal,adj
@@ -400,10 +403,11 @@ sour,adj
 sovereign,adj
 spoken,adj
 stable,adj
-state-run,adj
+state run,adj
 stellar,adj
 stolen,adj
 strange,adj
+stray,adj
 strong,adj
 stuck,adj
 sudden,adj
@@ -453,6 +457,15 @@ windswept,adj
 wooden,adj
 worthy,adj
 young,adj
+frozen,adj
+lethal,adj
+slower,adj
+scary,adj
+timely,adj
+too late,adj
+dirty,adj
+elegant,adj
+barren,adj
 bon,adj.fre
 nouveau,adj.fre
 bello,adj.ita
@@ -528,6 +541,11 @@ warthog,animal
 wolfs,animal
 worms,animal
 zebra,animal
+baboon,animal
+monkey,animal
+insect,animal
+tick,animal
+worm,animal
 chien,animal.fre
 ago,article
 also,article
@@ -573,6 +591,12 @@ nose,bodypart
 saliva,bodypart
 skin,bodypart
 tail,bodypart
+elbow,bodypart
+rectum,bodypart
+left arm,bodypart
+right arm,bodypart
+toe,bodypart
+thumbs,bodypart
 black,color
 blue,color
 bronze,color
@@ -633,10 +657,6 @@ north east,directional
 north eastern,directional
 north west,directional
 north western,directional
-north-east,directional
-north-eastern,directional
-north-west,directional
-north-western,directional
 northeast,directional
 northern,directional
 northwest,directional
@@ -765,6 +785,7 @@ stout,food
 strawberry,food
 sushi,food
 taco,food
+bean,food
 epsilon,greek
 christmas,holiday
 good friday,holiday
@@ -878,6 +899,10 @@ oct,month
 october,month
 sept,month
 september,month
+tanks,noun
+flags,noun
+affinity,noun
+baseline,noun
 accord,noun
 accounting,noun
 ace,noun
@@ -1126,7 +1151,7 @@ clipper,noun
 cloud,noun
 clover,noun
 club,noun
-co-operative,noun
+co operative,noun
 coal,noun
 coal mine,noun
 coats,noun
@@ -1262,6 +1287,7 @@ downside,noun
 drain,noun
 drama,noun
 drug,noun
+hashish,noun
 drum,noun
 drums,noun
 duo,noun
@@ -1435,6 +1461,7 @@ holiday,noun
 holy city,noun
 homes,noun
 honor,noun
+honesty,noun
 hook,noun
 hope,noun
 hopper,noun
@@ -1640,6 +1667,7 @@ nda,noun
 nerve,noun
 nets,noun
 never,noun
+newborn,noun
 newspaper,noun
 night,noun
 node,noun
@@ -1694,6 +1722,7 @@ payment,noun
 peace,noun
 peer,noun
 penalty,noun
+pencil,noun
 pens,noun
 perseverance,noun
 pest,noun
@@ -1851,6 +1880,7 @@ satellite channel,noun
 science,noun
 sciences,noun
 scout,noun
+scoop,noun
 scud,noun
 scum,noun
 sea breeze,noun
@@ -2103,6 +2133,32 @@ yule,noun
 zen,noun
 zenith,noun
 zona,noun
+fraud,noun
+dirt,noun
+tent,noun
+lawsuit,noun
+cargo,noun
+quest,noun
+mural,noun
+corp,noun
+doses,noun
+fireplace,noun
+herd,noun
+hunger,noun
+mailbox,noun
+mail box,noun
+nodes,noun
+panic,noun
+odds,noun
+pools,noun
+lows,noun
+spores,noun
+starvation,noun
+trauma,noun
+chips,noun
+rental,noun
+barrels,noun
+umbrella,noun
 l'heure,noun.fre
 la maison,noun.fre
 ligue,noun.fre
@@ -2119,6 +2175,7 @@ het,noun.nld
 aeroport,noun.por
 group,people
 society,people
+freak,person.label
 ag,person.label
 ally,person.label
 ambassador,person.label
@@ -2369,6 +2426,12 @@ voters,person.label
 vp,person.label
 whites,person.label
 wizard,person.label
+loser,person.label
+kid,person.label
+peers,person.label
+hunters,person.label
+winner,person.label
+rebel,person.label
 amir,person.label.mideast
 amira,person.label.mideast
 amr,person.label.mideast
@@ -2464,7 +2527,8 @@ ssg,person.label.rank
 ssgt,person.label.rank
 tsgt,person.label.rank
 vadm,person.label.rank
-as-is,phase
+as is,phase
+as seen,phrase
 a bad,phrase
 a better view,phrase
 a camp,phrase
@@ -2476,7 +2540,7 @@ a pool,phrase
 a school,phrase
 a small world,phrase
 a young,phrase
-a-la,phrase
+a la,phrase
 aha,phrase
 akin,phrase
 alas,phrase
@@ -2548,7 +2612,7 @@ fro,phrase
 gee,phrase
 global reach,phrase
 go home,phrase
-go-to,phrase
+go to,phrase
 gold rush,phrase
 good enough,phrase
 good faith,phrase
@@ -2767,6 +2831,11 @@ yup,phrase
 zero point,phrase
 zigzag,phrase
 zip,phrase
+gosh,phrase
+up to,phrase
+hmm,phrase
+lets,phrase
+to a,phrase
 merci,phrase.fre
 oui,phrase.fre
 basta,phrase.ita
@@ -2989,7 +3058,6 @@ quarters,place.civil
 radio station,place.civil
 ranch,place.civil
 real estate,place.civil
-real-estate,place.civil
 reservoir,place.civil
 residence,place.civil
 resort,place.civil
@@ -3054,6 +3122,8 @@ warehouses,place.civil
 watergate,place.civil
 west end,place.civil
 zoo,place.civil
+outpost,place.civil
+patio,place.civil
 a mountain,place.general
 a river,place.general
 a village,place.general
@@ -3253,6 +3323,8 @@ west coast,place.general
 west side,place.general
 world,place.general
 zone,place.general
+coastal,place.general
+saltmarsh,place.general
 arrondissement,place.general.fre
 cercle,place.general.fre
 commune,place.general.fre
@@ -3509,11 +3581,11 @@ nothing,stopword.wordnet
 notwithstanding,stopword.wordnet
 of,stopword.wordnet
 off,stopword.wordnet
-on,stopword.wordnet
+#on,stopword.wordnet
 oneself,stopword.wordnet
 onto,stopword.wordnet
 opposite,stopword.wordnet
-or,stopword.wordnet
+#or,stopword.wordnet
 other,stopword.wordnet
 otherwise,stopword.wordnet
 our,stopword.wordnet
@@ -3622,6 +3694,8 @@ noon,time
 present,time
 wartime,time
 gallon,unit
+biting,verb
+ate,verb
 abate,verb
 able,verb
 act,verb
@@ -3656,6 +3730,7 @@ betting,verb
 beware,verb
 bid,verb
 bite,verb
+bites,verb
 blame,verb
 bloom,verb
 blow,verb
@@ -3684,6 +3759,7 @@ change,verb
 charge,verb
 chase,verb
 chew,verb
+choke,verb
 cite,verb
 clash,verb
 clear,verb
@@ -4018,6 +4094,28 @@ won,verb
 wonder,verb
 woo,verb
 zoom,verb
+pause,verb
+sporting,verb
+hire,verb
+pulling,verb
+granting,verb
+arresting,verb
+screw,verb
+blot,verb
+breeding,verb
+cannot,verb
+harvest,verb
+isolate,verb
+owning,verb
+persist,verb
+posting,verb
+scrub,verb
+thaw,verb
+trapping,verb
+earn,verb
+suck,verb
+hitting,verb
+seize,verb
 espero,verb.por
 falar,verb.por
 quer,verb.por
@@ -4028,6 +4126,8 @@ vem,verb.por
 grenade,weapon
 kalashnikov,weapon
 ordnance,weapon
+mortar,weapon
+bomb,weapon
 fog,weather
 freezing point,weather
 rain,weather
@@ -4106,6 +4206,7 @@ hanta,well-known.disease
 lyme,well-known.disease
 mers,well-known.disease
 zika,well-known.disease
+malaria,well-known.disease
 alaaddin,well-known.fiction
 aladdin,well-known.fiction
 aladin,well-known.fiction
@@ -4160,4 +4261,6 @@ obama,well-known.person
 ringo,well-known.person
 shaq,well-known.person
 uncle sam,well-known.person
+bleach,well-known.science
 uranium,well-known.science
+toxin,well-known.science
