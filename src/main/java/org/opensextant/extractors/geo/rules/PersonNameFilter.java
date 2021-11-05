@@ -17,7 +17,12 @@
 
 package org.opensextant.extractors.geo.rules;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import org.opensextant.ConfigException;
+import org.opensextant.data.Place;
+import org.opensextant.data.TextInput;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.xtax.TaxonMatch;
+import org.opensextant.util.FileUtility;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,26 +32,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.opensextant.ConfigException;
-import org.opensextant.data.Place;
-import org.opensextant.data.TextInput;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.xtax.TaxonMatch;
-import org.opensextant.util.FileUtility;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class PersonNameFilter extends GeocodeRule {
 
     private Set<String> nameFilter = null;
     private Set<String> titles = null;
     private Set<String> suffixes = null;
-    private static final int AVG_WORD = 7;
 
     /**
      * Locations that are some number of words long AND have lat/lon
      * should be allowed to pass as geocodings even when they overlap with
      * organizational names.
      */
-    private static final int LONG_NAME_LEN = 3 * AVG_WORD;
+    private static final int LONG_NAME_LEN = 3 * AVG_WORD_LEN;
 
     /**
      * Constructor for general usage if you know your files might come from file
@@ -162,7 +161,7 @@ public class PersonNameFilter extends GeocodeRule {
             final List<TaxonMatch> persons, final List<TaxonMatch> orgs) {
 
         for (PlaceCandidate pc : placeNames) {
-            if (pc.isFilteredOut() || pc.isCountry || pc.isValid()) {
+            if (pc.isFilteredOut() || pc.isValid() || (pc.isCountry && !pc.isAbbreviation)) {
                 continue;
             }
 
@@ -223,19 +222,21 @@ public class PersonNameFilter extends GeocodeRule {
                 continue;
             }
 
+            /* is LOC candidate in ORG name
+             * or ORG name in LOC candidate?
+            */
             for (TaxonMatch name : orgs) {
                 if (pc.isSameMatch(name)) {
                     pc.setFilteredOut(true);
+                    pc.isCountry = false;
                     resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule("ResolvedOrg");
                 } else if (pc.isWithin(name) && !pc.isCountry) {
                     // LOC: "Memorial Square" in ORG: "Friends of Memorial Square"
 
                     // Special conditions:
-                    // City name in the name of a Building or Landmark is worth saving as a
-                    // location.
-                    // But short one-word names appearing in organization names, may be false
-                    // positives
+                    // City name in the name of a Building or Landmark is worth saving as a location.
+                    // But short one-word names appearing in organization names, may be false positives
                     // After more evaluation, it seems like presence of a city name in an
                     // organization name is good evidence to leverage.
                     //

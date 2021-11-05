@@ -76,6 +76,10 @@ public abstract class GeocodeRule {
         return true;
     }
 
+    public static boolean isShort(int matchLen) {
+        return matchLen <= AVG_WORD_LEN;
+    }
+
     /**
      * Create a location ID useful for tracking distinct named features by location.
      * This is not generalizable. It produces a looser identity such as "the city at

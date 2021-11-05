@@ -16,14 +16,14 @@
  */
 package org.opensextant.extractors.geo.rules;
 
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.PlaceEvidence;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.PlaceEvidence;
 
 /**
  * Major Place rule -- fire this rule after Country rule.
@@ -96,7 +96,7 @@ public class MajorPlaceRule extends GeocodeRule {
                 continue;
             }
 
-            boolean isAbbrev = name.getLength() < 4 && name.isASCII() && name.isUpper();
+            boolean isAbbrev = name.isShortName();
             boolean matchedAdmin = false;
 
             for (Place geo : name.getPlaces()) {
@@ -106,7 +106,7 @@ public class MajorPlaceRule extends GeocodeRule {
 
                 // Check for mismatched case -- BKA matching Bka (site feature)
                 if (isAbbrev) {
-                    if (geo.isAdministrative() && geo.isAbbreviation()) {
+                    if (geo.isAdministrative() && geo.isShortName()) {
                         matchedAdmin = true;
                     } else {
                         continue;
@@ -114,10 +114,6 @@ public class MajorPlaceRule extends GeocodeRule {
                 }
 
                 evaluate(name, geo);
-                if (name.getChosen() != null) {
-                    // DONE
-                    break;
-                }
             }
 
             // IF no geo lines up with the abbrevation eliminate it.

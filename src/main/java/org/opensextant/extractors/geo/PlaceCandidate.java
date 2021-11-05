@@ -68,11 +68,20 @@ public class PlaceCandidate extends TextMatch {
 
     private static final String[] DESIGNATION_SCALE = {
             /* Places: cities, villages, ruins, etc. */
-            "PPLC:12", "PPLA:8", "PPLG:7", "PPL:5", "PPLL:2", "PPLQ:2", "PPLX:2",
+            "PPLC:12",
+            "PPLA:8",
+            "PPLG:7",
+            "PPL:5",
+            "PPLL:2",
+            "PPLQ:2",
+            "PPLX:2",
             /* Administrative regions */
-            "ADM1:9", "ADM2:8", "ADM3:7",
+            "ADM1:9",
+            "ADM2:8",
+            "ADM3:7",
             /* Other geographic features */
-            "ISL:4", "ISLS:5"};
+            "ISL:4",
+            "ISLS:5"};
 
     private static final Map<String, Integer> classWeight = new HashMap<>();
     private static final Map<String, Integer> designationWeight = new HashMap<>();
@@ -94,6 +103,18 @@ public class PlaceCandidate extends TextMatch {
      */
     public PlaceCandidate() {
     }
+
+    private String nonDiacriticTextnorm = null;
+
+    public String getNDTextnorm(){
+        return nonDiacriticTextnorm;
+    }
+
+    public void setText(String name){
+        super.setText(name);
+        this.nonDiacriticTextnorm = TextUtils.phoneticReduction(getTextnorm(), isASCII());
+    }
+
 
     /**
      * Mark this candidate as something that was derived by special rules and to treat it
@@ -212,7 +233,7 @@ public class PlaceCandidate extends TextMatch {
             preChar = sourceBuffer.charAt(window[1]); /* offset greater than 0 */
         }
         if (window[2] != sourceBuffer.length()) {
-            preChar = sourceBuffer.charAt(window[2]);/* offset less than doc end */
+            postChar = sourceBuffer.charAt(window[2]);/* offset less than doc end */
         }
     }
 
@@ -254,6 +275,15 @@ public class PlaceCandidate extends TextMatch {
      *
      */
     public boolean hasDiacritics = false;
+
+    /**
+     * Alias for "isAbbreviation || isAcronym"
+     *
+     * @return
+     */
+    public boolean isShortName() {
+        return isAbbreviation || isAcronym;
+    }
 
     /**
      * After candidate has been scored and all, the final best place is the

@@ -28,13 +28,7 @@ public class NonsenseFilter extends GeocodeRule {
 
     private static final int MAX_NONSENSE_PHRASE_LEN = 20;
     private static final int MIN_PHONETIC_MATCH_LEN = 4;
-    public static final int GENERIC_ONE_WORD = 10; // Chars in average word.
-
-    private static final Pattern wsRedux = Pattern.compile("[-\\s+`]");
-
-    protected static String phoneticRedux(final String n) {
-        return wsRedux.matcher(n).replaceAll("");
-    }
+    public static final int AV = 10; // Chars in average word.
 
     private static boolean lowerInitial(String s) {
         return Character.isLowerCase(s.charAt(0));
@@ -48,19 +42,6 @@ public class NonsenseFilter extends GeocodeRule {
      */
     public static boolean isValidAbbreviation(String s) {
         return !nonAbbrevPunct.matcher(s).find();
-    }
-
-    /**
-     * See if name n2 is a phonetic match for a relative constant ph1.
-     * phonetic(n2) = ph1 ?
-     *
-     * @param ph1 - phonetic redux of a name.
-     * @param n2  - a test name.
-     * @return
-     */
-    protected static boolean isPhoneticMatch(final String ph1, final String n2) {
-        final String ph2 = phoneticRedux(n2);
-        return ph2.equalsIgnoreCase(ph1);
     }
 
     /**
@@ -129,7 +110,7 @@ public class NonsenseFilter extends GeocodeRule {
             /*
              * Short words, with numerics. Approximately one word.
              */
-            if (p.getLength() < GENERIC_ONE_WORD) {
+            if (isShort(p.getLength())) {
                 if (trivialNumerics.matcher(p.getText()).matches()) {
                     p.setFilteredOut(true);
                     p.addRule("Nonsense Numbers");
@@ -162,7 +143,7 @@ public class NonsenseFilter extends GeocodeRule {
              * NOTE: Score on each geo location is accounted for in default score. I.E.,
              * edit distance between text match and geo name.
              */
-            if (!p.isFilteredOut() && p.getLength() <= GENERIC_ONE_WORD) {
+            if (!p.isFilteredOut() && isShort(p.getLength())) {
                 assessPhoneticMatch(p);
             }
         }
@@ -202,12 +183,12 @@ public class NonsenseFilter extends GeocodeRule {
         }
 
         // Ignore short names that start with numbers ... actual gazetteer data, but usually not right.
-        if (shortNumericText(p.getText())){
+        if (shortNumericText(p.getText())) {
             p.setFilteredOut(true);
             return true;
         }
         // Ignore names of any length that have odd, common punctuation
-        if (irregularCommonPunct(p.getText())){
+        if (irregularCommonPunct(p.getText())) {
             p.setFilteredOut(true);
             return true;
         }
@@ -239,13 +220,13 @@ public class NonsenseFilter extends GeocodeRule {
      * Assess the validity of a match candidate with the geographic names associated
      * with it.
      * For example if you have ÄEÃ how well does it match Aeå, Aea or aeA?
-     * this is intended for ruling out short crap phonetically.
+     * this is intended for ruling out short crap phonetically, but NOT for ranking location names for a given candidate
      *
      * @param p
      */
     public void assessPhoneticMatch(PlaceCandidate p) {
         boolean hasValidGeo = false;
-        String ph1 = phoneticRedux(p.getTextnorm());
+        String ph1 = p.getNDTextnorm();
         String diacriticRule = null;
         log.debug("Testing phrase {} phonetic:{}", p.getTextnorm(), ph1);
         for (Place geo : p.getPlaces()) {
@@ -277,7 +258,7 @@ public class NonsenseFilter extends GeocodeRule {
                     diacriticRule = "Location-Contains-Name";
                     break;
                 }
-                if (isPhoneticMatch(ph1, geo.getNamenorm())) {
+                if (ph1.equals(geo.getNDNamenorm())) {
                     hasValidGeo = true;
                     diacriticRule = "Matched-Phonetic";
                     break;
@@ -308,13 +289,12 @@ public class NonsenseFilter extends GeocodeRule {
     }
 
     // Pattern to identify cues like "N. " or "Ft. " in lieu of "North " or "Fort "
-    private static final Pattern anyValidAbbrev = Pattern.compile("[EFMNSW][A-Z]{0,2}\\.\\s+",
-            Pattern.CASE_INSENSITIVE);
-    private static final Pattern nonAbbrevPunct = Pattern.compile("[^\\w\\s.-]+");
+    static final Pattern anyValidAbbrev = Pattern.compile("[EFMNSW][A-Z]{0,2}\\.\\s+", Pattern.CASE_INSENSITIVE);
+    static final Pattern nonAbbrevPunct = Pattern.compile("[^\\w\\s.-]+");
 
-    static Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
-    static Pattern anyPunct = Pattern.compile("[\\p{Punct}\u2014\u2015\u201C\u201D\u2033]"); /* find onw char */
-    static Pattern commonPunct = Pattern.compile("[()\\[\\]!&$]");
+    static final Pattern trivialNumerics = Pattern.compile("\\w+[\\p{Punct}\\s]+\\d+");
+    static final Pattern anyPunct = Pattern.compile("[\\p{Punct}\u2014\u2015\u201C\u201D\u2033]"); /* find onw char */
+    static final Pattern commonPunct = Pattern.compile("[()\\[\\]!&$]");
 
     /**
      * 5th Street  -- fine.
@@ -325,7 +305,7 @@ public class NonsenseFilter extends GeocodeRule {
      * @return
      */
     public static boolean shortNumericText(String t) {
-        return (t.length() <= GENERIC_ONE_WORD && Character.isDigit(t.charAt(0)));
+        return (isShort(t.length()) && Character.isDigit(t.charAt(0)));
     }
 
     /**

@@ -69,7 +69,7 @@ import java.util.Map;
 public class PlaceGeocoder extends GazetteerMatcher
         implements Extractor, CountryObserver, BoundaryObserver, LocationObserver {
 
-    public static final String VERSION = "3.4";
+    public static final String VERSION = "3.5";
     public static final String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
 
     /**
@@ -539,6 +539,8 @@ public class PlaceGeocoder extends GazetteerMatcher
         if (provinceNameSetter != null) {
             provinceNameSetter.evaluate(candidates);
         }
+        // Leverage the resulting state of the Chooser -- at the mention level and the document level
+        // To further refine filterable nonsense.
         updateRelatedNames(candidates);
 
         // For each candidate, if PlaceCandidate.chosen is not null,
@@ -559,16 +561,28 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * Reconnect match sequences "NAME, ADMIN"  or "NAME, CODE"
+     * <p>
+     * Omit matches for country codes that have no connection to anything, e.g., "CO" appears at random,
+     * but implies "COmpany" not "Colombia", for example.  The filter out trivial country codes.  Yeah, even "US"
+     * Abbreviations are fine.
      */
     private void updateRelatedNames(List<PlaceCandidate> candidates) {
         for (PlaceCandidate pc : candidates) {
+            if (!pc.isFilteredOut() && pc.isCountry && pc.getChosen() != null) {
+                Place C = pc.getChosen();
+                /* TODO: confusion between territory abbreviations and owning country may need to be resolved, but a truly minor point. */
+                if (C.isCode() && chooser.getInferredCountryCount(C.getCountryCode()) == 0) {
+                    pc.setFilteredOut(true);
+                    continue;
+                }
+            }
             if (pc.getRelated() == null) {
                 continue;
             }
 
             for (PlaceCandidate related : pc.getRelated()) {
                 Place geo = pc.getChosen();
-                if (related.getChosen() == null){
+                if (related.getChosen() == null) {
                     // This happens rarely if a name is marked as a Taxon, Person or Org.
                     continue;
                 }

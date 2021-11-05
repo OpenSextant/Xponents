@@ -17,7 +17,7 @@ import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
 /**
  * A final geocoding pass or two. Loop through candidates and choose the location that best fits the context.
  * As needed cache chosen entries to optimize, e.g. co-referrenced places aformentioned in document.
- *
+ * <p>
  * Ideally, consider choosing a best place for the particular instance of a name, but
  * percolate that to the other mentions of that same name. Is it the same place? No need to
  * disambiguate it multiple times at this point.
@@ -128,11 +128,42 @@ public class LocationChooserRule extends GeocodeRule {
                  */
                 name.getChosen().setConfidence(name.getConfidence());
                 name.getChosen().setMethod(PlaceGeocoder.METHOD_DEFAULT);
+
+                inferCountry(name.getChosen().getCountryCode());
+
                 // TOOD: Track resolved places documentResolvedLocations.put(name.getTextnorm(), name.getChosen());
             } else {
                 log.info("Place name is ambiguous: {} in N={} places", name.getText(), name.distinctLocationCount());
             }
         }
+    }
+
+    public void inferCountry(String cc) {
+        if (cc == null) {
+            return;
+        }
+        CountryCount counter = inferredCountries.get(cc);
+        if (counter == null) {
+            counter = new CountryCount();
+            counter.country = new Country(cc, cc); /* TODO: get real country object */
+            inferredCountries.put(cc, counter);
+        } else {
+            ++counter.count;
+        }
+    }
+
+    /**
+     * How likely is it that this country is substantially relevant to the document based on hard geography.
+     * not trivial mentions of country names/codes.  "Inferred" countries is more telling than short codes, for example
+     *
+     * @param cc
+     * @return
+     */
+    public int getInferredCountryCount(String cc) {
+        if (inferredCountries.containsKey(cc)) {
+            return inferredCountries.get(cc).count;
+        }
+        return 0;
     }
 
     /**
@@ -381,9 +412,6 @@ public class LocationChooserRule extends GeocodeRule {
      */
     public static final int MATCHCONF_PREFERRED = 5;
 
-    private static boolean isShort(int matchLen) {
-        return matchLen <= NonsenseFilter.GENERIC_ONE_WORD;
-    }
 
     /**
      * Confidence of your final chosen location for a given name is assembled as the
@@ -481,7 +509,7 @@ public class LocationChooserRule extends GeocodeRule {
          * Short names that are non-Admin boundaries, consider if they have
          * little or no supporting evidence. Decrement their points.
          */
-        if (!pc.getChosen().isAdministrative() && pc.getLength() < AVG_WORD_LEN) {
+        if (!pc.getChosen().isAdministrative() && isShort(pc.getLength())) {
             if (pc.getEvidence().isEmpty() && hasOnlyDefaultRules(pc)) {
                 points -= 10;
             }

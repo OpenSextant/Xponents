@@ -1,16 +1,10 @@
 package org.opensextant.extractors.geo.rules;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
-import org.opensextant.util.TextUtils;
+
+import java.util.*;
 
 public class HeatMapRule extends GeocodeRule {
 
@@ -67,11 +61,11 @@ public class HeatMapRule extends GeocodeRule {
 
         // Geometric buckets
         // addPlace(geo, gh2);
-        addPlace(name.getTextnorm(), geo, gh3);
-        addPlace(name.getTextnorm(), geo, gh4);
+        addPlace(name.getNDTextnorm(), geo, gh3);
+        addPlace(name.getNDTextnorm(), geo, gh4);
         // Geographic/geopolitical buckets:
         if (useAdminBoundary) {
-            addPlace(name.getTextnorm(), geo, geo.getHierarchicalPath());
+            addPlace(name.getNDTextnorm(), geo, geo.getHierarchicalPath());
         }
     }
 
@@ -93,7 +87,7 @@ public class HeatMapRule extends GeocodeRule {
             heatmapNames.put(gh, bucketNames);
         }
 
-        bucketNames.add(TextUtils.replaceDiacritics(name));
+        bucketNames.add(name);
 
         if (bucket == null) {
             bucket = new ArrayList<>();

@@ -1,28 +1,27 @@
 /**
  * Copyright 2014 The MITRE Corporation.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *
  */
 
 package org.opensextant.extractors.geo.rules;
 
-import java.util.HashSet;
-import java.util.List;
-
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
+
+import java.util.HashSet;
+import java.util.List;
 
 import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
 
@@ -54,11 +53,11 @@ public class NameCodeRule extends GeocodeRule {
     }
 
     private static boolean ignoreShortLowercase(final PlaceCandidate pc) {
-        return (pc.isLower() && pc.getLength() < 4);
+        return (pc.isLower() && pc.getLength() < AVG_ABBREV_LEN);
     }
 
     private static boolean ignoreShortMixedCase(final PlaceCandidate pc) {
-        return (pc.isMixedCase() && pc.getLength() < 4);
+        return (pc.isMixedCase() && pc.getLength() < AVG_ABBREV_LEN);
     }
 
     public static boolean isRuleFor(PlaceCandidate name) {
@@ -68,16 +67,17 @@ public class NameCodeRule extends GeocodeRule {
     private HashSet<String> ignoreTerms = new HashSet<>();
 
     @Override
-    public void reset(){
+    public void reset() {
         ignoreTerms.clear();
     }
 
-    private void trackIgnoreTerms(PlaceCandidate nm){
+    private void trackIgnoreTerms(PlaceCandidate nm) {
         ignoreTerms.add(nm.getText());
     }
 
     /**
      * Requirement: List of place candidate is a linked list.
+     * TODO: Develop patterned variations and tagging rules and filtering rules for this scenario.
      */
     @Override
     public void evaluate(final List<PlaceCandidate> names) {
@@ -88,7 +88,7 @@ public class NameCodeRule extends GeocodeRule {
                 continue;
             }
             /* Optimization: */
-            if (ignoreTerms.contains(name.getText())){
+            if (ignoreTerms.contains(name.getText())) {
                 name.setFilteredOut(true);
                 name.addRule("IgnoredPrecedent");
                 continue;
@@ -115,7 +115,7 @@ public class NameCodeRule extends GeocodeRule {
              */
             boolean isLast = x == names.size() - 1;
 
-            boolean canIgnoreName = ignoreShortLowercase(name) || ignoreNonAdminCode(name, name.isAbbreviation);
+            boolean canIgnoreName = ignoreShortLowercase(name) || (name.isAbbreviation && ignoreNonAdminCode(name));
             if (x == 0 || isLast) {
                 /*
                  * end of line logic. Either you have a dangling name or code, or you have a single candidate.
@@ -146,9 +146,8 @@ public class NameCodeRule extends GeocodeRule {
              * If we see a standalone country code, we'll allow it to pass.
              */
             if ((code.start - name.end) > MAX_CHAR_DIST) {
-                boolean canIgnoreCode = canIgnoreShortCode || ignoreNonAdminCode(code, abbrev);
-                // And so we have NAME xxxx CODE, where CODE is clearly not attached to NAME
-                // lexically.
+                boolean canIgnoreCode = canIgnoreShortCode || (abbrev && ignoreNonAdminCode(code));
+                // And so we have NAME xxxx CODE, where CODE is clearly not attached to NAME  lexically.
                 // Filter out such CODE noise.
                 if (canIgnoreCode) {
                     code.setFilteredOut(true);
@@ -170,12 +169,15 @@ public class NameCodeRule extends GeocodeRule {
 
             boolean comma = false;
             if (name.postChar > 0) {
-                comma = name.postChar == ',';
-                if (!Character.isLetter(name.postChar)) {
+                // Trying to match valid "NAME, CODE" or "NAME CODE" sequence.
+                // Other stuff interferring should be ignored.
+                comma = name.postChar == ',' || name.postChar == ' ';
+                if (!comma && !Character.isLetter(name.postChar)) {
                     // No match.
                     continue;
                 }
             }
+
             /*
              * ignore the trivial case of where a Name may be repeated.
              * Ex.
@@ -283,6 +285,12 @@ public class NameCodeRule extends GeocodeRule {
             if (name.isFilteredOut() || name.hasEvidence()) {
                 continue;
             }
+            if (!name.isValid() && name.getLength() <= 2) {
+                // junk.  Un-associated tokens that matched something.
+                name.setFilteredOut(true);
+                continue;
+            }
+
             if (ignoreShortMixedCase(name)) {
                 /*
                  * This is a short text span, no other evidence
@@ -302,27 +310,44 @@ public class NameCodeRule extends GeocodeRule {
                         break;
                     }
                 }
-            } else if ((!name.isCountry && (name.isAbbreviation || name.isAcronym)) && !name.isValid()) {
+            } else if ((!name.isCountry
+                    && !name.isValid()
+                    && name.isShortName())
+                    && isShort(name.getLength())) {
+
+                /* Handful of city acronyms to save, e.g., NYC, BSAS, etc.
+                 * Avoid rechecking items that have already been validated as NAME+CODE pairs (isValid()==true)
+                 */
+                boolean filterOut = true;
+                for (Place geo : name.getPlaces()) {
+                    if (geo.isPopulated() && geo.isShortName()) {
+                        filterOut = false;
+                        name.incrementPlaceScore(geo, 0.5, "CityNickName");
+                        break;
+                    }
+                }
+
                 // Check any name that is not already been validated.
                 // If Not Country, but is ABBREV, then omit all trivial abbreviations not already associated with a city.
                 // e.g., "I went to see my MD"
                 //
-                name.setFilteredOut(true);
+                name.setFilteredOut(filterOut);
             }
         }
     }
 
     private static boolean possiblyAbbreviation(final PlaceCandidate pc) {
         if (pc.isAbbreviation) {
-            return pc.isAbbreviation;
+            return true;
         }
+
         // First determine if subsequent tokens indicate this is abbreviation or not.
         // Al. possible.
         // Al<sp> possible.
         // Al- NO.
         // Al= NO.
         if (pc.postChar != 0) {
-            if (pc.postChar == '.') {
+            if (pc.postChar == '.' && pc.getLength() < AVG_ABBREV_LEN) {
                 return true;
             }
             if (!Character.isLetter(pc.postChar)) {
@@ -336,18 +361,16 @@ public class NameCodeRule extends GeocodeRule {
     /**
      * Experimental filters.
      * Filter out singular, known Admin boundary or other abbreviations. ... mainly
-     * that are not
-     * qualifying location names. Test examples include:
+     * that are not qualifying location names. Test examples include:
      * <ul>
      * <li>Co vs. CO vs. Colo.: Geraldine &amp; Co. or Geraldine, CO?</li>
      * <li>MD vs. Md. vs. ....: Maryland or Medical Doctor?</li>
      * </ul>
      *
      * @param pc match
-     * @param abbrev predetermine if match is possibly an abbreviation.
      * @return
      */
-    private static boolean ignoreNonAdminCode(final PlaceCandidate pc, boolean abbrev) {
+    private static boolean ignoreNonAdminCode(final PlaceCandidate pc) {
         // If found alone, unqualified what happens?
         // ------------------
         // ___ CO. ___ filter out
@@ -359,31 +382,28 @@ public class NameCodeRule extends GeocodeRule {
         // ___ LA ____ pass
         // ___ L.A. __ pass
         boolean matchFound = false;
-        if (abbrev && pc.isCountry) {
+        if (pc.isCountry) {
             // Ignore standalone references to country codes for this filtration.
             return false;
         }
         for (Place geo : pc.getPlaces()) {
-            boolean lexicalMatch1 = (abbrev && geo.isAbbreviation());
-            if (geo.isAdministrative()) {
-                if (lexicalMatch1) {
-                    // Known abbreviation and both match text and geographic name appear to line up.
-                    return true;
-                }
-            }
-            if (abbrev && !geo.isAbbreviation()) {
+            if (!geo.isShortName()) {
                 // Keep looking. given "CO", is "Cø." a match?
                 continue;
             }
-
-            // A valid location name
-            matchFound = true;
-            // Unsure if this is the end of this logic.
-            break;
+            // ALLOW administrative codes
+            if (geo.isAdministrative()) {
+                return false;
+            }
+            // DISALLOW other random codes and abbrevs, i.e. those for a water tower or bus station.
+            // ALLOW such codes and abbrevs for cities, though.
+            if (!geo.isPopulated()) {
+                return true;
+            }
         }
 
-        //
-        return !matchFound;
+        // No reason to filter out this name.
+        return false;
     }
 
     /**
@@ -412,7 +432,7 @@ public class NameCodeRule extends GeocodeRule {
         n.markValid(); // and prevent downstream filters from filtering this out
 
         int wt = weight + (comma ? 2 : 0);
-        if (codeGeo.isShortName() && (code.isAbbreviation || code.isAcronym)) {
+        if (codeGeo.isShortName() && (code.isShortName())) {
             ev.setRule(NAME_ADMCODE_RULE);
             ev.setWeight(wt + 1);
         } else {
@@ -420,16 +440,15 @@ public class NameCodeRule extends GeocodeRule {
             ev.setWeight(wt);
         }
         n.addEvidence(ev);
+        code.incrementPlaceScore(codeGeo, (double)wt, NAME_ADMCODE_RULE);
 
         if (boundaryObserver != null) {
             boundaryObserver.boundaryLevel1InScope(codeGeo);
         }
 
         /*
-         * Example -- "Houston, TX"
-         * adm1 = ("TX").adm1 "US.48", for example.
-         * Loop through all locations for "Houston" and score the ones that match
-         * "US.48" higher.
+         * Example -- "Houston, TX" adm1 = ("TX").adm1 "US.48", for example.
+         * Loop through all locations for "Houston" and score higher the ones that match "US.48".
          */
         String adm1 = codeGeo.getHierarchicalPath();
         Place country = code.isCountry ? code.getChosen() : null;

@@ -22,10 +22,11 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         Parameters testParams = new Parameters();
         testParams.resolve_localities = true;
         testParams.tag_coordinates = true;
-        PlaceGeocoder geocoderImpl = new PlaceGeocoder(false);
+        boolean lowerCaseTest = true;
+        PlaceGeocoder geocoderImpl = new PlaceGeocoder(lowerCaseTest);
         geocoderImpl.setParameters(testParams);
         geocoderImpl.enablePersonNameMatching(true);
-        geocoderImpl.setAllowLowerCaseAbbreviations(false);
+        geocoderImpl.setAllowLowerCaseAbbreviations(lowerCaseTest);
         geocoderImpl.configure();
 
         geocoder = geocoderImpl;
