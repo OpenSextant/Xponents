@@ -271,8 +271,19 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
                 isASCIIName = false;
             }
 
-            isUppercaseName = TextUtils.isUpper(this.name);
+            isUppercaseName = TextUtils.isUpper(name);
+            nonDiacriticName = TextUtils.phoneticReduction(name.toLowerCase(), isASCIIName);
         }
+    }
+
+    private String nonDiacriticName = null;
+
+    /**
+     * Returns a pre-computed Non-diacritic name
+     * @return
+     */
+    public String getNDNamenorm(){
+        return nonDiacriticName;
     }
 
     @Override

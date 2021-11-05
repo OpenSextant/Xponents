@@ -23,14 +23,23 @@
 37 P   u   Ronald Reagan
 37 P   u   President Ronald Reagan
 
+441 P    u   President Joe Biden
+441 P    u   President Joseph Biden
+441 P    u   President Joseph R Biden
+441 P    u   President Biden
+441 P    u   Senator Biden
+441 P    u   Senator Joe Biden
+
 2042 P   u   President Donald Trump
 2042 P   u   Donald Trump
 2042 P   u   The Donald
 2042 P   u   Donald J Trump
+2042 P   u   Former President Donald Trump
 
 60731 P   u   Mike Pence
 60731 P   u   Govenor Pence
 60731 P   u   Vice President Pence
+
 
 
 

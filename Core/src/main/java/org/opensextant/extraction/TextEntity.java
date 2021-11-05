@@ -174,7 +174,7 @@ public class TextEntity {
      * @return true if neither allower or all upper.
      */
     public boolean isMixedCase() {
-        return !isUpper && !isLower;
+        return !(isUpper || isLower);
     }
 
     /**
@@ -338,7 +338,7 @@ public class TextEntity {
         // OR t overlaps with self on right side
         //       Aaaa      start_diff = end - t.end (>0)
         //     Bbbb
-        if (isSameMatch(t)){
+        if (isSameMatch(t)) {
             // A perfect overlap.  If you intend to test for sameness, call this separately.
             return true;
         }

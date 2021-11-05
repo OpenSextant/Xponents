@@ -159,14 +159,49 @@ public class TextUtils {
     }
 
     /**
-     * remove accents from a string and replace with ASCII equivalent Reference:
-     * http://www.rgagnon.com/javadetails/java-0456.html Caveat: This implementation
-     * is not exhaustive.
-     *
+     * NOTE: normalize gazetteer entries should NOT use Unicode quotes for diacritics.
+     * This phonetic reduction tries to get to any western text into an ASCII form.
+     */
+    private static final Pattern wsRedux = Pattern.compile("[-\\s`\"\u00B4\u2018\u2019]");
+
+    /**
+     * Create a non-diacritic, ASCII version of the input string.  This will also have original whitespace,
+     * but will have removed non-character markings, e.g. "Za'tut" =&gt; "Zatut"  not "Za tut"
+     * @param t
+     * @return
+     */
+    public static String phoneticReduction(String t){
+        return wsRedux.matcher(TextUtils.replaceDiacritics(t)).replaceAll("");
+    }
+
+    public static String phoneticReduction(String t, boolean isAscii){
+        if (isAscii){
+            return wsRedux.matcher(t).replaceAll("");
+        } else {
+            return wsRedux.matcher(TextUtils.replaceDiacritics(t)).replaceAll("");
+        }
+    }
+
+    /**
+     * A thorough replacement of diacritics and Unicode chars to their ASCII equivalents.
      * @param s the string
      * @return converted string
      */
     public static final String replaceDiacritics(final String s) {
+        return Unimap.replaceDiacritics(s);
+    }
+
+    /**
+     * remove accents from a string and replace with ASCII equivalent Reference:
+     * http://www.rgagnon.com/javadetails/java-0456.html Caveat: This implementation
+     * is not exhaustive.
+     * @deprecated  See replaceDiacritics as the replacement. 
+     * @param s
+     * @return
+     * @see #replaceDiacritics(String)
+     */
+    @Deprecated
+    public static String replaceDiacriticsOriginal(final String s){
         if (s == null) {
             return null;
         }

@@ -6,12 +6,14 @@ import static org.junit.Assert.fail;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.opensextant.util.TextUtils;
+import org.opensextant.util.Unimap;
 
 public class TestTextUtils {
 
     private void print(String m) {
         System.out.println(m);
     }
+
 
     @Test
     public void testAlphaUtils() {
@@ -77,12 +79,19 @@ public class TestTextUtils {
         assertTrue(TextUtils.isLatin("a Ö 5 !"));
         assertTrue(!TextUtils.isLatin("a Ö 杨寨 5 !"));
 
-        String t = TextUtils.replaceDiacritics("a Ö ø Ø é å Å 杨寨 5 ! ē M ē ā");
-        if (!t.equals("a O o O e a A 杨寨 5 ! e M e a")) {
+        String t_original = "a Ö ø Ø é å Å 杨寨 5 ! ē M ē ā";
+        String t_remapped = "a O o O e a A 杨寨 5 ! e M e a";
+        String t = TextUtils.replaceDiacritics(t_original);
+        if (!t.equals(t_remapped)) {
             fail("Diacritics not replaced!");
         }
         assertTrue(!TextUtils.isASCII("xÖx"));
         assertTrue(TextUtils.isLatin("O a b c d O"));
+
+        String t2 = Unimap.replaceDiacritics(t_original);
+        if (!t2.equals(t_remapped)){
+            fail("Diacritics not replaced!");
+        }
     }
 
     @Test

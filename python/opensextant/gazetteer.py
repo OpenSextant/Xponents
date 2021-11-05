@@ -618,7 +618,8 @@ class DB:
               and source in ({source_criteria}) and name_group='' and name_type='N'"""
         names = set([])
         for nm in self.conn.execute(sql):
-            names.add(nm['NAME'].lower())
+            # To list names, we normalize lowercase and remove dashes.
+            names.add(nm['NAME'].lower().replace("-", " "))
         return names
 
     def update_place_id(self, rowid, plid):
@@ -955,6 +956,9 @@ class PlaceHeuristics:
         if name in self.stopwords:
             return True
 
+        if name.replace("-", " ") in self.stopwords:
+            return True
+
         # Name is "Bar"...
         # test if "The Bar" is a stopword
         if f"the {name}" in self.stopwords:
@@ -1119,6 +1123,7 @@ class PlaceHeuristics:
 
         # TODO: add non-diacritic name to this test?
         norm2 = strip_quotes(replace_diacritics(norm))
+        norm2 = norm2.replace("-", " ")
         is_popular_place = self.is_significant(feat_code) or \
                            self.is_large_city(norm) or \
                            self.is_province_name(norm) or \

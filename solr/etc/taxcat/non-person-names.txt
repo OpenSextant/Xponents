@@ -44,6 +44,7 @@ quick
 royal
 short
 long
+salah
 small
 smart
 see

@@ -42,6 +42,13 @@ class TestText(TestCase):
         nm = 'Ḩajjār'
         print(nm, "=>", replace_diacritics(nm))
 
+        # From the Java side.
+        crap = "a Ö ø Ø é å Å 杨寨 5 ! ē M ē ā"
+        crap_test = "a O o O e a A 杨寨 5 ! e M e a"
+        result = replace_diacritics(crap)
+        print(crap, "=>", result )
+        assert crap_test == result
+
 
 if __name__ == '__main__':
     main()
