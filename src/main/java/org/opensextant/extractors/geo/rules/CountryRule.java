@@ -36,9 +36,10 @@ public class CountryRule extends GeocodeRule {
 
         for (PlaceCandidate name : names) {
             // We do not want mixed case acronym/code/abbreviation matches.
-            if (name.isMixedCase() && name.getLength() < 4) {
-                name.setFilteredOut(true);
-                name.isCountry = false;
+            if (name.isCountry && !name.isUpper() && name.getLength() < 4) {
+                // Just looking at country codes -- we'll only consider upper case codes if they are short.
+                name.setFilteredOut(true); /* TODO: possibly leave as filtered-in */
+                name.isCountry = false; /* definitely unmark as country */
                 continue;
             }
             for (Place geo : name.getPlaces()) {

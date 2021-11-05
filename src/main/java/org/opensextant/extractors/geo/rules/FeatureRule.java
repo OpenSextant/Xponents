@@ -1,24 +1,21 @@
 package org.opensextant.extractors.geo.rules;
 
-import java.util.HashMap;
-
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
+
+import java.util.HashMap;
 
 /**
  * FeatureRule is a rule that makes use of feature distribution across the
  * gazetteer as well as known properties of specific feature types that make
- * them more or less likely to
- * be the best location type for a particular mention.
+ * them more or less likely to be the best location type for a particular mention.
  * This may or may not be tie breakers -- within a feature class for the same
- * name, this provides
- * no tie breaker.
- * "Boston", OH (P/PPL) ~ "Boston", MA (P/PPL) -- feature stats
- * are the same.
+ * name, this provides  no tie breaker.
+ *
+ * "Boston", OH (P/PPL) ~ "Boston", MA (P/PPL) -- feature stats are the same.
  * "Boston", ?? (T/ISL) ... is a different feature type and in this case is less
  * likely to be the best location.
- * Note -- other evidence and context has to overwhelm certain feature stats
- * here.
+ * Note -- other evidence and context has to overwhelm certain feature stats here.
  * TODO: this overtakes the "DefaultScore" component from "scoreFeature()"
  *
  * @author ubaldino
@@ -34,9 +31,10 @@ public class FeatureRule extends GeocodeRule {
              * For "A" class names, 10.0 x 0.035 = 0.35 factor
              * Keeping Cities/Towns as a 1.0 weight; Adjust others relative to that.
              **/
-            new FeatureClassMeta("A", 700000, 11.0),
+            new FeatureClassMeta("A", 700000, 10.0),
             new FeatureClassMeta("P", 10000000, 1.0),
-            new FeatureClassMeta("P/PPLX", 10000000, 0.7), // Ruins and unused historical names.
+            new FeatureClassMeta("P/PPLX", 500000, 0.7), // Ruins and unused historical names.
+            new FeatureClassMeta("P/PPLH", 500000, 0.7), // Unused historical names.
             new FeatureClassMeta("S", 2700000, 0.7),
             new FeatureClassMeta("T", 2300000, 0.6),
             new FeatureClassMeta("L", 700000, 0.7),
