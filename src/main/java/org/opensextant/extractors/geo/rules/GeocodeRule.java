@@ -32,6 +32,8 @@ import static org.opensextant.util.GeodeticUtility.geohash;
 public abstract class GeocodeRule {
 
     public static final int AVG_WORD_LEN = 8;
+    public static int AVG_ABBREV_LEN = 6; /* Typical acronym or abbreviation len */
+
     public static final int UPPERCASE = 2;
     public static final int LOWERCASE = 1;
 
@@ -183,13 +185,11 @@ public abstract class GeocodeRule {
     /**
      * Certain names appear often around the world... in such cases
      * we can pare back and evaluate only significant places (e.g., cities and
-     * states)
-     * and avoid say streams and roadways by the same name.
+     * states) and avoid say streams and roadways by the same name.
      * If a name, N, occurs in more than 100 to 250 places, then consider only
      * feature classes A and P.
      * The exact distinct count is up for debate. Lower count means we filter out
-     * random places sooner
-     * for common city/village names.
+     * random places sooner for common city/village names.
      *
      * @param name
      * @param geo
@@ -208,8 +208,7 @@ public abstract class GeocodeRule {
     /**
      * The one evaluation scheme that all rules must implement.
      * Given a single text match and a location, consider if the geo is a good
-     * geocoding
-     * for the match.
+     * geocoding for the match.
      *
      * @param name matched name in text
      * @param geo  gazetteer entry or location

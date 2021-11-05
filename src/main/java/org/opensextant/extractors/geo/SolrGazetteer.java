@@ -16,13 +16,6 @@
  */
 package org.opensextant.extractors.geo;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -37,13 +30,12 @@ import org.opensextant.data.Country;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
 import org.opensextant.extraction.ExtractionException;
-import org.opensextant.util.GeodeticUtility;
-import org.opensextant.util.GeonamesUtility;
-import org.opensextant.util.SolrProxy;
-import org.opensextant.util.SolrUtil;
-import org.opensextant.util.TextUtils;
+import org.opensextant.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The

@@ -15,25 +15,12 @@
  */
 package org.opensextant.extractors.geo;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
-//import org.apache.lucene.analysis.charfilter.MappingCharFilterFactory;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.update.AddUpdateCommand;
-/* JS and Groovy scripts worked out well... to an extent.
- * But adding global parameters to those stateless scripts was not possible.
-import org.apache.solr.update.processor.StatelessScriptUpdateProcessorFactory;
- *
- * And so this URP was created to do finer tuning of the solr data.
- */
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.update.processor.UpdateRequestProcessorFactory;
 import org.opensextant.util.GeonamesUtility;
@@ -41,6 +28,12 @@ import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class GazetteerUpdateProcessorFactory extends UpdateRequestProcessorFactory {
 

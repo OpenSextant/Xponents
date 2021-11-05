@@ -1,11 +1,5 @@
 package org.opensextant.extractors.geo.social;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;
@@ -20,6 +14,12 @@ import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Variant

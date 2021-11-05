@@ -17,14 +17,14 @@
 
 package org.opensextant.extractors.geo.rules;
 
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.PlaceCount;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.PlaceCount;
 
 /**
  * Give a list of province metadata that scopes the document, mark the list of

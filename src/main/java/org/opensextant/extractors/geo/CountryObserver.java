@@ -1,8 +1,8 @@
 package org.opensextant.extractors.geo;
 
-import java.util.Map;
-
 import org.opensextant.data.Country;
+
+import java.util.Map;
 
 public interface CountryObserver {
     /**

@@ -1,8 +1,8 @@
 package org.opensextant.extractors.geo.social;
 
-import java.util.Map;
-
 import org.opensextant.data.Geocoding;
+
+import java.util.Map;
 
 /**
  * This is a light wrapper around TextMatch + Geocoding interfaces.

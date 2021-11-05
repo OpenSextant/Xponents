@@ -13,10 +13,10 @@ public class FeatureClassMeta {
     public double proportion;
     /** Mention Weight */
     public double weight;
+
     /**
      * Mention Weight X Relative proportion
-     * - common features are more likely to be mentioned. - certain features we know
-     * should outweigh
+     * - common features are more likely to be mentioned. - certain features we know should outweigh
      * others (e.g., Intermittent Streams are not often true positives.)
      */
     public double factor;

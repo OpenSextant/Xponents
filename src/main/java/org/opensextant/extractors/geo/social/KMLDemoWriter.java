@@ -1,16 +1,7 @@
 package org.opensextant.extractors.geo.social;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.opensextant.data.Language;
 import org.opensextant.data.social.Message;
-//import org.opensextant.data.Place;
-//import org.mitre.deepeye.Annotation;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.giscore.DocumentType;
 import org.opensextant.giscore.GISFactory;
@@ -24,6 +15,13 @@ import org.opensextant.giscore.input.kml.IKml;
 import org.opensextant.giscore.output.IGISOutputStream;
 import org.opensextant.giscore.utils.Color;
 import org.opensextant.util.TextUtils;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A cleaner approach to outputting geocoding data to KML using GISCore.

@@ -1,24 +1,8 @@
 package org.opensextant.extractors.geo.social;
 
-import static org.opensextant.util.GeodeticUtility.getFeaturePrecision;
-import static org.opensextant.util.GeodeticUtility.isCoord;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
-import org.opensextant.data.Country;
-import org.opensextant.data.Geocoding;
-import org.opensextant.data.Language;
-import org.opensextant.data.Place;
-import org.opensextant.data.TextInput;
+import org.opensextant.data.*;
 import org.opensextant.data.social.Message;
 import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
@@ -36,6 +20,13 @@ import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static org.opensextant.util.GeodeticUtility.getFeaturePrecision;
+import static org.opensextant.util.GeodeticUtility.isCoord;
 
 /**
  * Pipeline focused on improving the location metadata for Tweets or Weibo or

@@ -1,11 +1,11 @@
 package org.opensextant.extractors.geo.rules;
 
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.PlaceCandidate;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.PlaceCandidate;
 
 public class ContextualOrganizationRule extends GeocodeRule {
 
@@ -46,10 +46,8 @@ public class ContextualOrganizationRule extends GeocodeRule {
         }
 
         /*
-         * Re-evaluate items that may have been filtered because the name appeared in an
-         * organization
-         * name where the org name was not necessarily geographically relevant until
-         * now.
+         * Re-evaluate items that may have been filtered because the name appeared in an organization
+         * name where the org name was not necessarily geographically relevant until now.
          */
         for (PlaceCandidate name : names) {
             if (name.isFilteredOut() && reEval.contains(name.getTextnorm())) {

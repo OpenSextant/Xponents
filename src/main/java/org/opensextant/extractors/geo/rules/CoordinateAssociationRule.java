@@ -16,16 +16,17 @@
  */
 package org.opensextant.extractors.geo.rules;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.opensextant.util.GeodeticUtility.geohash;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.util.GeodeticUtility;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.opensextant.util.GeodeticUtility.geohash;
 
 public class CoordinateAssociationRule extends GeocodeRule {
 
@@ -126,9 +127,8 @@ public class CoordinateAssociationRule extends GeocodeRule {
 
             for (Geocoding ll : coordinates) {
 
-                String gh = geohash(ll);
-
                 // is within
+                String gh = geohash(ll);
                 if (gh.startsWith(grid)) {
                     name.addGeocoordEvidence(GEOHASH_CONTAINS_RULE, weight, ll, geo, 1.0);
                 }

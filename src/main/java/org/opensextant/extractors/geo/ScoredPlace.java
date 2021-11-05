@@ -16,10 +16,10 @@
  */
 package org.opensextant.extractors.geo;
 
-import java.util.Set;
-import java.util.HashSet;
-
 import org.opensextant.data.Place;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A class to hold a Place and a score together. Used by PlaceCandidate to rank
