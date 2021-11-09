@@ -474,8 +474,7 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
             return -1;
         }
 
-        // Geohash: Same general location? Use 6 chars of geohash to get 2-3 KM
-        // resolution.
+        // Geohash: Same general location? Use 6 chars of geohash to get 2-3 KM resolution.
         if (other.hasCoordinate() && hasCoordinate()) {
             String g1 = geohash(other);
             String g2 = getGeohash();

@@ -89,7 +89,7 @@ def parse_country(val):
         if C:
             arr.append(C)
         else:
-            print("Missing ISO country code for ",val)
+            print("Missing ISO country code for ", val)
     if not arr:
         # International.
         print("Using ZZ for", val)
@@ -150,9 +150,9 @@ class NGAGeonames(DataSource):
                         g["FIPS_cc"] = ctry.cc_fips
                         verify_name_grp = name_group_for(nm)
                         g["name_group"] = verify_name_grp
-                        g["name_bias"] =  self.estimator.name_bias(g["name"],
-                                                                   g["feat_class"], g["feat_code"],
-                                                                   name_group=verify_name_grp)
+                        g["name_bias"] = self.estimator.name_bias(g["name"],
+                                                                  g["feat_class"], g["feat_code"],
+                                                                  name_group=verify_name_grp)
 
                         yield g
 

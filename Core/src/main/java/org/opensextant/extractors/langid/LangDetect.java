@@ -1,39 +1,32 @@
 /**
- *
- *  Copyright 2015-2016 The MITRE Corporation.
- *
+ * Copyright 2015-2016 The MITRE Corporation.
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package org.opensextant.extractors.langid;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.cybozu.labs.langdetect.Detector;
+import com.cybozu.labs.langdetect.DetectorFactory;
+import com.cybozu.labs.langdetect.LangDetectException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Language;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cybozu.labs.langdetect.Detector;
-import com.cybozu.labs.langdetect.DetectorFactory;
-import com.cybozu.labs.langdetect.LangDetectException;
+import java.io.File;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Wrapper around cybozu labs langdetect. This tool provides a simple
@@ -307,20 +300,14 @@ public class LangDetect {
             langid.put(TextUtils.japaneseLang, new LangID(TextUtils.japaneseLang, cjkRatio(chars, cjk, j), false));
         }
         if (k > 0) {
-            langid.put(TextUtils.koreanLang, new LangID(TextUtils.koreanLang, cjkRatio(chars, cjk, k), false)); // This
-                                                                                                                // is
-                                                                                                                // primary
-                                                                                                                // only
-                                                                                                                // if
-                                                                                                                // Japanese
-                                                                                                                // is 0.
+            // This  is primary only if  Japanese is 0.
+            langid.put(TextUtils.koreanLang, new LangID(TextUtils.koreanLang, cjkRatio(chars, cjk, k), false));
         }
         if (c > 0) {
             // This is primary language
             langid.put(TextUtils.chineseLang,
                     new LangID(TextUtils.chineseLang, cjkRatio(chars, cjk, c), (j == 0 && k == 0)));
-            // Distinct chinese script === if and only if there are no Korean or Japanese
-            // characters.
+            // Distinct chinese script === if and only if there are no Korean or Japanese characters.
         }
 
         return langid;
@@ -328,19 +315,14 @@ public class LangDetect {
 
     /**
      * L = Unique C, J, or K characters
-     * CJK = total CJK
-     * TOT = total characters non-control or whitespace.
-     * ratio = 0.5 * (L/CJK + CJK/TOT)
-     * produces a number always less than 1.0
-     * 1 Japanese char in 5 CJK chars out of a text of 20 characters (regardless of
-     * whitespace).
-     * ratio is 1/2 * (1/5 + 5/20) === 9/40 ~ 0.21 is score for this text, with
-     * Japanese being the primary choice.
+     *   CJK = total CJK
+     *   TOT = total characters non-control or whitespace.
+     *   ratio = 0.5 * (L/CJK + CJK/TOT) produces a number always less than 1.0
+     * 1 Japanese char in 5 CJK chars out of a text of 20 characters (regardless of whitespace).
+     * ratio is 1/2 * (1/5 + 5/20) === 9/40 ~ 0.21 is score for this text, with Japanese being the primary choice.
      * ratio for Chinese would be:
-     * 1/2 * (4/5 + 5/20) === 21/40 ~ 0.51, which is higher than that for Japanese,
-     * however, as
-     * CJK share a common character base, you first measure if any J or K is
-     * present, and then C.
+     *    1/2 * (4/5 + 5/20) === 21/40 ~ 0.51, which is higher than that for Japanese,
+     * however, as CJK share a common character base, you first measure if any J or K is present, and then C.
      *
      * @param total
      * @param cjk
@@ -368,11 +350,10 @@ public class LangDetect {
         // Languages classified as such, will be ignored.
         ignoredLanguage.put("cjk", 0);
         ignoredLanguage.put("unk", 0);
-        // Arbitrary character count. Less than N chars, LangDetect cannot reliably name
-        // the language.
-        ignoredLanguage.put("tl", -1); // About one line of text.
-        ignoredLanguage.put("ro", -1); // About one line of text.
-        ignoredLanguage.put("ca", -1); // Very unusual to get Catalan. Usually spanish or english.
+        //  These languages are not reliably detected with shorter texts
+        ignoredLanguage.put("tl", -1);
+        ignoredLanguage.put("ro", -1);
+        ignoredLanguage.put("ca", -1);
         ignoredLanguage.put("it", -1);
         ignoredLanguage.put("fr", -1);
         ignoredLanguage.put("es", -1);

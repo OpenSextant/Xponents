@@ -100,7 +100,7 @@ def _format(f):
     return float("{:0.3}".format(f))
 
 
-def add_country(geo:dict):
+def add_country(geo: dict):
     cc = geo["cc"]
     if cc:
         C = get_country(cc)
@@ -140,7 +140,7 @@ class GeonamesOrgGazetteer(DataSource):
 
         with open(sourcefile, "r", encoding="UTF-8") as fh:
             df = get_csv_reader(fh, delim="\t", columns=header_names)
-            self.purge() # Remove all previous records.
+            self.purge()  # Remove all previous records.
             namecount = 0
             for gn in df:
                 self.rowcount += 1
@@ -205,5 +205,5 @@ if __name__ == "__main__":
 
     args = ap.parse_args()
 
-    source = GeonamesOrgGazetteer(args.db,     debug = args.debug)
+    source = GeonamesOrgGazetteer(args.db, debug=args.debug)
     source.normalize(args.geonames, limit=int(args.max), optimize=args.optimize)

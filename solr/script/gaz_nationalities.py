@@ -40,8 +40,8 @@ The TaxCat/XTax strategy here is to use the following mapping:
     }
 """
 
-from opensextant.utility import get_text
 from opensextant.TaxCat import Taxon, TaxCatalogBuilder
+from opensextant.utility import get_text
 
 
 class Nationality(Taxon):

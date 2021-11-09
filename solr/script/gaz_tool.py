@@ -1,6 +1,5 @@
-from opensextant.gazetteer import get_default_db, GazetteerIndex, PlaceHeuristics
 from gaz_finalize import Finalizer
-
+from opensextant.gazetteer import get_default_db, GazetteerIndex, PlaceHeuristics
 
 
 class GazetteerUtility(Finalizer):
@@ -19,7 +18,7 @@ class GazetteerUtility(Finalizer):
         row_ids = []
         fixed_name_bias = None
         for pl in self.db.list_places(criteria=f"WHERE {query}"):
-            #if len(pl.name) < 2:
+            # if len(pl.name) < 2:
             #    continue
 
             print("Add PLACE: ", pl)
@@ -42,7 +41,7 @@ class GazetteerUtility(Finalizer):
         self.db.close()
         indexer.save(done=True)
 
-    def index(self, url):
+    def index(self, url, **kwargs):
         # Disabled.
         pass
 
