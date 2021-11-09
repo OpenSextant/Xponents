@@ -350,6 +350,16 @@ def print_places(arr, limit=25):
         print(str(p))
 
 
+def capitalize(name:dict):
+    """ Capitalize all city and major admin boundaries """
+    grp = name.get("name_group")
+    nt = name.get("name_type")
+    nm = name["name"]
+    ft = name["feat_class"]
+    if grp == '' and nt == 'N' and ft in {'A', 'P'}:
+        name["name"] = nm.capitalize()
+
+
 class DB:
     def __init__(self, dbpath, commit_rate=1000, debug=False):
         """
@@ -499,6 +509,8 @@ class DB:
         if "search_only" not in dct:
             nb = dct.get("name_bias", 0)
             dct["search_only"] = 1 if nb < 0 else 0
+
+        capitalize(dct)
 
     def add_place(self, obj):
         """

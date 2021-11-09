@@ -2280,6 +2280,7 @@ hon,person.label
 host,person.label
 hostage,person.label
 independents,person.label
+immigrant,person.label
 inmate,person.label
 inspector,person.label
 insurgent,person.label
@@ -2934,6 +2935,7 @@ consulate,place.civil
 convent,place.civil
 corner shop,place.civil
 corner store,place.civil
+country,place.civil
 court,place.civil
 court of appeal,place.civil
 court of appeals,place.civil
@@ -2943,6 +2945,7 @@ dam,place.civil
 deli,place.civil
 dental clinic,place.civil
 depot,place.civil
+detention,place.civil
 dining facility,place.civil
 district court,place.civil
 district courts,place.civil
