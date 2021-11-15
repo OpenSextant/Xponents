@@ -16,9 +16,6 @@
  */
 package org.opensextant.processing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opensextant.data.DocInput;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
@@ -26,11 +23,11 @@ import org.opensextant.extraction.ExtractionResult;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.output.ResultsFormatter;
-import org.opensextant.processing.progress.ProgressListener;
-import org.opensextant.processing.progress.ProgressMonitor;
-import org.opensextant.processing.progress.ProgressMonitorBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Group of Xponent Extractors. An Extractor has a simple interface:
@@ -38,10 +35,9 @@ import org.slf4j.LoggerFactory;
  * <pre>
  * +configure() + extract()
  * </pre>
- *
+ * <p>
  * Configure any Extractor; add it to the stack here;
- * Once you have added Extractors to your XtractorGroup, call
- * XtractorGroup.setup()
+ * Once you have added Extractors to your XtractorGroup, call XtractorGroup.setup()
  * Since a single processor of several may throw an exception, while others
  * succeed, The API does not throw exceptions failing a document completely. If
  * you need access to exceptions thrown by each processor or formatter, then you
@@ -69,28 +65,18 @@ public class XtractorGroup {
      */
     protected List<String> currErrors = new ArrayList<>();
 
-    protected ProgressMonitor progressMonitor = new ProgressMonitorBase();
-
     /**
+     *
      */
     public XtractorGroup() {
     }
 
     public void addExtractor(Extractor xprocessor) {
-        // xprocessor.setProgressMonitor(progressMonitor);
         extractors.add(xprocessor);
     }
 
     public void addFormatter(ResultsFormatter formatter) {
         formatters.add(formatter);
-    }
-
-    public void addProgressListener(ProgressListener listener) {
-        progressMonitor.addProgressListener(listener);
-    }
-
-    public void removeProgressListener(ProgressListener listener) {
-        progressMonitor.removeProgressListener(listener);
     }
 
     /**
@@ -100,7 +86,6 @@ public class XtractorGroup {
      */
     public List<TextMatch> process(TextInput input) {
         List<TextMatch> oneResultSet = new ArrayList<>();
-        progressMonitor.setNumberOfSteps(extractors.size());
 
         /**
          * Process all extraction and compile on a single list.
@@ -116,7 +101,6 @@ public class XtractorGroup {
                 currErrors.add("Extractor=" + x.getName() + " ERR=" + loopErr.getMessage());
             }
         }
-        progressMonitor.completeDocument();
         return oneResultSet;
     }
 
@@ -160,12 +144,14 @@ public class XtractorGroup {
     /**
      * Processes input content against all extractors and all formatters This
      * does not throw exceptions, as some processing may fail, while others
-     * succeed. TODO: Processing/Formatting details would have to be retrieved
+     * succeed.
+     * <p>
+     * TODO: Processing/Formatting details would have to be retrieved
      * by calling some other method that is statefully tracking such things.
      *
      * @param input
      * @return status -1 failure, 0 nothing found, 1 found matches and
-     *         formatted; 2 found content but nothing formatted. them.
+     * formatted; 2 found content but nothing formatted. them.
      */
     public int processAndFormat(TextInput input) {
         reset();
