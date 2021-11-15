@@ -111,7 +111,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         }
 
         // If you are dead-sure you want only coordinates from text, then just use XCoord.
-        // Otherwise SimpleGeocoder does both coords + names.
+        // Otherwise this does both coords + names.
         // 
         //XCoord xcoord = new XCoord();
         //xcoord.configure();
@@ -120,7 +120,7 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
         // Testing only
         params.tag_places = true;
         params.tag_coordinates = true;
-        params.output_countries = false;
+        params.tag_countries = false;
 
         PlaceGeocoder geocoder = new PlaceGeocoder();
         geocoder.enablePersonNameMatching(true);

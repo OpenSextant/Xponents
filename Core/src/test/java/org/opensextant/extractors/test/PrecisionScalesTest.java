@@ -77,7 +77,7 @@ public class PrecisionScalesTest {
         }
 
         // Try calculating the sig-figs on the string repr of the number.
-        String[] parts = lat.split("[.]", 2);
+        String[] parts = lat.split("\\.", 2);
         if (parts.length == 2) {
             int sig_figs = parts[1].length();
             if (sig_figs < PrecisionScales.DD_precision_list.length) {

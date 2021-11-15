@@ -469,6 +469,9 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
         if (getKey() != null && getKey().equals(other.getKey())) {
             return 0;
         }
+        if (getFeatureClass()==null){
+            return -1; // Bad source data. Must have feature classification.
+        }
 
         if (!getFeatureClass().equals(other.getFeatureClass())) {
             return -1;
@@ -481,7 +484,7 @@ public class Place extends GeoBase implements /* Comparable<Place>, */ Geocoding
             if (g2 == null) {
                 g2 = geohash(this);
             }
-            if (g2.startsWith(g1.substring(0, 6))) {
+            if (g2.startsWith(g1.substring(0, 8))) {
                 return 0;
             }
         }
