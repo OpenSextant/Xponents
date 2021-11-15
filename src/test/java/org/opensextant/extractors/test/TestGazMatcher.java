@@ -114,15 +114,16 @@ public class TestGazMatcher {
                 if (!p.getRules().isEmpty()) {
                     print("Rules = " + p.getRules());
                 }
+                Place chosen = p.getChosenPlace();
                 // Specific Country Mention cases:  Either tag is a country name (but not geolocated) or
                 //    tag is geolocated to a country.
-                if (p.getChosen() == null && p.isCountry || p.getChosen() != null && p.getChosen().isCountry()) {
+                if (chosen == null && p.isCountry || chosen != null && chosen.isCountry()) {
                     countryNames.add(p.getText());
-                } else if (p.getChosen() != null) {
+                } else if (chosen != null) {
                     // All other Placenames, geolocated.
-                    print(String.format("\tgeocoded @ %s with conf=%d, at [%s]", p.getChosen(), p.getConfidence(),
-                            GeodeticUtility.formatLatLon(p.getChosen())));
-                    ScoredPlace alt = p.getSecondChoice();
+                    print(String.format("\tgeocoded @ %s with conf=%d, at [%s]", p.getChosenPlace(), p.getConfidence(),
+                            GeodeticUtility.formatLatLon(p.getChosenPlace())));
+                    Place alt = p.getSecondChoice();
                     if (alt != null) {
                         print(String.format("\tgeocoded @ %s second place", alt));
                     }

@@ -71,7 +71,7 @@ public class TestPlaceGeocoder extends TestGazMatcher {
         //
         try {
             for (String txt : texts.split("\n")) {
-                if (txt.trim().isEmpty()) {
+                if (txt.trim().isEmpty() || txt.trim().startsWith("#")) {
                     continue;
                 }
                 print("TEST:\t" + txt + "\n=====================");
