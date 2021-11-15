@@ -13,9 +13,11 @@ import java.util.Map;
  */
 public interface BoundaryObserver {
 
-    void boundaryLevel1InScope(Place p);
+    /** Given the name (lower case, strip quotes), the location candidate infers an ADMIN boundary */
+    void boundaryLevel1InScope(String normalizedName, Place p);
 
-    void boundaryLevel2InScope(Place p);
+    /** Given the name (lower case, strip quotes), the location candidate infers an ADMIN boundary */
+    void boundaryLevel2InScope(String normalizedName, Place p);
 
     /*
      * TODO: Ocean boundaries or coastal/island boundaries in scope?
