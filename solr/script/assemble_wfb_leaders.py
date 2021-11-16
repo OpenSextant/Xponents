@@ -83,7 +83,7 @@ abbreviated_titles = {
 
 title_key = {}
 for k in abbreviated_titles:
-    title_key[k.lower()] = abbreviated_titles[k]
+    title_key[k.lower()] = abbreviated_titles.get(k)
 
 
 def expand_title(t):

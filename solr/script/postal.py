@@ -85,12 +85,11 @@ class PostalGazetteer(DataSource):
     def done(self, lim):
         return 0 < lim < self.place_count
 
-    def copy_administrative_codes(self, dbf, limit=-1, optimize=False):
+    def copy_administrative_codes(self, dbf, optimize=False):
         """
         Copy admin codes (country + province level1) from source DBF to this DBF.
 
         :param dbf:
-        :param limit:
         :param optimize:
         :return:
         """
@@ -107,7 +106,10 @@ class PostalGazetteer(DataSource):
             # !!! PER SQLITE: https://www.sqlite.org/faq.html  -- use Single Quotes for query on columns.
             #
             # Copy over country and province codes at a high level.
-            sub_query = f" AND name_group='' AND duplicate=0 AND feat_code='ADM1' AND name_type in ('C', 'A') AND cc in ({cc_sql_arr})"
+            sub_query = f""" AND name_group='' AND duplicate=0 
+                            AND feat_code='ADM1' 
+                            AND name_type in ('C', 'A') 
+                            AND cc in ({cc_sql_arr})"""
             _ctry_meta = []
             for pl in master_db.db.list_places(fc="A", criteria=sub_query):
                 self.rowcount += 1
@@ -273,7 +275,7 @@ if __name__ == "__main__":
         if source.starting_row == 0:
             print("You need to provide a non-zero starting row for copying other data.")
             sys.exit(1)
-        source.copy_administrative_codes(get_default_db(), limit=int(args.max), optimize=args.optimize)
+        source.copy_administrative_codes(get_default_db(), optimize=args.optimize)
     else:
         ref = ReferenceGaz(country=args.country)
         source.normalize(args.postal, limit=int(args.max), optimize=args.optimize)

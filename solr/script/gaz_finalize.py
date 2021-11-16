@@ -148,7 +148,7 @@ class Finalizer:
                     continue
                 flip_ids.append(pl.id)
                 print(pl)
-            # Any rows found -- flip their search status.
+            # Any rows found -- flip their search_only status.
             self.db.update_bias(10, flip_ids)
             self.db.commit()
 
