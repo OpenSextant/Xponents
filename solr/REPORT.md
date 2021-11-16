@@ -115,6 +115,15 @@ gazetteer:
 
 ## Opensextant Gazetteer Python API
 
+OpenSextant provides a simple API to access a variety of types of geographic data and related stuff. The 
+major types include:
+
+* **Reference Gazetteer data:** relatively lean, tabulated information for high-level geography (Countries, Provinces, Major cities, etc). This category 
+  is easily served in an API from flatfiles.  OpenSextant provides `opensextant.Place` and `.Country` classes to formally represent such things
+* **Complete Gazetteer data:** bulky named points, where a single feature or location may have numerous names, abbreviations, codes in dozens of languages.  
+  This data is best served from a database, which here is SQLite.
+* **Non-Geographic data:** language codes, popular words, common census name data, and the like.
+
 See the basic reference data in action here, which are demonstrated in the python test package
 under [python/test/test_gazetteer_api.py](../python/test/test_gazetteer_api.py)
 
@@ -141,8 +150,7 @@ data = load_us_provinces()
 
 ```
 
-Breaking away from the high-level reference data -- which is just backed by flat files -- 
-let's get into the full, master gazetteer using `opensextant.gazetteer.DB`
+Breaking away from the high-level reference data, let's get into the full, master gazetteer using `opensextant.gazetteer.DB`
 
 
 ```python
