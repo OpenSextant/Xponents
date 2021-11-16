@@ -32,15 +32,6 @@ package org.opensextant.extractors.xtax;
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -61,17 +52,12 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 
+import java.io.IOException;
+import java.util.*;
+
 /**
- * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents. The
- * phrases can be from
- * simple word lists or they can connect to a taxonomy of sorts -- the "taxcat"
- * solr core (see
- * Xponents/solr/taxcat and Xponents/XTax for implementation)
- * JVM arg to use is "opensextant.solr" to point to the local path Less tested:
- * solr.solr.home might
- * conflict with a Solr document server instead of this tagger. solr.url is good
- * for RESTful
- * integration, but not recommended
+ * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents. The phrases can be
+ * from simple word lists or they can connect to a taxonomy of sorts. the "taxcat" solr core (see Xponents/solr/taxcat)
  *
  * @author Marc Ubaldino - ubaldino@mitre.org
  */
@@ -94,12 +80,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
          * Tagger documentation for details.
          */
         params.set("overlaps", "NO_SUB");
-
     }
 
     private boolean tagAll = true;
     private final boolean filterNonAcronyms = true;
-    // private ProgressMonitor progressMonitor;
 
     /**
      * @throws IOException
@@ -154,7 +138,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         }
         if (!taxonExclusionFilter.isEmpty()) {
             String name = SolrUtil.getString(refData, "taxnode");
-            if (name !=null ) {
+            if (name != null) {
                 name = name.toLowerCase();
                 for (String t : taxonExclusionFilter) {
                     if (name.startsWith(t)) {
@@ -278,12 +262,12 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     public static String[] commonTaxonLabels = {"org", "person", "nationality"};
 
-    private static void assignType(TaxonMatch m, Taxon node){
+    private static void assignType(TaxonMatch m, Taxon node) {
         if (!m.isDefault()) {
             return;
         }
         String taxon_name = node.name.toLowerCase();
-        for (String l : commonTaxonLabels){
+        for (String l : commonTaxonLabels) {
             if (taxon_name.startsWith(l)) {
                 m.setType(l);
                 break;

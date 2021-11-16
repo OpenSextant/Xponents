@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase, main
-from opensextant.utility import fast_replace, levenshtein_distance, has_cjk, has_arabic, trivial_bias, replace_diacritics
+from opensextant.utility import fast_replace, levenshtein_distance, has_cjk, has_arabic, trivial_bias, replace_diacritics, is_code
 
 
 class TestText(TestCase):
+    def test_code(self):
+        assert is_code("US")
+        assert not is_code("Us")
+        assert is_code("EEUU")
+        assert not is_code("E.E.U.U.")
+        assert not is_code("BÜ")
+
     def test_replace_punct(self):
         test = fast_replace("Bloody mess, it is.", ".", ' ')
         print(test)

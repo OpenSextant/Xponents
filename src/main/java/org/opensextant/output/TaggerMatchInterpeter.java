@@ -19,7 +19,7 @@ public class TaggerMatchInterpeter implements MatchInterpreter {
         if (m instanceof Geocoding) {
             geocoding = (Geocoding) m;
         } else if (m instanceof PlaceCandidate) {
-            geocoding = ((PlaceCandidate) m).getChosen();
+            geocoding = ((PlaceCandidate) m).getChosenPlace();
         }
         return geocoding;
     }

@@ -30,8 +30,6 @@ from math import isnan
 from chardet import detect as detect_charset
 from .unicode import LATIN1_FOLDING
 
-version = 'v3'
-
 
 # ---------------------------------------
 #  TEXT UTILITIES
@@ -39,6 +37,9 @@ version = 'v3'
 #
 def is_text(t):
     return isinstance(t, str)
+
+
+code_pattern = re.compile("^[A-Z0-9]{1,}$", re.ASCII)
 
 
 def is_code(t: str, nlen=6):
@@ -50,8 +51,9 @@ def is_code(t: str, nlen=6):
     """
     if not t:
         return False
-    # TODO: [A-Z0-9]{1,}
-    return len(t) <= nlen and is_ascii(t) and t.isupper() and "." not in t
+    if len(t) > nlen or not t.isupper():
+        return False
+    return code_pattern.match(t) is not None
 
 
 def is_abbreviation(nm: str):
