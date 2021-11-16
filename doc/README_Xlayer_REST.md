@@ -116,17 +116,20 @@ INPUT:
 * `text`  - UTF-8 text buffer
 * `features` - comma-separated string of features which will vary by app.  XponentsGeotagger (default app) class supports: 
    * `places, coordinates, countries` or `geo` to refer to all of those geographic entities
+   * `postal` a special feature type invoking the postal code tagger
    * `patterns` - configured patterns. By default only date/time patterns are detected and normalized.  As other patterns are implemented, 
      this same REST API could be used without changing the call mechanisms -- your client would have to navigate the additional results though.
    * `persons`, `orgs`, `taxons` to refer to those non-geo entities.  
    * `filtered_out` will turn on noisy entities that were filtered out for some reason. The default is not return filtered-out items.
    
-* `options`  - comma-separated string of options
-   * Options will vary by app.   XponentsGeotagger class supports: `lowercase`
+* `options`  - comma-separated string of options. Currently: 
+   * `revgeo` - reverse geolocate any coordinates found in text input
+   * `lowercase` - allow lowercase tagging
+   * `clean_input` - attempt to sanitize input text which may contain angle or square bracket tags
     
 OUTPUT:
 
-* `response`     - status, numfound
+* `response`     - `status`, `numfound` to indicate number of tags found.
 * `annotations`  - an array  of objects. 
 
 Annotation schema
