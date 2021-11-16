@@ -3,7 +3,7 @@ import os
 import re
 import sys
 from abc import ABC, abstractmethod
-from math import sqrt, sin, cos, radians, atan2
+from math import sqrt, sin, cos, radians, atan2, log as mathlog
 
 from opensextant.utility import get_csv_reader, get_bool
 from pygeodesy.geohash import encode as geohash_encode
@@ -18,10 +18,20 @@ adm1_by_hasc = {}
 __loaded = False
 
 
-def make_HASC(cc, adm1):
+def make_HASC(cc, adm1, adm2=None):
+    """
+    Create a simplie hiearchical path for a boundary
+    :param cc:
+    :param adm1:
+    :param adm2:
+    :return:
+    """
     if not adm1:
         adm1 = '0'
-    return '{}.{}'.format(cc, adm1)
+    if adm2:
+        return '{}.{}.{}'.format(cc, adm1, adm2)
+    else:
+        return '{}.{}'.format(cc, adm1)
 
 
 def format_coord(lat, lon):
@@ -51,12 +61,12 @@ def distance_cartesian(x1, y1, x2, y2):
     return sqrt(xdist * xdist + ydist * ydist)
 
 
-EARTH_RADIUS_WGS84 = 6378  # KM,  True: 6378.137
+EARTH_RADIUS_WGS84 = 6378.137 * 1000  # M,  True: 6378.137
 
 
 def distance_haversine(ddlon1, ddlat1, ddlon2, ddlat2):
     """
-    Returns distance in kilometers for given decimal degree Lon/Lat (X,Y) pair
+    Returns distance in meters for given decimal degree Lon/Lat (X,Y) pair
 
     http://www.movable-type.co.uk/scripts/latlong.html
     """
@@ -68,8 +78,7 @@ def distance_haversine(ddlon1, ddlat1, ddlon2, ddlat2):
     dLon = lon2 - lon1
     a = (sin(dLat / 2) * sin(dLat / 2)) + (cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2))
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    d = EARTH_RADIUS_WGS84 * c
-    return d
+    return int(EARTH_RADIUS_WGS84 * c)
 
 
 class Coordinate:
@@ -166,7 +175,10 @@ class Place(Coordinate):
         self.id_bias = 0.0
         self.precision = -1
         self.method = None
+        # Population stats, if available. Scale is a power-of-2 scale
+        # starting at about pop of 2^14 as 0, 32K=1, 64K=2, etc.
         self.population = -1
+        self.population_scale = 0
         self.hierarchical_path = None
 
         # Internal fields for gazetteer curation and text analytics:
@@ -431,13 +443,41 @@ def load_major_cities():
             pl.country_code = line[8]
             pl.adm1 = line[10]
             pl.adm2 = line[11]
-            pl.geohash = geohash_encode(pl.lat, pl.lon, precision=5)
+            pl.geohash = geohash_encode(pl.lat, pl.lon, precision=6)
             try:
                 pl.population = int(line[14])
+                pl.population_scale = popscale(pl.population, feature="city")
             except:
                 pass
             cities.append(pl)
     return cities
+
+
+_pop_scale = {
+    "city": 13,      # 2^13 ~    8,000
+    "district": 15,  # 2^15 ~   32,000
+    "province": 17,  # 2^17 ~  130,000
+}
+
+
+def popscale(population, feature="city"):
+    """
+    Given a population in context of the feature -- provide a
+    approximation of the size of the feature on a 10 point scale.
+
+    Approximations for 10 points:
+    Largest city is ~15 million
+    Largest province is ~135 million
+
+    :param population:
+    :param feature:  city, district, or province allowed.
+    :return: index on 0..10 scale.
+    """
+    if population < 1:
+        return 0
+    shifter = _pop_scale.get(feature, 20)
+    index =  mathlog(population, 2) - shifter
+    return int(index) if index > 0 else 0
 
 
 def is_country(feat_code: str):

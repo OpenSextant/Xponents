@@ -186,7 +186,8 @@ class TaxCatalogBuilder:
             print("No server")
             return
 
-        if flush or (0 < self.count and self.count % self.add_rate == 0):
+        ready = 0 < self.count and (self.count % self.add_rate == 0)
+        if flush or ready:
             self.server.add(self._records)
             self._records.clear()
 

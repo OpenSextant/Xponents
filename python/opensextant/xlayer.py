@@ -222,18 +222,18 @@ if __name__ == '__main__':
             with open(args.input, 'r', encoding="UTF-8") as fh:
                 lineNum = 0
                 for line in fh:
-                    text = line.strip()
+                    textbuf = line.strip()
                     lineNum += 1
                     if is_json:
-                        if not text or text.startswith("#"):
+                        if not textbuf or textbuf.startswith("#"):
                             continue
-                        text = json.loads(text).get("text")
-                        if not text:
+                        textbuf = json.loads(textbuf).get("text")
+                        if not textbuf:
                             print("'text' value required in JSON")
                             continue
 
                     test_id = "line{}".format(lineNum)
-                    process_text(text, docid=test_id, features=feat,
+                    process_text(textbuf, docid=test_id, features=feat,
                                  preferred_countries=countries, preferred_locations=locations)
 
         except Exception as runErr:
