@@ -1,4 +1,4 @@
-# Gazetteer ETL Production Reporting Techniques
+# Gazetteer ETL Production Report & API Usage
 
 This report contains some of the basic techniques for reporting 
 and validating the contents of the master gazetteer.  Not all of these
@@ -7,6 +7,10 @@ will work on subset databases or partial master gazetteers.
 * TODO: automate DB validation by source and country and generate this report.
 * CAVEAT: The SQLite DB is available if you build the `./solr` gazetteer project data sources
   Or know someone who has and is kind enough to share.
+* FINALLY: Please note that this is the debut of the pure Python Gazetteer ETL pipeline.  The Python API supporting this is an initial release, but well tested.  This documentation will eventually migrate to a formal Python API document.  Please scan the entire page so you understand the API functions and limitations.  Also, please file a git issue here if you would like to see features or find bugs.
+
+Thank you,
+  The Managment.
 
 
 ## Library Details
