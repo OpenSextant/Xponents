@@ -256,6 +256,7 @@ def as_place(ctry: Country, name: str, name_type="N", oid=None):
 def load_countries(csvpath=None):
     """ parses Xponents Core/src/main/resource CSV file country-names-2015.csv
         putting out an array of Country objects.
+        :return: array of Country
     """
     if not csvpath:
         pkg_dir = os.path.dirname(os.path.abspath(__file__))
@@ -301,7 +302,7 @@ def load_countries(csvpath=None):
 
     global __loaded
     __loaded = len(countries_by_iso) > 1
-    return None
+    return countries
 
 
 def get_us_province(adm1: str):
@@ -316,8 +317,15 @@ def get_us_province(adm1: str):
 
 
 def load_us_provinces():
+    """
+    Load, store internally and return the LIST of US states.
+    NOTE: Place objects for US States have a location (unlike list of world provinces).
+    To get location and feature information in full, you must use the SQLITE DB or Xponents Solr.
+    :return: array of Place objects
+    """
     pkg_dir = os.path.dirname(os.path.abspath(__file__))
     csvpath = os.path.join(pkg_dir, 'resources', 'us-state-metadata.csv')
+    usstate_places = []
     with open(csvpath, 'r', encoding="UTF-8") as fh:
         columns = ["POSTAL_CODE", "ADM1_CODE", "STATE", "LAT", "LON", "FIPS_CC", "ISO2_CC"]
         io = get_csv_reader(fh, columns)
@@ -346,12 +354,24 @@ def load_us_provinces():
             usstates[place_id] = adm1
             usstates[postal_id] = adm1
 
+            usstate_places.append(adm1)
+    return usstate_places
+
 
 def load_provinces():
-    load_world_adm1()
+    """
+    Load, store and return a dictionary of ADM1 boundary names - provinces, states, republics, etc.
+    NOTE: Location information is not included in this province listing.  Just Country, ADM1, Name tuples.
+    :return:  dict
+    """
+    return load_world_adm1()
 
 
 def load_world_adm1():
+    """
+    Load, store and return a dictionary of ADM1 boundary names - provinces, states, republics, etc.
+    :return:  dict
+    """
     # Load local country data first, if you have it. US is only one so far.
     load_us_provinces()
 
@@ -382,7 +402,7 @@ def load_world_adm1():
                     adm1_by_hasc[hasc] = adm1
 
             adm1_by_hasc[hasc] = adm1
-    return
+    return adm1_by_hasc
 
 
 def get_province(cc, adm1):
@@ -454,7 +474,7 @@ def load_major_cities():
 
 
 _pop_scale = {
-    "city": 13,      # 2^13 ~    8,000
+    "city": 13,  # 2^13 ~    8,000
     "district": 15,  # 2^15 ~   32,000
     "province": 17,  # 2^17 ~  130,000
 }
@@ -467,6 +487,7 @@ def popscale(population, feature="city"):
 
     Approximations for 10 points:
     Largest city is ~15 million
+    // Few cities top 30 million, e.g., 2^25.  popscale = 25 - 13 = 12.
     Largest province is ~135 million
 
     :param population:
@@ -476,7 +497,7 @@ def popscale(population, feature="city"):
     if population < 1:
         return 0
     shifter = _pop_scale.get(feature, 20)
-    index =  mathlog(population, 2) - shifter
+    index = mathlog(population, 2) - shifter
     return int(index) if index > 0 else 0
 
 

@@ -728,7 +728,7 @@ class DB:
             yield as_place(p)
 
     def list_places_at(self, lat: float = None, lon: float = None, cc: str = None, geohash: str = None,
-                       radius: int = 10000):
+                       radius: int = 10000, limit=10):
         """
         A best effort guess at spatial query. Returns an array of matches, thinking most location queries are focused.
 
@@ -737,9 +737,9 @@ class DB:
         :param cc:  ISO country code to filter.
         :param geohash:  optionally, use precomputed geohash of precision 6-chars.
         :param radius:  in METERS, radial distance from given point to search
+        :param limit: count of places to return
         :return: array of tuples, sorted by distance.
         """
-        topN = 10
         # populate both location and point
         gh = geohash
         point = (lat, lon)
@@ -752,6 +752,7 @@ class DB:
             point = [float(x) for x in geohash_decode(geohash)]
 
         # This is optimized for this gazetteer DB, as locations are stored as 6-digit geohash
+        # HACK: USE spatial-lite extension for SQLite.
         sql_script = [
             f"select * from placenames where geohash = '{gh}'",
             f"select * from placenames where geohash like '{gh[0:5]}%'",
@@ -759,6 +760,7 @@ class DB:
         ]
         found = {}
         for script in sql_script:
+            print(script)
             for p in self.conn.execute(script):
                 if cc:
                     if p["cc"] != cc:
@@ -767,7 +769,7 @@ class DB:
                 dist = distance_haversine(point[1], point[0], place.lon, place.lat)
                 if dist < radius:
                     found[dist] = as_place(p)
-            if len(found) >= topN:
+            if len(found) >= limit:
                 # Return after first round of querying.
                 break
         # Sort by distance key

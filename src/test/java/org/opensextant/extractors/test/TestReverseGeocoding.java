@@ -24,7 +24,7 @@ public class TestReverseGeocoding  {
             tester.geocoder = geocoderImpl;
 
             try {
-                tester.printMemory();
+                TestGazMatcher.printMemory();
                 int iterations = 1;
                 int pause = 100; /* ms */
 
@@ -43,9 +43,9 @@ public class TestReverseGeocoding  {
 
                 for (int count = 0; count < iterations; ++count) {
                     tester.tagText(tester.inputText);
-                    tester.printMemory();
+                    TestGazMatcher.printMemory();
                 }
-                tester.dumpStats();
+                TestGazMatcher.dumpStats();
 
             } catch (Exception err) {
                 err.printStackTrace();

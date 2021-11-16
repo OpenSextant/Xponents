@@ -3,6 +3,7 @@ package org.opensextant.extractors.test;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -196,7 +197,7 @@ public class TestPoLiReporter {
             }
         }
 
-        String inputText = FileUtils.readFileToString(new File(f));
+        String inputText = FileUtils.readFileToString(new File(f), StandardCharsets.UTF_8);
 
         poli.enableAll();
         String fileID = "FILE:" + fname;

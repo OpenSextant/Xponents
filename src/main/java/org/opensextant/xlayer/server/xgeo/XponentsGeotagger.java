@@ -40,7 +40,7 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     private static final String[] extractors = {"xgeo", "xtemp", "xpostal"};
-    private static final HashSet extractorSet = new HashSet<>();
+    private static final HashSet<String> extractorSet = new HashSet<>();
 
     static {
         extractorSet.addAll(Arrays.asList(extractors));

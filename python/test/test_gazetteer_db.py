@@ -1,5 +1,6 @@
-from opensextant.gazetteer import  DB, get_default_db
+from opensextant.gazetteer import DB, get_default_db
 
+# default DB required, hence this is a unit test.:
 db = DB(get_default_db())
 names = db.list_admin_names()
 print("ADMIN NAMES TOTAL", len(names))
