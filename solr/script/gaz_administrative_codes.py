@@ -5,7 +5,7 @@ from copy import copy
 
 import shapefile
 from opensextant import get_country, Country
-from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, parse_admin_code, PlaceHeuristics
+from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, parse_admin_code, PlaceHeuristics
 from opensextant.utility import is_code, is_abbreviation, get_list
 
 #
@@ -38,10 +38,6 @@ SUBDIV_GAZ_TEMPLATE = {
     "name_type": "N",
     "name_group": ""
 }
-
-
-def scrub_name(name):
-    return name.strip("'").strip()
 
 
 def parse_feature_type(r, alt_names, debug=False):
@@ -229,7 +225,7 @@ class NatEarthAdminGazetteer(DataSource):
                             continue
                         lang = f.split("_")[1]
                         for possible_nm in nm.split("|"):
-                            nm2 = scrub_name(possible_nm)
+                            nm2 = normalize_name(possible_nm)
                             all_script.add(nm2)
                             if lang == "ar":
                                 arabic_script.add(nm2)
@@ -246,7 +242,7 @@ class NatEarthAdminGazetteer(DataSource):
                 for variant in alt_names:
                     if variant:
                         for alt_nm in variant.split("|"):
-                            names.add(scrub_name(alt_nm))
+                            names.add(normalize_name(alt_nm))
                 derive_abbreviations(names)
                 anglo_script.update(names)
 
@@ -285,7 +281,7 @@ class NatEarthAdminGazetteer(DataSource):
                 geo["feat_code"] = ft
                 geo["FIPS_cc"] = C.cc_fips
 
-                geo["id_bias"] = self.estimator.location_bias(geo["geohash"], fc, ft)
+                geo["id_bias"] = self.estimator.location_bias(geo)
 
                 # Name data here is variable -- so create a new entry for each distinct name.
                 distinct_names = set([])

@@ -249,7 +249,7 @@ class JRCEntity(Taxon):
     def _variant_id(self):
         if not self.variant_id:
             return "0"
-        return "%04x" % (self.variant_id)
+        return "{:04x}".format(self.variant_id)
 
     def _make_tags(self):
 

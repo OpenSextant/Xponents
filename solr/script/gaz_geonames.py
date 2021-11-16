@@ -7,7 +7,7 @@ The main 'geoname' table has the following fields :
 from copy import copy
 
 from opensextant import get_country
-from opensextant.gazetteer import DataSource, get_default_db, load_stopterms, PlaceHeuristics
+from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, PlaceHeuristics
 from opensextant.utility import get_list, has_cjk, has_arabic, is_value, is_code, is_abbreviation, get_csv_reader
 
 schema = """
@@ -91,7 +91,7 @@ def render_distinct_names(arr):
         if nm:
             if "(historical)" in nm:
                 nm = nm.replace("(historical)", "").strip()
-            nm = nm.replace("\u2019", "'").strip()
+            nm = normalize_name(nm)
             names[nm.lower()] = nm
     return set(names.values())
 
@@ -113,6 +113,29 @@ def add_country(geo: dict):
         geo["cc"] = cc
         geo["FIPS_cc"] = cc
         geo["adm1"] = "0"
+
+
+FEATURE_GUESSES = {
+    "rock": ("T", "RK"),
+    "station": ("S", "RSTN"),
+    "statistical": ("L", "RGNE"),
+    "edifice": ("T", "CLF"),
+    "point": ("L", "PNT"),
+    "pont": ("L", "PNT"),
+    "port": ("L", "PORT"),
+    "bibliotheque": ("S", "LIBR"),
+    "peak": ("T", "PK"),
+    "bridge": ("S", "BDG"),
+    "basin": ("T", "UNK")
+}
+
+
+def guess_feature(name):
+    toks = name.lower().replace("-", " ").split()
+    for t in toks:
+        if t in FEATURE_GUESSES:
+            return FEATURE_GUESSES.get(t)
+    return "S", "UNK"
 
 
 class GeonamesOrgGazetteer(DataSource):
@@ -169,10 +192,13 @@ class GeonamesOrgGazetteer(DataSource):
                 geo["place_id"] = f"G{plid}"
                 self.add_location(geo, geo["lat"], geo["lon"])
                 add_country(geo)
-                geo["id_bias"] = self.estimator.location_bias(geo["geohash"], geo["feat_class"], geo["feat_code"])
+                geo["id_bias"] = self.estimator.location_bias(geo)
                 for nm in names:
-                    namecount += 1
+                    if not nm:
+                        print("Encoding error with name", geo)
+                        continue
 
+                    namecount += 1
                     g = geo.copy()
                     g["name"] = nm
                     nt = g["name_type"]
@@ -187,8 +213,15 @@ class GeonamesOrgGazetteer(DataSource):
                     elif has_arabic(nm):
                         grp = "ar"
 
+                    fc = g["feat_class"]
+                    dsg = g["feat_code"]
+                    if not fc:
+                        fc, dsg = guess_feature(nm)
+                        g["feat_class"] = fc
+                        g["feat_code"] = dsg
+
                     g["name_group"] = grp
-                    g["name_bias"] = self.estimator.name_bias(nm, g["feat_class"], g["feat_code"], name_group=grp)
+                    g["name_bias"] = self.estimator.name_bias(nm, fc, dsg, name_group=grp)
                     g["id"] = GENERATED_BLOCK + namecount
                     yield g
 
