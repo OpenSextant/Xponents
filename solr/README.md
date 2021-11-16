@@ -1,19 +1,34 @@
 OpenSextant Solr Gazetteer
 ============================
 The OpenSextant Gazetteer is a catalog of place names and basic geographic metadata, such 
-as country code, location, feature codings.   In Xponents, Solr 7+ is used to index and provision the large lexicons such as gazetteer and taxonomies.
+as country code, location, feature codings.   In Xponents, Solr 7+ is used to index and provision 
+the large lexicons such as gazetteer and taxonomies.
 
-You are reading about the Xponents variant of the Solr Gazetteer.
-(OpenSextantToolbox is a similar tagger solution with a variant of the Gazetteer.
-Both libraries use the same Gazetteer "merged" flat file as a starting point)
+Related:
+- [Gazetteer Report](REPORT.md) lists some underlying raw statistics and SQL techniques for working with the 
+  master gazetteer.  For example, Using SQLite to list all possible names, distinct location counts in the gazetteer
+  by feature class, or how to use the `opensextant.gazetteer` API to query such things.
 
 Definitions: 
-* OpenSextant "Gazetteer" is an ETL project that assembles the catalog into a single 
-  "merged" flat file.
-* OpenSextant "Xponents Solr" is a particular Solr-based gazetteer implementation the 
+* **OpenSextant "Xponents Solr"** is a particular Solr-based gazetteer implementation the 
   provides specific features to the Xponents API, taggers, etc.
+* **"Gazetteer ETL"** - extract, transform and load - is the various conventions and routines to taking
+  arbitrary source gazetteers and conditioning them for use as a geographic tagging model.  We are 
+  concerned with balancing accuracy, thoroughness, usability and simplicity.  So the resulting data
+  may not be pure or complete with regards to its source version because some interpretation, 
+  conversion, or back-filling may be necessary to use the data at all.
+  * Extract: the scripting assciated with the source data harvesting and parsing from flat files
+  * Transform: the scripting associated with mapping source data to the `opensextant.Place` class
+   and enrichening that with the internal text model and `PlaceHueristics` that produce name and location biasing based on general assumptions.
+  * Load: the final scripting associated with parking entries in the `master_gazetteer.sqlite` and subsequently into the Solr `gazetteer` index
+  * Repeat all above for the `postal` index ETL.
+* **"Solr Index"** in this project Solr indices *store* reference data and provide a `/tag` 
+  operation (`request handler`) to identify that reference data in an input argument to `/tag`.  The main indices are:
+  * `gazetteer`
+  * `taxcat`
+  * `postal`
 
-You do NOT need know all about Solr or Lucene to make use of this, but it helps
+You do NOT need know all about SQLite, Solr or Lucene to make use of this, but it helps
 when you need to optimize or extend things for new langauges.
 
 
@@ -21,19 +36,22 @@ Getting started
 ================================
 You have a few options:
 
-* **Option 1.** Download Xponents SDK release (libraries, docs, and pre-built Xponents Solr)
-   * i.e., You just want the capability. No hassle.
-   * https://github.com/OpenSextant/Xponents/releases will have library releases; Maven Central has JARs/javaodcs
-   * https://hub.docker.com/r/mubaldino/opensextant will have Xponents 3.x and later as a full running service.
-* **Option 2.** Checkout Xponents  projects and build from latest source and data.
-   * i.e., You want the full experience, all the pain of building from source.
+**Option 1.** Download Xponents SDK release (libraries, docs, and pre-built Xponents Solr)
+* i.e., You just want the capability. No hassle.
+* https://github.com/OpenSextant/Xponents/releases will have binary releases (no gazetteer data); Maven Central has JARs/javaodcs
+* https://hub.docker.com/r/mubaldino/opensextant will have Xponents 3.x and later as a full running service.
+* You may exit now -- there is not much more on this page you need to know.
 
-For option 1. You need not do anything more with these instructions.
+**Option 2.** Checkout Xponents  projects and build from latest source and data.
+* i.e., You want the full experience, all the pain of building from source. 
+* follow the remainder of these instructions to build Xponents SDK, the master gazetteer and then
+ populate the various Solr indices.  From a source checkout you will be guided through 
+ installing Python dependencies, collecting the data for ETL and producing a working distribution.
 
-For option 2 you'll follow the remainder of these instructions to build Xponents SDK 
-with Solr indices populated.  Either way, where Python is referred in any instructions we are referring 
-to Python 3.8+ only.  `python` and `pip` may be further qualified as `python3` and `pip3` in many scripts.  
-In either case, review the Build Setup notes here and follow them best as you can.
+Where Python is referred in any instructions we are referring to Python 3.8+ only.  
+`python` and `pip` may be further qualified as `python3` and `pip3` in many scripts.  
+
+The estimated disk space to build a complete distribution is on the order of 20 GB, with various temporary files and all.
 
 **Expectations around Data**
 
@@ -119,7 +137,7 @@ SQLite file with unigram counts from GooleBooks Ngrams project.
 
 This SQLite master curation process is central to the Xponents gazetteer/geotagger.  
 All of the metadata and source data is channeled through this and optimized. 
-The raw SQLite master is approaching 7.5 GB or more containing about 45 million place names.
+The raw SQLite master is approaching 10 GB or more containing about 45 million place names.
 By contrast the resulting Solr index is about 3.0 GB with 25 million placenames. 
 The optimization steps are essential to managing size and comprehensive coverage.
 
@@ -215,21 +233,19 @@ to intervene and redo any steps.
 To update the Gazetteer Meta resources review these few steps:
 
 1. Follow notes above to setup.
-2. Update Person names filter
-3. Create JAR
-4. Field new JAR with your runtime deployment in CLASSPATH
+2. Update stopwords and person names filter using the build script `meta` command
+3. Install Maven project, as JAR contains resources from this ETL
 
 ```
   cd ./solr
-  python3 ./script/assemble_person_filter.py 
-  ant gaz-meta
+  ./build.sh meta
   
   cd ..
   mvn install
 ```
 
-NOTE: Regarding `gaz-meta`, the geotagger and other resources leverage things from the CLASSPATH ( via `opensextant-xponents-*jar` or from file system).  In releases Xponents v3.3 and earlier there was a 
-separate JAR file for these resources.  The main meta folders include:
+NOTE: The `meta` step above gathers resources below and pushes them up to the Maven project `src/main/resources` so 
+they become part of the CLASSPATH ( via `opensextant-xponents-*jar` or from file system). Resources include:
 
 * `/lang/`  -- Lucene and other stopword sets
 * `/filters/` -- exclusions for tagging and downstream tuning.
@@ -238,10 +254,12 @@ separate JAR file for these resources.  The main meta folders include:
 
 **FIRST USE:** 
 ```shell script
+    build.sh  meta
     build.sh  start clean data gazetteer
     build.sh  taxcat
     build.sh  postal
 ```
+
 IF you have gotten to this step and feel confident things look good, this one invocation of `build.sh`
 should allow you to run steps 4a, 4b, and 4c below all in one command.  STOP HERE.  If the above succeeded, check 
 your running solr instance at http://localhost:7000/solr/ and inspect the different Cores.  If you don't know
@@ -262,6 +280,8 @@ gazetteer you are likely ready to go start using Xponents SDK.
               Solr Server is only used at build time, not at runtime
    # data   = Acquire additional data e.g., Census, Geonames.org, JRC entities, etc. 
               These data sets are not cleaned by 'clean'
+   # meta   = build and gather metadata resources 
+   
    # proxy  = IF you are behind a proxy, set your proxy in build.propertes
 
    # gazetteer = regenerate only the gazetteer index
@@ -304,17 +324,6 @@ In this step, you can use:
 
 which will build the Solr gazetteer index and add to the taxcat index.  If the Solr Server is not
 running it will be started.  Access Solr URL is http://localhost:7000/solr
-
-
-CLASSPATH NOTE: "Filters" are important to gazetteer tuning.  I refer to "/filters/"  resources in 
-taggers and data processing.  Filters are packed in the main SDK JAR.
-
-```shell script
-   
-   # Copy Xponents gazetteer meta-files to Maven resource location
-   #
-   ant gaz-meta
-```
 
 
 Expert Topics

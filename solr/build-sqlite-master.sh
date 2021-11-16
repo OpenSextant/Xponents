@@ -39,6 +39,7 @@ done
 
 if [ "$do_test" -eq 1 ] ; then
   DB=./tmp/test.sqlite
+  python3 ./script/gaz_popstats.py --db $DB
   python3 ./script/gaz_usgs.py ${USGS_FILE} --max 100000 --db $DB
   python3 ./script/gaz_nga.py ./tmp/Countries.txt --max 100000 --db $DB
 
@@ -58,6 +59,9 @@ else
   rm -f $DB
 
   datekey=`date +%Y%m%d`
+
+  echo GEONAMES POPULATION STATS
+  python3 ./script/gaz_popstats.py
 
   # Geonames is FIRST, because it has better consistent coverage for all names
   echo GEONAMES       `date`

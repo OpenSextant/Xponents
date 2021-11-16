@@ -143,13 +143,20 @@ if [ ! -d $XPONENTS/target ]; then
   exit 1
 fi
 
+# Oh, shoot. I'm the only one who has a copy of this scrapped data.
+do_wfb=0
+
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
   ant $proxy gaz-resources
 
-  echo "Harvesting World Factbook 'factoids'"
-  python3 ./script/assemble_wfb_leaders.py
-  python3 ./script/assemble_wfb_orgs.py
+  if [ $do_wfb -eq 1 ]; then 
+    echo "Harvesting World Factbook 'factoids'"
+    python3 ./script/assemble_wfb_leaders.py
+    python3 ./script/assemble_wfb_orgs.py
+  else 
+    echo "As of 2020, WFB content has changed dramatically" 
+  fi
 fi
 
 if [ $do_meta -eq 1 ] ; then 
