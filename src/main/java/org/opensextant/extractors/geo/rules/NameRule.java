@@ -2,6 +2,7 @@ package org.opensextant.extractors.geo.rules;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.util.TextUtils;
 
 import java.util.HashSet;
@@ -54,7 +55,11 @@ public class NameRule extends GeocodeRule {
                 isAdmin2 = A2_suffixes.contains(tok2);
             }
 
-            for (Place geo : name.getPlaces()) {
+            /*
+             * Increment the score for locations whose feature lines up with the nomenclature in the text match.
+             */
+            for (ScoredPlace geoScore : name.getPlaces()) {
+                Place geo = geoScore.getPlace();
                 if (filterOutByFrequency(name, geo)) {
                     continue;
                 }

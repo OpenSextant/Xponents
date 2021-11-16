@@ -2,6 +2,7 @@ package org.opensextant.extractors.geo.rules;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.util.GeonamesUtility;
 
 import java.util.List;
@@ -35,8 +36,10 @@ public class PostalCodeAssociationRule extends GeocodeRule {
      * @param p2 PlaceCandidate
      */
     void alignGeography(final PlaceCandidate p1, final PlaceCandidate p2) {
-        for (Place geo1 : p1.getPlaces()) {
-            for (Place geo2 : p2.getPlaces()) {
+        for (ScoredPlace geo1Score : p1.getPlaces()) {
+            Place geo1 = geo1Score.getPlace();
+            for (ScoredPlace geo2Score : p2.getPlaces()) {
+                Place geo2 = geo2Score.getPlace();
                 // Lexical check:
                 if (!complementaryPostal(geo1, geo2)) {
                     continue;
@@ -46,7 +49,7 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                 // Geographic checks:
                 if (sameBoundary(geo1, geo2)) {
                     // Use this to collect evidence. Boundary for geo1 and geo2 are the same.
-                    this.boundaryObserver.boundaryLevel1InScope(geo1);
+                    this.boundaryObserver.boundaryLevel1InScope(p1.getNDTextnorm(), geo1);
                     p1.markValid();
                     p2.markValid();
                     if (geo1Postal){

@@ -113,11 +113,12 @@ public class LocationChooserRule extends GeocodeRule {
             // + Choose top score
             // + Cache result for a given NAME = CHOSEN, so we don't repeat the same logic unnecessarily.
             //
-            for (Place geo : name.getPlaces()) {
-                evaluate(name, geo);
+            for (ScoredPlace geoScore : name.getPlaces()) {
+                evaluate(name, geoScore.getPlace());
             }
             name.choose();
-            if (name.getChosen() != null) {
+            if (name.getChosenPlace() != null) {
+                Place chosen = name.getChosenPlace();
                 name.setType("place");
                 this.assessConfidence(name);
                 /*
@@ -126,10 +127,10 @@ public class LocationChooserRule extends GeocodeRule {
                  * method for inferencing. e.g., a summary of major branch of rules by which
                  * name+location is identified and geolocated.
                  */
-                name.getChosen().setConfidence(name.getConfidence());
-                name.getChosen().setMethod(PlaceGeocoder.METHOD_DEFAULT);
+                chosen.setConfidence(name.getConfidence());
+                chosen.setMethod(PlaceGeocoder.METHOD_DEFAULT);
 
-                inferCountry(name.getChosen().getCountryCode());
+                inferCountry(chosen.getCountryCode());
 
                 // TOOD: Track resolved places documentResolvedLocations.put(name.getTextnorm(), name.getChosen());
             } else {
@@ -142,14 +143,8 @@ public class LocationChooserRule extends GeocodeRule {
         if (cc == null) {
             return;
         }
-        CountryCount counter = inferredCountries.get(cc);
-        if (counter == null) {
-            counter = new CountryCount();
-            counter.country = new Country(cc, cc); /* TODO: get real country object */
-            inferredCountries.put(cc, counter);
-        } else {
-            ++counter.count;
-        }
+        CountryCount counter = inferredCountries.computeIfAbsent(cc, newCount -> new CountryCount(cc));
+        ++counter.count;
     }
 
     /**
@@ -181,15 +176,9 @@ public class LocationChooserRule extends GeocodeRule {
             if (name.isFilteredOut()) {
                 continue;
             }
-            PlaceCount x = namespace.get(name.getTextnorm());
-            if (x == null) {
-                x = new PlaceCount();
-                x.place = new Place(name.getTextnorm(), name.getTextnorm());
-                x.total = names.size();
-                namespace.put(name.getTextnorm(), x);
-            } else {
-                ++x.count;
-            }
+            PlaceCount x = namespace.computeIfAbsent(name.getTextnorm(), newCount-> new PlaceCount(name.getTextnorm()));
+            ++x.count;
+            x.total = names.size(); // The total count of mentions.
         }
 
         for (String cc : countryContext.keySet()) {
@@ -201,15 +190,9 @@ public class LocationChooserRule extends GeocodeRule {
         for (PlaceCount count : boundaryContext.values()) {
             // log.debug("Boundary: {} ({})", count.place, count.count);
             log.debug("Boundary: {}", count);
-            String cc = count.place.getCountryCode();
-            CountryCount Ccnt = inferredCountries.get(cc);
-            if (Ccnt == null) {
-                Ccnt = new CountryCount();
-                Ccnt.country = new Country(cc, cc);
-                inferredCountries.put(cc, Ccnt);
-            } else {
-                ++Ccnt.count;
-            }
+            String cc = count.getCountryCode();
+            CountryCount Ccnt = inferredCountries.computeIfAbsent(cc, newCount-> new CountryCount(cc));
+            ++Ccnt.count;
         }
         log.debug("Places: {}/{}", namespace.size(), namespace);
     }
@@ -256,13 +239,13 @@ public class LocationChooserRule extends GeocodeRule {
         // nudge choice of Springfield, OH as such. Such as with a preferred location
         // (geohash).
 
-        if (preferredCountries != null && !preferredCountries.isEmpty()) {
+        if (!preferredCountries.isEmpty()) {
             if (preferredCountries.contains(geo.getCountryCode())) {
                 // Get a half-point for being within the country
                 name.incrementPlaceScore(geo, 0.5, PREF_COUNTRY);
             }
         }
-        if (preferredLocations != null && !preferredLocations.isEmpty()) {
+        if (!preferredLocations.isEmpty()) {
             for (String gh : preferredLocations) {
                 if (geo.getGeohash().startsWith(gh)) {
                     // Increment a full point for being within the geohash. Note geohash length of 4
@@ -358,7 +341,7 @@ public class LocationChooserRule extends GeocodeRule {
      * Patterns of qualified
      * places.
      */
-    public static final int MATCHCONF_NAME_REGION = 75;
+    public static final int MATCHCONF_NAME_REGION = 65;
 
     /**
      * Absolute Confidence: Unique name in gazetteer. Confidence is high, however
@@ -450,6 +433,11 @@ public class LocationChooserRule extends GeocodeRule {
             pc.setConfidence(MATCHCONF_MANY_LOC);
             return;
         }
+        Place chosen = pc.getChosenPlace(); // NOT NULL
+        if (chosen == null){
+            // Should never happen -- if getChosen() is not null, getChosenPlace() should also be non-null.
+            return;
+        }
         int points = 0;
 
         // This place candidate instance:
@@ -463,7 +451,7 @@ public class LocationChooserRule extends GeocodeRule {
         } else if (pc.distinctLocationCount() == 1 && countryObserver.countryCount() > 0) {
             points = MATCHCONF_ONE_LOC;
         } else if (countryObserver.countryCount() == 0 && pc.hasDiacritics && isShort(pc.getLength())) {
-            points = MATCHCONF_MINIMUM;
+            points = MATCHCONF_MINIMUM - 10;
         } else if (pc.hasRule(NameCodeRule.NAME_ADMCODE_RULE) || pc.hasRule(NameCodeRule.NAME_ADMNAME_RULE)) {
             points = MATCHCONF_NAME_REGION;
         } else if (countryObserver.countryCount() == 1) {
@@ -484,11 +472,11 @@ public class LocationChooserRule extends GeocodeRule {
         // IF there is enough supporting evidence, the confidence will naturally
         // increase, otherwise that confidence stays below threshold.
         double featWeight = 0;
-        FeatureClassMeta fc = FeatureRule.lookupFeature(pc.getChosen());
+        FeatureClassMeta fc = FeatureRule.lookupFeature(chosen);
         if (fc != null) {
             featWeight = fc.factor;
         }
-        points = (int) ((0.75 * points) + (0.25 * points * featWeight));
+        points += (int)(0.20 * featWeight);
 
         // Any of these may occur.
         // ======================
@@ -498,9 +486,9 @@ public class LocationChooserRule extends GeocodeRule {
         // immediately get low-confidence.
         if (pc.isLower()) {
             points += MATCHCONF_QUALIFIER_LOWERCASE;
-            if (pc.getChosen().isAdministrative()) {
+            if (chosen.isAdministrative()) {
                 points += 15;
-            } else if (pc.getChosen().isPopulated()) {
+            } else if (chosen.isPopulated()) {
                 points += 10;
             }
         }
@@ -509,7 +497,7 @@ public class LocationChooserRule extends GeocodeRule {
          * Short names that are non-Admin boundaries, consider if they have
          * little or no supporting evidence. Decrement their points.
          */
-        if (!pc.getChosen().isAdministrative() && isShort(pc.getLength())) {
+        if (!pc.getChosenPlace().isAdministrative() && isShort(pc.getLength())) {
             if (pc.getEvidence().isEmpty() && hasOnlyDefaultRules(pc)) {
                 points -= 10;
             }
@@ -534,7 +522,7 @@ public class LocationChooserRule extends GeocodeRule {
         // TODO: work through ambiguities -- true ties.
         // AMBIGUOUS TIE:
         if (pc.isAmbiguous()) {
-            Place p1 = pc.getChosen();
+            Place p1 = pc.getChosenPlace();
             Place p2 = pc.getSecondChoice();
             if (GeodeticUtility.distanceMeters(p1, p2) < SAME_LOCALITY_RADIUS) {
                 points += 6;
@@ -573,7 +561,7 @@ public class LocationChooserRule extends GeocodeRule {
         }
         //
 
-        if (this.countryObserver.countryObserved(pc.getChosen().getCountryCode())) {
+        if (this.countryObserver.countryObserved(pc.getChosenPlace().getCountryCode())) {
             points += MATCHCONF_QUALIFIER_COUNTRY_MENTIONED;
         }
 
@@ -614,16 +602,14 @@ public class LocationChooserRule extends GeocodeRule {
          * Abs. ABS good match. Abbreviation matched abbreviation or code. TODO.
          * </pre>
          */
-        // boolean noEvidence = pc.getEvidence().isEmpty();
-        boolean isAcronym = pc.isUpper();
-        boolean isMisMatchedAcronym = (pc.isUpper() && !pc.getChosen().isUppercaseName())
-                || (!pc.isUpper() && pc.getChosen().isUppercaseName());
+        boolean upper = pc.getChosenPlace().isUppercaseName();
+        boolean isMisMatchedAcronym = (pc.isUpper() && !upper) || (!pc.isUpper() && upper);
 
         int points = MATCHCONF_MINIMUM;
 
         if (hasOnlyDefaultRules(pc) && isMisMatchedAcronym) {
             points = MATCHCONF_BARE_ACRONYM;
-        } else if (isAcronym) {
+        } else if (pc.isAcronym) {
             // Acronym with some evidence.
             points = MATCHCONF_BARE_ACRONYM + 3;
         }

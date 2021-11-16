@@ -3,15 +3,16 @@ package org.opensextant.extractors.geo.rules;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
+import org.opensextant.extractors.geo.ScoredPlace;
 
 import java.util.*;
 
 public class HeatMapRule extends GeocodeRule {
 
-    Map<String, List<Place>> heatmap = new HashMap<>();
-    Map<String, Set<String>> heatmapNames = new HashMap<>();
-    Set<String> visitedPlaces = new HashSet<>();
-    Map<String, List<PlaceCandidate>> mentionMap = new HashMap<>();
+    final Map<String, List<Place>> heatmap = new HashMap<>();
+    final Map<String, Set<String>> heatmapNames = new HashMap<>();
+    final Set<String> visitedPlaces = new HashSet<>();
+    final Map<String, List<PlaceCandidate>> mentionMap = new HashMap<>();
     private boolean useAdminBoundary = true;
 
     public static final String HEATMAP_RULE = "CollocatedNames.geohash";
@@ -80,19 +81,10 @@ public class HeatMapRule extends GeocodeRule {
         if (gh == null) {
             return;
         }
-        List<Place> bucket = heatmap.get(gh);
-        Set<String> bucketNames = heatmapNames.get(gh);
-        if (bucketNames == null) {
-            bucketNames = new HashSet<>();
-            heatmapNames.put(gh, bucketNames);
-        }
-
+        Set<String> bucketNames = heatmapNames.computeIfAbsent(gh, newBucket -> new HashSet<>());
         bucketNames.add(name);
 
-        if (bucket == null) {
-            bucket = new ArrayList<>();
-            heatmap.put(gh, bucket);
-        }
+        List<Place> bucket = heatmap.computeIfAbsent(gh, newPlaceList -> new ArrayList<>());
         bucket.add(geo);
     }
 
@@ -139,7 +131,8 @@ public class HeatMapRule extends GeocodeRule {
                 log.debug("Igore for HeatMap: {}", name.getText());
                 continue;
             }
-            for (Place geo : name.getPlaces()) {
+            for (ScoredPlace geoScore : name.getPlaces()) {
+                Place geo = geoScore.getPlace();
                 evaluate(name, geo);
             }
         }
@@ -236,6 +229,7 @@ public class HeatMapRule extends GeocodeRule {
             }
             log.debug("{} {} {}", loc, distinctNames, places);
         }
+        /* CLEAR here as memory consumption or object trails may linger with unwanted consequences. */
+        reset();
     }
-
 }

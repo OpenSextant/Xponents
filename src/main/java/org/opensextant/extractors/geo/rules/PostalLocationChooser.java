@@ -43,10 +43,11 @@ public class PostalLocationChooser extends GeocodeRule {
             // then we choose it.  Otherwise there is no easy way to select the location in isolation.
 
             // Qualified location  ... PROVINCE ZIPCODE ...
-            ScoredPlace loc = name.getChosen();
+            ScoredPlace locScore = name.getChosen();
+            Place loc = locScore.getPlace();
             if (loc != null && paired) {
                 conf += 20;
-                conf += (int) (loc.getScore() / 10);
+                conf += (int) (locScore.getScore() / 10);
             }
 
             // Unique location?

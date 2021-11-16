@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 The MITRE Corporation.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *
  */
 
 package org.opensextant.extractors.geo.rules;
@@ -22,9 +21,8 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceCount;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Give a list of province metadata that scopes the document, mark the list of
@@ -36,7 +34,7 @@ import java.util.Map;
  */
 public class ProvinceAssociationRule extends GeocodeRule {
 
-    private final Map<String, Place> relevantProvinceID = new HashMap<>();
+    private final HashSet<String> relevantProvinceID = new HashSet<>();
 
     public ProvinceAssociationRule() {
         weight = 5;
@@ -52,10 +50,8 @@ public class ProvinceAssociationRule extends GeocodeRule {
             return;
         }
         for (PlaceCount count : p) {
-            Place adm1 = count.place;
-            relevantProvinceID.put(adm1.getHierarchicalPath(), adm1);
+            relevantProvinceID.add(count.label);
         }
-
     }
 
     /**
@@ -94,9 +90,16 @@ public class ProvinceAssociationRule extends GeocodeRule {
 
             // All or any of these Geos for a name could be in scope.
             // Assess all of them.
-            for (Place adm1 : relevantProvinceID.values()) {
-                if (name.presentInHierarchy(adm1.getHierarchicalPath())) {
-                    name.addAdmin1Evidence("InferredAdmin1", weight, adm1.getAdmin1(), adm1.getCountryCode());
+            for (String adm1_path : relevantProvinceID) {
+                if (name.presentInHierarchy(adm1_path)) {
+                    if (adm1_path.contains(".")) {
+                        String[] parts = adm1_path.split("\\.");
+                        String cc = parts[0];
+                        String a = parts[1];
+                        name.addAdmin1Evidence("InferredAdmin1", weight, a, cc);
+                    } else {
+                        log.info("Unknown ADM1 boundary path %s", adm1_path);
+                    }
                 }
             }
         }

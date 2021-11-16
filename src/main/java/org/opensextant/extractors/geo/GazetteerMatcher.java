@@ -86,7 +86,6 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private long filteredTotal = 0;
     private long matchedTotal = 0;
     private boolean allowLowercaseAbbrev = false;
-    private static int AVERAGE_ABBREV_LEN = 6; /* Typical acronym or abbreviation len */
     private static int PHRASE_LEN = 20; /* Two short words */
 
     /*
@@ -249,7 +248,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @throws SolrServerException
      * @see #searchAdvanced(String, boolean, int)
      */
-    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr) throws SolrServerException, IOException {
+    public List<Place> searchAdvanced(String place, boolean as_solr) throws SolrServerException, IOException {
         return searchAdvanced(place, as_solr, -1);
     }
 
@@ -271,7 +270,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @return places List of scoreable place entries
      * @throws SolrServerException the solr server exception
      */
-    public List<ScoredPlace> searchAdvanced(String place, boolean as_solr, int maxLen)
+    public List<Place> searchAdvanced(String place, boolean as_solr, int maxLen)
             throws SolrServerException, IOException {
 
         if (as_solr) {
@@ -283,7 +282,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         QueryResponse response = solr.getInternalSolrClient().query(params, SolrRequest.METHOD.GET);
 
-        List<ScoredPlace> places = new ArrayList<>();
+        List<Place> places = new ArrayList<>();
         for (SolrDocument solrDoc : response.getResults()) {
             /*
              * Length Filter. Alternative: store name as string in solr, vice full text
@@ -575,11 +574,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             for (Object solrId : placeRecordIds) {
                 /* beanMap is populated by createTag() */
-                ScoredPlace pGeo = (ScoredPlace) beanMap.get(solrId);
+                Place pGeo = (Place) beanMap.get(solrId);
                 if (pGeo == null) {
                     log.error("Place object not found for row ID {}", solrId);
                     continue;
                 }
+
                 /* OPTIMIZE: Pare down very large location matches */
                 if (largeGeoCount) {
                     if (!(pGeo.isAdministrative() || pGeo.isPopulated())) {
@@ -607,13 +607,10 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * TEST: "abc" (Text) matches "abc" (Place)    allowLowercaseAbbrev = True
                  * TEST: "abc" (Text) matches "abc" (Place)    else if Place represents an abbreviation , then filter out
                  */
-                if (len < AVERAGE_ABBREV_LEN) {
+                if (pc.isAbbrevLength()) {
                     if (pc.isLower()) {
-                        if (allowLowercaseAbbrev || allowLowerCase) {
-                            validMatch = true; /* lower case allowed in certain circumstance */
-                        } else {
-                            validMatch = false; /* no lower case allowed */
-                        }
+                        // Lower case is allowed only if flags indicate so.
+                        validMatch = allowLowercaseAbbrev || allowLowerCase;
                     }
 
                     // This should invalidate matching trivial "me", "oh", "we", etc. in mixed case text
@@ -646,7 +643,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 if (geocode) {
                     pGeo.defaultHierarchicalPath();
                     // Default score for geo will be calculated in PlaceCandidate
-                    pc.addPlace(pGeo);
+                    ScoredPlace placeHolder = new ScoredPlace();
+                    placeHolder.setPlace(pGeo);
+                    pc.addPlace(placeHolder);
                 }
             }
 
@@ -694,7 +693,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         return false;
     }
 
-    private void assessAbbreviation(PlaceCandidate pc, ScoredPlace pGeo, char postChar, boolean docIsUPPER) {
+    private void assessAbbreviation(PlaceCandidate pc, Place pGeo, char postChar, boolean docIsUPPER) {
         /*
          * - Block re-entry to this logic. If Match is already marked as ABBREV,
          * then no need to review
@@ -721,7 +720,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * an abbreviation.
                  */
                 pc.isAbbreviation = true;
-            } else if (!docIsUPPER && pc.isUpper()) {
+            } else if (!docIsUPPER && pc.isUpper() && pc.isAbbrevLength()) {
                 /*
                  * Hack Warning: NOT everything UPPERCASE in a document
                  * is an abbrev.
@@ -758,16 +757,16 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * @param gazEntry a solr record from the gazetteer
      * @return Place (Xponents) object
      */
-    public static ScoredPlace createPlace(SolrDocument gazEntry) {
+    public static Place createPlace(SolrDocument gazEntry) {
 
         // Creates for now org.opensextant.placedata.Place
         // Place bean = SolrProxy.createPlace(gazEntry);
         String plid = SolrUtil.getString(gazEntry, "place_id");
         String nm = SolrUtil.getString(gazEntry, "name");
-        ScoredPlace bean = new ScoredPlace(plid, nm);
-        SolrUtil.populatePlace(gazEntry, bean);
+        Place geo = new Place(plid, nm);
+        SolrUtil.populatePlace(gazEntry, geo);
 
-        return bean;
+        return geo;
     }
 
     private void summarizeExtraction(Collection<PlaceCandidate> candidates, String docid) {
@@ -792,28 +791,15 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 namekey = namekey.toLowerCase();
             }
 
-            for (Place p : candidate.getPlaces()) {
-                if (p == null) {
-                    continue;
-                }
-
+            for (ScoredPlace scoredPlace : candidate.getPlaces()) {
+                Place p = scoredPlace.getPlace();
                 if (p.isCountry()) {
-                    Integer count = countries.get(namekey);
-                    if (count == null) {
-                        count = 1;
-                        countries.put(namekey, count);
-                    }
+                    Integer count = countries.computeIfAbsent(namekey, newInt-> 0);
                     ++count;
-                    countries.put(namekey, count);
                     break;
                 } else {
-                    Integer count = places.get(namekey);
-                    if (count == null) {
-                        count = 1;
-                        places.put(namekey, count);
-                    }
+                    Integer count = places.computeIfAbsent(namekey, newInt-> 0);
                     ++count;
-                    places.put(namekey, count);
                 }
             }
         }
@@ -836,5 +822,4 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public List<Place> placesAt(LatLon yx) throws SolrServerException, IOException {
         return gazetteer.placesAt(yx, 50);
     }
-
 }

@@ -52,7 +52,7 @@ public class ProvinceNameSetter extends GeocodeRule {
             /*
              * First choice -- set the place name.
              */
-            assignProvinceName(pc.getChosen());
+            assignProvinceName(pc.getChosenPlace());
         }
     }
 

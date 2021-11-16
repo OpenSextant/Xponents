@@ -54,7 +54,7 @@ public class Transforms {
                 placeMatch.setText(text);
                 Transforms.parseGeocoding(geo, a);
                 placeMatch.setConfidence(a.getInteger("confidence", -1));
-                placeMatch.choose(geo);
+                placeMatch.setChosenPlace(geo);
 
                 m = placeMatch;
                 break;
@@ -84,7 +84,7 @@ public class Transforms {
                 countryMatch.setConfidence(a.getInteger("confidence", -1));
                 cc.setCountryCode(a.getString("cc"));
                 countryMatch.isCountry = true;
-                countryMatch.choose(cc);
+                countryMatch.setChosenPlace(cc);
                 m = countryMatch;
 
                 break;
@@ -380,7 +380,7 @@ public class Transforms {
             }
 
             PlaceCandidate place = (PlaceCandidate) name;
-            Place resolvedPlace = place.getChosen();
+            Place resolvedPlace = place.getChosen().getPlace();
 
             /*
              * ==========================

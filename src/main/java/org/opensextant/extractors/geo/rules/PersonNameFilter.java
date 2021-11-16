@@ -185,7 +185,7 @@ public class PersonNameFilter extends GeocodeRule {
                 // LOC: "Murtagh" in PERSON: "General Murtagh"
                 if (pc.isWithin(name)) {
                     rule = "ResolvedPerson";
-                } else if (pc.isBefore(name) && pc.getWordCount() == 1) {
+                } else if (pc.isBefore(name) && pc.getWordCount() == 1 && !pc.isCountry) {
                     if (hasNonWhitespace(input.buffer, pc.end, name.start)) {
                         continue;
                     }
@@ -237,11 +237,10 @@ public class PersonNameFilter extends GeocodeRule {
                     // Special conditions:
                     // City name in the name of a Building or Landmark is worth saving as a location.
                     // But short one-word names appearing in organization names, may be false positives
-                    // After more evaluation, it seems like presence of a city name in an
-                    // organization name is good evidence to leverage.
+                    // After more evaluation, it seems like presence of a city name in an organization name
+                    // is good evidence to leverage, so do not claim the location name is a resolved org name.
                     //
-                    pc.setFilteredOut(true);
-                    resolvedOrgs.put(pc.getTextnorm(), name.getText());
+                    // TODO: pc.setFilteredOut(true); resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule(NAME_IN_ORG_RULE);
                 } else if (name.isWithin(pc)) {
                     name.setFilteredOut(true);

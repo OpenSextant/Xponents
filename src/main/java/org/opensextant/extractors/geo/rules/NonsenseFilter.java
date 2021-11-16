@@ -2,6 +2,7 @@ package org.opensextant.extractors.geo.rules;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.util.TextUtils;
 
 import java.util.HashSet;
@@ -96,7 +97,7 @@ public class NonsenseFilter extends GeocodeRule {
             /*
              * Ignore phrases starting with trivial articles or mismatching initial case.
              */
-            if (p.getWordCount() == 2) {
+            if (p.getWordCount() == 2 &&  !p.isCountry ) {
                 String tok1 = p.getTokens()[0];
                 String tok2 = p.getTokens()[1];
                 if (p.isLower() || (lowerInitial(tok1) && !lowerInitial(tok2))) {
@@ -229,7 +230,8 @@ public class NonsenseFilter extends GeocodeRule {
         String ph1 = p.getNDTextnorm();
         String diacriticRule = null;
         log.debug("Testing phrase {} phonetic:{}", p.getTextnorm(), ph1);
-        for (Place geo : p.getPlaces()) {
+        for (ScoredPlace geoScore : p.getPlaces()) {
+            Place geo = geoScore.getPlace();
             log.debug("\tPLACE={}, {}", geo, geo.getNamenorm());
             boolean geoDiacritics = TextUtils.hasDiacritics(geo.getPlaceName());
             if (geoDiacritics && p.hasDiacritics) {

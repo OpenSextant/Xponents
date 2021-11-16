@@ -19,6 +19,7 @@ package org.opensextant.extractors.geo.rules;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
+import org.opensextant.extractors.geo.ScoredPlace;
 
 import java.util.HashSet;
 import java.util.List;
@@ -99,7 +100,8 @@ public class MajorPlaceRule extends GeocodeRule {
             boolean isAbbrev = name.isShortName();
             boolean matchedAdmin = false;
 
-            for (Place geo : name.getPlaces()) {
+            for (ScoredPlace geoScore : name.getPlaces()) {
+                Place geo = geoScore.getPlace();
                 if (filterOutByFrequency(name, geo)) {
                     continue;
                 }
@@ -156,7 +158,7 @@ public class MajorPlaceRule extends GeocodeRule {
 
         setGeohash(geo);
 
-        String pid = this.internalPlaceID(geo);
+        String pid = String.format("%s/%s", geo.getPlaceID(), geo.getPlaceName());
         if (visitedPlaces.contains(pid)) {
             return;
         }
@@ -168,7 +170,7 @@ public class MajorPlaceRule extends GeocodeRule {
             ev = new PlaceEvidence(geo, CAPITAL, weight + 2);
         } else if (geo.isAdmin1()) {
             ev = new PlaceEvidence(geo, ADMIN, weight);
-            inferBoundary(geo);
+            inferBoundary(name.getNDTextnorm(), geo);
         } else if (popStats != null && geo.isPopulated()) {
             String gh = geo.getGeohash();
             String prefix = gh.substring(0, GEOHASH_RESOLUTION);
@@ -239,7 +241,7 @@ public class MajorPlaceRule extends GeocodeRule {
      *
      * @param capital
      */
-    public void inferCountry(final Place capital) {
+     void inferCountry(final Place capital) {
         if (this.countryObserver == null) {
             return;
         }
@@ -248,9 +250,9 @@ public class MajorPlaceRule extends GeocodeRule {
         }
     }
 
-    public void inferBoundary(final Place prov) {
+     void inferBoundary(String nameNorm, Place prov) {
         if (this.boundaryObserver != null) {
-            this.boundaryObserver.boundaryLevel1InScope(prov);
+            this.boundaryObserver.boundaryLevel1InScope(nameNorm, prov);
         }
     }
 }

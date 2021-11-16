@@ -21,6 +21,8 @@ import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.geo.rules.FeatureClassMeta;
+import org.opensextant.extractors.geo.rules.FeatureRule;
 import org.opensextant.util.TextUtils;
 
 import java.util.*;
@@ -62,43 +64,6 @@ public class PlaceCandidate extends TextMatch {
     private boolean anchor = false;
 
     /**
-     * Default weighting increments.
-     */
-    private static final String[] CLASS_SCALE = {"A:3", "P:2", "L:1", "R:0", "H:1", "V:0", "T:1"};
-
-    private static final String[] DESIGNATION_SCALE = {
-            /* Places: cities, villages, ruins, etc. */
-            "PPLC:12",
-            "PPLA:8",
-            "PPLG:7",
-            "PPL:5",
-            "PPLL:2",
-            "PPLQ:2",
-            "PPLX:2",
-            /* Administrative regions */
-            "ADM1:9",
-            "ADM2:8",
-            "ADM3:7",
-            /* Other geographic features */
-            "ISL:4",
-            "ISLS:5"};
-
-    private static final Map<String, Integer> classWeight = new HashMap<>();
-    private static final Map<String, Integer> designationWeight = new HashMap<>();
-    private static final int DEFAULT_DESIGNATION_WT = 2;
-
-    static {
-        for (String entry : DESIGNATION_SCALE) {
-            String[] parts = entry.split(":");
-            designationWeight.put(parts[0], Integer.parseInt(parts[1]));
-        }
-        for (String entry : CLASS_SCALE) {
-            String[] parts = entry.split(":");
-            classWeight.put(parts[0], Integer.parseInt(parts[1]));
-        }
-    }
-
-    /**
      *
      */
     public PlaceCandidate() {
@@ -106,15 +71,18 @@ public class PlaceCandidate extends TextMatch {
 
     private String nonDiacriticTextnorm = null;
 
-    public String getNDTextnorm(){
+    public String getNDTextnorm() {
         return nonDiacriticTextnorm;
     }
 
-    public void setText(String name){
+    public void setText(String name) {
         super.setText(name);
         this.nonDiacriticTextnorm = TextUtils.phoneticReduction(getTextnorm(), isASCII());
     }
 
+    public boolean isAbbrevLength() {
+        return getLength() <= ABBREVIATION_MAX_LEN;
+    }
 
     /**
      * Mark this candidate as something that was derived by special rules and to treat it
@@ -172,15 +140,8 @@ public class PlaceCandidate extends TextMatch {
      *
      * @param geo
      */
-    public void choose(Place geo) {
-        if (geo instanceof ScoredPlace) {
-            choice1 = (ScoredPlace) geo;
-        } else {
-            String k = makeKey(geo);
-            if (scoredPlaces.containsKey(k)) {
-                choice1 = scoredPlaces.get(k);
-            }
-        }
+    public void choose(ScoredPlace geo) {
+        choice1 = geo;
     }
 
     /**
@@ -293,7 +254,19 @@ public class PlaceCandidate extends TextMatch {
      */
     public Geocoding getGeocoding() {
         choose();
-        return getChosen();
+        if (this.choice1 != null) {
+            return getChosen().getPlace();
+        }
+        return null;
+    }
+
+    public void setChosenPlace(Place geo) {
+        choice1 = new ScoredPlace(null, null);
+        choice1.setPlace(geo);
+    }
+
+    public Place getChosenPlace() {
+        return choice1 != null ? choice1.getPlace() : null;
     }
 
     /**
@@ -309,15 +282,10 @@ public class PlaceCandidate extends TextMatch {
      *
      * @param geo
      */
-    public void setChosen(Place geo) {
+    public void setChosen(ScoredPlace geo) {
+        choice1 = geo;
         if (geo == null) {
-            choice1 = null;
             choice2 = null;
-        } else if (geo instanceof ScoredPlace) {
-            choice1 = (ScoredPlace) geo;
-        } else {
-            choice1 = new ScoredPlace(null, null);
-            geo.copyTo(choice1);
         }
     }
 
@@ -393,8 +361,8 @@ public class PlaceCandidate extends TextMatch {
     /**
      * @return ScoredPlace, choice2
      */
-    public ScoredPlace getSecondChoice() {
-        return choice2;
+    public Place getSecondChoice() {
+        return choice2 != null ? choice2.getPlace() : null;
     }
 
     /**
@@ -408,8 +376,9 @@ public class PlaceCandidate extends TextMatch {
      * @param place
      */
     public void addPlace(ScoredPlace place) {
-        this.addPlace(place, defaultScore(place));
+        this.addPlace(place, defaultScore(place.getPlace()));
         this.rules.add(DEFAULT_SCORE);
+        this.rules.add(FeatureRule.FEAT_RULE);
     }
 
     public static final String DEFAULT_SCORE = "DefaultScore";
@@ -431,39 +400,39 @@ public class PlaceCandidate extends TextMatch {
      */
     public void addPlace(ScoredPlace place, Double score) {
         place.incrementScore(score);
-        this.scoredPlaces.put(makeKey(place), place);
+        Place geo = place.getPlace();
+        this.scoredPlaces.put(makeKey(geo), place);
 
         // 'US.CA' or 'US.06', etc.
         // 'US'
         // Not "" or null allowed here:
-        if (place.getCountryCode() != null) {
-            this.hierarchicalPaths.add(place.getHierarchicalPath());
-            this.countries.add(place.getCountryCode());
+        if (geo.getCountryCode() != null) {
+            this.hierarchicalPaths.add(geo.getHierarchicalPath());
+            this.countries.add(geo.getCountryCode());
         }
     }
 
     /**
      *
      */
-    public static final double NAME_WEIGHT = 0.2;
+    public static final double NAME_WEIGHT = 0.5;
 
     /**
      *
      */
-    public static final double FEAT_WEIGHT = 0.1;
+    public static final double FEAT_WEIGHT = 0.3;
 
     /**
      *
      */
-    public static final double LOCATION_BIAS_WEIGHT = 0.7;
+    public static final double LOCATION_BIAS_WEIGHT = 0.10;
 
     /**
      * Given this candidate, how do you score the provided place
      * just based on those place properties (and not on context, document
      * properties, or other evidence)?
      * This 'should' produce a base score of something between 0 and 1.0, or 0..10.
-     * These scores do not necessarily need to stay in that range, as they are all
-     * relative.
+     * These scores do not necessarily need to stay in that range, as they are all relative.
      * However, as rules fire and compare location data it is better to stay in a
      * known range for sanity sake.
      *
@@ -472,11 +441,12 @@ public class PlaceCandidate extends TextMatch {
      */
     public double defaultScore(Place g) {
         double sn = scoreName(g);
-        double sf = scoreFeature(g);
+        // TODO: Xponents 3.5 ID bias accounts for feature score already.
+        //double sf = scoreFeature(g);
         int sb = g.getId_bias(); /* v3.5: 100 point scale. Multiply by 0.01 */
 
-        double baseScore = (NAME_WEIGHT * sn) + (FEAT_WEIGHT * sf) + (LOCATION_BIAS_WEIGHT * sb * 0.01);
-        return 10 * baseScore;
+        double baseScore = (NAME_WEIGHT * sn) + /*(FEAT_WEIGHT * sf) +*/ (LOCATION_BIAS_WEIGHT * sb );
+        return  baseScore;
     }
 
     /**
@@ -525,18 +495,8 @@ public class PlaceCandidate extends TextMatch {
      * @return feature score
      */
     protected double scoreFeature(Place g) {
-
-        Integer wt = designationWeight.get(g.getFeatureCode());
-        if (wt != null) {
-            return (float) wt / 10;
-        }
-        int score = DEFAULT_DESIGNATION_WT;
-        wt = classWeight.get(g.getFeatureClass());
-        if (wt != null) {
-            score += wt;
-        }
-
-        return (float) score / 10;
+        FeatureClassMeta meta = FeatureRule.lookupFeature(g);
+        return meta.factor * 0.10;
     }
 
     /**
@@ -848,7 +808,7 @@ public class PlaceCandidate extends TextMatch {
 
     public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
 
-    public static int ABBREVIATION_MAX_LEN = 6;
+    public static int ABBREVIATION_MAX_LEN = 5;
     private int wordCount = 0;
 
     /**
@@ -875,10 +835,11 @@ public class PlaceCandidate extends TextMatch {
         this.tokens = tokenizer.split(getText());
         this.wordCount = tokens.length;
         this.hasDiacritics = TextUtils.hasDiacritics(getText());
+        boolean hasSpaces = this.getText().contains(" ");
         /*
          * Old logic had harmful consequences on By-lines etc: Keep scope of this narrow.
          */
-        if (!contextisUpper && isUpper() && 0 < getLength() && getLength() <= ABBREVIATION_MAX_LEN) {
+        if (!contextisUpper && isUpper() && 0 < getLength() && isAbbrevLength() && !hasSpaces) {
             this.isAcronym = true;
             this.isAbbreviation = true;
         }
@@ -954,8 +915,8 @@ public class PlaceCandidate extends TextMatch {
             return true;
         }
 
-        Place geo = getChosen();
-        Place otherGeo = otherMention.getChosen();
+        Place geo = getChosenPlace();
+        Place otherGeo = otherMention.getChosenPlace();
         if (geo != null && otherGeo != null) {
             if (otherGeo.getFeatureDesignation().startsWith(featPrefix)) {
                 if (geo.sameBoundary(otherGeo)) {
@@ -967,11 +928,13 @@ public class PlaceCandidate extends TextMatch {
 
         // Dare we cache the sorted scoredPlaces for each mention/otherMention?
         //
-        for (Place someGeo : scoredPlaces.values()) {
-            for (Place someOtherGeo : otherMention.getPlaces()) {
-                if (someOtherGeo.getFeatureDesignation().startsWith(featPrefix)) {
-                    if (someGeo.sameBoundary(someOtherGeo)) {
-                        linkGeography(slot, someOtherGeo);
+        for (ScoredPlace someGeoScore : scoredPlaces.values()) {
+            for (ScoredPlace otherGeoScore : otherMention.getPlaces()) {
+                Place geo2 = someGeoScore.getPlace();
+                Place otherGeo2 = otherGeoScore.getPlace();
+                if (otherGeo2.getFeatureDesignation().startsWith(featPrefix)) {
+                    if (geo2.sameBoundary(otherGeo2)) {
+                        linkGeography(slot, otherGeo2);
                         return true;
                     }
                 }

@@ -276,7 +276,7 @@ public class XponentTextGeotagger extends XponentGeocoder {
                 continue;
             }
 
-            Place resolvedPlace = place.getChosen();
+            Place resolvedPlace = place.getChosenPlace();
             if (resolvedPlace == null) {
                 log.debug("Place Not Resolved {}", name.getText());
                 otherMatches.add(name);

@@ -18,10 +18,7 @@
 package org.opensextant.extractors.geo.rules;
 
 import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.BoundaryObserver;
-import org.opensextant.extractors.geo.CountryObserver;
-import org.opensextant.extractors.geo.LocationObserver;
-import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +29,6 @@ import static org.opensextant.util.GeodeticUtility.geohash;
 public abstract class GeocodeRule {
 
     public static final int AVG_WORD_LEN = 8;
-    public static int AVG_ABBREV_LEN = 6; /* Typical acronym or abbreviation len */
 
     public static final int UPPERCASE = 2;
     public static final int LOWERCASE = 1;
@@ -43,7 +39,7 @@ public abstract class GeocodeRule {
     protected CountryObserver countryObserver = null;
     protected LocationObserver coordObserver = null;
     protected BoundaryObserver boundaryObserver = null;
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected boolean locationOnly = false;
 
     protected void log(String msg) {
@@ -173,11 +169,11 @@ public abstract class GeocodeRule {
                 continue;
             }
 
-            for (Place geo : name.getPlaces()) {
-                if (filterOutByFrequency(name, geo)) {
+            for (ScoredPlace geoScore : name.getPlaces()) {
+                if (filterOutByFrequency(name, geoScore.getPlace())) {
                     continue;
                 }
-                evaluate(name, geo);
+                evaluate(name, geoScore.getPlace());
                 if (name.getChosen() != null) {
                     // DONE
                     break;

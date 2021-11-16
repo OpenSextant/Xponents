@@ -18,6 +18,7 @@ package org.opensextant.extractors.geo.rules;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 
 import java.util.List;
 
@@ -42,16 +43,16 @@ public class CountryRule extends GeocodeRule {
                 name.isCountry = false; /* definitely unmark as country */
                 continue;
             }
-            for (Place geo : name.getPlaces()) {
-                if (filterOutByFrequency(name, geo)) {
+            for (ScoredPlace geo : name.getPlaces()) {
+                if (filterOutByFrequency(name, geo.getPlace())) {
                     continue;
                 }
-                evaluate(name, geo);
+                evaluate(name, geo.getPlace());
             }
 
             if (name.isCountry) {
                 name.choose();
-                Place ctry = name.getChosen();
+                Place ctry = name.getChosenPlace();
                 if (ctry != null) {
                     // This should always be true -- should not be null.
                     name.addCountryEvidence(CNAME, weight + 0.0, ctry.getCountryCode(), ctry);
@@ -94,7 +95,7 @@ public class CountryRule extends GeocodeRule {
             // "ALB" (name) == "ALB" (geo)
             // "AL"  => ambiguous
             addCountryCode(name, geo);
-            log("Chose Country", name.getText());
+            log("Chose Country Short Name", name.getText());
         } else if (name.getLength() > 3) {
             // Check on Lexical matching to help choose best name match to location.
             sameLexicalName(name, geo);
@@ -107,7 +108,7 @@ public class CountryRule extends GeocodeRule {
                 // "Albania" = "ALBANIA"
                 addCountryName(name, geo);
             }
-            log("Chose Country", name.getText());
+            log("Chose Country Name", name.getText());
         }
     }
 

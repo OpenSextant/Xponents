@@ -309,7 +309,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         addRule(new NameRule());
 
         // Feature classification rule:
-        addRule(new FeatureRule());
+        //addRule(new FeatureRule());
         HeatMapRule heatmapper = new HeatMapRule();
         addRule(heatmapper);
         heatmapper.setCountryObserver(this);
@@ -394,7 +394,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         this.relevantCountries.clear();
         this.relevantProvinces.clear();
         this.relevantLocations.clear();
-        this.nationalities.clear();
+        //this.nationalities.clear();
 
         personNameRule.reset();
         countryRule.reset();
@@ -569,7 +569,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private void updateRelatedNames(List<PlaceCandidate> candidates) {
         for (PlaceCandidate pc : candidates) {
             if (!pc.isFilteredOut() && pc.isCountry && pc.getChosen() != null) {
-                Place C = pc.getChosen();
+                Place C = pc.getChosenPlace();
                 /* TODO: confusion between territory abbreviations and owning country may need to be resolved, but a truly minor point. */
                 if (C.isCode() && chooser.getInferredCountryCount(C.getCountryCode()) == 0) {
                     pc.setFilteredOut(true);
@@ -581,12 +581,12 @@ public class PlaceGeocoder extends GazetteerMatcher
             }
 
             for (PlaceCandidate related : pc.getRelated()) {
-                Place geo = pc.getChosen();
-                if (related.getChosen() == null) {
+                Place geo = pc.getChosenPlace();
+                if (related.getChosenPlace() == null) {
                     // This happens rarely if a name is marked as a Taxon, Person or Org.
                     continue;
                 }
-                Place relatedGeo = related.getChosen();
+                Place relatedGeo = related.getChosenPlace();
 
                 String admHierarchy = geo.getHierarchicalPath();
                 if (admHierarchy.equals(relatedGeo.getHierarchicalPath())
@@ -675,7 +675,8 @@ public class PlaceGeocoder extends GazetteerMatcher
                             if (x >= 0) {
                                 String isocode = t.substring(x + 3);
                                 this.countryInScope(isocode);
-                                nationalities.put(tag.getText(), isocode);
+                                // TODO: Leverage nationalities in some other way?
+                                // nationalities.put(tag.getText(), isocode);
                             }
                         }
                     } else {
@@ -732,14 +733,8 @@ public class PlaceGeocoder extends GazetteerMatcher
         }
         // Null country code? TODO: test for more nulls.
         //
-        CountryCount counter = relevantCountries.get(c.getCountryCode());
-        if (counter == null) {
-            counter = new CountryCount();
-            counter.country = c;
-            relevantCountries.put(c.getCountryCode(), counter);
-        } else {
-            ++counter.count;
-        }
+        CountryCount counter = relevantCountries.computeIfAbsent(c.getCountryCode(), newCount -> new CountryCount(c));
+        ++counter.count;
     }
 
     @Override
@@ -776,7 +771,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         int total = 0;
         // Accumulate total.
         for (PlaceCount cnt : relevantProvinces.values()) {
-            total += cnt.count;
+            total += cnt.getCount();
         }
 
         // One more time to set totals.
@@ -798,17 +793,8 @@ public class PlaceGeocoder extends GazetteerMatcher
             log.debug("Unknown country code {}", cc);
             return;
         }
-        CountryCount counter = relevantCountries.get(C.getCountryCode());
-        if (counter == null) {
-            counter = new CountryCount();
-            // Well, we must deal with a potential unknown country.
-            // Historical differences, XK = Kosovo, YU = Yugoslavia;
-            // FIPS vs. ISO differences, etc. Some country codes may not resolve cleanly.
-            counter.country = C;
-            relevantCountries.put(C.getCountryCode(), counter);
-        } else {
-            ++counter.count;
-        }
+        CountryCount counter = relevantCountries.computeIfAbsent(C.getCountryCode(), newCount -> new CountryCount(C));
+        ++counter.count;
     }
 
     @Override
@@ -858,7 +844,8 @@ public class PlaceGeocoder extends GazetteerMatcher
             // We may need to track all key/value pairs.
             cityOrProv.defaultHierarchicalPath();
             relevantLocations.put(cityOrProv.getPlaceID(), cityOrProv);
-            boundaryLevel1InScope(cityOrProv);
+            // for coordinates, the text that infers the location is not relevant in boundaryLevel1InScope()
+            boundaryLevel1InScope("coordinate", cityOrProv);
             countryInScope(cityOrProv.getCountryCode());
         } catch (Exception err) {
             log.error("Spatial search error", err);
@@ -867,29 +854,27 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * Observer pattern that sees any time a possible boundary (state, province,
-     * district, etc) is
-     * mentioned.
+     * district, etc) is mentioned.
+     * Example:  mention "Florida"  linked to location Florida(ADM1, FL, US) infers the boundary "US.FL"
+     * As would  "Miami" (PPL, FL, US) also infer "US.FL".  We care more about the distinct and various mentions more
+     * than the location counts.  I.e., "Florida" has 185 locations worldwide, multiples in some countries.
      *
+     * @param nameNorm text or name related to the place, p
      * @param p ID of a boundary.
      */
     @Override
-    public void boundaryLevel1InScope(Place p) {
-        if (p.getHierarchicalPath() == null) {
+    public void boundaryLevel1InScope(String nameNorm, Place p) {
+        String key = p.getHierarchicalPath();
+        if (key == null) {
             return;
         }
 
-        PlaceCount counter = relevantProvinces.get(p.getHierarchicalPath());
-        if (counter == null) {
-            counter = new PlaceCount();
-            counter.place = p;
-            relevantProvinces.put(p.getHierarchicalPath(), counter);
-        } else {
-            ++counter.count;
-        }
+        PlaceCount counter = relevantProvinces.computeIfAbsent(key, newCounter -> new PlaceCount(key));
+        counter.add(nameNorm);
     }
 
     @Override
-    public void boundaryLevel2InScope(Place p) {
+    public void boundaryLevel2InScope(String nameNorm, Place p) {
         // NOT Implmemented.
     }
 

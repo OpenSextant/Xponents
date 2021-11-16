@@ -287,39 +287,39 @@ public class SolrUtil {
      */
     public static Place createPlace(SolrDocument gazEntry) {
 
-        Place bean = new Place(getString(gazEntry, "place_id"), getString(gazEntry, "name"));
-        populatePlace(gazEntry, bean);
-        return bean;
+        Place geo = new Place(getString(gazEntry, "place_id"), getString(gazEntry, "name"));
+        populatePlace(gazEntry, geo);
+        return geo;
     }
 
     /**
      * Populate the data card.
      *
      * @param gazEntry solr doc
-     * @param bean     place obj to populate
+     * @param geo     place obj to populate
      */
-    public static void populatePlace(SolrDocument gazEntry, Place bean) {
+    public static void populatePlace(SolrDocument gazEntry, Place geo) {
         String nt = getString(gazEntry, "name_type");
         if (nt != null) {
             // Name types are flags - A(abbrev), N(name), C(code)
-            bean.setName_type(nt.charAt(0));
+            geo.setName_type(nt.charAt(0));
         }
 
-        bean.setCountryCode(getString(gazEntry, "cc"));
+        geo.setCountryCode(getString(gazEntry, "cc"));
 
         // Other metadata.
-        bean.setAdmin1(getString(gazEntry, "adm1"));
-        bean.setAdmin2(getString(gazEntry, "adm2"));
-        bean.setFeatureClass(getString(gazEntry, "feat_class"));
-        bean.setFeatureCode(getString(gazEntry, "feat_code"));
+        geo.setAdmin1(getString(gazEntry, "adm1"));
+        geo.setAdmin2(getString(gazEntry, "adm2"));
+        geo.setFeatureClass(getString(gazEntry, "feat_class"));
+        geo.setFeatureCode(getString(gazEntry, "feat_code"));
 
         // Geo field is specifically Spatial4J lat,lon format.
         // Value should have already been validated as it was stored in index
         double[] xy = getCoordinate(gazEntry, "geo");
-        bean.setLatitude(xy[0]);
-        bean.setLongitude(xy[1]);
+        geo.setLatitude(xy[0]);
+        geo.setLongitude(xy[1]);
 
         // bean.setName_bias(getDouble(gazEntry, "name_bias"));
-        bean.setId_bias(getInteger(gazEntry, "id_bias"));
+        geo.setId_bias(getInteger(gazEntry, "id_bias"));
     }
 }

@@ -2,6 +2,7 @@ package org.opensextant.extractors.geo.rules;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 
 import java.util.HashSet;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Set;
 
 public class ContextualOrganizationRule extends GeocodeRule {
 
-    Set<String> reEval = new HashSet<>();
+    final Set<String> reEval = new HashSet<>();
 
     @Override
     public void reset() {
@@ -35,8 +36,8 @@ public class ContextualOrganizationRule extends GeocodeRule {
             // with any state or division "ADM2" or "ADM1" references.
             // E.g., "Xyz City Council" where city "Xyz City" may reside in a state "S"
             // mentioned elsewhere in document.
-            for (Place geo : name.getPlaces()) {
-                if (boundaryObserver.placeMentionCount().containsKey(geo.getHierarchicalPath())) {
+            for (ScoredPlace geoScore : name.getPlaces()) {
+                if (boundaryObserver.placeMentionCount().containsKey(geoScore.getPlace().getHierarchicalPath())) {
                     name.setFilteredOut(false);
                     name.addRule("ContextualOrg");
                     reEval.add(name.getTextnorm());

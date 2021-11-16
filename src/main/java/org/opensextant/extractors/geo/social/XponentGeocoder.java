@@ -305,7 +305,7 @@ public class XponentGeocoder extends GeoInferencer {
                     // Expecting exactly one choice.
                     // Break out of loop after getting a non-null choice.
                     PlaceCandidate chooser = (PlaceCandidate) e;
-                    Place geo = chooser.getChosen();
+                    Place geo = chooser.getChosenPlace();
                     if (geo != null) {
                         chosen = geo;
                         conf = chosen.isCountry() ? DEFAULT_COUNTRY_CONF : chooser.getConfidence();
@@ -607,7 +607,7 @@ public class XponentGeocoder extends GeoInferencer {
          */
 
         int conf = -1;
-        ScoredPlace chosen = null;
+        Place chosen = null;
         List<TextMatch> entities = null;
         /*
          * LANG ID of profile geography
@@ -718,9 +718,8 @@ public class XponentGeocoder extends GeoInferencer {
                         continue;
                     }
 
-                    ScoredPlace geo = chooser.getChosen();
-                    if (geo != null) {
-                        chosen = geo;
+                    chosen = chooser.getChosenPlace();
+                    if (chosen != null) {
                         conf = chosen.isCountry() ? DEFAULT_COUNTRY_CONF : chooser.getConfidence();
                         g.setMethod(chosen.isCountry() ? "geotag/freetext/country" : "geotag/freetext");
                     }
@@ -801,16 +800,18 @@ public class XponentGeocoder extends GeoInferencer {
                 q = String.format("%s:\"%s\" AND feat_class:(P A L)", fld, nm);
             }
 
-            List<ScoredPlace> places = tagger.searchAdvanced(q, true, nm.length() + 3);
+            List<Place> places = tagger.searchAdvanced(q, true, nm.length() + 3);
             if (!places.isEmpty()) {
                 PlaceCandidate pc = new PlaceCandidate();
                 pc.setText(nm);
                 // TOOD: assess text sense -- if context is UPPER, lower or Mixed.
                 pc.inferTextSense(false, false);
-                ScoredPlace chosen = null;
+                ScoredPlace chosenScore = null;
 
-                for (ScoredPlace p : places) {
-                    pc.addPlace(p);
+                for (Place p : places) {
+                    ScoredPlace entry = new ScoredPlace(p.getPlaceID(), p.getName());
+                    entry.setPlace(p);
+                    pc.addPlace(entry); /* Review if addPlace(ScoredPlace) is needed for this eval */
                     profileRule.evaluate(pc, p);
                 }
 
@@ -819,11 +820,11 @@ public class XponentGeocoder extends GeoInferencer {
                  * scoring and choosing...
                  */
                 pc.choose();
-                chosen = pc.getChosen();
+                chosenScore = pc.getChosen();
 
-                if (chosen != null) {
+                if (chosenScore != null) {
 
-                    geocode(g, chosen);
+                    geocode(g, chosenScore.getPlace());
                     g.setMethod("geotag/lookup");
 
                     // Starting confidence.
@@ -835,7 +836,7 @@ public class XponentGeocoder extends GeoInferencer {
                         conf = conf - (int) (0.1 * profileRule.inferredCountries.size());
                     }
 
-                    conf += chosen.getScore();
+                    conf += chosenScore.getScore();
                     return conf;
                 }
             }

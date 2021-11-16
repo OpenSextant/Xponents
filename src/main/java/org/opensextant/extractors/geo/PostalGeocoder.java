@@ -184,18 +184,14 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
     }
 
     @Override
-    public void boundaryLevel1InScope(Place p) {
-        PlaceCount cnt = pairedPostalMentions.get(p.getHierarchicalPath());
-        if (cnt == null) {
-            cnt = new PlaceCount();
-            cnt.place = p;
-            pairedPostalMentions.put(p.getHierarchicalPath(), cnt);
-        }
+    public void boundaryLevel1InScope(String nameNorm, Place p) {
+        String key = p.getHierarchicalPath();
+        PlaceCount cnt = pairedPostalMentions.computeIfAbsent(key, newCount -> new PlaceCount(key));
         ++cnt.count;
     }
 
     @Override
-    public void boundaryLevel2InScope(Place p) { /* no-op */}
+    public void boundaryLevel2InScope(String nameNorm, Place p) { /* no-op */}
 
     @Override
     public Map<String, PlaceCount> placeMentionCount() {
@@ -209,18 +205,8 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
             log.debug("Unknown country code {}", cc);
             return;
         }
-        CountryCount counter = inferredCountries.get(C.getCountryCode());
-        if (counter == null) {
-            counter = new CountryCount();
-            // Well, we must deal with a potential unknown country.
-            // Historical differences, XK = Kosovo, YU = Yugoslavia;
-            // FIPS vs. ISO differences, etc. Some country codes may not resolve cleanly.
-            counter.country = C;
-            inferredCountries.put(C.getCountryCode(), counter);
-        } else {
-            ++counter.count;
-        }
-
+        CountryCount counter = inferredCountries.computeIfAbsent(C.getCountryCode(), newCount -> new CountryCount(C));
+        ++counter.count;
     }
 
     @Override
@@ -265,7 +251,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
          */
         for (TextMatch p1 : postalMatches) {
             PlaceCandidate postal = (PlaceCandidate) p1;
-            Place postalLoc = postal.getChosen();
+            Place postalLoc = postal.getChosenPlace();
 
             if (postalLoc != null) {
                 if (!GeonamesUtility.isPostal(postalLoc)) {
@@ -330,9 +316,11 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
         // Dare we cache the sorted scoredPlaces for each mention/otherMention?
         //
         // "postal" geo  ~ "02144"   ( KR.11 or US.MA )
-        for (Place geo : postal.getPlaces()) {
+        for (ScoredPlace geoScore : postal.getPlaces()) {
             //  slot = "admin",  if otherMention is "Massachussetts", then selected postal geo is "02144"(US.MA)
-            for (Place otherGeo : otherMention.getPlaces()) {
+            Place geo = geoScore.getPlace();
+            for (ScoredPlace otherGeoScore : otherMention.getPlaces()) {
+                Place otherGeo = otherGeoScore.getPlace();
                 if (otherGeo.getFeatureDesignation().startsWith(featPrefix)) {
                     if (geo.sameBoundary(otherGeo)) {
                         postal.linkGeography(otherMention, slot, otherGeo);
@@ -388,7 +376,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
     }
 
     public static boolean unqualifiedPostalLocation(PlaceCandidate match) {
-        Place geo = match.getChosen();
+        Place geo = match.getChosenPlace();
         return geo == null || GeonamesUtility.isPostal(geo);
     }
 
@@ -434,7 +422,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
             for (String knownSlot : KNOWN_GEO_SLOTS) {
                 if (anchor.hasLinkedGeography(knownSlot)) {
                     // TODO: Will this ever fire?
-                    mention.setChosen(anchor.getLinkedGeography().get(knownSlot));
+                    mention.setChosenPlace(anchor.getLinkedGeography().get(knownSlot));
                     break;
                 }
             }

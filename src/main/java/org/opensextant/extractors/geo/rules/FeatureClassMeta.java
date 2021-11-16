@@ -7,11 +7,17 @@ package org.opensextant.extractors.geo.rules;
  */
 public class FeatureClassMeta {
     public String label;
-    /** Absolute gazetteer count */
+    /**
+     * Absolute gazetteer count
+     */
     public int count;
-    /** Relative gazetteer proportion for this feature */
+    /**
+     * Relative gazetteer proportion for this feature
+     */
     public double proportion;
-    /** Mention Weight */
+    /**
+     * Mention Weight
+     */
     public double weight;
 
     /**
@@ -24,7 +30,7 @@ public class FeatureClassMeta {
     /**
      * number of entries; used as a denominator.
      */
-    private final static int GAZETTEER_BASE_COUNT = 20000000;
+    private final static int GAZETTEER_BASE_COUNT = 25000000;
 
     public FeatureClassMeta(String l, int c, double wt) {
         this.label = l;
@@ -35,6 +41,16 @@ public class FeatureClassMeta {
         // We have a number between 0 and 1 that increases with prevalence of feature
         // type but is adjusted on a-priori preference.
         this.factor = this.weight * this.proportion;
+    }
+
+    /**
+     * A set factor bias, without considering gazetteer proportions.
+     * @param l
+     * @param f
+     */
+    public FeatureClassMeta(String l, double f) {
+        label = l;
+        factor = f;
     }
 
     @Override

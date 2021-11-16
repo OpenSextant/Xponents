@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.extractors.geo.rules.NonsenseFilter;
@@ -27,11 +28,12 @@ public class TestPlacePhonetics {
          */
         String[] names = { /* "ÄEÃ" */ "aea", "Aeå" };
         for (String n : names) {
-            ScoredPlace geo = new ScoredPlace("nothing" + n, n);
+            ScoredPlace geoScore = new ScoredPlace("nothing" + n, n);
+            Place geo = geoScore.getPlace();
             geo.setId_bias(50);
             geo.setFeatureClass("P");
             geo.setFeatureCode("PPLX");
-            pc.addPlace(geo);
+            pc.addPlace(geoScore);
         }
         NonsenseFilter filter = new NonsenseFilter();
         filter.assessPhoneticMatch(pc);
@@ -50,11 +52,12 @@ public class TestPlacePhonetics {
          * candidate. No filtering should happen here.
          */
         String n = "ÄEÃ";
-        ScoredPlace geo = new ScoredPlace("nothing" + n, n);
+        ScoredPlace geoScore = new ScoredPlace("nothing" + n, n);
+        Place geo = geoScore.getPlace();
         geo.setId_bias(50);
         geo.setFeatureClass("P");
         geo.setFeatureCode("PPLX");
-        pc.addPlace(geo);
+        pc.addPlace(geoScore);
         filter.assessPhoneticMatch(pc);
         assertTrue(!pc.isFilteredOut());
         print("Place Match 'ÄEÃ' -- valid geo for candidate.");
@@ -73,11 +76,12 @@ public class TestPlacePhonetics {
          */
         String[] names = { "'OK", "øk", "ØK" };
         for (String n : names) {
-            ScoredPlace geo = new ScoredPlace("nothing" + n, n);
+            ScoredPlace geoScore = new ScoredPlace("nothing" + n, n);
+            Place geo = geoScore.getPlace();
             geo.setId_bias(50);
             geo.setFeatureClass("P");
             geo.setFeatureCode("PPLX");
-            pc.addPlace(geo);
+            pc.addPlace(geoScore);
         }
         NonsenseFilter filter = new NonsenseFilter();
         filter.assessPhoneticMatch(pc);
@@ -92,11 +96,12 @@ public class TestPlacePhonetics {
         pc.setFilteredOut(false);
 
         String n = "OK";
-        ScoredPlace geo = new ScoredPlace("nothing" + n, n);
+        ScoredPlace geoScore = new ScoredPlace("nothing" + n, n);
+        Place geo = geoScore.getPlace();
         geo.setId_bias(50);
         geo.setFeatureClass("P");
         geo.setFeatureCode("PPLX");
-        pc.addPlace(geo);
+        pc.addPlace(geoScore);
         filter.assessPhoneticMatch(pc);
         assertTrue(!pc.isFilteredOut());
         print("Place Match 'OK' -- valid geo for candidate.");

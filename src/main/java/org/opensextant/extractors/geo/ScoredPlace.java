@@ -28,13 +28,25 @@ import java.util.Set;
  * @author dlutz
  * @author ubaldino
  */
-public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
+public class ScoredPlace  implements Comparable<ScoredPlace> {
 
     private double score = 0.0;
     private Set<String> rules = null;
+    private Place place = null;
+
+    public ScoredPlace(){
+    }
 
     public ScoredPlace(String plid, String nm) {
-        super(plid, nm);
+        place = new Place(plid, nm);
+    }
+
+    public Place getPlace(){
+        return place;
+    }
+
+    public void setPlace(Place p){
+        place = p;
     }
 
     public double getScore() {
@@ -86,9 +98,12 @@ public class ScoredPlace extends Place implements Comparable<ScoredPlace> {
 
     @Override
     public String toString() {
-        if (getName() != null) {
-            return String.format("%s (%s, %s, %s), score=%03.2f", getName(), getAdmin1(), getCountryCode(),
-                    getFeatureCode(), getScore());
+        if (place==null){
+            return null;
+        }
+        if (place.getName() != null) {
+            return String.format("%s (%s, %s, %s), score=%03.2f", place.getName(), place.getAdmin1(), place.getCountryCode(),
+                    place.getFeatureCode(), getScore());
         }
         return "No Name";
     }

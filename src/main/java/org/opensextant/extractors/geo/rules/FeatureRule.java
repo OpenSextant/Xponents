@@ -4,6 +4,7 @@ import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * FeatureRule is a rule that makes use of feature distribution across the
@@ -17,48 +18,57 @@ import java.util.HashMap;
  * likely to be the best location.
  * Note -- other evidence and context has to overwhelm certain feature stats here.
  * TODO: this overtakes the "DefaultScore" component from "scoreFeature()"
- *
  * @author ubaldino
  */
 public class FeatureRule extends GeocodeRule {
 
-    private static final FeatureClassMeta[] fcmeta = {
-            /*
-             * Example: 3.5% of placenames are Administrative boundaries.
-             * But they are significant and more likely to be mentioned because of that.
-             * So they are weighted heavier per entry. A resulting factor of wt x proportion
-             * = factor
-             * For "A" class names, 10.0 x 0.035 = 0.35 factor
-             * Keeping Cities/Towns as a 1.0 weight; Adjust others relative to that.
-             **/
-            new FeatureClassMeta("A", 700000, 10.0),
-            new FeatureClassMeta("P", 10000000, 1.0),
-            new FeatureClassMeta("P/PPLX", 500000, 0.7), // Ruins and unused historical names.
-            new FeatureClassMeta("P/PPLH", 500000, 0.7), // Unused historical names.
-            new FeatureClassMeta("S", 2700000, 0.7),
-            new FeatureClassMeta("T", 2300000, 0.6),
-            new FeatureClassMeta("L", 700000, 0.7),
-            new FeatureClassMeta("V", 85000, 0.6),
-            new FeatureClassMeta("R", 65000, 0.5),
-            new FeatureClassMeta("U", 12000, 0.1),
-            new FeatureClassMeta("H", 3200000, 0.5),
-            new FeatureClassMeta("H/RSV", 100000, 0.3),
-            new FeatureClassMeta("H/STM", 1600000, 0.02),
-            new FeatureClassMeta("H/SPNG", 100000, 0.02),
-            new FeatureClassMeta("H/WLL", 100000, 0.01) };
 
-    public static HashMap<String, FeatureClassMeta> featWeights = new HashMap<>();
+    private static final FeatureClassMeta[] featureMeta = {
+            /* Administrative regions */
+            new FeatureClassMeta("A", 11), // administrative areas are slightly above P/PPL default 10.
+            new FeatureClassMeta("A/ADM1", 16), // major provinces
+            new FeatureClassMeta("A/ADM2", 13), // county-level
+            new FeatureClassMeta("A/PCL", 16), // countries and territories
+
+            /* Places: cities, villages, ruins, etc. */
+            new FeatureClassMeta("P", 10),
+            new FeatureClassMeta("P/PPL", 10), // most common lookup. Hold as a control point at "10"
+            new FeatureClassMeta("P/PPLC", 15), // capital cities
+            new FeatureClassMeta("P/PPLA", 10), // on par with A class default
+            new FeatureClassMeta("P/PPLG", 9),
+            new FeatureClassMeta("P/PPLH", 8),
+            new FeatureClassMeta("P/PPLQ", 7),
+            new FeatureClassMeta("P/PPLX", 7),
+            new FeatureClassMeta("P/PPLL", 8),
+            /* Other */
+            new FeatureClassMeta("L", 6),
+            new FeatureClassMeta("R", 6),
+            new FeatureClassMeta("H", 7),
+            new FeatureClassMeta("H/RSV", 2),
+            new FeatureClassMeta("H/WLL", 2),
+            new FeatureClassMeta("H/SPNG", 2),
+            new FeatureClassMeta("V", 7),
+            new FeatureClassMeta("S", 8),
+            new FeatureClassMeta("U", 5),
+            new FeatureClassMeta("T", 5),
+            new FeatureClassMeta("T/ISL", 6),
+            new FeatureClassMeta("T/ISLS", 6)
+    };
+
+    private static final FeatureClassMeta DEFAULT_FEATURE_WEIGHT = new FeatureClassMeta("UNK", 5);
+
+
+    private static final int[] FEAT_RESOLUTION = { 6, 5, 1 };
+    public static final HashMap<String, FeatureClassMeta> featWeights = new HashMap<>();
 
     static {
-        for (FeatureClassMeta fc : fcmeta) {
+        for (FeatureClassMeta fc : featureMeta) {
             featWeights.put(fc.label, fc);
         }
     }
 
-    static final int[] FEAT_RESOLUTION = { 6, 5, 1 };
-
     /**
-     * Find feature metadata if we have it.
+     * Find feature metadata if we have it;  At a minimum
      */
     public static FeatureClassMeta lookupFeature(Place geo) {
         String fullFeature = String.format("%s/%s", geo.getFeatureClass(), geo.getFeatureCode());
@@ -74,7 +84,7 @@ public class FeatureRule extends GeocodeRule {
                 return fc;
             }
         }
-        return null;
+        return DEFAULT_FEATURE_WEIGHT;
     }
 
     public static final String FEAT_RULE = "Feature";
@@ -90,6 +100,7 @@ public class FeatureRule extends GeocodeRule {
      * mentioned (relative
      * popularity of that feature class)
      */
+    @Deprecated
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
 
