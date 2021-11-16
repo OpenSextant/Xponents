@@ -52,5 +52,19 @@ class TestReferenceData(TestCase):
         from opensextant import load_major_cities
         data = load_major_cities()
         print(len(data))
+
+    def test_popscale(self):
+        from opensextant import popscale
+
+        for pop in [0, 8000, 9000, 15000, 16000, 17000, 33000, 56000, 120000, 150000, 15000000]:
+            print( f"City of {pop}.  SCALE =", popscale(pop))
+
+        for pop in [150000, 250000, 1000000]:
+            print( f"District of {pop}.  SCALE =", popscale(pop, feature="district"))
+
+        for pop in [1500000, 2500000, 10000000]:
+            print( f"Province of {pop}.  SCALE =", popscale(pop, feature="province"))
+
+
 if __name__ == '__main__':
     main()

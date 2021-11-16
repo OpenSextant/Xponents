@@ -1,14 +1,14 @@
 import os
 import sqlite3
-from math import log as natlog
 from traceback import format_exc
 
 import arrow
 import pysolr
-from opensextant import Place, Country, geohash_encode, load_major_cities
+from opensextant import Place, Country, distance_haversine, load_major_cities, make_HASC, popscale
 from opensextant.utility import ensure_dirs, is_ascii, has_cjk, has_arabic, \
     ConfigUtility, get_bool, trivial_bias, replace_diacritics, strip_quotes, parse_float, load_list
 from opensextant.wordstats import WordStats
+from pygeodesy.geohash import encode as geohash_encode, decode as geohash_decode
 
 DEFAULT_MASTER = "master_gazetteer.sqlite"
 DEFAULT_COUNTRY_ID_BIAS = 49
@@ -197,6 +197,15 @@ GAZETTEER_TEMPLATE = {
 }
 
 
+def normalize_name(nm: str):
+    """
+    convenience method that ensures we have some consistency on normalization of name
+    :param nm:
+    :return:
+    """
+    return nm.replace("\u2019", "'").replace("\xa0", " ").strip().strip("'")
+
+
 def name_group_for(nm: str):
     """
     Determine the major language "name group" for the input
@@ -350,14 +359,18 @@ def print_places(arr, limit=25):
         print(str(p))
 
 
-def capitalize(name:dict):
+def capitalize(name: dict):
     """ Capitalize all city and major admin boundaries """
+    nm = name["name"]
+    if nm and not nm[0].isupper():
+        return
+
     grp = name.get("name_group")
     nt = name.get("name_type")
-    nm = name["name"]
     ft = name["feat_class"]
-    if grp == '' and nt == 'N' and ft in {'A', 'P'}:
-        name["name"] = nm.capitalize()
+    if nm and grp == '' and nt == 'N' and ft in {'A', 'P'}:
+        # Because we don't like altering data much:
+        name["name"] = nm[0].upper() + nm[1:]
 
 
 class DB:
@@ -435,6 +448,31 @@ class DB:
         self.conn.executescript(sql_script)
         self.conn.commit()
 
+        # Population statistics that use location (geohash) as primary key
+        sql_script = """
+        create TABLE popstats (
+                `geohash` TEXT NOT NULL, 
+                `population` INTEGER NOT NULL,
+                `source` TEXT NOT NULL,
+                `feat_class` TEXT NOT NULL,
+                `cc` TEXT NOT NULL,
+                `FIPS_cc` TEXT  NULL,
+                `adm1` TEXT  NULL, 
+                `adm1_path` TEXT NOT NULL,        
+                `adm2` TEXT  NULL, 
+                `adm2_path` TEXT NOT NULL        
+        );
+        
+        create INDEX IF NOT EXISTS idx1 on popstats (`geohash`);
+        create INDEX IF NOT EXISTS idx2 on popstats (`source`);
+        create INDEX IF NOT EXISTS idx3 on popstats (`cc`);
+        create INDEX IF NOT EXISTS idx4 on popstats (`adm1`);
+        create INDEX IF NOT EXISTS idx5 on popstats (`adm2`);
+        
+        """
+        self.conn.executescript(sql_script)
+        self.conn.commit()
+
     def create_indices(self):
         """
         Create additional indices that are used for advanced ETL functions and optimization.
@@ -452,6 +490,7 @@ class DB:
             create INDEX IF NOT EXISTS ft_idx on placenames ("feat_code");
             create INDEX IF NOT EXISTS dup_idx on placenames ("duplicate");
             create INDEX IF NOT EXISTS so_idx on placenames ("search_only");
+                        
         """
         self.conn.executescript(indices)
         self.conn.commit()
@@ -469,9 +508,12 @@ class DB:
         self.close()
 
         self.conn = sqlite3.connect(self.dbpath)
-        self.conn.execute('PRAGMA cache_size =  8092')
+        self.conn.execute('PRAGMA cache_size = 8092')
+        self.conn.execute('PRAGMA page_size =  8092')  # twice default. Cache = 8092 x 8KB pages ~ 64MB
+        self.conn.execute('PRAGMA mmap_size =  1048576000')  # 1000 MB
         self.conn.execute("PRAGMA encoding = 'UTF-8'")
         self.conn.execute('PRAGMA synchronous = OFF')
+        self.conn.execute('PRAGMA locking_mode = EXCLUSIVE')
         self.conn.execute('PRAGMA journal_mode = MEMORY')
         self.conn.execute('PRAGMA temp_store = MEMORY')
         self.conn.row_factory = sqlite3.Row
@@ -551,7 +593,7 @@ class DB:
         self.queue_count += len(arr)
         self.__assess_queue()
 
-    def get_places_by_id(self, plid, limit=2):
+    def list_places_by_id(self, plid, limit=2):
         """
         Collect places and name_bias for gazetter ETL.
         Lookup place by ID as in "G1234567" for Geonames entry or "N123456789" for an NGA one, etc.
@@ -573,6 +615,72 @@ class DB:
             return place, name_bias
 
         return None, None
+
+    def add_population_stats(self, source="G"):
+        """
+        Population stats are record by populated area (P-class features) and rolled up
+        to provide an ADM1 population approximation.
+        """
+        self.conn.execute("delete from popstats where source = ?", (source,))
+        self.conn.commit()
+
+        sql = """insert into popstats (geohash, population, source, feat_class, cc, FIPS_cc, adm1, adm1_path, adm2, adm2_path) 
+              values (:geohash, :population, :source, :feat_class, :cc, :FIPS_cc, :adm1, :adm1_path, :adm2, :adm2_path)"""
+        #
+        for city in load_major_cities():
+            adm2_path = ""
+            if city.adm2:
+                adm2_path = make_HASC(city.country_code, city.adm1, adm2=city.adm2)
+            city_entry = {
+                "geohash": city.geohash[0:6],
+                "population": city.population,
+                "source": source,
+                "feat_class": city.feature_class,
+                "FIPS_cc": city.country_code_fips,
+                "cc": city.country_code,
+                "adm1": city.adm1,
+                "adm1_path": make_HASC(city.country_code, city.adm1),
+                "adm2": city.adm2,
+                "adm2_path": adm2_path
+            }
+            self.conn.execute(sql, city_entry)
+        self.conn.commit()
+
+    def list_all_popstats(self):
+        """
+        :return: map of population by geohash only
+        """
+        sql = """select sum(population) AS POP, geohash from popstats group by geohash order by POP"""
+        population_map = {}
+        for popstat in self.conn.execute(sql):
+            loc = popstat["geohash"]
+            population_map[loc] = popstat["POP"]
+        return population_map
+
+    def list_adm1_popstats(self):
+        """
+        Provides a neat lookup of population stats by HASC path,
+           e.g., "US.CA" is califronia; Reported at 35 million in major cities (where state total is reported
+           at 39 million in 2021.)  Population stats only cover major cities of 15K or more people.
+        :return: map of population stats by ADM1 path
+        """
+        sql = """select sum(population) AS POP, adm1_path  from popstats where adm1 != '0' group by adm1_path order by POP"""
+        population_map = {}
+        for popstat in self.conn.execute(sql):
+            adm1 = popstat["adm1_path"]
+            population_map[adm1] = popstat["POP"]
+        return population_map
+
+    def list_adm2_popstats(self):
+        """
+        Get approximate county-level stats
+        """
+        sql = """select sum(population) AS POP, adm2_path  from popstats where adm2 != '' group by adm2_path order by POP"""
+        population_map = {}
+        for popstat in self.conn.execute(sql):
+            adm2 = popstat["adm2_path"]
+            population_map[adm2] = popstat["POP"]
+        return population_map
 
     def list_countries(self):
         """
@@ -618,6 +726,53 @@ class DB:
             print(sql_script)
         for p in self.conn.execute(sql_script):
             yield as_place(p)
+
+    def list_places_at(self, lat: float = None, lon: float = None, cc: str = None, geohash: str = None,
+                       radius: int = 10000):
+        """
+        A best effort guess at spatial query. Returns an array of matches, thinking most location queries are focused.
+
+        :param lat:
+        :param lon:
+        :param cc:  ISO country code to filter.
+        :param geohash:  optionally, use precomputed geohash of precision 6-chars.
+        :param radius:  in METERS, radial distance from given point to search
+        :return: array of tuples, sorted by distance.
+        """
+        topN = 10
+        # populate both location and point
+        gh = geohash
+        point = (lat, lon)
+        if (lat and lon) and not geohash:
+            gh = geohash_encode(lat, lon, precision=6)
+        elif geohash:
+            if len(geohash) < 6:
+                raise Exception("Geohash query should be 6-chars or longer")
+            gh = geohash[0:6]
+            point = [float(x) for x in geohash_decode(geohash)]
+
+        # This is optimized for this gazetteer DB, as locations are stored as 6-digit geohash
+        sql_script = [
+            f"select * from placenames where geohash = '{gh}'",
+            f"select * from placenames where geohash like '{gh[0:5]}%'",
+            f"select * from placenames where geohash like '{gh[0:4]}%'"
+        ]
+        found = {}
+        for script in sql_script:
+            for p in self.conn.execute(script):
+                if cc:
+                    if p["cc"] != cc:
+                        continue
+                place = as_place(p)
+                dist = distance_haversine(point[1], point[0], place.lon, place.lat)
+                if dist < radius:
+                    found[dist] = as_place(p)
+            if len(found) >= topN:
+                # Return after first round of querying.
+                break
+        # Sort by distance key
+        result = [(dist, found[dist]) for dist in sorted(found.keys())]
+        return result[0:10]
 
     def list_admin_names(self, sources=['U', 'N', 'G']) -> set:
         """
@@ -887,6 +1042,9 @@ def estimate_name_bias(nm):
 
 
 class PlaceHeuristics:
+    # Population scale 0 = 16K, 1=32K, 2=64K, 3=128K
+    LARGE_CITY = 3
+
     def __init__(self, dbref: DB):
         """
 
@@ -897,6 +1055,9 @@ class PlaceHeuristics:
         self.cities_large = set([])
         self.cities_spatial = {}  # keyed by geohash
         self.provinces = {}
+        # These should only be used as relative rankings of size of admin boundaries.
+        self.adm1_population = {}
+        self.adm2_population = {}
         self.stopwords = load_stopterms()
         self.POPULATION_THRESHOLD = 200000
         self.MAX_NAMELEN = 50
@@ -913,40 +1074,48 @@ class PlaceHeuristics:
         self.exempt_features = {"PPLC", "ADM1", "PCLI", "PCL"}
         self.exempted_names = {}
         self.feature_wt = {
-            "A": 10,
-            "P": 9,
-            "S": 7,
-            "T": 6,
-            "L": 7,
-            "V": 7,
-            "R": 5,
-            "H": 7,
-            "U": 2,
-            "A/PCL": 30,  # Political entities have no population weight currently, only feat weight
+            "A": 11,
+            "A/ADM1": 16,
+            "A/ADM2": 14,
+            "A/PCL": 16,
+            "P": 10,
+            "P/PPL": 10,  # Most common
+            "P/PPLC": 15,
+            "P/PPLA": 10,
+            "P/PPLG": 9,
+            "P/PPLH": 8,
+            "P/PPLQ": 7,
             "P/PPLX": 7,
-            "P/PPLH": 7,
+            "P/PPLL": 8,
+            "L": 6,
+            "R": 6,
+            "H": 7,
             "H/SPNG": 2,
             "H/RSV": 2,
             "H/STM": 2,
-            "H/WLL": 2
+            "H/WLL": 2,
+            "V": 7,
+            "S": 8,
+            "U": 2,
+            "T": 5,
+            "T/ISL": 6,
+            "T/ISLS": 6
         }
 
         # This is a set (list) of distinct names for ADM1 level names.
         # This obviously changes as you build out the master gazetteer as in the beginning it has NOTHING.
         self.provinces = dbref.list_admin_names()
 
+        # Pop stats are primarily for P/PPL.
         for city in load_major_cities():
             self.cities.add(city.name.lower())
-            if city.population > self.POPULATION_THRESHOLD:
+            if city.population_scale >= PlaceHeuristics.LARGE_CITY:
                 self.cities_large.add(city.name.lower())
 
-            key = city.geohash
-            if city.population > 0:
-                if key not in self.cities_spatial:
-                    self.cities_spatial[key] = 0
-                elif self.debug:
-                    print("Dense cities around ", key, city)
-                self.cities_spatial[key] += city.population
+        self.cities_spatial = dbref.list_all_popstats()
+        # These should only be used to score specific feature types ADM1 or ADM2
+        self.adm1_population = dbref.list_adm1_popstats()
+        self.adm2_population = dbref.list_adm2_popstats()
 
     def is_large_city(self, name):
         return name in self.cities_large
@@ -995,7 +1164,7 @@ class PlaceHeuristics:
         :param name_group:
         :return:
         """
-        geo["id_bias"] = self.location_bias(geo["geohash"], geo["feat_class"], geo["feat_code"])
+        geo["id_bias"] = self.location_bias(geo)
         geo["name_bias"] = self.name_bias(geo["name"], geo["feat_class"], geo["feat_code"],
                                           name_group=name_group, name_type=geo["name_type"])
 
@@ -1019,7 +1188,7 @@ class PlaceHeuristics:
 
         return self.feature_wt.get(fc, 5)
 
-    def location_bias(self, loc, fc, dsg):
+    def location_bias(self, geo):
         """
         See estimate_bias()
 
@@ -1030,30 +1199,46 @@ class PlaceHeuristics:
         Feature gradient     A, P, ..... U.  More populated features have higer bias
         Population gradient  log(pop)  scales bias higher
 
-        :param loc: geohash(5)
-        :param fc:  feat class
-        :param dsg: feat code designation
+        :param geo:  standard ETL geo dict
         :return:  score on 100 point scale.
         """
-        return int(10 * self._location_bias(loc, fc, dsg))
+        return int(10 * self._location_bias(geo))
 
-    def _location_bias(self, loc, fc, dsg):
+    def _location_bias(self, geo):
+        """
+        dict with parts:
+
+        :param geo:  standard ETL geo dict
+        :return:  A number on the range of 0 to 10 approximately.
+        """
+        fc = geo["feat_class"]
+        dsg = geo["feat_code"]
         pop_wt = 0
         fc_scale = self.get_feature_scale(fc, dsg)
 
-        if loc:
-            # Lookup against Major Cities uses geohash 5-char prefix
-            lockey = loc[0:5]
-            if lockey in self.cities_spatial:
-                population = self.cities_spatial[lockey]
-                pop_wt = natlog(population) - 10
+        if fc == 'P':
+            lockey = geo["geohash"][0:6]
+            population = self.cities_spatial.get(lockey, 0)
+            pop_wt = popscale(population, feature="city")
+        if fc == 'A':
+            cc = geo["cc"]
+            a1 = geo["adm1"]
+            pop_wt = 1
+            if dsg == 'ADM1':
+                adm_path = make_HASC(cc, a1)
+                population = self.adm1_population.get(adm_path, 0)
+                pop_wt = popscale(population, feature="province")
+            if dsg == 'ADM2' and "adm2" in geo:
+                adm_path = make_HASC(cc, a1, geo["adm2"])
+                population = self.adm2_population.get(adm_path, 0)
+                pop_wt = popscale(population, feature="district")
 
         # For PLACES  this helps differentiate P/PPL by population
         # Between PLACES and BOUNDARIES the population component may rank places
         # higher than a boundary by the same name.
         #
-        # 1/10 of the weighted sums.  Get the ID BIAS to range 0..1
-        return (0.7 * pop_wt) + (0.3 * fc_scale)
+        # Weighted sums -- Population has more information than the feature, so we weight that higher.
+        return (0.75 * pop_wt) + (0.25 * fc_scale)
 
     def name_bias(self, geoname: str, feat_class: str, feat_code: str, name_group="", name_type="N"):
         """

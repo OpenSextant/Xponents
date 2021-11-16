@@ -1,5 +1,6 @@
 from opensextant import load_countries, get_country
-from opensextant.gazetteer import get_default_db, parse_admin_code, DataSource, PlaceHeuristics, name_group_for
+from opensextant.gazetteer import get_default_db, parse_admin_code, \
+    DataSource, PlaceHeuristics, name_group_for, normalize_name
 from opensextant.utility import get_csv_reader
 
 load_countries()
@@ -75,7 +76,7 @@ def render_distinct_names(entry):
     for fld in ["SHORT_FORM", "FULL_NAME_ND_RO", "FULL_NAME_RO"]:
         nm = entry.get(fld)
         if nm:
-            nm = nm.replace("\u2019", "'").strip()
+            nm = normalize_name(nm)
             names[nm.lower()] = nm
     return names
 
@@ -131,8 +132,6 @@ class NGAGeonames(DataSource):
                 # About 50,000 entries in NGA GNIS are dual-country.
                 countries = parse_country(row["CC1"])
 
-                geo["id_bias"] = self.estimator.location_bias(geo["geohash"], geo["feat_class"], geo["feat_code"])
-
                 # Notable lack of synchrony with for loop and yield:  recipient of dict here sees stale values.
                 # Solution -- create a new copy and update it.
                 for nm in distinct_names:
@@ -150,6 +149,7 @@ class NGAGeonames(DataSource):
                         g["FIPS_cc"] = ctry.cc_fips
                         verify_name_grp = name_group_for(nm)
                         g["name_group"] = verify_name_grp
+                        g["id_bias"] = self.estimator.location_bias(geo)
                         g["name_bias"] = self.estimator.name_bias(g["name"],
                                                                   g["feat_class"], g["feat_code"],
                                                                   name_group=verify_name_grp)

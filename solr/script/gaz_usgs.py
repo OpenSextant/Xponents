@@ -66,8 +66,7 @@ FEAT_MAP = {}
 
 
 def load_feature_map():
-    local_dir = os.path.dirname(__file__)
-    with open(os.path.join(local_dir, "usgs2gnis-feature-map.csv"), "r", encoding="UTF-8") as ftmap:
+    with open(os.path.join("etc", "gazetteer", "usgs2gnis-feature-map.csv"), "r", encoding="UTF-8") as ftmap:
         ftreader = get_csv_reader(ftmap, ["USGS_FEATURE_CLASS", "FEATURE_CLASS", "FEATURE_CODE"])
         for feat in ftreader:
             fin = feat["USGS_FEATURE_CLASS"]
