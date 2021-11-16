@@ -163,7 +163,7 @@ db = DB(get_default_db())
 names = db.list_admin_names()
 
 # Some place in the USA -- This is a completely random location choice.
-lat, lon = (44.321, 89.765)
+lat, lon = (44.321, -89.765)
 for dist, geo in db.list_places_at(lat=lat, lon=lon):
     print("Distance", dist, "Place:", geo)
 
