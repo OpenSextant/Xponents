@@ -1,4 +1,4 @@
-# Gazetteer ETL Production Reporting Techniques
+# Gazetteer ETL Production Report & API Usage
 
 This report contains some of the basic techniques for reporting 
 and validating the contents of the master gazetteer.  Not all of these
@@ -7,6 +7,10 @@ will work on subset databases or partial master gazetteers.
 * TODO: automate DB validation by source and country and generate this report.
 * CAVEAT: The SQLite DB is available if you build the `./solr` gazetteer project data sources
   Or know someone who has and is kind enough to share.
+* FINALLY: Please note that this is the debut of the pure Python Gazetteer ETL pipeline.  The Python API supporting this is an initial release, but well tested.  This documentation will eventually migrate to a formal Python API document.  Please scan the entire page so you understand the API functions and limitations.  Also, please file a git issue here if you would like to see features or find bugs.
+
+Thank you,
+  The Managment.
 
 
 ## Library Details
@@ -111,6 +115,15 @@ gazetteer:
 
 ## Opensextant Gazetteer Python API
 
+OpenSextant provides a simple API to access a variety of types of geographic data and related stuff. The 
+major types include:
+
+* **Reference Gazetteer data:** relatively lean, tabulated information for high-level geography (Countries, Provinces, Major cities, etc). This category 
+  is easily served in an API from flatfiles.  OpenSextant provides `opensextant.Place` and `.Country` classes to formally represent such things
+* **Complete Gazetteer data:** bulky named points, where a single feature or location may have numerous names, abbreviations, codes in dozens of languages.  
+  This data is best served from a database, which here is SQLite.
+* **Non-Geographic data:** language codes, popular words, common census name data, and the like.
+
 See the basic reference data in action here, which are demonstrated in the python test package
 under [python/test/test_gazetteer_api.py](../python/test/test_gazetteer_api.py)
 
@@ -137,8 +150,7 @@ data = load_us_provinces()
 
 ```
 
-Breaking away from the high-level reference data -- which is just backed by flat files -- 
-let's get into the full, master gazetteer using `opensextant.gazetteer.DB`
+Breaking away from the high-level reference data, let's get into the full, master gazetteer using `opensextant.gazetteer.DB`
 
 
 ```python
@@ -151,7 +163,7 @@ db = DB(get_default_db())
 names = db.list_admin_names()
 
 # Some place in the USA -- This is a completely random location choice.
-lat, lon = (44.321, 89.765)
+lat, lon = (44.321, -89.765)
 for dist, geo in db.list_places_at(lat=lat, lon=lon):
     print("Distance", dist, "Place:", geo)
 
