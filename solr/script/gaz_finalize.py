@@ -181,23 +181,32 @@ class Finalizer:
             keys = set([])
             duplicates = []
             # Collect all duplicate names within USGS and NGA base layers
-            sql = f"""select id, feat_class, source, geohash, name, place_id 
+            sql = f"""select id, feat_class, source, geohash, adm1, name, place_id 
                            from placenames where cc='{cc}' and source in ({base_sources}) and duplicate=0"""
             self._collect_duplicates(sql, keys, duplicates, label="Base")
 
             # De-duplicate other sources that leverage USGS/NGA as base sources.
-            sql = f"""select id, feat_class, source, geohash, name, place_id 
+            sql = f"""select id, feat_class, source, geohash, adm1, name, place_id 
                            from placenames where cc='{cc}' and source not in ({base_sources}) and duplicate=0"""
             self._collect_duplicates(sql, keys, duplicates, label="Other Sources")
             self.db.mark_duplicates(duplicates)
         print("Complete De-duplicating")
 
     def _collect_duplicates(self, sql, keys, dups, label="NA"):
+        """
+        specialized sql row is dictionary of "id, feat_class, source, geohash, adm1, name, place_id "
+        :param sql:
+        :param keys:
+        :param dups:
+        :param label:
+        :return:
+        """
         for row in self.db.conn.execute(sql):
             fc = row["feat_class"]
             loc = row["geohash"]
             nm = row["name"].lower()
-            k = f"{fc}/{loc[0:5]}/{nm}"
+            a1 = row["adm1"]
+            k = f"{fc}/{loc[0:5]}/{a1}/{nm}"
             if k in keys:
                 if self.debug: print(f"{label} dup: ", row["id"])
                 dups.append(row["id"])
