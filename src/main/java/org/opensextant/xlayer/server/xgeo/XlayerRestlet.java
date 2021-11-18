@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 /**
  * Xlayer Restlet app constructs the application, initializes resources, etc.
- * Actual logic is REST paths for /process --> XponentsGeotagger
+ * Actual logic is REST paths for /process --&gt; XponentsGeotagger
  *
  * @author ubaldino
  */

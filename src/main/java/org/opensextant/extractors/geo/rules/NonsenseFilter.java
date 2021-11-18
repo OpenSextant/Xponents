@@ -311,7 +311,7 @@ public class NonsenseFilter extends GeocodeRule {
     }
 
     /**
-     * If common punctuation (), [], !, &, $ are found within the match, then the name is not likely the right thing.
+     * If common punctuation (), [], !, &amp;, $ are found within the match, then the name is not likely the right thing.
      *
      * @param t
      * @return

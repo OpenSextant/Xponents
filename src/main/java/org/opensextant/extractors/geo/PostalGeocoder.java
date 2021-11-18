@@ -169,7 +169,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
     }
 
     /**
-     * Override the default MIN_LEN=4 length for a postal code.  Any textmatch with length < this length will
+     * Override the default MIN_LEN=4 length for a postal code.  Any textmatch with length &lt; this length will
      * be filtered out.
      * Postal codes in CA, FO, GB, GG, IE, IM, IS, JE, MT all have postal codes that are 2 or 3 alphanum.
      */
