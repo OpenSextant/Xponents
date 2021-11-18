@@ -125,8 +125,8 @@ public abstract class GISDataFormatter extends AbstractFormatter {
 
         try {
             closeOutputStreams();
-        } catch (Exception closer) {
-            log.error("ERROR finalizing data file ", closer);
+        } catch (Exception closerr) {
+            log.error("ERROR finalizing data file ", closerr);
         }
     }
 

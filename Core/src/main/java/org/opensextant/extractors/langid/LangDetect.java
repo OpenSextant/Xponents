@@ -159,8 +159,7 @@ public class LangDetect {
      * own LangID class
      *
      * @param text
-     * @param withProbabilities
-     *                          true to include propabilities on results
+     * @param withProbabilities true to include propabilities on results
      * @return
      * @throws LangDetectException
      */
@@ -315,13 +314,13 @@ public class LangDetect {
 
     /**
      * L = Unique C, J, or K characters
-     *   CJK = total CJK
-     *   TOT = total characters non-control or whitespace.
-     *   ratio = 0.5 * (L/CJK + CJK/TOT) produces a number always less than 1.0
+     * CJK = total CJK
+     * TOT = total characters non-control or whitespace.
+     * ratio = 0.5 * (L/CJK + CJK/TOT) produces a number always less than 1.0
      * 1 Japanese char in 5 CJK chars out of a text of 20 characters (regardless of whitespace).
      * ratio is 1/2 * (1/5 + 5/20) === 9/40 ~ 0.21 is score for this text, with Japanese being the primary choice.
      * ratio for Chinese would be:
-     *    1/2 * (4/5 + 5/20) === 21/40 ~ 0.51, which is higher than that for Japanese,
+     * 1/2 * (4/5 + 5/20) === 21/40 ~ 0.51, which is higher than that for Japanese,
      * however, as CJK share a common character base, you first measure if any J or K is present, and then C.
      *
      * @param total
@@ -423,14 +422,11 @@ public class LangDetect {
      *  Return a two-char ISO langID
      * </pre>
      *
-     * @param lang
-     *                        given lang ID or null
-     * @param naturalLanguage
-     *                        text to determine lang ID; Caller must prepare this
+     * @param lang            given lang ID or null
+     * @param naturalLanguage text to determine lang ID; Caller must prepare this
      *                        text, so consider using
      *                        DataUtility.scrubTweetText(t).trim();
-     * @param findCJK
-     *                        - if findCJK is true, then this will try to find the
+     * @param findCJK         - if findCJK is true, then this will try to find the
      *                        best language ID if Chinese/Japanese/Korean
      *                        characters exist at all.
      * @return lang ID, possibly different than given lang ID.
@@ -525,8 +521,11 @@ public class LangDetect {
                 return LANGUAGE_ID_GROUP_ENGLISH;
             }
         }
+        if (langID == null) {
+            return LANGUAGE_ID_GROUP_UNKNOWN;
+        }
 
-        if (langID != null && ignoredLanguage.containsKey(langID)) {
+        if (ignoredLanguage.containsKey(langID)) {
             boolean isUpper = TextUtils.isUpperCaseDocument(TextUtils.measureCase(naturalLanguage));
             if (isUpper && isASCII) {
                 return LANGUAGE_ID_GROUP_ENGLISH;

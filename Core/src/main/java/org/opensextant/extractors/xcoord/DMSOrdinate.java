@@ -63,7 +63,7 @@ public final class DMSOrdinate {
     /**
      * Resolution field for DMS.ms
      */
-    public static enum Resolution {
+    public enum Resolution {
         DEG, SUBDEG, MIN, SUBMIN, SEC, SUBSEC
     }
 

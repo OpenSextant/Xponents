@@ -344,7 +344,7 @@ public class GISDataModel {
         try {
             uri = new URI("urn:OpenSextant");
         } catch (URISyntaxException e) {
-            // e.printStackTrace();
+            throw new ConfigException("URI parsing", e);
         }
 
         this.schema = new Schema(uri);

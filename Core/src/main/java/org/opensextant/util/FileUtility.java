@@ -30,17 +30,9 @@
 //
 package org.opensextant.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,8 +41,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import org.apache.commons.io.FilenameUtils;
 
 /**
  * @author ubaldino
@@ -86,8 +76,8 @@ public class FileUtility {
             final OutputStreamWriter fout = new OutputStreamWriter(file, enc);
             fout.write(buffer, 0, buffer.length());
             fout.flush();
+            return true;
         }
-        return true;
     }
 
     /**
@@ -202,7 +192,7 @@ public class FileUtility {
      *
      * @param filepath path to file
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes
-     *         .tar.gz)
+     * .tar.gz)
      */
     public static boolean isArchiveFile(String filepath) {
         final String testpath = filepath.toLowerCase();
@@ -215,7 +205,7 @@ public class FileUtility {
      *
      * @param ext extension to test
      * @return boolean true if file ends with .zip, .tar, .tgz, .gz (includes
-     *         .tar.gz)
+     * .tar.gz)
      */
     public static boolean isArchiveFileType(String ext) {
         final String x = ext.toLowerCase();
@@ -308,20 +298,18 @@ public class FileUtility {
             return null;
         }
 
-        final FileInputStream instream = new FileInputStream(filepath);
-        final GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), ioBufferSize);
+        try (FileInputStream instream = new FileInputStream(filepath);
+             GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), ioBufferSize)) {
 
-        final byte[] inputBytes = new byte[ioBufferSize];
-        final StringBuilder buf = new StringBuilder();
+            final byte[] inputBytes = new byte[ioBufferSize];
+            final StringBuilder buf = new StringBuilder();
 
-        int readcount = 0;
-        while ((readcount = gzin.read(inputBytes, 0, ioBufferSize)) != -1) {
-            buf.append(new String(inputBytes, 0, readcount, default_encoding));
+            int readcount = 0;
+            while ((readcount = gzin.read(inputBytes, 0, ioBufferSize)) != -1) {
+                buf.append(new String(inputBytes, 0, readcount, default_encoding));
+            }
+            return buf.toString();
         }
-        instream.close();
-        gzin.close();
-
-        return buf.toString();
 
     }
 
@@ -336,18 +324,15 @@ public class FileUtility {
             return false;
         }
 
-        final FileOutputStream outstream = new FileOutputStream(filepath);
-        final GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), ioBufferSize);
+        try (FileOutputStream outstream = new FileOutputStream(filepath);
+             GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), ioBufferSize)) {
 
-        gzout.write(text.getBytes(default_encoding));
+            gzout.write(text.getBytes(default_encoding));
 
-        gzout.flush();
-        gzout.finish();
-
-        gzout.close();
-        outstream.close();
-        return true;
-
+            gzout.flush();
+            gzout.finish();
+            return true;
+        }
     }
 
     /**
@@ -565,11 +550,11 @@ public class FileUtility {
     }
 
     /**
-     * @author T. Allison
      * @param f          file obj
      * @param dupeMarker incrementor
      * @param maxDups    max incrementor
      * @return new file
+     * @author T. Allison
      */
     public static File getSafeFile(File f, String dupeMarker, int maxDups) {
         if (!f.exists()) {
@@ -624,12 +609,6 @@ public class FileUtility {
      */
     public static boolean isWindowsSystem() {
         final String val = System.getProperty("os.name");
-
-        /**
-         * if (val == null) { //log.warn("Could not verify OS name"); return false; }
-         * else {
-         * //log.debug("Operating System is " + val); }
-         */
         return (val != null ? val.contains("Windows") : false);
     }
 
@@ -643,9 +622,9 @@ public class FileUtility {
      *
      * @param resourcepath   classpath location of a resource
      * @param case_sensitive if terms are loaded with case preserved or not.
-     * @author ubaldino, MITRE Corp
      * @return Set containing unique words found in resourcepath
      * @throws IOException on error, resource does not exist
+     * @author ubaldino, MITRE Corp
      */
     public static Set<String> loadDictionary(String resourcepath, boolean case_sensitive) throws IOException {
         InputStream io = FileUtility.class.getResourceAsStream(resourcepath);
@@ -660,9 +639,9 @@ public class FileUtility {
      *
      * @param resourcepath   classpath location of a resource
      * @param case_sensitive if terms are loaded with case preserved or not.
-     * @author ubaldino, MITRE Corp
      * @return Set containing unique words found in resourcepath
      * @throws IOException on error, resource does not exist
+     * @author ubaldino, MITRE Corp
      */
     public static Set<String> loadDictionary(URL resourcepath, boolean case_sensitive) throws IOException {
         return loadDict(resourcepath.openStream(), case_sensitive);
@@ -718,7 +697,7 @@ public class FileUtility {
     // Working with file types
     //
     //
-    private static final HashMap<String, String> filetypeMap = new HashMap<String, String>();
+    private static final HashMap<String, String> filetypeMap = new HashMap<>();
     public static final String IMAGE_MIMETYPE = "image";
     public static final String DOC_MIMETYPE = "document";
     public static final String MESSAGE_MIMETYPE = "message";
@@ -734,7 +713,7 @@ public class FileUtility {
     public static final String NOT_AVAILABLE = "other";
     public static final String GIS_MIMETYPE = "GIS data";
 
-    private static final HashMap<String, String> imageTypeMap = new HashMap<String, String>();
+    private static final HashMap<String, String> imageTypeMap = new HashMap<>();
 
     static {
 
@@ -890,7 +869,7 @@ public class FileUtility {
      *
      * @param link a URL
      * @return true if link looks like a URL (ie., if it starts with http: or
-     *         https:)
+     * https:)
      */
     public static boolean isWebURL(String link) {
         if (link == null) {

@@ -70,7 +70,6 @@ public class TweetLoader {
                     }
                 } catch (Exception someErr) {
                     ++errors;
-                    someErr.printStackTrace();
                     log.error("Ignoring record error ERR={}", someErr.getMessage());
                     log.debug("line failed=" + line, someErr);
 

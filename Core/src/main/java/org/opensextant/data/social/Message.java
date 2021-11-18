@@ -1,11 +1,11 @@
 package org.opensextant.data.social;
 
-import java.util.Date;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeZone;
 import org.opensextant.data.Geocoding;
 import org.opensextant.util.TextUtils;
+
+import java.util.Date;
 
 /**
  * Micro Message is the basis for any sort microblog message, SMS, or tweet or
@@ -152,12 +152,9 @@ public class Message {
     /**
      * A simple message with an ID, text and a timestamp.
      *
-     * @param _id
-     *             ID
-     * @param text
-     *             message
-     * @param tm
-     *             timestamp
+     * @param _id  ID
+     * @param text message
+     * @param tm   timestamp
      */
     public Message(String _id, String text, Date tm) {
         this.id = _id;
@@ -226,14 +223,13 @@ public class Message {
      * @return
      */
     public static final double toUTCOffsetHours(int o) {
-        return o / 3600;
+        return (double) o / 3600;
     }
 
     /**
      * detect if Tweet has UTC offset or TZ
      *
-     * @param t
-     *          tweet obj
+     * @param t tweet obj
      * @return
      */
     public static boolean validTZ(Tweet t) {

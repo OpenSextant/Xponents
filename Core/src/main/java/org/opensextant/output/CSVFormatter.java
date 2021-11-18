@@ -80,8 +80,7 @@ public class CSVFormatter extends AbstractFormatter {
             writer.flush();
             closeOutputStreams();
         } catch (Exception err) {
-            // error quietly... failed to close.
-            err.printStackTrace();
+            log.error("IO Failure on finish", err);
         }
     }
 

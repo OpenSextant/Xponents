@@ -58,6 +58,7 @@ public class GDBFormatter extends GISDataFormatter {
         ZipOutputStream zos = new ZipOutputStream(fos);
         Object[] args = new Object[1];
         args[0] = gdb;
+        // Underlying IO stream remains open until finish.
         this.os = new FileGdbOutputStream(zos, args);
     }
 }

@@ -1081,13 +1081,9 @@ public class TextUtils {
      */
     static {
         try {
-            // initLanguageData(); // Barely useful -- this pulls out lang
-            // Locales.
-            initLOCLanguageData(); // LOC language data is a list of all known
-            // languages w/ISO codes.
-            // initICULanguageData(); ICU did not seem to be the right solution.
+            initLOCLanguageData(); // LOC language data is a list of all known languages w/ISO codes.
         } catch (Exception err) {
-            err.printStackTrace();
+            throw new RuntimeException("Failed to load static resources", err);
         }
     }
 

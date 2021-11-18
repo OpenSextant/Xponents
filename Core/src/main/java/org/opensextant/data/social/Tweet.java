@@ -235,6 +235,7 @@ public class Tweet extends Message {
      * If "base data" has been filled in by other method, e.g., TW4J or other formal
      * API, then avoid parsing the basics here: id, text ,author*, date, lang, are
      * checked if null. Only if null will they each be found in JSON and parsed.
+     * throws MessageParseException
      */
     public void fromJSON(JsonObject tw) throws MessageParseException {
         /*

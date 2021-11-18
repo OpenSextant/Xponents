@@ -65,8 +65,8 @@ public class MatcherUtils {
         }
     }
 
-    public static final String startChars = "<[";
-    public static final String closeChars = ">]";
+    public static final String START_CHARS = "<[";
+    public static final String CLOSE_CHARS = ">]";
 
     /**
      * Trivial attempt at locating edges of tags in data. This allows us to tag any
@@ -107,7 +107,7 @@ public class MatcherUtils {
         char next_c;
         for (int x = 0; x < text.length(); ++x) {
             c = text.charAt(x);
-            int starter_cx = startChars.indexOf(c);
+            int starter_cx = START_CHARS.indexOf(c);
             if (!inSpan && starter_cx >= 0) {
                 /*
                  * Check if this is a bare open tag. Ignore if so.
@@ -118,7 +118,7 @@ public class MatcherUtils {
                 }
                 span_start = x;
                 inSpan = true;
-                closer_c = closeChars.charAt(starter_cx);
+                closer_c = CLOSE_CHARS.charAt(starter_cx);
             } else {
                 if (c == closer_c) {
                     inSpan = false;

@@ -65,9 +65,6 @@ public class Taxon {
      */
     public boolean isAcronym = false;
 
-    public Taxon() {
-    }
-
     public void setName(String n) {
         name = n;
     }
