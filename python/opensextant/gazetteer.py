@@ -760,7 +760,6 @@ class DB:
         ]
         found = {}
         for script in sql_script:
-            print(script)
             for p in self.conn.execute(script):
                 if cc:
                     if p["cc"] != cc:
