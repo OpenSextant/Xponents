@@ -132,6 +132,7 @@ public class SolrGazetteer {
         return createGeodeticLookupParams(25);
     }
 
+    public static final String DEFAULT_FIELDS = "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type";
     /**
      * For larger areas choose a higher number of Rows to return. If you choose to
      * use Solr spatial
@@ -148,7 +149,7 @@ public class SolrGazetteer {
          * are set for each lookup.
          */
         ModifiableSolrParams p = new ModifiableSolrParams();
-        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type");
+        p.set(CommonParams.FL, DEFAULT_FIELDS);
         p.set(CommonParams.ROWS, rows);
 
         /*
@@ -171,7 +172,7 @@ public class SolrGazetteer {
         // What?
         p.set(CommonParams.Q, "*:*");
         // Which fields:
-        p.set(CommonParams.FL, "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type");
+        p.set(CommonParams.FL, DEFAULT_FIELDS);
         // Max Rows:
         p.set(CommonParams.ROWS, rows);
 
@@ -190,8 +191,7 @@ public class SolrGazetteer {
         solr = solrHome != null ? new SolrProxy(solrHome, "gazetteer") : new SolrProxy("gazetteer");
 
         params.set(CommonParams.Q, "*:*");
-        params.set(CommonParams.FL,
-                "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type");
+        params.set(CommonParams.FL, DEFAULT_FIELDS);
         try {
             this.countryCodes = loadCountries(solr.getInternalSolrClient());
         } catch (SolrServerException loadErr) {
@@ -216,15 +216,12 @@ public class SolrGazetteer {
 
     /**
      * List all country names, official and variant names. Distinct territories
-     * (whose own ISO codes are
-     * unique) are listed as well. Territories owned by other countries -- their ISO
-     * code is their
-     * owning nation -- are attached as Country.territory (call
+     * (whose own ISO codes are unique) are listed as well. Territories owned by other countries -- their ISO
+     * code is their owning nation -- are attached as Country.territory (call
      * Country.getTerritories() to list them).
      * Name aliases are listed as Country.getAliases()
      * The hash map returned contains all 260+ country listings keyed by ISO2 and
-     * ISO3. Odd commonly
-     * used variant codes are added as well.
+     * ISO3. Odd commonly used variant codes are added as well.
      *
      * @return the countries
      */
@@ -291,7 +288,7 @@ public class SolrGazetteer {
         /*
          * As of 2015 we have 2300+ name variants for countries and territories
          */
-        ctryparams.set("rows", 5000);
+        ctryparams.set("rows", 10000);
 
         QueryResponse response = index.query(ctryparams);
 
@@ -406,7 +403,6 @@ public class SolrGazetteer {
     }
 
     /**
-     * Use create M
      *
      * @param p
      * @return
@@ -554,8 +550,7 @@ public class SolrGazetteer {
      *
      * @param name
      * @param parametricQuery
-     * @param lenTolerance    your choice for how much longer a valid matching name
-     *                        can be.
+     * @param lenTolerance    your choice for how much longer a valid matching name can be.
      * @return list of matching places
      * @throws ExtractionException
      */
@@ -604,13 +599,10 @@ public class SolrGazetteer {
     }
 
     /**
-     * TODO: This yields primarily ASCII transliterations/romznized versions of the
-     * given place. You may
-     * indeed find multiple locations with the same name. Your parametric query
-     * should include feature
-     * type (feat_code:P, etc.) and country code (cc:AB) to yield the most relevant
-     * locations for a
-     * given name.
+     * NOTE: This yields primarily ASCII transliterations/romanized versions of the given place.
+     * You may indeed find multiple locations with the same name. Your parametric query
+     * should include feature type (feat_code:P, etc.) and country code (cc:AB) to yield the most relevant
+     * locations for a given name.
      *
      * @param name
      * @param parametricQuery

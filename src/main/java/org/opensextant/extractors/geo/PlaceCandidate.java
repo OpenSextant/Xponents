@@ -75,6 +75,7 @@ public class PlaceCandidate extends TextMatch {
         return nonDiacriticTextnorm;
     }
 
+    @Override
     public void setText(String name) {
         super.setText(name);
         this.nonDiacriticTextnorm = TextUtils.phoneticReduction(getTextnorm(), isASCII());
@@ -171,7 +172,7 @@ public class PlaceCandidate extends TextMatch {
     private String[] preTokens = null;
     private String[] postTokens = null;
     private String[] tokens = null;
-    protected static int DEFAULT_TOKEN_SIZE = 40;
+    private static int contextWidth = 40;
 
     /**
      * Get some sense of tokens surrounding match. Possibly optimize this by
@@ -181,7 +182,7 @@ public class PlaceCandidate extends TextMatch {
      * @param sourceBuffer
      */
     protected void setSurroundingTokens(String sourceBuffer) {
-        int[] window = TextUtils.get_text_window(start, end - start, sourceBuffer.length(), DEFAULT_TOKEN_SIZE);
+        int[] window = TextUtils.get_text_window(start, end - start, sourceBuffer.length(), contextWidth);
 
         /*
          * Get right most or left most whole tokens, for now whitespace
@@ -441,12 +442,8 @@ public class PlaceCandidate extends TextMatch {
      */
     public double defaultScore(Place g) {
         double sn = scoreName(g);
-        // TODO: Xponents 3.5 ID bias accounts for feature score already.
-        //double sf = scoreFeature(g);
         int sb = g.getId_bias(); /* v3.5: 100 point scale. Multiply by 0.01 */
-
-        double baseScore = (NAME_WEIGHT * sn) + /*(FEAT_WEIGHT * sf) +*/ (LOCATION_BIAS_WEIGHT * sb );
-        return  baseScore;
+        return (NAME_WEIGHT * sn) + (LOCATION_BIAS_WEIGHT * sb );
     }
 
     /**
@@ -854,7 +851,7 @@ public class PlaceCandidate extends TextMatch {
         return tokens;
     }
 
-    private HashMap<String, Place> linkedGeography = null;
+    private Map<String, Place> linkedGeography = null;
 
     /**
      * Get the collection of geographic slots geolocated.  E.g.,
@@ -862,11 +859,11 @@ public class PlaceCandidate extends TextMatch {
      *
      * @return
      */
-    public HashMap<String, Place> getLinkedGeography() {
+    public Map<String, Place> getLinkedGeography() {
         return linkedGeography;
     }
 
-    public void setLinkedGeography(HashMap<String, Place> geography) {
+    public void setLinkedGeography(Map<String, Place> geography) {
         linkedGeography = geography;
     }
 

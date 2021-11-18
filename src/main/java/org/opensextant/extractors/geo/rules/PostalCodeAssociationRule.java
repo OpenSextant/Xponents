@@ -9,7 +9,8 @@ import java.util.List;
 
 public class PostalCodeAssociationRule extends GeocodeRule {
 
-    public final static String POSTAL_ASSOC_RULE = "PostalAssociation";
+    public static final String POSTAL_ASSOC_RULE = "PostalAssociation";
+    int proximity = 20;
 
     /**
      * Determine if you have one of each, ADM1 and POSTAL.   COUNTRY and POSTAL is also fine.
@@ -52,10 +53,10 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                     this.boundaryObserver.boundaryLevel1InScope(p1.getNDTextnorm(), geo1);
                     p1.markValid();
                     p2.markValid();
-                    if (geo1Postal){
+                    if (geo1Postal) {
                         p1.markAnchor();
                     }
-                    if (geo2Postal){
+                    if (geo2Postal) {
                         p2.markAnchor();
                     }
                     p1.linkGeography(p2, geo1Postal ? "admin" : "postal", geo2);
@@ -68,10 +69,10 @@ public class PostalCodeAssociationRule extends GeocodeRule {
 
                     p1.markValid();
                     p2.markValid();
-                    if (geo1Postal){
+                    if (geo1Postal) {
                         p1.markAnchor();
                     }
-                    if (geo2Postal){
+                    if (geo2Postal) {
                         p2.markAnchor();
                     }
                     p1.linkGeography(p2, geo1Postal ? "country" : "postal", geo2);
@@ -102,7 +103,8 @@ public class PostalCodeAssociationRule extends GeocodeRule {
          */
         for (int x = 0; x < names.size(); ++x) {
             PlaceCandidate match = names.get(x);
-            PlaceCandidate before = null, after = null;
+            PlaceCandidate before = null;
+            PlaceCandidate after = null;
             if (x > 0) {
                 before = names.get(x - 1);
             }
@@ -110,10 +112,10 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                 after = names.get(x + 1);
             }
 
-            if (before != null && match.isWithinChars(before, 5)) {
+            if (before != null && match.isWithinChars(before, proximity)) {
                 alignGeography(match, before);
             }
-            if (after != null && match.isWithinChars(after, 5)) {
+            if (after != null && match.isWithinChars(after, proximity)) {
                 alignGeography(match, after);
             }
         }

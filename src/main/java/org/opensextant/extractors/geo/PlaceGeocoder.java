@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2012-2013 The MITRE Corporation.
+ * Copyright 2013-2021 The MITRE Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,8 +16,8 @@
  */
 ///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
-// _____                                ____                     __                       __
-///\  __`\                             /\  _`\                  /\ \__                   /\ \__
+//  _____                                ____                     __                       __
+// /\  __`\                             /\  _`\                  /\ \__                   /\ \__
 // \ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
 //  \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
 //   \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
@@ -27,6 +27,7 @@
 //                \/_/
 //
 // OpenSextant PlaceGeocoder (Xponents)
+// Copyright MITRE 2013-2021
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 // */
 package org.opensextant.extractors.geo;
@@ -78,7 +79,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private XCoord xcoord = null;
     private PersonNameFilter personNameRule = null;
     private TaxonMatcher personMatcher = null;
-    private static Map<String, Country> countryCatalog = null;
+    private Map<String, Country> countryCatalog = null;
     private GeonamesUtility nameHelper = null;
 
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
@@ -86,8 +87,7 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * Rules -- specific ones that are globals. Generic rules that have no state or
-     * order are added to
-     * this.rules array
+     * order are added to this.rules array
      */
     private CountryRule countryRule = null;
     private CoordinateAssociationRule coordRule = null;
@@ -101,12 +101,10 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding pipline
-     * start to finish. It
-     * makes use of XCoord to parse/geocode coordinates,
+     * start to finish. It makes use of XCoord to parse/geocode coordinates,
      * SolrGazetteer/GazetteerMatcher to match named
      * places, XTax to tag person names. Match Filters and rules work in conjunction
-     * to filter and tag
-     * further any candidates.
+     * to filter and tag further any candidates.
      *
      * @throws ConfigException if resource files could not be found in CLASSPATH
      */
@@ -169,11 +167,9 @@ public class PlaceGeocoder extends GazetteerMatcher
      * We do whatever is needed to init resources... that varies depending on the
      * use case.
      * Guidelines: this class is custodian of the app controller, Corpus feeder, and
-     * any Document
-     * instances passed into/out of the feeder.
+     * any Document instances passed into/out of the feeder.
      * This geocoder requires a default /exclusions/person-name-filter.txt, which
-     * can be empty, but most
-     * often it will be a list of person names (which are non-place names)
+     * can be empty, but most often it will be a list of person names (which are non-place names)
      * Rules Configured in approximate order:
      * <ul>
      * <li>CountryRule -- tag all country names</li>
@@ -194,10 +190,8 @@ public class PlaceGeocoder extends GazetteerMatcher
      * best location(s)</li>
      * </ul>
      * Your Rule Here -- use addRule( GeocodeRule ) to add a rule on the stack. It
-     * will be evaluated
-     * just before the final LocationChooserRule. your rule should improve Place
-     * scores on
-     * PlaceCandidates and name the rules that fire.
+     * will be evaluated just before the final LocationChooserRule. your rule should improve Place
+     * scores on PlaceCandidates and name the rules that fire.
      *
      * @throws ConfigException on err
      */
@@ -206,8 +200,7 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         // ==============
         // Rule setup: Create GeocodeRules, add them to this.rules if they can be
-        // evaluated generically
-        // on a list of place tags.
+        // evaluated generically on a list of place tags.
         // Otherwise such rules are configured, set during the request, and evaluated
         // adhoc as you need.
         //
@@ -225,14 +218,12 @@ public class PlaceGeocoder extends GazetteerMatcher
         addRule(nonsenseFilter);
 
         /**
-         * Files for Place Name filter are editable, as you likely have different ideas
-         * of who are "person
-         * names" to exclude when they conflict with place names. If you are filtering
-         * out such things, then
-         * it makes sense to filter them out earliest and not incorporate them in
-         * geocoding.
+         * Files for Place Name filter are editable, as you likely have different ideas of who are
+         * "person names" to exclude when they conflict with place names. If you are filtering
+         * out such things, then it makes sense to filter them out earliest and not incorporate them in geocoding.
          */
-        personNameRule = new PersonNameFilter("/filters/person-name-filter.txt", "/filters/person-title-filter.txt",
+        personNameRule = new PersonNameFilter("/filters/person-name-filter.txt",
+                "/filters/person-title-filter.txt",
                 "/filters/person-suffix-filter.txt");
 
         /*
@@ -308,8 +299,6 @@ public class PlaceGeocoder extends GazetteerMatcher
         //
         addRule(new NameRule());
 
-        // Feature classification rule:
-        //addRule(new FeatureRule());
         HeatMapRule heatmapper = new HeatMapRule();
         addRule(heatmapper);
         heatmapper.setCountryObserver(this);
@@ -318,7 +307,6 @@ public class PlaceGeocoder extends GazetteerMatcher
         chooser.setCountryObserver(this);
         chooser.setBoundaryObserver(this);
         chooser.setLocationObserver(this);
-        // rules.add(chooser);
 
         countryCatalog = this.getGazetteer().getCountries();
 
@@ -335,10 +323,8 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * Add your own geocode rules to enable you to add evidence, adjust score,
-     * outright choose Place
-     * instances on PlaceCandidates, etc. As long as your rule implements or
-     * overrides
-     * GeocodeRule.evaluate() methods candidate tags will be fully evaluated.
+     * outright choose Place instances on PlaceCandidates, etc. As long as your rule implements or
+     * overrides GeocodeRule.evaluate() methods candidate tags will be fully evaluated.
      *
      * @param r a rule
      */
@@ -394,7 +380,6 @@ public class PlaceGeocoder extends GazetteerMatcher
         this.relevantCountries.clear();
         this.relevantProvinces.clear();
         this.relevantLocations.clear();
-        //this.nationalities.clear();
 
         personNameRule.reset();
         countryRule.reset();
@@ -417,17 +402,16 @@ public class PlaceGeocoder extends GazetteerMatcher
      */
     private final Map<String, Place> relevantLocations = new HashMap<>();
 
-    /**
+    /*
      * Mentions of nationalities or cultures that indicate specific countries.
+     * No longer tracked.
      */
-    private final Map<String, String> nationalities = new HashMap<>();
 
     /**
      * If all you are doing is geotagging (just identifying places), then
      * enableGeocoding = false;
      * Otherwise the default here is geocoding (identify and geolocate) places. This
-     * is not a public API
-     * attribute.
+     * is not a public API attribute.
      *
      * @since 2.8.3
      */
@@ -518,8 +502,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         nameWithAdminRule.evaluate(candidates);
 
         // 2. NON-PLACE ID. Tag person and org names to negate celebrity names or
-        // well-known
-        // individuals who share a city name. "Tom Jackson", "Bill Clinton"
+        // well-known individuals who share a city name. "Tom Jackson", "Bill Clinton"
         //
         parseKnownNonPlaces(input, candidates, matches);
 
@@ -613,8 +596,7 @@ public class PlaceGeocoder extends GazetteerMatcher
             return;
         }
 
-        // If this step fails miserably, do not raise error. Log the error and return
-        // nothing found.
+        // If this step fails miserably, do not raise error. Log the error and return nothing found.
         //
         List<TextMatch> nonPlaces = null;
         try {
@@ -731,8 +713,6 @@ public class PlaceGeocoder extends GazetteerMatcher
         if (c == null) {
             return;
         }
-        // Null country code? TODO: test for more nulls.
-        //
         CountryCount counter = relevantCountries.computeIfAbsent(c.getCountryCode(), newCount -> new CountryCount(c));
         ++counter.count;
     }
@@ -744,10 +724,8 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * Calculate country mention totals and ratios. These ratios help qualify what
-     * the document is
-     * about. These may be mentions in text or inferred mentions to the countries
-     * listed, e.g., a coord
-     * infers a particular country.
+     * the document is about. These may be mentions in text or inferred mentions to the countries
+     * listed, e.g., a coord infers a particular country.
      */
     @Override
     public Map<String, CountryCount> countryMentionCount() {
@@ -788,12 +766,12 @@ public class PlaceGeocoder extends GazetteerMatcher
      */
     @Override
     public void countryInScope(String cc) {
-        Country C = countryCatalog.get(cc);
-        if (C == null) {
+        Country ctry = countryCatalog.get(cc);
+        if (ctry == null) {
             log.debug("Unknown country code {}", cc);
             return;
         }
-        CountryCount counter = relevantCountries.computeIfAbsent(C.getCountryCode(), newCount -> new CountryCount(C));
+        CountryCount counter = relevantCountries.computeIfAbsent(ctry.getCountryCode(), newCount -> new CountryCount(ctry));
         ++counter.count;
     }
 
@@ -815,18 +793,13 @@ public class PlaceGeocoder extends GazetteerMatcher
 
     /**
      * When coordinates are found track them. A coordinate is critical -- it informs
-     * us of city,
-     * province, and country. If the location is off shore or in no-mans' land,
-     * these chains of
-     * observers should respect that and fail quietly.
-     * There are at least two opportunities here: 1. Given a geo coordinate, use
-     * that hard location to
-     * disambiguate other named places 2. Given a geo coordinate identify the
-     * nearest known place(s).
-     * Such places may not be presented in the document or text.
-     * The first improves overall location accuracy, the second offers location
-     * enrichment and
-     * discovery.
+     * us of city,  province, and country. If the location is off shore or in no-mans' land,
+     * these chains of observers should respect that and fail quietly.
+     * There are at least two opportunities here:
+     * 1. Given a geo coordinate, use that hard location to disambiguate other named places
+     * 2. Given a geo coordinate identify the nearest known place(s).
+     * Such places may not be presented in the document or text. The first improves overall
+     * location accuracy, the second offers location enrichment and discovery.
      */
     @Override
     public void locationInScope(Geocoding geo) {
@@ -853,14 +826,13 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     /**
-     * Observer pattern that sees any time a possible boundary (state, province,
-     * district, etc) is mentioned.
+     * Observer pattern that sees any time a possible boundary (state, province, district, etc) is mentioned.
      * Example:  mention "Florida"  linked to location Florida(ADM1, FL, US) infers the boundary "US.FL"
      * As would  "Miami" (PPL, FL, US) also infer "US.FL".  We care more about the distinct and various mentions more
      * than the location counts.  I.e., "Florida" has 185 locations worldwide, multiples in some countries.
      *
      * @param nameNorm text or name related to the place, p
-     * @param p ID of a boundary.
+     * @param p        ID of a boundary.
      */
     @Override
     public void boundaryLevel1InScope(String nameNorm, Place p) {
@@ -912,15 +884,12 @@ public class PlaceGeocoder extends GazetteerMatcher
      * PLACE.
      * <p>
      * A method to retrieve one or more distinct admin boundaries containing the
-     * coordinate. This
-     * depends on resolution of gazetteer at hand. Secondarily as nearby places are
-     * encountered they are
-     * added to a coordinate providing a basic reverse-geocoding solution.
+     * coordinate. This depends on resolution of gazetteer at hand. Secondarily as nearby places are
+     * encountered they are added to a coordinate providing a basic reverse-geocoding solution.
      *
      * @param g geo coordinate found in text.
      * @return Place object near the geocoding.
-     * @throws SolrServerException a query against the Solr index may throw a Solr
-     *                             error.
+     * @throws SolrServerException a query against the Solr index may throw a Solr error.
      */
     public Place evaluateCoordinate(Geocoding g) throws SolrServerException, IOException {
         /*

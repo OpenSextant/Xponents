@@ -98,7 +98,7 @@ public class ProvinceAssociationRule extends GeocodeRule {
                         String a = parts[1];
                         name.addAdmin1Evidence("InferredAdmin1", weight, a, cc);
                     } else {
-                        log.info("Unknown ADM1 boundary path %s", adm1_path);
+                        log.info("Unknown ADM1 boundary path {}", adm1_path);
                     }
                 }
             }

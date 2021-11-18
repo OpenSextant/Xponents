@@ -17,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Transforms {
 
@@ -330,15 +330,15 @@ public class Transforms {
                 if (jobParams.tag_taxons) {
                     TaxonMatch match = (TaxonMatch) name;
                     ++tagCount;
-                    for (Taxon n : match.getTaxons()) {
+                    if (!match.getTaxons().isEmpty()) {
+                        // Only get one taxon from this match. That is sufficient, but not perfect.
+                        Taxon n = match.getTaxons().get(0);
                         JsonObject node = populateMatch(name);
                         node.put("type", match.getType());
                         node.put("taxon", n.name); // Name of taxon
                         node.put("catalog", n.catalog); // Name of catalog or source
                         node.put("filtered-out", name.isFilteredOut());
-
                         resultArray.add(node);
-                        break;
                     }
                 }
                 continue;
@@ -450,7 +450,7 @@ public class Transforms {
     private static void addRelatedGeography(JsonObject map, PlaceCandidate mention) {
         if (mention.isDerived() && mention.getLinkedGeography() != null) {
             JsonObject relatedInfo = new JsonObject();
-            HashMap<String, Place> slots = mention.getLinkedGeography();
+            Map<String, Place> slots = mention.getLinkedGeography();
             for (String slot : slots.keySet()) {
                 Place linkedPlace = slots.get(slot);
                 relatedInfo.put(slot, linkedPlace.getPlaceName());

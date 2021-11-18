@@ -250,22 +250,28 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
          *
          */
         for (TextMatch p1 : postalMatches) {
-            PlaceCandidate postal = (PlaceCandidate) p1;
-            Place postalLoc = postal.getChosenPlace();
-
-            if (postalLoc != null) {
-                if (!GeonamesUtility.isPostal(postalLoc)) {
-                    // Ignore things that are not postal codes.
-                    continue;
-                }
+            if (! (p1 instanceof  PlaceCandidate)){
+                // This shant' happen.
+                continue;
             }
-
-            if (TextUtils.isNumeric(p1.getText()) && p1.getLength() <= 3) {
+            if (TextUtils.isNumeric(p1.getText()) && p1.getLength() < MIN_LEN) {
                 // Ignore numeric codes that are 3 digits or shorter, for now.
                 // Ho hum... a limitation, but trivial matches may slow performance down.  TODO: Fix limitation.
                 continue;
             }
+            PlaceCandidate postal = (PlaceCandidate) p1;
+            boolean hasPostal = false;
+            for (ScoredPlace geo : postal.getPlaces()){
+                if (GeonamesUtility.isPostal(geo.getPlace())) {
+                    hasPostal = true;
+                    break;
+                }
+            }
+            if (!hasPostal){
+                continue;
+            }
 
+            int proximity = 20; // chars
             // Postal is NOW a Postal code.
             for (TextMatch m1 : matches) {
                 /*
@@ -285,7 +291,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
                          match#1   <Postal Code>
                          match#2  inferred, complete span from |<City> to <Country>|
                  */
-                if (!(postal.isWithinChars(m1, 20) && m1 instanceof PlaceCandidate)) {
+                if (!(postal.isWithinChars(m1, proximity) && m1 instanceof PlaceCandidate)) {
                     continue;
                 }
                 // Associate postal with m1?
@@ -325,6 +331,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
                     if (geo.sameBoundary(otherGeo)) {
                         postal.linkGeography(otherMention, slot, otherGeo);
                         postal.incrementPlaceScore(geo, 5.0, String.format("PostalAssociation/%s", slot));
+                        postal.markAnchor(); // If not already marked.
                         return true;
                     }
                 }

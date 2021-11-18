@@ -276,7 +276,7 @@ public abstract class SocialGeo {
     }
 
     protected double getConfidence(double c) {
-        return new BigDecimal(c).setScale(3, RoundingMode.FLOOR).doubleValue();
+        return BigDecimal.valueOf(c).setScale(3, RoundingMode.FLOOR).doubleValue();
     }
 
     /**

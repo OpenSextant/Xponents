@@ -24,8 +24,6 @@ import java.util.logging.Logger;
  */
 public class XlayerRestlet extends XlayerApp {
 
-    protected Logger log = null;
-
     public XlayerRestlet(Context c) {
         super(c);
         getContext();

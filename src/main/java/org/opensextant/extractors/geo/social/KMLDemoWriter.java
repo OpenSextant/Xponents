@@ -72,10 +72,7 @@ public class KMLDemoWriter implements Closeable {
     }
 
     /**
-     * Save off a tweet and its geo.
-     * TODO: confidence number should be more standardized and put into a 0..100
-     * scale
-     * ahead of time. Currently, 'confidence' might be a raw score as in ADNA
+     * Save off a tweet and its geo
      *
      * @param t
      *          tweet

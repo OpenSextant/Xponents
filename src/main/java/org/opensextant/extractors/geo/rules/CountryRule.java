@@ -95,7 +95,7 @@ public class CountryRule extends GeocodeRule {
             // "ALB" (name) == "ALB" (geo)
             // "AL"  => ambiguous
             addCountryCode(name, geo);
-            log("Chose Country Short Name", name.getText());
+            logMsg("Chose Country Short Name", name.getText());
         } else if (name.getLength() > 3) {
             // Check on Lexical matching to help choose best name match to location.
             sameLexicalName(name, geo);
@@ -108,7 +108,7 @@ public class CountryRule extends GeocodeRule {
                 // "Albania" = "ALBANIA"
                 addCountryName(name, geo);
             }
-            log("Chose Country Name", name.getText());
+            logMsg("Chose Country Name", name.getText());
         }
     }
 

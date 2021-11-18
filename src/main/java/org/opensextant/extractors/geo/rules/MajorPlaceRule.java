@@ -167,7 +167,7 @@ public class MajorPlaceRule extends GeocodeRule {
         if (geo.isNationalCapital()) {
             // IFF no countries are mentioned, Capitals are good proxies for country.
             inferCountry(geo);
-            ev = new PlaceEvidence(geo, CAPITAL, weight + 2);
+            ev = new PlaceEvidence(geo, CAPITAL, weight + 2.0);
         } else if (geo.isAdmin1()) {
             ev = new PlaceEvidence(geo, ADMIN, weight);
             inferBoundary(name.getNDTextnorm(), geo);

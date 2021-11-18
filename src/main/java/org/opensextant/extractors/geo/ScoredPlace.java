@@ -99,7 +99,7 @@ public class ScoredPlace  implements Comparable<ScoredPlace> {
     @Override
     public String toString() {
         if (place==null){
-            return null;
+            return "";
         }
         if (place.getName() != null) {
             return String.format("%s (%s, %s, %s), score=%03.2f", place.getName(), place.getAdmin1(), place.getCountryCode(),

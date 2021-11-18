@@ -40,8 +40,8 @@ public class NameCodeRule extends GeocodeRule {
      * Character distance between NAME CODE -- this is a simple distance
      * metric to avoid guessing or parsing what is between the NAME CODE or NAME
      * NAME
-     * E.g., San Francisco, Uraguay - 2 char distance. Allow up to 3
-     * E.g., San Francisco to Uraguay - 4 char distance.
+     * E.g., San Francisco, Uruguay - 2 char distance. Allow up to 3
+     * E.g., San Francisco to Uruguay - 4 char distance.
      */
     private static final int MAX_CHAR_DIST = 5;
 
@@ -77,8 +77,7 @@ public class NameCodeRule extends GeocodeRule {
     }
 
     /**
-     * Requirement: List of place candidate is a linked list.
-     * TODO: Develop patterned variations and tagging rules and filtering rules for this scenario.
+     *
      */
     @Override
     public void evaluate(final List<PlaceCandidate> names) {
@@ -143,12 +142,12 @@ public class NameCodeRule extends GeocodeRule {
                 continue;
             }
             /* Ignore series of country names and/or codes. */
-            if (name.isCountry && code.isCountry){
+            if (name.isCountry && code.isCountry) {
                 continue;
             }
 
             boolean canIgnoreShortCode = ignoreShortLowercase(code);
-            boolean abbrev = code.isAbbreviation; // possiblyAbbreviation(code);
+            boolean abbrev = code.isAbbreviation;
 
             /*
              * Test if SOMENAME, CODE is the case. a1.....a2.b1.., where b1 > a2
@@ -270,15 +269,12 @@ public class NameCodeRule extends GeocodeRule {
              * Found "Good Docktor, MD" --> likely medical doctor (MD), not Maryland.
              * So if no geographic connection between NAME, CODE and CODE is an
              * abbreviation, then omit CODE.
-             * If you actually have NAME, NAME, NAME, ... then you cannot omit subsequent
-             * NAMEs.
+             * If you actually have NAME, NAME, NAME, ... then you cannot omit subsequent NAMEs.
              * With NAME, CODE -- if CODE is an abbreviation but represents a Country, then
-             * let it pass,
-             * as it is more common to see country names/GPEs abbreviated as personified
+             * let it pass, as it is more common to see country names/GPEs abbreviated as personified
              * actors. Omit all other abbreviations, though.
              * with CODE CODE CODE ... you might have garbage text and would want to filter
-             * out chains of abbreviations.
-             * E.g., CO MA IN IA
+             * out chains of abbreviations. E.g., CO MA IN IA
              */
             if (abbrev) {
                 if (!logicalGeoMatchFound && !code.isCountry) {
@@ -356,8 +352,8 @@ public class NameCodeRule extends GeocodeRule {
         }
     }
 
-    private void remarkAbbreviation(PlaceCandidate pc){
-        if (pc.isAbbreviation){
+    private void remarkAbbreviation(PlaceCandidate pc) {
+        if (pc.isAbbreviation) {
             /* Find evidence that this match is an abbreviation. */
             boolean matchFound = false;
             for (ScoredPlace geo : pc.getPlaces()) {
@@ -462,14 +458,14 @@ public class NameCodeRule extends GeocodeRule {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setCountryCode(codeGeo.getCountryCode());
         ev.setAdmin1(codeGeo.getAdmin1());
-        double wt = weight + (comma ? 2 : 0);
-        String rl = codeGeo.isShortName() && code.isShortName() ?  NAME_ADMCODE_RULE: NAME_ADMNAME_RULE;
+        double wt = weight + (comma ? 2.0 : 0.0);
+        String rl = codeGeo.isShortName() && code.isShortName() ? NAME_ADMCODE_RULE : NAME_ADMNAME_RULE;
         ev.setRule(rl);
         ev.setWeight(wt);
         ev.setEvaluated(true); // Shunt. Evaluate this rule here; We'll increment the location score discretely.
         n.addEvidence(ev);
         code.addEvidence(ev);
-        code.incrementPlaceScore(codeGeo,  wt, rl);
+        code.incrementPlaceScore(codeGeo, wt, rl);
 
         if (boundaryObserver != null) {
             boundaryObserver.boundaryLevel1InScope(code.getNDTextnorm(), codeGeo);
@@ -491,7 +487,7 @@ public class NameCodeRule extends GeocodeRule {
                 break;
             }
             Place nameGeo = nameGeoScore.getPlace();
-            if (nameGeo.isSame(codeGeo)){
+            if (nameGeo.isSame(codeGeo)) {
                 continue; /* Ignore choosing same location for repeated names */
             }
             if (!(nameGeo.isPopulated() || nameGeo.isAdministrative() || nameGeo.isSpot())) {

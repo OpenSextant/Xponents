@@ -3,6 +3,7 @@ package org.opensextant.extractors.geo;
 import org.opensextant.data.Place;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Place metrics. Everything other than coords, countries, and filtered-out
@@ -15,7 +16,7 @@ public class PlaceCount {
     public Place place = null;
     public int total = 1;
     public String label = null;
-    public HashSet<String> names = new HashSet<>();
+    public Set<String> names = new HashSet<>();
 
     public PlaceCount(String l){
         label = l;

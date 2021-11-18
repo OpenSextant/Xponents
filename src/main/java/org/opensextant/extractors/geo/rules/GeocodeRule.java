@@ -42,11 +42,7 @@ public abstract class GeocodeRule {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected boolean locationOnly = false;
 
-    protected void log(String msg) {
-        log.debug("{}: {}", NAME, msg);
-    }
-
-    protected void log(String msg, String val) {
+    protected void logMsg(String msg, String val) {
         log.debug("{}: {} / value={}", NAME, msg, val);
     }
 
@@ -144,8 +140,6 @@ public abstract class GeocodeRule {
         }
         // Some rules may choose early -- and that would prevent other rules
         // from adding evidence
-        // In this scheme.
-        // DONE
         return name.getChosen() != null;
     }
 

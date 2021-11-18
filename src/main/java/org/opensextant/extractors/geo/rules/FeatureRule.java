@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * NOT USED MUCH.  Feature
+ *
  * FeatureRule is a rule that makes use of feature distribution across the
  * gazetteer as well as known properties of specific feature types that make
  * them more or less likely to be the best location type for a particular mention.
@@ -59,7 +61,7 @@ public class FeatureRule extends GeocodeRule {
 
 
     private static final int[] FEAT_RESOLUTION = { 6, 5, 1 };
-    public static final HashMap<String, FeatureClassMeta> featWeights = new HashMap<>();
+    public static final Map<String, FeatureClassMeta> featWeights = new HashMap<>();
 
     static {
         for (FeatureClassMeta fc : featureMeta) {
@@ -95,20 +97,16 @@ public class FeatureRule extends GeocodeRule {
 
     /**
      * Assess the feature of each location found, and provide a score on that geo
-     * based on the feature
-     * type apriori score (what we prefer in general) and the likelihood of it being
-     * mentioned (relative
-     * popularity of that feature class)
+     * based on the feature type apriori score (what we prefer in general) and the likelihood of it being
+     * mentioned (relative popularity of that feature class)
+     * @deprecated Feature score is now provided as part of id_bias
      */
     @Deprecated
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
 
         FeatureClassMeta fc = lookupFeature(geo);
-        if (fc == null) {
-            return;
-        }
-
+        // fc is not null
         name.incrementPlaceScore(geo, 10 * fc.factor, NAME);
     }
 }

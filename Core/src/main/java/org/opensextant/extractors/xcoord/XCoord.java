@@ -343,7 +343,7 @@ public class XCoord extends AbstractFlexPat {
                     if (debug) {
                         results.message = "Filtered out coordinate pattern=" + pat.id + " value='" + coord.getText()
                                 + "'";
-                        log.info("Normalization Filter fired, MSG=" + results.message);
+                        log.info("Normalization Filter fired, MSG={}", results.message);
                     }
                     continue;
                 }

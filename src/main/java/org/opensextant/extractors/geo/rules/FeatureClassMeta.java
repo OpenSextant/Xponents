@@ -30,7 +30,7 @@ public class FeatureClassMeta {
     /**
      * number of entries; used as a denominator.
      */
-    private final static int GAZETTEER_BASE_COUNT = 25000000;
+    private static final int GAZETTEER_BASE_COUNT = 25000000;
 
     public FeatureClassMeta(String l, int c, double wt) {
         this.label = l;

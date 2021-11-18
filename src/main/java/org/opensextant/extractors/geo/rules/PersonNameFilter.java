@@ -153,7 +153,7 @@ public class PersonNameFilter extends GeocodeRule {
      * Clinton, NY a town in upstate. We identify all such person names and mark
      * any overlaps and co-references that coincide with tagged place names.
      *
-     * @param placeNames places to NEgate
+     * @param placeNames places to negate
      * @param persons    named persons in doc
      * @param orgs       named orgs in doc
      */
@@ -240,7 +240,6 @@ public class PersonNameFilter extends GeocodeRule {
                     // After more evaluation, it seems like presence of a city name in an organization name
                     // is good evidence to leverage, so do not claim the location name is a resolved org name.
                     //
-                    // TODO: pc.setFilteredOut(true); resolvedOrgs.put(pc.getTextnorm(), name.getText());
                     pc.addRule(NAME_IN_ORG_RULE);
                 } else if (name.isWithin(pc)) {
                     name.setFilteredOut(true);
@@ -256,15 +255,8 @@ public class PersonNameFilter extends GeocodeRule {
      */
     public static final String NAME_IN_ORG_RULE = "NameInOrg";
 
-    /**
-     * Evaluate the place name purely based on previous rules or the lexical nature
-     * of the name, and not any geography.
-     * 
-     * @return True if name is evaluated sufficiently by this rule. False implies
-     *         continue evaluating.
-     */
-    @Override
-    public boolean evaluateNameFilterOnly(PlaceCandidate name) {
+
+    private boolean evaluateValidNames(PlaceCandidate name){
 
         if (name.isCountry) {
             return true;
@@ -272,31 +264,60 @@ public class PersonNameFilter extends GeocodeRule {
 
         /*
          * If you have already associated an Admin code with this name, then do
-         * not filter out
-         * Eugene, OR Jackson, MI
-         * TODO: Euguene, Oregon etc.
+         * not filter out Eugene, OR Jackson, MI
          */
-        if (NameCodeRule.isRuleFor(name)) {
+        else if (NameCodeRule.isRuleFor(name)) {
             name.setFilteredOut(false);
             return true;
         }
-        if (MajorPlaceRule.isRuleFor(name)) {
+        else if (MajorPlaceRule.isRuleFor(name)) {
             name.setFilteredOut(false);
             return true;
         }
+        return false;
 
+    }
+
+    private boolean isResolvedName(PlaceCandidate name){
         /*
          * Name matches not yet filtered out, but may be co-referrenced to prior
          * mention
          */
-        if (resolvedPersons.containsKey(name.getTextnorm())) {
+         if (resolvedPersons.containsKey(name.getTextnorm())) {
             name.setFilteredOut(true);
             name.addRule("ResolvedPerson.CoRef");
             return true;
-        }
-        if (resolvedOrgs.containsKey(name.getTextnorm())) {
+        } else if (resolvedOrgs.containsKey(name.getTextnorm())) {
             name.setFilteredOut(true);
             name.addRule("ResolvedOrg.CoRef");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isPersonName(PlaceCandidate name){
+        if (nameFilter.contains(name.getTextnorm())) {
+            name.setFilteredOut(true);
+            resolvedPersons.put(name.getTextnorm(), name.getText());
+            name.addRule("PersonName");
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Evaluate the place name purely based on previous rules or the lexical nature
+     * of the name, and not any geography, so this parent method is overriden and returns
+     * True always.  That shunts the geo evaluation;
+     * 
+     * @return True if name is evaluated sufficiently by this rule. False implies
+     *         continue evaluating.
+     */
+    @Override
+    public boolean evaluateNameFilterOnly(PlaceCandidate name) {
+
+        if (evaluateValidNames(name)){
+            return true;
+        } else if (isResolvedName(name)){
             return true;
         }
 
@@ -304,16 +325,13 @@ public class PersonNameFilter extends GeocodeRule {
         if (toks != null && toks.length > 0) {
             String pre = toks[toks.length - 1].toLowerCase();
             if (isNotBlank(pre)) {
-                // pre = delPeriod.matcher(pre).replaceAll("");
                 if (titles.contains(withoutPeriod(pre))) {
                     name.setFilteredOut(true);
                     resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
                     name.addRule("PersonTitle");
                     name.addRule("Prefix=" + pre);
                     return true;
-                }
-
-                if (nameFilter.contains(pre)) {
+                } else if (nameFilter.contains(pre)) {
                     name.setFilteredOut(true);
                     resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
                     name.addRule("PersonName");
@@ -323,10 +341,7 @@ public class PersonNameFilter extends GeocodeRule {
             }
         }
 
-        if (nameFilter.contains(name.getTextnorm())) {
-            name.setFilteredOut(true);
-            resolvedPersons.put(name.getTextnorm(), name.getText());
-            name.addRule("PersonName");
+        if (isPersonName(name)){
             return true;
         }
 
@@ -341,8 +356,6 @@ public class PersonNameFilter extends GeocodeRule {
             }
         }
 
-        /* return false; */
-        /* THERE ARE NO Geo-specific evaluation rules */
         return true;
     }
 

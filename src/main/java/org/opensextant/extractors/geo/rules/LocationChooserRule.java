@@ -83,9 +83,7 @@ public class LocationChooserRule extends GeocodeRule {
             }
         }
 
-        /*
-         * TODO: DEBUG through location chooser using histograms
-         *      of found and resolved place metadata.
+        /* metadata about resolved places is tracked here.
          */
         if (log.isDebugEnabled()) {
             debuggingHistograms(names);
@@ -131,8 +129,6 @@ public class LocationChooserRule extends GeocodeRule {
                 chosen.setMethod(PlaceGeocoder.METHOD_DEFAULT);
 
                 inferCountry(chosen.getCountryCode());
-
-                // TOOD: Track resolved places documentResolvedLocations.put(name.getTextnorm(), name.getChosen());
             } else {
                 log.info("Place name is ambiguous: {} in N={} places", name.getText(), name.distinctLocationCount());
             }
@@ -169,7 +165,6 @@ public class LocationChooserRule extends GeocodeRule {
      */
     private void debuggingHistograms(List<PlaceCandidate> names) {
         /*
-         * TODO: Is this histogram helpful.?
          * Uniqueness or popularity of a given name.
          */
         for (PlaceCandidate name : names) {
@@ -181,9 +176,8 @@ public class LocationChooserRule extends GeocodeRule {
             x.total = names.size(); // The total count of mentions.
         }
 
-        for (String cc : countryContext.keySet()) {
-            CountryCount count = countryContext.get(cc);
-            // log.debug("Country: {}/{} ({})", cc, count.country, count.count);
+        for (Map.Entry<String,CountryCount> e: countryContext.entrySet()) {
+            CountryCount count = e.getValue();
             log.debug("Country: {}", count);
         }
 
@@ -191,8 +185,8 @@ public class LocationChooserRule extends GeocodeRule {
             // log.debug("Boundary: {} ({})", count.place, count.count);
             log.debug("Boundary: {}", count);
             String cc = count.getCountryCode();
-            CountryCount Ccnt = inferredCountries.computeIfAbsent(cc, newCount-> new CountryCount(cc));
-            ++Ccnt.count;
+            CountryCount ccnt = inferredCountries.computeIfAbsent(cc, newCount-> new CountryCount(cc));
+            ++ccnt.count;
         }
         log.debug("Places: {}/{}", namespace.size(), namespace);
     }
@@ -413,10 +407,7 @@ public class LocationChooserRule extends GeocodeRule {
          * Countries are used to qualify other place names by way of geographic
          * boundaries.
          * So the rules for assigning countries should not leverage place confidence too
-         * much,
-         * otherwise this becomes an artificial feedback loop.
-         * TODO: devise acceptable confidence for country name match vs. country code or
-         * other inference.
+         * much, otherwise this becomes an artificial feedback loop.
          */
         if (pc.isCountry) {
             if (pc.isAbbreviation) {
@@ -512,14 +503,12 @@ public class LocationChooserRule extends GeocodeRule {
         // Award points to longer names
         // which helps raise confidence when looking at varied case texts.
         // One point per 5 characters + 1 point per word.
-        // TODO: Generalize beyond CJK vs non-CJK.
         if (TextUtils.hasCJKText(pc.getText())) {
             points += pc.getLength() + pc.getWordCount();
         } else {
             points += (pc.getLength() / 5) + pc.getWordCount();
         }
 
-        // TODO: work through ambiguities -- true ties.
         // AMBIGUOUS TIE:
         if (pc.isAmbiguous()) {
             Place p1 = pc.getChosenPlace();

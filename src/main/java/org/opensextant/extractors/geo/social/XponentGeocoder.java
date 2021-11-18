@@ -359,7 +359,7 @@ public class XponentGeocoder extends GeoInferencer {
         } else {
             // Possibly lots of countries. E.g. lang = 'en' | 'fr' is not
             // helpful.
-            if (t.lang == t.userLang) {
+            if (t.lang.equals(t.userLang)) {
                 countrySet = this.countries.countriesSpeaking(t.lang);
             } else {
                 // Otherwise prefer the User-declared language.s

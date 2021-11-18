@@ -214,8 +214,6 @@ public class HeatMapRule extends GeocodeRule {
                     continue;
                 }
 
-                // TODO: Unfortunately through the use of pointers
-                // the referenced Place in PlaceCandidate is a shared object reference.
                 // Increment the score once for a given geo location.
                 for (PlaceCandidate name2 : trackedMentions) {
                     if (offsets.contains(name2.start)) {

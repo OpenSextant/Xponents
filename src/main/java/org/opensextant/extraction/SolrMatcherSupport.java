@@ -1,19 +1,20 @@
-/*
- *
- * Copyright 2012-2013 The MITRE Corporation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
+///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+//
+//  ______                                ____                     __                       __
+// \ \  __`\                             /\  _`\                  /\ \__                   /\ \__
+// \ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
+//  \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
+//   \ \ \_\ \\ \ \L\ \/\  __/ /\ \/\ \    /\ \L\ \ /\  __/\/>  </ \ \ \_ /\ \L\.\_ /\ \/\ \\ \ \_
+//    \ \_____\\ \ ,__/\ \____\\ \_\ \_\   \ `\____\\ \____\/\_/\_\ \ \__\\ \__/.\_\\ \_\ \_\\ \__\
+//     \/_____/ \ \ \/  \/____/ \/_/\/_/    \/_____/ \/____/\//\/_/  \/__/ \/__/\/_/ \/_/\/_/ \/__/
+//               \ \_\
+//                \/_/
+//
+// OpenSextant (Xponents)
+// Copyright MITRE 2013
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
+//
+
 package org.opensextant.extraction;
 
 import java.io.Closeable;
@@ -36,8 +37,6 @@ import org.slf4j.LoggerFactory;
  * <code>SOLR_HOME</code> environment variable must be set to the location of
  * the Solr server.
  * <p >
- * This class is not thread-safe. It could be made to be
- * with little effort.
  *
  * @author David Smiley - dsmiley@mitre.org
  * @author Marc Ubaldino - ubaldino@mitre.org
@@ -46,13 +45,8 @@ public abstract class SolrMatcherSupport implements Closeable {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    /*
-     */
     protected String requestHandler = "/tag";
-    // protected String coreName = null;
     protected SolrProxy solr = null;
-
-    // updated after each call to getText();
     protected int tagNamesTime = 0;
     protected int getNamesTime = 0;
     protected int totalTime = 0;
@@ -188,14 +182,9 @@ public abstract class SolrMatcherSupport implements Closeable {
         // see https://issues.apache.org/jira/browse/SOLR-5154
         SolrDocumentList docList = response.getResults();
         if (docList != null) {
-            // log.debug("Not streaming docs from Solr (not supported)");
             StreamingResponseCallback callback = tagRequest.getStreamingResponseCallback();
             callback.streamDocListInfo(docList.getNumFound(), docList.getStart(), docList.getMaxScore());
             for (SolrDocument solrDoc : docList) {
-                /*
-                 * This appears to be an empty list; what is this explicit
-                 * callback loop for?
-                 */
                 callback.streamSolrDocument(solrDoc);
             }
         }

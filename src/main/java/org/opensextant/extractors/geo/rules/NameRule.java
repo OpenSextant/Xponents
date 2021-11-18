@@ -11,21 +11,20 @@ import java.util.Set;
 
 public class NameRule extends GeocodeRule {
 
-    public static String CITY = "QualifiedName.City";
-    public static String ADM1 = "QualifiedName.Prov";
-    public static String ADM2 = "QualifiedName.Dist";
-    public static String LEX1 = "LexicalMatch";
-    public static String LEX2 = "LexicalMatch.NoCase";
+    public static final String CITY = "QualifiedName.City";
+    public static final String ADM1 = "QualifiedName.Prov";
+    public static final String ADM2 = "QualifiedName.Dist";
+    public static final String LEX1 = "LexicalMatch";
+    public static final String LEX2 = "LexicalMatch.NoCase";
 
-    public static Set<String> P_prefixes = new HashSet<>();
-    public static Set<String> A1_suffixes = new HashSet<>();
-    public static Set<String> A2_suffixes = new HashSet<>();
+    public static final Set<String> P_prefixes = new HashSet<>();
+    public static final Set<String> A1_suffixes = new HashSet<>();
+    public static final Set<String> A2_suffixes = new HashSet<>();
 
     static {
         P_prefixes.addAll(TextUtils.string2list("town,city,village,hamlet,municipality", ","));
         A1_suffixes.addAll(TextUtils.string2list("province,state,prefecture", ","));
         A2_suffixes.addAll(TextUtils.string2list("district,county", ","));
-
     }
 
     public NameRule() {

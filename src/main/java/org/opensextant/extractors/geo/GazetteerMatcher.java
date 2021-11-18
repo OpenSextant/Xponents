@@ -18,7 +18,7 @@ package org.opensextant.extractors.geo;
 
 ///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
-// _____                                ____                     __                       __
+//  _____                               ____                     __                       __
 ///\  __`\                             /\  _`\                  /\ \__                   /\ \__
 //\ \ \/\ \   _____      __     ___    \ \,\L\_\      __   __  _\ \ ,_\     __       ___ \ \ ,_\
 // \ \ \ \ \ /\ '__`\  /'__`\ /' _ `\   \/_\__ \    /'__`\/\ \/'\\ \ \/   /'__`\   /' _ `\\ \ \/
@@ -86,7 +86,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     private long filteredTotal = 0;
     private long matchedTotal = 0;
     private boolean allowLowercaseAbbrev = false;
-    private static int PHRASE_LEN = 20; /* Two short words */
+    private static final int PHRASE_LEN = 20; /* Two short words */
 
     /*
      * enable trure for data such as tweets, blogs, etc. where case varies or
@@ -187,7 +187,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     public void reportMemory() {
         Runtime R = Runtime.getRuntime();
         long usedMemory = R.totalMemory() - R.freeMemory();
-        log.info("CURRENT MEM USAGE(K)=" + (int) (usedMemory / 1024));
+        log.info("CURRENT MEM USAGE(K)={}", (int) (usedMemory / 1024));
     }
 
     /**
@@ -482,13 +482,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             }
 
             // Then filter out trivial matches. E.g., Us is filtered out. vs. US would.
-            // be allowed. If lowercase abbreviations are allowed, then all matches are
-            // passed.
-            if (len <= PHRASE_LEN && !(allowLowerCase | allowLowercaseAbbrev | enableCodeHunter)) {
-                if (TextUtils.isASCII(matchText) && TextUtils.isLower(matchText)) {
-                    ++this.defaultFilterCount;
-                    continue;
-                }
+            // be allowed. If lowercase abbreviations are allowed, then all matches are passed.
+            boolean normalCaseHandling = !(allowLowerCase || allowLowercaseAbbrev || enableCodeHunter);
+            if (len <= PHRASE_LEN && normalCaseHandling && TextUtils.isASCII(matchText) && TextUtils.isLower(matchText)) {
+                ++this.defaultFilterCount;
+                continue;
             }
 
             if (TextUtils.countFormattingSpace(matchText) > 1) {
@@ -794,11 +792,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             for (ScoredPlace scoredPlace : candidate.getPlaces()) {
                 Place p = scoredPlace.getPlace();
                 if (p.isCountry()) {
-                    Integer count = countries.computeIfAbsent(namekey, newInt-> 0);
+                    Integer count = countries.computeIfAbsent(namekey, newInt -> 0);
                     ++count;
                     break;
                 } else {
-                    Integer count = places.computeIfAbsent(namekey, newInt-> 0);
+                    Integer count = places.computeIfAbsent(namekey, newInt -> 0);
                     ++count;
                 }
             }
