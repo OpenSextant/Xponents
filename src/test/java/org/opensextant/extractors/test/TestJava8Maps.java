@@ -1,5 +1,6 @@
 package org.opensextant.extractors.test;
-import org.junit.*;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.util.HashMap;
 
@@ -13,6 +14,6 @@ public class TestJava8Maps {
         HashMap<String, Integer> m = new HashMap<>();
         m.get("ABC");
         m.computeIfAbsent("ABC", newVal -> Integer.valueOf(4));
-        assert m.containsKey("ABC");
+        assertTrue( m.containsKey("ABC"));
     }
 }
