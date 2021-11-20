@@ -21,11 +21,12 @@ pushd $basedir/solr
 popd
 
 msg "Make Python library"
+msg " TODO: document using python lib from distro, as it is not fully installed." 
 # ----------------------
 pushd $basedir/python
 rm -rf ./dist/*
 python3 ./setup.py sdist
-pip3 install -U -t $basedir/piplib ./dist/opensextant-1.3*gz
+pip3 install -U -t $basedir/piplib ./dist/opensextant-1.4*gz
 
 msg "Prepare additional Java resources"
 # ----------------------
@@ -50,7 +51,7 @@ msg "Build and Package project"
 pushd $basedir/script
 
 # Pre-build the project before running this script.
-ant -f ./dist.xml dist
+ant -f ./dist.xml package-dist
 
 REL=$basedir/dist/Xponents-$VER
 find $REL -type f -name "*.sh" -exec chmod u+x {} \; -print
@@ -70,19 +71,21 @@ mkdir -p $REL/log
 
 rm $REL/doc/*.mp4
 rm $REL/script/dist* 
+rm -r $REL/xponents-solr/retired
+rm -r $REL/xponents-solr/script/__pycache__
+rm -r $REL/Sonarqube
+
 cp -r $basedir/dev.env $basedir/Examples/Docker/* $REL/
 
-
-# cp -r $basedir/src $basedir/pom.xml $basedir/Core $REL/
 
 msg "Create VERSION label"
 cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER
 Date:      `date`
-Gazetteer: Xponents Solr 2021-Q2
-  Sources: NGA,  2021-MAR
-           USGS, 2021-JAN
-           Geonames.org, 2021-MAR
+Gazetteer: Xponents Solr 2021-Q4
+  Sources: NGA,  2021-OCT
+           USGS, 2021-AUG
+           Geonames.org, 2021-AUG
            NaturalEarth, 2021-MAR
 EOF
-
+ 

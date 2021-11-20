@@ -25,8 +25,30 @@ RELEASES
 
 # 2021
 
-**Xponents 3.4.0 Vamp**
+**Xponents 3.5.0 GiveThanks**
 
+Release Objective: Sustainable & expanded gazetteer concepts.  Improved geoinferencing rules and evaluation.
+
+* **Features**: "postal" data from Geonames.org incorporated into its own tagger; Support tagging postal codes and abbreviations 
+  is available as a SDK tagger "PostalGeocoder" and also from the REST API, when using `features="postal"`
+* **Gazetteer ETL**: continued to refactor data sources thoroughly adding a full SQLite curation pipeline
+  for master gazetteer and postal data.  Python API and `./solr/script` contain the bulk.
+* **Gazetteer ETL**: employing Google Books wordstats (2012) to identify common words
+* **Fuzzy Matching**: Honed the concept of phonetic and non-diacritic matching to help optimize gazetteer entry
+  validation and tuning and tagger matching.
+* **Gazetteer**: Added entries for historical countries, UAE, and numerous variants and nationalities
+* **Geolocation**: converted gazetteer data and scoring to 100 point scale for ID bias and name bias (shed 50MB)
+  from each data store due to not carrying around unnecessary floating point accuracy.
+* **Python API**: `opensextant`, v1.4:
+* **Java API**: `opensextant-xponents-core` v3.5:
+* **Java API**: `opensextant-xponents` v3.5. Changes:
+  * `ScoredPlace` no longer subclasses `Place`: It is a holder for `score` and `place`
+  * `Parameters` no longer has `output_*` fields.  `tag_*` fields are used only to indicate user processing/output options
+* **REST API**: Xponents Server v3.5: 
+* **Sonar Scan**: Java8 code style and compliance fixes throughout.
+
+**Xponents 3.4.0 Vamp**
+* NOT released on docker. Skip.
 * Opensextant v1.3 python library updated and streamlined for Python3 conventions
 * Gazetteer curation refactored and added serious sources such as Geonames.org and NaturalEarth
 * Xponents Solr Gazetteer quarterly release, 2021-Q1
