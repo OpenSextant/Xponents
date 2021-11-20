@@ -19,12 +19,14 @@
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="opensextant.FlexPat.html">FlexPat</a><br>
 <a href="opensextant.TaxCat.html">TaxCat</a><br>
-</td><td width="25%" valign=top><a href="opensextant.advas_phonetics.html">advas_phonetics</a><br>
-<a href="opensextant.extractors.html"><strong>extractors</strong>&nbsp;(package)</a><br>
-</td><td width="25%" valign=top><a href="opensextant.gazetteer.html">gazetteer</a><br>
+<a href="opensextant.advas_phonetics.html">advas_phonetics</a><br>
+</td><td width="25%" valign=top><a href="opensextant.extractors.html"><strong>extractors</strong>&nbsp;(package)</a><br>
+<a href="opensextant.gazetteer.html">gazetteer</a><br>
 <a href="opensextant.phonetics.html">phonetics</a><br>
-</td><td width="25%" valign=top><a href="opensextant.utility.html">utility</a><br>
-<a href="opensextant.xlayer.html">xlayer</a><br>
+</td><td width="25%" valign=top><a href="opensextant.unicode.html">unicode</a><br>
+<a href="opensextant.utility.html">utility</a><br>
+<a href="opensextant.wordstats.html">wordstats</a><br>
+</td><td width="25%" valign=top><a href="opensextant.xlayer.html">xlayer</a><br>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
@@ -45,11 +47,11 @@
 <dt><font face="helvetica, arial"><a href="opensextant.html#Coordinate">Coordinate</a>
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="opensextant.html#Place">Place</a>
+<dt><font face="helvetica, arial"><a href="opensextant.html#Country">Country</a>
+</font></dt><dt><font face="helvetica, arial"><a href="opensextant.html#Place">Place</a>
 </font></dt></dl>
 </dd>
-<dt><font face="helvetica, arial"><a href="opensextant.html#Country">Country</a>
-</font></dt><dt><font face="helvetica, arial"><a href="opensextant.html#TextEntity">TextEntity</a>
+<dt><font face="helvetica, arial"><a href="opensextant.html#TextEntity">TextEntity</a>
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="opensextant.html#TextMatch">TextMatch</a>
@@ -97,18 +99,34 @@ Data descriptors defined here:<br>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="Country">class <strong>Country</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="Country">class <strong>Country</strong></a>(<a href="opensextant.html#Coordinate">Coordinate</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt><a href="#Country">Country</a>&nbsp;metadata<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
-<td width="100%">Methods defined here:<br>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="opensextant.html#Country">Country</a></dd>
+<dd><a href="opensextant.html#Coordinate">Coordinate</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
 <dl><dt><a name="Country-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="Country-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
 
 <hr>
-Data descriptors defined here:<br>
+Methods inherited from <a href="opensextant.html#Coordinate">Coordinate</a>:<br>
+<dl><dt><a name="Country-format_coord"><strong>format_coord</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Country-set"><strong>set</strong></a>(self, lat, lon)</dt><dd><tt>Set&nbsp;the&nbsp;location&nbsp;lat,&nbsp;lon</tt></dd></dl>
+
+<dl><dt><a name="Country-string_coord"><strong>string_coord</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Country-validate"><strong>validate</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="opensextant.html#Coordinate">Coordinate</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -121,10 +139,7 @@ Data descriptors defined here:<br>
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#000000" face="helvetica, arial"><a name="Extractor">class <strong>Extractor</strong></a>(<a href="abc.html#ABC">abc.ABC</a>)</font></td></tr>
     
-<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt>Helper&nbsp;class&nbsp;that&nbsp;provides&nbsp;a&nbsp;standard&nbsp;way&nbsp;to&nbsp;create&nbsp;an&nbsp;<a href="abc.html#ABC">ABC</a>&nbsp;using<br>
-inheritance.<br>&nbsp;</tt></td></tr>
-<tr><td>&nbsp;</td>
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="opensextant.html#Extractor">Extractor</a></dd>
 <dd><a href="abc.html#ABC">abc.ABC</a></dd>
@@ -324,30 +339,71 @@ Data descriptors inherited from <a href="opensextant.html#TextEntity">TextEntity
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
+<td width="100%"><dl><dt><a name="-as_place"><strong>as_place</strong></a>(ctry: opensextant.Country, name: str, name_type='N', oid=None)</dt><dd><tt>Convert&nbsp;to&nbsp;<a href="#Place">Place</a>.<br>
+:param&nbsp;ctry:&nbsp;<a href="#Country">Country</a>&nbsp;<a href="builtins.html#object">object</a><br>
+:param&nbsp;name:&nbsp;the&nbsp;name&nbsp;to&nbsp;use<br>
+:param&nbsp;name_type:<br>
+:param&nbsp;oid:&nbsp;row&nbsp;ID<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
 &nbsp;<br>
 Unlike&nbsp;atan(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbsp;y&nbsp;are&nbsp;considered.</tt></dd></dl>
  <dl><dt><a name="-cos"><strong>cos</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;cosine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
  <dl><dt><a name="-distance_cartesian"><strong>distance_cartesian</strong></a>(x1, y1, x2, y2)</dt><dd><tt>Given&nbsp;X1,&nbsp;Y1&nbsp;and&nbsp;X2,&nbsp;Y2&nbsp;provide&nbsp;the&nbsp;2-D&nbsp;Cartesian&nbsp;distance&nbsp;between&nbsp;two&nbsp;points.</tt></dd></dl>
- <dl><dt><a name="-distance_haversine"><strong>distance_haversine</strong></a>(ddlon1, ddlat1, ddlon2, ddlat2)</dt><dd><tt>Returns&nbsp;distance&nbsp;in&nbsp;kilometers&nbsp;for&nbsp;given&nbsp;decimal&nbsp;degree&nbsp;Lon/Lat&nbsp;(X,Y)&nbsp;pair<br>
+ <dl><dt><a name="-distance_haversine"><strong>distance_haversine</strong></a>(ddlon1, ddlat1, ddlon2, ddlat2)</dt><dd><tt>Returns&nbsp;distance&nbsp;in&nbsp;meters&nbsp;for&nbsp;given&nbsp;decimal&nbsp;degree&nbsp;Lon/Lat&nbsp;(X,Y)&nbsp;pair<br>
 &nbsp;<br>
 <a href="http://www.movable-type.co.uk/scripts/latlong.html">http://www.movable-type.co.uk/scripts/latlong.html</a></tt></dd></dl>
  <dl><dt><a name="-format_coord"><strong>format_coord</strong></a>(lat, lon)</dt><dd><tt>2.6,&nbsp;3.6&nbsp;format.<br>
 :param&nbsp;lat:&nbsp;latitude<br>
 :param&nbsp;lon:&nbsp;longitude<br>
 :return:&nbsp;string</tt></dd></dl>
- <dl><dt><a name="-get_country"><strong>get_country</strong></a>(code, standard='ISO')</dt><dd><tt>:param&nbsp;code:&nbsp;2-&nbsp;or&nbsp;3-alpha&nbsp;code.<br>
-:param&nbsp;standard:&nbsp;'ISO'&nbsp;or&nbsp;'FIPS'<br>
+ <dl><dt><a name="-get_country"><strong>get_country</strong></a>(namecode, standard='ISO')</dt><dd><tt>Get&nbsp;<a href="#Country">Country</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;given&nbsp;a&nbsp;name,&nbsp;ISO&nbsp;or&nbsp;FIPS&nbsp;code.&nbsp;&nbsp;For&nbsp;codes,&nbsp;you&nbsp;must&nbsp;be<br>
+clear&nbsp;about&nbsp;which&nbsp;standard&nbsp;the&nbsp;code&nbsp;is&nbsp;based&nbsp;in.&nbsp;Some&nbsp;code&nbsp;collisions&nbsp;exist.<br>
+"ZZ"&nbsp;will&nbsp;NOT&nbsp;be&nbsp;returned&nbsp;for&nbsp;the&nbsp;empty&nbsp;code&nbsp;--&nbsp;if&nbsp;you&nbsp;pass&nbsp;in&nbsp;a&nbsp;NULL&nbsp;or&nbsp;empty<br>
+country&nbsp;code&nbsp;you&nbsp;may&nbsp;have&nbsp;a&nbsp;data&nbsp;quality&nbsp;issue.<br>
+:param&nbsp;namecode:&nbsp;2-&nbsp;or&nbsp;3-alpha&nbsp;code.<br>
+:param&nbsp;standard:&nbsp;'ISO'&nbsp;or&nbsp;'FIPS',&nbsp;'name'<br>
 :return:&nbsp;&nbsp;<a href="#Country">Country</a>&nbsp;<a href="builtins.html#object">object</a></tt></dd></dl>
  <dl><dt><a name="-get_province"><strong>get_province</strong></a>(cc, adm1)</dt><dd><tt>REQUIRES&nbsp;you&nbsp;<a href="#-load_provinces">load_provinces</a>()&nbsp;first.</tt></dd></dl>
- <dl><dt><a name="-is_administrative"><strong>is_administrative</strong></a>(feat)</dt></dl>
- <dl><dt><a name="-is_populated"><strong>is_populated</strong></a>(feat)</dt></dl>
- <dl><dt><a name="-load_countries"><strong>load_countries</strong></a>(csvpath=None)</dt><dd><tt>parses&nbsp;Xponents&nbsp;Basics/src/main/resource&nbsp;CSV&nbsp;file&nbsp;country-names-2015.csv<br>
-putting&nbsp;out&nbsp;an&nbsp;array&nbsp;of&nbsp;<a href="#Country">Country</a>&nbsp;objects.</tt></dd></dl>
- <dl><dt><a name="-load_provinces"><strong>load_provinces</strong></a>()</dt></dl>
- <dl><dt><a name="-load_us_provinces"><strong>load_us_provinces</strong></a>()</dt></dl>
- <dl><dt><a name="-load_world_adm1"><strong>load_world_adm1</strong></a>()</dt></dl>
- <dl><dt><a name="-make_HASC"><strong>make_HASC</strong></a>(cc, adm1)</dt></dl>
+ <dl><dt><a name="-get_us_province"><strong>get_us_province</strong></a>(adm1: str)</dt><dd><tt>:param&nbsp;adm1:&nbsp;&nbsp;ADM1&nbsp;code&nbsp;or&nbsp;for&nbsp;territories,<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-is_administrative"><strong>is_administrative</strong></a>(feat: str)</dt></dl>
+ <dl><dt><a name="-is_country"><strong>is_country</strong></a>(feat_code: str)</dt><dd><tt>Test&nbsp;a&nbsp;feature&nbsp;code</tt></dd></dl>
+ <dl><dt><a name="-is_populated"><strong>is_populated</strong></a>(feat: str)</dt></dl>
+ <dl><dt><a name="-load_countries"><strong>load_countries</strong></a>(csvpath=None)</dt><dd><tt>parses&nbsp;Xponents&nbsp;Core/src/main/resource&nbsp;CSV&nbsp;file&nbsp;country-names-2015.csv<br>
+putting&nbsp;out&nbsp;an&nbsp;array&nbsp;of&nbsp;<a href="#Country">Country</a>&nbsp;objects.<br>
+:return:&nbsp;array&nbsp;of&nbsp;<a href="#Country">Country</a></tt></dd></dl>
+ <dl><dt><a name="-load_major_cities"><strong>load_major_cities</strong></a>()</dt><dd><tt>Loads&nbsp;City&nbsp;geo/demographic&nbsp;information&nbsp;--&nbsp;this&nbsp;does&nbsp;not&nbsp;try&nbsp;to&nbsp;parse&nbsp;all&nbsp;name&nbsp;variants.<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-load_provinces"><strong>load_provinces</strong></a>()</dt><dd><tt>Load,&nbsp;store&nbsp;and&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;ADM1&nbsp;boundary&nbsp;names&nbsp;-&nbsp;provinces,&nbsp;states,&nbsp;republics,&nbsp;etc.<br>
+NOTE:&nbsp;Location&nbsp;information&nbsp;is&nbsp;not&nbsp;included&nbsp;in&nbsp;this&nbsp;province&nbsp;listing.&nbsp;&nbsp;Just&nbsp;<a href="#Country">Country</a>,&nbsp;ADM1,&nbsp;Name&nbsp;tuples.<br>
+:return:&nbsp;&nbsp;dict</tt></dd></dl>
+ <dl><dt><a name="-load_us_provinces"><strong>load_us_provinces</strong></a>()</dt><dd><tt>Load,&nbsp;store&nbsp;internally&nbsp;and&nbsp;return&nbsp;the&nbsp;LIST&nbsp;of&nbsp;US&nbsp;states.<br>
+NOTE:&nbsp;<a href="#Place">Place</a>&nbsp;objects&nbsp;for&nbsp;US&nbsp;States&nbsp;have&nbsp;a&nbsp;location&nbsp;(unlike&nbsp;list&nbsp;of&nbsp;world&nbsp;provinces).<br>
+To&nbsp;get&nbsp;location&nbsp;and&nbsp;feature&nbsp;information&nbsp;in&nbsp;full,&nbsp;you&nbsp;must&nbsp;use&nbsp;the&nbsp;SQLITE&nbsp;DB&nbsp;or&nbsp;Xponents&nbsp;Solr.<br>
+:return:&nbsp;array&nbsp;of&nbsp;<a href="#Place">Place</a>&nbsp;objects</tt></dd></dl>
+ <dl><dt><a name="-load_world_adm1"><strong>load_world_adm1</strong></a>()</dt><dd><tt>Load,&nbsp;store&nbsp;and&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;ADM1&nbsp;boundary&nbsp;names&nbsp;-&nbsp;provinces,&nbsp;states,&nbsp;republics,&nbsp;etc.<br>
+:return:&nbsp;&nbsp;dict</tt></dd></dl>
+ <dl><dt><a name="-make_HASC"><strong>make_HASC</strong></a>(cc, adm1, adm2=None)</dt><dd><tt>Create&nbsp;a&nbsp;simplie&nbsp;hiearchical&nbsp;path&nbsp;for&nbsp;a&nbsp;boundary<br>
+:param&nbsp;cc:<br>
+:param&nbsp;adm1:<br>
+:param&nbsp;adm2:<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-mathlog"><strong>mathlog</strong></a> = log(...)</dt><dd><tt>log(x,&nbsp;[base=math.e])<br>
+Return&nbsp;the&nbsp;logarithm&nbsp;of&nbsp;x&nbsp;to&nbsp;the&nbsp;given&nbsp;base.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;base&nbsp;not&nbsp;specified,&nbsp;returns&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;(base&nbsp;e)&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-popscale"><strong>popscale</strong></a>(population, feature='city')</dt><dd><tt>Given&nbsp;a&nbsp;population&nbsp;in&nbsp;context&nbsp;of&nbsp;the&nbsp;feature&nbsp;--&nbsp;provide&nbsp;a<br>
+approximation&nbsp;of&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;feature&nbsp;on&nbsp;a&nbsp;10&nbsp;point&nbsp;scale.<br>
+&nbsp;<br>
+Approximations&nbsp;for&nbsp;10&nbsp;points:<br>
+Largest&nbsp;city&nbsp;is&nbsp;~15&nbsp;million<br>
+//&nbsp;Few&nbsp;cities&nbsp;top&nbsp;30&nbsp;million,&nbsp;e.g.,&nbsp;2^25.&nbsp;&nbsp;popscale&nbsp;=&nbsp;25&nbsp;-&nbsp;13&nbsp;=&nbsp;12.<br>
+Largest&nbsp;province&nbsp;is&nbsp;~135&nbsp;million<br>
+&nbsp;<br>
+:param&nbsp;population:<br>
+:param&nbsp;feature:&nbsp;&nbsp;city,&nbsp;district,&nbsp;or&nbsp;province&nbsp;allowed.<br>
+:return:&nbsp;index&nbsp;on&nbsp;0..10&nbsp;scale.</tt></dd></dl>
  <dl><dt><a name="-radians"><strong>radians</strong></a>(x, /)</dt><dd><tt>Convert&nbsp;angle&nbsp;x&nbsp;from&nbsp;degrees&nbsp;to&nbsp;radians.</tt></dd></dl>
  <dl><dt><a name="-render_match"><strong>render_match</strong></a>(m)</dt><dd><tt>:param&nbsp;m:&nbsp;<a href="#TextMatch">TextMatch</a><br>
 :return:&nbsp;dict</tt></dd></dl>
@@ -362,7 +418,7 @@ putting&nbsp;out&nbsp;an&nbsp;array&nbsp;of&nbsp;<a href="#Country">Country</a>&
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>EARTH_RADIUS_WGS84</strong> = 6378<br>
+<td width="100%"><strong>EARTH_RADIUS_WGS84</strong> = 6378137.0<br>
 <strong>PY3</strong> = True<br>
 <strong>adm1_by_hasc</strong> = {}<br>
 <strong>countries</strong> = []<br>

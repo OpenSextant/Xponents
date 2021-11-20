@@ -60,10 +60,11 @@ There&nbsp;are&nbsp;no&nbsp;default&nbsp;options&nbsp;supported.</tt></dd></dl>
 &nbsp;&nbsp;features&nbsp;=&nbsp;"f,f,f,f"&nbsp;&nbsp;String&nbsp;of&nbsp;comma-separated&nbsp;features<br>
 &nbsp;&nbsp;options&nbsp;&nbsp;=&nbsp;"o,o,o,o"&nbsp;&nbsp;String&nbsp;of&nbsp;comma-separated&nbsp;features<br>
 &nbsp;<br>
-&nbsp;&nbsp;features&nbsp;are&nbsp;places,&nbsp;coordinates,&nbsp;countries,&nbsp;orgs,&nbsp;persons,&nbsp;patterns.&nbsp;<br>
+&nbsp;&nbsp;features&nbsp;are&nbsp;places,&nbsp;coordinates,&nbsp;countries,&nbsp;orgs,&nbsp;persons,&nbsp;patterns,&nbsp;postal.&nbsp;<br>
 &nbsp;&nbsp;<br>
 &nbsp;&nbsp;feature&nbsp;aliases&nbsp;"geo"&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;get&nbsp;All&nbsp;Geographic&nbsp;entities&nbsp;(places,coordinates,countries)<br>
 &nbsp;&nbsp;feature&nbsp;"taxons"&nbsp;can&nbsp;get&nbsp;at&nbsp;any&nbsp;Taxon&nbsp;"taxons",&nbsp;"persons",&nbsp;"orgs"<br>
+&nbsp;&nbsp;feature&nbsp;"postal"&nbsp;will&nbsp;tag&nbsp;obvious,&nbsp;qualified&nbsp;postal&nbsp;codes&nbsp;that&nbsp;are&nbsp;paired&nbsp;with&nbsp;a&nbsp;CITY,&nbsp;PROVINCE,&nbsp;or&nbsp;COUNTRY&nbsp;tag.<br>
 &nbsp;&nbsp;<br>
 &nbsp;&nbsp;options&nbsp;are&nbsp;not&nbsp;observed&nbsp;by&nbsp;Xlayer&nbsp;"Xgeo",&nbsp;but&nbsp;you&nbsp;can&nbsp;adapt&nbsp;your&nbsp;own&nbsp;service<br>
 &nbsp;&nbsp;to&nbsp;accomodate&nbsp;such&nbsp;options.&nbsp;&nbsp;&nbsp;Possible&nbsp;options&nbsp;are&nbsp;clean_input,&nbsp;lowercase,&nbsp;for&nbsp;example:<br>
@@ -102,7 +103,10 @@ Data descriptors defined here:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-print_results"><strong>print_results</strong></a>(arr)</dt><dd><tt>:param&nbsp;arr:&nbsp;array&nbsp;of&nbsp;Annotations&nbsp;or&nbsp;TextMatch<br>
+<td width="100%"><dl><dt><a name="-print_match"><strong>print_match</strong></a>(match: opensextant.TextMatch)</dt><dd><tt>:param&nbsp;match:<br>
 :return:</tt></dd></dl>
+ <dl><dt><a name="-print_results"><strong>print_results</strong></a>(arr)</dt><dd><tt>:param&nbsp;arr:&nbsp;array&nbsp;of&nbsp;Annotations&nbsp;or&nbsp;TextMatch<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-process_text"><strong>process_text</strong></a>(txt, docid='$DOC-ID$', features=[], preferred_countries=[], preferred_locations=[])</dt></dl>
 </td></tr></table>
 </body></html>

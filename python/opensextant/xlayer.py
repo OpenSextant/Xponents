@@ -55,10 +55,11 @@ class XlayerClient:
           features = "f,f,f,f"  String of comma-separated features
           options  = "o,o,o,o"  String of comma-separated features
 
-          features are places, coordinates, countries, orgs, persons, patterns. 
+          features are places, coordinates, countries, orgs, persons, patterns, postal. 
           
           feature aliases "geo" can be used to get All Geographic entities (places,coordinates,countries)
           feature "taxons" can get at any Taxon "taxons", "persons", "orgs"
+          feature "postal" will tag obvious, qualified postal codes that are paired with a CITY, PROVINCE, or COUNTRY tag.
           
           options are not observed by Xlayer "Xgeo", but you can adapt your own service
           to accomodate such options.   Possible options are clean_input, lowercase, for example:

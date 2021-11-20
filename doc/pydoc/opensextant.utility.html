@@ -9,7 +9,7 @@
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="opensextant.html"><font color="#ffffff">opensextant</font></a>.utility</strong></big></big></font></td
 ><td align=right valign=bottom
 ><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/utility.py">/Users/ubaldino/workspace/opensource/Xponents/python/opensextant/utility.py</a></font></td></tr></table>
-    <p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright&nbsp;2012-2020&nbsp;The&nbsp;MITRE&nbsp;Corporation.<br>
+    <p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright&nbsp;2015-2021&nbsp;The&nbsp;MITRE&nbsp;Corporation.<br>
 &nbsp;<br>
 &nbsp;&nbsp;Licensed&nbsp;under&nbsp;the&nbsp;Apache&nbsp;License,&nbsp;Version&nbsp;2.0&nbsp;(the&nbsp;"License");&nbsp;you&nbsp;may&nbsp;not<br>
 &nbsp;&nbsp;use&nbsp;this&nbsp;file&nbsp;except&nbsp;in&nbsp;compliance&nbsp;with&nbsp;the&nbsp;License.&nbsp;You&nbsp;may&nbsp;obtain&nbsp;a&nbsp;copy&nbsp;of<br>
@@ -68,7 +68,7 @@ functions&nbsp;here&nbsp;take&nbsp;an&nbsp;Oxygen&nbsp;cfg&nbsp;parameter&nbsp;k
 If&nbsp;the&nbsp;keyword&nbsp;is&nbsp;valid&nbsp;and&nbsp;points&nbsp;to&nbsp;a&nbsp;valid&nbsp;file&nbsp;path,&nbsp;then&nbsp;the&nbsp;file&nbsp;path&nbsp;is&nbsp;used.<br>
 In&nbsp;otherwords,&nbsp;keywords&nbsp;are&nbsp;aliases&nbsp;for&nbsp;a&nbsp;file&nbsp;on&nbsp;disk.<br>
 &nbsp;<br>
-&nbsp;&nbsp;Ex.&nbsp;&nbsp;'mywords'&nbsp;=&nbsp;'.\cfg\mywords_v03_filtered.txt'<br>
+&nbsp;&nbsp;Ex.&nbsp;&nbsp;'mywords'&nbsp;=&nbsp;'./cfg/mywords_v03_filtered.txt'<br>
 &nbsp;<br>
 &nbsp;&nbsp;oxygen.cfg&nbsp;file&nbsp;would&nbsp;have&nbsp;this&nbsp;mapping.&nbsp;&nbsp;Your&nbsp;code&nbsp;just&nbsp;references&nbsp;'mywords'&nbsp;to&nbsp;load&nbsp;it.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -144,7 +144,22 @@ left_y&nbsp;&nbsp;left_x&nbsp;&nbsp;&nbsp;right_x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 :return:</tt></dd></dl>
  <dl><dt><a name="-has_digit"><strong>has_digit</strong></a>(text)</dt><dd><tt>Used&nbsp;primarily&nbsp;to&nbsp;report&nbsp;places&nbsp;and&nbsp;appears&nbsp;to&nbsp;be&nbsp;critical&nbsp;for<br>
 name&nbsp;filtering&nbsp;when&nbsp;doing&nbsp;phonetics.</tt></dd></dl>
+ <dl><dt><a name="-is_abbreviation"><strong>is_abbreviation</strong></a>(nm: str)</dt><dd><tt>Determine&nbsp;if&nbsp;something&nbsp;is&nbsp;an&nbsp;abbreviation.<br>
+Otherwise&nbsp;if&nbsp;text&nbsp;ends&nbsp;with&nbsp;"."&nbsp;we'll&nbsp;conclude&nbsp;so.<br>
+&nbsp;<br>
+Examples:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Ala.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YES<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Ala&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO<br>
+&nbsp;&nbsp;&nbsp;&nbsp;S.&nbsp;Bob&nbsp;&nbsp;&nbsp;NO&nbsp;&nbsp;&nbsp;--&nbsp;abbreviated,&nbsp;yes,&nbsp;but&nbsp;this&nbsp;is&nbsp;more&nbsp;like&nbsp;a&nbsp;contraction.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;S.&nbsp;B.&nbsp;&nbsp;&nbsp;&nbsp;YES<br>
+&nbsp;<br>
+:param&nbsp;nm:&nbsp;textual&nbsp;name<br>
+:return:&nbsp;True&nbsp;if&nbsp;obj&nbsp;is&nbsp;inferred&nbsp;to&nbsp;be&nbsp;an&nbsp;abbreviation</tt></dd></dl>
  <dl><dt><a name="-is_ascii"><strong>is_ascii</strong></a>(s)</dt></dl>
+ <dl><dt><a name="-is_code"><strong>is_code</strong></a>(t: str, nlen=6)</dt><dd><tt>Test&nbsp;if&nbsp;a&nbsp;string&nbsp;is&nbsp;an&nbsp;ASCII&nbsp;code&nbsp;typically&nbsp;1-3&nbsp;chars&nbsp;in&nbsp;len.<br>
+:param&nbsp;t:&nbsp;text<br>
+:param&nbsp;nlen:&nbsp;threshold&nbsp;for&nbsp;string&nbsp;len<br>
+:return:</tt></dd></dl>
  <dl><dt><a name="-is_text"><strong>is_text</strong></a>(t)</dt><dd><tt>#&nbsp;---------------------------------------<br>
 #&nbsp;&nbsp;TEXT&nbsp;UTILITIES<br>
 #&nbsp;---------------------------------------</tt></dd></dl>
@@ -154,18 +169,27 @@ This&nbsp;checks&nbsp;to&nbsp;see&nbsp;if&nbsp;value&nbsp;is&nbsp;non-trivial,&n
 :return:</tt></dd></dl>
  <dl><dt><a name="-isnan"><strong>isnan</strong></a>(x, /)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;x&nbsp;is&nbsp;a&nbsp;NaN&nbsp;(not&nbsp;a&nbsp;number),&nbsp;and&nbsp;False&nbsp;otherwise.</tt></dd></dl>
  <dl><dt><a name="-levenshtein_distance"><strong>levenshtein_distance</strong></a>(s, t)</dt><dd><tt>Wikipedia&nbsp;page&nbsp;on&nbsp;Levenshtein&nbsp;Edit&nbsp;Distance<br>
-https://en.wikipedia.org/wiki/Levenshtein_distance<br>
+<a href="https://en.wikipedia.org/wiki/Levenshtein_distance">https://en.wikipedia.org/wiki/Levenshtein_distance</a><br>
 &nbsp;<br>
 This&nbsp;is&nbsp;the&nbsp;fastest,&nbsp;simplest&nbsp;of&nbsp;3&nbsp;methods&nbsp;documented&nbsp;for&nbsp;Python.</tt></dd></dl>
+ <dl><dt><a name="-load_list"><strong>load_list</strong></a>(path, lower=False)</dt><dd><tt>Load&nbsp;text&nbsp;data&nbsp;from&nbsp;a&nbsp;file.<br>
+Returns&nbsp;array&nbsp;of&nbsp;non-comment&nbsp;rows.&nbsp;One&nbsp;non-whitespace&nbsp;row&nbsp;per&nbsp;line.<br>
+:param&nbsp;path:&nbsp;file&nbsp;to&nbsp;load.<br>
+:param&nbsp;lower:&nbsp;Lowercased&nbsp;is&nbsp;optional.<br>
+:return:&nbsp;array&nbsp;of&nbsp;terms</tt></dd></dl>
  <dl><dt><a name="-parse_float"><strong>parse_float</strong></a>(v)</dt></dl>
- <dl><dt><a name="-replace_diacritics"><strong>replace_diacritics</strong></a>(s)</dt><dd><tt>remove&nbsp;accents&nbsp;from&nbsp;a&nbsp;string&nbsp;and&nbsp;replace&nbsp;with&nbsp;ASCII&nbsp;equivalent&nbsp;Reference:<br>
-<a href="http://www.rgagnon.com/javadetails/java-0456.html">http://www.rgagnon.com/javadetails/java-0456.html</a>&nbsp;Caveat:&nbsp;This&nbsp;implementation&nbsp;is&nbsp;not&nbsp;exhaustive.<br>
-Port&nbsp;from&nbsp;Xponents&nbsp;class&nbsp;TextUtils.java<br>
-:param&nbsp;s:<br>
-:return:</tt></dd></dl>
+ <dl><dt><a name="-replace_diacritics"><strong>replace_diacritics</strong></a>(txt: str)</dt><dd><tt>Leverage&nbsp;the&nbsp;OpenSextant&nbsp;traditional&nbsp;ASCII&nbsp;Folding&nbsp;map&nbsp;for&nbsp;now.<br>
+Yes&nbsp;encoded("ascii",&nbsp;"ignore")&nbsp;may&nbsp;do&nbsp;this....<br>
+:param&nbsp;txt:<br>
+:return:&nbsp;a&nbsp;non-diacritic&nbsp;version&nbsp;of&nbsp;the&nbsp;text</tt></dd></dl>
  <dl><dt><a name="-scrub_eol"><strong>scrub_eol</strong></a>(t)</dt></dl>
  <dl><dt><a name="-squeeze_whitespace"><strong>squeeze_whitespace</strong></a>(s)</dt></dl>
- <dl><dt><a name="-trivial_bias"><strong>trivial_bias</strong></a>(name)</dt><dd><tt>Deteremine&nbsp;unique&nbsp;a&nbsp;name&nbsp;is&nbsp;using&nbsp;length&nbsp;and&nbsp;character&nbsp;set&nbsp;and&nbsp;#&nbsp;of&nbsp;words</tt></dd></dl>
+ <dl><dt><a name="-strip_quotes"><strong>strip_quotes</strong></a>(t)</dt><dd><tt>Run&nbsp;replace_diacritics&nbsp;first&nbsp;--&nbsp;this&nbsp;routine&nbsp;only&nbsp;attempts&nbsp;to&nbsp;remove&nbsp;normal&nbsp;quotes&nbsp;~&nbsp;',&nbsp;"</tt></dd></dl>
+ <dl><dt><a name="-trivial_bias"><strong>trivial_bias</strong></a>(name)</dt><dd><tt>Experimental:&nbsp;Deteremine&nbsp;unique&nbsp;a&nbsp;name&nbsp;is&nbsp;using&nbsp;length&nbsp;and&nbsp;character&nbsp;set&nbsp;and&nbsp;#&nbsp;of&nbsp;words<br>
+&nbsp;<br>
+Abcd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4/2&nbsp;+&nbsp;1&nbsp;+&nbsp;0&nbsp;&nbsp;&nbsp;x&nbsp;0.02&nbsp;&nbsp;=&nbsp;0.06<br>
+Abcde&nbsp;fghi&nbsp;&nbsp;&nbsp;&nbsp;10/2&nbsp;+&nbsp;2&nbsp;+&nbsp;0&nbsp;&nbsp;&nbsp;x&nbsp;0.02&nbsp;&nbsp;=&nbsp;0.14<br>
+Abcdé&nbsp;fghi&nbsp;&nbsp;&nbsp;&nbsp;10/2&nbsp;+&nbsp;2&nbsp;+&nbsp;1&nbsp;&nbsp;&nbsp;x&nbsp;0.02&nbsp;&nbsp;=&nbsp;0.16</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -173,12 +197,11 @@ Port&nbsp;from&nbsp;Xponents&nbsp;class&nbsp;TextUtils.java<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>ALPHAMAP_PLAIN_ASCII</strong> = 'AaEeIiOoUuAaEeIiOoUuYyAaEeIiOoUuYyAaOoNnAaEeIiOoUuYyAaCcOoUuOoAaEe'<br>
-<strong>ALPHAMAP_UNICODE</strong> = 'ÀàÈèÌìÒòÙùÁáÉéÍíÓóÚúÝýÂâÊêÎîÔôÛûŶŷÃãÕõÑñÄäËëÏïÖöÜüŸÿÅåÇçŐőŰűØøĀāĒē'<br>
-<strong>BOOL_F_STR</strong> = {0, '', 'null', 'f', 'no', '0', ...}<br>
-<strong>BOOL_T_STR</strong> = {1, 't', '1', 'y', 'yes', 'true'}<br>
+<td width="100%"><strong>BOOL_F_STR</strong> = {0, '', 'null', '0', 'false', 'no', ...}<br>
+<strong>BOOL_T_STR</strong> = {1, 'y', 'yes', 't', 'true', '1'}<br>
 <strong>CHARDET_LATIN2_ENCODING</strong> = 'ISO-8859-1'<br>
 <strong>COMMON_DIACRITC_HASHMARKS</strong> = re.compile('["\'`´‘’]')<br>
-<strong>reSqueezeWhiteSpace</strong> = re.compile('\\s+', re.MULTILINE)<br>
-<strong>version</strong> = 'v3'</td></tr></table>
+<strong>LATIN1_FOLDING</strong> = {'À': 'A', 'Á': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A', 'Å': 'A', 'Æ': 'AE', 'Ç': 'C', 'È': 'E', 'É': 'E', ...}<br>
+<strong>code_pattern</strong> = re.compile('^[A-Z0-9]{1,}$', re.ASCII)<br>
+<strong>reSqueezeWhiteSpace</strong> = re.compile('\\s+', re.MULTILINE)</td></tr></table>
 </body></html>
