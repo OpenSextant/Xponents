@@ -204,10 +204,10 @@ public class NameCodeRule extends GeocodeRule {
              */
             Place country = code.isCountry ? code.getChosenPlace() : null;
             log.debug("{} name, code: {} in {}?", NAME, name.getText(), code.getText());
-            boolean logicalGeoMatchFound = false;
+            int logicalGeoMatchCount = 0;
             for (ScoredPlace geoScore : code.getPlaces()) {
-                if (logicalGeoMatchFound) {
-                    break;
+                if (logicalGeoMatchCount>1) {
+                    break; /* Optimization: avoid spinning in loop.  2 geo-hierarchy matches is sufficient. */
                 }
                 Place geo = geoScore.getPlace();
                 if (!geo.isUpperAdmin() || geo.getCountryCode() == null) {
@@ -248,20 +248,13 @@ public class NameCodeRule extends GeocodeRule {
                     continue;
                 }
 
-                // Quick determination if these two places have a containment or geopolitical
-                // connection
+                // Quick determination if these two places have a containment or geopolitical connection
                 //
-                boolean contains = name.presentInHierarchy(adm1);
-                if (!contains && country != null) {
-                    contains = name.presentInCountry(country.getCountryCode());
+                if (name.presentInHierarchy(adm1) ||
+                        (country != null && name.presentInCountry(country.getCountryCode()))) {
+                    ++logicalGeoMatchCount;
+                    updateNameCodePair(name, code, geo, true /* comma */);
                 }
-
-                if (!contains) {
-                    continue;
-                }
-
-                logicalGeoMatchFound = true;
-                updateNameCodePair(name, code, geo, true /* comma */);
             }
 
             /*  Post-process abbreviations not associated.
@@ -277,7 +270,7 @@ public class NameCodeRule extends GeocodeRule {
              * out chains of abbreviations. E.g., CO MA IN IA
              */
             if (abbrev) {
-                if (!logicalGeoMatchFound && !code.isCountry) {
+                if (logicalGeoMatchCount==0 && !code.isCountry) {
                     code.setFilteredOut(true);
                     trackIgnoreTerms(code);
                     /*
@@ -359,6 +352,7 @@ public class NameCodeRule extends GeocodeRule {
             for (ScoredPlace geo : pc.getPlaces()) {
                 if (geo.getPlace().isShortName()) {
                     matchFound = true;
+                    break;
                 }
             }
             pc.isAbbreviation = pc.isAcronym = matchFound;

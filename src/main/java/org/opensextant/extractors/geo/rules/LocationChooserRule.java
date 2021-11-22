@@ -90,12 +90,6 @@ public class LocationChooserRule extends GeocodeRule {
         }
 
         for (PlaceCandidate name : names) {
-            if (name.isCountry) {
-                name.setType("country");
-                this.assessConfidence(name);
-                // No Place is chosen, but confidence will be set.
-                continue;
-            }
             if (name.isFilteredOut()) {
                 continue;
             }
@@ -117,7 +111,10 @@ public class LocationChooserRule extends GeocodeRule {
             name.choose();
             if (name.getChosenPlace() != null) {
                 Place chosen = name.getChosenPlace();
-                name.setType("place");
+                name.setType(chosen.isCountry() ? "country": "place");
+                if (name.isCountry && !chosen.isCountry()){
+                    name.isCountry = false;
+                }
                 this.assessConfidence(name);
                 /*
                  * Copy confidence AND method back to chosen place instance. Method should be a

@@ -49,18 +49,6 @@ public class CountryRule extends GeocodeRule {
                 }
                 evaluate(name, geo.getPlace());
             }
-
-            if (name.isCountry) {
-                name.choose();
-                Place ctry = name.getChosenPlace();
-                if (ctry != null) {
-                    // This should always be true -- should not be null.
-                    name.addCountryEvidence(CNAME, weight + 0.0, ctry.getCountryCode(), ctry);
-                    if (countryObserver != null) {
-                        countryObserver.countryInScope(ctry.getCountryCode());
-                    }
-                }
-            }
         }
     }
 
@@ -115,10 +103,16 @@ public class CountryRule extends GeocodeRule {
     void addCountryName(PlaceCandidate name, Place geo) {
         name.isCountry = true;
         name.incrementPlaceScore(geo, weight + 2.0, CNAME);
+        if (countryObserver != null) {
+            countryObserver.countryInScope(geo.getCountryCode());
+        }
     }
 
     void addCountryCode(PlaceCandidate name, Place geo) {
         name.isCountry = true;
         name.incrementPlaceScore(geo, weight + 0.0, CCODE);
+        if (countryObserver != null) {
+            countryObserver.countryInScope(geo.getCountryCode());
+        }
     }
 }
