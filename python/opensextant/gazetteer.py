@@ -840,10 +840,17 @@ class DB:
     def mark_search_only(self, pid):
         """
         Toggle bit for search only.
-        :param pid: Place ID
+        :param pid: Place ID int or list
         """
-        sql = f"update placenames set search_only=1 where id=?"
-        self.conn.execute(sql, (pid,))
+        if isinstance(pid, int):
+            sql = "update placenames set search_only=1 where id=?"
+            self.conn.execute(sql, (pid,))
+        elif isinstance(pid, list):
+            idset = ", ".join([str(x) for x in pid])
+            sql = f"update placenames set search_only=1 where id in ({idset})"
+            self.conn.execute(sql)
+        else:
+            raise Exception("Place ID integer or list of integers is required")
 
     def update_bias(self, name_bias, rowids):
         arg = ",".join([str(pid) for pid in rowids])
@@ -998,6 +1005,17 @@ class GazetteerIndex:
         self._records.append(rec)
         self.count += 1
         self.save()
+
+    def delete(self, entry_id=None):
+        """
+        Awaiting other kwdargs for deletion use cases.
+        :param entry_id: master gazetteer row ID in sqlite or solr.  Deletes solr entry
+        :return:
+        """
+        if entry_id:
+            self.server.delete(id=entry_id)
+            return True
+        return False
 
 
 class GazetteerSearch:

@@ -158,6 +158,7 @@ def process_text(txt, docid="$DOC-ID$", features=[], preferred_countries=[], pre
                               preferred_countries=preferred_countries,
                               preferred_locations=preferred_locations)
     print(f"=========DOCID {docid}")
+    print(txt[0:200])
     print("Matches\n============")
     for match in result:
         print_match(match)
