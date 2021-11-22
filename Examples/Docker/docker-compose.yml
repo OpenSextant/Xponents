@@ -2,7 +2,7 @@ version: '3'
 services:
   xponents:
     container_name: xponents
-    image: mubaldino/opensextant:xponents-offline-3.3
+    image: mubaldino/opensextant:xponents-offline-3.5
     environment:
         - JAVA_XMS=1500m
         - JAVA_XMX=1500m
