@@ -49,6 +49,18 @@ def filter_in_feature(pl: Place, feats):
     return False
 
 
+def oddball_omissions(pl:Place):
+    if pl.feature_code == "RGNE":
+        if " " in pl.name:
+            toks = pl.name.split(" ")
+            last_token = toks[-1]
+            if last_token.isupper() and len(last_token)<=3:
+                return True
+
+    # Awaiting other omission clauses here.
+    return False
+
+
 class Finalizer:
     def __init__(self, dbf, debug=False):
         self.db = DB(dbf)
@@ -214,7 +226,8 @@ class Finalizer:
                 # Unique entry
                 keys.add(k)
 
-    def index(self, url, features=None, ignore_features=None, ignore_digits=True, ignore_names=False, limit=-1):
+    def index(self, url, features=None, ignore_features=None, ignore_func=None,
+              ignore_digits=True, ignore_names=False, limit=-1):
 
         print("Xponents Gazetteer Finalizer: INDEX")
         indexer = GazetteerIndex(url)
@@ -238,6 +251,9 @@ class Finalizer:
         for cc in cc_list:
             print(f"Country '{cc}'")
             for pl in self.db.list_places(cc=cc, criteria=default_criteria, limit=limit):
+                if ignore_func:
+                    if ignore_func(pl):
+                        continue
                 if filter_out_feature(pl, filters):
                     continue
                 if ignore_digits and pl.name.isdigit():
@@ -304,6 +320,7 @@ if __name__ == "__main__":
         else:
             gaz = Finalizer(args.db, debug=args.debug)
             gaz.index(args.solr, ignore_digits=True, limit=int(args.max),
+                      ignore_func=oddball_omissions,
                       ignore_features={"H/WLL.*",
                                        "H/STM[ABCDHIQSBX]+",
                                        "H/SPNG.*",

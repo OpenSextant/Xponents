@@ -1,4 +1,4 @@
-from gaz_finalize import Finalizer
+from gaz_finalize import Finalizer, oddball_omissions
 from opensextant.gazetteer import get_default_db, GazetteerIndex, PlaceHeuristics
 
 
@@ -41,6 +41,36 @@ class GazetteerUtility(Finalizer):
         self.db.close()
         indexer.save(done=True)
 
+    def omit(self, url, query):
+        """
+        Result is to mark omissions as search_only and then to also delete from index
+        This is only for adhoc tuning -- the formal solution should be part of the normal Finalizer.index()
+
+        :param url:
+        :param query:
+        :return:
+        """
+        print("Xponents Gazetteer Finalizer: INDEX")
+        indexer = GazetteerIndex(url)
+
+        row_ids = []
+        for pl in self.db.list_places(criteria=f"WHERE {query}"):
+            if not oddball_omissions(pl):
+                continue
+
+            print("Omit PLACE: ", pl)
+            row_ids.append(pl.id)
+
+        if row_ids:
+            self.db.mark_search_only(row_ids)
+            for plid in row_ids:
+                indexer.delete(entry_id=plid)
+
+            indexer.save(done=True)
+        self.db.close()
+
+
+
     def index(self, url, **kwargs):
         # Disabled.
         pass
@@ -56,7 +86,11 @@ if __name__ == "__main__":
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--solr", help="Solr URL", required=True)
     ap.add_argument("--fix", action="store_true", default=False)
+    ap.add_argument("--omit", action="store_true", default=False, help="To mark an item search only in DB AND delete from index")
 
     args = ap.parse_args()
 
-    GazetteerUtility(args.db).index_sql(args.solr, args.query, fix=args.fix)
+    if args.omit:
+        GazetteerUtility(args.db).omit(args.solr, args.query)
+    else:
+        GazetteerUtility(args.db).index_sql(args.solr, args.query, fix=args.fix)
