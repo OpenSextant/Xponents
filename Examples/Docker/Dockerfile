@@ -1,9 +1,9 @@
 FROM adoptopenjdk:12-jdk-hotspot
 
 ENV XLAYER_PORT=8787
-ENV RELEASE_NAME=Xponents-3.3
-ENV JAVA_XMS=1000m
-ENV JAVA_XMX=1000m
+ENV RELEASE_NAME=Xponents-3.5
+ENV JAVA_XMS=1500m
+ENV JAVA_XMX=1500m
 
 RUN adduser --system --group --uid 110 opensextant
 

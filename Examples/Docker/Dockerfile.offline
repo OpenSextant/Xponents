@@ -1,12 +1,12 @@
 FROM adoptopenjdk:12-jdk-hotspot
-# SHADOWS: FROM mubaldino/opensextant:xponents-3.3
+# SHADOWS: FROM mubaldino/opensextant:xponents-3.5
 # 
 # --------------------------
 ENV XLAYER_PORT=8787
-ENV VERSION=Xponents-3.3
+ENV VERSION=Xponents-3.5
 ENV XPONENTS=/home/opensextant/Xponents
-ENV JAVA_XMS=1000m
-ENV JAVA_XMX=1000m
+ENV JAVA_XMS=1500m
+ENV JAVA_XMX=1500m
 ENV MVN=apache-maven-3.6.3
 ENV PATH=/opt/maven/bin:$PATH
 ENV LOCAL_REPO_NAME=maven-repo
