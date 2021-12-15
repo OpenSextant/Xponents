@@ -145,6 +145,7 @@ cheap,adj
 chic,adj
 cirrus,adj
 civil,adj
+civic,adj
 classic,adj
 collegiate,adj
 comercial,adj
@@ -467,6 +468,7 @@ too late,adj
 dirty,adj
 elegant,adj
 barren,adj
+ugly,adj
 bon,adj.fre
 nouveau,adj.fre
 bello,adj.ita
@@ -533,6 +535,7 @@ shark,animal
 snail,animal
 snake,animal
 spider,animal
+squirrel,animal
 swan,animal
 terrier,animal
 tiger,animal
@@ -811,8 +814,11 @@ botnet,internet
 cam,internet
 char,internet
 cobol,internet
+cookie,internet
+cookies,internet
 dell,internet
 dev,internet
+docker,internet
 enigma,internet
 entry point,internet
 epson,internet
@@ -1370,6 +1376,7 @@ fore,noun
 forestry,noun
 forever,noun
 forge,noun
+foundry,noun
 fork,noun
 forth,noun
 fortune,noun
@@ -1997,6 +2004,7 @@ tab,noun
 table,noun
 tactic,noun
 tag,noun
+tags,noun
 tales,noun
 tank,noun
 tapas,noun
@@ -3016,6 +3024,7 @@ library,place.civil
 lodge,place.civil
 major bank,place.civil
 mall,place.civil
+main street,place.civil
 manor,place.civil
 mansion,place.civil
 marina,place.civil
@@ -3870,6 +3879,7 @@ heard,verb
 held,verb
 hide,verb
 hit,verb
+hiring,verb
 hop,verb
 hoping,verb
 hover,verb
@@ -4028,6 +4038,7 @@ so do,verb
 sold,verb
 solve,verb
 sort,verb
+sprout,verb
 spin,verb
 spit,verb
 split,verb
@@ -4270,3 +4281,4 @@ uncle sam,well-known.person
 bleach,well-known.science
 uranium,well-known.science
 toxin,well-known.science
+quartz,well-known.science
