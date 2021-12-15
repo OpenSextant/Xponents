@@ -158,7 +158,7 @@ def process_text(txt, docid="$DOC-ID$", features=[], preferred_countries=[], pre
                               preferred_countries=preferred_countries,
                               preferred_locations=preferred_locations)
     print(f"=========DOCID {docid}")
-    print(txt[0:200])
+    print("TEXT", txt[0:200])
     print("Matches\n============")
     for match in result:
         print_match(match)
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     # Support data as one text record per line in a file
     #                
     elif args.lines or args.input.endswith(".json"):
-        print("INPUT: from individual lines from input file")
+        print("INPUT: from individual lines from input file\n\n")
         is_json = args.input.endswith(".json")
         try:
             with open(args.input, 'r', encoding="UTF-8") as fh:

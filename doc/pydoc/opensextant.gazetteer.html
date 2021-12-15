@@ -122,7 +122,7 @@ Lookup&nbsp;place&nbsp;by&nbsp;ID&nbsp;as&nbsp;in&nbsp;"G1234567"&nbsp;for&nbsp;
 <dl><dt><a name="DB-mark_duplicates"><strong>mark_duplicates</strong></a>(self, dups)</dt></dl>
 
 <dl><dt><a name="DB-mark_search_only"><strong>mark_search_only</strong></a>(self, pid)</dt><dd><tt>Toggle&nbsp;bit&nbsp;for&nbsp;search&nbsp;only.<br>
-:param&nbsp;pid:&nbsp;Place&nbsp;ID</tt></dd></dl>
+:param&nbsp;pid:&nbsp;Place&nbsp;ID&nbsp;int&nbsp;or&nbsp;list</tt></dd></dl>
 
 <dl><dt><a name="DB-optimize"><strong>optimize</strong></a>(self)</dt></dl>
 
@@ -208,6 +208,10 @@ This&nbsp;may&nbsp;provide&nbsp;gazetteer&nbsp;specific&nbsp;functions,&nbsp;but
 <dl><dt><a name="GazetteerIndex-__init__"><strong>__init__</strong></a>(self, server_url, debug=False)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="GazetteerIndex-add"><strong>add</strong></a>(self, place)</dt><dd><tt>:param&nbsp;place:&nbsp;Place&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="GazetteerIndex-delete"><strong>delete</strong></a>(self, entry_id=None)</dt><dd><tt>Awaiting&nbsp;other&nbsp;kwdargs&nbsp;for&nbsp;deletion&nbsp;use&nbsp;cases.<br>
+:param&nbsp;entry_id:&nbsp;master&nbsp;gazetteer&nbsp;row&nbsp;ID&nbsp;in&nbsp;sqlite&nbsp;or&nbsp;solr.&nbsp;&nbsp;Deletes&nbsp;solr&nbsp;entry<br>
 :return:</tt></dd></dl>
 
 <dl><dt><a name="GazetteerIndex-optimize"><strong>optimize</strong></a>(self)</dt></dl>
