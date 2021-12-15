@@ -2,7 +2,7 @@
 #
 #
 VER=3.5
-BUILD_VER=3.5.0
+BUILD_VER=3.5.1
 SOLR_DIST=./solr7-dist
 
 script=`dirname $0;`
@@ -73,9 +73,9 @@ rm $REL/doc/*.mp4
 rm $REL/script/dist* 
 rm -r $REL/xponents-solr/retired
 rm -r $REL/xponents-solr/script/__pycache__
-rm -r $REL/Sonarqube
 
 cp -r $basedir/dev.env $basedir/Examples/Docker/* $REL/
+rm -r $REL/Sonarqube
 
 
 msg "Create VERSION label"

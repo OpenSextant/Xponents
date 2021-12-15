@@ -10,7 +10,6 @@ shift
 
 CLASSPATH="$basedir/etc:$basedir/target/*:$basedir/lib/*"
 XPONENTS_SOLR=./solr
-TEST_JAR=target/opensextant-xponents-3.5.0-tests.jar
 
 java -Dopensextant.solr=$XPONENTS_SOLR/solr7 -Xmx3g -Xms3g \
         -XX:+UseParallelGC  \
