@@ -30,18 +30,31 @@ But in general, you would make use of the `./solr/build.sh` script and consult t
 
 `./solr/README.md` captures all the mechanics of building the Gazettter from checkout.
 
-6\. Distribution and Packaging: `ant -f ./script/dist.xml dist`
+5\. Distribution and Packaging: `ant -f ./script/dist.xml dist`
 
 Producing API documentation updates: infrequently, only for major releases.
  
 ```
- cp -r target/site/apidocs/ doc/sdk-apidocs/
- cp -r Core/target/site/apidocs/ doc/core-apidocs/
+ # target ./doc folders already exist as folders known to git.
+ cp -r target/apidocs/ doc/sdk-apidocs
+ cp -r Core/target/apidocs/ doc/core-apidocs
 
  # When done, commit changes, as API docs appear on GitHub public site.
 ```
 
-7\. Test.  Leverage the `Examples` projects to more fully test your build.
+6\. Test.  Leverage the `Examples` projects to more fully test your build.
+
+7\. Final Release.  With the properly compiled, tested packaging then create a distribution in full.
+
+```
+ ./script/dist.sh 
+
+ # Note - this script call ant  package-dist which just packages the pre-built, tested libraries.
+```
+
+8\. Publish Java Libraries to Maven Central as below
+
+9\. Build, Test and Publish Docker Images as described in `./Examples/Docker/`
 
 
 Level of Effort.

@@ -8,9 +8,9 @@ Packaging will include topics such as image publishing and Sonarqube code scanni
 
 Building
 ------------
-
-Copy this Dockerfile to the Xponents ./dist folder and build the docker image with the Xponents-X.x build in that folder.  
-To use a full development-ready version of the image use the `Docker.offline` builder or its respective image build instead.
+The normal `Xponents/script/dist.sh` distribution creates a release in the `./dist` folder.
+In that release the various `Dockerfile*` and `docker-compose.yml` files  will be at the 
+top level to produce the `opensextant:xponents-3.5` docker image.
 
 
 ```shell script
@@ -21,13 +21,20 @@ cd Xponents
 
 ./script/dist-docker.sh
 
-# Contents of the docker distribution script is below.
+# Export a copy or use docker push img:label
+VERSION=3.5
+docker save opensextant:xponents-$VERSION | gzip -c > /tmp/opensextant-xponents-$VERSION.tar.gz
+```
+
+Contents of the docker distribution script is below.
+```
+
 # We wanted to offer a "Maven Offline" capability, retroactively.
 # Knowing that Maven offline can be this challenging, some of these components may be reworked.
 # ====================
 
 # After a succesful build (dist will be about 3.5 GB), go to the release and build docker images -- regular and then offline.
-VERSION=3.3
+VERSION=3.5
 cd ./dist/Xponents-$VERSION
 docker build --tag opensextant:xponents-$VERSION .
 
@@ -58,13 +65,13 @@ Now Test It.
 ```
 # With OFFLINE image, you must use this sort of invocation:
 
-  docker run --rm -it --entrypoint /bin/sh mubaldino/opensextant:xponents-offline-3.3
+  docker run --rm -it --entrypoint /bin/sh mubaldino/opensextant:xponents-offline-3.5
 
   #> mvn -o test -Dmaven.repo.local=$PWD/maven-repo
 
 # Otherwise...
 
-  docker run --rm -it --entrypoint /bin/sh mubaldino/opensextant:xponents-3.3
+  docker run --rm -it --entrypoint /bin/sh mubaldino/opensextant:xponents-3.5
 
   #> mvn test 
 
