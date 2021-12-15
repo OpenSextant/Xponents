@@ -10,9 +10,9 @@
   <name>Xponent Examples</name>
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
-    <slf4j.version>1.7.30</slf4j.version>
+    <slf4j.version>1.7.32</slf4j.version>
     <xponents.version>3.5.1</xponents.version>
-    <xponents-core.version>3.5.0</xponents-core.version>
+    <xponents-core.version>3.5.1</xponents-core.version>
     <xtext.version>3.5.0</xtext.version>
   </properties>
   <dependencies>

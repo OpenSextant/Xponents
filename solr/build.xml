@@ -4,7 +4,7 @@
     <!-- Solr Home and Gazetteer config data sourced here: -->
     <property file="${basedir}/../build.properties"/>
     <property name="xponents.v" value="${xponents.build.v}"/>
-    <property name="jetty.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext"/>
+    <property name="solr.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext"/>
     <property name="solr.runtime.log" value="${basedir}/solr7-dist/server/logs"/>
     <property name="maven.lib" value="${user.home}/.m2/repository"/>
     <property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip"/>
@@ -14,6 +14,7 @@
     <property name="gaz.tmp" value="${basedir}/tmp"/>
     <property name="xponents.jar" value="${basedir}/../target/opensextant-xponents-${xponents.v}.jar"/>
     <property name="resources.lib" value="${basedir}/../src/main/resources"/>
+    <property name="xponents.lib" value="${basedir}/../lib"/>
 
     <path id="runtime.classpath">
         <pathelement location="${xponents.jar}"/>
@@ -32,10 +33,20 @@
     </target>
 
     <target name="copy-libs">
-        <copy todir="${jetty.runtime.lib}"
-              file="${maven.lib}/org/locationtech/jts/jts-core/1.15.0/jts-core-1.15.0.jar"/>
-        <copy todir="${jetty.runtime.lib}"
-              file="${maven.lib}/org/locationtech/spatial4j/spatial4j/0.7/spatial4j-0.7.jar"/>
+        <!-- COPY Spatial geometry/geodesy libraries to Solr Server -->
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/jts-core-1.15.0.jar"/>
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/spatial4j-0.7.jar"/>
+
+        <!-- DELETE v2.11 or earlier Log4J libraries and replace with valid version that works-->
+        <delete file="${solr.runtime.lib}/log4j-api-2.11.0.jar"/>
+        <delete file="${solr.runtime.lib}/log4j-core-2.11.0.jar"/>
+        <delete file="${solr.runtime.lib}/log4j-slf4j-impl-2.11.0.jar"/>
+        <delete file="${solr.runtime.lib}/log4j-1.2-api-2.11.0.jar"/>
+
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-api-2.16.0.jar"/>
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-core-2.16.0.jar"/>
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-slf4j-impl-2.16.0.jar"/>
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-1.2-api-2.16.0.jar"/>
     </target>
 
     <target name="gaz-resources">
