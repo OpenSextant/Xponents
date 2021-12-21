@@ -43,10 +43,10 @@
         <delete file="${solr.runtime.lib}/log4j-slf4j-impl-2.11.0.jar"/>
         <delete file="${solr.runtime.lib}/log4j-1.2-api-2.11.0.jar"/>
 
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-api-2.16.0.jar"/>
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-core-2.16.0.jar"/>
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-slf4j-impl-2.16.0.jar"/>
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-1.2-api-2.16.0.jar"/>
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-api-2.17.0.jar"/>
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-core-2.17.0.jar"/>
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-slf4j-impl-2.17.0.jar"/>
+        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-1.2-api-2.17.0.jar"/>
     </target>
 
     <target name="gaz-resources">
