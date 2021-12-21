@@ -4,7 +4,8 @@ from traceback import format_exc
 
 import arrow
 import pysolr
-from opensextant import Place, Country, distance_haversine, load_major_cities, make_HASC, popscale
+from opensextant import Place, Country, distance_haversine, load_major_cities, make_HASC, popscale, \
+    geohash_cells_radially
 from opensextant.utility import ensure_dirs, is_ascii, has_cjk, has_arabic, \
     ConfigUtility, get_bool, trivial_bias, replace_diacritics, strip_quotes, parse_float, load_list
 from opensextant.wordstats import WordStats
@@ -727,45 +728,58 @@ class DB:
         for p in self.conn.execute(sql_script):
             yield as_place(p)
 
-    def list_places_at(self, lat: float = None, lon: float = None, cc: str = None, geohash: str = None,
-                       radius: int = 10000, limit=10):
+    def list_places_at(self, lat: float = None, lon: float = None, geohash: str = None,
+                       cc: str = None, radius: int = 5000, limit=10):
         """
         A best effort guess at spatial query. Returns an array of matches, thinking most location queries are focused.
+        This is a geohash-backed hack at search
 
-        :param lat:
-        :param lon:
+        Use geohash_precision accordingly and approximately:
+        - geohash_precision=6 implies +/-  500m
+        - geohash_precision=5 implies +/-  2500m
+        - geohash_precision=4 implies +/- 20000m
+
+        Given the nature of geohash you might have locations in different cells "xxxx" and "xxxy" that are
+        close to each other, i.e. within your specified radius.  E.g.,
+
+        "9q5f"  and "9qh4"  are neighbor cells
+        "9q5fr" and "9qh42" are neighbor cells.
+
+        "9q5fp" is a LR (south-east) corner of "9q5".  Searching that 2x2 KM box by geohash will only search from that
+        corner north and westward.
+
+        :param lat: latitude
+        :param lon: longitude
         :param cc:  ISO country code to filter.
-        :param geohash:  optionally, use precomputed geohash of precision 6-chars.
-        :param radius:  in METERS, radial distance from given point to search
+        :param geohash:  optionally, use precomputed geohash of precision 6-chars instead of lat/lon.
+        :param radius:  in METERS, radial distance from given point to search, DEFAULT is 5 KM
         :param limit: count of places to return
         :return: array of tuples, sorted by distance.
         """
-        # populate both location and point
-        gh = geohash
-        point = (lat, lon)
-        if (lat and lon) and not geohash:
-            gh = geohash_encode(lat, lon, precision=6)
-        elif geohash:
-            if len(geohash) < 6:
-                raise Exception("Geohash query should be 6-chars or longer")
-            gh = geohash[0:6]
-            point = [float(x) for x in geohash_decode(geohash)]
+        if geohash:
+            # Postpend "sss" to create a default centroid in a shorter geohash.
+            gh = f"{geohash}sss"[0:6]
+            (lat, lon) = (float(x) for x in geohash_decode(geohash))
+        elif lat is None and lon is None:
+            raise Exception("Provide lat/lon or geohash")
 
-        # This is optimized for this gazetteer DB, as locations are stored as 6-digit geohash
-        # HACK: USE spatial-lite extension for SQLite.
-        sql_script = [
-            f"select * from placenames where geohash = '{gh}'",
-            f"select * from placenames where geohash like '{gh[0:5]}%'",
-            f"select * from placenames where geohash like '{gh[0:4]}%'"
-        ]
+        cells = geohash_cells_radially(lat, lon, radius)
+        sql_script = []
+        for gh in cells:
+            if len(gh) >= 6:
+                sql_script.append(f"select * from placenames where duplicate=0 and geohash = '{gh[0:6]}'")
+            else:
+                sql_script.append(f"select * from placenames where duplicate=0 and geohash like '{gh}%'")
+
         found = {}
+        # Search the entire grid space
         for script in sql_script:
             for p in self.conn.execute(script):
                 if cc:
                     if p["cc"] != cc:
                         continue
                 place = as_place(p)
-                dist = distance_haversine(point[1], point[0], place.lon, place.lat)
+                dist = distance_haversine(lon, lat, place.lon, place.lat)
                 if dist < radius:
                     found[dist] = as_place(p)
             if len(found) >= limit:
@@ -773,7 +787,7 @@ class DB:
                 break
         # Sort by distance key
         result = [(dist, found[dist]) for dist in sorted(found.keys())]
-        return result[0:10]
+        return result[0:limit]
 
     def list_admin_names(self, sources=['U', 'N', 'G']) -> set:
         """

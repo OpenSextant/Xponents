@@ -6,7 +6,8 @@ from abc import ABC, abstractmethod
 from math import sqrt, sin, cos, radians, atan2, log as mathlog
 
 from opensextant.utility import get_csv_reader, get_bool
-from pygeodesy.geohash import encode as geohash_encode
+from pygeodesy.geohash import encode as geohash_encode, neighbors as geohash_neighbors
+from pygeodesy.ellipsoidalVincenty import LatLon as LL
 
 PY3 = sys.version_info.major == 3
 countries = []
@@ -79,6 +80,86 @@ def distance_haversine(ddlon1, ddlat1, ddlon2, ddlat2):
     a = (sin(dLat / 2) * sin(dLat / 2)) + (cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2))
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return int(EARTH_RADIUS_WGS84 * c)
+
+
+def _estimate_geohash_precision(r: int):
+    """
+    Returns hueristic geohash length for the given radius in meters.
+
+    :param r: radius in meters
+    """
+    precision = 0
+    if r > 1000000:
+        precision = 1
+    elif r > 250000:
+        precision = 2
+    elif r > 50000:
+        precision = 3
+    elif r > 10000:
+        precision = 4
+    elif r > 1000:
+        precision = 5
+    elif r > 250:
+        precision = 6
+    elif r > 50:
+        precision = 7
+    elif r > 1:
+        precision = 8
+    else:
+        raise Exception(f"Not thinking about sub-meter resolution. radius={r}")
+
+    return precision
+
+
+def _ll2dict(p:LL):
+    return {"lat":p.lat, "lon":p.lon}
+
+
+def _ll2geohash(p:LL):
+    return geohash_encode(lat=p.lat, lon=p.lon)
+
+
+def radial_geohash(lat, lon, radius):
+    """
+    Propose geohash cells for a given radius from a given point
+    """
+    corners = {}
+    # Find clockwise points at a radius, E, N, S, W. Bearing for North is 0deg.
+    p1 = LL(lat, lon)
+    corners["N"] = _ll2geohash(p1.destination(radius, 0))
+    corners["E"] = _ll2geohash(p1.destination(radius, 90))
+    corners["S"] = _ll2geohash(p1.destination(radius, 180))
+    corners["W"] = _ll2geohash(p1.destination(radius, 270))
+    return corners
+
+
+def geohash_cells_radially(lat:float, lon:float, radius:int):
+    """
+    Create a set of geohashes that contain the given area defined by lat,lon + radius
+    """
+    ensw = radial_geohash(lat, lon, radius)
+    radius_error = _estimate_geohash_precision(radius)
+    cells = set([])
+    for directional in ensw:
+        gh = ensw[directional]
+        cells.add(gh[0:radius_error-1])
+    return cells
+
+
+def geohash_cells(gh: str, radius: int):
+    """
+    For a radius in meters generate the cells contained within or touched by that radius.
+    This is approximate precision based on:
+    https://en.wikipedia.org/wiki/Geohash   which suggests this approximation could be done mathematically
+    :return: Dict of 8 directionals ~ E, N, S, W; NE, SE, SW, NW.  If radius desired fits entirely within a
+    lesser precision geohash grid, the only cell returned is "CENTROID", i.e.  radius=2000 (meters) for a geohash such as
+    `9q5t`
+    """
+    radius_error = _estimate_geohash_precision(radius)
+    if len(gh) < radius_error:
+        return {"CENTROID": gh}
+    ghcell = gh[0:radius_error]
+    return geohash_neighbors(ghcell)
 
 
 class Coordinate:
