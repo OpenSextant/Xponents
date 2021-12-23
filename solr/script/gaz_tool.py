@@ -55,11 +55,12 @@ class GazetteerUtility(Finalizer):
 
         row_ids = []
         for pl in self.db.list_places(criteria=f"WHERE {query}"):
-            if not oddball_omissions(pl):
-                continue
-
-            print("Omit PLACE: ", pl)
-            row_ids.append(pl.id)
+            if oddball_omissions(pl):
+                print("Omit PLACE: ", pl)
+                row_ids.append(pl.id)
+            elif pl.feature_code != "RGNE":
+                print("Omit PLACE: ", pl)
+                row_ids.append(pl.id)
 
         if row_ids:
             self.db.mark_search_only(row_ids)
@@ -68,8 +69,6 @@ class GazetteerUtility(Finalizer):
 
             indexer.save(done=True)
         self.db.close()
-
-
 
     def index(self, url, **kwargs):
         # Disabled.
@@ -86,11 +85,13 @@ if __name__ == "__main__":
     ap.add_argument("--debug", action="store_true", default=False)
     ap.add_argument("--solr", help="Solr URL", required=True)
     ap.add_argument("--fix", action="store_true", default=False)
-    ap.add_argument("--omit", action="store_true", default=False, help="To mark an item search only in DB AND delete from index")
+    ap.add_argument("--omit", action="store_true", default=False,
+                    help="To mark an item search only in DB AND delete from index")
 
     args = ap.parse_args()
 
     if args.omit:
+        # NOTE: The query has to be exact
         GazetteerUtility(args.db).omit(args.solr, args.query)
     else:
         GazetteerUtility(args.db).index_sql(args.solr, args.query, fix=args.fix)

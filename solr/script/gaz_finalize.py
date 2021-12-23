@@ -49,13 +49,12 @@ def filter_in_feature(pl: Place, feats):
     return False
 
 
-def oddball_omissions(pl:Place):
+def oddball_omissions(pl: Place):
     if pl.feature_code == "RGNE":
         if " " in pl.name:
             toks = pl.name.split(" ")
             last_token = toks[-1]
-            if last_token.isupper() and len(last_token)<=3:
-                return True
+            return last_token.isupper() and len(last_token) <= 3
 
     # Awaiting other omission clauses here.
     return False
