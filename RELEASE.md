@@ -2,28 +2,31 @@
 VERSIONING AND OTHER 3rd PARTY LIBRARIES
 ---------------
 
-A very superficial description of other libraries Xponents relies on:
+Other Xponents components and libraries rely on various external projects:
 
 - XText depends on Tika 1.21+
 - XCoord depends on [OpenSextant Geodesy](https://github.com/OpenSextant/geodesy/) for geodetic parsing and validation 
 - Extraction makes use of [OpenSextant GISCore](https://github.com/OpenSextant/giscore/) for output file formatting
-
-Name matching depends on:
-
-* [OpenSextant Gazetteer](https://github.com/OpenSextant/Gazetteer), which depends on Pentaho Kettle and the NGA and USGS source gazetteers.
-
-* OpenSextant SolrTextTagger (__deprecated__) https://github.com/OpenSextant/SolrTextTagger v2.x (See project for maven details; This has been folded into the main line Apache Solr 7.4+ release)
-  * Xponents 2.5-2.9 == SolrTextTagger v2.0 w/Solr 4.10 w/ Java7
-  * Xponents 2.10    == SolrTextTagger v2.4 w/Solr 6.6+ w/ Java8
-  * Xponents 3.0     == SolrTextTagger v2.5 w/Solr 7.3+ w/ Java8
-  * Xponents 3.0.4   == Solr 7.4+ w/Java8. SolrTextTagger was migrated into Solr 7.4 formally as "TextTagger" request handler.
-  * Xponents 3.1+    == Solr 7.7+ w/Java8
+- Solr TextTagger was developed under OpenSextant in 2013 and migrated to the Apache Solr effort around 2018 in version 7.4.  The TextTagger is 
+  the primary tagging solution so there is a heavy dependence on Solr and Lucene. 
+  
+Starting with Xponents v3.5, the scripting for gazetteer data sources and
+related metadata are all self-contained in this project.  The OpenSextant
+Gazetteer project is no longer used here.
   
 
 RELEASES
 ==============
 
 # 2021
+
+**Xponents 3.5.2 BeginAgain**
+
+* **Full Evaluation**: internal evaluation work was redone start to finish to hone outlier gazetteer entries and
+  patterns of rogue entries from new data sources. Evaluation work called out and fixed serious false-positive and recall
+  errors
+* **Log4J Remediation**:  While Log4J is not the primary choice of logging facility, it is a dependency that appears
+  mainly in the Solr 7.x server distribution.  Vulnerable Log4J JAR files were removed and latest ones were injected.
 
 **Xponents 3.5.0 GiveThanks**
 
