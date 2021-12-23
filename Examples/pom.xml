@@ -13,7 +13,7 @@
     <slf4j.version>1.7.32</slf4j.version>
     <xponents.version>3.5.2</xponents.version>
     <xponents-core.version>3.5.2</xponents-core.version>
-    <xtext.version>3.5.0</xtext.version>
+    <xtext.version>3.5.2</xtext.version>
   </properties>
   <dependencies>
     <dependency>
@@ -88,7 +88,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
+      <version>1.2.10</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -122,7 +122,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.1</version>
         <configuration>
           <header>&lt;img alt='[OpenSextant Logo]' height='36'
             width='36'
@@ -135,7 +135,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>default-cli</id>
