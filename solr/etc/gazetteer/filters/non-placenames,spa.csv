@@ -41,7 +41,7 @@ al fin,phrase
 alerta,noun
 algún día,phrase
 algunas,noun
-alto,adjective.spa
+alto,adj.spa
 amigo,noun
 amigos,noun
 amo,noun
@@ -73,14 +73,14 @@ bienvenido,phrase
 blanco,color.spa
 boca,noun
 bravo,phrase
-brillante,adjective.spa
-buen,adjective.spa
+brillante,adj.spa
+buen,adj.spa
 buen dia,phrase
 buen día,phrase
 buenas noches,phrase
 buenas tardes,phrase
-bueno,adjective.spa
-buenos,adjective.spa
+bueno,adj.spa
+buenos,adj.spa
 buenos días,phrase
 busco,verb
 busca,verb
@@ -96,9 +96,10 @@ carne,noun
 carta,noun
 ças,noun
 casa,noun.spa
-casada,adjective.spa
-casado,adjective.spa
-casados,adjective.spa
+casas,noun.spa
+casada,adj.spa
+casado,adj.spa
+casados,adj.spa
 casi,phrase
 caso,noun
 catedral,noun
@@ -112,7 +113,7 @@ cien,noun
 cine,place.general.spa
 cinta,noun
 ciudad,noun
-claro,adjective.spa
+claro,adj.spa
 comer,verb
 como,phrase
 con quien,phrase
@@ -209,16 +210,17 @@ feliz,noun
 fiesta,noun
 fin,noun
 fotos,noun
-fuerte,adjective.spa
+fuerte,adj.spa
+generoso,adj.spa
 ghetto,noun
 globo,noun
 gobernador,noun
 gobierno,noun
 gracias,phrase
 gracias a dios,phrase
-gran,adjective.spa
-grande,adjective.spa
-grandes,adjective.spa
+gran,adj.spa
+grande,adj.spa
+grandes,adj.spa
 gringo,noun.spa
 grupo,noun.spa
 guarda,noun
@@ -313,8 +315,9 @@ leer,verb
 ley,noun
 libertad,noun
 libertadores,noun
-lista,adjective.spa
+lista,adj.spa
 lo,article.spa
+los dos,phrase
 los,preposition.spa
 los buenos,noun
 los niños,noun
@@ -326,7 +329,7 @@ madre,spa
 madre mia,spa
 maduro,spa
 mais,spa
-mal,adjective.spa
+mal,adj.spa
 mama,spa
 manāna,spa
 mano,spa
@@ -350,11 +353,11 @@ mis amores,spa
 moda,spa
 morena,spa
 mucha,spa
-muerte,adjective.spa
+muerte,adj.spa
 mujer,spa
 mūjer,spa
 mujeres,spa
-mundial,adjective.spa
+mundial,adj.spa
 mundo,place.general.spa
 municipio,place.general.spa
 museo,spa
@@ -493,7 +496,7 @@ y tu,spa
 ya lo,phrase.spa
 ya ló,spa
 yo,stopword.spa
-caliente,adjective.spa
+caliente,adj.spa
 caballeros,noun.spa
 caballo,noun.spa
 caballito,noun.spa
@@ -512,7 +515,7 @@ cento,enum.spa
 centro,place.civil
 cena,noun.spa
 corre,verb
-corte,adjective.spa
+corte,adj.spa
 corrientes,noun
 cuadra,place.civil
 dar,verb

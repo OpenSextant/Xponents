@@ -1,11 +1,14 @@
-from opensextant.gazetteer import get_default_db, DB
+from opensextant.gazetteer import get_default_db, DB, GazetteerIndex
 from opensextant.utility import get_csv_reader
 
 
 class Exclusionistic:
-    def __init__(self, dbf):
+    def __init__(self, dbf, solr_url=None):
         self.db = DB(dbf)
         print(f"Exclude Entries [{dbf}]")
+        self.indexer = None
+        if solr_url:
+            self.indexer = GazetteerIndex(server_url=solr_url)
 
     def exclude(self, filepath):
         print("\tFILE", filepath)
@@ -31,9 +34,15 @@ class Exclusionistic:
             names.add(pl.name.lower())
             row_ids.append(pl.id)
 
+        # IF you are using this .... the search_only aspect is minimal.  We'll just delete
+        # these entries from gazetteer.
         print("Names Marked search only", names)
         if row_ids:
             self.db.mark_search_only(row_ids)
+            # Delete from index as well.
+            if self.indexer:
+                for row_id in row_ids:
+                    self.indexer.delete(row_id)
 
 
 if __name__ == "__main__":
@@ -42,10 +51,11 @@ if __name__ == "__main__":
     ap = ArgumentParser()
     ap.add_argument("exclusions", help="CSV file with named features to remove")
     ap.add_argument("--db", default=get_default_db())
+    ap.add_argument("--solr", help="Solr URL", required=False)
     ap.add_argument("--debug", action="store_true", default=False)
     args = ap.parse_args()
 
-    excluder = Exclusionistic(args.db)
+    excluder = Exclusionistic(args.db, solr_url=args.solr)
 
     print("Remove specific confusing named features that are much less common")
     excluder.exclude(args.exclusions)
@@ -55,11 +65,27 @@ if __name__ == "__main__":
     excluder.exclude_nonsense("name LIKE '%-%' and LENGTH(name)=4 and name_group = ''")
 
     print("Mark search-only numerous short and obscure transliterations of names from Asian countries")
+    # Avoid tagging for these phrases as they are common appearances in text, but are not easy to
+    # create a codified rule to omit.
+    #
+    # "*Do to* you...."
     excluder.exclude_nonsense("name like 'do to' OR name like 'do-to'")
     excluder.exclude_nonsense("name like 'do do' OR name like 'do-do'")
     excluder.exclude_nonsense("name like 'to to' OR name like 'to-to'")
-    excluder.exclude_nonsense("name in ('he he', 'He-he', 'He-oh', 'He-ha', 'he can')")
+    # "*he he* the kid laughed"
+    excluder.exclude_nonsense("name in ('he he', 'He-he', 'He-oh', 'He-ha', 'he can', 'she can')")
+    # *man X*
     excluder.exclude_nonsense("name like 'man %' and LENGTH(name) < 6")
+    # *we X*
     excluder.exclude_nonsense("name like 'we we'")
+    # *open a* dialog ....
+    excluder.exclude_nonsense("name like 'open a'")
+    # *put in* the canoe...
+    excluder.exclude_nonsense("name like 'put in' OR name like 'put-in'")
+    # *as said* in the document...
+    # *has said* before
+    excluder.exclude_nonsense("name like 'as said' OR name like 'has-said'")
+    # Spanish:  *y la* semana proxima...
+    excluder.exclude_nonsense("name like 'y %' and LENGTH(name) < 5")
 
     excluder.db.close()
