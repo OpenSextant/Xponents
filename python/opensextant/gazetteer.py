@@ -739,6 +739,10 @@ class DB:
         - geohash_precision=5 implies +/-  2500m
         - geohash_precision=4 implies +/- 20000m
 
+        This approach uses an approximation of finding the relevant neighbor cells using a geodetic (not geohash)
+        assessment on the radial range.  This method hopefully gets past the limitations below.
+
+        General limitations of using Geohash for spatial query:
         Given the nature of geohash you might have locations in different cells "xxxx" and "xxxy" that are
         close to each other, i.e. within your specified radius.  E.g.,
 

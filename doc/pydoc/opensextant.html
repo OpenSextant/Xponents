@@ -357,6 +357,13 @@ Unlike&nbsp;atan(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbs
 :param&nbsp;lat:&nbsp;latitude<br>
 :param&nbsp;lon:&nbsp;longitude<br>
 :return:&nbsp;string</tt></dd></dl>
+ <dl><dt><a name="-geohash_cells"><strong>geohash_cells</strong></a>(gh: str, radius: int)</dt><dd><tt>For&nbsp;a&nbsp;radius&nbsp;in&nbsp;meters&nbsp;generate&nbsp;the&nbsp;cells&nbsp;contained&nbsp;within&nbsp;or&nbsp;touched&nbsp;by&nbsp;that&nbsp;radius.<br>
+This&nbsp;is&nbsp;approximate&nbsp;precision&nbsp;based&nbsp;on:<br>
+<a href="https://en.wikipedia.org/wiki/Geohash">https://en.wikipedia.org/wiki/Geohash</a>&nbsp;&nbsp;&nbsp;which&nbsp;suggests&nbsp;this&nbsp;approximation&nbsp;could&nbsp;be&nbsp;done&nbsp;mathematically<br>
+:return:&nbsp;Dict&nbsp;of&nbsp;8&nbsp;directionals&nbsp;~&nbsp;E,&nbsp;N,&nbsp;S,&nbsp;W;&nbsp;NE,&nbsp;SE,&nbsp;SW,&nbsp;NW.&nbsp;&nbsp;If&nbsp;radius&nbsp;desired&nbsp;fits&nbsp;entirely&nbsp;within&nbsp;a<br>
+lesser&nbsp;precision&nbsp;geohash&nbsp;grid,&nbsp;the&nbsp;only&nbsp;cell&nbsp;returned&nbsp;is&nbsp;"CENTROID",&nbsp;i.e.&nbsp;&nbsp;radius=2000&nbsp;(meters)&nbsp;for&nbsp;a&nbsp;geohash&nbsp;such&nbsp;as<br>
+`9q5t`</tt></dd></dl>
+ <dl><dt><a name="-geohash_cells_radially"><strong>geohash_cells_radially</strong></a>(lat: float, lon: float, radius: int)</dt><dd><tt>Create&nbsp;a&nbsp;set&nbsp;of&nbsp;geohashes&nbsp;that&nbsp;contain&nbsp;the&nbsp;given&nbsp;area&nbsp;defined&nbsp;by&nbsp;lat,lon&nbsp;+&nbsp;radius</tt></dd></dl>
  <dl><dt><a name="-get_country"><strong>get_country</strong></a>(namecode, standard='ISO')</dt><dd><tt>Get&nbsp;<a href="#Country">Country</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;given&nbsp;a&nbsp;name,&nbsp;ISO&nbsp;or&nbsp;FIPS&nbsp;code.&nbsp;&nbsp;For&nbsp;codes,&nbsp;you&nbsp;must&nbsp;be<br>
 clear&nbsp;about&nbsp;which&nbsp;standard&nbsp;the&nbsp;code&nbsp;is&nbsp;based&nbsp;in.&nbsp;Some&nbsp;code&nbsp;collisions&nbsp;exist.<br>
 "ZZ"&nbsp;will&nbsp;NOT&nbsp;be&nbsp;returned&nbsp;for&nbsp;the&nbsp;empty&nbsp;code&nbsp;--&nbsp;if&nbsp;you&nbsp;pass&nbsp;in&nbsp;a&nbsp;NULL&nbsp;or&nbsp;empty<br>
@@ -404,6 +411,7 @@ Largest&nbsp;province&nbsp;is&nbsp;~135&nbsp;million<br>
 :param&nbsp;population:<br>
 :param&nbsp;feature:&nbsp;&nbsp;city,&nbsp;district,&nbsp;or&nbsp;province&nbsp;allowed.<br>
 :return:&nbsp;index&nbsp;on&nbsp;0..10&nbsp;scale.</tt></dd></dl>
+ <dl><dt><a name="-radial_geohash"><strong>radial_geohash</strong></a>(lat, lon, radius)</dt><dd><tt>Propose&nbsp;geohash&nbsp;cells&nbsp;for&nbsp;a&nbsp;given&nbsp;radius&nbsp;from&nbsp;a&nbsp;given&nbsp;point</tt></dd></dl>
  <dl><dt><a name="-radians"><strong>radians</strong></a>(x, /)</dt><dd><tt>Convert&nbsp;angle&nbsp;x&nbsp;from&nbsp;degrees&nbsp;to&nbsp;radians.</tt></dd></dl>
  <dl><dt><a name="-render_match"><strong>render_match</strong></a>(m)</dt><dd><tt>:param&nbsp;m:&nbsp;<a href="#TextMatch">TextMatch</a><br>
 :return:&nbsp;dict</tt></dd></dl>

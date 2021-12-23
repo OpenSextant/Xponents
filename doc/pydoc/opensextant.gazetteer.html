@@ -102,13 +102,32 @@ to&nbsp;provide&nbsp;an&nbsp;ADM1&nbsp;population&nbsp;approximation.</tt></dd><
 :param&nbsp;limit:&nbsp;&nbsp;non-zero&nbsp;limit<br>
 :return:&nbsp;generator</tt></dd></dl>
 
-<dl><dt><a name="DB-list_places_at"><strong>list_places_at</strong></a>(self, lat: float = None, lon: float = None, cc: str = None, geohash: str = None, radius: int = 10000, limit=10)</dt><dd><tt>A&nbsp;best&nbsp;effort&nbsp;guess&nbsp;at&nbsp;spatial&nbsp;query.&nbsp;Returns&nbsp;an&nbsp;array&nbsp;of&nbsp;matches,&nbsp;thinking&nbsp;most&nbsp;location&nbsp;queries&nbsp;are&nbsp;focused.<br>
+<dl><dt><a name="DB-list_places_at"><strong>list_places_at</strong></a>(self, lat: float = None, lon: float = None, geohash: str = None, cc: str = None, radius: int = 5000, limit=10)</dt><dd><tt>A&nbsp;best&nbsp;effort&nbsp;guess&nbsp;at&nbsp;spatial&nbsp;query.&nbsp;Returns&nbsp;an&nbsp;array&nbsp;of&nbsp;matches,&nbsp;thinking&nbsp;most&nbsp;location&nbsp;queries&nbsp;are&nbsp;focused.<br>
+This&nbsp;is&nbsp;a&nbsp;geohash-backed&nbsp;hack&nbsp;at&nbsp;search<br>
 &nbsp;<br>
-:param&nbsp;lat:<br>
-:param&nbsp;lon:<br>
+Use&nbsp;geohash_precision&nbsp;accordingly&nbsp;and&nbsp;approximately:<br>
+-&nbsp;geohash_precision=6&nbsp;implies&nbsp;+/-&nbsp;&nbsp;500m<br>
+-&nbsp;geohash_precision=5&nbsp;implies&nbsp;+/-&nbsp;&nbsp;2500m<br>
+-&nbsp;geohash_precision=4&nbsp;implies&nbsp;+/-&nbsp;20000m<br>
+&nbsp;<br>
+This&nbsp;approach&nbsp;uses&nbsp;an&nbsp;approximation&nbsp;of&nbsp;finding&nbsp;the&nbsp;relevant&nbsp;neighbor&nbsp;cells&nbsp;using&nbsp;a&nbsp;geodetic&nbsp;(not&nbsp;geohash)<br>
+assessment&nbsp;on&nbsp;the&nbsp;radial&nbsp;range.&nbsp;&nbsp;This&nbsp;method&nbsp;hopefully&nbsp;gets&nbsp;past&nbsp;the&nbsp;limitations&nbsp;below.<br>
+&nbsp;<br>
+General&nbsp;limitations&nbsp;of&nbsp;using&nbsp;Geohash&nbsp;for&nbsp;spatial&nbsp;query:<br>
+Given&nbsp;the&nbsp;nature&nbsp;of&nbsp;geohash&nbsp;you&nbsp;might&nbsp;have&nbsp;locations&nbsp;in&nbsp;different&nbsp;cells&nbsp;"xxxx"&nbsp;and&nbsp;"xxxy"&nbsp;that&nbsp;are<br>
+close&nbsp;to&nbsp;each&nbsp;other,&nbsp;i.e.&nbsp;within&nbsp;your&nbsp;specified&nbsp;radius.&nbsp;&nbsp;E.g.,<br>
+&nbsp;<br>
+"9q5f"&nbsp;&nbsp;and&nbsp;"9qh4"&nbsp;&nbsp;are&nbsp;neighbor&nbsp;cells<br>
+"9q5fr"&nbsp;and&nbsp;"9qh42"&nbsp;are&nbsp;neighbor&nbsp;cells.<br>
+&nbsp;<br>
+"9q5fp"&nbsp;is&nbsp;a&nbsp;LR&nbsp;(south-east)&nbsp;corner&nbsp;of&nbsp;"9q5".&nbsp;&nbsp;Searching&nbsp;that&nbsp;2x2&nbsp;KM&nbsp;box&nbsp;by&nbsp;geohash&nbsp;will&nbsp;only&nbsp;search&nbsp;from&nbsp;that<br>
+corner&nbsp;north&nbsp;and&nbsp;westward.<br>
+&nbsp;<br>
+:param&nbsp;lat:&nbsp;latitude<br>
+:param&nbsp;lon:&nbsp;longitude<br>
 :param&nbsp;cc:&nbsp;&nbsp;ISO&nbsp;country&nbsp;code&nbsp;to&nbsp;filter.<br>
-:param&nbsp;geohash:&nbsp;&nbsp;optionally,&nbsp;use&nbsp;precomputed&nbsp;geohash&nbsp;of&nbsp;precision&nbsp;6-chars.<br>
-:param&nbsp;radius:&nbsp;&nbsp;in&nbsp;METERS,&nbsp;radial&nbsp;distance&nbsp;from&nbsp;given&nbsp;point&nbsp;to&nbsp;search<br>
+:param&nbsp;geohash:&nbsp;&nbsp;optionally,&nbsp;use&nbsp;precomputed&nbsp;geohash&nbsp;of&nbsp;precision&nbsp;6-chars&nbsp;instead&nbsp;of&nbsp;lat/lon.<br>
+:param&nbsp;radius:&nbsp;&nbsp;in&nbsp;METERS,&nbsp;radial&nbsp;distance&nbsp;from&nbsp;given&nbsp;point&nbsp;to&nbsp;search,&nbsp;DEFAULT&nbsp;is&nbsp;5&nbsp;KM<br>
 :param&nbsp;limit:&nbsp;count&nbsp;of&nbsp;places&nbsp;to&nbsp;return<br>
 :return:&nbsp;array&nbsp;of&nbsp;tuples,&nbsp;sorted&nbsp;by&nbsp;distance.</tt></dd></dl>
 
