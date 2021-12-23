@@ -58,7 +58,6 @@
   </target>
 
   <target name="copy-src">
-    <!-- Maven source 
     <copy todir="${release}/">
       <file file="${xponents.home}/pom.xml"/>
     </copy>
@@ -66,14 +65,18 @@
       <fileset dir="${xponents.home}/src"/>
     </copy>
     <copy todir="${release}/Core">
-      <fileset dir="${xponents.home}/Core"/>
+      <fileset dir="${xponents.home}/Core">
+        <exclude name="target/" />
+      </fileset>
     </copy>
     <copy todir="${release}/" overwrite="true">
       <fileset dir="${xponents.home}">
         <include name="checkstyle*.xml" />
       </fileset>
     </copy>
-    -->
+  </target>
+  
+  <target name="copy-examples">
     <copy todir="${release}/Examples/src">
       <fileset dir="${xponents.home}/Examples/src"/>
     </copy>
@@ -125,10 +128,6 @@
         <!-- temporary files or legacy items that do not need to come over -->
         <exclude name="tmp/**" />
         <exclude name="etc/taxcat/data/**" />
-        <exclude name="solr4/**" />
-        <exclude name="solr6/**" />
-        <exclude name="solr7-dist/contrib/**" />
-        <exclude name="solr7-dist/example/**" />
         <exclude name="solr7-dist/server/logs/**" />
       </fileset>
     </copy>
@@ -188,6 +187,6 @@
 
   <target name="dist" depends="mkdirs, build, build-examples, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
   </target>
-  <target name="package-dist" depends="mkdirs, copy-src, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing from a pre-built source tree.">
+  <target name="package-dist" depends="mkdirs, copy-examples, copy-src, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing from a pre-built source tree.">
   </target>
 </project>

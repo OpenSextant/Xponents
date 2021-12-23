@@ -24,6 +24,10 @@ if [ ! -d $XPONENTS/piplib ] ; then
    exit 1
 fi
 
+#
+# ----------------------------
+# Index Taxonomic Catalog
+# ----------------------------
 index_taxcat () {
   SOLR_URL=$1
   TAXCAT=./etc/taxcat
@@ -56,6 +60,10 @@ index_taxcat () {
 }
 
 
+#
+# ----------------------------
+# Index Master Gazetteer
+# ----------------------------
 index_gazetteer () {
   SOLR_URL=$1
 
@@ -75,6 +83,11 @@ index_gazetteer () {
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
 }
 
+
+#
+# ----------------------------
+# Index Postal Gazetteer
+# ----------------------------
 index_postal(){
   SOLR_URL=$1
 
