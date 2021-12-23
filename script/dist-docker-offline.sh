@@ -6,6 +6,11 @@ VERSION="3.5"
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
+SONAR_URL=http://localhost:9000
+if [ -n "$1" ]; then 
+  SONAR_URL=$1
+fi
+
 TARGET=$basedir/dist/Xponents-$VERSION
 if [ ! -d $TARGET ] ; then 
   echo "Distribution does not exist: $TARGET"
@@ -40,7 +45,8 @@ echo "++++++++++++++++ CORE ++++++++++++++++"
 echo "++++++++++++++++ SDK ++++++++++++++++"
 mvn -U clean install -Dopensextant.solr=./xponents-solr/solr7  -Dmaven.repo.local=$REPO
 # SDK miscellany
-mvn checkstyle:check findbugs:check  -Dmaven.repo.local=$REPO
+# findbugs:check is no longer maintained.
+mvn checkstyle:check -Dmaven.repo.local=$REPO
 
 # Examples
 echo "++++++++++++++++ EXAMPLES ++++++++++++++++"
@@ -59,7 +65,7 @@ if [ -n "$SONAR_TOKEN" ]; then
       -Dmaven.repo.local=../$REPO \
       -Dsonar.sourceEncoding=UTF-8 \
       -Dsonar.projectKey=opensextant-xponents-core \
-      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.host.url=$SONAR_URL \
       -Dsonar.login=$SONAR_TOKEN \
       -Dsonar.inclusions=./src/main/java )
     
@@ -69,7 +75,7 @@ if [ -n "$SONAR_TOKEN" ]; then
       -Dmaven.repo.local=$REPO \
       -Dsonar.sourceEncoding=UTF-8 \
       -Dsonar.projectKey=opensextant-xponents \
-      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.host.url=$SONAR_URL \
       -Dsonar.login=$SONAR_TOKEN \
       -Dsonar.inclusions=./src/main/java
 fi
@@ -84,4 +90,5 @@ mvn dependency:go-offline -Dmaven.repo.local=$REPO
 
 # Docker
 echo "++++++++++++++++ DOCKER / Maven Offline ++++++++++++++++"
+cd $TARGET
 docker build --tag opensextant:xponents-offline-$VERSION -f ./Dockerfile.offline .
