@@ -165,11 +165,6 @@ public class BasicGeoTemporalProcessing extends XtractorGroup implements Convers
                 AbstractFormatter formatter = createFormatter(fmt, params);
                 formatter.overwrite = overwriteOutput;
                 this.addFormatter(formatter);
-
-                //if (formatter instanceof CSVFormatter) {
-                //    formatter.addField(OpenSextantSchema.FILEPATH.getName());
-                //    formatter.addField(OpenSextantSchema.MATCH_TEXT.getName());
-                // }
                 formatter.start(params.getJobName());
             }
         }

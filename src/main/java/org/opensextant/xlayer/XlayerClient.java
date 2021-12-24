@@ -90,7 +90,6 @@ public class XlayerClient extends Application {
         try {
             Representation repr = new JsonRepresentation(content.toString());
             repr.setCharacterSet(CharacterSet.UTF_8);
-            // log.debug("CLIENT {} {}", serviceAddress, client);
             // Process and read response fully.
             Representation response = client.post(repr, MediaType.APPLICATION_JSON);
             response.write(data);

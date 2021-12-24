@@ -59,6 +59,6 @@ public class ContextualOrganizationRule extends GeocodeRule {
 
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
+        // no-op.  As required by abstract interface;  But this rule does not look at geo.
     }
-
 }

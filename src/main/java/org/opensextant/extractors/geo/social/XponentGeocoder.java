@@ -580,7 +580,6 @@ public class XponentGeocoder extends GeoInferencer {
         // Filter for lack of evidence:
         //
         if (adm1 == null && prov == null && name == null) {
-            // log.debug("Looks like a country and that is it? {}", g);
             // No info to work with.
             // These cases fall back to ADNA or other means.
             return 0;

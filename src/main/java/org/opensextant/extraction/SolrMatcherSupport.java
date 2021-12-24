@@ -154,6 +154,7 @@ public abstract class SolrMatcherSupport implements Closeable {
         tagRequest.setStreamingResponseCallback(new StreamingResponseCallback() {
             @Override
             public void streamDocListInfo(long numFound, long start, Float maxScore) {
+                // implementation not needed
             }
 
             // Future optimization: it would be nice if Solr could give us the

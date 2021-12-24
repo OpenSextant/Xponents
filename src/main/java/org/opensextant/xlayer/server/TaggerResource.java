@@ -39,6 +39,9 @@ public abstract class TaggerResource extends ServerResource {
 
     protected String operation = null;
 
+    public final static String FLD_FEATURES = "features";
+    public final static String FLD_STATUS = "status";
+
     /**
      * operational parameter.
      */
@@ -58,7 +61,7 @@ public abstract class TaggerResource extends ServerResource {
      */
     public Representation ping() {
         JSONObject ping = new JSONObject();
-        ping.put("status", "OK");
+        ping.put(FLD_STATUS, "OK");
         ping.put("version", getProperty("version"));
         return new JsonRepresentation(ping);
     }
@@ -88,7 +91,7 @@ public abstract class TaggerResource extends ServerResource {
      */
     protected Parameters fromRequest(Form inputs) {
         Parameters job = new Parameters();
-        String list = inputs.getValues("features");
+        String list = inputs.getValues(FLD_FEATURES);
         job.tag_coordinates = true;
         job.tag_countries = true;
         job.tag_places = true;
@@ -175,10 +178,10 @@ public abstract class TaggerResource extends ServerResource {
         job.output_filtered = false;
         job.addOutputFormat("json");
 
-        if (inputs.has("features")) {
+        if (inputs.has(FLD_FEATURES)) {
             resetParameters(job);
 
-            String list = inputs.getString("features");
+            String list = inputs.getString(FLD_FEATURES);
             Set<String> features = new HashSet<>(TextUtils.string2list(list.toLowerCase(), ","));
             this.parseParameters(job, features);
         }
@@ -214,10 +217,10 @@ public abstract class TaggerResource extends ServerResource {
         JSONObject s = new JSONObject();
         try {
             if (error != null) {
-                s.put("status", status);
+                s.put(FLD_STATUS, status);
                 s.put("error", error);
             } else {
-                s.put("status", status);
+                s.put(FLD_STATUS, status);
             }
         } catch (JSONException jsonErr) {
             error("Trivial JSON issue!!!!", jsonErr);
@@ -230,9 +233,6 @@ public abstract class TaggerResource extends ServerResource {
             log.severe(msg);
         } else {
             log.severe(msg + " ERR:" + err.getMessage());
-            if (isDebug()) {
-                log.fine(Arrays.toString(err.getStackTrace()));
-            }
         }
     }
 

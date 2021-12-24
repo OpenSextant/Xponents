@@ -74,14 +74,7 @@ import jodd.json.JsonObject;
 public class AnnotationHelper {
 
     /** Start of data quality logging */
-    private static Logger logger = LoggerFactory.getLogger(AnnotationHelper.class);
-
-    /**
-     * Use an instance if you are using any sort of caching for convenience.
-     */
-    public AnnotationHelper() {
-
-    }
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationHelper.class);
 
     /**
      * Given encoded annotations from db, decode them and yield a flattened set of
@@ -137,7 +130,7 @@ public class AnnotationHelper {
         if (offsets.isEmpty()) {
             return -1;
         }
-        return offsets.get(0).intValue();
+        return offsets.get(0);
     }
 
     /** The Constant NUM_SEP. */
@@ -198,7 +191,7 @@ public class AnnotationHelper {
             a.source_id = meta.source_id;
 
             // Set offset here.
-            a.offset = x.intValue();
+            a.offset = x;
             a.attrs = copyAttrs;
 
             annots.add(a);
@@ -253,7 +246,7 @@ public class AnnotationHelper {
      * entity values is
      * the only thing that appears to change.
      */
-    private Map<String, Annotation> deepEyeEntities = new HashMap<String, Annotation>();
+    private final Map<String, Annotation> deepEyeEntities = new HashMap<>();
 
     /**
      * Gets the cached annotations, unordered.
@@ -529,8 +522,7 @@ public class AnnotationHelper {
             return null;
         }
 
-        Country c = new Country(a.attrs.getString("cc"), a.value);
-        return c;
+        return new Country(a.attrs.getString("cc"), a.value);
     }
 
     /**
@@ -650,7 +642,7 @@ public class AnnotationHelper {
     }
 
     /** The datefmt. */
-    private static DateTimeFormatter DATEFMT = DateTimeFormat.forPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter DATEFMT = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     /**
      * Creates the temporal entity annotation.

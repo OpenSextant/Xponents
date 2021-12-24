@@ -22,6 +22,9 @@ import java.util.Map;
 
 public class Transforms {
 
+    public final static String FLD_FILTERED = "filtered-out";
+    public final static String FLD_TYPE = "type";
+
     /**
      * Convert JSON object for an annotation into a Xponents TextMatch instance.
      * Parsing data from
@@ -44,7 +47,7 @@ public class Transforms {
         TextMatch m = null;
         JsonObject a = (JsonObject) data;
 
-        String typ = a.getString("type");
+        String typ = a.getString(FLD_TYPE);
         String text = a.getString("matchtext");
         switch (typ) {
 
@@ -117,7 +120,7 @@ public class Transforms {
         m.setType(typ);
         m.start = a.getInteger("offset");
         m.end = m.start + a.getInteger("length");
-        m.setFilteredOut(a.getBoolean("filtered-out"));
+        m.setFilteredOut(a.getBoolean(FLD_FILTERED));
 
         return m;
     }
@@ -130,7 +133,7 @@ public class Transforms {
      */
     public static void parseDate(DateMatch d, JsonObject a) {
         d.setText(a.getString("matchtext"));
-        d.setType(a.getString("type"));
+        d.setType(a.getString(FLD_TYPE));
         d.datenorm_text = a.getString("date-normalized");
         d.pattern_id = a.getString("pattern-id");
     }
@@ -334,10 +337,10 @@ public class Transforms {
                         // Only get one taxon from this match. That is sufficient, but not perfect.
                         Taxon n = match.getTaxons().get(0);
                         JsonObject node = populateMatch(name);
-                        node.put("type", match.getType());
+                        node.put(FLD_TYPE, match.getType());
                         node.put("taxon", n.name); // Name of taxon
                         node.put("catalog", n.catalog); // Name of catalog or source
-                        node.put("filtered-out", name.isFilteredOut());
+                        node.put(FLD_FILTERED, name.isFilteredOut());
                         resultArray.add(node);
                     }
                 }
@@ -352,14 +355,14 @@ public class Transforms {
             if (name instanceof DateMatch) {
                 ++tagCount;
                 DateMatch dt = (DateMatch) name;
-                node.put("type", "date");
+                node.put(FLD_TYPE, "date");
                 node.put("date-normalized", dt.datenorm_text);
                 if (dt.datenorm != null) {
                     // Java/Unix Date Epoch in Seconds.
                     node.put("timestamp", asSeconds(dt.datenorm));
                 }
                 node.put("pattern-id", dt.pattern_id);
-                node.put("filtered-out", name.isFilteredOut());
+                node.put(FLD_FILTERED, name.isFilteredOut());
                 resultArray.add(node);
                 continue;
             }
@@ -372,8 +375,8 @@ public class Transforms {
             if (name instanceof GeocoordMatch) {
                 ++tagCount;
                 GeocoordMatch geo = (GeocoordMatch) name;
-                node.put("type", geo.getType());
-                node.put("filtered-out", name.isFilteredOut());
+                node.put(FLD_TYPE, geo.getType());
+                node.put(FLD_FILTERED, name.isFilteredOut());
                 Transforms.createGeocoding(geo, node);
                 resultArray.add(node);
                 continue;
@@ -394,7 +397,7 @@ public class Transforms {
             ++tagCount;
             if (place.isCountry) {
                 node.put("name", resolvedPlace.getPlaceName());
-                node.put("type", "country");
+                node.put(FLD_TYPE, "country");
                 node.put("cc", resolvedPlace.getCountryCode());
                 node.put("confidence", place.getConfidence());
 
@@ -408,7 +411,7 @@ public class Transforms {
                 addProvinceName(node, resolvedPlace);
                 // "Related" or linked geography is for Postal or other use cases.
                 addRelatedGeography(node, place);
-                node.put("type", name.getType());
+                node.put(FLD_TYPE, name.getType());
                 node.put("confidence", place.getConfidence());
                 node.put("rules", StringUtils.join(place.getRules(), ";"));
                 if (place.getConfidence() <= DEFAULT_LOWER_CONFIDENCE) {
@@ -416,12 +419,12 @@ public class Transforms {
                 }
             } else {
                 node.put("name", name.getText());
-                node.put("type", name.getType());
+                node.put(FLD_TYPE, name.getType());
                 node.put("confidence", 15); /* A low confidence */
-                node.put("filtered-out", name.isFilteredOut());
+                node.put(FLD_FILTERED, name.isFilteredOut());
                 node.put("rules", StringUtils.join(place.getRules(), ";"));
             }
-            node.put("filtered-out", place.isFilteredOut());
+            node.put(FLD_FILTERED, place.isFilteredOut());
             resultArray.add(node);
         }
         resultMeta.put("numfound", tagCount);

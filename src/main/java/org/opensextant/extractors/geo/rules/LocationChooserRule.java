@@ -178,7 +178,6 @@ public class LocationChooserRule extends GeocodeRule {
         }
 
         for (PlaceCount count : boundaryContext.values()) {
-            // log.debug("Boundary: {} ({})", count.place, count.count);
             log.debug("Boundary: {}", count);
             String cc = count.getCountryCode();
             CountryCount ccnt = inferredCountries.computeIfAbsent(cc, newCount -> new CountryCount(cc));
