@@ -25,13 +25,8 @@ public class TestExtraction {
 
     /** */
     public void test() {
-        TextEntity o1 = new TextEntity();
-        o1.end = 15;
-        o1.start = 10;
-
-        TextEntity o2 = new TextEntity();
-        o2.end = 17;
-        o2.start = 11;
+        TextEntity o1 = new TextEntity(10, 15);
+        TextEntity o2 = new TextEntity(11, 17);
 
         System.out.println(o2.isWithin(o1));
         System.out.println(o2.isSameMatch(o1));

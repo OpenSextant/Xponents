@@ -62,13 +62,6 @@ public class PlaceCandidate extends TextMatch {
     private HashMap<String, PlaceCandidate> related = null;
     private boolean derived = false;
     private boolean anchor = false;
-
-    /**
-     *
-     */
-    public PlaceCandidate() {
-    }
-
     private String nonDiacriticTextnorm = null;
 
     public String getNDTextnorm() {

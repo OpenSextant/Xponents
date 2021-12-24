@@ -87,11 +87,6 @@ public class TextEntity {
      */
     public boolean is_duplicate = false;
 
-    /**
-     *
-     */
-    public TextEntity() {
-    }
 
     /**
      * Simple Span representation.

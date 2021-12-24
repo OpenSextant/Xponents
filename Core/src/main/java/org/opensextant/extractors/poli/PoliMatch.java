@@ -16,9 +16,9 @@
  */
 package org.opensextant.extractors.poli;
 
-import java.util.Map;
-
 import org.opensextant.extraction.TextMatch;
+
+import java.util.Map;
 
 /**
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
@@ -33,19 +33,28 @@ public class PoliMatch extends TextMatch {
     protected Map<String, String> match_groups = null;
 
     /**
+     * No-argument constructor is needed because class in invoked through introspection (via name of class)
      *
      */
     public PoliMatch() {
+        this(-1, -1);
+    }
+
+    /**
+     *
+     */
+    public PoliMatch(int x1, int x2) {
+        super(x1, x2);
         this.producer = "PoLi";
     }
 
     public PoliMatch(String t) {
+        this();
         this.text = t;
-        this.producer = "PoLi";
     }
 
     public PoliMatch(Map<String, String> groups, String t) {
-        this.producer = "PoLi";
+        this();
         this.text = t;
         this.match_groups = groups;
     }

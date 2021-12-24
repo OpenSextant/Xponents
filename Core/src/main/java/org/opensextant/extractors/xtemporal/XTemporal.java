@@ -179,12 +179,9 @@ public class XTemporal extends AbstractFlexPat {
             while (match.find()) {
 
                 ++found;
-                DateMatch dt = new DateMatch();
-
-                dt.pattern_id = pat.id;
-                dt.start = match.start();
-                dt.end = match.end();
+                DateMatch dt = new DateMatch(match.start(), match.end());
                 dt.setText(match.group());
+                dt.pattern_id = pat.id;
                 dt.patternFields = patterns.group_map(pat, match);
 
                 try {

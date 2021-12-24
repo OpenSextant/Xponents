@@ -178,7 +178,7 @@ public final class GeocoordNormalization {
 
                     if (mgrs_candidates.length == 2) {
                         mgrs = mgrs_candidates[1];
-                        GeocoordMatch m2 = new GeocoordMatch();
+                        GeocoordMatch m2 = new GeocoordMatch(m.start, m.end);
                         m2.copy(m);
 
                         m2.coord_text = mgrs.toString();

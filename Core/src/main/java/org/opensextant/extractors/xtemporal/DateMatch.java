@@ -44,7 +44,8 @@ public class DateMatch extends TextMatch {
     /**
      *
      */
-    public DateMatch() {
+    public DateMatch(int x1, int x2) {
+        super(x1, x2);
         // populate attrs as needed;
         type = "datetime";
         producer = "XTemp";

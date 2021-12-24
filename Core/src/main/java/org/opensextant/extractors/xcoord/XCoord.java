@@ -63,7 +63,7 @@ public class XCoord extends AbstractFlexPat {
      * coordinate.
      */
     public static long RUNTIME_FLAGS = XConstants.FLAG_ALL_FILTERS | XConstants.FLAG_EXTRACT_CONTEXT;
-    protected static String DEFAULT_XCOORD_CFG = "/geocoord_patterns.cfg";
+    protected static final String DEFAULT_XCOORD_CFG = "/geocoord_patterns.cfg";
 
     /**
      * Debugging constructor -- if debugmode = True, enable debugging else if
@@ -304,16 +304,13 @@ public class XCoord extends AbstractFlexPat {
             while (match.find()) {
 
                 ++found;
-                GeocoordMatch coord = new GeocoordMatch();
+                GeocoordMatch coord = new GeocoordMatch(match.start(), match.end());
+                coord.setText(match.group());
 
                 // MATCH METHOD aka Pattern ID aka CCE instance
                 coord.pattern_id = pat.id;
                 coord.cce_family_id = pat.cce_family_id;
                 coord.cce_variant = pat.cce_variant;
-
-                coord.start = match.start();
-                coord.end = match.end();
-                coord.setText(match.group());
 
                 if ((RUNTIME_FLAGS & XConstants.CONTEXT_FILTERS_ON) > 0) {
                     if (this.filterOutContext(text, coord.start)) {

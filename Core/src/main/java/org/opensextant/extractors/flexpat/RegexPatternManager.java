@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -192,7 +193,7 @@ public abstract class RegexPatternManager {
         HashMap<String, String> matcherClasses = new HashMap<String, String>();
         List<String> rule_order = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, "UTF-8"))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, StandardCharsets.UTF_8))) {
 
             String _line = null;
             String[] fields;
@@ -264,8 +265,6 @@ public abstract class RegexPatternManager {
                     String fam = fields[1].trim();
                     matcherClasses.put(fam, fields[2].trim());
                 }
-                // Ignore everything else
-
             } // end file read loop
         } // try-finally closes reader.
 
@@ -421,9 +420,11 @@ public abstract class RegexPatternManager {
 
             // Put the matcher group in a hash with an appropriate name.
             String nm = p.regex_groups.get(x);
-            TextEntity e = new TextEntity();
-            e.setText(matched.group(x + 1));
-            e.start = matched.start(x + 1);
+            String span = matched.group(x + 1);
+            int x1 =matched.start(x + 1);
+            int x2 = matched.end(x+1);
+            TextEntity e = new TextEntity(x1, x2);
+            e.setText(span);
             pairs.put(nm, e);
         }
 

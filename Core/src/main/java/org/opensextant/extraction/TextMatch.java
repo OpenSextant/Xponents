@@ -41,6 +41,10 @@ public class TextMatch extends TextEntity {
      */
     protected String type = "generic";
 
+    public TextMatch(int x1, int x2){
+        super(x1, x2);
+    }
+
     public String getType() {
         return type;
     }
@@ -53,12 +57,6 @@ public class TextMatch extends TextEntity {
      */
     public void setType(String t) {
         type = t;
-    }
-
-    /**
-     *
-     */
-    public TextMatch() {
     }
 
     /**

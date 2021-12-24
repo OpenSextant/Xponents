@@ -31,6 +31,6 @@ public class TestCase extends PatternTestCase {
      */
     public TestCase(String _id, String _family, String _text) {
         super(_id, _family, _text);
-        this.match = new TextMatch();
+        this.match = new TextMatch(-1, -1);
     }
 }

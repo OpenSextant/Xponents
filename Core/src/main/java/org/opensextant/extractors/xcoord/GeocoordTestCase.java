@@ -33,7 +33,7 @@ public class GeocoordTestCase extends PatternTestCase {
         super(_id, _family, _text);
 
         this.family_id = XConstants.get_CCE_family(_family);
-        this.match = new GeocoordMatch();
+        this.match = new GeocoordMatch(-1, -1);
     }
 
     public GeocoordMatch getGeo() {
