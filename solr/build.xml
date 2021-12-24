@@ -43,9 +43,13 @@
         <delete file="${solr.runtime.lib}/log4j-slf4j-impl-2.11.0.jar"/>
         <delete file="${solr.runtime.lib}/log4j-1.2-api-2.11.0.jar"/>
 
+        <!-- log4j implementation is not a dependency, so we have to get it raw -->
+        <get dest="${solr.runtime.lib}">
+            <url url="https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j-impl/2.17.0/log4j-slf4j-impl-2.17.0.jar"/>
+        </get>
+
         <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-api-2.17.0.jar"/>
         <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-core-2.17.0.jar"/>
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-slf4j-impl-2.17.0.jar"/>
         <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-1.2-api-2.17.0.jar"/>
     </target>
 

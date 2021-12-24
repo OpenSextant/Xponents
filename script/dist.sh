@@ -2,7 +2,7 @@
 #
 #
 VER=3.5
-BUILD_VER=3.5.2
+BUILD_VER=3.5.3
 
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`

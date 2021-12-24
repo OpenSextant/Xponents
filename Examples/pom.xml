@@ -11,9 +11,9 @@
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <slf4j.version>1.7.32</slf4j.version>
-    <xponents.version>3.5.2</xponents.version>
-    <xponents-core.version>3.5.2</xponents-core.version>
-    <xtext.version>3.5.2</xtext.version>
+    <xponents.version>3.5.3</xponents.version>
+    <xponents-core.version>3.5.3</xponents-core.version>
+    <xtext.version>3.5.3</xtext.version>
   </properties>
   <dependencies>
     <dependency>
