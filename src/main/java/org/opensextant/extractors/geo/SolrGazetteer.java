@@ -146,20 +146,11 @@ public class SolrGazetteer {
     protected static ModifiableSolrParams createGeodeticLookupParams(int rows) {
         /*
          * Basic parameters for geospatial lookup. These are reused, and only pt and d
-         * are set for each lookup.
+         * are set for each lookup.  `geofilt` has several more parameters
          */
         ModifiableSolrParams p = new ModifiableSolrParams();
         p.set(CommonParams.FL, DEFAULT_FIELDS);
         p.set(CommonParams.ROWS, rows);
-
-        /*
-         * TOOD: Note that spatial filtering/scoring on large data sets seems to be very
-         * memory intensive. Failures below... must calculate and sort distance
-         * manually....
-         */
-        // p.set(CommonParams.Q, "*:*");
-        // p.set(CommonParams.Q, "{!geofilt sfield=geo score=distance cache=true}");
-        // p.set(CommonParams.SORT, "geodist() asc");
         p.set(CommonParams.Q, "{!geofilt}");
         p.set("sfield", "geo");
 
@@ -301,15 +292,14 @@ public class SolrGazetteer {
 
             Country existingCountry = countryCodeMap.get(C.getCountryCode());
             if (existingCountry != null) {
-                if (existingCountry.ownsTerritory(C.getName())) {
-                    // do nothing.
-                } else if (C.isTerritory) {
-                    log.debug("{} territory of {}", C, existingCountry);
-                    existingCountry.addTerritory(C);
-                } else {
-                    log.debug("{} alias of {}", C, existingCountry);
-                    existingCountry.addAlias(C.getName()); // all other metadata
-                                                           // is same.
+                if (!existingCountry.ownsTerritory(C.getName())) {
+                    if (C.isTerritory) {
+                        log.debug("{} territory of {}", C, existingCountry);
+                        existingCountry.addTerritory(C);
+                    } else {
+                        log.debug("{} alias of {}", C, existingCountry);
+                        existingCountry.addAlias(C.getName()); // all other metadataß is same.
+                    }
                 }
                 continue;
             }
@@ -441,7 +431,7 @@ public class SolrGazetteer {
 
         /* Trim */
         List<Place> trimmed = new ArrayList<>();
-        int end = sortable.size() > MAX_RESULTS ? MAX_RESULTS : sortable.size();
+        int end = Math.min(sortable.size(), MAX_RESULTS);
         for (int x = 0; x < end; ++x) {
             trimmed.add(sortable.get(x).place);
         }
@@ -458,7 +448,7 @@ public class SolrGazetteer {
      *
      * @author ubaldino
      */
-    class RelativePlace implements Comparable<RelativePlace> {
+    static class RelativePlace implements Comparable<RelativePlace> {
         public long radius = -1;
         public Place place = null;
 
