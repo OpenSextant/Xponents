@@ -96,11 +96,7 @@ public class HeatMapRule extends GeocodeRule {
      */
     private void addMention(PlaceCandidate name, Place geo) {
 
-        List<PlaceCandidate> tracking = mentionMap.get(geo.getPlaceID());
-        if (tracking == null) {
-            tracking = new ArrayList<>();
-            mentionMap.put(geo.getPlaceID(), tracking);
-        }
+        List<PlaceCandidate> tracking = mentionMap.computeIfAbsent(geo.getPlaceID(), k-> new ArrayList<>());
         if (!tracking.contains(name)) {
             tracking.add(name);
         }
