@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 
 /**
  * Abstract class encapsulating basic results formatter functionality.
@@ -179,13 +181,12 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
     /**
      * uniform helper for overwrite check.
      */
-    protected void checkOverwrite(File item) throws ProcessingException {
+    protected void checkOverwrite(File item) throws IOException {
         if (this.overwrite) {
             this.deleteOutput(item);
         } else if (item.exists()) {
-            throw new ProcessingException(
-                    "OpenSextant API cannot overwrite GIS output files -- caller must do that.  FILE=" + item.getPath()
-                            + " exists");
+            throw new FileAlreadyExistsException(
+                    String.format("OpenSextant API does not overwrite existing GIS output files -- caller must do that. FILE=%s ", item.getPath()));
         }
     }
 
@@ -204,9 +205,9 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
     protected abstract void createOutputStreams() throws Exception;
 
     /**
-     * @throws Exception
+     * @throws IOException
      */
-    protected abstract void closeOutputStreams() throws Exception;
+    public abstract void close() throws IOException;
 
     /**
      * Write your geocoding result directly to output

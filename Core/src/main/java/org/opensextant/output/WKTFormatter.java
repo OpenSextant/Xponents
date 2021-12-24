@@ -43,7 +43,7 @@ public final class WKTFormatter extends GISDataFormatter {
     /**
      * Create the output stream appropriate for the output type.
      *
-     * @throws Exception on err
+     * @throws IOException on err
      */
     @Override
     public void createOutputStreams() throws IOException {

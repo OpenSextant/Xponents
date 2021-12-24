@@ -16,8 +16,8 @@
 */
 package org.opensextant.output;
 
-import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,7 +78,7 @@ public class CSVFormatter extends AbstractFormatter {
     public void finish() {
         try {
             writer.flush();
-            closeOutputStreams();
+            close();
         } catch (Exception err) {
             log.error("IO Failure on finish", err);
         }
@@ -92,7 +92,7 @@ public class CSVFormatter extends AbstractFormatter {
     }
 
     @Override
-    protected void closeOutputStreams() throws Exception {
+    public void close() throws IOException {
         if (writer != null) {
             writer.close();
         }
@@ -104,7 +104,7 @@ public class CSVFormatter extends AbstractFormatter {
 
     @Override
     public void writeGeocodingResult(ExtractionResult rowdata) {
-        HashMap<String, String> values = new HashMap<String, String>();
+        HashMap<String, String> values = new HashMap<>();
         for (TextMatch m : rowdata.matches) {
 
             values.clear();

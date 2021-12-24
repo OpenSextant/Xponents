@@ -16,8 +16,6 @@
  */
 package org.opensextant.output;
 
-import java.io.File;
-
 import org.opensextant.ConfigException;
 import org.opensextant.data.Geocoding;
 import org.opensextant.extraction.ExtractionResult;
@@ -30,22 +28,21 @@ import org.opensextant.giscore.events.Feature;
 import org.opensextant.giscore.output.IGISOutputStream;
 import org.opensextant.processing.ProcessingException;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+
 /**
- * This is the base class for classes that convert document annotations to
- * GISCore features.
+ * This is the base class for classes that convert document annotations to GISCore features.
  * Subclasses differ chiefly by choice of text string for the description field.
- * For some types of
- * documents (e.g., news articles) the sentence containing the annotation is a
- * good choice, but for
- * other types (e.g., spreadsheets) sentence splitting may not be successful and
- * the line of text
- * containing the annotation is a better choice.
+ * For some types of documents (e.g., news articles) the sentence containing the annotation is a
+ * good choice, but for other types (e.g., spreadsheets) sentence splitting may not be successful and
+ * the line of text containing the annotation is a better choice.
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Dec 20, 2011
- * @author Marc C. Ubaldino, MITRE Corp. Refactored, redesigned package using
- *         GISCore, 2013.
+ * @author Marc C. Ubaldino, MITRE Corp. Refactored, redesigned package using GISCore, 2013.
  */
-public abstract class GISDataFormatter extends AbstractFormatter {
+public abstract class GISDataFormatter extends AbstractFormatter implements Closeable {
 
     /**
      *
@@ -89,7 +86,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     @Override
     public void start(String containerName) throws ProcessingException {
 
-        /**
+        /*
          * apply default GIS data model
          */
         if (this.gisDataModel == null) {
@@ -124,7 +121,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
         this.os.write(containerEnd);
 
         try {
-            closeOutputStreams();
+            close();
         } catch (Exception closerr) {
             log.error("ERROR finalizing data file ", closerr);
         }
@@ -137,10 +134,10 @@ public abstract class GISDataFormatter extends AbstractFormatter {
     }
 
     /**
-     * @throws Exception
+     * @throws IOException
      */
     @Override
-    protected void closeOutputStreams() throws Exception {
+    public void close() throws IOException {
         if (this.os != null) {
             this.os.close();
         }
@@ -159,19 +156,12 @@ public abstract class GISDataFormatter extends AbstractFormatter {
         }
 
         Geocoding geocoding = geoInterpreter.getGeocoding(geo);
-
-        if (geocoding != null) {
-            if (!outputParams.tag_coordinates && geocoding.isCoordinate()) {
-                return true;
-            } else if (!outputParams.tag_countries && geocoding.isCountry()) {
-                return true;
-            } else if (!outputParams.tag_places && geocoding.isPlace()) {
-                return true;
-            }
+        if (geocoding == null) {
+            return false;
         }
-
-        // Not Geo, but also not filtered out.
-        return false;
+        return ((!outputParams.tag_coordinates && geocoding.isCoordinate())
+                || (!outputParams.tag_countries && geocoding.isCountry())
+                || (!outputParams.tag_places && geocoding.isPlace()));
     }
 
     /**
@@ -205,9 +195,7 @@ public abstract class GISDataFormatter extends AbstractFormatter {
                     log.debug("FEATURE: {}", row);
                     this.os.write(row);
                 }
-
             } catch (ConfigException fieldErr) {
-
                 if (!error) {
                     log.error("OUTPUTTER, ERR=" + fieldErr);
                 }
@@ -216,17 +204,11 @@ public abstract class GISDataFormatter extends AbstractFormatter {
         }
     }
 
-    /**
-     * @param fld
-     */
     @Override
     public void addField(String fld) throws ConfigException {
         gisDataModel.addField(fld);
     }
 
-    /**
-     * @param fld
-     */
     @Override
     public void removeField(String fld) throws ConfigException {
         gisDataModel.removeField(fld);
