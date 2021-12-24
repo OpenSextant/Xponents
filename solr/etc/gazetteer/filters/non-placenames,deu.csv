@@ -72,6 +72,7 @@ hause,noun.deu
 heer,noun.deu
 herr,person_title.deu
 hier,person_title.deu
+ich,pronoun.deu
 jahr,noun.deu
 jede,article.deu
 juni,month.deu
@@ -91,6 +92,7 @@ menge,verb.deu
 mengen,verb.deu
 musik,noun.deu
 namen,noun.deu
+nacht,time.deu
 nase,noun.deu
 nationale,adjective.deu
 nein,phrase.deu
@@ -128,6 +130,7 @@ titel,noun.deu
 unter,noun.deu
 viktoria,person_name.deu
 wald,noun.deu
+weg,noun.deu
 weicht,place.general.deu
 weis,color.deu
 welt,noun.deu
@@ -139,4 +142,7 @@ wilhelm,person_name.deu
 winden,noun.deu
 woche,noun.deu
 worden,noun.deu
+vor,pronoun.deu
 wälder,place.general.deu
+werk,noun.deu
+zur,noun.deu
