@@ -67,7 +67,7 @@ if [ -n "$SONAR_TOKEN" ]; then
       -Dsonar.projectKey=opensextant-xponents-core \
       -Dsonar.host.url=$SONAR_URL \
       -Dsonar.login=$SONAR_TOKEN \
-      -Dsonar.inclusions=./src/main/java )
+      "-Dsonar.inclusions=**/*.java"
     
     echo "Sonar scanning Xponents SDK"
     echo "--This is done OFFLINE to prove dependencies were acquired in pass above"
@@ -77,7 +77,7 @@ if [ -n "$SONAR_TOKEN" ]; then
       -Dsonar.projectKey=opensextant-xponents \
       -Dsonar.host.url=$SONAR_URL \
       -Dsonar.login=$SONAR_TOKEN \
-      -Dsonar.inclusions=./src/main/java
+      "-Dsonar.inclusions=**/*.java"
 fi
 
 # One last time: go-offline

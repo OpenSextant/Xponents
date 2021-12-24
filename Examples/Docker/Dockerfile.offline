@@ -7,7 +7,8 @@ ENV VERSION=Xponents-3.5
 ENV XPONENTS=/home/opensextant/Xponents
 ENV JAVA_XMS=1500m
 ENV JAVA_XMX=1500m
-ENV MVN=apache-maven-3.6.3
+ENV MVN_VER=3.8.4
+ENV MVN=apache-maven-$MVN_VER
 ENV PATH=/opt/maven/bin:$PATH
 ENV LOCAL_REPO_NAME=maven-repo
 # NOTE LOCAL_REPO is a absolute path
@@ -24,7 +25,7 @@ COPY ./ $XPONENTS/
 # OFFLINE
 #---------------------------
 # Install Maven to allow for offline recompilation
-RUN cd /tmp && curl -O http://mirrors.advancedhosters.com/apache/maven/maven-3/3.6.3/binaries/$MVN-bin.tar.gz  && \
+RUN cd /tmp && curl -O http://mirrors.advancedhosters.com/apache/maven/maven-3/$MVN_VER/binaries/$MVN-bin.tar.gz  && \
    (cd /opt/ ; tar xzf /tmp/$MVN-bin.tar.gz) && \
    (mv /opt/$MVN /opt/maven)
 
@@ -42,7 +43,7 @@ RUN mvn -o -Dopensextant.solr=./xponents-solr/solr7 \
       -Dmaven.repo.local=$LOCAL_REPO clean package dependency:copy-dependencies
 
 # 2. Copy built items and metadata from install to final runtime CLASSPATH ./lib
-RUN cp ./target/*jar ./xponents-solr/solr7/lib/xponents*jar ./lib/
+RUN cp ./target/*jar ./lib/
 
 #---------------------------
 EXPOSE $XLAYER_PORT 7000
