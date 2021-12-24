@@ -53,7 +53,7 @@ public class MajorPlaceRule extends GeocodeRule {
     private static final int GEOHASH_RESOLUTION = 5;
     private static final int POP_MIN = 50000;
 
-    Set<String> visitedPlaces = new HashSet<>();
+    final Set<String> visitedPlaces = new HashSet<>();
 
     /**
      * Major Place assigns a score to places that are national capitals, provinces,

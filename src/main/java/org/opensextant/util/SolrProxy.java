@@ -17,7 +17,6 @@
 package org.opensextant.util;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,9 +119,9 @@ public class SolrProxy extends SolrUtil {
     }
 
     protected Logger logger = LoggerFactory.getLogger(SolrProxy.class);
-    protected SolrClient solrClient = null;
+    protected SolrClient solrClient;
     private UpdateRequest solrUpdate = null;
-    protected URL server_url = null;
+    protected URL server_url;
     private boolean writable = false;
 
     public void setWritable(boolean b) {
@@ -143,9 +142,8 @@ public class SolrProxy extends SolrUtil {
      *
      * @param url server represented by URL
      * @return Instance of a Solr server
-     * @throws MalformedURLException
      */
-    public static SolrClient initializeHTTP(URL url) throws MalformedURLException {
+    public static SolrClient initializeHTTP(URL url) {
 
         HttpSolrClient client = new HttpSolrClient.Builder(url.toString()).allowCompression(true).build();
         return client;

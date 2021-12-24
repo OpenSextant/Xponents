@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class PostalLocationChooser extends GeocodeRule {
 
-    Pattern separators = Pattern.compile("[-\\s+]");
+    final Pattern separators = Pattern.compile("[-\\s+]");
 
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {

@@ -235,7 +235,7 @@ public abstract class SocialGeo {
         countries.loadWorldAdmin1Metadata();
     }
 
-    protected Map<String, Place> US_STATES = new HashMap<>();
+    protected final Map<String, Place> US_STATES = new HashMap<>();
 
     /**
      * Lookup US States.

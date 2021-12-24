@@ -34,7 +34,7 @@ import org.apache.lucene.analysis.util.ResourceLoader;
  */
 public class LuceneStopwords {
 
-    static Set<String> SNOWBALL_SETS = new HashSet<>();
+    static final Set<String> SNOWBALL_SETS = new HashSet<>();
     static {
         SNOWBALL_SETS.addAll(TextUtils.string2list("da, de, es, fi, fr, hu, it, nl no, pt, ru, sv", ","));
     }

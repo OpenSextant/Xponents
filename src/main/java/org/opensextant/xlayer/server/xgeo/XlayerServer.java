@@ -55,7 +55,7 @@ public class XlayerServer extends Component {
             new XlayerServer(Integer.parseInt(args[0])).start();
         } catch (Exception err) {
             System.err.println(usage());
-            err.printStackTrace();
+            System.err.printf("ERROR: %s%n", err.getMessage());
             System.exit(-1);
         }
     }

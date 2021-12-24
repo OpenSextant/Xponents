@@ -67,11 +67,11 @@ public class XponentGeocoder extends GeoInferencer {
      */
     @Override
     public String report() {
-        String buf = String.format("%s Total Records:%d, Has Coords:%2.0f%%, Has TZ:%2.0f%%, Has Place: %2.0f%%",
-                this.inferencerID, totalRecords, pct(totalRecords, recordsWithCoord), pct(totalRecords, recordsWithTZ),
+        return String.format("%s Total Records:%d, Has Coords:%2.0f%%, Has TZ:%2.0f%%, Has Place: %2.0f%%",
+                this.inferencerID, totalRecords,
+                pct(totalRecords, recordsWithCoord),
+                pct(totalRecords, recordsWithTZ),
                 pct(totalRecords, recordsWithPlace));
-
-        return buf;
     }
 
     protected SolrGazetteer gazetteer = null;
@@ -406,7 +406,7 @@ public class XponentGeocoder extends GeoInferencer {
         return inferredCountry;
     }
 
-    class InferredCountry {
+    static class InferredCountry {
         String id = null;
         Country country = null;
         int score = 0;

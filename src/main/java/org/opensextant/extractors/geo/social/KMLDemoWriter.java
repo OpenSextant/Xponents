@@ -35,7 +35,7 @@ import java.util.Map;
 public class KMLDemoWriter implements Closeable {
 
     protected IGISOutputStream outputStream = null;
-    Namespace gxNs = Namespace.getNamespace("gx", IKml.NS_GOOGLE_KML_EXT);
+    // Namespace gxNs = Namespace.getNamespace("gx", IKml.NS_GOOGLE_KML_EXT);
     Namespace kmlNs = Namespace.getNamespace(IKml.KML_NS);
 
     public KMLDemoWriter(String path) throws IOException {
@@ -47,7 +47,6 @@ public class KMLDemoWriter implements Closeable {
             outputStream = GISFactory.getOutputStream(DocumentType.KML, fos);
             DocumentStart ds = new DocumentStart(DocumentType.KML);
             ds.getNamespaces().add(kmlNs);
-            // ds.getNamespaces().add(gxNs);
             outputStream.write(ds);
             outputStream.write(new ContainerStart());
         } catch (Exception err) {
@@ -61,8 +60,7 @@ public class KMLDemoWriter implements Closeable {
     static Map<String, Style> styles = new HashMap<>();
 
     static {
-        // ugeoStyle.setBalloonStyle(Color.BLUE, null, null, null);
-        // geoStyle.setBalloonStyle(Color.ORANGE, null, null, null);
+        /* Use Style.setBalloonStle() to color a placemark */
         ugeoStyle.setIconStyle(Color.CYAN, 0.8);
         geoStyle.setIconStyle(Color.ORANGE, 0.8);
         mentionGeoStyle.setIconStyle(Color.MAGENTA, 0.8);

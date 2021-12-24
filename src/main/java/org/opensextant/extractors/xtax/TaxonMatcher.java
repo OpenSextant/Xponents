@@ -215,7 +215,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * matches with the
      * catalog ID in this list will be returned by tagText()
      */
-    public Set<String> catalogs = new HashSet<>();
+    public final Set<String> catalogs = new HashSet<>();
 
     public void addCatalogFilters(String[] cats) {
         catalogs.addAll(Arrays.asList(cats));
@@ -260,7 +260,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         return extractorImpl(null, input_buf);
     }
 
-    public static String[] commonTaxonLabels = {"org", "person", "nationality"};
+    public static final String[] commonTaxonLabels = {"org", "person", "nationality"};
 
     private static void assignType(TaxonMatch m, Taxon node) {
         if (!m.isDefault()) {
@@ -317,15 +317,15 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         /*
          * Retrieve all offsets into a long list.
          */
-        TaxonMatch m = null;
+        TaxonMatch m;
         // int x1 = -1, x2 = -1;
         int tag_count = 0;
         String id_prefix = docid + "#";
 
         for (NamedList<?> tag : tags) {
             m = new TaxonMatch();
-            m.start = ((Integer) tag.get("startOffset")).intValue();
-            m.end = ((Integer) tag.get("endOffset")).intValue();
+            m.start = (Integer) tag.get("startOffset");
+            m.end = (Integer) tag.get("endOffset");
             // +1 char after last matched m.pattern_id = "taxtag";
             ++tag_count;
             m.match_id = id_prefix + tag_count;

@@ -36,9 +36,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class PersonNameFilter extends GeocodeRule {
 
-    private Set<String> nameFilter = null;
-    private Set<String> titles = null;
-    private Set<String> suffixes = null;
+    private Set<String> nameFilter;
+    private Set<String> titles;
+    private Set<String> suffixes;
 
     /**
      * Locations that are some number of words long AND have lat/lon
@@ -54,7 +54,7 @@ public class PersonNameFilter extends GeocodeRule {
      * @param names
      * @param persTitles
      * @param persSuffixes
-     * @throws ConfigException
+     * @throws ConfigException when filter files are missing.
      */
     public PersonNameFilter(URL names, URL persTitles, URL persSuffixes) throws ConfigException {
         try {
@@ -83,7 +83,7 @@ public class PersonNameFilter extends GeocodeRule {
      * @param namesPath
      * @param persTitlesPath
      * @param persSuffixesPath
-     * @throws ConfigException
+     * @throws ConfigException when filter files are missing
      */
     public PersonNameFilter(String namesPath, String persTitlesPath, String persSuffixesPath) throws ConfigException {
         try {
@@ -148,7 +148,7 @@ public class PersonNameFilter extends GeocodeRule {
      * <pre>
      *  Hillary Clinton visited New York state today.
      * </pre>
-     *
+     * <p>
      * So, Clinton is part of a well known celebrity, and is not referring to
      * Clinton, NY a town in upstate. We identify all such person names and mark
      * any overlaps and co-references that coincide with tagged place names.
@@ -158,7 +158,7 @@ public class PersonNameFilter extends GeocodeRule {
      * @param orgs       named orgs in doc
      */
     public void evaluateNamedEntities(final TextInput input, final List<PlaceCandidate> placeNames,
-            final List<TaxonMatch> persons, final List<TaxonMatch> orgs) {
+                                      final List<TaxonMatch> persons, final List<TaxonMatch> orgs) {
 
         for (PlaceCandidate pc : placeNames) {
             if (pc.isFilteredOut() || pc.isValid() || (pc.isCountry && !pc.isAbbreviation)) {
@@ -224,7 +224,7 @@ public class PersonNameFilter extends GeocodeRule {
 
             /* is LOC candidate in ORG name
              * or ORG name in LOC candidate?
-            */
+             */
             for (TaxonMatch name : orgs) {
                 if (pc.isSameMatch(name)) {
                     pc.setFilteredOut(true);
@@ -256,7 +256,7 @@ public class PersonNameFilter extends GeocodeRule {
     public static final String NAME_IN_ORG_RULE = "NameInOrg";
 
 
-    private boolean evaluateValidNames(PlaceCandidate name){
+    private boolean evaluateValidNames(PlaceCandidate name) {
 
         if (name.isCountry) {
             return true;
@@ -269,8 +269,7 @@ public class PersonNameFilter extends GeocodeRule {
         else if (NameCodeRule.isRuleFor(name)) {
             name.setFilteredOut(false);
             return true;
-        }
-        else if (MajorPlaceRule.isRuleFor(name)) {
+        } else if (MajorPlaceRule.isRuleFor(name)) {
             name.setFilteredOut(false);
             return true;
         }
@@ -278,12 +277,12 @@ public class PersonNameFilter extends GeocodeRule {
 
     }
 
-    private boolean isResolvedName(PlaceCandidate name){
+    private boolean isResolvedName(PlaceCandidate name) {
         /*
          * Name matches not yet filtered out, but may be co-referrenced to prior
          * mention
          */
-         if (resolvedPersons.containsKey(name.getTextnorm())) {
+        if (resolvedPersons.containsKey(name.getTextnorm())) {
             name.setFilteredOut(true);
             name.addRule("ResolvedPerson.CoRef");
             return true;
@@ -295,7 +294,7 @@ public class PersonNameFilter extends GeocodeRule {
         return false;
     }
 
-    private boolean isPersonName(PlaceCandidate name){
+    private boolean isPersonName(PlaceCandidate name) {
         if (nameFilter.contains(name.getTextnorm())) {
             name.setFilteredOut(true);
             resolvedPersons.put(name.getTextnorm(), name.getText());
@@ -304,63 +303,77 @@ public class PersonNameFilter extends GeocodeRule {
         }
         return false;
     }
+
     /**
      * Evaluate the place name purely based on previous rules or the lexical nature
      * of the name, and not any geography, so this parent method is overriden and returns
-     * True always.  That shunts the geo evaluation;
-     * 
-     * @return True if name is evaluated sufficiently by this rule. False implies
-     *         continue evaluating.
+     * True always.  That shunts the geo evaluation -- So, yes it always returns true.
      */
     @Override
-    public boolean evaluateNameFilterOnly(PlaceCandidate name) {
-
-        if (evaluateValidNames(name)){
-            return true;
-        } else if (isResolvedName(name)){
-            return true;
+    public void evaluate(List<PlaceCandidate> names) {
+        for (PlaceCandidate name : names) {
+            // Conditional here is to find just one hueristic that works successfully.
+            boolean test = evaluateValidNames(name)
+                    || isResolvedName(name)
+                    || hasPreHonorific(name)
+                    || isPersonName(name)
+                    || hasPostHonorific(name);
         }
+    }
 
-        String[] toks = name.getPrematchTokens();
-        if (toks != null && toks.length > 0) {
-            String pre = toks[toks.length - 1].toLowerCase();
-            if (isNotBlank(pre)) {
-                if (titles.contains(withoutPeriod(pre))) {
-                    name.setFilteredOut(true);
-                    resolvedPersons.put(val(pre, name.getTextnorm()), name.getText());
-                    name.addRule("PersonTitle");
-                    name.addRule("Prefix=" + pre);
-                    return true;
-                } else if (nameFilter.contains(pre)) {
-                    name.setFilteredOut(true);
-                    resolvedPersons.put(name.getTextnorm(), String.format("%s %s", pre, name.getTextnorm()));
-                    name.addRule("PersonName");
-                    name.addRule("Prefix=" + pre);
-                    return true;
-                }
-            }
+    /**
+     * Test if a name has a trailing honorific or title.
+     *
+     * @param nm
+     * @return
+     */
+    private boolean hasPostHonorific(PlaceCandidate nm) {
+        String[] toks = nm.getPostmatchTokens();
+        if (toks == null || toks.length == 0) {
+            return false;
         }
-
-        if (isPersonName(name)){
+        String post = toks[0].toLowerCase();
+        if (suffixes.contains(withoutPeriod(post))) {
+            nm.setFilteredOut(true);
+            resolvedPersons.put(val(nm.getTextnorm(), post), nm.getText());
+            nm.addRule("PersonSuffix");
             return true;
         }
+        return false;
+    }
 
-        toks = name.getPostmatchTokens();
-        if (toks != null && toks.length > 0) {
-            String post = toks[0].toLowerCase();
-            if (suffixes.contains(withoutPeriod(post))) {
-                name.setFilteredOut(true);
-                resolvedPersons.put(val(name.getTextnorm(), post), name.getText());
-                name.addRule("PersonSuffix");
+    /**
+     * Test if name has preceeding honorific
+     *
+     * @param nm
+     * @return
+     */
+    private boolean hasPreHonorific(PlaceCandidate nm) {
+        String[] toks = nm.getPrematchTokens();
+        if (toks == null || toks.length == 0) {
+            return false;
+        }
+        String pre = toks[toks.length - 1].toLowerCase();
+        if (isNotBlank(pre)) {
+            if (titles.contains(withoutPeriod(pre))) {
+                nm.setFilteredOut(true);
+                resolvedPersons.put(val(pre, nm.getTextnorm()), nm.getText());
+                nm.addRule("PersonTitle");
+                nm.addRule("Prefix=" + pre);
+                return true;
+            } else if (nameFilter.contains(pre)) {
+                nm.setFilteredOut(true);
+                resolvedPersons.put(nm.getTextnorm(), String.format("%s %s", pre, nm.getTextnorm()));
+                nm.addRule("PersonName");
+                nm.addRule("Prefix=" + pre);
                 return true;
             }
         }
-
-        return true;
+        return false;
     }
 
     @Override
-    public void evaluate(final PlaceCandidate name, final Place xgeo) {
+    public void evaluate(final PlaceCandidate name, final Place geo) {
         /* No Op */
     }
 

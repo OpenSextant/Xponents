@@ -15,7 +15,7 @@ public class PlaceCount {
     private double ratio = 0;
     public Place place = null;
     public int total = 1;
-    public String label = null;
+    public String label;
     public Set<String> names = new HashSet<>();
 
     public PlaceCount(String l){

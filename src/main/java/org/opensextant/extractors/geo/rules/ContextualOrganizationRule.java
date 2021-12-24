@@ -41,7 +41,6 @@ public class ContextualOrganizationRule extends GeocodeRule {
                     name.setFilteredOut(false);
                     name.addRule("ContextualOrg");
                     reEval.add(name.getTextnorm());
-                    continue;
                 }
             }
         }

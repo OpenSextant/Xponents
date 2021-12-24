@@ -14,7 +14,6 @@ import org.restlet.routing.Router;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Logger;
 
 /**
  * Xlayer Restlet app constructs the application, initializes resources, etc.

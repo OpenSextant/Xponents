@@ -28,8 +28,8 @@ import jodd.json.JsonParser;
 
 public class XlayerClient extends Application {
 
-    protected URL serviceAddress = null;
-    private URI serviceURI = null;
+    protected URL serviceAddress;
+    private URI serviceURI;
 
     protected Logger log = LoggerFactory.getLogger(getClass());
     protected final Context serviceContext = new Context();

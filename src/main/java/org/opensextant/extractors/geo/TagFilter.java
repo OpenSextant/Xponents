@@ -58,7 +58,7 @@ public class TagFilter extends MatchFilter {
     public TagFilter() throws IOException {
         super();
         nonPlaceStopTerms = new HashSet<>();
-        String[] defaultNonPlaceFilters = { "/filters/non-placenames.csv", // GENERAL
+        String[] defaultNonPlaceFilters = {"/filters/non-placenames.csv", // GENERAL
                 "/filters/non-placenames,spa.csv", // SPANISH
                 "/filters/non-placenames,deu.csv", // GERMAN
                 "/filters/non-placenames,acronym.csv" // ACRONYMS
@@ -66,16 +66,14 @@ public class TagFilter extends MatchFilter {
         for (String f : defaultNonPlaceFilters) {
             nonPlaceStopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
         }
-        // generalLangId.add(TextUtils.englishLang);
-        // generalLangId.add(TextUtils.spanishLang);
 
         /*
          * NOTE: these stop word sets are of format='wordset'
          * Whereas other languages (es, it, etc.) are provided in format='snowball'
          * StopFilterFactory is needed to load snowball filters.
          */
-        String[] langSet = { "ja", "th", "tr", "id", "ar", "fa", "ur", "ru", "it", "pt", "de", "nl", "es", "en", "tl",
-                "ko", "vi" };
+        String[] langSet = {
+                "ja", "th", "tr", "id", "ar", "fa", "ur", "ru", "it", "pt", "de", "nl", "es", "en", "tl", "ko", "vi"};
         loadLanguageStopwords(langSet);
     }
 
@@ -273,12 +271,12 @@ public class TagFilter extends MatchFilter {
      * Due to bi-gram shingling with CJK languages - Chinese, Japanese, Korean -
      * the matcher really over-matches, e.g. For really short matches, let's
      * rule out obvious bad matches.
-     * 
+     *
      * <pre>
      *  ... に た ... input text matched にた
      * gazetteer place name.
      * </pre>
-     * 
+     * <p>
      * TOOD: make use of better tokenizer/matcher
      * in SolrTextTagger configuration for CJK
      *

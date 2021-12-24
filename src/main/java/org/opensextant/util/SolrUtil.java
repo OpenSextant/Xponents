@@ -72,10 +72,9 @@ public class SolrUtil {
         if (obj instanceof StoredField) {
             return ((StoredField) obj).numericValue().intValue();
         } else if (obj instanceof Integer) {
-            return ((Integer) obj).intValue();
+            return (Integer) obj;
         } else {
-            Integer v = Integer.valueOf(obj.toString());
-            return v.intValue();
+            return Integer.parseInt(obj.toString());
         }
     }
 
@@ -95,7 +94,7 @@ public class SolrUtil {
         if (obj instanceof StoredField) {
             return ((StoredField) obj).numericValue().intValue();
         } else if (obj instanceof Integer) {
-            return ((Integer) obj).intValue();
+            return (Integer) obj;
         } else {
             return Integer.parseInt(obj.toString());
         }
@@ -146,7 +145,7 @@ public class SolrUtil {
         if (obj instanceof StoredField) {
             return ((StoredField) obj).numericValue().floatValue();
         } else if (obj instanceof Float) {
-            return ((Float) obj).floatValue();
+            return (Float) obj;
         } else {
             return Float.valueOf(obj.toString());
         }
@@ -235,7 +234,7 @@ public class SolrUtil {
             Number number = (Number) obj;
             return number.doubleValue();
         } else {
-            return Double.valueOf(obj.toString());
+            return Double.parseDouble(obj.toString());
         }
     }
 
