@@ -134,7 +134,7 @@ public abstract class GeocodeRule {
      * @param name
      * @return
      */
-    public boolean evaluateNameFilterOnly(PlaceCandidate name) {
+    public boolean filterByNameOnly(PlaceCandidate name) {
         if (name.isFilteredOut() && !name.isValid()) {
             return true;
         }
@@ -159,7 +159,7 @@ public abstract class GeocodeRule {
             /*
              * This was filtered out already so ignore.
              */
-            if (evaluateNameFilterOnly(name)) {
+            if (filterByNameOnly(name)) {
                 continue;
             }
 

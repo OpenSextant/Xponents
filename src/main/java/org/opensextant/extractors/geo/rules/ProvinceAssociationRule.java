@@ -84,7 +84,7 @@ public class ProvinceAssociationRule extends GeocodeRule {
             /*
              * This was filtered out already so ignore.
              */
-            if (this.evaluateNameFilterOnly(name)) {
+            if (filterByNameOnly(name)) {
                 continue;
             }
 

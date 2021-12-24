@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import org.opensextant.ConfigException;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
+import org.opensextant.extractors.geo.rules.GeocodeRule;
 import org.opensextant.extractors.geo.rules.NonsenseFilter;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
 import org.opensextant.util.TextUtils;
@@ -143,6 +145,26 @@ public class TestPersonFilter {
         pc = span("USA . [A]");
         assertTrue(NonsenseFilter.assessPunctuation(pc));
         assertTrue(pc.isFilteredOut());
+    }
+
+    @Test
+    public void testPersonNameFilter(){
+        try {
+            GeocodeRule filter = new PersonNameFilter(
+                    PersonNameFilter.class.getResource("/filters/person-name-filter.txt"),
+                    PersonNameFilter.class.getResource("/filters/person-title-filter.txt"),
+                    PersonNameFilter.class.getResource("/filters/person-suffix-filter.txt")
+            );
+
+            PlaceCandidate pc = span("Mikhail Robeige");
+            String[] toks1 = {"the",  "good", "Dr."};
+            pc.setPrematchTokens(toks1);
+            pc.setPostmatchTokens(null);
+            filter.filterByNameOnly(pc);
+        } catch (IOException err){
+            fail("Resources not found");
+        }
+
     }
 
     @Test

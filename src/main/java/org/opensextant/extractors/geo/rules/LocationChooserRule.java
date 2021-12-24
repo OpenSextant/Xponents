@@ -1,6 +1,5 @@
 package org.opensextant.extractors.geo.rules;
 
-import org.opensextant.data.Country;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.*;
 import org.opensextant.processing.Parameters;
@@ -111,8 +110,8 @@ public class LocationChooserRule extends GeocodeRule {
             name.choose();
             if (name.getChosenPlace() != null) {
                 Place chosen = name.getChosenPlace();
-                name.setType(chosen.isCountry() ? "country": "place");
-                if (name.isCountry && !chosen.isCountry()){
+                name.setType(chosen.isCountry() ? "country" : "place");
+                if (name.isCountry && !chosen.isCountry()) {
                     name.isCountry = false;
                 }
                 this.assessConfidence(name);
@@ -168,12 +167,12 @@ public class LocationChooserRule extends GeocodeRule {
             if (name.isFilteredOut()) {
                 continue;
             }
-            PlaceCount x = namespace.computeIfAbsent(name.getTextnorm(), newCount-> new PlaceCount(name.getTextnorm()));
+            PlaceCount x = namespace.computeIfAbsent(name.getTextnorm(), newCount -> new PlaceCount(name.getTextnorm()));
             ++x.count;
             x.total = names.size(); // The total count of mentions.
         }
 
-        for (Map.Entry<String,CountryCount> e: countryContext.entrySet()) {
+        for (Map.Entry<String, CountryCount> e : countryContext.entrySet()) {
             CountryCount count = e.getValue();
             log.debug("Country: {}", count);
         }
@@ -182,7 +181,7 @@ public class LocationChooserRule extends GeocodeRule {
             // log.debug("Boundary: {} ({})", count.place, count.count);
             log.debug("Boundary: {}", count);
             String cc = count.getCountryCode();
-            CountryCount ccnt = inferredCountries.computeIfAbsent(cc, newCount-> new CountryCount(cc));
+            CountryCount ccnt = inferredCountries.computeIfAbsent(cc, newCount -> new CountryCount(cc));
             ++ccnt.count;
         }
         log.debug("Places: {}/{}", namespace.size(), namespace);
@@ -210,10 +209,10 @@ public class LocationChooserRule extends GeocodeRule {
      * missing.... We accept
      * that and weight such preference higher.
      */
-    public static String PREF_COUNTRY = "PreferredCountry";
-    public static String PREF_LOCATION = "PreferredLocation";
-    public static String COUNTRY_CONTAINS = "Location.InCountry";
-    public static String ADMIN_CONTAINS = "Location.InAdmin";
+    public static final String PREF_COUNTRY = "PreferredCountry";
+    public static final String PREF_LOCATION = "PreferredLocation";
+    public static final String COUNTRY_CONTAINS = "Location.InCountry";
+    public static final String ADMIN_CONTAINS = "Location.InAdmin";
 
     /**
      * Yet unchosen location. Consider given evidence first, creating some weight there, then
@@ -422,7 +421,7 @@ public class LocationChooserRule extends GeocodeRule {
             return;
         }
         Place chosen = pc.getChosenPlace(); // NOT NULL
-        if (chosen == null){
+        if (chosen == null) {
             // Should never happen -- if getChosen() is not null, getChosenPlace() should also be non-null.
             return;
         }
@@ -464,7 +463,7 @@ public class LocationChooserRule extends GeocodeRule {
         if (fc != null) {
             featWeight = fc.factor;
         }
-        points += (int)(0.20 * featWeight);
+        points += (int) (0.20 * featWeight);
 
         // Any of these may occur.
         // ======================
