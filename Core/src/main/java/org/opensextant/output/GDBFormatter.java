@@ -54,11 +54,9 @@ public class GDBFormatter extends GISDataFormatter {
 
         File _temp = createTempFolder(this.outputType);
         File zipfile = new File(_temp + File.separator + gdb.getName() + ".zip");
-        FileOutputStream fos = new FileOutputStream(zipfile);
-        ZipOutputStream zos = new ZipOutputStream(fos);
         Object[] args = new Object[1];
         args[0] = gdb;
         // Underlying IO stream remains open until finish.
-        this.os = new FileGdbOutputStream(zos, args);
+        this.os = new FileGdbOutputStream(new ZipOutputStream(new FileOutputStream(zipfile)), args);
     }
 }

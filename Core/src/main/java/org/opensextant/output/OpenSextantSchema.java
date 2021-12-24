@@ -80,7 +80,7 @@ public final class OpenSextantSchema {
     public static final SimpleField PROVINCE = new SimpleField("province", SimpleField.Type.STRING);
     public static final SimpleField LAT = new SimpleField("lat", SimpleField.Type.FLOAT);
     public static final SimpleField LON = new SimpleField("lon", SimpleField.Type.FLOAT);
-    private static final Map<String, SimpleField> fields = new HashMap<String, SimpleField>();
+    private static final Map<String, SimpleField> fields = new HashMap<>();
 
     static {
         fields.put("id", SCHEMA_OID);

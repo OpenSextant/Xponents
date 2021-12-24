@@ -36,6 +36,18 @@ public class TestTextUtils {
     }
 
     @Test
+    public void testDigests() {
+        try {
+            String test = "a Ö ø Ø é å Å 杨寨 5 ! ē M ē ā";
+            String test_id = TextUtils.text_id(test);
+            assertEquals("35efe2bea1868a02530b012180d2f7e6f949040b", test_id);
+        } catch (Exception err){
+            fail("Algs? "+err.getMessage());
+        }
+
+    }
+
+    @Test
     public void testEOL() {
         /*
          * Test parsing text with multiple lines -- get all tokens, get Right token, get

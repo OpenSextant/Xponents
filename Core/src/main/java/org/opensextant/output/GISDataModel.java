@@ -16,15 +16,6 @@
  */
 package org.opensextant.output;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.io.FilenameUtils;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Geocoding;
@@ -37,6 +28,11 @@ import org.opensextant.giscore.geometry.Point;
 import org.opensextant.processing.ResultsUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.util.*;
 
 public class GISDataModel {
 
@@ -160,16 +156,11 @@ public class GISDataModel {
      */
     protected void addAdditionalAttributes(Feature row, Map<String, Object> rowAttributes) throws ConfigException {
         if (rowAttributes != null) {
-
-            try {
-                for (String field : rowAttributes.keySet()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("FIELD=" + field + " = " + rowAttributes.get(field));
-                    }
-                    addColumn(row, OpenSextantSchema.getField(field), rowAttributes.get(field));
+            for (String field : rowAttributes.keySet()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("FIELD=" + field + " = " + rowAttributes.get(field));
                 }
-            } catch (ConfigException fieldErr) {
-                throw fieldErr;
+                addColumn(row, OpenSextantSchema.getField(field), rowAttributes.get(field));
             }
         }
     }
@@ -265,7 +256,7 @@ public class GISDataModel {
      * @throws ConfigException schema configuration error
      */
     public List<Feature> buildRows(int id, Geocoding g, TextMatch m, Map<String, Object> rowAttributes,
-            ExtractionResult res) throws ConfigException {
+                                   ExtractionResult res) throws ConfigException {
 
         Feature row = new Feature();
         // Administrative settings:
@@ -340,7 +331,7 @@ public class GISDataModel {
             return this.schema;
         }
 
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI("urn:OpenSextant");
         } catch (URISyntaxException e) {

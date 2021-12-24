@@ -40,6 +40,8 @@ import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
 import java.io.*;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
@@ -57,13 +59,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class TextUtils {
 
     static final Pattern delws = Pattern.compile("\\s+");
-    // Match ALL empty lines:
-    // \n followed by other ootional whitespace
-    // Up to 2 empty lines or more. This matches 3 line endings
-    // The first EOL could be on a non-empty line, but then followed by 2 empty
-    // lines.
-    // The intent is to reduce 3 or more EOL to 2. Preserving paragraph breaks.
-    //
     static final Pattern multi_eol = Pattern.compile("(\n[ \t\r]*){3,}");
     static final Pattern multi_eol2 = Pattern.compile("(\n\r?){2,}");
 
@@ -84,8 +79,10 @@ public class TextUtils {
                 continue;
             }
             Character.UnicodeBlock blk = Character.UnicodeBlock.of(c);
-            if (blk == Character.UnicodeBlock.LATIN_1_SUPPLEMENT || blk == Character.UnicodeBlock.LATIN_EXTENDED_A
-                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_B || blk == Character.UnicodeBlock.LATIN_EXTENDED_C
+            if (blk == Character.UnicodeBlock.LATIN_1_SUPPLEMENT
+                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_A
+                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_B
+                    || blk == Character.UnicodeBlock.LATIN_EXTENDED_C
                     || blk == Character.UnicodeBlock.LATIN_EXTENDED_D
                     || blk == Character.UnicodeBlock.LATIN_EXTENDED_ADDITIONAL) {
                 continue;
@@ -118,7 +115,7 @@ public class TextUtils {
             + "AaEeIiOoUu" // AEIOU with macron
             + "AaBbMmNn" // A, B, M, N with dot ~ commonly seen
             + "DdRr" // D, R with under-bar
-    ;
+            ;
 
     private static final String ALPHAMAP_UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" // grave
             + "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD" // acute
@@ -135,7 +132,7 @@ public class TextUtils {
             + "\u1E00\u1E01\u1E02\u1E03\u1E40\u1E41\u1E44\u1E45" // A, B, M, N with dot ~ commonly seen
             + "\u1E0E\u1E0F\u1E5E\u1E5F" // D, R with under-bar
 
-    ;
+            ;
 
     private static final String COMMON_DIACRITC_HASHMARKS = "\"'`\u00B4\u2018\u2019";
 
@@ -167,15 +164,16 @@ public class TextUtils {
     /**
      * Create a non-diacritic, ASCII version of the input string.  This will also have original whitespace,
      * but will have removed non-character markings, e.g. "Za'tut" =&gt; "Zatut"  not "Za tut"
+     *
      * @param t
      * @return
      */
-    public static String phoneticReduction(String t){
+    public static String phoneticReduction(String t) {
         return wsRedux.matcher(TextUtils.replaceDiacritics(t)).replaceAll("");
     }
 
-    public static String phoneticReduction(String t, boolean isAscii){
-        if (isAscii){
+    public static String phoneticReduction(String t, boolean isAscii) {
+        if (isAscii) {
             return wsRedux.matcher(t).replaceAll("");
         } else {
             return wsRedux.matcher(TextUtils.replaceDiacritics(t)).replaceAll("");
@@ -184,6 +182,7 @@ public class TextUtils {
 
     /**
      * A thorough replacement of diacritics and Unicode chars to their ASCII equivalents.
+     *
      * @param s the string
      * @return converted string
      */
@@ -195,13 +194,14 @@ public class TextUtils {
      * remove accents from a string and replace with ASCII equivalent Reference:
      * http://www.rgagnon.com/javadetails/java-0456.html Caveat: This implementation
      * is not exhaustive.
-     * @deprecated  See replaceDiacritics as the replacement. 
+     *
      * @param s
      * @return
      * @see #replaceDiacritics(String)
+     * @deprecated See replaceDiacritics as the replacement.
      */
     @Deprecated
-    public static String replaceDiacriticsOriginal(final String s){
+    public static String replaceDiacriticsOriginal(final String s) {
         if (s == null) {
             return null;
         }
@@ -710,24 +710,30 @@ public class TextUtils {
             return null;
         }
 
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         /*
          * For this to be reproducible on all machines, we cannot rely on a
          * default encoding for getBytes. So use getBytes(enc) to be explicit.
          */
-        md5.update(text.getBytes("UTF-8"));
-        return md5_id(md5.digest());
+        sha1.update(text.getBytes(StandardCharsets.UTF_8));
+        return b2hex(sha1.digest());
+    }
+
+    public static String b2hex(byte[] barr) {
+        // Most concise solution:  https://stackoverflow.com/a/43276993/5548358
+        return String.format("%032x", new BigInteger(1, barr));
     }
 
     /**
-     * @param md5digest byte array
-     * @return MD5 hash for the data
+     * @param digest byte array
+     * @return hash for the data
+     * @deprecated not MD5 specific.  Use #b2hex() instead
      */
-    public static String md5_id(byte[] md5digest) {
+    public static String md5_id(byte[] digest) {
         // Thanks to javacream:
         // create hex string from the 16-byte hash
-        StringBuilder hashbuf = new StringBuilder(md5digest.length * 2);
-        for (byte b : md5digest) {
+        StringBuilder hashbuf = new StringBuilder(digest.length * 2);
+        for (byte b : digest) {
             int intVal = b & 0xff;
             if (intVal < 0x10) {
                 hashbuf.append("0");
@@ -1136,7 +1142,7 @@ public class TextUtils {
         // DATA FILE: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt
 
         java.io.InputStream io = TextUtils.class.getResourceAsStream("/ISO-639-2_utf-8.txt");
-        java.io.Reader featIO = new InputStreamReader(io, "UTF-8");
+        java.io.Reader featIO = new InputStreamReader(io, StandardCharsets.UTF_8);
         CsvListReader langReader = new CsvListReader(featIO, new CsvPreference.Builder('"', '|', "\n").build());
 
         CellProcessor[] cells = {new Optional(), new Optional(), new Optional(), new Optional(), new NotNull()};
@@ -1569,19 +1575,16 @@ public class TextUtils {
      * @throws IOException on error with decompression or text encoding
      */
     public static String uncompress(byte[] gzData, String charset) throws IOException {
-        GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(gzData));
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(gzData));
+             ByteArrayOutputStream out = new ByteArrayOutputStream();) {
 
-        byte[] buf = new byte[ONEKB];
-        int len;
-        while ((len = gzipInputStream.read(buf)) > 0) {
-            out.write(buf, 0, len);
+            byte[] buf = new byte[ONEKB];
+            int len;
+            while ((len = gzipInputStream.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            return out.toString(charset);
         }
-
-        gzipInputStream.close();
-        out.close();
-
-        return out.toString(charset);
     }
 
     /**
@@ -1657,7 +1660,7 @@ public class TextUtils {
      * Twitter hashtags
      * primarily
      */
-    public final static Pattern hashtagPattern1 = Pattern.compile("#(\\[\\w+[\\d\\s\\w]+\\])",
+    public final static Pattern hashtagPattern1 = Pattern.compile("(#\\[\\w[\\d\\s\\w]+\\])",
             Pattern.UNICODE_CHARACTER_CLASS);
     /**
      * Find any pattern "#ABC123" -- normal hashtag, Java Regex note: UNICODE flags
@@ -1665,7 +1668,7 @@ public class TextUtils {
      * otherwise "\w" and other classes match only ASCII. NOTE: These are Twitter
      * hashtags primarily
      */
-    public final static Pattern hashtagPattern2 = Pattern.compile("#(\\w+[\\d\\w]+)", Pattern.UNICODE_CHARACTER_CLASS);
+    public final static Pattern hashtagPattern2 = Pattern.compile("(#\\w[\\d\\w]+)", Pattern.UNICODE_CHARACTER_CLASS);
 
     /**
      * Parse the typical Twitter hashtag variants.

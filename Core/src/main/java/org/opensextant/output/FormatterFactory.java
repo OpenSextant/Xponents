@@ -31,7 +31,7 @@ public class FormatterFactory {
      */
     private static final String[] OUTPUT_FORMATS = { "CSV", "GeoCSV", "FileGDB", "GDB", "JSON", "KML", "WKT",
             "Shapefile", "SHP" };
-    private static final Map<String, String> OUTPUT_FORMATS_LOOKUP = new HashMap<String, String>();
+    private static final Map<String, String> OUTPUT_FORMATS_LOOKUP = new HashMap<>();
 
     static {
         for (String fmt : OUTPUT_FORMATS) {

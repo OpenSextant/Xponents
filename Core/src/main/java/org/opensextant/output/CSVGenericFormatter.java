@@ -1,6 +1,5 @@
 package org.opensextant.output;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.util.Map;
 

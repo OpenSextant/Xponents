@@ -31,6 +31,7 @@
 package org.opensextant.util;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -263,28 +264,7 @@ public class FileUtility {
         }
 
         try (final FileInputStream instream = new FileInputStream(fileinput)) {
-            final byte[] inputBytes = new byte[instream.available()];
-            instream.read(inputBytes);
-            return new String(inputBytes, enc);
-        }
-    }
-
-    /**
-     * Given a file get the byte array
-     *
-     * @param fileinput file object
-     * @return byte array
-     * @throws IOException on error
-     */
-    public static byte[] readBytesFrom(File fileinput) throws IOException {
-        if (fileinput == null) {
-            return null;
-        }
-
-        try (final FileInputStream instream = new FileInputStream(fileinput)) {
-            final byte[] inputBytes = new byte[instream.available()];
-            instream.read(inputBytes);
-            return inputBytes;
+            return new String(IOUtils.toByteArray(instream), enc);
         }
     }
 
@@ -300,17 +280,8 @@ public class FileUtility {
 
         try (FileInputStream instream = new FileInputStream(filepath);
              GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), ioBufferSize)) {
-
-            final byte[] inputBytes = new byte[ioBufferSize];
-            final StringBuilder buf = new StringBuilder();
-
-            int readcount = 0;
-            while ((readcount = gzin.read(inputBytes, 0, ioBufferSize)) != -1) {
-                buf.append(new String(inputBytes, 0, readcount, default_encoding));
-            }
-            return buf.toString();
+            return new String(IOUtils.toByteArray(gzin), default_encoding);
         }
-
     }
 
     /**
@@ -328,7 +299,6 @@ public class FileUtility {
              GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), ioBufferSize)) {
 
             gzout.write(text.getBytes(default_encoding));
-
             gzout.flush();
             gzout.finish();
             return true;

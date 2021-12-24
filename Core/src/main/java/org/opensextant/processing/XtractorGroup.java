@@ -65,12 +65,6 @@ public class XtractorGroup {
      */
     protected List<String> currErrors = new ArrayList<>();
 
-    /**
-     *
-     */
-    public XtractorGroup() {
-    }
-
     public void addExtractor(Extractor xprocessor) {
         extractors.add(xprocessor);
     }

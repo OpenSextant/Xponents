@@ -18,13 +18,14 @@ package org.opensextant.output;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.opensextant.giscore.DocumentType;
 import org.opensextant.giscore.GISFactory;
 import org.opensextant.processing.ProcessingException;
 
 /**
- * A formatter for WKT outut.
+ * A formatter for WKT output.
  *
  * @author Rich Markeloff, MITRE Corp. Initial version created on Feb 7, 2012
  */
@@ -45,7 +46,7 @@ public final class WKTFormatter extends GISDataFormatter {
      * @throws Exception on err
      */
     @Override
-    protected void createOutputStreams() throws Exception {
+    public void createOutputStreams() throws IOException {
 
         File wkt = new File(getOutputFilepath());
 
