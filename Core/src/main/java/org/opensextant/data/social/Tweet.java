@@ -386,7 +386,7 @@ public class Tweet extends Message {
             // JsonObject url = jsonArray.getJsonObject(x);
             Object obj = jsonArray.get(x);
             if (obj instanceof Map) {
-                Map url = (Map) obj;
+                Map<?,?> url = (Map) obj;
                 String urlItem = (String) url.get("expanded_url");
                 if (StringUtils.isBlank(urlItem)) {
                     urlItem = (String) url.get("url");
@@ -580,7 +580,7 @@ public class Tweet extends Message {
         return true;
     }
 
-    public static boolean isValue(List o) {
+    public static boolean isValue(List<?> o) {
         return (o != null && !o.isEmpty());
     }
 
