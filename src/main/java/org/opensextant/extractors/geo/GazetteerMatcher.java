@@ -509,9 +509,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 continue;
             }
 
-            PlaceCandidate pc = new PlaceCandidate();
-            pc.start = x1;
-            pc.end = x2;
+            PlaceCandidate pc = new PlaceCandidate(x1, x2);
             pc.setText(matchText);
 
             /*

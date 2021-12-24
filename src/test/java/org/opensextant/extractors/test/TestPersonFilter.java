@@ -1,14 +1,5 @@
 package org.opensextant.extractors.test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.opensextant.ConfigException;
@@ -18,6 +9,13 @@ import org.opensextant.extractors.geo.rules.GeocodeRule;
 import org.opensextant.extractors.geo.rules.NonsenseFilter;
 import org.opensextant.extractors.geo.rules.PersonNameFilter;
 import org.opensextant.util.TextUtils;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.*;
 
 public class TestPersonFilter {
 
@@ -42,7 +40,7 @@ public class TestPersonFilter {
         while (m.find()) {
             print(m.group());
         }
-        String[] validExamples = { "A-B", "Mr. A. B-C", "A{}B", "A} {B", "A. {B", "A\u2014.B" };
+        String[] validExamples = {"A-B", "Mr. A. B-C", "A{}B", "A} {B", "A. {B", "A\u2014.B"};
         for (String s : validExamples) {
             m = invalidPunct.matcher(s);
             print("Test " + s);
@@ -58,7 +56,7 @@ public class TestPersonFilter {
     }
 
     @Test
-    public void testJavaAPI(){
+    public void testJavaAPI() {
         assertTrue(TextUtils.isLower("bass-player"));
         assertTrue(StringUtils.isAllLowerCase("bassplayer"));
         assertFalse(StringUtils.isAllLowerCase("bass player"));
@@ -90,12 +88,11 @@ public class TestPersonFilter {
         return isShort && (badMatch || misMatchDiacritics);
     }
 
-    private static PlaceCandidate span(String t){
-        PlaceCandidate pc = new PlaceCandidate();
+    private static PlaceCandidate span(String t) {
+        // NOTE: span has to be 0-offset based.  10-th char is at offset 9, for example.
+        PlaceCandidate pc = new PlaceCandidate(0, t.length() - 1);
         pc.setText(t);
-        pc.start = 0;
-        pc.end = pc.getText().length();
-        return  pc;
+        return pc;
     }
 
     @Test
@@ -148,7 +145,7 @@ public class TestPersonFilter {
     }
 
     @Test
-    public void testPersonNameFilter(){
+    public void testPersonNameFilter() {
         try {
             GeocodeRule filter = new PersonNameFilter(
                     PersonNameFilter.class.getResource("/filters/person-name-filter.txt"),
@@ -157,11 +154,11 @@ public class TestPersonFilter {
             );
 
             PlaceCandidate pc = span("Mikhail Robeige");
-            String[] toks1 = {"the",  "good", "Dr."};
+            String[] toks1 = {"the", "good", "Dr."};
             pc.setPrematchTokens(toks1);
             pc.setPostmatchTokens(null);
             filter.filterByNameOnly(pc);
-        } catch (IOException err){
+        } catch (IOException err) {
             fail("Resources not found");
         }
 
@@ -176,7 +173,7 @@ public class TestPersonFilter {
         try {
             PersonNameFilter filt = new PersonNameFilter(p1, p2, p3);
 
-            PlaceCandidate p = new PlaceCandidate();
+            PlaceCandidate p = new PlaceCandidate(-1, -1); // Span offsets are not relevant
             p.setText("John Doe");
             p.setPrematchTokens(null);
             p.setPostmatchTokens(null);

@@ -410,11 +410,11 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
      * @return
      */
     private static PlaceCandidate deriveMention(PlaceCandidate anchor, Collection<PlaceCandidate> spans, TextInput text) {
-        PlaceCandidate mention = new PlaceCandidate();
+        PlaceCandidate mention = new PlaceCandidate(anchor.start, anchor.end);
         mention.setDerived(true);
 
-        int x1 = anchor.start;
-        int x2 = anchor.end;
+        int x1 = mention.start;
+        int x2 = mention.end;
         int confidence = 0; // Max
 
         // Assemble geolocation first based on prior linked geography.

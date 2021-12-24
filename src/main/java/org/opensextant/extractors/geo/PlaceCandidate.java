@@ -64,6 +64,10 @@ public class PlaceCandidate extends TextMatch {
     private boolean anchor = false;
     private String nonDiacriticTextnorm = null;
 
+    public PlaceCandidate(int x1, int x2){
+        super(x1, x2);
+    }
+
     public String getNDTextnorm() {
         return nonDiacriticTextnorm;
     }

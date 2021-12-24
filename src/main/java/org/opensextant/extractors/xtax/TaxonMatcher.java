@@ -323,9 +323,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         String id_prefix = docid + "#";
 
         for (NamedList<?> tag : tags) {
-            m = new TaxonMatch();
-            m.start = (Integer) tag.get("startOffset");
-            m.end = (Integer) tag.get("endOffset");
+            m = new TaxonMatch((Integer) tag.get("startOffset"), (Integer) tag.get("endOffset"));
             // +1 char after last matched m.pattern_id = "taxtag";
             ++tag_count;
             m.match_id = id_prefix + tag_count;

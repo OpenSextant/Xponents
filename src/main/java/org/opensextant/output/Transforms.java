@@ -49,10 +49,14 @@ public class Transforms {
 
         String typ = a.getString(FLD_TYPE);
         String text = a.getString("matchtext");
+        int start = a.getInteger("offset");
+        int len = a.getInteger("length");
+        int end = start + len;
+
         switch (typ) {
 
             case "place":
-                PlaceCandidate placeMatch = new PlaceCandidate();
+                PlaceCandidate placeMatch = new PlaceCandidate(start, end);
                 Place geo = new Place();
                 placeMatch.setText(text);
                 Transforms.parseGeocoding(geo, a);
@@ -63,7 +67,7 @@ public class Transforms {
                 break;
 
             case "coordinate":
-                GeocoordMatch coord = new GeocoordMatch();
+                GeocoordMatch coord = new GeocoordMatch(start, end);
                 Place coordLoc = new Place();
                 coord.setText(text);
                 // How awful:.... need to parse Coord directly
@@ -80,7 +84,7 @@ public class Transforms {
                 break;
 
             case "country":
-                PlaceCandidate countryMatch = new PlaceCandidate();
+                PlaceCandidate countryMatch = new PlaceCandidate(start, end);
                 Place cc = new Place();
                 countryMatch.setText(text);
                 cc.setName(text);
@@ -93,22 +97,22 @@ public class Transforms {
                 break;
 
             case "person":
-                m = new TaxonMatch();
+                m = new TaxonMatch(start, end);
                 Transforms.parseTaxon((TaxonMatch) m, "person", a);
                 break;
 
             case "org":
-                m = new TaxonMatch();
+                m = new TaxonMatch(start, end);
                 Transforms.parseTaxon((TaxonMatch) m, "org", a);
                 break;
 
             case "taxon":
-                m = new TaxonMatch();
+                m = new TaxonMatch(start, end);
                 Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
                 break;
 
             case "date":
-                DateMatch dt = new DateMatch();
+                DateMatch dt = new DateMatch(start, end);
                 Transforms.parseDate(dt, a);
                 m = dt;
                 break;

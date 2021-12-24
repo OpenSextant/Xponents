@@ -18,7 +18,7 @@ public class TestPlacePhonetics {
 
     @Test
     public void testWithDiacritics() {
-        PlaceCandidate pc = new PlaceCandidate();
+        PlaceCandidate pc = new PlaceCandidate(-1, -1);
         pc.setText("ÄEÃ");
         pc.hasDiacritics = TextUtils.hasDiacritics(pc.getText());
 
@@ -66,7 +66,7 @@ public class TestPlacePhonetics {
 
     @Test
     public void testASCII() {
-        PlaceCandidate pc = new PlaceCandidate();
+        PlaceCandidate pc = new PlaceCandidate(-1, -1);
         pc.setText("OK");
         pc.hasDiacritics = TextUtils.hasDiacritics(pc.getText());
 

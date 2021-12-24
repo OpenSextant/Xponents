@@ -801,7 +801,7 @@ public class XponentGeocoder extends GeoInferencer {
 
             List<Place> places = tagger.searchAdvanced(q, true, nm.length() + 3);
             if (!places.isEmpty()) {
-                PlaceCandidate pc = new PlaceCandidate();
+                PlaceCandidate pc = new PlaceCandidate(0, nmGiven.length()-1);
                 pc.setText(nm);
                 // TOOD: assess text sense -- if context is UPPER, lower or Mixed.
                 pc.inferTextSense(false, false);

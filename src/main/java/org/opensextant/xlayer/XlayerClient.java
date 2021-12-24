@@ -10,6 +10,7 @@ import java.util.List;
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.output.Transforms;
+import org.opensextant.xlayer.server.TaggerResource;
 import org.restlet.Application;
 import org.restlet.Context;
 import org.restlet.data.CharacterSet;
@@ -78,9 +79,9 @@ public class XlayerClient extends Application {
         JsonObject content = new JsonObject();
         content.put("text", text);
         content.put("docid", docid);
-        String featureSet = "places,coordinates,countries,persons,orgs,reverse-geocode,dates"
+        String featureSet = "postal,places,coordinates,countries,persons,orgs,reverse-geocode,dates"
                 + (viewFilteredOut ? ",filtered_out" : "");
-        content.put("features", featureSet);
+        content.put(TaggerResource.FLD_FEATURES, featureSet);
         /*
          * Coordinates mainly are XY locations; Reverse Geocode them to find what
          * country the location resides
