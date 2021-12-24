@@ -7,6 +7,7 @@ import org.restlet.Context;
 import org.restlet.Restlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -30,7 +31,7 @@ public abstract class XlayerApp extends Application {
     protected Logger log = null;
     protected String version = "3";
 
-    public XlayerApp(Context c) {
+    protected XlayerApp(Context c) {
         super(c);
         getContext();
         log = Context.getCurrentLogger();
@@ -40,7 +41,7 @@ public abstract class XlayerApp extends Application {
         /*
          * Capture version from banner
          */
-        Pattern pat = Pattern.compile("VERSION:\\s+(.+)\n");
+        Pattern pat = Pattern.compile("VERSION:\\s+([A-Z0-9.]+)");
         Matcher m = pat.matcher(buf);
         if (m.find()) {
             return m.group(1);
@@ -56,11 +57,13 @@ public abstract class XlayerApp extends Application {
     protected void banner() throws IOException {
         URL obj = XlayerApp.class.getResource("/banner.txt");
         if (obj != null) {
-            String version_banner = IOUtils.toString(obj.openStream(), StandardCharsets.UTF_8);
-            this.version = getVersion(version_banner);
-            info("\n" + version_banner);
+            try(InputStream resourceStream = obj.openStream()) {
+                String versionBanner = IOUtils.toString(resourceStream, StandardCharsets.UTF_8);
+                this.version = getVersion(versionBanner);
+                info("\n" + versionBanner);
+            }
         } else {
-            info("\nOpenSextant Xponents module 3.x -- banner.txt is missing or CLASSPATH is misconfigured.");
+            info("\nOpenSextant Xponents module 3.x; banner.txt is missing or CLASSPATH is misconfigured.");
         }
     }
 

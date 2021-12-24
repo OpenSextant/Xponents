@@ -773,7 +773,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             return;
         }
 
-        log.debug("DOC=" + docid + " PLACE CANDIDATES SIZE = " + candidates.size());
+        log.debug("DOC={} PLACE CANDIDATES SIZE = {}", docid, candidates.size());
         Map<String, Integer> countries = new HashMap<>();
         Map<String, Integer> places = new HashMap<>();
         int nullCount = 0;

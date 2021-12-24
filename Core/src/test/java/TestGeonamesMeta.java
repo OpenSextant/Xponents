@@ -1,13 +1,11 @@
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 
 import org.junit.Test;
 import org.opensextant.data.Country;
 import org.opensextant.data.Place;
 import org.opensextant.util.GeonamesUtility;
+
+import static org.junit.Assert.*;
 
 public class TestGeonamesMeta {
 
@@ -22,37 +20,37 @@ public class TestGeonamesMeta {
         Country pl;
         // Country/Territory queries:
         pl = util.getCountry("RU");
-        assertTrue(pl != null);
+        assertNotNull(pl);
         pl = util.getCountry("PJ");
-        assertTrue(pl == null);
+        assertNull(pl);
         pl = util.getCountryByFIPS("RU");
-        assertTrue(pl == null);
+        assertNull(pl);
         pl = util.getCountryByFIPS("RS");
-        assertTrue(pl != null);
+        assertNotNull(pl);
         pl = util.getCountryByFIPS("PJ");
-        assertTrue(pl != null);
+        assertNotNull(pl);
 
         pl = util.getCountry("PSE");
-        assertTrue(pl != null);
+        assertNotNull(pl);
         pl = util.getCountryByFIPS("WE");
-        assertTrue(pl != null);
+        assertNotNull(pl);
         pl = util.getCountryByFIPS("PS");
-        assertTrue(pl != null);
+        assertNotNull(pl);
         pl = util.getCountryByFIPS("GZ");
-        assertTrue(pl != null);
+        assertNotNull(pl);
 
         // US, Outlying Minor islands, Howland Island
         pl = util.getCountry("US");
-        assertTrue(pl != null);
+        assertNotNull(pl);
         pl = util.getCountry("UM");
-        assertTrue(pl != null);
+        assertNotNull(pl);
         pl = util.getCountryByFIPS("HQ");
-        assertTrue(pl != null);
+        assertNotNull(pl);
     }
     @Test
     public void testMetadata() throws IOException {
         GeonamesUtility util = new GeonamesUtility();
-        assertTrue(!util.getUSStateMetadata().isEmpty());
+        assertFalse(util.getUSStateMetadata().isEmpty());
 
         print("+++++++ List US States");
         for (Place adm1 : util.getUSStateMetadata()) {
@@ -64,9 +62,9 @@ public class TestGeonamesMeta {
     public void testWorldMetadata() throws IOException {
         GeonamesUtility util = new GeonamesUtility();
         util.loadWorldAdmin1Metadata();
-        assertTrue(!util.getWorldAdmin1Metadata().isEmpty());
+        assertFalse(util.getWorldAdmin1Metadata().isEmpty());
 
-        /** Print first 100; */
+        /* Print first 100; */
         print("++++ 100 ADM1 places ++++");
         for (int x = 0; x < 100; ++x) {
             print(util.getWorldAdmin1Metadata().get(x).toString());
