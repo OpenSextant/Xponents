@@ -11,5 +11,4 @@ org.opensextant.extractors.xcoord
 org.opensextant.extractors.xtemporal
 org.opensextant.output
 org.opensextant.processing
-org.opensextant.processing.progress
 org.opensextant.util
