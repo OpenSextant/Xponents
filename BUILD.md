@@ -57,6 +57,38 @@ Producing API documentation updates: infrequently, only for major releases.
 9\. Build, Test and Publish Docker Images as described in `./Examples/Docker/`
 
 
+
+All Together
+----------------
+Put it all together it might look like this, with notes about size of interim data:
+
+```shell
+
+  ./setup.sh
+
+  # About here you head into ./solr and produce the Gazetteer accoring to those build notes.
+  # 25 GB to compose SQlite gazetteer completely;  
+  # Allow for another 5GB of working space for the Solr Gazetteer to run
+
+  (cd ./Core && mvn install)
+  mvn install 
+
+  ant -f ./script/dist.xml build build-examples
+  ant -f ./script/dist.xml dist
+
+  # Test a bit, right?
+
+  # Raw distro is 4 GB;  Docker image is 4.8 GB,  Offline Docker image is 5.0 GB
+  # SubTotal - 15 GB
+  ./script/dist.sh
+  ./script/dist-docker.sh
+  ./script/dist-docker-offline.sh  http://localhost:9000  $SONAR_TOKEN
+
+
+  # TOTAL footprint is nearing 45 GB;  Allot 5 GB more for each saved version
+```
+
+
 Level of Effort.
 ----------------
 First time to acquire all the software and build could be a day: You would pull in 4 GB of compressed files, 
