@@ -7,8 +7,18 @@ script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
 SONAR_URL=http://localhost:9000
-if [ -n "$1" ]; then 
+if [ -n "$1"  ]; then 
   SONAR_URL=$1
+  if [ -n "$2" ] ; then 
+    SONAR_TOKEN=$2
+  else 
+    echo "Usage:   $0  SONAR_URL  SONAR_TOKEN"
+    echo
+    echo "If using Sonar scan; otherwise scan is not performed"
+    echo
+
+    exit
+  fi
 fi
 
 TARGET=$basedir/dist/Xponents-$VERSION
@@ -20,9 +30,6 @@ if [ ! -d $TARGET ] ; then
 
   exit 1
 fi
-echo SONAR_TOKEN = 
-echo "IF none is provided, Sonar scan is skipped"
-read SONAR_TOKEN
 
 # Build offline.
 # ==============
@@ -32,6 +39,7 @@ read SONAR_TOKEN
 # Then also to provide Maven dev tools we include FindBugs, Checkstyle and JavaDoc plugins.
 # 
 # Running any of those plugins naturally pulls them down -- we stash them in $REPO
+pushd $TARGET
 REPO=maven-repo
 
 echo "              Xponents Docker Offline         "
@@ -67,7 +75,7 @@ if [ -n "$SONAR_TOKEN" ]; then
       -Dsonar.projectKey=opensextant-xponents-core \
       -Dsonar.host.url=$SONAR_URL \
       -Dsonar.login=$SONAR_TOKEN \
-      "-Dsonar.inclusions=**/*.java"
+      "-Dsonar.inclusions=**/*.java" )
     
     echo "Sonar scanning Xponents SDK"
     echo "--This is done OFFLINE to prove dependencies were acquired in pass above"
@@ -79,6 +87,13 @@ if [ -n "$SONAR_TOKEN" ]; then
       -Dsonar.login=$SONAR_TOKEN \
       "-Dsonar.inclusions=**/*.java"
 fi
+
+
+# Log4J cleanup
+for log4jdir in `find ./maven-repo -type d | grep log4j | grep "2.11"`; do 
+  echo "Remove $log4jdir"
+  rm -rf $log4jdir
+done
 
 # One last time: go-offline
 #  -- Remove cache files from any Internet downloads
