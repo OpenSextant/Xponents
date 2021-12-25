@@ -519,7 +519,8 @@ public class GeonamesUtility {
             C.CC_ISO3 = iso3;
             C.setUniqueName(isUniq);
             C.isTerritory = isTerr;
-            C.setLatitude(lat); C.setLongitude(lon);
+            C.setLatitude(lat);
+            C.setLongitude(lon);
 
 
             // TOOD: Resolve the code mapping situation for simple lookups.
@@ -530,7 +531,7 @@ public class GeonamesUtility {
                 iso2fips.put(cc, fips); // ISO2
                 iso2fips.put(iso3, fips);
             } else {
-                logger.debug("Territory not mapped in iso/fips %s, %s", fips, cc );
+                logger.debug("Territory not mapped in iso/fips %s, %s", fips, cc);
             }
 
             // ISO
@@ -1056,7 +1057,17 @@ public class GeonamesUtility {
      * @return - true if this is a country or "country-like" place
      */
     public static boolean isCountry(String featCode) {
-        return (featCode != null ? featCode.startsWith("PCL") : false);
+        return "PCLI".equals(featCode);
+    }
+
+    /**
+     * Test if a feature is a political entity ~ country, territory, sovereign land
+     *
+     * @param featCode
+     * @return
+     */
+    public static boolean isPoliticalEntity(String featCode) {
+        return featCode != null ? featCode.startsWith("PCL") : false;
     }
 
     /**
@@ -1112,6 +1123,15 @@ public class GeonamesUtility {
      */
     public static boolean isCountry(Place p) {
         return isCountry(p.getFeatureCode());
+    }
+
+    /**
+     * Test is Place feature is coded as PCL* (PCL, PCLIX, PCLH, PCLD, PCLF, PCLS, etc)
+     * @param p Place
+     * @return true if place is a political boundary feature
+     */
+    public static boolean isPoliticalEntity(Place p) {
+        return isPoliticalEntity(p.getFeatureCode());
     }
 
     /**

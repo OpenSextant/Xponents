@@ -23,6 +23,7 @@ Houston, TX
 Texas, OA
 Texas, Oxaca
 Texas, OA Mexico
+London, England, UK is where exactly?
 Oh my Gosh, did I land on Mars or is this the red rock of the good ol USA?
 # Test for diacritics in short names, where the diacritic marks on gazetteer entries do not match the input text.
 Eh? Was Eï his home city? Or was that Ei eï?
@@ -74,6 +75,7 @@ Can you see 44.5N 73.2W  from there?  Is that near Buffalo or Boston?  USA for s
 
 # Country or Province?
 Is Lebanon near there?  I mean Lebanon, New Hampshire ... aka Lebanon, NH
+I mean Lebanon, New Hampshire ... aka Lebanon, NH, or Atlanta Georgia -- they got some great food
 
 # Major place rule.  "Paris, Texas"?  Will this yield a location?  Source: ImDB:
 Paris, Texas is a 1984 drama film directed by Wim Wenders and starring Harry Dean Stanton, Dean Stockwell, Nastassja Kinski, and Hunter Carson.

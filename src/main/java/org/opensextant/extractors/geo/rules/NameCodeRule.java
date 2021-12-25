@@ -93,14 +93,17 @@ public class NameCodeRule extends GeocodeRule {
                 name.addRule("IgnoredPrecedent");
                 continue;
             }
+            // use # of instances of a place name as a rough guess on how common a name is.
+            // A popular country name may appear as a city, county or other feature type.
+            int placeCount = name.getPlaces().size();
 
             /*
              * COUNTRY, STATE is not supported under this rule.
              * E.g., Uruguay, Argentina ... This looks like a list of countries
              * However Uruguay is a district in Argentina; Just as Georgia is a state in US
-             * and also a country name.
+             * and also a country name.  The count of 10 is arbitrary
              */
-            if (name.isCountry && !name.isAbbreviation) {
+            if (name.isCountry && placeCount < 10 && !name.isAbbreviation) {
                 continue;
             }
 
@@ -118,20 +121,16 @@ public class NameCodeRule extends GeocodeRule {
             boolean isLast = x == names.size() - 1;
 
             boolean canIgnoreName = ignoreShortLowercase(name) || (name.isAbbreviation && ignoreNonAdminCode(name));
-            if (x == 0 || isLast) {
-                /*
-                 * end of line logic. Either you have a dangling name or code, or you have a single candidate.
-                 * but we still want to evaluate it. This is one of the largest sources of noise.
-                 * Evaluate name as if it is the abbreviation, because it is last (or first and only).
-                 */
-                if (canIgnoreName) {
-                    name.setFilteredOut(true);
-                    trackIgnoreTerms(name);
-                    continue;
-                }
-                if (isLast) {
-                    continue;
-                }
+            // Short names, lower case will not be assessed at all.
+            if (canIgnoreName) {
+                name.setFilteredOut(true);
+                trackIgnoreTerms(name);
+                continue;
+            }
+            // As well, given the pattern is supposed to be <This Name>, <Admin Code> ... if this item is last and
+            // nothing follows we are done.
+            if (isLast) {
+                continue;
             }
 
             PlaceCandidate code = names.get(x + 1);
@@ -206,11 +205,11 @@ public class NameCodeRule extends GeocodeRule {
             log.debug("{} name, code: {} in {}?", NAME, name.getText(), code.getText());
             int logicalGeoMatchCount = 0;
             for (ScoredPlace geoScore : code.getPlaces()) {
-                if (logicalGeoMatchCount>1) {
+                if (logicalGeoMatchCount > 1) {
                     break; /* Optimization: avoid spinning in loop.  2 geo-hierarchy matches is sufficient. */
                 }
                 Place geo = geoScore.getPlace();
-                if (!geo.isUpperAdmin() || geo.getCountryCode() == null) {
+                if (!(geo.isUpperAdmin() || geo.isCountry()) || geo.getCountryCode() == null) {
                     continue;
                 }
 
@@ -249,9 +248,12 @@ public class NameCodeRule extends GeocodeRule {
                 }
 
                 // Quick determination if these two places have a containment or geopolitical connection
-                //
-                if (name.presentInHierarchy(adm1) ||
-                        (country != null && name.presentInCountry(country.getCountryCode()))) {
+                // -- If country was determined from code earlier, use it.
+                // -- Otherwise check if codeGeo country code aligns with name Geo.
+                if (name.presentInHierarchy(adm1)
+                        || (code.isCountry && name.presentInCountry(geo.getCountryCode()))
+                        || (country != null && name.presentInCountry(country.getCountryCode()))
+                ) {
                     ++logicalGeoMatchCount;
                     updateNameCodePair(name, code, geo, true /* comma */);
                 }
@@ -270,7 +272,7 @@ public class NameCodeRule extends GeocodeRule {
              * out chains of abbreviations. E.g., CO MA IN IA
              */
             if (abbrev) {
-                if (logicalGeoMatchCount==0 && !code.isCountry) {
+                if (logicalGeoMatchCount == 0 && !code.isCountry) {
                     code.setFilteredOut(true);
                     trackIgnoreTerms(code);
                     /*
