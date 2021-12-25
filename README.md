@@ -155,12 +155,12 @@ Java versus Python Libraries
 Python and Java functionality overlaps but is still drastically differe.  The Core API resembles 
 the Python library somewhat.
 
-* `opensextant` (v1.3) Python API offers data utilities; Solr clients for TaxCat and Gazetteer;
+* `opensextant` (v1.4) Python API offers data utilities; Solr clients for TaxCat and Gazetteer;
   basic data models for text spans, place objects, etc.  Xponents REST client (`xlayer`) which interacts with the Java Xponents REST service.
-* Xponents Core API (v3.4) Java library provides most of the functionality as in the Python library. 
+* Xponents Core API (v3.5) Java library provides most of the functionality as in the Python library. 
   It offers more complete Unicode utilities and other metadata resources such as Country, Timezone, 
   and Language metadata
-* Xponents SDK API (v3.4) provides the Solr and client/server integrations for Gazetteer, 
+* Xponents SDK API (v3.5) provides the Solr and client/server integrations for Gazetteer, 
   TaxCat and PlaceGeocoder.
 
 
@@ -183,14 +183,14 @@ Insert these dependencies into your POM depending on what you need.
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.3</version>
   </dependency>
 
   <!-- Xponents SDK API -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.3</version>
   </dependency>
 ```
 
@@ -198,9 +198,9 @@ For reference: [OpenSextant Xponents on Maven](https://search.maven.org/search?q
 
 * `geodesy 2.0.1`   - Geodetic operations and coordinate system calculations
 * `giscore 2.0.2`  - GIS I/O
-* `opensextant-xponents-core  3.4.*` - This Core API
-* `opensextant-xponents       3.4.*` - This Solr-based tagger SDK
-* `opensextant-xponents-xtext 3.4.*` - XText, the text extraction toolkit
+* `opensextant-xponents-core  3.5.*` - This Core API
+* `opensextant-xponents       3.5.*` - This Solr-based tagger SDK
+* `opensextant-xponents-xtext 3.5.*` - XText, the text extraction toolkit
 
 
 
@@ -251,6 +251,8 @@ These extractors are in the `org.opensextant.extractors` packages, and demonstra
 
 - **`Core API`** ([Core JavaDoc](https://opensextant.github.io/Xponents/doc/core-apidocs/)):  covers pattern matching (coordinates, dates, etc), text utilities, simple classes around social media, languaged ID, and geographic metadata.  The data model classes are central to all things Xponents.
 - **` SDK`** ([SDK JavaDoc](https://opensextant.github.io/Xponents/doc/sdk-apidocs/))) provides the advanced geoparsing, geotagger, keyword tagger, and any client/server integration. 
+
+A packaged distribution has the API docs at `./lib/opensextant-*-javadoc.jar` 
 
 
 **Xponents Philosophy**:  The intent of Xponents is to provide the extraction without too much infrastructure, as you likely already have that.  This library tool chest contains the following ideas and capabilities:

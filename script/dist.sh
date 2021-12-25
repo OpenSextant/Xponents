@@ -77,6 +77,8 @@ rm -f $REL/xponents-solr/solr7-dist/licenses/log4j*2.11*
 cp -r $basedir/dev.env $basedir/Examples/Docker/* $REL/
 rm -r $REL/Sonarqube
 
+# Distro has API docs in JAR files.
+rm -rf $REL/doc/*apidocs/
 
 msg "Create VERSION label"
 cat <<EOF > $REL/VERSION.txt

@@ -20,7 +20,7 @@ RELEASES
 
 # 2021
 
-**Xponents 3.5.2 BeginAgain**
+**Xponents 3.5.3 BeginAgain**
 
 * **Full Evaluation**: internal evaluation work was redone start to finish to hone outlier gazetteer entries and
   patterns of rogue entries from new data sources. Evaluation work called out and fixed serious false-positive and recall
