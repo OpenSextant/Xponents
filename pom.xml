@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.5.3</version>
+  <version>3.5.4-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -34,7 +34,7 @@
     </developer>
     <developer>
       <name>Todd Hay</name>
-      <organization>MITRE</organization>
+      <organization>independent</organization>
     </developer>
     <developer>
       <name>David Lutz</name>
@@ -44,7 +44,7 @@
     <developer>
       <name>David Smiley</name>
       <email>david.w.smiley@gmail.com</email>
-      <organization>MITRE</organization>
+      <organization>Apache Solr</organization>
     </developer>
   </developers>
   <properties>
@@ -485,6 +485,7 @@
         <executions>
           <execution>
             <id>default-cli</id>
+			<phase>package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -497,10 +498,10 @@
           </execution>
           <execution>
             <id>dependency-analysis</id>
+            <phase>verify</phase>
             <goals>
               <goal>analyze-only</goal>
             </goals>
-            <phase>verify</phase>
             <configuration />
 
           </execution>
@@ -564,11 +565,17 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.7</version>
+        <version>3.1.2</version>
         <configuration>
-          <!-- slow: -->
           <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependencies</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
