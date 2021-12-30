@@ -20,13 +20,18 @@ RELEASES
 
 # 2021
 
-**Xponents 3.5.3 BeginAgain**
+**Xponents 3.5.4 BeginAgain**
 
 * **Full Evaluation**: internal evaluation work was redone start to finish to hone outlier gazetteer entries and
   patterns of rogue entries from new data sources. Evaluation work called out and fixed serious false-positive and recall
   errors
 * **Log4J Remediation**:  While Log4J is not the primary choice of logging facility, it is a dependency that appears
   mainly in the Solr 7.x server distribution.  Vulnerable Log4J JAR files were removed and latest ones were injected.
+* **API Changes**: 
+  - `TextEntity` is a text span and requires a start, end offset pair. Only constructor
+  requires that pair.  Other subclasses can have a zero argument constructor by exception, such as `PoLiMatch`
+  - `GeonamesUtility.isCountry()` now only returns true for `PCLI` entries others are historical country names or territories.
+  - REST API now has `method` and `match-id` on most matches to be more consistent
 
 **Xponents 3.5.0 GiveThanks**
 

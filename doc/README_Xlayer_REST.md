@@ -11,6 +11,9 @@ which demonstrate how to call the extraction service and parse the results.
 
 History 
 ---------
+* version 1.0
+  * Xponents 3.5.0, introducing postal geocoding and improved gazetteer sourcing
+  
 * version 0.8
   * Xponents 3.1.0, exposing reverse geocoding feature set
   
@@ -77,7 +80,7 @@ Developing with Python
 In your distribution use either `./python/opensextant-1.*.tar.gz` of from a checkout, 
 compose the Pip bundle as `cd ./python/;  python ./setup.py sdist`.  The resulting TAR/gz file will be in `./dist`. 
 
-Install it, `pip3  install opensextant-1.2.tar.gz`.  You now can make use of the `xlayer` module, as documented 
+Install it, `pip3  install opensextant-1.4.*.tar.gz`.  You now can make use of the `xlayer` module, as documented 
 here in the [Py API](../doc/pydoc/opensextant.xlayer.html). This example captures the meat of it all:
 
 ```python
@@ -135,7 +138,8 @@ OUTPUT:
 Annotation schema
  
 * `matchtext`      - text span matched
-* `type`           - type of annotation, one of `place`, `country`, `coordinate`, `org`, `person`
+* `match-id`       - match ID, usually of the form `type@offset` 
+* `type`           - type of annotation, one of `place`, `country`, `coordinate`, `postal`, org`, `person`
 * `offset`         - character offset into text buffer where text span starts
 * `length`         - length of text span.  end offset = offset + length
 * `method`         - method tag identifying the means by which this annotation was derived.
@@ -155,6 +159,40 @@ Geographic annotations additionally have:
   for ADM1, province name, and country code should reflect the coding. This place name identifies that city.
 * `nearest_places` - An ARRAY of all such known places that could be landmarks, natural features, etc.
 This is different than the `related_place_name` mainly by feature type: that field is a populated place (P/PPL) and this array is any feature type.
+
+Derived Postal annotations additionally have:
+
+* `related`         - an array of evidence that points to other matches in the input text (and response).
+  as below:
+  
+```json
+
+      // For an input "Wellfleet, MA 02663" the individual matches will be given as normal, 
+      // but a composed match for the entire span will carry `related` section with 
+      //   specific slots indicating the components of the postal match:
+      //   
+      //   "city", "admin", "country", "postal"
+      // 
+      //   Each slot has the relevant `matchtext` and `match-id`. 
+      //   Use the match-id to retrieve the full geocoding for that portion.
+      //   The composed match here will usually carry the geocoding of the postal code.
+      
+      "related": {
+        "city": {
+          "matchtext": "Wellfleet",
+          "match-id": "place@0"
+        },
+        "admin": {
+          "matchtext": "MA",
+          "match-id": "place@11"
+        },
+        "postal": {
+          "matchtext": "02663",
+          "match-id": "postal@14"
+        }
+      },
+
+```
 
 Non-Geographic annotations have:
 
@@ -176,9 +214,6 @@ Example JSON Output:
      "Where is 56:08:45N, 117:33:12W?  Is it near Lisbon or closer to Saskatchewan?"
      + "Seriously, what part of Canada would you visit to see the new prime minister discus our border?"
      + "Do you think Hillary Clinton or former President Clinton have opinions on our Northern Border?")
-
-   # NOTE -- This is draft 0.1;  We can certainly make a more complete Client API using our own 
-   # python or Java data model and API.  This demo client demonstrates primarily the connectivity.
 ```
  
 	 {
