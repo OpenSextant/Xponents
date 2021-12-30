@@ -1,18 +1,13 @@
+package org.opensextant.annotations;
 /*
  * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
  *
- * OpenSextant/Xponents sub-project
- *      __
- *  ___/ /___  ___  ___  ___  __ __ ___
- * / _  // -_)/ -_)/ _ \/ -_)/ // // -_)
- * \_,_/ \__/ \__// .__/\__/ \_, / \__/
- *               /_/        /___/
+ * Xponents sub-project "DeepEye", NLP methodology
  *
  * IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
- * Copyright 2013, 2019 MITRE Corporation
+ * Copyright 2013-2021 MITRE Corporation
  */
 
-package org.opensextant.annotations;
 
 import java.util.ArrayList;
 import java.util.Collection;
