@@ -229,7 +229,8 @@ public class Place extends GeoBase implements Geocoding {
      */
     public String getFeatureDesignation() {
         if (featureDesig == null) {
-            featureDesig = GeonamesUtility.getFeatureDesignation(getFeatureClass(), getFeatureCode());
+            featureDesig = GeonamesUtility.getFeatureDesignation(getFeatureClass(),
+                    getFeatureCode());
         }
         return featureDesig;
     }
@@ -241,8 +242,8 @@ public class Place extends GeoBase implements Geocoding {
      * @return
      */
     public boolean sameBoundary(Place otherGeo) {
-        return (otherGeo != null &&
-                this.getHierarchicalPath().equals(otherGeo.getHierarchicalPath()));
+        return (otherGeo != null
+                && this.getHierarchicalPath().equals(otherGeo.getHierarchicalPath()));
     }
 
     /**
@@ -282,7 +283,7 @@ public class Place extends GeoBase implements Geocoding {
      * Returns a pre-computed Non-diacritic name
      * @return
      */
-    public String getNDNamenorm(){
+    public String getNDNamenorm() {
         return nonDiacriticName;
     }
 
@@ -446,7 +447,8 @@ public class Place extends GeoBase implements Geocoding {
     @Override
     public String toString() {
         if (getName() != null) {
-            return String.format("%s (%s, %s, %s)", getName(), getAdmin1(), this.getCountryCode(), getFeatureCode());
+            return String.format("%s (%s, %s, %s)", getName(), getAdmin1(), this.getCountryCode(),
+                    getFeatureCode());
         } else if (!Double.isNaN(this.latitude)) {
             return String.format("%2.3f, %3.3f", this.latitude, this.longitude);
         }
@@ -469,7 +471,7 @@ public class Place extends GeoBase implements Geocoding {
         if (getKey() != null && getKey().equals(other.getKey())) {
             return 0;
         }
-        if (getFeatureClass()==null){
+        if (getFeatureClass() == null) {
             return -1; // Bad source data. Must have feature classification.
         }
 
@@ -655,5 +657,27 @@ public class Place extends GeoBase implements Geocoding {
     @Override
     public void setConfidence(int c) {
         confidence = c;
+    }
+
+    private String instanceId = null;
+
+    /** Use to identify a particular related object ID associated with this location.
+     * 
+     * This is intended purely for processing applications (not for general purpose use, as in plotting placemarks).  
+     * For example use Place.instanceId to link
+     * this place object with a mention of the place in a document.  If the document mentions the place
+     * multiple times, you can be clear about which mention this instance matches.
+     * @param id
+     */
+    public void setInstanceId(String id) {
+        instanceId = id;
+    }
+
+    /**
+     * see {@link #getInstanceId()}
+     * @return
+     */
+    public String getInstanceId() {
+        return instanceId;
     }
 }

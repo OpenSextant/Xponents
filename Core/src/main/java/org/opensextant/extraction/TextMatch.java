@@ -133,4 +133,22 @@ public class TextMatch extends TextEntity {
     public boolean isDefault(){
         return (type==null || "generic".equals(type));
     }
+    
+    /**
+     * If called, this overwrites existing match_id
+     * Match ID is typically entity label @ offset.
+     * Alternatively a Match ID could be also label + offset + value + ... 
+     * to distinguish this text span from others.
+     */
+    public void defaultMatchId() {
+        match_id = String.format("%s@%d", this.getType(), this.start);
+    }
+    
+    /**
+     * Future planning -- match_id may become private field in future API.
+     * @return
+     */
+    public String getMatchId() {
+        return match_id;
+    }
 }
