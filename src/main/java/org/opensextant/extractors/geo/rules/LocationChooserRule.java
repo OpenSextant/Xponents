@@ -1,7 +1,11 @@
 package org.opensextant.extractors.geo.rules;
 
 import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.*;
+import org.opensextant.extractors.geo.PlaceCount;
+import org.opensextant.extractors.geo.CountryCount;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
+import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.TextUtils;
@@ -53,7 +57,6 @@ public class LocationChooserRule extends GeocodeRule {
     public void evaluate(List<PlaceCandidate> names) {
         evaluate(names, null);
     }
-
 
     /**
      * Walk the entire list.
@@ -114,6 +117,10 @@ public class LocationChooserRule extends GeocodeRule {
                 if (name.isCountry && !chosen.isCountry()) {
                     name.isCountry = false;
                 }
+                /* Assign Match ID. Associate the  */            
+                name.defaultMatchId();
+                chosen.setInstanceId(name.getMatchId());
+                
                 this.assessConfidence(name);
                 /*
                  * Copy confidence AND method back to chosen place instance. Method should be a
@@ -122,7 +129,7 @@ public class LocationChooserRule extends GeocodeRule {
                  * name+location is identified and geolocated.
                  */
                 chosen.setConfidence(name.getConfidence());
-                chosen.setMethod(PlaceGeocoder.METHOD_DEFAULT);
+                chosen.setMethod(defaultMethod);
 
                 inferCountry(chosen.getCountryCode());
             } else {

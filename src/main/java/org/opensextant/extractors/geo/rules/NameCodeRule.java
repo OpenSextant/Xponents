@@ -20,6 +20,7 @@ import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.extractors.geo.ScoredPlace;
+import org.opensextant.util.GeonamesUtility;
 
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
  * If CODE.adm1 == NAME.adm1 and CODE is an ADM1 boundary, then flag this is
  * significant.
  *
+ * TODO: expand from pairs to 2-4 tuples of related geographic hierachy, e.g., City, State, Country, etc.
  * @author ubaldino
  */
 public class NameCodeRule extends GeocodeRule {
@@ -82,6 +84,11 @@ public class NameCodeRule extends GeocodeRule {
     @Override
     public void evaluate(final List<PlaceCandidate> names) {
         reset();
+        /* 
+         * Objective:  associate NAME, CODE pairs
+         * 
+         * 
+         */
         for (int x = 0; x < names.size(); ++x) {
             PlaceCandidate name = names.get(x);
             if (name.isFilteredOut()) {
@@ -120,7 +127,8 @@ public class NameCodeRule extends GeocodeRule {
              */
             boolean isLast = x == names.size() - 1;
 
-            boolean canIgnoreName = ignoreShortLowercase(name) || (name.isAbbreviation && ignoreNonAdminCode(name));
+            boolean canIgnoreName = ignoreShortLowercase(name)
+                    || (name.isAbbreviation && ignoreNonAdminCode(name));
             // Short names, lower case will not be assessed at all.
             if (canIgnoreName) {
                 name.setFilteredOut(true);
@@ -205,11 +213,14 @@ public class NameCodeRule extends GeocodeRule {
             log.debug("{} name, code: {} in {}?", NAME, name.getText(), code.getText());
             int logicalGeoMatchCount = 0;
             for (ScoredPlace geoScore : code.getPlaces()) {
-                if (logicalGeoMatchCount > 1) {
-                    break; /* Optimization: avoid spinning in loop.  2 geo-hierarchy matches is sufficient. */
+                if (logicalGeoMatchCount > 4) {
+                    /* Optimization: avoid spinning in loop. 
+                     * 4 hierachical matches *seems* sufficient */
+                    break;
                 }
                 Place geo = geoScore.getPlace();
-                if (!(geo.isUpperAdmin() || geo.isCountry()) || geo.getCountryCode() == null) {
+                if (!(geo.isUpperAdmin() || GeonamesUtility.isPoliticalEntity(geo))
+                        || geo.getCountryCode() == null) {
                     continue;
                 }
 
@@ -250,12 +261,14 @@ public class NameCodeRule extends GeocodeRule {
                 // Quick determination if these two places have a containment or geopolitical connection
                 // -- If country was determined from code earlier, use it.
                 // -- Otherwise check if codeGeo country code aligns with name Geo.
-                if (name.presentInHierarchy(adm1)
-                        || (code.isCountry && name.presentInCountry(geo.getCountryCode()))
-                        || (country != null && name.presentInCountry(country.getCountryCode()))
-                ) {
+                boolean containsRelation = name.presentInHierarchy(adm1);
+                boolean inCountryRelation = (code.isCountry
+                        && name.presentInCountry(geo.getCountryCode()))
+                        || (country != null && name.presentInCountry(country.getCountryCode()));
+
+                if (containsRelation || inCountryRelation) {
                     ++logicalGeoMatchCount;
-                    updateNameCodePair(name, code, geo, true /* comma */);
+                    updateNameCodePair(name, code, geo, true /* comma */, containsRelation);
                 }
             }
 
@@ -320,29 +333,25 @@ public class NameCodeRule extends GeocodeRule {
                         break;
                     }
                 }
-            } else if ((!name.isCountry
-                    && !name.isValid()
-                    && name.isShortName())
+            } else if ((!name.isCountry && !name.isValid() && name.isShortName())
                     && isShort(name.getLength())) {
 
-                /* Handful of city acronyms to save, e.g., NYC, BSAS, etc.
-                 * Avoid rechecking items that have already been validated as NAME+CODE pairs (isValid()==true)
+                /* Last Chance:
+                 * - Save a handful of city acronyms, e.g., NYC, BSAS, etc.
+                 * - Avoid rechecking items that have already been validated as NAME+CODE pairs (isValid()==true)
+                 * - If Not Country, but is ABBREV, then omit all trivial abbreviations not already associated with a city.
+                 *   e.g., "I went to see my MD"
+                 * 
                  */
-                boolean filterOut = true;
+                name.setFilteredOut(true);
                 for (ScoredPlace geoScore : name.getPlaces()) {
                     Place geo = geoScore.getPlace();
                     if (geo.isPopulated() && geo.isShortName()) {
-                        filterOut = false;
+                        name.setFilteredOut(false);
                         name.incrementPlaceScore(geo, 1.0, "CityNickName");
                         break;
                     }
                 }
-
-                // Check any name that is not already been validated.
-                // If Not Country, but is ABBREV, then omit all trivial abbreviations not already associated with a city.
-                // e.g., "I went to see my MD"
-                //
-                name.setFilteredOut(filterOut);
             }
         }
     }
@@ -359,28 +368,6 @@ public class NameCodeRule extends GeocodeRule {
             }
             pc.isAbbreviation = pc.isAcronym = matchFound;
         }
-    }
-
-    private static boolean possiblyAbbreviation(final PlaceCandidate pc) {
-        if (pc.isAbbreviation) {
-            return true;
-        }
-
-        // First determine if subsequent tokens indicate this is abbreviation or not.
-        // Al. possible.
-        // Al<sp> possible.
-        // Al- NO.
-        // Al= NO.
-        if (pc.postChar != 0) {
-            if (pc.postChar == '.' && pc.isAbbrevLength()) {
-                return true;
-            }
-            if (!Character.isLetter(pc.postChar)) {
-                return false;
-            }
-        }
-        // Very limited scope assessment of "abbreviation" == 2 chars.
-        return pc.getLength() < 3;
     }
 
     /**
@@ -432,12 +419,18 @@ public class NameCodeRule extends GeocodeRule {
     }
 
     /**
-     * @param n
-     * @param code
-     * @param codeGeo
+     * Update the scores for any locations for the relevant Names + Codes. 
+     * The given codeGeo is scored against the code placename
+     * Reflect this location inference back onto the Name, scoring any possible features higher.
+     * 
+     * @param n  placename 
+     * @param code administrative placename related to `n`
+     * @param codeGeo candidate location for `code`
      * @param comma
+     * @param closeAssociation - true if inferred Name/Code geography is a close containment relation
      */
-    private void updateNameCodePair(PlaceCandidate n, PlaceCandidate code, Place codeGeo, boolean comma) {
+    private void updateNameCodePair(PlaceCandidate n, PlaceCandidate code, Place codeGeo,
+            boolean comma, boolean closeAssociation) {
         /*
          * The code is matched with the name.  Mark these paired items as valid to avoid further filtering
          */
@@ -446,16 +439,18 @@ public class NameCodeRule extends GeocodeRule {
         n.markValid();
 
         /*
-         * CITY, STATE
-         * CITY, COUNTRY
+         * CITY, STATE        -- weighted higher.   Shared hierarchy CC.xx
+         * COUNTY, STATE      -- weighted higher.   Shared hierarchy CC.xx
+         * CITY, COUNTRY      -- normal weight.     Shared hierarchy CC only.
          */
         // Associate the CODE to the NAME that precedes it.
         //
         PlaceEvidence ev = new PlaceEvidence();
         ev.setCountryCode(codeGeo.getCountryCode());
         ev.setAdmin1(codeGeo.getAdmin1());
-        double wt = weight + (comma ? 2.0 : 0.0);
-        String rl = codeGeo.isShortName() && code.isShortName() ? NAME_ADMCODE_RULE : NAME_ADMNAME_RULE;
+        double wt = weight + (comma ? 2.0 : 0.0) + (closeAssociation ? 4.0 : 0.0);
+        String rl = codeGeo.isShortName() && code.isShortName() ? NAME_ADMCODE_RULE
+                : NAME_ADMNAME_RULE;
         ev.setRule(rl);
         ev.setWeight(wt);
         ev.setEvaluated(true); // Shunt. Evaluate this rule here; We'll increment the location score discretely.
@@ -500,5 +495,6 @@ public class NameCodeRule extends GeocodeRule {
     }
 
     @Override
-    public void evaluate(PlaceCandidate name, Place geo) { /* no-op*/ }
+    public void evaluate(PlaceCandidate name, Place geo) {
+        /* no-op*/ }
 }

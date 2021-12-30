@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class PostalLocationChooser extends GeocodeRule {
 
     final Pattern separators = Pattern.compile("[-\\s+]");
-
+    
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
             log.info("Candidate? {}", name);
@@ -29,7 +29,7 @@ public class PostalLocationChooser extends GeocodeRule {
             }
 
             name.choose();
-
+            
             int conf = 0;
             boolean paired = name.getRelated() != null;
 
@@ -45,6 +45,7 @@ public class PostalLocationChooser extends GeocodeRule {
             // Qualified location  ... PROVINCE ZIPCODE ...
             ScoredPlace locScore = name.getChosen();
             Place loc = locScore.getPlace();
+            loc.setMethod(defaultMethod);
             if (loc != null && paired) {
                 conf += 20;
                 conf += (int) (locScore.getScore() / 10);
@@ -88,6 +89,10 @@ public class PostalLocationChooser extends GeocodeRule {
                 }
             }
             name.setConfidence(conf);
+
+            /* Assign Match ID */
+            name.defaultMatchId();
+            loc.setInstanceId(name.getMatchId());
         }
     }
 

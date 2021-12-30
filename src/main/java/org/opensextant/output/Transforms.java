@@ -24,6 +24,7 @@ public class Transforms {
 
     public final static String FLD_FILTERED = "filtered-out";
     public final static String FLD_TYPE = "type";
+    public final static String FLD_MATCH_ID = "match-id";
 
     /**
      * Convert JSON object for an annotation into a Xponents TextMatch instance.
@@ -55,70 +56,70 @@ public class Transforms {
 
         switch (typ) {
 
-            case "place":
-                PlaceCandidate placeMatch = new PlaceCandidate(start, end);
-                Place geo = new Place();
-                placeMatch.setText(text);
-                Transforms.parseGeocoding(geo, a);
-                placeMatch.setConfidence(a.getInteger("confidence", -1));
-                placeMatch.setChosenPlace(geo);
+        case "place":
+            PlaceCandidate placeMatch = new PlaceCandidate(start, end);
+            Place geo = new Place();
+            placeMatch.setText(text);
+            Transforms.parseGeocoding(geo, a);
+            placeMatch.setConfidence(a.getInteger("confidence", -1));
+            placeMatch.setChosenPlace(geo);
 
-                m = placeMatch;
-                break;
+            m = placeMatch;
+            break;
 
-            case "coordinate":
-                GeocoordMatch coord = new GeocoordMatch(start, end);
-                Place coordLoc = new Place();
-                coord.setText(text);
-                // How awful:.... need to parse Coord directly
-                Transforms.parseGeocoding(coordLoc, a);
-                coord.setLatLon(coordLoc);
-                coord.setMethod(coordLoc.getMethod());
+        case "coordinate":
+            GeocoordMatch coord = new GeocoordMatch(start, end);
+            Place coordLoc = new Place();
+            coord.setText(text);
+            // How awful:.... need to parse Coord directly
+            Transforms.parseGeocoding(coordLoc, a);
+            coord.setLatLon(coordLoc);
+            coord.setMethod(coordLoc.getMethod());
 
-                /*
-                 * TODO: GeocoordMatch needs to support setters for Geocoding here. missing
-                 * reverse geo info
-                 * cc, adm1
-                 */
-                m = coord;
-                break;
+            /*
+             * TODO: GeocoordMatch needs to support setters for Geocoding here. missing
+             * reverse geo info
+             * cc, adm1
+             */
+            m = coord;
+            break;
 
-            case "country":
-                PlaceCandidate countryMatch = new PlaceCandidate(start, end);
-                Place cc = new Place();
-                countryMatch.setText(text);
-                cc.setName(text);
-                countryMatch.setConfidence(a.getInteger("confidence", -1));
-                cc.setCountryCode(a.getString("cc"));
-                countryMatch.isCountry = true;
-                countryMatch.setChosenPlace(cc);
-                m = countryMatch;
+        case "country":
+            PlaceCandidate countryMatch = new PlaceCandidate(start, end);
+            Place cc = new Place();
+            countryMatch.setText(text);
+            cc.setName(text);
+            countryMatch.setConfidence(a.getInteger("confidence", -1));
+            cc.setCountryCode(a.getString("cc"));
+            countryMatch.isCountry = true;
+            countryMatch.setChosenPlace(cc);
+            m = countryMatch;
 
-                break;
+            break;
 
-            case "person":
-                m = new TaxonMatch(start, end);
-                Transforms.parseTaxon((TaxonMatch) m, "person", a);
-                break;
+        case "person":
+            m = new TaxonMatch(start, end);
+            Transforms.parseTaxon((TaxonMatch) m, "person", a);
+            break;
 
-            case "org":
-                m = new TaxonMatch(start, end);
-                Transforms.parseTaxon((TaxonMatch) m, "org", a);
-                break;
+        case "org":
+            m = new TaxonMatch(start, end);
+            Transforms.parseTaxon((TaxonMatch) m, "org", a);
+            break;
 
-            case "taxon":
-                m = new TaxonMatch(start, end);
-                Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
-                break;
+        case "taxon":
+            m = new TaxonMatch(start, end);
+            Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
+            break;
 
-            case "date":
-                DateMatch dt = new DateMatch(start, end);
-                Transforms.parseDate(dt, a);
-                m = dt;
-                break;
+        case "date":
+            DateMatch dt = new DateMatch(start, end);
+            Transforms.parseDate(dt, a);
+            m = dt;
+            break;
 
-            default:
-                throw new jodd.json.JsonException("Unknown Annotation " + typ);
+        default:
+            throw new jodd.json.JsonException("Unknown Annotation " + typ);
         }
 
         m.setType(typ);
@@ -286,6 +287,9 @@ public class Transforms {
         o.put("length", len);
         // String matchText = TextUtils.squeeze_whitespace(name.getText());
         o.put("matchtext", m.getText());
+        o.put(FLD_MATCH_ID, m.getMatchId());
+        o.put(FLD_TYPE, m.getType());
+        o.put(FLD_FILTERED, m.isFilteredOut());
         return o;
     }
 
@@ -336,15 +340,15 @@ public class Transforms {
             if (name instanceof TaxonMatch) {
                 if (jobParams.tag_taxons) {
                     TaxonMatch match = (TaxonMatch) name;
+                    match.defaultMatchId();
                     ++tagCount;
                     if (!match.getTaxons().isEmpty()) {
                         // Only get one taxon from this match. That is sufficient, but not perfect.
                         Taxon n = match.getTaxons().get(0);
                         JsonObject node = populateMatch(name);
-                        node.put(FLD_TYPE, match.getType());
                         node.put("taxon", n.name); // Name of taxon
                         node.put("catalog", n.catalog); // Name of catalog or source
-                        node.put(FLD_FILTERED, name.isFilteredOut());
+                        node.put("method", "TaxonMatcher");
                         resultArray.add(node);
                     }
                 }
@@ -366,7 +370,6 @@ public class Transforms {
                     node.put("timestamp", asSeconds(dt.datenorm));
                 }
                 node.put("pattern-id", dt.pattern_id);
-                node.put(FLD_FILTERED, name.isFilteredOut());
                 resultArray.add(node);
                 continue;
             }
@@ -379,8 +382,6 @@ public class Transforms {
             if (name instanceof GeocoordMatch) {
                 ++tagCount;
                 GeocoordMatch geo = (GeocoordMatch) name;
-                node.put(FLD_TYPE, geo.getType());
-                node.put(FLD_FILTERED, name.isFilteredOut());
                 Transforms.createGeocoding(geo, node);
                 resultArray.add(node);
                 continue;
@@ -404,7 +405,7 @@ public class Transforms {
                 node.put(FLD_TYPE, "country");
                 node.put("cc", resolvedPlace.getCountryCode());
                 node.put("confidence", place.getConfidence());
-
+                node.put("method", resolvedPlace.getMethod());
             } else if (resolvedPlace != null) {
 
                 /*
@@ -415,20 +416,17 @@ public class Transforms {
                 addProvinceName(node, resolvedPlace);
                 // "Related" or linked geography is for Postal or other use cases.
                 addRelatedGeography(node, place);
-                node.put(FLD_TYPE, name.getType());
                 node.put("confidence", place.getConfidence());
                 node.put("rules", StringUtils.join(place.getRules(), ";"));
                 if (place.getConfidence() <= DEFAULT_LOWER_CONFIDENCE) {
                     place.setFilteredOut(true);
+                    node.put(FLD_FILTERED, place.isFilteredOut());
                 }
             } else {
                 node.put("name", name.getText());
-                node.put(FLD_TYPE, name.getType());
                 node.put("confidence", 15); /* A low confidence */
-                node.put(FLD_FILTERED, name.isFilteredOut());
                 node.put("rules", StringUtils.join(place.getRules(), ";"));
             }
-            node.put(FLD_FILTERED, place.isFilteredOut());
             resultArray.add(node);
         }
         resultMeta.put("numfound", tagCount);
@@ -455,14 +453,18 @@ public class Transforms {
      * @param mention
      */
     private static void addRelatedGeography(JsonObject map, PlaceCandidate mention) {
-        if (mention.isDerived() && mention.getLinkedGeography() != null) {
-            JsonObject relatedInfo = new JsonObject();
-            Map<String, Place> slots = mention.getLinkedGeography();
-            for (String slot : slots.keySet()) {
-                Place linkedPlace = slots.get(slot);
-                relatedInfo.put(slot, linkedPlace.getPlaceName());
-            }
-            map.put("related", relatedInfo);
+        if (!mention.isDerived() || mention.getLinkedGeography() == null) {
+            return;
         }
+        JsonObject relatedInfo = new JsonObject();
+        Map<String, Place> slots = mention.getLinkedGeography();
+        for (String slot : slots.keySet()) {
+            Place linkedPlace = slots.get(slot);
+            JsonObject slotValue = new JsonObject();
+            slotValue.put("matchtext", linkedPlace.getPlaceName());
+            slotValue.put("match-id", linkedPlace.getInstanceId());
+            relatedInfo.put(slot, slotValue);
+        }
+        map.put("related", relatedInfo);
     }
 }

@@ -38,6 +38,7 @@ public class PostalCodeAssociationRule extends GeocodeRule {
      */
     void alignGeography(final PlaceCandidate p1, final PlaceCandidate p2) {
         for (ScoredPlace geo1Score : p1.getPlaces()) {
+            p1.defaultMatchId();            
             Place geo1 = geo1Score.getPlace();
             for (ScoredPlace geo2Score : p2.getPlaces()) {
                 Place geo2 = geo2Score.getPlace();
@@ -63,6 +64,10 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                     p2.linkGeography(p1, geo1Postal ? "postal" : "admin", geo1);
                     p1.incrementPlaceScore(geo1, 5.0, POSTAL_ASSOC_RULE);
                     p2.incrementPlaceScore(geo2, 5.0, POSTAL_ASSOC_RULE);
+                    
+                    // Match ID tracking helps with the integrity of serialized results.
+                    geo1.setInstanceId(p1.getMatchId());
+                    geo2.setInstanceId(p2.getMatchId());
                 } else if (sameCountry(geo1, geo2)) {
                     // Use this to collect evidence. Boundary for geo1 and geo2 are the same.
                     this.countryObserver.countryInScope(geo1.getCountryCode());
@@ -79,6 +84,10 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                     p2.linkGeography(p1, geo1Postal ? "postal" : "country", geo1);
                     p1.incrementPlaceScore(geo1, 3.0, POSTAL_ASSOC_RULE);
                     p2.incrementPlaceScore(geo2, 3.0, POSTAL_ASSOC_RULE);
+
+                    // Match ID tracking helps with the integrity of serialized results.
+                    geo1.setInstanceId(p1.getMatchId());
+                    geo2.setInstanceId(p2.getMatchId());
                 }
             }
         }

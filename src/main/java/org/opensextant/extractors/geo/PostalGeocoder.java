@@ -79,7 +79,9 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
         r.setCountryObserver(this);
         rules.add(r);
         rules.add(new PostalCodeFilter(minLen));
-        rules.add(new PostalLocationChooser());
+        GeocodeRule chooser = new PostalLocationChooser();
+        chooser.setDefaultMethod(METHOD_DEFAULT);
+        rules.add(chooser);
     }
 
     @Override
@@ -234,6 +236,16 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
         return inferredCountries;
     }
 
+    private static void copyMatchId(TextMatch postal, List<TextMatch> matches) {
+        for (TextMatch m : matches) {
+            if (m instanceof  PlaceCandidate && m.isSameMatch(postal)) {
+                postal.match_id = m.match_id;
+                postal.setType(m.getType());
+                return;
+            }
+        }
+    }
+    
     /**
      * Given geotagging from a prior pass of PlaceGeocoder or other stuff, compare and align
      * those tags with POSTAL tags.
@@ -254,11 +266,13 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
                 // This shant' happen.
                 continue;
             }
+
             if (TextUtils.isNumeric(p1.getText()) && p1.getLength() < MIN_LEN) {
                 // Ignore numeric codes that are 3 digits or shorter, for now.
-                // Ho hum... a limitation, but trivial matches may slow performance down.  TODO: Fix limitation.
+                // Ho hum... a limitation, but trivial matches may slow performance down.
                 continue;
             }
+            copyMatchId(p1, matches);
             PlaceCandidate postal = (PlaceCandidate) p1;
             boolean hasPostal = false;
             for (ScoredPlace geo : postal.getPlaces()){
@@ -373,6 +387,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
             if (mention.isAnchor() && mention.getRelated() != null) {
                 PlaceCandidate newSpan = deriveMention(mention, mention.getRelated(), t);
                 newSpan.setType(m.getType());
+                newSpan.match_id = String.format("%s-derived@%d", m.getType(), newSpan.start);
                 derived.add(newSpan);
             } else if (unqualifiedPostalLocation(mention)) {
                 // Unpaired Postal code.
@@ -415,7 +430,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
 
         int x1 = mention.start;
         int x2 = mention.end;
-        int confidence = 0; // Max
+        int confidence = 0;
 
         // Assemble geolocation first based on prior linked geography.
         //  .... IF for some odd reason this is empty, then fall back on individual spans chosen().
@@ -423,6 +438,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
         mention.setLinkedGeography(anchor.getLinkedGeography());
         if (anchor.getChosen() != null) {
             // Shortcut -- add a previously Scored, chosen place to a new mention.
+            mention.linkGeography("postal", anchor.getChosenPlace());
             mention.addPlace(anchor.getChosen(), 0.0); /* addPlace with incremental score of 0 */
             mention.choose();
         } else if (anchor.getLinkedGeography() != null) {

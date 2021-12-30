@@ -35,6 +35,8 @@ public abstract class GeocodeRule {
 
     public int weight = 0; /* of 10, approximately */
     public String NAME = null;
+    
+    protected String defaultMethod = null;
 
     protected CountryObserver countryObserver = null;
     protected LocationObserver coordObserver = null;
@@ -56,6 +58,10 @@ public abstract class GeocodeRule {
 
     public void setBoundaryObserver(BoundaryObserver o) {
         boundaryObserver = o;
+    }
+
+    public void setDefaultMethod(String m) {
+        defaultMethod = m;
     }
 
     /**

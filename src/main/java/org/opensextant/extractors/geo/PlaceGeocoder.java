@@ -304,6 +304,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         heatmapper.setCountryObserver(this);
 
         chooser = new LocationChooserRule();
+        chooser.setDefaultMethod(METHOD_DEFAULT);
         chooser.setCountryObserver(this);
         chooser.setBoundaryObserver(this);
         chooser.setLocationObserver(this);
@@ -485,18 +486,16 @@ public class PlaceGeocoder extends GazetteerMatcher
          * Assemble some histograms to support some basic counts, weighting and sorting.
          * Rules: Work with observables first, then move onto associations between
          * candidates and more obscure fine tuning.
-         * 1a. Country - named country weighs heavily;
-         * 1b. Place, Boundary -- a city or location, followed/qualified by a
-         * geopolitical boundary name or code. Paris, France; Paris, Texas.
-         * 1c. Coordinate rule -- coordinates emit Province ID and Country ID if
-         * possible. So inferred Provinces are weighted heavily.
-         * b. Person name rule - filters out heavily, making use of JRC Names and your
-         * own data sets as a TaxCat catalog/tagger.
-         * d. Major Places rule -- well-known large cities, capitals or provinces are
-         * weighted moderately.
-         * e. Province association rule -- for each found place, weight geos falling in
-         * Provinces positively ID'd.
-         * f. Location Chooser rule -- assemble all evidence and account for weights.
+         * a. Country - named country weighs heavily;
+         * b. Place, Boundary -- a city or location, followed/qualified by a
+         *    geopolitical boundary name or code. Paris, France; Paris, Texas.
+         * c. Coordinate rule -- coordinates emit Province ID and Country ID if
+         *    possible. So inferred Provinces are weighted heavily.
+         * d. Person name rule - filters out heavily, making use of JRC Names and your
+         *    own data sets as a TaxCat catalog/tagger.
+         * e. Major Places rule -- well-known large cities, capitals or provinces are weighted moderately.
+         * f. Province association rule -- for each found place, weight geos falling in Provinces positively ID'd.
+         * g. Location Chooser rule -- assemble all evidence and account for weights.
          */
         countryRule.evaluate(candidates);
         nameWithAdminRule.evaluate(candidates);
@@ -563,8 +562,8 @@ public class PlaceGeocoder extends GazetteerMatcher
                 continue;
             }
 
+            Place geo = pc.getChosenPlace();
             for (PlaceCandidate related : pc.getRelated()) {
-                Place geo = pc.getChosenPlace();
                 if (related.getChosenPlace() == null) {
                     // This happens rarely if a name is marked as a Taxon, Person or Org.
                     continue;

@@ -33,11 +33,8 @@ import java.util.regex.Pattern;
  * as a possible named geographic location. It is used to collect together the
  * information from the document (the evidence), as well as the possible
  * geographic locations it could represent (the Places ). It also contains the
- * results of the final decision to include:
- * <ul>
- * <li>bestPlace - Of all the places with the same/similar names, which place is
- * it?
- * </ul>
+ * results of the final decision to include: bestPlace - Of all the places with 
+ * the same/similar names, which place is it?
  *
  * @author ubaldino
  * @author dlutz, based on OpenSextant Toolbox
@@ -64,7 +61,7 @@ public class PlaceCandidate extends TextMatch {
     private boolean anchor = false;
     private String nonDiacriticTextnorm = null;
 
-    public PlaceCandidate(int x1, int x2){
+    public PlaceCandidate(int x1, int x2) {
         super(x1, x2);
     }
 
@@ -162,7 +159,6 @@ public class PlaceCandidate extends TextMatch {
         return related.values();
     }
 
-
     // ---- the getters and setters ---------
     //
 
@@ -179,7 +175,8 @@ public class PlaceCandidate extends TextMatch {
      * @param sourceBuffer
      */
     protected void setSurroundingTokens(String sourceBuffer) {
-        int[] window = TextUtils.get_text_window(start, end - start, sourceBuffer.length(), contextWidth);
+        int[] window = TextUtils.get_text_window(start, end - start, sourceBuffer.length(),
+                contextWidth);
 
         /*
          * Get right most or left most whole tokens, for now whitespace
@@ -440,7 +437,7 @@ public class PlaceCandidate extends TextMatch {
     public double defaultScore(Place g) {
         double sn = scoreName(g);
         int sb = g.getId_bias(); /* v3.5: 100 point scale. Multiply by 0.01 */
-        return (NAME_WEIGHT * sn) + (LOCATION_BIAS_WEIGHT * sb );
+        return (NAME_WEIGHT * sn) + (LOCATION_BIAS_WEIGHT * sb);
     }
 
     /**
@@ -462,7 +459,8 @@ public class PlaceCandidate extends TextMatch {
     protected double scoreName(Place g) {
         int startingScore = getTextnorm().length();
 
-        int editDist = LevenshteinDistance.getDefaultInstance().apply(getTextnorm(), g.getNamenorm());
+        int editDist = LevenshteinDistance.getDefaultInstance().apply(getTextnorm(),
+                g.getNamenorm());
         int score = startingScore - editDist;
         if (isUpper() && (g.isAbbreviation() || TextUtils.isUpper(g.getName()))) {
             ++score;
@@ -652,7 +650,8 @@ public class PlaceCandidate extends TextMatch {
      * @param geo
      * @param proximityScore
      */
-    public void addGeocoordEvidence(String rule, double weight, LatLon coord, Place geo, double proximityScore) {
+    public void addGeocoordEvidence(String rule, double weight, LatLon coord, Place geo,
+            double proximityScore) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
@@ -696,8 +695,8 @@ public class PlaceCandidate extends TextMatch {
      */
     public String summarize(boolean dumpAll) {
         StringBuilder tmp = new StringBuilder(getText() != null ? getText() : "<null>");
-        tmp.append(String.format("(CONF=%d, N=%d, filtered=%s)", getConfidence(), scoredPlaces.size(),
-                isFilteredOut() ? "Out" : "In"));
+        tmp.append(String.format("(CONF=%d, N=%d, filtered=%s)", getConfidence(),
+                scoredPlaces.size(), isFilteredOut() ? "Out" : "In"));
         tmp.append("\nRules=");
         tmp.append(rules);
         tmp.append("\nEvidence=");
