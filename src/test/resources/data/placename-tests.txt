@@ -5,6 +5,8 @@ New York New York
 New York, New York
 NYC, New York
 New York, NY
+Orange County, California
+Palermo, BsAs
 San Diego, CA
 San Diego, Calif.
 San Diego, California
@@ -49,6 +51,7 @@ Boise, Id. ... skiing, yes?
 Boise, ID is full of fun.
 Boston, Ma. is also know as Beantown
 Boston, MA 02121
+Boston, Mass. is older postal form.
 ABS Radio
 Which LA?
 la provençe is a specialty shop
