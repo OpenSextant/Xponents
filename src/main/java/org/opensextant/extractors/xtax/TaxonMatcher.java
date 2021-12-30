@@ -84,6 +84,8 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     private boolean tagAll = true;
     private final boolean filterNonAcronyms = true;
+    /** Caller can adjust this default constant if shorter tags are desired. */
+    public static int DEFAULT_MIN_LENGTH = 3;
 
     /**
      * @throws IOException
@@ -308,25 +310,24 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         }
 
         List<TextMatch> matches = new ArrayList<>();
-
-        @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
 
         log.debug("TAGS SIZE = {}", tags.size());
 
-        /*
-         * Retrieve all offsets into a long list.
-         */
         TaxonMatch m;
-        // int x1 = -1, x2 = -1;
         int tag_count = 0;
-        String id_prefix = docid + "#";
 
         for (NamedList<?> tag : tags) {
-            m = new TaxonMatch((Integer) tag.get("startOffset"), (Integer) tag.get("endOffset"));
-            // +1 char after last matched m.pattern_id = "taxtag";
             ++tag_count;
-            m.match_id = id_prefix + tag_count;
+            int x1 = (Integer) tag.get("startOffset");
+            int x2 = (Integer) tag.get("endOffset");
+            if (x2 - x1 < DEFAULT_MIN_LENGTH) {
+                // Trivial length filter
+                continue;
+            }
+
+            m = new TaxonMatch(x1, x2);
+            m.match_id = String.format("taxon@%d", tag_count);
 
             // matchText can be null.
             if (TextUtils.countFormattingSpace(buf.substring(m.start, m.end)) > 1) {

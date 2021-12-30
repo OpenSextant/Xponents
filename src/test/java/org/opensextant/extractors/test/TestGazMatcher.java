@@ -12,7 +12,6 @@ import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.GazetteerMatcher;
 import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.RuntimeTools;
