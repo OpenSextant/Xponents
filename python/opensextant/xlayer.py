@@ -48,19 +48,26 @@ class XlayerClient:
             return response.raise_for_status()
         return True
 
-    def process(self, docid, text, features=["geo"], timeout=10, preferred_countries=None, preferred_locations=None):
+    def process(self, docid, text, lang=None, features=["geo"], timeout=10,
+                preferred_countries=None, preferred_locations=None):
         """
         Process text, extracting some entities
 
-          features = "f,f,f,f"  String of comma-separated features
-          options  = "o,o,o,o"  String of comma-separated features
+          lang = "xx" or None, where "xx" is a ISO language 2-char code.
+              For general Chinese/Japanese/Korean (CJK) support, use lang = 'cjk'
+              Language IDs that have some additional tuning include:
+                   "ja", "th", "tr", "id", "ar", "fa", "ur", "ru", "it",
+                   "pt", "de", "nl", "es", "en", "tl", "ko", "vi"
+          Behavior:  Arabic (ar) or CJK (cjk) lang ID directs tagger to use language-specific tokenizers
+              Otherwise other lang ID provided just invokes language-specific stopword filters
 
           features are places, coordinates, countries, orgs, persons, patterns, postal. 
           
           feature aliases "geo" can be used to get All Geographic entities (places,coordinates,countries)
           feature "taxons" can get at any Taxon "taxons", "persons", "orgs"
           feature "postal" will tag obvious, qualified postal codes that are paired with a CITY, PROVINCE, or COUNTRY tag.
-          
+          feature "patterns" is an alias for dates and any other pattern-based extractors. For now "dates" is only one
+
           options are not observed by Xlayer "Xgeo", but you can adapt your own service
           to accomodate such options.   Possible options are clean_input, lowercase, for example:
 
@@ -71,7 +78,8 @@ class XlayerClient:
           so they are not supported out of the box here.
         :param docid: identifier of transaction
         :param text: Unicode text to process
-        :param features: LIST of geo OR [places, coordinates, countries], orgs, persons, patterns, taxons
+        :param lang: One of ["ar", "cjk", .... other ISO language IDs]
+        :param features: list of geo OR [places, coordinates, countries], orgs, persons, patterns, taxons
         :param timeout: default to 10 seconds; If you think your processing takes longer,
                  adjust if you see exceptions.
         :param preferred_countries: Array of country codes representing those which are preferred fall backs when
@@ -88,6 +96,8 @@ class XlayerClient:
             json_request['preferred_countries'] = preferred_countries
         if preferred_locations:
             json_request['preferred_locations'] = preferred_locations
+        if lang:
+            json_request['lang'] = lang
 
         response = requests.post(self.server, json=json_request, timeout=timeout)
         if response.status_code != 200:

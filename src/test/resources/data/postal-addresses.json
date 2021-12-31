@@ -1,0 +1,35 @@
+# For these tests we start off with one central address and vary parts of it
+#
+# Test AUS-01 -- test street address; Street name is city name in other country.  Strawberry hills may not exist..
+#     The singular "Strawberry Hill" is a S/HMSD (homestead).
+#     NSW (New South Wales) has postal codes ranging in the 2000s -- that align with recent year numbers.
+# https://en.wikipedia.org/wiki/Address#Australia,  2021
+{ "id":"AUS-01a", "text": "Australia Post\n219–241 Cleveland St\nSTRAWBERRY HILL NSW  1427" }
+{ "id":"AUS-01b", "text": "Australia Post\n219–241 Cleveland St\nSTRAWBERRY HILLs NSW  1427" }
+{ "id":"AUS-01c", "text": "Australia Post\n219–241 Cleveland St\nBanksmeadow NSW  2019" }
+{ "id":"AUS-01d", "text": "Australia Post\n219–241 Cleveland St\nPaddington NSW  2021" }
+{ "id":"AUS-01e", "text": "Australia Post\n219–241 Cleveland St\nPaddington NSW  2120" }
+
+#  Test: AUS-02
+{ "id":"AUS-02a", "text":  "Lighthouse Promotions PO Box 215 SPRINGVALE  VIC  3171" }
+{ "id":"AUS-02b", "text":  "Lighthouse Promotions PO Box 215 SPRINGVALE,  Victoria  3171" }
+{ "id":"AUS-02c", "text":  "Lighthouse Promotions PO Box 215 SPRINGVALE  VIC  3171 Australia" }
+{ "id":"AUS-02d", "text":  "Lighthouse Promotions PO Box 215 SPRINGVALE  xVIC  3171 Australia" }
+{ "id":"AUS-02e", "text":  "Lighthouse Promotions PO Box 215 SPRINGVALE  VIC  0003171 Australia" }
+
+# Test: AUS-03
+{ "id":"AUS-03", "text": "|--------------------|----------|---------|------|\n| 3A/45 Jindabyne Rd | Oakleigh |  VIC    | 3166 |\n| 3A/45 Jindabyne Rd | Oakleigh |  VIC    | 3166 |  AUSTRALIA |   With country.\n|--------------------|----------|---------|------|\n"}
+
+# Test: BEL-01;  SOURCE: https://en.wikipedia.org/wiki/Address#Belgium,
+{"id":"BEL-01a", "text":"Acme SA          \nBloc A - étage 4\nRue du Vivier 7C bte 5\n1000 Bruxelles\nBELGIUM"}
+{"id":"BEL-O1b", "text": "Acme NV \n     Gebouw A - Verdieping 3\nVolklorenlaan 81 bus 15\n2610 Wilrijk\nBELGIUM"}
+
+# Test: DEU;  Google Maps search for Hotels in Germany
+{"id":"DEU", "text":"Dieckmann's Hotel\n#-#-#-#-#\nWittbraeucker Str. 980, 44265 Dortmund, North Rhine-Westphalia Germany"}
+
+# Test: RUS, SOURCE: https://en.wikipedia.org/wiki/Address#Russia, 2021
+{"id":"RUS-01-ru", "text":"Гусев Иван Сергеевич\nул. Победы, д. 20, кв. 29\nпос. Октябрьский\nБорский р-н\nНижегородская обл.\n606480\nRussia, Россия"}
+{"id":"RUS-01-en", "text":"Gusev Ivan\nul. Pobedy, d. 20, kv. 29\npos. Oktyabrskiy\nBorskiy r-n\nNizhegorodskaya obl.\n606480\nRUSSIA"}
+
+
+
