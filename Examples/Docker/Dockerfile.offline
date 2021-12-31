@@ -42,6 +42,10 @@ RUN cd ./Core && mvn -o install -Dmaven.repo.local=$LOCAL_REPO
 RUN mvn -o -Dopensextant.solr=./xponents-solr/solr7 \
       -Dmaven.repo.local=$LOCAL_REPO clean package dependency:copy-dependencies
 
+# 1a. Log4J cleanup
+RUN for log4jdir in `find $LOCAL_REPO -type d | grep log4j | grep "2.11"`; do rm -rf $log4jdir; done
+
+
 # 2. Copy built items and metadata from install to final runtime CLASSPATH ./lib
 RUN cp ./target/*jar ./lib/
 

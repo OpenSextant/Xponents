@@ -6,11 +6,15 @@ VERSION="3.5"
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
+
+run_sonar=0
 SONAR_URL=http://localhost:9000
 if [ -n "$1"  ]; then 
   SONAR_URL=$1
   if [ -n "$2" ] ; then 
     SONAR_TOKEN=$2
+    # run sonar only if command line args are given
+    run_sonar=1
   else 
     echo "Usage:   $0  SONAR_URL  SONAR_TOKEN"
     echo
@@ -62,7 +66,7 @@ echo "++++++++++++++++ EXAMPLES ++++++++++++++++"
 
 
 # Code scan using Sonarqube:
-if [ -n "$SONAR_TOKEN" ]; then 
+if [ $run_sonar -eq 1 ]; then 
 
     git init
     git add .gitignore pom.xml Core/pom.xml Core/src src script python 
@@ -89,11 +93,6 @@ if [ -n "$SONAR_TOKEN" ]; then
 fi
 
 
-# Log4J cleanup
-for log4jdir in `find ./maven-repo -type d | grep log4j | grep "2.11"`; do 
-  echo "Remove $log4jdir"
-  rm -rf $log4jdir
-done
 
 # One last time: go-offline
 #  -- Remove cache files from any Internet downloads
@@ -101,6 +100,12 @@ done
 find ./$REPO  -name "*.sha1"  -exec rm {} \;
 find ./$REPO  -name "*.repositories"  -exec rm {} \;
 mvn dependency:go-offline -Dmaven.repo.local=$REPO
+
+# Log4J cleanup
+for log4jdir in `find ./maven-repo -type d | grep log4j | grep "2.11"`; do 
+  echo "Remove $log4jdir"
+  rm -rf $log4jdir
+done
 
 
 # Docker
