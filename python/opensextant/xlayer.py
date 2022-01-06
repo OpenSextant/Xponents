@@ -9,18 +9,27 @@ import json
 
 import requests
 import requests.exceptions
-from opensextant import Place, TextMatch
+from opensextant import TextMatch, PlaceCandidate
+
+
+# Move away from "geo" and towards a more descriptive place label.
+GEOCODINGS = {"geo", "place", "postal", "country", "coord", "coordinate"}
 
 
 class XlayerClient:
     def __init__(self, server, options=""):
         """
-        @param server: URL for the service.   E.g., http://SERVER/xlayer/rest/process.
+        @param server: URL for the service.   E.g., host:port or 'http://SERVER/xlayer/rest/process'.
         @keyword  options:  STRING. a comma-separated list of options to send with each request.
         There are no default options supported.
         """
         self.server = server
-        self.server_control = server.replace('/process', '/control')
+        if not server.startswith("http"):
+            self.server = f"http://{server}/xlayer/rest/process"
+            self.server_control = f"http://{server}/xlayer/rest/control"
+        else:
+            # User provided a full URL.
+            self.server_control = server.replace('/process', '/control')
         self.debug = False
         self.default_options = options
 
@@ -116,21 +125,20 @@ class XlayerClient:
         if 'annotations' in json_content:
             aj = json_content['annotations']
             for annot in aj:
-                tm = TextMatch(annot.get('matchtext'), annot.get('offset'), None)
+                # Desire to move to "label" away from "type"
+                label = annot.get("type")
+                if label in GEOCODINGS:
+                    tm = PlaceCandidate(annot.get('matchtext'), annot.get('offset'), None)
+                else:
+                    tm = TextMatch(annot.get('matchtext'), annot.get('offset'), None)
                 tm.populate(annot)
                 annots.append(tm)
-                if self.debug:
-                    print("Match '{}' at char offset {}".format(tm.text, tm.start))
-                    if 'lat' in tm.attrs:
-                        geo = Place(None, tm.text, lat=tm.attrs.get('lat'), lon=tm.attrs.get('lon'))
-                        print("\trepresenting location: {}".format(str(geo)))
 
         return annots
 
 
 def print_results(arr):
     """
-
     :param arr: array of Annotations or TextMatch
     :return:
     """
@@ -146,7 +154,6 @@ def print_results(arr):
 
 def print_match(match: TextMatch):
     """
-
     :param match:
     :return:
     """
@@ -182,7 +189,7 @@ if __name__ == '__main__':
 
     ap = argparse.ArgumentParser()
     ap.add_argument("input", help="your input")
-    ap.add_argument("--service-url", help="XLayer server host:port", default="localhost:5757")
+    ap.add_argument("--service-url", help="XLayer server host:port", default="localhost:8787")
     ap.add_argument("--docid", help="your doc id")
     ap.add_argument("--lines", action="store_true", help="process your inputfile as one line per call")
     ap.add_argument("--text", action="store_true", help="<input> arg is a UTF-8 string to process")
@@ -196,9 +203,6 @@ if __name__ == '__main__':
     args = ap.parse_args()
 
     service_url = args.service_url
-    if not args.service_url.startswith("http"):
-        service_url = f"http://{args.service_url}/xlayer/rest/process"
-
     xtractor = XlayerClient(service_url, options=args.options)
     xtractor.debug = args.debug
     feat = ["geo"]

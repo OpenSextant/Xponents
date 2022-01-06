@@ -14,7 +14,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='opensextant',
-    version='1.4.4',
+    version='1.4.5',
 
     description='OpenSextant APIs and Utilities',
     long_description=long_description,

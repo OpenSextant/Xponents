@@ -171,7 +171,7 @@ class Coordinate:
     """
 
     def __init__(self, row, lat=None, lon=None):
-
+        # TODO: set coordinate to X, Y = None, None by default.
         self.X = 0.0
         self.Y = 0.0
         self.mgrs = None
@@ -582,10 +582,15 @@ def popscale(population, feature="city"):
     return int(index) if index > 0 else 0
 
 
-def is_country(feat_code: str):
+def is_political(feat_code:str):
     """Test a feature code"""
     if not feat_code: return False
     return feat_code.startswith("PCL")
+
+
+def is_country(feat_code: str):
+    """Test a feature code"""
+    return "PCLI" == feat_code
 
 
 def is_administrative(feat: str):
@@ -694,15 +699,16 @@ class TextMatch(TextEntity):
     def __str__(self):
         return f"{self.label}/{self.text}({self.start},{self.end})"
 
-    def populate(self, attrs):
+    def populate(self, attrs:dict):
         """
         Populate a TextMatch to normalize the set of attributes -- separate class fields on TextMatch from additional
         optional attributes.
-        :param attrs:
+        :param attrs: dict of standard Xponents API outputs.
         :return:
         """
+        self.id = attrs.get("match-id")
         self.label = attrs.get("type")
-        self.attrs = attrs
+        self.attrs.update(attrs)
         self.filtered_out = get_bool(self.attrs.get("filtered-out"))
         for k in ['len', 'length']:
             if k in self.attrs:
@@ -724,6 +730,57 @@ class TextMatch(TextEntity):
         :return:
         """
         pass
+
+
+class PlaceCandidate(TextMatch):
+    """
+    A TextMatch representing any geographic mention -- a Place object will
+    represent the additional attributes for the chosen place.
+    see also in Java org.opensextant.extractors.geo.PlaceCandidate class, which is
+    a more in-depth version of this.  This Python class represents the
+    response from the REST API, for example.
+
+    """
+    def __init__(self, *args, **kwargs):
+        TextMatch.__init__(self, *args, **kwargs)
+        self.confidence = 0
+        self.rules = []
+        self.is_country = False
+        self.place = None
+
+    def populate(self, attrs:dict):
+        """
+        Deserialize the attributes dict from either TextMatch schema or Place schema
+        :param attrs:
+        :return:
+        """
+        TextMatch.populate(self, attrs)
+        geo = Place(None, attrs.get("name"), lat=attrs.get("lat"), lon=attrs.get("lon"))
+        if not geo.name:
+            geo.name = self.text
+
+        # attribute / schema does not align 100% here.
+        geo.country_code = attrs.get("cc")
+        geo.adm1 = attrs.get("adm1")
+        geo.precision = attrs.get("prec")
+        geo.feature_class = attrs.get("feat_class")
+        geo.feature_code = attrs.get("feat_code")
+        geo.adm1_name = attrs.get("province-name")
+        geo.geohash = attrs.get("geohash")
+        geo.method = attrs.get("method")
+
+        # Combined match + geo-location confidence:
+        self.confidence = attrs.get("confidence")
+        if "rules" in attrs:
+            # One or more geo-inferencing rules
+            self.rules = attrs["rules"].split(";")
+
+        self.is_country = self.label == "country" or is_country(geo.feature_code)
+        if self.is_country:
+            # Zero out country location; Let user derive country from metadata.
+            geo.lat = None
+            geo.lon = None
+        self.place = geo
 
 
 class Extractor(ABC):
