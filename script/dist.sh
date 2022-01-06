@@ -74,7 +74,7 @@ rm -r $REL/xponents-solr/retired
 rm -r $REL/xponents-solr/script/__pycache__
 rm -f $REL/xponents-solr/solr7-dist/licenses/log4j*2.11* 
 
-cp -r $basedir/dev.env $basedir/Examples/Docker/* $REL/
+cp -r $basedir/.gitignore $basedir/dev.env $basedir/Examples/Docker/* $REL/
 rm -r $REL/Sonarqube
 
 # Distro has API docs in JAR files.
