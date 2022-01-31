@@ -51,6 +51,7 @@ public class TestGazMatcher {
         }
     }
 
+    protected static int confidenceThreshold = 20;
     protected final static ArrayList<Integer> memStats = new ArrayList<>();
 
     public static final void printMemory() {
@@ -152,12 +153,35 @@ public class TestGazMatcher {
 
         System.out.println("MENTIONS DISTINCT PLACES == " + placeNames.size());
         System.out.println(placeNames);
+        System.out.println(filterByConfidence(matches, confidenceThreshold));
         System.out.println("MENTIONS COUNTRIES == " + countryNames.size());
         System.out.println(countryNames);
         System.out.println("MENTIONS COORDINATES == " + coordinates.size());
         System.out.println(coordinates);
-
     }
+
+
+    /** Report matches separated by confidence threshold.
+     */
+    public static String filterByConfidence(List<TextMatch> matches, int conf){
+        ArrayList<String> placesAbove = new ArrayList<>();
+        ArrayList<String> placesBelow = new ArrayList<>();
+        for (TextMatch tm : matches) {
+            if (tm instanceof PlaceCandidate) {
+                PlaceCandidate p = (PlaceCandidate) tm;
+                if (!tm.isFilteredOut()) {
+                    String label = String.format("%s(%d)", p.getText(), p.getConfidence());
+                    if (p.getConfidence() < conf) {
+                        placesBelow.add(label);
+                    } else {
+                        placesAbove.add(label);
+                    }
+                }
+            }
+        }
+        return String.format("\tPlaces Above: %s\n\tPlaces Below: %s", placesAbove, placesBelow);
+    }
+
 
     public static List<TextMatch> copyFrom(List<PlaceCandidate> list) {
         List<TextMatch> list2 = new ArrayList<>();
