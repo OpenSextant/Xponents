@@ -27,10 +27,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.opensextant.util.TextUtils;
 
 /**
- * A property sheet.
- * For now I'm using attributes directly to facilitate compile-time stuff.
- * But a property sheet of k,v pairs may help later
- *
  * @author Marc C. Ubaldino, MITRE, ubaldino at mitre dot org
  */
 public class Parameters extends java.util.Properties {
@@ -40,9 +36,15 @@ public class Parameters extends java.util.Properties {
      */
     private static final long serialVersionUID = 1L;
 
+    /** Tag/Output countries */
     public boolean tag_countries = true;
+    /** Tag/Output placenames of any time other than countries */
     public boolean tag_places = true;
+    /** Tag/Output coordinates */
     public boolean tag_coordinates = true;
+    /** Tag/Output codes of placenames -- Exclusive of Coutry or other Placenames */
+    public boolean tag_codes = false;
+    /** Tag/Output postal hierarchy, i.e., "City, Province, Postal code" */
     public boolean tag_postal = false;
 
     /**

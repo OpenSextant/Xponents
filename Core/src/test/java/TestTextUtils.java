@@ -44,7 +44,13 @@ public class TestTextUtils {
         } catch (Exception err){
             fail("Algs? "+err.getMessage());
         }
+    }
 
+    @Test
+    public void testPunct(){
+        String testText = "Eat at Bob\"s | Country Bunker";
+        assertTrue(TextUtils.hasIrregularPunctuation(testText));
+        assertEquals(2, TextUtils.countIrregularPunctuation(testText));
     }
 
     @Test

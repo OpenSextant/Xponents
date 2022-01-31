@@ -58,6 +58,39 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class TextUtils {
 
+
+    static final Pattern commonPunct = Pattern.compile("[!$%&#*+;:<>=?/{}|~^\"\\u201D\\u201C\\[\\]]");
+
+    /**
+     * Simple triage of punctuation.
+     * Rationale:  OpenSextant taggers maximize RECALL in favor of not missing a possible match.
+     * the problem there is we often encounter substantial noise with tagger output, so a trivial test is to see
+     * if we have overmatched:
+     *
+     * Allowed Punctuation: , . - _ ` '  ( )   ## Diacritics, Parenthetics, periods/dashes.
+     *
+     * <pre>
+     *     Given phrase "A B C"  we may have matched:
+     *                  "A|B+C", "A; B; C", "A &lt;B&gt; C" etc...  where common punctation separates valid tokens
+     *                  that appear in the reference phrase.
+     * </pre>
+     *
+     * @param t
+     * @return
+     */
+    public static boolean hasIrregularPunctuation(String t) {
+        return commonPunct.matcher(t).find();
+    }
+
+    public static int countIrregularPunctuation(String t) {
+        int count = 0;
+        Matcher m = commonPunct.matcher(t);
+        while(m.find()){
+            ++count;
+        }
+        return count;
+    }
+
     static final Pattern delws = Pattern.compile("\\s+");
     static final Pattern multi_eol = Pattern.compile("(\n[ \t\r]*){3,}");
     static final Pattern multi_eol2 = Pattern.compile("(\n\r?){2,}");
