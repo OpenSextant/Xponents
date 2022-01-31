@@ -64,14 +64,19 @@ if __name__ == "__main__":
     print("Mark search-only short 4-char names X-XX or XX-X")
     excluder.exclude_nonsense("name LIKE '%-%' and LENGTH(name)=4 and name_group = ''")
 
+    print("Mark search-only short 5-char names starting with vowels A, I, O U -  A-xx, A xx, or A-xxx, A xxx")
+    for vowel in [ 'a', 'e', 'i', 'o', 'u', 'y']:
+        excluder.exclude_nonsense(f"(name LIKE '{vowel} %' OR name LIKE '{vowel}-%') and LENGTH(name)=4 and name_group = ''")
+    # Additionally:
+    excluder.exclude_nonsense("name in ('A Toi', 'A Toy', 'A Tin')")
+
     print("Mark search-only numerous short and obscure transliterations of names from Asian countries")
     # Avoid tagging for these phrases as they are common appearances in text, but are not easy to
     # create a codified rule to omit.
     #
     # "*Do to* you...."
-    excluder.exclude_nonsense("name like 'do to' OR name like 'do-to'")
-    excluder.exclude_nonsense("name like 'do do' OR name like 'do-do'")
-    excluder.exclude_nonsense("name like 'to to' OR name like 'to-to'")
+    excluder.exclude_nonsense("(name like '% to' OR name like '%-to') AND LENGTH(name)=5")
+    excluder.exclude_nonsense("(name like '% do' OR name like '%-do') AND LENGTH(name)=5")
     # "*he he* the kid laughed"
     excluder.exclude_nonsense("name in ('he he', 'He-he', 'He-oh', 'He-ha', 'he can', 'she can')")
     # *man X*
@@ -85,7 +90,11 @@ if __name__ == "__main__":
     # *as said* in the document...
     # *has said* before
     excluder.exclude_nonsense("name like 'as said' OR name like 'has-said'")
-    # Spanish:  *y la* semana proxima...
-    excluder.exclude_nonsense("name like 'y %' and LENGTH(name) < 5")
+
+    print("Mark search only for generic enumerations ~ Division 4, Number 6, etc.")
+    # *enumerations* of generic things
+    excluder.exclude_nonsense("name like 'division %' AND LENGTH(name) < 13")
+    excluder.exclude_nonsense("name like 'number %' AND LENGTH(name) < 10")
+    excluder.exclude_nonsense("name like 'numero %' AND LENGTH(name) < 10")
 
     excluder.db.close()

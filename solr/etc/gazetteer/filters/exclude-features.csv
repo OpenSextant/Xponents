@@ -1,11 +1,19 @@
 #CLASS,CODE,NAME
+A,PCLI,AIA
 A,PCLI,albany
 A,PCLI,Albany
 A,PCLI,German
 A,PCLI,a man
 A,PCLI,israeli
+A,PCLI,LSO
+A,PCLI,BRB
+A,PCLI,GT
 A,PCLI,yemeni
 A,PCLI,pakistani
+A,PCLI,filipino
+A,PCLI,widen
+P,PPLX,iran
+P,PPLX,syria
 P,PPL,№ 2
 P,PPL,№ 6
 P,PPL,No 2

@@ -19,6 +19,7 @@ assad
 barclay
 baron
 bashar
+ben
 bieber
 blitzer
 bouchard
@@ -45,6 +46,7 @@ dooley
 dow
 ed
 eddie
+ely
 eggers
 erdogan
 erdoğan
