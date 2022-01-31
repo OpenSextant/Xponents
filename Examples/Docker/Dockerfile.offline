@@ -5,8 +5,8 @@ FROM adoptopenjdk:12-jdk-hotspot
 ENV XLAYER_PORT=8787
 ENV VERSION=Xponents-3.5
 ENV XPONENTS=/home/opensextant/Xponents
-ENV JAVA_XMS=1500m
-ENV JAVA_XMX=1500m
+ENV JAVA_XMS=3500m
+ENV JAVA_XMX=3500m
 ENV MVN_VER=3.8.4
 ENV MVN=apache-maven-$MVN_VER
 ENV PATH=/opt/maven/bin:$PATH

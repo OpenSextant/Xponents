@@ -4,8 +4,8 @@ services:
     container_name: xponents
     image: mubaldino/opensextant:xponents-offline-3.5
     environment:
-        - JAVA_XMS=1500m
-        - JAVA_XMX=1500m
+        - JAVA_XMS=3500m
+        - JAVA_XMX=3500m
     ports:
         - "8787:8787"
         - "7000:7000"

@@ -18,7 +18,7 @@ if [ -n "$http_proxy" -o -n "$https_proxy" ]; then
     proxy_args="-Dhttps.proxyHost=${proxyHost} -Dhttps.proxyPort=80 $PROXY"
 fi
 
-xponents_args=" -Dopensextant.solr=$SOLR_HOME -Xmx1200m -Xms1200m "
+xponents_args=" -Dopensextant.solr=$SOLR_HOME -Xmx1500m -Xms1500m "
 logging_args="-Dlogback.configurationFile=$XP/etc/logback.xml"
 tika_args="-Dtika.config=$XP/etc/tika-config.xml"
 

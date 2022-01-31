@@ -56,7 +56,7 @@ static void main(String[] args){
         break;
       
       case 'geocoder':
-        app = new TestPlaceGeocoder()
+        app = new PlaceGeocoderTester()
         // -i input -o output
         break;
       case 'geotemp':
