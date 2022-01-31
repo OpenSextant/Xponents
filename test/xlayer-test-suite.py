@@ -53,7 +53,7 @@ def random_story_testing():
     with open(testfile, "r", encoding="UTF-8") as fh:
         docid = os.path.basename(testfile)
         content = fh.read()
-        print_results(client.process(docid, content, features=["geo", "postal", "dates", "taxons"]))
+        print_results(client.process(docid, content, features=["geo", "postal", "dates", "taxons", "codes"]))
 
 
 def arabic_testing():
