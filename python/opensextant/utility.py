@@ -442,6 +442,9 @@ class ConfigUtility:
             filereader = csv.reader(f, delimiter=delim, lineterminator='\n')
             data = []
             for row in filereader:
+                if not row:
+                    print("Blank line")
+                    continue
                 first_cell = row[0].strip()
                 if first_cell.startswith('#'):
                     continue

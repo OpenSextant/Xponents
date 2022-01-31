@@ -2,7 +2,7 @@
 #
 import os
 import json
-from opensextant import Place
+from opensextant import Place, PlaceCandidate
 
 def print_intro(test_id, content):
     print(f"{test_id}\t{content[0:100]}")
@@ -14,12 +14,10 @@ def print_results(matches):
     :param matches: arr of TextMatch
     """
     for match in matches:
-        if "lat" in match.attrs:
-            geo = Place(None, match.text, lat=match.attrs.get('lat'), lon=match.attrs.get('lon'))
-            geo.country_code = match.attrs.get("cc")
-            conf = match.attrs.get("confidence")
+        if isinstance(match, PlaceCandidate):
+            geo = match.place
             # Label is place, country, coord, or postal
-            print(f"{match.label}\t{match.text}\n\t{geo}, confidence:{conf}")
+            print(f"{match.label}\t{match.text}\n\t{geo},\t{geo.feature_class}/{geo.feature_code} confidence:{match.confidence}")
         else:
             # Label is taxon, person, org or nationality
             #  .... or pattern name
