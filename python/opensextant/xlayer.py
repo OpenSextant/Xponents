@@ -76,6 +76,7 @@ class XlayerClient:
           feature "taxons" can get at any Taxon "taxons", "persons", "orgs"
           feature "postal" will tag obvious, qualified postal codes that are paired with a CITY, PROVINCE, or COUNTRY tag.
           feature "patterns" is an alias for dates and any other pattern-based extractors. For now "dates" is only one
+          feature "codes" will tag, use and report coded information for any place; primarily administrative boundaries
 
           options are not observed by Xlayer "Xgeo", but you can adapt your own service
           to accomodate such options.   Possible options are clean_input, lowercase, for example:
