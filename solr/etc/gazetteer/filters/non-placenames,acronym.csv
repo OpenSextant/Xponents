@@ -1,6 +1,7 @@
 exclusion,category
 #,Add here any term or phrase you wish to eliminate from geotagging because it 
 #,is a well known or not-so-well known acronym. 
+AAA,
 ABS,
 ACA,
 ACS,
@@ -116,6 +117,7 @@ KG,
 LAN,
 LEU,
 LLC,
+MBA,
 MIE,
 MIME,
 MIDI,

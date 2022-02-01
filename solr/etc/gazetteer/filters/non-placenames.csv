@@ -153,6 +153,7 @@ brilliant,adj
 brisk,adj
 broke,adj
 broken,adj
+budding,adj
 buff,adj
 bulk,adj
 burnt,adj
@@ -572,6 +573,7 @@ beaver,animal
 beetle,animal
 bug,animal
 butterfly,animal
+calves,animal
 camel,animal
 cobra,animal
 cougar,animal
@@ -681,6 +683,7 @@ gills,bodypart
 gland,bodypart
 hind,bodypart
 hip,bodypart
+hippocampus,bodypart
 horns,bodypart
 left arm,bodypart
 leg,bodypart
@@ -688,6 +691,7 @@ lip,bodypart
 livers,bodypart
 lung,bodypart
 marrow,bodypart
+medulla,bodypart
 neck,bodypart
 nipple,bodypart
 nose,bodypart
@@ -1118,6 +1122,7 @@ age,noun
 agency,noun
 agenda,noun
 ages,noun
+aggregates,noun
 air,noun
 airline,noun
 airlines,noun
@@ -2514,6 +2519,7 @@ vanguard,noun
 vault,noun
 venture,noun
 ventures,noun
+veracity,noun
 verge,noun
 vessel,noun
 vest,noun
@@ -2543,6 +2549,7 @@ watchman,noun
 water tank,noun
 wave,noun
 waves,noun
+wax,noun
 way,noun
 ways,noun
 weakens,noun
@@ -3015,6 +3022,7 @@ begin to,phrase
 best view,phrase
 better chance,phrase
 big town,phrase
+bienvenue,phrse.fre
 black and white,phrase
 black box,phrase
 blah,phrase
