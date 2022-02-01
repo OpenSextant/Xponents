@@ -113,7 +113,8 @@ public abstract class TaggerResource extends ServerResource {
         p.tag_coordinates = kv.contains("coordinates");
         p.tag_countries = kv.contains("countries");
         p.tag_places = kv.contains("places");
-        p.tag_postal = kv.contains("postal");
+        p.tag_postal = kv.contains("postal"); /* Postal tuples which include codes */
+        p.tag_codes = kv.contains("codes"); /* literal codes, 'IX', 'VQS', 'MA' */
 
         if (kv.contains("geo")) {
             p.tag_coordinates = true;

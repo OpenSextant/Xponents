@@ -13,6 +13,7 @@ import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtemporal.DateMatch;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeodeticUtility;
+import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,70 +57,70 @@ public class Transforms {
 
         switch (typ) {
 
-        case "place":
-            PlaceCandidate placeMatch = new PlaceCandidate(start, end);
-            Place geo = new Place();
-            placeMatch.setText(text);
-            Transforms.parseGeocoding(geo, a);
-            placeMatch.setConfidence(a.getInteger("confidence", -1));
-            placeMatch.setChosenPlace(geo);
+            case "place":
+                PlaceCandidate placeMatch = new PlaceCandidate(start, end);
+                Place geo = new Place();
+                placeMatch.setText(text);
+                Transforms.parseGeocoding(geo, a);
+                placeMatch.setConfidence(a.getInteger("confidence", -1));
+                placeMatch.setChosenPlace(geo);
 
-            m = placeMatch;
-            break;
+                m = placeMatch;
+                break;
 
-        case "coordinate":
-            GeocoordMatch coord = new GeocoordMatch(start, end);
-            Place coordLoc = new Place();
-            coord.setText(text);
-            // How awful:.... need to parse Coord directly
-            Transforms.parseGeocoding(coordLoc, a);
-            coord.setLatLon(coordLoc);
-            coord.setMethod(coordLoc.getMethod());
+            case "coordinate":
+                GeocoordMatch coord = new GeocoordMatch(start, end);
+                Place coordLoc = new Place();
+                coord.setText(text);
+                // How awful:.... need to parse Coord directly
+                Transforms.parseGeocoding(coordLoc, a);
+                coord.setLatLon(coordLoc);
+                coord.setMethod(coordLoc.getMethod());
 
-            /*
-             * TODO: GeocoordMatch needs to support setters for Geocoding here. missing
-             * reverse geo info
-             * cc, adm1
-             */
-            m = coord;
-            break;
+                /*
+                 * TODO: GeocoordMatch needs to support setters for Geocoding here. missing
+                 * reverse geo info
+                 * cc, adm1
+                 */
+                m = coord;
+                break;
 
-        case "country":
-            PlaceCandidate countryMatch = new PlaceCandidate(start, end);
-            Place cc = new Place();
-            countryMatch.setText(text);
-            cc.setName(text);
-            countryMatch.setConfidence(a.getInteger("confidence", -1));
-            cc.setCountryCode(a.getString("cc"));
-            countryMatch.isCountry = true;
-            countryMatch.setChosenPlace(cc);
-            m = countryMatch;
+            case "country":
+                PlaceCandidate countryMatch = new PlaceCandidate(start, end);
+                Place cc = new Place();
+                countryMatch.setText(text);
+                cc.setName(text);
+                countryMatch.setConfidence(a.getInteger("confidence", -1));
+                cc.setCountryCode(a.getString("cc"));
+                countryMatch.isCountry = true;
+                countryMatch.setChosenPlace(cc);
+                m = countryMatch;
 
-            break;
+                break;
 
-        case "person":
-            m = new TaxonMatch(start, end);
-            Transforms.parseTaxon((TaxonMatch) m, "person", a);
-            break;
+            case "person":
+                m = new TaxonMatch(start, end);
+                Transforms.parseTaxon((TaxonMatch) m, "person", a);
+                break;
 
-        case "org":
-            m = new TaxonMatch(start, end);
-            Transforms.parseTaxon((TaxonMatch) m, "org", a);
-            break;
+            case "org":
+                m = new TaxonMatch(start, end);
+                Transforms.parseTaxon((TaxonMatch) m, "org", a);
+                break;
 
-        case "taxon":
-            m = new TaxonMatch(start, end);
-            Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
-            break;
+            case "taxon":
+                m = new TaxonMatch(start, end);
+                Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
+                break;
 
-        case "date":
-            DateMatch dt = new DateMatch(start, end);
-            Transforms.parseDate(dt, a);
-            m = dt;
-            break;
+            case "date":
+                DateMatch dt = new DateMatch(start, end);
+                Transforms.parseDate(dt, a);
+                m = dt;
+                break;
 
-        default:
-            throw new jodd.json.JsonException("Unknown Annotation " + typ);
+            default:
+                throw new jodd.json.JsonException("Unknown Annotation " + typ);
         }
 
         m.setType(typ);
@@ -408,6 +409,17 @@ public class Transforms {
                 node.put("method", resolvedPlace.getMethod());
             } else if (resolvedPlace != null) {
 
+                // IF Caller is not asking for "codes" output....
+                if (!jobParams.tag_codes) {
+                    boolean qualified = place.isDerived() || place.isValid();
+                    // Filter out non-Postal codes if user is not requesting "codes" to be listed.
+                    if (resolvedPlace.isCode() && !qualified && !GeonamesUtility.isPostal(resolvedPlace)) {
+                        /* Given a bare token ' MA ' not attached to another term,
+                         * this would be considered just a code.  Caller must add "codes" to request to get these.
+                         */
+                        continue;
+                    }
+                }
                 /*
                  * Conf = 20 or greater to be geocoded.
                  */

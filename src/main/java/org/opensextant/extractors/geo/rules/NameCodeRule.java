@@ -20,6 +20,7 @@ import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.extractors.geo.ScoredPlace;
+import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
 
 import java.util.HashSet;
@@ -50,9 +51,12 @@ public class NameCodeRule extends GeocodeRule {
     public static final String NAME_ADMCODE_RULE = "AdminCode";
     public static final String NAME_ADMNAME_RULE = "AdminName";
 
-    public NameCodeRule() {
+    private final Parameters params;
+
+    public NameCodeRule(Parameters p) {
         NAME = "AdminCodeOrName";
         weight = 10;
+        params = p;
     }
 
     private static boolean ignoreShortLowercase(final PlaceCandidate pc) {
@@ -308,10 +312,15 @@ public class NameCodeRule extends GeocodeRule {
             if (name.isFilteredOut() || name.hasEvidence()) {
                 continue;
             }
-            if (!name.isValid() && name.getLength() <= 2) {
-                // junk.  Un-associated tokens that matched something.
-                name.setFilteredOut(true);
-                continue;
+            if (!name.isValid()) {
+                if (name.getLength() <= 2) {
+                    // junk.  Un-associated tokens that matched something.
+                    name.setFilteredOut(true);
+                    continue;
+                } else if (!params.tag_codes && name.isShortName() && name.matchesCode()) {
+                    name.setFilteredOut(true);
+                    continue;
+                }
             }
 
             if (ignoreShortMixedCase(name)) {
@@ -357,6 +366,9 @@ public class NameCodeRule extends GeocodeRule {
     }
 
     private void remarkAbbreviation(PlaceCandidate pc) {
+        if (pc.isReviewed()){
+            return;
+        }
         if (pc.isAbbreviation) {
             /* Find evidence that this match is an abbreviation. */
             boolean matchFound = false;
@@ -367,6 +379,7 @@ public class NameCodeRule extends GeocodeRule {
                 }
             }
             pc.isAbbreviation = pc.isAcronym = matchFound;
+            pc.setReviewed(true);
         }
     }
 

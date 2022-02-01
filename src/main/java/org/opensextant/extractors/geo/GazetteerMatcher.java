@@ -151,16 +151,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         params.set(CommonParams.ROWS, 100000);
         params.set("subTags", false);
 
-        // we've got the input doc as a string instead; matchText=false means
-        // the tagger will not report the text, just span offsets.
-        // params.set("matchText", true);
-
         /*
          * Possible overlaps: ALL, NO_SUB, LONGEST_DOMINANT_RIGHT See Solr Text
          * Tagger documentation for details.
          */
         params.set("overlaps", "LONGEST_DOMINANT_RIGHT");
-        // params.set("overlaps", "NO_SUB");
 
         gazetteer = new SolrGazetteer(this.solr);
     }
@@ -467,6 +462,13 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // we might as well not make the tagger do any more work.
 
             String matchText = (String) tag.get("matchText");
+
+            // IF the matched text span contains odd punctuation, we'll pass on it.
+            if (TextUtils.hasIrregularPunctuation(matchText)){
+                ++this.defaultFilterCount;
+                continue;
+            }
+
             // Get char immediately following match, for light NLP rules.
             char postChar = 0;
             char preChar = 0;
@@ -582,7 +584,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                         // Omit non-major places
                         continue;
                     }
-                    if (pGeo.getFeatureCode().endsWith("X") || pGeo.getFeatureCode().endsWith("H")) {
+                    if (pGeo.getFeatureCode() != null &&
+                            (pGeo.getFeatureCode().endsWith("X") || pGeo.getFeatureCode().endsWith("H"))) {
                         // Omit Ruins or historical features.  Not perfect match here.
                         continue;
                     }
@@ -627,13 +630,22 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     namesMatched.add(pGeo.getName());
                 }
 
-                /*
+                /* COUNTRY feature bias:
                  * Country names are the only names you can reasonably set ahead
                  * of time. All other names need to be assessed in context.
                  * Negate country names, e.g., "Georgia", by exception.
                  */
                 if (pGeo.isCountry()) {
                     pc.isCountry = true;
+                }
+
+                /* CODE token filtering:
+                 * Example, if 'GA' appears randomly in document out of context  of qualifying a city or county,
+                 * then it is likely just the letters'GA' and not representing state of 'Georgia (GA)'.
+                 */
+                if (pGeo.isCode() && pc.isUpper()){
+                    pc.isAbbreviation = true;
+                    pc.isAcronym = true;
                 }
 
                 if (geocode) {

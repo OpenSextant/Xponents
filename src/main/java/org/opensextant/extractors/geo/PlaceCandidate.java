@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * as a possible named geographic location. It is used to collect together the
  * information from the document (the evidence), as well as the possible
  * geographic locations it could represent (the Places ). It also contains the
- * results of the final decision to include: bestPlace - Of all the places with 
+ * results of the final decision to include: bestPlace - Of all the places with
  * the same/similar names, which place is it?
  *
  * @author ubaldino
@@ -60,6 +60,7 @@ public class PlaceCandidate extends TextMatch {
     private boolean derived = false;
     private boolean anchor = false;
     private String nonDiacriticTextnorm = null;
+    private boolean reviewed = false;
 
     public PlaceCandidate(int x1, int x2) {
         super(x1, x2);
@@ -324,6 +325,29 @@ public class PlaceCandidate extends TextMatch {
             choice2 = tmp.get(last - 1);
             secondPlaceScore = choice2.getScore();
         }
+    }
+
+
+    /**
+     * To be used sparingly -- determine if a matched place for this text span
+     * is actually a code. Example
+     * <pre>
+     *     YYZ  -- an airport code
+     *     Yyz  -- transliterated name.
+     *     If we are not tagging coded information then short abbreviations are ignorable.
+     * </pre>
+     * @return True if a Geographic place for this match is actually a CODE
+     */
+    public boolean matchesCode() {
+        if (!hasPlaces()) {
+            return false;
+        }
+        for (ScoredPlace geo : getPlaces()) {
+            if (geo.getPlace().isCode()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -651,7 +675,7 @@ public class PlaceCandidate extends TextMatch {
      * @param proximityScore
      */
     public void addGeocoordEvidence(String rule, double weight, LatLon coord, Place geo,
-            double proximityScore) {
+                                    double proximityScore) {
         PlaceEvidence ev = new PlaceEvidence();
         ev.setRule(rule);
         ev.setWeight(weight);
@@ -934,5 +958,19 @@ public class PlaceCandidate extends TextMatch {
             }
         }
         return false;
+    }
+
+    /**
+     * A general purpose flag "reviewed" to indicate something was reviewed and to not repeat that task
+     * on this instance.
+     *
+     * @param b
+     */
+    public void setReviewed(boolean b) {
+        reviewed = b;
+    }
+
+    public boolean isReviewed() {
+        return reviewed;
     }
 }
