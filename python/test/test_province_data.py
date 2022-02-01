@@ -22,7 +22,7 @@ class TestReferenceData(TestCase):
         usa2 = get_country("United States", standard="name")
         assert usa1 == usa2
 
-        assert get_country("United States") == None
+        assert get_country("United States") is None
         try:
             get_country("United States", standard="No Such Standard")
         except:

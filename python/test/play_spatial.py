@@ -1,8 +1,9 @@
 import sys
 from argparse import ArgumentParser
-from opensextant.gazetteer import  get_default_db, DB
-from opensextant import Coordinate, Place
+
 import arrow
+from opensextant import Coordinate, Place
+from opensextant.gazetteer import DB
 
 ap = ArgumentParser()
 ap.add_argument("db", help="sqlite database")
@@ -10,8 +11,8 @@ ap.add_argument("--latlon", help="comma-separated lat,lon")
 args = ap.parse_args()
 
 
-def print_loc(geo:Place, dist):
-    print("Distance", dist, "Grid",geo.geohash, "Place:", geo)
+def print_loc(pl: Place, distance):
+    print("Distance", distance, "Grid", geo.geohash, "Place:", pl)
 
 
 # db = DB(get_default_db())
@@ -22,9 +23,8 @@ if args.latlon:
     print("Your query ---", coord)
     for dist, geo in db.list_places_at(lat=coord.lat, lon=coord.lon):
         print_loc(geo, dist)
-    
-    sys.exit();
 
+    sys.exit()
 
 gh = "9q5fp"
 
@@ -45,13 +45,12 @@ for dist, geo in locations:
     print_loc(geo, dist)
 print("Time: ", arrow.now() - t0)
 
-
 gh = "9rupu"
 # print("v1 bad version\n============")
-#t0 = arrow.now()
+# t0 = arrow.now()
 # locations = db.list_places_at_v1(geohash=gh, radius=5000)
-#print("Found", len(locations))
-#for dist, geo in locations:
+# print("Found", len(locations))
+# for dist, geo in locations:
 #    print_loc(geo, dist)
 """ NOTA BENE:  When searching geohash by prefix -- even a coarse enough prefix -- you
 still frequently run into issues at the edges of cells. 
@@ -81,21 +80,19 @@ for dist, geo in locations:
 
 print("Time: ", arrow.now() - t0)
 
-
-
 t0 = arrow.now()
 gh = "9q5fpg"
 # 9qh5... is next to 9q5f...
 print("\n====================")
 print("Location", gh, "Los Angeles County search against proximal geohash cells at 6, 5, 4...")
-locations= db.list_places_at(geohash=gh, radius=10000, limit=5)
+locations = db.list_places_at(geohash=gh, radius=10000, limit=5)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
 print("Time: ", arrow.now() - t0)
 
 # So look for places close to POI ~ "9q5fpg" but now in 9q5f* other cells.
-locations= db.list_places_at(geohash=gh, radius=10000, limit=5)
+locations = db.list_places_at(geohash=gh, radius=10000, limit=5)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
@@ -106,12 +103,11 @@ print("Time: ", arrow.now() - t0)
 # Notice RADIUS is smaller, because its likely 9qh places are closer than other 9q5 places.
 print("\n====================")
 print(" Find places in 9q* that are within 2KM of the point", gh)
-locations= db.list_places_at(geohash=gh, radius=2000, limit=100)
+locations = db.list_places_at(geohash=gh, radius=2000, limit=100)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
 print("Time: ", arrow.now() - t0)
-
 
 # Otherwise....
 print("Spatial Queries for Places near a Lat/Lon")
