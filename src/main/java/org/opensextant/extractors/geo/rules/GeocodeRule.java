@@ -18,6 +18,7 @@
 package org.opensextant.extractors.geo.rules;
 
 import org.opensextant.data.Place;
+import org.opensextant.data.TextInput;
 import org.opensextant.extractors.geo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,22 @@ public abstract class GeocodeRule {
     public void setDefaultMethod(String m) {
         defaultMethod = m;
     }
+
+    /** for the purposes of Geocoder Rule reasoning determine the case. */
+    public int textCase(TextInput t){
+        if (t.isLower){
+            return LOWERCASE;
+        } else if (t.isUpper){
+            return UPPERCASE;
+        }
+        return 0;
+    }
+    protected int textCase = 0;
+
+    public void setTextCase(TextInput t) {
+        textCase = textCase(t);
+    }
+
 
     /**
      * Override if rule instance has another view of relevance, e.g.
@@ -130,7 +147,7 @@ public abstract class GeocodeRule {
         if (geo.getName().equals(name.getText())) {
             name.incrementPlaceScore(geo, 1.5, NameRule.LEX1);
         } else if (geo.getName().equalsIgnoreCase(name.getText())) {
-            name.incrementPlaceScore(geo, 1.0, NameRule.LEX2);
+            name.incrementPlaceScore(geo, 0.5, NameRule.LEX2);
         }
     }
 

@@ -39,12 +39,6 @@ public class LocationChooserRule extends GeocodeRule {
     private final HashSet<String> preferredCountries = new HashSet<>();
     private final HashSet<String> preferredLocations = new HashSet<>();
 
-    private int textCase = 0;
-
-    public void setTextCase(int c) {
-        textCase = c;
-    }
-
     @Override
     public void reset() {
         namespace.clear();
@@ -494,7 +488,11 @@ public class LocationChooserRule extends GeocodeRule {
             if (pc.getEvidence().isEmpty() && hasOnlyDefaultRules(pc)) {
                 points -= 10;
             }
-            if (pc.isLower() && textCase != LOWERCASE) {
+            // For Short phrases we look mostly at how well they line up with the document itself.
+            // lower case in NOT lower case Text --> decrement
+            // UPPER case in UPPER CASE TEXT --> decrement
+            //
+            if ((pc.isLower() && textCase != LOWERCASE) || (pc.isUpper() && textCase == UPPERCASE)) {
                 points -= 5;
             }
         }

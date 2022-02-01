@@ -150,9 +150,15 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
      * if Place given has same feature class and code as the current evidence
      */
     public boolean isSameFeature(Place geo) {
+        // Nothing to compare
         if (this.getFeatureClass() == null) {
             return false;
         }
+        // compare class, test if codes are both null
+        if (this.getFeatureCode()==null){
+            return this.getFeatureClass().equals(geo.getFeatureClass()) && geo.getFeatureCode() == null;
+        }
+        // No nulls, compare Class/Code.
         return (this.getFeatureClass().equals(geo.getFeatureClass())
                 && this.getFeatureCode().equals(geo.getFeatureCode()));
     }

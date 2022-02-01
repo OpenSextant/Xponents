@@ -1018,7 +1018,7 @@ public class XponentGeocoder extends GeoInferencer {
 
     private static final Pattern remove_punct = Pattern.compile("\\.");
 
-    public static final String removePunct(String s) {
+    public static String removePunct(String s) {
         return remove_punct.matcher(s).replaceAll("");
     }
 

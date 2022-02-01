@@ -283,6 +283,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * @return list of matches or Null
      * @throws ExtractionException
      */
+    @SuppressWarnings("unchecked")
     private List<TextMatch> extractorImpl(String id, String buf) throws ExtractionException {
         /*
          * Implementation notes:

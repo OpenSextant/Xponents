@@ -315,7 +315,7 @@ public class SolrGazetteer {
         return countryCodeMap;
     }
 
-    private static final Country createCountry(SolrDocument gazEntry) {
+    private static Country createCountry(SolrDocument gazEntry) {
         String code = SolrUtil.getString(gazEntry, "cc");
         String name = SolrUtil.getString(gazEntry, "name");
         String featCode = SolrUtil.getString(gazEntry, "feat_code");
@@ -496,7 +496,7 @@ public class SolrGazetteer {
      * @param places list of places
      * @return closest place
      */
-    public static final Place closest(LatLon yx, List<Place> places) {
+    public static Place closest(LatLon yx, List<Place> places) {
 
         long dist = 10000000L;
         Place chosen = null;

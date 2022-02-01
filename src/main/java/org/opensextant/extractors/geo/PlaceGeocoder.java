@@ -209,7 +209,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         countryRule.setCountryObserver(this);
 
         /* assess NAME, CODE patterns */
-        nameWithAdminRule = new NameCodeRule();
+        nameWithAdminRule = new NameCodeRule(this.taggingParams);
         nameWithAdminRule.setBoundaryObserver(this);
         nameWithAdminRule.setCountryObserver(this);
 
@@ -516,7 +516,7 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         // Last rule: score, choose, add confidence.
         //
-        chooser.setTextCase(input.isLower ? GeocodeRule.LOWERCASE : 0);
+        chooser.setTextCase(input);
         chooser.evaluate(candidates, jobParams);
         if (provinceNameSetter != null) {
             provinceNameSetter.evaluate(candidates);

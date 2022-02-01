@@ -124,7 +124,7 @@ public class HeatMapRule extends GeocodeRule {
          */
         for (PlaceCandidate name : names) {
             if (name.isFilteredOut()) {
-                log.debug("Igore for HeatMap: {}", name.getText());
+                log.debug("Ignore for HeatMap: {}", name.getText());
                 continue;
             }
             for (ScoredPlace geoScore : name.getPlaces()) {
