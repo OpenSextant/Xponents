@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class SolrMatcherSupport implements Closeable {
 
+    public static final int DEFAULT_TAG_LIMIT = 100000;
+
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected String requestHandler = "/tag";
@@ -184,6 +186,12 @@ public abstract class SolrMatcherSupport implements Closeable {
         SolrDocumentList docList = response.getResults();
         if (docList != null) {
             StreamingResponseCallback callback = tagRequest.getStreamingResponseCallback();
+            // Avoid creating objects on large buff if you know this will error out.
+            if (docList.getNumFound() >= DEFAULT_TAG_LIMIT) {
+                throw new ExtractionException(String.format("[Text ID: %s] Tag limit (n=%d) reached. Break up your input (len=%d)",
+                        docid, DEFAULT_TAG_LIMIT, buffer.length()));
+            }
+
             callback.streamDocListInfo(docList.getNumFound(), docList.getStart(), docList.getMaxScore());
             for (SolrDocument solrDoc : docList) {
                 callback.streamSolrDocument(solrDoc);

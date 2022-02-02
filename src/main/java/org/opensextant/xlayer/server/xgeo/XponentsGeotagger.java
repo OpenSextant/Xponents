@@ -30,6 +30,9 @@ import java.util.List;
  */
 public class XponentsGeotagger extends TaggerResource {
 
+    private static final String[] extractors = {"xgeo", "xtemp", "xpostal"};
+    private final HashSet<String> extractorSet = new HashSet<>();
+
     /**
      * Restlet resource that pulls its configuration from Context.
      */
@@ -37,12 +40,6 @@ public class XponentsGeotagger extends TaggerResource {
         super();
         getContext();
         log = Context.getCurrentLogger();
-    }
-
-    private static final String[] extractors = {"xgeo", "xtemp", "xpostal"};
-    private static final HashSet<String> extractorSet = new HashSet<>();
-
-    static {
         extractorSet.addAll(Arrays.asList(extractors));
     }
 

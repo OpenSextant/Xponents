@@ -143,12 +143,13 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         super.initialize();
 
         /*
-         * Setup matcher params.
+         * Setup matcher params.  "tagsLimit" indicates the # of index rows, i.e., gazetteer
+         * objects returned in beanMap
          */
         params.set(CommonParams.FL,
                 "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type");
-        params.set("tagsLimit", 100000);
-        params.set(CommonParams.ROWS, 100000);
+        params.set("tagsLimit", DEFAULT_TAG_LIMIT);
+        params.set(CommonParams.ROWS, DEFAULT_TAG_LIMIT);
         params.set("subTags", false);
 
         /*
@@ -574,8 +575,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 /* beanMap is populated by createTag() */
                 Place pGeo = (Place) beanMap.get(solrId);
                 if (pGeo == null) {
-                    log.error("Place object not found for row ID {}", solrId);
-                    continue;
+                    // Uknown reason why beanMap may not contain the relevant tag info -- very large docs?
+                    throw new ExtractionException(String.format("[Text ID: %s] Place instance not found in-memory for gazetteer tag ID %s", input.id, solrId));
                 }
 
                 /* OPTIMIZE: Pare down very large location matches */

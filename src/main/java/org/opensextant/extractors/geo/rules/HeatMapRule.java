@@ -1,11 +1,11 @@
 package org.opensextant.extractors.geo.rules;
 
+import java.util.*;
+
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.extractors.geo.ScoredPlace;
-
-import java.util.*;
 
 public class HeatMapRule extends GeocodeRule {
 
@@ -15,17 +15,40 @@ public class HeatMapRule extends GeocodeRule {
     final Map<String, List<PlaceCandidate>> mentionMap = new HashMap<>();
     private boolean useAdminBoundary = true;
 
+    private static final int AVERAGE_NAME_LEN = 8;
     public static final String HEATMAP_RULE = "CollocatedNames.geohash";
     public static final String HEATMAP_ADMIN_RULE = "CollocatedNames.boundary";
     private static final String IGNORE_FEATURES = "URS"; // OK: A, P, H, T, L, V.
-    private static final int AVERAGE_NAME_LEN = 8;
+    private static final HashSet<String> IGNORE_FEATURE_LIST = new HashSet<>();
+
+    static {
+        // Heat map model should igore the numerous Hydro features and select other
+        // common features.
+        IGNORE_FEATURE_LIST.add("S/FRM");
+        IGNORE_FEATURE_LIST.add("H/WLL");
+        IGNORE_FEATURE_LIST.add("H/SPNG");
+        IGNORE_FEATURE_LIST.add("H/STM");
+        IGNORE_FEATURE_LIST.add("H/STMI");
+        IGNORE_FEATURE_LIST.add("H/STMM");
+    }
 
     @Override
     public void reset() {
         heatmap.clear();
         visitedPlaces.clear();
         heatmapNames.clear();
+        mentionMap.clear();
         useAdminBoundary = true;
+    }
+
+    private boolean ignoreFeatures(Place pl) {
+        if (IGNORE_FEATURES.contains(pl.getFeatureClass())) {
+            return true;
+        }
+        if (IGNORE_FEATURE_LIST.contains(pl.getFeatureDesignation())) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -43,7 +66,7 @@ public class HeatMapRule extends GeocodeRule {
         if (geo.getFeatureCode() == null || geo.getFeatureClass() == null) {
             return;
         }
-        if (IGNORE_FEATURES.contains(geo.getFeatureClass())) {
+        if (ignoreFeatures(geo)) {
             return;
         }
 
@@ -72,7 +95,7 @@ public class HeatMapRule extends GeocodeRule {
 
     /**
      * Add a place NAME to a grid or geohash to create clusters.
-     * 
+     *
      * @param name
      * @param geo
      * @param gh
@@ -90,13 +113,13 @@ public class HeatMapRule extends GeocodeRule {
 
     /**
      * Map Geo Place ID to PlaceCandidate that referred it.
-     * 
+     *
      * @param name
      * @param geo
      */
     private void addMention(PlaceCandidate name, Place geo) {
 
-        List<PlaceCandidate> tracking = mentionMap.computeIfAbsent(geo.getPlaceID(), k-> new ArrayList<>());
+        List<PlaceCandidate> tracking = mentionMap.computeIfAbsent(geo.getPlaceID(), k -> new ArrayList<>());
         if (!tracking.contains(name)) {
             tracking.add(name);
         }
