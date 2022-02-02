@@ -48,24 +48,31 @@
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="XlayerClient-__init__"><strong>__init__</strong></a>(self, server, options='')</dt><dd><tt>@param&nbsp;server:&nbsp;URL&nbsp;for&nbsp;the&nbsp;service.&nbsp;&nbsp;&nbsp;E.g.,&nbsp;<a href="http://SERVER/xlayer/rest/process">http://SERVER/xlayer/rest/process</a>.<br>
+<dl><dt><a name="XlayerClient-__init__"><strong>__init__</strong></a>(self, server, options='')</dt><dd><tt>@param&nbsp;server:&nbsp;URL&nbsp;for&nbsp;the&nbsp;service.&nbsp;&nbsp;&nbsp;E.g.,&nbsp;host:port&nbsp;or&nbsp;'<a href="http://SERVER/xlayer/rest/process">http://SERVER/xlayer/rest/process</a>'.<br>
 @keyword&nbsp;&nbsp;options:&nbsp;&nbsp;STRING.&nbsp;a&nbsp;comma-separated&nbsp;list&nbsp;of&nbsp;options&nbsp;to&nbsp;send&nbsp;with&nbsp;each&nbsp;request.<br>
 There&nbsp;are&nbsp;no&nbsp;default&nbsp;options&nbsp;supported.</tt></dd></dl>
 
 <dl><dt><a name="XlayerClient-ping"><strong>ping</strong></a>(self, timeout=30)</dt><dd><tt>Timeout&nbsp;of&nbsp;30&nbsp;seconds&nbsp;is&nbsp;used&nbsp;here&nbsp;so&nbsp;calls&nbsp;do&nbsp;not&nbsp;hang&nbsp;indefinitely.<br>
 :return:&nbsp;True&nbsp;if&nbsp;successful.</tt></dd></dl>
 
-<dl><dt><a name="XlayerClient-process"><strong>process</strong></a>(self, docid, text, features=['geo'], timeout=10, preferred_countries=None, preferred_locations=None)</dt><dd><tt>Process&nbsp;text,&nbsp;extracting&nbsp;some&nbsp;entities<br>
+<dl><dt><a name="XlayerClient-process"><strong>process</strong></a>(self, docid, text, lang=None, features=['geo'], timeout=10, preferred_countries=None, preferred_locations=None)</dt><dd><tt>Process&nbsp;text,&nbsp;extracting&nbsp;some&nbsp;entities<br>
 &nbsp;<br>
-&nbsp;&nbsp;features&nbsp;=&nbsp;"f,f,f,f"&nbsp;&nbsp;String&nbsp;of&nbsp;comma-separated&nbsp;features<br>
-&nbsp;&nbsp;options&nbsp;&nbsp;=&nbsp;"o,o,o,o"&nbsp;&nbsp;String&nbsp;of&nbsp;comma-separated&nbsp;features<br>
+&nbsp;&nbsp;lang&nbsp;=&nbsp;"xx"&nbsp;or&nbsp;None,&nbsp;where&nbsp;"xx"&nbsp;is&nbsp;a&nbsp;ISO&nbsp;language&nbsp;2-char&nbsp;code.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;general&nbsp;Chinese/Japanese/Korean&nbsp;(CJK)&nbsp;support,&nbsp;use&nbsp;lang&nbsp;=&nbsp;'cjk'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Language&nbsp;IDs&nbsp;that&nbsp;have&nbsp;some&nbsp;additional&nbsp;tuning&nbsp;include:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ja",&nbsp;"th",&nbsp;"tr",&nbsp;"id",&nbsp;"ar",&nbsp;"fa",&nbsp;"ur",&nbsp;"ru",&nbsp;"it",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"pt",&nbsp;"de",&nbsp;"nl",&nbsp;"es",&nbsp;"en",&nbsp;"tl",&nbsp;"ko",&nbsp;"vi"<br>
+&nbsp;&nbsp;Behavior:&nbsp;&nbsp;Arabic&nbsp;(ar)&nbsp;or&nbsp;CJK&nbsp;(cjk)&nbsp;lang&nbsp;ID&nbsp;directs&nbsp;tagger&nbsp;to&nbsp;use&nbsp;language-specific&nbsp;tokenizers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Otherwise&nbsp;other&nbsp;lang&nbsp;ID&nbsp;provided&nbsp;just&nbsp;invokes&nbsp;language-specific&nbsp;stopword&nbsp;filters<br>
 &nbsp;<br>
 &nbsp;&nbsp;features&nbsp;are&nbsp;places,&nbsp;coordinates,&nbsp;countries,&nbsp;orgs,&nbsp;persons,&nbsp;patterns,&nbsp;postal.&nbsp;<br>
 &nbsp;&nbsp;<br>
 &nbsp;&nbsp;feature&nbsp;aliases&nbsp;"geo"&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;get&nbsp;All&nbsp;Geographic&nbsp;entities&nbsp;(places,coordinates,countries)<br>
 &nbsp;&nbsp;feature&nbsp;"taxons"&nbsp;can&nbsp;get&nbsp;at&nbsp;any&nbsp;Taxon&nbsp;"taxons",&nbsp;"persons",&nbsp;"orgs"<br>
 &nbsp;&nbsp;feature&nbsp;"postal"&nbsp;will&nbsp;tag&nbsp;obvious,&nbsp;qualified&nbsp;postal&nbsp;codes&nbsp;that&nbsp;are&nbsp;paired&nbsp;with&nbsp;a&nbsp;CITY,&nbsp;PROVINCE,&nbsp;or&nbsp;COUNTRY&nbsp;tag.<br>
-&nbsp;&nbsp;<br>
+&nbsp;&nbsp;feature&nbsp;"patterns"&nbsp;is&nbsp;an&nbsp;alias&nbsp;for&nbsp;dates&nbsp;and&nbsp;any&nbsp;other&nbsp;pattern-based&nbsp;extractors.&nbsp;For&nbsp;now&nbsp;"dates"&nbsp;is&nbsp;only&nbsp;one<br>
+&nbsp;&nbsp;feature&nbsp;"codes"&nbsp;will&nbsp;tag,&nbsp;use&nbsp;and&nbsp;report&nbsp;coded&nbsp;information&nbsp;for&nbsp;any&nbsp;place;&nbsp;primarily&nbsp;administrative&nbsp;boundaries<br>
+&nbsp;<br>
 &nbsp;&nbsp;options&nbsp;are&nbsp;not&nbsp;observed&nbsp;by&nbsp;Xlayer&nbsp;"Xgeo",&nbsp;but&nbsp;you&nbsp;can&nbsp;adapt&nbsp;your&nbsp;own&nbsp;service<br>
 &nbsp;&nbsp;to&nbsp;accomodate&nbsp;such&nbsp;options.&nbsp;&nbsp;&nbsp;Possible&nbsp;options&nbsp;are&nbsp;clean_input,&nbsp;lowercase,&nbsp;for&nbsp;example:<br>
 &nbsp;<br>
@@ -76,7 +83,8 @@ There&nbsp;are&nbsp;no&nbsp;default&nbsp;options&nbsp;supported.</tt></dd></dl>
 &nbsp;&nbsp;so&nbsp;they&nbsp;are&nbsp;not&nbsp;supported&nbsp;out&nbsp;of&nbsp;the&nbsp;box&nbsp;here.<br>
 :param&nbsp;docid:&nbsp;identifier&nbsp;of&nbsp;transaction<br>
 :param&nbsp;text:&nbsp;Unicode&nbsp;text&nbsp;to&nbsp;process<br>
-:param&nbsp;features:&nbsp;LIST&nbsp;of&nbsp;geo&nbsp;OR&nbsp;[places,&nbsp;coordinates,&nbsp;countries],&nbsp;orgs,&nbsp;persons,&nbsp;patterns,&nbsp;taxons<br>
+:param&nbsp;lang:&nbsp;One&nbsp;of&nbsp;["ar",&nbsp;"cjk",&nbsp;....&nbsp;other&nbsp;ISO&nbsp;language&nbsp;IDs]<br>
+:param&nbsp;features:&nbsp;list&nbsp;of&nbsp;geo&nbsp;OR&nbsp;[places,&nbsp;coordinates,&nbsp;countries],&nbsp;orgs,&nbsp;persons,&nbsp;patterns,&nbsp;taxons<br>
 :param&nbsp;timeout:&nbsp;default&nbsp;to&nbsp;10&nbsp;seconds;&nbsp;If&nbsp;you&nbsp;think&nbsp;your&nbsp;processing&nbsp;takes&nbsp;longer,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adjust&nbsp;if&nbsp;you&nbsp;see&nbsp;exceptions.<br>
 :param&nbsp;preferred_countries:&nbsp;Array&nbsp;of&nbsp;country&nbsp;codes&nbsp;representing&nbsp;those&nbsp;which&nbsp;are&nbsp;preferred&nbsp;fall&nbsp;backs&nbsp;when<br>
@@ -108,5 +116,12 @@ Data descriptors defined here:<br>
  <dl><dt><a name="-print_results"><strong>print_results</strong></a>(arr)</dt><dd><tt>:param&nbsp;arr:&nbsp;array&nbsp;of&nbsp;Annotations&nbsp;or&nbsp;TextMatch<br>
 :return:</tt></dd></dl>
  <dl><dt><a name="-process_text"><strong>process_text</strong></a>(txt, docid='$DOC-ID$', features=[], preferred_countries=[], preferred_locations=[])</dt></dl>
-</td></tr></table>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>GEOCODINGS</strong> = {'coord', 'coordinate', 'country', 'geo', 'place', 'postal'}</td></tr></table>
 </body></html>

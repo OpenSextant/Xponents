@@ -55,7 +55,12 @@
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="opensextant.html#TextMatch">TextMatch</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="opensextant.html#PlaceCandidate">PlaceCandidate</a>
 </font></dt></dl>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd>
@@ -227,6 +232,73 @@ Data descriptors inherited from <a href="opensextant.html#Coordinate">Coordinate
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PlaceCandidate">class <strong>PlaceCandidate</strong></a>(<a href="opensextant.html#TextMatch">TextMatch</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#PlaceCandidate">PlaceCandidate</a>(*args,&nbsp;**kwargs)<br>
+&nbsp;<br>
+A&nbsp;<a href="#TextMatch">TextMatch</a>&nbsp;representing&nbsp;any&nbsp;geographic&nbsp;mention&nbsp;--&nbsp;a&nbsp;<a href="#Place">Place</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;will<br>
+represent&nbsp;the&nbsp;additional&nbsp;attributes&nbsp;for&nbsp;the&nbsp;chosen&nbsp;place.<br>
+see&nbsp;also&nbsp;in&nbsp;Java&nbsp;org.opensextant.extractors.geo.<a href="#PlaceCandidate">PlaceCandidate</a>&nbsp;class,&nbsp;which&nbsp;is<br>
+a&nbsp;more&nbsp;in-depth&nbsp;version&nbsp;of&nbsp;this.&nbsp;&nbsp;This&nbsp;Python&nbsp;class&nbsp;represents&nbsp;the<br>
+response&nbsp;from&nbsp;the&nbsp;REST&nbsp;API,&nbsp;for&nbsp;example.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="opensextant.html#PlaceCandidate">PlaceCandidate</a></dd>
+<dd><a href="opensextant.html#TextMatch">TextMatch</a></dd>
+<dd><a href="opensextant.html#TextEntity">TextEntity</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="PlaceCandidate-__init__"><strong>__init__</strong></a>(self, *args, **kwargs)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="PlaceCandidate-populate"><strong>populate</strong></a>(self, attrs: dict)</dt><dd><tt>Deserialize&nbsp;the&nbsp;attributes&nbsp;dict&nbsp;from&nbsp;either&nbsp;<a href="#TextMatch">TextMatch</a>&nbsp;schema&nbsp;or&nbsp;<a href="#Place">Place</a>&nbsp;schema<br>
+:param&nbsp;attrs:<br>
+:return:</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="opensextant.html#TextMatch">TextMatch</a>:<br>
+<dl><dt><a name="PlaceCandidate-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="PlaceCandidate-normalize"><strong>normalize</strong></a>(self)</dt><dd><tt>Optional,&nbsp;but&nbsp;recommended&nbsp;routine&nbsp;to&nbsp;normalize&nbsp;the&nbsp;matched&nbsp;data.<br>
+That&nbsp;is,&nbsp;parse&nbsp;fields,&nbsp;uppercase,&nbsp;streamline&nbsp;punctuation,&nbsp;etc.<br>
+As&nbsp;well,&nbsp;given&nbsp;such&nbsp;normalization&nbsp;result,&nbsp;this&nbsp;is&nbsp;the&nbsp;opportunity&nbsp;to&nbsp;additionally<br>
+validate&nbsp;the&nbsp;match.<br>
+:return:</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="opensextant.html#TextEntity">TextEntity</a>:<br>
+<dl><dt><a name="PlaceCandidate-contains"><strong>contains</strong></a>(self, x1)</dt><dd><tt>if&nbsp;this&nbsp;span&nbsp;contains&nbsp;an&nbsp;offset&nbsp;x1<br>
+:param&nbsp;x1:</tt></dd></dl>
+
+<dl><dt><a name="PlaceCandidate-exact_match"><strong>exact_match</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="PlaceCandidate-is_after"><strong>is_after</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="PlaceCandidate-is_before"><strong>is_before</strong></a>(self, t)</dt></dl>
+
+<dl><dt><a name="PlaceCandidate-is_within"><strong>is_within</strong></a>(self, t)</dt><dd><tt>if&nbsp;the&nbsp;given&nbsp;annotation,&nbsp;t,&nbsp;contains&nbsp;this<br>
+:param&nbsp;t:<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="PlaceCandidate-overlaps"><strong>overlaps</strong></a>(self, t)</dt><dd><tt>Determine&nbsp;if&nbsp;t&nbsp;overlaps&nbsp;self.&nbsp;&nbsp;If&nbsp;Right&nbsp;or&nbsp;Left&nbsp;match,&nbsp;t&nbsp;overlaps&nbsp;if&nbsp;it&nbsp;is&nbsp;longer.<br>
+If&nbsp;t&nbsp;is&nbsp;contained&nbsp;entirely&nbsp;within&nbsp;self,&nbsp;then&nbsp;it&nbsp;is&nbsp;not&nbsp;considered&nbsp;overlap&nbsp;--&nbsp;it&nbsp;is&nbsp;Contained&nbsp;within.<br>
+:param&nbsp;t:<br>
+:return:</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="opensextant.html#TextEntity">TextEntity</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#000000" face="helvetica, arial"><a name="TextEntity">class <strong>TextEntity</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
@@ -299,9 +371,9 @@ As&nbsp;well,&nbsp;given&nbsp;such&nbsp;normalization&nbsp;result,&nbsp;this&nbs
 validate&nbsp;the&nbsp;match.<br>
 :return:</tt></dd></dl>
 
-<dl><dt><a name="TextMatch-populate"><strong>populate</strong></a>(self, attrs)</dt><dd><tt>Populate&nbsp;a&nbsp;<a href="#TextMatch">TextMatch</a>&nbsp;to&nbsp;normalize&nbsp;the&nbsp;set&nbsp;of&nbsp;attributes&nbsp;--&nbsp;separate&nbsp;class&nbsp;fields&nbsp;on&nbsp;<a href="#TextMatch">TextMatch</a>&nbsp;from&nbsp;additional<br>
+<dl><dt><a name="TextMatch-populate"><strong>populate</strong></a>(self, attrs: dict)</dt><dd><tt>Populate&nbsp;a&nbsp;<a href="#TextMatch">TextMatch</a>&nbsp;to&nbsp;normalize&nbsp;the&nbsp;set&nbsp;of&nbsp;attributes&nbsp;--&nbsp;separate&nbsp;class&nbsp;fields&nbsp;on&nbsp;<a href="#TextMatch">TextMatch</a>&nbsp;from&nbsp;additional<br>
 optional&nbsp;attributes.<br>
-:param&nbsp;attrs:<br>
+:param&nbsp;attrs:&nbsp;dict&nbsp;of&nbsp;standard&nbsp;Xponents&nbsp;API&nbsp;outputs.<br>
 :return:</tt></dd></dl>
 
 <hr>
@@ -376,6 +448,7 @@ country&nbsp;code&nbsp;you&nbsp;may&nbsp;have&nbsp;a&nbsp;data&nbsp;quality&nbsp
 :return:</tt></dd></dl>
  <dl><dt><a name="-is_administrative"><strong>is_administrative</strong></a>(feat: str)</dt></dl>
  <dl><dt><a name="-is_country"><strong>is_country</strong></a>(feat_code: str)</dt><dd><tt>Test&nbsp;a&nbsp;feature&nbsp;code</tt></dd></dl>
+ <dl><dt><a name="-is_political"><strong>is_political</strong></a>(feat_code: str)</dt><dd><tt>Test&nbsp;a&nbsp;feature&nbsp;code</tt></dd></dl>
  <dl><dt><a name="-is_populated"><strong>is_populated</strong></a>(feat: str)</dt></dl>
  <dl><dt><a name="-load_countries"><strong>load_countries</strong></a>(csvpath=None)</dt><dd><tt>parses&nbsp;Xponents&nbsp;Core/src/main/resource&nbsp;CSV&nbsp;file&nbsp;country-names-2015.csv<br>
 putting&nbsp;out&nbsp;an&nbsp;array&nbsp;of&nbsp;<a href="#Country">Country</a>&nbsp;objects.<br>
