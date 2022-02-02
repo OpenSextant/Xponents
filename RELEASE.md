@@ -32,6 +32,10 @@ RELEASES
     and various other false-positive places are NOT tagged, although present in the gazetteer.
   - About 500 dictionary words in French, German and English were added to the stop-filter
     for tokens commonly not places. E.g., `amend`, `adept`, etc.
+* **Bugs Fixed**: 
+  - Geocoder Rule `HeatMap` memory leak fixed
+  - `German` is removed as a country -- its a nationality or an adjective
+  - Tagger will throw `ExtractionException` if it tags 100,000 or more locations from gazetter  
 * **API Changes**:
   - `codes` feature can be requested in REST API: `features=geo,taxons,patterns,codes` for example.
     This will emit tagged acronyms for admin boundaries for now.
