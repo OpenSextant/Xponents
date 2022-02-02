@@ -2,7 +2,7 @@
 #
 #
 VER=3.5
-BUILD_VER=3.5.3
+BUILD_VER=3.5.5
 
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
@@ -84,7 +84,7 @@ msg "Create VERSION label"
 cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER
 Date:      `date`
-Gazetteer: Xponents Solr 2021-Q4
+Gazetteer: Xponents Solr 2022-Q1
   Sources: NGA,  2021-OCT
            USGS, 2021-AUG
            Geonames.org, 2021-AUG

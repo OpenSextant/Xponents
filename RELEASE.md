@@ -20,6 +20,27 @@ RELEASES
 
 # 2021
 
+**Xponents 3.5.5 BeginAgain (Re-release)**
+
+* **Geocoding**: Tamped down on acronym false-positives on UPPERCASE and lowercase 
+  documents given the added gazetteer data includes lots of codes.
+  - Default behavior: country codes and province codes are NOT emitted although tagged. 
+    These are requested explicitly by caller using the `codes` feature. Right, so `USA`
+    or `COD` or `MA` are not emitted by default although those bare tokens may represent
+    countries or provinces.  Such codes qualifying other placenames will be emitted.
+  - Gazetteer tagging ommissions: numerous transliterated short names for Pacific/Asian islands `A xx`, `I-xx`
+    and various other false-positive places are NOT tagged, although present in the gazetteer.
+  - About 500 dictionary words in French, German and English were added to the stop-filter
+    for tokens commonly not places. E.g., `amend`, `adept`, etc.
+* **API Changes**:
+  - `codes` feature can be requested in REST API: `features=geo,taxons,patterns,codes` for example.
+    This will emit tagged acronyms for admin boundaries for now.
+  - Xponents Core `TextUtils` now offers trivial text span testing for common punctuation.
+    For example, to quickly test if `MARC __&amp;__ U` looks like a entity or is a false positive
+    when tagging the phrase `Marc U` a common punct test was needed.  These were fairly obvious 
+    pre-filters to employ just after tagging and before serious reasoning happens. 
+    
+
 **Xponents 3.5.4 BeginAgain**
 
 * **Full Evaluation**: internal evaluation work was redone start to finish to hone outlier gazetteer entries and

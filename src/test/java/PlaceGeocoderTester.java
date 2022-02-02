@@ -64,6 +64,7 @@ public class PlaceGeocoderTester extends TestGazMatcher {
      * @throws URISyntaxException
      */
     public void tagEvaluation() throws IOException, URISyntaxException {
+        TestGazMatcher.printMemory();
 
         File f = new File(PlaceGeocoderTester.class.getResource("/data/placename-tests.txt").toURI());
         String texts = FileUtility.readFile(f, "UTF-8");
@@ -114,6 +115,7 @@ public class PlaceGeocoderTester extends TestGazMatcher {
             } catch (Exception err) {
                 err.printStackTrace();
             }
+            TestGazMatcher.printMemory();
             tester.cleanup();
             System.exit(0);
 

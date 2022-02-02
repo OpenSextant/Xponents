@@ -256,8 +256,6 @@ public class TestGazMatcher {
         List<TextMatch> matches = geocoder.extract(t);
         summarizeFindings(matches);
         print("\n");
-
-        TestGazMatcher.printMemory();
     }
 
     protected void tagBatch(String filename) throws IOException {
