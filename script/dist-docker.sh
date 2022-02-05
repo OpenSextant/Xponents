@@ -17,6 +17,9 @@ fi
 echo "              Xponents Docker                 "
 echo "=============================================="
 
+echo "Version Number of Image"
+read IMG_VERSION
+
 cd $TARGET/
-docker build --tag opensextant:xponents-$VERSION .
+docker build --tag opensextant:xponents-$IMG_VERSION .
 

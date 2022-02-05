@@ -49,6 +49,10 @@ REPO=maven-repo
 echo "              Xponents Docker Offline         "
 echo "=============================================="
 
+echo "Version Number of Image"
+read IMG_VERSION
+
+
 # CORE
 echo "++++++++++++++++ CORE ++++++++++++++++"
 (cd Core && mvn install -Dmaven.repo.local=../$REPO)
@@ -111,4 +115,4 @@ done
 # Docker
 echo "++++++++++++++++ DOCKER / Maven Offline ++++++++++++++++"
 cd $TARGET
-docker build --tag opensextant:xponents-offline-$VERSION -f ./Dockerfile.offline .
+docker build --tag opensextant:xponents-offline-$IMG_VERSION -f ./Dockerfile.offline .
