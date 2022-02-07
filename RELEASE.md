@@ -18,7 +18,7 @@ Gazetteer project is no longer used here.
 RELEASES
 ==============
 
-# 2021
+# 2022
 
 **Xponents 3.5.5 BeginAgain (Re-release)**
 
@@ -57,6 +57,8 @@ RELEASES
   requires that pair.  Other subclasses can have a zero argument constructor by exception, such as `PoLiMatch`
   - `GeonamesUtility.isCountry()` now only returns true for `PCLI` entries others are historical country names or territories.
   - REST API now has `method` and `match-id` on most matches to be more consistent
+
+# 2021
 
 **Xponents 3.5.0 GiveThanks**
 
