@@ -3,7 +3,7 @@ import os
 import re
 import sys
 from abc import ABC, abstractmethod
-from math import sqrt, sin, cos, radians, atan2, log as mathlog
+from math import sqrt, sin, cos, radians, atan2, log as mathlog, log10
 
 from opensextant.utility import get_csv_reader, get_bool
 from pygeodesy.geohash import encode as geohash_encode, neighbors as geohash_neighbors
@@ -80,6 +80,34 @@ def distance_haversine(ddlon1, ddlat1, ddlon2, ddlat2):
     a = (sin(dLat / 2) * sin(dLat / 2)) + (cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2))
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return int(EARTH_RADIUS_WGS84 * c)
+
+
+def location_accuracy(conf, prec_err):
+    """
+    Both confidence and precision error are required to be non-zero and positive.
+
+    Scale ACCURACY by confidence, and inversely log10( R^2 )
+    Decreasing accuracy with increasing radius, but keep scale on the order of visible things,
+    e.g., 0.01 to 1.00.  This is only one definition of accuracy.
+
+    Consider confidence = 100 (aka 100% chance we have the right location)
+
+    * Country precision ~ +/- 100KM is accuracy = 0.091
+    * GPS precision is   10 M precision is accuracy 0.33
+    * 1M precision , accuracy =  1.0, (1 / (1+log(1*1)) = 1/1.  In other words a 1m error is basically "perfect"
+
+    :param conf: confidence on 100 point scale (0-100)
+    :param prec_err: error in location precision, meters
+    :return:
+    """
+    if not conf or not prec_err:
+        return 0
+    if conf < 0 or prec_err < 0:
+        return 0
+    scale = 0.01 * conf
+    inv_prec = 1 + log10(prec_err * prec_err)
+    acc = scale / inv_prec
+    return float(f"{acc:0.4f}")
 
 
 def _estimate_geohash_precision(r: int):
@@ -254,6 +282,7 @@ class Place(Coordinate):
         self.source = None
         self.name_bias = 0.0
         self.id_bias = 0.0
+        # Precision is actually "Precision Error" in meters
         self.precision = -1
         self.method = None
         # Population stats, if available. Scale is a power-of-2 scale
@@ -747,6 +776,9 @@ class PlaceCandidate(TextMatch):
         self.rules = []
         self.is_country = False
         self.place = None
+        # Location certainty is a simple meausre 0.0 to 1.0 to convey confidence + precision in one metric
+        self.location_certainty = -1
+
 
     def populate(self, attrs:dict):
         """
@@ -781,6 +813,8 @@ class PlaceCandidate(TextMatch):
             geo.lat = None
             geo.lon = None
         self.place = geo
+        # Items like coordinates and cities, etc receive a location certainty.  Countries do not.
+        self.location_certainty = location_accuracy(self.confidence, geo.precision)
 
 
 class Extractor(ABC):
