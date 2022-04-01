@@ -2,10 +2,10 @@
 #
 #
 VER=3.5
-BUILD_VER=3.5.5
 
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
+BUILD_VER=`grep build.v  $basedir/build.properties |awk -F= '{print $2;}'`
 
 msg(){
   echo
