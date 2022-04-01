@@ -20,7 +20,7 @@ public class PostalLocationChooser extends GeocodeRule {
     
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
-            log.info("Candidate? {}", name);
+            log.debug("Candidate? {}", name);
             if (name.isFilteredOut()) {
                 continue;
             }

@@ -33,16 +33,19 @@ hope
 key
 la
 le
+les
 lo
 long
 love
 mac
 man
+max
 person
 manual
 many
 name
 page
+price
 quick
 royal
 short
@@ -52,6 +55,7 @@ small
 smart
 see
 son
+soon
 van
 spring
 sun
