@@ -1,106 +1,98 @@
 exclusion,category
-a su,phrase
-este,article
-por,article
-la frontera,place.civil
-en la,phrase
-de la,phrase
-mucho,verb
-buscar,verb
-tiene,verb
-uno,number
-dos,number
-tres,number
-cuatro,number
-cinco,number
-seis,number
-siete,number
-ocho,number
-nueve,number
-diez,number
+alto,adj.spa
+bien,adj.spa
+brillante,adj.spa
+buen,adj.spa
+bueno,adj.spa
+buenos,adj.spa
+caliente,adj.spa
+casada,adj.spa
+casado,adj.spa
+casados,adj.spa
+claro,adj.spa
+corte,adj.spa
+facil,adj.spa
+fuerte,adj.spa
+generoso,adj.spa
+gran,adj.spa
+grande,adj.spa
+grandes,adj.spa
+hermosa,adj.spa
+hermoso,adj.spa
+lista,adj.spa
+mal,adj.spa
+muerte,adj.spa
+mundial,adj.spa
+abre,adj.spa
+hermosa,adj.spa
+hermoso,adj.spa
 #la,article
-a al,phrase
-a la,phrase
-a mi,phrase
+asi,article
+esa,article
+esas,article
+esās,article
+ese,article
+eso,article
+este,article
+esto,article
+hay,article
+por,article
+lo,article.spa
+azul,color.spa
+blanco,color.spa
 abajo,direction
+unos,enum
+cento,enum.spa
+cero,enum.spa
+dos,enum.spa
+dos,enum.spa
+primera,enum.spa
+primero,enum.spa
+segunda,enum.spa
+segundo,enum.spa
+una,enum.spa
+unas,enum.spa
+uno,enum.spa
+abril,month.spa
+enero,month.spa
+febrero,month.spa
+marzo,month.spa
+acuario,myth.spa
+# ayer,noun
 abuela,noun
 abuelo,noun
-aca,pronoun
-ača,pronoun
 academia,noun
-acuario,myth.spa
-adios,phrase
-adiós,phrase
 administración,noun
 aero,noun
-aeroporto,place.civil.spa
-aeropuerto,place.civil.spa
 agua,noun
 ahora,noun
-al fin,phrase
+aire,noun
 alerta,noun
-algún día,phrase
 algunas,noun
-alto,adj.spa
 amigo,noun
 amigos,noun
 amo,noun
 amores,noun
-anda,verb
 animales,noun
-año,noun
 ano,noun
-antes,preposition.spa
+año,noun
 aqua,noun
-aqui esta,phrase
 arte,noun
-si,phrase
-asi,article
-# ayer,noun
-hasta,stopword.spa
-horas,noun
 ayuda,noun
-azul,color.spa
-baja,preposition.spa
 banca,noun
-banco,noun.spa
-banda,noun.spa
 bando,noun
-barrios,place.civil.spa
-besar,verb
 beso,noun
-bienvenido,phrase
-blanco,color.spa
 boca,noun
-bravo,phrase
-brillante,adj.spa
-buen,adj.spa
-buen dia,phrase
-buen día,phrase
-buenas noches,phrase
-buenas tardes,phrase
-bueno,adj.spa
-buenos,adj.spa
-buenos días,phrase
-busco,verb
-busca,verb
-buscas,verb
-buscan,verb
 calle,noun
 calles,noun
 calma,noun
 cambio,noun
+campana,noun
 canciones,noun
 cantina,noun
 carne,noun
 carta,noun
 ças,noun
-casa,noun.spa
-casas,noun.spa
-casada,adj.spa
-casado,adj.spa
-casados,adj.spa
-casi,phrase
 caso,noun
 catedral,noun
 catorce,noun
@@ -110,19 +102,12 @@ chico,noun
 chicos,noun
 chino,noun
 cien,noun
-cine,place.general.spa
 cinta,noun
 ciudad,noun
-claro,adj.spa
-comer,verb
-como,phrase
-con quien,phrase
-con su,phrase
-con tu,phrase
 congreso,noun
 constitución,noun
-contra,preposition.spa
 copa,noun
+corrientes,noun
 cosa,noun
 creo,noun
 cuadrado,noun
@@ -130,28 +115,16 @@ cuadro,noun
 cuando,noun
 cuarto,noun
 cultura,noun
-# de,preposition.spa
-de lo,phrase
-de luz,phrase
-del norte,phrase
 democracia,noun
-departmento,place.general.spa
 derechos humanos,noun
-des,preposition.spa
 dias,noun
 dio,noun
-dios mio,phrase
 dios,noun
-dios mío,phrase
 dolor de cabeza,noun
-dos,enum.spa
 drogas,noun
-du,preposition.spa
 economía,noun
 educación,noun
 el acuerdo,noun
-aire,noun
-el,preposition.spa
 el aire,noun
 el amor,noun
 el arte,noun
@@ -182,78 +155,37 @@ el sector,noun
 el segundo,noun
 el señor,noun
 el telefono,noun
-el territorio,place.civil.spa
 el tiempo,noun
 el unico,noun
 el uso,noun
 el verde,noun
 emergencia,noun
-en,preposition.spa
 en medio,noun
 encuentro,noun
-eres,verb
-es,verb
-esa,article
-esas,article
-esās,article
-escucha,verb
-ese,article
-eso,article
-estado,place.general.spa
-esto,article
 estudiantes,noun
 euro,noun
 europa,noun
-facil,adj.spa
-farmacia,place.civil
 felicidades,noun
 feliz,noun
 fiesta,noun
 fin,noun
 fotos,noun
-fuerte,adj.spa
-generoso,adj.spa
 ghetto,noun
 globo,noun
 gobernador,noun
 gobierno,noun
-gracias,phrase
-gracias a dios,phrase
-gran,adj.spa
-grande,adj.spa
-grandes,adj.spa
-gringo,noun.spa
-grupo,noun.spa
+gol,noun
 guarda,noun
-habla,verb
-hacienda,noun.spa
-hay,article
 hermano,noun
-hermoso,adjective
-hermosa,adjective
 historia,noun
-hola,phrase
-hora,phrase
-hoy,noun.spa
-huracán,spa
-independiente,spa
-internacional,spa
-jamas,spa
-jefe,spa
-joven,spa
-juega,spa
-junto,spa
-justicia,spa
-justo,spa
-manana,noun.spa
-mañana,noun.spa
+horas,noun
+juventud,noun
 la calle,noun
 la cama,noun
 la campana,noun
 la cara,noun
 la carta,noun
 la casa,noun
-la ciudad,place.general.spa
 la constitución,noun
 la familia,noun
 la felicidad,noun
@@ -261,12 +193,11 @@ la fiesta,noun
 la guerra,noun
 la historia,noun
 la hora,noun
-la isla,place.general.spa
 la izquierda,noun
 la justicia,noun
 la juventud,noun
-juventud,noun
 la letra,noun
+la ley,noun
 la libertad,noun
 la luz,noun
 la mama,noun
@@ -285,7 +216,6 @@ la premiere,noun
 la presentacion,noun
 la presidencia,noun
 la primera,noun
-la provincia,place.general.spa
 la region,noun
 la relacion,noun
 la respuesta,noun
@@ -303,34 +233,154 @@ la verdad,noun
 la victoria,noun
 la vida,noun
 la vista,noun
-la zona,place.general.spa
-las,preposition.spa
 las canciones,noun
 las chicas,noun
 las mujeres,noun
 las nuevas,noun
 las pelotas,noun
 las primeras,noun
-las zonas,place.civil.spa
-leer,verb
 ley,noun
 libertad,noun
 libertadores,noun
-lista,adj.spa
-lo,article.spa
-los dos,phrase
-los,preposition.spa
 los buenos,noun
 los niños,noun
 los partidos,noun
 los problemas,noun
 los sueños,noun
+niña,noun
+noticia,noun
+policia,noun
+revolucion,noun
+tarde,noun
+tortilla,noun
+tren,noun
+banco,noun.spa
+banda,noun.spa
+caballeros,noun.spa
+caballito,noun.spa
+caballo,noun.spa
+cabana,noun.spa
+casa,noun.spa
+casas,noun.spa
+cena,noun.spa
+continente,noun.spa
+cruz,noun.spa
+esquinas,noun.spa
+gringo,noun.spa
+grupo,noun.spa
+hacienda,noun.spa
+hoy,noun.spa
+manana,noun.spa
+mañana,noun.spa
+nina,noun.spa
+niño,noun.spa
+puerto,noun.spa
+sol,noun.spa
+cinco,number
+cuatro,number
+diez,number
+dos,number
+nueve,number
+ocho,number
+seis,number
+siete,number
+tres,number
+uno,number
+hija,person.label.spa
+hijo,person.label.spa
+padre,person.label.spa
+san,person.label.spa
+a al,phrase
+a la,phrase
+a mi,phrase
+a su,phrase
+adios,phrase
+adiós,phrase
+al fin,phrase
+algún día,phrase
+aqui esta,phrase
+arriba,phrase
+bienvenido,phrase
+bravo,phrase
+buen dia,phrase
+buen día,phrase
+buenas noches,phrase
+buenas tardes,phrase
+buenos días,phrase
+casi,phrase
+como,phrase
+con quien,phrase
+con su,phrase
+con tu,phrase
+de la,phrase
+de lo,phrase
+de luz,phrase
+del norte,phrase
+dios mio,phrase
+dios mío,phrase
+en la,phrase
+gracias,phrase
+gracias a dios,phrase
+hola,phrase
+hora,phrase
+los dos,phrase
+no se,phrase
+si,phrase
+vamos,phrase.spa
+ya lo,phrase.spa
+centro,place.civil
+cuadra,place.civil
+farmacia,place.civil
+la comunidad,place.civil
+la frontera,place.civil
+aeroporto,place.civil.spa
+aeropuerto,place.civil.spa
+barrio,place.civil.spa
+barrios,place.civil.spa
+el territorio,place.civil.spa
+las zonas,place.civil.spa
+cine,place.general.spa
+departmento,place.general.spa
+estado,place.general.spa
+la ciudad,place.general.spa
+la isla,place.general.spa
+la provincia,place.general.spa
+la zona,place.general.spa
 lugar,place.general.spa
+mundo,place.general.spa
+municipio,place.general.spa
+nacional,place.general.spa
+provincia,place.general.spa
+rincon,place.general.spa
+rio,place.general.spa
+territorio,place.general.spa
+# de,preposition.spa
+antes,preposition.spa
+baja,preposition.spa
+contra,preposition.spa
+des,preposition.spa
+du,preposition.spa
+el,preposition.spa
+en,preposition.spa
+las,preposition.spa
+los,preposition.spa
+aca,pronoun
+ača,pronoun
+huracán,spa
+independiente,spa
+internacional,spa
+isla,spa
+jamas,spa
+jefe,spa
+joven,spa
+juega,spa
+junto,spa
+justicia,spa
+justo,spa
 madre,spa
 madre mia,spa
 maduro,spa
 mais,spa
-mal,adj.spa
 mama,spa
 manāna,spa
 mano,spa
@@ -339,10 +389,6 @@ mas,spa
 mas nunca,spa
 memória,spa
 mes,spa
-enero,month.spa
-febrero,month.spa
-marzo,month.spa
-abril,month.spa
 mesa,spa
 mi sueño,spa
 militar,spa
@@ -354,31 +400,20 @@ mis amores,spa
 moda,spa
 morena,spa
 mucha,spa
-muerte,adj.spa
 mujer,spa
 mūjer,spa
 mujeres,spa
-mundial,adj.spa
-mundo,place.general.spa
-municipio,place.general.spa
 museo,spa
 musica,spa
 nacho,spa
-nacional,place.general.spa
 nadie,spa
-niña,
-nina,noun.spa
-niño,noun.spa
 niños,spa
 no tengo,spa
-se,verb
-no se,phrase
 no-se,spa
 noche,spa
 nos,spa
 nota,spa
 notícia,spa
-noticia,
 nuestro,spa
 nueva,spa
 nuevo,spa
@@ -398,21 +433,15 @@ playa,spa
 pobre,spa
 policía,spa
 por fin,spa
-premio,
 premió,spa
 primavera,spa
-primera,enum.spa
-primero,enum.spa
 projeto,spa
-provincia,place.general.spa
 proyecto,spa
-publico,
 público,spa
 puebla,spa
 pueblo,spa
 puede ser,spa
 puedes,spa
-puerto,noun.spa
 punto,spa
 puta,spa
 que grande,spa
@@ -426,16 +455,11 @@ realidad,spa
 recuerda,spa
 reforma,spa
 revista,spa
-rincon,place.general.spa
-rio,place.general.spa
 rojo,spa
 s an,spa
-san,person.label.spa
 sabe,spa
 sabes,spa
 salud,spa
-segunda,enum.spa
-segundo,enum.spa
 seguridad,spa
 seguro,spa
 semana santa,spa
@@ -457,7 +481,6 @@ tanta,spa
 te espero,spa
 tema,spa
 tengo,spa
-territorio,place.general.spa
 tio,spa
 tito,spa
 toda,spa
@@ -473,14 +496,8 @@ tus,spa
 ultima,spa
 unica,spa
 universidad,spa
-uno,enum.spa
-unos,enum
-una,enum.spa
-unas,enum.spa
-dos,enum.spa
 uso,spa
 vacaciones,spa
-vamos,phrase.spa
 vámos,spa
 vaya,spa
 veo,spa
@@ -496,45 +513,33 @@ vota,spa
 voz,spa
 y lo,spa
 y tu,spa
-ya lo,phrase.spa
 ya ló,spa
+hasta,stopword.spa
 yo,stopword.spa
-caliente,adj.spa
-caballeros,noun.spa
-caballo,noun.spa
-caballito,noun.spa
-continente,noun.spa
-cabana,noun.spa
-esquinas,noun.spa
-cruz,noun.spa
-gol,noun
-la ley,noun
-abre,adjective
-arriba,phrase
+anda,verb
+besar,verb
+busca,verb
+buscan,verb
+buscar,verb
+buscas,verb
+busco,verb
 camino,verb
-campana,noun
-cero,enum.spa
-cento,enum.spa
-centro,place.civil
-cena,noun.spa
+comer,verb
 corre,verb
-corte,adj.spa
-corrientes,noun
-cuadra,place.civil
+crea,verb
 dar,verb
 digo,verb
+eres,verb
+es,verb
+escucha,verb
 gana,verb
 haber,verb
+habla,verb
 habra,verb
 le dan,verb
 le voy,verb
-crea,verb
+leer,verb
+mucho,verb
+se,verb
+tiene,verb
 usar,verb
-policia,noun
-tren,noun
-tortilla,noun
-revolucion,noun
-tarde,noun
-hijo,person.label
-hija,person.label
-padre,person.label

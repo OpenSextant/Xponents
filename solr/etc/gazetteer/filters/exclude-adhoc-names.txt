@@ -40,14 +40,15 @@ dimitry
 diplomat
 diplomats
 disney
+dmitri
 dmitriy
 do
 dooley
 dow
 ed
 eddie
-ely
 eggers
+ely
 erdogan
 erdoğan
 faulk
@@ -58,8 +59,8 @@ fernando
 firefighters
 forman
 francois
-francoise
 françois
+francoise
 george
 giuliani
 griffiths
@@ -90,13 +91,14 @@ manning
 manny
 mark twain
 matty
+maxim
 medvedev
 merrill
+méssi
 mick
 mikhail
 miley
 murry
-méssi
 nat
 nate
 neighbors
@@ -115,7 +117,10 @@ poe
 putin
 rockefeller
 romney
+ron
 rooney
+sergei
+sergey
 sheik
 sia
 sri
@@ -133,11 +138,11 @@ walt
 walther
 zach
 # Various Spanish last names
-reyes
-hernandez
-ramirez
-martinez
 garcia
+hernandez
+martinez
+ramirez
+reyes
 # Various Chinese/Asian last names
 # https://www.thechairmansbao.com/the-ten-most-common-surnames-in-china/
 # https://en.wikipedia.org/wiki/List_of_common_Chinese_surnames
@@ -186,8 +191,8 @@ zhi
 zhu
 # german names; Test sources: DerFreischütz
 hanne
-olaf
 harald
+olaf
 samael
 samiel
 viktoria

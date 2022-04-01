@@ -24,6 +24,7 @@ demi,abbrev
 dept,abbrev
 dist,abbrev
 doc,abbrev
+econ,abbrev
 ed,abbrev
 eng,abbrev
 eta,abbrev
@@ -39,6 +40,7 @@ ibid,abbrev
 ie,abbrev
 imo,abbrev
 inc,abbrev
+lant,abbrev
 lat,abbrev
 lib,abbrev
 lil,abbrev
@@ -147,6 +149,7 @@ boiling,adj
 bold,adj
 bony,adj
 boring,adj
+bossy,adj
 bovine,adj
 brave,adj
 brief,adj
@@ -546,6 +549,7 @@ wide,adj
 wild,adj
 willing,adj
 windswept,adj
+windward,adj
 woken,adj
 wooden,adj
 worthy,adj
@@ -588,6 +592,7 @@ cougar,animal
 cow,animal
 coyote,animal
 crab,animal
+cranes,animal
 crow,animal
 dog,animal
 dove,animal
@@ -620,6 +625,7 @@ otter,animal
 panda,animal
 panther,animal
 parakeet,animal
+pelican,animal
 penguin,animal
 pig,animal
 raccoon,animal
@@ -798,6 +804,10 @@ top,directional
 west,directional
 west central,directional
 western,directional
+est,directional.fra
+nord,directional.fra
+ouest,directional.fra
+sud,directional.fra
 anger,emotion
 delight,emotion
 happy,emotion
@@ -862,6 +872,10 @@ v,enum
 vi,enum
 vii,enum
 viii,enum
+x,enum
+xi,enum
+xii,enum
+xiii,enum
 xx,enum
 xxx,enum
 secondo,enum.ita
@@ -933,6 +947,7 @@ vanilla,food
 wedding cake,food
 epsilon,greek
 gamma,greek
+omicron,greek
 christmas,holiday
 good friday,holiday
 mardi gras,holiday
@@ -1013,6 +1028,7 @@ link,internet
 login,internet
 lua,internet
 mcafee,internet
+meme,internet
 modem,internet
 monero,internet
 nav,internet
@@ -1088,7 +1104,6 @@ prima,latin
 situ,latin
 synopsis,latin
 vis,latin
-edema,medical
 nickel,money
 apr,month
 april,month
@@ -1163,6 +1178,7 @@ armour,noun
 army,noun
 aroma,noun
 arrival,noun
+arson,noun
 art,noun
 arts,noun
 ash,noun
@@ -1284,6 +1300,7 @@ boron,noun
 boss,noun
 bounds,noun
 bouy,noun
+bowl,noun
 box,noun
 boxer,noun
 boxes,noun
@@ -1293,6 +1310,7 @@ bra,noun
 brace,noun
 brain,noun
 brains,noun
+brake,noun
 branches,noun
 brand,noun
 brass,noun
@@ -1308,6 +1326,7 @@ brine,noun
 brink,noun
 brush,noun
 bubble,noun
+bucket,noun
 bulkhead,noun
 bull,noun
 bullet,noun
@@ -1317,6 +1336,7 @@ bully,noun
 bum,noun
 bunch,noun
 bunkers,noun
+buoy,noun
 burden,noun
 burger,noun
 burrow,noun
@@ -1347,6 +1367,7 @@ cameo,noun
 camera,noun
 campo,noun
 cancer,noun
+candle,noun
 cane,noun
 canister,noun
 cannon,noun
@@ -1387,6 +1408,7 @@ chalk,noun
 chamber,noun
 champ,noun
 champion,noun
+champions,noun
 champs,noun
 chance,noun
 chaos,noun
@@ -1573,6 +1595,7 @@ doll,noun
 dollar,noun
 dolphin,noun
 dolphins,noun
+domino,noun
 donation,noun
 dong,noun
 door,noun
@@ -1755,6 +1778,7 @@ grease,noun
 grid,noun
 grill,noun
 grip,noun
+grit,noun
 group,noun
 grub,noun
 guess,noun
@@ -1854,6 +1878,7 @@ kings,noun
 kiss,noun
 kitchen,noun
 knights,noun
+knob,noun
 knot,noun
 la nueva,noun
 la radio,noun
@@ -1863,8 +1888,10 @@ laboratory,noun
 labour,noun
 lack,noun
 lamps,noun
+landfall,noun
 landing,noun
 laser,noun
+latch,noun
 later,noun
 laundry,noun
 lav,noun
@@ -2253,6 +2280,7 @@ revision,noun
 revival,noun
 revolution,noun
 reward,noun
+ribbon,noun
 rice,noun
 ride,noun
 rider,noun
@@ -2475,17 +2503,22 @@ term,noun
 test,noun
 testing,noun
 the head,noun
+the heads,noun
+the quake,noun
 the view,noun
+the views,noun
 thing,noun
 thong,noun
 thorn,noun
 thumb,noun
 tides,noun
 tiempo,noun
+tier,noun
 ties,noun
 tile,noun
 time,noun
 tip,noun
+tire,noun
 tires,noun
 titan,noun
 tolerance,noun
@@ -2496,6 +2529,8 @@ tonnes,noun
 toon,noun
 tooth,noun
 topic,noun
+topping,noun
+tornado,noun
 total,noun
 tour,noun
 touring,noun
@@ -2551,6 +2586,7 @@ vacation,noun
 van,noun
 vane,noun
 vanguard,noun
+vans,noun
 vault,noun
 venture,noun
 ventures,noun
@@ -2637,7 +2673,6 @@ la vita,noun.ita
 liga,noun.ita
 maestro,noun.ita
 volta,noun.ita
-het,noun.nld
 aeroport,noun.por
 ag,person.label
 ally,person.label
@@ -2718,6 +2753,7 @@ drs,person.label
 duchess,person.label
 dude,person.label
 duke,person.label
+dynamo,person.label
 elder,person.label
 engineer,person.label
 esq,person.label
@@ -2725,6 +2761,7 @@ esquire,person.label
 fans,person.label
 father,person.label
 felon,person.label
+fisherman,person.label
 folk,person.label
 folks,person.label
 fool,person.label
@@ -2814,6 +2851,7 @@ officer,person.label
 old man,person.label
 old man,person.label
 old woman,person.label
+olympian,person.label
 pal,person.label
 papa,person.label
 partner,person.label
@@ -3023,7 +3061,7 @@ ssgt,person.label.rank
 tsgt,person.label.rank
 vadm,person.label.rank
 a bad,phrase
-a better view,hrase
+a better view,phrase
 a camp,phrase
 a do,phrase
 a la,phrase
@@ -3265,6 +3303,7 @@ sos,phrase
 start point,phrase
 starting point,phrase
 state run,phrase
+stopover,phrase
 story building,phrase
 ta,phrase
 task force,phrase
@@ -3286,6 +3325,7 @@ the contents,phrase
 the current,phrase
 the gap,phrase
 the globe,phrase
+the great,phrase
 the hunt,phrase
 the index,phrase
 the international,phrase
@@ -3421,6 +3461,7 @@ battlefield,place.civil
 battlefields,place.civil
 boat launch,place.civil
 border town,place.civil
+borderland,place.civil
 boulevard,place.civil
 boundary,place.civil
 boutique,place.civil
@@ -3450,6 +3491,7 @@ checkpoint,place.civil
 church,place.civil
 churches,place.civil
 cir,place.civil
+circus,place.civil
 city center,place.civil
 city centre,place.civil
 city hall,place.civil
@@ -3594,6 +3636,7 @@ pipeline,place.civil
 plant,place.civil
 plaza,place.civil
 police station,place.civil
+polls,place.civil
 port city,place.civil
 port of entry,place.civil
 ports,place.civil
@@ -3965,6 +4008,7 @@ yt,slang
 astros,sport
 bills,sport
 bowling,sport
+boxing,sport
 browns,sport
 bruins,sport
 bucks,sport
@@ -3999,6 +4043,7 @@ sport,sport
 sports,sport
 sprint,sport
 sumo,sport
+tennis,sport
 again,stopword
 away,stopword
 headline,stopword
@@ -4007,6 +4052,7 @@ thus,stopword
 bonjour,stopword.fre
 tre,stopword.fre
 vous,stopword.fre
+het,stopword.nld
 tao,stopword.por
 #on,stopword.wordnet
 #or,stopword.wordnet
@@ -4232,6 +4278,7 @@ able,verb
 act,verb
 add,verb
 adhere,verb
+adheres,verb
 admire,verb
 advance,verb
 advise,verb
@@ -4239,6 +4286,7 @@ aging,verb
 aid,verb
 aiding,verb
 allege,verb
+amaze,verb
 amend,verb
 appeal,verb
 are,verb
@@ -4354,6 +4402,7 @@ detain,verb
 deter,verb
 devise,verb
 did,verb
+dies,verb
 dig,verb
 dine,verb
 dining,verb
@@ -4364,6 +4413,7 @@ do,verb
 docking,verb
 dodge,verb
 does,verb
+doping,verb
 draft,verb
 drank,verb
 draw,verb
@@ -4411,10 +4461,12 @@ get,verb
 gets,verb
 give,verb
 glide,verb
+glow,verb
 go,verb
 goes,verb
 going,verb
 got,verb
+grab,verb
 grade,verb
 grading,verb
 granting,verb
@@ -4512,9 +4564,11 @@ merge,verb
 met,verb
 mixing,verb
 mock,verb
+moor,verb
 moored,verb
 move,verb
 must,verb
+nab,verb
 nag,verb
 nap,verb
 need,verb
@@ -4565,6 +4619,7 @@ raiding,verb
 rains,verb
 ran,verb
 rang,verb
+rant,verb
 rap,verb
 rape,verb
 rate,verb
@@ -4591,6 +4646,7 @@ reset,verb
 retreat,verb
 retrieve,verb
 return,verb
+revise,verb
 rid,verb
 riding,verb
 rinse,verb
@@ -4603,6 +4659,7 @@ ruled,verb
 run,verb
 running,verb
 runs,verb
+rupture,verb
 rushing,verb
 said,verb
 sailing,verb
@@ -4684,6 +4741,7 @@ stoke,verb
 stole,verb
 storing,verb
 strike,verb
+stung,verb
 suck,verb
 supply,verb
 surge,verb
@@ -4731,6 +4789,7 @@ use,verb
 uses,verb
 utter,verb
 veto,verb
+vex,verb
 vie,verb
 view,verb
 visit,verb
@@ -4783,6 +4842,7 @@ fog,weather
 freezing point,weather
 rain,weather
 rainy,weather
+storms,weather
 fri,weekday
 friday,weekday
 mon,weekday
@@ -4810,6 +4870,7 @@ camaro,well-known.brand
 citi,well-known.brand
 coca cola,well-known.brand
 coca-cola,well-known.brand
+cosco,well-known.brand
 dior,well-known.brand
 disney,well-known.brand
 doppler,well-known.brand
@@ -4825,6 +4886,7 @@ lego,well-known.brand
 lenovo,well-known.brand
 mac,well-known.brand
 mcdonalds,well-known.brand
+moderna,well-known.brand
 monsanto,well-known.brand
 mustang,well-known.brand
 nike,well-known.brand
@@ -4891,6 +4953,7 @@ zeus,well-known.mythology
 orbiter,well-known.name
 chevrolet,well-known.org
 coke,well-known.org
+election commission,well-known.org
 gallup,well-known.org
 ngos,well-known.org
 nobel,well-known.org
@@ -4898,6 +4961,7 @@ red cross,well-known.org
 reuters,well-known.org
 sears,well-known.org
 sox,well-known.org
+stock exchange,well-known.org
 toyota,well-known.org
 united nations,well-known.org
 usaid,well-known.org
@@ -4914,6 +4978,7 @@ shaq,well-known.person
 uncle sam,well-known.person
 bleach,well-known.science
 bromide,well-known.science
+edema,well-known.science
 latitude,well-known.science
 lipid,well-known.science
 longitude,well-known.science
@@ -4924,8 +4989,10 @@ radon,well-known.science
 rust,well-known.science
 saline,well-known.science
 sine,well-known.science
+sputnik,well-known.science
 sulfur,well-known.science
 sulphur,well-known.science
+torque,well-known.science
 toxin,well-known.science
 uranium,well-known.science
 vapor,well-known.science
