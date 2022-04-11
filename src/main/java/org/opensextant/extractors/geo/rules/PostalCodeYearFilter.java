@@ -20,6 +20,7 @@ public class PostalCodeYearFilter extends GeocodeRule {
     public PostalCodeYearFilter() {
     }
 
+    @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
             if (name.isValid()) {

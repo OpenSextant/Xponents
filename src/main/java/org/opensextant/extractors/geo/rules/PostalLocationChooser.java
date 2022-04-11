@@ -44,6 +44,7 @@ public class PostalLocationChooser extends GeocodeRule {
         return conf;
     }
 
+    @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
             log.debug("Candidate? {}", name);

@@ -31,6 +31,7 @@ public class PostalCodeFilter extends GeocodeRule {
         return !m.matches();
     }
 
+    @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
             if (name.isValid()) {
