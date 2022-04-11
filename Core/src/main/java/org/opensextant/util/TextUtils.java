@@ -433,11 +433,13 @@ public class TextUtils {
     }
 
     /**
-     * StringUtils in commons isNumeric("1.234") is NOT numeric. Here "1.234" is
-     * numeric.
+     * Determine if a string is numeric in nature, not necessarily a parsable number.
+     * 0-9 or "-+.E" are valid symbols.
+     * Example -- 11111E.00003333 is Numeric,
+     * commons StringUtils.isNumeric only detects digits.
      *
      * @param v val to parse
-     * @return true if val is a number
+     * @return true if val is a numeric sequence, symbols allowed.
      */
     public static final boolean isNumeric(final String v) {
 
@@ -445,15 +447,17 @@ public class TextUtils {
             return false;
         }
 
+        char ch0 = v.charAt(0);
+        if (!(Character.isDigit(ch0) || ch0 == '.' || ch0 == '-' || ch0 == '+' )){
+            return false;
+        }
         for (char ch : v.toCharArray()) {
-
             /*
              * Is the character in .-+Ee ?
              */
             if (ch == '.' || ch == '-' || ch == '+' || ch == 'e' || ch == 'E') {
                 continue;
             }
-
             if (!Character.isDigit(ch)) {
                 return false;
             }

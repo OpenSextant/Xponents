@@ -1179,7 +1179,7 @@ public class GeonamesUtility {
     }
 
     public static boolean isPostal(final Place g) {
-        return "POST".equals(g.getFeatureCode());
+        return "POST".equals(g.getFeatureCode()) && "A".equals(g.getFeatureClass());
     }
 
     public static boolean isPostal(final String fc) {

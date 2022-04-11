@@ -371,6 +371,9 @@ public class Place extends GeoBase implements Geocoding {
         return GeonamesUtility.isAdministrative(featureClass);
     }
 
+    /** Determines if this feature instance is a postal zone, coded "A/POST" */
+    public boolean isPostal(){ return GeonamesUtility.isPostal(this); }
+
     /**
      * macro for detecting ADM1 or ADM2
      */
