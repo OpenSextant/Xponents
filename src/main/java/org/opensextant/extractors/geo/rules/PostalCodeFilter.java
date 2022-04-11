@@ -1,48 +1,59 @@
 package org.opensextant.extractors.geo.rules;
 
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.util.TextUtils;
-
-import java.util.List;
 
 public class PostalCodeFilter extends GeocodeRule {
 
-    private static final int ERA_START_YEAR = 1975;
-    private static final int ERA_END_YEAR = 2025;
-
     int minLen = -1;
+
+    Pattern validPunct = Pattern.compile("^[-A-Z0-9 ]+$", Pattern.CASE_INSENSITIVE);
 
     /**
      *
      * @param len - minimum length for a valid postal code.
      */
-    public PostalCodeFilter(int len){
+    public PostalCodeFilter(int len) {
         minLen = len;
+    }
+
+    /**
+     * Match only alphanumeric codes. space and dash are allowed.
+     * @param t
+     * @return True if contains invalid punct
+     */
+    public boolean hasInvalidPunct(String t) {
+        Matcher m = validPunct.matcher(t);
+        return !m.matches();
     }
 
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
             if (name.isValid()) {
+                // Order of Rules is mildly important
                 continue;
             }
+            if (!name.hasPostal()) {
+                //... But this only applies to POSTAL codes.
+                continue;
+            }
+
+            // Rules apply only to postal codes; while this processing chain will see
+            // country and administrative features as well. So, only A/POST from here down.
+            //
+            if (hasInvalidPunct(name.getText())) {
+                name.addRule("InvalidPunct");
+                name.setFilteredOut(true);
+            }
+
             // IGNORE SHORT CODES
             if (name.getLength() < minLen) {
                 name.addRule("ShortCode");
                 name.setFilteredOut(true);
-            }
-            // IGNORE YEARS of recent times.
-            else if (TextUtils.isNumeric(name.getText()) && name.getLength() == 4) {
-                try {
-                    int possibleYear = Integer.parseInt(name.getText());
-                    /* Arbitrary 50-year period we will ignore for any 4-digit postal codes. */
-                    if (ERA_START_YEAR < possibleYear && possibleYear < ERA_END_YEAR) {
-                        name.addRule("YearCode");
-                        name.setFilteredOut(true);
-                    }
-                } catch (NumberFormatException nfe) {
-                    // No worries.  Not a year.
-                }
             }
         }
     }

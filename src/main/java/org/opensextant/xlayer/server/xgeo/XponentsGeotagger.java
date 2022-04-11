@@ -152,6 +152,8 @@ public class XponentsGeotagger extends TaggerResource {
                         // Associate raw geotags with Postal matches, so any Postal codes are fully geolocated.
                         // Filter out any postal code that does not line up with other geography in input text.
                         if (!postalMatches.isEmpty()) {
+                            // This part combines the output from both Postal and Place Geocoders.
+                            //
                             // 1. link postal geotags with other non-postal geotags.
                             PostalGeocoder.associateMatches(matches, postalMatches);
                             // 2. regenerate new spans and geocodes;  This may filter in/out geotags.

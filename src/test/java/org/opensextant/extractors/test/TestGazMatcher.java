@@ -179,7 +179,7 @@ public class TestGazMatcher {
                 }
             }
         }
-        return String.format("\tPlaces Above: %s\n\tPlaces Below: %s", placesAbove, placesBelow);
+        return String.format("\tPlaces Above Threshold: %s\n\tPlaces Below Threshold: %s", placesAbove, placesBelow);
     }
 
 

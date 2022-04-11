@@ -1,5 +1,9 @@
 package org.opensextant.extractors.geo;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
+
 import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
 import org.opensextant.data.Place;
@@ -7,16 +11,9 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extractors.geo.rules.GeocodeRule;
-import org.opensextant.extractors.geo.rules.PostalCodeAssociationRule;
-import org.opensextant.extractors.geo.rules.PostalCodeFilter;
-import org.opensextant.extractors.geo.rules.PostalLocationChooser;
+import org.opensextant.extractors.geo.rules.*;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
 
 /**
  * PostalGeocoder -- a GazetteerMatcher that uses the "postal" solr index to
@@ -56,7 +53,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
      * 0174
      * 011 -- too short and ambiguous.
      */
-    private static final int MIN_LEN = 4;
+    private static final int MIN_LEN = 3;
     private int minLen = MIN_LEN;
     private final List<GeocodeRule> rules = new ArrayList<>();
     private Map<String, Country> countryCatalog = null;
@@ -74,11 +71,19 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
         this.setEnableCaseFilter(false);
         this.setEnableCodeHunter(true);
 
+        // LEXICAL FILTERS
+        rules.add(new PostalCodeFilter(minLen));
+
+        // HIERARCHICAL ASSOCIATION
         GeocodeRule r = new PostalCodeAssociationRule();
         r.setBoundaryObserver(this);
         r.setCountryObserver(this);
         rules.add(r);
-        rules.add(new PostalCodeFilter(minLen));
+
+        //  OMIT UNASSOCIATED CODES that look like YEAR numbers
+        rules.add(new PostalCodeYearFilter());
+
+        // DISAMBIGUATION
         GeocodeRule chooser = new PostalLocationChooser();
         chooser.setDefaultMethod(METHOD_DEFAULT);
         rules.add(chooser);
@@ -238,14 +243,14 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
 
     private static void copyMatchId(TextMatch postal, List<TextMatch> matches) {
         for (TextMatch m : matches) {
-            if (m instanceof  PlaceCandidate && m.isSameMatch(postal)) {
+            if (m instanceof PlaceCandidate && m.isSameMatch(postal)) {
                 postal.match_id = m.match_id;
                 postal.setType(m.getType());
                 return;
             }
         }
     }
-    
+
     /**
      * Given geotagging from a prior pass of PlaceGeocoder or other stuff, compare and align
      * those tags with POSTAL tags.
@@ -262,8 +267,11 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
          *
          */
         for (TextMatch p1 : postalMatches) {
-            if (! (p1 instanceof  PlaceCandidate)){
+            if (!(p1 instanceof PlaceCandidate)) {
                 // This shant' happen.
+                continue;
+            }
+            if (p1.isFilteredOut()) {
                 continue;
             }
 
@@ -274,14 +282,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
             }
             copyMatchId(p1, matches);
             PlaceCandidate postal = (PlaceCandidate) p1;
-            boolean hasPostal = false;
-            for (ScoredPlace geo : postal.getPlaces()){
-                if (GeonamesUtility.isPostal(geo.getPlace())) {
-                    hasPostal = true;
-                    break;
-                }
-            }
-            if (!hasPostal){
+            if (!postal.hasPostal()) {
                 continue;
             }
 
@@ -399,14 +400,8 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
 
     public static boolean unqualifiedPostalLocation(PlaceCandidate match) {
         Place geo = match.getChosenPlace();
-        return geo == null || GeonamesUtility.isPostal(geo);
+        return geo == null || geo.isPostal();
     }
-
-    /**
-     * Order of preference of linked geography slots. For any given A/POSTAL feature
-     * we are trying to fully flesh out these slots.
-     */
-    public static final String[] KNOWN_GEO_SLOTS = {"city", "postal", "admin", "country"};
 
     /**
      * Take a given mention that has related mentions and compose a new expanded mention.
@@ -442,7 +437,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
             mention.addPlace(anchor.getChosen(), 0.0); /* addPlace with incremental score of 0 */
             mention.choose();
         } else if (anchor.getLinkedGeography() != null) {
-            for (String knownSlot : KNOWN_GEO_SLOTS) {
+            for (String knownSlot : PlaceCandidate.KNOWN_GEO_SLOTS) {
                 if (anchor.hasLinkedGeography(knownSlot)) {
                     // TODO: Will this ever fire?
                     mention.setChosenPlace(anchor.getLinkedGeography().get(knownSlot));

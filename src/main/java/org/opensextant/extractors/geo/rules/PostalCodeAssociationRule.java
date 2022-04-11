@@ -1,11 +1,10 @@
 package org.opensextant.extractors.geo.rules;
 
+import java.util.List;
+
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
-import org.opensextant.util.GeonamesUtility;
-
-import java.util.List;
 
 public class PostalCodeAssociationRule extends GeocodeRule {
 
@@ -25,11 +24,11 @@ public class PostalCodeAssociationRule extends GeocodeRule {
     public static boolean complementaryPostal(final Place geo1, final Place geo2) {
 
         /* ADM POST */
-        if ((geo1.isAdmin1() || geo1.isCountry()) && GeonamesUtility.isPostal(geo2)) {
+        if ((geo1.isAdmin1() || geo1.isCountry()) && geo2.isPostal()) {
             return true;
         }
         /* POST ADM1 */
-        return (geo2.isAdmin1() || geo2.isCountry()) && GeonamesUtility.isPostal(geo1);
+        return (geo2.isAdmin1() || geo2.isCountry()) && geo1.isPostal();
     }
 
     /**
@@ -38,7 +37,7 @@ public class PostalCodeAssociationRule extends GeocodeRule {
      */
     void alignGeography(final PlaceCandidate p1, final PlaceCandidate p2) {
         for (ScoredPlace geo1Score : p1.getPlaces()) {
-            p1.defaultMatchId();            
+            p1.defaultMatchId();
             Place geo1 = geo1Score.getPlace();
             for (ScoredPlace geo2Score : p2.getPlaces()) {
                 Place geo2 = geo2Score.getPlace();
@@ -46,8 +45,8 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                 if (!complementaryPostal(geo1, geo2)) {
                     continue;
                 }
-                boolean geo1Postal = GeonamesUtility.isPostal(geo1); /* If postal, then geo2 must be other */
-                boolean geo2Postal = GeonamesUtility.isPostal(geo2); /* If postal, then geo1 must be other */
+                boolean geo1Postal = geo1.isPostal(); /* If postal, then geo2 must be other */
+                boolean geo2Postal = geo2.isPostal(); /* If postal, then geo1 must be other */
                 // Geographic checks:
                 if (sameBoundary(geo1, geo2)) {
                     // Use this to collect evidence. Boundary for geo1 and geo2 are the same.
@@ -64,7 +63,7 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                     p2.linkGeography(p1, geo1Postal ? "postal" : "admin", geo1);
                     p1.incrementPlaceScore(geo1, 5.0, POSTAL_ASSOC_RULE);
                     p2.incrementPlaceScore(geo2, 5.0, POSTAL_ASSOC_RULE);
-                    
+
                     // Match ID tracking helps with the integrity of serialized results.
                     geo1.setInstanceId(p1.getMatchId());
                     geo2.setInstanceId(p2.getMatchId());
@@ -112,6 +111,9 @@ public class PostalCodeAssociationRule extends GeocodeRule {
          */
         for (int x = 0; x < names.size(); ++x) {
             PlaceCandidate match = names.get(x);
+            if (match.isFilteredOut()) {
+                continue;
+            }
             PlaceCandidate before = null;
             PlaceCandidate after = null;
             if (x > 0) {
@@ -120,11 +122,10 @@ public class PostalCodeAssociationRule extends GeocodeRule {
             if (x < count - 1) {
                 after = names.get(x + 1);
             }
-
-            if (before != null && match.isWithinChars(before, proximity)) {
+            if (before != null && match.isWithinChars(before, proximity) && !before.isFilteredOut()) {
                 alignGeography(match, before);
             }
-            if (after != null && match.isWithinChars(after, proximity)) {
+            if (after != null && match.isWithinChars(after, proximity) && !after.isFilteredOut()) {
                 alignGeography(match, after);
             }
         }

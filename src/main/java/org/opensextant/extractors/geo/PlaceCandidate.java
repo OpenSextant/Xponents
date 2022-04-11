@@ -16,6 +16,9 @@
  */
 package org.opensextant.extractors.geo;
 
+import java.util.*;
+import java.util.regex.Pattern;
+
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
@@ -24,9 +27,6 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.rules.FeatureClassMeta;
 import org.opensextant.extractors.geo.rules.FeatureRule;
 import org.opensextant.util.TextUtils;
-
-import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * A PlaceCandidate represents a portion of a document which has been identified
@@ -61,6 +61,13 @@ public class PlaceCandidate extends TextMatch {
     private boolean anchor = false;
     private String nonDiacriticTextnorm = null;
     private boolean reviewed = false;
+
+    /**
+     * Linked geographic slots, in no order. These help develop a fuller depiction of the
+     * context of a place mention -- through linked-geography in these categorical slots.
+     * These are ordered roughly in resolution order, fine to coarse.
+     */
+    public static final String[] KNOWN_GEO_SLOTS = {"postal", "city", "admin", "country"};
 
     public PlaceCandidate(int x1, int x2) {
         super(x1, x2);
@@ -972,5 +979,32 @@ public class PlaceCandidate extends TextMatch {
 
     public boolean isReviewed() {
         return reviewed;
+    }
+
+    private boolean postalEval = false;
+    private boolean hasPostal = false;
+
+    /**
+     * Evaluate if postal matches reside in candidate locations. Evaluate only once and save result.
+     * We distinguish between "hasPostal" matches vs. marking this place as "is Postal".
+     * That's the difference between factual and inferential.
+     *
+     * @return true if postal features exist here.
+     */
+    public boolean hasPostal() {
+        if (postalEval) {
+            return hasPostal;
+        }
+        postalEval = true;
+        for (ScoredPlace geo : getPlaces()) {
+            if (!geo.getPlace().isAdministrative()) {
+                continue;
+            }
+            if (geo.getPlace().isPostal()) {
+                hasPostal = true;
+                return hasPostal;
+            }
+        }
+        return hasPostal;
     }
 }
