@@ -88,13 +88,6 @@ public class XTemporal extends AbstractFlexPat {
         return "XTemporal";
     }
 
-    /**
-     * Extractor interface: extractors are responsible for cleaning up after
-     * themselves.
-     */
-    @Override
-    public void cleanup() {
-    }
 
     /**
      * XTemporal ctor
@@ -215,7 +208,6 @@ public class XTemporal extends AbstractFlexPat {
             }
 
             patternsComplete++;
-            updateProgress(patternsComplete / (double) patterns.get_patterns().size() + 1);
         }
 
         results.pass = !results.matches.isEmpty();

@@ -57,7 +57,7 @@ public class FileUtility {
      * @throws IOException if file had IO errors.
      */
     public static boolean writeFile(String buffer, String fname) throws IOException {
-        return writeFile(buffer, fname, default_encoding, false);
+        return writeFile(buffer, fname, defaultEncoding, false);
     }
 
     /**
@@ -229,7 +229,7 @@ public class FileUtility {
      * @throws IOException on error
      */
     public static String readFile(String filepath) throws IOException {
-        return readFile(new File(filepath), default_encoding);
+        return readFile(new File(filepath), defaultEncoding);
     }
 
     /**
@@ -238,17 +238,18 @@ public class FileUtility {
      * @throws IOException on error
      */
     public static String readFile(File filepath) throws IOException {
-        return readFile(filepath, default_encoding);
+        return readFile(filepath, defaultEncoding);
     }
 
     /**
      *
      */
-    public static final String default_encoding = "UTF-8";
+    public static final String defaultEncoding = "UTF-8";
+
     /**
      *
      */
-    private static final int ioBufferSize = 0x800;
+    private static int IO_BUFFER_SIZE = 0x800;
 
     /**
      * Slurps a text file into a string and returns the string.
@@ -279,8 +280,8 @@ public class FileUtility {
         }
 
         try (FileInputStream instream = new FileInputStream(filepath);
-             GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), ioBufferSize)) {
-            return new String(IOUtils.toByteArray(gzin), default_encoding);
+             GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), IO_BUFFER_SIZE)) {
+            return new String(IOUtils.toByteArray(gzin), defaultEncoding);
         }
     }
 
@@ -296,9 +297,9 @@ public class FileUtility {
         }
 
         try (FileOutputStream outstream = new FileOutputStream(filepath);
-             GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), ioBufferSize)) {
+             GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), IO_BUFFER_SIZE)) {
 
-            gzout.write(text.getBytes(default_encoding));
+            gzout.write(text.getBytes(defaultEncoding));
             gzout.flush();
             gzout.finish();
             return true;
@@ -628,7 +629,7 @@ public class FileUtility {
      */
     public static Set<String> loadDict(InputStream io, boolean case_sensitive) throws IOException {
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, default_encoding))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, defaultEncoding))) {
 
             final Set<String> dict = new HashSet<>();
             String newline = null;

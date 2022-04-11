@@ -169,6 +169,7 @@ public abstract class RegexPatternManager {
     }
 
     private StringBuilder configMessages = new StringBuilder();
+    private static String SEPARATOR = "[\t ]+";
 
     /**
      * Initializes the pattern manager implementations. Reads the DEFINEs and RULEs
@@ -206,7 +207,7 @@ public abstract class RegexPatternManager {
                 if (line.startsWith("#DEFINE")) {
                     // line should be
                     // #DEFINE<tab><defineName><tab><definePattern>
-                    fields = line.split("[\t ]+", 3);
+                    fields = line.split(SEPARATOR, 3);
                     if (fields.length!=3) {
                         throw new ConfigException(String.format("DEFINE entry must have 3 fields for LINE: %s", line));
                     }
@@ -216,7 +217,7 @@ public abstract class RegexPatternManager {
                 else if (line.startsWith("#RULE")) {
                     // line should be
                     // #RULE<tab><rule_fam><tab><rule_id><tab><pattern>
-                    fields = line.split("[\t ]+", 4);
+                    fields = line.split(SEPARATOR, 4);
                     if (fields.length!=4) {
                         throw new ConfigException(String.format("RULE entry must have 4 fields for LINE: %s", line));
                     }
@@ -239,7 +240,7 @@ public abstract class RegexPatternManager {
                         rule_order.add(ruleKey);
                     }
                 } else if (testing && line.startsWith("#TEST")) {
-                    fields = line.split("[\t ]+", 4);
+                    fields = line.split(SEPARATOR, 4);
                     if (fields.length!=4) {
                         throw new ConfigException(String.format("TEST entry must have 4 fields for LINE: %s", line));
                     }
@@ -257,7 +258,7 @@ public abstract class RegexPatternManager {
                     // testcases.add(new PatternTestCase(ruleKey + "#" + testcount, fam, testtext));
                     testcases.add(tc);
                 } else if (line.startsWith("#CLASS")) {
-                    fields = line.split("[\t ]+", 3);
+                    fields = line.split(SEPARATOR, 3);
                     if (fields.length!=3) {
                         throw new ConfigException(String.format("CLASS entry must have 3 fields for LINE: %s", line));
                     }

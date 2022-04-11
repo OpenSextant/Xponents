@@ -84,14 +84,6 @@ public class XCoord extends AbstractFlexPat {
     }
 
     /**
-     * Extractor interface: extractors are responsible for cleaning up after
-     * themselves.
-     */
-    @Override
-    public void cleanup() {
-    }
-
-    /**
      * Extractor interface: getName
      *
      * @return name of extractor
@@ -390,7 +382,6 @@ public class XCoord extends AbstractFlexPat {
             }
 
             patternsComplete++;
-            updateProgress(patternsComplete / (double) patterns.get_patterns().size() + 1);
         }
 
         // "pass" is the wrong idea. If no data was found

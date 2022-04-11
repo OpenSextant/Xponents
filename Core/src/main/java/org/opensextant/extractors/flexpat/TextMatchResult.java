@@ -51,12 +51,6 @@ public class TextMatchResult {
      */
     public List<TextMatch> matches = null;
 
-    /**
-     *
-     */
-    public TextMatchResult() {
-    }
-
     private StringBuilder msgTrace = new StringBuilder();
 
     /**

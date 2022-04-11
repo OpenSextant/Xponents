@@ -69,14 +69,6 @@ public class PatternsOfLife extends AbstractFlexPat {
     }
 
     /**
-     * Extractor interface: extractors are responsible for cleaning up after
-     * themselves.
-     */
-    @Override
-    public void cleanup() {
-    }
-
-    /**
      * Extractor interface: getName
      *
      * @return extractor name
@@ -196,7 +188,6 @@ public class PatternsOfLife extends AbstractFlexPat {
 
             }
             patternsComplete++;
-            updateProgress(patternsComplete / (double) patterns.get_patterns().size() + 1);
         }
 
         results.pass = !results.matches.isEmpty();

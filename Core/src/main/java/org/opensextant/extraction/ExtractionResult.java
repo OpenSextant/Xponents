@@ -49,9 +49,6 @@ public class ExtractionResult {
      */
     public List<TextMatch> matches = new ArrayList<>();
 
-    public ExtractionResult() {
-    }
-
     /**
      * Given a record ID, create a container for holding onto all the geocodes
      * for that particular data object.

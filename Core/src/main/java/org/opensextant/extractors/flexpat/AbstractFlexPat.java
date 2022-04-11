@@ -154,17 +154,16 @@ public abstract class AbstractFlexPat implements Extractor {
         }
     }
 
+    /**
+     * Extractor interface: extractors are responsible for cleaning up after
+     * themselves.
+     */
+    @Override
+    public void cleanup() { }
     public void enableAll() {
         patterns.enableAll();
     }
-
     public void disableAll() {
         patterns.disableAll();
-    }
-
-    public void updateProgress(double progress) {
-    }
-
-    public void markComplete() {
     }
 }
