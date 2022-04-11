@@ -57,7 +57,7 @@ public class FileUtility {
      * @throws IOException if file had IO errors.
      */
     public static boolean writeFile(String buffer, String fname) throws IOException {
-        return writeFile(buffer, fname, defaultEncoding, false);
+        return writeFile(buffer, fname, DEFAULT_ENCODING, false);
     }
 
     /**
@@ -229,7 +229,7 @@ public class FileUtility {
      * @throws IOException on error
      */
     public static String readFile(String filepath) throws IOException {
-        return readFile(new File(filepath), defaultEncoding);
+        return readFile(new File(filepath), DEFAULT_ENCODING);
     }
 
     /**
@@ -238,13 +238,13 @@ public class FileUtility {
      * @throws IOException on error
      */
     public static String readFile(File filepath) throws IOException {
-        return readFile(filepath, defaultEncoding);
+        return readFile(filepath, DEFAULT_ENCODING);
     }
 
     /**
      *
      */
-    public static final String defaultEncoding = "UTF-8";
+    public static final String DEFAULT_ENCODING = "UTF-8";
 
     /**
      *
@@ -281,7 +281,7 @@ public class FileUtility {
 
         try (FileInputStream instream = new FileInputStream(filepath);
              GZIPInputStream gzin = new GZIPInputStream(new BufferedInputStream(instream), IO_BUFFER_SIZE)) {
-            return new String(IOUtils.toByteArray(gzin), defaultEncoding);
+            return new String(IOUtils.toByteArray(gzin), DEFAULT_ENCODING);
         }
     }
 
@@ -299,7 +299,7 @@ public class FileUtility {
         try (FileOutputStream outstream = new FileOutputStream(filepath);
              GZIPOutputStream gzout = new GZIPOutputStream(new BufferedOutputStream(outstream), IO_BUFFER_SIZE)) {
 
-            gzout.write(text.getBytes(defaultEncoding));
+            gzout.write(text.getBytes(DEFAULT_ENCODING));
             gzout.flush();
             gzout.finish();
             return true;
@@ -629,7 +629,7 @@ public class FileUtility {
      */
     public static Set<String> loadDict(InputStream io, boolean case_sensitive) throws IOException {
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, defaultEncoding))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, DEFAULT_ENCODING))) {
 
             final Set<String> dict = new HashSet<>();
             String newline = null;

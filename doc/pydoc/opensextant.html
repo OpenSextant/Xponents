@@ -464,6 +464,22 @@ To&nbsp;get&nbsp;location&nbsp;and&nbsp;feature&nbsp;information&nbsp;in&nbsp;fu
 :return:&nbsp;array&nbsp;of&nbsp;<a href="#Place">Place</a>&nbsp;objects</tt></dd></dl>
  <dl><dt><a name="-load_world_adm1"><strong>load_world_adm1</strong></a>()</dt><dd><tt>Load,&nbsp;store&nbsp;and&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;ADM1&nbsp;boundary&nbsp;names&nbsp;-&nbsp;provinces,&nbsp;states,&nbsp;republics,&nbsp;etc.<br>
 :return:&nbsp;&nbsp;dict</tt></dd></dl>
+ <dl><dt><a name="-location_accuracy"><strong>location_accuracy</strong></a>(conf, prec_err)</dt><dd><tt>Both&nbsp;confidence&nbsp;and&nbsp;precision&nbsp;error&nbsp;are&nbsp;required&nbsp;to&nbsp;be&nbsp;non-zero&nbsp;and&nbsp;positive.<br>
+&nbsp;<br>
+Scale&nbsp;ACCURACY&nbsp;by&nbsp;confidence,&nbsp;and&nbsp;inversely&nbsp;<a href="#-log10">log10</a>(&nbsp;R^2&nbsp;)<br>
+Decreasing&nbsp;accuracy&nbsp;with&nbsp;increasing&nbsp;radius,&nbsp;but&nbsp;keep&nbsp;scale&nbsp;on&nbsp;the&nbsp;order&nbsp;of&nbsp;visible&nbsp;things,<br>
+e.g.,&nbsp;0.01&nbsp;to&nbsp;1.00.&nbsp;&nbsp;This&nbsp;is&nbsp;only&nbsp;one&nbsp;definition&nbsp;of&nbsp;accuracy.<br>
+&nbsp;<br>
+Consider&nbsp;confidence&nbsp;=&nbsp;100&nbsp;(aka&nbsp;100%&nbsp;chance&nbsp;we&nbsp;have&nbsp;the&nbsp;right&nbsp;location)<br>
+&nbsp;<br>
+*&nbsp;<a href="#Country">Country</a>&nbsp;precision&nbsp;~&nbsp;+/-&nbsp;100KM&nbsp;is&nbsp;accuracy&nbsp;=&nbsp;0.091<br>
+*&nbsp;GPS&nbsp;precision&nbsp;is&nbsp;&nbsp;&nbsp;10&nbsp;M&nbsp;precision&nbsp;is&nbsp;accuracy&nbsp;0.33<br>
+*&nbsp;1M&nbsp;precision&nbsp;,&nbsp;accuracy&nbsp;=&nbsp;&nbsp;1.0,&nbsp;(1&nbsp;/&nbsp;(1+log(1*1))&nbsp;=&nbsp;1/1.&nbsp;&nbsp;In&nbsp;other&nbsp;words&nbsp;a&nbsp;1m&nbsp;error&nbsp;is&nbsp;basically&nbsp;"perfect"<br>
+&nbsp;<br>
+:param&nbsp;conf:&nbsp;confidence&nbsp;on&nbsp;100&nbsp;point&nbsp;scale&nbsp;(0-100)<br>
+:param&nbsp;prec_err:&nbsp;error&nbsp;in&nbsp;location&nbsp;precision,&nbsp;meters<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-log10"><strong>log10</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;base&nbsp;10&nbsp;logarithm&nbsp;of&nbsp;x.</tt></dd></dl>
  <dl><dt><a name="-make_HASC"><strong>make_HASC</strong></a>(cc, adm1, adm2=None)</dt><dd><tt>Create&nbsp;a&nbsp;simplie&nbsp;hiearchical&nbsp;path&nbsp;for&nbsp;a&nbsp;boundary<br>
 :param&nbsp;cc:<br>
 :param&nbsp;adm1:<br>

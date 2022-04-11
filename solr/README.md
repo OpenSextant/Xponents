@@ -91,6 +91,24 @@ Xponents root folder:
     
 ```
 
+Linux/Mac kernel configuration related to Solr server usage also requires increasing certain "ulimit" limits
+above defaults:
+
+```
+  # EXPERIMENTAL.
+
+  # As root
+  /sbin/sysctl fs.file-max=65536000
+  # or temporarily
+  ulimit -n 65536000
+  
+  # As user, increase user process max
+  ulimit -u 8092
+
+  # As root:
+  sudo /sbin/sysctl -p
+```
+
 
 
 Option 2.  Build Gazetteer From Scatch

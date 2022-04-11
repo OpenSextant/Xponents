@@ -3783,6 +3783,7 @@ creek,place.general
 cross,place.general
 crossing,place.general
 crossroads,place.general
+dead end,place.general
 delegation,place.general
 delta,place.general
 department,place.general
@@ -4034,6 +4035,7 @@ par,sport
 poker,sport
 polo,sport
 pong,sport
+punches,sport
 rams,sport
 recreation,sport
 rugby,sport
@@ -4289,6 +4291,7 @@ allege,verb
 amaze,verb
 amend,verb
 appeal,verb
+arching,verb
 are,verb
 argue,verb
 arrest,verb
@@ -4473,6 +4476,7 @@ granting,verb
 grilling,verb
 groom,verb
 grooms,verb
+guiding,verb
 guessing,verb
 hack,verb
 hacking,verb
