@@ -453,9 +453,9 @@ public class TextUtils {
         }
         for (char ch : v.toCharArray()) {
             /*
-             * Is the character in .-+Ee ?
+             * Is the character in .-+Ee or SPACE?
              */
-            if (ch == '.' || ch == '-' || ch == '+' || ch == 'e' || ch == 'E') {
+            if (ch == '.' || ch == ',' || ch == '-' || ch == '+' || ch == 'e' || ch == 'E' || ch==' ') {
                 continue;
             }
             if (!Character.isDigit(ch)) {

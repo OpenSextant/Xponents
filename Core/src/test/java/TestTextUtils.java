@@ -177,4 +177,17 @@ public class TestTextUtils {
         assertTrue(!TextUtils.isUpper(latinText) && !TextUtils.isLower(latinText));
         assertTrue(TextUtils.isLower("øh baby") && TextUtils.isUpper("ØH BABY"));
     }
+
+    @Test
+    public void testNumerics(){
+        // Valid number patterns.
+        assertTrue(TextUtils.isNumeric("5.67E2"));
+        assertTrue(TextUtils.isNumeric("+5.67E2"));
+        assertTrue(TextUtils.isNumeric("+5 67E2"));
+        assertTrue(TextUtils.isNumeric("+5,672"));
+
+        // Not number patterns.  Starting with "E" or any Alpha is not numeric.
+        assertFalse(TextUtils.isNumeric("E5.672"));
+        assertFalse(TextUtils.isNumeric("abcdef"));
+    }
 }
