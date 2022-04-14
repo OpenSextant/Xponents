@@ -2,10 +2,21 @@ version: '3'
 services:
   xponents:
     container_name: xponents
-    image: mubaldino/opensextant:xponents-offline-3.5
+    image: mubaldino/opensextant:xponents-3.5
     environment:
-        - JAVA_XMS=3500m
-        - JAVA_XMX=3500m
+        - JAVA_XMS=4g
+        - JAVA_XMX=4g
     ports:
         - "8787:8787"
+
+  gazetteer:
+    container_name: gazetteer
+    image: mubaldino/opensextant:xponents-3.5
+    entrypoint: ./xponents-solr/solr7-dist/bin/solr start -p 7000 -s ./xponents-solr/solr7 -m 3g -q  -foreground  -force
+    ports:
         - "7000:7000"
+
+networks:
+  default:
+      
+

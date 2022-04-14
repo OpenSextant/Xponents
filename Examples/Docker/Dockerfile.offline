@@ -7,7 +7,7 @@ ENV VERSION=Xponents-3.5
 ENV XPONENTS=/home/opensextant/Xponents
 ENV JAVA_XMS=3500m
 ENV JAVA_XMX=3500m
-ENV MVN_VER=3.8.4
+ENV MVN_VER=3.8.5
 ENV MVN=apache-maven-$MVN_VER
 ENV PATH=/opt/maven/bin:$PATH
 ENV LOCAL_REPO_NAME=maven-repo
@@ -25,7 +25,7 @@ COPY ./ $XPONENTS/
 # OFFLINE
 #---------------------------
 # Install Maven to allow for offline recompilation
-RUN cd /tmp && curl -O http://mirrors.advancedhosters.com/apache/maven/maven-3/$MVN_VER/binaries/$MVN-bin.tar.gz  && \
+RUN cd /tmp && curl -O https://dlcdn.apache.org/maven/maven-3/$MVN_VER/binaries/$MVN-bin.tar.gz && \
    (cd /opt/ ; tar xzf /tmp/$MVN-bin.tar.gz) && \
    (mv /opt/$MVN /opt/maven)
 

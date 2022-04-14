@@ -85,30 +85,41 @@ data processing vs. rote reference data lookups.
 
 Running
 --------------------
+
+The default HTTP port Xponents REST runs on is `8787`.  Remap that as needed.
+
 **Run Xponents REST:**
 
 Main points:
+
 * Choose a port number -- XLAYER_PORT is the only argument to the internal "xlayer-docker.sh" script.
  The ports in the invocation below are related to:
   *  Xponents REST service, ala `-p HOST_PORT:PPPP ... -e XLAYER_PORT=PPPP`. Externally you use HOST_PORT in your URL.
   *  Solr Gazeteer REST service, ala ` -p HOST_PORT:SSSS`, where SSSS is the port you start Solr, if needed. It is OFF by default.
 * Leave off `--detach` if you want to see console.
+
 Use `docker logs NAME` to see the console, if it was a detached run. NAME is the docker container "--name" argument.
 
-```sh
+```shell
 
-docker run -p 8888:8888 -p 7000:7000 -e XLAYER_PORT=8888 \
-      --name xponents --rm --detach  opensextant:xponents-$VERSION
+    docker run -p 8080:8787 --name xponents --rm --detach  opensextant:xponents-$VERSION
       
 ```
 
 **Run Gazeteeer:**
 
-```sh
+```shell
 
-docker exec -it xponents /bin/bash -c \
-   "cd ./xponents-solr && ./solr7-dist/bin/solr start -p 7000 -s ./solr7 -m 3g -q -force"
+    docker exec -it xponents /bin/bash -c \
+       "cd ./xponents-solr && ./solr7-dist/bin/solr start -p 7000 -s ./solr7 -m 3g -q -force"
 
+```
+
+Use The provided `docker-compose.yml` runs both services in separate containers off the same image.
+
+```
+    docker-compose up -d xponents
+    docker-compose up -d gazetteer
 ```
 
 Now that you have the Gazetteer running, you can query this in various ways below.  But first consult 
