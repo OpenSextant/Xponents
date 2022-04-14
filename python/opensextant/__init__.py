@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 from math import sqrt, sin, cos, radians, atan2, log as mathlog, log10
 
 from opensextant.utility import get_csv_reader, get_bool
-from pygeodesy.geohash import encode as geohash_encode, neighbors as geohash_neighbors
 from pygeodesy.ellipsoidalVincenty import LatLon as LL
+from pygeodesy.geohash import encode as geohash_encode, neighbors as geohash_neighbors
 
 PY3 = sys.version_info.major == 3
 countries = []
@@ -51,6 +51,25 @@ def validate_lat(f):
 
 def validate_lon(f):
     return (f >= -180.0) and (f <= 180.0)
+
+
+def parse_admin_code(adm1):
+    """
+    :param adm1: admin level 1 code
+    :return: ADM1 code if possible.
+    """
+    if not adm1:
+        return ""
+
+    code = adm1
+    if "?" in adm1:
+        code = "0"
+    elif "." in adm1:
+        cc2, code = adm1.split(".")
+    # Normalize Country-level.  Absent ADM1 levels are assigned "0" anyway
+    if code.strip() in {"", None, "0", "00"}:
+        code = "0"
+    return code
 
 
 def distance_cartesian(x1, y1, x2, y2):
@@ -139,11 +158,11 @@ def _estimate_geohash_precision(r: int):
     return precision
 
 
-def _ll2dict(p:LL):
-    return {"lat":p.lat, "lon":p.lon}
+def _ll2dict(p: LL):
+    return {"lat": p.lat, "lon": p.lon}
 
 
-def _ll2geohash(p:LL):
+def _ll2geohash(p: LL):
     return geohash_encode(lat=p.lat, lon=p.lon)
 
 
@@ -161,7 +180,7 @@ def radial_geohash(lat, lon, radius):
     return corners
 
 
-def geohash_cells_radially(lat:float, lon:float, radius:int):
+def geohash_cells_radially(lat: float, lon: float, radius: int):
     """
     Create a set of geohashes that contain the given area defined by lat,lon + radius
     """
@@ -170,7 +189,7 @@ def geohash_cells_radially(lat:float, lon:float, radius:int):
     cells = set([])
     for directional in ensw:
         gh = ensw[directional]
-        cells.add(gh[0:radius_error-1])
+        cells.add(gh[0:radius_error - 1])
     return cells
 
 
@@ -500,7 +519,7 @@ def load_world_adm1():
 
             cc_adm1 = adm1Splitter.split(row[0], 2)
             adm1.country_code = cc_adm1[0]
-            adm1.adm1 = cc_adm1[1]
+            adm1.adm1 = parse_admin_code(cc_adm1[1])
             adm1.source = "G"  # Geonames.org coded.
             hasc = make_HASC(adm1.country_code, adm1.adm1)
             if adm1.country_code == "US":
@@ -571,7 +590,7 @@ def load_major_cities():
             pl.feature_class = line[6]
             pl.feature_code = line[7]
             pl.country_code = line[8]
-            pl.adm1 = line[10]
+            pl.adm1 = parse_admin_code(line[10])
             pl.adm2 = line[11]
             pl.geohash = geohash_encode(pl.lat, pl.lon, precision=6)
             try:
@@ -611,7 +630,7 @@ def popscale(population, feature="city"):
     return int(index) if index > 0 else 0
 
 
-def is_political(feat_code:str):
+def is_political(feat_code: str):
     """Test a feature code"""
     if not feat_code: return False
     return feat_code.startswith("PCL")
@@ -728,7 +747,7 @@ class TextMatch(TextEntity):
     def __str__(self):
         return f"{self.label}/{self.text}({self.start},{self.end})"
 
-    def populate(self, attrs:dict):
+    def populate(self, attrs: dict):
         """
         Populate a TextMatch to normalize the set of attributes -- separate class fields on TextMatch from additional
         optional attributes.
@@ -770,6 +789,7 @@ class PlaceCandidate(TextMatch):
     response from the REST API, for example.
 
     """
+
     def __init__(self, *args, **kwargs):
         TextMatch.__init__(self, *args, **kwargs)
         self.confidence = 0
@@ -779,8 +799,7 @@ class PlaceCandidate(TextMatch):
         # Location certainty is a simple meausre 0.0 to 1.0 to convey confidence + precision in one metric
         self.location_certainty = -1
 
-
-    def populate(self, attrs:dict):
+    def populate(self, attrs: dict):
         """
         Deserialize the attributes dict from either TextMatch schema or Place schema
         :param attrs:

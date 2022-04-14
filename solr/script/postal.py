@@ -2,7 +2,7 @@ import sqlite3
 from copy import copy
 
 import arrow
-from opensextant import Place, get_country
+from opensextant import Place, get_country, parse_admin_code
 from opensextant.gazetteer import DataSource, get_default_db, as_place_record
 from opensextant.utility import get_csv_reader, is_ascii
 
@@ -180,7 +180,7 @@ class PostalGazetteer(DataSource):
                 pl.country_code = row["cc"]
                 pl.name_bias = 0.1
                 pl.id_bias = 0.1
-                pl.adm1 = row["admin_code1"]
+                pl.adm1 = parse_admin_code(row["admin_code1"])
                 pl.place_id = "/".join([pl.country_code, pl.adm1, pl.name])
                 if pl.place_id in cache:
                     # Do we track lat/lon?
