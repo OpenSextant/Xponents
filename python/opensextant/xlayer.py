@@ -11,7 +11,6 @@ import requests
 import requests.exceptions
 from opensextant import TextMatch, PlaceCandidate
 
-
 # Move away from "geo" and towards a more descriptive place label.
 GEOCODINGS = {"geo", "place", "postal", "country", "coord", "coordinate"}
 

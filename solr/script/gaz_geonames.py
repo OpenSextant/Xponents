@@ -6,7 +6,7 @@ The main 'geoname' table has the following fields :
 """
 from copy import copy
 
-from opensextant import get_country
+from opensextant import get_country, parse_admin_code
 from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, PlaceHeuristics
 from opensextant.utility import get_list, has_cjk, has_arabic, is_value, is_code, is_abbreviation, get_csv_reader
 
@@ -189,6 +189,7 @@ class GeonamesOrgGazetteer(DataSource):
                     print("What Country?", gn)
                     continue
 
+                geo["adm1"] = parse_admin_code(geo.get("adm1"))
                 geo["place_id"] = f"G{plid}"
                 self.add_location(geo, geo["lat"], geo["lon"])
                 add_country(geo)

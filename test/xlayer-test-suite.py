@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-import os
 import json
-from opensextant import Place, PlaceCandidate
+import os
+
+from opensextant import PlaceCandidate
+
 
 def print_intro(test_id, content):
-    print(f"{test_id}\t{content[0:100]}")
+    print(f"\n==========\n{test_id}\t{content[0:100]}")
 
 
 def print_results(matches):
@@ -14,14 +16,27 @@ def print_results(matches):
     :param matches: arr of TextMatch
     """
     for match in matches:
+        match_summary = {"type": match.label,
+                         "matchtext": match.text}
+
         if isinstance(match, PlaceCandidate):
             geo = match.place
+            feat = ""
+            if geo.feature_class:
+                feat = f"{geo.feature_class}/{geo.feature_code}"
+            match_summary.update(
+                {"adm1": geo.adm1, "cc": geo.country_code,
+                 "lat": geo.lat, "lon": geo.lon,
+                 "feature": feat, "confidence": match.confidence})
+
             # Label is place, country, coord, or postal
-            print(f"{match.label}\t{match.text}\n\t{geo},\t{geo.feature_class}/{geo.feature_code} confidence:{match.confidence}")
+            print(f"{match.label}\t{match.text}\n\t{geo},\t{feat} confidence:{match.confidence}")
         else:
             # Label is taxon, person, org or nationality
             #  .... or pattern name
             print(f"{match.label}\t{match.text}\n\t{match.attrs}")
+
+        results_csv.writerow(match_summary)
 
 
 def unit_testing():
@@ -72,6 +87,7 @@ def arabic_testing():
     """
     print_results(client.process(docid, content, lang="ar", features=["geo", "patterns", "taxons"]))
 
+
 def cjk_testing():
     # Excerpt from https://english.kyodonews.net/news/2021/08/008ad4067ab0-japan-issues-exclusion-orders-to-80-chinese-fishing-ships-in-2021.html
     # Translated by Google Translate to Japanese
@@ -111,6 +127,8 @@ def test_suite():
     cjk_testing()
 
 
+COLUMNS = ["type", "matchtext", "adm1", "cc", "lat", "lon", "feature", "confidence"]
+
 if __name__ == "__main__":
     from argparse import ArgumentParser
     from opensextant.xlayer import XlayerClient
@@ -125,4 +143,12 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(__file__)
     xponents_home = os.path.dirname(script_dir)
 
-    test_suite()
+    results_fname = "xponents-rest-results.csv"
+    results_file = os.path.join(xponents_home, "tmp", results_fname)
+    results_csv = None
+    from opensextant.utility import get_csv_writer
+
+    with open(results_file, "w", encoding="UTF-8") as results_io:
+        results_csv = get_csv_writer(results_io, columns=COLUMNS)
+        results_csv.writeheader()
+        test_suite()

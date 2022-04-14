@@ -1,6 +1,5 @@
-from opensextant import load_countries, get_country
-from opensextant.gazetteer import get_default_db, parse_admin_code, \
-    DataSource, PlaceHeuristics, name_group_for, normalize_name
+from opensextant import load_countries, get_country, parse_admin_code
+from opensextant.gazetteer import get_default_db, DataSource, PlaceHeuristics, name_group_for, normalize_name
 from opensextant.utility import get_csv_reader
 
 load_countries()

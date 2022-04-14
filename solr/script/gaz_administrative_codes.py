@@ -4,8 +4,8 @@ import os
 from copy import copy
 
 import shapefile
-from opensextant import get_country, Country
-from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, parse_admin_code, PlaceHeuristics
+from opensextant import get_country, Country, parse_admin_code
+from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, PlaceHeuristics
 from opensextant.utility import is_code, is_abbreviation, get_list
 
 #

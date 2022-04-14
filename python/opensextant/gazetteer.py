@@ -220,25 +220,6 @@ def name_group_for(nm: str):
     return ""
 
 
-def parse_admin_code(adm1):
-    """
-    :param adm1: admin level 1 code
-    :return: ADM1 code if possible.
-    """
-    if not adm1:
-        return ""
-
-    code = adm1
-    if "?" in adm1:
-        code = "0"
-    elif "." in adm1:
-        cc2, code = adm1.split(".")
-    # Normalize Country-level.  Absent ADM1 levels are assigned "0" anyway
-    if code.strip() in {"", None, "0", "00"}:
-        code = "0"
-    return code
-
-
 def as_place(r):
     """
     Convert dict to a Place object
