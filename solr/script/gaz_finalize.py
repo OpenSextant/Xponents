@@ -4,7 +4,7 @@ from time import sleep
 
 from opensextant import Place
 from opensextant.gazetteer import DB, estimate_name_bias, GazetteerIndex, get_default_db
-from opensextant.utility import replace_diacritics, load_list
+from opensextant.utility import replace_diacritics, load_list, get_list
 
 
 def filter_out_feature(pl: Place, feats):
@@ -226,7 +226,19 @@ class Finalizer:
                 keys.add(k)
 
     def index(self, url, features=None, ignore_features=None, ignore_func=None,
-              ignore_digits=True, ignore_names=False, limit=-1):
+              ignore_digits=True, ignore_names=False, limit=-1, countries=[]):
+        """
+
+        :param url:  Gazetteer URL
+        :param features:  features to index
+        :param ignore_features: features to ignore
+        :param ignore_func: filter function
+        :param ignore_digits:  True if indexer should ignore purely numeric names
+        :param ignore_names:  True if indexer should ignore name_type=N, e.g,. postal
+        :param limit:
+        :param countries: array of country codes.
+        :return:
+        """
 
         print("Xponents Gazetteer Finalizer: INDEX")
         indexer = GazetteerIndex(url)
@@ -246,7 +258,7 @@ class Finalizer:
         if ignore_names:
             default_criteria = " and duplicate=0 and name_type!='N'"
         # For each row in DB, index to Solr.  Maybe organize batches by row ID where dup=0.
-        cc_list = self.db.list_countries()
+        cc_list = countries or self.db.list_countries()
         for cc in cc_list:
             print(f"Country '{cc}'")
             for pl in self.db.list_places(cc=cc, criteria=default_criteria, limit=limit):
@@ -304,21 +316,25 @@ if __name__ == "__main__":
     ap.add_argument("--solr", help="Solr URL")
     ap.add_argument("--optimize", action="store_true", default=False)
     ap.add_argument("--postal", action="store_true", default=False)
+    ap.add_argument("--countries", help="list of country codes CC,CC,...")
 
     args = ap.parse_args()
 
     gaz = None
     if args.operation == "index" and args.solr:
+        cclist = []
+        if args.countries:
+            cclist = get_list(args.countries)
         #  Features not as present in general data include: WELLS, STREAMS, SPRINGS, HILLS.
         #
         if args.postal:
             # Postal Codes
             gaz = PostalIndexer(args.db, debug=args.debug)
             gaz.stop_filters = None
-            gaz.index(args.solr, ignore_digits=False, limit=int(args.max))
+            gaz.index(args.solr, ignore_digits=False, limit=int(args.max), countries=cclist)
         else:
             gaz = Finalizer(args.db, debug=args.debug)
-            gaz.index(args.solr, ignore_digits=True, limit=int(args.max),
+            gaz.index(args.solr, ignore_digits=True, limit=int(args.max), countries=cclist,
                       ignore_func=oddball_omissions,
                       ignore_features={"H/WLL.*",
                                        "H/STM[ABCDHIQSBX]+",
