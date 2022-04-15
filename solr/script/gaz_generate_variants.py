@@ -194,12 +194,18 @@ if __name__ == "__main__":
     ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
+    ap.add_argument("--adhoc", action="store_true", default=False)
+    ap.add_argument("--variants", action="store_true", default=False)
 
     args = ap.parse_args()
+    default_run = not args.adhoc and not args.variants
 
     # All "X" Xponents generated names are purged by first class.  NameVariant generators do not purge
-    adhocgaz = AdhocNameVariants(args.db)
-    adhocgaz.normalize('etc/gazetteer/additions/adhoc-placenames.csv')
-    count = adhocgaz.rowcount
-    GeneralNameVariants(args.db).generate_variants()
-    SaintNameVariants(args.db).generate_variants()
+    count = 0
+    if args.adhoc or default_run:
+        adhocgaz = AdhocNameVariants(args.db)
+        adhocgaz.normalize('etc/gazetteer/additions/adhoc-placenames.csv')
+        count = adhocgaz.rowcount
+    if args.variants or default_run:
+        GeneralNameVariants(args.db).generate_variants()
+        SaintNameVariants(args.db).generate_variants()
