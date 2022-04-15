@@ -16,6 +16,9 @@
  */
 package org.opensextant.extractors.geo;
 
+import java.io.IOException;
+import java.util.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -33,9 +36,6 @@ import org.opensextant.extraction.ExtractionException;
 import org.opensextant.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The
@@ -133,6 +133,7 @@ public class SolrGazetteer {
     }
 
     public static final String DEFAULT_FIELDS = "id,name,cc,adm1,adm2,feat_class,feat_code,geo,place_id,id_bias,name_type";
+
     /**
      * For larger areas choose a higher number of Rows to return. If you choose to
      * use Solr spatial
@@ -307,7 +308,7 @@ public class SolrGazetteer {
             log.info("Unknown country in gazetteer, that is not in flat files. C={}", C);
 
             countryCodeMap.put(C.getCountryCode(), C);
-            if (C.CC_ISO3!=null) {                
+            if (C.CC_ISO3 != null) {
                 countryCodeMap.put(C.CC_ISO3, C);
             }
         }
@@ -441,7 +442,7 @@ public class SolrGazetteer {
     /**
      * Internal class for comparing gazetteer entries returned as a result of a
      * point search, ie.., using
-     * 
+     *
      * <pre>
      * { !geofilt }
      * </pre>

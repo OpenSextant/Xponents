@@ -32,6 +32,9 @@ package org.opensextant.extractors.geo;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 // */
 
+import java.io.IOException;
+import java.util.*;
+
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -50,9 +53,6 @@ import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Connects to a Solr sever via HTTP and tags place names in document. The
@@ -465,7 +465,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             String matchText = (String) tag.get("matchText");
 
             // IF the matched text span contains odd punctuation, we'll pass on it.
-            if (TextUtils.hasIrregularPunctuation(matchText)){
+            if (TextUtils.hasIrregularPunctuation(matchText)) {
                 ++this.defaultFilterCount;
                 continue;
             }
@@ -644,7 +644,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                  * Example, if 'GA' appears randomly in document out of context  of qualifying a city or county,
                  * then it is likely just the letters'GA' and not representing state of 'Georgia (GA)'.
                  */
-                if (pGeo.isCode() && pc.isUpper()){
+                if (pGeo.isCode() && pc.isUpper()) {
                     pc.isAbbreviation = true;
                     pc.isAcronym = true;
                 }

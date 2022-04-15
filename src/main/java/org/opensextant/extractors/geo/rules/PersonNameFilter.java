@@ -17,13 +17,6 @@
 
 package org.opensextant.extractors.geo.rules;
 
-import org.opensextant.ConfigException;
-import org.opensextant.data.Place;
-import org.opensextant.data.TextInput;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.xtax.TaxonMatch;
-import org.opensextant.util.FileUtility;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -32,6 +25,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.opensextant.ConfigException;
+import org.opensextant.data.Place;
+import org.opensextant.data.TextInput;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.xtax.TaxonMatch;
+import org.opensextant.util.FileUtility;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class PersonNameFilter extends GeocodeRule {
@@ -183,7 +182,9 @@ public class PersonNameFilter extends GeocodeRule {
                 String rule = null;
                 // Case: LOC in NAME
                 // LOC: "Murtagh" in PERSON: "General Murtagh"
-                if (pc.isWithin(name)) {
+                if (pc.isSameNorm(name)) {
+                    rule = "ResolvedPerson";
+                } else if (pc.isWithin(name)) {
                     rule = "ResolvedPerson";
                 } else if (pc.isBefore(name) && pc.getWordCount() == 1 && !pc.isCountry) {
                     if (hasNonWhitespace(input.buffer, pc.end, name.start)) {
@@ -196,6 +197,7 @@ public class PersonNameFilter extends GeocodeRule {
                     }
                     rule = "ResolvedPerson.SucceedingName";
                 } else if (name.isWithin(pc)) {
+                    // Filter out PERSON name, let PLACE pass.
                     // Ignore person names that are sub-matches
                     // NAME: Murtagh in LOC: "General Murtagh Memorial Square"
                     pc.addRule("Contains.PersonName");

@@ -1,5 +1,9 @@
 package org.opensextant.extractors.geo.social;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Pattern;
+
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.*;
@@ -20,11 +24,6 @@ import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import static org.opensextant.util.GeodeticUtility.getFeaturePrecision;
 import static org.opensextant.util.GeodeticUtility.isCoord;
 
@@ -113,19 +112,13 @@ public class XponentGeocoder extends GeoInferencer {
     @Override
     public void configure() throws ConfigException {
 
-        /*
-         * DeepEye Text provides a wrapper around Cybozu LangDetect
-         */
-        // langidTool = new LangDetect(AVERAGE_TEXT_SIZE);
-
-        tagger = new PlaceGeocoder(true);// new GazetteerMatcher(true /*allow
-                                         // lowercase tagging*/);
+        tagger = new PlaceGeocoder(true);
         tagger.enablePersonNameMatching(true);
         // If you really do not want to miss anything -- look at this flag:
         // tagger.setAllowLowerCaseAbbreviations(true);
         Parameters xponentsParams = new Parameters();
         xponentsParams.tag_coordinates = false; // Coords extracted separately
-                                                // here by XCoord.
+        // here by XCoord.
 
         /* "resolve_provinces" is equivalent to setProvinceName(Place) */
         xponentsParams.resolve_localities = true;
@@ -677,11 +670,11 @@ public class XponentGeocoder extends GeoInferencer {
         String gazNameField = "name";
         if (isCJK) {
             lastTry.langid = "zh"; // Should verify language and use zh, ja, ko
-                                   // instead of 'cjk' or 'zh' for all.
+            // instead of 'cjk' or 'zh' for all.
             gazNameField = "name_cjk";
         } else if (isArabic) {
             lastTry.langid = "ar"; // langid tools may return 'msa' or other
-                                   // MidEast script/langIDs.
+            // MidEast script/langIDs.
             gazNameField = "name_ar";
         }
 
@@ -801,7 +794,7 @@ public class XponentGeocoder extends GeoInferencer {
 
             List<Place> places = tagger.searchAdvanced(q, true, nm.length() + 3);
             if (!places.isEmpty()) {
-                PlaceCandidate pc = new PlaceCandidate(0, nmGiven.length()-1);
+                PlaceCandidate pc = new PlaceCandidate(0, nmGiven.length() - 1);
                 pc.setText(nm);
                 // TOOD: assess text sense -- if context is UPPER, lower or Mixed.
                 pc.inferTextSense(false, false);
@@ -926,8 +919,8 @@ public class XponentGeocoder extends GeoInferencer {
             query.append(String.format(" AND +cc:%s", cc));
         }
         List<Place> matches = gazetteer.search(query.toString(), true); // Full
-                                                                        // solr
-                                                                        // query
+        // solr
+        // query
         for (Place adm1Place : matches) {
             log.debug("Matched PROV {} =? {}", prov, adm1Place);
 

@@ -17,14 +17,13 @@
 
 package org.opensextant.extractors.geo.rules;
 
+import java.util.List;
+
 import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;
 import org.opensextant.extractors.geo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-
 import static org.opensextant.util.GeodeticUtility.geohash;
 
 public abstract class GeocodeRule {
@@ -34,9 +33,12 @@ public abstract class GeocodeRule {
     public static final int UPPERCASE = 2;
     public static final int LOWERCASE = 1;
 
+    public static final String LEX1 = "LexicalMatch";
+    public static final String LEX2 = "LexicalMatch.NoCase";
+
     public int weight = 0; /* of 10, approximately */
     public String NAME = null;
-    
+
     protected String defaultMethod = null;
 
     protected CountryObserver countryObserver = null;
@@ -66,14 +68,15 @@ public abstract class GeocodeRule {
     }
 
     /** for the purposes of Geocoder Rule reasoning determine the case. */
-    public int textCase(TextInput t){
-        if (t.isLower){
+    public int textCase(TextInput t) {
+        if (t.isLower) {
             return LOWERCASE;
-        } else if (t.isUpper){
+        } else if (t.isUpper) {
             return UPPERCASE;
         }
         return 0;
     }
+
     protected int textCase = 0;
 
     public void setTextCase(TextInput t) {
@@ -119,6 +122,19 @@ public abstract class GeocodeRule {
     }
 
     /**
+     * To compare places by their country code alone. Useful for CITY.cc =? COUNTRY.cc mentions.
+     * @param cc1 code 1
+     * @param cc2 code 2
+     * @return
+     */
+    public boolean sameCountry(String cc1, String cc2) {
+        if (cc1 == null || cc2 == null) {
+            return false;
+        }
+        return cc1.equalsIgnoreCase(cc2);
+    }
+
+    /**
      * Quick test to see if two places are contained within the same boundary.
      *
      * @param p1
@@ -143,11 +159,29 @@ public abstract class GeocodeRule {
         }
     }
 
+    /**
+     * Increment score for lexical matches accoringly:
+     * - non-ASCII match:       2.5 pts
+     * - ASCII match:           1.5 pts
+     * - Case insenstive match: 0.5 pts
+     * Simple example, with one char in Name match, one char in Geo Name
+     *  ø = ø   2.5
+     *  o = o   1.5
+     *  O = O   1.5
+     *  O = o   0.5
+     *
+     *  Mention ? Gazetteer Entry
+     *  Boston != Bøstøn,  no points.
+     *  Bøstøn == Bøstøn,  2.5 points
+     *
+     * @param name
+     * @param geo
+     */
     public void sameLexicalName(PlaceCandidate name, Place geo) {
         if (geo.getName().equals(name.getText())) {
-            name.incrementPlaceScore(geo, 1.5, NameRule.LEX1);
+            name.incrementPlaceScore(geo, name.isASCII() ? 1.5 : 2.5, LEX1);
         } else if (geo.getName().equalsIgnoreCase(name.getText())) {
-            name.incrementPlaceScore(geo, 0.5, NameRule.LEX2);
+            name.incrementPlaceScore(geo, 0.5, LEX2);
         }
     }
 
