@@ -93,7 +93,7 @@
         <input addproperty="nga_release_date">NGA gazetteer date?
         </input>
 
-        <get dest="${gaz.tmp}" verbose="true" usetimestamp="true" >
+        <get dest="${gaz.tmp}" verbose="true" usetimestamp="true" skipexisting="true" >
             <url url="https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_1_states_provinces.zip"/>
             <url url="http://download.geonames.org/export/dump/cities15000.zip" />
             <url url="https://download.geonames.org/export/dump/allCountries.zip"/>
@@ -104,10 +104,10 @@
 
         <!-- Unpack it all -->
         <unzip dest="${gaz.tmp}/ne_10m_admin_1_states_provinces" src="${gaz.tmp}/ne_10m_admin_1_states_provinces.zip"/>
-        <unzip dest="${gaz.tmp}" src="cities15000.zip"/>
-        <unzip dest="${gaz.tmp}" src="allCountries.zip"/>
-        <unzip dest="${gaz.tmp}" src="geonames_${nga_release_date}.zip" />
-        <unzip dest="${gaz.tmp}" src="NationalFile.zip" />
+        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/cities15000.zip"/>
+        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/allCountries.zip"/>
+        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/geonames_${nga_release_date}.zip" />
+        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/NationalFile.zip" />
 
     </target>
 
