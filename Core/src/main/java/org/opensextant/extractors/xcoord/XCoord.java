@@ -31,8 +31,6 @@
 // */
 package org.opensextant.extractors.xcoord;
 
-import static org.opensextant.extraction.MatcherUtils.reduceMatches;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -48,6 +46,7 @@ import org.opensextant.extractors.flexpat.RegexPattern;
 import org.opensextant.extractors.flexpat.RegexPatternManager;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.util.TextUtils;
+import static org.opensextant.extraction.MatcherUtils.reduceMatches;
 
 /**
  * Use this XCoord class for both test and development of patterns, as well as
@@ -285,8 +284,7 @@ public class XCoord extends AbstractFlexPat {
             // If family specified, the limit to that family. Only one for now.
             // To limit multiple use enable_XXXX()
             if (family != XConstants.ALL_PATTERNS && pat.cce_family_id != family) {
-
-                log.debug("CFG pattern={} not requested", pat.id);
+                // log.debug("CFG pattern={} not requested", pat.id);
                 continue;
             }
 

@@ -37,16 +37,8 @@ import java.util.List;
  */
 public class DMSFilter implements GeocoordMatchFilter {
 
-    /**
-     *
-     */
+    /** Date patterns to test matches; Avoid coordinate interpretation if date parses. */
     public static final String[] general_formats = { "yy-dd-mm HH:MM:ss", "mm-dd-yy HH:MM:ss" };
-    /**
-     *
-     */
-    /**
-     *
-     */
     public List<DateFormat> general_dates = new ArrayList<>();
 
     /**

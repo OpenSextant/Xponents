@@ -1,12 +1,6 @@
 package org.opensextant.extractors.test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +17,7 @@ import org.opensextant.extractors.xcoord.GeocoordTestCase;
 import org.opensextant.extractors.xcoord.XConstants;
 import org.opensextant.extractors.xcoord.XCoord;
 import org.opensextant.util.FileUtility;
+import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +117,6 @@ public class TestXCoord {
                 log.info("=========SYSTEM TEST " + tst.id + " FOUND:"
                         + (results.matches.isEmpty() ? "NOTHING" : results.matches.size()));
                 tester.save_result(null, results);
-
             }
             tester.close_report();
 
@@ -399,14 +393,14 @@ public class TestXCoord {
         // after", "UTM");
 
         boolean dd = true;
-        boolean dms = false;
-        boolean dm = false;
+        boolean dms = true;
+        boolean dm = true;
         boolean mgrs = false;
         boolean utm = false;
         //
         xcoord.match_MGRS(mgrs);
 
-        String[] mgrstest = { "1N\n678912340", "3GSM 2000", "1 FEB 2013", "12 GMT 18", "12 ctf 4000", "04\nSMB800999",
+        String[] mgrstest = {"1N\n678912340", "3GSM 2000", "1 FEB 2013", "12 GMT 18", "12 ctf 4000", "04\nSMB800999",
                 "12\nDTF\r7070", "12\rDTF\r7070", "12\n\rDTF\r7070", "7MAR13 1600", "17MAR13 1600", "17MAR13 2014",
                 "17MAY13 2014", "17JUN13 2014", "17JUL13 2014", "17SEP13 2014", "17OCT13 2014", "17NOV13 2014",
                 "17DEC13 2014", "17APR13 2014", "17AUG13 2014", "17JAN13 2014", "7JAN13 2001", "17 JAN 13 2014",
@@ -415,15 +409,17 @@ public class TestXCoord {
                 "10 Jan 13", // edge case, bare minimum.
                 "10 Jan 94", // no, this is the real bare minimum.
                 "38SMB 461136560", "38SMB 461103656", "38SMB 46110 3656", "38SMB 4611 03656", // 0-padded
-                                                                                              // Northing/Easting? 7 4
-                                                                                              // or 0007 0004
+                // Northing/Easting? 7 4
+                // or 0007 0004
                 "38SMB 46110365 60", "38SMB 46110365\n60", // even, but whitespace
                 "38SMB 4611035\n60", // odd, and whitespace
                 "38 SMB 4611 3656", "42 RPR 4611 3656", "10 Jan 2005 02", // MGRS 01, 10JAN 200502
-                "10 Jan 1995 02" };
+                "10 Jan 1995 02"};
 
         xcoord.match_DD(dd);
-        String[] ddtest = { "34.29, -81.55", "N 49°2' 0'' / E 38°22' 0''", "1.718114°  44.699603°",
+        String[] ddtest = {
+                "3: 42.18N 102.24W   ",
+                "34.29, -81.55", "N 49°2' 0'' / E 38°22' 0''", "1.718114°  44.699603°",
                 "N34.445566° W078.112233°", "00 N 130 WA",
                 "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy", "-385331-17004121",
                 "CAN-385331-17004121", "15S5E", "TARGET [1]  LATITUDE: +32.3345  LONGITUDE: -179.3412", // DD04
@@ -445,7 +441,9 @@ public class TestXCoord {
 
         xcoord.match_DMS(dms);
         xcoord.match_DM(dm);
-        String[] dmtest = { "28˚ 55' 19\"N 77˚ 23' 14\"W", "x +42:18:00 -102:24:00 ", "x +42:18:00 -102:24:00 x",
+        String[] dmtest = {
+                "7: 12 22.33N 14 43.42W",
+                "28˚ 55' 19\"N 77˚ 23' 14\"W", "x +42:18:00 -102:24:00 ", "x +42:18:00 -102:24:00 x",
                 "N421800W1022400", "4218009N10224003W", "xxx +42° 18' 00\"  -102° 24' 00\" xxx",
                 "+42° 18' 00\" W 102° 24' 00\"", "N 49°2' 0'' / E 38°22' 0''",
                 "xxxxxxxxxxxxx-385331-17004121.1466dc9989b3545553c65ef91c14c0f3yyyyyyyyyyyyyyyyyyy", "-385331-17004121",
@@ -459,7 +457,7 @@ public class TestXCoord {
                 "31°24' 70°21'", "40°55'23.2\" 9°43'51.1\"", // No HEMI
                 "-40°55'23.2\" +9°43'51.1\"", // with HEMI
                 "42 9-00 N 102 6-00W;           ", "42 18-009 N 102 24-009W;        ", "08°29.067' 13°14.067'", // No
-                                                                                                                // HEMI
+                // HEMI
                 "08°29.067'N 13°14.067'W", "08°29.067'N 113°14.067'W", "40°55'23.2\"N 9°43'51\"E",
                 "42° 18' 00\" 102° 24' 00", "(42° 18' 00\" 102° 24' 00", "01° 44' 55.5\" 101° 22' 33.0\"",
                 "77°55'33.22\"N 127°33'22.11\"W", "40:26:46.123N,79:56:55.000W", "43-04-30.2720N 073-34-58.4170W",
@@ -472,7 +470,7 @@ public class TestXCoord {
                 "27° 37 45N, 82° 42 10W" // no min hash.
         };
 
-        String[] utm_tests = { "12\n\t\nX\t\n245070175", "12\n\nX\n266070175", "12 X 266070175", "12X 266070 175" };
+        String[] utm_tests = {"12\n\t\nX\t\n245070175", "12\n\nX\n266070175", "12 X 266070175", "12X 266070 175"};
 
         xcoord.match_UTM(utm);
         int count = 0;
@@ -499,13 +497,10 @@ public class TestXCoord {
                     + (results.matches.isEmpty() ? "NOTHING" : results.matches.size()));
             for (TextMatch m : results.matches) {
                 log.info("\t" + m.toString());
-                GeocoordMatch g = (GeocoordMatch) m;
-                log.info("\t" + g.formatLatitude() + ", " + g.formatLongitude());
+                log.info("\t{}", GeodeticUtility.formatLatLon((GeocoordMatch) m));
             }
         }
-
         log.info("=== ADHOC TESTS DONE ===");
-
     }
 
     public static void usage() {
@@ -518,12 +513,11 @@ public class TestXCoord {
                 + "\n\tTestXCoord  -a       -- adhoc tests, e.g., recompiling code and testing"
                 + "\n\tTestXCoord  -h       -- help. ";
         System.out.println(USAGE);
-
     }
 
     /**
      * Run a simple test. TODO: Move Main program to Examples or other test area.
-     * 
+     *
      * @param args only one argument accepted: a text file input.
      */
     public static void main(String[] args) {
@@ -544,49 +538,48 @@ public class TestXCoord {
             int c;
             while ((c = opts.getopt()) != -1) {
                 switch (c) {
-                case 'f':
-                    String testFile = "/data/Coord_Patterns_Truth.csv";
-                    System.out.println("SYSTEM TESTS=======FILE=" + testFile + "\n");
-                    test.systemTests();
+                    case 'f':
+                        String testFile = "/data/Coord_Patterns_Truth.csv";
+                        System.out.println("SYSTEM TESTS=======FILE=" + testFile + "\n");
+                        test.systemTests();
 
-                    // Truth source is at src/test/resources -- Or anywhere in your runtime
-                    // classpath at TOP LEVEL!
-                    //
-                    InputStream truthData = XCoord.class.getResourceAsStream(testFile);
-                    if (truthData != null) {
-                        test.fileTruth(truthData, FilenameUtils.getBaseName(testFile));
-                    } else {
-                        System.err.println("Failed... " + testFile + " not found");
-                    }
-                    break;
+                        // Truth source is at src/test/resources -- Or anywhere in your runtime
+                        // classpath at TOP LEVEL!
+                        //
+                        InputStream truthData = XCoord.class.getResourceAsStream(testFile);
+                        if (truthData != null) {
+                            test.fileTruth(truthData, FilenameUtils.getBaseName(testFile));
+                        } else {
+                            System.err.println("Failed... " + testFile + " not found");
+                        }
+                        break;
 
-                case 'i':
-                    test.userTest(opts.getOptarg());
-                    break;
+                    case 'i':
+                        test.userTest(opts.getOptarg());
+                        break;
 
-                case 't':
-                    System.out.println("USER TEST\n=======\n" + opts.getOptarg());
-                    test.fileTestByLines(opts.getOptarg());
-                    break;
+                    case 't':
+                        System.out.println("USER TEST\n=======\n" + opts.getOptarg());
+                        test.fileTestByLines(opts.getOptarg());
+                        break;
 
-                case 'u':
-                    System.out.println("USER FILE\n=======\n" + opts.getOptarg());
-                    test.fileTests(opts.getOptarg());
-                    break;
+                    case 'u':
+                        System.out.println("USER FILE\n=======\n" + opts.getOptarg());
+                        test.fileTests(opts.getOptarg());
+                        break;
 
-                case 'a':
-                    System.out.println("Adhoc Tests\n=======\n");
-                    test.focusedTests();
-                    break;
+                    case 'a':
+                        System.out.println("Adhoc Tests\n=======\n");
+                        test.focusedTests();
+                        break;
 
-                case 'h':
-                default:
-                    usage();
+                    case 'h':
+                    default:
+                        usage();
                 }
             }
         } catch (Exception xerr) {
             xerr.printStackTrace();
         }
     }
-
 }

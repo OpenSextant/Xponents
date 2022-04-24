@@ -78,14 +78,14 @@ public final class PatternManager extends RegexPatternManager {
     /**
      *
      */
-    public Map<Integer, Boolean> CCE_family_state = new HashMap<Integer, Boolean>();
+    public Map<Integer, Boolean> CCE_family_state = new HashMap<>();
 
     /**
      * @throws IOException
      */
     @Override
     public void initialize(InputStream io) throws IOException {
-        CCE_family_state = new HashMap<Integer, Boolean>();
+        CCE_family_state = new HashMap<>();
         super.initialize(io);
         log.debug(this.getConfigurationDebug());
     }
@@ -122,7 +122,7 @@ public final class PatternManager extends RegexPatternManager {
 
         Boolean b = CCE_family_state.get(p.cce_family_id);
         if (b != null) {
-            p.enabled = b.booleanValue();
+            p.enabled = b;
         }
     }
 
