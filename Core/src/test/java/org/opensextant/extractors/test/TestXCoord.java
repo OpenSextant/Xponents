@@ -1,6 +1,7 @@
 package org.opensextant.extractors.test;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -127,21 +128,6 @@ public class TestXCoord {
         log.info("=== SYSTEM TESTS DONE ===");
     }
 
-    /**
-     * Deprecated: LineNumberReader is deprecated. Very limited as this reads the
-     * entire buffer first.
-     *
-     * @param filepath file to read.
-     * @return LineNumberReader obj
-     * @throws FileNotFoundException
-     * @throws IOException           if reader could not be created
-     * @deprecated LineNumber reader is deprecated
-     */
-    @Deprecated
-    public static LineNumberReader getLineReader(String filepath) throws FileNotFoundException, IOException {
-        return new LineNumberReader(new StringReader(FileUtility.readFile(filepath)));
-    }
-
     public void userTest(String text) {
         xcoord.match_UTM(true);
         xcoord.match_MGRS(true);
@@ -179,7 +165,7 @@ public class TestXCoord {
      *
      * @param coordfile
      */
-    public void fileTestByLines(String coordfile) {
+    public void fileTestByLines(String coordfile) throws IOException {
 
         xcoord.match_UTM(true);
         xcoord.match_MGRS(true);
@@ -187,17 +173,16 @@ public class TestXCoord {
         xcoord.match_DMS(true);
         xcoord.match_DM(true);
 
-        try {
+        String _file = coordfile.trim();
+        String fname = FilenameUtils.getBaseName(_file);
+        String rptFile = "./results/xcoord_" + fname + "-lines.csv";
+        TestXCoordReporter tester = new TestXCoordReporter(rptFile);
+        int lineCount = 0;
 
-            String _file = coordfile.trim();
-            String fname = FilenameUtils.getBaseName(_file);
-            String rptFile = "./results/xcoord_" + fname + "-lines.csv";
-            TestXCoordReporter tester = new TestXCoordReporter(rptFile);
-
-            java.io.LineNumberReader in = getLineReader(coordfile);
-            String line = null;
+        try (BufferedReader in= new BufferedReader(new FileReader(new File(coordfile)))) {
+            String line;
             while ((line = in.readLine()) != null) {
-
+                ++lineCount;
                 String text = line.trim();
                 if (text.startsWith("#")) {
                     continue;
@@ -214,11 +199,8 @@ public class TestXCoord {
                     continue;
                 }
 
-                GeocoordTestCase tst = new GeocoordTestCase("#" + in.getLineNumber(), fam, text);
+                GeocoordTestCase tst = new GeocoordTestCase("#" + lineCount, fam, text);
                 TextMatchResult results = xcoord.extract_coordinates(tst.text, tst.id);
-                /**
-                 * tst.family_id
-                 */
                 results.add_trace("Test Payload: " + tst.text);
 
                 if (!results.evaluated) {
@@ -255,7 +237,7 @@ public class TestXCoord {
     }
 
     public CsvMapReader openStream(InputStream strm) throws IOException {
-        InputStreamReader rdr = new InputStreamReader(strm, "UTF-8");
+        InputStreamReader rdr = new InputStreamReader(strm, StandardCharsets.UTF_8);
         CsvMapReader R = new CsvMapReader(rdr, CsvPreference.STANDARD_PREFERENCE);
         return R;
     }
@@ -475,7 +457,7 @@ public class TestXCoord {
         xcoord.match_UTM(utm);
         int count = 0;
 
-        List<String> tests = new ArrayList<String>();
+        List<String> tests = new ArrayList<>();
         if (utm) {
             tests.addAll(Arrays.asList(utm_tests));
         }

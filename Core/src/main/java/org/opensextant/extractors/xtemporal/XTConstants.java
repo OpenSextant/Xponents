@@ -47,11 +47,11 @@ public class XTConstants {
     /**
      *
      */
-    protected static final Map<String, Integer> familyInt = new HashMap<String, Integer>();
+    protected static final Map<String, Integer> familyInt = new HashMap<>();
     /**
      *
      */
-    protected static final Map<Integer, String> familyLabel = new HashMap<Integer, String>();
+    protected static final Map<Integer, String> familyLabel = new HashMap<>();
 
     static {
 
@@ -73,7 +73,7 @@ public class XTConstants {
     public static int getPatternFamily(String key) {
         Integer i = familyInt.get(key);
         if (i != null) {
-            return i.intValue();
+            return i;
         }
         return UNK_PATTERN;
     }

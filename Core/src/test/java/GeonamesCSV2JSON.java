@@ -3,6 +3,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.opensextant.util.FileUtility;
@@ -34,7 +35,7 @@ public class GeonamesCSV2JSON extends GeonamesUtility {
         // CurrencyCode CurrencyName Phone Postal Code Format Postal Code Regex
         // Languages geonameid neighbours EquivalentFipsCode
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri), "UTF-8"))) {
+                new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().startsWith("#")) {

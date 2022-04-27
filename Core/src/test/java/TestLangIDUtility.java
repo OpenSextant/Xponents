@@ -36,11 +36,7 @@ public class TestLangIDUtility {
 
             int len = buffer.length();
             LangDetect lid = new LangDetect(len);
-            // More direct access to langdetect, which can offer probabilities of
-            // guesses:
-            //
-            // lid.detect(text);
-            //
+            // More direct access to langdetect, which can offer probabilities of guesses:
 
             boolean simple = false;
             if (simple) {

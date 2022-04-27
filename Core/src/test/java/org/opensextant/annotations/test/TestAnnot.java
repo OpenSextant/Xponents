@@ -53,11 +53,6 @@ public class TestAnnot {
         prec = a.attrs.getInteger("prec", -1);
         System.out.println("Prec, exists as integer, w/default = " + prec);
 
-        // ClassCastException: String to Number
-        // a.attrs.put("prec", "8000");
-        // prec = a.attrs.getInteger("prec", -1);
-        // System.out.println("Prec, exists as str, w/default = "+prec);
-
         System.out.println("Annotation as a map\t" + a.getMap());
 
         // Test null.

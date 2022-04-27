@@ -23,7 +23,6 @@ public class PrecisionScalesTest {
      *
      * @param f
      * @param digits
-     * @see tests in main()
      * @deprecated TODO needs to be re-evaluated
      * @author dsmiley
      * @return String formatted number

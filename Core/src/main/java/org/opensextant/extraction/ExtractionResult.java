@@ -71,7 +71,7 @@ public class ExtractionResult {
      */
     public void addAttribute(String f, Object v) {
         if (attributes == null) {
-            attributes = new HashMap<String, Object>();
+            attributes = new HashMap<>();
         }
         attributes.put(f, v);
     }

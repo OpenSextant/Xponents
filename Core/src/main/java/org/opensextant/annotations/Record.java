@@ -107,7 +107,7 @@ public class Record extends DeepEyeData {
         return val.toString();
     }
 
-    private final static Integer DEFAULT_STATE_VAL = Integer.valueOf(1);
+    private final static Integer DEFAULT_STATE_VAL = 1;
 
     public void addState(String s) {
         if (state == null) {

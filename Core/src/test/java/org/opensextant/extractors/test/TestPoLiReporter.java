@@ -87,7 +87,7 @@ public class TestPoLiReporter {
      */
     protected Map<String, Object> createResultRow(PatternTestCase t, TextMatch m) {
 
-        Map<String, Object> row = new HashMap<String, Object>();
+        Map<String, Object> row = new HashMap<>();
 
         if (t != null) {
             row.put(header[0], t.id);
@@ -141,8 +141,6 @@ public class TestPoLiReporter {
             if (results.evaluated && !results.matches.isEmpty()) {
                 try {
                     for (TextMatch m : results.matches) {
-                        // log.debug("TEST " + test.id + " FOUND: " +
-                        // m.toString());
                         Map<String, Object> row = createResultRow(test, m);
                         report.write(row, header, poliResultsSpec);
                     }
@@ -184,8 +182,6 @@ public class TestPoLiReporter {
             if (results.evaluated && !results.matches.isEmpty()) {
                 try {
                     for (TextMatch m : results.matches) {
-                        // log.debug("TEST " + test.id + " FOUND: " +
-                        // m.toString());
                         Map<String, Object> row = createResultRow(test, m);
                         report.write(row, header, poliResultsSpec);
                     }
@@ -206,8 +202,6 @@ public class TestPoLiReporter {
         if (results.evaluated && !results.matches.isEmpty()) {
             try {
                 for (TextMatch m : results.matches) {
-                    // log.debug("TEST " + test.id + " FOUND: " +
-                    // m.toString());
                     Map<String, Object> row = createResultRow(fileTestCase, m);
                     report.write(row, header, poliResultsSpec);
                 }
@@ -219,16 +213,5 @@ public class TestPoLiReporter {
         }
 
         closeReport();
-    }
-
-    /**
-     * Random testing TOOD: move the testing off to test package. Such things
-     * involve re-compiling and therefore core lib is recompiled to do adhoc
-     * testing.
-     */
-    public void adhoc() {
-        // this.poli.disableAll();
-        // this.poli.getPatternManager().enable_patterns("PHONE");
-        // this.test();
     }
 }
