@@ -267,7 +267,6 @@ public class MGRSParser {
         // The MGRS easting/northing is messy and contains line endings.
         // Abort. This is not likely an MGRS worth anything.
         //
-
         boolean containsEOL = (ne.contains("\n") || ne.contains("\r"));
         boolean containsTAB = ne.contains("\t");
         if (oddLength) {
@@ -276,10 +275,8 @@ public class MGRSParser {
 
         int wsCount = TextUtils.count_ws(ne);
 
-        // NO:
-        // dd dd\ndd
-        // YES: normal text wrap on offset.
-        // dd\ndd
+        // NO: dd dd\ndd
+        // YES: normal text wrap on offset. dd\ndd
         if (wsCount > 1 && containsEOL) {
             return false;
         }
@@ -340,11 +337,7 @@ public class MGRSParser {
             return true;
         }
         t1 = t.substring(1, 4);
-        if (ignoreMonths.contains(t1)) {
-            return true;
-        }
-        return false;
-
+        return ignoreMonths.contains(t1);
     }
 
 }

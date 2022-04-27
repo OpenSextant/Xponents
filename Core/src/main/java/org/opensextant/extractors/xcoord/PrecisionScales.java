@@ -145,11 +145,11 @@ public class PrecisionScales {
     /**
      *
      */
-    public static float DMS_MIN_PREC = 900; // +/- 1.85 KM at equator
+    public static final float DMS_MIN_PREC = 900; // +/- 1.85 KM at equator
     /**
      *
      */
-    public static float DMS_SEC_PREC = 15; // +/- 0.03 KM at equator, 60th of a minute
+    public static final float DMS_SEC_PREC = 15; // +/- 0.03 KM at equator, 60th of a minute
 
     /**
      * set precision on a DMS text coordinate -- simply if the Match latitude "has
@@ -206,7 +206,7 @@ public class PrecisionScales {
     /**
      * Precision appears in pairs, as we tolerate some typo/errors in MGRs.
      */
-    public static float[] MGRS_precision_list = { 1000000, // 0 length MGRS -- no meaning.
+    public static final float[] MGRS_precision_list = { 1000000, // 0 length MGRS -- no meaning.
             100000, // 1 GZD
             100000, // 2 GZD
             100000, // 3 GZD
@@ -226,7 +226,7 @@ public class PrecisionScales {
             0.1f // 17
     };
 
-    public static float[] MGRS_offset_precision_list = { 100000, // NONE. 0 or 1 digit of precision is meaningless.
+    public static final float[] MGRS_offset_precision_list = { 100000, // NONE. 0 or 1 digit of precision is meaningless.
             100000, // NONE.
             10000, // DEC PREC: 1 digit
             10000, //
@@ -242,7 +242,7 @@ public class PrecisionScales {
     /**
      *
      */
-    public static int[] MGRS2DEC_digits = { 0, 0, // 1 GZD
+    public static final int[] MGRS2DEC_digits = { 0, 0, // 1 GZD
             0, // 2 GZD
             0, // 3 GZD
             0, // 4 Q

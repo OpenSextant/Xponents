@@ -40,6 +40,7 @@ import org.locationtech.spatial4j.io.GeohashUtils;
 import org.opensextant.data.GeoBase;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.LatLon;
+import static org.opensextant.util.GeonamesUtility.getFeatureDesignation;
 
 /**
  * A collection of geodetic routines used within OpenSextant. This is a light
@@ -67,7 +68,7 @@ public class GeodeticUtility {
      * @param lon longitude
      * @return if lat/lon is valid
      */
-    public static final boolean validateCoordinate(double lat, double lon) {
+    public static boolean validateCoordinate(double lat, double lon) {
         // Java behavior for NaN -- use object/class routines to compare.
         //
         if (Double.isNaN(lon) || Double.isNaN(lat)) {
@@ -94,7 +95,7 @@ public class GeodeticUtility {
      * @return true if coordinate is non-zero (0.000, 0.000) AND is valid
      *         abs(lon) &lt; 180.0, etc.
      */
-    public static final boolean isValidNonZeroCoordinate(double lat, double lon) {
+    public static boolean isValidNonZeroCoordinate(double lat, double lon) {
         return isCoord(lat, lon);
     }
 
@@ -119,11 +120,11 @@ public class GeodeticUtility {
         return (Math.abs(lat) < 0.00001 && Math.abs(lon) < 0.00001);
     }
 
-    public static final boolean isCoord(double lat, double lon) {
+    public static boolean isCoord(double lat, double lon) {
         return validateCoordinate(lat, lon) && !isZeroCoord(lat, lon);
     }
 
-    public static final boolean isCoord(final LatLon p) {
+    public static boolean isCoord(final LatLon p) {
         return isValidNonZeroCoordinate(p.getLatitude(), p.getLongitude());
     }
 
@@ -137,7 +138,7 @@ public class GeodeticUtility {
      * @param p2 point
      * @return distance between p1 and p2 in degrees.
      */
-    public static final double distanceDegrees(GeoBase p1, GeoBase p2) {
+    public static double distanceDegrees(GeoBase p1, GeoBase p2) {
         if (p1 == null || p2 == null) {
             return Double.MAX_VALUE;
         }
@@ -154,7 +155,7 @@ public class GeodeticUtility {
      * @param p2 geodesy API LatLon
      * @return distance in meters.
      */
-    public static final long distanceMeters(LatLon p1, LatLon p2) {
+    public static long distanceMeters(LatLon p1, LatLon p2) {
         double lat1 = p1.getLatitude();
         double lon1 = p1.getLongitude();
         double lat2 = p2.getLatitude();
@@ -189,21 +190,20 @@ public class GeodeticUtility {
     }
 
     /**
-     * Precision -- this is a first draft attempt at assigning some error bars
-     * to geocoding results.
+     * Precision -- this is a first draft attempt at assigning some error bars to geocoding results.
      * TODO: move this to a configuration file
-     * feat/code: prec # precision is meters of error for a given gazetteer
-     * entry with feat/code)
-     * A/ADM1: 50000 # ADM1 is generally +/- 50km, world wide P/PPL: 1000 # city
-     * is generally +/- 1km within center point P/PPLC: 10000 # major capital
-     * city is 10km of error, etc.
+     * feat/code: prec # precision is meters of error for a given gazetteer  entry with feat/code)
+     * A/ADM1:  50000 # ADM1 is generally +/- 50km, world wide
+     * P/PPL:    1000 # city is generally +/- 1km within center point
+     * P/PPLC:  10000 # major capital city is 10km of error, etc.
      */
-    public static final Map<String, Integer> FEATURE_PRECISION = new HashMap<String, Integer>();
-    public static final Map<String, Integer> FEATURE_GEOHASH_PRECISION = new HashMap<String, Integer>();
+    public static final Map<String, Integer> FEATURE_PRECISION = new HashMap<>();
+    public static final Map<String, Integer> FEATURE_GEOHASH_PRECISION = new HashMap<>();
     public static final int DEFAULT_PRECISION = 50000; // +/- 50KM
     public static final int DEFAULT_GEOHASH_PRECISION = 5;
 
     static {
+        FEATURE_PRECISION.put("", 2 * DEFAULT_PRECISION);
         FEATURE_PRECISION.put("P", 5000);
         FEATURE_PRECISION.put("A", DEFAULT_PRECISION);
         FEATURE_PRECISION.put("S", 1000);
@@ -212,6 +212,7 @@ public class GeodeticUtility {
         FEATURE_PRECISION.put("A/ADM2", 20000);
         FEATURE_PRECISION.put("P/PPL", 5000);
         FEATURE_PRECISION.put("P/PPLC", 10000);
+        FEATURE_PRECISION.put("A/POST", 5000); /* POSTAL support as of v3.5 */
 
         // This helps guage how long should a geohash be for a given feature.
         FEATURE_GEOHASH_PRECISION.put("A/PCLI", 3);
@@ -238,17 +239,16 @@ public class GeodeticUtility {
             return DEFAULT_PRECISION;
         }
 
-        String lookup = (feat_code != null ? String.format("%s/%s", feat_type, feat_code) : feat_type);
-
+        String lookup = getFeatureDesignation(feat_type, feat_code);
         Integer prec = FEATURE_PRECISION.get(lookup);
 
         if (prec != null) {
-            return prec.intValue();
+            return prec;
         }
 
         prec = FEATURE_PRECISION.get(feat_type);
         if (prec != null) {
-            return prec.intValue();
+            return prec;
         }
 
         return DEFAULT_PRECISION;
@@ -269,17 +269,16 @@ public class GeodeticUtility {
             return DEFAULT_GEOHASH_PRECISION;
         }
 
-        String lookup = (feat_code != null ? feat_type + "/" + feat_code : feat_type);
-
+        String lookup = getFeatureDesignation(feat_type, feat_code);
         Integer prec = FEATURE_GEOHASH_PRECISION.get(lookup);
 
         if (prec != null) {
-            return prec.intValue();
+            return prec;
         }
 
         prec = FEATURE_GEOHASH_PRECISION.get(feat_type);
         if (prec != null) {
-            return prec.intValue();
+            return prec;
         }
 
         return DEFAULT_GEOHASH_PRECISION;
@@ -345,7 +344,7 @@ public class GeodeticUtility {
      * @return "lat, lon" formatted with 4 decimal places; that is an average
      *         amount of precision for common XY=&gt; String uses.
      */
-    public static final String formatLatLon(final LatLon yx) {
+    public static String formatLatLon(final LatLon yx) {
         return String.format("%2.4f,%3.4f", yx.getLatitude(), yx.getLongitude());
     }
 
@@ -353,11 +352,11 @@ public class GeodeticUtility {
      * @param yx lat,lon obj
      * @return geohash representation of the lat,lon
      */
-    public static final String geohash(final LatLon yx) {
+    public static String geohash(final LatLon yx) {
         return GeohashUtils.encodeLatLon(yx.getLatitude(), yx.getLongitude());
     }
 
-    public static final String geohash(double lat, double lon) {
+    public static String geohash(double lat, double lon) {
         return GeohashUtils.encodeLatLon(lat, lon);
     }
 

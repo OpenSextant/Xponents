@@ -382,11 +382,10 @@ public class Tweet extends Message {
             return;
         }
 
-        for (int x = 0; x < jsonArray.size(); ++x) {
+        for (Object obj : jsonArray) {
             // JsonObject url = jsonArray.getJsonObject(x);
-            Object obj = jsonArray.get(x);
             if (obj instanceof Map) {
-                Map<?,?> url = (Map) obj;
+                Map<?, ?> url = (Map) obj;
                 String urlItem = (String) url.get("expanded_url");
                 if (StringUtils.isBlank(urlItem)) {
                     urlItem = (String) url.get("url");
@@ -674,7 +673,7 @@ public class Tweet extends Message {
     protected Set<String> mentions = null;
     protected List<Mention> mentionIDs = null;
 
-    public class Mention {
+    public static class Mention {
         public String mentionAuthorID = null;
         public String mentionAuthorProfileID = null;
     }

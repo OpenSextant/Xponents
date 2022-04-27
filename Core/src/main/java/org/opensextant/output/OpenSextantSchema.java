@@ -64,10 +64,7 @@ public final class OpenSextantSchema {
     public static final SimpleField FILEPATH = new SimpleField(FILEPATH_FLD, SimpleField.Type.STRING);
     public static final SimpleField FILENAME = new SimpleField("filename", SimpleField.Type.STRING);
     public static final SimpleField TEXTPATH = new SimpleField("textpath", SimpleField.Type.STRING);
-    // private static SimpleField prematchField = new SimpleField("prematch",
-    // SimpleField.Type.STRING);
-    // private static SimpleField postmatchField = new SimpleField("postmatch",
-    // SimpleField.Type.STRING);
+
     /**
      * A text window around the MATCH TEXT delineated by START/END offsets. Default
      * window size is +/- 150 characters

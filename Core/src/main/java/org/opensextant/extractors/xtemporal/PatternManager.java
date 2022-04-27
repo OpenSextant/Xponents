@@ -33,7 +33,7 @@ public class PatternManager extends RegexPatternManager {
     /**
      *
      */
-    public Map<Integer, Boolean> pattern_family_state = new HashMap<Integer, Boolean>();
+    public Map<Integer, Boolean> pattern_family_state = new HashMap<>();
 
     /**
      * Pass in InputStream to provide yourself the most flexibility.
@@ -51,7 +51,7 @@ public class PatternManager extends RegexPatternManager {
      */
     @Override
     public void initialize(InputStream io) throws IOException {
-        pattern_family_state = new HashMap<Integer, Boolean>();
+        pattern_family_state = new HashMap<>();
         super.initialize(io);
         enable_pattern_family(XTConstants.DATETIME_FAMILY, true);
         enable_pattern_family(XTConstants.MDY_FAMILY, true);
@@ -101,7 +101,7 @@ public class PatternManager extends RegexPatternManager {
 
         Boolean b = pattern_family_state.get(p.family_id);
         if (b != null) {
-            p.enabled = b.booleanValue();
+            p.enabled = b;
         }
     }
 

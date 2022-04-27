@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 The MITRE Corporation.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -16,16 +16,15 @@
 
 package org.opensextant.extractors.geo.rules;
 
+import java.util.HashSet;
+import java.util.List;
+
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceEvidence;
 import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
-
-import java.util.HashSet;
-import java.util.List;
-
 import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
 
 /**
@@ -82,43 +81,253 @@ public class NameCodeRule extends GeocodeRule {
         ignoreTerms.add(nm.getText());
     }
 
+    static class PairValidation {
+
+        boolean codeIsAbbrev = false;
+        boolean nameIsIgnorable = false;
+        boolean hasComma = false;
+        boolean valid = true; /* negate this by exception */
+
+        public boolean isCodeLexicalMatch(Place geo) {
+            return (this.codeIsAbbrev && geo.isShortName()) || (!this.codeIsAbbrev && geo.isName());
+        }
+    }
+
+    /**
+     * Validate if a given "NAME" in "NAME, CODE" sequence is a valid token at all.
+     * We look at lexical aspects and feature traits of NAME.
+     *
+     * @param nm NAME
+     * @return True if matched place candidate looks okay by itself.
+     */
+    private PairValidation validMatch(PlaceCandidate nm) {
+        PairValidation validation = new PairValidation();
+        /* Optimization: */
+        if (ignoreTerms.contains(nm.getText())) {
+            nm.setFilteredOut(true);
+            nm.addRule("IgnoredPrecedent");
+            validation.valid = false;
+            return validation;
+        }
+        // use # of instances of a place name as a rough guess on how common a name is.
+        // A popular country name may appear as a city, county or other feature type.
+        int placeCount = nm.getPlaces().size();
+
+        /*
+         * COUNTRY, STATE is not supported under this rule.
+         * E.g., Uruguay, Argentina ... This looks like a list of countries
+         * However Uruguay is a district in Argentina; Just as Georgia is a state in US
+         * and also a country name.  The count of 10 is arbitrary
+         */
+        if (nm.isCountry && placeCount < 10 && !nm.isAbbreviation) {
+            validation.valid = false;
+            return validation;
+        }
+
+        remarkAbbreviation(nm);
+
+        validation.nameIsIgnorable = ignoreShortLowercase(nm)
+                || (nm.isAbbreviation && ignoreNonAdminCode(nm));
+        // Short names, lower case will not be assessed at all.
+        if (validation.nameIsIgnorable) {
+            nm.setFilteredOut(true);
+            trackIgnoreTerms(nm);
+            validation.valid = false;
+            return validation;
+        }
+
+        return validation;
+    }
+
+    private boolean validMatchPair(PlaceCandidate nm, PlaceCandidate code, PairValidation v) {
+        remarkAbbreviation(code);
+
+        /* code or name of admin area */
+        if (code.isFilteredOut()) {
+            return false;
+        }
+        /* Ignore series of country names and/or codes. */
+        if (nm.isCountry && code.isCountry) {
+            return false;
+        }
+
+        boolean canIgnoreShortCode = ignoreShortLowercase(code);
+        v.codeIsAbbrev = code.isAbbreviation;
+
+        /*
+         * Test if SOMENAME, CODE is the case. a1.....a2.b1.., where b1 > a2
+         * > a1, but distance is minimal from end of name to start of code.
+         * If we see a standalone country code, we'll allow it to pass.
+         */
+        if ((code.start - nm.end) > MAX_CHAR_DIST) {
+            boolean canIgnoreCode = canIgnoreShortCode || (v.codeIsAbbrev && ignoreNonAdminCode(code));
+            // And so we have NAME xxxx CODE, where CODE is clearly not attached to NAME  lexically.
+            // Filter out such CODE noise.
+            if (canIgnoreCode) {
+                code.setFilteredOut(true);
+                trackIgnoreTerms(code);
+            }
+            if (v.nameIsIgnorable) {
+                nm.setFilteredOut(true);
+                trackIgnoreTerms(nm);
+            }
+            return false;
+        }
+
+        /*
+         * Not supporting lowercase codes/abbreviations. 'la', 'is', 'un', etc.
+         */
+        if (canIgnoreShortCode) {
+            return false;
+        }
+
+        if (nm.postChar > 0) {
+            // Trying to match valid "NAME, CODE" or "NAME CODE" sequence.
+            // Other stuff interferring should be ignored.
+            v.hasComma = nm.postChar == ',' || nm.postChar == ' ';
+            if (!v.hasComma && !Character.isLetter(nm.postChar)) {
+                // No match.
+                return false;
+            }
+        }
+
+        /*
+         * ignore the trivial case of where a Name may be repeated.
+         * Ex.
+         * New York, New York -- fine.
+         * New York # New York -- ignore association.
+         */
+        boolean repeatedName = !v.hasComma && nm.isSameNorm(code);
+
+        return !repeatedName;
+    }
+
+    /**
+     * Review all Geolocations on the CODE part of NAME, CODE.
+     * Where there is an alignment between geographic hierarchy, follow that and
+     * promote/propagate that location on NAME and CODE
+     * @param nm NAME
+     * @param code CODE
+     * @param val validation so far
+     */
+    private void alignGeography(PlaceCandidate nm, PlaceCandidate code, PairValidation val) {
+
+        /*
+         * by this point a place name tag should be marked as a name or
+         * code/abbrev. Match the abbreviation with a geographic location
+         * that is a state, county, district, etc.
+         */
+        Place country = code.isCountry ? code.getChosenPlace() : null;
+        log.debug("{} name, code: {} in {}?", NAME, nm.getText(), code.getText());
+        int logicalGeoMatchCount = 0;
+        for (ScoredPlace geoScore : code.getPlaces()) {
+            if (logicalGeoMatchCount > 4) {
+                /* Optimization: avoid spinning in loop.
+                 * 4 hierachical matches *seems* sufficient */
+                break;
+            }
+            Place geo = geoScore.getPlace();
+            if (!(geo.isUpperAdmin() || GeonamesUtility.isPoliticalEntity(geo)) || geo.getCountryCode() == null) {
+                continue;
+            }
+
+            // Provinces, states, districts, etc. Only.
+            //
+            // Make sure you can match an province name or code with the gazetteer entries
+            // found:
+            // Boston, Ma. ==== for 'Ma', resolve to an abbreviation for Massachusetts
+            // Ignore places called 'Ma'
+            //
+            // Place ('Ma') == will have gazetteer metadata indicating if this is a valid
+            // abbreviated code for a place.
+            // PlaceCandidate('Ma.') will have textual metadata from given text indicating
+            // if it is a code, MA, or abbrev. 'Ma.'
+            //
+            // These two situations must match here. We ignore geo locations that do not fit
+            // this profile.
+            // NAME CODE
+            // A a
+            // a A
+            // A A
+            // a a
+            // Aaa Aaa
+            // Aaa AA
+            // ... etc.
+            //
+            if (!val.isCodeLexicalMatch(geo)) {
+                continue;
+            }
+
+            String adm1 = geo.getHierarchicalPath();
+            if (adm1 == null && !code.isCountry) {
+                log.debug("ADM1 hierarchical path should not be null");
+                continue;
+            }
+
+            // Quick determination if these two places have a containment or geopolitical connection
+            // -- If country was determined from code earlier, use it.
+            // -- Otherwise check if codeGeo country code aligns with name Geo.
+            boolean containsRelation = nm.presentInHierarchy(adm1);
+            boolean inCountryRelation = (code.isCountry
+                    && nm.presentInCountry(geo.getCountryCode()))
+                    || (country != null && nm.presentInCountry(country.getCountryCode()));
+
+            if (containsRelation || inCountryRelation) {
+                ++logicalGeoMatchCount;
+                updateNameCodePair(nm, code, geo, true, containsRelation);
+            }
+        }
+
+        /*  Post-process abbreviations not associated.
+         *
+         * Found "Good Docktor, MD" --> likely medical doctor (MD), not Maryland.
+         * So if no geographic connection between NAME, CODE and CODE is an
+         * abbreviation, then omit CODE.
+         * If you actually have NAME, NAME, NAME, ... then you cannot omit subsequent NAMEs.
+         * With NAME, CODE -- if CODE is an abbreviation but represents a Country, then
+         * let it pass, as it is more common to see country names/GPEs abbreviated as personified
+         * actors. Omit all other abbreviations, though.
+         * with CODE CODE CODE ... you might have garbage text and would want to filter
+         * out chains of abbreviations. E.g., CO MA IN IA
+         */
+        if (val.codeIsAbbrev) {
+            if (logicalGeoMatchCount == 0 && !code.isCountry) {
+                code.setFilteredOut(true);
+                trackIgnoreTerms(code);
+                /*
+                 * NAME is actually an abbreviation and if it has no other evidence, then ignore this.
+                 */
+                if (nm.isAbbreviation && hasOnlyDefaultRules(nm)) {
+                    nm.setFilteredOut(true);
+                    trackIgnoreTerms(nm);
+                }
+            } else {
+                log.debug("Abbrev/code allowed: {}", code);
+            }
+        }
+    }
+
     /**
      *
      */
     @Override
     public void evaluate(final List<PlaceCandidate> names) {
         reset();
-        /* 
+        /*
          * Objective:  associate NAME, CODE pairs
-         * 
-         * 
+         *
+         *
          */
         for (int x = 0; x < names.size(); ++x) {
             PlaceCandidate name = names.get(x);
             if (name.isFilteredOut()) {
                 continue;
             }
-            /* Optimization: */
-            if (ignoreTerms.contains(name.getText())) {
-                name.setFilteredOut(true);
-                name.addRule("IgnoredPrecedent");
+
+            PairValidation validation = validMatch(name);
+            if (!validation.valid) {
                 continue;
             }
-            // use # of instances of a place name as a rough guess on how common a name is.
-            // A popular country name may appear as a city, county or other feature type.
-            int placeCount = name.getPlaces().size();
-
-            /*
-             * COUNTRY, STATE is not supported under this rule.
-             * E.g., Uruguay, Argentina ... This looks like a list of countries
-             * However Uruguay is a district in Argentina; Just as Georgia is a state in US
-             * and also a country name.  The count of 10 is arbitrary
-             */
-            if (name.isCountry && placeCount < 10 && !name.isAbbreviation) {
-                continue;
-            }
-
-            remarkAbbreviation(name);
 
             /*
              * CASE:
@@ -129,182 +338,28 @@ public class NameCodeRule extends GeocodeRule {
              * b applies to the match, which may actually be a name or code. But we
              * filter out unattached codes. Names are left as is.
              */
-            boolean isLast = x == names.size() - 1;
-
-            boolean canIgnoreName = ignoreShortLowercase(name)
-                    || (name.isAbbreviation && ignoreNonAdminCode(name));
-            // Short names, lower case will not be assessed at all.
-            if (canIgnoreName) {
-                name.setFilteredOut(true);
-                trackIgnoreTerms(name);
-                continue;
-            }
-            // As well, given the pattern is supposed to be <This Name>, <Admin Code> ... if this item is last and
-            // nothing follows we are done.
-            if (isLast) {
+            if (x == names.size() - 1) {
+                // As well, given the pattern is supposed to be <This Name>, <Admin Code> ...
+                // if this item is last and nothing follows we are done.
                 continue;
             }
 
             PlaceCandidate code = names.get(x + 1);
-            remarkAbbreviation(code);
-
-            /* code or name of admin area */
-            if (code.isFilteredOut()) {
-                continue;
-            }
-            /* Ignore series of country names and/or codes. */
-            if (name.isCountry && code.isCountry) {
+            if (!validMatchPair(name, code, validation)) {
                 continue;
             }
 
-            boolean canIgnoreShortCode = ignoreShortLowercase(code);
-            boolean abbrev = code.isAbbreviation;
-
-            /*
-             * Test if SOMENAME, CODE is the case. a1.....a2.b1.., where b1 > a2
-             * > a1, but distance is minimal from end of name to start of code.
-             * If we see a standalone country code, we'll allow it to pass.
-             */
-            if ((code.start - name.end) > MAX_CHAR_DIST) {
-                boolean canIgnoreCode = canIgnoreShortCode || (abbrev && ignoreNonAdminCode(code));
-                // And so we have NAME xxxx CODE, where CODE is clearly not attached to NAME  lexically.
-                // Filter out such CODE noise.
-                if (canIgnoreCode) {
-                    code.setFilteredOut(true);
-                    trackIgnoreTerms(code);
-                }
-                if (canIgnoreName) {
-                    name.setFilteredOut(true);
-                    trackIgnoreTerms(name);
-                }
-                continue;
-            }
-
-            /*
-             * Not supporting lowercase codes/abbreviations. 'la', 'is', 'un', etc.
-             */
-            if (canIgnoreShortCode) {
-                continue;
-            }
-
-            boolean comma = false;
-            if (name.postChar > 0) {
-                // Trying to match valid "NAME, CODE" or "NAME CODE" sequence.
-                // Other stuff interferring should be ignored.
-                comma = name.postChar == ',' || name.postChar == ' ';
-                if (!comma && !Character.isLetter(name.postChar)) {
-                    // No match.
-                    continue;
-                }
-            }
-
-            /*
-             * ignore the trivial case of where a Name may be repeated.
-             * Ex.
-             * New York, New York -- fine.
-             * New York # New York -- ignore association.
-             */
-            if (!comma && name.isSameNorm(code)) {
-                continue;
-            }
-
-            /*
-             * by this point a place name tag should be marked as a name or
-             * code/abbrev. Match the abbreviation with a geographic location
-             * that is a state, county, district, etc.
-             */
-            Place country = code.isCountry ? code.getChosenPlace() : null;
-            log.debug("{} name, code: {} in {}?", NAME, name.getText(), code.getText());
-            int logicalGeoMatchCount = 0;
-            for (ScoredPlace geoScore : code.getPlaces()) {
-                if (logicalGeoMatchCount > 4) {
-                    /* Optimization: avoid spinning in loop. 
-                     * 4 hierachical matches *seems* sufficient */
-                    break;
-                }
-                Place geo = geoScore.getPlace();
-                if (!(geo.isUpperAdmin() || GeonamesUtility.isPoliticalEntity(geo))
-                        || geo.getCountryCode() == null) {
-                    continue;
-                }
-
-                // Provinces, states, districts, etc. Only.
-                //
-                // Make sure you can match an province name or code with the gazetteer entries
-                // found:
-                // Boston, Ma. ==== for 'Ma', resolve to an abbreviation for Massachusetts
-                // Ignore places called 'Ma'
-                //
-                // Place ('Ma') == will have gazetteer metadata indicating if this is a valid
-                // abbreviated code for a place.
-                // PlaceCandidate('Ma.') will have textual metadata from given text indicating
-                // if it is a code, MA, or abbrev. 'Ma.'
-                //
-                // These two situations must match here. We ignore geo locations that do not fit
-                // this profile.
-                // NAME CODE
-                // A a
-                // a A
-                // A A
-                // a a
-                // Aaa Aaa
-                // Aaa AA
-                // ... etc.
-                boolean lexicalMatch = abbrev && geo.isShortName() || (!abbrev && geo.isName());
-                //
-                if (!lexicalMatch) {
-                    continue;
-                }
-
-                String adm1 = geo.getHierarchicalPath();
-                if (adm1 == null && !code.isCountry) {
-                    log.debug("ADM1 hierarchical path should not be null");
-                    continue;
-                }
-
-                // Quick determination if these two places have a containment or geopolitical connection
-                // -- If country was determined from code earlier, use it.
-                // -- Otherwise check if codeGeo country code aligns with name Geo.
-                boolean containsRelation = name.presentInHierarchy(adm1);
-                boolean inCountryRelation = (code.isCountry
-                        && name.presentInCountry(geo.getCountryCode()))
-                        || (country != null && name.presentInCountry(country.getCountryCode()));
-
-                if (containsRelation || inCountryRelation) {
-                    ++logicalGeoMatchCount;
-                    updateNameCodePair(name, code, geo, true /* comma */, containsRelation);
-                }
-            }
-
-            /*  Post-process abbreviations not associated.
-             *
-             * Found "Good Docktor, MD" --> likely medical doctor (MD), not Maryland.
-             * So if no geographic connection between NAME, CODE and CODE is an
-             * abbreviation, then omit CODE.
-             * If you actually have NAME, NAME, NAME, ... then you cannot omit subsequent NAMEs.
-             * With NAME, CODE -- if CODE is an abbreviation but represents a Country, then
-             * let it pass, as it is more common to see country names/GPEs abbreviated as personified
-             * actors. Omit all other abbreviations, though.
-             * with CODE CODE CODE ... you might have garbage text and would want to filter
-             * out chains of abbreviations. E.g., CO MA IN IA
-             */
-            if (abbrev) {
-                if (logicalGeoMatchCount == 0 && !code.isCountry) {
-                    code.setFilteredOut(true);
-                    trackIgnoreTerms(code);
-                    /*
-                     * NAME is actually an abbreviation and if it has no other evidence, then ignore this.
-                     */
-                    if (name.isAbbreviation && hasOnlyDefaultRules(name)) {
-                        name.setFilteredOut(true);
-                        trackIgnoreTerms(name);
-                    }
-                } else {
-                    log.debug("Abbrev/code allowed: {}", code);
-                }
-            }
+            alignGeography(name, code, validation);
         }
 
+        review(names);
+    }
+
+    /**
+     * Create final answers, filters, etc on the entire list.
+     * @param names array of candidates
+     */
+    private void review(List<PlaceCandidate> names) {
         /*
          * Review items once more.  Note -- no need to track ignored terms from here.
          */
@@ -313,8 +368,8 @@ public class NameCodeRule extends GeocodeRule {
                 continue;
             }
             if (!name.isValid()) {
-                if (name.getLength() <= 2) {
-                    // junk.  Un-associated tokens that matched something.
+                int allowedLen = name.isASCII() ? 2 : 1;
+                if (name.getLength() <= allowedLen) {
                     name.setFilteredOut(true);
                     continue;
                 } else if (!params.tag_codes && name.isShortName() && name.matchesCode()) {
@@ -350,7 +405,7 @@ public class NameCodeRule extends GeocodeRule {
                  * - Avoid rechecking items that have already been validated as NAME+CODE pairs (isValid()==true)
                  * - If Not Country, but is ABBREV, then omit all trivial abbreviations not already associated with a city.
                  *   e.g., "I went to see my MD"
-                 * 
+                 *
                  */
                 name.setFilteredOut(true);
                 for (ScoredPlace geoScore : name.getPlaces()) {
@@ -366,7 +421,7 @@ public class NameCodeRule extends GeocodeRule {
     }
 
     private void remarkAbbreviation(PlaceCandidate pc) {
-        if (pc.isReviewed()){
+        if (pc.isReviewed()) {
             return;
         }
         if (pc.isAbbreviation) {
@@ -393,7 +448,7 @@ public class NameCodeRule extends GeocodeRule {
      * </ul>
      *
      * @param pc match
-     * @return
+     * @return true if non-administrative feature is encountred
      */
     private static boolean ignoreNonAdminCode(final PlaceCandidate pc) {
         // If found alone, unqualified what happens?
@@ -435,15 +490,15 @@ public class NameCodeRule extends GeocodeRule {
      * Update the scores for any locations for the relevant Names + Codes. 
      * The given codeGeo is scored against the code placename
      * Reflect this location inference back onto the Name, scoring any possible features higher.
-     * 
+     *
      * @param n  placename 
      * @param code administrative placename related to `n`
      * @param codeGeo candidate location for `code`
-     * @param comma
+     * @param comma boolean indicating if comma is present in NAME, CODE or not.
      * @param closeAssociation - true if inferred Name/Code geography is a close containment relation
      */
     private void updateNameCodePair(PlaceCandidate n, PlaceCandidate code, Place codeGeo,
-            boolean comma, boolean closeAssociation) {
+                                    boolean comma, boolean closeAssociation) {
         /*
          * The code is matched with the name.  Mark these paired items as valid to avoid further filtering
          */
@@ -480,7 +535,6 @@ public class NameCodeRule extends GeocodeRule {
          * Loop through all locations for "Houston" and score higher the ones that match "US.48".
          */
         String adm1 = codeGeo.getHierarchicalPath();
-        Place country = code.isCountry ? code.getChosenPlace() : null;
 
         // Now choose which location for CITY (name) best suits this.
         // Actually increase score for all geos that match the criteria.
@@ -500,7 +554,7 @@ public class NameCodeRule extends GeocodeRule {
             if (adm1 != null && adm1.equals(nameGeo.getHierarchicalPath())) {
                 n.incrementPlaceScore(nameGeo, ev.getWeight(), ev.getRule());
                 matchFound = true;
-            } else if (country != null && sameCountry(nameGeo, country)) {
+            } else if (code.isCountry && sameCountry(nameGeo.getCountryCode(), codeGeo.getCountryCode())) {
                 n.incrementPlaceScore(nameGeo, ev.getWeight(), ev.getRule());
                 matchFound = true;
             }
@@ -509,5 +563,6 @@ public class NameCodeRule extends GeocodeRule {
 
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
-        /* no-op*/ }
+        /* no-op*/
+    }
 }

@@ -26,13 +26,8 @@ public class GeocoordPrecision {
      */
     public double precision = 0.0;
     /**
-     * # of M/S/s digits in a D:M:S string for a lat or lon
-     */
-    // public int precision_dms_digits = 0;
-    /**
      * # of decimal places in D.ddd... string for a lat or lon
      */
-    // public int precision_dec_digits = 0;
     public int digits = 0;
 
     /**

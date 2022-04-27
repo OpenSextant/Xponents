@@ -179,7 +179,7 @@ public class XTemporal extends AbstractFlexPat {
 
                 try {
 
-                    DateNormalization.normalize_date(dt.patternFields, dt);
+                    DateNormalization.normalizeDate(dt.patternFields, dt);
                     if (dt.datenorm == null) {
                         continue;
                     }

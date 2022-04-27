@@ -1,5 +1,3 @@
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +8,7 @@ import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.GeonamesUtility;
+import static org.junit.Assert.*;
 
 /**
  * @author ubaldino
@@ -61,7 +60,7 @@ public class TestGeoUtils {
         }
 
         print("" + util.countriesInTimezone("Mountain")); // TODO: discover full list of TZ e.g., EDT, BST, CST, MT
-                                                          // "Mountain Time", etc.
+        // "Mountain Time", etc.
         print("" + util.countriesInUTCOffset(-7.0)); // Same or similar to Mountain TZ, GMT-0500 but -0200 more.
 
         print("" + util.countriesInUTCOffset(9.0)); //
@@ -70,8 +69,6 @@ public class TestGeoUtils {
 
     @Test
     public void testCitiesPopulation() throws IOException {
-        // GeonamesUtility.loadMajorCities(getZipContent(new
-        // File("./src/test/resources/cities15000.zip")));
         List<Place> cities = GeonamesUtility.loadMajorCities("/geonames.org/cities15000.txt");
 
         assertTrue(cities.size() > 0);
@@ -141,8 +138,24 @@ public class TestGeoUtils {
         } catch (Exception err) {
             // err.printStackTrace();
             System.out.println("Pass: invalid coordinate, " + test + " fails to parse; ERR=" + err.getMessage());
-
             assert (true);
         }
+
+        // Test for precision of features:
+        int prec = GeodeticUtility.getFeaturePrecision("A", "POST");
+        System.out.println("Postal precision " + prec);
+        assertEquals(5000, prec);
+
+        prec = GeodeticUtility.getFeaturePrecision("S", "COORD");
+        System.out.println("Coord (default) precision " + prec);
+        assertEquals(1000, prec);
+
+        prec = GeodeticUtility.getFeaturePrecision("A", "ADM1");
+        System.out.println("Prov precision " + prec);
+        assertEquals(50000, prec);
+
+        prec = GeodeticUtility.getFeaturePrecision("P", "PPL");
+        System.out.println("City precision " + prec);
+        assertEquals(5000, prec);
     }
 }

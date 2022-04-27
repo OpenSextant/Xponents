@@ -52,75 +52,75 @@ public interface Geocoding extends LatLon {
     /**
      * @return true if geocoding represents a named place
      */
-    public boolean isPlace();
+    boolean isPlace();
 
     /**
      * isCoordinate: if this object represents a coordinate
      *
      * @return true if geocoding represents a coordinate
      */
-    public boolean isCoordinate();
+    boolean isCoordinate();
 
     /**
      * has Coordinate: if this named place object has a coordinate.
      *
      * @return true if geocoding represents has a valid lat, lon
      */
-    public boolean hasCoordinate();
+    boolean hasCoordinate();
 
-    public boolean isCountry();
+    boolean isCountry();
 
-    public boolean isAdministrative();
+    boolean isAdministrative();
 
     /**
      * Precision - radius in meters of possible error
      *
      * @return precision error radius
      */
-    public int getPrecision();
+    int getPrecision();
 
     /**
      * Precision - radius in meters of possible error
      *
      * @param m meters of error
      */
-    public void setPrecision(int m);
+    void setPrecision(int m);
 
     // ---------------------
     // entity metadata:
     // ---------------------
-    public String getCountryCode();
+    String getCountryCode();
 
-    public void setCountryCode(String cc);
+    void setCountryCode(String cc);
 
-    public void setCountry(Country c);
+    void setCountry(Country c);
 
-    public String getAdmin1();
+    String getAdmin1();
 
-    public String getAdmin2();
+    String getAdmin2();
 
-    public String getAdminName();
+    String getAdminName();
 
-    public String getAdmin1Name();
+    String getAdmin1Name();
 
-    public String getAdmin2Name();
+    String getAdmin2Name();
 
-    public String getFeatureClass();
+    String getFeatureClass();
 
-    public String getFeatureCode();
+    String getFeatureCode();
 
-    public String getPlaceID();
+    String getPlaceID();
 
-    public String getPlaceName();
+    String getPlaceName();
 
-    public void setPlaceName(String n);
+    void setPlaceName(String n);
 
     /**
      * State-level postal code, the corresponds usually to ADM1
      *
      * @return optional postal code
      */
-    public String getAdmin1PostalCode();
+    String getAdmin1PostalCode();
 
     /**
      * City-level postal code, that may be something like a zip.
@@ -128,14 +128,14 @@ public interface Geocoding extends LatLon {
      *
      * @return optional postal code
      */
-    public String getPlacePostalCode();
+    String getPlacePostalCode();
 
     /**
      * @return Method for determining geocoding
      */
-    public String getMethod();
+    String getMethod();
 
-    public void setMethod(String m);
+    void setMethod(String m);
 
     /**
      * Confidence metric is a normalized 100-point scale.
@@ -143,7 +143,7 @@ public interface Geocoding extends LatLon {
      *
      * @return value on a 100 point scale.
      */
-    public int getConfidence();
+    int getConfidence();
 
     /**
      * Set confidence, a value on a 100 point scale, 0-100.
@@ -153,5 +153,5 @@ public interface Geocoding extends LatLon {
      *
      * @param c confidence
      */
-    public void setConfidence(int c);
+    void setConfidence(int c);
 }

@@ -7,16 +7,16 @@ public interface JSONListener {
     /**
      * If listener isDone, then caller should exit
      */
-    public boolean isDone();
+    boolean isDone();
 
     /**
      * implementation should advertise if it prefers JSON or String.
      *
      * @return
      */
-    public boolean preferJSON();
+    boolean preferJSON();
 
-    public void readObject(JsonObject obj) throws MessageParseException;
+    void readObject(JsonObject obj) throws MessageParseException;
 
     /**
      * API method to allow implementation to read string, e.g., TW4J factory uses
@@ -25,5 +25,5 @@ public interface JSONListener {
      * @param obj
      * @throws MessageParseException
      */
-    public void readObject(String obj) throws MessageParseException;
+    void readObject(String obj) throws MessageParseException;
 }

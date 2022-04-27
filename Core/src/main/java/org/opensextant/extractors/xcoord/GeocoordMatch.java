@@ -228,8 +228,8 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     /**
      * The separators.
      */
-    public final String[] separators = { "trivialSep", "xySep", "latlonSep", "latlonSep3", "latlonSep03",
-            "latlonSepNoDash" };
+    public final String[] separators = {"trivialSep", "xySep", "latlonSep", "latlonSep3", "latlonSep03",
+            "latlonSepNoDash"};
 
     /**
      * The offset separator.
@@ -269,11 +269,9 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Evaluate DMS patterns only... evaluate if match contains dashes as field
-     * separators or as
+     * Evaluate DMS patterns only... evaluate if match contains dashes as field separators or as
      * hemispheres. Or both. If match contains dash sep on lat, but not in lon, then
-     * the match is
-     * invalid. This suggests the match is not a geocoordinate.
+     * the match is invalid. This suggests the match is not a geocoordinate.
      *
      * @return true if coordinate is invalid because
      * @throws NormalizationException the normalization exception
@@ -300,7 +298,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         if (offsetSeparator > 0) {
             // Offsets are regex char 1.. based or 0.. based?
             x2 = offsetSeparator - 1; // Exclude the offset; should remain
-                                      // as-is;
+            // as-is;
         } else if (lat.offsetHemi > 0 && lat.offsetHemi > lat.offsetDeg) {
             x2 = lat.offsetHemi + 1; // Include the hemisphere for Lat. +1
         }
@@ -514,6 +512,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     // Geocoding Interface
     //
     // ************************************
+
     /**
      * Checks if is place.
      *
@@ -945,12 +944,9 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     }
 
     /**
-     * Becuase coordinate parsing is pretty deterministic, for now the confidence
-     * defaults to a high
-     * value. TODO: introduce qualitative measures of goodness as far as if detected
-     * pattern is reliable
-     * vs. loose; or if the geocoding has multiple interpretations due to ambiguous
-     * fields. Etc.
+     * Becuase coordinate parsing is pretty deterministic, for now the confidence defaults to a high value.
+     * TODO: introduce qualitative measures of goodness as far as if detected pattern is reliable
+     *   vs. loose; or if the geocoding has multiple interpretations due to ambiguous fields. Etc.
      */
     private int confidence = 90;
 
@@ -962,5 +958,36 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     @Override
     public void setConfidence(int c) {
         confidence = c;
+    }
+
+    /**
+     * Test punctuation separators.
+     *
+     * @param fieldValues
+     * @return true if pattern match contains  asymmetric punctuation
+     * @throws NormalizationException
+     */
+    public boolean evaluateInvalidPunct(Map<String, String> fieldValues) throws NormalizationException {
+        if (lat == null || lon == null) {
+            throw new NormalizationException("Set lat/lon first before evaluating punctuation");
+        }
+        if (lat.offsetOrdinate < 0 || lon.offsetOrdinate < 0) {
+            throw new NormalizationException("Degree offsets my exist");
+        }
+
+        String latSep = fieldValues.get("dmLatSep");
+        String lonSep = fieldValues.get("dmLonSep");
+        if (latSep == null && lonSep == null) {
+            // Symmetric
+            return false;
+        }
+        if (latSep == null || lonSep == null) {
+            return true;
+        }
+        if (!latSep.equals(lonSep)) {
+            return true;
+        }
+        // Check more separators?
+        return false;
     }
 }

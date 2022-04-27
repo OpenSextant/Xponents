@@ -74,8 +74,6 @@ public class UTMParser {
         Integer E = Integer.parseInt(e);
         Integer N = Integer.parseInt(n);
 
-        UTM utm = new UTM(ZZ, h, E.doubleValue(), N.doubleValue());
-
-        return utm;
+        return new UTM(ZZ, h, E.doubleValue(), N.doubleValue());
     }
 }

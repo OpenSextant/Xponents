@@ -878,6 +878,11 @@ xii,enum
 xiii,enum
 xx,enum
 xxx,enum
+1st,enum
+2nd,enum
+3rd,enum
+4th,enum
+5th,enum
 secondo,enum.ita
 sei,enum.ita
 ale,food
@@ -4710,6 +4715,7 @@ shun,verb
 shut,verb
 simmering,verb
 simmers,verb
+sing,verb
 sip,verb
 sit,verb
 siting,verb

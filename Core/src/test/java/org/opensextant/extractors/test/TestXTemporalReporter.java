@@ -102,7 +102,7 @@ public class TestXTemporalReporter {
         {
             for (TextMatch tm : results.matches) {
 
-                row = new HashMap<String, Object>();
+                row = new HashMap<>();
                 row.put(header[0], results.result_id);
                 row.put(header[1], status);
 
@@ -123,7 +123,7 @@ public class TestXTemporalReporter {
                 report.write(row, header, xtempResultsSpec);
             }
         } else {
-            row = new HashMap<String, Object>();
+            row = new HashMap<>();
             row.put(header[0], results.result_id);
             row.put(header[1], status);
             row.put(header[2], results.get_trace());

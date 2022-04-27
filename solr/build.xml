@@ -69,16 +69,16 @@
     <target name="postal-sources">
         <mkdir dir="${gaz.tmp}/postal"/>
         <!-- Postal codes -->
-        <get dest="${gaz.tmp}/postal-allCountries.zip">
+        <get dest="${gaz.tmp}/postal-allCountries.zip" skipexisting="true">
             <url url="https://download.geonames.org/export/zip/allCountries.zip"/>
         </get>
-        <get dest="${gaz.tmp}/postal-GB.zip">
+        <get dest="${gaz.tmp}/postal-GB.zip"  skipexisting="true">
             <url url="https://download.geonames.org/export/zip/GB_full.csv.zip"/>
         </get>
-        <get dest="${gaz.tmp}/postal-NL.zip">
+        <get dest="${gaz.tmp}/postal-NL.zip"  skipexisting="true">
             <url url="https://download.geonames.org/export/zip/NL_full.csv.zip"/>
         </get>
-        <get dest="${gaz.tmp}/postal-CA.zip">
+        <get dest="${gaz.tmp}/postal-CA.zip"  skipexisting="true">
             <url url="https://download.geonames.org/export/zip/CA_full.csv.zip"/>
         </get>
         <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-allCountries.zip"/>

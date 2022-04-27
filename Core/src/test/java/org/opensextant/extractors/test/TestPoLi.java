@@ -80,10 +80,8 @@ public class TestPoLi {
             } else if (testFile != null) {
                 test.testUserFile(testFile);
             }
-        } catch (NormalizationException xerr) {
+        } catch (NormalizationException | IOException xerr) {
             xerr.printStackTrace();
-        } catch (IOException ioerr) {
-            ioerr.printStackTrace();
         }
     }
 }

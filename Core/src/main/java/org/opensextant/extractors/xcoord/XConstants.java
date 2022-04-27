@@ -92,11 +92,11 @@ public final class XConstants {
     /**
      *
      */
-    public static final Map<String, Integer> familyInt = new HashMap<String, Integer>();
+    public static final Map<String, Integer> familyInt = new HashMap<>();
     /**
      *
      */
-    public static final Map<Integer, String> familyLabel = new HashMap<Integer, String>();
+    public static final Map<Integer, String> familyLabel = new HashMap<>();
 
     static {
 
@@ -126,7 +126,7 @@ public final class XConstants {
 
         Integer id = familyInt.get(nm);
         if (id != null) {
-            return id.intValue();
+            return id;
         }
 
         return UNK_PATTERN;

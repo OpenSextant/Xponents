@@ -24,21 +24,21 @@ public interface LatLon {
     /**
      * @return lat in degrees
      */
-    public double getLatitude();
+    double getLatitude();
 
     /**
      * @return lon in degrees
      */
-    public double getLongitude();
+    double getLongitude();
 
     /**
      * @param latitude in degrees
      */
-    public void setLatitude(double latitude);
+    void setLatitude(double latitude);
 
     /**
      * @param longitude in degrees
      */
-    public void setLongitude(double longitude);
+    void setLongitude(double longitude);
 
 }

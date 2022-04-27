@@ -32,6 +32,12 @@
 // */
 package org.opensextant.extractors.geo;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.*;
@@ -47,12 +53,6 @@ import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A simple variation on the geocoding algorithms: geotag all possible things

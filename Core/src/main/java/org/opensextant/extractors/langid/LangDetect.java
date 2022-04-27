@@ -15,6 +15,10 @@
  */
 package org.opensextant.extractors.langid;
 
+import java.io.File;
+import java.net.URL;
+import java.util.*;
+
 import com.cybozu.labs.langdetect.Detector;
 import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
@@ -23,10 +27,6 @@ import org.opensextant.data.Language;
 import org.opensextant.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.net.URL;
-import java.util.*;
 
 /**
  * Wrapper around cybozu labs langdetect. This tool provides a simple
@@ -188,6 +188,7 @@ public class LangDetect {
             sorted.add(lid);
         }
         Collections.sort(sorted);
+        Collections.reverse(sorted);
         return sorted;
     }
 

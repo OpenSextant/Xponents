@@ -121,8 +121,7 @@ public class XponentTextGeotagger extends XponentGeocoder {
      * This may make use of Tweet metadata for disambiguation, not just the message
      * content.
      *
-     * @param tw
-     *           tweet as parsed by DeepEye. This will use Tweet.lang to direct
+     * @param tw tweet rendered by Core API TweetUtility This will use Tweet.lang to direct
      *           tagging/tokenization.
      * @return Geo or Country annotation
      * @throws MessageParseException

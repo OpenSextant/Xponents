@@ -1,12 +1,17 @@
 package org.opensextant.extractors.test;
 
-import static org.junit.Assert.assertEquals;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.extractors.xtemporal.DateMatch;
 import org.opensextant.extractors.xtemporal.XTemporal;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -25,22 +30,54 @@ public class DateNormalizationTest {
         }
     }
 
+    static int counter = 0;
+
     /**
-     * Note that this may report false negatives if the JVM's default time zone is
-     * UTC.
+     * Facilitate validation.
+     * @param result
+     * @param validCount
+     */
+    static void print(TextMatchResult result, int validCount) {
+        ++counter;
+        System.err.println(counter + " " + result.matches.toString());
+        int validMatches = 0;
+        for (TextMatch m: result.matches){
+            if (!m.isFilteredOut()){
+                ++validMatches;
+            }
+        }
+        assertEquals(validCount, validMatches);
+    }
+
+    /**
+     * Note that this may report false negatives if the JVM's default time zone is UTC.
      */
     @Test
     public void ensureTimeZone() {
         // Not parseable by default. pattern is too noisy.
-        final TextMatchResult result1 = timeFinder.extract_dates("Oct 07", "dummy");
-        System.err.println("1 " + result1.matches.toString());
-        assertEquals(0, result1.matches.size());
-        final TextMatchResult result2 = timeFinder.extract_dates("Oct 2007", "dummy");
-        System.err.println("2 " + result1.matches.toString());
-        assertEquals(1, result2.matches.size());
+        TextMatchResult result = timeFinder.extract_dates("Oct 07", "dummy");
+        print(result, 0);
 
-        DateMatch dt = (DateMatch) result2.matches.get(0);
-        long noon = (12 * 3600 * 1000);
-        assertEquals(1191196800000L + noon, dt.datenorm.getTime());
+        result = timeFinder.extract_dates("Oct 2007", "dummy");
+        print(result, 1);
+
+        result = timeFinder.extract_dates("2007-10-12T11:33:00", "dummy");
+        print(result, 1);
+
+        result = timeFinder.extract_dates("2007-10-12T25:33:00", "dummy");
+        print(result, 1);
+
+        result = timeFinder.extract_dates("2007-10-12T13:33", "dummy");
+        print(result, 1);
+
+        // "2007-10-12T13:33:00"  epoch is 1192195980 sec
+        DateMatch dt = (DateMatch) result.matches.get(0);
+
+        // Calendar d2007 = Calendar.getInstance();
+        // d2007.setTimeZone(TimeZone.getTimeZone("GMT+0000"));
+        // d2007.setTimeInMillis(dt.datenorm.getTime());
+        //long epoch = d2007.getTime().getTime();
+        long epoch = dt.datenorm.getTime();
+        assertEquals(1192195980000L , epoch);
     }
 }

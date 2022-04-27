@@ -97,7 +97,7 @@ public class DateNormalization {
      * @param dt       found date
      * @throws ParseException the parse exception
      */
-    public static void normalize_date(java.util.Map<String, String> elements, DateMatch dt) throws ParseException {
+    public static void normalizeDate(java.util.Map<String, String> elements, DateMatch dt) throws ParseException {
 
         // Parse years.
         int year = normalize_year(elements);
@@ -166,7 +166,7 @@ public class DateNormalization {
         // So even if time is 00:00:00Z -- all zeroes -- the resolution is still
         // SECONDS.
         //
-        int hour = normalize_time(elements, "hh");
+        int hour = normalizeTime(elements, "hh");
         if (hour >= 0) {
             // Only if HH:MM... is present do we try to detect TZ.
             //
@@ -177,7 +177,7 @@ public class DateNormalization {
 
             // NON-zero hour.
             dt.resolution = DateMatch.TimeResolution.HOUR;
-            int min = normalize_time(elements, "mm");
+            int min = normalizeTime(elements, "mm");
             if (min >= 0) {
                 dt.resolution = DateMatch.TimeResolution.MINUTE;
                 // NON-zero minutes
@@ -233,7 +233,7 @@ public class DateNormalization {
      * @param tmField  the tm field
      * @return the int
      */
-    public static int normalize_time(java.util.Map<String, String> elements, String tmField) {
+    public static int normalizeTime(java.util.Map<String, String> elements, String tmField) {
 
         if (!elements.containsKey(tmField)) {
             return -1;
@@ -243,25 +243,22 @@ public class DateNormalization {
             return -1;
         }
 
-        if ("hh".equals("tmField")) {
-            if (val < 24) {
-                return val;
-            }
-        } else if ("mm".equals("tmField")) {
-            if (val < 60) {
-                return val;
-            }
-        } else if ("ss".equals("tmField")) {
-            if (val < 60) {
-                return val;
-            }
-        } else {
-            // Unknown field;
-            return val;
+        switch(tmField){
+            case "hh":
+                if (val < 24) {
+                    return val;
+                }
+                break;
+            case "mm":
+            case "ss":
+                if (val < 60) {
+                    return val;
+                }
+                break;
         }
-
         return -1;
     }
+
 
     /**
      * Normalize_year.

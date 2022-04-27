@@ -155,14 +155,14 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
             return false;
         }
         // compare class, test if codes are both null
-        if (this.getFeatureCode()==null){
+        if (this.getFeatureCode() == null) {
             return this.getFeatureClass().equals(geo.getFeatureClass()) && geo.getFeatureCode() == null;
         }
         // No nulls, compare Class/Code.
         return (this.getFeatureClass().equals(geo.getFeatureClass())
                 && this.getFeatureCode().equals(geo.getFeatureCode()));
     }
-    
+
     /**
      * Provide a reasonable string label for this PlaceEvidence
      * @author ubaldino

@@ -169,7 +169,6 @@ public abstract class RegexPatternManager {
     }
 
     private StringBuilder configMessages = new StringBuilder();
-    private static String SEPARATOR = "[\t ]+";
 
     /**
      * Initializes the pattern manager implementations. Reads the DEFINEs and RULEs
@@ -182,16 +181,16 @@ public abstract class RegexPatternManager {
      * @throws IOException if patterns file can not be loaded and parsed
      */
     public void initialize(InputStream io) throws IOException {
-
+        String SEPARATOR = "[\t ]+";
         patterns = new HashMap<>();
         patterns_list = new ArrayList<>();
 
         // the #DEFINE statements as name and regex
-        HashMap<String, String> defines = new HashMap<String, String>();
+        HashMap<String, String> defines = new HashMap<>();
 
         // the #RULE statements as name and a sequence of DEFINES and regex bits
-        HashMap<String, String> rules = new HashMap<String, String>();
-        HashMap<String, String> matcherClasses = new HashMap<String, String>();
+        HashMap<String, String> rules = new HashMap<>();
+        HashMap<String, String> matcherClasses = new HashMap<>();
         List<String> rule_order = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(io, StandardCharsets.UTF_8))) {
@@ -394,7 +393,7 @@ public abstract class RegexPatternManager {
      */
     public Map<String, String> group_map(RegexPattern p, java.util.regex.Matcher matched) {
 
-        Map<String, String> pairs = new HashMap<String, String>();
+        Map<String, String> pairs = new HashMap<>();
         int cnt = matched.groupCount();
         for (int x = 0; x < cnt; ++x) {
 
@@ -415,7 +414,7 @@ public abstract class RegexPatternManager {
      */
     public Map<String, TextEntity> group_matches(RegexPattern p, java.util.regex.Matcher matched) {
 
-        Map<String, TextEntity> pairs = new HashMap<String, TextEntity>();
+        Map<String, TextEntity> pairs = new HashMap<>();
         int cnt = matched.groupCount();
         for (int x = 0; x < cnt; ++x) {
 

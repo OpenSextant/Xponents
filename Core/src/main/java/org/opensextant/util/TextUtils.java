@@ -1117,7 +1117,7 @@ public class TextUtils {
     public static final String thaiLang = "th";
     public static final String vietnameseLang = "vi";
     public static final String romanianLang = "ro";
-    private static final Map<String, Language> languageMapISO639 = new HashMap<String, Language>();
+    private static final Map<String, Language> languageMapISO639 = new HashMap<>();
 
     /*
      * Initialize some langauge metadata.
@@ -1613,7 +1613,7 @@ public class TextUtils {
      */
     public static String uncompress(byte[] gzData, String charset) throws IOException {
         try (GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(gzData));
-             ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             byte[] buf = new byte[ONEKB];
             int len;

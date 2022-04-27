@@ -14,9 +14,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/**
- * @author ubaldino
- */
 package org.opensextant.extractors.xcoord;
 
 import java.util.HashMap;
@@ -32,6 +29,7 @@ import org.opensextant.util.TextUtils;
 
 /**
  *
+ * @author ubaldino
  */
 public final class GeocoordNormalization {
 
@@ -43,8 +41,7 @@ public final class GeocoordNormalization {
 
     /**
      * The match object is normalized, setting the coord_text and other data from
-     * parsing "text" and
-     * knowing which pattern family was matched.
+     * parsing "text" and knowing which pattern family was matched.
      *
      * @param m      match
      * @param groups fields
@@ -53,12 +50,10 @@ public final class GeocoordNormalization {
     public static void normalize_coordinate(GeocoordMatch m, Map<String, TextEntity> groups)
             throws NormalizationException {
 
-        // Hoaky Java 6 issue: REGEX does not use named groups, so here we map both the
-        // value to
-        // a text/offset pair (in groups) and provide just the key/text pairs
-        // (_elements)
+        // Hoaky Java 6 issue: REGEX does not use named groups, so here we map both the value to
+        // a text/offset pair (in groups) and provide just the key/text pair (_elements)
         //
-        Map<String, String> fieldValues = new HashMap<String, String>();
+        Map<String, String> fieldValues = new HashMap<>();
         for (String name : groups.keySet()) {
             TextEntity val = groups.get(name);
             fieldValues.put(name, val.getText());
@@ -90,14 +85,13 @@ public final class GeocoordNormalization {
             m.setSeparator(groups);
             m.setCoordinate(ddlat, ddlon);
 
-            /**
+            /*
              * DD filters enabled.
              * To Disable: XCoord.RUNTIME_FLAGS XOR XConstants.DD_FILTERS_ON
              */
             if ((XCoord.RUNTIME_FLAGS & XConstants.DD_FILTERS_ON) > 0) {
-                /**
-                 * With FILTERS ON if lat/lon have no ALPHA hemisphere, i.e., ENSW and if
-                 * lat/lon text for match
+                /*
+                 * With FILTERS ON if lat/lon have no ALPHA hemisphere, i.e., ENSW and if lat/lon text for match
                  * has no COORD symbology then this is likely not a DD coordinate -- filter out.
                  */
                 if (!ddlon.hemisphere.isAlpha() && !ddlat.hemisphere.isAlpha()) {
@@ -128,7 +122,7 @@ public final class GeocoordNormalization {
             m.setCoordinate(dmlat, dmlon);
 
             if (!m.isFilteredOut()) {
-                m.setFilteredOut(m.evaluateInvalidDashes(fieldValues));
+                m.setFilteredOut(m.evaluateInvalidDashes(fieldValues) || m.evaluateInvalidPunct(fieldValues));
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
             set_precision(m);
@@ -146,7 +140,7 @@ public final class GeocoordNormalization {
             m.setCoordinate(dmlat, dmlon);
 
             if (!m.isFilteredOut()) {
-                m.setFilteredOut(m.evaluateInvalidDashes(fieldValues));
+                m.setFilteredOut(m.evaluateInvalidDashes(fieldValues)|| m.evaluateInvalidPunct(fieldValues));
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
             set_precision(m);

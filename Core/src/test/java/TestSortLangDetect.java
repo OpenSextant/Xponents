@@ -35,6 +35,5 @@ public class TestSortLangDetect {
         for (LangID l : sorted) {
             System.out.println("L=" + l);
         }
-
     }
 }

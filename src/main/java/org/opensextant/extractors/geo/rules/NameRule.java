@@ -1,21 +1,20 @@
 package org.opensextant.extractors.geo.rules;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.util.TextUtils;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class NameRule extends GeocodeRule {
 
     public static final String CITY = "QualifiedName.City";
     public static final String ADM1 = "QualifiedName.Prov";
     public static final String ADM2 = "QualifiedName.Dist";
-    public static final String LEX1 = "LexicalMatch";
-    public static final String LEX2 = "LexicalMatch.NoCase";
+    public static final String DIACRITIC = "DiacriticName";
 
     public static final Set<String> P_prefixes = new HashSet<>();
     public static final Set<String> A1_suffixes = new HashSet<>();
@@ -40,6 +39,10 @@ public class NameRule extends GeocodeRule {
              */
             if (name.isFilteredOut() || name.getChosen() != null) {
                 continue;
+            }
+
+            if (!name.isASCII()) {
+                name.addRule(DIACRITIC);
             }
 
             boolean isPlace = false;
