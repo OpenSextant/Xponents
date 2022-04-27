@@ -20,15 +20,15 @@ public class LangID implements Comparable<LangID> {
         primary = isFirstChoice;
     }
 
+    /**
+     * If THIS langID score is less than argument, return -1
+     * If THIS langID score is greater than argument, return 1
+     * @param o
+     * @return
+     */
     @Override
     public int compareTo(LangID o) {
-        if (o.score > this.score) {
-            return 1;
-        }
-        if (o.score < this.score) {
-            return -1;
-        }
-        return 0;
+        return Integer.compare(this.score, o.score);
     }
 
     @Override
