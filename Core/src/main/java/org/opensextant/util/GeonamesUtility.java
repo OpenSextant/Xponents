@@ -15,6 +15,12 @@
 */
 package org.opensextant.util;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.util.*;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Country;
 import org.opensextant.data.Language;
@@ -25,13 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.opensextant.util.GeodeticUtility.geohash;
 
@@ -204,11 +203,7 @@ public class GeonamesUtility {
      * @param cc ISO country code for lookup
      */
     private void addTimezone(String tz, String cc) {
-        Set<String> ccset = tz2cc.get(tz);
-        if (ccset == null) {
-            ccset = new HashSet<>();
-            tz2cc.put(tz, ccset);
-        }
+        Set<String> ccset = tz2cc.computeIfAbsent(tz, k -> new HashSet<>());
         ccset.add(cc);
     }
 
@@ -531,7 +526,7 @@ public class GeonamesUtility {
                 iso2fips.put(cc, fips); // ISO2
                 iso2fips.put(iso3, fips);
             } else {
-                logger.debug("Territory not mapped in iso/fips %s, %s", fips, cc);
+                logger.debug("Territory not mapped in iso/fips {}, {}", fips, cc);
             }
 
             // ISO
@@ -981,7 +976,7 @@ public class GeonamesUtility {
      * Experimental. A trivial way of looking at mapping well-known name collisions
      * to country codes
      */
-    public static final Map<String, String> KNOWN_NAME_COLLISIONS = new HashMap<String, String>();
+    public static final Map<String, String> KNOWN_NAME_COLLISIONS = new HashMap<>();
 
     static {
 
@@ -1198,20 +1193,6 @@ public class GeonamesUtility {
      * 'fr' or 'fr-fr'
      */
     private final HashMap<String, Set<String>> languageInCountries = new HashMap<>();
-    // private final HashMap<String, Set<String>> primaryLanguageInCountries = new
-    // HashMap<>();
-
-    /**
-     * Given Country code (ISO2) list all language locales and primary languages
-     * spoken there. E.g., If
-     * 'en-AU' is spoken in Sydney Australia, then they at least speak some form of
-     * English ('en') as
-     * well as the local australian dialect.
-     * MAP: cc ===&gt; set( l1, l2, l3...) KEYS: uppercase
-     */
-    // private final HashMap<String, Set<String>> countrySpeaks = new HashMap<>();
-    // private final HashMap<String, String> countryPrimarilySpeaks = new
-    // HashMap<>();
 
     public final HashSet<String> unknownLanguages = new HashSet<>();
 
@@ -1307,8 +1288,7 @@ public class GeonamesUtility {
         if (lang == null) {
             return null;
         }
-        Set<String> set = languageInCountries.get(lang.toLowerCase());
-        return set;
+        return languageInCountries.get(lang.toLowerCase());
     }
 
     /**
@@ -1345,7 +1325,7 @@ public class GeonamesUtility {
         // CurrencyCode CurrencyName Phone Postal Code Format Postal Code Regex
         // Languages geonameid neighbours EquivalentFipsCode
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri), "UTF-8"))) {
+                new InputStreamReader(GeonamesUtility.class.getResourceAsStream(uri), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().startsWith("#")) {
@@ -1389,11 +1369,7 @@ public class GeonamesUtility {
                 }
                 Country C = isoCountries.get(cc);
                 for (String lang : C.getLanguages()) {
-                    Set<String> ccset = languageInCountries.get(lang);
-                    if (ccset == null) {
-                        ccset = new HashSet<>();
-                        languageInCountries.put(lang, ccset);
-                    }
+                    Set<String> ccset = languageInCountries.computeIfAbsent(lang, l -> new HashSet<>());
                     ccset.add(cc);
                 }
             }
@@ -1408,12 +1384,11 @@ public class GeonamesUtility {
      */
     protected void addLang(String langOrLocale, String cc) {
 
-        String lid = langOrLocale;
-        if (lid.length() == 3) {
+        if (langOrLocale.length() == 3) {
             Language L = TextUtils.getLanguage(langOrLocale);
 
             if (L == null) {
-                unknownLanguages.add(lid);
+                unknownLanguages.add(langOrLocale);
             }
         }
 
@@ -1424,7 +1399,7 @@ public class GeonamesUtility {
          */
         Country C = this.isoCountries.get(cc);
         if (C != null) {
-            C.addLanguage(lid);
+            C.addLanguage(langOrLocale);
         }
     }
 
