@@ -272,10 +272,10 @@ they become part of the CLASSPATH ( via `opensextant-xponents-*jar` or from file
 
 **FIRST USE:** 
 ```shell script
-    build.sh  meta
-    build.sh  start clean data gazetteer
-    build.sh  taxcat
-    build.sh  postal
+    ./build.sh  meta
+    ./build.sh  start clean data gazetteer
+    ./build.sh  taxcat
+    ./build.sh  postal
 ```
 
 IF you have gotten to this step and feel confident things look good, this one invocation of `build.sh`
@@ -323,7 +323,7 @@ gazetteer you are likely ready to go start using Xponents SDK.
 **Step 4.b Get Supporting Data**
 
 ```shell script
-    build.sh [proxy] data 
+    ./build.sh [proxy] data 
 ```
 
 This will pull down data sets used by Gazetteer and TaxCat taggers and resources using the Ant tasks:
@@ -422,12 +422,13 @@ Approximate Feature Count from OpenSextant Gazetteer (2020)
 
 
 This is an initial, experimental model for features based on intuition.
-Populated Place and Administrative features 
-are far more common in most data, but this depends on your domain.  This weighting will NOT omit
-particular feature types, but it will help with disambiguating (choosing a most likely feature) 
+Populated Place and Administrative features are far more common in most data, but this depends on your domain.  
+This weighting will NOT omit particular feature types, but it will help with disambiguating (choosing a most likely feature) 
 and informing the confidence in that conclusion.  More test data is needed to objectively build 
 a reasonable feature model.  
 
 References:
 
-* Acheson, De Sabbata, Purvesa   "A quantitative analysis of global gazetteers: Patterns of coverage for common feature types". 2017.  https://www.sciencedirect.com/science/article/pii/S0198971516302496 
+* Acheson, De Sabbata, Purvesa   "A quantitative analysis of global gazetteers: 
+  Patterns of coverage for common feature types". 2017.  
+  https://www.sciencedirect.com/science/article/pii/S0198971516302496 

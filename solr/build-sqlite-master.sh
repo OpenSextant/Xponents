@@ -73,7 +73,7 @@ else
   LOG=./tmp/gaz_usgs_${datekey}.log
   python3 ./script/gaz_usgs.py $USGS_FILE > $LOG
 
-  datekey=`date +%Y%m%d`
+
   echo NGA GNIS  `date`
   LOG=./tmp/gaz_nga_${datekey}.log
   python3 ./script/gaz_nga.py ./tmp/Countries.txt > $LOG
