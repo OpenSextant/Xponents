@@ -82,6 +82,25 @@ parsing backwards (or forwards) to identify the start of the street name and num
 is an exercise for you the end user.  There are resources that offer
 by-country patterns for common addresses.
 
+## Testing
+
+To test you will need to run the Xponents REST server in one terminal and then
+drive the unit tests from a second window.   These tests are more focused on 
+postal geocoder than the general testing.
+
+```shell
+
+  cd Xponents
+  
+  # In Terminal 1:
+  . ./dev.env
+  ./script/xlayer-server.sh start 8787
+  
+  # In Terminal 2
+  python3 ./test/xlayer-test-suite.py localhost:8787
+  
+
+```
 
 ## Client API Usage
 

@@ -136,7 +136,7 @@ if __name__ == "__main__":
     ap = ArgumentParser()
     ap.add_argument("url",
                     help="Try the format http://localhost:8787/xlayer/rest/process ... adjust host/port as needed")
-    ap.add_argument("--show-filtered", default=False)
+    ap.add_argument("--show-filtered", default=False, action="store_true", help="Show items that were detected, but filtered on server side")
     args = ap.parse_args()
 
     client = XlayerClient(args.url)

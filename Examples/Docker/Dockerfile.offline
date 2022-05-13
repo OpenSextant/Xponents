@@ -1,4 +1,4 @@
-FROM adoptopenjdk:12-jdk-hotspot
+FROM eclipse-temurin:17-jdk
 # SHADOWS: FROM mubaldino/opensextant:xponents-3.5
 # 
 # --------------------------

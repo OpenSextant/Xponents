@@ -1,4 +1,4 @@
-FROM adoptopenjdk:12-jdk-hotspot
+FROM eclipse-temurin:17-jdk
 
 ENV XLAYER_PORT=8787
 ENV RELEASE_NAME=Xponents-3.5

@@ -1,20 +1,55 @@
 
+GIS File Input/Output
+=====================
 
-Follow the notes on OpenSextant/giscore/ page for FileGDB support.
+OpenSextant (Xponents, specifically) has had the ability to output ESRI FileGDB directly
+for many years.  However, its supportability is limited. You can see the Esri FileGDB native
+library referenced below -- this was work done c.2012-2015.  These binaries may still work.
 
-I used the following setup in my IDE:
-* Env:  
+What has worked well, though, is support for GeoJSON, GeoCSV (CSV with lat/lon), CSV, KML, 
+and Shapefile.   The notes below focus more on the FileGDB support here with Xponents. 
+The [README Examples](./README_Examples.md) details how to call the demo to output these 
+file formats.
+
+Consult the [GISCore](https://github.com/OpenSextant/giscore) developer page for the 
+complete details on setting up your runtime environemnt. 
+
+**Bottom Line:** FileGDB support is not maintained or well-tested. But the rest is. Good luck.
+
+
+**Invocation**
+
+In the Xponents Examples, you'll be working towards this type of invocation:
+
+```shell
+
+	./script/xponents-demo.sh geotemp  <ARGS>
+	
+	# Under the hood you'll need to pay attention to additional jvmArgs noted below
+	#               geotemp                    <ARGS>...
+	java jvmArgs ...BasicGeoTemporalProcessing -f FileGDB -i /my/dir  -o /output
+```
+
+
+**Environ:**
+
+```shell
+
 	export FILEGDB=RELEASE
 	export DYLD_LIBRARY_PATH=/path/to/Xponents/Examples/filegdb/osx/build/Release
 
-* Java:
+	JVM tuning: Add jvmArg as follows:
         -Djava.library.path=/path/to/Xponents/Examples/filegdb/osx/build/Release
+	
+```
 
-* Working Dir
-	GISCore appears to have some use of "user.dir" if your lib path above is not absolute.
-        So, in that case you have to have "filegdb/" in  your current working dir.
+**Working Dir:**
 
-* Libraries 
+GISCore appears to have some use of `user.dir` if your lib path above is not absolute.
+So, in that case you have to have "filegdb/" in  your current working dir.
+
+
+**Libraries:** 
 
 ```
 OSX contents:
@@ -33,12 +68,5 @@ filegdb/win64/filegdb.lib
 filegdb/win64/... ( ditto, ESRI and GISCore builds for windows go here )
 ...
 ```
-
-
-* Runtime
-
-Put it all together and you can run the main program 
-
-   java opts ...BasicGeoTemporalProcessing -f FileGDB -i /my/dir  -o /output
 
 

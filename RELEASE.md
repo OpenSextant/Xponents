@@ -20,6 +20,20 @@ RELEASES
 
 # 2022
 
+**Xponents 3.5.7 Postal Patience**
+
+* **Geocoding**: 
+  - Following fixes related to `features=["postal",...]` in Python API (`XlayerClient`) or REST API (`/xlayer/rest/process`)
+  - Omit postal tags where random punctuation appears amongst valid postal data. If it is valid, 
+    you should cleanse your text a bit.  Postal codes and abbreviations are very common and
+    can often be confused with other coded data
+  - Postal tags left undecorated by the end of a call are omitted, ie., tagging for postal features  
+    may detect a valid postal code (e.g., ZIP `90210`) -- but will only report it if it is qualified
+    by a province or valid city (e.g., `CA 90210`, `Beverly Heights, 90210`).  Bare digits are not reported.
+  - Precision of postal feature `"A/POST"` was 50,000m; it is now 5,000m.
+  - Use `features=["filtered",...]` to retrieve items that are tagged, but omitted  
+    
+
 **Xponents 3.5.5 BeginAgain (Re-release)**
 
 * **Geocoding**: Tamped down on acronym false-positives on UPPERCASE and lowercase 

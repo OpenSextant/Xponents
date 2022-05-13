@@ -71,8 +71,8 @@ Put it all together it might look like this, with notes about size of interim da
   # 25 GB to compose SQlite gazetteer completely;  
   # Allow for another 5GB of working space for the Solr Gazetteer to run
 
-  (cd ./Core && mvn install)
-  mvn install 
+  # (cd ./Core && mvn install)
+  # mvn install 
 
   ant -f ./script/dist.xml build build-examples
   ant -f ./script/dist.xml dist
