@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 The MITRE Corporation.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -16,13 +16,13 @@
 
 package org.opensextant.extractors.geo.rules;
 
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.PlaceCount;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.PlaceCount;
 
 /**
  * Give a list of province metadata that scopes the document, mark the list of

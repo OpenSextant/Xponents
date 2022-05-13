@@ -1,10 +1,10 @@
 package org.opensextant.extractors.geo.rules;
 
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.PlaceCandidate;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.PlaceCandidate;
 
 /**
  * NOT USED MUCH.  Feature
@@ -60,7 +60,7 @@ public class FeatureRule extends GeocodeRule {
     private static final FeatureClassMeta DEFAULT_FEATURE_WEIGHT = new FeatureClassMeta("UNK", 5);
 
 
-    private static final int[] FEAT_RESOLUTION = { 6, 5, 1 };
+    private static final int[] FEAT_RESOLUTION = {6, 5, 1};
     public static final Map<String, FeatureClassMeta> featWeights = new HashMap<>();
 
     static {

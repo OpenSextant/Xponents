@@ -13,13 +13,14 @@ public class CountryCount {
     private double ratio = 0;
     public Country country = null;
 
-    public CountryCount(Country C){
+    public CountryCount(Country C) {
         country = C;
     }
 
-    public CountryCount(String cc){
+    public CountryCount(String cc) {
         country = new Country(cc, cc);
     }
+
     /**
      * given a total number of ALL country mentions,
      * you can derive a ratio, e.g., text ABC is 45% about country1, 34% about

@@ -35,9 +35,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class PersonNameFilter extends GeocodeRule {
 
-    private Set<String> nameFilter;
-    private Set<String> titles;
-    private Set<String> suffixes;
+    private final Set<String> nameFilter;
+    private final Set<String> titles;
+    private final Set<String> suffixes;
 
     /**
      * Locations that are some number of words long AND have lat/lon

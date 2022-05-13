@@ -16,11 +16,11 @@
  */
 package org.opensextant.extractors.geo.rules;
 
+import java.util.List;
+
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
-
-import java.util.List;
 
 public class CountryRule extends GeocodeRule {
 

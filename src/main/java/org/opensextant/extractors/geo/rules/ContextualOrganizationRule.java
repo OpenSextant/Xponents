@@ -1,12 +1,12 @@
 package org.opensextant.extractors.geo.rules;
 
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.ScoredPlace;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 
 public class ContextualOrganizationRule extends GeocodeRule {
 

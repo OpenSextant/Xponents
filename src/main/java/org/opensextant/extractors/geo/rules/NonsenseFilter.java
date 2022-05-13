@@ -1,15 +1,15 @@
 package org.opensextant.extractors.geo.rules;
 
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.ScoredPlace;
-import org.opensextant.util.TextUtils;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
+import org.opensextant.util.TextUtils;
 
 /**
  * Filter out nonsense tokens that match some city or state name.
@@ -97,7 +97,7 @@ public class NonsenseFilter extends GeocodeRule {
             /*
              * Ignore phrases starting with trivial articles or mismatching initial case.
              */
-            if (p.getWordCount() == 2 &&  !p.isCountry ) {
+            if (p.getWordCount() == 2 && !p.isCountry) {
                 String tok1 = p.getTokens()[0];
                 String tok2 = p.getTokens()[1];
                 if (p.isLower() || (lowerInitial(tok1) && !lowerInitial(tok2))) {

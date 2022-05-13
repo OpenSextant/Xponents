@@ -1,11 +1,11 @@
 package org.opensextant.extractors.geo.rules;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.util.GeonamesUtility;
-
-import java.io.IOException;
-import java.util.List;
 
 public class ProvinceNameSetter extends GeocodeRule {
 

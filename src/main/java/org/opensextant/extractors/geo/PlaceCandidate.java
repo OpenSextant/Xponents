@@ -173,7 +173,7 @@ public class PlaceCandidate extends TextMatch {
     private String[] preTokens = null;
     private String[] postTokens = null;
     private String[] tokens = null;
-    private static int contextWidth = 40;
+    private static final int contextWidth = 40;
 
     /**
      * Get some sense of tokens surrounding match. Possibly optimize this by

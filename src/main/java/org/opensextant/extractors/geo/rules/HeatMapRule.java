@@ -45,10 +45,7 @@ public class HeatMapRule extends GeocodeRule {
         if (IGNORE_FEATURES.contains(pl.getFeatureClass())) {
             return true;
         }
-        if (IGNORE_FEATURE_LIST.contains(pl.getFeatureDesignation())) {
-            return true;
-        }
-        return false;
+        return IGNORE_FEATURE_LIST.contains(pl.getFeatureDesignation());
     }
 
     @Override

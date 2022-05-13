@@ -16,15 +16,15 @@
  */
 package org.opensextant.extractors.geo.rules;
 
-import org.opensextant.data.Place;
-import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.PlaceEvidence;
-import org.opensextant.extractors.geo.ScoredPlace;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.opensextant.data.Place;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.PlaceEvidence;
+import org.opensextant.extractors.geo.ScoredPlace;
 
 /**
  * Major Place rule -- fire this rule after Country rule.
@@ -66,7 +66,7 @@ public class MajorPlaceRule extends GeocodeRule {
      * and they are not context specific. So we only assess population per location
      * ONCE
      * not per mention.
-     * 
+     *
      * @param populationStats
      *                        optional population stats.
      */
@@ -131,7 +131,7 @@ public class MajorPlaceRule extends GeocodeRule {
      * we don't care about loose references to places.
      * "CITY, MD" is valid if city is in Maryland, but
      * "NAME, MD" may be a name of a doctor for example.
-     * 
+     *
      * @param pc
      * @return flag
      */
@@ -241,7 +241,7 @@ public class MajorPlaceRule extends GeocodeRule {
      *
      * @param capital
      */
-     void inferCountry(final Place capital) {
+    void inferCountry(final Place capital) {
         if (this.countryObserver == null) {
             return;
         }
@@ -250,7 +250,7 @@ public class MajorPlaceRule extends GeocodeRule {
         }
     }
 
-     void inferBoundary(String nameNorm, Place prov) {
+    void inferBoundary(String nameNorm, Place prov) {
         if (this.boundaryObserver != null) {
             this.boundaryObserver.boundaryLevel1InScope(nameNorm, prov);
         }

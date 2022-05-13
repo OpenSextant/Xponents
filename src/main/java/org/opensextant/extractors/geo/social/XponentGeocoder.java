@@ -135,7 +135,7 @@ public class XponentGeocoder extends GeoInferencer {
         // Or from coords in user profile.
         userlocX = new XCoord();
 
-        /**
+        /*
          * Xcoord parser; We expect only decimal degree (DD) patterns to appear
          * in text. If other patterns are found, then enable more. See Xponents
          * XCoord.

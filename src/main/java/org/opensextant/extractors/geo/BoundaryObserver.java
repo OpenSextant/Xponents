@@ -1,8 +1,8 @@
 package org.opensextant.extractors.geo;
 
-import org.opensextant.data.Place;
-
 import java.util.Map;
+
+import org.opensextant.data.Place;
 
 /**
  * Emit a boundary event when you come across a concrete reference to a

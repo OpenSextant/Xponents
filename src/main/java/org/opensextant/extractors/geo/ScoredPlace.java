@@ -16,10 +16,10 @@
  */
 package org.opensextant.extractors.geo;
 
-import org.opensextant.data.Place;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import org.opensextant.data.Place;
 
 /**
  * A class to hold a Place and a score together. Used by PlaceCandidate to rank
@@ -28,24 +28,24 @@ import java.util.Set;
  * @author dlutz
  * @author ubaldino
  */
-public class ScoredPlace  implements Comparable<ScoredPlace> {
+public class ScoredPlace implements Comparable<ScoredPlace> {
 
     private double score = 0.0;
     private Set<String> rules = null;
     private Place place = null;
 
-    public ScoredPlace(){
+    public ScoredPlace() {
     }
 
     public ScoredPlace(String plid, String nm) {
         place = new Place(plid, nm);
     }
 
-    public Place getPlace(){
+    public Place getPlace() {
         return place;
     }
 
-    public void setPlace(Place p){
+    public void setPlace(Place p) {
         place = p;
     }
 
@@ -62,7 +62,7 @@ public class ScoredPlace  implements Comparable<ScoredPlace> {
      * TODO: expand this to allow incremental scores for Document level vs. local
      * span-level
      * scoring of specific location candidates.
-     * 
+     *
      * @param d    score
      * @param rule rule name
      */
@@ -98,7 +98,7 @@ public class ScoredPlace  implements Comparable<ScoredPlace> {
 
     @Override
     public String toString() {
-        if (place==null){
+        if (place == null) {
             return "";
         }
         if (place.getName() != null) {

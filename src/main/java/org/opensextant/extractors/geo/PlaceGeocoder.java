@@ -217,7 +217,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         nonsenseFilter = new NonsenseFilter();
         addRule(nonsenseFilter);
 
-        /**
+        /*
          * Files for Place Name filter are editable, as you likely have different ideas of who are
          * "person names" to exclude when they conflict with place names. If you are filtering
          * out such things, then it makes sense to filter them out earliest and not incorporate them in geocoding.

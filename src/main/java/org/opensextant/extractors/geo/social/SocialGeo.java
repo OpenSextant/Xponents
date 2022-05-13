@@ -11,6 +11,13 @@
  */
 package org.opensextant.extractors.geo.social;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
@@ -23,14 +30,6 @@ import org.opensextant.extractors.xcoord.GeocoordPrecision;
 import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -290,8 +289,7 @@ public abstract class SocialGeo {
         if (allCountries == null) {
             return null;
         }
-        Country c = allCountries.get(nm.toLowerCase());
-        return c;
+        return allCountries.get(nm.toLowerCase());
     }
 
     public Place inferPlaceRecursively(SolrGazetteer gaz, Geocoding poi) throws SolrServerException, IOException {
@@ -437,11 +435,8 @@ public abstract class SocialGeo {
             }
         }
 
-        /*
-         * Admin Region?
-         */
-        Place region = gaz.placeAt(poi, 100, "A");
-        return region;
+        /* Admin Region? */
+        return gaz.placeAt(poi, 100, "A");
     }
 
     /**

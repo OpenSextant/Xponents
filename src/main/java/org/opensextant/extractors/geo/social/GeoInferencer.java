@@ -16,13 +16,13 @@
  */
 package org.opensextant.extractors.geo.social;
 
+import java.util.Collection;
+
 import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.langid.LangDetect;
-
-import java.util.Collection;
 
 /**
  * A geoinferencer infers location on users and their messages.

@@ -334,8 +334,7 @@ public class SolrGazetteer {
         C.setLatitude(xy[0]);
         C.setLongitude(xy[1]);
 
-        String fips = SolrUtil.getString(gazEntry, "FIPS_cc");
-        C.CC_FIPS = fips;
+        C.CC_FIPS = SolrUtil.getString(gazEntry, "FIPS_cc");
 
         C.setName_type(SolrUtil.getChar(gazEntry, "name_type"));
 
