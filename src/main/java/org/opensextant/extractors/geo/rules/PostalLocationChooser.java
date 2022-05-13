@@ -81,10 +81,8 @@ public class PostalLocationChooser extends GeocodeRule {
             ScoredPlace locScore = name.getChosen();
             Place loc = locScore.getPlace();
             loc.setMethod(defaultMethod);
-            if (loc != null) {
-                conf += INCR;
-                conf += (int) (locScore.getScore() / 10);
-            }
+            conf += INCR;
+            conf += (int) (locScore.getScore() / 10);
 
             // Unique location?
             if (name.getPlaces().size() == 1) {
@@ -96,34 +94,33 @@ public class PostalLocationChooser extends GeocodeRule {
             // Length?
             conf += 2 * name.getLength();
 
-            if (loc != null) {
-                /* For postal codes only: */
-                if (loc.isPostal()) {
-                    /* Assign the match label */
-                    name.setType("postal");
+            /* For postal codes only: */
+            if (loc.isPostal()) {
+                /* Assign the match label */
+                name.setType("postal");
 
-                    // Separators?
-                    if (5 < name.getLength() && name.getLength() < 10) {
-                        Matcher m = separators.matcher(name.getText());
-                        if (m.find()) {
-                            // Patterns with separators where separator occurs after 2-chars seem more credible.
-                            if (m.start() >= 2) {
-                                conf += INCR;
-                            }
-                            name.addRule("PostalCodeFormat");
+                // Separators?
+                if (5 < name.getLength() && name.getLength() < 10) {
+                    Matcher m = separators.matcher(name.getText());
+                    if (m.find()) {
+                        // Patterns with separators where separator occurs after 2-chars seem more credible.
+                        if (m.start() >= 2) {
+                            conf += INCR;
                         }
+                        name.addRule("PostalCodeFormat");
                     }
-                    // Mixed Alphanumeric patterns have more uniqueness
-                    if (!TextUtils.isNumeric(name.getText())) {
-                        conf += INCR;
-                    }
-                } else if (!paired) {
-                    /* IS NOT a postal code and is unpaired, so it is noise. */
-                    // Any other match is filtered out, e.g., trivial country names.
-                    // Looking to emit qualified postal code pairs
-                    name.setFilteredOut(true);
                 }
+                // Mixed Alphanumeric patterns have more uniqueness
+                if (!TextUtils.isNumeric(name.getText())) {
+                    conf += INCR;
+                }
+            } else if (!paired) {
+                /* IS NOT a postal code and is unpaired, so it is noise. */
+                // Any other match is filtered out, e.g., trivial country names.
+                // Looking to emit qualified postal code pairs
+                name.setFilteredOut(true);
             }
+
             name.setConfidence(conf);
 
             /* Assign Match ID */

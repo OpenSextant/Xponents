@@ -1,6 +1,8 @@
 package org.opensextant.extractors.geo.rules;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
@@ -10,6 +12,17 @@ public class PostalCodeAssociationRule extends GeocodeRule {
 
     public static final String POSTAL_ASSOC_RULE = "PostalAssociation";
     int proximity = 20;
+
+    private String currentBuffer = null;
+    static final Pattern validChar = Pattern.compile("[\\w\\s,.]");
+
+    /**
+     * Important - set buffer so spans for tuples can be assessed.
+     * @param buf
+     */
+    public void setBuffer(String buf) {
+        currentBuffer = buf;
+    }
 
     /**
      * Determine if you have one of each, ADM1 and POSTAL.   COUNTRY and POSTAL is also fine.
@@ -32,10 +45,35 @@ public class PostalCodeAssociationRule extends GeocodeRule {
     }
 
     /**
+     * detect if invalid punct characters exceed some limit.
+     * Pattern of ADMIN, inner POSTAL must be tested to show "inner" span is not junk.
+     *
+     * @param span
+     * @return
+     */
+    private boolean exceedsInnerSpanPunctuation(String span) {
+        Matcher m = validChar.matcher(span);
+        int charCount = 0;
+        while (m.find()) {
+            ++charCount;
+        }
+        // Considered allowing some punctuation -- but here we see if any char in span is not valid.
+        return (span.length() - charCount) > 0;
+    }
+
+    /**
      * @param p1 PlaceCandidate
      * @param p2 PlaceCandidate
      */
     void alignGeography(final PlaceCandidate p1, final PlaceCandidate p2) {
+        // validate text between matches;
+        // Loosely -- if inner text span contains lots of punctuation, then ignore.
+        int x1 = p1.end < p2.start ? p1.end : p2.end;
+        int x2 = p1.end < p2.start ? p2.start : p1.start;
+        if (exceedsInnerSpanPunctuation(currentBuffer.substring(x1, x2))) {
+            return;
+        }
+
         for (ScoredPlace geo1Score : p1.getPlaces()) {
             p1.defaultMatchId();
             Place geo1 = geo1Score.getPlace();
@@ -129,9 +167,35 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                 alignGeography(match, after);
             }
         }
+        for (PlaceCandidate name : names) {
+            if (name.isFilteredOut()) {
+                continue;
+            }
+            if (name.hasPostal() && name.getRelated() == null) {
+                // FILTER: remove bare POSTAL codes
+                name.setFilteredOut(true);
+            } else {
+                // FILTER: remove bare ADM1 codes
+                for (ScoredPlace geoScore : name.getPlaces()) {
+                    if (name.isFilteredOut()) {
+                        break;
+                    }
+                    this.evaluate(name, geoScore.getPlace());
+                }
+            }
+        }
     }
 
     @Override
-    public void evaluate(PlaceCandidate name, Place geo) {/* no-op*/}
+    public void evaluate(PlaceCandidate name, Place geo) {
+        /*
+         * crazy rule -- review Administrative codes that collide with other abbreviations.
+         * Looking for only (NAME | CODE + POSTAL) in a short span.  If its just "CODE" that appears bare,
+         * then we filter it out as noise.
+         */
+        if (name.isShortName() && name.getRelated() == null && geo.isAdministrative()) {
+            name.setFilteredOut(true);
+        }
+    }
 }
 

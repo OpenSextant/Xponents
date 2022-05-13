@@ -61,6 +61,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
     private final HashMap<String, PlaceCount> pairedPostalMentions = new HashMap<>();
     private final HashMap<String, CountryCount> inferredCountries = new HashMap<>();
 
+    private final PostalCodeAssociationRule assocFilter = new PostalCodeAssociationRule();
 
     public PostalGeocoder() throws ConfigException {
         super();
@@ -75,10 +76,9 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
         rules.add(new PostalCodeFilter(minLen));
 
         // HIERARCHICAL ASSOCIATION
-        GeocodeRule r = new PostalCodeAssociationRule();
-        r.setBoundaryObserver(this);
-        r.setCountryObserver(this);
-        rules.add(r);
+        assocFilter.setBoundaryObserver(this);
+        assocFilter.setCountryObserver(this);
+        rules.add(assocFilter);
 
         //  OMIT UNASSOCIATED CODES that look like YEAR numbers
         rules.add(new PostalCodeYearFilter());
@@ -155,6 +155,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
         List<PlaceCandidate> candidates = tagText(input, false);
         reset();
         /* assess each tag.  Rules filter, improve, and then choose and rate confidence on each match */
+        assocFilter.setBuffer(input.buffer);
         for (GeocodeRule r : rules) {
             r.evaluate(candidates);
         }
@@ -188,6 +189,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
     public void reset() {
         pairedPostalMentions.clear();
         inferredCountries.clear();
+        assocFilter.setBuffer(null);
     }
 
     @Override
