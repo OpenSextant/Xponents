@@ -220,6 +220,7 @@ elite,adj
 energetic,adj
 english,adj
 equatorial,adj
+equitable,adj
 european,adj
 ever,adj
 every,adj
@@ -813,6 +814,11 @@ delight,emotion
 happy,emotion
 rage,emotion
 sad,emotion
+1st,enum
+2nd,enum
+3rd,enum
+4th,enum
+5th,enum
 double,enum
 dozen,enum
 eight,enum
@@ -878,11 +884,6 @@ xii,enum
 xiii,enum
 xx,enum
 xxx,enum
-1st,enum
-2nd,enum
-3rd,enum
-4th,enum
-5th,enum
 secondo,enum.ita
 sei,enum.ita
 ale,food
@@ -1205,6 +1206,7 @@ baby,noun
 back,noun
 backer,noun
 bacon,noun
+badge,noun
 bait,noun
 bale,noun
 bales,noun
@@ -1404,6 +1406,7 @@ cave,noun
 celebration,noun
 celebrations,noun
 cent,noun
+ceramic,noun
 ceramics,noun
 cereal,noun
 ceres,noun
@@ -1497,6 +1500,7 @@ cooperative,noun
 cop,noun
 cord,noun
 core,noun
+cores,noun
 cork,noun
 corn,noun
 corner,noun
@@ -1789,6 +1793,7 @@ grub,noun
 guess,noun
 guide,noun
 guideline,noun
+guides,noun
 guild,noun
 gum,noun
 gun,noun
@@ -1881,6 +1886,7 @@ kilo,noun
 kinder,noun
 kings,noun
 kiss,noun
+kit,noun
 kitchen,noun
 knights,noun
 knob,noun
@@ -2339,6 +2345,7 @@ satellite,noun
 satellite channel,noun
 scenery,noun
 scenic view,noun
+schema,noun
 science,noun
 sciences,noun
 scoop,noun
@@ -2349,6 +2356,7 @@ sea breeze,noun
 sea spray,noun
 seal,noun
 seals,noun
+seam,noun
 seaweed,noun
 secession,noun
 secret,noun
@@ -2389,8 +2397,10 @@ side,noun
 sides,noun
 sight,noun
 signal,noun
+sill,noun
 silver,noun
 sin,noun
+sink,noun
 siren,noun
 size,noun
 skiff,noun
@@ -2410,6 +2420,7 @@ snowflake,noun
 socks,noun
 soda,noun
 sodium,noun
+sofa,noun
 soil,noun
 solitaire,noun
 solo,noun
@@ -2519,6 +2530,8 @@ thumb,noun
 tides,noun
 tiempo,noun
 tier,noun
+tier,noun
+tiers,noun
 ties,noun
 tile,noun
 time,noun
@@ -3454,6 +3467,7 @@ arbor,place.civil
 arcade,place.civil
 armory,place.civil
 arsenal,place.civil
+atrium,place.civil
 attache,place.civil
 attaché,place.civil
 auditorium,place.civil
@@ -3524,6 +3538,11 @@ depot,place.civil
 detention,place.civil
 dining facility,place.civil
 dispensary,place.civil
+district 1,place.civil
+district 2,place.civil
+district 3,place.civil
+district 4,place.civil
+district 5,place.civil
 district court,place.civil
 district courts,place.civil
 dock,place.civil
@@ -3673,6 +3692,21 @@ school,place.civil
 schools,place.civil
 science foundation,place.civil
 secondary school,place.civil
+section 1,place.civil
+section 10,place.civil
+section 11,place.civil
+section 12,place.civil
+section 13,place.civil
+section 14,place.civil
+section 15,place.civil
+section 2,place.civil
+section 3,place.civil
+section 4,place.civil
+section 5,place.civil
+section 6,place.civil
+section 7,place.civil
+section 8,place.civil
+section 9,place.civil
 seminary,place.civil
 service center,place.civil
 sewer,place.civil
@@ -4013,6 +4047,7 @@ yep,slang
 yt,slang
 astros,sport
 bills,sport
+boomerang,sport
 bowling,sport
 boxing,sport
 browns,sport
@@ -4481,8 +4516,8 @@ granting,verb
 grilling,verb
 groom,verb
 grooms,verb
-guiding,verb
 guessing,verb
+guiding,verb
 hack,verb
 hacking,verb
 had,verb
@@ -4656,6 +4691,7 @@ retreat,verb
 retrieve,verb
 return,verb
 revise,verb
+revise,verb
 rid,verb
 riding,verb
 rinse,verb
@@ -4741,6 +4777,7 @@ sprout,verb
 spur,verb
 staining,verb
 stand,verb
+stare,verb
 start,verb
 stay,verb
 step,verb
