@@ -57,19 +57,19 @@ Conventions in pattern IDs.  Each pattern is enumerated with the its family; Add
 | ---- | ----- | ------- |
 | <a name="MGRS" />**MGRS pattern** | | |
 | MGRS | MGRS-01 | 38SMB4611036560|
-| | | |
-| **UTM pattern**  | | |
+| <BR> <BR> | | |
+| <a name="UTM" />**UTM pattern**  | | |
 | UTM | UTM-01 | `17N 699990 3333335` <BR>// Zone/Latitude band + northing + easting;  Optionally with units "m" <BR>// for meters and or N/E marker
-| | | |
-| **Degree-Minute-Second patterns**| | |
+| <BR> <BR> | | |
+| <a name="DMS" />**Degree-Minute-Second patterns**| | |
 | DMS | DMS-01fs-a, DMS-01fs-b |`01°44'55.5"N 101°22'33.0"E`<BR>`N01°44'55.5" E101°22'33.0"`<br>// fractional second resolution, w/hash marks, with hemisphere|
 | DMS |DMS-01fs-deg | `01°44'55.5" 101°22'33.0"`<BR>// fractional second resolution, w/hash marks, NO hemisphere |
 | DMS | DMS-01dot-a, DMS-01dot-b | `01.44.55N 055.44.33E`<BR>`N01.44.55 E055.44.33`<BR>// explicit dot separator   |
 | DMS | DMS-02 | `N42 18' 00" W102 24' 00"` // variable length fields with separators and hemisphere   |
 | DMS | DMS-01a, DMS-02a| `421800N 1022400W`<BR>`N421800 W1022400`<BR>// no field separators, D/M/S   |
 | DMS | DMS-03a, DMS-03b| `4218001234N 10224001234W`<BR>`N4218001234 W10224001234`<BR>// no field separators; D/M/S.ss assummed  |
-| | | |
-| **Degree-Minute patterns** | | |
+| <BR><BR>  | | |
+| <a name="DM" />**Degree-Minute patterns** | | |
 | DM | DM-00 | `4218N-009 10224W-003`<BR>// obscure fractional minute notation   |
 | DM | DM-01a, DM-01a-dash, DM-01a-dot; <BR> DM-01b, DM-01b-dash, DM-01b-dot | `42 18-009N 102 24-003W`<BR>`42-18-009N; 102-24-003W`<BR>`42.18.009N 102.24.003W`<BR>// Ambiguous fractional minute separator<BR>// is handled with distinct patterns<BR><BR>`N4218.009W10224.003`<BR>`N42 18-005 x W102 24-008`<BR>`N42.18.005 x W102.24.008` |
 | DM | DM-02a, DM-02b, DM-02b-dash | `4218.009N 10224.003W`<BR>`N4218.0 W10224.0`<BR>`N4218-0018 W10224-0444`<BR> // 02a/b allows for fixed-width D/M without separators.   |
@@ -81,8 +81,8 @@ Conventions in pattern IDs.  Each pattern is enumerated with the its family; Add
 | DM | DM-06 | OBE   |
 | DM | DM-07 | `42 DEG 18.0N 102 DEG 24.0W`<BR>// 'DEG' spelled out.  fractional minute resolution |
 | DM | DM-08 | `+42 18.0 x -102 24.0` |
-| | | |
-| **Decimal Degree patterns** | | |
+| <BR> <BR> | | |
+| <a name="DD" />**Decimal Degree patterns** | | |
 | DD| DD-01 | `N42.3, W102.4` | 
 | DD | DD-02 |` 42.3N; 102.4W ` |
 | DD | DD-03 | `+42.3°;-102.4°` <BR>// explicit degree notation required, otherwise it is just a pair<BR>// of floating point numbers.  |
@@ -90,10 +90,7 @@ Conventions in pattern IDs.  Each pattern is enumerated with the its family; Add
 | DD | DD-05 | `N42°, W102°` |
 | DD | DD-06 | `42° N, 102° W` |
 | DD | DD-07 | `N42, W102` |
-| | | |
-
-  
-
+| END | | |
 
 
 XCOORD RELEASE NOTES

@@ -1,19 +1,4 @@
 
-VERSIONING AND OTHER 3rd PARTY LIBRARIES
----------------
-
-Other Xponents components and libraries rely on various external projects:
-
-- XText depends on Tika 1.21+
-- XCoord depends on [OpenSextant Geodesy](https://github.com/OpenSextant/geodesy/) for geodetic parsing and validation 
-- Extraction makes use of [OpenSextant GISCore](https://github.com/OpenSextant/giscore/) for output file formatting
-- Solr TextTagger was developed under OpenSextant in 2013 and migrated to the Apache Solr effort around 2018 in version 7.4.  The TextTagger is 
-  the primary tagging solution so there is a heavy dependence on Solr and Lucene. 
-  
-Starting with Xponents v3.5, the scripting for gazetteer data sources and
-related metadata are all self-contained in this project.  The OpenSextant
-Gazetteer project is no longer used here.
-  
 
 RELEASES
 ==============

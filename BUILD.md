@@ -3,22 +3,22 @@ Building Xponents
 ==================
 
 After checkout, first build Core API (opensextant-xponents-core)
-Then you can begin working with the Tagger API (opensextant-xponents)
+Then you can begin working with the extractor SDK (opensextant-xponents)
 
-1\. Setup project. 
+1. Setup project. 
 
 ```
   ./setup.sh
 ```
 
 
-2\. Setup Core API to build and test:
+2. Setup Core API to build and test:
 
 ```
   (cd ./Core && mvn install)
 ```
 
-3\. Build SDK:
+3. Build SDK:
 
 There are some outstanding build tasks related to gazetteer metadata assembly that need automation.
 But in general, you would make use of the `./solr/build.sh` script and consult the README there.
@@ -27,11 +27,11 @@ But in general, you would make use of the `./solr/build.sh` script and consult t
   mvn install
 ```
 
-4\. Build a full Gazetteer from scratch.
+4. Build a full Gazetteer from scratch.
 
 `./solr/README.md` captures all the mechanics of building the Gazettter from checkout.
 
-5\. Distribution and Packaging: `ant -f ./script/dist.xml dist`
+5. Distribution and Packaging: `ant -f ./script/dist.xml dist`
 
 Producing API documentation updates: infrequently, only for major releases.
  
@@ -43,9 +43,9 @@ Producing API documentation updates: infrequently, only for major releases.
  # When done, commit changes, as API docs appear on GitHub public site.
 ```
 
-6\. Test.  Leverage the `Examples` projects to more fully test your build.
+6. Test.  Leverage the `Examples` projects to more fully test your build.
 
-7\. Final Release.  With the properly compiled, tested packaging then create a distribution in full.
+7. Final Release.  With the properly compiled, tested packaging then create a distribution in full.
 
 ```
  ./script/dist.sh 
@@ -53,9 +53,9 @@ Producing API documentation updates: infrequently, only for major releases.
  # Note - this script call ant  package-dist which just packages the pre-built, tested libraries.
 ```
 
-8\. Publish Java Libraries to Maven Central as below
+8. Publish Java Libraries to Maven Central as below
 
-9\. Build, Test and Publish Docker Images as described in `./Examples/Docker/`
+9. Build, Test and Publish Docker Images as described in `./Examples/Docker/`
 
 
 
@@ -68,9 +68,8 @@ Put it all together it might look like this, with notes about size of interim da
   ./setup.sh
 
   # About here you head into ./solr and produce the Gazetteer accoring to those build notes.
-  # 25 GB to compose SQlite gazetteer completely;  
-  # Allow for another 5GB of working space for the Solr Gazetteer to run
 
+  # Ant script below automates the Maven routines
   # (cd ./Core && mvn install)
   # mvn install 
 
@@ -85,9 +84,20 @@ Put it all together it might look like this, with notes about size of interim da
   ./script/dist-docker.sh
   ./script/dist-docker-offline.sh  http://localhost:9000  $SONAR_TOKEN
 
-
-  # TOTAL footprint is nearing 45 GB;  Allot 5 GB more for each saved version
 ```
+
+Sizing
+----------------
+
+Overall a complete build of gazetteer and production docker images will consume 45 GB. 
+Docker images are compressable to about 2.0 GB.  The breakdown is below:
+
+- Checkout and build libraries -  0.3 GB
+- Compose SQLite Gazetteers from raw data - 25.0 GB
+- Assemble Solr Gazetteer(s)  - 3.5 GB
+- Package final distribution - 4.0 GB
+- Package docker normal - 4.0 GB
+- Package docker offline - 4.2 GB
 
 
 Level of Effort.
@@ -112,7 +122,6 @@ Maven Publishing
   mvn clean deploy -P release
   cd ..
   mvn clean deploy -P release
-  
 
 ```
 
