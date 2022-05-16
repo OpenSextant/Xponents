@@ -1,4 +1,4 @@
-from opensextant import load_countries, countries, as_place, Place
+from opensextant import load_countries, countries, country_as_place, Place
 from opensextant.gazetteer import DataSource, PlaceHeuristics, get_default_db, DEFAULT_COUNTRY_ID_BIAS
 
 SOURCE_ID = "ISO"  # Really "ISO plus"
@@ -38,21 +38,21 @@ class CountryGazetteer(DataSource):
         for C in countries:
 
             # We won't use FIPS codes for tagging.  ID values are faked up.
-            pl = as_place(C, C.name.lower().capitalize(), oid=self.starting_row + count, name_type="N")
+            pl = country_as_place(C, C.name.lower().capitalize(), oid=self.starting_row + count, name_type="N")
             self.name_bias(pl)
             pl.id_bias = DEFAULT_COUNTRY_ID_BIAS
             pl.source = SOURCE_ID
             self.db.add_place(pl)
             count += 1
 
-            pl = as_place(C, C.cc_iso2, oid=self.starting_row + count, name_type="C")
+            pl = country_as_place(C, C.cc_iso2, oid=self.starting_row + count, name_type="C")
             self.name_bias(pl)
             pl.id_bias = DEFAULT_COUNTRY_ID_BIAS
             pl.source = SOURCE_ID
             self.db.add_place(pl)
             count += 1
 
-            pl = as_place(C, C.cc_iso3, oid=self.starting_row + count, name_type="C")
+            pl = country_as_place(C, C.cc_iso3, oid=self.starting_row + count, name_type="C")
             self.name_bias(pl)
             pl.id_bias = DEFAULT_COUNTRY_ID_BIAS
             pl.source = SOURCE_ID
