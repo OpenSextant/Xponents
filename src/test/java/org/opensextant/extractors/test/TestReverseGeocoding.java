@@ -1,6 +1,7 @@
 package org.opensextant.extractors.test;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opensextant.data.TextInput;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.processing.Parameters;
 
@@ -30,6 +31,7 @@ public class TestReverseGeocoding  {
 
                 if (tester.runSystemTests) {
                     iterations = 25;
+                    tester.inputText = new TextInput("test-revgeo", null);
                     tester.inputText.buffer =  StringUtils.join(new String[] { "20.000N, 10.000E", /* Sahara */
                             "26.14N, 33.52E", /* Egypt */
                             "32.000N, 101.668W", /* Texas */
@@ -38,7 +40,7 @@ public class TestReverseGeocoding  {
                             "42.00N, 68.111W", /* New England, water */
                             "42.00N, 75.111W", /* New England */
                             "38.00N, 80.111W", /* New York */
-                    }, ";;");
+                    }, ";;   ");
                 }
 
                 for (int count = 0; count < iterations; ++count) {

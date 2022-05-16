@@ -59,7 +59,5 @@ public class TestPlaceLookup {
         } catch (ExtractionException e2) {
             e2.printStackTrace();
         }
-
     }
-
 }
