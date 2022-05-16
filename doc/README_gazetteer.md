@@ -32,21 +32,20 @@ java -classpath  etc/*:dist/*:lib/* -Dopensextant.solr=$XPONENTS_SOLR -Xmx300m -
 
 ```
 
-__DETAILS__
-* Java 8+
-* Xponents Solr gazetteer is released about quarterly. "2017Q4" tag indicates the release.
-  You should have a copy of this gazetteer release and unpack it somewhere convenient. It is 4GB unpacked.
-* Solr 6.x requires Java 8.  Xponents 2.9 supported Java 7 and Solr 4.x (Please don't go back to Java 7 if you don't have to...)
 
-__JVM ARGS:__ You should replicated these settings in any other Java invocations of these Xponents API
-* CLASSPATH includes etc/xponents-gazetteer-meta.jar 
-* CLASSPATH includes lib/*.jar and xponents-demo*.jar
+__JVM ARGS:__ 
+
+Please use the provided `./script/xponents-demo.sh` groovy wrapper as a model
+for how to run Xponents applications in general.  Here are some pointers:
+
+* `CLASSPATH` should include `lib/opensextant*jar`. For this demo, the 
+ essential library for testing is `opensextant-xponents-examples-<VER>-SNAPSHOT.jar`
 * `opensextant.solr` variable is critical to this demonstration
 * Logback is Logger implementation (etc/logback.xml), but SLF4J is API used throughout most of the code.
-* Memory ~ 2.0 GB is good. We can go as low as 1.2 GB, but that is pushing the lower bound for geotagging
-  For typical SDK usage using the gazetteer you need 300 MB. Geotagging will create lots more objects 
-
-
+* Memory:
+  * Tagger: 2.0 GB is good for one-off testing. Tagger can go as low as 1.2 GB.  For server or long runs, 3.0 GB or more is better.
+  * Gazetteer: 0.3 GB -- to just query Solr index, not much memory is needed.
+  
 ```
 
 STRAIGHT LOOKUP
@@ -118,7 +117,7 @@ Here the Solr server will be running and we use pysolr to RESTfully query the ga
    python3 ./setup.py sdist 
 
    # Or just install distribution:
-   pip3 install --target $XPT/piplib ./dist/opensextant-1.3.1.tar.gz 
+   pip3 install --target $XPT/piplib ./dist/opensextant-1.x.x.tar.gz 
 
    # Set path
    export PYTHONPATH=$XPT/piplib

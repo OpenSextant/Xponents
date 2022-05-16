@@ -215,7 +215,7 @@ Someday we'll just post this to PyPi.
     popd
 
     # Install built lib with dependencies to ./piplib
-    pip3 install -U --target ./piplib ./python/dist/opensextant-1.3*.tar.gz 
+    pip3 install -U --target ./piplib ./python/dist/opensextant-1.4*.tar.gz 
     pip3 install -U --target ./piplib lxml bs4 arrow requests
     
     # Note - if working with a distribution release, the built Python 

@@ -178,7 +178,7 @@ class AdhocNameVariants(DataSource):
                 if row["place_id"] == "place_id":
                     continue
                 self.rowcount += 1
-                pl = as_place(row)
+                pl = as_place(row, source="db")
                 pl.id = GENERATED_BLOCK + self.rowcount
                 pl.search_only = 0
                 pl.name_group = ""

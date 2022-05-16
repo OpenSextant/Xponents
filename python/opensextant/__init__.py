@@ -355,7 +355,7 @@ class Country(Coordinate):
         return u'{} ({})'.format(self.name, self.cc_iso2)
 
 
-def as_place(ctry: Country, name: str, name_type="N", oid=None):
+def country_as_place(ctry: Country, name: str, name_type="N", oid=None):
     """
     Convert to Place.
     :param ctry: Country object

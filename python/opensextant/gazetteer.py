@@ -220,7 +220,7 @@ def name_group_for(nm: str):
     return ""
 
 
-def as_place(r):
+def as_place(r, source="index"):
     """
     Convert dict to a Place object
     :param r: gazetteer row from Solr or SQlite.
@@ -244,7 +244,9 @@ def as_place(r):
         # Required if coming or going into a database:
         p.id = r["id"]
     p.id_bias = r["id_bias"]
-    p.name_bias = r["name_bias"]
+    if source == "db":
+        p.name_bias = r["name_bias"]
+
     # optional fields:
     if "FIPS_cc" in keys:
         p.country_code_fips = r["FIPS_cc"]
@@ -338,7 +340,7 @@ def run_query(url, q):
 def print_places(arr, limit=25):
     print("FOUND {}. Showing top {}".format(len(arr), limit))
     for p in arr[0:limit]:
-        print(str(p))
+        print(str(p), f"\tfeature: {p.feature_class}/{p.feature_code}")
 
 
 def capitalize(name: dict):
@@ -587,7 +589,7 @@ class DB:
         name_bias = dict()
         place = None
         for row in self.conn.execute(f"select * from placenames where place_id = ? limit {limit}", (plid,)):
-            pl = as_place(row)
+            pl = as_place(row, source="db")
             if not place:
                 place = pl
             name_bias[pl.name.lower()] = pl.name_bias
@@ -707,7 +709,7 @@ class DB:
         if self.debug:
             print(sql_script)
         for p in self.conn.execute(sql_script):
-            yield as_place(p)
+            yield as_place(p, source="db")
 
     def list_places_at(self, lat: float = None, lon: float = None, geohash: str = None,
                        cc: str = None, radius: int = 5000, limit=10):
@@ -766,7 +768,7 @@ class DB:
                 place = as_place(p)
                 dist = distance_haversine(lon, lat, place.lon, place.lat)
                 if dist < radius:
-                    found[dist] = as_place(p)
+                    found[dist] = place
             if len(found) >= limit:
                 # Return after first round of querying.
                 break
