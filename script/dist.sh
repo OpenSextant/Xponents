@@ -62,6 +62,9 @@ for f in $REL/xponents-solr/solr*-dist/bin/post \
   chmod u+x $f
 done 
 
+# Pre-install Python library; Albeit for Linux....
+pip3 install -U -t $REL/piplib $REL/python/opensextant-1.4*gz
+
 msg "Clean up distribution"
 # ----------------------
 rm -rf $REL/xponents-solr/solr*-dist/server/logs/*
@@ -85,7 +88,7 @@ cat <<EOF > $REL/VERSION.txt
 Build:     $BUILD_VER
 Date:      `date`
 Gazetteer: Xponents Solr 2022-Q1
-  Sources: NGA,  2021-OCT
+  Sources: NGA,  2022-APR
            USGS, 2021-AUG
            Geonames.org, 2021-AUG
            NaturalEarth, 2021-MAR
