@@ -61,7 +61,7 @@ military, transportation, humanitarian and other industries. They offer excellen
 names or allusions to the geography at hand.  In Xponents, coordinate can be queried against the ```SolrGazetteer.placesAt()```
 method to reveal nearest cities, the province and country containing the location, or the fact the coordinate is
 not near anything (e.g., over water). **Xponents Patterns** project has ```XCoord``` extractor which detects and geocodes
-the coordinate patterns listed here in the [XCoord Patterns reference manual](XCoord_Patterns.htm) reference manual.
+the coordinate patterns listed here in the [XCoord Patterns reference manual](xcoord.html) reference manual.
 * **T3. Names of populated places and administrative &amp; geopolitical boundaries.**
 Any known geographic name can be tagged in any language (Xponents does not currently support the use of 
 statistical models that can tag unknown names based on a learned model). **[SolrTextTagger](https://github.com/OpenSextant/SolrTextTagger/)**

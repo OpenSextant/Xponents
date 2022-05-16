@@ -30,7 +30,7 @@ XCoord
 ---------
 `XCoord` is a geographic coordinate extractor and normalizer that finds latitude/longitude pairs or grids such 
   as `MGRS` or `UTM`. The patterns are either decimal degrees, minutes seconds, and/or fractional parts along 
-  with hemisphere symbology.  Patterns include these: [Coord Patterns, 2013-2017](./XCoord_Patterns.htm), as 
+  with hemisphere symbology.  Patterns include these: [Coord Patterns, 2013-2017](./xcoord.htm), as 
   implemented in this patterns definition [geocoord_patterns.cfg](https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/resources/geocoord_patterns.cfg).  This was drafted and operationalized 
   in Java here and has not yet been ported to Python (In actuality the first extractor implementation before OpenSextant was 
   in Python not using the FlexPat approach). Coordinate patterns include:
@@ -39,7 +39,7 @@ XCoord
    - MGRS ~ Quad/Zone/Easting/Northing
    - UTM ~  Zone/Band/Easthing/Northing
 
-**FILES**:  **[Coord Patterns](./XCoord_Patterns.htm)**, Patterns Config: **[geocoord_patterns.cfg](https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/resources/geocoord_patterns.cfg)**.
+**FILES**:  **[Coord Patterns](./xcoord.html)**, Patterns Config: **[geocoord_patterns.cfg](https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/resources/geocoord_patterns.cfg)**.
 
 XTemporal 
 -----------

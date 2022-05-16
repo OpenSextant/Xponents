@@ -1,31 +1,37 @@
 Third-Party Liceneses
 ======================
 
+Apache Solr
+---------------------
+* FILE: `solr/solr7-dist` or `xponents-solr/solr7-dist`
+* LICENSE, NOTICE, etc, are contained therein
+
 Vietnamese Stopwords
 ----------------------
-https://github.com/stopwords/vietnamese-stopwords#license
-MIT License 
-Copyright (c) 2015 Van-Duyet Le
+* FILE: `src/main/resources/lang/vietnamese-stopwords.txt`
+* SOURCE: https://github.com/stopwords/vietnamese-stopwords#license
+* MIT License. Copyright (c) 2015 Van-Duyet Le
 
 Carrot2 Stopwords 
 ----------------------
-(XPONENTS:  ./solr/etc/gazetteer/filters, solr/solr*dist/)
-Used as optional downloads --  LICENSE:
-http://project.carrot2.org/license.html
-
-You the Xponents user are responsible for acquiring stopwords.
-Runtime location:  ./solr/etc/gazetteer/filters,  
-    Or anywhere in CLASSPATH as "/filters/carrot2-stopwords.LL" for Language LL
+* Xponents Code:  `./solr/etc/gazetteer/filters`
+* Xponents Runtime: `/filters/carrot2-stopwords.LL` for Language `LL` can be found in the SDK JAR
+* Currently unused in Xponents 3.5
+* LICENSE: http://project.carrot2.org/license.html
 
 
 CyboZu/Narconex Language-Detection ("LANGDETECT") 
 -----------------------
-(XPONENTS: ./etc/langdetect/)
-https://code.google.com/archive/p/language-detection/
+* Xponents Runtime: `./etc/langdetect/`
+* FILE: `./etc/langdetect-profiles-v3.zip`
+* SOURCE: https://code.google.com/archive/p/language-detection/
+* CITATION:
 
+```json
    @misc{nakatani2010langdetect, title = {Language Detection Library for Java},
    author = {Shuyo, Nakatani}, url = {http://code.google.com/p/language-detection/},
    year = {2010} }
+```
 
 Copyrights and License
 
