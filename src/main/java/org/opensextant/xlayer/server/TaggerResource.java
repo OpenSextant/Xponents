@@ -171,7 +171,7 @@ public abstract class TaggerResource extends ServerResource {
         job.tag_coordinates = false;
         job.tag_countries = true;
         job.tag_places = true;
-        /** Coordinates are not reverse geocoded by default. */
+        /* Coordinates are not reverse geocoded by default. */
         job.resolve_localities = false;
 
         job.tag_taxons = true;

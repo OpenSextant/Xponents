@@ -1,21 +1,18 @@
 package org.opensextant.xlayer.server.xgeo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.restlet.Component;
 import org.restlet.Context;
 import org.restlet.data.Protocol;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author ubaldino
  */
 public class XlayerServer extends Component {
 
-    public static String usage() {
-
-        return "Usage:\n\t\tXlayerServer <port>";
-    }
+    private static String USAGE = "Usage:\n\t\tXlayerServer <port>";
 
     public XlayerServer() {
         this(8888);
@@ -48,13 +45,13 @@ public class XlayerServer extends Component {
      */
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.err.println(usage());
+            System.err.println(USAGE);
             System.exit(-1);
         }
         try {
             new XlayerServer(Integer.parseInt(args[0])).start();
         } catch (Exception err) {
-            System.err.println(usage());
+            System.err.println(USAGE);
             System.err.printf("ERROR: %s%n", err.getMessage());
             System.exit(-1);
         }

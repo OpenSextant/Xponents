@@ -15,7 +15,7 @@
     <property name="xponents.jar" value="${basedir}/../target/opensextant-xponents-${xponents.v}.jar"/>
     <property name="resources.lib" value="${basedir}/../src/main/resources"/>
     <property name="xponents.lib" value="${basedir}/../lib"/>
-	<property name="log4j.v" value="2.17.1"/>
+	<property name="log4j.v" value="2.17.2"/>
 
     <path id="runtime.classpath">
         <pathelement location="${xponents.jar}"/>

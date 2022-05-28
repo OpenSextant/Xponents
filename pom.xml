@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.5.8</version>
+  <version>3.5.9</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -50,9 +50,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <solr.version>7.7.3</solr.version>
-    <slf4j.version>1.7.32</slf4j.version>
-    <log4j.version>2.17.1</log4j.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <log4j.version>2.17.2</log4j.version>
     <restlet.version>2.4.3</restlet.version>
+    <xponents.version>3.5.9</xponents.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
   <distributionManagement>
@@ -71,7 +72,7 @@
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.8.0</version>
+        <version>2.11.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -94,14 +95,18 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.2.10</version>
+        <version>1.2.11</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
     <!-- BASIC LIBS -->
-
+    <dependency>
+      <groupId>org.opensextant</groupId>
+      <artifactId>opensextant-xponents-core</artifactId>
+      <version>${xponents.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -121,14 +126,6 @@
       <artifactId>spatial4j</artifactId>
       <version>0.8</version>
     </dependency>
-    <!-- JTS is unused. No change in performance or function without it.
-    <dependency>
-      <groupId>org.locationtech.jts</groupId>
-      <artifactId>jts-core</artifactId>
-      <version>1.18.3</version>
-      <scope>runtime</scope>
-    </dependency>
-    -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>fluent-hc</artifactId>
@@ -167,6 +164,90 @@
       <artifactId>super-csv</artifactId>
       <version>2.4.0</version>
     </dependency>
+    <!-- UTILITY AND LOGGING -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+      <version>${log4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${log4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>gnu.getopt</groupId>
+      <artifactId>java-getopt</artifactId>
+      <version>1.0.13</version>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.4</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- REST support -->
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.simple</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.json</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20190722</version>
+    </dependency>
+
+    <!-- JSON serialization and metadata transforms -->
+    <dependency>
+      <groupId>org.jodd</groupId>
+      <artifactId>jodd-json</artifactId>
+      <version>5.1.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
+      <version>${solr.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>${solr.version}</version>
+    </dependency>
+
     <!-- SOLR 7.x LIBS -->
     <dependency>
       <groupId>org.apache.solr</groupId>
@@ -313,94 +394,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- UTILITY AND LOGGING -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-1.2-api</artifactId>
-      <version>${log4j.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>${log4j.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>${log4j.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>gnu.getopt</groupId>
-      <artifactId>java-getopt</artifactId>
-      <version>1.0.13</version>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>1.4</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- REST support -->
-    <dependency>
-      <groupId>org.restlet.jse</groupId>
-      <artifactId>org.restlet</artifactId>
-      <version>${restlet.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.restlet.jse</groupId>
-      <artifactId>org.restlet.ext.simple</artifactId>
-      <version>${restlet.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.restlet.jse</groupId>
-      <artifactId>org.restlet.ext.json</artifactId>
-      <version>${restlet.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20190722</version>
-    </dependency>
 
-    <!-- JSON serialization and metadata transforms -->
-    <dependency>
-      <groupId>org.jodd</groupId>
-      <artifactId>jodd-json</artifactId>
-      <version>5.1.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-analyzers-common</artifactId>
-      <version>${solr.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-core</artifactId>
-      <version>${solr.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opensextant</groupId>
-      <artifactId>opensextant-xponents-core</artifactId>
-      <version>3.5.8</version>
-    </dependency>
   </dependencies>
   <build>
     <!-- <directory>target</directory> -->
