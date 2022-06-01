@@ -73,7 +73,6 @@ mkdir -p $REL/log
 
 rm $REL/doc/*.mp4
 rm $REL/script/dist* 
-rm -r $REL/xponents-solr/retired
 rm -r $REL/xponents-solr/script/__pycache__
 rm -f $REL/xponents-solr/solr7-dist/licenses/log4j*2.11* 
 
