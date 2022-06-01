@@ -5,6 +5,21 @@ RELEASES
 
 # 2022
 
+**Xponents 3.5.9**
+
+* Library versions: Post-Log4shell cleanup
+  * SLF4J 1.7.36, Logback, 1.2.11, Log4J 2.17.2
+  * Commons IO 2.11.0
+  * Tika 1.28.3 (Examples and XText) 
+  * Spatial4J 0.8;  JTS 1.x removed from dependencies, but still used in Solr distro
+* JavaLint results from Sonarqube scans implemented - addressing the removal of Java 5, 6, 7 code style, code formatting
+* **Geocoding**:
+  * Postal code precision set at +/- 5000m instead of 50,000m
+  * NameCodeRule rule - improved the validation for how "Name, Code" or "Name, AdminName" pairings are managed;
+    Avoid repetitive lists such as "Country, Country, ..." or "Province, Province,... ";
+    Avoid repetitive codes such as "CODE, CODE" as in `CM MA`
+  * Gazetteer regenerated and substantial abbreviations and stop words added.
+  
 **Xponents 3.5.7 Postal Patience**
 
 * **Geocoding**: 
