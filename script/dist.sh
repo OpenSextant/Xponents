@@ -53,28 +53,32 @@ pushd $basedir/script
 ant -f ./dist.xml package-dist
 
 REL=$basedir/dist/Xponents-$VER
+GAZ=$REL/xponents-solr
 find $REL -type f -name "*.sh" -exec chmod u+x {} \; -print
 
 msg "Copy Solr indices in bulk"
 # ----------------------
-for f in $REL/xponents-solr/solr*-dist/bin/post \
-	$REL/xponents-solr/solr*-dist/bin/solr ; do
+# Patch Solr7 for Java16+
+cp $basedir/solr/script/solr7-dist-bin-solr $GAZ/solr7-dist/bin/solr 
+
+for f in $GAZ/solr*-dist/bin/post $GAZ/solr*-dist/bin/solr ; do
   chmod u+x $f
 done 
 
 # Pre-install Python library; Albeit for Linux....
 pip3 install -U -t $REL/piplib $REL/python/opensextant-1.4*gz
 
+
 msg "Clean up distribution"
 # ----------------------
-rm -rf $REL/xponents-solr/solr*-dist/server/logs/*
+rm -rf $GAZ/solr*-dist/server/logs/*
 rm -rf $REL/log
 mkdir -p $REL/log
 
 rm $REL/doc/*.mp4
 rm $REL/script/dist* 
-rm -r $REL/xponents-solr/script/__pycache__
-rm -f $REL/xponents-solr/solr7-dist/licenses/log4j*2.11* 
+rm -r $GAZ/script/__pycache__
+rm -f $GAZ/solr7-dist/licenses/log4j*2.11* 
 
 cp -r $basedir/.gitignore $basedir/dev.env $basedir/Examples/Docker/* $REL/
 rm -r $REL/Sonarqube

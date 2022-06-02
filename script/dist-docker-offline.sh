@@ -105,7 +105,7 @@ find ./$REPO  -name "*.sha1"  -exec rm {} \;
 find ./$REPO  -name "*.repositories"  -exec rm {} \;
 mvn dependency:go-offline -Dmaven.repo.local=$REPO
 
-# Log4J cleanup
+# Log4J cleanup -- No, this happens on in Docker after offline image is built; then you can delete Log4J
 for log4jdir in `find ./maven-repo -type d | grep log4j | grep "2.11"`; do 
   echo "Remove $log4jdir"
   rm -rf $log4jdir
