@@ -377,7 +377,7 @@ Data and other attributes defined here:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-as_place"><strong>as_place</strong></a>(r)</dt><dd><tt>Convert&nbsp;dict&nbsp;to&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a><br>
+<td width="100%"><dl><dt><a name="-as_place"><strong>as_place</strong></a>(r, source='index')</dt><dd><tt>Convert&nbsp;dict&nbsp;to&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a><br>
 :param&nbsp;r:&nbsp;gazetteer&nbsp;row&nbsp;from&nbsp;Solr&nbsp;or&nbsp;SQlite.<br>
 :return:&nbsp;Place</tt></dd></dl>
  <dl><dt><a name="-as_place_record"><strong>as_place_record</strong></a>(place, target='index')</dt><dd><tt>Given&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a>,&nbsp;serialize&nbsp;it&nbsp;as&nbsp;a&nbsp;dict&nbsp;consistent&nbsp;with&nbsp;the&nbsp;Solr&nbsp;index&nbsp;schema.<br>
@@ -398,8 +398,6 @@ Data and other attributes defined here:<br>
  <dl><dt><a name="-normalize_name"><strong>normalize_name</strong></a>(nm: str)</dt><dd><tt>convenience&nbsp;method&nbsp;that&nbsp;ensures&nbsp;we&nbsp;have&nbsp;some&nbsp;consistency&nbsp;on&nbsp;normalization&nbsp;of&nbsp;name<br>
 :param&nbsp;nm:<br>
 :return:</tt></dd></dl>
- <dl><dt><a name="-parse_admin_code"><strong>parse_admin_code</strong></a>(adm1)</dt><dd><tt>:param&nbsp;adm1:&nbsp;admin&nbsp;level&nbsp;1&nbsp;code<br>
-:return:&nbsp;ADM1&nbsp;code&nbsp;if&nbsp;possible.</tt></dd></dl>
  <dl><dt><a name="-print_places"><strong>print_places</strong></a>(arr, limit=25)</dt></dl>
  <dl><dt><a name="-run_lookup"><strong>run_lookup</strong></a>(url, lookup, parse)</dt><dd><tt>Gazetteer&nbsp;demo&nbsp;mimics&nbsp;some&nbsp;of&nbsp;the&nbsp;logic&nbsp;in&nbsp;XponentsGazetteerQuery<br>
 try&nbsp;"San&nbsp;Francisco,&nbsp;CA,&nbsp;US"</tt></dd></dl>

@@ -411,16 +411,16 @@ Data descriptors inherited from <a href="opensextant.html#TextEntity">TextEntity
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-as_place"><strong>as_place</strong></a>(ctry: opensextant.Country, name: str, name_type='N', oid=None)</dt><dd><tt>Convert&nbsp;to&nbsp;<a href="#Place">Place</a>.<br>
+<td width="100%"><dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
+&nbsp;<br>
+Unlike&nbsp;atan(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbsp;y&nbsp;are&nbsp;considered.</tt></dd></dl>
+ <dl><dt><a name="-cos"><strong>cos</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;cosine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
+ <dl><dt><a name="-country_as_place"><strong>country_as_place</strong></a>(ctry: opensextant.Country, name: str, name_type='N', oid=None)</dt><dd><tt>Convert&nbsp;to&nbsp;<a href="#Place">Place</a>.<br>
 :param&nbsp;ctry:&nbsp;<a href="#Country">Country</a>&nbsp;<a href="builtins.html#object">object</a><br>
 :param&nbsp;name:&nbsp;the&nbsp;name&nbsp;to&nbsp;use<br>
 :param&nbsp;name_type:<br>
 :param&nbsp;oid:&nbsp;row&nbsp;ID<br>
 :return:</tt></dd></dl>
- <dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
-&nbsp;<br>
-Unlike&nbsp;atan(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbsp;y&nbsp;are&nbsp;considered.</tt></dd></dl>
- <dl><dt><a name="-cos"><strong>cos</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;cosine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
  <dl><dt><a name="-distance_cartesian"><strong>distance_cartesian</strong></a>(x1, y1, x2, y2)</dt><dd><tt>Given&nbsp;X1,&nbsp;Y1&nbsp;and&nbsp;X2,&nbsp;Y2&nbsp;provide&nbsp;the&nbsp;2-D&nbsp;Cartesian&nbsp;distance&nbsp;between&nbsp;two&nbsp;points.</tt></dd></dl>
  <dl><dt><a name="-distance_haversine"><strong>distance_haversine</strong></a>(ddlon1, ddlat1, ddlon2, ddlat2)</dt><dd><tt>Returns&nbsp;distance&nbsp;in&nbsp;meters&nbsp;for&nbsp;given&nbsp;decimal&nbsp;degree&nbsp;Lon/Lat&nbsp;(X,Y)&nbsp;pair<br>
 &nbsp;<br>
@@ -489,6 +489,8 @@ Consider&nbsp;confidence&nbsp;=&nbsp;100&nbsp;(aka&nbsp;100%&nbsp;chance&nbsp;we
 Return&nbsp;the&nbsp;logarithm&nbsp;of&nbsp;x&nbsp;to&nbsp;the&nbsp;given&nbsp;base.<br>
 &nbsp;<br>
 If&nbsp;the&nbsp;base&nbsp;not&nbsp;specified,&nbsp;returns&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;(base&nbsp;e)&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-parse_admin_code"><strong>parse_admin_code</strong></a>(adm1)</dt><dd><tt>:param&nbsp;adm1:&nbsp;admin&nbsp;level&nbsp;1&nbsp;code<br>
+:return:&nbsp;ADM1&nbsp;code&nbsp;if&nbsp;possible.</tt></dd></dl>
  <dl><dt><a name="-popscale"><strong>popscale</strong></a>(population, feature='city')</dt><dd><tt>Given&nbsp;a&nbsp;population&nbsp;in&nbsp;context&nbsp;of&nbsp;the&nbsp;feature&nbsp;--&nbsp;provide&nbsp;a<br>
 approximation&nbsp;of&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;feature&nbsp;on&nbsp;a&nbsp;10&nbsp;point&nbsp;scale.<br>
 &nbsp;<br>
