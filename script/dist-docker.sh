@@ -17,9 +17,13 @@ fi
 echo "              Xponents Docker                 "
 echo "=============================================="
 
+
 echo "Version Number of Image"
 read IMG_VERSION
 
 cd $TARGET/
+if [ -e "maven-repo" ] ; then
+  mv maven-repo ..
+fi
 docker build --tag opensextant:xponents-$IMG_VERSION .
 

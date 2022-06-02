@@ -52,6 +52,11 @@ echo "=============================================="
 echo "Version Number of Image"
 read IMG_VERSION
 
+# Previously cached.  Kill this off 
+if [ -e "../maven-repo" ] ; then
+  mv ../maven-repo  .
+fi
+
 
 # CORE
 echo "++++++++++++++++ CORE ++++++++++++++++"

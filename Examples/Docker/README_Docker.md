@@ -153,12 +153,13 @@ For example, with the sonarqube plugin I launch an analysis:
 
 ```
     SONAR_TOKEN=abcdef01234.... 
+    SONAR_URL=http://localhost:9000
 
     pushd ./Xponents/Core
     mvn sonar:sonar \
       -Dsonar.sourceEncoding=UTF-8 \
       -Dsonar.projectKey=opensextant-xponents-core \
-      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.host.url=$SONAR_URL \
       -Dsonar.login=$SONAR_TOKEN \
       -Dsonar.inclusions="**/*.java"
     
@@ -167,7 +168,7 @@ For example, with the sonarqube plugin I launch an analysis:
     mvn sonar:sonar \
       -Dsonar.sourceEncoding=UTF-8 \
       -Dsonar.projectKey=opensextant-xponents \
-      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.host.url=$SONAR_URL \
       -Dsonar.login=$SONAR_TOKEN \
       -Dsonar.inclusions="**/*.java"
       
@@ -176,7 +177,7 @@ For example, with the sonarqube plugin I launch an analysis:
     mvn sonar:sonar \
       -Dsonar.sourceEncoding=UTF-8 \
       -Dsonar.projectKey=opensextant-xtext \
-      -Dsonar.host.url=http://localhost:9000 \
+      -Dsonar.host.url=$SONAR_URL \
       -Dsonar.login=$SONAR_TOKEN \
       -Dsonar.inclusions="**/*.java"
     popd    

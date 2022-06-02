@@ -2011,13 +2011,13 @@ function start_solr() {
         # '-XX:+UseCMSInitiatingOccupancyOnly' \
         # '-XX:CMSMaxAbortablePrecleanTime=6000' \
         # '-XX:+CMSParallelRemarkEnabled' \
+        # '-XX:CMSInitiatingOccupancyFraction=50' \
       GC_TUNE=('-XX:NewRatio=3' \
         '-XX:SurvivorRatio=4' \
         '-XX:TargetSurvivorRatio=90' \
         '-XX:MaxTenuringThreshold=8' \
         '-XX:ConcGCThreads=4' '-XX:ParallelGCThreads=4' \
         '-XX:PretenureSizeThreshold=64m' \
-        '-XX:CMSInitiatingOccupancyFraction=50' \
         '-XX:+ParallelRefProcEnabled' \
         '-XX:-OmitStackTraceInFastThrow')
   else

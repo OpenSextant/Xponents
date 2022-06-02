@@ -75,13 +75,21 @@ rm -rf $GAZ/solr*-dist/server/logs/*
 rm -rf $REL/log
 mkdir -p $REL/log
 
+# Dot Dir, Dot File
+find $REL  -type f -name ".*" -exec rm {} \;
+rm -r $REL/.git $REL/.idea/
+# Media
 rm $REL/doc/*.mp4
 rm $REL/script/dist* 
+# Library cleanup
 rm -r $GAZ/script/__pycache__
 rm -f $GAZ/solr7-dist/licenses/log4j*2.11* 
 
+# Docker configuration
 cp -r $basedir/.gitignore $basedir/dev.env $basedir/Examples/Docker/* $REL/
+mv $REL/dockerignore $REL/.dockerignore
 rm -r $REL/Sonarqube
+
 
 # Distro has API docs in JAR files.
 rm -rf $REL/doc/*apidocs/
