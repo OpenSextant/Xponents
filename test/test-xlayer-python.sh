@@ -1,7 +1,7 @@
 #!/bin/bash 
 export PYTHONPATH=./piplib:./python
-URL_PREFIX=$1
+# URL is host:port or the full prefix
+URL=$1
 FILE=$2
-URL=$URL_PREFIX/xlayer/rest/process
 # NOTE -- test data is in xlayer.py tester
-python3 -m opensextant.xlayer --service-url "$URL" --inputfile "$FILE" --debug
+python3 -m opensextant.xlayer --service-url "$URL" --debug "$FILE"
