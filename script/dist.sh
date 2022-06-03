@@ -47,10 +47,9 @@ popd
 
 msg "Build and Package project"
 # ----------------------
-pushd $basedir/script
-
 # Pre-build the project before running this script.
-ant -f ./dist.xml package-dist
+# Just run `ant dist` ahead of this
+ant  package-dist
 
 REL=$basedir/dist/Xponents-$VER
 GAZ=$REL/xponents-solr
@@ -76,8 +75,12 @@ rm -rf $REL/log
 mkdir -p $REL/log
 
 # Dot Dir, Dot File
-find $REL  -type f -name ".*" -exec rm {} \;
-rm -r $REL/.git $REL/.idea/
+find $REL  -type f -name ".*" -exec rm -f {} \;
+find $REL  -type f -name "*.iml" -exec rm {} \;
+find $REL  -type d -name ".idea" -exec rm -rf {} \;
+find $REL  -type d -name ".settings" -exec rm -rf {} \;
+rm -rf $REL/.git 
+
 # Media
 rm $REL/doc/*.mp4
 rm $REL/script/dist* 

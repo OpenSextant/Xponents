@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.5.9</version>
+  <version>3.5.10</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -53,7 +53,7 @@
     <slf4j.version>1.7.36</slf4j.version>
     <log4j.version>2.17.2</log4j.version>
     <restlet.version>2.4.3</restlet.version>
-    <xponents.version>3.5.9</xponents.version>
+    <xponents.version>3.5.10</xponents.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
   <distributionManagement>
@@ -116,53 +116,14 @@
       <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.15</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
       <version>1.9</version>
-    </dependency>
-    <!-- GEODETIC MATH LIBS -->
-    <dependency>
-      <groupId>org.locationtech.spatial4j</groupId>
-      <artifactId>spatial4j</artifactId>
-      <version>0.8</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>fluent-hc</artifactId>
-      <version>4.5.13</version>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.13</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>commons-logging</artifactId>
-          <groupId>commons-logging</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpcore</artifactId>
-      <version>4.4.14</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpmime</artifactId>
-      <version>4.5.13</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.supercsv</groupId>
-      <artifactId>super-csv</artifactId>
-      <version>2.4.0</version>
     </dependency>
     <!-- UTILITY AND LOGGING -->
     <dependency>
@@ -209,6 +170,51 @@
       <version>1.4</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- GEODETIC MATH LIBS -->
+    <dependency>
+      <groupId>org.locationtech.spatial4j</groupId>
+      <artifactId>spatial4j</artifactId>
+      <version>0.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>fluent-hc</artifactId>
+      <version>4.5.13</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+          <groupId>commons-logging</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.4.14</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>4.5.13</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.supercsv</groupId>
+      <artifactId>super-csv</artifactId>
+      <version>2.4.0</version>
+    </dependency>
     <!-- REST support -->
     <dependency>
       <groupId>org.restlet.jse</groupId>
@@ -238,6 +244,16 @@
       <version>5.1.5</version>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.12.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>3.16.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-analyzers-common</artifactId>
       <version>${solr.version}</version>
@@ -249,6 +265,12 @@
     </dependency>
 
     <!-- SOLR 7.x LIBS -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-core</artifactId>
@@ -376,13 +398,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- solr-core missing dependency -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
-      <scope>runtime</scope>
-    </dependency>
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
@@ -397,23 +412,27 @@
 
   </dependencies>
   <build>
-    <!-- <directory>target</directory> -->
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>3.0.0-M1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.1</version>
+          <version>3.10.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.3.1</version>
+          <version>3.4.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -423,27 +442,35 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.0.0-M1</version>
+          <version>3.0.0-M2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.2.2</version>
+          <executions>
+            <execution>
+              <id>attach-tests</id>
+              <goals>
+                <goal>test-jar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.1.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M4</version>
+          <version>3.0.0-M6</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>3.0.0-M1</version>
+          <version>3.0.0-M5</version>
         </plugin>
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
@@ -467,12 +494,11 @@
       <!-- run explicitly with: mvn checkstyle:check -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
-          <configLocation>checkstyle.xml</configLocation>
+          <configLocation>${basedir}/src/checkstyle.xml</configLocation>
           <propertyExpansion>checkstyle.indentChars=4</propertyExpansion>
-          <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+          <suppressionsLocation>${basedir}/src/checkstyle-suppressions.xml</suppressionsLocation>
           <consoleOutput>true</consoleOutput>
           <failOnViolation>false</failOnViolation>
         </configuration>
@@ -483,7 +509,7 @@
         <executions>
           <execution>
             <id>default-cli</id>
-			<phase>package</phase>
+            <phase>package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -500,8 +526,7 @@
             <goals>
               <goal>analyze-only</goal>
             </goals>
-            <configuration />
-
+            <configuration/>
           </execution>
         </executions>
       </plugin>
@@ -520,10 +545,8 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <source>1.8</source>
-          <header>&lt;img alt='[OpenSextant Logo]' height='36'
-            width='36'
-            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright
-            OpenSextant.org, 2013-2021
+          <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36'
+            src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright OpenSextant.org, 2013-2022
           </header>
           <version>true</version>
           <windowtitle>Xponents Extraction Toolkit</windowtitle>
@@ -563,7 +586,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.3.0</version>
         <reportSets>
           <reportSet>
             <reports>

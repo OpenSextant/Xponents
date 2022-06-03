@@ -24,14 +24,17 @@ There are some outstanding build tasks related to gazetteer metadata assembly th
 But in general, you would make use of the `./solr/build.sh` script and consult the README there.
 
 ```
-  mvn install
+  mvn install  
 ```
+
+Additionally, to build in full, XText project needs to be updated if you want to make the distribution 
+to include all the demos and Examples (in ./Examples).  For that we'd use `ant build build-examples`
 
 4. Build a full Gazetteer from scratch.
 
 `./solr/README.md` captures all the mechanics of building the Gazettter from checkout.
 
-5. Distribution and Packaging: `ant -f ./script/dist.xml dist`
+5. Distribution and Packaging: `ant dist`
 
 Producing API documentation updates: infrequently, only for major releases.
  
@@ -73,8 +76,8 @@ Put it all together it might look like this, with notes about size of interim da
   # (cd ./Core && mvn install)
   # mvn install 
 
-  ant -f ./script/dist.xml build build-examples
-  ant -f ./script/dist.xml dist
+  # ant build build-examples   ; # This is just a subset of `dist` target
+  ant dist
 
   # Test a bit, right?
 
@@ -82,7 +85,57 @@ Put it all together it might look like this, with notes about size of interim da
   # SubTotal - 15 GB
   ./script/dist.sh
   ./script/dist-docker.sh
-  ./script/dist-docker-offline.sh  http://localhost:9000  $SONAR_TOKEN
+  
+  # Prior to doing anything with Sonar make sure it is accessible. 
+  # If using Examples/Docker/Sonarqube -- go there now and run `docker-compose up -d`.  Configured port is 9900
+  ./script/dist-docker-offline.sh  http://localhost:9900  $SONAR_TOKEN
+
+```
+
+Code Practices
+----------------
+
+This project overall converted from using checkstyle and findbugs to just using Sonarqube. 
+See the deployment of Sonarqube in [Examples/Docker/Sonarqube](./Examples/Docker/Sonarqube])
+
+For historical purposes here is a POM snippet for using findbugs, which is no longer maintained. 
+In a similar reduction of dependencies, checkstyle plugin functions are replaced by Sonar scanning:
+
+```xml
+  <pluginManagement>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>3.0.5</version>
+        </plugin>
+  </pluginManagement>
+  <plugins>
+      <!-- run explicitly with: mvn findbugs:check -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <!--<threshold>High</threshold> -->
+        </configuration>
+      </plugin>
+      
+      <!-- run explicitly with: mvn checkstyle:check -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <propertyExpansion>checkstyle.indentChars=4</propertyExpansion>
+          <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+          <consoleOutput>true</consoleOutput>
+          <failOnViolation>false</failOnViolation>
+        </configuration>
+      </plugin>
+  </plugins>
+  
+
 
 ```
 

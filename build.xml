@@ -5,6 +5,11 @@
   <property name="tmp" value="${basedir}/tmp" />
   <property name="geonames.resources" value="${java.resources}/geonames.org" />
   <property name="pylib.resources" value="${basedir}/python/opensextant/resources" />
+
+  <property name="xponents.home" value="${basedir}/" />
+  <property name="release" location="${xponents.home}/dist/Xponents-${xponents.version}" />
+  <property name="solr.release" location="${release}/xponents-solr" />
+
   <!-- setup proxy -->
   <target name="proxy">
     <property name="proxy.port" value="80" />
@@ -44,4 +49,201 @@
   </target>
 
   <target name="setup" depends="proxy,get-meta,copy-resources,unpack-langid" />
+
+
+  <!-- Build and Distribution mechanics -->
+
+  <target name="clean">
+    <delete dir="${xponents.home}/lib" />
+    <delete dir="${xponents.home}/Core/lib" />
+    <delete dir="${xponents.home}/Examples/lib" />
+
+    <exec executable="mvn" dir="${xponents.home}/Core" failonerror="true">
+      <arg value="clean" />
+    </exec>
+    <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
+      <arg value="clean" />
+    </exec>
+    <exec executable="mvn" dir="${xponents.home}/" failonerror="true">
+      <arg value="clean" />
+    </exec>
+  </target>
+
+  <target name="build" depends="clean">
+    <exec executable="mvn" dir="${xponents.home}/Core" failonerror="true">
+      <arg value="-DincludeScope=test" />
+      <arg value="-DincludeScope=runtime" />
+      <arg value="-DincludeScope=compile" />
+      <arg value="clean" />
+      <arg value="install" />
+      <arg value="javadoc:jar" />
+      <arg value="dependency:copy-dependencies" />
+    </exec>
+    <exec executable="mvn" dir="${xponents.home}" failonerror="true">
+      <arg value="-DincludeScope=test" />
+      <arg value="-DincludeScope=runtime" />
+      <arg value="-DincludeScope=compile" />
+      <arg value="clean" />
+      <arg value="install" />
+      <arg value="javadoc:jar" />
+      <arg value="dependency:copy-dependencies" />
+      <arg value="project-info-reports:dependencies" />
+    </exec>
+  </target>
+
+  <target name="build-examples">
+    <!-- Clean lib -->
+    <delete dir="${xponents.home}/Examples/lib" />
+    <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
+      <arg value="-DincludeScope=test" />
+      <arg value="-DincludeScope=runtime" />
+      <arg value="-DincludeScope=compile" />
+      <arg value="clean" />
+      <arg value="install" />
+      <arg value="dependency:copy-dependencies" />
+      <arg value="project-info-reports:dependencies" />
+    </exec>
+  </target>
+
+  <!-- Release script for Xponents complete. -->
+
+  <target name="mkdirs">
+    <delete dir="${release}" />
+
+    <mkdir dir="${release}" />
+    <mkdir dir="${release}/lib" />
+    <mkdir dir="${release}/python" />
+    <mkdir dir="${release}/log" />
+    <mkdir dir="${release}/etc" />
+    <mkdir dir="${release}/test" />
+    <mkdir dir="${release}/script" />
+  </target>
+
+  <target name="copy-src">
+    <copy todir="${release}/">
+      <file file="${xponents.home}/pom.xml"/>
+    </copy>
+    <copy todir="${release}/src">
+      <fileset dir="${xponents.home}/src"/>
+    </copy>
+    <copy todir="${release}/Core">
+      <fileset dir="${xponents.home}/Core">
+        <exclude name="target/" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copy-examples">
+    <copy todir="${release}/Examples/src">
+      <fileset dir="${xponents.home}/Examples/src"/>
+    </copy>
+    <copy todir="${release}/Examples/">
+      <file file="${xponents.home}/Examples/pom.xml"/>
+    </copy>
+  </target>
+
+  <target name="copy-libs">
+
+    <!-- As Examples requires all other dependencies it is a good one for forcing the copy -->
+    <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
+      <arg value="-DoutputDirectory=${release}/lib" />
+      <arg value="-DincludeScope=test" />
+      <arg value="-DincludeScope=runtime" />
+      <arg value="-DincludeScope=compile" />
+      <arg value="dependency:copy-dependencies" />
+    </exec>
+
+    <copy todir="${release}/lib/">
+      <fileset dir="${xponents.home}/Examples/target">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/lib/">
+      <fileset dir="${xponents.home}/Examples/lib">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/lib/">
+      <fileset dir="${xponents.home}/Core/target">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/lib/">
+      <fileset dir="${xponents.home}/target">
+        <include name="*.jar" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/python">
+      <fileset dir="${xponents.home}/python/dist/">
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copy-solr7">
+    <copy todir="${solr.release}/" overwrite="true">
+      <fileset dir="${xponents.home}/solr">
+        <!-- temporary files or legacy items that do not need to come over -->
+        <exclude name="tmp/**" />
+        <exclude name="etc/taxcat/data/**" />
+        <exclude name="solr7-dist/server/logs/**" />
+      </fileset>
+    </copy>
+    <copy file="${xponents.home}/build.properties" todir="${release}" overwrite="true" />
+  </target>
+
+  <target name="copy-data">
+    <copy todir="${release}/test/" overwrite="true">
+      <fileset dir="${xponents.home}/Core/src/test/resources/data">
+        <include name="Coord_Patterns*.*" />
+      </fileset>
+    </copy>
+    <unzip src="${xponents.home}/etc/langdetect-profiles-v3.zip" dest="${release}/etc" />
+  </target>
+
+  <target name="copy-script">
+    <copy todir="${release}/script/" overwrite="true">
+      <fileset dir="${xponents.home}/script">
+        <include name="*.*" />
+      </fileset>
+      <fileset dir="${xponents.home}/Examples/script">
+        <include name="*.*" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/test/" overwrite="true">
+      <fileset dir="${xponents.home}/test">
+        <include name="*.*" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/etc/" overwrite="true">
+      <fileset dir="${xponents.home}/etc">
+        <include name="*.xml" />
+        <include name="*.txt" />
+        <include name="*.properties" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="apidocs">
+    <exec executable="mvn" dir="${xponents.home}" failonerror="true">
+      <arg value="javadoc:jar" />
+    </exec>
+  </target>
+
+  <target name="copy-docs" depends="apidocs">
+    <copy todir="${release}/">
+      <fileset dir="${xponents.home}/">
+        <include name="NOTICE" />
+        <include name="LICENSE" />
+        <include name="*.md" />
+      </fileset>
+    </copy>
+    <copy todir="${release}/doc/">
+      <fileset dir="${xponents.home}/doc" />
+    </copy>
+  </target>
+
+  <target name="dist" depends="mkdirs, build, build-examples, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
+  </target>
+  <target name="package-dist" depends="copy-examples, copy-src" description="Build a zip file containing a distributable, runnable thing from a pre-built source tree.">
+  </target>
 </project>
