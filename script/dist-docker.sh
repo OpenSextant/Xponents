@@ -6,9 +6,9 @@ VERSION="3.5"
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
-TARGET=$basedir/dist/Xponents-$VERSION
-if [ ! -d $TARGET ] ; then 
-  echo "Distribution does not exist: $TARGET"
+REL=$basedir/dist/Xponents-$VERSION
+if [ ! -d $REL ] ; then 
+  echo "Distribution does not exist: $REL"
   echo "First build per BUILD.md"
   echo "Then run ./script/dist.sh "
   exit 1
@@ -21,9 +21,6 @@ echo "=============================================="
 echo "Version Number of Image"
 read IMG_VERSION
 
-cd $TARGET/
-if [ -e "maven-repo" ] ; then
-  mv maven-repo ..
-fi
-docker build --tag opensextant:xponents-$IMG_VERSION .
+cp  $basedir/Examples/Docker/dockerignore $REL/.dockerignore
+cd $REL &&  docker build --tag opensextant:xponents-$IMG_VERSION .
 

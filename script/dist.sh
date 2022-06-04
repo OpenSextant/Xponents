@@ -6,6 +6,8 @@ VER=3.5
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 BUILD_VER=`grep build.v  $basedir/build.properties |awk -F= '{print $2;}'`
+REL=$basedir/dist/Xponents-$VER
+GAZ=$REL/xponents-solr
 
 msg(){
   echo
@@ -24,11 +26,12 @@ msg " TODO: document using python lib from distro, as it is not fully installed.
 cd $basedir/python
 rm -rf ./dist/*
 python3 ./setup.py sdist
-pip3 install -U -t $basedir/piplib ./dist/opensextant-1.4*gz
+pip3 install -U -t $REL/piplib ./dist/opensextant-1.4*gz
+
 
 msg "Prepare additional Java resources"
 # ----------------------
-export PYTHONPATH=$basedir/python:$basedir/piplib
+export PYTHONPATH=$REL/piplib
 cd $basedir/solr;
 # resource files for person names
 python3 ./script/assemble_person_filter.py
@@ -50,15 +53,11 @@ cd $basedir
 
 msg "Build and Package project"
 # ----------------------
-# Pre-build the project before running this script.
-# Just run `ant dist` ahead of this
-ant  package-dist
+ant  dist
 
-REL=$basedir/dist/Xponents-$VER
-GAZ=$REL/xponents-solr
 find $REL -type f -name "*.sh" -exec chmod u+x {} \; -print
 
-msg "Copy Solr indices in bulk"
+msg "Patch Solr Server"
 # ----------------------
 # Patch Solr7 for Java16+
 cp $basedir/solr/script/solr7-dist-bin-solr $GAZ/solr7-dist/bin/solr 
@@ -66,9 +65,6 @@ cp $basedir/solr/script/solr7-dist-bin-solr $GAZ/solr7-dist/bin/solr
 for f in $GAZ/solr*-dist/bin/post $GAZ/solr*-dist/bin/solr ; do
   chmod u+x $f
 done 
-
-# Pre-install Python library; Albeit for Linux....
-pip3 install -U -t $REL/piplib $REL/python/opensextant-1.4*gz
 
 
 msg "Clean up distribution"
@@ -92,9 +88,8 @@ rm -r $GAZ/script/__pycache__
 rm -f $GAZ/solr7-dist/licenses/log4j*2.11* 
 
 # Docker configuration
-cp -r $basedir/.gitignore $basedir/dev.env $basedir/Examples/Docker/* $REL/
-mv $REL/dockerignore $REL/.dockerignore
-rm -r $REL/Sonarqube
+cp  $basedir/.gitignore $basedir/dev.env $REL/
+(cd $basedir/Examples/Docker/; cp Dockerfile* README* settings.xml  docker-compose.yml $REL/)
 
 
 # Distro has API docs in JAR files.

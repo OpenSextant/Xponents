@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:18-jdk
 # SHADOWS: FROM mubaldino/opensextant:xponents-3.5
 # 
 # --------------------------

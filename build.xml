@@ -71,23 +71,12 @@
 
   <target name="build" depends="clean">
     <exec executable="mvn" dir="${xponents.home}/Core" failonerror="true">
-      <arg value="-DincludeScope=test" />
-      <arg value="-DincludeScope=runtime" />
-      <arg value="-DincludeScope=compile" />
       <arg value="clean" />
       <arg value="install" />
-      <arg value="javadoc:jar" />
-      <arg value="dependency:copy-dependencies" />
     </exec>
     <exec executable="mvn" dir="${xponents.home}" failonerror="true">
-      <arg value="-DincludeScope=test" />
-      <arg value="-DincludeScope=runtime" />
-      <arg value="-DincludeScope=compile" />
       <arg value="clean" />
       <arg value="install" />
-      <arg value="javadoc:jar" />
-      <arg value="dependency:copy-dependencies" />
-      <arg value="project-info-reports:dependencies" />
     </exec>
   </target>
 
@@ -95,11 +84,37 @@
     <!-- Clean lib -->
     <delete dir="${xponents.home}/Examples/lib" />
     <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
+      <arg value="clean" />
+      <arg value="install" />
+    </exec>
+  </target>
+
+  <target name="compile" depends="build, build-examples">
+  </target>
+
+  <target name="reports" >
+    <exec executable="mvn" dir="${xponents.home}/Core" failonerror="true">
       <arg value="-DincludeScope=test" />
       <arg value="-DincludeScope=runtime" />
       <arg value="-DincludeScope=compile" />
-      <arg value="clean" />
-      <arg value="install" />
+      <arg value="javadoc:jar" />
+      <arg value="dependency:copy-dependencies" />
+    </exec>
+    <exec executable="mvn" dir="${xponents.home}" failonerror="true">
+      <arg value="-DincludeScope=test" />
+      <arg value="-DincludeScope=runtime" />
+      <arg value="-DincludeScope=compile" />
+      <arg value="javadoc:jar" />
+      <arg value="dependency:copy-dependencies" />
+      <arg value="project-info-reports:dependencies" />
+    </exec>
+
+    <!-- Clean lib -->
+    <delete dir="${xponents.home}/Examples/lib" />
+    <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
+      <arg value="-DincludeScope=test" />
+      <arg value="-DincludeScope=runtime" />
+      <arg value="-DincludeScope=compile" />
       <arg value="dependency:copy-dependencies" />
       <arg value="project-info-reports:dependencies" />
     </exec>
@@ -242,8 +257,6 @@
     </copy>
   </target>
 
-  <target name="dist" depends="mkdirs, build, build-examples, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" description="Build a zip file containing a distributable, runnable thing.">
-  </target>
-  <target name="package-dist" depends="copy-examples, copy-src" description="Build a zip file containing a distributable, runnable thing from a pre-built source tree.">
-  </target>
+  <target name="dist" depends="mkdirs, reports, copy-examples, copy-src, copy-libs, copy-solr7, copy-script, copy-data, copy-docs" 
+          description="Build a SDK full distribution folder containing a distributable, runnable thing." />
 </project>

@@ -208,7 +208,7 @@ For reference: [OpenSextant Xponents on Maven](https://search.maven.org/search?q
 
 Someday we'll just post this to PyPi. 
 
-```shell script
+```shell
 
     pushd ./python
     python3 ./setup.py sdist
