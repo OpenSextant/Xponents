@@ -15,14 +15,13 @@ msg(){
 
 msg "Stop Solr 7.x before copying to distribution"
 # ----------------------
-pushd $basedir/solr
+cd $basedir/solr
 ./mysolr.sh stop 7000
-popd
 
 msg "Make Python library"
 msg " TODO: document using python lib from distro, as it is not fully installed." 
 # ----------------------
-pushd $basedir/python
+cd $basedir/python
 rm -rf ./dist/*
 python3 ./setup.py sdist
 pip3 install -U -t $basedir/piplib ./dist/opensextant-1.4*gz
@@ -30,20 +29,24 @@ pip3 install -U -t $basedir/piplib ./dist/opensextant-1.4*gz
 msg "Prepare additional Java resources"
 # ----------------------
 export PYTHONPATH=$basedir/python:$basedir/piplib
-pushd ../solr;
+cd $basedir/solr;
 # resource files for person names
 python3 ./script/assemble_person_filter.py
 # copy to Maven project
 ant gaz-meta
-popd
 
 
 msg "Prepare Python API docs" 
 # ----------------------
-pushd $basedir/doc/pydoc/
-pydoc3 -w opensextant opensextant.xlayer opensextant.utility opensextant.phonetics  opensextant.advas_phonetics \
-   opensextant.gazetteer opensextant.extractors opensextant.TaxCat opensextant.FlexPat
-popd
+cd $basedir/doc/pydoc/
+pydoc3 -w opensextant \
+   opensextant.xlayer opensextant.utility \
+   opensextant.phonetics  opensextant.advas_phonetics \
+   opensextant.gazetteer opensextant.extractors \
+   opensextant.TaxCat opensextant.FlexPat
+
+
+cd $basedir
 
 msg "Build and Package project"
 # ----------------------

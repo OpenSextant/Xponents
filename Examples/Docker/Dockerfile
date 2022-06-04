@@ -6,7 +6,13 @@ ENV JAVA_XMS=3500m
 ENV JAVA_XMX=3500m
 ENV XPONENTS=/home/opensextant/Xponents
 
-COPY ./ $XPONENTS/
+RUN adduser opensextant --home /home/opensextant --disabled-password 
+USER opensextant
+
+# --------------------------
+# Copy ./Xponents-3.x/<CONTENT> to target 
+#
+COPY --chown=opensextant:opensextant ./ $XPONENTS/
 WORKDIR $XPONENTS
 EXPOSE $XLAYER_PORT 7000
 
