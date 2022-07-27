@@ -3,7 +3,6 @@
 
     <!-- Solr Home and Gazetteer config data sourced here: -->
     <property file="${basedir}/../build.properties"/>
-    <property name="xponents.v" value="${xponents.build.v}"/>
     <property name="solr.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext"/>
     <property name="solr.runtime.log" value="${basedir}/solr7-dist/server/logs"/>
     <property name="maven.lib" value="${user.home}/.m2/repository"/>
@@ -12,15 +11,9 @@
     <property name="gaz.data" value="${basedir}/etc/gazetteer/"/>
     <property name="gaz.conf" value="${solr.home}/gazetteer/conf"/>
     <property name="gaz.tmp" value="${basedir}/tmp"/>
-    <property name="xponents.jar" value="${basedir}/../target/opensextant-xponents-${xponents.v}.jar"/>
     <property name="resources.lib" value="${basedir}/../src/main/resources"/>
     <property name="xponents.lib" value="${basedir}/../lib"/>
-	<property name="log4j.v" value="2.17.2"/>
-
-    <path id="runtime.classpath">
-        <pathelement location="${xponents.jar}"/>
-        <pathelement location="${basedir}/../lib/*"/>
-    </path>
+    <property name="log4j.v" value="2.17.2"/>
 
     <target name="proxy">
         <property name="proxy.port" value="80"/>
@@ -34,19 +27,18 @@
     </target>
 
     <target name="copy-libs">
-        <!-- COPY Spatial geometry/geodesy libraries to Solr Server -->
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/jts-core-1.15.0.jar"/>
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/spatial4j-0.7.jar"/>
-
         <!-- DELETE v2.11 or earlier Log4J libraries and replace with valid version that works-->
         <delete file="${solr.runtime.lib}/log4j-api-2.11.0.jar"/>
         <delete file="${solr.runtime.lib}/log4j-core-2.11.0.jar"/>
         <delete file="${solr.runtime.lib}/log4j-slf4j-impl-2.11.0.jar"/>
         <delete file="${solr.runtime.lib}/log4j-1.2-api-2.11.0.jar"/>
 
-        <!-- log4j implementation is not a dependency, so we have to get it raw -->
+        <!-- log4j implementation is not a dependency, so we have to get it raw, and other Solr Spatial dependencies -->
         <get dest="${solr.runtime.lib}">
             <url url="https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j-impl/${log4j.v}/log4j-slf4j-impl-${log4j.v}.jar"/>
+            <!-- TODO: for now manually remove other versions -->
+            <url url="https://repo1.maven.org/maven2/org/locationtech/jts/jts-core/1.19.0/jts-core-1.19.0.jar"/>
+            <url url="https://repo1.maven.org/maven2/org/locationtech/spatial4j/spatial4j/0.8/spatial4j-0.8.jar"/>
         </get>
 
         <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-api-${log4j.v}.jar"/>
