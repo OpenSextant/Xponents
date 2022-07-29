@@ -5,6 +5,10 @@ RELEASES
 
 # 2022
 
+**Xponents 3.5.10**
+
+* Maven Dependency review and scrub
+
 **Xponents 3.5.9**
 
 * Library versions: Post-Log4shell cleanup

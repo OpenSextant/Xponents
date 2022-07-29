@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:18-jdk
 # SHADOWS: FROM mubaldino/opensextant:xponents-3.5
 # 
 # --------------------------
@@ -9,22 +9,26 @@ ENV JAVA_XMS=3500m
 ENV JAVA_XMX=3500m
 ENV MVN_VER=3.8.5
 ENV MVN=apache-maven-$MVN_VER
-ENV PATH=/opt/maven/bin:$PATH
+ENV PATH=/home/opensextant/maven/bin:$PATH
 ENV LOCAL_REPO_NAME=maven-repo
 # NOTE LOCAL_REPO is a absolute path
 ENV LOCAL_REPO=$XPONENTS/$LOCAL_REPO_NAME
 
+RUN adduser opensextant --home /home/opensextant --disabled-password 
+USER opensextant
+WORKDIR /home/opensextant
+
 # --------------------------
 # Copy ./Xponents-3.x/<CONTENT> to target 
 #
-COPY ./ $XPONENTS/
+COPY --chown=opensextant:opensextant ./ $XPONENTS/
 
 # OFFLINE
 #---------------------------
 # Install Maven to allow for offline recompilation
-RUN cd /tmp && curl -O https://dlcdn.apache.org/maven/maven-3/$MVN_VER/binaries/$MVN-bin.tar.gz && \
-   (cd /opt/ ; tar xzf /tmp/$MVN-bin.tar.gz) && \
-   (mv /opt/$MVN /opt/maven)
+RUN curl -O https://dlcdn.apache.org/maven/maven-3/$MVN_VER/binaries/$MVN-bin.tar.gz && \
+   tar xzf ./$MVN-bin.tar.gz && \
+   mv $MVN ./maven
 
 WORKDIR $XPONENTS
 

@@ -24,14 +24,17 @@ There are some outstanding build tasks related to gazetteer metadata assembly th
 But in general, you would make use of the `./solr/build.sh` script and consult the README there.
 
 ```
-  mvn install
+  mvn install  
 ```
+
+Additionally, to build in full, XText project needs to be updated if you want to make the distribution 
+to include all the demos and Examples (in ./Examples).  For that we'd use `ant build build-examples`
 
 4. Build a full Gazetteer from scratch.
 
 `./solr/README.md` captures all the mechanics of building the Gazettter from checkout.
 
-5. Distribution and Packaging: `ant -f ./script/dist.xml dist`
+5. Distribution and Packaging: `ant dist`
 
 Producing API documentation updates: infrequently, only for major releases.
  
@@ -69,20 +72,101 @@ Put it all together it might look like this, with notes about size of interim da
 
   # About here you head into ./solr and produce the Gazetteer accoring to those build notes.
 
-  # Ant script below automates the Maven routines
+  # Java modules
+  # ----------------------
+  # Ant script below automates these Maven routines. So to build there are options
+  # Depending on what you are doing.
+  # Option -- Maven to install
   # (cd ./Core && mvn install)
   # mvn install 
+  # (cd ./Examples && mvn install)
 
-  ant -f ./script/dist.xml build build-examples
-  ant -f ./script/dist.xml dist
+  ant compile 
+  # Once tested and good -- publish a release to Maven Central 
+
+  # Use Ant to wrap around Maven to site, package and prep distro
+  ant dist
 
   # Test a bit, right?
 
+  # Complete distribution
+  # ----------------------
+  # Produce the  full Xponents SDK, then build docker images from that.
   # Raw distro is 4 GB;  Docker image is 4.8 GB,  Offline Docker image is 5.0 GB
   # SubTotal - 15 GB
   ./script/dist.sh
   ./script/dist-docker.sh
-  ./script/dist-docker-offline.sh  http://localhost:9000  $SONAR_TOKEN
+  
+  # Prior to doing anything with Sonar make sure it is accessible. 
+  # If using Examples/Docker/Sonarqube -- go there now and run `docker-compose up -d`.  Configured port is 9900
+  ./script/dist-docker-offline.sh  http://localhost:9900  $SONAR_TOKEN
+
+```
+
+Code Practices
+----------------
+
+Three (3) or more different software quality practices are in play here:
+
+- Use Sonarqube to track SQE over time across the project
+- Use Checkstyle to assess code statically
+- Use Docker scan + Snyk to monitor dependencies and vulnerabilities
+- Use Findbugs legacy to cover a lot overlap on the first three.
+
+This project overall converted from using checkstyle and findbugs to just using Sonarqube. 
+See the deployment of Sonarqube in [Examples/Docker/Sonarqube](./Examples/Docker/Sonarqube])
+
+For historical purposes here is a POM snippet for using findbugs, which is no longer maintained. 
+In a similar reduction of dependencies, checkstyle plugin functions are replaced by Sonar scanning:
+
+```xml
+  <pluginManagement>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>3.0.5</version>
+        </plugin>
+  </pluginManagement>
+  <plugins>
+      <!-- run explicitly with: mvn findbugs:check -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <!--<threshold>High</threshold> -->
+        </configuration>
+      </plugin>
+      
+      <!-- run explicitly with: mvn checkstyle:check -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <propertyExpansion>checkstyle.indentChars=4</propertyExpansion>
+          <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+          <consoleOutput>true</consoleOutput>
+          <failOnViolation>false</failOnViolation>
+        </configuration>
+      </plugin>
+  </plugins>
+
+```
+
+For Docker Scan and Snyk usage, you will need to review those emerging services.  They seem to work 
+in an insecure mode, but have issues with secure operation behind firewalls.  With a vulnerability 
+report in hand you can adjust Maven POM or other aspects before publishing.
+
+```shell
+  # Get a vulnerability report
+  snyk auth
+  snyk test  --insecure
+
+
+  # Ditto, using Docker
+  docker scan opensextant:xponents-offline-3.5
 
 ```
 

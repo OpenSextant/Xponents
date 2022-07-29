@@ -25,9 +25,9 @@ if [ -n "$1"  ]; then
   fi
 fi
 
-TARGET=$basedir/dist/Xponents-$VERSION
-if [ ! -d $TARGET ] ; then 
-  echo "Distribution does not exist: $TARGET"
+REL=$basedir/dist/Xponents-$VERSION
+if [ ! -d $REL ] ; then 
+  echo "Distribution does not exist: $REL"
   echo "First build per BUILD.md"
   echo "Then run ./script/dist.sh "
   echo "... Then run ./script/dist-docker.sh  to see that the normal docker image builds"
@@ -43,7 +43,7 @@ fi
 # Then also to provide Maven dev tools we include FindBugs, Checkstyle and JavaDoc plugins.
 # 
 # Running any of those plugins naturally pulls them down -- we stash them in $REPO
-pushd $TARGET
+pushd $REL
 REPO=maven-repo
 
 echo "              Xponents Docker Offline         "
@@ -56,6 +56,8 @@ read IMG_VERSION
 if [ -e "../maven-repo" ] ; then
   mv ../maven-repo  .
 fi
+
+cp  $basedir/Examples/Docker/dockerignore.offline $REL/.dockerignore
 
 
 # CORE
@@ -119,5 +121,5 @@ done
 
 # Docker
 echo "++++++++++++++++ DOCKER / Maven Offline ++++++++++++++++"
-cd $TARGET
+cd $REL
 docker build --tag opensextant:xponents-offline-$IMG_VERSION -f ./Dockerfile.offline .
