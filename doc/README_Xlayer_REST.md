@@ -1,66 +1,226 @@
 Xlayer:  Xponents REST service
 ==============================
 
-You can pronounce this like "Zlayer" or X-Layer or Slayer.
-Using primarily the Restlet Framework (http://restlet.org)
-we have a very basic ability to provision the Xponent extraction 
-as REST services.   
-
-In this package is a REST server and several test clients in Java and Python 
-which demonstrate how to call the extraction service and parse the results.
-
-History 
----------
-* version 1.0
-  * Xponents 3.5.0, introducing postal geocoding and improved gazetteer sourcing
-  
-* version 0.8
-  * Xponents 3.1.0, exposing reverse geocoding feature set
-  
-* version 0.6
-  * Xponents 3.0 release integrated
-
-* version 0.2
-  * added features and options to allow caller to customize request
-  * Expose PlaceGeocoder capability: geocode text, yielding 
-    places, coordinates, countries, and matched non-places organizations and person names
+Xlayer (pr. "X Layer") is an older name for the Xponents geotagger web service.  We just call it "Xponents API" now. Under the hood the 
+service is implemented in Java using Restlet framework and provides 
+functionality described [here in README_REST_API.md](README_REST_API.md). The remainder of this page describes the Python client and more details related to the server development.  The REST README focuses on the docker instance and the web service specification. 
 
 
 Execution
 --------------
 
-This is a server-side capability, but you can write your own BAT, Groovy, Ant or other script
-to invoke the main Restlet server as shown in this script:
+In the Xponents project or distribution you'll find the Xponents API server script:
 
+```shell
     ./script/xlayer-server.sh  start 8080
     .... 
     ./script/xlayer-server.sh  stop 8080 
+```
 
-For now the script takes a port number, running a HTTP server on that port, with no security.
-And then also the control command start or stop.  Now the server is running, access it at:
+Alternatively, using Docker Compose:
 
-    http://localhost:8080/xlayer/rest/process ? docid = .... & text = ...
+```shell
+   # In source tree you'll find docker-compose.yml 
+   # You do not need to check out the project to use this.
+   # Copy ../Examples/Docker/docker-compose.yml
+   
+   docker-compose up -d xponents
+```
 
-GET or POST operations are supported.  With GET, use the parameters as noted above.
-With POST, use JSON to formulate your input as a single JSON object, e.g., `{"docid":..., "text":....}`
-Additionally, features and tuning parameters will be supported.
+With the server running you will be able to test out the functions to 
+`process` text and control the server (`ping` and `stop`).
 
-Testing/Processing
+    GET  http://localhost:8080/xlayer/rest/process ? docid= & text= & features =
+    POST http://localhost:8080/xlayer/rest/process  JSON body { docid =, text =, features = }  
+    GET  http://localhost:8080/xlayer/rest/control/ping
+    GET  http://localhost:8080/xlayer/rest/control/stop
+
+
+However you have started the API server, here are some test scripts to interact 
+with it -- you'll need copies of the scripts from source tree here or from the distribution.  The docker image has copies of these scripts for testing.
+
+
+* `./test/test-xlayer-curl.sh PORT FILE`  - requires cURL. **[script](https://github.com/OpenSextant/Xponents/blob/master/test/test-xlayer-curl.sh)** 
+* `./test/test-xlayer-java.sh PORT FILE`  - requires Java and libraries in ./lib distro
+* `./test/test-xlayer-python.sh PORT FILE`  - requires Python 3 `opensextant` module described below.  **[script](https://github.com/OpenSextant/Xponents/blob/master/test/test-xlayer-python.sh)** 
+
+Xponents API Python Client
 ------------------
 
-A quick test can be done by these test scripts: In each case specify the PORT that Xlayer is running on and then 
-test file.
+Please consider using this Python client to interact with the API server -- as a 
+reference implementation of the data model and processing/extraction services it is
+as complete as it needs to be.  If you need or want to work in another language and 
+want to contribute your implementation please file an issue in the GitHub project for Xponents.
+This page focuses on using the Python API to demonstrate the value of the Xponents
+geotagging and extraction approach. 
 
-* `./test/test-xlayer-curl.sh PORT FILE`  - requires cURL
-* `./test/test-xlayer-java.sh PORT FILE`  - requires Java and test libraries in ./lib
-* `./test/test-xlayer-python.sh PORT FILE`  - requires Python 2 `opensextant` module in `PYTHONPATH`
+[ **[Latest Release](https://github.com/OpenSextant/Xponents/releases/tag/python-v1.4.7)** ] [ **[Python API reference](../doc/pydoc/opensextant.xlayer.html)** ] [ **[Python Source](https://github.com/OpenSextant/Xponents/blob/master/python/opensextant/xlayer.py)** ]
 
-Developing with Java
+Install it, `pip3  install opensextant-1.4.*.tar.gz`.  You now can make use of the `opensextant.xlayer` module. 
+Here is a synopsis of the `XlayerClient` in action.  You can also refer to the client test code 
+where [play_rest_api.py](../python/tests/play_rest_api.py) gets playful with the basics. 
+
+```python
+
+# Setup
+from opensextant.xlayer import XlayerClient
+client = XlayerClient(url)   # url = 'host:port'  or the full 'http://host:port/xlayer/rest/process'  URL.
+
+# For each block of text:
+textbuffer = " ..... "
+result  = client.process("ab8ef7c...",             # document ID 
+                         textbuffer,               # your raw text input
+                         features=["geo",          # default is only "geo". If you want extracted features, add as you wish. 
+                                   "postal", 
+                                   "dates", 
+                                   "taxons", 
+                                   "filtered_out"])
+
+# result is a simple array of opensextant.TextMatch
+# where geotags are PlaceCandidate classes, which are subclasses of TextMatch
+
+```
+
+Let's take this step by step.  First, if you like looking at source code (see Source link above), 
+`opensextant.xlayer` module is a full main program that provides additional test capabilities
+for command line use or to craft your own post-processing script.
+
+Here is a exposé of the key data classes - `TextMatch` and `PlaceCandidate`:
+
+* TextMatch represents a span of text emitted by a particular NLP routine.  The core class attributes are:
+  * `label`, `text`, `start`, `end`, `attrs`  (Describing an entity of type `label` and a value `text`; attributes may be empty)
+  * `filtered_out` class attribute is True or False.  `filtered_out=True` indicates that the span was tagged, but 
+  the API post-processed that tag as invalid or noise for some reason.
+* PlaceCandidate is a subclass of TextMatch adding more geographic class attributes:
+  * `place`, `confidence`, `attrs` -- A Place object (with lat/lon) was inferred with the confidence 
+    and significant collection of gazetter attributes.  Other class attributes are available for expert use.
+
+
+Below "Part A" is looping through all TextMatches generically. 
+"Part B" is much more speicific to logic for geotags aka PlaceCandidate objects. 
+For Part B, look at the advanced geoinferencing topics that follow.  More to come.  WHY?   Your objective with 
+geotagging is usually to present these results in a spatial visualization or capture in a spatial database. All this
+metadata work will help you do that effectively.
+
+
+```python
+
+from opensextant import TextMatch, PlaceCandidate, Place
+
+# Let's say in the result array a TextMatch item had been created as such:
+#
+#   t = TextMatch("Sana'a Cafe", 55, 67)
+#
+# Name of a business mentioned at character span (55, 67)
+# Additional metadata would be assigned internally.  See the loop example below:
+
+# Part A -- Generic Text span interpretation
+for t in result:
+   # 
+   if t.filtered_out:
+     print("We'll ignore this tag.")
+   else:     
+     print(f"Match {t.id} of type {t.label}:  {t.text} at span ({t.start}, {t.end})")
+     # 
+     # NOTE:  For all TextMatch and subclasses `.attrs` field will contain additional metadata, including:
+     #    - patterns -- ID of regex pattern
+     #    - place    -- gazetter metadata and inferred precision, related geography, etc.
+     #    - taxon    -- name of catalog and other metadata from taxonmomic key phrases
+     # 
+     print("\tATTRS", t.attrs)
+
+
+# Part B -- Geo-inferencing interpretation. Looking at Countries, Placenames, Coordinates, and Postal entries
+#
+# Combine the loop logic as you need. This variation focuses on PlaceCandidate specifically 
+for t in result:
+  if not t.filtered_out and isinstance(t, PlaceCandidate):
+    
+    # PlaceCandidate is either a Country (or non-Coordinate location) or a Coordinate-bearing location.
+    # Be sure to know the distinction. 
+    if t.is_country:
+      print("COUNTRY", t.text, t.place.country_code)
+    else:
+      print("GEOTAG", t.text)
+      geo = t.place
+      feature = f"{geo.feature_class}/{geo.feature_code}" 
+      print(f"\tFEAT={feature} LL=({geo.lat}, {geo.lat}) in country {geo.country_code}")                  
+
+```
+
+## Expert Topics in Xponents Geoinferencing
+
+These topics are addressed here because you as the 
+consumer of the Xponents API output need to interpret what is found in text. 
+This is the *inferencing* aspect of all
+this -- if you don't take some action to interpret the output intelligently there really is no value or credibility
+of the output downstream.  Review these topics for a flavor of that next level of inference follow.
+
+### Feature Class Use
+
+Be aware that all sorts of geographic references are returned by the API service along this spectrum of 
+  about 10 M to 100 KM resolution: coordinates, postal, landmark, city, district, province, country and even 
+  region or body of water.  Feature metadata (`feature_class`, `feature_code`) help distinguish types of features.
+
+### Gazetteer Metadata Use
+Feature geographic metadata is encoded to ISO-3166 standards, so make use of it on these fields as noted in the 
+  schema below in REST Interface.
+
+### Precision Error and Location Uncertainty
+
+Consider these aspects of inferred locations that have `lat`, `lon` tuple or a valid `PlaceCandidate.place` object:
+
+- **Precision** (`precision` attribute or `prec` key) -- the categorical error (in meters)  for the feature class. e.g., 
+a province mention is typically on the order of +/- 50 KM although provinces vary wildly by size
+- **Confidence** (`confidence` attribute or key) -- the relative confidence we have that the place mention 
+  is indeed a place AND that we chose the correct location. 100 point scale where 20 represents a minimum threshold. 
+  Less than 20 is typically filtered out as noise that has little corroborating evidence.
+- **Location uncertainty or accuracy** (`location_accuracy()` method or `PlaceCandidate.location_certainty` attribute) 
+  a logarithmic approach to rendering confidence and spatial precision error into a single number to enable you 
+  to compare location mentions or present them in meaningful ways for users.  The logarithmic approach helps distill 
+  about 6 orders of magnitude in geography down to a single useful number. So from 10 meters up to 1000 KM (10^6 meters) 
+  it can be hard to compare the significance of places, let alone visualize them on a map.
+      
+Some [Examples in this test script](../python/tests/test_location_accuracy.py) for nailing down this idea of location 
+accuracy issue as it is relatively important for inferrencing spatial entities:
+
+```text
+
+So if you have these situations in free text the API currently manages how location accuracy is calculated, 
+But you can override that and calculate your own.  Examples:
+
+  - a coordinate with one decimal precision, that is very confident
+  - a coordinate with six decimals of precision, that is very confident
+  - a coordinate with twelve decimals of precision that was formatted with default floating point precision 
+  - a small city with a common name, where we are not very confident it is right
+  - a landmark or park
+  - mention of a large country or region
+
+## Run: python3 test_location_accuracy.py
+
+Important -- Look at the comments in code for each example. In the output see that 
+the ACCURACY column is a result that typicallylands between 0.01 and 0.30 (on a 0.0 to 1.0 scale). 
+This makes it easy to compare and visualize any geographic entity that has been inferred.
+
+Accuracy 1.0 = 100% confident with a 1 meter of error.
+
+
+EXAMPLES ....................	ACCURACY	CONF	PREC_ERR
+Coord - 31.1N x 117.0W.           	0.100	90	10000
+Coord - 31.123456N x 117.098765W. 	0.300	90	10
+Coord - 31.123456789012N x 117.098765432101W. 	0.180	90	100
+City Euguene, Oregon  .......... 	0.101	85	5000
+Poblacion, ... Philippines  .... 	0.036	25	1000
+Workshop of H. Wilson, Natick    	0.317	95	10
+.....Khammouane.....in Laos..... 	0.058	60	50000
+
+```
+
+
+Xponents API Java Client
 -------------------
 
-Pardon the paltry API documentation. Still polishing.
-
-Use the `opensextant-xponents` artifact and `org.opensextant.xlayer.XlayerClient(url)` 
+Use the `opensextant-xponents` maven artifact and `org.opensextant.xlayer.XlayerClient(url)` 
 gives you a starting point to invoke the `.process()` method. [API](../doc/sdk-apidocs/org/opensextant/xlayer/XlayerClient.html). 
 
 ```java
@@ -71,29 +231,20 @@ gives you a starting point to invoke the `.process()` method. [API](../doc/sdk-a
 
 client = XlayerClient(url);
 results = client.process(....);
-/* Results is an array of TextMatch */
+/* Results is an array of TextMatch
+   PlaceCandidate objects are subclass of TextMatch and will carry the geotagging details of geography, etc.
+ */
 
 ```
 
-Developing with Python
---------------------
-In your distribution use either `./python/opensextant-1.*.tar.gz` of from a checkout, 
-compose the Pip bundle as `cd ./python/;  python ./setup.py sdist`.  The resulting TAR/gz file will be in `./dist`. 
+Additional classes include:
 
-Install it, `pip3  install opensextant-1.4.*.tar.gz`.  You now can make use of the `xlayer` module, as documented 
-here in the [Py API](../doc/pydoc/opensextant.xlayer.html). This example captures the meat of it all:
+* [XlayerClientTest.java](src/test/java/XlayerClientTest.java) - Test main program. Compile and include `./target/\*-tests.jar` in CLASSPATH
+* [XlayerClient.java](src/main/java/org/opensextant/xlayer/XlayerClient.java) - a basic Client, using Restlet
+* [Transforms.java](src/main/java/org/opensextant/output/Transforms.java) - a basic data adapter for getting REST response back into API objects.
 
-```python
 
-from opensextant.xlayer import XlayerClient
-client = XlayerClient(url)
-result  = client.process(.....)
 
-# result is a simple array of dict.
-# Later versions may have a convenience method that transforms raw dictionaries into API classes
-# opensextant.Data python classes are not complete and consistent with their Java counterparts.
-
-```
 
 Health Check
 --------------
@@ -166,17 +317,17 @@ Derived Postal annotations additionally have:
   as below:
   
 ```json
-
-      // For an input "Wellfleet, MA 02663" the individual matches will be given as normal, 
-      // but a composed match for the entire span will carry `related` section with 
-      //   specific slots indicating the components of the postal match:
-      //   
-      //   "city", "admin", "country", "postal"
-      // 
-      //   Each slot has the relevant `matchtext` and `match-id`. 
-      //   Use the match-id to retrieve the full geocoding for that portion.
-      //   The composed match here will usually carry the geocoding of the postal code.
-      
+{
+      "comment-only": "For an input 'Wellfleet, MA 02663' the individual matches will be given as normal, 
+         but a composed match for the entire span will carry `related` section with 
+         specific slots indicating the components of the postal match:
+         
+         'city', 'admin', 'country', 'postal'
+       
+         Each slot has the relevant `matchtext` and `match-id`. 
+         Use the match-id to retrieve the full geocoding for that portion.
+         The composed match here will usually carry the geocoding of the postal code.",
+              
       "related": {
         "city": {
           "matchtext": "Wellfleet",
@@ -190,7 +341,8 @@ Derived Postal annotations additionally have:
           "matchtext": "02663",
           "match-id": "postal@14"
         }
-      },
+      },...
+}
 
 ```
 
@@ -357,60 +509,14 @@ Example JSON Output:
 	  ]
 	 }
 
-
-
 Implementation
 ---------------
-Please refer to Xponents Extraction module.  The tagging/extracting/geocoding is done by PlaceGeocoder Java API.
-(https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java)
+The key geocoders implemented in Xponents REST API are as follows:
 
-The general design of the RestLet applications here is depicted below in Figure 1. 
-The XlayerServer is a container that manages the overall runtime environement.
-The XlayerRestlet is an application inside the container.  A Restlet Application typically
-has multiple services (ServerResources) mapped to URLs or URL patterns.
-
-XponentsGeotagger is a wrapper around the PlaceGeocoder class. The wrapper manages the digestion of client requests 
-in JSON, determines client"s feature requests to hone processing and formatting, and finally produces a JSON formatted response.
-
-![Figure 1](./xlayer-xgeo-server-example.png "Extending Xlayer using Restlet")
-
-
-When building an Xlayer application, client-side or server-side, please understand the general CLASSPATH needs:
-
-* Xponents JARs -- APIs, Xlayer main and test code.  Use ``` mvn dependency:copy-dependencies``` and then see ./lib/opensextant-*.jar. The 
-  essential items are listed in order of increasing dependency:
-  * opensextant-xponents-3.*.jar
-  * opensextant-xponents-core-3.*.jar
-* Configuration items foldered in ```./etc``` or similar folder in CLASSPATH
-* Logging configuration -- Logback is used in most Xponents work, but only through SLF4J. If you choose another logger implementation, 
-  SLF4J is your interface.   Copy and configure ```Xlayer/src/test/resources/logback.xml``` in your install.  As scripted, ```./etc/``` is the location for this item.
-* Geocoding metadata -- ./etc/ should contain xponents-gazetteer-meta.jar (result of normal Xponents/solr build)
-  This resource is required for Java Xponents usage or server-side development, but not client REST usage necessarily.
-
-
-
-References:
-The following data here is emitted in the Xlayer and most all Xponents APIs.  Xponents Basics API provides
-GeonamesUtility class (in Java, and partial solution in Python) to access the codes easily:
-* NGA, http://geonames.nga.mil/gns/html/countrycodes.html
-* Geonames.org, http://download.geonames.org/export/dump/featureCodes_en.txt
-* Geonames.org, http://www.geonames.org/data-sources.html
-
-
-Using Xlayer API and More
-=========================
-
-[XlayerClient demo in Python](../src/main/python/opensextant/xlayer.py "Xlayer demo client") provides the real 
-basics of how a client calls the server.   A richer illustration of how to create a client and make use of 
-Xponents APIs is here in the Java XlayerClient:
-
-* [src/main/java/XlayerClientTest.java](src/test/java/XlayerClientTest.java) - Test main program. Compile and include ./target/\*-tests.jar in CLASSPATH
-* [src/main/java/org/opensextant/xlayer/XlayerClient.java](src/main/java/org/opensextant/xlayer/XlayerClient.java) - a basic Client, using Restlet
-* [src/main/java/org/opensextant/output/Transforms.java](src/main/java/org/opensextant/output/Transforms.java) - a basic data adapter for getting REST response back into API objects.
-
-If you have gotten this far please consider the Xponents APIs for your data model when using client-side/REST applications. You get JSON
-back and you can do anything with it... however our preference is to consume the JSON and get API objects from the JSON. Sure, we can 
-do better getting into GSON or JSON object parsers.  But for now there are lots of choices for how to do this.  The crux of this occurs under the Transforms class.
+- Main logic [XponentsGeotagger](https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/xlayer/server/xgeo/XponentsGeotagger.java) , which wraps the following:
+  -  [PlaceGeocoder](https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java) for general geo inferencing
+  - [PostalGeocoder](https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PostalGeocoder.java) for postal zone geo inferencing
+  - [XTemporal](https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/java/org/opensextant/extractors/xtemporal/XTemporal.java) for date and time extraction
 
 
 INSTALLATION
@@ -442,4 +548,21 @@ Rather than use shell scripting, we have used Groovy and Ant to simplify these t
 As these are for demonstration only, we do not intend to generalize the scripting beyond this.
 
 ```
+
+History 
+---------
+* version 1.4
+  * Xponents 3.5.0, introducing postal geocoding and improved gazetteer sourcing
+  
+* version 0.8
+  * Xponents 3.1.0, exposing reverse geocoding feature set
+  
+* version 0.6
+  * Xponents 3.0 release integrated
+
+* version 0.2
+  * added features and options to allow caller to customize request
+  * Expose PlaceGeocoder capability: geocode text, yielding 
+    places, coordinates, countries, and matched non-places organizations and person names
+
 

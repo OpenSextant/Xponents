@@ -1,7 +1,7 @@
 import json
 from argparse import ArgumentParser
 from opensextant.xlayer import XlayerClient
-from opensextant import TextMatch
+from opensextant import TextMatch, PlaceCandidate
 
 
 def print_match(match:TextMatch):
@@ -10,7 +10,8 @@ def print_match(match:TextMatch):
     :param match:
     :return:
     """
-    if match.label == "place":
+    # if match.label == "place":
+    if isinstance(match, PlaceCandidate):
         cc = match.attrs.get("cc")
         fc = match.attrs.get("feat_class")
         fcode = match.attrs.get("feat_code")
@@ -52,7 +53,6 @@ def just_text(text):
 ap = ArgumentParser()
 ap.add_argument("url")
 ap.add_argument("file")
-ap.add_argument("--text", action="store_true", default=False)
 ap.add_argument("--text", action="store_true", default=False)
 args = ap.parse_args()
 
