@@ -18,6 +18,9 @@ if [ -n "$IMG_VERSION" ] ; then
 fi
 
 if [ "$CMD" = "push" ]; then
+   docker push $REPO/opensextant:xponents-$IMG_VERSION
+   docker push $REPO/opensextant:xponents-offline-$IMG_VERSION
+
    docker push $REPO/opensextant:xponents-$IMG_TARGET
    docker push $REPO/opensextant:xponents-offline-$IMG_TARGET
    docker push $REPO/opensextant:latest

@@ -1,4 +1,5 @@
 exclusion,category
+abre,adj.spa
 alto,adj.spa
 bien,adj.spa
 brillante,adj.spa
@@ -18,41 +19,57 @@ gran,adj.spa
 grande,adj.spa
 grandes,adj.spa
 hermosa,adj.spa
+hermosa,adj.spa
+hermoso,adj.spa
 hermoso,adj.spa
 lista,adj.spa
 mal,adj.spa
 muerte,adj.spa
 mundial,adj.spa
-abre,adj.spa
-hermosa,adj.spa
-hermoso,adj.spa
-#la,article
-asi,article
-esa,article
-esas,article
-esās,article
-ese,article
-eso,article
-este,article
-esto,article
-hay,article
-por,article
+permanente,adj.spa
+ultimo,adj.spa
+último,adj.spa
+#la,article.spa
+asi,article.spa
+durante,article.spa
+esa,article.spa
+esas,article.spa
+esās,article.spa
+ese,article.spa
+eso,article.spa
+este,article.spa
+esto,article.spa
+hay,article.spa
 lo,article.spa
+por,article.spa
+que,article.spa
+sus,article.spa
 azul,color.spa
 blanco,color.spa
 abajo,direction
-unos,enum
+bajo,direction
 cento,enum.spa
 cero,enum.spa
+cinco,enum.spa
+cuatro,enum.spa
+diez,enum.spa
 dos,enum.spa
 dos,enum.spa
+dos,enum.spa
+nueve,enum.spa
+ocho,enum.spa
 primera,enum.spa
 primero,enum.spa
 segunda,enum.spa
 segundo,enum.spa
+seis,enum.spa
+siete,enum.spa
+tres,enum.spa
 una,enum.spa
 unas,enum.spa
 uno,enum.spa
+uno,enum.spa
+unos,enum.spa
 abril,month.spa
 enero,month.spa
 febrero,month.spa
@@ -62,6 +79,7 @@ acuario,myth.spa
 abuela,noun
 abuelo,noun
 academia,noun
+administracion,noun
 administración,noun
 aero,noun
 agua,noun
@@ -83,6 +101,7 @@ banca,noun
 bando,noun
 beso,noun
 boca,noun
+calibre,noun
 calle,noun
 calles,noun
 calma,noun
@@ -90,6 +109,7 @@ cambio,noun
 campana,noun
 canciones,noun
 cantina,noun
+caracter,noun
 carne,noun
 carta,noun
 ças,noun
@@ -116,6 +136,8 @@ cuando,noun
 cuarto,noun
 cultura,noun
 democracia,noun
+dependencia,noun
+deposito,noun
 derechos humanos,noun
 dias,noun
 dio,noun
@@ -162,6 +184,9 @@ el verde,noun
 emergencia,noun
 en medio,noun
 encuentro,noun
+ende,noun
+enfermeria,noun
+espiritu,noun
 estudiantes,noun
 euro,noun
 europa,noun
@@ -169,6 +194,7 @@ felicidades,noun
 feliz,noun
 fiesta,noun
 fin,noun
+forma,noun
 fotos,noun
 ghetto,noun
 globo,noun
@@ -187,6 +213,7 @@ la cara,noun
 la carta,noun
 la casa,noun
 la constitución,noun
+la defensa,noun
 la familia,noun
 la felicidad,noun
 la fiesta,noun
@@ -247,13 +274,21 @@ los niños,noun
 los partidos,noun
 los problemas,noun
 los sueños,noun
+marca,noun
+momento,noun
 niña,noun
+nivel,noun
 noticia,noun
+ordenes,noun
 policia,noun
+presentación,noun
+recursos,noun
 revolucion,noun
 tarde,noun
+tipo,noun
 tortilla,noun
 tren,noun
+vuelo,noun
 banco,noun.spa
 banda,noun.spa
 caballeros,noun.spa
@@ -266,28 +301,28 @@ cena,noun.spa
 continente,noun.spa
 cruz,noun.spa
 esquinas,noun.spa
+grado,noun.spa
 gringo,noun.spa
 grupo,noun.spa
 hacienda,noun.spa
+hoja,noun.spa
 hoy,noun.spa
 manana,noun.spa
 mañana,noun.spa
+millas,noun.spa
 nina,noun.spa
 niño,noun.spa
 puerto,noun.spa
+resolucion,noun.spa
+resolución,noun.spa
 sol,noun.spa
-cinco,number
-cuatro,number
-diez,number
-dos,number
-nueve,number
-ocho,number
-seis,number
-siete,number
-tres,number
-uno,number
+unidad,noun.spa
+ellas,person.label.spa
 hija,person.label.spa
 hijo,person.label.spa
+medica,person.label.spa
+medico,person.label.spa
+médico,person.label.spa
 padre,person.label.spa
 san,person.label.spa
 a al,phrase
@@ -323,6 +358,7 @@ gracias,phrase
 gracias a dios,phrase
 hola,phrase
 hora,phrase
+la opinion,phrase
 los dos,phrase
 no se,phrase
 si,phrase
@@ -374,6 +410,7 @@ jamas,spa
 jefe,spa
 joven,spa
 juega,spa
+junta,spa
 junto,spa
 justicia,spa
 justo,spa
@@ -398,6 +435,8 @@ mio,spa
 mis,spa
 mis amores,spa
 moda,spa
+modela,spa
+modelo,spa
 morena,spa
 mucha,spa
 mujer,spa
@@ -514,8 +553,12 @@ voz,spa
 y lo,spa
 y tu,spa
 ya ló,spa
+cada,stopword.spa
+donde,stopword.spa
 hasta,stopword.spa
+todo,stopword.spa
 yo,stopword.spa
+fecha,time.spa
 anda,verb
 besar,verb
 busca,verb
@@ -528,10 +571,12 @@ comer,verb
 corre,verb
 crea,verb
 dar,verb
+debe,verb
 digo,verb
 eres,verb
 es,verb
 escucha,verb
+fue,verb
 gana,verb
 haber,verb
 habla,verb
@@ -540,6 +585,11 @@ le dan,verb
 le voy,verb
 leer,verb
 mucho,verb
+poner,verb
+puesto,verb
+reposo,verb
 se,verb
+seguir,verb
 tiene,verb
+toma,verb
 usar,verb

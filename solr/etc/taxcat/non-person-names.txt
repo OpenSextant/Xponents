@@ -35,6 +35,9 @@ la
 le
 les
 lo
+una
+esta
+del
 long
 love
 mac
