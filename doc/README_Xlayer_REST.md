@@ -177,7 +177,18 @@ a province mention is typically on the order of +/- 50 KM although provinces var
   Less than 20 is typically filtered out as noise that has little corroborating evidence.
 - **Location uncertainty or accuracy** (`location_accuracy()` method or `PlaceCandidate.location_certainty` attribute) 
   a logarithmic approach to rendering confidence and spatial precision error into a single number to enable you 
-  to compare location mentions or present them in meaningful ways for users.  So if you have these situations in free text:
+  to compare location mentions or present them in meaningful ways for users.  The logarithmic approach helps distill 
+  about 6 orders of magnitude in geography down to a single useful number. So from 10 meters up to 1000 KM (10^6 meters) 
+  it can be hard to compare the significance of places, let alone visualize them on a map.
+      
+Some [Examples in this test script](../python/tests/test_location_accuracy.py) for nailing down this idea of location 
+accuracy issue as it is relatively important for inferrencing spatial entities:
+
+```text
+
+So if you have these situations in free text the API currently manages how location accuracy is calculated, 
+But you can override that and calculate your own.  Examples:
+
   - a coordinate with one decimal precision, that is very confident
   - a coordinate with six decimals of precision, that is very confident
   - a coordinate with twelve decimals of precision that was formatted with default floating point precision 
@@ -185,13 +196,7 @@ a province mention is typically on the order of +/- 50 KM although provinces var
   - a landmark or park
   - mention of a large country or region
 
-The logarithmic approach helps distill about 6 orders of magnitude in geography down to a single useful number. So from
-    10 meters up to 1000 KM (10^6 meters) it can be hard to compare the significance of places, let alone visualize them on a map.
-      
-Some [Examples in this test script](../python/tests/test_location_accuracy.py) for nailing down this idea of location 
-accuracy issue as it is relatively important for inferrencing spatial entities:
-
-```text
+## Run: python3 test_location_accuracy.py
 
 Important -- Look at the comments in code for each example. In the output see that 
 the ACCURACY column is a result that typicallylands between 0.01 and 0.30 (on a 0.0 to 1.0 scale). 
@@ -504,18 +509,14 @@ Example JSON Output:
 	  ]
 	 }
 
-
-
 Implementation
 ---------------
-
 The key geocoders implemented in Xponents REST API are as follows:
 
 - Main logic [XponentsGeotagger](https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/xlayer/server/xgeo/XponentsGeotagger.java) , which wraps the following:
-  -  [PlaceGeocoder]((https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java)
-  - [PostalGeocoder]((https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PostalGeocoder.java)
-  - [XTemporal]((https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/java/org/opensextant/extractors/xtemporal/XTemporal.java)
-  
+  -  [PlaceGeocoder](https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PlaceGeocoder.java) for general geo inferencing
+  - [PostalGeocoder](https://github.com/OpenSextant/Xponents/blob/master/src/main/java/org/opensextant/extractors/geo/PostalGeocoder.java) for postal zone geo inferencing
+  - [XTemporal](https://github.com/OpenSextant/Xponents/blob/master/Core/src/main/java/org/opensextant/extractors/xtemporal/XTemporal.java) for date and time extraction
 
 
 INSTALLATION

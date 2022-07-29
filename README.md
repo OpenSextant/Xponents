@@ -7,6 +7,7 @@ Xponents, A Toolkit for Geotagging World-wide Geography
 * **Lecture** **["Geographic Literacy in Text Analytics: Developing and Applying OpenSextant", Jan 2020](https://gis.harvard.edu/event/geographic-literacy-text-analytics-developing-and-applying-opensextant)**
 * **Video:** **["Discoverying World Geography in Your Data"](https://youtu.be/44v2WljG1R0?t=1805)**
 * **Docker:** [OpenSextant on Docker](https://hub.docker.com/r/mubaldino/opensextant) 
+* **Python Client:** [Xponents REST API](./doc/README_Xlayer_REST.md) covers the REST service and explains using the output.
 
 About our nomenclature -- **OpenSextant** is a family of projects 
 for geotagging and other NLP and information extraction work.  **Xponents**
@@ -42,11 +43,11 @@ Define your own patterns or compose your own Extractor apps.  As a Java API, the
 
 Here are some fast-tracks for applying Xponents:
 
-A. Geotagging and everything -- Deploy the Docker service as prescribed on our [Docker Hub](https://hub.docker.com/r/mubaldino/opensextant).  Consult at least the Python client `opensextant.xlayer` as noted in the Docker page and in the Python setup below.
+A. Geotagging and everything -- Deploy the Docker service as prescribed on our **[Docker Hub](https://hub.docker.com/r/mubaldino/opensextant)**.  Consult at least the Python client `opensextant.xlayer` as noted in the Docker page and in the Python setup below.
 
 B. Pattern extraction -- The Python library `opensextant.FlexPat` or its Java counterpart `org.opensextant.extractors.flexpat` -- offer a lean and effective manner to develop a regular-expression
 pipeline.  In either case minimal dependencies are needed.  See Python setup below. Complete FlexPat 
-overview is available at [Patterns.md](./doc/Patterns.md)
+overview is available at **[Patterns.md](./doc/Patterns.md)**
 
 C. Geotagging and everything,.... but for some reason you feel that you need to build 
 it all yourself. You'll need to follow the notes here in `BUILD.md` and in `./solr/README.md`. 
@@ -230,17 +231,17 @@ Someday we'll just post this to PyPi.
 
 Demonstration
 ---------------------
-See the [Examples](./doc/README_Examples.md) material that you can use 
+See the **[Examples](./doc/README_Examples.md)** material that you can use 
 from within the Docker image or from a full checkout/build of the project.  Pipeline 
 topics covered there are :
 
 - Basic geo/temporal extraction
-- XText file-to-text conversion tool. More info is at [`XText`](https://github.com/OpenSextant/XText/). XText is included in this distribution
-- Gazetteer interaction for querying and updates are provided on [README_gazetteer](./doc/README_gazetteer.md)  
+- XText file-to-text conversion tool. More info is at **[`XText`](https://github.com/OpenSextant/XText/)**. XText is included in this distribution
+- Gazetteer interaction for querying and updates are provided on **[README_gazetteer](./doc/README_gazetteer.md)**
 - GIS map layer generation
 - Language ID
 - Social media geo-inferencing
-- [Xponents REST](./doc/README_Xlayer_REST.md) interaction as described here   
+- Python REST client -- see link at top of page   
 - etc.
 
 
@@ -249,8 +250,8 @@ API Documentation and Developer Notes
 
 These extractors are in the `org.opensextant.extractors` packages, and demonstrated in the Examples sub-project using Groovy.  These libraries and builds are located in Maven Central and in Docker Hub.  Here is a quick overview of the organization of the project:
 
-- **`Core API`** ([Core JavaDoc](https://opensextant.github.io/Xponents/doc/core-apidocs/)):  covers pattern matching (coordinates, dates, etc), text utilities, simple classes around social media, languaged ID, and geographic metadata.  The data model classes are central to all things Xponents.
-- **` SDK`** ([SDK JavaDoc](https://opensextant.github.io/Xponents/doc/sdk-apidocs/))) provides the advanced geoparsing, geotagger, keyword tagger, and any client/server integration. 
+- **[Core JavaDoc](https://opensextant.github.io/Xponents/doc/core-apidocs/)**  covers pattern matching (coordinates, dates, etc), text utilities, simple classes around social media, languaged ID, and geographic metadata.  The data model classes are central to all things Xponents.
+- **[SDK JavaDoc](https://opensextant.github.io/Xponents/doc/sdk-apidocs/)** provides the advanced geoparsing, geotagger, keyword tagger, and any client/server integration. 
 
 A packaged distribution has the API docs at `./lib/opensextant-*-javadoc.jar` 
 
@@ -268,9 +269,9 @@ A packaged distribution has the API docs at `./lib/opensextant-*-javadoc.jar`
   * `Country, Place, LatLon` are all examples of the `Geocoding` interface (see `org.opensextant.data`)
   * `Language` and `LangID` represents a simple but powerful and overlooked data: language codes and names.  Here we use language codes to drive various language-dependent features and then also to present language name to end users. (see ISO-339 standards; our source table is from Library of Congress)  
   * Entity Extraction and Matching:  `TextEntity` (a text span) and `TextMatch` (a span matched by a rule or extractor) represent the essential unit of data emitted by all Extractors in Xponents.  These include:  `GeocoordMatch`, `PlaceCandidate`, `DateMatch`, `TaxonMatch`, and others.
-* **Geographic Gazetteers & Metadata:** under the hood are standard (ISO, USGS, etc) and defacto standard (geonames.org) data sets instrumented by these Java APIs.  The primary gazetteer is housed in an Apache Solr index, which can you can interact with during development. The [OpenSextant Gazetteer](https://github.com/OpenSextant/Gazetteer) project provides the data ETL. 
+* **Geographic Gazetteers & Metadata:** under the hood are standard (ISO, USGS, etc) and defacto standard (geonames.org) data sets instrumented by these Java APIs.  The primary gazetteer is housed in an Apache Solr index, which can you can interact with during development. The [OpenSextant Gazetteer](./solr) project provides the data ETL. 
   * `SolrGazetteer` provides a clean API to query gazetteer data using Solr query mechanics and Xponents data classes. The index is optimized for full text search and geospatial queries
-  * `GazetteerMatcher` provides a direct API around the text tagging capability (via [SolrTextTagger](https://github.com/OpenSextant/SolrTextTagger)) beneath the SolrGazetteer.
+  * `GazetteerMatcher` provides a direct API around the text tagging capability Solr `TextTagger` (present in Solr v7.4 or later) 
 * **GIS Formatters:**  The immediate satisfaction of processing some challenging data and then producing a map visual from that is undeniable.  However, our GIS outputter options offer more than just the immediate map plot:  the output schema includes a decent combination of source information, match metadata, and geocoding so you can review  what was found while in the map view.  
 
 
