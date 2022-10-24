@@ -119,6 +119,7 @@ def load_stopterms(project_dir=".", lower=True):
     stopterms = set([])
     for f in ["etc/gazetteer/filters/non-placenames.csv",
               "etc/gazetteer/filters/non-placenames,spa.csv",  # SPANISH
+              "etc/gazetteer/filters/non-placenames,rus,ukr.csv",  # Cyrillic languages
               "etc/gazetteer/filters/non-placenames,deu.csv",  # GERMAN
               "etc/gazetteer/filters/non-placenames,acronym.csv"]:
         terms = loader.loadDataFromFile(os.path.join(project_dir, f), ",")
@@ -880,14 +881,32 @@ def _array_blocks(arr, step=1000):
     return blocks
 
 
+def add_location(geo, lat, lon):
+    """
+    Insert validated location coordinate and geohash
+    :param geo: dict
+    :param lat: latitude value, str or float
+    :param lon: longitude value, str or float
+    :return: geo dict with location
+    """
+    if lat and lon:
+        geo["lat"] = parse_float(lat)
+        geo["lon"] = parse_float(lon)
+    else:
+        print("No location on ROW", geo.get("place_id"))
+    if "lat" in geo:
+        geo["geohash"] = geohash_encode(geo["lat"], geo["lon"], precision=6)
+    return geo
+
 class DataSource:
     """
     Gazetteer Data Source abstraction -- provides guidelines on how to inject
     data into a common, normalized gazetteer.
     """
 
-    def __init__(self, dbf, debug=False):
+    def __init__(self, dbf, debug=False, ver=None):
         self.db = DB(dbf, commit_rate=100)
+        self.ver = ver
         self.rate = 1000000
         self.rowcount = 0
         self.source_keys = []
@@ -910,16 +929,6 @@ class DataSource:
         :return: generator of Place object or dict of Place schema
         """
         yield None
-
-    def add_location(self, geo, lat, lon):
-        if lat and lon:
-            geo["lat"] = parse_float(lat)
-            geo["lon"] = parse_float(lon)
-        else:
-            print("No location on ROW", geo.get("place_id"))
-        if "lat" in geo:
-            geo["geohash"] = geohash_encode(geo["lat"], geo["lon"], precision=6)
-        return geo
 
     def normalize(self, sourcefile, limit=-1, optimize=False):
         """
