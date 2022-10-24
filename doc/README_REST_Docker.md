@@ -3,7 +3,7 @@ Xponents REST API
 
 Welcome to Xponents the geo/temporal tagging suite. 
 
-* **[Xponents home page](https://opensextant.github.io/Xponents)** describes in more detail all information extraction capabillities.
+* **[Xponents Home](https://opensextant.github.io/Xponents)** describes in more detail all information extraction capabillities.
 * **[API Reference](https://opensextant.github.io/Xponents/doc/README_Xlayer_REST.html)**
 
 

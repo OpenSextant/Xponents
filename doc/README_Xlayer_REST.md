@@ -1,10 +1,17 @@
 Xlayer:  Xponents REST service
 ==============================
 
-Xlayer (pr. "X Layer") is an older name for the Xponents geotagger web service.  We just call it "Xponents API" now. Under the hood the 
-service is implemented in Java using Restlet framework and provides 
-functionality described [here in README_REST_API.md](README_REST_API.md). The remainder of this page describes the Python client and more details related to the server development.  The REST README focuses on the docker instance and the web service specification. 
+Xlayer (pr. "X Layer") is an older name for the Xponents geotagger web service.  We just call it "Xponents API" now. 
+Under the hood the service is implemented in Java using Restlet framework and provides 
+functionality described here in [REST Docker](README_REST_Docker.md). The remainder of this page describes the Python 
+client and more details related to the server development.  The Docker README focuses on the docker instance and the web service specification. 
 
+Contents here will help you:
+
+- Start/stop Xponents REST service via shell or docker
+- Navigate the REST API methods and output schema
+- Understand how to quickly test your data against the server using the various client test tools
+- Read detailed examples of Python client code in action for driving and consuming geotagger REST API
 
 Execution
 --------------
@@ -40,9 +47,9 @@ However you have started the API server, here are some test scripts to interact
 with it -- you'll need copies of the scripts from source tree here or from the distribution.  The docker image has copies of these scripts for testing.
 
 
-* `./test/test-xlayer-curl.sh PORT FILE`  - requires cURL. **[script](https://github.com/OpenSextant/Xponents/blob/master/test/test-xlayer-curl.sh)** 
+* `./test/test-xlayer-curl.sh PORT FILE`  - requires cURL.  **[test script](https://github.com/OpenSextant/Xponents/blob/master/test/test-xlayer-curl.sh)** 
 * `./test/test-xlayer-java.sh PORT FILE`  - requires Java and libraries in ./lib distro
-* `./test/test-xlayer-python.sh PORT FILE`  - requires Python 3 `opensextant` module described below.  **[script](https://github.com/OpenSextant/Xponents/blob/master/test/test-xlayer-python.sh)** 
+* `./test/test-xlayer-python.sh PORT FILE`  - requires Python 3 `opensextant` module described below.  **[test script](https://github.com/OpenSextant/Xponents/blob/master/test/test-xlayer-python.sh)** 
 
 Xponents API Python Client
 ------------------
