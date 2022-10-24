@@ -61,6 +61,7 @@ public class TagFilter extends MatchFilter {
         String[] defaultNonPlaceFilters = {"/filters/non-placenames.csv", // GENERAL
                 "/filters/non-placenames,spa.csv", // SPANISH
                 "/filters/non-placenames,deu.csv", // GERMAN
+                "/filters/non-placenames,rus,ukr.csv", // RUSSIAN, UKRANIAN
                 "/filters/non-placenames,acronym.csv" // ACRONYMS
         };
         for (String f : defaultNonPlaceFilters) {

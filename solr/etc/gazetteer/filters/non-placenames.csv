@@ -33,9 +33,11 @@ eval,abbrev
 expo,abbrev
 fam,abbrev
 fig,abbrev
+gaz,abbrev
 glo,abbrev
 helo,abbrev
 hg,abbrev
+hwy,abbrev
 ibid,abbrev
 ie,abbrev
 imo,abbrev
@@ -332,6 +334,7 @@ lucky,adj
 lude,adj
 lumbar,adj
 lunar,adj
+mad,adj
 main,adj
 main stream,adj
 mainstream,adj
@@ -375,6 +378,7 @@ newer,adj
 next,adj
 nice,adj
 noisy,adj
+nameless,adj
 noname,adj
 novel,adj
 oceanic,adj
@@ -665,6 +669,7 @@ sans,article.fre
 cé,article.ita
 che,article.ita
 gli,article.ita
+lui,article.ita
 tra,article.ita
 tras,article.ita
 uni,article.ita
@@ -749,6 +754,7 @@ christ,concept.religion
 creed,concept.religion
 devil,concept.religion
 god,concept.religion
+hindi,concept.religion
 holy,concept.religion
 islam,concept.religion
 jesus,concept.religion
@@ -763,6 +769,7 @@ sharia,concept.religion
 shia,concept.religion
 sins,concept.religion
 spirit,concept.religion
+swastika,concept.religion
 cont,contraction
 dont,contraction
 isnt,contraction
@@ -1004,6 +1011,7 @@ enigma,internet
 entry point,internet
 epson,internet
 eudora,internet
+err,internet
 excel,internet
 explorer,internet
 ezine,internet
@@ -1034,6 +1042,7 @@ link,internet
 login,internet
 lua,internet
 mcafee,internet
+mem,internet
 meme,internet
 modem,internet
 monero,internet
@@ -1200,6 +1209,7 @@ avalanche,noun
 aviation,noun
 avnil,noun
 award,noun
+ax,noun
 azalea,noun
 babe,noun
 baby,noun
@@ -2870,6 +2880,7 @@ old man,person.label
 old man,person.label
 old woman,person.label
 olympian,person.label
+ombudsman,person.label
 pal,person.label
 papa,person.label
 partner,person.label
@@ -3203,6 +3214,7 @@ hoo,phrase
 hot spot,phrase
 hotspot,phrase
 huh,phrase
+uh,phrase
 hum,phrase
 i do,phrase
 ideal solution,phrase
@@ -3659,6 +3671,7 @@ piers,place.civil
 pipeline,place.civil
 plant,place.civil
 plaza,place.civil
+precinct,place.civil
 police station,place.civil
 polls,place.civil
 port city,place.civil
@@ -3882,6 +3895,7 @@ marshes,place.general
 metro,place.general
 metropolis,place.general
 metropolitan,place.general
+mer,place.general.fre
 mideast,place.general
 midwest,place.general
 mount,place.general
@@ -4058,6 +4072,7 @@ celtic,sport
 checkers,sport
 colts,sport
 cricket,sport
+dart,sport
 dodgers,sport
 frisbee,sport
 golf,sport
@@ -4552,6 +4567,7 @@ hop,verb
 hoping,verb
 hosting,verb
 hover,verb
+hug,verb
 hunting,verb
 hurry,verb
 hurt,verb
@@ -4700,6 +4716,7 @@ rise,verb
 roaming,verb
 rotate,verb
 rots,verb
+rub,verb
 ruled,verb
 run,verb
 running,verb
@@ -4972,6 +4989,7 @@ hanta,well-known.disease
 lyme,well-known.disease
 malaria,well-known.disease
 mers,well-known.disease
+pox,well-known.disease
 zika,well-known.disease
 alaaddin,well-known.fiction
 aladdin,well-known.fiction
@@ -4994,10 +5012,14 @@ krypton,well-known.mythology
 midas,well-known.mythology
 middle earth,well-known.mythology
 nirvana,well-known.mythology
+poseidon,well-known.mythology
+neptune,well-known.mythology
+phoenix,well-known.mythology
 thor,well-known.mythology
 voodoo,well-known.mythology
 zeus,well-known.mythology
 orbiter,well-known.name
+bolshevik,well-known.org
 chevrolet,well-known.org
 coke,well-known.org
 election commission,well-known.org
@@ -5036,6 +5058,7 @@ radon,well-known.science
 rust,well-known.science
 saline,well-known.science
 sine,well-known.science
+mir,well-known.science
 sputnik,well-known.science
 sulfur,well-known.science
 sulphur,well-known.science
