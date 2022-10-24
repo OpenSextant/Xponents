@@ -1,5 +1,24 @@
 # Gazetteer Curation and Data Model
 
+## Sources
+
+**USA NGA Geographic Names Database**: is cited as the following as accessed from https://geonames.nga.mil/geonames/GNSHome/index.html
+
+```
+Toponymic information is based on the Geographic Names Database, containing 
+official standard names approved by the United States Board on Geographic Names and maintained by the 
+National Geospatial-Intelligence Agency. More information is available at the Resources link at http://www.nga.mil. 
+The National Geospatial-Intelligence Agency name, initials, and seal are protected by 10 United States Code § Section 425.
+```
+
+**Geonames.org**: Content referenced simply as "Geonames" or "Geonames.org" refers to the content from https://www.geonames.org/,
+which provides this licensing message:
+
+```
+This work is licensed under a Creative Commons Attribution 4.0 License,
+see https://creativecommons.org/licenses/by/4.0/
+The Data is provided "as is" without warranty or any representation of accuracy, timeliness or completeness.
+```
 
 Xponents SQLite ETL Schema
 ------------------

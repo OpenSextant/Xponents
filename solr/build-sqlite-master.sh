@@ -21,10 +21,10 @@ while [ "$1" != "" ]; do
 done
 
 # GLOB NationalFile*
-USGS_FILE=`ls ./tmp/NationalFile_202*`
+USGS_FILE=./tmp/NationalFile.txt
 
 for f in  $USGS_FILE \
-    "./tmp/Countries.txt" \
+    "./tmp/Whole_World.txt" \
     "./tmp/allCountries.txt" \
     "./tmp/ne_10m_admin_1_states_provinces" \
     "./tmp/wordstats.sqlite"; do
@@ -41,7 +41,7 @@ if [ "$do_test" -eq 1 ] ; then
   DB=./tmp/test.sqlite
   python3 ./script/gaz_popstats.py --db $DB
   python3 ./script/gaz_usgs.py ${USGS_FILE} --max 100000 --db $DB
-  python3 ./script/gaz_nga.py ./tmp/Countries.txt --max 100000 --db $DB
+  python3 ./script/gaz_nga.py ./tmp/Whole_World.txt --max 100000 --db $DB
 
   python3 ./script/gaz_geonames.py ./tmp/allCountries.txt  --max 100000 --db $DB
   python3 ./script/gaz_administrative_codes.py ./tmp/ne_10m_admin_1_states_provinces/ne_10m_admin_1_states_provinces.shp  --db $DB --max 100000
@@ -76,7 +76,7 @@ else
 
   echo NGA GNIS  `date`
   LOG=./tmp/gaz_nga_${datekey}.log
-  python3 ./script/gaz_nga.py ./tmp/Countries.txt > $LOG
+  python3 ./script/gaz_nga.py ./tmp/Whole_World.txt > $LOG
 
   echo ADMIN CODES    `date`
   LOG=./tmp/gaz_administrative_codes_${datekey}.log

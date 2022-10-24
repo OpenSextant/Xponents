@@ -82,28 +82,31 @@
     <!-- Get Gazetteer data in addition to OpenSextant source -->
     <target name="gaz-sources">
         <mkdir dir="${gaz.tmp}"/>
-        <input addproperty="nga_release_date">NGA gazetteer date?
-        </input>
 
         <get dest="${gaz.tmp}" verbose="true" usetimestamp="true" skipexisting="true" >
             <url url="https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_1_states_provinces.zip"/>
             <url url="http://download.geonames.org/export/dump/cities15000.zip" />
             <url url="https://download.geonames.org/export/dump/allCountries.zip"/>
-            <url url="https://geonames.nga.mil/gns/html/cntyfile/geonames_${nga_release_date}.zip"/>
-            <url url="https://geonames.usgs.gov/docs/stategaz/NationalFile.zip"/>
+
+            <!-- <url url="https://geonames.nga.mil/geonames/GNSData/fc_files/Whole_World.7z" /> -->
+            <!-- <input addproperty="nga_release_date">NGA gazetteer date? />  -->
+            <!-- <url url="https://geonames.nga.mil/gns/html/cntyfile/geonames_${nga_release_date}.zip"/>  Overtaken by Whole_World.7z -->
+            <!-- <url url="https://geonames.usgs.gov/docs/stategaz/NationalFile.zip"/> -->
             <!-- <url url="https://geonames.usgs.gov/docs/stategaz/GOVT_UNITS.zip"/> 3500 county names, no locations -->
         </get>
 
+        <echo>Unpack geonames ${gaz.tmp} / Whole_World.7z manually</echo>
         <!-- Unpack it all -->
         <unzip dest="${gaz.tmp}/ne_10m_admin_1_states_provinces" src="${gaz.tmp}/ne_10m_admin_1_states_provinces.zip"/>
         <unzip dest="${gaz.tmp}" src="${gaz.tmp}/cities15000.zip"/>
         <unzip dest="${gaz.tmp}" src="${gaz.tmp}/allCountries.zip"/>
-        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/geonames_${nga_release_date}.zip" />
-        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/NationalFile.zip" />
 
-    </target>
+        <!--    <unzip dest="${gaz.tmp}" src="${gaz.tmp}/geonames_${nga_release_date}.zip" /> -->
+        <!--    <unzip dest="${gaz.tmp}" src="${gaz.tmp}/NationalFile.zip" /> -->
 
-    <!-- Big list of Stopwords -->
+</target>
+
+<!-- Big list of Stopwords -->
     <target name="gaz-stopwords">
         <get dest="${gaz.conf}/lang/stopwords_tl.txt">
             <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-tl/master/stopwords-tl.txt"/>

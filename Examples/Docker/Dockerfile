@@ -6,6 +6,7 @@ ENV JAVA_XMS=3500m
 ENV JAVA_XMX=3500m
 ENV XPONENTS=/home/opensextant/Xponents
 
+RUN apt-get update  && apt-get upgrade -y
 RUN adduser opensextant --home /home/opensextant --disabled-password 
 USER opensextant
 

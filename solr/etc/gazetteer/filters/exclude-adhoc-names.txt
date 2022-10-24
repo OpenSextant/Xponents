@@ -9,6 +9,7 @@ ahmad
 ahmed
 alberts
 alfred
+ali
 ana
 ana maria
 anders
@@ -33,6 +34,7 @@ collins
 connor
 cosby
 cristiano
+dan
 david
 dick
 dicks
@@ -83,6 +85,8 @@ karim
 kath
 keegan
 keith
+klaus
+law
 liam
 luis
 luiz
@@ -98,6 +102,7 @@ méssi
 mick
 mikhail
 miley
+moe
 murry
 nat
 nate
@@ -112,6 +117,8 @@ papi
 paulo
 pepe
 pete
+petr
+pyotr
 peyton
 poe
 putin
@@ -124,11 +131,15 @@ sergey
 sheik
 sia
 sri
+syed
 the president
 the vice president
+tim
 tom
 tracy
 uday
+vladimir
+vadim
 veteran
 vic
 viktor
@@ -157,6 +168,7 @@ fu
 guo
 liao
 liang
+lin
 liu
 luo
 meng
@@ -192,8 +204,11 @@ zhu
 # german names; Test sources: DerFreischütz
 hanne
 harald
+johannes
 olaf
 samael
 samiel
+vadim
+vadym
 viktoria
 wilhelm

@@ -23,7 +23,7 @@ def evaluate_text(txn, stop):
         txn.is_valid = len(txn.phrase) >= min_len
 
 
-GENERIC_PHRASES = {"commonwealth", "north"}
+GENERIC_PHRASES = {"commonwealth", "north", "south"}
 
 
 class FactBookTaxon(Taxon):

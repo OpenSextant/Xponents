@@ -14,6 +14,7 @@ ENV LOCAL_REPO_NAME=maven-repo
 # NOTE LOCAL_REPO is a absolute path
 ENV LOCAL_REPO=$XPONENTS/$LOCAL_REPO_NAME
 
+RUN apt-get update && apt-get upgrade -y
 RUN adduser opensextant --home /home/opensextant --disabled-password 
 USER opensextant
 WORKDIR /home/opensextant

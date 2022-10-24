@@ -84,3 +84,5 @@ september
 august
 vic
 camp
+nam
+major
