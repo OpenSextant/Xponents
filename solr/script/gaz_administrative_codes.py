@@ -5,7 +5,7 @@ from copy import copy
 
 import shapefile
 from opensextant import get_country, Country, parse_admin_code
-from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, PlaceHeuristics
+from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, PlaceHeuristics, add_location
 from opensextant.utility import is_code, is_abbreviation, get_list
 
 #
@@ -274,7 +274,7 @@ class NatEarthAdminGazetteer(DataSource):
 
                 # Create template for new entry from this row -- metadata here is constant
                 geo = copy(SUBDIV_GAZ_TEMPLATE)
-                self.add_location(geo, row["latitude"], row["longitude"])
+                add_location(geo, row["latitude"], row["longitude"])
                 geo["place_id"] = plid
                 assign_admin_levels(geo, C, adm1, alt_adm1=gu_a3)
                 geo["feat_class"] = fc

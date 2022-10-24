@@ -1,6 +1,6 @@
 import os
 
-from opensextant.gazetteer import get_default_db, DataSource, PlaceHeuristics, US_TERRITORY_MAP
+from opensextant.gazetteer import get_default_db, DataSource, PlaceHeuristics, US_TERRITORY_MAP, add_location
 from opensextant.utility import get_csv_reader, get_list
 
 HEADER = get_list(
@@ -147,7 +147,7 @@ class USGSGazetteer(DataSource):
                 geo["FIPS_cc"] = "US"
                 geo["adm1"] = row["STATE_ALPHA"]
                 geo["adm2"] = row["COUNTY_NUMERIC"]
-                self.add_location(geo, row["PRIM_LAT_DEC"], row["PRIM_LONG_DEC"])
+                add_location(geo, row["PRIM_LAT_DEC"], row["PRIM_LONG_DEC"])
                 adjust_country_territory(geo)
                 adjust_feature(geo)
                 self.estimator.estimate_bias(geo)

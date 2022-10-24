@@ -132,10 +132,16 @@ and automate.
 ```shell
 
     # cd ./solr
-
     ant gaz-resources
     ant gaz-stopwords
+
+    # US Gov sites ~ USGS and NGA.mil websites are not consistently 
+    # secured with an obvious CA chain.  `curl -k` is used to insecurely download some data
+    ./build-get-sources.sh
+    
+    # Other data sources, and unpacking all of it.
     ant gaz-sources
+    ant postal-sources
     
 ```
 
@@ -157,7 +163,7 @@ This SQLite master curation process is central to the Xponents gazetteer/geotagg
 All of the metadata and source data is channeled through this and optimized. 
 The raw SQLite master is approaching 10 GB or more containing about 45 million place names.
 By contrast the resulting Solr index is about 3.0 GB with 25 million placenames. 
-The optimization steps are essential to managing size and comprehensive coverage.
+The optimization steps are essential to managing size balanced with comprehensive coverage.
 
 ```shell script
 
