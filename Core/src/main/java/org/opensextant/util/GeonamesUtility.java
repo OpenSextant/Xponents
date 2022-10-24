@@ -550,7 +550,11 @@ public class GeonamesUtility {
         }
 
         // Less standard country/territory codes:
-        //
+        // Kosovo
+        isoCountries.put("XKS", isoCountries.get("XKX"));
+        // Jan Mayen / Svalbaard
+        isoCountries.put("XJM", isoCountries.get("SJM"));
+        isoCountries.put("XSV", isoCountries.get("SJM"));
         // Gaza Strip, GAZ is occassionally used.
         isoCountries.put("GAZ", isoCountries.get("PS"));
         // East Timor-Leste;

@@ -431,6 +431,18 @@ def load_countries(csvpath=None):
 
     global __loaded
     __loaded = len(countries_by_iso) > 1
+
+    if __loaded:
+        if "XKX" in countries_by_iso:
+            countries_by_iso["XKS"] = countries_by_iso.get("XKX")
+        if "SJM" in countries_by_iso:
+            countries_by_iso["XSV"] = countries_by_iso.get("SJM")
+            countries_by_iso["XJM"] = countries_by_iso.get("SJM")
+        if "PSE" in countries_by_iso:
+            countries_by_iso["GAZ"] = countries_by_iso.get("PSE")
+        if "TLS" in countries_by_iso:
+            countries_by_iso["TMP"] = countries_by_iso.get("TLS")
+
     return countries
 
 
