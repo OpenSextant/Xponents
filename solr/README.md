@@ -137,7 +137,7 @@ and automate.
 
     # US Gov sites ~ USGS and NGA.mil websites are not consistently 
     # secured with an obvious CA chain.  `curl -k` is used to insecurely download some data
-    ./build-get-sources.sh
+    ./build-1-get-sources.sh
     
     # Other data sources, and unpacking all of it.
     ant gaz-sources
@@ -168,10 +168,10 @@ The optimization steps are essential to managing size balanced with comprehensiv
 ```shell script
 
   cd Xponents/solr
-  ./build-sqlite-master.sh 
+  ./build-2-sqlite-master.sh 
   
   # A simple test attempts to pull in only 100,000 rows of data from each source to see how things work.
-  # ./build-sqlite-master.sh test   
+  # ./build-2-sqlite-master.sh test   
 
 ```
 
@@ -183,7 +183,7 @@ completes successfully above.
 
 ```shell
 
-  ./build-sqlite-postal.sh 
+  ./build-3-sqlite-postal.sh 
   
 ```
 
