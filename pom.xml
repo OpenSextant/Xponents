@@ -120,6 +120,18 @@
       <artifactId>commons-text</artifactId>
       <version>1.10.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.woodstox</groupId>
+      <artifactId>stax2-api</artifactId>
+      <version>4.2.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>3.21.7</version>
+      <scope>runtime</scope>
+    </dependency>
     <!-- UTILITY AND LOGGING -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
