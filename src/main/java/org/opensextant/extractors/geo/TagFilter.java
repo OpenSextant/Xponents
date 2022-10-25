@@ -40,14 +40,11 @@ public class TagFilter extends MatchFilter {
     boolean filter_stopwords = true;
     boolean filter_on_case = true;
     Set<String> nonPlaceStopTerms = null;
-    Logger log = LoggerFactory.getLogger(TagFilter.class);
 
     /*
      * Select languages for experimentation.
      */
     private final Map<String, Set<Object>> langStopFilters = new HashMap<>();
-
-    // private Set<String> generalLangId = new HashSet<>();
 
     /**
      * NOTE: This expects the files are all available. This fails if resource
@@ -74,42 +71,11 @@ public class TagFilter extends MatchFilter {
          * StopFilterFactory is needed to load snowball filters.
          */
         String[] langSet = {
-                "ja", "th", "tr", "id", "ar", "fa", "ur", "ru", "it", "pt", "de", "nl", "es", "en", "tl", "ko", "vi"};
+                "ja", "ko", "zh",
+                "ar", "fa", "ur",
+                "th", "tr", "id", "tl", "vi",
+                "ru", "it", "pt", "de", "nl", "es", "en" };
         loadLanguageStopwords(langSet);
-    }
-
-    private final boolean loadCustomStops = false;
-
-    private void loadCustomStopwords() throws IOException {
-        if (!loadCustomStops) {
-            return;
-        }
-        /*
-         * More optional lists.
-         */
-        // KOREAN
-        String url = "/lang/carrot2-stopwords.ko";
-        String lg = "ko";
-        URL obj = URL.class.getResource(url);
-        if (obj != null) {
-            loadStopSet(obj, lg);
-        }
-        // CHINESE
-        url = "/lang/carrot2-stopwords.zh";
-        lg = "zh";
-        obj = URL.class.getResource(url);
-        if (obj != null) {
-            loadStopSet(obj, lg);
-        }
-
-        // VIETNAMESE
-        url = "/lang/vietnamese-stopwords.txt";
-        lg = "vi";
-        obj = URL.class.getResource(url);
-        if (obj != null) {
-            loadStopSet(obj, lg);
-        }
-
     }
 
     /**
@@ -123,9 +89,6 @@ public class TagFilter extends MatchFilter {
         for (String lg : langids) {
             langStopFilters.put(lg, LuceneStopwords.getStopwords(new ClasspathResourceLoader(TagFilter.class), lg));
         }
-
-        // Temporarily discontinued:
-        loadCustomStopwords();
     }
 
     private void loadStopSet(URL url, String langid) throws IOException {
@@ -189,8 +152,7 @@ public class TagFilter extends MatchFilter {
      */
     public boolean filterOut(PlaceCandidate t, String langId, boolean docIsUpper, boolean docIsLower) {
         /*
-         * Consider no given language ID -- only short, non-ASCII terms should be
-         * filtered out
+         * Consider no given language ID -- only short, non-ASCII terms should be filtered out
          * against all stop filters; Otherwise there is some performance issues.
          */
         if (langId == null) {
@@ -202,8 +164,7 @@ public class TagFilter extends MatchFilter {
         }
         /*
          * Consider language specific stop filters.
-         * NOTE: LangID should not be 'CJK' or group. langStopFilters keys stop terms by
-         * LangID
+         * NOTE: LangID should not be 'CJK' or group. langStopFilters keys stop terms by LangID
          */
         if (langStopFilters.containsKey(langId)) {
             Set<Object> terms = langStopFilters.get(langId);
@@ -342,5 +303,4 @@ public class TagFilter extends MatchFilter {
             throw new ConfigException("Could not load exclusions.", err);
         }
     }
-
 }
