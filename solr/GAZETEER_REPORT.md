@@ -6,11 +6,43 @@ will work on subset databases or partial master gazetteers.
 
 * TODO: automate DB validation by source and country and generate this report.
 * CAVEAT: The SQLite DB is available if you build the `./solr` gazetteer project data sources
-  Or know someone who has and is kind enough to share.
-* FINALLY: Please note that this is the debut of the pure Python Gazetteer ETL pipeline.  The Python API supporting this is an initial release, but well tested.  This documentation will eventually migrate to a formal Python API document.  Please scan the entire page so you understand the API functions and limitations.  Also, please file a git issue here if you would like to see features or find bugs.
+  Or know someone who has and is kind enough to share.  The master gazetteer SQLite (or other 
+  intermediary databases) are not shared -- You can build it, though.
+* FINALLY: Please note that this is the debut of the pure Python Gazetteer ETL pipeline.  
+  The Python API supporting this is an initial release, but well tested.  This documentation 
+  will eventually migrate to a formal Python API document.  Please scan the entire page so 
+  you understand the API functions and limitations.  Also, please file a git issue here if 
+  you would like to see features or find bugs.
 
 Thank you,
-  The Managment.
+  The Management.
+
+
+## Sources
+
+**USA NGA Geographic Names Database**: is cited as the following as accessed from https://geonames.nga.mil/geonames/GNSHome/index.html
+
+```
+Toponymic information is based on the Geographic Names Database, containing
+official standard names approved by the United States Board on Geographic Names and maintained by the
+National Geospatial-Intelligence Agency. More information is available at the Resources link at http://www.nga.mil.
+The National Geospatial-Intelligence Agency name, initials, and seal are protected by 10 United States Code § Section 425.
+```
+
+**Geonames.org**: Content referenced simply as "Geonames" or "Geonames.org" refers to the content from https://www.geonames.org/,
+which provides this licensing message:
+
+```
+This work is licensed under a Creative Commons Attribution 4.0 License,
+see https://creativecommons.org/licenses/by/4.0/
+The Data is provided "as is" without warranty or any representation of accuracy, timeliness or completeness.
+```
+
+**Natural Earth Data**:  Opensextant Gazetteer contains data "Made with Natural Earth",
+![NE Logo](https://www.naturalearthdata.com/wp-content/uploads/2009/08/NEV-Logo-color.png)
+[Natural Earth Terms of Use](https://www.naturalearthdata.com/about/terms-of-use/)
+
+
 
 
 ## Library Details
@@ -54,43 +86,43 @@ A more detailed schema is listed in [Source_Schema_Notes](./etc/gazetteer/Source
 
 ```sqlite
 
-// Names & Location counts for "Province-level boundaries (Level-1 aka 'ADM1')"
-
-/* LIST */ 
-  select * from placenames where feat_class = 'A' and feat_code = 'ADM1' 
-    and name_group = '' and name_type = 'N';
-
-/* COUNT NAMES */
-  select count(1) from placenames where feat_class = 'A' and feat_code = 'ADM1'  
-    and name_group = '' and name_type = 'N' ;
-  // COUNT: 4981
-
-/* COUNT LOCATIONS */
-  select count(distinct(place_id)) from placenames where feat_class = 'A' and feat_code = 'ADM1' 
-    and name_group = '' and name_type = 'N' ;
-  // COUNT: 143
-
-
-// Names & Location counts for "Populated Places" ~ cities, towns, villages, etc.
-
-/* LIST */
-select * from placenames where feat_class = 'P' and feat_code in ('PPL', 'PPLC') and name_group = '' and name_type = 'N' ;
-
-/* COUNT NAMES */
-select count(1) from placenames where feat_class = 'P' and feat_code in ('PPL', 'PPLC') 
-  and name_group = '' and name_type = 'N';
-  // COUNT: 292559
-
-
-/* DISTINCT LOCATION COUNT (by place_id): */
-select count(distinct(place_id)) from placenames where feat_class = 'P' and feat_code in ('PPL', 'PPLC') 
-  and name_group = '' and name_type = 'N' ;
-  // COUNT: 227782
-
-// POSTAL CODES for US+ coverage.  NOTE:  Use the "postal_gazetteer.sqlite"
-select count(1) from placenames where feat_class = 'A' and feat_code = 'POST';
-  // COUNT: 41676
-
+    // Names & Location counts for "Province-level boundaries (Level-1 aka 'ADM1')"
+  
+    /* LIST */ 
+    select * from placenames where feat_class = 'A' and feat_code = 'ADM1' 
+      and name_group = '' and name_type = 'N';
+  
+    /* COUNT NAMES */
+    select count(1) from placenames where feat_class = 'A' and feat_code = 'ADM1'  
+      and name_group = '' and name_type = 'N' ;
+    // COUNT: 4981
+  
+    /* COUNT LOCATIONS */
+    select count(distinct(place_id)) from placenames where feat_class = 'A' and feat_code = 'ADM1' 
+      and name_group = '' and name_type = 'N' ;
+    // COUNT: 143
+  
+  
+    // Names & Location counts for "Populated Places" ~ cities, towns, villages, etc.
+  
+    /* LIST */
+    select * from placenames where feat_class = 'P' and feat_code in ('PPL', 'PPLC') and name_group = '' and name_type = 'N' ;
+  
+    /* COUNT NAMES */
+    select count(1) from placenames where feat_class = 'P' and feat_code in ('PPL', 'PPLC') 
+      and name_group = '' and name_type = 'N';
+    // COUNT: 292559
+    
+    
+    /* DISTINCT LOCATION COUNT (by place_id): */
+    select count(distinct(place_id)) from placenames where feat_class = 'P' and feat_code in ('PPL', 'PPLC') 
+      and name_group = '' and name_type = 'N' ;
+    // COUNT: 227782
+    
+    // POSTAL CODES for US+ coverage.  NOTE:  Use the "postal_gazetteer.sqlite"
+    select count(1) from placenames where feat_class = 'A' and feat_code = 'POST';
+    // COUNT: 41676
+  
 ```
 
 ### General Data Model Reference
@@ -167,6 +199,7 @@ lat, lon = (44.321, -89.765)
 for dist, geo in db.list_places_at(lat=lat, lon=lon):
     print("Distance", dist, "Place:", geo)
 
+#-------------------------
 ## Results are:
 
 DISTANCE in meters from the given lat, lon
@@ -182,12 +215,16 @@ Distance 3674 Place: Columbia School (historical), US @(44.31413,-89.81012)
 Distance 3976 Place: Bloody Run, US @(44.3433,-89.80401)
 Distance 4123 Place: Fourmile Creek, US @(44.3474659,-89.801235)
 Distance 4124 Place: Four Mile Creek, US @(44.34747,-89.80124)
+#-------------------------
 
-
+# Python
+#-------------------------
 # I think you get the picture.
 lat, lon = (55.321, 27.765)
 for dist, geo in db.list_places_at(lat=lat, lon=lon):
     print("Distance", dist, "Place:", geo)
+
+#-------------------------
 ... 
 Distance 371 Place: Luchayka, BY @(55.323,27.7697)
 Distance 904 Place: Заборцы, BY @(55.3135,27.7705)
