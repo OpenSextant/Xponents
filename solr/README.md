@@ -5,7 +5,7 @@ as country code, location, feature codings.   In Xponents, Solr 7+ is used to in
 the large lexicons such as gazetteer and taxonomies.
 
 Related:
-- [Gazetteer Report](REPORT.md) lists some underlying raw statistics and SQL techniques for working with the 
+- [Gazetteer Report](GAZETEER_REPORT.md) lists some underlying raw statistics and SQL techniques for working with the 
   master gazetteer.  For example, Using SQLite to list all possible names, distinct location counts in the gazetteer
   by feature class, or how to use the `opensextant.gazetteer` API to query such things.
 
