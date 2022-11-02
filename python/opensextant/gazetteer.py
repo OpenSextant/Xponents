@@ -777,7 +777,7 @@ class DB:
         result = [(dist, found[dist]) for dist in sorted(found.keys())]
         return result[0:limit]
 
-    def list_admin_names(self, sources=['U', 'N', 'G']) -> set:
+    def list_admin_names(self, sources=['U', 'N', 'G'], cc=None) -> set:
         """
         Lists all admin level1 names.
         :param sources: list of source IDs defaulting to those for USGS, NGA, Geonames.org
@@ -786,6 +786,9 @@ class DB:
         source_criteria = ','.join([f"'{s}'" for s in sources])
         sql = f"""select distinct(name) AS NAME from placenames where  feat_class = 'A' and feat_code = 'ADM1' 
               and source in ({source_criteria}) and name_group='' and name_type='N'"""
+
+        if cc:
+            sql += f" and cc='{cc}'"
         names = set([])
         for nm in self.conn.execute(sql):
             # To list names, we normalize lowercase and remove dashes.
