@@ -2241,6 +2241,7 @@ prop,noun
 protection,noun
 provost,noun
 puke,noun
+pulp,noun
 pun,noun
 pup,noun
 purification,noun
@@ -2302,7 +2303,7 @@ revival,noun
 revolution,noun
 reward,noun
 ribbon,noun
-rice,noun
+rice,food
 ride,noun
 rider,noun
 rifle,noun
@@ -4979,6 +4980,7 @@ cola,well-known.concept
 energy,well-known.concept
 foia,well-known.concept
 geometry,well-known.concept
+haram,well-known.concept
 martini,well-known.concept
 society,well-known.concept
 cyst,well-known.disease
