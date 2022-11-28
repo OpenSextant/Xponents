@@ -296,6 +296,7 @@ class Place(Coordinate):
         self.feature_code = None
         self.adm1 = None
         self.adm1_name = None
+        self.adm1_iso = None # Alternate ISO-based ADM1 code used by NGA and others.
         self.adm2 = None
         self.adm2_name = None
         self.source = None
@@ -483,6 +484,7 @@ def load_us_provinces():
             adm1.feature_class = "A"
             adm1.feature_code = "ADM1"
             adm1.name_type = "N"
+            adm1.geohash = geohash_encode(adm1.lat, adm1.lon, precision=6)
 
             adm1.country_code = cc
             adm1.adm1 = adm1_code

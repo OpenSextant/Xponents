@@ -241,6 +241,39 @@ def has_digit(text):
     return False
 
 
+def measure_case(t):
+    """
+
+    :param t: text
+    :return:  tuple:  counts of UPPER, lower, Alpha, Non-Alpha, WS
+    """
+    if not t:
+        return 0, 0, 0, 0, 0
+
+    u, l, ch, nonch, ws = 0, 0, 0, 0, 0
+    for c in t:
+        if c.isalpha():
+            ch += 1
+            if c.isupper():
+                u += 1
+            elif c.islower():
+                l += 1
+        elif c.isspace():
+            ws += 1
+        else:
+            nonch += 1
+
+    # you should verify
+    #   TOTAL chars = ch + nonch + ws
+    #   Alpha chars, ch = u + l
+    return u, l, ch, nonch, ws
+
+
+def is_upper_text(t, threadshold=0.90):
+    u, l, ch, nonch, ws = measure_case(t)
+    return u / ch > threadshold
+
+
 def is_value(v):
     """
     Working more with pandas or sci libraries -- you run into various types of default "Null" values.
