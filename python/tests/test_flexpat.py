@@ -81,6 +81,13 @@ print("TEST RESULTS")
 for result in test_results:
     print(repr(result))
 
+patternsApp.pattern_manager.disable_all()
+test_results = patternsApp.default_tests()
+
+patternsApp.pattern_manager.set_enabled("PHONE", True)
+
+patternsApp.pattern_manager.enable_all()
+
 print("Generic Test on nothing trying to run every pattern, default is 'all'")
 real_results = patternsApp.extract(".... text blob 1-800-123-4567...")
 print("TEST RESULTS")

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase, main
-from opensextant.utility import fast_replace, levenshtein_distance, has_cjk, has_arabic, trivial_bias, replace_diacritics, is_code
+from opensextant.utility import fast_replace, levenshtein_distance, has_cjk, has_arabic, trivial_bias, \
+    replace_diacritics, is_code, measure_case, is_upper_text
 
 
 class TestText(TestCase):
@@ -21,6 +22,12 @@ class TestText(TestCase):
         cmp1 = fast_replace("9.9.9.3.1.3-321", ".")
         cmp2 = fast_replace("9.9.9.3.1.3-321", ".", sub='')
         assert (cmp == cmp1 == cmp2)
+
+    def test_case(self):
+        stats = measure_case("该比赛上，太平洋联盟队")
+        self.assertFalse(is_upper_text("该比赛上，太平洋联盟队"))
+        self.assertFalse(is_upper_text("Happy THE CLOWN"))
+        self.assertTrue(is_upper_text("HAPPY THE CLOWN !"))
 
     def test_editdist(self):
         print("Edit Distances")

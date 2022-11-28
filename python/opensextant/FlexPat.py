@@ -327,12 +327,25 @@ class RegexPatternManager:
         return repat is not None
 
     def enable_all(self):
-        for pat in self.patterns:
+        for k in self.patterns:
+            pat = self.patterns[k]
             pat.enabled = True
 
     def disable_all(self):
-        for pat in self.patterns:
+        for k in self.patterns:
+            pat = self.patterns[k]
             pat.enabled = False
+
+    def set_enabled(self, some:str, flag:bool):
+        """
+
+        :param some: prefix of a family or family-variant
+        :return:
+        """
+        for k in self.patterns:
+            pat = self.patterns[k]
+            if pat.id.startswith(some):
+                pat.enabled = flag
 
     def _initialize(self):
         """
@@ -557,6 +570,8 @@ class PatternExtractor(Extractor):
                 pat = self.pattern_manager.patterns[pat_id]
                 if not pat.family == fam:
                     continue
+                if not pat.enabled:
+                    continue
 
                 for m in pat.regex.finditer(text):
                     digested_groups = _digest_sub_groups(m, pat.regex_groups)
@@ -640,3 +655,19 @@ class PatternExtractor(Extractor):
                                  "PASS": success})
 
         return test_results
+
+
+def print_test(result:dict):
+    """ print the structure from default_tests()
+    """
+    if not result: 
+        return
+
+    tid = result["TEST"]
+    txt = result["TEXT"]
+    res = result["PASS"]
+    matches = "<None>"
+    if result["MATCHES"]:
+        arr = result["MATCHES"]
+        matches = ";".join([match.text for match in arr])
+    print(f"TEST: {tid}, TEXT: {txt} PASS:{res}\tMATCHES: {matches}")
