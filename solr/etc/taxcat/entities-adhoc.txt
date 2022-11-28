@@ -328,6 +328,10 @@
 2102015	O	u	United Services Automobile Association
 2102015	O	u	USAA
 
+2102016	O	u	Homeland Security Investigations
+2102016	O	u	DHS/HSI
+2102016	O	u	HSI
+
 # More Generics
 2200001	O	u	Bank of Commerce
 2200002	O	u	bureau

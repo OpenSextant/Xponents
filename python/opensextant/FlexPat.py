@@ -34,21 +34,19 @@ def reduce_matches(matches):
                 # M < entirely after N
                 continue
 
-            if n1 == m1 and n2 == m2:
-                # Exact duplicate - Mark N as dup, as M is first in array, but only if M is a valid match.
-                if not M.filtered_out:
-                    N.is_duplicate = True
+            # One of these overlap situations may apply:
+            if M.filtered_out or N.filtered_out:
+                # Just considering if one match is filtered already the other may be valid, even if submatch, etc.
                 break
-
-            if n1 <= m1 < m2 <= n2:
+            elif n1 == m1 and n2 == m2:
+                # Exact duplicate - Mark N as dup, as M is first in array, but only if M is a valid match.
+                N.is_duplicate = True
+            elif n1 <= m1 < m2 <= n2:
                 # M is within N span
                 M.is_submatch = True
-                break
-
-            if m1 <= n1 < n2 <= m2:
+            elif m1 <= n1 < n2 <= m2:
                 # N is within M span
                 N.is_submatch = True
-                break
 
 
 def reduce_matches_dict(matches):
@@ -83,21 +81,20 @@ def reduce_matches_dict(matches):
                 # M after N
                 continue
 
+            # Check for filtered-out matches not done in this version.
+            #
             if n1 == m1 and n2 == m2:
                 N['submatch'] = IS_DUPLICATE
-                break
 
-            if n1 <= m1 < m2 <= n2:
+            elif n1 <= m1 < m2 <= n2:
                 M['submatch'] = IS_SUBMATCH
                 # Determined state of M.
                 # break this internal loop
-                break
 
-            if m1 <= n1 < n2 <= m2:
+            elif m1 <= n1 < n2 <= m2:
                 N['submatch'] = IS_SUBMATCH
                 # Determined state of N,
                 # But possibly more N contained within M. Do not break yet.
-                break
     return
 
 
