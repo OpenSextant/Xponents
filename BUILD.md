@@ -8,7 +8,11 @@ Then you can begin working with the extractor SDK (opensextant-xponents)
 1. Setup project. 
 
 ```
+  # Set up Core API with independent reference data
   ./setup.sh
+
+  # Set the main SDK API with the Gazetteer data unique to this project:
+  cd solr && ./build.sh meta
 ```
 
 
@@ -18,7 +22,13 @@ Then you can begin working with the extractor SDK (opensextant-xponents)
   (cd ./Core && mvn install)
 ```
 
-3. Build SDK:
+3. Build a full Gazetteer from scratch.
+
+`./solr/README.md` captures all the mechanics of building the Gazettter from checkout.
+The SDK is dependent on having one of the folders `./solr` source or `./xponents-solr` built.
+Since you are reading thie BUILD documentation you'll want to try building the `./solr` folder from source.
+
+4. Build SDK:
 
 There are some outstanding build tasks related to gazetteer metadata assembly that need automation.
 But in general, you would make use of the `./solr/build.sh` script and consult the README there.
@@ -29,10 +39,6 @@ But in general, you would make use of the `./solr/build.sh` script and consult t
 
 Additionally, to build in full, XText project needs to be updated if you want to make the distribution 
 to include all the demos and Examples (in ./Examples).  For that we'd use `ant build build-examples`
-
-4. Build a full Gazetteer from scratch.
-
-`./solr/README.md` captures all the mechanics of building the Gazettter from checkout.
 
 5. Distribution and Packaging: `ant dist`
 
