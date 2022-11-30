@@ -35,10 +35,15 @@ But in general, you would make use of the `./solr/build.sh` script and consult t
 
 ```
   mvn install  
+
+
+  # To try out demos, tests, etc.  This step invokes `mvn install` on the desired projects.
+  ant build build-examples
 ```
 
-Additionally, to build in full, XText project needs to be updated if you want to make the distribution 
-to include all the demos and Examples (in ./Examples).  For that we'd use `ant build build-examples`
+`Examples` sub-project makes use of Core, the main SDK, and the OpenSextant XText project. 
+XText libraries are  published in Maven Central.
+
 
 5. Distribution and Packaging: `ant dist`
 
