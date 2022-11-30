@@ -15,10 +15,16 @@ ant setup
 
 # Python setup.
 msg "Build Python libraries"
-(cd ./python  && rm ./dist/opensextant* &&  python3 ./setup.py sdist)
+
+unset PYTHONPATH
+if [ -d "./python/dist" ]; then
+  rm -f ./python/dist/*
+fi
+(cd ./python  &&  python3 ./setup.py sdist)
 
 msg "Install Python resources"
-# Install built lib with dependencies to ./python
+# Install built lib with dependencies to ./python. First install here are 
+# libraries used by Solr/ETL scripting:
 pip3 install -U --target ./piplib lxml bs4 arrow requests pyshp
 pip3 install -U --target ./piplib ./python/dist/opensextant-1.4*.tar.gz
 

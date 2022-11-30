@@ -6,8 +6,6 @@ fi
 SOLR_PORT=${SOLR_PORT:-7000}
 SERVER=localhost:$SOLR_PORT
 # Proxies can be sensitive, but at least we need NOPROXY
-#unset http_proxy
-#unset https_proxy
 export noproxy=localhost,127.0.0.1
 export NO_PROXY=$noproxy
 
@@ -110,7 +108,6 @@ do_taxcat=1
 do_gazetteer=1
 do_postal=0
 do_meta=0
-proxy='' 
 while [ "$1" != "" ]; do
  case $1 in 
   'data')
@@ -127,10 +124,6 @@ while [ "$1" != "" ]; do
      ;;
   'clean')
      do_clean=1
-     shift
-     ;;
-  'proxy')
-     proxy='proxy'
      shift
      ;;
   'taxcat')
@@ -161,7 +154,7 @@ do_wfb=0
 
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
-  ant $proxy gaz-resources
+  ant gaz-resources
 
   if [ $do_wfb -eq 1 ]; then 
     echo "Harvesting World Factbook 'factoids'"
@@ -175,19 +168,22 @@ fi
 if [ $do_meta -eq 1 ] ; then 
   python3 ./script/assemble_person_filter.py
   # temporary Java/TLS issues with getting stopwords from https://github....; Run gaz-stopwords separately.
-  ant $proxy gaz-stopwords
-  ant $proxy gaz-meta
+  ant gaz-stopwords
+  ant gaz-meta
+  echo "Done with meta"
+  exit;
 fi
 
 sleep 2 
 
+if [ $do_clean -eq 1 ]; then 
+  ant clean init
+fi
+
+
 if [ $do_start -eq 1 ]; then 
   # Stop first.
   ./mysolr.sh stop $SOLR_PORT
-
-  if [ $do_clean -eq 1 ]; then 
-    ant $proxy clean init
-  fi
 
   echo "Starting Solr $SERVER"
   echo "Wait for Solr 7.x to load"
@@ -196,7 +192,7 @@ if [ $do_start -eq 1 ]; then
 fi
 
 if [ $do_data -eq 1 ] ; then 
-  ant $proxy taxcat-jrc
+  ant taxcat-jrc
 fi
 if [ $do_taxcat -eq 1 ]; then
   index_taxcat http://$SERVER/solr/taxcat
