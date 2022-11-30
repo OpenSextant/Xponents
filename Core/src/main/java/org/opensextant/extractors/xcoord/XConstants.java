@@ -78,13 +78,16 @@ public final class XConstants {
      * patterns e.g., the ratio "4 per 4000" is not MGRS
      */
     public static final int MGRS_FILTERS_ON = 0x04;
+
+    /** Strict MGRS parsing does not allow typos or mismatched Northing/Easting and possibly other parsing problems.*/
+    public static final int MGRS_STRICT_ON = 0x08;
     /**
      * RUNTIME FLAGS: filter out coordinate matches that appear embedded in other
      * text, e.g., ABC45.44,77.1W
      */
     public static final int CONTEXT_FILTERS_ON = 0x20;
     /** RUNTIME FLAGS: filter all coordinate patterns that have filters */
-    public static final int FLAG_ALL_FILTERS = (MGRS_FILTERS_ON | DD_FILTERS_ON | DMS_FILTERS_ON | CONTEXT_FILTERS_ON);
+    public static final int FLAG_ALL_FILTERS = (MGRS_FILTERS_ON |MGRS_STRICT_ON| DD_FILTERS_ON | DMS_FILTERS_ON | CONTEXT_FILTERS_ON);
 
     /** RUNTIME FLAGS: extract context or not */
     public static final int FLAG_EXTRACT_CONTEXT = 0x10;

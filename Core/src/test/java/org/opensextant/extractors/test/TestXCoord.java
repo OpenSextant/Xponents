@@ -179,7 +179,7 @@ public class TestXCoord {
         TestXCoordReporter tester = new TestXCoordReporter(rptFile);
         int lineCount = 0;
 
-        try (BufferedReader in= new BufferedReader(new FileReader(new File(coordfile)))) {
+        try (BufferedReader in = new BufferedReader(new FileReader(new File(coordfile)))) {
             String line;
             while ((line = in.readLine()) != null) {
                 ++lineCount;
@@ -377,12 +377,12 @@ public class TestXCoord {
         boolean dd = true;
         boolean dms = true;
         boolean dm = true;
-        boolean mgrs = false;
+        boolean mgrs = true;
         boolean utm = false;
         //
         xcoord.match_MGRS(mgrs);
 
-        String[] mgrstest = {"1N\n678912340", "3GSM 2000", "1 FEB 2013", "12 GMT 18", "12 ctf 4000", "04\nSMB800999",
+        String[] mgrstest = {"37SCA211914648", "42 RPR 4611 3656", "1N\n678912340", "3GSM 2000", "1 FEB 2013", "12 GMT 18", "12 ctf 4000", "04\nSMB800999",
                 "12\nDTF\r7070", "12\rDTF\r7070", "12\n\rDTF\r7070", "7MAR13 1600", "17MAR13 1600", "17MAR13 2014",
                 "17MAY13 2014", "17JUN13 2014", "17JUL13 2014", "17SEP13 2014", "17OCT13 2014", "17NOV13 2014",
                 "17DEC13 2014", "17APR13 2014", "17AUG13 2014", "17JAN13 2014", "7JAN13 2001", "17 JAN 13 2014",
@@ -493,6 +493,7 @@ public class TestXCoord {
                 + "\n\tTestXCoord  -t FILE  -- user test with file; one test per line"
                 + "\n\tTestXCoord  -t FILE  -- user test with file"
                 + "\n\tTestXCoord  -a       -- adhoc tests, e.g., recompiling code and testing"
+                + "\n\tTestXCoord  -S       -- strict parsing OFF. Errors not thrown, though."
                 + "\n\tTestXCoord  -h       -- help. ";
         System.out.println(USAGE);
     }
@@ -507,10 +508,12 @@ public class TestXCoord {
 
         // Use default config file.
         XCoord xc = new XCoord(debug);
-        XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT | XConstants.MGRS_FILTERS_ON
+        XCoord.RUNTIME_FLAGS = XConstants.FLAG_EXTRACT_CONTEXT
+                | XConstants.MGRS_FILTERS_ON
+                | XConstants.MGRS_STRICT_ON
                 | XConstants.CONTEXT_FILTERS_ON;
 
-        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TestXCoord", args, "ahft:u:i:");
+        gnu.getopt.Getopt opts = new gnu.getopt.Getopt("TestXCoord", args, "ahfSt:u:i:");
 
         try {
             // xc.configure( "file:./etc/test_regex.cfg"); // default
@@ -553,6 +556,9 @@ public class TestXCoord {
                     case 'a':
                         System.out.println("Adhoc Tests\n=======\n");
                         test.focusedTests();
+                        break;
+                    case 'S':
+                        XCoord.setStrictMode(false);
                         break;
 
                     case 'h':
