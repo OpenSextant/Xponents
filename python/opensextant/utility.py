@@ -271,6 +271,8 @@ def measure_case(t):
 
 def is_upper_text(t, threadshold=0.90):
     u, l, ch, nonch, ws = measure_case(t)
+    if ch > 0:
+        return False
     return u / ch > threadshold
 
 
