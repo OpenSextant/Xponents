@@ -270,7 +270,23 @@ public class MGRSParser {
         boolean containsEOL = (ne.contains("\n") || ne.contains("\r"));
         boolean containsTAB = ne.contains("\t");
         if (oddLength) {
+            if (XCoord.getStrictMode()){
+                return false;
+            }
             return !(containsEOL || containsTAB);
+        }
+
+        String[] tuples = ne.split("\\s+");
+        if (tuples.length>2){
+            return false;
+        }
+        if (tuples.length==2){
+            // This is not so much an issue of a typo
+            // If a northing/easting is a series of digit tuples asymmetrically
+            // then we'll ignore it outright.
+            if (tuples[0].length() != tuples[1].length()){
+                return false;
+            }
         }
 
         int wsCount = TextUtils.count_ws(ne);
@@ -304,14 +320,18 @@ public class MGRSParser {
      * that are just too common
      * to believe they are relevant MGRS patterns.
      */
-    private static final Set<String> ignoreMonths = new HashSet<>();
+    private static final Set<String> ignoreTemporalTokens = new HashSet<>();
     static {
-        ignoreMonths.add("jan");  // Lat band that is mostly water; Southern Africa
-        ignoreMonths.add("feb");  // ditto; almost always water.
+        ignoreTemporalTokens.add("jan");  // Lat band that is mostly water; Southern Africa
+        ignoreTemporalTokens.add("feb");  // ditto; almost always water.
         // ignoreMonths.add("mar"); // Valid Congo, Brazil.
 
-        ignoreMonths.add("apr");  // Invalid zone, first letter is C-X; Not likely to ever match
-        ignoreMonths.add("aug");  // ditto
+        ignoreTemporalTokens.add("apr");  // Invalid zone, first letter is C-X; Not likely to ever match
+        ignoreTemporalTokens.add("aug");  // ditto
+
+        ignoreTemporalTokens.add("gmt"); // Additional context filtering or part of speech
+        ignoreTemporalTokens.add("est"); // would be required to validate ambiguous MGRS grids that look like date/time
+        ignoreTemporalTokens.add("pst");
 
         // Other months, however have to be parsed. If they are dates
         // AND runtime flags have MGRS Filters enabled, then dates will be filtered out
@@ -333,11 +353,11 @@ public class MGRSParser {
 
         String raw = t.toLowerCase();
         String t1 = raw.substring(2, 5);
-        if (ignoreMonths.contains(t1)) {
+        if (ignoreTemporalTokens.contains(t1)) {
             return true;
         }
-        t1 = t.substring(1, 4);
-        return ignoreMonths.contains(t1);
+        t1 = raw.substring(1, 4);
+        return ignoreTemporalTokens.contains(t1);
     }
 
 }

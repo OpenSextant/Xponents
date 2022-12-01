@@ -127,6 +127,18 @@ public class XCoord extends AbstractFlexPat {
         return results.matches;
     }
 
+    public static void setStrictMode(boolean b){
+        if (b) {
+            XCoord.RUNTIME_FLAGS |= XConstants.MGRS_STRICT_ON;
+        } else{
+            XCoord.RUNTIME_FLAGS &= ~XConstants.MGRS_STRICT_ON;
+        }
+    }
+
+    public static boolean getStrictMode(){
+        return (XCoord.RUNTIME_FLAGS & XConstants.MGRS_STRICT_ON) > 0;
+    }
+
     /**
      *
      */

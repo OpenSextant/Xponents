@@ -1,170 +1,163 @@
 <?xml version="1.0"?>
 <project name="OpenSextant-Xponents-Gazetteer">
 
-    <!-- Solr Home and Gazetteer config data sourced here: -->
-    <property file="${basedir}/../build.properties"/>
-    <property name="solr.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext"/>
-    <property name="solr.runtime.log" value="${basedir}/solr7-dist/server/logs"/>
-    <property name="maven.lib" value="${user.home}/.m2/repository"/>
-    <property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip"/>
-    <property name="jrc.data" value="${basedir}/etc/taxcat/data"/>
-    <property name="gaz.data" value="${basedir}/etc/gazetteer/"/>
-    <property name="gaz.conf" value="${solr.home}/gazetteer/conf"/>
-    <property name="gaz.tmp" value="${basedir}/tmp"/>
-    <property name="resources.lib" value="${basedir}/../src/main/resources"/>
-    <property name="xponents.lib" value="${basedir}/../lib"/>
-    <property name="log4j.v" value="2.17.2"/>
+  <!-- Solr Home and Gazetteer config data sourced here: -->
+  <property file="${basedir}/../build.properties"/>
+  <property name="solr.runtime.lib" value="${basedir}/solr7-dist/server/lib/ext"/>
+  <property name="solr.runtime.log" value="${basedir}/solr7-dist/server/logs"/>
+  <property name="maven.lib" value="${user.home}/.m2/repository"/>
+  <property name="jrc.url" value="http://optima.jrc.it/data/entities.gzip"/>
+  <property name="jrc.data" value="${basedir}/etc/taxcat/data"/>
+  <property name="gaz.data" value="${basedir}/etc/gazetteer/"/>
+  <property name="gaz.conf" value="${solr.home}/gazetteer/conf"/>
+  <property name="gaz.tmp" value="${basedir}/tmp"/>
+  <property name="resources.lib" value="${basedir}/../src/main/resources"/>
+  <property name="xponents.lib" value="${basedir}/../lib"/>
+  <property name="log4j.v" value="2.19.0"/>
 
-    <target name="proxy">
-        <property name="proxy.port" value="80"/>
-        <property name="proxy.user" value=""/>
-        <property name="proxy.pass" value=""/>
-        <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"/>
-    </target>
+  <target name="setup">
+    <mkdir dir="${solr.home}/lib"/>
+  </target>
 
-    <target name="setup">
-        <mkdir dir="${solr.home}/lib"/>
-    </target>
+  <target name="copy-libs">
+    <!-- DELETE v2.11 or earlier Log4J libraries and replace with valid version that works-->
+    <delete file="${solr.runtime.lib}/log4j-api-2.11.0.jar"/>
+    <delete file="${solr.runtime.lib}/log4j-core-2.11.0.jar"/>
+    <delete file="${solr.runtime.lib}/log4j-slf4j-impl-2.11.0.jar"/>
+    <delete file="${solr.runtime.lib}/log4j-1.2-api-2.11.0.jar"/>
 
-    <target name="copy-libs">
-        <!-- DELETE v2.11 or earlier Log4J libraries and replace with valid version that works-->
-        <delete file="${solr.runtime.lib}/log4j-api-2.11.0.jar"/>
-        <delete file="${solr.runtime.lib}/log4j-core-2.11.0.jar"/>
-        <delete file="${solr.runtime.lib}/log4j-slf4j-impl-2.11.0.jar"/>
-        <delete file="${solr.runtime.lib}/log4j-1.2-api-2.11.0.jar"/>
+    <!-- log4j implementation is not a dependency, so we have to get it raw, and other Solr Spatial dependencies -->
+    <get dest="${solr.runtime.lib}">
+      <url url="https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j-impl/${log4j.v}/log4j-slf4j-impl-${log4j.v}.jar"/>
+      <!-- TODO: for now manually remove other versions -->
+      <url url="https://repo1.maven.org/maven2/org/locationtech/jts/jts-core/1.19.0/jts-core-1.19.0.jar"/>
+      <url url="https://repo1.maven.org/maven2/org/locationtech/spatial4j/spatial4j/0.8/spatial4j-0.8.jar"/>
+    </get>
 
-        <!-- log4j implementation is not a dependency, so we have to get it raw, and other Solr Spatial dependencies -->
-        <get dest="${solr.runtime.lib}">
-            <url url="https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j-impl/${log4j.v}/log4j-slf4j-impl-${log4j.v}.jar"/>
-            <!-- TODO: for now manually remove other versions -->
-            <url url="https://repo1.maven.org/maven2/org/locationtech/jts/jts-core/1.19.0/jts-core-1.19.0.jar"/>
-            <url url="https://repo1.maven.org/maven2/org/locationtech/spatial4j/spatial4j/0.8/spatial4j-0.8.jar"/>
-        </get>
+    <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-api-${log4j.v}.jar"/>
+    <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-core-${log4j.v}.jar"/>
+    <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-1.2-api-${log4j.v}.jar"/>
+  </target>
 
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-api-${log4j.v}.jar"/>
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-core-${log4j.v}.jar"/>
-        <copy todir="${solr.runtime.lib}" file="${xponents.lib}/log4j-1.2-api-${log4j.v}.jar"/>
-    </target>
+  <target name="gaz-resources">
+    <mkdir dir="${gaz.data}/filters/census"/>
+    <get dest="${gaz.data}/filters/census">
+      <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.male.first"/>
+      <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.female.first"/>
+      <url url="https://www2.census.gov/topics/genealogy/2010surnames/names.zip"/>
+    </get>
+    <unzip dest="${gaz.data}/filters/census" src="${gaz.data}/filters/census/names.zip"/>
+    <delete file="${gaz.data}/filters/census/names.zip"/>
+    <delete file="${gaz.data}/filters/census/Names_2010Census.xlsx"/>
+  </target>
 
-    <target name="gaz-resources">
-        <mkdir dir="${gaz.data}/filters/census"/>
-        <get dest="${gaz.data}/filters/census">
-            <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.male.first"/>
-            <url url="http://www2.census.gov/topics/genealogy/1990surnames/dist.female.first"/>
-            <url url="https://www2.census.gov/topics/genealogy/2010surnames/names.zip"/>
-        </get>
-        <unzip dest="${gaz.data}/filters/census" src="${gaz.data}/filters/census/names.zip"/>
-        <delete file="${gaz.data}/filters/census/names.zip"/>
-        <delete file="${gaz.data}/filters/census/Names_2010Census.xlsx"/>
-    </target>
+  <target name="postal-sources">
+    <mkdir dir="${gaz.tmp}/postal"/>
+    <!-- Postal codes -->
+    <get dest="${gaz.tmp}/postal-allCountries.zip" skipexisting="true">
+      <url url="https://download.geonames.org/export/zip/allCountries.zip"/>
+    </get>
+    <get dest="${gaz.tmp}/postal-GB.zip" skipexisting="true">
+      <url url="https://download.geonames.org/export/zip/GB_full.csv.zip"/>
+    </get>
+    <get dest="${gaz.tmp}/postal-NL.zip" skipexisting="true">
+      <url url="https://download.geonames.org/export/zip/NL_full.csv.zip"/>
+    </get>
+    <get dest="${gaz.tmp}/postal-CA.zip" skipexisting="true">
+      <url url="https://download.geonames.org/export/zip/CA_full.csv.zip"/>
+    </get>
+    <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-allCountries.zip"/>
+    <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-CA.zip"/>
+    <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-GB.zip"/>
+    <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-NL.zip"/>
+  </target>
 
-    <target name="postal-sources">
-        <mkdir dir="${gaz.tmp}/postal"/>
-        <!-- Postal codes -->
-        <get dest="${gaz.tmp}/postal-allCountries.zip" skipexisting="true">
-            <url url="https://download.geonames.org/export/zip/allCountries.zip"/>
-        </get>
-        <get dest="${gaz.tmp}/postal-GB.zip"  skipexisting="true">
-            <url url="https://download.geonames.org/export/zip/GB_full.csv.zip"/>
-        </get>
-        <get dest="${gaz.tmp}/postal-NL.zip"  skipexisting="true">
-            <url url="https://download.geonames.org/export/zip/NL_full.csv.zip"/>
-        </get>
-        <get dest="${gaz.tmp}/postal-CA.zip"  skipexisting="true">
-            <url url="https://download.geonames.org/export/zip/CA_full.csv.zip"/>
-        </get>
-        <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-allCountries.zip"/>
-        <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-CA.zip"/>
-        <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-GB.zip"/>
-        <unzip dest="${gaz.tmp}/postal" src="${gaz.tmp}/postal-NL.zip"/>
-    </target>
+  <!-- Get Gazetteer data in addition to OpenSextant source -->
+  <target name="gaz-sources">
+    <mkdir dir="${gaz.tmp}"/>
 
-    <!-- Get Gazetteer data in addition to OpenSextant source -->
-    <target name="gaz-sources">
-        <mkdir dir="${gaz.tmp}"/>
+    <get dest="${gaz.tmp}" verbose="true" usetimestamp="true" skipexisting="true">
+      <url url="https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_1_states_provinces.zip"/>
+      <url url="http://download.geonames.org/export/dump/cities15000.zip"/>
+      <url url="https://download.geonames.org/export/dump/allCountries.zip"/>
 
-        <get dest="${gaz.tmp}" verbose="true" usetimestamp="true" skipexisting="true" >
-            <url url="https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_1_states_provinces.zip"/>
-            <url url="http://download.geonames.org/export/dump/cities15000.zip" />
-            <url url="https://download.geonames.org/export/dump/allCountries.zip"/>
+      <!-- <url url="https://geonames.nga.mil/geonames/GNSData/fc_files/Whole_World.7z" /> -->
+      <!-- <input addproperty="nga_release_date">NGA gazetteer date? />  -->
+      <!-- <url url="https://geonames.nga.mil/gns/html/cntyfile/geonames_${nga_release_date}.zip"/>  Overtaken by Whole_World.7z -->
+      <!-- <url url="https://geonames.usgs.gov/docs/stategaz/NationalFile.zip"/> -->
+      <!-- <url url="https://geonames.usgs.gov/docs/stategaz/GOVT_UNITS.zip"/> 3500 county names, no locations -->
+    </get>
 
-            <!-- <url url="https://geonames.nga.mil/geonames/GNSData/fc_files/Whole_World.7z" /> -->
-            <!-- <input addproperty="nga_release_date">NGA gazetteer date? />  -->
-            <!-- <url url="https://geonames.nga.mil/gns/html/cntyfile/geonames_${nga_release_date}.zip"/>  Overtaken by Whole_World.7z -->
-            <!-- <url url="https://geonames.usgs.gov/docs/stategaz/NationalFile.zip"/> -->
-            <!-- <url url="https://geonames.usgs.gov/docs/stategaz/GOVT_UNITS.zip"/> 3500 county names, no locations -->
-        </get>
+    <echo>Unpack geonames ${gaz.tmp} / Whole_World.7z manually</echo>
+    <!-- Unpack it all -->
+    <unzip dest="${gaz.tmp}/ne_10m_admin_1_states_provinces" src="${gaz.tmp}/ne_10m_admin_1_states_provinces.zip"/>
+    <unzip dest="${gaz.tmp}" src="${gaz.tmp}/cities15000.zip"/>
+    <unzip dest="${gaz.tmp}" src="${gaz.tmp}/allCountries.zip"/>
 
-        <echo>Unpack geonames ${gaz.tmp} / Whole_World.7z manually</echo>
-        <!-- Unpack it all -->
-        <unzip dest="${gaz.tmp}/ne_10m_admin_1_states_provinces" src="${gaz.tmp}/ne_10m_admin_1_states_provinces.zip"/>
-        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/cities15000.zip"/>
-        <unzip dest="${gaz.tmp}" src="${gaz.tmp}/allCountries.zip"/>
+    <!--    <unzip dest="${gaz.tmp}" src="${gaz.tmp}/geonames_${nga_release_date}.zip" /> -->
+    <!--    <unzip dest="${gaz.tmp}" src="${gaz.tmp}/NationalFile.zip" /> -->
 
-        <!--    <unzip dest="${gaz.tmp}" src="${gaz.tmp}/geonames_${nga_release_date}.zip" /> -->
-        <!--    <unzip dest="${gaz.tmp}" src="${gaz.tmp}/NationalFile.zip" /> -->
+  </target>
 
-</target>
+  <!-- Big list of Stopwords -->
+  <target name="gaz-stopwords">
+    <get dest="${gaz.conf}/lang/stopwords_tl.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-tl/master/stopwords-tl.txt"/>
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_ur.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ur/master/stopwords-ur.txt"/>
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_ko.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ko/master/stopwords-ko.txt"/>
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_zh.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-zh/master/stopwords-zh.txt"/>
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_ja.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ja/master/stopwords-ja.txt"/>
+    </get>
+    <get dest="${gaz.conf}/lang/stopwords_vi.txt">
+      <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-vi/master/stopwords-vi.txt"/>
+    </get>
+  </target>
 
-<!-- Big list of Stopwords -->
-    <target name="gaz-stopwords">
-        <get dest="${gaz.conf}/lang/stopwords_tl.txt">
-            <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-tl/master/stopwords-tl.txt"/>
-        </get>
-        <get dest="${gaz.conf}/lang/stopwords_ur.txt">
-            <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ur/master/stopwords-ur.txt"/>
-        </get>
-        <get dest="${gaz.conf}/lang/stopwords_ko.txt">
-            <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ko/master/stopwords-ko.txt"/>
-        </get>
-        <get dest="${gaz.conf}/lang/stopwords_zh.txt">
-            <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-zh/master/stopwords-zh.txt"/>
-        </get>
-        <get dest="${gaz.conf}/lang/stopwords_ja.txt">
-            <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-ja/master/stopwords-ja.txt"/>
-        </get>
-        <get dest="${gaz.conf}/lang/stopwords_vi.txt">
-            <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-vi/master/stopwords-vi.txt"/>
-        </get>
-    </target>
+  <target name="gaz-meta">
+    <!-- depends="stopwords" -->
+    <copy todir="${resources.lib}">
+      <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**"/>
+      <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/*.*"/>
+      <fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**"/>
+      <fileset dir="${solr.home}/../etc/gazetteer" includes="additions/**"/>
+    </copy>
 
-    <target name="gaz-meta" >
-        <!-- depends="stopwords" -->
-        <copy todir="${resources.lib}">
-            <fileset dir="${solr.home}/gazetteer/conf" includes="lang/**"/>
-            <fileset dir="${solr.home}/../etc/gazetteer" includes="filters/*.*"/>
-            <fileset dir="${solr.home}/../etc/gazetteer" includes="lang/**"/>
-            <fileset dir="${solr.home}/../etc/gazetteer" includes="additions/**"/>
-        </copy>
+  </target>
 
-    </target>
+  <!-- Too bad this source data is compromised, as of 2017.  Should be a 5 MB gzip file with 600K entries  -->
+  <target name="taxcat-jrc">
+    <mkdir dir="${jrc.data}"/>
+    <get dest="${jrc.data}" skipexisting="true">
+      <url url="${jrc.url}"/>
+    </get>
+    <!-- <gunzip dest="${jrc.data}" src="${jrc.data}/entities.gzip" />-->
+    <move file="${jrc.data}/entities.gzip" tofile="${jrc.data}/entities.gz"/>
+    <exec executable="gunzip" dir="${jrc.data}">
+      <arg value="${jrc.data}/entities.gz"/>
+    </exec>
+    <move file="${jrc.data}/entities" tofile="${jrc.data}/entities.txt"/>
+  </target>
 
-    <!-- Too bad this source data is compromised, as of 2017.  Should be a 5 MB gzip file with 600K entries  -->
-    <target name="taxcat-jrc">
-        <mkdir dir="${jrc.data}"/>
-        <get dest="${jrc.data}" skipexisting="true">
-            <url url="${jrc.url}"/>
-        </get>
-        <!-- <gunzip dest="${jrc.data}" src="${jrc.data}/entities.gzip" />-->
-        <move file="${jrc.data}/entities.gzip" tofile="${jrc.data}/entities.gz"/>
-        <exec executable="gunzip" dir="${jrc.data}">
-            <arg value="${jrc.data}/entities.gz"/>
-        </exec>
-        <move file="${jrc.data}/entities" tofile="${jrc.data}/entities.txt"/>
-    </target>
+  <target name="init" depends="setup,copy-libs">
+  </target>
 
-    <target name="init" depends="setup,copy-libs">
-    </target>
+  <target name="clean" description="Delete indexed data">
+    <delete dir="${solr.home}/gazetteer/data"/>
+    <delete dir="${solr.home}/taxcat/data"/>
+    <delete dir="${solr.home}/postal/data"/>
+    <delete dir="${solr.home}/lib"/>
 
-    <target name="clean" description="Delete indexed data">
-        <delete dir="${solr.home}/gazetteer/data"/>
-        <delete dir="${solr.home}/taxcat/data"/>
-        <delete dir="${solr.home}/postal/data"/>
-        <delete dir="${solr.home}/lib"/>
-
-        <mkdir dir="${solr.home}/gazetteer/data"/>
-        <mkdir dir="${solr.home}/taxcat/data"/>
-        <mkdir dir="${solr.home}/postal/data"/>
-        <mkdir dir="${solr.home}/lib"/>
-    </target>
+    <mkdir dir="${solr.home}/gazetteer/data"/>
+    <mkdir dir="${solr.home}/taxcat/data"/>
+    <mkdir dir="${solr.home}/postal/data"/>
+    <mkdir dir="${solr.home}/lib"/>
+  </target>
 </project>

@@ -51,7 +51,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <solr.version>7.7.3</solr.version>
     <slf4j.version>1.7.36</slf4j.version>
-    <log4j.version>2.17.2</log4j.version>
+    <log4j.version>2.19.0</log4j.version>
     <restlet.version>2.4.3</restlet.version>
     <xponents.version>3.5.11-SNAPSHOT</xponents.version>
   </properties>

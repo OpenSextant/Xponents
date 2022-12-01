@@ -40,8 +40,8 @@ DD_03,9, -34.00 +181.11   FAIL; -181 > 180 lon,0,0,FAIL – out of range
 DD_03,10, -234.00 +181.11   FAIL; -181 > 180 lon,0,0,FAIL – out of range
 # TARGET [1]  DD.ddH [D]DD.ddH,,,,,
 #-----------------------------,,,,,
-DD_08,1,"34.00, 44.77   Decimal degree",34.00,44.77,
-DD_08,2,"34.00, -44.11   Decimal degree",34.00,-44.11,
+DD_08,1,"34.00, 44.77   Decimal degree",34,44.77,
+DD_08,2,"34.00, -44.11   Decimal degree",34,-44.11,
 ,,,,,
 ,,,,,
 #TARGETS,, LAT: DD_LAT LON: DD_LON,,,
@@ -227,10 +227,10 @@ MGRS_01,3,    38SMB46113656,32.86583,44.423991,
 MGRS_01,4,     8SMB46113656,32.86583,-135.576009,
 MGRS_01,5,    38SMB 4611036560,32.86583,44.423991,
 MGRS_01,6,   38SMB 46113656,32.86583,44.423991,
-MGRS_01,7,   38SMB 461103656,32.86583,44.423991,
-MGRS_01,8,   38SMB 4611365 6,32.86583,44.423991,
+MGRS_01,7,   38SMB 461103656,32.86583,44.423991,FAIL strict mode – not rescuing MGRS coords by default if they have typos
+MGRS_01,8,   38SMB 4611365 6,32.86583,44.423991,FAIL corrupted MGRS or not MGRS at all.
 MGRS_01,9,   38SMB 4611365$NL6,32.86583,44.423991,
-MGRS_01,9,   38SMB 4611$NL36560,32.86583,44.423991,
+MGRS_01,9,   38SMB 4611$NL36560,32.86583,44.423991,FAIL - has a newline and a typo in Northing/Easting.
 MGRS_01,10,42RPR 46113600,0,0,FAIL invalid GZD char “P” for 42 zone
 MGRS_01,11,   38SMB 46113656 40000 KG,32.86583,44.423991,Large number next to MGRS pattern – should not interfere with MGRS northing.
 MGRS_01,12,    63SNV 6567 7888   FAIL gzd>60,0,0,FAIL – 0 GZD

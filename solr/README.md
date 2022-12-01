@@ -278,6 +278,7 @@ they become part of the CLASSPATH ( via `opensextant-xponents-*jar` or from file
 
 **FIRST USE:** 
 ```shell script
+    ./build.sh  clean
     ./build.sh  meta
     ./build.sh  start clean data gazetteer
     ./build.sh  taxcat
@@ -296,7 +297,7 @@ gazetteer you are likely ready to go start using Xponents SDK.
 
 ```
    Synopsis:
-   ./build.sh  start clean data proxy gazeteer taxcat
+   ./build.sh  start clean data gazeteer taxcat
 
    # clean  = Clean Solr indices and initialize library folders with copies of dependencies, etc.
 
@@ -306,8 +307,6 @@ gazetteer you are likely ready to go start using Xponents SDK.
               These data sets are not cleaned by 'clean'
    # meta   = build and gather metadata resources 
    
-   # proxy  = IF you are behind a proxy, set your proxy in build.propertes
-
    # gazetteer = regenerate only the gazetteer index
    
    # taxcat    = regenerate only the taxcat index
@@ -320,16 +319,14 @@ gazetteer you are likely ready to go start using Xponents SDK.
 **Step 4.a Initialize**
 
 ```shell script
-    # If you use a proxy, then include proxy command first in all your Ant invocations.
-    # As well, set proxy.host and proxy.port in your build.properties above.
     #
-    ant [proxy] init
+    ant init
 ```
 
 **Step 4.b Get Supporting Data**
 
 ```shell script
-    ./build.sh [proxy] data 
+    ./build.sh data 
 ```
 
 This will pull down data sets used by Gazetteer and TaxCat taggers and resources using the Ant tasks:
@@ -343,7 +340,7 @@ This will pull down data sets used by Gazetteer and TaxCat taggers and resources
 In this step, you can use:
 
 ```
-    ./build.sh  [proxy] [start] 
+    ./build.sh  [start] 
 ```
 
 which will build the Solr gazetteer index and add to the taxcat index.  If the Solr Server is not
