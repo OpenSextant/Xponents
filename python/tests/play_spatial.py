@@ -1,7 +1,7 @@
 import sys
 from argparse import ArgumentParser
 
-import arrow
+from time import time as now
 from opensextant import Coordinate, Place
 from opensextant.gazetteer import DB
 
@@ -9,6 +9,15 @@ ap = ArgumentParser()
 ap.add_argument("db", help="sqlite database")
 ap.add_argument("--latlon", help="comma-separated lat,lon")
 args = ap.parse_args()
+
+
+def msg(m):
+    print(f"\n{m}")
+
+
+def deltat(tm):
+    sec = now() - tm
+    print(f"{sec:0.4} seconds")
 
 
 def print_loc(pl: Place, distance):
@@ -21,8 +30,10 @@ if args.latlon:
     ll = args.latlon.split(",")
     coord = Coordinate(None, lat=ll[0], lon=ll[1])
     print("Your query ---", coord)
+    t0 = now()
     for dist, geo in db.list_places_at(lat=coord.lat, lon=coord.lon):
         print_loc(geo, dist)
+    deltat(t0)
 
     sys.exit()
 
@@ -30,20 +41,20 @@ gh = "9q5fp"
 
 print("\n====================")
 print("Location", gh, "Los Angeles County search against proximal geohash cells")
-t0 = arrow.now()
+t0 = now()
 locations = db.list_places_at(geohash=gh, radius=2000)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
 
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)
 
-t0 = arrow.now()
+t0 = now()
 locations = db.list_places_at(geohash=gh, radius=500)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)
 
 gh = "9rupu"
 # print("v1 bad version\n============")
@@ -69,18 +80,18 @@ Distance 3928 Grid c2h0h6 Place: North Powder Pond Number One, US @(45.0132047,-
 Distance 3977 Grid c2h0j1 Place: North Powder Valley, US @(45.00792,-117.89938)
 """
 
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)
 
 print("v2 good version\n============")
-t0 = arrow.now()
+t0 = now()
 locations = db.list_places_at(geohash=gh, radius=5000)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
 
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)
 
-t0 = arrow.now()
+t0 = now()
 gh = "9q5fpg"
 # 9qh5... is next to 9q5f...
 print("\n====================")
@@ -89,14 +100,14 @@ locations = db.list_places_at(geohash=gh, radius=10000, limit=5)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)
 
 # So look for places close to POI ~ "9q5fpg" but now in 9q5f* other cells.
 locations = db.list_places_at(geohash=gh, radius=10000, limit=5)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)
 
 # 9q% search:
 # So look for places close to POI ~ "9q5fpg" but now in 9q* other cells.
@@ -107,14 +118,14 @@ locations = db.list_places_at(geohash=gh, radius=2000, limit=100)
 print("Found", len(locations))
 for dist, geo in locations:
     print_loc(geo, dist)
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)
 
 # Otherwise....
 print("Spatial Queries for Places near a Lat/Lon")
 # sample geohash query
 gh = "dr21ry"
 
-t0 = arrow.now()
+t0 = now()
 
 print("\n====================")
 print("Location", gh)
@@ -122,8 +133,8 @@ locations = db.list_places_at(geohash=gh)
 for dist, geo in locations:
     print_loc(geo, dist)
 
-print("Time: ", arrow.now() - t0)
-t0 = arrow.now()
+print("Time: ", now() - t0)
+t0 = now()
 
 print("\n====================")
 print("Location", gh, "Country = CA")
@@ -131,12 +142,12 @@ locations = db.list_places_at(geohash=gh, cc="CA")
 for dist, geo in locations:
     print_loc(geo, dist)
 
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)
 
-t0 = arrow.now()
+t0 = now()
 print("\n====================")
 print("Location", gh, "Country = US, 1 KM")
 locations = db.list_places_at(geohash=gh, cc="US", radius=1000)
 for dist, geo in locations:
     print_loc(geo, dist)
-print("Time: ", arrow.now() - t0)
+print("Time: ", now() - t0)

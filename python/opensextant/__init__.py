@@ -7,7 +7,7 @@ from math import sqrt, sin, cos, radians, atan2, log as mathlog, log10
 
 from opensextant.utility import get_csv_reader, get_bool
 from pygeodesy.ellipsoidalVincenty import LatLon as LL
-from pygeodesy.geohash import encode as geohash_encode, neighbors as geohash_neighbors
+from pygeodesy.geohash import encode as geohash_encode, decode as geohash_decode, neighbors as geohash_neighbors
 
 PY3 = sys.version_info.major == 3
 countries = []
@@ -166,6 +166,14 @@ def _ll2geohash(p: LL):
     return geohash_encode(lat=p.lat, lon=p.lon)
 
 
+def point2geohash(lat: float, lon: float, precision=6):
+    return geohash_encode(lat=lat, lon=lon, precision=precision)
+
+
+def geohash2point(gh):
+    return (float(x) for x in geohash_decode(gh))
+
+
 def radial_geohash(lat, lon, radius):
     """
     Propose geohash cells for a given radius from a given point
@@ -258,6 +266,11 @@ class Coordinate:
             return 'unset'
 
 
+def bbox(lat: float, lon: float, radius: int):
+    sw, ne = LL(lon, lat).boundsOf(2 * radius, 2 * radius)
+    return Coordinate(None, lat=sw.lat, lon=sw.lon), Coordinate(None, lat=ne.lat, lon=ne.lon)
+
+
 class Place(Coordinate):
     """
     Location or GeoBase
@@ -296,7 +309,7 @@ class Place(Coordinate):
         self.feature_code = None
         self.adm1 = None
         self.adm1_name = None
-        self.adm1_iso = None # Alternate ISO-based ADM1 code used by NGA and others.
+        self.adm1_iso = None  # Alternate ISO-based ADM1 code used by NGA and others.
         self.adm2 = None
         self.adm2_name = None
         self.source = None

@@ -5,11 +5,11 @@ from traceback import format_exc
 import arrow
 import pysolr
 from opensextant import Place, Country, distance_haversine, load_major_cities, make_HASC, popscale, \
-    geohash_cells_radially
+    geohash_cells_radially, bbox, point2geohash, geohash2point
 from opensextant.utility import ensure_dirs, is_ascii, has_cjk, has_arabic, \
     ConfigUtility, get_bool, trivial_bias, replace_diacritics, strip_quotes, parse_float, load_list
 from opensextant.wordstats import WordStats
-from pygeodesy.geohash import encode as geohash_encode, decode as geohash_decode
+
 
 DEFAULT_MASTER = "master_gazetteer.sqlite"
 DEFAULT_COUNTRY_ID_BIAS = 49
@@ -221,9 +221,30 @@ def name_group_for(nm: str):
     return ""
 
 
+def as_admin_place(r):
+    """
+    Convert dict to a Place object
+    :param r: gazetteer row from Solr or SQlite.
+    :return: Place
+    """
+    keys = {}
+    if hasattr(r, "keys"):
+        keys = r.keys()
+
+    p = Place(r['place_id'], r['name'])
+    p.country_code = r["cc"]
+    p.adm1 = r["adm1"]
+    p.source = r["source"]
+    p.geohash = r["geohash"]
+    if "adm1_iso" in keys:
+        p.adm1_iso = r["adm1_iso"]
+    return p
+
+
 def as_place(r, source="index"):
     """
     Convert dict to a Place object
+    :param source: db or index (solr)
     :param r: gazetteer row from Solr or SQlite.
     :return: Place
     """
@@ -423,7 +444,7 @@ class DB:
                 `name_bias` INTEGER DEFAULT 0,
                 `id_bias` INTEGER DEFAULT 0,
                 `search_only` BIT DEFAULT 0                
-            );
+            ) without rowid;
             
             create INDEX plid_idx on placenames ("place_id");               
             create INDEX s_idx on placenames ("source");
@@ -458,6 +479,24 @@ class DB:
         self.conn.executescript(sql_script)
         self.conn.commit()
 
+        # INFERRED ADM1 codes, and maybe ADM2 codes.
+        sql_script = """
+        create TABLE admin1_codes(            
+            `adm1` TEXT NOT NULL, 
+            `adm1_iso` TEXT  NULL, 
+            `place_id` TEXT NOT NULL,
+            `name` TEXT NOT NULL,
+            `source` TEXT NOT NULL,
+            `cc` TEXT NOT NULL,
+            `geohash` TEXT NOT NULL, 
+            PRIMARY KEY (`cc`, `adm1`)                   
+        ) without rowid ; 
+        create INDEX loc_idx on admin1_codes (`geohash`);       
+        create INDEX cc_idx on admin1_codes (`cc`);       
+        """
+        self.conn.executescript(sql_script)
+        self.conn.commit()
+
     def create_indices(self):
         """
         Create additional indices that are used for advanced ETL functions and optimization.
@@ -475,6 +514,8 @@ class DB:
             create INDEX IF NOT EXISTS ft_idx on placenames ("feat_code");
             create INDEX IF NOT EXISTS dup_idx on placenames ("duplicate");
             create INDEX IF NOT EXISTS so_idx on placenames ("search_only");
+            create INDEX IF NOT EXISTS lat_idx on placenames ("lat");
+            create INDEX IF NOT EXISTS lon_idx on placenames ("lon");
                         
         """
         self.conn.executescript(indices)
@@ -519,7 +560,8 @@ class DB:
         except:
             self.conn = None
 
-    def _prep_place(self, dct):
+    @staticmethod
+    def _prep_place(dct):
         """
         REQUIRED fields:  'source', 'lat', 'lon'.
         OPTIONAL fieldsd: 'search_only'
@@ -530,7 +572,7 @@ class DB:
         dct["source"] = GAZETTEER_SOURCES.get(src, src)
         # 6 geohash prefix is about 100m to 200m error. precision=8 is 1m precision.
         if "lat" in dct and not dct.get("geohash"):
-            dct["geohash"] = geohash_encode(dct["lat"], dct["lon"], precision=6)
+            dct["geohash"] = point2geohash(dct["lat"], dct["lon"], precision=6)
         #
         # print("Geoname has no location", dct)
         if "search_only" not in dct:
@@ -577,6 +619,62 @@ class DB:
         self.queue.extend(arr)
         self.queue_count += len(arr)
         self.__assess_queue()
+
+    def add_admin_places(self, arr):
+        sql = """
+        insert into admin1_codes (
+            place_id, name, geohash, cc,  adm1, source
+         ) values (
+            :place_id, :name, :geohash, :cc,  :adm1, :source)"""
+
+        admin_places = []
+        for pl in arr:
+            admin_places.append({
+                "place_id": pl.place_id, "name": pl.name, "geohash": pl.geohash[0:5],
+                "cc": pl.country_code, "adm1": pl.adm1, "source": pl.source
+            })
+        self.conn.executemany(sql, admin_places)
+        self.conn.commit()
+
+    def update_admin_places(self, arr):
+        """
+        Map existing ADM1 code to new value (adm1_iso field)
+        :param arr: array of tuple, ( cc, existing adm1,  alt adm1_iso )
+        :return:
+        """
+        sql = """update admin1_codes set adm1_iso = ? where cc = ? and adm1 = ?"""
+        for tpl in arr:
+            cc, adm1, adm1_iso = tpl
+            self.conn.execute(sql, (adm1_iso, cc, adm1))
+
+        self.conn.commit()
+
+    def purge_admin_places(self, source=None, cc=None):
+        sql = []
+        if source:
+            sql.append(f"source = '{source}'")
+        if cc:
+            sql.append(f"cc = '{cc}'")
+        if not sql:
+            raise Exception("One or more kwarg is required.")
+        criteria = " and ".join(sql)
+        self.conn.execute(f"delete from admin1_codes where {criteria}")
+        self.conn.commit()
+
+    def list_admin_places(self, source=None, cc=None):
+        sql = []
+        if source:
+            sql.append(f"source = '{source}'")
+        if cc:
+            sql.append(f"cc = '{cc}'")
+        if not sql:
+            raise Exception("One or more kwarg is required.")
+        criteria = " and ".join(sql)
+        arr = []
+        for row in self.conn.execute(f"select * from admin1_codes where {criteria}"):
+            pl = as_admin_place(row)
+            arr.append(pl)
+        return arr
 
     def list_places_by_id(self, plid, limit=2):
         """
@@ -712,11 +810,11 @@ class DB:
         for p in self.conn.execute(sql_script):
             yield as_place(p, source="db")
 
-    def list_places_at(self, lat: float = None, lon: float = None, geohash: str = None,
-                       cc: str = None, radius: int = 5000, limit=10):
+    def _list_places_at_geohash(self, lat: float = None, lon: float = None, geohash: str = None,
+                                cc: str = None, radius: int = 5000, limit=10):
         """
         A best effort guess at spatial query. Returns an array of matches, thinking most location queries are focused.
-        This is a geohash-backed hack at search
+        This is a geohash-backed hack at search.  Even with SQLite indexing this is still very slow.
 
         Use geohash_precision accordingly and approximately:
         - geohash_precision=6 implies +/-  500m
@@ -735,19 +833,18 @@ class DB:
 
         "9q5fp" is a LR (south-east) corner of "9q5".  Searching that 2x2 KM box by geohash will only search from that
         corner north and westward.
-
-        :param lat: latitude
-        :param lon: longitude
-        :param cc:  ISO country code to filter.
-        :param geohash:  optionally, use precomputed geohash of precision 6-chars instead of lat/lon.
-        :param radius:  in METERS, radial distance from given point to search, DEFAULT is 5 KM
-        :param limit: count of places to return
-        :return: array of tuples, sorted by distance.
+        :param lat:
+        :param lon:
+        :param geohash:
+        :param cc:
+        :param radius:
+        :param limit:
+        :return: dict of matches,  { DIST = PLACE, ... }
         """
         if geohash:
             # Postpend "sss" to create a default centroid in a shorter geohash.
             gh = f"{geohash}sss"[0:6]
-            (lat, lon) = (float(x) for x in geohash_decode(geohash))
+            (lat, lon) = geohash2point(geohash)
         elif lat is None and lon is None:
             raise Exception("Provide lat/lon or geohash")
 
@@ -773,6 +870,49 @@ class DB:
             if len(found) >= limit:
                 # Return after first round of querying.
                 break
+
+        return found
+
+    def _list_places_at_2d(self, lat: float, lon: float,
+                           cc: str = None, radius: int = 5000, limit=10):
+        found = {}
+        sw, ne = bbox(lon, lat, radius)
+        sql_script = [f"""select * from placenames where 
+            (lat < {ne.lat:0.6} and lon < {ne.lon:0.6}) and 
+            (lat > {sw.lat:0.6} and lon > {sw.lon:0.6})"""]
+        if cc:
+            sql_script.append(f" and cc = '{cc}'")
+
+        script = " ".join(sql_script)
+        for p in self.conn.execute(script):
+            place = as_place(p)
+            dist = distance_haversine(lon, lat, place.lon, place.lat)
+            if dist < radius:
+                found[dist] = place
+
+        return found
+
+    def list_places_at(self, lat: float = None, lon: float = None, geohash: str = None,
+                       cc: str = None, radius: int = 5000, limit=10, method="2d"):
+        """
+
+        :param lat: latitude
+        :param lon: longitude
+        :param cc:  ISO country code to filter.
+        :param geohash:  optionally, use precomputed geohash of precision 6-chars instead of lat/lon.
+        :param radius:  in METERS, radial distance from given point to search, DEFAULT is 5 KM
+        :param limit: count of places to return
+        :param method: bbox or geohash
+        :return: array of tuples, sorted by distance.
+        """
+        found = {}
+        if method == "geohash" or geohash and lat is None:
+            found = self._list_places_at_geohash(lat=lat, lon=lon, geohash=geohash, cc=cc, radius=radius, limit=limit)
+        elif method == "2d":
+            found = self._list_places_at_2d(lat=lat, lon=lon, cc=cc, radius=radius, limit=limit)
+        if not found:
+            return []
+
         # Sort by distance key
         result = [(dist, found[dist]) for dist in sorted(found.keys())]
         return result[0:limit]
@@ -780,6 +920,7 @@ class DB:
     def list_admin_names(self, sources=['U', 'N', 'G'], cc=None) -> set:
         """
         Lists all admin level1 names.
+        :param cc: country code filter.
         :param sources: list of source IDs defaulting to those for USGS, NGA, Geonames.org
         :return: set of names, lowerased
         """
@@ -898,8 +1039,9 @@ def add_location(geo, lat, lon):
     else:
         print("No location on ROW", geo.get("place_id"))
     if "lat" in geo:
-        geo["geohash"] = geohash_encode(geo["lat"], geo["lon"], precision=6)
+        geo["geohash"] = point2geohash(geo["lat"], geo["lon"], precision=6)
     return geo
+
 
 class DataSource:
     """
