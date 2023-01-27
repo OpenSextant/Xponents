@@ -14,8 +14,12 @@ class TestLangs(unittest.TestCase):
         print(get_language("en"))
 
     def test_class(self):
-        L = Language("AAA", "AA", "NOT VALID")
-        print(L)
+        try:
+            L = Language("AAA", "AA", "NOT VALID")
+            print(L)
+            self.fail("Exception expected")
+        except Exception as err:
+            self.assertTrue(True, "Exception thrown:"+str(err))
 
     def test_individuals(self):
         print("Name for 'fre'", get_lang_name("fre"))

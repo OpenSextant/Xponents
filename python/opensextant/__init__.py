@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+import math
 from abc import ABC, abstractmethod
 from math import sqrt, sin, cos, radians, atan2, log as mathlog, log10
 
@@ -276,6 +277,24 @@ class Coordinate:
 def bbox(lat: float, lon: float, radius: int):
     sw, ne = LL(lon, lat).boundsOf(2 * radius, 2 * radius)
     return Coordinate(None, lat=sw.lat, lon=sw.lon), Coordinate(None, lat=ne.lat, lon=ne.lon)
+
+
+def centroid(arr: list):
+    """
+
+    :param arr:  a list of numeric coordinates (y,x)
+    :return: Coordinate -- the average of sum(y), sum(x)
+    """
+    n = len(arr)
+    if not n:
+        return None
+    if n == 1:
+        y, x = arr[0]
+        return Coordinate(None, lat=y, lon=x)
+
+    lat_sum = math.fsum([y for y, x in arr])
+    lon_sum = math.fsum([x for y, x in arr])
+    return Coordinate(None, lat=lat_sum / n, lon=lon_sum / n)
 
 
 class Place(Coordinate):
@@ -911,7 +930,8 @@ class Language:
     Coding is 3-char or 2-char, either is optional.
     In some situations there are competeing 2-char codes in code books, such as Lib of Congress (LOC)
     """
-    def __init__(self, iso3, iso2, nmlist:list):
+
+    def __init__(self, iso3, iso2, nmlist: list):
         self.code_iso3 = iso3
         self.code = iso2
         self.names = nmlist
@@ -1070,6 +1090,8 @@ def is_lang_chinese(l: str):
 
 
 IGNORE_LANGUAGES = {"gaa"}
+
+
 def load_languages():
     global __language_map_init
     if __language_map_init:
@@ -1093,7 +1115,6 @@ def load_languages():
         if bib3:
             L = Language(bib3, lang[2], lang_names)
             add_language(L, override=True)
-            print(bib3)
 
     # Some odd additions -- Bibliographic vs. Terminologic codes may vary.
     # FRE vs. FRA is valid for French, for example.
@@ -1102,8 +1123,11 @@ def load_languages():
 
                Language("zh-cn", "zh", ["Chinese"]),
 
-               Language(None, "zt", ["Simplified Chinese"]),
-               Language("zh-tw", "zt", ["Simplified Chinese/Taiwain"]),
+               Language(None, "zt", ["Traditionl Chinese"]),
+               Language("zh-tw", "zt", ["Traditionl Chinese/Taiwain"]),
+
+               Language("fa-AF", "dr", ["Dari", "Afghan Persian"]),
+               Language("prs", "dr", ["Dari", "Afghan Persian"]),
 
                Language("eng", "en", ["English"]),
                Language("en-gb", "en", ["English"]),
