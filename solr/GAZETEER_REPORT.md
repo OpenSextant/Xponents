@@ -43,6 +43,42 @@ The Data is provided "as is" without warranty or any representation of accuracy,
 [Natural Earth Terms of Use](https://www.naturalearthdata.com/about/terms-of-use/)
 
 
+**HumData Exchange**: Sources such as the Pakistan Admin-Level-3 gazetteer come from 
+HumData (HDX) at https://data.humdata.org/dataset/cod-ab-pak.   Other sources to follow
+
+**OpenSextant Metadata**: Derived mappings for aligning administrative boundary codings 
+are cached from various builds of OpenSextant to support the internal data model.  In
+2022 the NGA gazetteer was revamped entirely to use ISO alphabetic boundary codings 
+entirely replacing their use of FIPS/ISO numeric codings.  These project sources help glue
+together the critical administrative boundary hierarchy:
+
+* `./solr/etc/gazetteer/global_admin1_mapping.json` - the final master mapping combining all component sources below
+* `./solr/etc/gazetteer/nga_2021_admin1_mapping.json` - NGA codings as of 2021
+* `./solr/etc/gazetteer/nga_2022_admin1_mapping.json` - NGA codings at the end of 2022
+* `./solr/etc/gazetteer/xponents_v35_admin1_mapping.json` - Interim combined codings from Xponents v35
+
+```text
+   ISO     FIPS
+   US.MA == US.25 == Massachussetts
+   
+   ISO      FIPS
+   KE.01 == KE.10 == Baringo
+   Reference: http://www.statoids.com/uke.html
+```
+
+Furthermore standards usage is not consistent:  Geonames uses a mix of FIPS and ISO 
+accordingt to http://download.geonames.org/export/dump/readme.txt.   Countries US, CH, BE, ME are represented 
+as ISO ADM1 coding.
+
+## Sources and Standards
+
+As of Xponents v3.5 FIPS (aka FIPS 10-4, or US GEC, etc) was the primary internal standard.
+For Xponents v3.6 ISO 3166 will be the primary standard for ADM1 coding.  Here's a summary of 
+standards in use by sources:
+
+- **NGA**: as of 2022, ISO
+- **Geonames**: FIPS, predominately except US, CH, BE and ME
+- **NaturalEarth**: Any standards; both FIPS, ISO and historical codings 
 
 
 ## Library Details
