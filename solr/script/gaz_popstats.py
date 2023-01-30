@@ -1,5 +1,6 @@
 from opensextant.gazetteer import get_default_db, DB
 
+
 class PopStats:
     def __init__(self, dbf):
         self.db = DB(dbf)
