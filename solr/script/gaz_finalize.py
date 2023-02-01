@@ -3,7 +3,7 @@ import re
 from time import sleep
 
 from opensextant import Place
-from opensextant.gazetteer import DB, estimate_name_bias, GazetteerIndex, get_default_db
+from opensextant.gazetteer import DB, estimate_name_bias, GazetteerIndex, get_default_db, coord_grid
 from opensextant.utility import replace_diacritics, load_list, get_list
 
 
@@ -214,10 +214,10 @@ class Finalizer:
         """
         for row in self.db.conn.execute(sql):
             fc = row["feat_class"]
-            loc = row["geohash"]
+            loc = coord_grid(row)
             nm = row["name"].lower()
             a1 = row["adm1"]
-            k = f"{fc}/{loc[0:5]}/{a1}/{nm}"
+            k = f"{fc}/{loc}/{a1}/{nm}"
             if k in keys:
                 if self.debug: print(f"{label} dup: ", row["id"])
                 dups.append(row["id"])

@@ -65,8 +65,9 @@ if __name__ == "__main__":
     excluder.exclude_nonsense("name LIKE '%-%' and LENGTH(name)=4 and name_group = ''")
 
     print("Mark search-only short 5-char names starting with vowels A, I, O U -  A-xx, A xx, or A-xxx, A xxx")
-    for vowel in [ 'a', 'e', 'i', 'o', 'u', 'y']:
-        excluder.exclude_nonsense(f"(name LIKE '{vowel} %' OR name LIKE '{vowel}-%') and LENGTH(name)=4 and name_group = ''")
+    for vowel in ['a', 'e', 'i', 'o', 'u', 'y']:
+        excluder.exclude_nonsense(
+            f"(name LIKE '{vowel} %' OR name LIKE '{vowel}-%') and LENGTH(name)=4 and name_group = ''")
     # Additionally:
     excluder.exclude_nonsense("name in ('A Toi', 'A Toy', 'A Tin')")
 
