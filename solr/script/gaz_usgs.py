@@ -1,6 +1,7 @@
 import os
 
-from opensextant.gazetteer import get_default_db, DataSource, PlaceHeuristics, US_TERRITORY_MAP, add_location
+from opensextant.gazetteer import get_default_db, DataSource, PlaceHeuristics, US_TERRITORY_MAP, add_location, \
+    coord_grid
 from opensextant.utility import get_csv_reader, get_list
 
 HEADER = get_list(
@@ -43,9 +44,18 @@ USGS_GAZ_TEMPLATE = {
     "name_type": "N"
 }
 
+
+def bidi_map(dct):
+    bidi = dct.copy()
+    for k in dct:
+        v = dct[k]
+        bidi[v] = k
+    return bidi
+
+
 #
 # UM (US.74) territory Islands  are these FIPS codes:, which in turn ADM1 codes should be converted to postal ID
-UMI_GEOHASH_MAP = {
+UMI_GEOHASH_MAP = bidi_map({
     "FQ": "8049",
     "HQ": "804k",
     "DQ": "2ryj",
@@ -55,12 +65,19 @@ UMI_GEOHASH_MAP = {
     "BQ": "d768",
     "LQ": "83h9",
     "WQ": "xeqt"
-}
+})
 
-# Bidirection FIPS => geohash
-for k in UMI_GEOHASH_MAP.copy().keys():
-    v = UMI_GEOHASH_MAP[k]
-    UMI_GEOHASH_MAP[v] = k
+UMI_COORD_MAP = bidi_map({
+    "FQ": "0.2,-176.6",
+    "HQ": "0.8,-176.6",
+    "DQ": "-0.3,-160.0",
+    "JQ": "16.8,-169.5",
+    "KQ": "6.4,-162.4",
+    "MQ": "28.2,-177.4",
+    "BQ": "18.4,-75.0",
+    "LQ": "5.9,-162.1",
+    "WQ": "19.3,166.1"
+})
 
 FEAT_MAP = {}
 
@@ -89,12 +106,12 @@ def adjust_country_territory(entry, debug=False):
     adm1 = entry["adm1"]
 
     if adm1 == "UM":
-        geolookup = entry["geohash"][0:4]
-        fips_cc = UMI_GEOHASH_MAP.get(geolookup)
         entry["cc"] = adm1
         entry["FIPS_cc"] = "*"
         entry["adm1"] = entry["adm2"]
         entry["adm2"] = ""
+
+        fips_cc = UMI_COORD_MAP.get(coord_grid(entry))
         if fips_cc:
             entry["FIPS_cc"] = fips_cc
 

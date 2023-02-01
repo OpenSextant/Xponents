@@ -1,3 +1,4 @@
+import json
 import os
 import sqlite3
 from traceback import format_exc
@@ -5,11 +6,10 @@ from traceback import format_exc
 import arrow
 import pysolr
 from opensextant import Place, Country, distance_haversine, load_major_cities, make_HASC, popscale, \
-    geohash_cells_radially, bbox, point2geohash, geohash2point
+    geohash_cells_radially, bbox, point2geohash, geohash2point, pkg_resource_path
 from opensextant.utility import ensure_dirs, is_ascii, has_cjk, has_arabic, \
     ConfigUtility, get_bool, trivial_bias, replace_diacritics, strip_quotes, parse_float, load_list
 from opensextant.wordstats import WordStats
-
 
 DEFAULT_MASTER = "master_gazetteer.sqlite"
 DEFAULT_COUNTRY_ID_BIAS = 49
@@ -98,6 +98,19 @@ US_TERRITORY_MAP = {
         "AS": "AQ"
     }
 }
+
+# IGNROE Historical names and Zones, and Unknowns *H
+MAJOR_ADMIN_CODES = {'ADM1', 'ADM2', 'ADM3', 'ADM4', 'PRSH', 'TERR', 'LTER'}
+
+
+def coord_grid(geo: dict) -> str:
+    """
+    A less dissatisfying grid than geohash. Its just returning Y,X in low resolution. LLL.l,LLL.l
+    """
+    if "lat" not in geo:
+        return None
+    x, y = geo["lon"], geo["lat"]
+    return f"{y:0.1f},{x:0.1f}"
 
 
 def get_default_db():
@@ -238,6 +251,8 @@ def as_admin_place(r):
     p.geohash = r["geohash"]
     if "adm1_iso" in keys:
         p.adm1_iso = r["adm1_iso"]
+
+    p.lat = p.lon = p.X = p.Y = None
     return p
 
 
@@ -379,8 +394,176 @@ def capitalize(name: dict):
         name["name"] = nm[0].upper() + nm[1:]
 
 
+def gaz_resource(fname):
+    """
+    Formats the relative path for an item in the ./solr/etc/gazetteer/ metadata
+    :param fname:
+    :return:
+    """
+    return os.path.join("etc", "gazetteer", fname)
+
+
+def export_admin_mapping(admin_ids, filepath):
+    """
+    Experimental:  Map all source place IDs => ADM ids
+                   Map all standard ADM ids => place IDs
+    :param admin_ids:  dict for JSON or array for CSV
+    :param filepath:
+    :return:
+    """
+    with open(filepath, "w", encoding="UTF-8") as fio:
+        fio.write("\t".join(["ADM1", "PLACE_ID", "LAT", "LON", "NAME"]))
+
+        for a1 in admin_ids:
+            cc = a1["cc"]
+            adm1 = a1["adm1"]
+            hasc = f"{cc}.{adm1}"
+            y, x = a1["lat"], a1["lon"]
+            entry = [hasc, a1["place_id"], f"{y:0.1f}", f"{x:0.1f}", a1["name"]]
+            fio.write("\t".join(entry))
+            fio.write("\n")
+
+
+class AdminLevelCodes:
+
+    # CC = { places = { PLACE_ID: { 'f':FIPS_ADM1, 'i':ISO_ADM1 }},
+    #        coords = { COORD_ID: { 'f':FIPS_ADM1, 'i':ISO_ADM1 }},
+    #        admin1 = { 'f':{FIPS_ADM1:ISO_ADM1, ...},
+    #                   'i':{ISO_ADM1:FIPS_ADM1, ....}}
+    #
+    #  Step 1a. Inventory all places by ID across all data sources and standards.
+    #  Step 1b.       at that time also calculate the relevant codings at the coordinate grid by standard
+    #  Step 2.  Reindex mapping all paired ADM1-ADM1 equivalents.
+    #
+    # NOT every PLACE is represented by both codings, Not every coordinate has both codings
+    # NOT every ADM1 has a mapping
+    # Questions:
+    #     Given an ADM1 in a known standard, what is the alternative code in other standard?
+    #     Given a place ID (but no ADM1) locate the relevant ADM1 code
+
+    def __init__(self, filepath=None):
+        self.places = {}
+        self.coords = {}
+        self.admin1 = {}
+        self.countries = set([])
+        if filepath:
+            self.load(filepath)
+        else:
+            self.load(pkg_resource_path("global_admin1_mapping.json"))
+
+    def get_alternate_admin1(self, cc, adm1, std):
+        """
+
+        :param cc: ISO country code
+        :param adm1: ADM1 in the given standard
+        :param std: standard "FIPS" or "ISO"
+        :return:
+        """
+        if cc in self.admin1:
+            country_registry = self.admin1[cc]
+            if country_registry:
+                return country_registry[std].get(adm1)
+        # No country
+        return None
+
+    def add_country(self, cc):
+        self.countries.add(cc)
+        if cc not in self.places:
+            self.places[cc] = {}
+        if cc not in self.coords:
+            self.coords[cc] = {}
+        if cc not in self.admin1:
+            self.admin1[cc] = {}
+
+    def add_place(self, place_id, cc, std, adm1, grid):
+        """
+        Accumulate discrete ADM1 codings by place instance and location
+        :param place_id:
+        :param cc:
+        :param std:
+        :param adm1:
+        :param grid:
+        :return:
+        """
+        obj = self.places[cc].get(place_id, {})
+        if not obj:
+            self.places[cc][place_id] = obj
+        # TODO: detect errors where a place has a standard set already, but the adm1 value conflicts
+        obj[std] = adm1
+
+        crd = self.coords[cc].get(grid, {})
+        if not crd:
+            self.coords[cc][grid] = crd
+        crd[std] = adm1
+
+    @staticmethod
+    def _update_adminset(given, iso=None, fips=None):
+        """
+        update the iso[i]=f
+        update the fips[f]=i
+        from the given (f=i, i=f,)
+
+        :param given:  a record of codings {f:val, i:val}
+        :param iso:  accumulating iso map
+        :param fips:  accumulating fips map
+        :return:
+        """
+        f = given.get("f", "-")
+        i = given.get("i", "-")
+        curr_f = iso.get(i)
+        curr_i = fips.get(f)
+        missing_f = not curr_f or curr_f == "-"
+        missing_i = not curr_i or curr_i == "-"
+
+        if f != "-" and i != "-":
+            if missing_f:
+                iso[i] = f
+            if missing_i:
+                fips[f] = i
+        else:
+            if f != "-" and missing_i:
+                fips[f] = "-"
+            if i != "-" and missing_f:
+                iso[i] = "-"
+
+    def align_admin1(self):
+        for cc in self.countries:
+            fips = {}
+            iso = {}
+            registry = self.places[cc]
+            for plid in registry:
+                AdminLevelCodes._update_adminset(registry[plid], iso=iso, fips=fips)
+
+            registry = self.coords[cc]
+            for crd in registry:
+                AdminLevelCodes._update_adminset(registry[crd], iso=iso, fips=fips)
+            # Mappings:
+            self.admin1[cc] = {"FIPS": fips, "ISO": iso}
+
+    def as_json(self):
+        result = {}
+        for cc in self.countries:
+            result[cc] = {"places": self.places.get(cc),
+                          "coords": self.coords.get(cc),
+                          "admin1": self.admin1.get(cc)}
+        return result
+
+    def save(self, fpath):
+        with open(fpath, "w", encoding="UTF-8") as fout:
+            json.dump(self.as_json(), fout)
+
+    def load(self, fpath):
+        with open(fpath, "r", encoding="UTF-8") as fin:
+            content = json.load(fin)
+            self.countries = set(content.keys())
+            for cc in self.countries:
+                self.places[cc] = content[cc].get("places")
+                self.coords[cc] = content[cc].get("coords")
+                self.admin1[cc] = content[cc].get("admin1")
+
+
 class DB:
-    def __init__(self, dbpath, commit_rate=1000, debug=False):
+    def __init__(self, dbpath, commit_rate=1000, debug=False, add_geohash=False):
         """
         Save items to SQlite db at the commit_rate given.  Call close to finalize any partial batches
         and save database.
@@ -394,6 +577,7 @@ class DB:
         self.queue_count = 0
         self.commit_rate = commit_rate
         self.debug = debug
+        self.geohash_default = add_geohash
         if not os.path.exists(dbpath):
             ensure_dirs(dbpath)
             self.reopen()
@@ -479,24 +663,6 @@ class DB:
         self.conn.executescript(sql_script)
         self.conn.commit()
 
-        # INFERRED ADM1 codes, and maybe ADM2 codes.
-        sql_script = """
-        create TABLE admin1_codes(            
-            `adm1` TEXT NOT NULL, 
-            `adm1_iso` TEXT  NULL, 
-            `place_id` TEXT NOT NULL,
-            `name` TEXT NOT NULL,
-            `source` TEXT NOT NULL,
-            `cc` TEXT NOT NULL,
-            `geohash` TEXT NOT NULL, 
-            PRIMARY KEY (`cc`, `adm1`)                   
-        ) without rowid ; 
-        create INDEX loc_idx on admin1_codes (`geohash`);       
-        create INDEX cc_idx on admin1_codes (`cc`);       
-        """
-        self.conn.executescript(sql_script)
-        self.conn.commit()
-
     def create_indices(self):
         """
         Create additional indices that are used for advanced ETL functions and optimization.
@@ -554,14 +720,13 @@ class DB:
                 self.__assess_queue(force=True)
                 self.conn.close()
                 self.conn = None
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as sql_err:
             print("Data integrity issue")
             print(format_exc(limit=5))
-        except:
+        except Exception as err:
             self.conn = None
 
-    @staticmethod
-    def _prep_place(dct):
+    def _prep_place(self, dct):
         """
         REQUIRED fields:  'source', 'lat', 'lon'.
         OPTIONAL fieldsd: 'search_only'
@@ -570,9 +735,10 @@ class DB:
         """
         src = dct["source"]
         dct["source"] = GAZETTEER_SOURCES.get(src, src)
-        # 6 geohash prefix is about 100m to 200m error. precision=8 is 1m precision.
-        if "lat" in dct and not dct.get("geohash"):
-            dct["geohash"] = point2geohash(dct["lat"], dct["lon"], precision=6)
+        if self.geohash_default:
+            # 6 geohash prefix is about 100m to 200m error. precision=8 is 1m precision.
+            if "lat" in dct and not dct.get("geohash"):
+                dct["geohash"] = point2geohash(dct["lat"], dct["lon"], precision=6)
         #
         # print("Geoname has no location", dct)
         if "search_only" not in dct:
@@ -620,62 +786,6 @@ class DB:
         self.queue_count += len(arr)
         self.__assess_queue()
 
-    def add_admin_places(self, arr):
-        sql = """
-        insert into admin1_codes (
-            place_id, name, geohash, cc,  adm1, source
-         ) values (
-            :place_id, :name, :geohash, :cc,  :adm1, :source)"""
-
-        admin_places = []
-        for pl in arr:
-            admin_places.append({
-                "place_id": pl.place_id, "name": pl.name, "geohash": pl.geohash[0:5],
-                "cc": pl.country_code, "adm1": pl.adm1, "source": pl.source
-            })
-        self.conn.executemany(sql, admin_places)
-        self.conn.commit()
-
-    def update_admin_places(self, arr):
-        """
-        Map existing ADM1 code to new value (adm1_iso field)
-        :param arr: array of tuple, ( cc, existing adm1,  alt adm1_iso )
-        :return:
-        """
-        sql = """update admin1_codes set adm1_iso = ? where cc = ? and adm1 = ?"""
-        for tpl in arr:
-            cc, adm1, adm1_iso = tpl
-            self.conn.execute(sql, (adm1_iso, cc, adm1))
-
-        self.conn.commit()
-
-    def purge_admin_places(self, source=None, cc=None):
-        sql = []
-        if source:
-            sql.append(f"source = '{source}'")
-        if cc:
-            sql.append(f"cc = '{cc}'")
-        if not sql:
-            raise Exception("One or more kwarg is required.")
-        criteria = " and ".join(sql)
-        self.conn.execute(f"delete from admin1_codes where {criteria}")
-        self.conn.commit()
-
-    def list_admin_places(self, source=None, cc=None):
-        sql = []
-        if source:
-            sql.append(f"source = '{source}'")
-        if cc:
-            sql.append(f"cc = '{cc}'")
-        if not sql:
-            raise Exception("One or more kwarg is required.")
-        criteria = " and ".join(sql)
-        arr = []
-        for row in self.conn.execute(f"select * from admin1_codes where {criteria}"):
-            pl = as_admin_place(row)
-            arr.append(pl)
-        return arr
-
     def list_places_by_id(self, plid, limit=2):
         """
         Collect places and name_bias for gazetter ETL.
@@ -707,8 +817,10 @@ class DB:
         self.conn.execute("delete from popstats where source = ?", (source,))
         self.conn.commit()
 
-        sql = """insert into popstats (geohash, population, source, feat_class, cc, FIPS_cc, adm1, adm1_path, adm2, adm2_path) 
-              values (:geohash, :population, :source, :feat_class, :cc, :FIPS_cc, :adm1, :adm1_path, :adm2, :adm2_path)"""
+        sql = """insert into popstats (geohash, population, source, feat_class, 
+                cc, FIPS_cc, adm1, adm1_path, adm2, adm2_path) 
+            values (:geohash, :population, :source, :feat_class, 
+                :cc, :FIPS_cc, :adm1, :adm1_path, :adm2, :adm2_path)"""
         #
         for city in load_major_cities():
             adm2_path = ""
@@ -747,7 +859,7 @@ class DB:
            at 39 million in 2021.)  Population stats only cover major cities of 15K or more people.
         :return: map of population stats by ADM1 path
         """
-        sql = """select sum(population) AS POP, adm1_path  from popstats where adm1 != '0' group by adm1_path order by POP"""
+        sql = "select sum(population) AS POP, adm1_path from popstats where adm1 != '0' group by adm1_path order by POP"
         population_map = {}
         for popstat in self.conn.execute(sql):
             adm1 = popstat["adm1_path"]
@@ -758,7 +870,7 @@ class DB:
         """
         Get approximate county-level stats
         """
-        sql = """select sum(population) AS POP, adm2_path  from popstats where adm2 != '' group by adm2_path order by POP"""
+        sql = "select sum(population) AS POP, adm2_path from popstats where adm2 != '' group by adm2_path order by POP"
         population_map = {}
         for popstat in self.conn.execute(sql):
             adm2 = popstat["adm2_path"]
@@ -1025,9 +1137,10 @@ def _array_blocks(arr, step=1000):
     return blocks
 
 
-def add_location(geo, lat, lon):
+def add_location(geo, lat, lon, add_geohash=False):
     """
     Insert validated location coordinate and geohash
+    :param add_geohash: due to performance, add this if needed
     :param geo: dict
     :param lat: latitude value, str or float
     :param lon: longitude value, str or float
@@ -1038,7 +1151,7 @@ def add_location(geo, lat, lon):
         geo["lon"] = parse_float(lon)
     else:
         print("No location on ROW", geo.get("place_id"))
-    if "lat" in geo:
+    if add_geohash and "lat" in geo:
         geo["geohash"] = point2geohash(geo["lat"], geo["lon"], precision=6)
     return geo
 
@@ -1083,7 +1196,6 @@ class DataSource:
         :param optimize: if database should be optimized when done.
         :return:
         """
-
         print("\n============================")
         print(f"Start {self.source_name}. {arrow.now()}  FILE={sourcefile}")
         for geo in self.process_source(sourcefile, limit=limit):
@@ -1355,8 +1467,8 @@ class PlaceHeuristics:
             return self.feature_wt.get(fc, 5)
 
         fckey = f"{fc}/{dsg}"
-        for l in [6, 5]:
-            fc_scale = self.feature_wt.get(fckey[0:l])
+        for glen in [6, 5]:
+            fc_scale = self.feature_wt.get(fckey[0:glen])
             if fc_scale:
                 return fc_scale
 
@@ -1495,15 +1607,14 @@ class PlaceHeuristics:
         # TODO: add non-diacritic name to this test?
         norm2 = strip_quotes(replace_diacritics(norm))
         norm2 = norm2.replace("-", " ")
-        is_popular_place = self.is_significant(feat_code) or \
-                           self.is_large_city(norm) or \
-                           self.is_province_name(norm) or \
-                           self.is_province_name(norm2)
+        is_popular_place = self.is_significant(feat_code) or self.is_large_city(norm) or \
+                           self.is_province_name(norm) or self.is_province_name(norm2)
 
         # Example: "Moscow (P/PPLC)" significant. Name is exempted (significant feature)
         #          "Moscow (A/ADM2)" not significant; But it is flagged as "common"...and omitted without this:
         #          "Florida (P/PPL)" is not a common place
-        #          "Florida (A/ADM1)" is a significant place.  Note "Large Cities" vs. ADMIN-LEVEL1 boundaries are different lookups
+        #          "Florida (A/ADM1)" is a significant place.
+        #                Note "Large Cities" vs. ADMIN-LEVEL1 boundaries are different lookups
         if is_popular_place:
             self.exempted_names[norm] = trivial_bias(geoname)
             return self.exempted_names[norm]

@@ -64,19 +64,20 @@ def validate_lon(f):
     return (f >= -180.0) and (f <= 180.0)
 
 
-def parse_admin_code(adm1):
+def parse_admin_code(adm1, delim="."):
     """
+    :param delim:
     :param adm1: admin level 1 code
     :return: ADM1 code if possible.
     """
     if not adm1:
-        return ""
+        return "0"
 
     code = adm1
     if "?" in adm1:
         code = "0"
-    elif "." in adm1:
-        cc2, code = adm1.split(".")
+    elif delim in adm1:
+        cc2, code = adm1.split(delim)
     # Normalize Country-level.  Absent ADM1 levels are assigned "0" anyway
     if code.strip() in {"", None, "0", "00"}:
         code = "0"
@@ -503,7 +504,6 @@ def load_us_provinces():
     To get location and feature information in full, you must use the SQLITE DB or Xponents Solr.
     :return: array of Place objects
     """
-    pkg_dir = os.path.dirname(os.path.abspath(__file__))
     csvpath = pkg_resource_path('us-state-metadata.csv')
     usstate_places = []
     with open(csvpath, 'r', encoding="UTF-8") as fh:
@@ -543,6 +543,8 @@ def load_provinces():
     """
     Load, store and return a dictionary of ADM1 boundary names - provinces, states, republics, etc.
     NOTE: Location information is not included in this province listing.  Just Country, ADM1, Name tuples.
+    NOTE: This reflects only GEONAMES ADMIN1 CODES ASCII -- which portrays most of the world (except US) as FIPS,
+    not ISO.
     :return:  dict
     """
     return load_world_adm1()
@@ -551,19 +553,24 @@ def load_provinces():
 def load_world_adm1():
     """
     Load, store and return a dictionary of ADM1 boundary names - provinces, states, republics, etc.
+    Coding for ADM1 is FIPS based mostly
     :return:  dict
     """
     # Load local country data first, if you have it. US is only one so far.
     load_us_provinces()
 
+    SOURCE_ID = "G"
     csvpath = pkg_resource_path(os.path.join('geonames.org', 'admin1CodesASCII.txt'))
 
     with open(csvpath, 'r', encoding="UTF-8") as fh:
         adm1Splitter = re.compile(r'\.')
         lineSplitter = re.compile('\t')
         for line in fh:
-            row = lineSplitter.split(line)
-            adm1 = Place(row[0], row[1])
+            row = lineSplitter.split(line.strip())
+            src_id = f"{SOURCE_ID}{row[3]}"
+            if not row[3]:
+                src_id = None
+            adm1 = Place(src_id, row[1])
             adm1.feature_class = "A"
             adm1.feature_code = "ADM1"
             adm1.name_type = "N"
@@ -1002,6 +1009,11 @@ def add_language(lg: Language, override=False):
 
 
 def get_language(code: str) -> Language:
+    """
+
+    :param code: language ID or name
+    :return: Language or None
+    """
     if not code:
         return None
 
@@ -1033,7 +1045,7 @@ def get_lang_name(code: str):
     if L:
         return L.get_name()
 
-    raise Exception(f"No such language ID {k}")
+    raise Exception(f"No such language ID {code}")
 
 
 def get_lang_code(txt: str):
@@ -1044,22 +1056,22 @@ def get_lang_code(txt: str):
     raise Exception(f"No such language ID {txt}")
 
 
-def is_lang_romance(l: str):
+def is_lang_romance(lg: str):
     """If spanish, portuguese, italian, french, romanian"""
-    L = get_language(l)
+    L = get_language(lg)
     if not L:
         return False
     c = L.code
     return c in {"es", "pt", "it", "fr", "ro"}
 
 
-def is_lang_euro(l: str):
+def is_lang_euro(lg: str):
     """
     true if lang is European -- romance, german, english, etc
-    :param l:
+    :param lg:
     :return:
     """
-    L = get_language(l)
+    L = get_language(lg)
     if not L:
         return False
     c = L.code
@@ -1068,22 +1080,22 @@ def is_lang_euro(l: str):
                  "bu", "cz", "po", "nl", "el", "sq"}
 
 
-def is_lang_english(l: str):
-    L = get_language(l)
+def is_lang_english(lg: str):
+    L = get_language(lg)
     if not L:
         return False
     return L.code == "en"
 
 
-def is_lang_cjk(l: str):
-    L = get_language(l)
+def is_lang_cjk(lg: str):
+    L = get_language(lg)
     if not L:
         return False
     return L.code in {"zh", "zt", "ko", "ja"}
 
 
-def is_lang_chinese(l: str):
-    L = get_language(l)
+def is_lang_chinese(lg: str):
+    L = get_language(lg)
     if not L:
         return False
     return L.code in {"zh", "zt"}
