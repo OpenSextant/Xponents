@@ -99,7 +99,8 @@ def adjust_country_territory(entry, debug=False):
             entry["FIPS_cc"] = fips_cc
 
     elif adm1 in US_TERRITORY_MAP["ISO"]:
-        if debug: print("Correct Country/Territory", adm1)
+        if debug:
+            print("Correct Country/Territory", adm1)
         entry["cc"] = adm1
         entry["FIPS_cc"] = US_TERRITORY_MAP["ISO"][adm1]
 

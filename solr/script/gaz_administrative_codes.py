@@ -5,10 +5,10 @@ from copy import copy
 
 import shapefile
 from opensextant import get_country, Country, parse_admin_code
-from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, PlaceHeuristics, add_location
 from opensextant.utility import is_code, is_abbreviation, get_list
+from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, PlaceHeuristics, \
+    add_location
 
-#
 stopterms = load_stopterms()
 NOT_LEXICAL_COMPARABLE_SCRIPT = {"ar", "cjk"}
 

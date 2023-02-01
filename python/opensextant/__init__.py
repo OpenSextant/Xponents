@@ -2,12 +2,13 @@
 import os
 import re
 import sys
+import math
 from abc import ABC, abstractmethod
 from math import sqrt, sin, cos, radians, atan2, log as mathlog, log10
 
-from opensextant.utility import get_csv_reader, get_bool
+from opensextant.utility import get_csv_reader, get_bool, get_list, load_datafile
 from pygeodesy.ellipsoidalVincenty import LatLon as LL
-from pygeodesy.geohash import encode as geohash_encode, neighbors as geohash_neighbors
+from pygeodesy.geohash import encode as geohash_encode, decode as geohash_decode, neighbors as geohash_neighbors
 
 PY3 = sys.version_info.major == 3
 countries = []
@@ -17,6 +18,16 @@ countries_by_name = {}
 usstates = {}
 adm1_by_hasc = {}
 __loaded = False
+__language_map_init = False
+
+
+def pkg_resource_path(rsrc):
+    pkg_dir = os.path.dirname(os.path.abspath(__file__))
+    fpath = os.path.join(pkg_dir, 'resources', rsrc)
+    if not os.path.exists(fpath):
+        raise Exception(f"Resource not found {rsrc} (tried {fpath}")
+
+    return fpath
 
 
 def make_HASC(cc, adm1, adm2=None):
@@ -135,27 +146,24 @@ def _estimate_geohash_precision(r: int):
 
     :param r: radius in meters
     """
-    precision = 0
     if r > 1000000:
-        precision = 1
+        return 1
     elif r > 250000:
-        precision = 2
+        return 2
     elif r > 50000:
-        precision = 3
+        return 3
     elif r > 10000:
-        precision = 4
+        return 4
     elif r > 1000:
-        precision = 5
+        return 5
     elif r > 250:
-        precision = 6
+        return 6
     elif r > 50:
-        precision = 7
+        return 7
     elif r > 1:
-        precision = 8
+        return 8
     else:
         raise Exception(f"Not thinking about sub-meter resolution. radius={r}")
-
-    return precision
 
 
 def _ll2dict(p: LL):
@@ -164,6 +172,14 @@ def _ll2dict(p: LL):
 
 def _ll2geohash(p: LL):
     return geohash_encode(lat=p.lat, lon=p.lon)
+
+
+def point2geohash(lat: float, lon: float, precision=6):
+    return geohash_encode(lat=lat, lon=lon, precision=precision)
+
+
+def geohash2point(gh):
+    return (float(x) for x in geohash_decode(gh))
 
 
 def radial_geohash(lat, lon, radius):
@@ -258,6 +274,29 @@ class Coordinate:
             return 'unset'
 
 
+def bbox(lat: float, lon: float, radius: int):
+    sw, ne = LL(lon, lat).boundsOf(2 * radius, 2 * radius)
+    return Coordinate(None, lat=sw.lat, lon=sw.lon), Coordinate(None, lat=ne.lat, lon=ne.lon)
+
+
+def centroid(arr: list):
+    """
+
+    :param arr:  a list of numeric coordinates (y,x)
+    :return: Coordinate -- the average of sum(y), sum(x)
+    """
+    n = len(arr)
+    if not n:
+        return None
+    if n == 1:
+        y, x = arr[0]
+        return Coordinate(None, lat=y, lon=x)
+
+    lat_sum = math.fsum([y for y, x in arr])
+    lon_sum = math.fsum([x for y, x in arr])
+    return Coordinate(None, lat=lat_sum / n, lon=lon_sum / n)
+
+
 class Place(Coordinate):
     """
     Location or GeoBase
@@ -296,7 +335,7 @@ class Place(Coordinate):
         self.feature_code = None
         self.adm1 = None
         self.adm1_name = None
-        self.adm1_iso = None # Alternate ISO-based ADM1 code used by NGA and others.
+        self.adm1_iso = None  # Alternate ISO-based ADM1 code used by NGA and others.
         self.adm2 = None
         self.adm2_name = None
         self.source = None
@@ -389,8 +428,7 @@ def load_countries(csvpath=None):
         :return: array of Country
     """
     if not csvpath:
-        pkg_dir = os.path.dirname(os.path.abspath(__file__))
-        csvpath = os.path.join(pkg_dir, 'resources', 'country-names-2021.csv')
+        csvpath = pkg_resource_path('country-names-2021.csv')
 
     count = 0
     with open(csvpath, 'r', encoding="UTF-8") as fh:
@@ -466,7 +504,7 @@ def load_us_provinces():
     :return: array of Place objects
     """
     pkg_dir = os.path.dirname(os.path.abspath(__file__))
-    csvpath = os.path.join(pkg_dir, 'resources', 'us-state-metadata.csv')
+    csvpath = pkg_resource_path('us-state-metadata.csv')
     usstate_places = []
     with open(csvpath, 'r', encoding="UTF-8") as fh:
         columns = ["POSTAL_CODE", "ADM1_CODE", "STATE", "LAT", "LON", "FIPS_CC", "ISO2_CC"]
@@ -518,8 +556,7 @@ def load_world_adm1():
     # Load local country data first, if you have it. US is only one so far.
     load_us_provinces()
 
-    pkg_dir = os.path.dirname(os.path.abspath(__file__))
-    csvpath = os.path.join(pkg_dir, 'resources', 'geonames.org', 'admin1CodesASCII.txt')
+    csvpath = pkg_resource_path(os.path.join('geonames.org', 'admin1CodesASCII.txt'))
 
     with open(csvpath, 'r', encoding="UTF-8") as fh:
         adm1Splitter = re.compile(r'\.')
@@ -586,8 +623,7 @@ def load_major_cities():
     Loads City geo/demographic information -- this does not try to parse all name variants.
     :return:
     """
-    pkg_dir = os.path.dirname(os.path.abspath(__file__))
-    csvpath = os.path.join(pkg_dir, 'resources', 'geonames.org', 'cities15000.txt')
+    csvpath = pkg_resource_path(os.path.join('geonames.org', 'cities15000.txt'))
 
     from csv import reader
     with open(csvpath, 'r', encoding="UTF-8") as fh:
@@ -881,3 +917,224 @@ def render_match(m):
         "filtered-out": m.filtered_out
     }
     return dct
+
+
+# Language Code Support
+
+
+# ISO 639 code book support -- Language codes
+
+class Language:
+    """
+    Language Represents a single code/name pair
+    Coding is 3-char or 2-char, either is optional.
+    In some situations there are competeing 2-char codes in code books, such as Lib of Congress (LOC)
+    """
+
+    def __init__(self, iso3, iso2, nmlist: list):
+        self.code_iso3 = iso3
+        self.code = iso2
+        self.names = nmlist
+        if nmlist:
+            if not isinstance(nmlist, list):
+                raise Exception("Name list is a list of names for the language. The first one is the default.")
+
+    def get_name(self):
+        if self.names:
+            return self.names[0]
+        return None
+
+    def name_code(self):
+        if self.names:
+            return self.names[0].lower()
+        return None
+
+    def __str__(self):
+        return f"{self.name_code()}({self.code})"
+
+
+# ISO 639 lookup
+language_map = {}
+
+
+def list_languages():
+    """
+    List out a flattened list of languages, de-duplicated by ISO2 language ID.
+    TODO: alternatively list out every language
+    :return:
+    """
+    load_languages()
+    langs = []
+    visited = set([])
+    for lg in language_map:
+        L = language_map[lg]
+        if L.code:
+            if not L.code in visited:
+                langs.append(L)
+                visited.add(L.code)
+        if L.code_iso3:
+            if not L.code_iso3 in visited:
+                langs.append(L)
+                visited.add(L.code_iso3)
+    return langs
+
+
+def add_language(lg: Language, override=False):
+    if not lg:
+        return
+
+    codes = []
+    if lg.code:
+        codes.append(lg.code.lower())
+
+    if lg.code_iso3:
+        codes.append(lg.code_iso3.lower())
+
+    if lg.names:
+        for nm in lg.names:
+            codes.append(nm.lower())
+
+    for k in set(codes):
+        if k in language_map and not override:
+            raise Exception(f"Forcibly remap language code? {k}")
+
+        language_map[k] = lg
+
+
+def get_language(code: str) -> Language:
+    if not code:
+        return None
+
+    load_languages()
+    k = code.lower()
+    # Most cases:
+    if len(k) <= 3:
+        return language_map.get(k)
+
+    # Code is odd, like a locale?  "EN_GB" or en-gb, etc.
+    if k.isalpha():
+        return language_map.get(k)
+
+    if k in language_map:
+        return language_map.get(k)
+
+    for delim in ["-", " ", "_"]:
+        k = k.split(delim)[0]
+        if k in language_map:
+            return language_map.get(k)
+    return None
+
+
+def get_lang_name(code: str):
+    if not code:
+        return None
+
+    L = get_language(code)
+    if L:
+        return L.get_name()
+
+    raise Exception(f"No such language ID {k}")
+
+
+def get_lang_code(txt: str):
+    L = get_language(txt)
+    if L:
+        return L.code
+
+    raise Exception(f"No such language ID {txt}")
+
+
+def is_lang_romance(l: str):
+    """If spanish, portuguese, italian, french, romanian"""
+    L = get_language(l)
+    if not L:
+        return False
+    c = L.code
+    return c in {"es", "pt", "it", "fr", "ro"}
+
+
+def is_lang_euro(l: str):
+    """
+    true if lang is European -- romance, german, english, etc
+    :param l:
+    :return:
+    """
+    L = get_language(l)
+    if not L:
+        return False
+    c = L.code
+    return c in {"es", "pt", "it", "fr", "ro",
+                 "de", "en",
+                 "bu", "cz", "po", "nl", "el", "sq"}
+
+
+def is_lang_english(l: str):
+    L = get_language(l)
+    if not L:
+        return False
+    return L.code == "en"
+
+
+def is_lang_cjk(l: str):
+    L = get_language(l)
+    if not L:
+        return False
+    return L.code in {"zh", "zt", "ko", "ja"}
+
+
+def is_lang_chinese(l: str):
+    L = get_language(l)
+    if not L:
+        return False
+    return L.code in {"zh", "zt"}
+
+
+IGNORE_LANGUAGES = {"gaa"}
+
+
+def load_languages():
+    global __language_map_init
+    if __language_map_init:
+        return
+
+    fpath = pkg_resource_path("ISO-639-2_utf-8.txt")
+    langset = load_datafile(fpath, delim="|")
+    for lang in langset:
+        lang_names = get_list(lang[3], delim=";")
+
+        iso3 = lang[0]
+        bib3 = lang[1]
+        if iso3 and iso3.startswith("#"):
+            continue
+
+        if iso3 in IGNORE_LANGUAGES:
+            continue
+
+        L = Language(lang[0], lang[2], lang_names)
+        add_language(L)
+        if bib3:
+            L = Language(bib3, lang[2], lang_names)
+            add_language(L, override=True)
+
+    # Some odd additions -- Bibliographic vs. Terminologic codes may vary.
+    # FRE vs. FRA is valid for French, for example.
+    #
+    for lg in [Language("fra", "fr", ["French"]),
+
+               Language("zh-cn", "zh", ["Chinese"]),
+
+               Language(None, "zt", ["Traditionl Chinese"]),
+               Language("zh-tw", "zt", ["Traditionl Chinese/Taiwain"]),
+
+               Language("fa-AF", "dr", ["Dari", "Afghan Persian"]),
+               Language("prs", "dr", ["Dari", "Afghan Persian"]),
+
+               Language("eng", "en", ["English"]),
+               Language("en-gb", "en", ["English"]),
+               Language("en-us", "en", ["English"]),
+               Language("en-uk", "en", ["English"]),
+               Language("en-ca", "en", ["English"]),
+               Language("en-au", "en", ["English"])]:
+        add_language(lg, override=True)
+
+    __language_map_init = True

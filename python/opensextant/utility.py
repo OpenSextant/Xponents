@@ -474,7 +474,7 @@ class ConfigUtility:
             raise Exception('File does not exist, FILE=%s' % path)
 
         with  open(path, 'r', encoding="UTF-8") as f:
-            filereader = csv.reader(f, delimiter=delim, lineterminator='\n')
+            filereader = csv.reader(f, delimiter=delim, lineterminator='\n', dialect="excel")
             data = []
             for row in filereader:
                 if not row:
@@ -549,6 +549,31 @@ def load_list(path, lower=False):
             termlist.append(line.lower() if lower else line)
 
         return termlist
+
+
+def load_datafile(path, delim):
+    """
+    :param path: file path
+    :param delim: delimiter
+    :return: Array of tuples.
+    """
+    if not os.path.exists(path):
+        raise Exception(f'File does not exist, FILE={path}')
+
+    with open(path, 'r', encoding="utf-8") as f:
+        data = []
+        text = f.read().replace('\uFEFF', '')
+
+        for line in text.split("\n"):
+            row = line.strip().split(delim)
+            if not row:
+                # print("Blank line")
+                continue
+            first_cell = row[0]
+            if first_cell.startswith('#'):
+                continue
+            data.append(row)
+        return data
 
 
 def ensure_dirs(fpath):

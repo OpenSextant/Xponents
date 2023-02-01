@@ -338,8 +338,9 @@ class RegexPatternManager:
 
     def set_enabled(self, some:str, flag:bool):
         """
-
+        set family enabled or not
         :param some: prefix of a family or family-variant
+        :param flag: bool setting
         :return:
         """
         for k in self.patterns:

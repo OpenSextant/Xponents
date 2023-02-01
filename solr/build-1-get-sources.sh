@@ -40,3 +40,27 @@ if [ -f "$TEST" ]; then
 
   echo "USGS file is at $TARGET"
 fi
+
+
+echo "Download HumData Exchange - PAK"
+echo "==============================="
+FILE=pak_adm_wfp_20220909_shp.zip
+TEST=tmp/$FILE
+
+if [ !  -f "$TEST" ]; then
+  echo "Download https://data.humdata.org/dataset/cod-ab-pak"
+  echo "  grab FILE $FILE"
+  echo "  copy to ./tmp/ here"
+  echo "READY?"
+  read ans
+  if [ "$ans" = "y" -a -f "$TEST" ]; then
+    echo "Continuing ... "
+  else
+    echo "File not found"
+  fi
+fi
+
+if [ -f $TEST ]; then
+    unzip -d ./tmp/pak_adm_wfp/ $TEST
+fi
+

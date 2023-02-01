@@ -14,7 +14,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='opensextant',
-    version='1.4.12',
+    version='1.4.16b',
 
     description='OpenSextant APIs and Utilities',
     long_description=long_description,
@@ -35,7 +35,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
@@ -55,7 +55,9 @@ setup(
     # What does your project relate to?
     keywords='geography taxonomy tagging',
     packages=["opensextant", "opensextant.extractors"],
-    package_data={'opensextant': ['./resources/geonames.org/*.txt', './resources/*.csv', './resources/*.cfg']},
+    package_data={'opensextant': ['./resources/geonames.org/*.txt',
+                                  './resources/*.txt','./resources/*.csv',
+                                  './resources/*.cfg']},
 
     install_requires=['pysolr>=3.9.0', 'chardet>=3.0.0', 'requests', 'arrow>=1.1.0', 'PyGeodesy>=21.3.3']
 )

@@ -152,10 +152,10 @@ class Finalizer:
             # ============================================
             flip_ids = []
             non_place_codes = os.path.join('etc', 'gazetteer', 'filters', 'non-placenames,admin-codes.csv')
-            IGNORE_CODES = set(load_list(non_place_codes))
+            ignore_codes = set(load_list(non_place_codes))
             for pl in self.db.list_places(fc="A",
                                           criteria=" and name_type='C' and feat_code in ('ADM1','ADM2') and search_only=1"):
-                if pl.name in IGNORE_CODES:
+                if pl.name in ignore_codes:
                     continue
                 flip_ids.append(pl.id)
                 print(pl)

@@ -64,7 +64,7 @@ def variants(pl: Place):
     :param pl:
     :return:
     """
-    if not " " in pl.name:
+    if " " not in pl.name:
         return [pl, ]
 
     nm = pl.name.replace(" ", "")
@@ -101,7 +101,7 @@ class PostalGazetteer(DataSource):
         # Guidelines -- Copy over source data from DBF, but reassign row ID to be consistent with this
         # postal db
         cc_list = self.db.list_countries()
-        cc_sql_arr = ", ".join([ f"'{cc}'" for cc in cc_list])
+        cc_sql_arr = ", ".join([f"'{cc}'" for cc in cc_list])
         try:
             # !!! PER SQLITE: https://www.sqlite.org/faq.html  -- use Single Quotes for query on columns.
             #
