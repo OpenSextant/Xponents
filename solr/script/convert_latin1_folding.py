@@ -1,13 +1,14 @@
 import os
 from opensextant.utility import get_list
+
 uni_array = []
-ascii_array =[]
+ascii_array = []
 uni_mapping = dict()
 
 with open(os.path.join("solr7/gazetteer/conf/OpenSextant-Gazetteer-ASCIIFolding.txt"), "r", encoding="UTF-8") as fh:
     for line in fh:
         text = line.strip()
-        if not text or  text.startswith("#"):
+        if not text or text.startswith("#"):
             continue
 
         if "=>" not in text:

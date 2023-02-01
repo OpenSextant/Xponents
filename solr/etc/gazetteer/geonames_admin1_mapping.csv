@@ -1,0 +1,3872 @@
+ADM1	PLACE_ID	LAT	LON	NAMEAD.06	G3039162	42.5	1.5	Sant Julia de Loria
+AD.05	G3039676	42.6	1.5	Ordino
+AD.04	G3040131	42.6	1.5	La Massana
+AD.03	G3040684	42.5	1.6	Encamp
+AD.02	G3041203	42.6	1.7	Canillo
+AD.07	G3041566	42.5	1.5	Andorra la Vella
+AD.08	G3338529	42.5	1.6	Escaldes-Engordany
+AE.07	G290595	25.5	55.8	Imarat Umm al Qaywayn
+AE.05	G291075	25.7	56.0	Imarat Ra's al Khaymah
+AE.03	G292224	25.0	55.3	Dubai
+AE.06	G292673	25.3	55.4	Ash Shariqah
+AE.04	G292879	25.1	56.2	Imarat al Fujayrah
+AE.02	G292933	25.4	55.5	Imarat 'Ajman
+AE.01	G292969	23.7	54.0	Abu Dhabi
+AF.28	G1121143	32.2	67.2	Wilayat-e Zabul
+AF.27	G1121863	34.2	68.0	Wardak
+AF.26	G1123230	36.7	69.8	Wilayat-e Takhar
+AF.33	G1127106	35.8	66.2	Sar-e Pul
+AF.32	G1127766	36.0	67.7	Samangan
+AF.40	G1131054	35.0	68.9	Parwan
+AF.29	G1131256	32.4	68.8	Wilayat-e Paktika
+AF.36	G1131257	33.7	69.3	Wilayat-e Paktiya
+AF.39	G1131461	32.8	66.0	Uruzgan
+AF.19	G1131821	31.0	62.5	Wilayat-e Nimroz
+AF.18	G1132366	34.3	70.4	Nangarhar
+AF.17	G1134561	34.0	69.2	Wilayat-e Logar
+AF.35	G1135022	34.8	70.2	Wilayat-e Laghman
+AF.24	G1135690	36.8	68.8	Kunduz
+AF.34	G1135702	35.0	71.1	Wilayat-e Kunar
+AF.14	G1138255	35.0	69.6	Wilayat-e Kapisa
+AF.23	G1138335	31.0	65.8	Kandahar
+AF.13	G1138957	34.5	69.4	Wilayat-e Kabul
+AF.31	G1139049	36.8	65.8	Wilayat-e Jowzjan
+AF.11	G1140025	34.5	62.0	Herat
+AF.10	G1140043	31.0	64.0	Helmand
+AF.09	G1141103	34.0	65.0	Wilayat-e Ghor
+AF.08	G1141268	33.3	67.8	Wilayat-e Ghazni
+AF.07	G1142226	36.2	64.8	Faryab Province
+AF.06	G1142263	32.5	62.5	Farah
+AF.05	G1147239	34.8	67.2	Wilayat-e Bamyan
+AF.30	G1147288	36.8	67.0	Balkh
+AF.03	G1147537	35.8	69.0	Wilayat-e Baghlan
+AF.02	G1147707	35.0	63.8	Badghis
+AF.01	G1147745	36.8	72.0	Badakhshan
+AF.37	G1444362	33.4	69.9	Velayat-e Khowst
+AF.38	G1444363	35.3	70.8	Velayat-e Nurestan
+AF.41	G6957553	33.8	66.2	Daykundi Province
+AF.42	G6957555	35.4	70.0	Panjshir
+AG.08	G3576015	17.1	-61.7	Parish of Saint Philip
+AG.07	G3576016	17.1	-61.7	Parish of Saint Peter
+AG.06	G3576017	17.0	-61.8	Parish of Saint Paul
+AG.05	G3576018	17.1	-61.9	Parish of Saint Mary
+AG.04	G3576023	17.1	-61.9	Parish of Saint John
+AG.03	G3576024	17.1	-61.8	Parish of Saint George
+AG.09	G3576037	16.9	-62.3	Redonda
+AG.01	G3576390	17.6	-61.8	Barbuda
+AI.11205389	G11205389	18.2	-63.1	Blowing Point
+AI.11205392	G11205392	18.2	-63.1	Sandy Ground
+AI.11205393	G11205393	18.2	-63.0	Sandy Hill
+AI.11205396	G11205396	18.2	-63.1	The Valley
+AI.11205433	G11205433	18.2	-63.0	East End
+AI.11205436	G11205436	18.2	-63.1	North Hill
+AI.11205437	G11205437	18.2	-63.2	West End
+AI.11205438	G11205438	18.2	-63.1	South Hill
+AI.11205439	G11205439	18.2	-63.0	The Quarter
+AI.11205440	G11205440	18.2	-63.0	North Side
+AI.11205441	G11205441	18.3	-63.0	Island Harbour
+AI.11205442	G11205442	18.2	-63.1	George Hill
+AI.11205443	G11205443	18.2	-63.0	Stoney Ground
+AI.11205444	G11205444	18.2	-63.0	The Farrington
+AL.40	G865730	40.6	20.1	Qarku i Beratit
+AL.41	G865731	41.6	20.2	Qarku i Dibres
+AL.43	G865732	41.1	20.2	Qarku i Elbasanit
+AL.45	G865733	40.2	20.2	Qarku i Gjirokastres
+AL.46	G865734	40.6	20.7	Qarku i Korces
+AL.47	G865735	42.2	20.4	Qarku i Kukesit
+AL.42	G3344947	41.5	19.6	Qarku i Durresit
+AL.44	G3344948	40.8	19.6	Qarku i Fierit
+AL.48	G3344949	41.8	19.9	Qarku i Lezhes
+AL.49	G3344950	42.2	19.8	Qarku i Shkodres
+AL.50	G3344951	41.3	19.8	Tirana
+AL.51	G3344952	40.2	19.8	Qarku i Vlores
+AM.02	G409313	39.9	44.8	Ararati Marz
+AM.08	G409314	39.3	46.2	Syunik'i Marz
+AM.10	G409315	39.8	45.4	Vayots' Dzor
+AM.11	G616051	40.2	44.5	Yerevan
+AM.01	G828259	40.4	44.2	Aragatsotni Marz
+AM.03	G828260	40.1	44.0	Armaviri Marz
+AM.04	G828261	40.2	45.4	Geghark'unik'i Marz
+AM.05	G828262	40.4	44.8	Kotayk'i Marz
+AM.06	G828263	41.0	44.5	Lorru Marz
+AM.07	G828264	40.8	43.8	Shiraki Marz
+AM.09	G828265	40.9	45.2	Tavushi Marz
+AO.18	G145701	-10.3	20.6	Lunda-Sul
+AO.17	G145702	-8.6	19.6	Lunda Norte Province
+AO.14	G875996	-12.8	20.9	Moxico
+AO.04	G876337	-15.9	19.4	Cuando Cubango
+AO.16	G2236355	-6.6	13.5	Zaire
+AO.15	G2236566	-7.1	15.4	Provincia do Uige
+AO.12	G2239858	-9.7	16.8	Malanje Province
+AO.20	G2240444	-8.9	13.3	Luanda Province
+AO.05	G2241660	-8.9	14.9	Cuanza Norte Province
+AO.03	G2243266	-4.9	12.4	Cabinda
+AO.19	G2243598	-9.0	13.8	Bengo Province
+AO.13	G3347016	-15.3	12.7	Namibe Province
+AO.09	G3348303	-14.7	15.0	Huila Province
+AO.08	G3348310	-12.5	15.7	Huambo
+AO.07	G3349096	-16.5	15.4	Cunene Province
+AO.06	G3349234	-10.8	15.0	Cuanza-Sul
+AO.02	G3351640	-12.3	17.3	Provincia do Bie
+AO.01	G3351660	-12.9	13.9	Benguela
+AR.14	G3430657	-26.8	-54.3	Misiones Province
+AR.09	G3433896	-25.0	-60.0	Formosa Province
+AR.07	G3433955	-34.6	-58.5	Ciudad Autonoma de Buenos Aires
+AR.08	G3434137	-32.0	-59.0	Entre Rios Province
+AR.06	G3435214	-29.0	-58.0	Corrientes Province
+AR.01	G3435907	-36.0	-60.0	Buenos Aires
+AR.24	G3833578	-27.0	-65.5	Tucuman Province
+AR.23	G3834450	-54.5	-67.0	Tierra del Fuego Province
+AR.22	G3835868	-28.0	-63.5	Santiago del Estero Province
+AR.21	G3836276	-31.0	-61.0	Santa Fe Province
+AR.20	G3836350	-49.0	-70.0	Santa Cruz Province
+AR.19	G3837029	-34.0	-66.0	San Luis Province
+AR.18	G3837152	-31.0	-69.0	San Juan Province
+AR.17	G3838231	-24.8	-65.4	Salta Province
+AR.16	G3838830	-40.0	-67.0	Rio Negro Province
+AR.15	G3843122	-39.0	-70.0	Neuquen Province
+AR.13	G3844419	-34.5	-68.5	Mendoza Province
+AR.12	G3848949	-29.6	-67.0	La Rioja Province
+AR.11	G3849574	-37.0	-66.0	La Pampa Province
+AR.10	G3853404	-23.0	-66.0	Jujuy Province
+AR.05	G3860255	-32.0	-64.0	Cordoba Province
+AR.04	G3861244	-44.0	-69.0	Chubut Province
+AR.03	G3861887	-26.3	-60.5	Chaco Province
+AR.02	G3862286	-27.0	-67.0	Catamarca Province
+AS.050	G5880873	-14.3	-170.8	Western District
+AS.040	G5881199	-11.1	-171.1	Swains Island
+AS.010	G5881219	-14.3	-170.7	Eastern District
+AS.020	G5881436	-14.2	-169.5	Manu'a District
+AS.030	G7309441	-14.5	-168.2	Rose Atoll
+AT.09	G2761367	48.2	16.4	Wien
+AT.08	G2762300	47.2	9.9	Vorarlberg
+AT.07	G2763586	47.2	11.3	Tirol
+AT.06	G2764581	47.2	15.2	Steiermark
+AT.05	G2766823	47.4	13.2	Salzburg
+AT.04	G2769848	48.2	14.0	Oberoesterreich
+AT.03	G2770542	48.3	15.8	Niederoesterreich
+AT.02	G2774686	46.8	13.8	Kaernten
+AT.01	G2781194	47.5	16.4	Burgenland
+AU.08	G2058645	-25.0	122.0	State of Western Australia
+AU.05	G2061327	-30.0	135.0	State of South Australia
+AU.03	G2064513	-20.0	134.0	Northern Territory
+AU.07	G2145234	-37.0	145.0	State of Victoria
+AU.06	G2147291	-42.0	147.0	State of Tasmania
+AU.04	G2152274	-20.0	145.0	State of Queensland
+AU.02	G2155400	-33.0	146.0	State of New South Wales
+AU.01	G2177478	-35.5	149.0	Australian Capital Territory
+AX.211	G9611689	60.1	19.9	Mariehamns stad
+AX.212	G9611692	60.2	19.9	Alands landsbygd
+AX.213	G9611694	60.2	20.7	Alands skaergard
+AZ.12	G146879	39.8	47.7	Beylagan Rayon
+AZ.69	G146900	39.1	46.7	Zangilan Rayon
+AZ.66	G146962	38.9	48.2	Yardymli Rayon
+AZ.55	G147163	39.7	46.7	Susa Rayonu
+AZ.49	G147269	39.7	49.0	Salyan Rayon
+AZ.46	G147284	39.9	48.7	Sabirabad Rayon
+AZ.45	G147287	39.8	48.4	Saatly Rayon
+AZ.13	G147310	39.5	48.4	Bilasuvar Rayon
+AZ.36	G147422	39.3	49.0	Neftchala Rayon
+AZ.35	G147435	39.2	45.4	Nakhchivan Autonomous Republic
+AZ.32	G147551	39.0	48.7	Masally District
+AZ.31	G147610	38.8	48.4	Lerik Rayon
+AZ.29	G147613	38.7	48.8	Lankaran Rayon
+AZ.28	G147626	39.7	46.4	Lacin Rayonu
+AZ.43	G147694	39.3	46.6	Qubadli Rayon
+AZ.24	G147983	39.8	48.1	Imishli Rayon
+AZ.18	G148107	39.6	47.3	Fizuli Rayon
+AZ.14	G148140	39.3	47.0	Jabrayil District
+AZ.15	G148155	39.2	48.5	Jalilabad
+AZ.08	G148442	38.5	48.7	Astara District
+AZ.64	G148449	39.8	46.8	Xocali Rayonu
+AZ.02	G148615	40.0	47.4	Aghjabadi Rayon
+AZ.03	G148617	40.0	47.0	Aghdam Rayon
+AZ.07	G409417	40.0	48.9	Shirvan
+AZ.30	G409418	38.7	48.8	Lankaran Sahari
+AZ.56	G409419	39.8	46.8	Shusha
+AZ.57	G409420	40.3	46.9	Tartar Rayon
+AZ.61	G409421	39.8	46.8	Xankandi Sahari
+AZ.65	G409423	39.7	47.0	Khojavend District
+AZ.71	G584583	40.2	47.8	Zardab Rayon
+AZ.70	G584604	41.6	46.7	Zaqatala Rayon
+AZ.67	G584650	40.7	47.0	Yevlakh Rayon
+AZ.37	G584742	41.1	47.5	Oghuz Rayon
+AZ.59	G584783	40.4	47.8	Ujar Rayon
+AZ.58	G584861	41.0	45.8	Tovuz Rayon
+AZ.50	G585030	40.6	48.7	Shamakhi Rayon
+AZ.47	G585031	41.1	47.2	Shaki Rayon
+AZ.51	G585059	40.8	46.1	Shamkir Rayon
+AZ.27	G585686	40.2	48.2	Kurdamir Rayon
+AZ.38	G585738	40.9	47.8	Qabala Rayon
+AZ.44	G585749	41.4	48.2	Qusar Rayon
+AZ.42	G585786	41.2	48.4	Quba Rayon
+AZ.62	G585967	40.5	46.3	Goygol Rayon
+AZ.60	G586001	41.6	48.8	Khachmaz Rayon
+AZ.26	G586047	40.1	46.2	Kalbajar District
+AZ.40	G586087	41.3	45.1	Qazakh Rayon
+AZ.21	G586112	40.6	46.7	Goranboy Rayon
+AZ.39	G586290	41.3	46.8	Qakh Rayon
+AZ.25	G586320	40.8	48.2	Ismayilli Rayon
+AZ.22	G586482	40.6	47.8	Goychay Rayon
+AZ.17	G586725	41.2	48.8	Shabran Rayon
+AZ.16	G586771	40.4	46.0	Dashkasan Rayon
+AZ.10	G587010	41.8	46.4	Balakan Rayon
+AZ.11	G587056	40.3	47.2	Barda Rayon
+AZ.09	G587081	40.4	49.7	Baku City
+AZ.01	G587245	40.4	49.3	Absheron Rayon
+AZ.06	G587342	40.5	48.3	Aghsu Rayon
+AZ.04	G587376	40.6	47.4	Aghdash Rayon
+AZ.19	G627535	40.5	45.7	Gadabay Rayon
+AZ.05	G828297	41.2	45.5	Aghstafa Rayon
+AZ.20	G828298	40.7	46.3	Ganja City
+AZ.33	G828299	40.8	47.0	Mingacevir City
+AZ.34	G828300	40.5	46.8	Naftalan City
+AZ.41	G828301	40.5	49.0	Gobustan Rayon
+AZ.52	G828302	40.9	46.4	Samukh Rayon
+AZ.48	G828303	41.2	47.2	Shaki city
+AZ.53	G828304	41.0	49.1	Siazan Rayon
+AZ.54	G828305	40.6	49.6	Sumqayit City
+AZ.63	G828306	40.8	49.2	Khizi Rayon
+AZ.68	G828307	40.6	47.2	Yevlakh City
+AZ.23	G828315	40.1	48.9	Hajigabul Rayon
+BA.01	G3229999	44.0	17.6	Federation of Bosnia and Herzegovina
+BA.02	G3230000	44.7	17.4	Republika Srpska
+BA.BRC	G3294903	44.8	18.8	Brcko
+BB.11	G3373551	13.2	-59.6	Saint Thomas
+BB.10	G3373553	13.1	-59.5	Saint Philip
+BB.09	G3373554	13.3	-59.6	Saint Peter
+BB.08	G3373557	13.1	-59.6	Saint Michael
+BB.07	G3373565	13.3	-59.6	Saint Lucy
+BB.06	G3373568	13.2	-59.5	Saint Joseph
+BB.05	G3373569	13.2	-59.5	Saint John
+BB.04	G3373570	13.2	-59.6	Saint James
+BB.03	G3373572	13.1	-59.5	Saint George
+BB.02	G3373580	13.2	-59.6	Saint Andrew
+BB.01	G3373988	13.1	-59.5	Christ Church
+BD.83	G1337166	25.0	89.0	Rajshahi Division
+BD.81	G1337179	23.8	90.2	Dhaka Division
+BD.84	G1337200	22.9	91.5	Chittagong
+BD.82	G1337210	22.9	89.3	Khulna Division
+BD.85	G1337229	22.5	90.3	Barisal Division
+BD.86	G1477362	24.7	91.7	Sylhet Division
+BD.87	G7671048	25.8	89.0	Rangpur Division
+BD.H	G11287936	24.7	90.4	Mymensingh Division
+BE.BRU	G2800867	50.9	4.4	Bruxelles-Capitale
+BE.WAL	G3337387	50.5	4.8	Wallonia
+BE.VLG	G3337388	51.0	4.5	Flanders
+BF.01	G6930701	12.5	-3.5	Boucle du Mouhoun Region
+BF.02	G6930703	10.4	-4.5	Cascades Region
+BF.03	G6930704	12.4	-1.5	Centre
+BF.04	G6930705	11.8	-0.4	Centre-Est
+BF.05	G6930706	13.1	-1.1	Centre-Nord
+BF.06	G6930707	12.3	-2.4	Centre-Ouest
+BF.07	G6930708	11.7	-1.1	Centre-Sud
+BF.08	G6930709	12.1	0.4	Est
+BF.09	G6930710	11.3	-4.3	High-Basins Region
+BF.10	G6930711	13.6	-2.4	Nord
+BF.11	G6930712	12.6	-1.3	Plateau-Central
+BF.12	G6930713	14.0	-0.0	Sahel
+BF.13	G6930714	10.5	-3.2	Southwest Region
+BG.52	G453751	43.6	26.6	Oblast Razgrad
+BG.47	G453753	43.5	23.2	Oblast Montana
+BG.64	G725713	43.4	23.8	Oblast Vratsa
+BG.61	G726051	43.2	27.6	Varna
+BG.40	G726419	43.7	27.9	Oblast Dobrich
+BG.58	G727012	42.7	23.8	Sofia
+BG.53	G727524	43.7	26.0	Oblast Ruse
+BG.51	G728194	42.3	24.8	Plovdiv
+BG.50	G728204	43.5	24.6	Oblast Pleven
+BG.49	G728331	42.6	22.9	Pernik
+BG.48	G728379	42.1	24.2	Pazardzhik
+BG.46	G729560	43.0	24.6	Lovech
+BG.43	G730436	41.8	25.9	Haskovo
+BG.42	G731061	42.7	23.4	Sofia-Grad
+BG.39	G732771	42.5	27.2	Burgas
+BG.38	G733192	41.7	23.4	Blagoevgrad
+BG.41	G864552	43.0	25.2	Gabrovo
+BG.44	G864553	41.5	25.4	Oblast Kardzhali
+BG.45	G864554	42.2	22.9	Oblast Kyustendil
+BG.54	G864555	43.3	27.0	Oblast Shumen
+BG.55	G864556	43.9	27.1	Oblast Silistra
+BG.56	G864557	42.7	26.3	Oblast Sliven
+BG.57	G864558	41.6	24.6	Oblast Smolyan
+BG.59	G864559	42.5	25.6	Oblast Stara Zagora
+BG.60	G864560	43.3	26.4	Oblast Targovishte
+BG.62	G864561	43.2	25.6	Oblast Veliko Tarnovo
+BG.63	G864562	43.8	22.7	Oblast Vidin
+BG.65	G864563	42.3	26.6	Oblast Yambol
+BH.15	G290333	26.2	50.6	Muharraq Governorate
+BH.16	G7090954	26.2	50.6	Capital Governorate
+BH.17	G7090972	25.9	50.6	Southern Governorate
+BH.19	G7090974	26.1	50.5	Northern Governorate
+BI.17	G422233	-4.2	29.8	Makamba Province
+BI.10	G423327	-3.9	29.6	Bururi Province
+BI.22	G425550	-3.2	29.7	Muramvya Province
+BI.13	G426271	-3.5	29.9	Gitega Province
+BI.21	G426699	-3.5	30.3	Ruyigi Province
+BI.11	G427700	-3.1	30.6	Cankuzo Province
+BI.14	G428218	-3.1	30.1	Karuzi Province
+BI.09	G428514	-3.1	29.4	Bubanza Province
+BI.12	G430020	-2.9	29.2	Cibitoke Province
+BI.19	G430567	-2.9	29.9	Ngozi Province
+BI.15	G430951	-3.1	29.7	Kayanza Province
+BI.18	G431747	-2.8	30.3	Muyinga Province
+BI.16	G432455	-2.6	30.2	Kirundo Province
+BI.20	G434147	-3.9	30.1	Rutana Province
+BI.23	G434386	-3.5	29.7	Province de Mwaro
+BI.24	G7303939	-3.4	29.4	Bujumbura Mairie Province
+BI.25	G7303940	-3.5	29.5	Bujumbura Rural Province
+BI.26	G11184798	-4.0	29.4	Rumonge Province
+BJ.18	G2390719	7.2	2.2	Zou Department
+BJ.16	G2392325	6.6	2.5	Departement de l'Oueme
+BJ.15	G2392716	6.6	1.8	Mono
+BJ.10	G2394992	9.8	2.8	Borgou Department
+BJ.09	G2395504	6.7	2.2	Atlantique Department
+BJ.08	G2395524	10.8	1.7	Atakora Department
+BJ.07	G2597271	11.3	2.9	Alibori
+BJ.11	G2597272	8.0	2.2	Collines Department
+BJ.12	G2597273	7.1	1.8	Kouffo Department
+BJ.13	G2597274	9.3	1.8	Donga
+BJ.14	G2597275	6.4	2.4	Littoral
+BJ.17	G2597277	7.2	2.6	Plateau Department
+BM.11	G3572972	32.3	-64.8	Warwick Parish
+BM.10	G3573026	32.3	-64.9	Southampton Parish
+BM.09	G3573031	32.3	-64.7	Smith's Parish
+BM.08	G3573050	32.3	-64.9	Sandys Parish
+BM.07	G3573057	32.4	-64.7	Saint George's Parish
+BM.06	G3573062	32.4	-64.7	Saint George
+BM.05	G3573095	32.3	-64.8	Pembroke Parish
+BM.04	G3573103	32.3	-64.8	Paget Parish
+BM.02	G3573195	32.3	-64.7	Hamilton
+BM.03	G3573198	32.3	-64.8	Hamilton City
+BM.01	G3573251	32.3	-64.8	Devonshire Parish
+BN.04	G1820068	4.6	114.7	Tutong
+BN.03	G1820106	4.6	115.2	Temburong
+BN.02	G1820818	4.9	114.9	Daerah Brunei dan Muara
+BN.01	G1820869	4.3	114.6	Belait
+BO.09	G3903319	-21.5	-64.0	Departamento de Tarija
+BO.08	G3904907	-17.5	-61.5	Departamento de Santa Cruz
+BO.07	G3907580	-20.7	-67.0	Departamento de Potosi
+BO.06	G3908600	-11.3	-67.7	Departamento de Pando
+BO.05	G3909233	-18.7	-67.5	Departamento de Oruro
+BO.04	G3911924	-15.5	-68.0	Departamento de La Paz
+BO.02	G3919966	-17.5	-65.7	Departamento de Cochabamba
+BO.01	G3920177	-20.0	-64.3	Departamento de Chuquisaca
+BO.03	G3923172	-14.0	-65.5	El Beni
+BQ.BO	G7609816	12.2	-68.3	Bonaire
+BQ.SB	G7610358	17.6	-63.2	Saba
+BQ.SE	G7610359	17.5	-63.0	Sint Eustatius
+BR.22	G3390290	-5.8	-36.5	Rio Grande do Norte
+BR.20	G3392213	-7.2	-42.3	Piaui
+BR.30	G3392268	-8.3	-37.8	Pernambuco
+BR.17	G3393098	-7.2	-36.5	Paraiba
+BR.16	G3393129	-4.0	-53.0	Para
+BR.13	G3395443	-5.0	-45.0	Maranhao
+BR.06	G3402362	-5.0	-39.5	Ceara
+BR.03	G3407762	1.0	-52.0	Amapa
+BR.02	G3408096	-9.6	-36.4	Alagoas
+BR.28	G3447799	-10.5	-37.3	Sergipe
+BR.27	G3448433	-22.0	-49.0	Sao Paulo
+BR.26	G3450387	-27.0	-50.0	Santa Catarina
+BR.23	G3451133	-30.0	-53.5	Rio Grande do Sul
+BR.21	G3451189	-22.2	-42.5	Rio de Janeiro
+BR.18	G3455077	-24.5	-51.3	Parana
+BR.15	G3457153	-18.0	-44.0	Minas Gerais
+BR.11	G3457415	-20.5	-55.0	Mato Grosso do Sul
+BR.14	G3457419	-13.0	-56.0	Mato Grosso
+BR.29	G3462372	-15.6	-49.6	Goias
+BR.07	G3463504	-15.8	-47.8	Federal District
+BR.08	G3463930	-20.0	-40.8	Espirito Santo
+BR.05	G3471168	-12.0	-42.0	Bahia
+BR.31	G3474575	-10.5	-48.0	Tocantins
+BR.25	G3662560	2.2	-61.2	Roraima
+BR.04	G3665361	-3.8	-64.5	Amazonas
+BR.01	G3665474	-9.0	-70.0	Acre
+BR.24	G3924825	-11.0	-63.0	Rondonia
+BS.35	G3571493	24.0	-74.5	San Salvador District
+BS.18	G3571629	22.4	-75.8	Ragged Island District
+BS.32	G3571809	25.7	-77.8	Berry Islands District
+BS.23	G3571815	25.0	-77.3	New Providence District
+BS.16	G3571894	22.4	-73.0	Mayaguana District
+BS.15	G3572005	23.2	-75.1	Long Island
+BS.13	G3572154	21.1	-73.3	Inagua
+BS.22	G3572238	25.5	-76.6	Harbour Island District
+BS.25	G3572374	26.5	-78.6	City of Freeport District
+BS.10	G3572427	23.6	-75.9	Exuma District
+BS.06	G3572678	24.3	-75.5	Cat Island
+BS.05	G3572807	25.7	-79.3	Bimini District
+BS.24	G3572937	22.4	-74.0	Acklins Island District
+BS.36	G8030541	24.1	-76.4	Black Point District
+BS.37	G8030542	26.4	-77.1	Central Abaco District
+BS.38	G8030543	24.4	-78.0	Central Andros District
+BS.39	G8030544	25.1	-76.1	Central Eleuthera District
+BS.40	G8030545	22.7	-74.2	Crooked Island and Long Cay District
+BS.41	G8030546	26.7	-78.1	East Grand Bahama District
+BS.42	G8030547	27.2	-78.3	Grand Cay District
+BS.43	G8030548	26.5	-77.0	Hope Town District
+BS.44	G8030549	24.2	-77.8	Mangrove Cay
+BS.45	G8030550	26.3	-77.6	Moore's Island District
+BS.46	G8030551	26.8	-77.4	North Abaco District
+BS.47	G8030552	24.8	-78.1	North Andros District
+BS.48	G8030553	25.5	-76.7	North Eleuthera District
+BS.49	G8030554	23.7	-74.9	Rum Cay
+BS.50	G8030555	26.0	-77.2	South Abaco District
+BS.51	G8030556	23.9	-77.6	South Andros
+BS.52	G8030557	24.8	-76.2	South Eleuthera
+BS.53	G8030558	25.5	-76.8	Spanish Wells District
+BS.54	G8030559	26.6	-78.6	West Grand Bahama District
+BT.05	G1337278	27.7	90.8	Bumthang Dzongkhag
+BT.06	G1337279	27.0	89.5	Chhukha Dzongkhag
+BT.08	G1337280	27.1	89.9	Dagana Dzongkhag
+BT.07	G1337281	27.0	90.2	Tsirang Dzongkhag
+BT.09	G1337282	27.0	90.4	Sarpang Dzongkhag
+BT.10	G1337283	27.3	89.2	Haa Dzongkhag
+BT.11	G1337284	27.8	91.2	Lhuentse Dzongkhag
+BT.12	G1337285	27.2	91.2	Mongar Dzongkhag
+BT.13	G1337286	27.5	89.4	Paro Dzongkhag
+BT.14	G1337287	27.0	91.4	Pemagatshel Dzongkhag
+BT.15	G1337288	27.7	89.8	Punakha Dzongkhag
+BT.16	G1337289	27.0	89.1	Samtse Dzongkhag
+BT.17	G1337290	26.9	91.6	Samdrup Jongkhar Dzongkhag
+BT.18	G1337291	27.1	90.8	Zhemgang Dzongkhag
+BT.19	G1337292	27.2	91.8	Trashigang Dzongkhag
+BT.20	G1337293	27.6	89.6	Thimphu Dzongkhag
+BT.21	G1337294	27.4	90.5	Trongsa Dzongkhag
+BT.22	G1337295	27.5	90.1	Wangdue Phodrang Dzongkhag
+BT.23	G7303651	27.9	89.7	Gasa
+BT.24	G7303653	27.6	91.5	Trashi Yangste
+BW.10	G933043	-25.0	25.0	Southern District
+BW.09	G933044	-25.0	25.8	South East District
+BW.08	G933210	-21.0	27.5	North East District
+BW.11	G933230	-20.0	22.5	North West District
+BW.06	G933562	-24.0	25.0	Kweneng District
+BW.05	G933654	-24.2	26.5	Kgatleng District
+BW.04	G933657	-25.0	22.0	Kgalagadi District
+BW.03	G933758	-22.0	22.0	Ghanzi District
+BW.12	G933840	-18.5	25.0	Chobe District
+BW.01	G933851	-22.0	26.0	Central District
+BW.13	G11778168	-21.2	27.5	City of Francistown
+BW.14	G11778169	-24.6	25.9	Gaborone
+BW.15	G11778170	-24.6	24.7	Jwaneng
+BW.16	G11778171	-25.2	25.7	Lobatse
+BW.17	G11778172	-22.0	27.8	Selibe Phikwe
+BW.18	G11778173	-20.6	26.2	Sowa Town
+BY.07	G620134	55.0	29.5	Vitebsk Oblast
+BY.06	G625073	54.0	30.8	Mogilyov Oblast
+BY.05	G625142	54.0	28.0	Minsk Oblast
+BY.04	G625143	53.9	27.6	Horad Minsk
+BY.03	G628035	53.5	24.5	Grodno Oblast
+BY.02	G628281	52.0	30.0	Homyel' Voblasc'
+BY.01	G629631	52.1	23.8	Brest Oblast
+BZ.06	G3580913	16.3	-88.9	Toledo District
+BZ.05	G3580975	16.8	-88.5	Stann Creek District
+BZ.04	G3581511	17.8	-88.8	Orange Walk District
+BZ.03	G3582302	18.2	-88.3	Corozal District
+BZ.02	G3582429	17.0	-88.9	Cayo District
+BZ.01	G3582676	17.6	-88.4	Belize District
+CA.01	G5883102	52.3	-117.5	Alberta
+CA.02	G5909050	54.0	-125.0	British Columbia
+CA.03	G6065171	55.0	-97.0	Manitoba
+CA.04	G6087430	46.5	-66.0	New Brunswick/Nouveau-Brunswick
+CA.13	G6091069	69.5	-121.5	Northwest Territories
+CA.07	G6091530	45.0	-63.0	Nova Scotia
+CA.14	G6091732	66.0	-100.1	Nunavut
+CA.08	G6093943	49.3	-84.5	Ontario
+CA.09	G6113358	46.4	-63.3	Prince Edward Island
+CA.10	G6115047	52.0	-72.0	Quebec
+CA.11	G6141242	54.0	-106.0	Saskatchewan
+CA.12	G6185811	63.0	-135.0	Yukon
+CA.05	G6354959	52.0	-56.0	Newfoundland and Labrador
+CD.31	G204697	-0.2	20.9	Tshuapa
+CD.30	G204704	0.5	25.2	Tshopo
+CD.29	G205253	-5.9	29.2	Tanganika
+CD.12	G205413	-3.2	28.2	South Kivu Province
+CD.27	G205828	-5.0	23.4	Sankuru
+CD.11	G206938	-0.7	28.8	Province du Nord-Kivu
+CD.25	G208741	2.1	21.5	Mongala
+CD.10	G209610	-3.0	26.0	Province du Maniema
+CD.23	G210596	-6.3	22.5	Kasai-Central
+CD.04	G214138	-6.2	23.5	East Kasai
+CD.18	G214140	-5.3	21.4	Kasai Province
+CD.17	G215709	1.6	30.2	Ituri
+CD.16	G216140	2.8	27.6	Haut Uele
+CD.15	G216141	-8.7	25.0	Haut-Lomani
+CD.02	G216661	0.2	18.9	Province de l'Equateur
+CD.13	G219402	2.8	24.7	Bas Uele
+CD.22	G922727	-10.7	25.5	Lualaba
+CD.24	G2313191	-2.6	19.3	Mai Ndombe
+CD.20	G2313847	-5.0	18.8	Kwilu
+CD.19	G2313860	-6.5	17.8	Kwango
+CD.06	G2314300	-4.4	16.0	Kinshasa City
+CD.08	G2317277	-5.3	14.3	Province du Kongo Central
+CD.14	G11288213	-10.5	27.8	Province du Haut-Katanga
+CD.21	G11288214	-6.2	24.7	Lomami
+CD.26	G11288215	3.6	21.3	Province du Nord-Ubangi
+CD.28	G11288216	3.1	19.4	Province du Sud-Ubangi
+CF.14	G236178	9.8	22.5	Vakaga
+CF.11	G236887	6.2	20.8	Ouaka
+CF.08	G237556	5.5	23.3	Mbomou
+CF.05	G238639	6.3	25.7	Haut-Mbomou
+CF.03	G238640	7.4	23.0	Haute-Kotto
+CF.02	G240396	5.0	21.4	Basse-Kotto
+CF.01	G240591	8.4	20.7	Bamingui-Bangoran
+CF.16	G2383204	3.5	16.2	Prefecture de la Sangha-Mbaere
+CF.13	G2383650	6.8	16.1	Prefecture de l'Ouham-Pende
+CF.12	G2383653	7.0	18.0	Ouham
+CF.17	G2383765	5.1	18.0	Ombella-Mpoko
+CF.09	G2384205	6.0	15.3	Prefecture de la Nana-Mambere
+CF.07	G2385105	4.2	17.7	Lobaye
+CF.06	G2385836	5.9	19.2	Prefecture de la Kemo
+CF.04	G2386161	4.5	16.0	Mambere-Kadei
+CF.15	G2386243	7.1	19.3	Prefecture de la Nana-Grebizi
+CF.18	G2596686	4.4	18.6	Commune de Bangui
+CG.10	G2255329	1.3	15.5	Sangha
+CG.11	G2255404	-3.5	14.8	Pool
+CG.08	G2255422	-2.0	15.5	Plateaux
+CG.07	G2256175	-3.0	12.3	Region du Niari
+CG.06	G2258431	2.0	17.5	Likouala
+CG.05	G2258534	-3.1	13.5	Lekoumou
+CG.04	G2258738	-4.2	12.0	Region du Kouilou
+CG.13	G2260487	-0.5	16.0	Cuvette
+CG.01	G2260668	-4.2	13.7	Region de la Bouenza
+CG.12	G2572183	-4.3	15.3	Commune de Brazzaville
+CG.14	G2593118	0.0	14.5	Cuvette-Ouest
+CG.15	G7280295	-4.8	11.9	Pointe-Noire
+CH.ZH	G2657895	47.4	8.7	Kanton Zurich
+CH.ZG	G2657907	47.2	8.5	Kanton Zug
+CH.VD	G2658182	46.6	6.6	Canton de Vaud
+CH.VS	G2658205	46.2	7.5	Canton du Valais
+CH.UR	G2658226	46.8	8.6	Kanton Uri
+CH.TI	G2658370	46.3	8.8	Cantone Ticino
+CH.TG	G2658372	47.6	9.1	Kanton Thurgau
+CH.SO	G2658563	47.2	7.5	Kanton Solothurn
+CH.SZ	G2658664	47.0	8.7	Kanton Schwyz
+CH.SH	G2658760	47.7	8.6	Kanton Schaffhausen
+CH.SG	G2658821	47.2	9.2	Kanton St. Gallen
+CH.OW	G2659315	46.9	8.2	Kanton Obwalden
+CH.NW	G2659471	46.9	8.4	Kanton Nidwalden
+CH.NE	G2659495	47.0	6.8	Canton de Neuchatel
+CH.LU	G2659810	47.2	8.2	Kanton Luzern
+CH.JU	G2660207	47.4	7.2	Canton de Jura
+CH.GR	G2660522	46.7	9.6	Kanton Graubunden
+CH.GL	G2660593	47.0	9.1	Kanton Glarus
+CH.GE	G2660645	46.2	6.1	Canton de Geneve
+CH.FR	G2660717	46.7	7.1	Canton de Fribourg
+CH.BE	G2661551	46.9	7.6	Canton de Berne
+CH.BS	G2661602	47.6	7.6	Kanton Basel-Stadt
+CH.BL	G2661603	47.5	7.7	Kanton Basel-Landschaft
+CH.AR	G2661739	47.4	9.3	Kanton Appenzell Ausserrhoden
+CH.AI	G2661741	47.3	9.4	Kanton Appenzell Innerrhoden
+CH.AG	G2661876	47.4	8.2	Kanton Aargau
+CI.98	G10629377	6.8	-5.3	Yamoussoukro Autonomous District
+CI.76	G11153052	5.5	-6.7	Bas-Sassandra
+CI.94	G11153053	5.5	-3.3	Comoe
+CI.77	G11153054	9.5	-7.4	Denguele
+CI.95	G11153055	6.1	-5.9	Goh-Djiboua
+CI.81	G11153056	7.0	-4.4	Lacs
+CI.82	G11153057	5.9	-4.3	Lagunes
+CI.78	G11153058	7.0	-7.6	Montagnes
+CI.96	G11153059	7.0	-6.5	Sassandra-Marahoue
+CI.87	G11153060	9.5	-5.5	Savanes
+CI.90	G11153061	8.3	-4.9	Vallee du Bandama
+CI.97	G11153062	8.0	-6.6	Woroba
+CI.92	G11153063	8.5	-3.2	Zanzan
+CI.93	G11153151	5.4	-4.0	Abidjan
+CK.11695124	G11695124	-18.9	-159.8	Aitutaki
+CK.11695126	G11695126	-20.0	-158.1	Atiu
+CK.11695127	G11695127	-21.9	-157.9	Mangaia
+CK.11695384	G11695384	-10.4	-161.0	Manihiki
+CK.11695385	G11695385	-20.2	-157.3	Ma'uke
+CK.11695386	G11695386	-19.9	-157.7	Mitiaro
+CK.11695387	G11695387	-18.1	-163.2	Palmerston
+CK.11695388	G11695388	-9.0	-158.0	Penrhyn
+CK.11695389	G11695389	-10.9	-165.8	Pukapuka
+CK.11695390	G11695390	-10.0	-161.1	Rakahanga
+CK.11695425	G11695425	-21.2	-159.8	Rarotonga
+CL.01	G3868621	-32.8	-71.3	Region de Valparaiso
+CL.15	G3870116	-20.0	-69.3	Region de Tarapaca
+CL.12	G3873544	-33.5	-70.6	Region Metropolitana
+CL.11	G3880306	-35.5	-71.5	Region del Maule
+CL.14	G3881974	-42.6	-74.0	Region de los Lagos
+CL.08	G3883281	-34.5	-71.0	Region del Libertador General Bernardo O'Higgins
+CL.07	G3893623	-30.8	-71.0	Region de Coquimbo
+CL.06	G3898380	-37.4	-72.5	Region del Biobio
+CL.05	G3899191	-27.5	-70.0	Region de Atacama
+CL.04	G3899463	-38.5	-72.0	Region de la Araucania
+CL.03	G3899537	-23.5	-69.0	Region de Antofagasta
+CL.02	G3900333	-46.5	-73.5	Region Aysen
+CL.10	G4036650	-52.5	-73.0	Region de Magallanes y Antartica Chilena
+CL.16	G6693562	-18.6	-69.5	Region de Arica y Parinacota
+CL.17	G6693563	-40.0	-72.5	Region de los Rios
+CL.18	G11979367	-36.6	-72.2	Region de Nuble
+CM.09	G2221788	5.2	9.3	South-West Region
+CM.14	G2221789	2.8	11.6	South Region
+CM.08	G2222934	5.5	10.7	West Region
+CM.07	G2223602	6.4	10.4	North-West Region
+CM.13	G2223603	8.5	14.0	North Region
+CM.05	G2229336	4.3	10.1	Littoral Region
+CM.12	G2231755	11.0	14.5	Far North Region
+CM.04	G2231835	3.8	14.2	East Region
+CM.11	G2233376	4.8	11.8	Centre Region
+CM.10	G2236015	6.8	13.2	Adamaoua Region
+CN.14	G1279685	31.7	88.0	Tibet Autonomous Region
+CN.06	G1280239	36.0	96.0	Qinghai Sheng
+CN.13	G1529047	41.5	85.5	Xinjiang Uyghur Autonomous Region
+CN.02	G1784764	29.2	120.0	Zhejiang Sheng
+CN.29	G1785694	25.0	101.5	Yunnan Sheng
+CN.28	G1792943	39.3	117.3	Tianjin Shi
+CN.32	G1794299	30.5	102.7	Sichuan Sheng
+CN.24	G1795912	37.7	112.2	Shanxi Sheng
+CN.23	G1796231	31.2	121.4	Shanghai Shi
+CN.25	G1796328	36.3	118.2	Shandong Sheng
+CN.26	G1796480	36.0	109.0	Shaanxi
+CN.21	G1799355	37.2	106.0	Ningxia Huizu Zizhiqu
+CN.03	G1806222	27.7	115.7	Jiangxi Sheng
+CN.04	G1806260	33.0	119.8	Jiangsu Sheng
+CN.11	G1806691	27.7	111.8	Hunan Sheng
+CN.12	G1806949	31.0	112.2	Hubei Sheng
+CN.09	G1808520	34.0	113.7	Henan Sheng
+CN.10	G1808773	39.0	115.7	Hebei Sheng
+CN.31	G1809054	19.2	109.8	Hainan Sheng
+CN.18	G1809445	27.0	107.0	Guizhou Sheng
+CN.16	G1809867	24.0	109.0	Guangxi Zhuangzu Zizhiqu
+CN.30	G1809935	23.5	113.2	Guangdong Sheng
+CN.15	G1810676	37.8	102.8	Gansu Sheng
+CN.07	G1811017	26.2	118.0	Fujian Sheng
+CN.33	G1814905	30.1	107.8	Chongqing Shi
+CN.01	G1818058	31.9	117.2	Anhui Sheng
+CN.20	G2035607	43.5	114.8	Inner Mongolia Autonomous Region
+CN.19	G2036115	41.2	122.7	Liaoning Sheng
+CN.05	G2036500	43.6	126.2	Jilin Sheng
+CN.08	G2036965	47.8	128.0	Heilongjiang Sheng
+CN.22	G2038349	39.9	116.4	Beijing Shi
+CO.31	G3666082	5.0	-69.5	Departamento del Vichada
+CO.30	G3666254	0.8	-70.8	Departamento del Vaupes
+CO.29	G3666313	3.8	-76.5	Departamento del Valle del Cauca
+CO.28	G3666951	4.0	-75.2	Departamento de Tolima
+CO.27	G3667725	9.0	-75.0	Departamento de Sucre
+CO.26	G3668578	6.8	-73.4	Departamento de Santander
+CO.25	G3670205	12.5	-81.7	Providencia y Santa Catalina, Departamento de Archipielago de San Andres
+CO.24	G3670698	5.0	-76.0	Departamento de Risaralda
+CO.23	G3671087	4.5	-75.7	Quindio Department
+CO.22	G3671178	0.5	-76.0	Departamento del Putumayo
+CO.21	G3673798	8.0	-73.0	Departamento de Norte de Santander
+CO.20	G3674021	1.5	-78.0	Departamento de Narino
+CO.19	G3674810	3.5	-73.0	Departamento del Meta
+CO.38	G3675686	10.0	-74.5	Departamento del Magdalena
+CO.17	G3678847	11.5	-72.5	Departamento de La Guajira
+CO.16	G3680692	2.5	-75.6	Departamento del Huila
+CO.14	G3681344	1.9	-72.0	Departamento del Guaviare
+CO.15	G3681652	2.5	-69.0	Departamento del Guainia
+CO.33	G3685413	5.0	-74.2	Departamento de Cundinamarca
+CO.12	G3685889	8.3	-75.7	Departamento de Cordoba
+CO.11	G3686431	6.0	-77.0	Departamento del Choco
+CO.10	G3686880	9.3	-73.5	Departamento del Cesar
+CO.09	G3687029	2.5	-76.8	Departamento del Cauca
+CO.32	G3687173	5.5	-71.5	Departamento de Casanare
+CO.08	G3687479	0.8	-74.0	Departamento del Caqueta
+CO.37	G3687951	5.3	-75.3	Departamento de Caldas
+CO.36	G3688536	5.7	-73.0	Departamento de Boyaca
+CO.35	G3688650	9.0	-74.3	Departamento de Bolivar
+CO.34	G3688685	4.2	-74.2	Distrito Capital de Bogota
+CO.04	G3689436	10.8	-75.0	Departamento del Atlantico
+CO.03	G3689717	6.7	-71.0	Departamento de Arauca
+CO.02	G3689815	7.0	-75.5	Departamento de Antioquia
+CO.01	G3689982	-1.2	-71.5	Amazonas
+CR.08	G3621837	9.7	-84.0	Provincia de San Jose
+CR.07	G3622226	10.0	-84.8	Provincia de Puntarenas
+CR.06	G3623064	10.0	-83.2	Provincia de Limon
+CR.04	G3623484	10.3	-84.0	Provincia de Heredia
+CR.03	G3623582	10.5	-85.2	Provincia de Guanacaste
+CR.02	G3624368	9.8	-83.8	Provincia de Cartago
+CR.01	G3624953	10.5	-84.5	Provincia de Alajuela
+CU.16	G3534168	22.6	-80.0	Provincia de Villa Clara
+CU.15	G3536725	20.2	-75.9	Provincia de Santiago de Cuba
+CU.14	G3540665	21.9	-79.4	Provincia de Sancti Spiritus
+CU.01	G3544088	22.4	-83.8	Provincia de Pinar del Rio
+CU.03	G3547394	22.7	-81.2	Provincia de Matanzas
+CU.13	G3550595	21.1	-76.9	Las Tunas
+CU.04	G3556608	21.7	-82.8	Municipio Especial Isla de la Juventud
+CU.12	G3556965	20.8	-75.9	Provincia de Holguin
+CU.10	G3557685	20.2	-74.9	Provincia de Guantanamo
+CU.09	G3558052	20.3	-76.9	Provincia Granma
+CU.02	G3564073	23.1	-82.3	La Habana
+CU.08	G3564120	22.3	-80.5	Provincia de Cienfuegos
+CU.07	G3564175	22.0	-78.6	Provincia de Ciego de Avila
+CU.05	G3566062	21.4	-77.8	Provincia de Camagueey
+CU.AR	G7668824	22.8	-82.8	Artemisa
+CU.MA	G7668827	23.0	-82.1	Provincia Mayabeque
+CV.20	G3374161	15.3	-23.7	Concelho do Tarrafal
+CV.11	G3374198	16.8	-25.0	Concelho de Sao Vicente
+CV.15	G3374226	15.1	-23.7	Concelho de Santa Catarina
+CV.08	G3374249	16.8	-22.9	Sal Municipality
+CV.07	G3374274	17.1	-25.1	Concelho da Ribeira Grande
+CV.14	G3374332	14.9	-23.5	Concelho da Praia
+CV.05	G3374391	17.1	-25.0	Concelho do Paul
+CV.04	G3374487	15.2	-23.2	Concelho do Maio
+CV.02	G3374832	14.9	-24.7	Concelho da Brava
+CV.01	G3374855	16.1	-22.8	Concelho da Boa Vista
+CV.13	G3411924	15.0	-24.4	Concelho dos Mosteiros
+CV.16	G3411925	15.1	-23.6	Concelho de Santa Cruz
+CV.17	G3411926	15.0	-23.5	Concelho de Sao Domingos
+CV.18	G3411927	14.9	-24.4	Concelho do Sao Filipe
+CV.19	G3411928	15.2	-23.6	Concelho de Sao Miguel
+CV.21	G7602868	17.0	-25.2	Concelho do Porto Novo
+CV.22	G7602869	16.6	-24.2	Concelho da Ribeira Brava
+CV.24	G7602870	14.9	-24.3	Concelho de Santa Catarina do Fogo
+CV.26	G7602871	15.1	-23.6	Concelho de Sao Salvador do Mundo
+CV.27	G7602872	16.6	-24.4	Concelho do Tarrafal de Sao Nicolau
+CV.25	G7602873	15.1	-23.6	Sao Lourenco dos Orgaos
+CV.23	G7603281	15.0	-23.6	Concelho de Ribeira Grande de Santiago
+CY.06	G146213	34.9	32.5	Paphos District
+CY.04	G146267	35.1	33.1	Nicosia District
+CY.05	G146383	34.8	32.9	Limassol District
+CY.03	G146398	34.9	33.5	Eparchia Larnakas
+CY.02	G146411	35.3	33.2	Kyrenia District
+CY.01	G146615	35.3	33.9	Famagusta District
+CZ.52	G3067695	50.1	14.5	Hlavni mesto Praha
+CZ.78	G3339536	49.2	16.6	Jihomoravsky kraj
+CZ.79	G3339537	49.1	14.5	Jihocesky kraj
+CZ.80	G3339538	49.4	15.5	Kraj Vysocina
+CZ.81	G3339539	50.2	12.7	Karlovarsky kraj
+CZ.82	G3339540	50.4	15.9	Kralovehradecky kraj
+CZ.83	G3339541	50.8	15.0	Liberecky kraj
+CZ.84	G3339542	49.8	17.2	Olomoucky kraj
+CZ.85	G3339573	49.8	18.0	Moravskoslezsky kraj
+CZ.86	G3339574	49.8	16.1	Pardubicky kraj
+CZ.87	G3339575	49.5	13.2	Plzensky kraj
+CZ.88	G3339576	50.1	14.2	Stredocesky kraj
+CZ.89	G3339577	50.5	13.8	Ustecky kraj
+CZ.90	G3339578	49.2	17.8	Zlinsky kraj
+DE.15	G2822542	50.9	11.0	Thuringia
+DE.10	G2838632	54.2	9.8	Schleswig-Holstein
+DE.14	G2842565	52.0	11.7	Saxony-Anhalt
+DE.13	G2842566	51.0	13.2	Saxony
+DE.09	G2842635	49.4	7.0	Saarland
+DE.08	G2847618	49.7	7.5	Rheinland-Pfalz
+DE.07	G2861876	51.2	6.8	Nordrhein-Westfalen
+DE.06	G2862926	52.8	9.2	Lower Saxony
+DE.12	G2872567	53.8	12.5	Mecklenburg-Western Pomerania
+DE.05	G2905330	50.5	9.0	Hessen
+DE.04	G2911297	53.6	10.0	Free and Hanseatic City of Hamburg
+DE.03	G2944387	53.1	8.8	Bremen
+DE.11	G2945356	52.5	13.0	Brandenburg
+DE.16	G2950157	52.5	13.4	Land Berlin
+DE.02	G2951839	49.0	11.5	Bavaria
+DE.01	G2953481	48.5	9.0	Baden-Wuerttemberg
+DJ.05	G220781	12.0	42.5	Tadjourah
+DJ.04	G221525	12.3	43.1	Obock
+DJ.07	G223818	11.6	43.1	Djibouti Region
+DJ.06	G223889	11.4	42.2	Dikhil
+DJ.01	G225282	11.2	42.9	Ali Sabieh Region
+DJ.08	G449265	11.5	42.8	Arta Region
+DK.17	G6418538	55.8	12.3	Region Hovedstaden
+DK.18	G6418539	56.2	9.5	Region Midtjylland
+DK.19	G6418540	57.0	9.7	North Denmark Region
+DK.20	G6418541	55.4	11.8	Region Sjaelland
+DK.21	G6418542	55.4	10.3	Region Syddanmark
+DM.11	G3575618	15.5	-61.5	Saint Peter
+DM.10	G3575619	15.3	-61.4	Saint Paul
+DM.09	G3575620	15.3	-61.3	Saint Patrick
+DM.08	G3575621	15.2	-61.4	Saint Mark
+DM.07	G3575622	15.3	-61.4	Saint Luke
+DM.06	G3575625	15.4	-61.4	Saint Joseph
+DM.05	G3575626	15.6	-61.5	Saint John
+DM.04	G3575628	15.3	-61.4	Saint George
+DM.03	G3575630	15.5	-61.3	Saint David
+DM.02	G3575632	15.6	-61.4	Saint Andrew
+DO.27	G3492112	19.6	-71.0	Provincia de Valverde
+DO.26	G3492912	19.4	-71.3	Provincia de Santiago Rodriguez
+DO.25	G3492918	19.3	-70.9	Provincia de Santiago
+DO.24	G3493031	18.5	-69.3	Provincia de San Pedro de Macoris
+DO.23	G3493091	18.8	-71.2	Provincia de San Juan
+DO.33	G3493186	18.6	-70.2	Provincia de San Cristobal
+DO.21	G3493192	19.0	-70.2	Provincia Sanchez Ramirez
+DO.20	G3493232	19.2	-69.5	Samana Province
+DO.19	G3493282	19.4	-70.3	Provincia de Hermanas Mirabal
+DO.18	G3494267	19.8	-70.8	Provincia de Puerto Plata
+DO.35	G3495015	18.3	-70.4	Provincia de Peravia
+DO.16	G3495136	18.0	-71.6	Provincia de Pedernales
+DO.34	G3496024	18.5	-69.9	Distrito Nacional
+DO.32	G3496132	18.8	-69.8	Provincia de Monte Plata
+DO.15	G3496200	19.7	-71.5	Provincia de Monte Cristi
+DO.31	G3496274	18.9	-70.4	Provincia de Monsenor Nouel
+DO.14	G3496772	19.4	-70.0	Provincia Maria Trinidad Sanchez
+DO.30	G3499977	19.1	-70.7	Provincia de La Vega
+DO.12	G3500955	18.5	-69.0	Provincia de La Romana
+DO.10	G3503706	18.6	-68.6	Provincia de La Altagracia
+DO.09	G3504326	18.4	-71.6	Provincia de Independencia
+DO.29	G3504766	18.8	-69.3	Provincia de Hato Mayor
+DO.08	G3505867	19.6	-70.4	Provincia Espaillat
+DO.28	G3506189	18.8	-69.0	Provincia de El Seibo
+DO.11	G3507269	19.0	-71.6	Provincia de Elias Pina
+DO.06	G3508718	19.2	-70.1	Provincia Duarte
+DO.04	G3508951	19.4	-71.6	Provincia de Dajabon
+DO.03	G3512042	18.2	-71.2	Provincia de Barahona
+DO.02	G3512050	18.5	-71.3	Provincia de Baoruco
+DO.01	G3512209	18.6	-70.8	Provincia de Azua
+DO.36	G6201372	18.5	-70.5	Provincia de San Jose de Ocoa
+DO.37	G6201373	18.6	-69.8	Provincia de Santo Domingo
+DZ.15	G2475683	34.7	-1.4	Wilaya de Tlemcen
+DZ.14	G2475741	36.8	4.2	Wilaya de Tizi Ouzou
+DZ.56	G2475858	35.8	1.8	Wilaya de Tissemsilt
+DZ.55	G2476027	36.6	2.4	Wilaya de Tipaza
+DZ.54	G2476302	27.4	-5.8	Wilaya de Tindouf
+DZ.13	G2476893	34.9	1.6	Wilaya de tiaret kabas
+DZ.33	G2477457	35.0	7.8	Wilaya de Tebessa
+DZ.53	G2478217	23.6	5.2	Wilaya de Tamanrasset
+DZ.52	G2479213	36.2	7.9	Wilaya de Souk Ahras
+DZ.31	G2479532	36.8	6.8	Wilaya de Skikda
+DZ.30	G2481001	34.8	-0.5	Wilaya de Sidi Bel Abbes
+DZ.12	G2481696	36.2	5.5	Wilaya de Setif
+DZ.10	G2482557	34.7	0.3	Wilaya de Saida
+DZ.51	G2483666	35.8	0.9	Wilaya de Relizane
+DZ.29	G2484618	35.8	7.1	Oum el Bouaghi
+DZ.50	G2485794	30.7	5.3	Wilaya de Ouargla
+DZ.09	G2485920	35.7	-0.5	Oran
+DZ.49	G2486512	33.5	-0.8	Wilaya de Naama
+DZ.27	G2486682	35.3	4.2	M'sila
+DZ.07	G2487130	36.0	0.3	Wilaya de Mostaganem
+DZ.48	G2487449	36.4	6.2	Wilaya de Mila
+DZ.06	G2488831	36.1	3.0	Wilaya de Medea
+DZ.26	G2490095	35.4	0.2	Wilaya de Mascara
+DZ.25	G2491188	33.6	2.7	Wilaya de Laghouat
+DZ.47	G2491887	35.0	7.0	Wilaya de Khenchela
+DZ.24	G2492910	36.8	6.0	Wilaya de Jijel
+DZ.46	G2493455	27.9	8.0	Illizi
+DZ.23	G2495659	36.4	7.4	Wilaya de Guelma
+DZ.45	G2496045	32.5	3.5	Wilaya de Ghardaia
+DZ.44	G2497322	36.8	8.2	El Tarf
+DZ.43	G2497406	33.2	7.2	El Oued
+DZ.42	G2498541	32.5	1.2	El Bayadh
+DZ.22	G2500013	34.3	3.7	Wilaya de Djelfa
+DZ.04	G2501147	36.3	6.7	Wilaya de Constantine
+DZ.41	G2501296	36.2	1.2	Wilaya de Chlef
+DZ.40	G2502638	36.8	3.7	Wilaya de Boumerdes
+DZ.21	G2502951	36.2	3.9	Wilaya de Bouira
+DZ.39	G2503699	36.1	4.8	Wilaya de Bordj Bou Arreridj
+DZ.20	G2503765	36.6	3.0	Wilaya de Blida
+DZ.19	G2503822	34.7	5.9	Wilaya de Biskra
+DZ.18	G2505325	36.7	4.9	Wilaya de Bejaia
+DZ.38	G2505525	31.7	-2.4	Wilaya de Bechar
+DZ.03	G2505569	35.5	5.9	Wilaya de Batna
+DZ.37	G2506994	36.8	7.6	Annaba
+DZ.01	G2507475	36.7	3.0	Wilaya d' Alger
+DZ.36	G2507899	35.3	-1.1	Wilaya de Ain Temouchent
+DZ.35	G2508226	36.2	2.2	Wilaya de Ain Defla
+DZ.34	G2508807	26.7	-0.9	Adrar
+DZ.BB	G12226383	23.3	-0.6	Bordj Badji Mokhtar
+DZ.TM	G12226384	29.7	0.9	Timimoun
+DZ.BA	G12226385	29.5	-2.7	Beni Abbes
+DZ.IG	G12226386	20.4	4.5	In Guezzam
+DZ.IS	G12226387	27.3	3.4	In Salah
+DZ.DJ	G12226388	24.2	9.3	Djanet
+DZ.EM	G12226389	30.7	3.0	El Menia
+DZ.TG	G12226390	32.9	6.3	Touggourt
+DZ.MG	G12226391	33.9	5.7	El Mghair
+DZ.OD	G12226392	34.2	4.8	Ouled Djellal
+EC.20	G3649953	-4.2	-78.8	Provincia de Zamora-Chinchipe
+EC.19	G3650445	-1.2	-78.5	Provincia del Tungurahua
+EC.18	G3653224	-0.1	-78.5	Provincia de Pichincha
+EC.17	G3653392	-1.7	-76.8	Provincia del Pastaza
+EC.23	G3653890	-0.6	-77.8	Provincia de Napo
+EC.15	G3654005	-2.5	-77.9	Provincia de Morona-Santiago
+EC.14	G3654451	-0.7	-80.1	Provincia de Manabi
+EC.13	G3654592	-1.4	-79.6	Provincia de Los Rios
+EC.12	G3654665	-4.2	-79.5	Provincia de Loja
+EC.11	G3655635	0.4	-78.3	Provincia de Imbabura
+EC.10	G3657505	-2.0	-79.8	Provincia del Guayas
+EC.01	G3657879	-0.7	-90.9	Provincia de Galapagos
+EC.09	G3657986	0.8	-79.2	Provincia de Esmeraldas
+EC.08	G3658195	-3.5	-79.8	Provincia de El Oro
+EC.07	G3658766	-0.8	-78.8	Provincia de Cotopaxi
+EC.06	G3659237	-1.9	-78.8	Provincia del Chimborazo
+EC.05	G3659718	0.8	-78.1	Provincia del Carchi
+EC.04	G3659849	-2.5	-79.0	Provincia del Canar
+EC.03	G3660130	-1.6	-79.1	Provincia de Bolivar
+EC.02	G3660431	-3.1	-79.3	Provincia del Azuay
+EC.22	G3830305	0.1	-76.9	Provincia de Sucumbios
+EC.24	G3830306	-0.8	-76.4	Provincia de Francisco de Orellana
+EC.26	G7062136	-0.3	-79.2	Provincia de Santo Domingo de los Tsachilas
+EC.25	G7062138	-2.1	-80.6	Provincia de Santa Elena
+EE.21	G587448	57.8	26.9	Vorumaa
+EE.20	G587590	58.3	25.6	Viljandimaa
+EE.19	G587875	57.9	26.2	Valgamaa
+EE.18	G588334	58.4	26.7	Tartumaa
+EE.14	G588879	58.4	22.6	Saaremaa
+EE.13	G589115	59.0	24.7	Raplamaa
+EE.12	G589373	58.1	27.2	Polvamaa
+EE.11	G589576	58.5	24.6	Paernumaa
+EE.08	G590854	59.2	26.3	Laane-Virumaa
+EE.07	G590856	58.9	23.6	Laeaenemaa
+EE.05	G591901	58.7	26.5	Jogevamaa
+EE.04	G591961	58.9	25.7	Jarvamaa
+EE.03	G592075	59.2	27.4	Ida-Virumaa
+EE.02	G592133	58.9	22.6	Hiiumaa
+EE.01	G592170	59.3	24.8	Harjumaa
+EG.24	G347794	26.5	31.7	Muhafazat Suhaj
+EG.27	G349401	30.5	33.7	North Sinai
+EG.23	G350546	25.8	32.8	Muhafazat Qina
+EG.22	G352603	29.7	27.5	Muhafazat Matruh
+EG.21	G354500	31.3	30.9	Kafr ash Shaykh
+EG.26	G355182	29.0	33.8	South Sinai Governorate
+EG.20	G358044	31.4	31.8	Damietta Governorate
+EG.19	G358617	31.1	32.4	Muhafazat Bur Sa'id
+EG.18	G359171	28.9	30.6	Muhafazat Bani Suwayf
+EG.17	G359781	27.2	31.1	Muhafazat Asyut
+EG.16	G359787	23.3	32.9	Muhafazat Aswan
+EG.15	G359797	29.7	32.3	As Suways
+EG.14	G360016	30.7	31.8	Muhafazat ash Sharqiyah
+EG.13	G360483	24.8	28.9	New Valley
+EG.12	G360621	30.3	31.2	Muhafazat al Qalyubiyah
+EG.11	G360631	30.1	31.6	Cairo Governorate
+EG.10	G360688	28.1	30.0	Muhafazat al Minya
+EG.09	G360689	30.5	31.0	Muhafazat al Minufiyah
+EG.08	G360997	30.0	31.1	Muhafazat al Jizah
+EG.07	G361056	30.6	32.4	Ismailia Governorate
+EG.06	G361059	31.0	29.8	Alexandria
+EG.05	G361294	30.9	31.0	Muhafazat al Gharbiyah
+EG.04	G361323	29.3	30.5	Muhafazat al Fayyum
+EG.03	G361370	30.6	30.2	Beheira Governorate
+EG.02	G361468	27.2	33.8	Red Sea Governorate
+EG.01	G361849	31.1	31.6	Muhafazat ad Daqahliyah
+EG.28	G7603259	25.7	32.6	Luxor
+ER.01	G448497	16.5	37.5	Anseba Region
+ER.02	G448498	14.8	38.8	Debub Region
+ER.03	G448499	13.8	41.5	Southern Red Sea Region
+ER.04	G448500	15.2	37.5	Gash-Barka Region
+ER.05	G448501	15.3	38.9	Maekel Region
+ER.06	G448502	16.0	39.0	Northern Red Sea Region
+ES.31	G2513413	38.0	-1.5	Region de Murcia
+ES.CE	G2519582	35.9	-5.3	Ceuta
+ES.07	G2521383	39.6	2.9	Comunitat Autonoma de les Illes Balears
+ES.51	G2593109	37.5	-4.6	Andalusia
+ES.53	G2593110	28.0	-15.5	Canary Islands
+ES.54	G2593111	39.5	-3.0	Castilla-La Mancha
+ES.57	G2593112	39.2	-6.2	Extremadura
+ES.60	G2593113	39.5	-0.8	Comunitat Valenciana
+ES.34	G3114710	43.3	-6.0	Principality of Asturias
+ES.32	G3115609	42.8	-1.7	Navarra
+ES.29	G3117732	40.4	-3.7	Comunidad de Madrid
+ES.27	G3336897	42.3	-2.5	La Rioja
+ES.39	G3336898	43.2	-4.0	Cantabria
+ES.52	G3336899	41.5	-0.7	Aragon
+ES.55	G3336900	41.7	-4.2	Castilla y Leon
+ES.56	G3336901	41.8	1.9	Catalunya
+ES.58	G3336902	42.8	-7.9	Galicia
+ES.59	G3336903	43.0	-2.8	Euskal Autonomia Erkidegoa
+ES.ML	G6362988	35.3	-2.9	Melilla
+ET.44	G444178	9.0	38.8	Addis Ababa
+ET.45	G444179	12.0	41.5	Afar Region
+ET.46	G444180	11.5	38.5	Amhara Region
+ET.47	G444181	11.0	35.5	Benishangul-Gumuz Region
+ET.48	G444182	9.6	42.0	Dire Dawa Region
+ET.49	G444183	7.8	34.5	Gambela Region
+ET.50	G444184	9.2	42.2	Harari Region
+ET.51	G444185	8.0	39.0	Oromiya Region
+ET.52	G444186	7.0	44.0	Somali Region
+ET.53	G444187	14.2	38.8	Tigray Region
+ET.54	G444188	6.1	36.7	Southern Nations, Nationalities, and People's Region
+FI.19	G830603	67.8	26.5	Lapland
+FI.18	G830664	64.5	28.5	Kainuu
+FI.17	G830667	65.0	26.4	Pohjois-Pohjanmaa
+FI.16	G830675	63.6	24.1	Keski-Pohjanmaa
+FI.15	G830676	63.1	22.2	Pohjanmaa
+FI.14	G830682	62.8	23.0	South Ostrobothnia
+FI.13	G830685	62.5	25.5	Mellersta Finland
+FI.12	G830686	62.8	29.9	Pohjois-Karjala
+FI.11	G830690	63.2	27.5	Pohjois-Savo
+FI.10	G830695	61.8	27.8	Southern Savonia
+FI.09	G830699	61.0	28.2	South Karelia Region
+FI.08	G830703	60.8	26.9	Kymenlaakso
+FI.06	G830704	61.7	23.7	Pirkanmaa
+FI.05	G830705	60.9	24.3	Kanta-Haeme
+FI.02	G830708	60.5	22.2	Varsinais-Suomi
+FI.01	G830709	60.4	24.8	Uusimaa
+FI.07	G831040	61.2	25.8	Paijat-Hame Region
+FI.04	G831041	61.5	22.2	Satakunta
+FJ.05	G2194371	-18.0	177.5	Western Division
+FJ.03	G2199295	-16.5	179.5	Northern Division
+FJ.01	G2205272	-18.0	178.3	Central Division
+FJ.02	G4036647	-18.5	180.0	Eastern Division
+FJ.04	G6324593	-12.5	177.1	Rotuma
+FM.04	G2081175	9.5	138.1	State of Yap
+FM.02	G2081550	7.0	158.2	State of Pohnpei
+FM.01	G2082036	5.3	163.0	State of Kosrae
+FM.03	G2082282	7.4	151.9	State of Chuuk
+FO.VG	G2610816	62.1	-7.2	Vaga Sysla
+FO.SU	G2612137	61.5	-6.8	Suduroyar sysla
+FO.ST	G2612225	62.1	-7.0	Streymoyar Sysla
+FO.SA	G2614219	61.8	-6.8	Sandoyar Sysla
+FO.NO	G2616145	62.3	-6.6	Nordoyar sysla
+FO.OS	G2622387	62.2	-6.9	Eysturoyar sysla
+FR.93	G2985244	43.9	6.1	Provence-Alpes-Cote d'Azur
+FR.52	G2988289	47.5	-0.8	Pays de la Loire
+FR.11	G3012874	48.7	2.5	Ile-de-France
+FR.94	G3023519	42.1	9.0	Corse
+FR.24	G3027939	47.5	1.8	Centre-Val de Loire
+FR.53	G3030293	48.2	-2.8	Bretagne
+FR.27	G11071619	47.1	5.0	Bourgogne-Franche-Comte
+FR.75	G11071620	46.1	1.3	Nouvelle-Aquitaine
+FR.28	G11071621	49.2	0.5	Normandie
+FR.44	G11071622	48.7	5.9	Grand Est
+FR.76	G11071623	44.0	1.6	Occitanie
+FR.32	G11071624	49.6	2.7	Hauts-de-France
+FR.84	G11071625	45.5	5.4	Auvergne-Rhone-Alpes
+GA.09	G2396076	1.5	12.0	Province du Woleu-Ntem
+GA.08	G2396924	-1.6	9.6	Province de l'Ogooue-Maritime
+GA.07	G2396925	-0.8	12.7	Province de l'Ogooue-Lolo
+GA.06	G2396926	0.7	12.8	Province de l'Ogooue-Ivindo
+GA.05	G2397141	-3.0	11.0	Province de la Nyanga
+GA.04	G2397466	-1.6	11.2	Province de la Ngounie
+GA.03	G2397842	-0.4	10.6	Province du Moyen-Ogooue
+GA.02	G2400454	-1.3	13.9	Province du Haut-Ogooue
+GA.01	G2400682	0.3	10.0	Estuaire
+GB.WLS	G2634895	52.5	-3.5	Wales
+GB.SCT	G2638360	56.0	-4.0	Scotland
+GB.NIR	G2641364	54.5	-6.5	Northern Ireland
+GB.ENG	G6269131	52.2	-0.7	England
+GD.06	G3579907	12.2	-61.6	Saint Patrick
+GD.05	G3579913	12.2	-61.7	Saint Mark
+GD.04	G3579919	12.1	-61.7	Saint John
+GD.03	G3579926	12.1	-61.7	Saint George
+GD.02	G3579932	12.1	-61.7	Saint David
+GD.01	G3579938	12.1	-61.6	Saint Andrew
+GD.10	G7303836	12.5	-61.5	Carriacou and Petite Martinique
+GE.51	G611716	41.7	44.8	K'alak'i T'bilisi
+GE.04	G615929	41.7	42.0	Ajaria
+GE.68	G865536	41.5	44.5	Kvemo Kartli
+GE.67	G865537	41.8	45.7	Kakheti
+GE.65	G865538	42.0	42.2	Guria
+GE.66	G865539	42.2	43.0	Imereti
+GE.73	G865540	42.3	44.1	Shida Kartli
+GE.69	G865541	42.3	44.8	Mtskheta-Mtianeti
+GE.70	G865542	42.6	43.1	Racha-Lechkhumi and Kvemo Svaneti
+GE.71	G865543	42.7	42.2	Samegrelo-Zemo Svanetis Mkhare
+GE.72	G865544	41.6	43.3	Samtskhe-Javakheti
+GE.02	G6643410	43.0	41.0	Abkhazia
+GF.GF	G6690605	4.0	-53.0	Guyane
+GG.6417213	G6417213	49.4	-2.6	Saint Pierre du Bois
+GG.6417214	G6417214	49.4	-2.6	Torteval
+GG.6417215	G6417215	49.4	-2.6	Saint Saviour
+GG.6417223	G6417223	49.4	-2.6	Forest
+GG.6417224	G6417224	49.4	-2.6	Saint Martin
+GG.6417226	G6417226	49.4	-2.6	Saint Andrew
+GG.6417228	G6417228	49.5	-2.6	Saint Peter Port
+GG.6417229	G6417229	49.5	-2.6	Castel
+GG.6417230	G6417230	49.5	-2.5	Vale
+GG.6417233	G6417233	49.5	-2.5	Saint Sampson
+GG.8989934	G8989934	49.7	-2.2	Alderney
+GH.09	G2294076	5.5	-2.2	Western Region
+GH.08	G2294234	6.4	0.5	Volta Region
+GH.11	G2294286	10.3	-2.2	Upper West Region
+GH.10	G2294291	10.8	-0.8	Upper East Region
+GH.06	G2297169	9.4	-0.1	Northern Region
+GH.01	G2300569	5.8	0.0	Greater Accra Region
+GH.05	G2301360	6.5	-0.5	Eastern Region
+GH.04	G2302353	5.5	-1.0	Central Region
+GH.02	G2304116	6.8	-1.5	Ashanti Region
+GH.13	G12105069	7.7	-2.5	Bono
+GH.16	G12105070	7.9	0.3	Oti
+GH.15	G12105071	10.4	-0.6	North East
+GH.12	G12105072	7.0	-2.5	Ahafo
+GH.14	G12105073	7.8	-1.1	Bono East
+GH.17	G12105074	9.2	-1.6	Savannah
+GH.18	G12105075	6.3	-2.8	Western North
+GL.04	G7602005	60.7	-46.0	Kujalleq
+GL.06	G7602006	66.9	-53.7	Qeqqata
+GL.07	G7602007	64.2	-51.7	Sermersooq
+GL.11839534	G11839534	68.7	-52.8	Qeqertalik
+GL.11839537	G11839537	69.2	-51.1	Avannaata
+GM.05	G2411683	13.2	-16.4	West Coast
+GM.04	G2411711	13.4	-14.2	Upper River
+GM.07	G2412353	13.5	-16.0	North Bank
+GM.03	G2412707	13.6	-14.9	Central River
+GM.02	G2412716	13.4	-15.7	Lower River Division
+GM.01	G2413875	13.4	-16.6	Banjul
+GN.04	G2422464	9.6	-13.6	Conakry Region
+GN.B	G8335085	11.3	-14.3	Boke Region
+GN.F	G8335086	10.3	-10.7	Faranah Region
+GN.K	G8335087	10.4	-9.2	Kankan Region
+GN.D	G8335088	10.1	-13.2	Kindia Region
+GN.L	G8335089	11.6	-12.1	Labe Region
+GN.M	G8335090	10.7	-12.3	Mamou Region
+GN.N	G8335091	8.2	-9.1	Nzerekore Region
+GP.GP	G6690363	16.3	-61.6	Guadeloupe
+GQ.03	G2310307	-1.4	5.6	Provincia de Annobon
+GQ.04	G2566978	3.7	8.8	Provincia de Bioko Norte
+GQ.05	G2566979	3.4	8.7	Provincia de Bioko Sur
+GQ.06	G2566980	1.5	10.4	Provincia de Centro Sur
+GQ.07	G2566981	2.0	11.0	Provincia de Kie-Ntem
+GQ.08	G2566982	1.5	9.8	Provincia de Litoral
+GQ.09	G2566983	1.5	11.1	Provincia de Wele-Nzas
+GQ.10	G12168385	1.6	10.8	Djibloho
+GR.736572	G736572	40.2	24.3	Mount Athos
+GR.ESYE31	G6692632	37.9	23.9	Attica
+GR.ESYE24	G6697800	38.4	23.1	Central Greece
+GR.ESYE12	G6697801	40.9	22.8	Central Macedonia
+GR.ESYE43	G6697802	35.2	24.9	Crete
+GR.ESYE11	G6697803	40.9	25.3	Eastern Macedonia and Thrace
+GR.ESYE21	G6697804	39.2	20.7	Epirus
+GR.ESYE22	G6697805	37.8	20.8	Ionian Islands
+GR.ESYE41	G6697806	37.7	26.8	North Aegean
+GR.ESYE25	G6697807	37.6	22.4	Peloponnese
+GR.ESYE42	G6697808	36.2	27.9	South Aegean
+GR.ESYE14	G6697809	39.4	22.0	Thessaly
+GR.ESYE23	G6697810	38.5	21.3	Western Greece
+GR.ESYE13	G6697811	40.3	21.3	Western Macedonia
+GT.22	G3587586	15.0	-89.5	Departamento de Zacapa
+GT.21	G3588257	15.0	-91.3	Departamento de Totonicapan
+GT.20	G3588668	14.4	-91.4	Departamento de Suchitepequez
+GT.19	G3588697	14.7	-91.2	Departamento de Solola
+GT.18	G3589172	14.2	-90.3	Departamento de Santa Rosa
+GT.17	G3589801	15.0	-91.9	Departamento de San Marcos
+GT.16	G3590686	14.6	-90.8	Departamento de Sacatepequez
+GT.15	G3590857	14.3	-91.8	Departamento de Retalhuleu
+GT.14	G3590964	15.5	-90.9	Departamento del Quiche
+GT.13	G3590978	14.8	-91.7	Departamento de Quetzaltenango
+GT.12	G3591410	16.8	-90.0	Departamento del Peten
+GT.11	G3595067	14.2	-89.8	Departamento de Jutiapa
+GT.10	G3595236	14.6	-89.9	Departamento de Jalapa
+GT.09	G3595259	15.5	-89.0	Departamento de Izabal
+GT.08	G3595415	15.7	-91.6	Departamento de Huehuetenango
+GT.07	G3595530	14.7	-90.5	Departamento de Guatemala
+GT.06	G3595802	14.2	-91.0	Departamento de Escuintla
+GT.05	G3596416	14.8	-90.0	Departamento de El Progreso
+GT.04	G3598464	14.7	-89.4	Departamento de Chiquimula
+GT.03	G3598571	14.7	-90.9	Departamento de Chimaltenango
+GT.02	G3599602	15.1	-90.3	Departamento de Baja Verapaz
+GT.01	G3599773	15.7	-90.0	Departamento de Alta Verapaz
+GU.PI	G4038478	13.5	144.7	Piti Municipality
+GU.SR	G4038555	13.4	144.7	Santa Rita Municipality
+GU.SJ	G4038590	13.5	144.8	Sinajana Municipality
+GU.TF	G4038652	13.4	144.8	Talofofo Municipality
+GU.TM	G4038661	13.5	144.8	Tamuning-Tumon-Harmon Municipality
+GU.UM	G4038739	13.3	144.7	Umatac Municipality
+GU.YG	G4038796	13.5	144.9	Yigo Municipality
+GU.YN	G4038811	13.4	144.8	Yona Municipality
+GU.ME	G4043396	13.3	144.7	Merizo Municipality
+GU.MA	G4043416	13.4	144.8	Mangilao Municipality
+GU.AH	G4043524	13.5	144.7	Agana Heights Municipality
+GU.CP	G4043614	13.4	144.8	Chalan Pago-Ordot Municipality
+GU.AS	G4043691	13.5	144.7	Asan-Maina Municipality
+GU.AT	G4043725	13.4	144.7	Agat Municipality
+GU.DD	G4043877	13.5	144.8	Dededo Municipality
+GU.BA	G4043885	13.5	144.8	Barrigada Municipality
+GU.AN	G4044019	13.5	144.8	Hagatna Municipality
+GU.IN	G4044041	13.3	144.7	Inarajan Municipality
+GU.MT	G4044148	13.5	144.8	Mongmong-Toto-Maite Municipality
+GW.07	G2368955	11.3	-15.0	Tombali
+GW.02	G2370360	11.7	-15.1	Quinara
+GW.04	G2371071	12.2	-15.2	Oio Region
+GW.10	G2372533	12.2	-14.2	Gabu
+GW.06	G2374312	12.0	-16.2	Cacheu Region
+GW.05	G2374689	11.2	-16.0	Bolama
+GW.11	G2374776	11.9	-15.6	Bissau Region
+GW.12	G2374820	11.9	-15.8	Biombo
+GW.01	G2375255	12.2	-14.7	Bafata
+GY.19	G3375463	2.9	-59.0	Upper Takutu-Upper Essequibo Region
+GY.18	G3375469	5.5	-58.3	Upper Demerara-Berbice Region
+GY.17	G3376386	4.9	-59.3	Potaro-Siparuni Region
+GY.16	G3376407	7.1	-58.8	Pomeroon-Supenaam Region
+GY.15	G3377274	6.2	-57.8	Mahaica-Berbice Region
+GY.14	G3378741	6.7	-58.5	Essequibo Islands-West Demerara Region
+GY.13	G3378840	4.0	-58.2	East Berbice-Corentyne Region
+GY.12	G3378950	6.5	-58.1	Demerara-Mahaica Region
+GY.11	G3379023	6.0	-60.0	Cuyuni-Mazaruni Region
+GY.10	G3379515	7.7	-59.8	Barima-Waini Region
+HK.NYL	G1818224	22.4	114.0	Yuen Long District
+HK.NTW	G1818458	22.4	114.1	Tsuen Wan District
+HK.NTP	G1818672	22.4	114.2	Tai Po District
+HK.NSK	G1819049	22.4	114.3	Sai Kung District
+HK.NIS	G1819708	22.3	114.0	Islands District
+HK.HCW	G7533598	22.3	114.1	Central and Western District
+HK.HWC	G7533607	22.3	114.2	Wan Chai
+HK.HEA	G7533608	22.3	114.2	Eastern
+HK.HSO	G7533609	22.2	114.2	Southern
+HK.KYT	G7533610	22.3	114.2	Yau Tsim Mong
+HK.KSS	G7533611	22.3	114.2	Sham Shui Po
+HK.KKC	G7533612	22.3	114.2	Kowloon City
+HK.KWT	G7533613	22.3	114.2	Wong Tai Sin
+HK.KKT	G7533614	22.3	114.2	Kwun Tong
+HK.NKT	G7533615	22.4	114.1	Kwai Tsing
+HK.NTM	G7533616	22.4	114.0	Tuen Mun
+HK.NNO	G7533617	22.5	114.1	North
+HK.NST	G7533618	22.4	114.2	Sha Tin
+HN.18	G3600193	15.2	-87.2	Departamento de Yoro
+HN.17	G3600456	13.6	-87.6	Departamento de Valle
+HN.16	G3601689	15.1	-88.3	Departamento de Santa Barbara
+HN.15	G3604249	14.8	-86.0	Departamento de Olancho
+HN.14	G3604318	14.5	-89.0	Departamento de Ocotepeque
+HN.13	G3606066	14.5	-88.6	Departamento de Lempira
+HN.12	G3607251	14.1	-87.9	Departamento de La Paz
+HN.11	G3608814	16.1	-86.9	Departamento de Islas de la Bahia
+HN.10	G3608833	14.3	-88.2	Departamento de Intibuca
+HN.09	G3609583	15.2	-84.3	Departamento de Gracias a Dios
+HN.08	G3609672	14.2	-87.2	Departamento de Francisco Morazan
+HN.07	G3610942	14.1	-86.5	Departamento de El Paraiso
+HN.06	G3613140	15.4	-88.0	Departamento de Cortes
+HN.05	G3613229	14.9	-88.9	Departamento de Copan
+HN.04	G3613319	14.6	-87.7	Departamento de Comayagua
+HN.03	G3613358	15.8	-85.7	Departamento de Colon
+HN.02	G3613527	13.3	-87.1	Departamento de Choluteca
+HN.01	G3615027	15.7	-87.0	Departamento de Atlantida
+HR.01	G3337511	45.7	17.0	Bjelovar-Bilogora
+HR.02	G3337512	45.2	17.8	Brod-Posavina
+HR.03	G3337513	42.7	18.1	Dubrovacko-Neretvanska Zupanija
+HR.04	G3337514	45.2	13.9	Istria
+HR.05	G3337515	45.3	15.6	Karlovac
+HR.06	G3337518	46.2	16.8	Koprivinica-Krizevci
+HR.07	G3337519	46.1	16.0	Krapina-Zagorje
+HR.08	G3337520	44.7	15.4	Lika-Senj
+HR.09	G3337521	46.4	16.5	Medimurje
+HR.10	G3337522	45.5	18.6	Osjecko-Baranjska Zupanija
+HR.11	G3337523	45.4	17.7	Pozega-Slavonia
+HR.12	G3337524	45.5	14.6	Primorsko-Goranska Zupanija
+HR.13	G3337525	43.8	15.9	Sibenik-Knin
+HR.14	G3337526	45.4	16.5	Sisak-Moslavina
+HR.15	G3337527	43.2	16.5	Split-Dalmatia
+HR.16	G3337528	46.2	16.3	Varazdin
+HR.18	G3337529	45.2	18.9	Vukovar-Srijem
+HR.19	G3337530	44.1	15.3	Zadar
+HR.20	G3337531	45.8	16.1	Zagreb County
+HR.21	G3337532	45.8	16.0	Grad Zagreb
+HR.17	G3337533	45.8	17.6	Virovitica-Podravina
+HT.13	G3716950	18.3	-72.4	Sud-Est
+HT.12	G3716952	18.3	-73.7	Sud
+HT.11	G3719432	18.7	-72.3	Departement de l'Ouest
+HT.03	G3719536	19.8	-73.0	Nord-Ouest
+HT.10	G3719540	19.5	-71.9	Departement du Nord-Est
+HT.09	G3719543	19.6	-72.3	Nord
+HT.14	G3724613	18.5	-74.1	Grand'Anse
+HT.07	G3728069	19.0	-72.0	Centre
+HT.06	G3731053	19.3	-72.5	Departement de l'Artibonite
+HT.15	G7115999	18.4	-73.4	Departement de Nippes
+HU.18	G715593	48.0	22.2	Szabolcs-Szatmar-Bereg
+HU.20	G719637	47.2	20.5	Jasz-Nagykun-Szolnok
+HU.11	G720002	47.8	20.2	Heves megye
+HU.10	G720293	47.4	21.5	Hajdu-Bihar
+HU.06	G721589	46.4	20.2	Csongrad megye
+HU.04	G722064	48.2	21.0	Borsod-Abauj Zemplen county
+HU.03	G722433	46.8	21.0	Bekes County
+HU.24	G3042613	46.7	16.8	Zala megye
+HU.23	G3042925	47.2	17.7	Veszprem megye
+HU.22	G3043047	47.2	16.8	Vas megye
+HU.21	G3043845	46.5	18.6	Tolna megye
+HU.17	G3045226	46.4	17.6	Somogy megye
+HU.16	G3046431	47.4	19.3	Pest megye
+HU.14	G3047348	48.0	19.6	Nograd megye
+HU.12	G3049518	47.6	18.3	Komarom-Esztergom
+HU.09	G3051977	47.7	17.2	Gyor-Moson-Sopron megye
+HU.08	G3053028	47.2	18.6	Fejer megye
+HU.05	G3054638	47.5	19.1	Budapest
+HU.02	G3055399	46.1	18.2	Baranya county
+HU.01	G3055744	46.5	19.4	Bacs-Kiskun county
+ID.26	G1213642	2.0	99.0	North Sumatra
+ID.01	G1215638	4.0	97.0	Nanggroe Aceh Darussalam Province
+ID.10	G1621176	-7.8	110.3	Daerah Istimewa Yogyakarta
+ID.32	G1626196	-2.8	103.8	Sumatera Selatan
+ID.24	G1626197	-1.0	100.5	Provinsi Sumatera Barat
+ID.31	G1626229	1.2	124.8	Sulawesi Utara
+ID.22	G1626230	-4.4	122.2	Sulawesi Tenggara
+ID.21	G1626231	-0.9	122.4	Sulawesi Tengah
+ID.38	G1626232	-4.3	120.2	Provinsi Sulawesi Selatan
+ID.37	G1629652	0.5	101.7	Provinsi Riau
+ID.18	G1633791	-8.7	121.1	East Nusa Tenggara
+ID.17	G1633792	-8.7	117.5	West Nusa Tenggara
+ID.28	G1636627	-3.2	130.1	Provinsi Maluku
+ID.15	G1638535	-5.0	105.0	Provinsi Lampung
+ID.14	G1641897	0.5	116.5	Provinsi Kalimantan Timur
+ID.13	G1641898	-2.0	113.5	Provinsi Kalimantan Tengah
+ID.12	G1641899	-2.5	115.5	Provinsi Kalimantan Selatan
+ID.11	G1641900	0.0	110.5	Provinsi Kalimantan Barat
+ID.08	G1642668	-7.7	112.5	Jawa Timur
+ID.07	G1642669	-7.5	110.0	Provinsi Jawa Tengah
+ID.30	G1642672	-6.8	107.5	Jawa Barat
+ID.05	G1642856	-1.5	103.0	Provinsi Jambi
+ID.04	G1642907	-6.2	106.9	Daerah Khusus Ibukota Jakarta
+ID.36	G1643012	-4.8	138.0	Provinsi Papua
+ID.03	G1649147	-3.8	102.3	Propinsi Bengkulu
+ID.02	G1650535	-8.5	115.0	Provinsi Bali
+ID.33	G1923045	-6.5	106.2	Banten
+ID.34	G1923046	0.7	122.5	Provinsi Gorontalo
+ID.35	G1923047	-2.7	106.7	Kepulauan Bangka Belitung
+ID.29	G1958070	0.6	127.8	North Maluku
+ID.39	G1996549	-0.9	134.1	Provinsi Papua Barat
+ID.41	G1996550	-2.5	119.3	Provinsi Sulawesi Barat
+ID.40	G1996551	0.6	107.0	Provinsi Kepulauan Riau
+ID.42	G8604684	3.4	116.5	North Kalimantan
+IE.C	G7521313	53.9	-8.6	Connacht
+IE.L	G7521314	53.2	-7.0	Leinster
+IE.M	G7521315	52.3	-8.7	Munster
+IE.U	G7521316	54.9	-7.9	Ulster
+IL.06	G293198	31.8	35.0	Jerusalem
+IL.05	G293396	32.1	34.8	Tel Aviv District
+IL.04	G294800	32.6	35.0	Haifa
+IL.03	G294824	32.9	35.5	Northern District
+IL.02	G294904	32.1	34.9	Central District
+IL.01	G294952	30.7	34.8	Southern District
+IL.WE	G11821181	32.1	35.2	Judea and Samaria Area
+IM.9782164	G9782164	54.4	-4.4	Andreas
+IM.9782165	G9782165	54.1	-4.7	Arbory
+IM.9782166	G9782166	54.3	-4.5	Ballaugh
+IM.9782167	G9782167	54.2	-4.5	Braddan
+IM.9782168	G9782168	54.4	-4.4	Bride
+IM.9782169	G9782169	54.1	-4.7	Castletown
+IM.9782170	G9782170	54.2	-4.5	Douglas
+IM.9782171	G9782171	54.2	-4.6	German
+IM.9782172	G9782172	54.4	-4.5	Jurby
+IM.9782173	G9782173	54.2	-4.4	Laxey
+IM.9782176	G9782176	54.3	-4.4	Lezayre
+IM.9782180	G9782180	54.2	-4.4	Lonan
+IM.9782182	G9782182	54.1	-4.6	Malew
+IM.9782183	G9782183	54.2	-4.6	Marown
+IM.9782184	G9782184	54.3	-4.3	Maughold
+IM.9782185	G9782185	54.3	-4.6	Michael
+IM.9782186	G9782186	54.2	-4.5	Onchan
+IM.9782187	G9782187	54.2	-4.7	Patrick
+IM.9782188	G9782188	54.2	-4.7	Peel
+IM.9782189	G9782189	54.1	-4.7	Port Erin
+IM.9782190	G9782190	54.1	-4.7	Port St Mary
+IM.9782191	G9782191	54.3	-4.4	Ramsey
+IM.9782192	G9782192	54.1	-4.8	Rushen
+IM.9782193	G9782193	54.1	-4.6	Santon
+IN.28	G1252881	24.0	88.0	West Bengal
+IN.36	G1253626	27.2	80.8	Uttar Pradesh
+IN.26	G1254169	24.0	92.0	Tripura
+IN.40	G1254788	17.8	79.1	State of Telangana
+IN.25	G1255053	11.0	78.3	State of Tamil Nadu
+IN.29	G1256312	27.8	88.5	Sikkim
+IN.24	G1258899	26.6	73.8	State of Rajasthan
+IN.23	G1259223	30.9	75.4	State of Punjab
+IN.22	G1259424	11.9	79.8	Union Territory of Puducherry
+IN.21	G1261029	20.5	84.4	State of Odisha
+IN.20	G1262271	26.1	94.5	State of Nagaland
+IN.31	G1262963	23.0	93.0	Mizoram
+IN.18	G1263207	25.5	91.3	Meghalaya
+IN.17	G1263706	25.0	94.0	Manipur
+IN.16	G1264418	19.5	76.0	State of Maharashtra
+IN.35	G1264542	23.5	78.5	Madhya Pradesh
+IN.14	G1265206	10.9	72.3	Union Territory of Lakshadweep
+IN.13	G1267254	10.4	76.5	State of Kerala
+IN.19	G1267701	14.7	75.8	State of Karnataka
+IN.12	G1269320	33.5	75.4	State of Jammu and Kashmir
+IN.11	G1270101	31.9	77.2	State of Himachal Pradesh
+IN.10	G1270260	29.2	76.3	State of Haryana
+IN.09	G1270770	23.0	71.8	State of Gujarat
+IN.33	G1271157	15.3	74.1	Goa
+IN.07	G1273293	28.7	77.1	National Capital Territory of Delhi
+IN.05	G1274744	30.7	76.8	Union Territory of Chandigarh
+IN.34	G1275715	25.8	85.8	State of Bihar
+IN.03	G1278253	26.0	93.0	Assam
+IN.30	G1278341	27.1	93.4	State of Arunachal Pradesh
+IN.02	G1278629	15.8	79.8	State of Andhra Pradesh
+IN.01	G1278647	11.7	92.7	Union Territory of Andaman and Nicobar Islands
+IN.37	G1444364	21.5	82.0	State of Chhattisgarh
+IN.38	G1444365	23.8	85.5	State of Jharkhand
+IN.39	G1444366	30.2	79.2	State of Uttarakhand
+IN.41	G12096464	34.1	77.3	Ladakh
+IN.52	G12165662	20.4	72.9	Dadra and Nagar Haveli and Daman and Diu
+IQ.02	G89341	30.4	47.4	Muhafazat al Basrah
+IQ.16	G89693	32.8	45.4	Muhafazat Wasit
+IQ.18	G91695	34.5	43.6	Muhafazat Salah ad Din
+IQ.15	G92877	36.1	42.5	Muhafazat Ninawa
+IQ.14	G93540	31.9	47.1	Muhafazat Maysan
+IQ.12	G94823	32.5	43.8	Muhafazat Karbala'
+IQ.11	G95445	36.3	44.2	Erbil
+IQ.10	G96965	34.0	45.0	Diyala
+IQ.09	G97019	31.2	46.2	Muhafazat Dhi Qar
+IQ.08	G97270	37.1	43.1	Dihok
+IQ.07	G98180	33.3	44.4	Baghdad Governorate
+IQ.06	G98227	32.5	44.6	Muhafazat Babil
+IQ.13	G98410	35.4	44.1	Kirkuk
+IQ.05	G98465	35.6	45.3	Muhafazat as Sulaymaniyah
+IQ.17	G98862	31.2	43.8	An Najaf
+IQ.04	G99022	31.9	45.1	Muhafazat al Qadisiyah
+IQ.03	G99032	30.2	45.3	Muhafazat al Muthanna
+IQ.01	G99592	33.5	41.3	Muhafazat al Anbar
+IQ.19	G12218240	35.2	46.0	Halabja Governorate
+IR.26	G110791	35.7	51.4	Tehran Province
+IR.36	G111452	36.5	48.3	Zanjan Province
+IR.40	G111821	32.5	55.6	Yazd Province
+IR.25	G116401	35.5	55.0	Semnan Province
+IR.35	G124544	36.2	52.3	Mazandaran Province
+IR.34	G124763	34.3	49.8	Markazi Province
+IR.23	G125605	33.5	48.5	Lorestan Province
+IR.16	G126584	35.7	47.0	Kurdistan Province
+IR.05	G126878	30.8	50.7	Kohgiluyeh and Boyer-Ahmad Province
+IR.15	G127082	31.5	49.0	Khuzestan Province
+IR.13	G128222	34.4	46.8	Kermanshah Province
+IR.29	G128231	29.8	57.2	Kerman Province
+IR.10	G130801	33.2	47.0	Ilam Province
+IR.11	G131222	27.8	56.5	Hormozgan Province
+IR.09	G132142	34.8	48.6	Hamadan Province
+IR.08	G133349	37.2	49.5	Gilan Province
+IR.07	G134766	29.0	53.0	Fars Province
+IR.03	G139677	32.2	50.8	Chaharmahal and Bakhtiari Province
+IR.22	G139816	28.8	51.5	Bushehr Province
+IR.33	G142549	38.0	46.8	East Azerbaijan Province
+IR.01	G142550	37.7	45.0	West Azerbaijan Province
+IR.32	G413931	38.5	48.0	Ardabil Province
+IR.28	G418862	33.0	52.2	Isfahan Province
+IR.37	G443792	37.2	55.0	Golestan Province
+IR.38	G443793	36.0	49.8	Qazvin Province
+IR.39	G443794	34.8	51.0	Qom Province
+IR.04	G1159456	28.5	60.5	Sistan and Baluchestan Province
+IR.41	G6201374	32.5	59.5	South Khorasan Province
+IR.42	G6201375	35.2	59.0	Razavi Khorasan Province
+IR.43	G6201376	37.5	57.0	North Khorasan Province
+IR.44	G7648907	36.0	50.8	Alborz Province
+IS.41	G3337403	65.3	-20.0	Nordurland Vestra
+IS.40	G3337404	65.5	-17.0	Nordurland Eystra
+IS.38	G3337405	65.0	-15.0	Austurland
+IS.42	G3337406	64.0	-19.0	Sudurland
+IS.39	G3426182	64.2	-21.7	Hoefudborgarsvaedi
+IS.43	G3426183	63.9	-22.2	Sudurnes
+IS.45	G3426184	64.8	-21.8	Vesturland
+IS.44	G3426185	65.7	-22.5	Vestfirdir
+IT.15	G2523119	37.8	14.2	Sicilia
+IT.14	G2523228	40.0	9.0	Sardegna
+IT.03	G2525468	39.0	16.5	Calabria
+IT.20	G3164604	45.5	11.8	Veneto
+IT.19	G3164857	45.8	7.2	Regione Autonoma Valle d'Aosta
+IT.18	G3165048	43.0	12.5	Umbria
+IT.17	G3165244	46.5	11.3	Trentino-Alto Adige
+IT.16	G3165361	43.4	11.0	Toscana
+IT.13	G3169778	41.0	16.7	Puglia
+IT.12	G3170831	45.0	8.0	Piemonte
+IT.11	G3173222	41.7	14.5	Molise
+IT.10	G3174004	43.5	13.2	Marche
+IT.09	G3174618	45.7	9.5	Lombardia
+IT.08	G3174725	44.5	8.8	Liguria
+IT.07	G3174976	42.1	12.8	Lazio
+IT.06	G3176525	46.0	13.0	Friuli Venezia Giulia
+IT.05	G3177401	44.5	11.0	Emilia-Romagna
+IT.04	G3181042	40.9	14.9	Campania
+IT.02	G3182306	40.5	16.1	Basilicata
+IT.01	G3183560	42.2	13.8	Abruzzo
+JE.3237072	G3237072	49.2	-2.1	Saint Clement
+JE.3237073	G3237073	49.2	-2.1	Saint Saviour
+JE.3237200	G3237200	49.2	-2.2	Saint Brelade
+JE.3237203	G3237203	49.2	-2.0	Grouville
+JE.3237212	G3237212	49.2	-2.2	Saint Mary
+JE.3237214	G3237214	49.2	-2.1	Saint Lawrence
+JE.3237221	G3237221	49.2	-2.2	Saint Peter
+JE.3237229	G3237229	49.2	-2.2	Saint Ouen
+JE.3237497	G3237497	49.2	-2.1	Saint John
+JE.3237530	G3237530	49.2	-2.1	Trinity
+JE.3237716	G3237716	49.2	-2.0	Saint Martin
+JE.3237864	G3237864	49.2	-2.1	Saint Helier
+JM.16	G3488081	18.2	-78.2	Westmoreland
+JM.15	G3488222	18.4	-77.6	Trelawny
+JM.14	G3488688	17.9	-76.4	Saint Thomas
+JM.13	G3488693	18.3	-76.9	Saint Mary
+JM.12	G3488700	18.4	-77.9	Saint James
+JM.11	G3488708	18.1	-77.8	Saint Elizabeth
+JM.10	G3488711	18.1	-77.0	Saint Catherine
+JM.09	G3488715	18.4	-77.3	Parish of Saint Ann
+JM.08	G3488716	18.1	-76.8	Saint Andrew
+JM.07	G3488997	18.1	-76.5	Portland
+JM.04	G3489586	18.1	-77.5	Manchester
+JM.17	G3489853	18.0	-76.8	Kingston
+JM.02	G3490145	18.4	-78.1	Parish of Hanover
+JM.01	G3490952	18.0	-77.3	Clarendon
+JO.19	G248380	30.3	36.6	Muhafazat Ma'an
+JO.18	G248944	32.5	35.8	Irbid
+JO.17	G250092	32.1	36.1	Muhafazat az Zarqa'
+JO.12	G250199	30.8	35.6	Muhafazat at Tafilah
+JO.16	G250439	31.6	36.3	Amman Governorate
+JO.15	G250583	32.3	37.9	Al Mafraq
+JO.09	G250625	31.2	35.8	Al Karak
+JO.02	G250751	32.0	35.7	Muhafazat al Balqa'
+JO.20	G443120	32.3	35.8	Ajloun
+JO.22	G443121	32.2	35.9	Jerash
+JO.21	G443122	29.8	35.3	Muhafazat al 'Aqabah
+JO.23	G443123	31.6	35.7	Muhafazat Madaba
+JP.46	G1848649	35.6	138.6	Yamanashi
+JP.45	G1848681	34.2	131.6	Yamaguchi
+JP.43	G1848938	33.9	135.4	Wakayama
+JP.42	G1849872	36.6	137.3	Toyama-ken
+JP.41	G1849890	35.4	133.8	Tottori
+JP.40	G1850144	35.7	139.7	Tokyo Prefecture
+JP.39	G1850157	33.9	134.2	Tokushima-ken
+JP.38	G1850310	36.7	139.8	Tochigi
+JP.37	G1851715	35.0	138.3	Shizuoka
+JP.36	G1852442	35.1	132.6	Shimane-ken
+JP.35	G1852553	35.2	136.1	Shiga
+JP.34	G1853226	35.9	139.6	Saitama-ken
+JP.33	G1853299	33.3	130.1	Saga-ken
+JP.32	G1853904	34.7	135.5	Osaka-fu
+JP.47	G1854345	26.5	127.9	Okinawa
+JP.31	G1854381	34.9	133.8	Okayama-ken
+JP.30	G1854484	33.2	131.4	Oita Prefecture
+JP.29	G1855429	37.5	138.9	Niigata-ken
+JP.28	G1855608	34.7	135.8	Nara-ken
+JP.27	G1856156	33.2	129.6	Nagasaki Prefecture
+JP.26	G1856210	36.1	138.0	Nagano-ken
+JP.25	G1856710	32.2	131.3	Miyazaki
+JP.23	G1857352	34.5	136.4	Mie-ken
+JP.22	G1857907	35.2	135.4	Kyoto Prefecture
+JP.21	G1858419	32.6	130.8	Kumamoto
+JP.20	G1859133	33.6	133.4	Kochi Prefecture
+JP.19	G1860291	35.4	139.3	Kanagawa
+JP.18	G1860825	31.6	131.0	Kagoshima-ken
+JP.17	G1860834	34.2	134.0	Kagawa-ken
+JP.15	G1861387	36.8	136.8	Ishikawa-ken
+JP.13	G1862047	35.0	134.8	Hyogo
+JP.11	G1862413	34.6	132.8	Hiroshima-ken
+JP.10	G1863501	36.5	139.0	Gunma-ken
+JP.09	G1863640	35.8	137.1	Gifu
+JP.07	G1863958	33.5	130.7	Fukuoka Prefecture
+JP.06	G1863983	35.9	136.2	Fukui
+JP.05	G1864226	33.6	132.8	Ehime
+JP.01	G1865694	35.2	136.9	Aichi-ken
+JP.44	G2110554	38.5	140.1	Yamagata-ken
+JP.24	G2111888	38.4	140.9	Miyagi-ken
+JP.16	G2112518	39.6	141.3	Iwate
+JP.14	G2112669	36.3	140.3	Ibaraki
+JP.08	G2112922	37.4	140.2	Fukushima-ken
+JP.04	G2113014	35.6	140.1	Chiba-ken
+JP.02	G2113124	39.8	140.4	Akita
+JP.12	G2130037	43.1	141.3	Hokkaido
+JP.03	G2130656	40.8	140.8	Aomori-ken
+KE.55	G178145	1.8	35.2	West Pokot District
+KE.54	G178440	1.8	40.0	Wajir District
+KE.52	G178837	0.5	35.3	Uasin Gishu
+KE.51	G178914	3.0	35.5	Turkana District
+KE.50	G179068	1.0	35.0	Trans Nzoia District
+KE.49	G179380	-0.1	38.0	Tharaka District
+KE.48	G179585	-1.5	39.4	Tana River District
+KE.46	G180320	0.1	34.3	Siaya District
+KE.45	G180782	1.3	37.1	Samburu District
+KE.05	G184742	-1.3	36.8	Nairobi Province
+KE.38	G185578	-0.7	37.0	Murang'a District
+KE.37	G186298	-4.0	39.7	Mombasa District
+KE.35	G186824	0.0	37.5	Meru
+KE.34	G187583	3.0	37.6	Marsabit District
+KE.33	G187895	3.4	40.7	Mandera District
+KE.29	G189794	0.3	36.8	Laikipia District
+KE.28	G190106	-4.1	39.2	Kwale District
+KE.27	G191037	-1.8	38.5	Kitui District
+KE.26	G191242	-0.1	34.6	Kisumu
+KE.25	G191298	-0.8	34.8	Kisii District
+KE.24	G191420	-0.5	37.3	Kirinyaga District
+KE.23	G192064	-3.6	39.6	Kilifi District
+KE.22	G192709	-1.1	36.7	Kiambu District
+KE.21	G192898	-0.3	35.4	Kericho District
+KE.20	G195271	0.3	34.8	Kakamega District
+KE.18	G196228	1.0	38.5	Isiolo District
+KE.16	G197744	-0.2	40.0	Garissa District
+KE.15	G198474	-0.4	37.5	Embu District
+KE.13	G199987	0.3	34.2	Busia District
+KE.12	G200066	0.7	34.6	Bungoma District
+KE.10	G200573	0.7	36.0	Baringo District
+KE.43	G7603036	-0.3	36.5	Nyandarua District
+KE.53	G7667638	0.1	34.7	Vihiga District
+KE.30	G7667643	-2.3	40.9	Lamu
+KE.31	G7667644	-1.3	37.4	Machakos District
+KE.32	G7667645	-2.2	37.9	Makueni District
+KE.14	G7667646	1.0	35.5	Marakwet District
+KE.47	G7667652	-3.4	38.4	Taita Taveta District
+KE.19	G7667657	-2.1	36.9	Kajiado District
+KE.44	G7667661	-0.4	37.0	Nyeri District
+KE.17	G7667665	-0.7	34.5	Homa Bay District
+KE.11	G7667666	-0.8	35.4	Bomet District
+KE.36	G7667678	-1.0	34.4	Migori District
+KE.39	G7668902	-0.5	36.2	Nakuru District
+KE.41	G7668904	-1.2	35.7	Narok District
+KE.42	G7806857	-0.8	35.0	Nyamira District
+KE.40	G8051212	0.1	35.2	Nandi South District
+KG.08	G1346798	40.0	73.0	Osh Oblasty
+KG.09	G1463580	39.8	71.0	Batken
+KG.06	G1527297	42.3	72.0	Talas
+KG.04	G1527590	41.4	76.0	Naryn oblast
+KG.07	G1528260	42.0	78.0	Issyk-Kul Region
+KG.01	G1528334	42.9	74.6	Gorod Bishkek
+KG.03	G1529778	41.5	72.5	Jalal-Abad oblast
+KG.02	G1538652	42.4	74.5	Chuyskaya Oblast'
+KG.10	G10300944	40.5	72.8	Osh City
+KH.12	G1821301	12.3	103.7	Pursat
+KH.29	G1821310	12.9	103.1	Battambang
+KH.19	G1821939	10.9	104.8	Takeo
+KH.18	G1821992	11.2	105.8	Svay Rieng
+KH.17	G1822028	13.8	106.2	Stung Treng
+KH.27	G1822210	14.2	103.5	Otar Meanchey
+KH.24	G1822213	13.5	104.0	Siem Reap
+KH.23	G1822449	13.8	107.1	Ratanakiri
+KH.14	G1822609	11.4	105.5	Prey Veng
+KH.13	G1822676	13.8	105.0	Preah Vihear
+KH.22	G1830103	11.6	104.9	Phnom Penh
+KH.30	G1830206	12.9	102.6	Pailin
+KH.10	G1830306	12.8	107.0	Mondolkiri
+KH.09	G1830563	12.7	106.1	Kratie
+KH.26	G1830937	10.5	104.3	Kep
+KH.08	G1831037	11.5	103.5	Koh Kong
+KH.07	G1831095	11.4	105.0	Kandal
+KH.21	G1831111	10.8	104.3	Kampot
+KH.05	G1831124	12.8	105.0	Kampong Thom
+KH.04	G1831132	11.5	104.3	Kampong Speu
+KH.03	G1831166	12.2	104.5	Kampong Chhnang
+KH.02	G1831172	12.1	105.2	Kampong Cham
+KH.28	G1899262	10.7	103.8	Preah Sihanouk
+KH.25	G1899273	13.8	103.0	Banteay Meanchey
+KH.31	G7647525	12.0	105.7	Tboung Khmum
+KI.01	G2110215	1.4	173.0	Gilbert Islands
+KI.02	G4030940	1.9	-157.5	Line Islands
+KI.03	G7521379	-2.8	-171.7	Phoenix Islands
+KM.03	G921780	-12.3	43.7	Moheli
+KM.02	G921882	-11.6	43.3	Grande Comore
+KM.01	G922001	-12.2	44.4	Ndzuwani
+KN.15	G3575114	17.3	-62.8	Trinity Palmetto Point
+KN.13	G3575164	17.4	-62.8	Saint Thomas Middle Island
+KN.12	G3575165	17.2	-62.6	Saint Thomas Lowland
+KN.11	G3575168	17.3	-62.7	Saint Peter Basseterre
+KN.10	G3575171	17.1	-62.6	Saint Paul Charlestown
+KN.09	G3575172	17.4	-62.8	Saint Paul Capesterre
+KN.08	G3575173	17.4	-62.7	Saint Mary Cayon
+KN.07	G3575175	17.1	-62.6	Saint John Figtree
+KN.06	G3575176	17.4	-62.8	Saint John Capesterre
+KN.05	G3575177	17.2	-62.6	Saint James Windward
+KN.04	G3575179	17.1	-62.6	Saint George Gingerland
+KN.03	G3575180	17.3	-62.7	Saint George Basseterre
+KN.02	G3575183	17.4	-62.8	Saint Anne Sandy Point
+KN.01	G3575476	17.4	-62.8	Christ Church Nichola Town
+KP.12	G1871856	39.1	125.8	Pyongyang
+KP.15	G1871952	39.5	126.2	South Pyongan
+KP.11	G1871954	40.0	125.3	North Pyongan
+KP.09	G1876101	38.7	127.5	Kangwon-do
+KP.06	G1876884	38.2	125.5	Hwanghae-namdo
+KP.07	G1876888	38.6	126.3	Hwanghae-bukto
+KP.03	G1877450	40.2	127.8	Hamnam
+KP.13	G2039332	41.2	128.2	Ryanggang
+KP.17	G2044245	41.8	129.4	Hambuk
+KP.01	G2045265	40.8	126.5	Chagang-do
+KP.18	G2054927	42.3	130.4	Rason
+KR.21	G1833742	35.6	129.3	Ulsan
+KR.19	G1835224	36.3	127.4	Daejeon
+KR.15	G1835327	35.8	128.6	Daegu
+KR.11	G1835847	37.6	127.0	Seoul
+KR.10	G1838519	35.1	129.1	Busan
+KR.14	G1841597	36.3	128.8	Gyeongsangbuk-do
+KR.13	G1841610	37.6	127.2	Gyeonggi-do
+KR.18	G1841808	35.2	126.9	Gwangju
+KR.06	G1843125	37.8	128.2	Gangwon-do
+KR.12	G1843561	37.5	126.7	Incheon
+KR.17	G1845105	36.5	127.0	Chungcheongnam-do
+KR.05	G1845106	36.8	127.7	Chungcheongbuk-do
+KR.16	G1845788	34.8	127.0	Jeollanam-do
+KR.03	G1845789	35.8	127.2	Jeollabuk-do
+KR.01	G1846265	33.4	126.5	Jeju-do
+KR.20	G1902028	35.2	128.2	Gyeongsangnam-do
+KR.22	G8394437	36.6	127.3	Sejong-si
+KW.08	G285628	29.3	48.0	Muhafazat Hawalli
+KW.02	G285788	29.3	47.9	Al Asimah Governorate
+KW.05	G285798	29.5	47.5	Muhafazat al Jahra'
+KW.07	G285816	29.2	47.9	Muhafazat al Farwaniyah
+KW.04	G285841	28.9	48.0	Muhafazat al Ahmadi
+KW.09	G7733358	29.2	48.0	Muhafazat Mubarak al Kabir
+KY.10346796	G10346796	19.3	-81.4	George Town
+KY.10375968	G10375968	19.4	-81.4	West Bay
+KY.10375969	G10375969	19.3	-81.3	Bodden Town
+KY.10375970	G10375970	19.3	-81.2	North Side
+KY.10375971	G10375971	19.3	-81.1	East End
+KY.10375972	G10375972	19.7	-79.8	Sister Island
+KZ.07	G607847	49.8	50.7	West Kazakhstan
+KZ.09	G608879	44.0	54.0	Mangistauskaya Oblast'
+KZ.06	G609862	47.0	52.0	Atyrau Oblysy
+KZ.04	G610688	48.6	58.6	Aktyubinskaya Oblast'
+KZ.15	G1517381	48.8	81.5	East Kazakhstan
+KZ.03	G1518003	51.8	69.9	Aqmola Oblysy
+KZ.16	G1519367	54.3	69.5	North Kazakhstan
+KZ.11	G1520239	52.1	76.2	Pavlodar Region
+KZ.14	G1521406	45.0	65.0	Qyzylorda Oblysy
+KZ.13	G1521671	51.5	64.0	Qostanay Oblysy
+KZ.12	G1523401	48.2	71.0	Qaraghandy Oblysy
+KZ.17	G1524444	44.3	72.1	Zhambyl Oblysy
+KZ.10	G1524787	43.2	68.7	Turkistan
+KZ.02	G1526395	43.3	76.9	Almaty
+KZ.01	G1537162	44.5	78.0	Almaty Oblysy
+KZ.1537272	G1537272	42.3	69.6	Shymkent
+KZ.08	G1538316	45.6	63.3	Baikonur
+KZ.05	G1538317	51.1	71.4	Astana
+LA.14	G1652077	19.5	103.5	Xiangkhouang
+LA.13	G1652210	18.5	101.5	Xaignabouli
+LA.27	G1652238	18.8	102.4	Vientiane Province
+LA.20	G1653315	16.5	105.8	Khoueng Savannakhet
+LA.19	G1653333	15.8	106.2	Salavan
+LA.18	G1653893	21.8	102.3	Khoueng Phongsali
+LA.07	G1654491	20.2	101.5	Khoueng Oudomxai
+LA.17	G1655558	20.2	102.7	Luang Prabang Province
+LA.16	G1655561	20.9	101.3	Louangnamtha
+LA.15	G1656538	17.5	105.3	Khammouan
+LA.03	G1657114	20.5	104.0	Houaphan
+LA.02	G1657818	14.8	106.0	Champasak
+LA.01	G1665045	14.7	107.0	Attapu
+LA.26	G1904615	15.5	107.0	Khoueng Xekong
+LA.22	G1904616	20.5	100.5	Khoueng Bokeo
+LA.23	G1904617	18.5	104.3	Bolikhamxai
+LA.24	G1904618	18.1	102.7	Vientiane Prefecture
+LA.28	G11395958	18.9	103.1	Xaisomboun Province
+LB.05	G273607	33.9	35.7	Mohafazat Mont-Liban
+LB.04	G276780	33.9	35.5	Beyrouth
+LB.09	G278297	34.3	35.9	Mohafazat Liban-Nord
+LB.06	G279894	33.4	35.3	Mohafazat Liban-Sud
+LB.08	G280282	33.7	35.8	Mohafazat Beqaa
+LB.07	G444191	33.2	35.5	Mohafazat Nabatiye
+LB.10	G6201370	34.5	36.2	Mohafazat Aakkar
+LB.11	G6201371	34.2	36.3	Mohafazat Baalbek-Hermel
+LC.10	G3576413	13.8	-61.0	Vieux-Fort
+LC.09	G3576441	13.8	-61.0	Soufriere
+LC.08	G3576567	13.8	-60.9	Micoud
+LC.07	G3576662	13.8	-61.0	Laborie
+LC.06	G3576685	14.1	-60.9	Gros-Islet
+LC.05	G3576764	13.9	-60.9	Dennery
+LC.04	G3576794	13.8	-61.0	Choiseul
+LC.03	G3576810	14.0	-61.0	Castries
+LC.01	G3576891	13.9	-61.0	Anse-la-Raye
+LC.12	G11351387	13.9	-61.1	Canaries
+LI.11	G3042031	47.1	9.5	Vaduz
+LI.10	G3042034	47.1	9.6	Triesenberg
+LI.09	G3042036	47.1	9.6	Triesen
+LI.08	G3042038	47.2	9.6	Schellenberg
+LI.07	G3042042	47.2	9.5	Schaan
+LI.06	G3042047	47.2	9.5	Ruggell
+LI.05	G3042050	47.2	9.6	Planken
+LI.04	G3042056	47.2	9.6	Mauren
+LI.03	G3042063	47.2	9.5	Gamprin
+LI.02	G3042069	47.2	9.5	Eschen
+LI.01	G3042074	47.1	9.5	Balzers
+LK.36	G1223421	6.8	80.1	Western Province
+LK.35	G1225265	7.0	81.1	Province of Uva
+LK.34	G1227618	6.2	80.8	Southern Province
+LK.33	G1228435	6.8	80.5	Sabaragamuwa Province
+LK.32	G1232860	7.8	80.2	North Western Province
+LK.30	G1232870	8.3	80.5	North Central Province
+LK.29	G1249296	7.3	80.8	Central Province
+LK.38	G7671049	9.2	80.4	Northern Province
+LK.37	G8133521	8.6	81.2	Eastern Province
+LR.10	G2273898	5.3	-8.8	Sinoe County
+LR.09	G2274688	6.8	-8.8	Nimba County
+LR.14	G2274890	6.5	-10.6	Montserrado County
+LR.13	G2275099	4.8	-7.8	Maryland County
+LR.20	G2275344	8.0	-9.8	Lofa County
+LR.19	G2276622	6.0	-8.2	Grand Gedeh County
+LR.12	G2276627	7.1	-11.1	Grand Cape Mount County
+LR.11	G2276630	6.2	-9.8	Grand Bassa County
+LR.01	G2278292	7.0	-9.6	Bong County
+LR.15	G2278324	6.7	-10.8	Bomi County
+LR.16	G2588490	4.8	-8.2	Grand Kru County
+LR.17	G2588491	6.5	-10.3	Margibi County
+LR.18	G2588492	5.9	-9.4	River Cess County
+LR.21	G2593119	7.4	-10.3	Gbarpolu County
+LR.22	G2593120	5.3	-7.8	River Gee County
+LS.19	G932011	-29.6	28.6	Thaba-Tseka
+LS.18	G932184	-30.4	28.0	Quthing
+LS.17	G932219	-30.0	28.8	Qacha's Nek
+LS.16	G932418	-29.2	29.0	Mokhotlong
+LS.15	G932439	-30.1	27.8	Mohale's Hoek District
+LS.14	G932506	-29.6	27.8	Maseru
+LS.13	G932615	-29.8	27.5	Mafeteng District
+LS.12	G932700	-29.0	28.3	Leribe District
+LS.11	G932888	-28.8	28.6	Butha-Buthe
+LS.10	G932932	-29.2	27.9	Berea
+LT.56	G864389	54.2	24.2	Alytus County
+LT.57	G864477	55.2	24.0	Kaunas County
+LT.58	G864478	55.7	21.3	Klaipeda County
+LT.59	G864479	54.8	23.2	Marijampole County
+LT.60	G864480	55.9	24.8	Panevezys
+LT.61	G864481	56.0	23.3	Siauliai County
+LT.62	G864482	55.3	22.5	Taurage County
+LT.63	G864483	56.1	22.2	Telsiu apskritis
+LT.64	G864484	55.5	25.8	Utena County
+LT.65	G864485	54.8	25.3	Vilnius County
+LU.WI	G2959975	49.9	5.9	Wiltz
+LU.VD	G2960020	49.9	6.2	Vianden
+LU.RM	G2960152	49.5	6.3	Remich
+LU.RD	G2960161	49.8	5.9	Redange
+LU.ME	G2960275	49.8	6.1	Mersch
+LU.LU	G2960315	49.6	6.2	Luxembourg
+LU.GR	G2960514	49.7	6.3	Grevenmacher
+LU.ES	G2960599	49.5	6.0	Canton d'Esch-sur-Alzette
+LU.EC	G2960629	49.8	6.4	Canton d'Echternach
+LU.DI	G2960656	49.9	6.1	Diekirch
+LU.CL	G2960683	50.1	6.0	Clervaux
+LU.CA	G2960696	49.6	6.0	Capellen
+LV.33	G454307	57.3	21.8	Ventspils Municipality
+LV.32	G454311	57.4	21.6	Ventspils
+LV.31	G454564	57.5	25.4	Valmiera
+LV.30	G454571	57.6	25.9	Valka Municipality
+LV.29	G454771	56.9	23.0	Tukuma novads
+LV.28	G454968	57.3	22.6	Talsi Municipality
+LV.27	G455888	56.7	22.5	Saldus Municipality
+LV.25	G456173	57.0	24.1	Riga
+LV.24	G456197	56.5	27.2	Rezeknes Novads
+LV.23	G456203	56.5	27.3	Rezekne
+LV.22	G456528	56.3	26.7	Preili Municipality
+LV.21	G457061	56.9	25.1	Ogres novads
+LV.20	G457712	56.8	26.2	Madona Municipality
+LV.19	G457773	56.5	27.8	Ludzas novads
+LV.18	G457889	57.6	24.7	Limbazu novads
+LV.16	G457955	56.5	21.0	Liepaja
+LV.15	G458459	56.8	22.0	Kuldigas novads
+LV.14	G458621	55.9	27.3	Kraslavas novads
+LV.13	G459202	57.0	23.7	Jurmala
+LV.12	G459278	56.6	23.8	Jelgavas novads
+LV.11	G459281	56.7	23.7	Jelgava
+LV.10	G459282	56.3	25.8	Jekabpils Municipality
+LV.09	G459664	57.2	26.7	Gulbenes novads
+LV.08	G460311	56.6	23.2	Dobeles novads
+LV.06	G460414	55.9	26.5	Daugavpils
+LV.05	G460569	57.2	25.4	Cesu Novads
+LV.04	G461112	56.5	24.3	Bauskas Novads
+LV.03	G461160	57.0	27.4	Balvu Novads
+LV.02	G461525	57.4	27.0	Aluksnes Novads
+LV.01	G461613	56.6	25.3	Aizkraukles novads
+LV.95	G7628319	56.9	24.0	Marupes Novads
+LV.A2	G7628320	56.8	23.9	Olaines Novads
+LV.80	G7628322	56.8	24.2	Kekavas Novads
+LV.C3	G7628323	56.9	24.4	Salaspils Novads
+LV.34	G7628327	57.1	24.4	Adazu Novads
+LV.90	G7628341	56.4	26.4	Livanu Novads
+LV.E1	G7628342	56.6	26.6	Varaklanu Novads
+LV.B5	G7628359	57.0	24.6	Ropazu Novads
+LV.C7	G7628362	57.1	24.9	Siguldas Novads
+LV.C5	G7628366	57.3	24.4	Saulkrastu Novads
+LV.D1	G7628380	57.4	26.0	Smiltenes Novads
+LV.DN	G12276857	56.5	21.2	South Kurzeme Municipality
+LV.AN	G12276858	56.0	26.3	Augsdaugava Municipality
+LY.70	G87204	31.8	22.7	Darnah
+LY.69	G88318	32.1	20.2	Sha'biyat Banghazi
+LY.66	G88904	31.8	21.2	Al Marj
+LY.65	G88932	23.8	22.2	Al Kufrah
+LY.63	G443289	32.1	21.8	Al Jabal al Akhdar
+LY.77	G2210245	32.6	13.4	Tripoli
+LY.76	G2210553	30.0	16.9	Surt
+LY.75	G2212774	26.9	15.0	Sabha
+LY.74	G2214432	30.2	10.8	Nalut
+LY.73	G2214602	24.6	15.6	Murzuq
+LY.72	G2214845	32.3	15.1	Sha'biyat Misratah
+LY.71	G2217350	25.9	10.6	Ghat
+LY.68	G2218972	32.5	12.5	Az Zawiyah
+LY.78	G2219413	27.8	12.7	Wadi ash Shati'
+LY.64	G2219944	27.7	17.1	Al Jufrah
+LY.67	G2593778	32.6	11.9	An Nuqat al Khams
+LY.79	G7602688	29.9	24.0	Al Butnan
+LY.80	G7602689	30.5	13.0	Jabal al Gharbi District
+LY.81	G7602690	32.5	12.9	Al Jafarah
+LY.82	G7602691	32.2	14.2	Al Marqab
+LY.83	G7602692	28.7	21.4	Al Wahat
+LY.84	G7602693	26.3	12.7	Wadi al Hayat
+MA.01	G11281874	35.7	-5.8	Tanger-Tetouan-Al Hoceima
+MA.02	G11281875	34.8	-2.1	Oriental
+MA.03	G11281876	34.0	-5.0	Fes-Meknes
+MA.04	G11281877	34.0	-6.8	Rabat-Sale-Kenitra
+MA.05	G11281878	32.3	-6.3	Beni Mellal-Khenifra
+MA.06	G11281879	33.5	-7.4	Casablanca-Settat
+MA.07	G11281880	31.6	-8.0	Marrakesh-Safi
+MA.08	G11281881	31.7	-4.4	Draa-Tafilalet
+MA.09	G11281882	30.4	-9.6	Souss-Massa
+MA.10	G11281884	29.0	-10.0	Guelmim-Oued Noun
+MA.11	G11281885	27.9	-12.2	Laayoune-Sakia El Hamra
+MA.12	G11281886	23.8	-15.9	Dakhla-Oued Ed-Dahab
+MC.0	G3319178	43.7	7.4	Commune de Monaco
+MD.73	G617077	48.2	27.2	Raionul Edinet
+MD.92	G617181	47.3	27.9	Raionul Ungheni
+MD.91	G617255	47.6	28.5	Telenesti
+MD.90	G617264	45.9	28.6	Taraclia
+MD.88	G617283	46.5	29.7	Raionul Stefan Voda
+MD.89	G617301	47.2	28.6	Raionul Straseni
+MD.87	G617366	48.2	28.2	Raionul Soroca
+MD.84	G617483	47.9	27.5	Riscani
+MD.83	G617501	47.7	28.8	Rezina
+MD.82	G617639	47.4	28.8	Orhei
+MD.81	G617656	48.4	27.5	Raionul Ocnita
+MD.59	G617715	46.9	29.2	Anenii Noi
+MD.80	G617754	47.1	28.2	Nisporeni
+MD.79	G617903	46.5	28.4	Leova
+MD.85	G617913	47.7	28.2	Singerei
+MD.69	G617962	47.2	29.0	Criuleni
+MD.78	G617991	46.8	28.8	Ialoveni
+MD.57	G618069	47.0	28.8	Municipiul Chisinau
+MD.67	G618119	46.6	29.3	Raionul Causeni
+MD.65	G618142	46.2	28.3	Cantemir
+MD.66	G618162	47.3	28.3	Raionul Calarasi
+MD.64	G618164	45.8	28.3	Raionul Cahul
+MD.76	G618260	47.8	27.5	Glodeni
+MD.75	G618331	47.9	28.4	Floresti
+MD.74	G618345	47.6	27.8	Falesti
+MD.72	G618363	47.2	29.1	Raionul Dubasari
+MD.71	G618369	48.1	27.8	Raionul Drochia
+MD.70	G618381	48.3	27.7	Donduseni
+MD.68	G618430	46.6	28.8	Cimislia
+MD.63	G618511	48.2	27.0	Briceni
+MD.61	G618565	46.4	28.9	Basarabeasca
+MD.77	G858803	46.8	28.4	Hincesti
+MD.86	G858808	47.8	28.7	Soldanesti
+MD.58	G858889	47.4	29.2	Unitatea Teritoriala din Stinga Nistrului
+MD.51	G858895	46.2	28.7	Gagauzia
+MD.62	G861487	46.8	29.4	Municipiul Bender
+MD.60	G873909	47.8	27.9	Municipiul Balti
+ME.17	G786233	42.8	20.2	Opstina Rozaje
+ME.21	G3186995	43.2	19.1	Opstina Zabljak
+ME.20	G3188514	42.0	19.3	Ulcinj
+ME.19	G3189071	42.4	18.7	Tivat
+ME.16	G3189077	42.5	19.3	Podgorica
+ME.18	G3191221	43.0	19.1	Opstina Savnik
+ME.15	G3193129	43.2	18.8	Opstina Pluzine
+ME.14	G3193160	43.3	19.3	Pljevlja
+ME.13	G3193227	42.6	19.9	Opstina Plav
+ME.12	G3194493	42.8	18.9	Opstina Niksic
+ME.11	G3194925	43.0	19.6	Mojkovac
+ME.10	G3197537	42.4	18.8	Kotor
+ME.09	G3197895	42.8	19.5	Opstina Kolasin
+ME.03	G3199070	42.8	19.9	Berane
+ME.08	G3199393	42.5	18.5	Herceg Novi
+ME.07	G3202193	42.6	19.1	Danilovgrad
+ME.06	G3202640	42.4	18.9	Cetinje
+ME.05	G3203104	42.3	18.8	Budva
+ME.04	G3204173	43.0	19.7	Bijelo Polje
+ME.02	G3204508	42.2	19.2	Bar
+ME.01	G3343959	42.7	19.8	Andrijevica
+ME.22	G11497642	42.6	19.8	Gusinje
+ME.23	G11497643	42.9	20.0	Petnjica
+ME.24	G12104729	42.4	19.3	Tuzi
+MG.71	G7670842	-13.5	49.0	Diana Region
+MG.72	G7670846	-14.2	49.8	Sava Region
+MG.42	G7670847	-15.2	48.4	Sofia Region
+MG.32	G7670848	-16.5	49.5	Analanjirofo Region
+MG.41	G7670849	-16.3	46.1	Boeny Region
+MG.43	G7670850	-17.2	47.1	Betsiboka Region
+MG.33	G7670851	-17.9	48.4	Alaotra Mangoro Region
+MG.44	G7670852	-17.6	44.8	Melaky Region
+MG.14	G7670853	-18.5	46.1	Bongolava Region
+MG.12	G7670854	-19.7	46.9	Vakinankaratra Region
+MG.13	G7670855	-18.9	47.0	Itasy Region
+MG.11	G7670856	-18.4	47.5	Analamanga Region
+MG.31	G7670857	-19.0	48.9	Atsinanana Region
+MG.54	G7670902	-20.2	45.1	Menabe Region
+MG.22	G7670904	-20.5	46.7	Amoron'i Mania Region
+MG.21	G7670905	-21.4	46.5	Haute Matsiatra Region
+MG.24	G7670907	-22.3	46.2	Ihorombe Region
+MG.25	G7670908	-23.2	47.4	Atsimo-Atsinanana Region
+MG.53	G7670910	-24.1	46.3	Anosy Region
+MG.52	G7670911	-24.8	45.5	Androy Region
+MG.51	G7670913	-23.2	44.4	Atsimo-Andrefana Region
+MG.26	G12494965	-21.9	47.8	Fitovinany Region
+MG.27	G12494968	-20.8	48.0	Vatovavy Region
+MH.007	G7303491	11.1	166.4	Ailinginae Atoll
+MH.010	G7303492	7.4	168.8	Ailinglaplap Atoll
+MH.030	G7303493	10.3	169.9	Ailuk Atoll
+MH.040	G7303494	7.1	171.8	Arno Atoll
+MH.050	G7303495	8.2	171.1	Aur Atoll
+MH.060	G7303496	12.3	170.1	Bikar Atoll
+MH.070	G7303497	11.6	165.4	Bikini Atoll
+MH.080	G7303498	4.6	168.7	Ebon Atoll
+MH.090	G7303499	11.5	162.2	Enewetak Atoll
+MH.100	G7303500	9.1	170.0	Erikub Atoll
+MH.120	G7303501	6.0	169.6	Jaluit Atoll
+MH.150	G7303502	9.2	167.3	Kwajalein Atoll
+MH.160	G7303503	8.9	166.2	Lae Atoll
+MH.180	G7303504	9.9	169.2	Likiep Atoll
+MH.190	G7303505	7.2	171.2	Majuro Atoll
+MH.300	G7303506	8.8	171.1	Maloelap Atoll
+MH.320	G7303507	6.1	171.9	Mili Atoll
+MH.330	G7303508	5.6	168.1	Namdrik Atoll
+MH.340	G7303509	8.0	168.2	Namu Atoll
+MH.350	G7303510	11.3	166.8	Rongelap Atoll
+MH.360	G7303511	11.3	167.4	Rongrik Atoll
+MH.385	G7303512	11.2	169.6	Taka Atoll
+MH.073	G7303513	14.6	169.0	Bokak Atoll
+MH.390	G7303514	9.1	165.6	Ujae Atoll
+MH.400	G7303515	9.8	160.9	Ujelang Atoll
+MH.410	G7303516	11.3	169.8	Utrik Atoll
+MH.420	G7303517	10.1	166.0	Wotho Atoll
+MH.430	G7303518	9.5	170.0	Wotje Atoll
+MH.110	G7303519	7.8	169.0	Jabat Island
+MH.130	G7303520	10.1	169.5	Jemo Island
+MH.140	G7303521	5.6	169.1	Kili Island
+MH.170	G7303522	8.3	167.4	Lib Island
+MH.310	G7303523	10.3	170.9	Mejit Island
+MK.E9	G784732	41.3	22.5	Valandovo
+MK.86	G786339	41.0	21.0	Resen
+MK.51	G789090	42.1	22.2	Kratovo
+MK.78	G862938	41.8	22.9	Opstina Pehcevo
+MK.72	G862945	41.4	22.9	Novo Selo
+MK.11	G862946	41.5	22.8	Bosilovo
+MK.A9	G862947	41.5	22.7	Vasilevo
+MK.E5	G862949	41.2	22.7	Opstina Dojran
+MK.08	G862950	41.2	22.6	Bogdanci
+MK.47	G862953	41.5	22.4	Opstina Konce
+MK.62	G862956	42.0	22.6	Makedonska Kamenica
+MK.C6	G862958	41.8	22.4	Zrnovci
+MK.40	G862960	41.8	22.3	Karbinci
+MK.25	G862961	41.4	22.2	Demir Kapija
+MK.87	G862973	41.5	21.9	Rosoman
+MK.35	G862974	41.6	21.9	Gradsko
+MK.60	G862975	41.8	21.9	Lozovo
+MK.19	G862977	41.9	22.3	Cesinovo-Oblesevo
+MK.E1	G863468	41.0	21.7	Novaci
+MK.04	G863485	41.7	22.8	Berovo
+MK.06	G863486	41.0	21.3	Bitola
+MK.D9	G863488	41.2	21.4	Mogila
+MK.01	G863831	42.0	21.6	Opstina Aracinovo
+MK.C7	G863834	42.0	20.9	Bogovinje
+MK.12	G863835	41.9	21.0	Brvenica
+MK.C9	G863838	41.6	21.6	Opstina Caska
+MK.18	G863841	41.5	20.6	Opstina Centar Zupa
+MK.20	G863842	42.2	21.4	Opstina Cucer-Sandevo
+MK.D2	G863843	41.5	20.6	Debar
+MK.22	G863844	41.9	22.8	Opstina Delcevo
+MK.D3	G863846	41.3	21.1	Demir Hisar
+MK.28	G863849	41.5	21.4	Dolneni
+MK.33	G863854	41.2	22.4	Gevgelija
+MK.D4	G863855	41.8	20.8	Gostivar
+MK.36	G863856	42.0	21.6	Ilinden
+MK.D5	G863858	42.1	21.1	Jegunovce
+MK.D6	G863861	41.3	22.0	Kavadarci
+MK.43	G863862	41.5	20.9	Opstina Kicevo
+MK.46	G863865	42.0	22.4	Opstina Kocani
+MK.52	G863869	42.2	22.3	Kriva Palanka
+MK.53	G863870	41.3	21.4	Opstina Krivogastani
+MK.54	G863871	41.4	21.3	Opstina Krusevo
+MK.D7	G863873	42.1	21.8	Kumanovo
+MK.59	G863875	42.2	21.6	Opstina Lipkovo
+MK.D8	G863877	41.7	21.2	Makedonski Brod
+MK.69	G863881	41.5	22.1	Negotino
+MK.E2	G863883	41.1	20.9	Ohrid
+MK.79	G863886	41.9	21.7	Petrovec
+MK.80	G863887	41.5	21.1	Plasnica
+MK.E3	G863888	41.3	21.7	Prilep
+MK.83	G863889	42.0	22.1	Opstina Probistip
+MK.84	G863890	41.6	22.5	Opstina Radovis
+MK.85	G863891	42.2	22.1	Opstina Rankovce
+MK.E4	G863892	41.7	20.7	Opstina Mavrovo i Rostusa
+MK.92	G863896	41.9	21.3	Opstina Sopiste
+MK.97	G863899	42.2	21.9	Opstina Staro Nagoricane
+MK.98	G863900	41.7	22.2	Opstina Stip
+MK.E6	G863901	41.3	20.6	Struga
+MK.E7	G863902	41.4	22.6	Strumica
+MK.A2	G863903	41.8	21.4	Opstina Studenicani
+MK.A4	G863905	41.9	22.0	Sveti Nikole
+MK.A5	G863906	42.1	21.1	Tearce
+MK.E8	G863907	42.0	20.9	Tetovo
+MK.F1	G863909	41.8	21.8	Veles
+MK.B3	G863911	41.2	20.6	Opstina Vevcani
+MK.B4	G863912	41.9	22.6	Vinica
+MK.B7	G863914	41.9	20.9	Opstina Vrapciste
+MK.C2	G863918	41.8	21.6	Zelenikovo
+MK.C3	G863919	41.9	21.1	Opstina Zelino
+MK.F5	G7056271	41.3	20.8	Debarca
+MK.F6	G11398357	42.0	21.4	Grad Skopje
+ML.08	G2449066	19.7	-3.6	Tombouctou Region
+ML.06	G2451184	11.3	-6.2	Sikasso Region
+ML.05	G2451477	13.6	-5.9	Segou Region
+ML.04	G2453347	14.7	-3.4	Mopti Region
+ML.07	G2454532	13.8	-7.5	Koulikoro Region
+ML.03	G2455517	13.9	-10.1	Kayes Region
+ML.09	G2457161	16.6	1.6	Gao Region
+ML.01	G2460594	12.7	-8.0	Bamako Region
+ML.10	G2597449	19.4	1.2	Kidal Region
+ML.12070575	G12070575	22.7	-4.0	Taoudenit Region
+ML.12070577	G12070577	15.9	2.4	Menaka Region
+MM.12	G1293118	13.0	99.0	Tanintharyi Region
+MM.11	G1297099	22.0	98.0	Shan State
+MM.10	G1298480	23.5	95.5	Sagaing Region
+MM.17	G1298822	17.0	96.2	Yangon Region
+MM.01	G1298852	19.0	94.2	Rakhine State
+MM.16	G1300463	18.2	96.2	Bago Region
+MM.13	G1308528	16.2	97.8	Mon State
+MM.08	G1311871	21.0	96.0	Mandalay Region
+MM.15	G1312604	20.5	94.8	Magway Region
+MM.06	G1319539	19.2	97.5	Kayah State
+MM.05	G1320233	17.5	97.8	Kayin State
+MM.04	G1321702	26.0	97.5	Kachin State
+MM.03	G1321850	17.0	95.0	Ayeyarwady Region
+MM.02	G1327132	22.0	93.5	Chin State
+MM.18	G8239588	19.9	96.1	Nay Pyi Taw
+MN.19	G1514967	49.5	93.0	Uvs Aymag
+MN.12	G1515696	47.0	92.5	Hovd
+MN.10	G1515917	45.5	96.0	Govi-Altay Aymag
+MN.09	G1516012	48.0	96.0	Dzavhan Aymag
+MN.03	G1516278	48.5	90.0	Bayan-OElgiy Aymag
+MN.02	G1516290	45.5	99.5	Bayanhongor Aymag
+MN.20	G2028461	47.9	106.9	Ulaanbaatar Hot
+MN.18	G2028849	47.5	106.5	Central Aymag
+MN.17	G2029155	46.2	113.5	Suhbaatar Aymag
+MN.16	G2029432	49.7	106.4	Selenge Aymag
+MN.15	G2029546	46.0	102.5	South Khangay
+MN.14	G2029669	43.0	104.0	OEmnoegovi Province
+MN.13	G2030469	50.0	100.0	Hovsgol Aymag
+MN.11	G2030783	48.0	110.5	Hentiy Aymag
+MN.08	G2031740	45.5	106.5	Dundgovi Aymag
+MN.07	G2031798	44.5	110.0	East Gobi Aymag
+MN.06	G2031799	48.0	115.0	Dornod Aymag
+MN.21	G2032199	49.0	103.5	Bulgan
+MN.01	G2032855	48.0	101.5	Arhangay Aymag
+MN.23	G2055111	49.3	106.1	Darhan-Uul Aymag
+MN.24	G2055112	46.5	108.5	Govi-Sumber
+MN.25	G2055113	49.1	104.2	Orhon Aymag
+MO.11875154	G11875154	22.2	113.5	Nossa Senhora de Fatima
+MO.11875155	G11875155	22.2	113.5	Santo Antonio
+MO.11875156	G11875156	22.2	113.6	Sao Lazaro
+MO.11875157	G11875157	22.2	113.6	Se
+MO.11875158	G11875158	22.2	113.5	Sao Lourenco
+MO.11875159	G11875159	22.2	113.6	Nossa Senhora do Carmo
+MO.11875160	G11875160	22.1	113.6	Cotai
+MO.11875161	G11875161	22.1	113.6	Sao Francisco Xavier
+MP.100	G4041530	14.2	145.2	Rota Municipality
+MP.110	G4041552	15.2	145.7	Saipan Municipality
+MP.120	G4041650	15.0	145.6	Tinian Municipality
+MP.085	G7733156	18.1	145.8	Northern Islands Municipality
+MQ.MQ	G6690603	14.7	-61.0	Martinique
+MR.06	G2375742	17.9	-14.7	Wilaya du Trarza
+MR.11	G2375989	24.2	-9.5	Tiris Zemmour
+MR.09	G2376551	18.7	-10.3	Tagant
+MR.12	G2378903	20.0	-15.1	Inchiri
+MR.02	G2379024	16.6	-9.8	Hodh El Gharbi
+MR.01	G2379025	18.9	-7.0	Hodh ech Chargui
+MR.10	G2379216	15.4	-12.1	Guidimaka
+MR.04	G2379384	16.0	-12.8	Gorgol
+MR.08	G2380426	20.7	-16.2	Dakhlet Nouadhibou
+MR.05	G2380635	17.2	-13.4	Brakna
+MR.03	G2381344	16.6	-11.6	Assaba
+MR.07	G2381972	20.8	-10.2	Adrar
+MR.13	G11496391	18.3	-16.0	Nouakchott Ouest
+MR.14	G11496392	18.2	-15.9	Nouakchott Nord
+MR.15	G11496393	18.0	-15.9	Nouakchott Sud
+MS.03	G3578039	16.8	-62.2	Parish of Saint Peter
+MS.02	G3578044	16.7	-62.2	Parish of Saint Georges
+MS.01	G3578045	16.7	-62.2	Parish of Saint Anthony
+MT.01	G8299700	35.9	14.4	Attard
+MT.02	G8299701	35.9	14.5	Balzan
+MT.03	G8299702	35.9	14.5	Il-Birgu
+MT.04	G8299703	35.9	14.5	Birkirkara
+MT.05	G8299704	35.8	14.5	Birzebbuga
+MT.06	G8299705	35.9	14.5	Bormla
+MT.07	G8299706	35.9	14.4	Dingli
+MT.08	G8299707	35.9	14.5	Il-Fgura
+MT.09	G8299708	35.9	14.5	Il-Furjana
+MT.10	G8299709	36.0	14.2	Il-Fontana
+MT.11	G8299710	36.0	14.3	Ghajnsielem
+MT.12	G8299711	36.1	14.2	L-Gharb
+MT.13	G8299712	35.9	14.5	Hal Gharghur
+MT.14	G8299713	36.1	14.2	L-Ghasri
+MT.15	G8299714	35.8	14.5	Hal Ghaxaq
+MT.16	G8299715	35.9	14.5	Il-Gudja
+MT.17	G8299716	35.9	14.5	Il-Gzira
+MT.18	G8299717	35.9	14.5	Il-Hamrun
+MT.19	G8299718	35.9	14.5	L-Iklin
+MT.20	G8299719	35.9	14.4	L-Imdina
+MT.21	G8299720	35.9	14.4	L-Imgarr
+MT.22	G8299721	35.8	14.5	L-Imqabba
+MT.23	G8299722	35.9	14.5	L-Imsida
+MT.24	G8299723	35.9	14.4	L-Imtarfa
+MT.25	G8299724	35.9	14.5	L-Isla
+MT.26	G8299725	35.9	14.5	Il-Kalkara
+MT.27	G8299726	36.0	14.2	Ta' Kercem
+MT.28	G8299727	35.8	14.5	Kirkop
+MT.29	G8299728	35.9	14.4	Lija
+MT.30	G8299729	35.9	14.5	Luqa
+MT.31	G8299730	35.9	14.5	Il-Marsa
+MT.32	G8299731	35.9	14.6	Marsaskala
+MT.33	G8299732	35.8	14.6	Marsaxlokk
+MT.34	G8299733	36.0	14.4	Il-Mellieha
+MT.35	G8299734	35.9	14.4	Il-Mosta
+MT.36	G8299735	36.0	14.2	Il-Munxar
+MT.37	G8299736	36.0	14.3	In-Nadur
+MT.38	G8299737	35.9	14.4	In-Naxxar
+MT.39	G8299738	35.9	14.5	Paola
+MT.40	G8299739	35.9	14.5	Pembroke
+MT.41	G8299740	35.9	14.5	Tal-Pieta
+MT.42	G8299741	36.0	14.3	Il-Qala
+MT.43	G8299742	35.9	14.5	Qormi
+MT.44	G8299743	35.8	14.5	Il-Qrendi
+MT.45	G8299744	35.9	14.4	Ir-Rabat
+MT.46	G8299745	36.0	14.2	Victoria
+MT.47	G8299746	35.8	14.5	Safi
+MT.48	G8299747	35.9	14.5	Saint John
+MT.49	G8299748	35.9	14.5	Saint Julian's
+MT.50	G8299749	36.0	14.2	Saint Lawrence
+MT.51	G8299750	35.9	14.5	Saint Lucia
+MT.52	G8299751	35.9	14.4	Saint Paul's Bay
+MT.53	G8299752	35.9	14.5	Saint Venera
+MT.54	G8299753	36.0	14.3	Sannat
+MT.55	G8299754	35.8	14.4	Is-Siggiewi
+MT.56	G8299755	35.9	14.5	Tas-Sliema
+MT.57	G8299756	35.9	14.5	Is-Swieqi
+MT.58	G8299757	35.9	14.5	Tarxien
+MT.59	G8299758	35.9	14.5	Ta' Xbiex
+MT.61	G8299759	36.1	14.3	Ix-Xaghra
+MT.62	G8299760	36.0	14.3	Ix-Xewkija
+MT.63	G8299761	35.9	14.5	Ix-Xghajra
+MT.64	G8299762	35.9	14.5	Haz-Zabbar
+MT.65	G8299763	35.9	14.4	Haz-Zebbug
+MT.66	G8299764	36.1	14.2	Iz-Zebbug
+MT.67	G8299765	35.9	14.5	Iz-Zejtun
+MT.68	G8299766	35.8	14.5	Iz-Zurrieq
+MT.60	G8334638	35.9	14.5	Valletta
+MU.21	G448254	-10.4	56.6	Agalega Islands
+MU.20	G934017	-20.5	57.5	Savanne District
+MU.19	G934090	-20.1	57.6	Riviere du Rempart District
+MU.18	G934153	-20.2	57.5	Port Louis District
+MU.17	G934166	-20.3	57.5	Plaines Wilhems District
+MU.16	G934212	-20.1	57.6	Pamplemousses District
+MU.15	G934275	-20.2	57.6	Moka District
+MU.14	G934466	-20.4	57.6	Grand Port District
+MU.13	G934522	-20.2	57.7	Flacq District
+MU.12	G934718	-20.3	57.4	Black River District
+MU.22	G1106583	-16.6	59.6	Cargados Carajos
+MU.23	G1547449	-19.7	63.4	Rodrigues
+MV.47	G1281843	3.4	73.6	Vaavu Atholhu
+MV.46	G1281881	2.2	73.1	Thaa Atholhu
+MV.45	G1281892	6.3	73.2	Shaviyani Atholhu
+MV.01	G1281893	-0.7	73.2	Addu Atoll
+MV.44	G1281918	5.8	73.0	Raa Atholhu
+MV.43	G1281937	6.0	73.4	Noonu Atoll
+MV.42	G1281945	-0.3	73.4	Gnaviyani Atoll
+MV.41	G1281985	2.8	73.4	Meemu Atholhu
+MV.39	G1282096	5.3	73.6	Lhaviyani Atholhu
+MV.05	G1282101	2.1	73.6	Laamu Atholhu
+MV.38	G1282208	4.2	73.5	Kaafu Atoll
+MV.37	G1282293	6.8	73.2	Haa Dhaalu Atholhu
+MV.36	G1282294	7.0	73.0	Haa Alifu Atholhu
+MV.35	G1282328	0.2	73.1	Gaafu Dhaalu Atholhu
+MV.34	G1282329	0.4	73.5	Gaafu Alifu Atholhu
+MV.33	G1282393	3.1	73.0	Faafu Atholhu
+MV.32	G1282447	2.9	73.0	Dhaalu Atholhu
+MV.31	G1282478	4.9	73.0	Baa Atholhu
+MV.30	G1282497	4.3	73.0	Alifu Atholhu
+MV.40	G1337624	4.2	73.5	Maale
+MV.10346475	G10346475	3.6	72.8	Southern Ari Atoll
+MW.S	G923817	-15.5	35.0	Southern Region
+MW.N	G924591	-11.0	34.0	Northern Region
+MW.C	G931597	-13.5	34.0	Central Region
+MX.31	G3514211	20.8	-88.8	Estado de Yucatan
+MX.30	G3514780	19.3	-96.7	Estado de Veracruz-Llave
+MX.29	G3515359	19.4	-98.2	Estado de Tlaxcala
+MX.28	G3516391	24.0	-98.8	Estado de Tamaulipas
+MX.27	G3516458	18.0	-92.7	Estado de Tabasco
+MX.23	G3520887	19.7	-88.2	Estado de Quintana Roo
+MX.22	G3520914	20.9	-99.8	Estado de Queretaro
+MX.21	G3521082	18.8	-97.9	Estado de Puebla
+MX.20	G3522509	17.0	-96.5	Estado de Oaxaca
+MX.19	G3522542	25.6	-99.8	Estado de Nuevo Leon
+MX.17	G3522961	18.8	-99.1	Estado de Morelos
+MX.15	G3523272	19.4	-99.7	Estado de Mexico
+MX.13	G3527115	20.5	-99.0	Estado de Hidalgo
+MX.12	G3527213	17.7	-100.0	Estado de Guerrero
+MX.09	G3527646	19.3	-99.1	Ciudad de Mexico
+MX.05	G3531011	16.5	-92.5	Estado de Chiapas
+MX.04	G3531730	18.8	-90.2	Estado de Campeche
+MX.32	G3979840	23.2	-103.0	Estado de Zacatecas
+MX.26	G3982846	29.7	-110.5	Estado de Sonora
+MX.25	G3983035	25.0	-107.5	Estado de Sinaloa
+MX.24	G3985605	22.5	-100.5	Estado de San Luis Potosi
+MX.18	G3995012	21.8	-104.8	Estado de Nayarit
+MX.16	G3995955	19.2	-101.8	Estado de Michoacan de Ocampo
+MX.14	G4004156	20.3	-103.7	Estado de Jalisco
+MX.11	G4005267	21.0	-101.0	Estado de Guanajuato
+MX.10	G4011741	24.8	-104.8	Estado de Durango
+MX.08	G4013513	19.1	-103.9	Estado de Colima
+MX.07	G4013674	27.3	-102.0	Estado de Coahuila de Zaragoza
+MX.06	G4014336	28.8	-106.2	Estado de Chihuahua
+MX.03	G4017698	25.8	-111.8	Estado de Baja California Sur
+MX.02	G4017700	30.0	-115.0	Estado de Baja California
+MX.01	G4019231	22.0	-102.4	Estado de Aguascalientes
+MY.04	G1733035	2.2	102.2	Melaka
+MY.13	G1733036	5.0	103.0	Terengganu
+MY.12	G1733037	3.2	101.5	Selangor
+MY.11	G1733038	2.5	113.5	Sarawak
+MY.16	G1733039	5.5	117.0	Sabah
+MY.08	G1733040	6.5	100.2	Perlis
+MY.07	G1733041	5.0	101.0	Perak
+MY.06	G1733042	3.5	102.8	Pahang
+MY.05	G1733043	2.8	102.2	Negeri Sembilan
+MY.03	G1733044	5.3	102.0	Kelantan
+MY.14	G1733046	3.1	101.7	Kuala Lumpur
+MY.09	G1733047	5.4	100.3	Pulau Pinang
+MY.02	G1733048	6.0	100.7	Kedah
+MY.01	G1733049	2.0	103.5	Johor
+MY.15	G1734240	5.3	115.2	Labuan
+MY.17	G1996552	2.9	101.7	Putrajaya
+MZ.09	G1024312	-17.0	37.0	Provincia de Zambezia
+MZ.08	G1026010	-15.5	33.0	Tete
+MZ.05	G1026804	-19.2	34.8	Sofala Province
+MZ.07	G1030006	-13.0	36.7	Niassa Province
+MZ.06	G1033354	-15.0	39.0	Nampula
+MZ.04	G1040649	-25.5	32.3	Maputo Province
+MZ.10	G1040947	-19.0	33.5	Manica Province
+MZ.03	G1045110	-23.0	34.5	Inhambane Province
+MZ.02	G1046058	-23.5	33.0	Gaza Province
+MZ.01	G1051823	-12.5	39.4	Cabo Delgado Province
+MZ.11	G1105845	-26.0	32.6	Cidade de Maputo
+NA.28	G1090052	-17.8	23.8	Zambezi Region
+NA.21	G3352137	-22.8	17.1	Khomas
+NA.29	G3371199	-22.1	15.3	Erongo
+NA.30	G3371200	-24.5	17.2	Hardap
+NA.31	G3371201	-27.0	17.5	Karas
+NA.32	G3371202	-19.4	13.8	Kunene
+NA.33	G3371203	-17.6	16.8	Ohangwena
+NA.35	G3371205	-21.8	19.4	Omaheke
+NA.36	G3371206	-18.3	14.8	Omusati
+NA.37	G3371207	-18.5	15.8	Oshana
+NA.38	G3371208	-18.5	17.1	Oshikoto
+NA.39	G3371209	-20.3	18.0	Otjozondjupa
+NA.40	G8693188	-18.3	20.6	Kavango East Region
+NA.41	G8693189	-18.2	18.9	Kavango West Region
+NC.02	G2140464	-21.8	165.8	Province Sud
+NC.01	G2140685	-21.1	164.9	Province Nord
+NC.03	G7521415	-20.9	167.3	Province des iles Loyaute
+NE.07	G2437797	15.0	10.5	Zinder
+NE.06	G2439374	16.0	5.5	Tahoua
+NE.04	G2441289	14.2	7.2	Maradi
+NE.03	G2445486	13.2	3.6	Dosso Region
+NE.02	G2445702	16.0	13.5	Diffa
+NE.01	G2448083	19.8	10.2	Agadez
+NE.09	G2595293	14.3	2.1	Tillaberi Region
+NE.08	G2595294	13.5	2.1	Niamey
+NG.51	G2322907	13.1	5.2	Sokoto State
+NG.50	G2324433	4.7	6.8	Rivers State
+NG.49	G2324828	9.2	9.8	Plateau State
+NG.32	G2325190	8.0	4.0	Oyo State
+NG.48	G2326168	7.2	5.1	Ondo State
+NG.16	G2327546	7.0	3.6	Ogun State
+NG.31	G2328925	10.0	6.0	Niger State
+NG.05	G2332453	6.5	3.4	Lagos State
+NG.30	G2332785	8.5	5.0	Kwara State
+NG.24	G2334797	12.2	7.5	Katsina State
+NG.29	G2335196	11.5	8.5	Kano State
+NG.23	G2335722	10.3	7.8	Kaduna State
+NG.28	G2337542	5.5	7.2	Imo State
+NG.22	G2345891	5.8	8.5	Cross River State
+NG.27	G2346794	11.5	13.0	Borno State
+NG.26	G2347266	7.3	8.8	Benue State
+NG.46	G2347468	10.5	10.0	Bauchi State
+NG.25	G2349961	6.3	7.0	Anambra State
+NG.21	G2350813	5.0	7.8	Akwa Ibom State
+NG.11	G2352776	8.8	7.2	Federal Capital Territory
+NG.45	G2565340	5.4	7.5	Abia State
+NG.36	G2565341	5.5	6.0	Delta State
+NG.35	G2565342	9.3	12.5	Adamawa State
+NG.37	G2565343	6.5	6.0	Edo
+NG.47	G2565344	6.5	7.5	Enugu State
+NG.39	G2565345	12.1	9.6	Jigawa State
+NG.52	G2595344	4.8	6.1	Bayelsa State
+NG.53	G2595345	6.2	8.1	Ebonyi State
+NG.54	G2595346	7.7	5.2	Ekiti State
+NG.55	G2595347	10.2	11.2	Gombe State
+NG.56	G2595348	8.5	8.2	Nasarawa State
+NG.57	G2595349	12.2	6.2	Zamfara State
+NG.40	G2597363	11.5	4.0	Kebbi State
+NG.41	G2597364	7.8	6.8	Kogi State
+NG.42	G2597365	7.5	4.5	Osun State
+NG.43	G2597366	8.0	10.5	Taraba State
+NG.44	G2597367	12.0	11.5	Yobe State
+NI.15	G3617051	11.3	-85.8	Departamento de Rivas
+NI.14	G3617056	11.3	-84.6	Departamento de Rio San Juan
+NI.13	G3617458	13.7	-86.2	Departamento de Nueva Segovia
+NI.12	G3617707	12.9	-85.7	Departamento de Matagalpa
+NI.11	G3617722	12.0	-86.2	Departamento de Masaya
+NI.10	G3617762	12.0	-86.4	Departamento de Managua
+NI.09	G3617796	13.5	-86.4	Departamento de Madriz
+NI.08	G3618029	12.6	-86.6	Departamento de Leon
+NI.07	G3618928	13.8	-85.6	Departamento de Jinotega
+NI.06	G3619135	11.8	-85.9	Departamento de Granada
+NI.05	G3619193	13.2	-86.3	Departamento de Esteli
+NI.04	G3620368	12.1	-85.2	Departamento de Chontales
+NI.03	G3620380	12.8	-87.1	Departamento de Chinandega
+NI.02	G3620481	11.8	-86.2	Departamento de Carazo
+NI.01	G3620673	12.5	-85.5	Departamento de Boaco
+NI.17	G3830307	14.0	-84.2	Costa Caribe Norte
+NI.18	G3830308	11.8	-84.1	Costa Caribe Sur
+NL.11	G2743698	52.0	4.7	Provincie Zuid-Holland
+NL.10	G2744011	51.4	3.8	Provincie Zeeland
+NL.09	G2745909	52.0	5.2	Provincie Utrecht
+NL.15	G2748838	52.4	6.5	Provincie Overijssel
+NL.07	G2749879	52.6	4.9	Provincie Noord-Holland
+NL.06	G2749990	51.7	5.0	Provincie Noord-Brabant
+NL.05	G2751596	51.2	6.0	Provincie Limburg
+NL.04	G2755249	53.2	6.8	Provincie Groningen
+NL.03	G2755634	52.0	5.8	Provincie Gelderland
+NL.02	G2755812	53.2	5.8	Provincie Friesland
+NL.01	G2756631	52.8	6.6	Provincie Drenthe
+NL.16	G3319179	52.5	5.7	Provincie Flevoland
+NO.14	G3141558	59.1	6.2	Rogaland Fylke
+NO.12	G3143242	59.9	10.7	Oslo County
+NO.09	G3144301	66.9	14.8	Nordland Fylke
+NO.08	G3145495	62.7	7.2	More og Romsdal fylke
+NO.21	G11862827	64.0	11.6	Trondelag
+NO.30	G12110595	60.1	9.9	Viken
+NO.42	G12110596	58.7	7.6	Agder
+NO.54	G12110597	69.7	23.7	Troms og Finnmark
+NO.34	G12110598	61.4	10.4	Innlandet
+NO.38	G12110599	59.5	8.7	Vestfold og Telemark
+NO.46	G12110600	60.9	6.4	Vestland
+NP.1	G12095447	27.2	87.2	Province 1
+NP.2	G12095448	26.9	85.6	Province 2
+NP.3	G12095449	27.7	85.4	Bagmati Province
+NP.4	G12095450	28.4	84.0	Gandaki Pradesh
+NP.5	G12095451	28.1	82.5	Lumbini Province
+NP.6	G12095452	29.3	82.5	Karnali Province
+NP.7	G12095453	29.3	80.9	Sudurpashchim Pradesh
+NR.14	G2110418	-0.5	166.9	Yaren
+NR.13	G2110420	-0.5	166.9	Uaboe District
+NR.12	G2110423	-0.5	166.9	Nibok District
+NR.11	G2110431	-0.6	166.9	Meneng District
+NR.10	G2110432	-0.5	167.0	Ijuw District
+NR.09	G2110435	-0.5	166.9	Ewa District
+NR.08	G2110437	-0.5	166.9	Denigomodu District
+NR.07	G2110440	-0.5	166.9	Buada District
+NR.06	G2110441	-0.5	166.9	Boe District
+NR.05	G2110442	-0.5	166.9	Baiti District
+NR.04	G2110445	-0.5	167.0	Anibare District
+NR.03	G2110448	-0.5	166.9	Anetan District
+NR.02	G2110449	-0.5	167.0	Anabar District
+NR.01	G2110451	-0.5	166.9	Aiwo District
+NZ.G2	G2179538	-41.3	174.8	Wellington
+NZ.F3	G2179671	-40.0	175.0	Manawatu-Wanganui
+NZ.G1	G2180293	-37.5	175.3	Waikato
+NZ.TAS	G2181818	-41.2	173.1	Tasman
+NZ.F9	G2181872	-39.2	174.7	Taranaki
+NZ.F8	G2182501	-45.7	168.0	Southland
+NZ.E8	G2182560	-38.2	176.9	Bay of Plenty
+NZ.F6	G2185978	-35.5	174.0	Northland
+NZ.F4	G2187304	-41.7	173.5	Marlborough
+NZ.F2	G2190146	-39.7	176.5	Hawke's Bay
+NZ.F1	G2190767	-38.6	178.0	Gisborne
+NZ.E9	G2192628	-43.5	171.5	Canterbury
+NZ.E7	G2193734	-36.9	174.8	Auckland
+NZ.10	G4033013	-44.0	-176.5	Chatham Islands
+NZ.F5	G6612108	-41.3	173.3	Nelson
+NZ.F7	G6612109	-45.3	169.5	Otago
+NZ.G3	G6612113	-42.5	171.2	West Coast
+OM.01	G411735	22.5	57.3	Muhafazat ad Dakhiliyah
+OM.02	G411736	23.4	57.7	Al Batinah South Governorate
+OM.03	G411737	20.2	56.6	Muhafazat al Wusta
+OM.04	G411738	21.6	59.1	Ash Sharqiyah South
+OM.09	G411739	22.9	56.0	Az Zahirah
+OM.06	G411740	23.6	58.4	Muhafazat Masqat
+OM.07	G411741	26.0	56.3	Musandam
+OM.08	G411742	18.5	54.2	Dhofar Governorate
+OM.10	G7110710	24.2	56.1	Muhafazat al Buraymi
+OM.12	G8394433	22.1	58.4	Ash Sharqiyah North Governorate
+OM.11	G8394434	24.0	56.8	Al Batinah North Governorate
+PA.10	G3700159	8.2	-81.1	Provincia de Veraguas
+PA.09	G3701537	9.2	-78.2	Guna Yala
+PA.08	G3703433	9.1	-78.9	Provincia de Panama
+PA.07	G3704961	7.6	-80.3	Provincia de Los Santos
+PA.06	G3708710	7.8	-80.8	Provincia de Herrera
+PA.05	G3711671	8.1	-77.9	Provincia del Darien
+PA.04	G3712073	9.2	-80.0	Provincia de Colon
+PA.03	G3712162	8.6	-80.4	Provincia de Cocle
+PA.02	G3712410	8.5	-82.4	Provincia de Chiriqui
+PA.01	G3713954	9.2	-82.5	Provincia de Bocas del Toro
+PA.11	G7303686	8.2	-77.5	Embera-Wounaan
+PA.12	G7303688	8.5	-81.7	Ngoebe-Bugle
+PA.13	G11353126	8.8	-79.9	Panama Oeste
+PE.25	G3691099	-9.8	-73.5	Ucayali
+PE.24	G3691146	-3.8	-80.5	Tumbes
+PE.22	G3692385	-7.0	-76.8	Region de San Martin
+PE.20	G3693525	-5.0	-80.3	Piura
+PE.16	G3695238	-4.0	-74.5	Loreto
+PE.14	G3695753	-6.3	-80.0	Lambayeque
+PE.13	G3695781	-8.0	-78.5	La Libertad
+PE.10	G3696416	-9.5	-76.0	Region de Huanuco
+PE.06	G3699087	-6.2	-78.8	Cajamarca
+PE.02	G3699674	-9.5	-77.8	Ancash
+PE.01	G3699699	-5.0	-78.2	Amazonas
+PE.23	G3928127	-17.7	-70.3	Tacna
+PE.21	G3931275	-15.0	-70.0	Puno
+PE.19	G3932834	-10.5	-75.2	Pasco
+PE.18	G3934607	-16.8	-70.9	Departamento de Moquegua
+PE.17	G3935619	-12.0	-70.2	Madre de Dios
+PE.LMA	G3936451	-12.0	-76.8	Provincia de Lima
+PE.15	G3936452	-11.8	-76.5	Lima
+PE.12	G3937485	-11.5	-75.0	Junin
+PE.11	G3938526	-14.3	-75.5	Ica
+PE.09	G3939467	-13.0	-75.0	Huancavelica
+PE.08	G3941583	-13.0	-72.2	Cusco
+PE.07	G3946080	-12.1	-77.1	Callao
+PE.05	G3947018	-14.0	-74.2	Ayacucho
+PE.04	G3947319	-16.0	-72.2	Arequipa
+PE.03	G3947421	-14.0	-73.0	Region de Apurimac
+PF.04	G4019991	-9.8	-139.0	Iles Marquises
+PF.03	G4030621	-18.2	-140.9	Iles Tuamotu-Gambier
+PF.02	G4034364	-16.7	-151.5	Iles Sous-le-Vent
+PF.01	G4034365	-17.5	-149.5	Iles du Vent
+PF.05	G4034366	-23.0	-150.0	Iles Australes
+PG.17	G2083546	-5.9	149.8	West New Britain Province
+PG.06	G2083549	-7.5	142.0	Western Province
+PG.16	G2083551	-5.8	144.2	Western Highlands Province
+PG.05	G2086331	-6.5	143.6	Southern Highlands Province
+PG.18	G2087246	-3.5	142.0	West Sepik Province
+PG.07	G2089470	-6.0	155.0	Bougainville
+PG.04	G2089478	-9.0	148.5	Northern Province
+PG.15	G2089693	-3.0	151.5	New Ireland Province
+PG.20	G2089856	-9.4	147.2	National Capital District
+PG.14	G2090468	-7.0	147.0	Morobe Province
+PG.13	G2091495	-2.0	147.0	Manus Province
+PG.12	G2091993	-5.0	145.5	Madang Province
+PG.02	G2096633	-7.7	145.1	Gulf Province
+PG.19	G2097655	-5.5	143.5	Enga Province
+PG.11	G2097846	-4.0	143.8	East Sepik Province
+PG.10	G2097853	-4.6	151.9	East New Britain Province
+PG.09	G2097855	-6.5	145.6	Eastern Highlands Province
+PG.08	G2098593	-6.2	144.8	Chimbu Province
+PG.03	G2132895	-10.6	150.3	Milne Bay Province
+PG.01	G2133763	-10.0	148.0	Central Province
+PG.21	G8521658	-6.3	142.8	Hela
+PG.22	G8521660	-5.9	144.7	Jiwaka
+PH.14	G7115989	7.5	124.3	Autonomous Region in Muslim Mindanao
+PH.10	G7521295	8.5	125.2	Northern Mindanao
+PH.41	G7521296	12.9	121.1	Mimaropa
+PH.02	G7521297	17.7	121.7	Cagayan Valley
+PH.12	G7521298	6.5	124.9	Soccsksargen
+PH.13	G7521299	9.0	125.7	Caraga
+PH.15	G7521300	17.1	121.0	Cordillera Administrative Region
+PH.01	G7521301	17.0	120.5	Ilocos
+PH.40	G7521303	14.3	121.1	Calabarzon
+PH.06	G7521304	11.1	122.5	Western Visayas
+PH.03	G7521305	15.3	120.8	Central Luzon
+PH.07	G7521306	10.4	123.9	Central Visayas
+PH.08	G7521307	11.5	125.0	Eastern Visayas
+PH.09	G7521308	7.9	123.1	Zamboanga Peninsula
+PH.11	G7521309	7.5	125.9	Davao
+PH.05	G7521310	13.3	123.6	Bicol
+PH.NCR	G7521311	14.6	121.0	National Capital Region
+PK.08	G1162015	33.7	73.1	Islamabad
+PK.05	G1164807	26.1	68.8	Sindh
+PK.04	G1167710	30.9	72.3	Punjab Province
+PK.03	G1168873	34.0	71.7	Khyber Pakhtunkhwa Province
+PK.07	G1168878	36.0	75.0	Gilgit-Baltistan
+PK.02	G1183606	28.5	65.6	Balochistan
+PK.06	G1184196	33.9	73.9	Azad Jammu and Kashmir
+PL.75	G858785	51.2	22.9	Lublin Voivodeship
+PL.77	G858786	49.9	20.3	Lesser Poland Voivodeship
+PL.78	G858787	52.4	21.1	Masovian Voivodeship
+PL.80	G858788	50.0	22.2	Podkarpackie Voivodeship
+PL.81	G858789	53.2	23.0	Podlaskie Voivodeship
+PL.84	G858790	50.8	20.8	Wojewodztwo Swietokrzyskie
+PL.85	G858791	53.8	20.8	Warmian-Masurian Voivodeship
+PL.72	G3337492	51.1	16.4	Lower Silesian Voivodeship
+PL.74	G3337493	51.6	19.4	Wojewodztwo Lodzkie
+PL.76	G3337494	52.2	15.3	Lubusz Voivodeship
+PL.79	G3337495	50.7	17.9	Opole Voivodeship
+PL.82	G3337496	54.2	18.0	Pomeranian Voivodeship
+PL.83	G3337497	50.3	18.9	Silesian Voivodeship
+PL.86	G3337498	52.3	17.2	Greater Poland Voivodeship
+PL.87	G3337499	53.6	15.6	West Pomeranian Voivodeship
+PL.73	G3337500	53.1	18.5	Kuyavian-Pomeranian Voivodeship
+PM.97502	G3424935	46.8	-56.2	Commune de Saint-Pierre
+PM.97501	G3424938	47.0	-56.3	Miquelon-Langlade
+PR.001	G4562487	18.2	-66.7	Adjuntas
+PR.003	G4562503	18.4	-67.2	Aguada
+PR.005	G4562512	18.4	-67.2	Aguadilla
+PR.007	G4562516	18.3	-66.1	Aguas Buenas
+PR.009	G4562531	18.1	-66.3	Aibonito
+PR.011	G4562605	18.3	-67.1	Anasco
+PR.013	G4562640	18.4	-66.7	Arecibo
+PR.015	G4562682	18.0	-66.1	Arroyo
+PR.017	G4562771	18.5	-66.5	Barceloneta
+PR.019	G4562779	18.2	-66.3	Barranquitas
+PR.021	G4562837	18.4	-66.2	Bayamon Municipio
+PR.023	G4562997	18.1	-67.1	Cabo Rojo Municipio
+PR.025	G4563011	18.2	-66.0	Caguas Municipio
+PR.027	G4563065	18.4	-66.9	Camuy Municipio
+PR.029	G4563169	18.3	-65.9	Canovanas Municipio
+PR.031	G4563244	18.4	-66.0	Carolina Municipio
+PR.033	G4563299	18.4	-66.1	Catano Municipio
+PR.035	G4563309	18.1	-66.2	Cayey Municipio
+PR.037	G4563380	18.3	-65.7	Ceiba Municipio
+PR.039	G4563774	18.3	-66.5	Ciales Municipio
+PR.041	G4563778	18.2	-66.2	Cidra Municipio
+PR.043	G4563812	18.1	-66.4	Coamo Municipio
+PR.045	G4563921	18.2	-66.2	Comerio Municipio
+PR.047	G4564004	18.3	-66.3	Corozal Municipio
+PR.049	G4564071	18.3	-65.3	Culebra Municipio
+PR.051	G4564134	18.4	-66.3	Dorado Municipio
+PR.053	G4564949	18.3	-65.7	Fajardo Municipio
+PR.054	G4564993	18.4	-66.6	Florida Municipio
+PR.055	G4565091	18.0	-66.9	Guanica Municipio
+PR.057	G4565107	18.0	-66.1	Guayama Municipio
+PR.059	G4565112	18.1	-66.8	Guayanilla Municipio
+PR.061	G4565120	18.3	-66.1	Guaynabo Municipio
+PR.063	G4565126	18.3	-66.0	Gurabo Municipio
+PR.065	G4565348	18.4	-66.8	Hatillo Municipio
+PR.067	G4565381	18.1	-67.1	Hormigueros Municipio
+PR.069	G4565449	18.1	-65.8	Humacao Municipio
+PR.071	G4565581	18.5	-67.0	Municipio de Isabela
+PR.073	G4565684	18.2	-66.6	Municipio de Jayuya
+PR.075	G4565713	18.0	-66.5	Juana Diaz Municipio
+PR.077	G4565720	18.2	-65.9	Municipio de Juncos
+PR.079	G4565900	18.0	-67.0	Lajas Municipio
+PR.081	G4565910	18.3	-66.9	Lares Municipio
+PR.083	G4565961	18.3	-67.0	Las Marias Municipio
+PR.085	G4565981	18.2	-65.9	Las Piedras Municipio
+PR.087	G4566025	18.4	-65.9	Loiza Municipio
+PR.089	G4566106	18.3	-65.7	Luquillo Municipio
+PR.091	G4566138	18.4	-66.5	Manati Municipio
+PR.093	G4566180	18.2	-66.9	Maricao Municipio
+PR.095	G4566209	18.0	-65.9	Maunabo Municipio
+PR.097	G4566217	18.2	-67.1	Mayagueez Municipio
+PR.099	G4566272	18.4	-67.1	Moca Municipio
+PR.101	G4566334	18.3	-66.4	Morovis Municipio
+PR.103	G4566397	18.2	-65.8	Naguabo Municipio
+PR.105	G4566403	18.3	-66.3	Naranjito Municipio
+PR.107	G4566456	18.2	-66.4	Orocovis Municipio
+PR.109	G4566654	18.0	-66.0	Patillas Municipio
+PR.111	G4566689	18.1	-66.7	Penuelas Municipio
+PR.113	G4566886	18.1	-66.6	Ponce Municipio
+PR.117	G4567727	18.3	-67.2	Rincon Municipio
+PR.115	G4567734	18.4	-66.9	Quebradillas Municipio
+PR.119	G4567823	18.3	-65.8	Rio Grande Municipio
+PR.121	G4568015	18.1	-66.9	Sabana Grande Municipio
+PR.123	G4568043	18.0	-66.3	Salinas Municipio
+PR.125	G4568105	18.1	-67.0	San German Municipio
+PR.127	G4568138	18.5	-66.1	San Juan
+PR.129	G4568150	18.2	-66.0	San Lorenzo Municipio
+PR.131	G4568177	18.3	-67.0	San Sebastian Municipio
+PR.133	G4568213	18.0	-66.4	Santa Isabel Municipio
+PR.135	G4568404	18.4	-66.3	Toa Alta Municipio
+PR.137	G4568408	18.4	-66.2	Toa Baja Municipio
+PR.139	G4568452	18.3	-66.0	Trujillo Alto Municipio
+PR.141	G4568491	18.3	-66.7	Utuado Municipio
+PR.143	G4568529	18.4	-66.3	Vega Alta Municipio
+PR.145	G4568534	18.4	-66.4	Vega Baja Municipio
+PR.149	G4568684	18.1	-66.5	Villalba Municipio
+PR.151	G4568909	18.1	-65.9	Yabucoa Municipio
+PR.153	G4568918	18.1	-66.9	Yauco Municipio
+PR.147	G4568924	18.1	-65.4	Vieques Municipality
+PS.GZ	G281132	31.4	34.3	Gaza Strip
+PS.WE	G285153	31.7	35.2	West Bank
+PT.19	G2262961	38.3	-8.6	Distrito de Setubal
+PT.18	G2263478	39.3	-8.5	Distrito de Santarem
+PT.16	G2264507	39.2	-7.6	Distrito de Portalegre
+PT.14	G2267056	39.0	-9.1	Distrito de Lisboa
+PT.13	G2267094	39.7	-8.8	Distrito de Leiria
+PT.09	G2268337	37.2	-8.2	Distrito de Faro
+PT.08	G2268404	38.6	-7.8	Distrito de Evora
+PT.06	G2269513	40.0	-7.5	Distrito de Castelo Branco
+PT.03	G2270984	37.8	-7.9	Distrito de Beja
+PT.10	G2593105	32.8	-16.9	Madeira
+PT.22	G2732264	40.8	-7.8	Distrito de Viseu
+PT.21	G2732437	41.5	-7.6	Distrito de Vila Real
+PT.20	G2732772	41.9	-8.5	Distrito de Viana do Castelo
+PT.17	G2735941	41.2	-8.3	Distrito do Porto
+PT.11	G2738782	40.6	-7.2	Distrito da Guarda
+PT.07	G2740636	40.2	-8.3	Distrito de Coimbra
+PT.05	G2742026	41.8	-6.8	Distrito de Braganca
+PT.04	G2742031	41.5	-8.4	Distrito de Braga
+PT.02	G2742610	40.7	-8.5	Distrito de Aveiro
+PT.23	G3411865	37.8	-25.5	Azores
+PW.11	G1559532	7.5	134.5	State of Ngatpang
+PW.16	G1559630	5.3	132.2	State of Sonsorol
+PW.05	G1559774	8.1	134.7	State of Kayangel
+PW.04	G1559776	3.0	131.1	State of Hatohobei
+PW.01	G1559964	7.4	134.5	State of Aimeliik
+PW.02	G4037645	7.4	134.5	State of Airai
+PW.03	G4037653	6.9	134.1	State of Angaur
+PW.06	G4037892	7.3	134.5	State of Koror
+PW.07	G4037930	7.5	134.6	State of Melekeok
+PW.08	G4037962	7.6	134.6	State of Ngaraard
+PW.12	G4037976	7.5	134.6	State of Ngchesar
+PW.09	G4038037	7.7	134.6	State of Ngarchelong
+PW.10	G4038043	7.6	134.6	State of Ngardmau
+PW.13	G4038068	7.5	134.5	State of Ngeremlengui
+PW.14	G4038179	7.6	134.6	State of Ngiwal
+PW.15	G4038261	7.0	134.2	State of Peleliu
+PY.17	G3437027	-24.1	-56.7	Departamento de San Pedro
+PY.16	G3437443	-23.5	-58.8	Departamento de Presidente Hayes
+PY.15	G3437599	-26.0	-57.2	Departamento de Paraguari
+PY.13	G3437677	-26.7	-57.9	Departamento de Neembucu
+PY.12	G3437727	-27.0	-57.0	Departamento de Misiones
+PY.11	G3437923	-26.8	-55.7	Departamento de Itapua
+PY.10	G3438049	-25.8	-56.3	Departamento del Guaira
+PY.08	G3438827	-25.2	-57.0	Departamento de la Cordillera
+PY.07	G3438833	-22.8	-57.2	Departamento de Concepcion
+PY.06	G3439137	-25.5	-57.5	Departamento Central
+PY.19	G3439216	-24.2	-55.2	Departamento de Canindeyu
+PY.05	G3439296	-26.2	-56.1	Departamento de Caazapa
+PY.04	G3439312	-25.2	-55.8	Departamento de Caaguazu
+PY.02	G3439433	-22.8	-56.0	Departamento del Amambay
+PY.01	G3439440	-25.5	-54.8	Departamento del Alto Parana
+PY.23	G3439441	-20.5	-59.2	Departamento de Alto Paraguay
+PY.22	G3474570	-25.3	-57.6	Asuncion
+PY.24	G3867442	-22.6	-61.1	Departamento de Boqueron
+QA.08	G389462	26.0	51.2	Baladiyat ash Shamal
+QA.04	G389465	25.8	51.3	Baladiyat al Khawr wa adh Dhakhirah
+QA.09	G389467	25.5	51.3	Baladiyat Umm Salal
+QA.06	G389469	24.9	51.0	Baladiyat ar Rayyan
+QA.01	G389470	25.3	51.5	Baladiyat ad Dawhah
+QA.10	G389472	24.9	51.3	Al Wakrah
+QA.13	G8030540	25.5	51.5	Baladiyat az Za'ayin
+QA.14	G11777514	25.4	51.0	Al-Shahaniya
+RE.RE	G6690283	-21.1	55.6	Reunion
+RO.40	G662447	45.8	26.9	Vrancea
+RO.39	G662892	45.1	24.2	Valcea
+RO.38	G663116	46.5	27.8	Vaslui
+RO.37	G664517	45.0	28.8	Tulcea
+RO.36	G665091	45.7	21.5	Timis
+RO.35	G665283	44.1	25.2	Teleorman
+RO.34	G665849	47.6	25.8	Suceava
+RO.33	G667267	45.8	24.1	Sibiu
+RO.32	G667869	47.8	23.0	Satu Mare
+RO.31	G668248	47.2	23.2	Salaj
+RO.30	G669737	45.2	26.0	Prahova
+RO.29	G671857	44.3	24.5	Olt
+RO.28	G672460	47.0	26.5	Neamt
+RO.27	G672628	46.7	24.6	Mures
+RO.26	G673612	44.7	22.8	Mehedinti
+RO.25	G673887	47.7	24.0	Maramures
+RO.23	G675809	47.2	27.2	Iasi
+RO.22	G675848	44.7	27.0	Ialomita
+RO.21	G675917	45.8	23.0	Hunedoara
+RO.20	G676309	46.6	25.4	Harghita
+RO.19	G676898	45.0	23.3	Gorj
+RO.42	G677104	44.2	25.9	Giurgiu
+RO.18	G677692	45.8	27.8	Galati
+RO.17	G679134	44.2	23.8	Dolj
+RO.16	G679385	44.9	25.5	Dambovita
+RO.15	G680428	45.9	26.0	Covasna
+RO.14	G680962	44.2	28.3	Constanta
+RO.13	G681291	46.6	23.8	Cluj
+RO.12	G682714	45.1	22.1	Caras-Severin
+RO.41	G683016	44.2	27.0	Calarasi
+RO.11	G683121	45.4	26.8	Buzau
+RO.10	G683504	44.5	26.1	Bucuresti
+RO.09	G683843	45.8	25.3	Brasov
+RO.08	G683901	45.1	27.7	Braila
+RO.07	G684038	47.8	26.8	Botosani
+RO.06	G684647	47.2	24.6	Bistrita-Nasaud
+RO.05	G684878	47.0	22.3	Bihor
+RO.04	G685947	46.4	26.8	Bacau
+RO.03	G686192	45.0	24.8	Arges
+RO.02	G686253	46.3	21.8	Arad
+RO.01	G686581	46.1	23.6	Alba
+RO.43	G865518	44.6	26.2	Ilfov
+RS.VO	G784272	45.0	20.0	Autonomna Pokrajina Vojvodina
+RS.SE	G785958	44.0	21.0	Central Serbia
+RU.88	G468898	58.0	39.5	Yaroslavl Oblast
+RU.86	G472039	51.0	40.5	Voronezh Oblast
+RU.85	G472454	60.0	42.0	Vologda Oblast
+RU.84	G472755	49.0	44.0	Volgograd Oblast
+RU.81	G479119	54.0	48.0	Ulyanovsk Oblast
+RU.80	G479613	57.0	53.0	Udmurtskaya Respublika
+RU.77	G480041	57.0	35.0	Tver Oblast
+RU.76	G480508	54.0	37.5	Tula Oblast
+RU.73	G484048	55.3	51.0	Tatarstan
+RU.72	G484638	52.8	41.5	Tambov Oblast
+RU.70	G487839	45.0	44.0	Stavropol Kray
+RU.69	G491684	55.0	33.0	Smolensk Oblast
+RU.67	G498671	51.5	47.0	Saratovskaya Oblast
+RU.65	G499068	53.0	50.0	Samara Oblast
+RU.62	G500059	54.2	40.5	Ryazan Oblast
+RU.61	G501165	47.4	41.1	Rostov Oblast
+RU.60	G504338	57.5	29.0	Pskov Oblast
+RU.90	G511180	59.0	57.0	Perm Krai
+RU.57	G511555	53.0	44.5	Penza Oblast
+RU.56	G514801	53.0	36.2	Orel Oblast
+RU.55	G515001	52.0	56.0	Orenburg Oblast
+RU.52	G519324	58.5	32.5	Novgorod Oblast
+RU.68	G519969	43.0	44.2	North Ossetia-Alania
+RU.50	G522652	67.5	54.0	Nenetskiy Avtonomnyy Okrug
+RU.49	G524304	68.0	34.0	Murmansk Oblast
+RU.48	G524894	55.8	37.6	Moskva
+RU.47	G524925	55.8	36.7	Moscow Oblast
+RU.46	G525369	54.5	44.0	Respublika Mordoviya
+RU.45	G529352	56.5	48.0	Respublika Mariy-El
+RU.43	G535120	52.5	39.0	Lipetsk Oblast
+RU.42	G536199	60.0	32.0	Leningrad Oblast
+RU.66	G536203	59.9	30.2	Sankt-Peterburg
+RU.41	G538555	51.5	36.0	Kursk Oblast
+RU.38	G542415	45.0	39.0	Krasnodarskiy Kray
+RU.37	G543871	58.5	44.0	Kostroma Oblast
+RU.34	G545854	64.0	54.0	Komi
+RU.33	G548389	58.0	50.0	Kirov Oblast
+RU.28	G552548	64.0	32.5	Respublika Kareliya
+RU.27	G552927	44.0	42.0	Karachayevo-Cherkesiya
+RU.25	G553899	54.5	35.5	Kaluga Oblast
+RU.24	G553972	46.5	45.5	Kalmykiya
+RU.23	G554230	54.8	21.5	Kaliningrad Oblast
+RU.22	G554667	43.5	43.5	Kabardino-Balkarskaya Respublika
+RU.21	G555235	57.0	41.8	Ivanovo Oblast
+RU.19	G556349	43.2	45.0	Respublika Ingushetiya
+RU.51	G559838	56.0	45.0	Nizhny Novgorod Oblast
+RU.17	G567293	43.0	47.0	Dagestan
+RU.16	G567395	55.5	47.0	Chuvashskaya Respublika
+RU.12	G569665	43.2	45.8	Chechenskaya Respublika
+RU.10	G571473	53.0	33.5	Bryansk Oblast
+RU.09	G578071	50.8	37.5	Belgorod Oblast
+RU.08	G578853	54.0	56.0	Bashkortostan
+RU.07	G580491	47.0	48.0	Astrakhan Oblast
+RU.06	G581043	64.0	44.0	Arkhangelsk Oblast
+RU.01	G584222	45.0	40.0	Respublika Adygeya
+RU.83	G826294	56.0	40.5	Vladimirskaya Oblast'
+RU.87	G1486462	66.0	76.0	Yamalo-Nenetskiy Avtonomnyy Okrug
+RU.78	G1488747	57.3	68.5	Tyumenskaya Oblast'
+RU.79	G1488873	51.5	95.0	Respublika Tyva
+RU.75	G1489421	58.5	82.5	Tomsk Oblast
+RU.71	G1490542	58.0	62.0	Sverdlovsk Oblast
+RU.54	G1496152	56.0	73.0	Omsk Oblast
+RU.53	G1496745	55.0	80.0	Novosibirsk Oblast
+RU.40	G1501312	55.5	64.0	Kurgan Oblast
+RU.91	G1502020	58.0	93.0	Krasnoyarskiy Kray
+RU.32	G1503773	62.0	72.0	Khanty-Mansiyskiy Avtonomnyy Okrug-Yugra
+RU.31	G1503834	53.3	90.0	Respublika Khakasiya
+RU.29	G1503900	55.0	86.0	Kemerovo Oblast
+RU.03	G1506272	51.0	87.0	Respublika Altay
+RU.13	G1508290	54.0	60.5	Chelyabinsk Oblast
+RU.04	G1511732	52.5	83.0	Altayskiy Kray
+RU.63	G2013162	65.0	130.0	Republic of Sakha (Yakutia)
+RU.59	G2017623	45.0	135.0	Primorskiy Kray
+RU.30	G2022888	55.0	134.0	Khabarovskiy Kray
+RU.20	G2023468	56.0	106.0	Irkutsk Oblast
+RU.89	G2026639	48.5	132.0	Yevrey (Jewish) Autonomous Oblast
+RU.05	G2027748	54.0	128.0	Amur Oblast
+RU.11	G2050915	53.0	109.0	Respublika Buryatiya
+RU.64	G2121529	50.0	143.0	Sakhalin Oblast
+RU.44	G2123627	63.0	154.0	Magadan Oblast
+RU.92	G2125072	55.0	159.0	Kamchatka Krai
+RU.15	G2126099	67.5	172.0	Chukotskiy Avtonomnyy Okrug
+RU.93	G7779061	52.0	117.0	Transbaikal Territory
+RW.11	G6413337	-1.8	30.5	Eastern Province
+RW.12	G6413338	-1.9	30.1	Kigali Province
+RW.13	G6413339	-1.6	29.9	Northern Province
+RW.14	G6413340	-2.2	29.3	Western Province
+RW.15	G6413341	-2.3	29.7	Southern Province
+SA.19	G101627	28.2	37.2	Tabuk Region
+SA.16	G103628	18.4	46.9	Najran Region
+SA.14	G104514	21.6	41.2	Mecca Region
+SA.17	G105298	17.3	42.7	Jazan Region
+SA.13	G106280	27.4	41.5	Ha'il Region
+SA.11	G108179	19.1	43.0	'Asir Region
+SA.06	G108241	24.0	49.8	Eastern Province
+SA.10	G108411	23.1	45.5	Riyadh Region
+SA.08	G108933	27.1	43.5	Al-Qassim Region
+SA.05	G109224	24.9	39.5	Medina Region
+SA.20	G109470	30.1	39.6	Al Jawf Region
+SA.15	G109579	30.2	42.4	Northern Borders Region
+SA.02	G109954	20.2	41.4	Al Bahah Region
+SB.11	G2101556	-8.0	157.0	Western Province
+SB.03	G2106552	-9.0	161.0	Malaita Province
+SB.07	G2108262	-8.1	159.1	Isabel Province
+SB.06	G2108831	-9.6	160.2	Guadalcanal Province
+SB.10	G2109495	-9.1	160.2	Central Province
+SB.09	G2178472	-10.7	165.9	Temotu Province
+SB.08	G2178730	-10.6	161.8	Makira-Ulawa Province
+SB.12	G7280292	-7.0	156.9	Choiseul
+SB.13	G7280293	-11.6	160.2	Rennell and Bellona
+SB.14	G9259067	-9.4	160.0	Honiara
+SC.23	G241151	-4.8	55.5	Takamaka
+SC.22	G241181	-4.6	55.4	Saint Louis
+SC.27	G241215	-4.7	55.4	Port Glaud
+SC.20	G241221	-4.7	55.5	Pointe Larue
+SC.19	G241224	-4.7	55.5	Plaisance
+SC.18	G241251	-4.6	55.5	Mont Fleuri
+SC.17	G241252	-4.6	55.4	Mont Buxton
+SC.26	G241302	-4.6	55.5	English River
+SC.25	G241311	-4.4	55.8	La Digue
+SC.24	G241330	-4.7	55.5	Grand Anse Mahe
+SC.14	G241331	-4.3	55.7	Grand Anse Praslin
+SC.12	G241336	-4.6	55.4	Glacis
+SC.11	G241396	-4.7	55.5	Cascade
+SC.10	G241424	-4.6	55.4	Bel Ombre
+SC.09	G241426	-4.6	55.4	Bel Air
+SC.08	G241428	-4.6	55.4	Beau Vallon
+SC.07	G241438	-4.3	55.7	Baie Sainte Anne
+SC.06	G241439	-4.7	55.5	Baie Lazare
+SC.05	G241444	-4.7	55.5	Anse Royale
+SC.03	G241447	-4.6	55.5	Anse Etoile
+SC.02	G241449	-4.7	55.5	Anse Boileau
+SC.01	G241450	-4.7	55.5	Anse aux Pins
+SC.29	G448408	-4.7	55.5	Les Mamelles
+SC.30	G448409	-4.6	55.5	Roche Caiman
+SC.28	G448410	-4.7	55.5	Au Cap
+SC.11876017	G11876017	-10.0	51.0	Outer Islands
+SC.12200079	G12200079	-4.6	55.5	Ile Perseverance I
+SC.12200080	G12200080	-4.6	55.5	Ile Perseverance II
+SD.43	G378389	19.3	29.5	Northern
+SD.29	G379253	15.8	33.0	Khartoum
+SD.36	G408646	20.0	35.7	Red Sea
+SD.38	G408648	14.6	33.4	Al Jazirah State
+SD.39	G408649	14.1	35.4	Al Qadarif State
+SD.41	G408653	13.5	32.4	White Nile
+SD.42	G408654	11.2	34.1	Blue Nile
+SD.47	G408658	13.4	22.7	West Darfur
+SD.62	G408659	11.8	28.3	West Kordofan State
+SD.49	G408660	11.5	24.7	South Darfur
+SD.50	G408661	11.3	30.8	South Kordofan
+SD.52	G408663	15.9	35.6	Kassala State
+SD.53	G408664	19.0	33.2	River Nile
+SD.55	G408666	16.0	25.5	North Darfur
+SD.56	G408667	14.7	29.9	North Kordofan
+SD.58	G408669	13.0	34.0	Sennar
+SD.60	G8394435	11.2	26.5	East Darfur
+SD.61	G8394436	12.4	23.3	Central Darfur State
+SE.14	G604010	67.0	20.0	Norrbotten County
+SE.25	G2664179	59.8	16.3	Vaestmanland County
+SE.24	G2664292	63.0	17.5	Vaesternorrland County
+SE.23	G2664415	65.0	17.5	Vaesterbotten County
+SE.22	G2664870	59.8	13.2	Vaermland County
+SE.21	G2666218	60.0	17.8	Uppsala County
+SE.26	G2673722	59.5	18.0	Stockholm County
+SE.18	G2676207	59.2	16.7	Soedermanland County
+SE.16	G2685867	58.4	15.8	OEstergoetland County
+SE.15	G2686655	59.5	15.0	OErebro County
+SE.12	G2699050	56.7	14.7	Kronoberg County
+SE.10	G2699767	61.0	14.5	Dalarna County
+SE.09	G2702259	57.3	16.0	Kalmar
+SE.08	G2702976	57.5	14.5	Joenkoeping County
+SE.07	G2703330	63.0	14.7	Jaemtland County
+SE.06	G2708794	56.8	13.0	Halland County
+SE.05	G2711508	57.5	18.5	Gotland County
+SE.03	G2712411	61.5	16.2	Gaevleborg County
+SE.02	G2721357	56.3	15.3	Blekinge County
+SE.27	G3337385	56.0	13.5	Skane County
+SE.28	G3337386	58.0	13.0	Vaestra Goetaland County
+SH.01	G2411430	-7.9	-14.4	Ascension
+SH.03	G3370684	-37.1	-12.3	Tristan da Cunha
+SH.02	G6930057	-15.9	-5.7	Saint Helena
+SI.N5	G3186843	46.3	15.2	Obcina Zalec
+SI.E7	G3186905	46.1	15.0	Zagorje ob Savi
+SI.E5	G3187213	46.0	14.3	Vrhnika
+SI.D5	G3188687	46.4	14.3	Obcina Trzic
+SI.D4	G3188885	45.9	15.0	Trebnje
+SI.D3	G3188914	46.1	15.0	Trbovlje
+SI.D2	G3189037	46.2	13.7	Obcina Tolmin
+SI.D7	G3189074	46.4	15.1	Velenje
+SI.C5	G3190509	46.2	15.5	Obcina Smarje pri Jelsah
+SI.C4	G3190529	46.3	15.5	Slovenske Konjice
+SI.L8	G3190533	46.4	15.5	Slovenska Bistrica
+SI.C2	G3190535	46.5	15.1	Slovenj Gradec
+SI.B9	G3190716	46.2	14.3	Obcina Skofja Loka
+SI.B7	G3190944	45.7	13.9	Obcina Sezana
+SI.B6	G3190949	46.0	15.3	Sevnica
+SI.L7	G3191028	46.2	15.4	Obcina Sentjur
+SI.L1	G3191679	45.7	14.7	Ribnica
+SI.A3	G3192062	46.3	14.2	Radovljica
+SI.A2	G3192120	46.6	15.3	Radlje ob Dravi
+SI.K7	G3192240	46.4	15.9	Ptuj
+SI.94	G3192672	45.8	14.2	Postojna
+SI.J9	G3193340	45.5	13.6	Piran
+SI.87	G3193964	46.4	16.1	Obcina Ormoz
+SI.J7	G3194350	45.8	15.2	Mestna Obcina Novo mesto
+SI.84	G3194451	46.0	13.7	Nova Gorica
+SI.80	G3194647	46.7	16.2	Murska Sobota
+SI.79	G3194791	46.4	15.0	Mozirje
+SI.73	G3195213	45.7	15.3	Metlika
+SI.J2	G3195505	46.6	15.6	Maribor
+SI.64	G3196288	45.9	14.2	Logatec
+SI.I6	G3196306	46.5	16.1	Ljutomer
+SI.I5	G3196424	46.1	14.9	Litija
+SI.I3	G3196684	46.6	15.8	Lenart
+SI.57	G3196759	46.1	15.3	Obcina Lasko
+SI.54	G3197146	46.0	15.5	Obcina Krsko
+SI.52	G3197377	46.2	14.4	Kranj
+SI.50	G3197752	45.5	13.8	Koper
+SI.H7	G3197942	45.6	14.9	Obcina Kocevje
+SI.H6	G3198364	46.2	14.7	Kamnik
+SI.H4	G3198646	46.5	14.1	Jesenice
+SI.40	G3199016	45.5	13.7	Izola
+SI.38	G3199130	45.6	14.3	Ilirska Bistrica
+SI.36	G3199169	46.0	14.0	Idrija
+SI.34	G3199296	46.1	15.1	Hrastnik
+SI.32	G3199522	45.9	14.7	Grosuplje
+SI.29	G3200196	46.6	16.0	Gornja Radgona
+SI.25	G3201252	46.6	15.0	Dravograd
+SI.G7	G3201729	46.1	14.6	Obcina Domzale
+SI.17	G3202332	45.5	15.2	Obcina Crnomelj
+SI.13	G3202707	45.8	14.4	Cerknica
+SI.11	G3202780	46.2	15.3	Celje
+SI.08	G3203411	45.9	15.6	Obcina Brezice
+SI.01	G3204853	45.9	13.9	Obcina Ajdovscina
+SI.35	G3239050	45.6	14.0	Hrpelje-Kozina
+SI.19	G3239051	45.7	14.0	Obcina Divaca
+SI.91	G3239054	45.7	14.2	Pivka
+SI.I7	G3239056	45.7	14.5	Obcina Loska Dolina
+SI.66	G3239059	45.7	14.6	Obcina Loski Potok
+SI.88	G3239061	45.5	14.7	Osilnica
+SI.D8	G3239062	45.8	14.6	Obcina Velike Lasce
+SI.C1	G3239066	46.0	14.6	Obcina Skofljica
+SI.37	G3239069	45.9	14.5	Ig
+SI.09	G3239071	45.9	14.4	Brezovica
+SI.05	G3239073	45.9	14.4	Borovnica
+SI.E1	G3239075	45.8	14.0	Vipava
+SI.49	G3239078	45.8	13.7	Komen
+SI.J5	G3239080	45.9	13.6	Miren-Kostanjevica
+SI.07	G3239083	46.0	13.5	Brda
+SI.44	G3239086	46.1	13.6	Obcina Kanal ob Soci
+SI.F2	G3239087	46.1	14.1	Obcina Ziri
+SI.14	G3239091	46.1	14.0	Cerkno
+SI.F1	G3239093	46.2	14.1	Obcina Zelezniki
+SI.27	G3239095	46.1	14.1	Gorenja Vas-Poljane
+SI.G4	G3239096	46.1	14.3	Dobrova-Polhov Gradec
+SI.46	G3239098	46.2	13.6	Obcina Kobarid
+SI.06	G3239100	46.3	13.6	Obcina Bovec
+SI.04	G3239101	46.3	13.9	Bohinj
+SI.03	G3239103	46.4	14.1	Obcina Bled
+SI.82	G3239104	46.3	14.3	Naklo
+SI.53	G3239105	46.5	13.8	Kranjska Gora
+SI.K5	G3239107	46.3	14.5	Preddvor
+SI.12	G3239110	46.2	14.5	Cerklje na Gorenjskem
+SI.B2	G3239111	46.2	14.4	Obcina Sencur
+SI.E3	G3239112	46.2	14.5	Vodice
+SI.71	G3239113	46.1	14.4	Medvode
+SI.72	G3239114	46.2	14.6	Obcina Menges
+SI.22	G3239115	46.1	14.7	Dol pri Ljubljani
+SI.77	G3239132	46.1	14.8	Obcina Moravce
+SI.30	G3239133	46.3	14.8	Gornji Grad
+SI.I9	G3239134	46.4	14.7	Obcina Luce
+SI.K8	G3239175	46.5	15.0	Obcina Ravne na Koroskem
+SI.74	G3239177	46.5	14.9	Obcina Mezica
+SI.81	G3239179	46.6	15.1	Muta
+SI.E6	G3239180	46.6	15.2	Vuzenica
+SI.16	G3239181	46.5	14.8	Obcina Crna na Koroskem
+SI.62	G3239184	46.4	14.8	Ljubno
+SI.C7	G3239185	46.4	15.0	Obcina Sostanj
+SI.C6	G3239187	46.3	15.0	Obcina Smartno ob Paki
+SI.68	G3239188	46.2	14.8	Lukovica
+SI.99	G3239189	46.1	15.1	Obcina Radece
+SI.39	G3239191	45.9	14.8	Obcina Ivancna Gorica
+SI.20	G3239193	45.8	14.7	Dobrepolje
+SI.B1	G3239195	45.7	15.1	Obcina Semic
+SI.B4	G3239197	45.8	15.3	Obcina Sentjernej
+SI.B8	G3239199	45.9	15.3	Obcina Skocjan
+SI.C9	G3239200	46.2	15.3	Obcina Store
+SI.N3	G3239202	46.3	15.3	Vojnik
+SI.E2	G3239204	46.4	15.3	Vitanje
+SI.F3	G3239205	46.4	15.4	Obcina Zrece
+SI.76	G3239207	46.5	15.2	Mislinja
+SI.L3	G3239211	46.5	15.5	Obcina Ruse
+SI.55	G3239213	46.6	15.6	Kungota
+SI.B3	G3239214	46.7	15.7	Obcina Sentilj
+SI.89	G3239215	46.6	15.7	Pesnica
+SI.26	G3239216	46.5	15.8	Duplek
+SI.98	G3239224	46.5	15.6	Obcina Race-Fram
+SI.C8	G3239226	46.5	15.8	Obcina Starse
+SI.45	G3239227	46.4	15.8	Obcina Kidricevo
+SI.J1	G3239229	46.3	15.8	Obcina Majsperk
+SI.N2	G3239231	46.4	15.9	Videm
+SI.A7	G3239234	46.2	15.6	Obcina Rogaska Slatina
+SI.A8	G3239237	46.2	15.7	Rogatec
+SI.92	G3239241	46.1	15.6	Obcina Podcetrtek
+SI.51	G3239243	46.1	15.6	Kozje
+SI.28	G3239245	46.4	16.0	Obcina Gorisnica
+SI.E9	G3239247	46.4	16.0	Obcina Zavrc
+SI.24	G3239248	46.4	16.0	Dornava
+SI.42	G3239251	46.5	16.0	Obcina Jursinci
+SI.D1	G3239259	46.6	16.0	Obcina Sveti Jurij ob Scavnici
+SI.A1	G3239262	46.6	16.0	Radenci
+SI.97	G3239268	46.7	16.1	Puconci
+SI.A6	G3239270	46.8	16.0	Obcina Rogasovci
+SI.I2	G3239272	46.8	16.1	Kuzma
+SI.31	G3239275	46.8	16.2	Gornji Petrovci
+SI.78	G3239279	46.7	16.3	Moravske Toplice
+SI.47	G3239280	46.7	16.4	Kobilje
+SI.02	G3239282	46.6	16.2	Beltinci
+SI.D6	G3239283	46.6	16.3	Obcina Turnisce
+SI.86	G3239285	46.6	16.3	Odranci
+SI.15	G3239286	46.6	16.3	Obcina Crensovci
+SI.83	G3239294	46.3	14.9	Nazarje
+SI.61	G3239318	46.1	14.5	Mestna Obcina Ljubljana
+SI.N7	G3344893	46.4	14.2	Obcina Zirovnica
+SI.H5	G3344894	46.4	14.5	Jezersko
+SI.M2	G3344895	46.4	14.7	Obcina Solcava
+SI.H8	G3344896	46.2	14.5	Komenda
+SI.H3	G3344897	46.0	14.3	Horjul
+SI.L6	G3344898	45.9	13.7	Obcina Sempeter-Vrtojba
+SI.F6	G3344899	45.8	14.5	Bloke
+SI.M1	G3344900	45.8	14.6	Obcina Sodrazica
+SI.M8	G3344901	46.1	14.6	Trzin
+SI.K6	G3344902	46.6	14.9	Prevalje
+SI.N4	G3344903	46.2	14.9	Vransko
+SI.M5	G3344904	46.2	15.0	Tabor
+SI.F7	G3344905	46.3	15.0	Obcina Braslovce
+SI.K3	G3344906	46.3	15.1	Polzela
+SI.K4	G3344907	46.2	15.1	Prebold
+SI.H9	G3344908	45.5	14.9	Kostel
+SI.N8	G3344909	45.8	14.9	Obcina Zuzemberk
+SI.G6	G3344910	45.7	15.0	Dolenjske Toplice
+SI.J6	G3344911	45.9	15.1	Obcina Mirna Pec
+SI.F5	G3344912	46.1	15.6	Bistrica ob Sotli
+SI.G2	G3344913	46.1	15.4	Dobje
+SI.G3	G3344914	46.4	15.2	Dobrna
+SI.J8	G3344915	46.4	15.5	Oplotnica
+SI.K2	G3344916	46.6	15.4	Podvelka
+SI.L2	G3344917	46.5	15.3	Ribnica na Pohorju
+SI.I8	G3344918	46.5	15.4	Lovrenc na Pohorju
+SI.L5	G3344919	46.6	15.5	Selnica ob Dravi
+SI.H1	G3344920	46.5	15.6	Obcina Hoce-Slivnica
+SI.J4	G3344921	46.5	15.7	Obcina Miklavz na Dravskem Polju
+SI.G9	G3344922	46.4	15.8	Hajdina
+SI.N6	G3344923	46.3	15.8	Obcina Zetale
+SI.K1	G3344924	46.3	15.9	Podlehnik
+SI.J3	G3344925	46.4	16.0	Markovci
+SI.G1	G3344926	46.5	15.9	Destrnik
+SI.M7	G3344927	46.5	15.9	Obcina Trnovska vas
+SI.M4	G3344928	46.5	16.0	Obcina Sveti Andraz v Slovenskih Goricah
+SI.F9	G3344929	46.6	15.9	Cerkvenjak
+SI.F4	G3344930	46.6	15.9	Benedikt
+SI.M3	G3344931	46.6	15.8	Sveta Ana
+SI.I1	G3344932	46.6	16.1	Obcina Krizevci
+SI.N1	G3344933	46.6	16.2	Obcina Verzej
+SI.M9	G3344934	46.6	16.4	Velika Polana
+SI.I4	G3344935	46.6	16.5	Lendava
+SI.G5	G3344936	46.7	16.4	Dobrovnik
+SI.M6	G3344937	46.7	16.1	Obcina Tisina
+SI.F8	G3344938	46.7	16.0	Cankova
+SI.G8	G3344939	46.8	16.1	Grad
+SI.H2	G3344940	46.8	16.3	Hodos
+SI.K9	G3344941	46.5	16.3	Obcina Razkrizje
+SI.L9	G3344942	46.0	14.8	Obcina Smartno pri Litiji
+SI.L4	G3344943	46.8	16.3	Obcina Salovci
+SI.N9	G8133579	46.7	15.9	Obcina Apace
+SI.O1	G8133580	46.3	16.0	Cirkulane
+SI.O3	G8133581	45.8	15.4	Kostanjevica na Krki
+SI.O4	G8133582	46.0	14.4	Log-Dragomer
+SI.O5	G8133583	46.3	15.7	Makole
+SI.O7	G8133584	45.9	15.2	Mokronog-Trebelno
+SI.O8	G8133585	46.3	15.6	Obcina Poljcane
+SI.O9	G8133586	46.3	14.9	Obcina Recica ob Savinji
+SI.P1	G8133587	45.9	13.7	Obcina Rence-Vogrsko
+SI.P4	G8133588	46.4	16.3	Obcina Sredisce ob Dravi
+SI.P5	G8133589	45.8	15.1	Obcina Straza
+SI.P6	G8133590	46.6	15.9	Sveta Trojica v Slovenskih Goricah
+SI.P8	G8133591	46.5	16.1	Obcina Sveti Tomaz
+SI.P2	G8133592	46.0	15.1	Obcina Sentrupert
+SI.P3	G8133593	45.9	15.2	Obcina Smarjeske Toplice
+SI.P7	G8469236	46.6	15.8	Sveti Jurij v Slovenskih Goricah
+SI.O2	G8986279	46.4	14.1	Gorje
+SI.P9	G11288217	45.6	13.7	Ankaran
+SI.O6	G11288255	46.0	15.1	Mirna
+SJ.22	G3041964	71.0	-8.5	Jan Mayen
+SJ.21	G7521757	78.2	15.9	Svalbard
+SK.03	G865084	48.7	21.3	Kosice
+SK.05	G865085	49.2	21.2	Presov
+SK.08	G3056506	49.2	19.2	Zilina
+SK.01	G3343954	48.5	19.5	Banska Bystrica
+SK.02	G3343955	48.3	17.2	Bratislava
+SK.04	G3343956	48.2	18.3	Nitra
+SK.06	G3343957	48.8	18.2	Trencin
+SK.07	G3343958	48.4	17.7	Trnava
+SL.04	G2403068	8.3	-13.1	Western Area
+SL.03	G2403745	7.8	-12.0	Southern Province
+SL.02	G2404798	9.2	-11.5	Northern Province
+SL.01	G2409543	8.2	-11.0	Eastern Province
+SL.05	G11919533	9.1	-12.7	North West Province
+SM.09	G3166650	44.0	12.5	Serravalle
+SM.02	G3178807	43.9	12.4	Chiesanuova
+SM.07	G3345302	43.9	12.4	Castello di San Marino Citta
+SM.01	G3345303	44.0	12.4	Castello di Acquaviva
+SM.06	G3345304	43.9	12.4	Castello di Borgo Maggiore
+SM.03	G3345305	44.0	12.5	Castello di Domagnano
+SM.04	G3345306	43.9	12.5	Castello di Faetano
+SM.05	G3345307	43.9	12.5	Castello di Fiorentino
+SM.08	G3345308	43.9	12.5	Castello di Montegiardino
+SN.12	G2243939	12.8	-16.4	Ziguinchor
+SN.07	G2244800	14.9	-16.9	Region de Thies
+SN.05	G2244990	13.9	-13.2	Tambacounda
+SN.14	G2246451	16.3	-15.0	Saint-Louis
+SN.15	G2248753	15.2	-13.7	Matam
+SN.13	G2249221	15.4	-15.5	Louga
+SN.11	G2249781	13.0	-14.4	Kolda
+SN.10	G2250804	14.0	-16.0	Kaolack
+SN.09	G2251910	14.3	-16.5	Fatick
+SN.03	G2252308	14.8	-16.1	Diourbel
+SN.01	G2253350	14.8	-17.3	Dakar
+SN.16	G7303935	14.1	-15.5	Region de Kaffrine
+SN.17	G7303936	12.6	-12.2	Region de Kedougou
+SN.18	G7303937	12.7	-15.6	Region de Sedhiou
+SO.20	G50360	10.0	44.5	Gobolka Woqooyi Galbeed
+SO.19	G51230	9.3	45.4	Gobolka Togdheer
+SO.14	G51966	1.8	44.4	Gobolka Shabeellaha Hoose
+SO.13	G51967	3.0	46.0	Gobolka Shabeellaha Dhexe
+SO.12	G52187	10.5	48.0	Gobolka Sanaag
+SO.18	G53477	8.2	49.0	Gobolka Nugaal
+SO.10	G53707	7.0	48.0	Gobolka Mudug
+SO.09	G56083	0.0	42.0	Gobolka Jubbada Hoose
+SO.08	G56084	1.3	42.7	Gobolka Jubbada Dhexe
+SO.07	G57060	4.0	45.5	Gobolka Hiiraan
+SO.06	G58802	3.0	42.0	Gobolka Gedo
+SO.05	G59362	5.0	47.0	Gobolka Galguduud
+SO.04	G64538	3.0	43.5	Gobolka Bay
+SO.03	G64661	10.0	50.0	Gobolka Bari
+SO.02	G64833	2.1	45.4	Gobolka Banaadir
+SO.01	G64982	4.0	44.0	Gobolka Bakool
+SO.21	G6268943	10.5	43.5	Gobolka Awdal
+SO.22	G6268947	8.7	47.5	Gobolka Sool
+SR.19	G3382761	5.8	-55.2	Distrikt Wanica
+SR.18	G3383062	4.0	-56.0	Distrikt Sipaliwini
+SR.17	G3383110	5.7	-55.6	Distrikt Saramacca
+SR.16	G3383329	5.9	-55.2	Distrikt Paramaribo
+SR.15	G3383337	5.4	-55.3	Distrikt Para
+SR.14	G3383438	5.7	-56.8	Distrikt Nickerie
+SR.13	G3383560	5.6	-54.3	Distrikt Marowijne
+SR.12	G3384397	5.6	-56.2	Distrikt Coronie
+SR.11	G3384418	5.8	-54.9	Distrikt Commewijne
+SR.10	G3384481	4.8	-55.2	Distrikt Brokopondo
+SS.07	G381229	10.0	32.7	Upper Nile
+SS.04	G408647	6.8	30.0	Lakes
+SS.06	G408650	8.7	29.9	Unity
+SS.01	G408655	4.8	31.0	Central Equatoria State
+SS.10	G408656	5.4	28.4	Western Equatoria
+SS.09	G408657	8.2	26.0	Western Bahr el Ghazal State
+SS.03	G408662	7.4	32.4	Jonglei
+SS.05	G408665	8.8	27.0	Northern Bahr el Ghazal
+SS.02	G408668	4.9	33.8	Eastern Equatoria
+SS.08	G408670	8.0	28.9	Warrap State
+ST.02	G2410764	0.2	6.6	Sao Tome
+ST.01	G2410878	1.6	7.4	Principe
+SV.14	G3582882	13.4	-88.5	Departamento de Usulutan
+SV.13	G3583101	13.7	-89.7	Departamento de Sonsonate
+SV.12	G3583176	13.5	-88.8	Departamento de San Vicente
+SV.11	G3583332	14.1	-89.6	Departamento de Santa Ana
+SV.10	G3583360	13.8	-89.2	Departamento de San Salvador
+SV.09	G3583462	13.5	-88.3	Departamento de San Miguel
+SV.08	G3584317	13.8	-88.1	Departamento de Morazan
+SV.07	G3584767	13.6	-87.9	Departamento de La Union
+SV.06	G3585087	13.5	-89.0	Departamento de La Paz
+SV.05	G3585155	13.8	-89.4	Departamento de La Libertad
+SV.04	G3586831	13.8	-89.0	Departamento de Cuscatlan
+SV.03	G3587090	14.1	-89.0	Departamento de Chalatenango
+SV.02	G3587217	13.9	-88.8	Departamento de Cabanas
+SV.01	G3587425	13.9	-89.9	Departamento de Ahuachapan
+SY.14	G163342	35.0	36.2	Tartus Governorate
+SY.13	G167541	33.5	36.3	Damascus Governorate
+SY.12	G169387	35.8	36.7	Idlib Governorate
+SY.11	G169575	34.5	38.3	Homs Governorate
+SY.10	G170015	35.2	37.2	Hama Governorate
+SY.09	G170062	36.2	37.6	Aleppo Governorate
+SY.08	G170652	33.5	37.4	Damascus Countryside
+SY.07	G170792	35.2	40.3	Deir ez-Zor Governorate
+SY.06	G170903	32.9	36.2	Daraa Governorate
+SY.05	G172410	32.8	36.9	As-Suwayda Governorate
+SY.04	G172957	36.0	38.9	Ar-Raqqah Governorate
+SY.03	G173336	33.0	35.8	Quneitra Governorate
+SY.02	G173578	35.6	36.0	Latakia Governorate
+SY.01	G173813	36.5	40.9	Al-Hasakah Governorate
+SZ.04	G934867	-27.1	31.4	Shiselweni District
+SZ.03	G934994	-26.6	31.2	Manzini
+SZ.02	G935042	-26.5	31.9	Lubombo District
+SZ.01	G935085	-26.1	31.3	Hhohho
+TD.13	G242048	11.0	20.5	Salamat Region
+TD.12	G242246	13.5	21.2	Ouaddai Region
+TD.02	G244877	15.0	21.5	Wadi Fira Region
+TD.14	G2425287	9.5	16.5	Tandjile Region
+TD.17	G2427315	9.3	18.5	Moyen-Chari Region
+TD.16	G2428132	10.0	15.8	Mayo-Kebbi East Region
+TD.09	G2429058	8.2	16.4	Logone Oriental Region
+TD.08	G2429060	8.8	15.9	Logone Occidental Region
+TD.07	G2429323	13.5	14.5	Lac Region
+TD.06	G2430873	15.0	15.0	Kanem Region
+TD.05	G2431555	11.5	18.5	Guera Region
+TD.15	G2434478	11.3	16.2	Chari-Baguirmi Region
+TD.01	G2435899	14.0	19.0	Batha Region
+TD.23	G7602866	18.2	18.5	Borkou Region
+TD.18	G7603251	12.7	16.2	Hadjer-Lamis
+TD.19	G7603252	8.3	17.9	Mandoul
+TD.20	G7603253	9.3	14.8	Mayo-Kebbi West Region
+TD.21	G7603254	12.1	15.1	Ville de N'Djamena
+TD.22	G7603255	14.7	16.9	Province du Barh-El-Gazel
+TD.25	G7603257	12.2	21.5	Sila
+TD.26	G7603258	20.3	16.7	Tibesti Region
+TD.28	G8604857	18.4	21.4	Ennedi-Ouest
+TD.27	G8604858	17.8	23.2	Ennedi-Est
+TF.02	G936339	-46.4	51.0	Archipel des Crozet
+TF.03	G1546558	-49.2	69.2	Archipel des Kerguelen
+TF.01	G1547221	-37.8	77.5	Iles Saint-Paul et Nouvelle-Amsterdam
+TF.05	G6690916	-17.0	42.7	Iles Eparses de l'ocean Indien
+TF.04	G6690917	-60.0	139.0	La Terre-Adelie
+TG.26	G2364205	10.5	0.5	Savanes
+TG.25	G2364370	7.5	1.2	Plateaux
+TG.24	G2365173	6.5	1.3	Maritime
+TG.22	G2367237	8.7	1.0	Centrale
+TG.23	G2597439	9.7	0.9	Kara
+TH.15	G1149965	15.4	99.5	Changwat Uthai Thani
+TH.65	G1150006	7.5	99.6	Changwat Trang
+TH.08	G1150489	16.6	98.8	Changwat Tak
+TH.60	G1150514	9.0	99.0	Changwat Surat Thani
+TH.09	G1150532	17.2	99.7	Changwat Sukhothai
+TH.52	G1150953	13.6	99.5	Changwat Ratchaburi
+TH.59	G1150964	10.1	98.8	Changwat Ranong
+TH.57	G1151073	12.2	99.8	Changwat Prachuap Khiri Khan
+TH.62	G1151253	8.0	98.4	Phuket Province
+TH.56	G1151416	13.0	99.6	Changwat Phetchaburi
+TH.61	G1151462	8.6	98.4	Changwat Phangnga
+TH.01	G1152221	18.8	97.9	Changwat Mae Hong Son
+TH.05	G1152467	18.2	98.9	Changwat Lamphun
+TH.06	G1152472	18.3	99.5	Changwat Lampang
+TH.63	G1152631	8.2	99.0	Changwat Krabi
+TH.50	G1153080	14.6	99.1	Changwat Kanchanaburi
+TH.11	G1153089	16.2	99.5	Changwat Kamphaeng Phet
+TH.58	G1153555	10.4	99.1	Changwat Chumphon
+TH.03	G1153668	19.9	99.9	Changwat Chiang Rai
+TH.02	G1153670	18.8	99.0	Chiang Mai Province
+TH.72	G1604767	15.8	104.3	Changwat Yasothon
+TH.70	G1604869	6.3	101.2	Changwat Yala
+TH.10	G1605214	17.7	100.5	Changwat Uttaradit
+TH.49	G1605277	12.5	102.5	Changwat Trat
+TH.29	G1606029	14.8	103.8	Changwat Surin
+TH.51	G1606032	14.5	100.1	Changwat Suphan Buri
+TH.68	G1606146	6.8	100.7	Changwat Songkhla
+TH.30	G1606238	14.8	104.3	Changwat Si Sa Ket
+TH.33	G1606269	14.9	100.3	Changwat Sing Buri
+TH.67	G1606375	6.8	100.0	Changwat Satun
+TH.37	G1606417	14.6	101.0	Changwat Saraburi
+TH.54	G1606585	13.4	100.0	Changwat Samut Songkhram
+TH.55	G1606587	13.6	100.2	Changwat Samut Sakhon
+TH.42	G1606589	13.6	100.7	Changwat Samut Prakan
+TH.20	G1606789	17.3	103.8	Changwat Sakon Nakhon
+TH.25	G1607000	15.8	103.8	Changwat Roi Et
+TH.47	G1607016	12.8	101.4	Changwat Rayong
+TH.36	G1607530	14.3	100.5	Phra Nakhon Si Ayutthaya
+TH.07	G1607551	18.1	100.0	Changwat Phrae
+TH.12	G1607707	16.9	100.5	Changwat Phitsanulok
+TH.13	G1607724	16.2	100.4	Changwat Phichit
+TH.14	G1607736	16.2	101.1	Changwat Phetchabun
+TH.41	G1607758	19.2	100.2	Changwat Phayao
+TH.66	G1607778	7.5	100.1	Changwat Phatthalung
+TH.69	G1607976	6.7	101.4	Changwat Pattani
+TH.39	G1607982	14.0	100.6	Changwat Pathum Thani
+TH.38	G1608132	13.9	100.4	Changwat Nonthaburi
+TH.17	G1608231	17.8	102.8	Changwat Nong Khai
+TH.31	G1608408	6.2	101.7	Changwat Narathiwat
+TH.04	G1608451	18.8	100.7	Changwat Nan
+TH.64	G1608525	8.4	99.8	Changwat Nakhon Si Thammarat
+TH.16	G1608526	15.7	100.1	Changwat Nakhon Sawan
+TH.27	G1608528	15.0	102.2	Changwat Nakhon Ratchasima
+TH.73	G1608530	17.5	104.5	Changwat Nakhon Phanom
+TH.53	G1608533	14.0	100.1	Changwat Nakhon Pathom
+TH.43	G1608538	14.2	101.1	Changwat Nakhon Nayok
+TH.78	G1608595	16.6	104.5	Changwat Mukdahan
+TH.24	G1608899	16.0	103.2	Changwat Maha Sarakham
+TH.34	G1609031	15.1	100.9	Changwat Lop Buri
+TH.18	G1609070	17.4	101.5	Changwat Loei
+TH.40	G1609348	13.9	100.7	Bangkok
+TH.22	G1609775	16.4	102.6	Changwat Khon Kaen
+TH.23	G1610468	16.5	103.5	Changwat Kalasin
+TH.46	G1611108	13.3	101.3	Changwat Chon Buri
+TH.48	G1611268	12.9	102.2	Changwat Chanthaburi
+TH.26	G1611406	16.0	101.8	Changwat Chaiyaphum
+TH.32	G1611415	15.1	100.1	Changwat Chai Nat
+TH.44	G1611438	13.6	101.4	Changwat Chachoengsao
+TH.28	G1611452	14.8	103.0	Changwat Buri Ram
+TH.35	G1621034	14.6	100.4	Changwat Ang Thong
+TH.76	G1906686	17.3	102.8	Changwat Udon Thani
+TH.74	G1906687	14.1	101.7	Changwat Prachin Buri
+TH.75	G1906688	15.2	105.2	Changwat Ubon Ratchathani
+TH.77	G1906689	15.9	104.8	Changwat Amnat Charoen
+TH.79	G1906690	17.2	102.2	Changwat Nong Bua Lamphu
+TH.80	G1906691	13.8	102.3	Changwat Sa Kaeo
+TH.81	G8133594	18.2	103.8	Changwat Bueng Kan
+TJ.03	G1221092	40.0	69.0	Viloyati Sughd
+TJ.01	G1221692	38.0	73.0	Gorno-Badakhshan
+TJ.02	G1347488	37.8	69.0	Viloyati Khatlon
+TJ.RR	G6452615	38.9	70.2	Districts of Republican Subordination
+TJ.04	G7280679	38.6	68.8	Dushanbe
+TK.N	G4031091	-9.2	-171.8	Nukunonu
+TK.F	G4031112	-9.4	-171.2	Fakaofo
+TK.A	G4031116	-8.6	-172.5	Atafu
+TL.VI	G1622470	-8.8	126.4	Viqueque
+TL.MF	G1636309	-9.0	125.8	Manufahi
+TL.MT	G1636525	-8.7	126.0	Manatuto
+TL.LI	G1637729	-8.7	125.3	Liquica
+TL.LA	G1638294	-8.5	127.0	Lautein
+TL.CO	G1639462	-9.3	125.2	Kovalima
+TL.ER	G1644865	-8.8	125.4	Ermera
+TL.DI	G1645456	-8.6	125.7	Dili
+TL.BO	G1648513	-8.9	125.2	Bobonaro
+TL.BA	G1649538	-8.5	126.5	Baucau
+TL.OE	G1651539	-9.3	124.3	Oecusse
+TL.AN	G1651809	-9.0	125.5	Ainaro
+TL.AL	G1651815	-8.7	125.6	Aileu
+TM.02	G162152	40.0	54.5	Balkan
+TM.01	G162181	38.2	59.8	Ahal
+TM.S	G162182	38.0	58.4	Ashgabat
+TM.03	G601465	41.0	58.5	Dasoguz Welayaty
+TM.05	G1218666	37.0	62.5	Mary
+TM.04	G1219651	39.0	63.0	Lebap
+TN.37	G2464038	36.3	10.0	Gouvernorat de Zaghouan
+TN.36	G2464464	36.8	10.2	Gouvernorat de Tunis
+TN.35	G2464645	34.0	8.1	Gouvernorat de Tozeur
+TN.34	G2464698	32.0	10.0	Tataouine
+TN.23	G2464912	35.9	10.4	Gouvernorat de Sousse
+TN.22	G2465027	36.0	9.3	Gouvernorat de Siliana
+TN.33	G2465837	34.8	9.5	Gouvernorat de Sidi Bouzid
+TN.32	G2467450	34.8	10.4	Gouvernorat de Sfax
+TN.31	G2468014	33.5	8.8	Gouvernorat de Kebili
+TN.30	G2468351	34.5	9.0	Gafsa Governorate
+TN.29	G2468365	33.8	9.8	Gouvernorat de Gabes
+TN.19	G2468576	36.7	10.7	Gouvernorat de Nabeul
+TN.28	G2469470	33.3	11.0	Gouvernorat de Medenine
+TN.06	G2470085	36.7	8.8	Gouvernorat de Jendouba
+TN.27	G2472477	36.7	10.3	Gouvernorat de Ben Arous
+TN.18	G2472699	37.1	9.6	Gouvernorat de Bizerte
+TN.17	G2472770	36.7	9.2	Gouvernorat de Beja
+TN.38	G2473245	37.0	10.1	Gouvernorat de l'Ariana
+TN.03	G2473451	35.6	9.8	Gouvernorat de Kairouan
+TN.02	G2473460	35.2	8.8	Gouvernorat de Kasserine
+TN.16	G2473495	35.6	10.8	Gouvernorat de Monastir
+TN.15	G2473574	35.3	10.6	Gouvernorat de Mahdia
+TN.14	G2473637	36.1	8.8	Gouvernorat de Kef
+TN.39	G6201192	36.8	9.8	Manouba
+TO.03	G4032231	-18.7	-174.0	Vava'u
+TO.02	G4032279	-21.1	-175.2	Tongatapu
+TO.01	G4032637	-19.8	-174.3	Ha'apai
+TO.EU	G7668021	-21.4	-174.9	Eua
+TO.NI	G7668055	-16.0	-173.8	Niuas
+TR.66	G296560	39.6	35.3	Yozgat
+TR.65	G298113	38.4	43.7	Van
+TR.64	G298298	38.5	29.4	Usak
+TR.63	G298332	37.2	38.8	Sanliurfa
+TR.62	G298845	39.1	39.5	Tunceli
+TR.58	G300617	39.8	37.0	Sivas
+TR.74	G300821	38.0	41.9	Siirt
+TR.73	G303826	37.8	34.8	Nigde
+TR.50	G303830	38.9	34.7	Nevsehir
+TR.49	G304041	39.0	41.8	Mus
+TR.48	G304183	37.2	28.4	Mugla
+TR.72	G304794	37.3	40.7	Mardin
+TR.45	G304825	38.8	28.2	Manisa
+TR.44	G304919	38.5	38.0	Malatya
+TR.43	G305267	39.2	29.5	Kuetahya
+TR.71	G306569	38.2	32.5	Konya
+TR.40	G307513	39.3	34.2	Kirsehir
+TR.38	G308463	38.7	35.5	Kayseri
+TR.46	G310858	38.0	37.0	Kahramanmaras
+TR.35	G311044	38.5	27.1	Izmir
+TR.33	G311071	38.0	31.0	Isparta
+TR.32	G311728	36.9	34.7	Mersin
+TR.31	G312394	36.5	36.2	Hatay
+TR.70	G312888	37.6	44.2	Hakkari
+TR.83	G314829	37.1	37.3	Gaziantep
+TR.26	G315201	39.7	31.2	Eskisehir
+TR.25	G315367	40.0	41.5	Erzurum
+TR.24	G315372	39.8	39.5	Erzincan
+TR.23	G315807	38.7	39.2	Elazig
+TR.21	G316540	38.0	40.2	Diyarbakir
+TR.20	G317106	37.8	29.1	Denizli
+TR.15	G320390	37.5	30.0	Burdur
+TR.13	G321022	38.3	42.4	Bitlis
+TR.12	G321079	39.1	40.8	Bingoel
+TR.11	G321122	40.0	30.2	Bilecik
+TR.10	G322164	39.8	28.0	Balikesir
+TR.09	G322819	37.8	28.0	Aydin
+TR.07	G323776	36.8	31.9	Antalya
+TR.68	G323784	39.9	32.9	Ankara
+TR.04	G325163	39.7	43.2	Agri
+TR.03	G325302	38.8	30.7	Afyonkarahisar
+TR.02	G325329	37.8	38.2	Adiyaman
+TR.81	G325361	37.0	35.3	Adana
+TR.91	G443183	37.2	36.2	Osmaniye
+TR.88	G443184	39.9	44.0	Igdir
+TR.75	G443185	38.4	34.0	Aksaray
+TR.76	G443186	38.0	41.3	Batman
+TR.78	G443187	37.1	33.2	Karaman
+TR.79	G443188	39.8	33.8	Kirikkale
+TR.80	G443189	37.5	42.5	Sirnak
+TR.90	G443213	36.7	37.1	Kilis
+TR.85	G737021	41.2	31.8	Zonguldak
+TR.61	G738647	40.9	39.8	Trabzon
+TR.60	G738742	40.4	36.6	Tokat
+TR.59	G738926	41.0	27.5	Tekirdag
+TR.57	G739598	41.8	34.9	Sinop
+TR.55	G740263	41.2	36.3	Samsun
+TR.54	G740352	40.8	30.6	Sakarya
+TR.53	G740481	40.9	40.9	Rize
+TR.52	G741098	40.9	37.7	Ordu
+TR.41	G742865	40.9	29.9	Kocaeli
+TR.39	G743165	41.7	27.5	Kirklareli
+TR.37	G743881	41.5	33.7	Kastamonu
+TR.84	G743942	40.4	43.1	Kars
+TR.34	G745042	41.0	29.0	Istanbul
+TR.69	G746423	40.2	39.6	Guemueshane
+TR.28	G746878	40.5	38.5	Giresun
+TR.22	G747711	41.2	26.7	Edirne
+TR.19	G748877	40.5	34.8	Corum
+TR.82	G749747	40.7	33.4	Cankiri
+TR.17	G749778	40.1	26.8	Canakkale
+TR.16	G750268	40.2	29.1	Bursa
+TR.14	G750510	40.6	31.6	Bolu
+TR.08	G751816	41.2	41.8	Artvin
+TR.05	G752014	40.7	35.9	Amasya
+TR.87	G862467	41.6	32.5	Bartin
+TR.89	G862468	41.2	32.5	Karabuek
+TR.92	G862469	40.6	29.2	Yalova
+TR.86	G862470	41.1	42.8	Ardahan
+TR.77	G862471	40.2	40.2	Bayburt
+TR.93	G865521	40.8	31.2	Duezce
+TT.11	G3573606	11.2	-60.7	Tobago
+TT.10	G3573739	10.3	-61.5	San Fernando
+TT.05	G3573891	10.7	-61.5	City of Port of Spain
+TT.03	G3574155	10.2	-61.1	Mayaro
+TT.01	G3575052	10.6	-61.3	Arima
+TT.CHA	G7521937	10.5	-61.4	Chaguanas
+TT.CTT	G7521938	10.4	-61.5	Couva-Tabaquite-Talparo
+TT.DMN	G7521939	10.7	-61.5	Diego Martin
+TT.PED	G7521941	10.2	-61.5	Penal/Debe
+TT.PRT	G7521942	10.3	-61.4	Princes Town
+TT.PTF	G7521943	10.2	-61.7	Point Fortin
+TT.SGE	G7521944	10.6	-61.1	Sangre Grande
+TT.SIP	G7521945	10.1	-61.5	Siparia
+TT.SJL	G7521946	10.6	-61.5	San Juan/Laventille
+TT.TUP	G7521947	10.6	-61.4	Tunapuna/Piarco
+TV.NUI	G2110341	-7.2	177.2	Nui
+TV.NMA	G2110345	-5.7	176.1	Nanumea
+TV.FUN	G2110384	-8.5	179.1	Funafuti
+TV.NIT	G7601979	-6.1	177.3	Niutao
+TV.NMG	G7601980	-6.3	176.3	Nanumanga
+TV.VAI	G7601981	-7.5	178.7	Vaitupu
+TV.NKF	G7601982	-8.0	178.4	Nukufetau
+TV.NKL	G7601983	-9.4	179.8	Nukulaelae
+TW.01	G7280288	24.5	118.4	Fukien
+TW.02	G7280289	22.6	120.4	Kaohsiung
+TW.03	G7280290	25.0	121.8	Taipei
+TW.04	G7280291	24.2	120.7	Taiwan
+TZ.19	G148679	-1.9	31.2	Kagera Region
+TZ.25	G148724	-6.2	39.2	Zanzibar Urban/West Region
+TZ.22	G148725	-5.9	39.3	Zanzibar North Region
+TZ.21	G148728	-6.2	39.4	Zanzibar Central/South Region
+TZ.18	G149595	-5.2	38.3	Tanga Region
+TZ.17	G149653	-5.2	32.8	Tabora Region
+TZ.16	G149876	-5.8	34.7	Singida Region
+TZ.15	G150004	-3.7	32.9	Shinyanga Region
+TZ.24	G150442	-8.0	31.4	Rukwa Region
+TZ.02	G150602	-7.2	38.8	Coast Region
+TZ.20	G150732	-5.3	39.8	Pemba South Region
+TZ.13	G150733	-5.0	39.8	Pemba North Region
+TZ.12	G152219	-2.8	33.1	Mwanza Region
+TZ.10	G153214	-7.9	37.2	Morogoro Region
+TZ.09	G154375	-8.2	33.3	Mbeya Region
+TZ.08	G154775	-1.8	34.4	Mara Region
+TZ.07	G155946	-9.5	38.5	Lindi Region
+TZ.06	G157449	-3.8	37.6	Kilimanjaro Region
+TZ.05	G157732	-4.8	30.5	Kigoma Region
+TZ.04	G159067	-7.8	35.5	Iringa Region
+TZ.03	G160192	-5.9	35.9	Dodoma Region
+TZ.23	G160260	-6.8	39.2	Dar es Salaam Region
+TZ.26	G161322	-3.0	36.0	Arusha Region
+TZ.27	G435764	-4.5	36.8	Manyara Region
+TZ.14	G877416	-10.7	36.2	Ruvuma Region
+TZ.11	G877744	-10.8	39.1	Mtwara Region
+TZ.31	G8469238	-3.0	34.2	Simiyu Region
+TZ.28	G8469239	-3.2	31.9	Geita Region
+TZ.29	G8469240	-6.4	31.3	Katavi Region
+TZ.30	G8469241	-9.4	34.8	Njombe Region
+TZ.32	G11124984	-9.0	32.8	Songwe
+UA.27	G686966	50.6	28.5	Zhytomyrska Oblast
+UA.26	G687699	47.8	35.1	Zaporizhzhya Oblast
+UA.25	G687869	48.6	22.3	Zakarpattia Oblast
+UA.24	G689064	51.2	24.9	Volynska Oblast
+UA.23	G689559	49.2	28.5	Vinnytsya Oblast
+UA.22	G691649	49.6	25.6	Ternopil Oblast
+UA.21	G692196	51.0	34.0	Sumska Oblast
+UA.20	G694422	44.6	33.5	Sebastopol City
+UA.19	G695592	51.0	26.5	Rivnenska Oblast
+UA.18	G696634	49.6	34.5	Poltava Oblast
+UA.17	G698738	46.5	30.7	Odeska Oblast
+UA.16	G700567	47.0	32.0	Mykolayiv Oblast
+UA.15	G702549	49.8	23.9	Lvivska Oblast
+UA.14	G702657	49.0	39.0	Luhanska Oblast
+UA.13	G703446	50.2	30.2	Kyiv Oblast
+UA.12	G703447	50.4	30.5	Misto Kyiv
+UA.11	G703883	45.0	34.0	Autonomous Republic of Crimea
+UA.10	G705811	48.5	32.3	Kirovohrad Oblast
+UA.09	G706370	49.4	27.0	Khmelnytskyi Oblast
+UA.08	G706442	46.6	32.6	Kherson Oblast
+UA.07	G706482	49.5	36.5	Kharkivska Oblast
+UA.06	G707470	48.9	24.7	Ivano-Frankivsk Oblast
+UA.05	G709716	48.0	37.7	Donetska Oblast
+UA.04	G709929	48.5	35.0	Dnipropetrovsk Oblast
+UA.03	G710720	48.3	25.9	Chernivtsi Oblast
+UA.02	G710734	51.3	32.0	Chernihivska Oblast
+UA.01	G710802	49.4	32.1	Cherkasy Oblast
+UG.C	G234594	0.5	32.0	Central Region
+UG.E	G8260673	1.0	33.8	Eastern Region
+UG.N	G8260674	2.7	31.9	Northern Region
+UG.W	G8260675	-0.6	30.6	Western Region
+UM.450	G4041685	19.3	166.6	Wake Atoll
+UM.350	G4743755	18.4	-75.0	Navassa Island
+UM.050	G5854907	0.2	-176.5	Baker Island
+UM.100	G5854922	0.8	-176.6	Howland Island
+UM.150	G5854926	-0.4	-160.0	Jarvis Island
+UM.200	G5854929	16.7	-169.5	Johnston Atoll
+UM.250	G5854936	6.4	-162.4	Kingman Reef
+UM.300	G5854943	28.2	-177.4	Midway Atoll
+UM.400	G5854952	5.9	-162.1	Palmyra Atoll
+US.AR	G4099753	34.8	-92.5	Arkansas
+US.DC	G4138106	38.9	-77.0	District of Columbia
+US.DE	G4142224	39.0	-75.5	Delaware
+US.FL	G4155751	28.8	-82.5	Florida
+US.GA	G4197000	32.8	-83.5	Georgia
+US.KS	G4273857	38.5	-98.5	Kansas
+US.LA	G4331987	31.0	-92.0	Louisiana
+US.MD	G4361885	39.0	-76.7	Maryland
+US.MO	G4398678	38.3	-92.5	Missouri
+US.MS	G4436296	32.8	-89.8	Mississippi
+US.NC	G4482348	35.5	-80.0	North Carolina
+US.OK	G4544379	35.5	-97.5	Oklahoma
+US.SC	G4597040	34.0	-81.0	South Carolina
+US.TN	G4662168	35.8	-86.3	Tennessee
+US.TX	G4736286	31.3	-99.3	Texas
+US.WV	G4826850	38.5	-80.5	West Virginia
+US.AL	G4829764	32.8	-86.8	Alabama
+US.CT	G4831725	41.7	-72.7	Connecticut
+US.IA	G4862182	42.0	-93.5	Iowa
+US.IL	G4896861	40.0	-89.3	Illinois
+US.IN	G4921868	40.0	-86.3	Indiana
+US.ME	G4971068	45.5	-69.2	Maine
+US.MI	G5001836	44.3	-85.5	Michigan
+US.MN	G5037779	46.3	-94.3	Minnesota
+US.NE	G5073708	41.5	-99.8	Nebraska
+US.NH	G5090174	43.7	-71.5	New Hampshire
+US.NJ	G5101760	40.2	-74.5	New Jersey
+US.NY	G5128638	43.0	-75.5	New York
+US.OH	G5165418	40.3	-83.0	Ohio
+US.RI	G5224323	41.8	-71.5	Rhode Island
+US.VT	G5242283	44.0	-72.7	Vermont
+US.WI	G5279468	44.5	-90.0	Wisconsin
+US.CA	G5332921	37.3	-119.8	California
+US.CO	G5417618	39.0	-105.5	Colorado
+US.NM	G5481136	34.5	-106.0	New Mexico
+US.NV	G5509151	39.3	-116.8	Nevada
+US.UT	G5549030	39.3	-111.8	Utah
+US.AZ	G5551752	34.5	-111.5	Arizona
+US.ID	G5596512	44.5	-114.3	Idaho
+US.MT	G5667009	47.0	-109.8	Montana
+US.ND	G5690763	47.5	-100.0	North Dakota
+US.OR	G5744337	44.0	-120.5	Oregon
+US.SD	G5769223	44.5	-100.3	South Dakota
+US.WA	G5815135	47.5	-120.5	Washington
+US.WY	G5843591	43.0	-107.5	Wyoming
+US.HI	G5855797	20.8	-156.4	Hawaii
+US.AK	G5879092	64.0	-150.0	Alaska
+US.KY	G6254925	38.2	-84.9	Kentucky
+US.MA	G6254926	42.4	-71.1	Massachusetts
+US.PA	G6254927	40.8	-77.7	Pennsylvania
+US.VA	G6254928	37.5	-77.4	Virginia
+UY.19	G3439780	-33.0	-54.2	Departamento de Treinta y Tres
+UY.18	G3440033	-32.1	-55.8	Departamento de Tacuarembo
+UY.17	G3440054	-33.5	-57.8	Departamento de Soriano
+UY.16	G3440645	-34.2	-56.8	Departamento de San Jose
+UY.15	G3440711	-31.4	-57.0	Departamento de Salto
+UY.14	G3440771	-34.0	-54.0	Departamento de Rocha
+UY.13	G3440780	-31.5	-55.2	Departamento de Rivera
+UY.12	G3440789	-32.8	-57.3	Departamento de Rio Negro
+UY.11	G3441242	-32.1	-57.2	Departamento de Paysandu
+UY.10	G3441572	-34.8	-56.2	Departamento de Montevideo
+UY.09	G3441890	-34.6	-54.8	Departamento de Maldonado
+UY.08	G3442007	-34.0	-55.0	Departamento de Lavalleja
+UY.07	G3442584	-33.8	-55.9	Departamento de Florida
+UY.06	G3442587	-33.6	-56.8	Departamento de Flores
+UY.05	G3442720	-33.1	-56.1	Departamento de Durazno
+UY.04	G3443025	-34.2	-57.7	Departamento de Colonia
+UY.03	G3443173	-32.3	-54.3	Departamento de Cerro Largo
+UY.02	G3443411	-34.5	-55.9	Departamento de Canelones
+UY.01	G3443756	-30.6	-57.0	Departamento de Artigas
+UZ.09	G453752	44.2	58.8	Karakalpakstan
+UZ.12	G1114926	38.0	67.5	Surxondaryo Region
+UZ.10	G1114927	39.8	66.4	Samarqand Region
+UZ.08	G1114928	38.6	66.0	Qashqadaryo Region
+UZ.02	G1114929	40.0	64.0	Bukhara Region
+UZ.14	G1484838	41.2	69.8	Tashkent Region
+UZ.13	G1484839	41.3	69.2	Tashkent
+UZ.16	G1484840	40.4	68.7	Sirdaryo Region
+UZ.07	G1484841	42.0	64.0	Navoiy Region
+UZ.06	G1484842	41.0	71.2	Namangan Region
+UZ.05	G1484843	41.5	60.5	Xorazm Region
+UZ.15	G1484844	40.3	67.7	Jizzakh Region
+UZ.03	G1484845	40.5	71.2	Fergana Region
+UZ.01	G1484846	40.8	72.3	Andijan Region
+VC.05	G3577818	13.2	-61.2	Parish of Saint Patrick
+VC.04	G3577819	13.2	-61.2	Parish of Saint George
+VC.03	G3577821	13.3	-61.2	Parish of Saint David
+VC.02	G3577822	13.2	-61.2	Parish of Saint Andrew
+VC.06	G3577892	12.9	-61.2	Grenadines
+VC.01	G3577934	13.3	-61.2	Parish of Charlotte
+VE.23	G3625035	10.0	-72.2	Estado Zulia
+VE.22	G3625210	10.3	-68.7	Estado Yaracuy
+VE.21	G3625974	9.4	-70.5	Estado Trujillo
+VE.20	G3626553	7.8	-72.1	Estado Tachira
+VE.19	G3626655	10.4	-63.5	Estado Sucre
+VE.18	G3629941	9.2	-69.2	Estado Portuguesa
+VE.17	G3631462	11.0	-64.0	Estado Nueva Esparta
+VE.16	G3632100	9.3	-63.0	Estado Monagas
+VE.15	G3632191	10.2	-66.4	Miranda
+VE.14	G3632306	8.5	-71.2	Estado Merida
+VE.13	G3636539	10.2	-69.8	Estado Lara
+VE.12	G3640017	8.7	-66.6	Estado Guarico
+VE.24	G3640846	10.9	-65.3	Dependencias Federales
+VE.25	G3640847	10.5	-67.0	Distrito Capital
+VE.11	G3640873	11.0	-69.8	Estado Falcon
+VE.09	G3644541	8.8	-61.3	Delta Amacuro
+VE.08	G3645386	9.3	-68.3	Estado Cojedes
+VE.07	G3646751	10.2	-68.1	Estado Carabobo
+VE.06	G3648106	6.3	-63.5	Estado Bolivar
+VE.05	G3648544	8.2	-69.8	Estado Barinas
+VE.04	G3649110	10.0	-67.2	Estado Aragua
+VE.03	G3649151	7.2	-68.8	Estado Apure
+VE.02	G3649198	9.0	-64.3	Estado Anzoategui
+VE.01	G3649302	3.5	-66.0	Estado Amazonas
+VE.26	G3830309	10.6	-66.9	Estado La Guaira
+VI.010	G7267902	17.7	-64.7	Saint Croix Island
+VI.020	G7267903	18.3	-64.7	Saint John Island
+VI.030	G7267904	18.3	-64.9	Saint Thomas Island
+VN.58	G1559969	19.2	104.9	Tinh Nghe An
+VN.59	G1559970	20.2	105.9	Tinh Ninh Binh
+VN.60	G1559971	11.8	108.8	Tinh Ninh Thuan
+VN.65	G1559972	9.6	105.9	Tinh Soc Trang
+VN.67	G1559975	9.8	106.3	Tinh Tra Vinh
+VN.68	G1559976	22.1	105.2	Tinh Tuyen Quang
+VN.69	G1559977	10.1	106.0	Tinh Vinh Long
+VN.70	G1559978	21.8	104.6	Tinh Yen Bai
+VN.90	G1562412	22.3	104.2	Tinh Lao Cai
+VN.37	G1564676	10.4	106.3	Tinh Tien Giang
+VN.66	G1565033	16.3	107.6	Tinh Thua Thien-Hue
+VN.55	G1565088	14.8	107.9	Kon Tum
+VN.34	G1566165	20.1	105.3	Tinh Thanh Hoa
+VN.35	G1566338	20.5	106.4	Tinh Thai Binh
+VN.33	G1566557	11.3	106.2	Tinh Tay Ninh
+VN.32	G1567643	21.2	104.0	Tinh Son La
+VN.64	G1568733	16.8	107.0	Tinh Quang Tri
+VN.30	G1568758	21.2	107.3	Tinh Quang Ninh
+VN.63	G1568769	15.0	108.7	Tinh Quang Ngai
+VN.62	G1568839	17.5	106.3	Tinh Quang Binh
+VN.61	G1569805	13.2	109.1	Tinh Phu Yen
+VN.53	G1572594	20.7	105.3	Tinh Hoa Binh
+VN.24	G1575788	10.7	106.2	Long An
+VN.39	G1576632	21.8	106.6	Tinh Lang Son
+VN.23	G1577882	11.7	108.1	Tinh Lam GJong
+VN.89	G1577954	22.3	103.2	Tinh Lai Chau
+VN.21	G1579008	10.0	105.2	Tinh Kien Giang
+VN.54	G1579634	12.3	109.0	Tinh Khanh Hoa
+VN.20	G1580578	10.8	106.6	Ho Chi Minh City
+VN.52	G1580700	18.3	105.8	Tinh Ha Tinh
+VN.50	G1581030	22.8	105.0	Tinh Ha Giang
+VN.49	G1581088	13.8	108.2	Gia Lai
+VN.44	G1581129	21.0	105.8	Hanoi
+VN.87	G1581188	10.1	105.5	Thanh Pho Can Tho
+VN.13	G1581297	20.8	106.7	Thanh Pho Hai Phong
+VN.47	G1581882	11.1	108.1	Tinh Binh Thuan
+VN.09	G1582562	10.6	105.6	Tinh GJong Thap
+VN.43	G1582720	11.0	107.2	Tinh GJong Nai
+VN.88	G1584169	12.8	108.2	GJak Lak Province
+VN.45	G1584534	10.6	107.2	Tinh Ba Ria-Vung Tau
+VN.05	G1586182	22.8	106.1	Tinh Cao Bang
+VN.46	G1587871	14.2	109.0	Tinh Binh GJinh
+VN.03	G1587974	10.2	106.5	Tinh Ben Tre
+VN.01	G1594446	10.5	105.2	An Giang
+VN.91	G1904987	12.2	107.8	Dak Nong
+VN.92	G1905099	21.3	102.9	Tinh Dien Bien
+VN.74	G1905412	21.1	106.1	Tinh Bac Ninh
+VN.71	G1905419	21.3	106.4	Tinh Bac Giang
+VN.78	G1905468	16.1	108.1	Thanh Pho GJa Nang
+VN.75	G1905475	11.2	106.7	Tinh Binh Duong
+VN.76	G1905480	11.8	106.9	Tinh Binh Phuoc
+VN.85	G1905497	21.7	105.8	Tinh Thai Nguyen
+VN.84	G1905516	15.6	107.9	Tinh Quang Nam
+VN.83	G1905577	21.3	105.1	Tinh Phu Tho
+VN.82	G1905626	20.2	106.2	Tinh Nam GJinh
+VN.80	G1905637	20.5	106.0	Tinh Ha Nam
+VN.72	G1905669	22.2	105.8	Tinh Bac Kan
+VN.73	G1905675	9.3	105.5	Tinh Bac Lieu
+VN.77	G1905678	9.1	105.1	Tinh Ca Mau
+VN.79	G1905686	20.9	106.3	Tinh Hai Duong
+VN.81	G1905699	20.8	106.0	Tinh Hung Yen
+VN.86	G1905856	21.3	105.6	Tinh Vinh Phuc
+VN.93	G7506719	9.8	105.5	Hau Giang Province
+VU.15	G2134739	-19.5	169.3	Tafea Province
+VU.13	G2134898	-15.3	166.8	Sanma Province
+VU.07	G2137421	-13.8	167.5	Torba Province
+VU.16	G2208265	-16.3	167.6	Malampa Province
+VU.17	G2208266	-15.4	167.8	Penama Province
+VU.18	G2208267	-17.6	168.4	Shefa Province
+WF.98613	G4034759	-13.3	-176.2	Uvea
+WF.98612	G4034776	-14.3	-178.2	Sigave
+WF.98611	G4034884	-14.3	-178.1	Alo
+WS.11	G4034910	-13.5	-172.7	Vaisigano
+WS.06	G4034943	-13.9	-171.5	Va'a-o-Fonoti
+WS.10	G4034977	-13.9	-171.8	Tuamasaga
+WS.09	G4035046	-13.6	-172.6	Satupa'itea
+WS.08	G4035154	-13.7	-172.5	Palauli
+WS.07	G4035313	-13.5	-172.5	Gagaifomauga
+WS.05	G4035314	-13.5	-172.2	Gaga'emauga
+WS.04	G4035383	-13.7	-172.2	Fa'asaleleaga
+WS.03	G4035402	-13.9	-171.6	Atua
+WS.02	G4035425	-13.8	-172.2	Aiga-i-le-Tai
+WS.01	G4035434	-13.9	-172.0	A'ana
+XK.10096138	G10096138	42.4	21.1	Ferizaj District
+XK.10096859	G10096859	42.4	20.4	Gjakova District
+XK.10097357	G10097357	42.5	21.5	Gjilan District
+XK.10097358	G10097358	42.9	20.9	Mitrovica District
+XK.10097359	G10097359	42.7	20.3	Pec District
+XK.10097360	G10097360	42.7	21.2	Pristina District
+XK.10097361	G10097361	42.2	20.7	Prizren District
+YE.25	G70222	13.5	44.0	Muhafazat Ta`izz
+YE.05	G70935	15.0	47.0	Shabwah
+YE.16	G71132	15.3	44.4	Sanaa
+YE.15	G71333	17.1	43.9	Muhafazat Sa`dah
+YE.27	G71532	14.6	43.7	Muhafazat Raymah
+YE.14	G72966	15.5	45.3	Muhafazat Ma'rib
+YE.10	G73200	15.4	43.5	Al Mahwit
+YE.21	G74222	16.6	45.5	Muhafazat al Jawf
+YE.04	G75411	16.0	49.0	Hadhramaut Governorate
+YE.11	G76183	14.7	44.3	Muhafazat Dhamar
+YE.03	G78985	17.0	51.5	Al Mahrah
+YE.08	G79416	14.9	43.2	Muhafazat al Hudaydah
+YE.20	G79838	14.3	45.4	Al Bayda Governorate
+YE.02	G80412	12.8	44.9	Governorate Number One
+YE.01	G80425	13.6	46.1	Muhafazat Abyan
+YE.18	G6201193	13.9	44.8	Muhafazat ad Dali'
+YE.19	G6201194	16.2	43.9	Muhafazat 'Amran
+YE.22	G6201195	16.0	43.2	Muhafazat Hajjah
+YE.23	G6201196	14.0	44.2	Ibb
+YE.24	G6201197	13.2	44.6	Muhafazat Lahij
+YE.26	G6940571	15.5	44.2	Amanat alasimah
+YE.28	G9645387	12.5	53.8	Socotra
+YT.97601	G7521421	-12.7	45.1	Acoua
+YT.97602	G7521422	-12.7	45.1	Bandraboua
+YT.97603	G7521423	-12.9	45.2	Bandrele
+YT.97604	G7521424	-12.9	45.1	Boueni
+YT.97605	G7521425	-12.8	45.1	Chiconi
+YT.97606	G7521426	-12.9	45.2	Chirongui
+YT.97607	G7521427	-12.8	45.2	Dembeni
+YT.97608	G7521428	-12.8	45.3	Dzaoudzi
+YT.97609	G7521429	-13.0	45.1	Kani-Keli
+YT.97610	G7521430	-12.7	45.2	Koungou
+YT.97611	G7521431	-12.8	45.2	Mamoudzou
+YT.97612	G7521432	-12.7	45.1	Mtsamboro
+YT.97613	G7521433	-12.8	45.1	M'Tsangamouji
+YT.97614	G7521434	-12.8	45.1	Ouangani
+YT.97615	G7521435	-12.8	45.3	Pamandzi
+YT.97616	G7521436	-12.9	45.1	Sada
+YT.97617	G7521437	-12.8	45.1	Tsingoni
+ZA.03	G967573	-29.0	26.0	Free State
+ZA.02	G972062	-29.0	30.0	KwaZulu-Natal
+ZA.05	G1085593	-32.0	26.0	Eastern Cape
+ZA.06	G1085594	-26.1	28.2	Gauteng
+ZA.07	G1085595	-26.0	30.0	Mpumalanga
+ZA.08	G1085596	-29.5	22.0	Northern Cape
+ZA.09	G1085597	-24.0	29.5	Limpopo
+ZA.10	G1085598	-26.5	26.0	North West
+ZA.11	G1085599	-34.0	20.0	Western Cape
+ZM.01	G896140	-15.0	24.0	Western Province
+ZM.07	G896972	-16.5	27.0	Southern Province
+ZM.06	G900594	-13.0	25.0	North-Western Province
+ZM.05	G900601	-9.8	30.8	Northern Province
+ZM.09	G909129	-15.4	29.0	Lusaka Province
+ZM.04	G909845	-11.0	29.0	Luapula Province
+ZM.03	G917388	-13.7	32.0	Eastern Province
+ZM.08	G917524	-13.0	28.0	Copperbelt Province
+ZM.02	G921064	-14.0	29.0	Central Province
+ZM.10	G11154503	-10.5	32.1	Muchinga Province
+ZW.02	G886119	-19.2	29.8	Midlands Province
+ZW.07	G886747	-20.9	28.8	Matabeleland South Province
+ZW.06	G886748	-18.8	27.4	Matabeleland North Province
+ZW.08	G886761	-20.6	31.4	Masvingo Province
+ZW.05	G886841	-17.2	29.8	Mashonaland West Province
+ZW.04	G886842	-18.0	31.7	Mashonaland East Province
+ZW.03	G886843	-16.7	31.2	Mashonaland Central Province
+ZW.01	G887358	-19.0	32.4	Manicaland Province
+ZW.09	G1105843	-20.1	28.6	Bulawayo Province
+ZW.10	G1105844	-17.9	31.1	Harare Province

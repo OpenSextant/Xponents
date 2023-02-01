@@ -65,12 +65,10 @@ from opensextant import load_us_provinces
 from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id
 from opensextant.utility import is_ascii, has_cjk
 
-load_us_provinces()
-from opensextant import usstates
-
+us_states = load_us_provinces()
 ignore_provinces = []
-for adm1 in usstates:
-    adm1_place = usstates[adm1]
+for adm1 in us_states:
+    adm1_place = us_states[adm1]
     ignore_provinces.append(adm1_place.name.lower())
 
 # distinct primary names act as a JRC root entry; all others would be variants
@@ -359,7 +357,7 @@ if __name__ == "__main__":
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("taxonomy",  help="Taxonomy file in JRCNames format")
+    ap.add_argument("taxonomy", help="Taxonomy file in JRCNames format")
     ap.add_argument("--starting-id", help="Solr index row ID start")
     ap.add_argument("--solr", help="Solr URL for taxcat index")
     ap.add_argument("--max", help="Max # of rows to index; for testing")

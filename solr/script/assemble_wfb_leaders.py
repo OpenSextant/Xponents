@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 #
 """
+OBSOLETE -- as of 2021 this site no longer operates this way.
+
+
 World Factbook harvest: This script collects world leaders "Chiefs of State (COS)"
 from the WFB.  The intent is to gather various well-known named entities and have them
 available to either tag any document or to negate geotags that tag a person's name as a geographic place.
@@ -24,7 +27,6 @@ OUTPUT:
       "personal_title" : "Dr."
     },
 
-
 """
 import json
 import os
@@ -35,9 +37,7 @@ import requests
 from opensextant import load_countries
 from opensextant.utility import squeeze_whitespace
 
-load_countries()
-
-from opensextant import countries_by_iso
+countries = load_countries()
 
 base_url = "https://www.cia.gov/library/publications/resources/world-leaders-1/{}.html"
 master = {}
@@ -105,10 +105,10 @@ def expand_title(t):
     return ' '.join(buf)
 
 
-for cc in countries_by_iso:
-    if len(cc) > 2: continue
+for C in countries:
+    if not C.cc_iso2:
+        continue
 
-    C = countries_by_iso[cc]
     url = base_url.format(C.cc_iso2)
     html = requests.get(url, verify=False)
     doc = bs4.BeautifulSoup(html.content, features="lxml")
@@ -132,8 +132,9 @@ for cc in countries_by_iso:
             row["name"] = a.strip()
         rows.append(row)
 
-    master[cc] = rows
+    master[C.cc_iso2] = rows
 
+print("------------DEPRECATED---------------")
 print("Script runs from ./solr folder, exports JSON result to ./etc/taxcat/data")
 print("""Run this to update content periodically -- but in aggregating all updates, 
     you should be resolving duplicates before entering into TaxCat""")

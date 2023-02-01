@@ -64,7 +64,7 @@ class GeneralNameVariants(NameGenerator):
         print(f"====={self.name}=======")
         for term in self.terms:
             search_term = term.capitalize()
-            regex = re.compile(f"({term}\s+)", re.UNICODE | re.IGNORECASE)
+            regex = re.compile(f"({term}\\s+)", re.UNICODE | re.IGNORECASE)
             repl = self.terms[term].capitalize()
             print("PREFIX", term)
             termlen = len(term)
@@ -117,7 +117,7 @@ class SaintNameVariants(NameGenerator):
         print(f"====={self.name}=======")
         ignore_countries = set("TW CN JP LA VN ML PA KR KP".split())
         for term in self.terms:
-            regex = re.compile(f"({term}[-`'\u2019\s]+)", re.UNICODE | re.IGNORECASE)
+            regex = re.compile(f"({term}[-`'\u2019\\s]+)", re.UNICODE | re.IGNORECASE)
             repl = self.terms[term].capitalize()
             term_ = '{} '.format(term)
             term_dash = '{}-'.format(term)

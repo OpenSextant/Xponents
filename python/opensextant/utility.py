@@ -473,7 +473,7 @@ class ConfigUtility:
         if not os.path.exists(path):
             raise Exception('File does not exist, FILE=%s' % path)
 
-        with  open(path, 'r', encoding="UTF-8") as f:
+        with open(path, 'r', encoding="UTF-8") as f:
             filereader = csv.reader(f, delimiter=delim, lineterminator='\n', dialect="excel")
             data = []
             for row in filereader:

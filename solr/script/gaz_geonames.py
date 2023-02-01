@@ -1,15 +1,16 @@
+from copy import copy
+
+from opensextant import get_country, parse_admin_code
+from opensextant.gazetteer import DataSource, get_default_db, normalize_name, \
+    load_stopterms, PlaceHeuristics, AdminLevelCodes, add_location, gaz_resource, export_admin_mapping
+from opensextant.utility import get_list, has_cjk, has_arabic, is_value, is_code, is_abbreviation, get_csv_reader
+
 """
 from http://Geonames.org/export/dump
 
 The main 'geoname' table has the following fields :
 ---------------------------------------------------
 """
-from copy import copy
-
-from opensextant import get_country, parse_admin_code
-from opensextant.gazetteer import DataSource, get_default_db, normalize_name, load_stopterms, PlaceHeuristics, add_location
-from opensextant.utility import get_list, has_cjk, has_arabic, is_value, is_code, is_abbreviation, get_csv_reader
-
 schema = """
 geonameid         : integer id of record in geonames database
 name              : name of geographical point (utf8) varchar(200)
@@ -64,7 +65,7 @@ GEONAMES_GAZ_TEMPLATE = {
 }
 
 MAP_GN_OPENSEXTANT = {
-    "geonameid": "place_id",
+    # "geonameid": "place_id",
     "name": "name",
     "latitude": "lat",
     "longitude": "lon",
@@ -74,6 +75,13 @@ MAP_GN_OPENSEXTANT = {
     "admin1_code": "adm1",
     "admin2_code": "adm2"
 }
+
+# Do not remap ADM1 for these:
+GN_ISO_USAGE = {"US",  # USA
+                "CH",  # Switzerland
+                "BE",  # Belgium
+                "ME"  # Montenegro
+                }
 
 stopterms = load_stopterms()
 
@@ -138,12 +146,131 @@ def guess_feature(name):
     return "S", "UNK"
 
 
+def parse_geonames_schema():
+    """
+    Use a copy of geonames documented schema to parse and create column headings.
+    :return:
+    """
+    hdr = []
+    for col in schema.split("\n"):
+        columns = get_list(col, delim=":")
+        if columns:
+            hdr.append(columns[0].replace(" ", "_"))
+    return hdr
+
+
+GN_ISO_REMAP = {
+    # ALL are FIPS --> ISO
+    "AE": {"11": "0", "10": "01", "09": "0"},
+    "AF": {"04": "19"}
+}
+
+
+def fix_geonames_admin1_iso(cc, adm):
+    if cc in GN_ISO_REMAP:
+        return GN_ISO_REMAP[cc].get(adm)
+    return None
+
+
+def render_entry(gn, columns):
+    geo = copy(GEONAMES_GAZ_TEMPLATE)
+    # Gather name variants
+    for f in columns:
+        # Gather Fields from source row and copy to destination schema.
+        k = MAP_GN_OPENSEXTANT.get(f)
+        if k:
+            geo[k] = gn[f]
+
+    plid = gn["geonameid"]
+    geo["place_id"] = f"G{plid}"
+    return geo
+
+
+ERROR_CACHE = set([])
+
+
+class GeonamesOrgScanner:
+    def __init__(self):
+        self.rowcount = 0
+
+    def scan_adm1(self, sourcefile, limit=-1):
+        header_names = parse_geonames_schema()
+        admin_master = []
+        found = 0
+        # NOTE: Attempted pandas read_csv() operation. Failed.
+        with open(sourcefile, "r", encoding="UTF-8") as fh:
+            df = get_csv_reader(fh, delim="\t", columns=header_names)
+            for gn in df:
+                self.rowcount += 1
+                if self.rowcount % 1000000 == 0:
+                    print(f"Row# {self.rowcount}")
+
+                geo = render_entry(gn, header_names)
+                nm = gn["asciiname"]
+                if not nm:
+                    continue
+
+                geo["name"] = nm
+                fclass, fcode = geo["feat_class"], geo["feat_code"]
+                if fclass != "A":
+                    continue
+                # Consider other ADMIN features later...
+                if fcode != "ADM1":
+                    continue
+
+                adm1 = parse_admin_code(geo.get("adm1"))
+                geo["adm1"] = adm1
+                add_country(geo)
+                add_location(geo, geo["lat"], geo["lon"])
+
+                admin_master.append(geo)
+
+                found += 1
+                if 0 < limit < found:
+                    print("Reached Limit", limit)
+                    break
+
+        export_admin_mapping(admin_master, gaz_resource("geonames_admin1_mapping.csv"))
+
+
 class GeonamesOrgGazetteer(DataSource):
     def __init__(self, dbf, **kwargs):
         DataSource.__init__(self, dbf, **kwargs)
+        # self.rate = 10
         self.source_keys = [GEONAMES_SOURCE]
         self.source_name = "Geonames.org"
         self.estimator = PlaceHeuristics(self.db)
+        self.admin_lookup = AdminLevelCodes(filepath=gaz_resource('global_admin1_mapping.json'))
+
+    def populate_admin1(self, geo):
+
+        # GIVEN:
+        adm1 = parse_admin_code(geo.get("adm1"))
+        cc = geo["cc"]
+
+        if cc in GN_ISO_USAGE or adm1 == "0":
+            geo["adm1"] = adm1
+            return
+
+        # REMAP geonames FIPS code to ISO
+        try:
+            adm1_iso = self.admin_lookup.get_alternate_admin1(cc, adm1, "ISO")
+            if adm1_iso:
+                if isinstance(adm1_iso, str):
+                    geo["adm1"] = adm1_iso
+                elif isinstance(adm1_iso, list):
+                    geo["adm1"] = adm1_iso[0]
+            else:
+                print("XXXX NOT FOUND", cc, adm1)
+        except Exception as lookup_err:
+            if str(lookup_err) not in ERROR_CACHE:
+                print(lookup_err)
+                ERROR_CACHE.add(str(lookup_err))
+
+            # RESCUE oddities for unknown codings.
+            adm1_iso = fix_geonames_admin1_iso(cc, adm1)
+            if adm1_iso:
+                geo["adm1"] = adm1_iso
 
     def process_source(self, sourcefile, limit=-1):
         """
@@ -151,25 +278,17 @@ class GeonamesOrgGazetteer(DataSource):
         :param limit: limit of number of records to process
         :return: Yields geoname dict
         """
-        header_names = []
-        for col in schema.split("\n"):
-            columns = get_list(col, delim=":")
-            if columns:
-                header_names.append(columns[0].replace(" ", "_"))
+        header_names = parse_geonames_schema()
 
-        # So much harder for normal mixed text/number data:
-        # from pandas import read_csv
-        # df = read_csv(args.geonames, delimiter="\t", header=None, names=header_names, encoding="UTF-8")
-
+        # NOTE: Attempted pandas read_csv() operation. Failed.
         with open(sourcefile, "r", encoding="UTF-8") as fh:
             df = get_csv_reader(fh, delim="\t", columns=header_names)
             self.purge()  # Remove all previous records.
             namecount = 0
             for gn in df:
                 self.rowcount += 1
-                geo = copy(GEONAMES_GAZ_TEMPLATE)
-                # Gather name variants
-                plid = gn["geonameid"]
+                geo = render_entry(gn, header_names)
+
                 names = set([])
                 variants = gn["alternatenames"]
                 if is_value(variants):
@@ -178,21 +297,17 @@ class GeonamesOrgGazetteer(DataSource):
                 if is_value(nm):
                     names.add(nm)
 
-                for f in header_names:
-                    # Gather Fields from source row and copy to destination schema.
-                    k = MAP_GN_OPENSEXTANT.get(f)
-                    if not k:
-                        continue
-                    geo[k] = gn[f]
-
-                if "cc" not in geo:
-                    print("What Country?", gn)
-                    continue
-
-                geo["adm1"] = parse_admin_code(geo.get("adm1"))
-                geo["place_id"] = f"G{plid}"
-                add_location(geo, geo["lat"], geo["lon"])
+                # From the top: Country metadata
+                # ================================
                 add_country(geo)
+
+                # ADM1 - tweak so code is ISO, if possible.
+                # ================================
+                self.populate_admin1(geo)
+
+                # Detailed location and name data
+                # ================================
+                add_location(geo, geo["lat"], geo["lon"], add_geohash=False)
                 geo["id_bias"] = self.estimator.location_bias(geo)
                 for nm in names:
                     if not nm:
@@ -232,6 +347,7 @@ if __name__ == "__main__":
 
     ap = ArgumentParser()
     ap.add_argument("geonames")
+    ap.add_argument("--adm1", action="store_true", default=False)
     ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
@@ -239,5 +355,9 @@ if __name__ == "__main__":
 
     args = ap.parse_args()
 
-    source = GeonamesOrgGazetteer(args.db, debug=args.debug)
-    source.normalize(args.geonames, limit=int(args.max), optimize=args.optimize)
+    if args.adm1:
+        scanner = GeonamesOrgScanner()
+        scanner.scan_adm1(args.geonames, limit=int(args.max))
+    else:
+        source = GeonamesOrgGazetteer(args.db, debug=args.debug)
+        source.normalize(args.geonames, limit=int(args.max), optimize=args.optimize)

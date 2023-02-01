@@ -6,5 +6,6 @@ include opensextant/resources/datetime_patterns.cfg
 include opensextant/resources/poli_patterns.cfg
 include opensextant/resources/ISO_639_2_utf-8.txt
 include opensextant/resources/us-state-metadata.csv
+include opensextant/resources/global_admin1_mapping.json
 include opensextant/resources/geonames.org/cities15000.txt
 include opensextant/resources/geonames.org/admin1CodesASCII.txt
