@@ -1233,6 +1233,12 @@ public class TextUtils {
         Language fas = new Language("per", "fa", "Farsi");
         languageMapISO639.put("farsi", fas);
 
+        Language dr = new Language("prs", "dr", "Dari");
+        languageMapISO639.put("dari", dr);
+        languageMapISO639.put("prs", dr);
+        languageMapISO639.put("dr", dr);
+        languageMapISO639.put("fa-AF", dr);
+
         // Locales of English -- are still "English"
         Language en1 = new Language("eng", "en", "English");
         languageMapISO639.put("en-gb", en1);
