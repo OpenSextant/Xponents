@@ -628,6 +628,8 @@ def get_country(namecode, standard="ISO"):
 def load_major_cities():
     """
     Loads City geo/demographic information -- this does not try to parse all name variants.
+
+    This produces Geonames use of FIPS codes.
     :return:
     """
     csvpath = pkg_resource_path(os.path.join('geonames.org', 'cities15000.txt'))
@@ -647,9 +649,12 @@ def load_major_cities():
             pl.feature_class = line[6]
             pl.feature_code = line[7]
             pl.country_code = line[8]
+            alt_cc = line[9]
+            if alt_cc and alt_cc != pl.country_code:
+                print("Alternate Country Code",alt_cc)
             pl.adm1 = parse_admin_code(line[10])
             pl.adm2 = line[11]
-            pl.geohash = geohash_encode(pl.lat, pl.lon, precision=6)
+            # pl.geohash = geohash_encode(pl.lat, pl.lon, precision=6)
             try:
                 pl.population = int(line[14])
                 pl.population_scale = popscale(pl.population, feature="city")

@@ -100,7 +100,7 @@ US_TERRITORY_MAP = {
 }
 
 # IGNROE Historical names and Zones, and Unknowns *H
-MAJOR_ADMIN_CODES = {'ADM1', 'ADM2', 'ADM3', 'ADM4', 'PRSH', 'TERR', 'LTER'}
+MAJOR_ADMIN_CODES = {'ADM1', 'ADMD', 'ADM2', 'ADM3', 'ADM4', 'PRSH', 'TERR'}
 
 
 def coord_grid(geo: dict) -> str:
@@ -423,6 +423,63 @@ def export_admin_mapping(admin_ids, filepath):
             fio.write("\t".join(entry))
             fio.write("\n")
 
+class ISO3166Registry:
+    def __init__(self):
+        self.hierarchy = {}
+
+    def is_iso_country(self, cc):
+        return cc in self.hierarchy
+
+    def has_admin1(self, cc, adm1):
+        registry = self.hierarchy.get(cc)
+        if not registry:
+            # No such country here.
+            return None
+        return adm1 in registry["admin1"]
+
+    def get_admin1_for(self, cc, adm2):
+        registry = self.hierarchy.get(cc)
+        if not registry:
+            # No such country here.
+            return None
+        return registry["admin2"].get(adm2)
+
+    @staticmethod
+    def export_admin_mapping():
+        """
+        Generate initial file using pycountry.  pycountry is not a library dependency
+        so it is externalized here.
+        :return:
+        """
+        import pycountry
+        fpath = gaz_resource("iso3166_admin1_admin2_hierarchy.csv")
+        with open(fpath, "w", encoding="UTF-8") as fio:
+            for subd in pycountry.subdivisions:
+                fio.write("\t".join([subd.country_code, subd.parent_code or "-", subd.code]))
+                fio.write("\n")
+
+    def load_admin_mapping(self):
+        from opensextant import parse_admin_code
+        fpath = gaz_resource("iso3166_admin1_admin2_hierarchy.csv")
+        with open(fpath, "r", encoding="UTF-8") as fio:
+            for line in fio:
+                hasc = line.strip().split("\t")
+                cc_iso = hasc[0]
+                adm1, adm2 = None, None
+                parent = hasc[1]
+                if parent == "-":
+                    adm1 = parse_admin_code(hasc[2])
+                else:
+                    adm1, adm2 = parse_admin_code(hasc[1]), parse_admin_code(hasc[2])
+
+                registry = self.hierarchy.get(cc_iso)
+                if not registry:
+                    registry = {"admin1": set([]), "admin2": {}}
+                    self.hierarchy[cc_iso] = registry
+                registry["admin1"].add(adm1)
+                if adm2:
+                    registry["admin2"][adm2] = adm1
+
 
 class AdminLevelCodes:
 
@@ -445,14 +502,30 @@ class AdminLevelCodes:
         self.places = {}
         self.coords = {}
         self.admin1 = {}
+        self.admin2 = {}  # ADM2 contained in ADM1. {ADM2 : ADM1,...}
         self.countries = set([])
+        self.admin_hierarchy = {}  # Set before use.
+        self.admin_hierarchy_cc = {}
         if filepath:
             self.load(filepath)
         else:
             self.load(pkg_resource_path("global_admin1_mapping.json"))
 
+    def adjust_admin1(self, cc, adm1):
+        if cc in self.admin_hierarchy_cc:
+            container_adm1 = self.admin_hierarchy[cc].get(adm1)
+            if container_adm1:
+                # New mapping:  ADM1, ADM2
+                return container_adm1, adm1
+        return None, None
+
+    def set_admin_hierarchy(self, countries, adm1_containment):
+        self.admin_hierarchy_cc = set(countries)
+        self.admin_hierarchy = adm1_containment
+
     def get_alternate_admin1(self, cc, adm1, std):
         """
+        EXPERIMENTAL still.
 
         :param cc: ISO country code
         :param adm1: ADM1 in the given standard
@@ -474,6 +547,8 @@ class AdminLevelCodes:
             self.coords[cc] = {}
         if cc not in self.admin1:
             self.admin1[cc] = {}
+        if cc not in self.admin2:
+            self.admin2[cc] = {}
 
     def add_place(self, place_id, cc, std, adm1, grid):
         """
@@ -482,9 +557,14 @@ class AdminLevelCodes:
         :param cc:
         :param std:
         :param adm1:
+        :param adm2: optional ADM2 mapping
         :param grid:
         :return:
         """
+        alt_adm1, adm2 = self.adjust_admin1(cc, adm1)
+        if adm2:
+            print("CORRECTION:", cc, alt_adm1, adm2)
+
         obj = self.places[cc].get(place_id, {})
         if not obj:
             self.places[cc][place_id] = obj
@@ -495,6 +575,10 @@ class AdminLevelCodes:
         if not crd:
             self.coords[cc][grid] = crd
         crd[std] = adm1
+
+        if adm2:
+            mapping = self.admin2[cc].get(adm2, {})
+            mapping[adm2] = adm1
 
     @staticmethod
     def _update_adminset(given, iso=None, fips=None):
@@ -528,15 +612,21 @@ class AdminLevelCodes:
 
     def align_admin1(self):
         for cc in self.countries:
+            # TODO: we'll keep this experimental layer of ADM2s.
+            # Usage: user will have to consult the admin2 lookup first.
             fips = {}
             iso = {}
-            registry = self.places[cc]
+            registry = self.places[cc]  # ADMIN places only please.
+            for plid in registry:
+                self.update_admin_containment(registry[plid])
+
             for plid in registry:
                 AdminLevelCodes._update_adminset(registry[plid], iso=iso, fips=fips)
 
             registry = self.coords[cc]
             for crd in registry:
                 AdminLevelCodes._update_adminset(registry[crd], iso=iso, fips=fips)
+
             # Mappings:
             self.admin1[cc] = {"FIPS": fips, "ISO": iso}
 
@@ -553,6 +643,9 @@ class AdminLevelCodes:
             json.dump(self.as_json(), fout)
 
     def load(self, fpath):
+        if not os.path.exists(fpath):
+            raise Exception("File does not exist", fpath)
+
         with open(fpath, "r", encoding="UTF-8") as fin:
             content = json.load(fin)
             self.countries = set(content.keys())
@@ -560,6 +653,45 @@ class AdminLevelCodes:
                 self.places[cc] = content[cc].get("places")
                 self.coords[cc] = content[cc].get("coords")
                 self.admin1[cc] = content[cc].get("admin1")
+
+
+def load_major_cities_iso():
+    print("Popstats - Load Major Cities / as ISO coded")
+    admin_lookup = None
+    try:
+        admin_lookup = AdminLevelCodes()
+    except Exception as config_err:
+        print("Try generating Admin level codes first with \"build prep admin1\" script")
+        print(str(config_err))
+        return
+
+    # ADM1 hierarchy
+    #  NGA used FIPS, now uses ISO
+    #  Geonames uses FIPS, except a few:
+    #
+    already_iso = {"US", "BE", "CH", "ME"}
+
+    cities = load_major_cities()
+    problem_countries = {}
+    all_countries = {}
+    for city in cities:
+        cc = city.country_code
+        all_countries[cc] = 1 + all_countries.get(cc, 0)
+        if cc in already_iso:
+            continue
+
+        adm1_iso = admin_lookup.get_alternate_admin1(cc, city.adm1, "FIPS")
+        if adm1_iso == "-":
+            print("No match for FIPS", cc, city.adm1)
+            problem_countries[cc] = 1 + problem_countries.get(cc, 0)
+        elif adm1_iso:
+            city.adm1 = adm1_iso  # this attr represents the default internal ADM1
+            city.adm1_iso = adm1_iso  # Yes, this attr represents the ISO ADM1
+    print("Countries with missing ISO ADM1")
+    for cc in problem_countries:
+        if problem_countries[cc] > 1:
+            print(f"{cc}\t{problem_countries[cc]:4}  /  {all_countries[cc]:4}")
+    return cities
 
 
 class DB:
@@ -641,7 +773,7 @@ class DB:
         # Population statistics that use location (geohash) as primary key
         sql_script = """
         create TABLE popstats (
-                `geohash` TEXT NOT NULL, 
+                `grid` TEXT NOT NULL, 
                 `population` INTEGER NOT NULL,
                 `source` TEXT NOT NULL,
                 `feat_class` TEXT NOT NULL,
@@ -653,7 +785,7 @@ class DB:
                 `adm2_path` TEXT NOT NULL        
         );
         
-        create INDEX IF NOT EXISTS idx1 on popstats (`geohash`);
+        create INDEX IF NOT EXISTS idx1 on popstats (`grid`);
         create INDEX IF NOT EXISTS idx2 on popstats (`source`);
         create INDEX IF NOT EXISTS idx3 on popstats (`cc`);
         create INDEX IF NOT EXISTS idx4 on popstats (`adm1`);
@@ -814,20 +946,21 @@ class DB:
         Population stats are record by populated area (P-class features) and rolled up
         to provide an ADM1 population approximation.
         """
+        print("Purge Popstats")
         self.conn.execute("delete from popstats where source = ?", (source,))
         self.conn.commit()
 
-        sql = """insert into popstats (geohash, population, source, feat_class, 
+        sql = """insert into popstats (grid, population, source, feat_class, 
                 cc, FIPS_cc, adm1, adm1_path, adm2, adm2_path) 
-            values (:geohash, :population, :source, :feat_class, 
+            values (:grid, :population, :source, :feat_class, 
                 :cc, :FIPS_cc, :adm1, :adm1_path, :adm2, :adm2_path)"""
         #
-        for city in load_major_cities():
+        for city in load_major_cities_iso():
             adm2_path = ""
             if city.adm2:
                 adm2_path = make_HASC(city.country_code, city.adm1, adm2=city.adm2)
             city_entry = {
-                "geohash": city.geohash[0:6],
+                "grid": coord_grid({"lat": city.lat, "lon": city.lon}),
                 "population": city.population,
                 "source": source,
                 "feat_class": city.feature_class,
@@ -840,15 +973,16 @@ class DB:
             }
             self.conn.execute(sql, city_entry)
         self.conn.commit()
+        print("Popstats - Complete")
 
     def list_all_popstats(self):
         """
         :return: map of population by geohash only
         """
-        sql = """select sum(population) AS POP, geohash from popstats group by geohash order by POP"""
+        sql = """select sum(population) AS POP, grid from popstats group by grid order by POP"""
         population_map = {}
         for popstat in self.conn.execute(sql):
-            loc = popstat["geohash"]
+            loc = popstat["grid"]
             population_map[loc] = popstat["POP"]
         return population_map
 
@@ -1503,7 +1637,7 @@ class PlaceHeuristics:
         fc_scale = self.get_feature_scale(fc, dsg)
 
         if fc == 'P':
-            lockey = geo["geohash"][0:6]
+            lockey = coord_grid(geo)
             population = self.cities_spatial.get(lockey, 0)
             pop_wt = popscale(population, feature="city")
         if fc == 'A':
