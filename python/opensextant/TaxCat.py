@@ -132,7 +132,7 @@ class TaxCatalogBuilder:
     def __init__(self, server=None, test=False):
         """
         API to assist in building taxon nodes and storing them in Solr.
-        @param server: solr server http URL
+        :param server: solr server http URL
         """
 
         self.server = None
@@ -195,12 +195,14 @@ class TaxCatalogBuilder:
                 self.server.commit()
         return
 
-    def add(self, catalog, taxon):
+    def add(self, catalog, taxon: Taxon):
         """
-        @param catalog ID of catalog where this taxon lives
-        @param taxon   Taxon obj
+        Add the given taxon to the index, increment the internal counter.
+        :param catalog:  catalog ID
+        :param taxon:
+        :return:
         """
-        self.count = self.count + 1
+        self.count += 1
         rec = {'catalog': catalog, 'taxnode': taxon.name, 'phrase': taxon.phrase, 'id': taxon.id,
                'valid': taxon.is_valid,
                'name_type': 'N'}
@@ -239,7 +241,6 @@ class TaxCatalogBuilder:
                     # is a comment or commented out word.
                     continue
 
-                self.count += 1
                 _id = start_id + self.count
 
                 key = _phrase.lower()
@@ -262,3 +263,19 @@ class TaxCatalogBuilder:
                 self.add(catalog, t)
             self.save(flush=True)
             print(f"COUNT: {self.count}")
+
+
+def create_taxcat(solr_server):
+    """
+
+    :param solr_server: URL or host:port
+    :return:
+    """
+    server = solr_server
+
+    if not solr_server:
+        server = "localhost:7000"
+    if server and not server.lower().startswith("http"):
+        server = f"http://{server}/solr/taxcat"
+
+    return TaxCatalogBuilder(server=server)
