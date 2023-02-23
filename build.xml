@@ -10,13 +10,6 @@
   <property name="release" location="${xponents.home}/dist/Xponents-${xponents.version}" />
   <property name="solr.release" location="${release}/xponents-solr" />
 
-  <!-- setup proxy -->
-  <target name="proxy">
-    <property name="proxy.port" value="80" />
-    <property name="proxy.user" value="" />
-    <property name="proxy.pass" value="" />
-    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
-  </target>
   <target name="get-meta">
 
     <mkdir dir="${core-api}/etc" />
@@ -51,7 +44,7 @@
     <copy file="${geonames.resources}/admin1CodesASCII.txt" todir="${pylib.resources}/geonames.org/" />
   </target>
 
-  <target name="setup" depends="proxy,get-meta,copy-resources,unpack-langid" />
+  <target name="setup" depends="get-meta,copy-resources,unpack-langid" />
 
 
   <!-- Build and Distribution mechanics -->
