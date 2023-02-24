@@ -47,12 +47,23 @@ public class Parameters extends java.util.Properties {
     /** Tag/Output postal hierarchy, i.e., "City, Province, Postal code" */
     public boolean tag_postal = false;
 
+    /** "taxons" is a catch all for the non-geo items that come out of geotagger, e.g.,
+     * negated tags such as the surname "Johnson" -- typically a surname and not a city.
+     * These tags are a by-product of Geotagging and available to caller.
+     */
+    public boolean tag_taxons = false;
+
     /**
-     * Generic flag to represent tagging non-Geo names, e.g., names of persons, orgs
-     * and things
+     * "all taxons" is an explicit request to tag all keyphrases AKA taxons
+     */
+    public boolean tag_all_taxons = false;
+
+    /**
+     * Name taxons are a special grouping of tags, including "person_name" and other entries
+     * Entity type is usually `person`.  This group is differentiated from non-name tags such as assets or codes.
      */
     public boolean tag_names = true;
-    public boolean tag_taxons = false;
+
     public boolean tag_patterns = false;
     public boolean tag_lowercase = false;
     public boolean clean_input = false;

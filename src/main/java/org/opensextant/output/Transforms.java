@@ -339,7 +339,7 @@ public class Transforms {
              * ==========================
              */
             if (name instanceof TaxonMatch) {
-                if (jobParams.tag_taxons) {
+                if (jobParams.tag_taxons || jobParams.tag_all_taxons) {
                     TaxonMatch match = (TaxonMatch) name;
                     match.defaultMatchId();
                     ++tagCount;
