@@ -157,10 +157,11 @@ public class PersonNameFilter extends GeocodeRule {
      * @param orgs       named orgs in doc
      */
     public void evaluateNamedEntities(final TextInput input, final List<PlaceCandidate> placeNames,
-                                      final List<TaxonMatch> persons, final List<TaxonMatch> orgs) {
+                                      final List<TaxonMatch> persons, final List<TaxonMatch> orgs, final List<TaxonMatch> others) {
 
         for (PlaceCandidate pc : placeNames) {
             if (pc.isFilteredOut() || pc.isValid() || (pc.isCountry && !pc.isAbbreviation)) {
+                // TODO: document examples for this clause
                 continue;
             }
 
@@ -177,42 +178,7 @@ public class PersonNameFilter extends GeocodeRule {
                 continue;
             }
 
-            for (TaxonMatch name : persons) {
-
-                String rule = null;
-                // Case: LOC in NAME
-                // LOC: "Murtagh" in PERSON: "General Murtagh"
-                if (pc.isSameNorm(name)) {
-                    rule = "ResolvedPerson";
-                } else if (pc.isWithin(name)) {
-                    rule = "ResolvedPerson";
-                } else if (pc.isBefore(name) && pc.getWordCount() == 1 && !pc.isCountry) {
-                    if (hasNonWhitespace(input.buffer, pc.end, name.start)) {
-                        continue;
-                    }
-                    rule = "ResolvedPerson.PreceedingName";
-                } else if (pc.isAfter(name)) {
-                    if (hasNonWhitespace(input.buffer, name.end, pc.start)) {
-                        continue;
-                    }
-                    rule = "ResolvedPerson.SucceedingName";
-                } else if (name.isWithin(pc)) {
-                    // Filter out PERSON name, let PLACE pass.
-                    // Ignore person names that are sub-matches
-                    // NAME: Murtagh in LOC: "General Murtagh Memorial Square"
-                    pc.addRule("Contains.PersonName");
-                    name.setFilteredOut(true);
-                }
-
-                if (rule != null) {
-                    pc.setFilteredOut(true);
-                    resolvedPersons.put(pc.getTextnorm(), name.getText());
-                    pc.addRule(rule);
-                    break;
-                }
-            }
-
-            if (pc.isFilteredOut()) {
+            if (evaluatePersonName(pc, persons, input.buffer)) {
                 continue;
             }
 
@@ -224,31 +190,95 @@ public class PersonNameFilter extends GeocodeRule {
                 continue;
             }
 
-            /* is LOC candidate in ORG name
-             * or ORG name in LOC candidate?
-             */
-            for (TaxonMatch name : orgs) {
-                if (pc.isSameMatch(name)) {
-                    pc.setFilteredOut(true);
-                    pc.isCountry = false;
-                    resolvedOrgs.put(pc.getTextnorm(), name.getText());
-                    pc.addRule("ResolvedOrg");
-                } else if (pc.isWithin(name) && !pc.isCountry) {
-                    // LOC: "Memorial Square" in ORG: "Friends of Memorial Square"
+            if (evaluateOrgName(pc, orgs)) {
+                continue;
+            }
 
-                    // Special conditions:
-                    // City name in the name of a Building or Landmark is worth saving as a location.
-                    // But short one-word names appearing in organization names, may be false positives
-                    // After more evaluation, it seems like presence of a city name in an organization name
-                    // is good evidence to leverage, so do not claim the location name is a resolved org name.
-                    //
-                    pc.addRule(NAME_IN_ORG_RULE);
-                } else if (name.isWithin(pc)) {
-                    name.setFilteredOut(true);
-                    pc.addRule("Contains.OrgName");
-                }
+            evaluateOtherName(pc, others);
+        }
+    }
+
+    private boolean evaluateOtherName(PlaceCandidate pc, List<TaxonMatch> matches) {
+        for (TaxonMatch name : matches) {
+            if (pc.isSameMatch(name)) {
+                pc.setFilteredOut(true);
+                pc.isCountry = false;
+                pc.addRule("Matches.Taxon");
+                return true;
+            } else if (pc.isWithin(name) && !pc.isCountry) {
+                pc.addRule(NAME_IN_ORG_RULE);
+            } else if (name.isWithin(pc)) {
+                name.setFilteredOut(true);
+                pc.addRule("Contains.Taxon");
+                return true;
             }
         }
+        return false;
+    }
+
+    private boolean evaluateOrgName(PlaceCandidate pc, List<TaxonMatch> orgs) {
+        /* is LOC candidate in ORG name
+         * or ORG name in LOC candidate?
+         */
+        for (TaxonMatch name : orgs) {
+            if (pc.isSameMatch(name)) {
+                pc.setFilteredOut(true);
+                pc.isCountry = false;
+                resolvedOrgs.put(pc.getTextnorm(), name.getText());
+                pc.addRule("ResolvedOrg");
+                return true;
+            } else if (pc.isWithin(name) && !pc.isCountry) {
+                // LOC: "Memorial Square" in ORG: "Friends of Memorial Square"
+
+                // Special conditions:
+                // City name in the name of a Building or Landmark is worth saving as a location.
+                // But short one-word names appearing in organization names, may be false positives
+                // After more evaluation, it seems like presence of a city name in an organization name
+                // is good evidence to leverage, so do not claim the location name is a resolved org name.
+                //
+                pc.addRule(NAME_IN_ORG_RULE);
+            } else if (name.isWithin(pc)) {
+                name.setFilteredOut(true);
+                pc.addRule("Contains.OrgName");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean evaluatePersonName(PlaceCandidate pc, List<TaxonMatch> persons, String text) {
+        for (TaxonMatch name : persons) {
+            String rule = null;
+            // Case: LOC in NAME
+            // LOC: "Murtagh" in PERSON: "General Murtagh"
+            if (pc.isSameNorm(name) || pc.isWithin(name)) {
+                rule = "ResolvedPerson";
+            } else if (pc.isBefore(name) && pc.getWordCount() == 1 && !pc.isCountry) {
+                if (hasNonWhitespace(text, pc.end, name.start)) {
+                    continue;
+                }
+                rule = "ResolvedPerson.PreceedingName";
+            } else if (pc.isAfter(name)) {
+                if (hasNonWhitespace(text, name.end, pc.start)) {
+                    continue;
+                }
+                rule = "ResolvedPerson.SucceedingName";
+            } else if (name.isWithin(pc)) {
+                // Filter out PERSON name, let PLACE pass.
+                // Ignore person names that are sub-matches
+                // NAME: Murtagh in LOC: "General Murtagh Memorial Square"
+                pc.addRule("Contains.PersonName");
+                name.setFilteredOut(true);
+            }
+
+            if (rule != null) {
+                pc.setFilteredOut(true);
+                resolvedPersons.put(pc.getTextnorm(), name.getText());
+                pc.addRule(rule);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

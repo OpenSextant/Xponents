@@ -56,7 +56,7 @@ public class XponentGeocoder extends GeoInferencer {
      */
     @Override
     public Collection<GeoInference> geoinferencePlaceMentions(Tweet tw)
-            throws MessageParseException, ExtractionException {
+            throws ExtractionException {
         return null;
     }
 
@@ -113,7 +113,6 @@ public class XponentGeocoder extends GeoInferencer {
     public void configure() throws ConfigException {
 
         tagger = new PlaceGeocoder(true);
-        tagger.enablePersonNameMatching(true);
         // If you really do not want to miss anything -- look at this flag:
         // tagger.setAllowLowerCaseAbbreviations(true);
         Parameters xponentsParams = new Parameters();
@@ -192,7 +191,7 @@ public class XponentGeocoder extends GeoInferencer {
      * or "country"
      */
     @Override
-    public GeoInference geoinferenceTweetAuthor(Tweet tw) throws MessageParseException, ExtractionException {
+    public GeoInference geoinferenceTweetAuthor(Tweet tw) throws ExtractionException {
         return processLocation(tw, (Place) tw.authorGeo, tw.id, "ugeo");
     }
 
@@ -210,7 +209,7 @@ public class XponentGeocoder extends GeoInferencer {
      *                               on running geolocation routines
      */
     @Override
-    public GeoInference geoinferenceTweetStatus(Tweet tw) throws MessageParseException, ExtractionException {
+    public GeoInference geoinferenceTweetStatus(Tweet tw) throws ExtractionException {
         return processLocation(tw, (Place) tw.statusGeo, tw.id, "geo");
     }
 
@@ -558,9 +557,8 @@ public class XponentGeocoder extends GeoInferencer {
      * @param g
      *          place that has some name/prov/country or name/ADM1/CC hiearchy
      * @return confidence. greater than 0 means something was found.
-     * @throws ExtractionException
      */
-    public int inferProvinceByHierarchy(Tweet tw, Place g) throws ExtractionException {
+    public int inferProvinceByHierarchy(Tweet tw, Place g) {
 
         String cc = g.getCountryCode();
         String adm1 = g.getAdmin1();

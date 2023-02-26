@@ -33,10 +33,7 @@
 package org.opensextant.extractors.geo;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
@@ -78,10 +75,10 @@ public class PlaceGeocoder extends GazetteerMatcher
      */
     private XCoord xcoord = null;
     private PersonNameFilter personNameRule = null;
-    private TaxonMatcher personMatcher = null;
+    private TaxonMatcher taxonTagger = null;
     private Map<String, Country> countryCatalog = null;
     private GeonamesUtility nameHelper = null;
-
+    public Set<String> taxonCatalogs = new HashSet<>();
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
 
@@ -268,21 +265,21 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         // Names of Orgs and Persons.
         //
-        if (isPersonNameMatchingEnabled()) {
-            try {
-                personMatcher = new TaxonMatcher();
-                personMatcher.excludeTaxons("place."); /* but allow org., person., etc. */
-                /*
-                 * Default catalog must be built. Extraction ./XTax folder has script for
-                 * populating a catalog.
-                 */
-                personMatcher.addCatalogFilter("JRC");
-                personMatcher.addCatalogFilter("nationality");
-                personMatcher.addCatalogFilter("person_names");
+        try {
+            // This matcher will return everything, but for Geotags it
+            // will filter out Persons & Orgs from catalogs below.
+            taxonTagger = new TaxonMatcher();
+            taxonTagger.excludeTaxons("place."); /* but allow org., person., etc. */
+            /*
+             * Default catalog must be built. Extraction ./XTax folder has script for
+             * populating a catalog.
+             */
+            taxonCatalogs.add("JRC");
+            taxonCatalogs.add("nationality");
+            taxonCatalogs.add("person_names");
 
-            } catch (IOException err) {
-                throw new ConfigException("XTax resource not available.");
-            }
+        } catch (IOException err) {
+            throw new ConfigException("XTax resource not available.");
         }
 
         // Un-filter city names that can be resolved if other ADMIN places line up.
@@ -353,8 +350,8 @@ public class PlaceGeocoder extends GazetteerMatcher
     @Override
     public void close() {
         super.close();
-        if (personMatcher != null) {
-            personMatcher.close();
+        if (taxonTagger != null) {
+            taxonTagger.close();
         }
     }
 
@@ -369,10 +366,22 @@ public class PlaceGeocoder extends GazetteerMatcher
         return taggingParams.tag_coordinates;
     }
 
+    /**
+     * Person name matching is ALWAYS on,
+     * this flag indicates if results are reported in returned array
+     * @deprecated This has no effect. Tagging Parameters here are mainly considered for filtering output.
+     * @return
+     */
+    @Deprecated
     public boolean isPersonNameMatchingEnabled() {
         return taggingParams.tag_names;
     }
 
+    /**
+     * @deprecated
+     * @param b
+     */
+    @Deprecated
     public void enablePersonNameMatching(boolean b) {
         taggingParams.tag_names = b;
     }
@@ -474,9 +483,8 @@ public class PlaceGeocoder extends GazetteerMatcher
         // Province/Country if possible.
         //
         coordinates = parseGeoCoordinates(input);
-        if (coordinates != null) {
-            matches.addAll(coordinates);
-        }
+        matches.addAll(coordinates);
+
         if (candidates == null) {
             return matches;
         }
@@ -503,10 +511,15 @@ public class PlaceGeocoder extends GazetteerMatcher
         // 2. NON-PLACE ID. Tag person and org names to negate celebrity names or
         // well-known individuals who share a city name. "Tom Jackson", "Bill Clinton"
         //
-        parseKnownNonPlaces(input, candidates, matches);
+        parseKnownNonPlaces(input, candidates, matches, jobParams);
 
         // Measure duration of tagging.
         this.taggingTimes.addTimeSince(t1);
+
+        if (candidates.isEmpty()) {
+            // May contain found taxons from known places step above.
+            return matches;
+        }
 
         // Evaluate independent rules, and any that user has added.
         //
@@ -589,27 +602,24 @@ public class PlaceGeocoder extends GazetteerMatcher
      *
      * @throws ExtractionException
      */
-    private void parseKnownNonPlaces(TextInput input, List<PlaceCandidate> candidates, List<TextMatch> matches) {
+    private void parseKnownNonPlaces(TextInput input, List<PlaceCandidate> candidates, List<TextMatch> matches,
+                                     Parameters params) throws ExtractionException {
 
-        if (!isPersonNameMatchingEnabled()) {
+        List<TextMatch> nonPlaces = taxonTagger.extract(input, params);
+        if (nonPlaces.isEmpty()) {
             return;
         }
-
-        // If this step fails miserably, do not raise error. Log the error and return nothing found.
-        //
-        List<TextMatch> nonPlaces = null;
-        try {
-            nonPlaces = personMatcher.extract(input.buffer);
-            if (nonPlaces == null || nonPlaces.isEmpty()) {
-                return;
-            }
-        } catch (Exception err) {
-            log.error(err.getMessage());
-            return;
-        }
+        /* Taxon Matcher tags for all taxons in your own `taxcat` tagger index
+         * The default one has JRC, WFB, person names, nationalities.
+         * ALL these taxons will be tagged and compared against geogrpahic names.
+         *
+         * Only if caller requests `taxons` (or persons, orgs, etc) in service will these be output.
+         * The primary purpose here is to account for things that are NOT geographic names.
+         */
 
         List<TaxonMatch> persons = new ArrayList<>();
         List<TaxonMatch> orgs = new ArrayList<>();
+        List<TaxonMatch> others = new ArrayList<>();
 
         log.debug("Matched {}", nonPlaces.size());
 
@@ -618,70 +628,61 @@ public class PlaceGeocoder extends GazetteerMatcher
                 continue;
             }
 
-            if (tm.isLower() && !input.isLower) {
+            // Ignore lower case match when lower case tagging is not enabled
+            // Allow lower case match if input is entirely lower case
+            if (tm.isLower() && !input.isLower && !taggingParams.tag_lowercase) {
                 tm.setFilteredOut(true);
                 continue;
             }
 
+            boolean sillyOrShort = tm.isLower() || tm.getLength() < 4;
             TaxonMatch tag = (TaxonMatch) tm;
-            //
-            // For the purposes of geocoding/geoparsing filter out ALL
-            // TaxonMatches. Any place names should reside back in
-            // gazetteer. If XTax does have place or location data, that would be new.
-            //
-            // tm.setFilteredOut(true);
+
             for (Taxon taxon : tag.getTaxons()) {
                 String node = taxon.name.toLowerCase();
-                // If you matched a Person name or an Organization ACRONYM
-                // add the TaxonMatch (TextMatch) to negate place
-                // name spans that are not places.
+                // Match negation based on entity class Place, Person, Org, Nationality, Other Taxon
+                // ==============================
                 if (node.startsWith("person")) {
-                    persons.add(tag);
-                    break;
-                } else if (node.startsWith("org.")) {
-                    if (taxon.isAcronym && !tm.isUpper()) {
-                        continue;
+                    if (node.startsWith("person_name.")) {
+                        // Filter out common lowercase first names  or last names that are also stopwords.
+                        // ==============================
+                        if (this.filter.filterOut(input.langid, tag.getTextnorm()) && sillyOrShort) {
+                            continue;
+                        }
                     }
-                    orgs.add(tag);
-                    break;
-                } else if (node.startsWith("nationality.")) {
                     persons.add(tag);
-                    // If you matched any nationalities they usually have a tag set of the form:
-                    // cc+XXX, where XXX is a ISO country code.
-                    // The tag may be absent as some ethnicities may be mixed in and indicate no
-                    // country.
+                } else if (node.startsWith("nationality.")) {
+                    // Nationality infers ==> Country.  Grab country code from Taxon
+                    // ==============================
                     if (taxon.hasTags()) {
                         for (String t : taxon.tagset) {
                             int x = t.indexOf("cc+");
                             if (x >= 0) {
                                 String isocode = t.substring(x + 3);
                                 this.countryInScope(isocode);
-                                // TODO: Leverage nationalities in some other way?
-                                // nationalities.put(tag.getText(), isocode);
                             }
                         }
-                    } else {
-                        this.log.debug("Taxon has not tags {}", taxon);
                     }
-                } else if (node.startsWith("person_name.")) {
-                    // Ignore names that are already stop terms. Okay, 'Will Smith'
-                    // passes, but 'will i am' is filtered out.
-                    // Short names that are also stopwords are filtered out. Names that are
-                    // stopwords,
-                    // but appear as proper names may be valid first or last names
-                    //
-                    boolean sillyOrShort = tm.isLower() || tm.getLength() < 4;
-                    if (this.filter.filterOut(input.langid, tag.getTextnorm()) && sillyOrShort) {
+                    others.add(tag);
+                } else {
+                    if (taxon.isAcronym && !tm.isUpper()) {
+                        // Mismatch  ABC vs. Abc
                         continue;
                     }
-                    persons.add(tag);
+                    if (node.startsWith("org.")) {
+                        orgs.add(tag);
+                    } else {
+                        others.add(tag);
+                    }
                 }
             }
         }
 
-        personNameRule.evaluateNamedEntities(input, candidates, persons, orgs);
+        // Once all non-Places entities are found, line them up against existing Place Candidates.
+        personNameRule.evaluateNamedEntities(input, candidates, persons, orgs, others);
         matches.addAll(persons);
         matches.addAll(orgs);
+        matches.addAll(others);
     }
 
     /**
@@ -689,17 +690,17 @@ public class PlaceGeocoder extends GazetteerMatcher
      * country
      */
     private List<TextMatch> parseGeoCoordinates(TextInput input) {
+        List<TextMatch> coords = new ArrayList<>();
         if (!isCoordExtractionEnabled()) {
-            return null;
+            return coords;
         }
 
-        List<TextMatch> coords = xcoord.extract(input);
+        coords = xcoord.extract(input);
         if (!coords.isEmpty()) {
             coordRule.addCoordinates(coords);
             adm1Rule.setProvinces(relevantProvinces.values());
-            return coords;
         }
-        return null;
+        return coords;
     }
 
     /**
@@ -879,8 +880,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     }
 
     /**
-     * Compund-method that is crucial in reverse geocoding COORDINATE to KNOWN
-     * PLACE.
+     * Compund-method that is crucial in reverse geocoding COORDINATE to KNOWN PLACE.
      * <p>
      * A method to retrieve one or more distinct admin boundaries containing the
      * coordinate. This depends on resolution of gazetteer at hand. Secondarily as nearby places are

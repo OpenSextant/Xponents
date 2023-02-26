@@ -32,6 +32,9 @@ package org.opensextant.extractors.xtax;
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
 //
 
+import java.io.IOException;
+import java.util.*;
+
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -49,11 +52,9 @@ import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.SolrMatcherSupport;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.processing.Parameters;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * TaxonMatcher uses SolrTextTagger to tag mentions of phrases in documents. The phrases can be
@@ -83,15 +84,18 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
     private boolean tagAll = true;
+    private boolean tagLowerCase = false;
+
+    // acronym filter May change later:
     private final boolean filterNonAcronyms = true;
+
     /** Caller can adjust this default constant if shorter tags are desired. */
-    public static int DEFAULT_MIN_LENGTH = 3;
+    public static final int DEFAULT_MIN_LENGTH = 3;
 
     /**
-     * @throws IOException
-     * @throws ConfigException
+     * @throws ConfigException errors related to configuration, resource files or Solr setup
      */
-    public TaxonMatcher() throws IOException, ConfigException {
+    public TaxonMatcher() throws ConfigException {
         configure();
     }
 
@@ -174,7 +178,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     /**
      * Extractor interface: getName
      *
-     * @return
+     * @return Extractor name
      */
     @Override
     public String getName() {
@@ -244,7 +248,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * Add prefixes of types of taxons you do not want returned. e.g., "Place...."
      * exlclude will allow "Org" and "Person" taxons to pass on thru
      *
-     * @param prefix
+     * @param prefix taxon name prefix
      */
     public void excludeTaxons(String prefix) {
         taxonExclusionFilter.add(prefix.toLowerCase());
@@ -259,7 +263,22 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      */
     @Override
     public List<TextMatch> extract(String input_buf) throws ExtractionException {
-        return extractorImpl(null, input_buf);
+        return extractorImpl(null, input_buf, null);
+    }
+
+    /**
+     * Parameterized extraction, e.g., for REST service or other fine tuning.
+     * @param input text to tag
+     * @param params tagging parameters
+     * @return array of TextMatch
+     * @throws ExtractionException on Solr Tagger error
+     */
+    public List<TextMatch> extract(TextInput input, Parameters params) throws ExtractionException {
+        return extractorImpl(input.id, input.buffer, params);
+    }
+
+    public void setAllowLowerCase(boolean b) {
+        this.tagLowerCase = b;
     }
 
     public static final String[] commonTaxonLabels = {"org", "person", "nationality"};
@@ -281,10 +300,10 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * @param id  doc id
      * @param buf input text
      * @return list of matches or Null
-     * @throws ExtractionException
+     * @throws ExtractionException on Solr Tagger error
      */
     @SuppressWarnings("unchecked")
-    private List<TextMatch> extractorImpl(String id, String buf) throws ExtractionException {
+    private List<TextMatch> extractorImpl(String id, String buf, Parameters params) throws ExtractionException {
         /*
          * Implementation notes:
          * "tags" are instances of the matching text spans from your input buffer
@@ -302,17 +321,19 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
          */
 
         String docid = (id != null ? id : NO_DOC_ID);
+        List<TextMatch> matches = new ArrayList<>();
+        if (params != null) {
+            this.setAllowLowerCase(params.tag_lowercase);
+        }
 
         Map<Object, Object> beanMap = new HashMap<>(100);
         QueryResponse response = tagTextCallSolrTagger(buf, docid, beanMap);
         /* Exit early if catalog or taxon filters yield no entries */
         if (beanMap.isEmpty()) {
-            return null;
+            return matches;
         }
 
-        List<TextMatch> matches = new ArrayList<>();
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
-
         log.debug("TAGS SIZE = {}", tags.size());
 
         TaxonMatch m;
@@ -326,21 +347,32 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
                 // Trivial length filter
                 continue;
             }
+            String matchtext = buf.substring(x1, x2);
+            /*
+            Major pre-filters:  Avoid tagging these situations, for performance and quality reasons:
 
-            m = new TaxonMatch(x1, x2);
-            m.match_id = String.format("taxon@%d", tag_count);
-
+              "Word    Word"        Valid match, but whitespace separation is abnormal
+              "word word"           Valid match, but content is all lowercase.  Lower case matching is OFF by default
+             */
             // matchText can be null.
-            if (TextUtils.countFormattingSpace(buf.substring(m.start, m.end)) > 1) {
+            if (TextUtils.countFormattingSpace(matchtext) > 1) {
                 // Phrases with words broken across more than one line are not valid matches.
                 // Phrase with a single TAB is okay
                 continue;
             }
+
+            if (!tagLowerCase && TextUtils.isLower(matchtext)) {
+                continue;
+            }
+
+            m = new TaxonMatch(x1, x2);
+            m.match_id = String.format("taxon@%d", tag_count);
+
             /*
              * Set Text and immediately determine if there is some validity
              * to this match
              */
-            m.setText(buf.substring(m.start, m.end));
+            m.setText(matchtext);
             m.setFilteredOut(ruleFilter.filterOut(m.getText()));
 
             List<?> taxonIDs = (List<?>) tag.get("ids");
@@ -376,6 +408,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         return matches;
     }
 
+
     /**
      * Tag the input
      *
@@ -385,7 +418,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
-        return extractorImpl(input.id, input.buffer);
+        return extractorImpl(input.id, input.buffer, null);
     }
 
     public static List<Taxon> search(SolrClient index, String query) throws SolrServerException, IOException {
@@ -415,7 +448,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * @param query Solr "q" parameter only
      * @return list of taxons
      * @throws SolrServerException on err
-     * @throws IOException
+     * @throws IOException on err
      */
     public List<Taxon> search(String query) throws SolrServerException, IOException {
         return search(this.solr.getInternalSolrClient(), query);
@@ -427,7 +460,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * @param qparams Solr parameters in full.
      * @return list of taxons
      * @throws SolrServerException on err
-     * @throws IOException
+     * @throws IOException on err
      */
     public List<Taxon> search(SolrParams qparams) throws SolrServerException, IOException {
         return search(this.solr.getInternalSolrClient(), qparams);

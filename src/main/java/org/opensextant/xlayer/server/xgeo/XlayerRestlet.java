@@ -71,8 +71,6 @@ public class XlayerRestlet extends XlayerApp {
         Parameters taggerParams = new Parameters();
         taggerParams.resolve_localities = true;
         tagger.setParameters(taggerParams);
-        // See Xponents concept of Parameters
-        tagger.enablePersonNameMatching(true);
         tagger.configure();
 
         // TODO: refine this filter list. Use "/filters/non-placenames,user.csv" going forward.

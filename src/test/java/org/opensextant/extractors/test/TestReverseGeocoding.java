@@ -18,7 +18,6 @@ public class TestReverseGeocoding  {
             testParams.tag_coordinates = true;
             PlaceGeocoder geocoderImpl = new PlaceGeocoder(true);
             geocoderImpl.setParameters(testParams);
-            geocoderImpl.enablePersonNameMatching(true);
             geocoderImpl.setAllowLowerCaseAbbreviations(false);
             geocoderImpl.configure();
 
