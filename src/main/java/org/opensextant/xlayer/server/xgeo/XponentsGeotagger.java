@@ -1,5 +1,8 @@
 package org.opensextant.xlayer.server.xgeo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jodd.json.JsonObject;
 import org.json.JSONException;
 import org.opensextant.data.TextInput;
@@ -21,17 +24,17 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
 /**
  * A RESTFul application of PlaceGeocoder
  */
 public class XponentsGeotagger extends TaggerResource {
 
-    private static final String[] extractors = {"xgeo", "xtemp", "xpostal"};
-    private final HashSet<String> extractorSet = new HashSet<>();
+    static {
+        extractorSet.add(GEO_TAGGER);
+        extractorSet.add(POSTAL_TAGGER);
+        extractorSet.add(DATE_TAGGER);
+        extractorSet.add(TAXON_TAGGER);
+    }
 
     /**
      * Restlet resource that pulls its configuration from Context.
@@ -40,7 +43,6 @@ public class XponentsGeotagger extends TaggerResource {
         super();
         getContext();
         log = Context.getCurrentLogger();
-        extractorSet.addAll(Arrays.asList(extractors));
     }
 
     /**
@@ -119,6 +121,19 @@ public class XponentsGeotagger extends TaggerResource {
         return process(item, job);
     }
 
+    private boolean tag_geo(Parameters p) {
+        return p.tag_coordinates || p.tag_countries || p.tag_places;
+    }
+
+    /** Extracting Taxons ~ keyphrases, etc. ~ is a secondary function.
+     *
+     * So either caller explicity asks for all taxons OR
+     * they ask for "taxons" and no geo features.
+     */
+    private boolean tag_taxons(Parameters p) {
+        return p.tag_all_taxons || p.tag_taxons;
+    }
+
     /**
      * Process the text for the given document.
      *
@@ -135,50 +150,52 @@ public class XponentsGeotagger extends TaggerResource {
         debug("Processing plain text doc");
 
         try {
-            if (prodMode) {
-                PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor("xgeo");
-                List<TextMatch> matches = xgeo.extract(input, jobParams);
+            List<TextMatch> matches = new ArrayList<>();
 
-                if (jobParams.tag_patterns) {
-                    XTemporal xt = (XTemporal) getExtractor("xtemp");
-                    matches.addAll(xt.extract(input));
-                }
-                if (jobParams.tag_postal) {
-                    // TODO: PostalGeocoder code may operate with older index
-                    //       but extractor will be null here if that *postal* index is not present.
-                    PostalGeocoder pg = (PostalGeocoder) getExtractor("xpostal");
-                    if (pg != null) {
-                        List<TextMatch> postalMatches = pg.extract(input);
-                        // Associate raw geotags with Postal matches, so any Postal codes are fully geolocated.
-                        // Filter out any postal code that does not line up with other geography in input text.
-                        if (!postalMatches.isEmpty()) {
-                            // This part combines the output from both Postal and Place Geocoders.
-                            //
-                            // 1. link postal geotags with other non-postal geotags.
-                            PostalGeocoder.associateMatches(matches, postalMatches);
-                            // 2. regenerate new spans and geocodes;  This may filter in/out geotags.
-                            List<TextMatch> derivedMatches = PostalGeocoder.deriveMatches(postalMatches, input);
-                            // 3. add the superset of postal+derived tags.
-                            matches.addAll(derivedMatches);
-                        }
+            // BOTH geo and taxons could be requested:  features = "geo", "all-taxons"
+
+            // `geo` tagging
+            if (tag_geo(jobParams) || tag_taxons(jobParams)) {
+                PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor(GEO_TAGGER);
+                matches.addAll(xgeo.extract(input, jobParams));
+            }
+            if (jobParams.tag_patterns) {
+                XTemporal xt = (XTemporal) getExtractor(DATE_TAGGER);
+                matches.addAll(xt.extract(input));
+            }
+            if (jobParams.tag_postal) {
+                // TODO: PostalGeocoder code may operate with older index
+                //       but extractor will be null here if that *postal* index is not present.
+                PostalGeocoder pg = (PostalGeocoder) getExtractor(POSTAL_TAGGER);
+                if (pg != null) {
+                    List<TextMatch> postalMatches = pg.extract(input);
+                    // Associate raw geotags with Postal matches, so any Postal codes are fully geolocated.
+                    // Filter out any postal code that does not line up with other geography in input text.
+                    if (!postalMatches.isEmpty()) {
+                        // This part combines the output from both Postal and Place Geocoders.
+                        //
+                        // 1. link postal geotags with other non-postal geotags.
+                        PostalGeocoder.associateMatches(matches, postalMatches);
+                        // 2. regenerate new spans and geocodes;  This may filter in/out geotags.
+                        List<TextMatch> derivedMatches = PostalGeocoder.deriveMatches(postalMatches, input);
+                        // 3. add the superset of postal+derived tags.
+                        matches.addAll(derivedMatches);
                     }
                 }
-                if (isDebug()) {
-                    debug(String.format("CURRENT MEM USAGE(K)=%d", RuntimeTools.reportMemory()));
-                }
-                /*
-                 * formulate matches as JSON output.
-                 */
-                filter(matches, jobParams);
-                return format(matches, jobParams);
             }
+            if (isDebug()) {
+                debug(String.format("CURRENT MEM USAGE(K)=%d", RuntimeTools.reportMemory()));
+            }
+            /*
+             * formulate matches as JSON output.
+             */
+            filter(matches, jobParams);
+            return format(matches, jobParams);
 
         } catch (Exception processingErr) {
             error("Failure on doc " + input.id, processingErr);
             return status("FAIL", processingErr.getMessage());
         }
-
-        return status("TEST", "nothing done in test with doc=" + input.id);
     }
 
     /**
@@ -204,13 +221,15 @@ public class XponentsGeotagger extends TaggerResource {
      */
     public void filter(List<TextMatch> variousMatches, Parameters params) {
         /* TODO: filter other matches more seriously.
-         *  Marking Taxons as filteredOut is a hack.
+         *  Marking Taxons as filteredOut is the only output filter for now.
          */
-        if (!params.tag_taxons) {
-            for (TextMatch m : variousMatches) {
-                if (m instanceof TaxonMatch) {
-                    m.setFilteredOut(true);
-                }
+        if (params.tag_taxons || params.tag_all_taxons) {
+            return;
+        }
+        // Taxons were not requested:
+        for (TextMatch m : variousMatches) {
+            if (m instanceof TaxonMatch) {
+                m.setFilteredOut(true);
             }
         }
     }

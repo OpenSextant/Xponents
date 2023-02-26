@@ -12,7 +12,7 @@ import org.restlet.data.Protocol;
  */
 public class XlayerServer extends Component {
 
-    private static String USAGE = "Usage:\n\t\tXlayerServer <port>";
+    private static final String USAGE = "Usage:\n\t\tXlayerServer <port>";
 
     public XlayerServer() {
         this(8888);

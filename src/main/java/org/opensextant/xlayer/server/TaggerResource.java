@@ -20,23 +20,20 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public abstract class TaggerResource extends ServerResource {
 
+    public static final String GEO_TAGGER = "xgeo";
+    public static final String POSTAL_TAGGER = "xpostal";
+    public static final String DATE_TAGGER = "xtemp";
+    public static final String TAXON_TAGGER = "xtax"; // Unused.
+
+    protected static final HashSet<String> extractorSet = new HashSet<>();
+
     /**
      * The log.
      */
     protected Logger log = null;
-    /**
-     * The test mode.
-     */
-    protected static final boolean testMode = false;
-    /**
-     * The prod mode.
-     */
-    protected static final boolean prodMode = !testMode;
-
     public TaggerResource() {
         super();
     }
-
     protected String operation = null;
 
     public final static String FLD_FEATURES = "features";
@@ -123,6 +120,7 @@ public abstract class TaggerResource extends ServerResource {
         }
 
         // Request tagging on demand.
+        p.tag_all_taxons = kv.contains("all-taxons");
         p.tag_taxons = (kv.contains("taxons") || kv.contains("orgs") || kv.contains("persons"));
         p.tag_patterns = kv.contains("patterns") || kv.contains("dates");
 
@@ -142,6 +140,7 @@ public abstract class TaggerResource extends ServerResource {
         job.tag_postal = false;
 
         job.tag_taxons = false;
+        job.tag_all_taxons = false;
         job.tag_patterns = false;
         job.output_geohash = false;
         job.output_filtered = false;

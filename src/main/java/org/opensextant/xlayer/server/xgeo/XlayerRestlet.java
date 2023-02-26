@@ -1,5 +1,8 @@
 package org.opensextant.xlayer.server.xgeo;
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.opensextant.ConfigException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extractors.geo.PlaceGeocoder;
@@ -11,9 +14,6 @@ import org.opensextant.xlayer.server.XlayerControl;
 import org.restlet.Context;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
-
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * Xlayer Restlet app constructs the application, initializes resources, etc.
@@ -39,15 +39,10 @@ public class XlayerRestlet extends XlayerApp {
             banner();
             configure();
             Context ctx = getContext();
-            if (tagger != null) {
-                ctx.getAttributes().put("xgeo", tagger);
-            }
-            if (dateTagger != null) {
-                ctx.getAttributes().put("xtemp", dateTagger);
-            }
-            if (postalGeocoder != null) {
-                ctx.getAttributes().put("xpostal", postalGeocoder);
-            }
+            ctx.getAttributes().put("xgeo", tagger);
+            ctx.getAttributes().put("xtemp", dateTagger);
+            ctx.getAttributes().put("xpostal", postalGeocoder);
+
             ctx.getAttributes().put("version", this.version);
             info("%%%%   Xponents Geo Phase Configured");
         } catch (Exception err) {
@@ -80,8 +75,7 @@ public class XlayerRestlet extends XlayerApp {
         tagger.enablePersonNameMatching(true);
         tagger.configure();
 
-        // TODO: refine this filter list. Use "/filters/non-placenames,user.csv" going
-        // forward.
+        // TODO: refine this filter list. Use "/filters/non-placenames,user.csv" going forward.
         //
         String userFilterPath = "/filters/non-placenames,user.csv";
         URL filterFile = getClass().getResource(userFilterPath);

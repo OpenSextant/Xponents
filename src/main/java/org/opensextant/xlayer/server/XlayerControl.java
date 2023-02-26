@@ -2,7 +2,6 @@ package org.opensextant.xlayer.server;
 
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
-import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.processing.Parameters;
 import org.restlet.Context;
 import org.restlet.ext.json.JsonRepresentation;
@@ -18,7 +17,11 @@ public class XlayerControl extends TaggerResource {
     }
 
     public void stop() {
-        Extractor x = getExtractor("xgeo");
+        Extractor x = getExtractor(GEO_TAGGER);
+        if (x != null) {
+            x.cleanup();
+        }
+        x = getExtractor(TAXON_TAGGER);
         if (x != null) {
             x.cleanup();
         }
@@ -34,12 +37,12 @@ public class XlayerControl extends TaggerResource {
          * xid argument is ignored. This default case, only the 'xgeo' object is queried
          * to stop it.
          */
-        PlaceGeocoder xgeo = (PlaceGeocoder) this.getApplication().getContext().getAttributes().get("xgeo");
-        if (xgeo == null) {
-            info("Misconfigured, no context-level pipeline initialized");
-            return null;
+        Extractor extor = (Extractor) this.getApplication().getContext().getAttributes().get(xid);
+        if (extor != null) {
+            return extor;
         }
-        return xgeo;
+        info("Misconfigured, " + xid + " Not found");
+        return null;
     }
 
     @Override
