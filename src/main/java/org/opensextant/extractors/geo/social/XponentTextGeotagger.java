@@ -49,7 +49,6 @@ public class XponentTextGeotagger extends XponentGeocoder {
         // new GazetteerMatcher(true /*allow lowercase tagging*/);
         tagger = new PlaceGeocoder(true);
 
-        tagger.enablePersonNameMatching(true);
         // If you really do not want to miss anything -- look at this flag:
         // tagger.setAllowLowerCaseAbbreviations(true);
         Parameters xponentsParams = new Parameters();
@@ -112,7 +111,7 @@ public class XponentTextGeotagger extends XponentGeocoder {
      * @throws ExtractionException   on tagging erorr
      */
     @Override
-    public GeoInference geoinferenceTweetAuthor(Tweet tw) throws MessageParseException, ExtractionException {
+    public GeoInference geoinferenceTweetAuthor(Tweet tw) throws ExtractionException {
         return null;
     }
 
@@ -130,7 +129,7 @@ public class XponentTextGeotagger extends XponentGeocoder {
      *                               on running geolocation routines
      */
     @Override
-    public GeoInference geoinferenceTweetStatus(Tweet tw) throws MessageParseException, ExtractionException {
+    public GeoInference geoinferenceTweetStatus(Tweet tw) throws ExtractionException {
         return null;
     }
 
@@ -142,7 +141,7 @@ public class XponentTextGeotagger extends XponentGeocoder {
      */
     @Override
     public Collection<GeoInference> geoinferencePlaceMentions(Tweet tw)
-            throws MessageParseException, ExtractionException {
+            throws ExtractionException {
         return processLocationMentions(tw, (Place) tw.authorGeo, tw.id, "geo");
     }
 

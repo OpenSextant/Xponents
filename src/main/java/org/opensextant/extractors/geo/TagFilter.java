@@ -18,8 +18,6 @@ import org.opensextant.ConfigException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.util.LuceneStopwords;
 import org.opensextant.util.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 /*
@@ -74,7 +72,7 @@ public class TagFilter extends MatchFilter {
                 "ja", "ko", "zh",
                 "ar", "fa", "ur",
                 "th", "tr", "id", "tl", "vi",
-                "ru", "it", "pt", "de", "nl", "es", "en" };
+                "ru", "it", "pt", "de", "nl", "es", "en"};
         loadLanguageStopwords(langSet);
     }
 

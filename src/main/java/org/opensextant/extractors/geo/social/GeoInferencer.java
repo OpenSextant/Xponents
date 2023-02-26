@@ -18,7 +18,6 @@ package org.opensextant.extractors.geo.social;
 
 import java.util.Collection;
 
-import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
@@ -62,10 +61,9 @@ public abstract class GeoInferencer extends SocialGeo {
      * @param tw
      *           DeepEye Social Tweet
      * @return annot DeepEye Annotation
-     * @throws MessageParseException
      * @throws ExtractionException
      */
-    public abstract GeoInference geoinferenceTweetAuthor(Tweet tw) throws MessageParseException, ExtractionException;
+    public abstract GeoInference geoinferenceTweetAuthor(Tweet tw) throws ExtractionException;
 
     /**
      * Infer location of message, if any such metadata is present. Result is a
@@ -76,10 +74,9 @@ public abstract class GeoInferencer extends SocialGeo {
      * @param tw
      *           DeepEye Social Tweet
      * @return inference
-     * @throws MessageParseException
      * @throws ExtractionException
      */
-    public abstract GeoInference geoinferenceTweetStatus(Tweet tw) throws MessageParseException, ExtractionException;
+    public abstract GeoInference geoinferenceTweetStatus(Tweet tw) throws ExtractionException;
 
     /**
      * Extract and geocode any mentioned places, countries, coordinates in social
@@ -91,7 +88,7 @@ public abstract class GeoInferencer extends SocialGeo {
      * @return
      */
     public abstract Collection<GeoInference> geoinferencePlaceMentions(Tweet tw)
-            throws MessageParseException, ExtractionException;
+            throws ExtractionException;
 
     /**
      * If there are by-products of geotagging or inferencing that are worth

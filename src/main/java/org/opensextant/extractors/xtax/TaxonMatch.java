@@ -28,7 +28,7 @@ import org.opensextant.util.TextUtils;
  */
 public class TaxonMatch extends TextMatch {
 
-    public static String TAXON_LABEL = "taxon";
+    public static final String TAXON_LABEL = "taxon";
 
     public TaxonMatch(int x1, int x2) {
         super(x1, x2);

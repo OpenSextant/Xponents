@@ -10,7 +10,7 @@ public class TaxonFilter extends MatchFilter {
         // no configuration
     }
 
-    static Pattern anyInvalidPunct = Pattern.compile("[\\p{Punct}&&[^-_.'`]]+");
+    static final Pattern anyInvalidPunct = Pattern.compile("[\\p{Punct}&&[^-_.'`]]+");
 
     public static boolean irregularPunctPatterns(final String t) {
         return anyInvalidPunct.matcher(t).find();
