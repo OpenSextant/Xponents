@@ -140,7 +140,7 @@ public final class GeocoordNormalization {
             m.setCoordinate(dmlat, dmlon);
 
             if (!m.isFilteredOut()) {
-                m.setFilteredOut(m.evaluateInvalidDashes(fieldValues)|| m.evaluateInvalidPunct(fieldValues));
+                m.setFilteredOut(m.evaluateInvalidDashes(fieldValues) || m.evaluateInvalidPunct(fieldValues));
             }
             m.coord_text = m.lat_text + " " + m.lon_text;
             set_precision(m);
@@ -160,7 +160,7 @@ public final class GeocoordNormalization {
                 // 1 is normal. 2 arise from having odd-digit offsets in
                 // NorthingEasting
                 //
-                if (mgrs_candidates != null) {
+                if (mgrs_candidates.length > 0) {
                     MGRS mgrs = mgrs_candidates[0];
 
                     m.coord_text = mgrs.toString();

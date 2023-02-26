@@ -28,6 +28,8 @@ import org.opensextant.util.TextUtils;
  */
 public class MGRSParser {
 
+    private static final MGRS[] empty = {};
+
     /**
      * Given the match parse MGRS as best as can be done.
      * TODO: provide level of confidence. Items that match MGRS scheme perfectly are
@@ -36,21 +38,21 @@ public class MGRSParser {
      * etc.
      *
      * @param rawtext  the rawtext
-     * @param _text    text normalized, optionally
+     * @param txt    text normalized, optionally
      * @param elements matched groups within regex pattern
      * @return array of possible MGRS interpretations.
      */
-    public static MGRS[] parseMGRS(String rawtext, String _text, Map<String, String> elements) {
+    public static MGRS[] parseMGRS(String rawtext, String txt, Map<String, String> elements) {
         // pad MGRS
         // remove whitespace
         // set MGRS
         // set lat, lon
 
         String text = null;
-        if (_text == null) {
+        if (txt == null) {
             text = TextUtils.delete_whitespace(rawtext);
         } else {
-            text = _text;
+            text = txt;
         }
 
         // Filter out trivial DD DEG MM pattern.
@@ -59,14 +61,14 @@ public class MGRSParser {
         if (text.length() < 6) {
             // less than 6 chars long this is either a zone with no offset
             // or some sort of false positive. Pattern should not match this
-            return null;
+            return empty;
         }
 
         if (text.length() < 8) {
             String _test = text.substring(2, 5);
 
             if (_test.equalsIgnoreCase("DEG")) {
-                return null;
+                return empty;
             }
         }
 
@@ -76,7 +78,7 @@ public class MGRSParser {
         // NOTE: an MGRS pattern may indeed look like a date+time in some cases but it
         // can actually be a valid MGRS. Take care not to filter out too aggressively.
         if (filterOutMonths(text)) {
-            return null;
+            return empty;
         }
 
         String gzd = elements.get("MGRSZone");
@@ -85,7 +87,7 @@ public class MGRSParser {
          * Gridzone required.
          */
         if (gzd == null) {
-            return null;
+            return empty;
         }
 
         // GZD Rule: 00 not allowed in 5-digit GZD
@@ -94,17 +96,17 @@ public class MGRSParser {
         int num2 = parseInt(gzd.substring(0, 2));
 
         if (num2 == 0 || (num1 == 0 && gzd.length() == 2)) {
-            return null;
+            return empty;
         }
 
         if (num1 < 0) {
             // Pattern should have never matched.
-            return null;
+            return empty;
         }
 
         // GZD Rule numbered zones not greate than 60
         if (num2 > 60) {
-            return null;
+            return empty;
         }
 
         // ---------------------------------------|
@@ -130,7 +132,7 @@ public class MGRSParser {
         boolean odd_len = ((digits & 0x0001) == 1);
 
         if (!isValidEastingNorthing(ne, odd_len)) {
-            return null;
+            return empty;
         }
 
         if (!odd_len) {
@@ -141,7 +143,7 @@ public class MGRSParser {
             // whitespace
             // ----------------------------
             //
-            return new MGRS[] { new MGRS(text) };
+            return new MGRS[]{new MGRS(text)};
         } else {
             // ----------------------------
             // Slightly obscure case that is possibly a typo or Easting/Northing disturbed.
@@ -175,7 +177,7 @@ public class MGRSParser {
                 mgrs2.insert(0, Q);
                 mgrs2.insert(0, gzd);
 
-                return new MGRS[] { new MGRS(mgrs1.toString()), new MGRS(mgrs2.toString()) };
+                return new MGRS[]{new MGRS(mgrs1.toString()), new MGRS(mgrs2.toString())};
             }
 
             nenorm = TextUtils.squeeze_whitespace(ne);
@@ -202,7 +204,7 @@ public class MGRSParser {
 
                 // Just one answer:
 
-                return new MGRS[] { new MGRS(TextUtils.delete_whitespace(mgrs1.toString())) };
+                return new MGRS[]{new MGRS(TextUtils.delete_whitespace(mgrs1.toString()))};
             }
 
             if (space_count == 1 && (ws_index == midpoint)) {
@@ -213,7 +215,7 @@ public class MGRSParser {
                 mgrs1.insert(0, Q);
                 mgrs1.insert(0, gzd);
 
-                return new MGRS[] { new MGRS(TextUtils.delete_whitespace(mgrs1.toString())) };
+                return new MGRS[]{new MGRS(TextUtils.delete_whitespace(mgrs1.toString()))};
             }
 
             // Given
@@ -241,7 +243,7 @@ public class MGRSParser {
             mgrs2.insert(0, Q);
             mgrs2.insert(0, gzd);
 
-            return new MGRS[] { new MGRS(mgrs1.toString()), new MGRS(mgrs2.toString()) };
+            return new MGRS[]{new MGRS(mgrs1.toString()), new MGRS(mgrs2.toString())};
         }
     }
 
@@ -270,21 +272,21 @@ public class MGRSParser {
         boolean containsEOL = (ne.contains("\n") || ne.contains("\r"));
         boolean containsTAB = ne.contains("\t");
         if (oddLength) {
-            if (XCoord.getStrictMode()){
+            if (XCoord.getStrictMode()) {
                 return false;
             }
             return !(containsEOL || containsTAB);
         }
 
         String[] tuples = ne.split("\\s+");
-        if (tuples.length>2){
+        if (tuples.length > 2) {
             return false;
         }
-        if (tuples.length==2){
+        if (tuples.length == 2) {
             // This is not so much an issue of a typo
             // If a northing/easting is a series of digit tuples asymmetrically
             // then we'll ignore it outright.
-            if (tuples[0].length() != tuples[1].length()){
+            if (tuples[0].length() != tuples[1].length()) {
                 return false;
             }
         }
@@ -321,6 +323,7 @@ public class MGRSParser {
      * to believe they are relevant MGRS patterns.
      */
     private static final Set<String> ignoreTemporalTokens = new HashSet<>();
+
     static {
         ignoreTemporalTokens.add("jan");  // Lat band that is mostly water; Southern Africa
         ignoreTemporalTokens.add("feb");  // ditto; almost always water.
