@@ -72,7 +72,8 @@ class XlayerClient:
           features are places, coordinates, countries, orgs, persons, patterns, postal. 
           
           feature aliases "geo" can be used to get All Geographic entities (places,coordinates,countries)
-          feature "taxons" can get at any Taxon "taxons", "persons", "orgs"
+          feature "taxons" can get at any Taxon "taxons", "persons", "orgs".  As of Xponents 3.6 this reports ALL
+              Other taxons available in TaxCat tagger.  "all-taxons" is offered as a means to distinguish old and new behavior.
           feature "postal" will tag obvious, qualified postal codes that are paired with a CITY, PROVINCE, or COUNTRY tag.
           feature "patterns" is an alias for dates and any other pattern-based extractors. For now "dates" is only one
           feature "codes" will tag, use and report coded information for any place; primarily administrative boundaries

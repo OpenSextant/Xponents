@@ -131,6 +131,9 @@ For historical purposes here is a POM snippet for using findbugs, which is no lo
 In a similar reduction of dependencies, checkstyle plugin functions are replaced by Sonar scanning:
 
 ```xml
+
+<project>
+  ...    
   <pluginManagement>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -163,7 +166,7 @@ In a similar reduction of dependencies, checkstyle plugin functions are replaced
         </configuration>
       </plugin>
   </plugins>
-
+</project>
 ```
 
 For Docker Scan and Snyk usage, you will need to review those emerging services.  They seem to work 
