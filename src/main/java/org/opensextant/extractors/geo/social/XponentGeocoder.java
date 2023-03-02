@@ -8,7 +8,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.*;
 import org.opensextant.data.social.Message;
-import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
@@ -203,8 +202,6 @@ public class XponentGeocoder extends GeoInferencer {
      * @param tw
      *           tweet as parsed by DeepEye
      * @return Geo or Country annotation
-     * @throws MessageParseException
-     *                               on parsing the tweet or JSON
      * @throws ExtractionException
      *                               on running geolocation routines
      */

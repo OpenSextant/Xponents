@@ -559,6 +559,7 @@ woken,adj
 wooden,adj
 worthy,adj
 young,adj
+zealous,adj
 bon,adj.fre
 nouveau,adj.fre
 bello,adj.ita
@@ -2817,6 +2818,7 @@ guerrilla,person.label
 guest,person.label
 gul,person.label
 gunner,person.label
+gunners,person.label
 guy,person.label
 guys,person.label
 gypsy,person.label
@@ -2943,6 +2945,7 @@ senator,person.label
 sender,person.label
 senders,person.label
 senior,person.label
+seniors,person.label
 sergeant,person.label
 servant,person.label
 sheriff,person.label
@@ -4394,6 +4397,7 @@ bluff,verb
 boil,verb
 bolster,verb
 born,verb
+borrow,verb
 bounce,verb
 breaks,verb
 bred,verb

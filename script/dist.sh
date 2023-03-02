@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #
-VER=3.5
+VER=3.6
 
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
