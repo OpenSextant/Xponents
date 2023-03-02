@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="opensextant.html"><font color="#ffffff">opensextant</font></a>.gazetteer</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:https://github.com/OpenSextant/Xponents/blob/master/python/opensextant/gazetteer.py">https://github.com/OpenSextant/Xponents/blob/master/python/opensextant/gazetteer.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/dist/Xponents-3.6/piplib/opensextant/gazetteer.py">/Users/ubaldino/workspace/opensource/Xponents/dist/Xponents-3.6/piplib/opensextant/gazetteer.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -18,10 +18,11 @@
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="arrow.html">arrow</a><br>
+<a href="json.html">json</a><br>
 </td><td width="25%" valign=top><a href="os.html">os</a><br>
-</td><td width="25%" valign=top><a href="pysolr.html">pysolr</a><br>
+<a href="pysolr.html">pysolr</a><br>
 </td><td width="25%" valign=top><a href="sqlite3.html">sqlite3</a><br>
-</td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -32,10 +33,12 @@
 <dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#DB">DB</a>
+<dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#AdminLevelCodes">AdminLevelCodes</a>
+</font></dt><dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#DB">DB</a>
 </font></dt><dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#DataSource">DataSource</a>
 </font></dt><dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#GazetteerIndex">GazetteerIndex</a>
 </font></dt><dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#GazetteerSearch">GazetteerSearch</a>
+</font></dt><dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#ISO3166Registry">ISO3166Registry</a>
 </font></dt><dt><font face="helvetica, arial"><a href="opensextant.gazetteer.html#PlaceHeuristics">PlaceHeuristics</a>
 </font></dt></dl>
 </dd>
@@ -44,15 +47,67 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="DB">class <strong>DB</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AdminLevelCodes">class <strong>AdminLevelCodes</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DB">DB</a>(dbpath,&nbsp;commit_rate=1000,&nbsp;debug=False)<br>
+<td colspan=2><tt><a href="#AdminLevelCodes">AdminLevelCodes</a>(filepath=None)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="DB-__init__"><strong>__init__</strong></a>(self, dbpath, commit_rate=1000, debug=False)</dt><dd><tt>Save&nbsp;items&nbsp;to&nbsp;SQlite&nbsp;db&nbsp;at&nbsp;the&nbsp;commit_rate&nbsp;given.&nbsp;&nbsp;Call&nbsp;close&nbsp;to&nbsp;finalize&nbsp;any&nbsp;partial&nbsp;batches<br>
+<dl><dt><a name="AdminLevelCodes-__init__"><strong>__init__</strong></a>(self, filepath=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="AdminLevelCodes-add_country"><strong>add_country</strong></a>(self, cc)</dt></dl>
+
+<dl><dt><a name="AdminLevelCodes-add_place"><strong>add_place</strong></a>(self, place_id, cc, std, adm1, grid)</dt><dd><tt>Accumulate&nbsp;discrete&nbsp;ADM1&nbsp;codings&nbsp;by&nbsp;place&nbsp;instance&nbsp;and&nbsp;location<br>
+:param&nbsp;place_id:<br>
+:param&nbsp;cc:<br>
+:param&nbsp;std:<br>
+:param&nbsp;adm1:<br>
+:param&nbsp;adm2:&nbsp;optional&nbsp;ADM2&nbsp;mapping<br>
+:param&nbsp;grid:<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="AdminLevelCodes-adjust_admin1"><strong>adjust_admin1</strong></a>(self, cc, adm1)</dt></dl>
+
+<dl><dt><a name="AdminLevelCodes-align_admin1"><strong>align_admin1</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="AdminLevelCodes-as_json"><strong>as_json</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="AdminLevelCodes-get_alternate_admin1"><strong>get_alternate_admin1</strong></a>(self, cc, adm1, std)</dt><dd><tt>EXPERIMENTAL&nbsp;still.<br>
+&nbsp;<br>
+:param&nbsp;cc:&nbsp;ISO&nbsp;country&nbsp;code<br>
+:param&nbsp;adm1:&nbsp;ADM1&nbsp;in&nbsp;the&nbsp;given&nbsp;standard<br>
+:param&nbsp;std:&nbsp;standard&nbsp;"FIPS"&nbsp;or&nbsp;"ISO"<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="AdminLevelCodes-load"><strong>load</strong></a>(self, fpath)</dt></dl>
+
+<dl><dt><a name="AdminLevelCodes-save"><strong>save</strong></a>(self, fpath)</dt></dl>
+
+<dl><dt><a name="AdminLevelCodes-set_admin_hierarchy"><strong>set_admin_hierarchy</strong></a>(self, countries, adm1_containment)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DB">class <strong>DB</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DB">DB</a>(dbpath,&nbsp;commit_rate=1000,&nbsp;debug=False,&nbsp;add_geohash=False)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DB-__init__"><strong>__init__</strong></a>(self, dbpath, commit_rate=1000, debug=False, add_geohash=False)</dt><dd><tt>Save&nbsp;items&nbsp;to&nbsp;SQlite&nbsp;db&nbsp;at&nbsp;the&nbsp;commit_rate&nbsp;given.&nbsp;&nbsp;Call&nbsp;close&nbsp;to&nbsp;finalize&nbsp;any&nbsp;partial&nbsp;batches<br>
 and&nbsp;save&nbsp;database.<br>
 &nbsp;<br>
 :param&nbsp;dbpath:<br>
@@ -86,7 +141,8 @@ to&nbsp;provide&nbsp;an&nbsp;ADM1&nbsp;population&nbsp;approximation.</tt></dd><
 
 <dl><dt><a name="DB-list_adm2_popstats"><strong>list_adm2_popstats</strong></a>(self)</dt><dd><tt>Get&nbsp;approximate&nbsp;county-level&nbsp;stats</tt></dd></dl>
 
-<dl><dt><a name="DB-list_admin_names"><strong>list_admin_names</strong></a>(self, sources=['U', 'N', 'G']) -&gt; set</dt><dd><tt>Lists&nbsp;all&nbsp;admin&nbsp;level1&nbsp;names.<br>
+<dl><dt><a name="DB-list_admin_names"><strong>list_admin_names</strong></a>(self, sources=['U', 'N', 'G'], cc=None) -&gt; set</dt><dd><tt>Lists&nbsp;all&nbsp;admin&nbsp;level1&nbsp;names.<br>
+:param&nbsp;cc:&nbsp;country&nbsp;code&nbsp;filter.<br>
 :param&nbsp;sources:&nbsp;list&nbsp;of&nbsp;source&nbsp;IDs&nbsp;defaulting&nbsp;to&nbsp;those&nbsp;for&nbsp;USGS,&nbsp;NGA,&nbsp;Geonames.org<br>
 :return:&nbsp;set&nbsp;of&nbsp;names,&nbsp;lowerased</tt></dd></dl>
 
@@ -102,33 +158,13 @@ to&nbsp;provide&nbsp;an&nbsp;ADM1&nbsp;population&nbsp;approximation.</tt></dd><
 :param&nbsp;limit:&nbsp;&nbsp;non-zero&nbsp;limit<br>
 :return:&nbsp;generator</tt></dd></dl>
 
-<dl><dt><a name="DB-list_places_at"><strong>list_places_at</strong></a>(self, lat: float = None, lon: float = None, geohash: str = None, cc: str = None, radius: int = 5000, limit=10)</dt><dd><tt>A&nbsp;best&nbsp;effort&nbsp;guess&nbsp;at&nbsp;spatial&nbsp;query.&nbsp;Returns&nbsp;an&nbsp;array&nbsp;of&nbsp;matches,&nbsp;thinking&nbsp;most&nbsp;location&nbsp;queries&nbsp;are&nbsp;focused.<br>
-This&nbsp;is&nbsp;a&nbsp;geohash-backed&nbsp;hack&nbsp;at&nbsp;search<br>
-&nbsp;<br>
-Use&nbsp;geohash_precision&nbsp;accordingly&nbsp;and&nbsp;approximately:<br>
--&nbsp;geohash_precision=6&nbsp;implies&nbsp;+/-&nbsp;&nbsp;500m<br>
--&nbsp;geohash_precision=5&nbsp;implies&nbsp;+/-&nbsp;&nbsp;2500m<br>
--&nbsp;geohash_precision=4&nbsp;implies&nbsp;+/-&nbsp;20000m<br>
-&nbsp;<br>
-This&nbsp;approach&nbsp;uses&nbsp;an&nbsp;approximation&nbsp;of&nbsp;finding&nbsp;the&nbsp;relevant&nbsp;neighbor&nbsp;cells&nbsp;using&nbsp;a&nbsp;geodetic&nbsp;(not&nbsp;geohash)<br>
-assessment&nbsp;on&nbsp;the&nbsp;radial&nbsp;range.&nbsp;&nbsp;This&nbsp;method&nbsp;hopefully&nbsp;gets&nbsp;past&nbsp;the&nbsp;limitations&nbsp;below.<br>
-&nbsp;<br>
-General&nbsp;limitations&nbsp;of&nbsp;using&nbsp;Geohash&nbsp;for&nbsp;spatial&nbsp;query:<br>
-Given&nbsp;the&nbsp;nature&nbsp;of&nbsp;geohash&nbsp;you&nbsp;might&nbsp;have&nbsp;locations&nbsp;in&nbsp;different&nbsp;cells&nbsp;"xxxx"&nbsp;and&nbsp;"xxxy"&nbsp;that&nbsp;are<br>
-close&nbsp;to&nbsp;each&nbsp;other,&nbsp;i.e.&nbsp;within&nbsp;your&nbsp;specified&nbsp;radius.&nbsp;&nbsp;E.g.,<br>
-&nbsp;<br>
-"9q5f"&nbsp;&nbsp;and&nbsp;"9qh4"&nbsp;&nbsp;are&nbsp;neighbor&nbsp;cells<br>
-"9q5fr"&nbsp;and&nbsp;"9qh42"&nbsp;are&nbsp;neighbor&nbsp;cells.<br>
-&nbsp;<br>
-"9q5fp"&nbsp;is&nbsp;a&nbsp;LR&nbsp;(south-east)&nbsp;corner&nbsp;of&nbsp;"9q5".&nbsp;&nbsp;Searching&nbsp;that&nbsp;2x2&nbsp;KM&nbsp;box&nbsp;by&nbsp;geohash&nbsp;will&nbsp;only&nbsp;search&nbsp;from&nbsp;that<br>
-corner&nbsp;north&nbsp;and&nbsp;westward.<br>
-&nbsp;<br>
-:param&nbsp;lat:&nbsp;latitude<br>
+<dl><dt><a name="DB-list_places_at"><strong>list_places_at</strong></a>(self, lat: float = None, lon: float = None, geohash: str = None, cc: str = None, radius: int = 5000, limit=10, method='2d')</dt><dd><tt>:param&nbsp;lat:&nbsp;latitude<br>
 :param&nbsp;lon:&nbsp;longitude<br>
 :param&nbsp;cc:&nbsp;&nbsp;ISO&nbsp;country&nbsp;code&nbsp;to&nbsp;filter.<br>
 :param&nbsp;geohash:&nbsp;&nbsp;optionally,&nbsp;use&nbsp;precomputed&nbsp;geohash&nbsp;of&nbsp;precision&nbsp;6-chars&nbsp;instead&nbsp;of&nbsp;lat/lon.<br>
 :param&nbsp;radius:&nbsp;&nbsp;in&nbsp;METERS,&nbsp;radial&nbsp;distance&nbsp;from&nbsp;given&nbsp;point&nbsp;to&nbsp;search,&nbsp;DEFAULT&nbsp;is&nbsp;5&nbsp;KM<br>
 :param&nbsp;limit:&nbsp;count&nbsp;of&nbsp;places&nbsp;to&nbsp;return<br>
+:param&nbsp;method:&nbsp;bbox&nbsp;or&nbsp;geohash<br>
 :return:&nbsp;array&nbsp;of&nbsp;tuples,&nbsp;sorted&nbsp;by&nbsp;distance.</tt></dd></dl>
 
 <dl><dt><a name="DB-list_places_by_id"><strong>list_places_by_id</strong></a>(self, plid, limit=2)</dt><dd><tt>Collect&nbsp;places&nbsp;and&nbsp;name_bias&nbsp;for&nbsp;gazetter&nbsp;ETL.<br>
@@ -177,15 +213,13 @@ Data descriptors defined here:<br>
 <font color="#000000" face="helvetica, arial"><a name="DataSource">class <strong>DataSource</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DataSource">DataSource</a>(dbf,&nbsp;debug=False)<br>
+<td colspan=2><tt><a href="#DataSource">DataSource</a>(dbf,&nbsp;debug=False,&nbsp;ver=None)<br>
 &nbsp;<br>
 Gazetteer&nbsp;Data&nbsp;Source&nbsp;abstraction&nbsp;--&nbsp;provides&nbsp;guidelines&nbsp;on&nbsp;how&nbsp;to&nbsp;inject<br>
 data&nbsp;into&nbsp;a&nbsp;common,&nbsp;normalized&nbsp;gazetteer.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="DataSource-__init__"><strong>__init__</strong></a>(self, dbf, debug=False)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
-
-<dl><dt><a name="DataSource-add_location"><strong>add_location</strong></a>(self, geo, lat, lon)</dt></dl>
+<dl><dt><a name="DataSource-__init__"><strong>__init__</strong></a>(self, dbf, debug=False, ver=None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="DataSource-normalize"><strong>normalize</strong></a>(self, sourcefile, limit=-1, optimize=False)</dt><dd><tt>Given&nbsp;the&nbsp;spreadsheet&nbsp;or&nbsp;source&nbsp;file&nbsp;rip&nbsp;through&nbsp;it,&nbsp;ingesting&nbsp;contents&nbsp;into&nbsp;the&nbsp;master&nbsp;gazetteer.<br>
 :param&nbsp;sourcefile:&nbsp;input&nbsp;file<br>
@@ -268,6 +302,38 @@ TODO:&nbsp;Document&nbsp;different&nbsp;uses&nbsp;for&nbsp;<a href="#GazetteerSe
 TODO:&nbsp;Review&nbsp;differences&nbsp;in&nbsp;Place()&nbsp;schema&nbsp;and&nbsp;Country()&nbsp;schema&nbsp;for&nbsp;name&nbsp;variants,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;e.g.,&nbsp;Country&nbsp;variants&nbsp;presented&nbsp;as&nbsp;abbreviations,&nbsp;codes&nbsp;or&nbsp;names&nbsp;need&nbsp;to&nbsp;be&nbsp;distinguished&nbsp;as&nbsp;such.<br>
 :param&nbsp;max_namelen:<br>
+:return:</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ISO3166Registry">class <strong>ISO3166Registry</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="ISO3166Registry-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="ISO3166Registry-get_admin1_for"><strong>get_admin1_for</strong></a>(self, cc, adm2)</dt></dl>
+
+<dl><dt><a name="ISO3166Registry-has_admin1"><strong>has_admin1</strong></a>(self, cc, adm1)</dt></dl>
+
+<dl><dt><a name="ISO3166Registry-is_iso_country"><strong>is_iso_country</strong></a>(self, cc)</dt></dl>
+
+<dl><dt><a name="ISO3166Registry-load_admin_mapping"><strong>load_admin_mapping</strong></a>(self)</dt></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="ISO3166Registry-export_admin_mapping"><strong>export_admin_mapping</strong></a>()</dt><dd><tt>Generate&nbsp;initial&nbsp;file&nbsp;using&nbsp;pycountry.&nbsp;&nbsp;pycountry&nbsp;is&nbsp;not&nbsp;a&nbsp;library&nbsp;dependency<br>
+so&nbsp;it&nbsp;is&nbsp;externalized&nbsp;here.<br>
 :return:</tt></dd></dl>
 
 <hr>
@@ -377,7 +443,17 @@ Data and other attributes defined here:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-as_place"><strong>as_place</strong></a>(r, source='index')</dt><dd><tt>Convert&nbsp;dict&nbsp;to&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a><br>
+<td width="100%"><dl><dt><a name="-add_location"><strong>add_location</strong></a>(geo, lat, lon, add_geohash=False)</dt><dd><tt>Insert&nbsp;validated&nbsp;location&nbsp;coordinate&nbsp;and&nbsp;geohash<br>
+:param&nbsp;add_geohash:&nbsp;due&nbsp;to&nbsp;performance,&nbsp;add&nbsp;this&nbsp;if&nbsp;needed<br>
+:param&nbsp;geo:&nbsp;dict<br>
+:param&nbsp;lat:&nbsp;latitude&nbsp;value,&nbsp;str&nbsp;or&nbsp;float<br>
+:param&nbsp;lon:&nbsp;longitude&nbsp;value,&nbsp;str&nbsp;or&nbsp;float<br>
+:return:&nbsp;geo&nbsp;dict&nbsp;with&nbsp;location</tt></dd></dl>
+ <dl><dt><a name="-as_admin_place"><strong>as_admin_place</strong></a>(r)</dt><dd><tt>Convert&nbsp;dict&nbsp;to&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a><br>
+:param&nbsp;r:&nbsp;gazetteer&nbsp;row&nbsp;from&nbsp;Solr&nbsp;or&nbsp;SQlite.<br>
+:return:&nbsp;Place</tt></dd></dl>
+ <dl><dt><a name="-as_place"><strong>as_place</strong></a>(r, source='index')</dt><dd><tt>Convert&nbsp;dict&nbsp;to&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a><br>
+:param&nbsp;source:&nbsp;db&nbsp;or&nbsp;index&nbsp;(solr)<br>
 :param&nbsp;r:&nbsp;gazetteer&nbsp;row&nbsp;from&nbsp;Solr&nbsp;or&nbsp;SQlite.<br>
 :return:&nbsp;Place</tt></dd></dl>
  <dl><dt><a name="-as_place_record"><strong>as_place_record</strong></a>(place, target='index')</dt><dd><tt>Given&nbsp;a&nbsp;Place&nbsp;<a href="builtins.html#object">object</a>,&nbsp;serialize&nbsp;it&nbsp;as&nbsp;a&nbsp;dict&nbsp;consistent&nbsp;with&nbsp;the&nbsp;Solr&nbsp;index&nbsp;schema.<br>
@@ -385,9 +461,19 @@ Data and other attributes defined here:<br>
 :param&nbsp;target:&nbsp;index&nbsp;or&nbsp;db<br>
 :return:</tt></dd></dl>
  <dl><dt><a name="-capitalize"><strong>capitalize</strong></a>(name: dict)</dt><dd><tt>Capitalize&nbsp;all&nbsp;city&nbsp;and&nbsp;major&nbsp;admin&nbsp;boundaries</tt></dd></dl>
+ <dl><dt><a name="-coord_grid"><strong>coord_grid</strong></a>(geo: dict) -&gt; str</dt><dd><tt>A&nbsp;less&nbsp;dissatisfying&nbsp;grid&nbsp;than&nbsp;geohash.&nbsp;Its&nbsp;just&nbsp;returning&nbsp;Y,X&nbsp;in&nbsp;low&nbsp;resolution.&nbsp;LLL.l,LLL.l</tt></dd></dl>
  <dl><dt><a name="-estimate_name_bias"><strong>estimate_name_bias</strong></a>(nm)</dt></dl>
+ <dl><dt><a name="-export_admin_mapping"><strong>export_admin_mapping</strong></a>(admin_ids, filepath)</dt><dd><tt>Experimental:&nbsp;&nbsp;Map&nbsp;all&nbsp;source&nbsp;place&nbsp;IDs&nbsp;=&gt;&nbsp;ADM&nbsp;ids<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&nbsp;all&nbsp;standard&nbsp;ADM&nbsp;ids&nbsp;=&gt;&nbsp;place&nbsp;IDs<br>
+:param&nbsp;admin_ids:&nbsp;&nbsp;dict&nbsp;for&nbsp;JSON&nbsp;or&nbsp;array&nbsp;for&nbsp;CSV<br>
+:param&nbsp;filepath:<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-gaz_resource"><strong>gaz_resource</strong></a>(fname)</dt><dd><tt>Formats&nbsp;the&nbsp;relative&nbsp;path&nbsp;for&nbsp;an&nbsp;item&nbsp;in&nbsp;the&nbsp;./solr/etc/gazetteer/&nbsp;metadata<br>
+:param&nbsp;fname:<br>
+:return:</tt></dd></dl>
  <dl><dt><a name="-get_default_db"><strong>get_default_db</strong></a>()</dt></dl>
  <dl><dt><a name="-get_default_wordstats"><strong>get_default_wordstats</strong></a>()</dt></dl>
+ <dl><dt><a name="-load_major_cities_iso"><strong>load_major_cities_iso</strong></a>()</dt></dl>
  <dl><dt><a name="-load_stopterms"><strong>load_stopterms</strong></a>(project_dir='.', lower=True)</dt><dd><tt>Load&nbsp;default&nbsp;stop&nbsp;terms&nbsp;from&nbsp;source&nbsp;tree&nbsp;for&nbsp;project&nbsp;build.<br>
 :param&nbsp;project_dir:&nbsp;The&nbsp;location&nbsp;of&nbsp;Xponents/solr&nbsp;source&nbsp;tree.<br>
 :param&nbsp;lower:&nbsp;default&nbsp;case&nbsp;to&nbsp;load&nbsp;data&nbsp;as.&nbsp;If&nbsp;not&nbsp;lower,&nbsp;then&nbsp;terms&nbsp;are&nbsp;loaded&nbsp;as-is<br>
@@ -416,6 +502,7 @@ requires&nbsp;you&nbsp;know&nbsp;the&nbsp;schema</tt></dd></dl>
 <strong>GAZETTEER_SOURCES</strong> = {'ADHOC': 'OA', 'G': 'G', 'GEONAMES': 'OG', 'GP': 'GP', 'Geonames.org': 'OG', 'NE': 'NE', 'NGA': 'N', 'NGA-AUTOFIXED': 'NF', 'USGS': 'U', 'USGS-AUTOFIXED': 'UF', ...}<br>
 <strong>GAZETTEER_SOURCE_ID</strong> = {'G', 'GPX', 'ISO', 'N', 'NE', 'NF', ...}<br>
 <strong>GAZETTEER_TEMPLATE</strong> = {'FIPS_cc': None, 'adm1': None, 'adm2': None, 'cc': None, 'feat_class': None, 'feat_code': None, 'id': -1, 'id_bias': 0, 'lat': 0, 'lon': 0, ...}<br>
+<strong>MAJOR_ADMIN_CODES</strong> = {'ADM1', 'ADM2', 'ADM3', 'ADM4', 'ADMD', 'PRSH', ...}<br>
 <strong>SCRIPT_CODES</strong> = {None: '', 'LATIN': 'L', 'HAN': 'H', 'COMMON': 'C', 'ARABIC': 'A', 'ARMENIAN': 'AM', 'BENGALI': 'BN', 'CYRILLIC': 'CY', 'DEVANAGARI': 'DV', 'ETHIOPIC': 'ET', ...}<br>
 <strong>US_TERRITORY_MAP</strong> = {'FIPS': {'AQ': 'AS', 'CQ': 'MP', 'DQ': 'UM', 'FQ': 'UM', 'GQ': 'GU', 'HQ': 'UM', 'JQ': 'UM', 'MQ': 'UM', 'RQ': 'PR', 'VI': 'VI', ...}, 'ISO': {'AS': 'AQ', 'GU': 'CQ', 'MP': 'CQ', 'PR': 'RQ'}}</td></tr></table>
 </body></html>
