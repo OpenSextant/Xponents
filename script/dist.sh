@@ -5,7 +5,7 @@ VER=3.6
 
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
-BUILD_VER=`grep build.v  $basedir/build.properties |awk -F= '{print $2;}'`
+BUILD_VER=`grep xponents.v  $basedir/build.properties |awk -F= '{print $2;}'`
 REL=$basedir/dist/Xponents-$VER
 GAZ=$REL/xponents-solr
 
