@@ -68,7 +68,6 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
 
     static {
         params = new ModifiableSolrParams();
-        // params.set(CommonParams.QT, requestHandler);
         params.set(CommonParams.FL, "id,catalog,taxnode,phrase,tag,name_type");
 
         params.set("tagsLimit", 100000);
@@ -86,7 +85,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     private boolean tagAll = true;
     private boolean tagLowerCase = false;
 
-    // acronym filter May change later:
+    /* acronym filter May change later: */
     private final boolean filterNonAcronyms = true;
 
     /** Caller can adjust this default constant if shorter tags are desired. */
@@ -281,7 +280,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
         this.tagLowerCase = b;
     }
 
-    public static final String[] commonTaxonLabels = {"org", "person", "nationality"};
+    protected static final String[] commonTaxonLabels = {"org", "person", "nationality"};
 
     private static void assignType(TaxonMatch m, Taxon node) {
         if (!m.isDefault()) {

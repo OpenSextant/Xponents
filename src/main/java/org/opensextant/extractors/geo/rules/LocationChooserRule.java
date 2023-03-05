@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.opensextant.data.MatchSchema;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.*;
 import org.opensextant.processing.Parameters;
@@ -22,7 +23,7 @@ import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
  *
  * @author ubaldino
  */
-public class LocationChooserRule extends GeocodeRule {
+public class LocationChooserRule extends GeocodeRule implements MatchSchema {
 
     /**
      * These are set.
@@ -102,7 +103,7 @@ public class LocationChooserRule extends GeocodeRule {
             name.choose();
             if (name.getChosenPlace() != null) {
                 Place chosen = name.getChosenPlace();
-                name.setType(chosen.isCountry() ? "country" : "place");
+                name.setType(chosen.isCountry() ? VAL_COUNTRY : VAL_PLACE);
                 if (name.isCountry && !chosen.isCountry()) {
                     name.isCountry = false;
                 }

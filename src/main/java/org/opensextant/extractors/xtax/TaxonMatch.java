@@ -28,11 +28,9 @@ import org.opensextant.util.TextUtils;
  */
 public class TaxonMatch extends TextMatch {
 
-    public static final String TAXON_LABEL = "taxon";
-
     public TaxonMatch(int x1, int x2) {
         super(x1, x2);
-        this.type = TAXON_LABEL;
+        this.type = VAL_TAXON;
         this.producer = "XTax";
     }
 
@@ -45,7 +43,7 @@ public class TaxonMatch extends TextMatch {
     }
 
     public boolean isDefault(){
-        return TAXON_LABEL.equals(type);
+        return VAL_TAXON.equals(type);
     }
 
     public boolean hasDiacritics = false;

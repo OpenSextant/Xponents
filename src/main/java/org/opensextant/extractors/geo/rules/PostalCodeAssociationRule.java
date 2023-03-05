@@ -5,10 +5,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.opensextant.data.Place;
+import org.opensextant.data.MatchSchema;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
 
-public class PostalCodeAssociationRule extends GeocodeRule {
+public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchema {
 
     public static final String POSTAL_ASSOC_RULE = "PostalAssociation";
     int proximity = 20;
@@ -117,8 +118,8 @@ public class PostalCodeAssociationRule extends GeocodeRule {
                     if (geo2Postal) {
                         p2.markAnchor();
                     }
-                    p1.linkGeography(p2, geo1Postal ? "country" : "postal", geo2);
-                    p2.linkGeography(p1, geo1Postal ? "postal" : "country", geo1);
+                    p1.linkGeography(p2, geo1Postal ? VAL_COUNTRY : VAL_POSTAL, geo2);
+                    p2.linkGeography(p1, geo1Postal ? VAL_POSTAL : VAL_COUNTRY, geo1);
                     p1.incrementPlaceScore(geo1, 3.0, POSTAL_ASSOC_RULE);
                     p2.incrementPlaceScore(geo2, 3.0, POSTAL_ASSOC_RULE);
 

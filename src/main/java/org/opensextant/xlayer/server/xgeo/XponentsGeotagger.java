@@ -10,7 +10,6 @@ import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.geo.PostalGeocoder;
-import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
@@ -164,8 +163,6 @@ public class XponentsGeotagger extends TaggerResource {
                 matches.addAll(xt.extract(input));
             }
             if (jobParams.tag_postal) {
-                // TODO: PostalGeocoder code may operate with older index
-                //       but extractor will be null here if that *postal* index is not present.
                 PostalGeocoder pg = (PostalGeocoder) getExtractor(POSTAL_TAGGER);
                 if (pg != null) {
                     List<TextMatch> postalMatches = pg.extract(input);
@@ -187,9 +184,8 @@ public class XponentsGeotagger extends TaggerResource {
                 debug(String.format("CURRENT MEM USAGE(K)=%d", RuntimeTools.reportMemory()));
             }
             /*
-             * formulate matches as JSON output.
+             * transform matches as JSON output.
              */
-            filter(matches, jobParams);
             return format(matches, jobParams);
 
         } catch (Exception processingErr) {
@@ -213,24 +209,5 @@ public class XponentsGeotagger extends TaggerResource {
         result.setCharacterSet(CharacterSet.UTF_8);
 
         return result;
-    }
-
-    /**
-     * @param params         parameters
-     * @param variousMatches matches to filter
-     */
-    public void filter(List<TextMatch> variousMatches, Parameters params) {
-        /* TODO: filter other matches more seriously.
-         *  Marking Taxons as filteredOut is the only output filter for now.
-         */
-        if (params.tag_taxons || params.tag_all_taxons) {
-            return;
-        }
-        // Taxons were not requested:
-        for (TextMatch m : variousMatches) {
-            if (m instanceof TaxonMatch) {
-                m.setFilteredOut(true);
-            }
-        }
     }
 }

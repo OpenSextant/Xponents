@@ -186,8 +186,7 @@ public class XponentGeocoder extends GeoInferencer {
     }
 
     /**
-     * Geoinference user/author profile. Standard 'deepeye' annotation is "ugeo"
-     * or "country"
+     * Geoinference user/author profile. Standard 'deepeye' annotation is "ugeo" or "country"
      */
     @Override
     public GeoInference geoinferenceTweetAuthor(Tweet tw) throws ExtractionException {
@@ -1073,7 +1072,7 @@ public class XponentGeocoder extends GeoInferencer {
             }
 
             G.confidence = confidence;
-            G.inferenceName = "country";
+            G.inferenceName = TextMatch.VAL_COUNTRY;
             G.geocode = g;
             log.debug("Lookup Chooser: Chose country {} ", g);
             return G;
@@ -1133,7 +1132,7 @@ public class XponentGeocoder extends GeoInferencer {
         // A mere convention -- if method yields only a country, then emit only a
         // Country annot, not a full geocode.
         if (g.getMethod().endsWith("country")) {
-            annotName = "country";
+            annotName = TextMatch.VAL_COUNTRY;
         }
 
         /*

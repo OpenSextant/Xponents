@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.opensextant.data.MatchSchema;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
@@ -89,7 +90,7 @@ public class PostalLocationChooser extends GeocodeRule {
                 conf += INCR;
             }
             /* Assign the match label */
-            name.setType("place");
+            name.setType(MatchSchema.VAL_PLACE);
 
             // Length?
             conf += 2 * name.getLength();
@@ -97,7 +98,7 @@ public class PostalLocationChooser extends GeocodeRule {
             /* For postal codes only: */
             if (loc.isPostal()) {
                 /* Assign the match label */
-                name.setType("postal");
+                name.setType(MatchSchema.VAL_POSTAL);
 
                 // Separators?
                 if (5 < name.getLength() && name.getLength() < 10) {
