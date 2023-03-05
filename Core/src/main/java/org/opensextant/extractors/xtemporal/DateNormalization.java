@@ -90,8 +90,6 @@ public class DateNormalization {
      */
     /**
      * For now this reports only DATE and standard TIME fields. Timezone is still
-     * TODO.
-     * TODO: throw NormalizationException
      *
      * @param elements pattern fields
      * @param dt       found date
@@ -248,15 +246,16 @@ public class DateNormalization {
                 if (val < 24) {
                     return val;
                 }
-                break;
+                return -1;
             case "mm":
             case "ss":
                 if (val < 60) {
                     return val;
                 }
-                break;
+                return -1;
+            default:
+                return -1;
         }
-        return -1;
     }
 
 

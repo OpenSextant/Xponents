@@ -67,10 +67,10 @@ public class XTemporal extends AbstractFlexPat {
      * when found dates
      * fall on either side of that they will be relative PAST and relative FUTURE.
      */
-    public static Date TODAY = new Date();
+    public Date TODAY = new Date();
 
     /** The today epoch. */
-    public static long TODAY_EPOCH = TODAY.getTime();
+    public long TODAY_EPOCH = TODAY.getTime();
 
     /** The Constant JAVA_0_DATE_YEAR. */
     public static final int JAVA_0_DATE_YEAR = 1970;
@@ -269,7 +269,7 @@ public class XTemporal extends AbstractFlexPat {
      *
      * @param y 4-digit year
      */
-    public void setDistantPastYear(int y) {
+    public static void setDistantPastYear(int y) {
         DISTANT_PAST_YEAR = y;
         DISTANT_PAST_THRESHOLD = (DISTANT_PAST_YEAR - JAVA_0_DATE_YEAR) * ONE_YEAR_MS;
     }

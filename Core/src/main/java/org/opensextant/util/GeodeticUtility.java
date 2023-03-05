@@ -60,6 +60,8 @@ public class GeodeticUtility {
      */
     public static final int LON_MAX = 180;
 
+    private GeodeticUtility(){}
+
     /**
      * TODO: consider using geodesy, however that API has no obvious simple
      * validator.
