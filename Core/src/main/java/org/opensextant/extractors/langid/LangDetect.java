@@ -88,7 +88,7 @@ public class LangDetect {
      * If working size, in CHARS, is less than 180 (20 8 char words + 1 whitespace
      * word break);
      */
-    public final static int DEFAULT_WORKING_SIZE = 20 * (8 + 1);
+    public static final int DEFAULT_WORKING_SIZE = 20 * (8 + 1);
 
     /**
      * @param sz
@@ -219,9 +219,9 @@ public class LangDetect {
         return LangDetect.alternativeLangID(data);
     }
 
-    public final static Language LANGUAGE_ID_GROUP_ENGLISH = new Language("eng", TextUtils.englishLang, "English");
-    public final static Language LANGUAGE_ID_GROUP_CJK = new Language("cjk", "cjk", "Chinese/Japanese/Korean");
-    public final static Language LANGUAGE_ID_GROUP_UNKNOWN = new Language("unk", "unk", "Unknown");
+    public static final Language LANGUAGE_ID_GROUP_ENGLISH = new Language("eng", TextUtils.englishLang, "English");
+    public static final Language LANGUAGE_ID_GROUP_CJK = new Language("cjk", "cjk", "Chinese/Japanese/Korean");
+    public static final Language LANGUAGE_ID_GROUP_UNKNOWN = new Language("unk", "unk", "Unknown");
 
     /**
      * Look at raw bytes/characters to see which Unicode block they fall into.
@@ -339,8 +339,8 @@ public class LangDetect {
      * languages by reporting ID, but occassionally refines this by reporting a
      * Locale (lang+country)
      */
-    final static Map<String, String> lookupLanguage = new HashMap<>();
-    final static Map<String, Integer> ignoredLanguage = new HashMap<>();
+    static final Map<String, String> lookupLanguage = new HashMap<>();
+    static final Map<String, Integer> ignoredLanguage = new HashMap<>();
 
     static {
         lookupLanguage.put("en-gb", TextUtils.englishLang);
@@ -382,7 +382,7 @@ public class LangDetect {
      * E.g. 16 chars of ASCII text ~ we can possibly say it is English. However,
      * this is really only making an guess.
      */
-    public final static int MIN_LENGTH_UNK_TEXT_THRESHOLD = 16; /* Characters */
+    public static final int MIN_LENGTH_UNK_TEXT_THRESHOLD = 16; /* Characters */
 
     public static double MIN_LANG_DETECT_PROBABILITY = 0.60;
 

@@ -61,6 +61,7 @@ msg "Patch Solr Server"
 # ----------------------
 # Patch Solr7 for Java16+
 cp $basedir/solr/script/solr7-dist-bin-solr $GAZ/solr7-dist/bin/solr 
+cp $basedir/solr/script/solr7-dist-bin-solr.cmd $GAZ/solr7-dist/bin/solr.cmd
 
 for f in $GAZ/solr*-dist/bin/post $GAZ/solr*-dist/bin/solr ; do
   chmod u+x $f
