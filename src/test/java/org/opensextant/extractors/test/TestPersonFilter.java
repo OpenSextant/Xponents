@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class TestPersonFilter {
 
-    private final static void print(String msg) {
+    private static final void print(String msg) {
         System.out.println(msg);
     }
 

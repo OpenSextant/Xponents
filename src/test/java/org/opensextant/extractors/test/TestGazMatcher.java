@@ -52,7 +52,7 @@ public class TestGazMatcher {
     }
 
     protected static int confidenceThreshold = 20;
-    protected final static ArrayList<Integer> memStats = new ArrayList<>();
+    protected static final ArrayList<Integer> memStats = new ArrayList<>();
 
     public static final void printMemory() {
         int kbMemory = RuntimeTools.reportMemory();

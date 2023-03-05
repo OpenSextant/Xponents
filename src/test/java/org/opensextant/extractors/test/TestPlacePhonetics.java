@@ -107,7 +107,7 @@ public class TestPlacePhonetics {
         print("Place Match 'OK' -- valid geo for candidate.");
     }
 
-    private final static void print(String msg) {
+    private static final void print(String msg) {
         System.out.println(msg);
     }
 }

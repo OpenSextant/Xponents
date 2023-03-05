@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 public class TestPostalFilters {
 
 
-    private final static void print(String msg) {
+    private static final void print(String msg) {
         System.out.println(msg);
     }
 

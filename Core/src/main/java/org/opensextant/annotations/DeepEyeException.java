@@ -17,7 +17,7 @@ package org.opensextant.annotations;
  */
 public class DeepEyeException extends Exception {
 
-    private final static long serialVersionUID = 1234567890L;
+    private static final long serialVersionUID = 1234567890L;
 
     public DeepEyeException(Exception ex) {
         super(ex);
