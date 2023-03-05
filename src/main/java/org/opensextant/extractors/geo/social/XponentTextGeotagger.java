@@ -298,9 +298,9 @@ public class XponentTextGeotagger extends XponentGeocoder {
             // country = Name or Code; geo = named location with lat/lon; place = just a
             // name.
             if (place.isCountry) {
-                G.inferenceName = TextMatch.VAL_COUNTRY;
+                G.inferenceName = VAL_COUNTRY;
             } else {
-                G.inferenceName = place.getConfidence() >= MATCHCONF_MINIMUM_SOCMEDIA ? "geo" : TextMatch.VAL_PLACE;
+                G.inferenceName = place.getConfidence() >= MATCHCONF_MINIMUM_SOCMEDIA ? "geo" : VAL_PLACE;
             }
 
             inferences.add(G);
