@@ -3,7 +3,6 @@
 """
 OBSOLETE -- as of 2021 this site no longer operates this way.
 
-
 World Factbook harvest: This script collects world leaders "Chiefs of State (COS)"
 from the WFB.  The intent is to gather various well-known named entities and have them
 available to either tag any document or to negate geotags that tag a person's name as a geographic place.
@@ -105,40 +104,44 @@ def expand_title(t):
     return ' '.join(buf)
 
 
-for C in countries:
-    if not C.cc_iso2:
-        continue
+if __name__ == "__main__":
 
-    url = base_url.format(C.cc_iso2)
-    html = requests.get(url, verify=False)
-    doc = bs4.BeautifulSoup(html.content, features="lxml")
-    # text = doc.get_text()
-    print("Country", C)
-    cos = doc.find_all("div", attrs={"id": "chiefsOutput"})
-    rows = []
-    for chief in cos:
-        row = dict()
-        col = chief.find("span", attrs={"class": "title"})
-        row["title_orig"] = col.text
-        col = chief.find("span", attrs={"class": "cos_name"})
-        row["name"] = col.text
-        for k in row:
-            val = squeeze_whitespace(row.get(k).strip())
-            row[k] = val.replace(' ,', ',')
-        row["official_title"] = expand_title(row['title_orig'])
-        if "," in row["name"]:
-            a, b = row["name"].split(",", 1)
-            row["personal_title"] = b.strip()
-            row["name"] = a.strip()
-        rows.append(row)
+    print("Web site no longer exists -- proceed with caution -- WFB was migrated to a new portal")
 
-    master[C.cc_iso2] = rows
+    for C in countries:
+        if not C.cc_iso2:
+            continue
 
-print("------------DEPRECATED---------------")
-print("Script runs from ./solr folder, exports JSON result to ./etc/taxcat/data")
-print("""Run this to update content periodically -- but in aggregating all updates, 
-    you should be resolving duplicates before entering into TaxCat""")
-ymd = arrow.utcnow().format("YYYY-MM-DD")
-target = os.path.join("etc", "taxcat", "data", "wfb-leaders-by-country-{}.json".format(ymd))
-with open(target, "w", encoding="UTF-8") as fh:
-    json.dump(master, fh, indent=2)
+        url = base_url.format(C.cc_iso2)
+        html = requests.get(url, verify=True)
+        doc = bs4.BeautifulSoup(html.content, features="lxml")
+        # text = doc.get_text()
+        print("Country", C)
+        cos = doc.find_all("div", attrs={"id": "chiefsOutput"})
+        rows = []
+        for chief in cos:
+            row = dict()
+            col = chief.find("span", attrs={"class": "title"})
+            row["title_orig"] = col.text
+            col = chief.find("span", attrs={"class": "cos_name"})
+            row["name"] = col.text
+            for k in row:
+                val = squeeze_whitespace(row.get(k).strip())
+                row[k] = val.replace(' ,', ',')
+            row["official_title"] = expand_title(row['title_orig'])
+            if "," in row["name"]:
+                a, b = row["name"].split(",", 1)
+                row["personal_title"] = b.strip()
+                row["name"] = a.strip()
+            rows.append(row)
+
+        master[C.cc_iso2] = rows
+
+    print("------------DEPRECATED---------------")
+    print("Script runs from ./solr folder, exports JSON result to ./etc/taxcat/data")
+    print("""Run this to update content periodically -- but in aggregating all updates, 
+        you should be resolving duplicates before entering into TaxCat""")
+    ymd = arrow.utcnow().format("YYYY-MM-DD")
+    target = os.path.join("etc", "taxcat", "data", "wfb-leaders-by-country-{}.json".format(ymd))
+    with open(target, "w", encoding="UTF-8") as fh:
+        json.dump(master, fh, indent=2)

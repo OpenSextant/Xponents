@@ -223,11 +223,13 @@ if __name__ == '__main__':
         print(str(runErr))
         sys.exit(1)
 
+    fpath = os.path.abspath(args.input)
+
     # ======================================
     # Support for arbitrary amounts of text
     #
     if args.text:
-        process_text(args.input, docid="test-doc-#123", features=feat,
+        process_text(fpath, docid="test-doc-#123", features=feat,
                      preferred_countries=countries, preferred_locations=locations)
     # ======================================
     # Support data as one text record per line in a file
@@ -236,7 +238,7 @@ if __name__ == '__main__':
         print("INPUT: from individual lines from input file\n\n")
         is_json = args.input.endswith(".json")
         try:
-            with open(args.input, 'r', encoding="UTF-8") as fh:
+            with open(fpath, 'r', encoding="UTF-8") as fh:
                 lineNum = 0
                 for line in fh:
                     textbuf = line.strip()
@@ -259,10 +261,10 @@ if __name__ == '__main__':
     # ======================================
     # Use a single file as the source text to process
     #                
-    elif args.input:
-        file_id = os.path.basename(args.input)
+    elif fpath:
+        file_id = os.path.basename(fpath)
         try:
-            with open(args.input, 'r', encoding="UTF-8") as fh:
+            with open(fpath, 'r', encoding="UTF-8") as fh:
                 process_text(fh.read(), docid=file_id, features=feat,
                              preferred_countries=countries, preferred_locations=locations)
         except Exception as runErr:
