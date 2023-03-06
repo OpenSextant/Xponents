@@ -4,7 +4,7 @@ RELEASES
 ==============
 
 # 2023
-**Xponents 3.6.0**
+**Xponents 3.6.1**
 * Taxon matching refinements and expansion.  REST API now allows for geotagger to fully extract/report all taxons
 * [#81](https://github.com/OpenSextant/Xponents/issues/81) Xponents Core: XCoord parsing of MGRS 
 * [#77](https://github.com/OpenSextant/Xponents/issues/77) Streamlined dependencies and now understand them better, 

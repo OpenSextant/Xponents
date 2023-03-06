@@ -184,14 +184,14 @@ Insert these dependencies into your POM depending on what you need.
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.5.10</version>
+    <version>3.6.1</version>
   </dependency>
 
   <!-- Xponents SDK API -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.5.10</version>
+    <version>3.6.1</version>
   </dependency>
 ```
 
