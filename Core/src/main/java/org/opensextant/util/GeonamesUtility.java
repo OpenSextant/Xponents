@@ -1162,6 +1162,23 @@ public class GeonamesUtility {
     }
 
     /**
+     * Administrative feat class + code test.
+     *
+     * @param featClass
+     * @param featCode
+     * @return
+     */
+    public static boolean isAdministrative(final String featClass, final String featCode) {
+        if ( "A".equalsIgnoreCase(featClass)){
+            return true;
+        }
+        if (featCode!=null && "P".equalsIgnoreCase(featClass) && featCode.startsWith("PPLA")){
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param featClass geonames feature class, e.g., A, P, H, L, V, T, R
      * @return true if P.
      */
