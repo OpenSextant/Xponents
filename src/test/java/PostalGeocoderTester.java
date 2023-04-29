@@ -24,18 +24,9 @@ public class PostalGeocoderTester extends TestGazMatcher {
         // Step 0.  You can stop here and return postal matches if you want.
         List<TextMatch> postalMatches = geocoder.extract(t);
 
-        // Step 1. Fully tag text to find related geography and associate City + Postal.
-        //         NOTE: this assumes that the postal tagger is incomplete and any pre-selected geocoding is tossed away.
-        List<TextMatch> matches = preTagger.extract(t);
-        PostalGeocoder.associateMatches(matches, postalMatches);
-
-        //  Step 2. (Only if Step 1 occurred) Generate new spans with the finest location chosen.
-        //       "derivedMatches" here is a super set of the originals and any derivations.
-        List<TextMatch> derivedMatches = PostalGeocoder.deriveMatches(postalMatches, t);
-
         // Emit just postal matches here -- to not overwhelm output.
         // But in general the super set of matches is output.
-        summarizeFindings(derivedMatches);
+        summarizeFindings(postalMatches);
 
         print(" ** Only Postal Geotags were emitted. **\n");
     }

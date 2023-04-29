@@ -31,6 +31,30 @@ public class PostalCodeFilter extends GeocodeRule {
         return !m.matches();
     }
 
+    private static final int ERA_START_YEAR = 1975;
+    private static final int ERA_END_YEAR = 2025;
+    private static final int YEAR_LEN = 4;
+
+    private boolean filterOutYears(String txt) {
+
+        /** DATE filters for disambiguating bettween year and postal code patterns:
+         * Let's use +/- 25 years around the millenium for now.
+         */
+        if (txt.length() != YEAR_LEN) {
+            return false;
+        }
+
+        // IGNORE YEARS of recent times.
+        try {
+            int possibleYear = Integer.parseInt(txt);
+            /* Arbitrary 50-year period we will ignore for any 4-digit postal codes. */
+            return ERA_START_YEAR < possibleYear && possibleYear < ERA_END_YEAR;
+        } catch (NumberFormatException nfe) {
+            // No worries.  Not a year.
+            return false;
+        }
+    }
+
     @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate name : names) {
@@ -55,6 +79,16 @@ public class PostalCodeFilter extends GeocodeRule {
             if (name.getLength() < minLen) {
                 name.addRule("ShortCode");
                 name.setFilteredOut(true);
+            }
+
+            // IGNORE TOKENS LOOKiNG LiKE YEARS
+            if (!name.isValid()) {
+                // This only applies to names that have not been previously validated.
+                // For example, "2002" could have been marked as valid prior to this rule.
+                if (name.hasPostal() && filterOutYears(name.getText())) {
+                    name.addRule("YearCode");
+                    name.setFilteredOut(true);
+                }
             }
         }
     }
