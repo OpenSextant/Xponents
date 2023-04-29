@@ -470,20 +470,16 @@ public class PlaceGeocoder extends GazetteerMatcher
         }
 
         List<TextMatch> matches = new ArrayList<>();
-        List<TextMatch> coordinates = null;
 
         // 0. GEOTAG raw text. Flag tag-only = false, in otherwords do extra work for
         // geocoding.
         //
         List<PlaceCandidate> candidates = tagText(input, tagOnly);
 
-        // 1. COORDINATES. If caller thinks their data may have coordinates, then
-        // attempt to parse
-        // lat/lon. Any coordinates found fire rules for resolve lat/lon to a
-        // Province/Country if possible.
+        // 1. COORDINATES. If caller thinks their data may have coordinates, then  attempt to parse lat/lon.
+        // Any coordinates found fire rules for resolve lat/lon to a Province/Country if possible.
         //
-        coordinates = parseGeoCoordinates(input);
-        matches.addAll(coordinates);
+        matches.addAll(parseGeoCoordinates(input));
 
         if (candidates == null) {
             return matches;

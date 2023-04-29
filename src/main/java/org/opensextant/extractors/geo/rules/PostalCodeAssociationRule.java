@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.opensextant.data.Place;
 import org.opensextant.data.MatchSchema;
+import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
 
@@ -38,11 +38,11 @@ public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchem
     public static boolean complementaryPostal(final Place geo1, final Place geo2) {
 
         /* ADM POST */
-        if ((geo1.isAdmin1() || geo1.isCountry()) && geo2.isPostal()) {
+        if ((geo1.isAdministrative() || geo1.isCountry()) && geo2.isPostal()) {
             return true;
         }
         /* POST ADM1 */
-        return (geo2.isAdmin1() || geo2.isCountry()) && geo1.isPostal();
+        return (geo2.isAdministrative() || geo2.isCountry()) && geo1.isPostal();
     }
 
     /**

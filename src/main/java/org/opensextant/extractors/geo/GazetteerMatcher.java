@@ -659,7 +659,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             }
 
             // Only add PlaceCandidate if it has associated locations after filtering
-            if (geocode && validMatch && pc.hasPlaces()) {
+            if (validMatch && pc.hasPlaces()) {
                 candidates.put(pc.start, pc);
                 log.debug("Text {} matched {}", pc.getText(), namesMatched);
             } else {
