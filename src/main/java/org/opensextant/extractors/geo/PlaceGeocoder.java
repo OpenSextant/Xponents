@@ -623,6 +623,14 @@ public class PlaceGeocoder extends GazetteerMatcher
 
         log.debug("Matched {}", nonPlaces.size());
 
+        /*
+          Step 1 - Filter all TaxonMatches, based on the individual Taxons found.
+          One Match may be linked to multiple Taxons.  E.g., "The Feds" text may be resolved/tagged as
+             "org.Federal Government" (catalog JRC),
+             "org.musical.Feds_Band" (catalog BandGuide)
+
+          Only one conditional is needed to filter in/out the TextMatch based on one taxon.
+         */
         for (TextMatch tm : nonPlaces) {
             if (!(tm instanceof TaxonMatch)) {
                 continue;
@@ -651,6 +659,7 @@ public class PlaceGeocoder extends GazetteerMatcher
                         }
                     }
                     persons.add(tag);
+                    break;
                 } else if (node.startsWith("nationality.")) {
                     // Nationality infers ==> Country.  Grab country code from Taxon
                     // ==============================
@@ -664,6 +673,7 @@ public class PlaceGeocoder extends GazetteerMatcher
                         }
                     }
                     others.add(tag);
+                    break;
                 } else {
                     if (taxon.isAcronym && !tm.isUpper()) {
                         // Mismatch  ABC vs. Abc
@@ -674,11 +684,17 @@ public class PlaceGeocoder extends GazetteerMatcher
                     } else {
                         others.add(tag);
                     }
+                    break;
                 }
             }
         }
 
-        // Once all non-Places entities are found, line them up against existing Place Candidates.
+        /* Step 2.  Separate groups of entities, but add all salient ones to Matches.
+        Note - filtered out Taxons/TaxonMatches are not included in final output,
+        So caller looking for "filtered out" will not see trivial taxons.
+
+        Then all non-Places entities are found, line them up against existing Place Candidates.
+         */
         personNameRule.evaluateNamedEntities(input, candidates, persons, orgs, others);
         matches.addAll(persons);
         matches.addAll(orgs);

@@ -52,7 +52,6 @@ public final class PlaceEvidence extends Place implements Comparable<Object> {
         APRIORI, LOCAL, COREF, MERGED, DOCUMENT
     }
 
-    // private static final long serialVersionUID = 2389068067890L;
     // The rule which found the evidence
     private String rule = null;
     // the scope from which this evidence came

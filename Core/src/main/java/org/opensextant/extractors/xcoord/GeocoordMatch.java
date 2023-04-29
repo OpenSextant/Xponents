@@ -107,7 +107,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
     public GeocoordMatch(int x1, int x2) {
         super(x1, x2);
         // populate attrs as needed;
-        this.type = "coord";
+        this.type = VAL_COORD;
         this.producer = "XCoord";
     }
 

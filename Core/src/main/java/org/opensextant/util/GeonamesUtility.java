@@ -1424,7 +1424,7 @@ public class GeonamesUtility {
         }
     }
 
-    private final static Pattern langidSplit = Pattern.compile("[-_]");
+    private static final Pattern langidSplit = Pattern.compile("[-_]");
 
     /**
      * Parse lang ID from Locale. Internal method; Ensure argument is not null;

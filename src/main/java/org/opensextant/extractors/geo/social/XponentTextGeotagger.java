@@ -9,7 +9,6 @@ import java.util.List;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;
-import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
@@ -107,7 +106,6 @@ public class XponentTextGeotagger extends XponentGeocoder {
      *
      * @param tw Tweet API object
      * @return the annotation with geo-inference
-     * @throws MessageParseException on data parsing error
      * @throws ExtractionException   on tagging erorr
      */
     @Override
@@ -123,8 +121,6 @@ public class XponentTextGeotagger extends XponentGeocoder {
      * @param tw tweet rendered by Core API TweetUtility This will use Tweet.lang to direct
      *           tagging/tokenization.
      * @return Geo or Country annotation
-     * @throws MessageParseException
-     *                               on parsing the tweet or JSON
      * @throws ExtractionException
      *                               on running geolocation routines
      */
@@ -302,9 +298,9 @@ public class XponentTextGeotagger extends XponentGeocoder {
             // country = Name or Code; geo = named location with lat/lon; place = just a
             // name.
             if (place.isCountry) {
-                G.inferenceName = "country";
+                G.inferenceName = VAL_COUNTRY;
             } else {
-                G.inferenceName = place.getConfidence() >= MATCHCONF_MINIMUM_SOCMEDIA ? "geo" : "place";
+                G.inferenceName = place.getConfidence() >= MATCHCONF_MINIMUM_SOCMEDIA ? "geo" : VAL_PLACE;
             }
 
             inferences.add(G);

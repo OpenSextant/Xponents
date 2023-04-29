@@ -130,7 +130,7 @@ public class AnnotationHelper {
     }
 
     /** The Constant NUM_SEP. */
-    public final static String NUM_SEP = ";";
+    public static final String NUM_SEP = ";";
 
     /**
      * Encode offsets.

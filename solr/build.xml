@@ -13,7 +13,7 @@
   <property name="gaz.tmp" value="${basedir}/tmp"/>
   <property name="resources.lib" value="${basedir}/../src/main/resources"/>
   <property name="xponents.lib" value="${basedir}/../lib"/>
-  <property name="log4j.v" value="2.19.0"/>
+  <property name="log4j.v" value="2.20.0"/>
 
   <target name="setup">
     <mkdir dir="${solr.home}/lib"/>

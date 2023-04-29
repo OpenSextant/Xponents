@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>opensextant</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:https://github.com/OpenSextant/Xponents/blob/master/python/opensextant/__init__.py">https://github.com/OpenSextant/Xponents/blob/master/python/opensextant/__init__.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/dist/Xponents-3.6/piplib/opensextant/__init__.py">/Users/ubaldino/workspace/opensource/Xponents/dist/Xponents-3.6/piplib/opensextant/__init__.py</a></font></td></tr></table>
     <p><tt>#&nbsp;-*-&nbsp;coding:&nbsp;utf-8&nbsp;-*-</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -51,7 +51,8 @@
 </font></dt><dt><font face="helvetica, arial"><a href="opensextant.html#Place">Place</a>
 </font></dt></dl>
 </dd>
-<dt><font face="helvetica, arial"><a href="opensextant.html#TextEntity">TextEntity</a>
+<dt><font face="helvetica, arial"><a href="opensextant.html#Language">Language</a>
+</font></dt><dt><font face="helvetica, arial"><a href="opensextant.html#TextEntity">TextEntity</a>
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="opensextant.html#TextMatch">TextMatch</a>
@@ -170,6 +171,36 @@ Data descriptors defined here:<br>
 Data and other attributes defined here:<br>
 <dl><dt><strong>__abstractmethods__</strong> = frozenset({'extract'})</dl>
 
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Language">class <strong>Language</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Language">Language</a>(iso3,&nbsp;iso2,&nbsp;nmlist:&nbsp;list)<br>
+&nbsp;<br>
+<a href="#Language">Language</a>&nbsp;Represents&nbsp;a&nbsp;single&nbsp;code/name&nbsp;pair<br>
+Coding&nbsp;is&nbsp;3-char&nbsp;or&nbsp;2-char,&nbsp;either&nbsp;is&nbsp;optional.<br>
+In&nbsp;some&nbsp;situations&nbsp;there&nbsp;are&nbsp;competeing&nbsp;2-char&nbsp;codes&nbsp;in&nbsp;code&nbsp;books,&nbsp;such&nbsp;as&nbsp;Lib&nbsp;of&nbsp;Congress&nbsp;(LOC)<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Language-__init__"><strong>__init__</strong></a>(self, iso3, iso2, nmlist: list)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Language-__str__"><strong>__str__</strong></a>(self)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="Language-get_name"><strong>get_name</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Language-name_code"><strong>name_code</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
@@ -411,9 +442,13 @@ Data descriptors inherited from <a href="opensextant.html#TextEntity">TextEntity
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
+<td width="100%"><dl><dt><a name="-add_language"><strong>add_language</strong></a>(lg: opensextant.Language, override=False)</dt></dl>
+ <dl><dt><a name="-atan2"><strong>atan2</strong></a>(y, x, /)</dt><dd><tt>Return&nbsp;the&nbsp;arc&nbsp;tangent&nbsp;(measured&nbsp;in&nbsp;radians)&nbsp;of&nbsp;y/x.<br>
 &nbsp;<br>
 Unlike&nbsp;atan(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbsp;y&nbsp;are&nbsp;considered.</tt></dd></dl>
+ <dl><dt><a name="-bbox"><strong>bbox</strong></a>(lat: float, lon: float, radius: int)</dt></dl>
+ <dl><dt><a name="-centroid"><strong>centroid</strong></a>(arr: list)</dt><dd><tt>:param&nbsp;arr:&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;numeric&nbsp;coordinates&nbsp;(y,x)<br>
+:return:&nbsp;<a href="#Coordinate">Coordinate</a>&nbsp;--&nbsp;the&nbsp;average&nbsp;of&nbsp;sum(y),&nbsp;sum(x)</tt></dd></dl>
  <dl><dt><a name="-cos"><strong>cos</strong></a>(x, /)</dt><dd><tt>Return&nbsp;the&nbsp;cosine&nbsp;of&nbsp;x&nbsp;(measured&nbsp;in&nbsp;radians).</tt></dd></dl>
  <dl><dt><a name="-country_as_place"><strong>country_as_place</strong></a>(ctry: opensextant.Country, name: str, name_type='N', oid=None)</dt><dd><tt>Convert&nbsp;to&nbsp;<a href="#Place">Place</a>.<br>
 :param&nbsp;ctry:&nbsp;<a href="#Country">Country</a>&nbsp;<a href="builtins.html#object">object</a><br>
@@ -429,6 +464,7 @@ Unlike&nbsp;atan(y/x),&nbsp;the&nbsp;signs&nbsp;of&nbsp;both&nbsp;x&nbsp;and&nbs
 :param&nbsp;lat:&nbsp;latitude<br>
 :param&nbsp;lon:&nbsp;longitude<br>
 :return:&nbsp;string</tt></dd></dl>
+ <dl><dt><a name="-geohash2point"><strong>geohash2point</strong></a>(gh)</dt></dl>
  <dl><dt><a name="-geohash_cells"><strong>geohash_cells</strong></a>(gh: str, radius: int)</dt><dd><tt>For&nbsp;a&nbsp;radius&nbsp;in&nbsp;meters&nbsp;generate&nbsp;the&nbsp;cells&nbsp;contained&nbsp;within&nbsp;or&nbsp;touched&nbsp;by&nbsp;that&nbsp;radius.<br>
 This&nbsp;is&nbsp;approximate&nbsp;precision&nbsp;based&nbsp;on:<br>
 <a href="https://en.wikipedia.org/wiki/Geohash">https://en.wikipedia.org/wiki/Geohash</a>&nbsp;&nbsp;&nbsp;which&nbsp;suggests&nbsp;this&nbsp;approximation&nbsp;could&nbsp;be&nbsp;done&nbsp;mathematically<br>
@@ -443,26 +479,46 @@ country&nbsp;code&nbsp;you&nbsp;may&nbsp;have&nbsp;a&nbsp;data&nbsp;quality&nbsp
 :param&nbsp;namecode:&nbsp;2-&nbsp;or&nbsp;3-alpha&nbsp;code.<br>
 :param&nbsp;standard:&nbsp;'ISO'&nbsp;or&nbsp;'FIPS',&nbsp;'name'<br>
 :return:&nbsp;&nbsp;<a href="#Country">Country</a>&nbsp;<a href="builtins.html#object">object</a></tt></dd></dl>
+ <dl><dt><a name="-get_lang_code"><strong>get_lang_code</strong></a>(txt: str)</dt></dl>
+ <dl><dt><a name="-get_lang_name"><strong>get_lang_name</strong></a>(code: str)</dt></dl>
+ <dl><dt><a name="-get_language"><strong>get_language</strong></a>(code: str) -&gt; opensextant.Language</dt><dd><tt>:param&nbsp;code:&nbsp;language&nbsp;ID&nbsp;or&nbsp;name<br>
+:return:&nbsp;<a href="#Language">Language</a>&nbsp;or&nbsp;None</tt></dd></dl>
  <dl><dt><a name="-get_province"><strong>get_province</strong></a>(cc, adm1)</dt><dd><tt>REQUIRES&nbsp;you&nbsp;<a href="#-load_provinces">load_provinces</a>()&nbsp;first.</tt></dd></dl>
  <dl><dt><a name="-get_us_province"><strong>get_us_province</strong></a>(adm1: str)</dt><dd><tt>:param&nbsp;adm1:&nbsp;&nbsp;ADM1&nbsp;code&nbsp;or&nbsp;for&nbsp;territories,<br>
 :return:</tt></dd></dl>
  <dl><dt><a name="-is_administrative"><strong>is_administrative</strong></a>(feat: str)</dt></dl>
  <dl><dt><a name="-is_country"><strong>is_country</strong></a>(feat_code: str)</dt><dd><tt>Test&nbsp;a&nbsp;feature&nbsp;code</tt></dd></dl>
+ <dl><dt><a name="-is_lang_chinese"><strong>is_lang_chinese</strong></a>(lg: str)</dt></dl>
+ <dl><dt><a name="-is_lang_cjk"><strong>is_lang_cjk</strong></a>(lg: str)</dt></dl>
+ <dl><dt><a name="-is_lang_english"><strong>is_lang_english</strong></a>(lg: str)</dt></dl>
+ <dl><dt><a name="-is_lang_euro"><strong>is_lang_euro</strong></a>(lg: str)</dt><dd><tt>true&nbsp;if&nbsp;lang&nbsp;is&nbsp;European&nbsp;--&nbsp;romance,&nbsp;german,&nbsp;english,&nbsp;etc<br>
+:param&nbsp;lg:<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-is_lang_romance"><strong>is_lang_romance</strong></a>(lg: str)</dt><dd><tt>If&nbsp;spanish,&nbsp;portuguese,&nbsp;italian,&nbsp;french,&nbsp;romanian</tt></dd></dl>
  <dl><dt><a name="-is_political"><strong>is_political</strong></a>(feat_code: str)</dt><dd><tt>Test&nbsp;a&nbsp;feature&nbsp;code</tt></dd></dl>
  <dl><dt><a name="-is_populated"><strong>is_populated</strong></a>(feat: str)</dt></dl>
+ <dl><dt><a name="-list_languages"><strong>list_languages</strong></a>()</dt><dd><tt>List&nbsp;out&nbsp;a&nbsp;flattened&nbsp;list&nbsp;of&nbsp;languages,&nbsp;de-duplicated&nbsp;by&nbsp;ISO2&nbsp;language&nbsp;ID.<br>
+TODO:&nbsp;alternatively&nbsp;list&nbsp;out&nbsp;every&nbsp;language<br>
+:return:</tt></dd></dl>
  <dl><dt><a name="-load_countries"><strong>load_countries</strong></a>(csvpath=None)</dt><dd><tt>parses&nbsp;Xponents&nbsp;Core/src/main/resource&nbsp;CSV&nbsp;file&nbsp;country-names-2015.csv<br>
 putting&nbsp;out&nbsp;an&nbsp;array&nbsp;of&nbsp;<a href="#Country">Country</a>&nbsp;objects.<br>
 :return:&nbsp;array&nbsp;of&nbsp;<a href="#Country">Country</a></tt></dd></dl>
+ <dl><dt><a name="-load_languages"><strong>load_languages</strong></a>()</dt></dl>
  <dl><dt><a name="-load_major_cities"><strong>load_major_cities</strong></a>()</dt><dd><tt>Loads&nbsp;City&nbsp;geo/demographic&nbsp;information&nbsp;--&nbsp;this&nbsp;does&nbsp;not&nbsp;try&nbsp;to&nbsp;parse&nbsp;all&nbsp;name&nbsp;variants.<br>
+&nbsp;<br>
+This&nbsp;produces&nbsp;Geonames&nbsp;use&nbsp;of&nbsp;FIPS&nbsp;codes.<br>
 :return:</tt></dd></dl>
  <dl><dt><a name="-load_provinces"><strong>load_provinces</strong></a>()</dt><dd><tt>Load,&nbsp;store&nbsp;and&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;ADM1&nbsp;boundary&nbsp;names&nbsp;-&nbsp;provinces,&nbsp;states,&nbsp;republics,&nbsp;etc.<br>
 NOTE:&nbsp;Location&nbsp;information&nbsp;is&nbsp;not&nbsp;included&nbsp;in&nbsp;this&nbsp;province&nbsp;listing.&nbsp;&nbsp;Just&nbsp;<a href="#Country">Country</a>,&nbsp;ADM1,&nbsp;Name&nbsp;tuples.<br>
+NOTE:&nbsp;This&nbsp;reflects&nbsp;only&nbsp;GEONAMES&nbsp;ADMIN1&nbsp;CODES&nbsp;ASCII&nbsp;--&nbsp;which&nbsp;portrays&nbsp;most&nbsp;of&nbsp;the&nbsp;world&nbsp;(except&nbsp;US)&nbsp;as&nbsp;FIPS,<br>
+not&nbsp;ISO.<br>
 :return:&nbsp;&nbsp;dict</tt></dd></dl>
  <dl><dt><a name="-load_us_provinces"><strong>load_us_provinces</strong></a>()</dt><dd><tt>Load,&nbsp;store&nbsp;internally&nbsp;and&nbsp;return&nbsp;the&nbsp;LIST&nbsp;of&nbsp;US&nbsp;states.<br>
 NOTE:&nbsp;<a href="#Place">Place</a>&nbsp;objects&nbsp;for&nbsp;US&nbsp;States&nbsp;have&nbsp;a&nbsp;location&nbsp;(unlike&nbsp;list&nbsp;of&nbsp;world&nbsp;provinces).<br>
 To&nbsp;get&nbsp;location&nbsp;and&nbsp;feature&nbsp;information&nbsp;in&nbsp;full,&nbsp;you&nbsp;must&nbsp;use&nbsp;the&nbsp;SQLITE&nbsp;DB&nbsp;or&nbsp;Xponents&nbsp;Solr.<br>
 :return:&nbsp;array&nbsp;of&nbsp;<a href="#Place">Place</a>&nbsp;objects</tt></dd></dl>
  <dl><dt><a name="-load_world_adm1"><strong>load_world_adm1</strong></a>()</dt><dd><tt>Load,&nbsp;store&nbsp;and&nbsp;return&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;ADM1&nbsp;boundary&nbsp;names&nbsp;-&nbsp;provinces,&nbsp;states,&nbsp;republics,&nbsp;etc.<br>
+Coding&nbsp;for&nbsp;ADM1&nbsp;is&nbsp;FIPS&nbsp;based&nbsp;mostly<br>
 :return:&nbsp;&nbsp;dict</tt></dd></dl>
  <dl><dt><a name="-location_accuracy"><strong>location_accuracy</strong></a>(conf, prec_err)</dt><dd><tt>Both&nbsp;confidence&nbsp;and&nbsp;precision&nbsp;error&nbsp;are&nbsp;required&nbsp;to&nbsp;be&nbsp;non-zero&nbsp;and&nbsp;positive.<br>
 &nbsp;<br>
@@ -489,8 +545,11 @@ Consider&nbsp;confidence&nbsp;=&nbsp;100&nbsp;(aka&nbsp;100%&nbsp;chance&nbsp;we
 Return&nbsp;the&nbsp;logarithm&nbsp;of&nbsp;x&nbsp;to&nbsp;the&nbsp;given&nbsp;base.<br>
 &nbsp;<br>
 If&nbsp;the&nbsp;base&nbsp;not&nbsp;specified,&nbsp;returns&nbsp;the&nbsp;natural&nbsp;logarithm&nbsp;(base&nbsp;e)&nbsp;of&nbsp;x.</tt></dd></dl>
- <dl><dt><a name="-parse_admin_code"><strong>parse_admin_code</strong></a>(adm1)</dt><dd><tt>:param&nbsp;adm1:&nbsp;admin&nbsp;level&nbsp;1&nbsp;code<br>
+ <dl><dt><a name="-parse_admin_code"><strong>parse_admin_code</strong></a>(adm1, delim='.')</dt><dd><tt>:param&nbsp;delim:<br>
+:param&nbsp;adm1:&nbsp;admin&nbsp;level&nbsp;1&nbsp;code<br>
 :return:&nbsp;ADM1&nbsp;code&nbsp;if&nbsp;possible.</tt></dd></dl>
+ <dl><dt><a name="-pkg_resource_path"><strong>pkg_resource_path</strong></a>(rsrc)</dt></dl>
+ <dl><dt><a name="-point2geohash"><strong>point2geohash</strong></a>(lat: float, lon: float, precision=6)</dt></dl>
  <dl><dt><a name="-popscale"><strong>popscale</strong></a>(population, feature='city')</dt><dd><tt>Given&nbsp;a&nbsp;population&nbsp;in&nbsp;context&nbsp;of&nbsp;the&nbsp;feature&nbsp;--&nbsp;provide&nbsp;a<br>
 approximation&nbsp;of&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;feature&nbsp;on&nbsp;a&nbsp;10&nbsp;point&nbsp;scale.<br>
 &nbsp;<br>
@@ -518,11 +577,13 @@ Largest&nbsp;province&nbsp;is&nbsp;~135&nbsp;million<br>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>EARTH_RADIUS_WGS84</strong> = 6378137.0<br>
+<strong>IGNORE_LANGUAGES</strong> = {'gaa'}<br>
 <strong>PY3</strong> = True<br>
 <strong>adm1_by_hasc</strong> = {}<br>
 <strong>countries</strong> = []<br>
 <strong>countries_by_fips</strong> = {}<br>
 <strong>countries_by_iso</strong> = {}<br>
 <strong>countries_by_name</strong> = {}<br>
+<strong>language_map</strong> = {}<br>
 <strong>usstates</strong> = {}</td></tr></table>
 </body></html>

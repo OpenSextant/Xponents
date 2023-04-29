@@ -48,6 +48,9 @@ import java.util.zip.GZIPOutputStream;
  */
 public class FileUtility {
 
+    /** private constructor */
+    private FileUtility(){}
+
     /**
      * Write file, UTF-8 is default charset here.
      *

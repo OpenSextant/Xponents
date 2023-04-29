@@ -36,8 +36,8 @@ public abstract class TaggerResource extends ServerResource {
     }
     protected String operation = null;
 
-    public final static String FLD_FEATURES = "features";
-    public final static String FLD_STATUS = "status";
+    public static final String FLD_FEATURES = "features";
+    public static final String FLD_STATUS = "status";
 
     /**
      * operational parameter.

@@ -121,7 +121,7 @@ public class MGRSFilter implements GeocoordMatchFilter {
     }
 
     /** The Constant eol. */
-    final static Pattern eol = Pattern.compile("[\r\n]");
+    static final Pattern eol = Pattern.compile("[\r\n]");
 
     /**
      * TODO: Document rules.

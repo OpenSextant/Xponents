@@ -17,13 +17,14 @@
 package org.opensextant.extraction;
 
 import org.opensextant.util.TextUtils;
+import org.opensextant.data.MatchSchema;
 
 /**
  * A variation on TextEntity that also records pattern metadata
  *
  * @author ubaldino
  */
-public class TextMatch extends TextEntity {
+public class TextMatch extends TextEntity implements MatchSchema {
 
     /**
      * the ID of the pattern that extracted this
@@ -41,7 +42,7 @@ public class TextMatch extends TextEntity {
      */
     protected String type = "generic";
 
-    public TextMatch(int x1, int x2){
+    public TextMatch(int x1, int x2) {
         super(x1, x2);
     }
 
@@ -52,7 +53,7 @@ public class TextMatch extends TextEntity {
     /**
      * Allow matchers and taggers to set a type label, e.g., pattern family or other
      * string.
-     * 
+     *
      * @param t type
      */
     public void setType(String t) {
@@ -75,26 +76,26 @@ public class TextMatch extends TextEntity {
 
         this.pattern_id = m.pattern_id;
     }
-    
+
     /**
      * Case-insensitive comparison to another string
      * @param m match
      * @return trut if 
      */
     public boolean isSame(String m) {
-        if (m==null || text == null) {
+        if (m == null || text == null) {
             return false;
         }
         return getText().equalsIgnoreCase(m);
     }
-    
+
     /**
      * Compare the normalized string for this match to that of another.
      * @param m
      * @return true if getTextnorm()s yield same string.
      */
     public boolean isSameNorm(TextMatch m) {
-        if (m==null || text == null) {
+        if (m == null || text == null) {
             return false;
         }
         return getTextnorm().equals(m.getTextnorm());
@@ -130,10 +131,10 @@ public class TextMatch extends TextEntity {
      * the match remains default and generic.
      * @return
      */
-    public boolean isDefault(){
-        return (type==null || "generic".equals(type));
+    public boolean isDefault() {
+        return (type == null || "generic".equals(type));
     }
-    
+
     /**
      * If called, this overwrites existing match_id
      * Match ID is typically entity label @ offset.
@@ -143,7 +144,7 @@ public class TextMatch extends TextEntity {
     public void defaultMatchId() {
         match_id = String.format("%s@%d", this.getType(), this.start);
     }
-    
+
     /**
      * Future planning -- match_id may become private field in future API.
      * @return

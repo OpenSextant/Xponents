@@ -543,7 +543,7 @@ public class SocialGeoDemo implements JSONListener {
      * @return
      * @throws IOException
      */
-    public final static InputStream getStream(final String f) throws IOException {
+    public static final InputStream getStream(final String f) throws IOException {
         File infile = new File(f);
 
         if (infile.getName().toLowerCase().endsWith(".gz")) {

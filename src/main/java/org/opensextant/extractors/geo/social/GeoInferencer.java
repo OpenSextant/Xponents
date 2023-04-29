@@ -18,6 +18,7 @@ package org.opensextant.extractors.geo.social;
 
 import java.util.Collection;
 
+import org.opensextant.data.MatchSchema;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.TextMatch;
@@ -30,7 +31,7 @@ import org.opensextant.extractors.langid.LangDetect;
  *
  * @author ubaldino
  */
-public abstract class GeoInferencer extends SocialGeo {
+public abstract class GeoInferencer extends SocialGeo implements MatchSchema {
 
     /**
      * Avg text size (in chars) of tweets -- in 2014, I measured this to be about 90

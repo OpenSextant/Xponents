@@ -67,8 +67,7 @@ from opensextant.utility import is_ascii, has_cjk
 
 us_states = load_us_provinces()
 ignore_provinces = []
-for adm1 in us_states:
-    adm1_place = us_states[adm1]
+for adm1_place in us_states:
     ignore_provinces.append(adm1_place.name.lower())
 
 # distinct primary names act as a JRC root entry; all others would be variants

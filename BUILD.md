@@ -131,6 +131,9 @@ For historical purposes here is a POM snippet for using findbugs, which is no lo
 In a similar reduction of dependencies, checkstyle plugin functions are replaced by Sonar scanning:
 
 ```xml
+
+<project>
+  ...    
   <pluginManagement>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -163,7 +166,7 @@ In a similar reduction of dependencies, checkstyle plugin functions are replaced
         </configuration>
       </plugin>
   </plugins>
-
+</project>
 ```
 
 For Docker Scan and Snyk usage, you will need to review those emerging services.  They seem to work 
@@ -207,12 +210,13 @@ If this sounds like a bit much, then leverage the artifacts in Maven Central or 
 
 Maven Publishing
 ----------------
+-  Fix all versions to be release versions. No SNAPSHOTS, no broken javadoc, etc. Go through entire packgaging phase.
+-  Ensure GPG key is known...
+-  and OSSRH login is set in settings.xml
+-  Prerequsite items include a `pinentry` and Gnu PGP utilities. On Mac, `brew install gnupg pinentry-mac`, for example.
+-  Review [Maven Plugin](https://maven.apache.org/plugins/maven-gpg-plugin/) for details
+
 ```
-
-  # Fix all versions to be release versions.
-  # Ensure GPG key is known...
-  # and OSSRH login is set in settings.xml
-
   cd ./Core
   mvn clean deploy -P release
   cd ..

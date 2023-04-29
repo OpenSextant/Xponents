@@ -40,43 +40,45 @@ def parse_aliases(nm):
     return alist
 
 
-# MAIN
 base_url = "https://www.cia.gov/library/publications/resources/the-world-factbook/appendix/appendix-b.html"
 master = {}
 load_cached = True
 cached_file = '/tmp/wfb-orgs.html'
 html = None
 
-if load_cached and os.path.exists(cached_file):
-    with open(cached_file, 'r', encoding="UTF-8") as fh:
-        html = fh.read()
-else:
-    html_response = requests.get(base_url, verify=False)
-    html = html_response.content
-    with open('/tmp/wfb-orgs.html', 'w', encoding="UTF-8") as fh:
-        fh.write(html.decode("UTF-8"))
+if __name__ == "__main__":
 
-doc = bs4.BeautifulSoup(html, features="lxml")
+    print("Web site no longer exists -- proceed with caution -- WFB was migrated to a new portal")
+    if load_cached and os.path.exists(cached_file):
+        with open(cached_file, 'r', encoding="UTF-8") as fh:
+            html = fh.read()
+    else:
+        html_response = requests.get(base_url, verify=True)
+        html = html_response.content
+        with open('/tmp/wfb-orgs.html', 'w', encoding="UTF-8") as fh:
+            fh.write(html.decode("UTF-8"))
 
-master = []
-for chx in range(ord('a'), ord('z')):
-    ch = chr(chx)
-    node_class = "appendix-entry reference-content ln-{}".format(ch)
-    for entry in doc.find_all("div", attrs={"class": node_class}):
-        org_name = entry.find("div", attrs={"class": "appendix-entry-name category"})
-        org_desc = entry.find("div", attrs={"class": "appendix-entry-text category_data"})
-        if org_name:
-            k = org_name.text.strip()
-            row = {"name": k, "description": org_desc.text.strip()}
-            if "(" in k:
-                row["aliases"] = parse_aliases(k)
-                row["name"] = k.split("(")[0].strip()
-            master.append(row)
+    doc = bs4.BeautifulSoup(html, features="lxml")
 
-print("Script runs from ./solr folder, exports JSON result to ./etc/taxcat/data")
-print("""Run this to update content periodically -- but in aggregating all updates, 
-    you should be resolving duplicates before entering into TaxCat""")
-ymd = arrow.utcnow().format("YYYY-MM-DD")
-target = os.path.join("etc", "taxcat", "data", "wfb-orgs-{}.json".format(ymd))
-with open(target, "w", encoding="UTF-8") as fh:
-    json.dump({"orgs_and_groups": master}, fh, indent=2)
+    master = []
+    for chx in range(ord('a'), ord('z')):
+        ch = chr(chx)
+        node_class = "appendix-entry reference-content ln-{}".format(ch)
+        for entry in doc.find_all("div", attrs={"class": node_class}):
+            org_name = entry.find("div", attrs={"class": "appendix-entry-name category"})
+            org_desc = entry.find("div", attrs={"class": "appendix-entry-text category_data"})
+            if org_name:
+                k = org_name.text.strip()
+                row = {"name": k, "description": org_desc.text.strip()}
+                if "(" in k:
+                    row["aliases"] = parse_aliases(k)
+                    row["name"] = k.split("(")[0].strip()
+                master.append(row)
+
+    print("Script runs from ./solr folder, exports JSON result to ./etc/taxcat/data")
+    print("""Run this to update content periodically -- but in aggregating all updates, 
+        you should be resolving duplicates before entering into TaxCat""")
+    ymd = arrow.utcnow().format("YYYY-MM-DD")
+    target = os.path.join("etc", "taxcat", "data", "wfb-orgs-{}.json".format(ymd))
+    with open(target, "w", encoding="UTF-8") as fh:
+        json.dump({"orgs_and_groups": master}, fh, indent=2)

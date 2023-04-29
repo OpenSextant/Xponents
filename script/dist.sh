@@ -1,11 +1,11 @@
 #!/bin/bash
 #
 #
-VER=3.5
+VER=3.6
 
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
-BUILD_VER=`grep build.v  $basedir/build.properties |awk -F= '{print $2;}'`
+BUILD_VER=`grep xponents.v  $basedir/build.properties |awk -F= '{print $2;}'`
 REL=$basedir/dist/Xponents-$VER
 GAZ=$REL/xponents-solr
 
@@ -61,6 +61,7 @@ msg "Patch Solr Server"
 # ----------------------
 # Patch Solr7 for Java16+
 cp $basedir/solr/script/solr7-dist-bin-solr $GAZ/solr7-dist/bin/solr 
+cp $basedir/solr/script/solr7-dist-bin-solr.cmd $GAZ/solr7-dist/bin/solr.cmd
 
 for f in $GAZ/solr*-dist/bin/post $GAZ/solr*-dist/bin/solr ; do
   chmod u+x $f

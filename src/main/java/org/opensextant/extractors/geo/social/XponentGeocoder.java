@@ -8,7 +8,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.opensextant.ConfigException;
 import org.opensextant.data.*;
 import org.opensextant.data.social.Message;
-import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
@@ -187,8 +186,7 @@ public class XponentGeocoder extends GeoInferencer {
     }
 
     /**
-     * Geoinference user/author profile. Standard 'deepeye' annotation is "ugeo"
-     * or "country"
+     * Geoinference user/author profile. Standard 'deepeye' annotation is "ugeo" or "country"
      */
     @Override
     public GeoInference geoinferenceTweetAuthor(Tweet tw) throws ExtractionException {
@@ -203,8 +201,6 @@ public class XponentGeocoder extends GeoInferencer {
      * @param tw
      *           tweet as parsed by DeepEye
      * @return Geo or Country annotation
-     * @throws MessageParseException
-     *                               on parsing the tweet or JSON
      * @throws ExtractionException
      *                               on running geolocation routines
      */
@@ -1076,7 +1072,7 @@ public class XponentGeocoder extends GeoInferencer {
             }
 
             G.confidence = confidence;
-            G.inferenceName = "country";
+            G.inferenceName = VAL_COUNTRY;
             G.geocode = g;
             log.debug("Lookup Chooser: Chose country {} ", g);
             return G;
@@ -1136,7 +1132,7 @@ public class XponentGeocoder extends GeoInferencer {
         // A mere convention -- if method yields only a country, then emit only a
         // Country annot, not a full geocode.
         if (g.getMethod().endsWith("country")) {
-            annotName = "country";
+            annotName = VAL_COUNTRY;
         }
 
         /*

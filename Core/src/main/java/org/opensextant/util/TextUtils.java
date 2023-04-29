@@ -529,8 +529,8 @@ public class TextUtils {
         return checkCase(dat, CASE_LOWER);
     }
 
-    public final static int CASE_LOWER = 1;
-    public final static int CASE_UPPER = 2;
+    public static final int CASE_LOWER = 1;
+    public static final int CASE_UPPER = 2;
 
     /**
      * detects if string alpha chars are purely lower case.
@@ -1703,7 +1703,7 @@ public class TextUtils {
      * Twitter hashtags
      * primarily
      */
-    public final static Pattern hashtagPattern1 = Pattern.compile("(#\\[\\w[\\d\\s\\w]+\\])",
+    public static final Pattern hashtagPattern1 = Pattern.compile("(#\\[\\w[\\d\\s\\w]+\\])",
             Pattern.UNICODE_CHARACTER_CLASS);
     /**
      * Find any pattern "#ABC123" -- normal hashtag, Java Regex note: UNICODE flags
@@ -1711,7 +1711,7 @@ public class TextUtils {
      * otherwise "\w" and other classes match only ASCII. NOTE: These are Twitter
      * hashtags primarily
      */
-    public final static Pattern hashtagPattern2 = Pattern.compile("(#\\w[\\d\\w]+)", Pattern.UNICODE_CHARACTER_CLASS);
+    public static final Pattern hashtagPattern2 = Pattern.compile("(#\\w[\\d\\w]+)", Pattern.UNICODE_CHARACTER_CLASS);
 
     /**
      * Parse the typical Twitter hashtag variants.
@@ -1846,7 +1846,7 @@ public class TextUtils {
      * @param dt ISO date/time string.
      * @return
      */
-    public final static java.util.Date parseDate(final String dt) {
+    public static final java.util.Date parseDate(final String dt) {
         if (dt == null) {
             return null;
         }

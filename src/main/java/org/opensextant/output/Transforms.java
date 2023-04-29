@@ -1,11 +1,16 @@
 package org.opensextant.output;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import jodd.json.JsonArray;
 import jodd.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Geocoding;
 import org.opensextant.data.Place;
 import org.opensextant.data.Taxon;
+import org.opensextant.data.MatchSchema;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
@@ -17,15 +22,11 @@ import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+public class Transforms  implements MatchSchema {
 
-public class Transforms {
-
-    public final static String FLD_FILTERED = "filtered-out";
-    public final static String FLD_TYPE = "type";
-    public final static String FLD_MATCH_ID = "match-id";
+    public static final String FLD_FILTERED = "filtered-out";
+    public static final String FLD_TYPE = "type";
+    public static final String FLD_MATCH_ID = "match-id";
 
     /**
      * Convert JSON object for an annotation into a Xponents TextMatch instance.
@@ -57,7 +58,7 @@ public class Transforms {
 
         switch (typ) {
 
-            case "place":
+            case VAL_PLACE:
                 PlaceCandidate placeMatch = new PlaceCandidate(start, end);
                 Place geo = new Place();
                 placeMatch.setText(text);
@@ -68,6 +69,7 @@ public class Transforms {
                 m = placeMatch;
                 break;
 
+            case VAL_COORD:
             case "coordinate":
                 GeocoordMatch coord = new GeocoordMatch(start, end);
                 Place coordLoc = new Place();
@@ -85,7 +87,7 @@ public class Transforms {
                 m = coord;
                 break;
 
-            case "country":
+            case VAL_COUNTRY:
                 PlaceCandidate countryMatch = new PlaceCandidate(start, end);
                 Place cc = new Place();
                 countryMatch.setText(text);
@@ -108,9 +110,9 @@ public class Transforms {
                 Transforms.parseTaxon((TaxonMatch) m, "org", a);
                 break;
 
-            case "taxon":
+            case VAL_TAXON:
                 m = new TaxonMatch(start, end);
-                Transforms.parseTaxon((TaxonMatch) m, "taxon", a);
+                Transforms.parseTaxon((TaxonMatch) m, VAL_TAXON, a);
                 break;
 
             case "date":
@@ -153,7 +155,7 @@ public class Transforms {
      */
     public static void parseTaxon(TaxonMatch x, String t, JsonObject a) {
         x.setText(a.getString("matchtext"));
-        if (a.containsKey("taxon")) {
+        if (a.containsKey(VAL_TAXON)) {
             Taxon tx = new Taxon();
             tx.setName(a.getString("taxon"));
             tx.catalog = a.getString("catalog");
@@ -338,20 +340,19 @@ public class Transforms {
              * filtered out, but worth tracking
              * ==========================
              */
-            if (name instanceof TaxonMatch) {
-                if (jobParams.tag_taxons || jobParams.tag_all_taxons) {
-                    TaxonMatch match = (TaxonMatch) name;
-                    match.defaultMatchId();
-                    ++tagCount;
-                    if (!match.getTaxons().isEmpty()) {
-                        // Only get one taxon from this match. That is sufficient, but not perfect.
-                        Taxon n = match.getTaxons().get(0);
-                        JsonObject node = populateMatch(name);
-                        node.put("taxon", n.name); // Name of taxon
-                        node.put("catalog", n.catalog); // Name of catalog or source
-                        node.put("method", "TaxonMatcher");
-                        resultArray.add(node);
-                    }
+            if (name instanceof TaxonMatch &&
+                    (jobParams.tag_taxons || jobParams.tag_all_taxons)) {
+                TaxonMatch match = (TaxonMatch) name;
+                match.defaultMatchId();
+                ++tagCount;
+                if (!match.getTaxons().isEmpty()) {
+                    // Only get one taxon from this match. That is sufficient, but not perfect.
+                    Taxon n = match.getTaxons().get(0);
+                    JsonObject node = populateMatch(name);
+                    node.put("taxon", n.name); // Name of taxon
+                    node.put("catalog", n.catalog); // Name of catalog or source
+                    node.put("method", "TaxonMatcher");
+                    resultArray.add(node);
                 }
                 continue;
             }
@@ -361,7 +362,7 @@ public class Transforms {
              */
             JsonObject node = populateMatch(name);
 
-            if (name instanceof DateMatch) {
+            if (name instanceof DateMatch && jobParams.tag_patterns) {
                 ++tagCount;
                 DateMatch dt = (DateMatch) name;
                 node.put(FLD_TYPE, "date");
@@ -380,7 +381,7 @@ public class Transforms {
              * ANNOTATIONS: coordinates
              * ==========================
              */
-            if (name instanceof GeocoordMatch) {
+            if (name instanceof GeocoordMatch && jobParams.tag_coordinates) {
                 ++tagCount;
                 GeocoordMatch geo = (GeocoordMatch) name;
                 Transforms.createGeocoding(geo, node);
@@ -389,7 +390,11 @@ public class Transforms {
             }
 
             PlaceCandidate place = (PlaceCandidate) name;
-            Place resolvedPlace = place.getChosen().getPlace();
+            Place resolvedPlace = place.getChosenPlace();
+            if (resolvedPlace == null){
+                // TODO: need more examples of how this might happen.
+                continue;
+            }
 
             /*
              * ==========================
@@ -401,13 +406,14 @@ public class Transforms {
              * out, do it now. Otherwise it is a valid place name to consider
              */
             ++tagCount;
-            if (place.isCountry) {
+            if (place.isCountry && jobParams.tag_countries) {
                 node.put("name", resolvedPlace.getPlaceName());
-                node.put(FLD_TYPE, "country");
+                node.put(FLD_TYPE, VAL_COUNTRY);
                 node.put("cc", resolvedPlace.getCountryCode());
                 node.put("confidence", place.getConfidence());
                 node.put("method", resolvedPlace.getMethod());
-            } else if (resolvedPlace != null) {
+            } else if (resolvedPlace != null &&
+                    (jobParams.tag_places|| jobParams.tag_postal)) {
 
                 // IF Caller is not asking for "codes" output....
                 if (!jobParams.tag_codes) {

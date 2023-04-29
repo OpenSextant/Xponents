@@ -67,7 +67,7 @@ public class PlaceCandidate extends TextMatch {
      * context of a place mention -- through linked-geography in these categorical slots.
      * These are ordered roughly in resolution order, fine to coarse.
      */
-    public static final String[] KNOWN_GEO_SLOTS = {"postal", "city", "admin", "country"};
+    public static final String[] KNOWN_GEO_SLOTS = {VAL_PLACE, "city", "admin", VAL_COUNTRY};
 
     public PlaceCandidate(int x1, int x2) {
         super(x1, x2);

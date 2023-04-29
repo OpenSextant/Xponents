@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.opensextant.ConfigException;
 import org.opensextant.data.Country;
+import org.opensextant.data.MatchSchema;
 import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
@@ -39,7 +40,7 @@ import org.opensextant.util.TextUtils;
  *
  * @author ubaldino
  */
-public class PostalGeocoder extends GazetteerMatcher implements Extractor, BoundaryObserver, CountryObserver {
+public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Extractor, BoundaryObserver, CountryObserver {
 
     public static final String VERSION = "1.0";
     public static final String METHOD_DEFAULT = String.format("PostalGeocoder v%s", VERSION);
@@ -321,7 +322,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
                 // Prior taggers may have already made linkages.
                 linkGeography(postal, other, "city", "P/PPL");
                 linkGeography(postal, other, "admin", "A/ADM");
-                linkGeography(postal, other, "country", "A/PCL");
+                linkGeography(postal, other, VAL_COUNTRY, "A/PCL");
             }
             // Linkages above will re-score geographic connections between postal ~ city, admin, country.
             //   In the end you will have 4 possible geolocations to choose from, the postal coding be the most specific.
@@ -435,7 +436,7 @@ public class PostalGeocoder extends GazetteerMatcher implements Extractor, Bound
         mention.setLinkedGeography(anchor.getLinkedGeography());
         if (anchor.getChosen() != null) {
             // Shortcut -- add a previously Scored, chosen place to a new mention.
-            mention.linkGeography("postal", anchor.getChosenPlace());
+            mention.linkGeography(VAL_POSTAL, anchor.getChosenPlace());
             mention.addPlace(anchor.getChosen(), 0.0); /* addPlace with incremental score of 0 */
             mention.choose();
         } else if (anchor.getLinkedGeography() != null) {

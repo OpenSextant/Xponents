@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="opensextant.html"><font color="#ffffff">opensextant</font></a>.FlexPat</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:https://github.com/OpenSextant/Xponents/blob/master/python/opensextant/FlexPat.py">https://github.com/OpenSextant/Xponents/blob/master/python/opensextant/FlexPat.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/dist/Xponents-3.6/piplib/opensextant/FlexPat.py">/Users/ubaldino/workspace/opensource/Xponents/dist/Xponents-3.6/piplib/opensextant/FlexPat.py</a></font></td></tr></table>
     <p><tt>#&nbsp;-*-&nbsp;coding:&nbsp;utf-8&nbsp;-*-</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -305,6 +305,11 @@ See&nbsp;documentation:&nbsp;<a href="https://opensextant.github.io/Xponents/doc
 
 <dl><dt><a name="RegexPatternManager-get_pattern"><strong>get_pattern</strong></a>(self, pid)</dt></dl>
 
+<dl><dt><a name="RegexPatternManager-set_enabled"><strong>set_enabled</strong></a>(self, some: str, flag: bool)</dt><dd><tt>set&nbsp;family&nbsp;enabled&nbsp;or&nbsp;not<br>
+:param&nbsp;some:&nbsp;prefix&nbsp;of&nbsp;a&nbsp;family&nbsp;or&nbsp;family-variant<br>
+:param&nbsp;flag:&nbsp;bool&nbsp;setting<br>
+:return:</tt></dd></dl>
+
 <dl><dt><a name="RegexPatternManager-validate_pattern"><strong>validate_pattern</strong></a>(self, repat)</dt><dd><tt>Default&nbsp;validation&nbsp;is&nbsp;True<br>
 Override&nbsp;this&nbsp;if&nbsp;necessary,&nbsp;e.g.,&nbsp;pattern&nbsp;implementation&nbsp;has&nbsp;additional&nbsp;metadata</tt></dd></dl>
 
@@ -334,6 +339,7 @@ Data descriptors defined here:<br>
 :param&nbsp;grps:<br>
 :param&nbsp;k:<br>
 :return:&nbsp;tuple&nbsp;matching.</tt></dd></dl>
+ <dl><dt><a name="-print_test"><strong>print_test</strong></a>(result: dict)</dt><dd><tt>print&nbsp;the&nbsp;structure&nbsp;from&nbsp;default_tests()</tt></dd></dl>
  <dl><dt><a name="-reduce_matches"><strong>reduce_matches</strong></a>(matches)</dt><dd><tt>Mark&nbsp;each&nbsp;match&nbsp;if&nbsp;it&nbsp;is&nbsp;a&nbsp;submatch&nbsp;or&nbsp;overlap&nbsp;or&nbsp;exact&nbsp;duplicate&nbsp;of&nbsp;other.<br>
 :param&nbsp;matches:&nbsp;array&nbsp;of&nbsp;<a href="opensextant.html#TextMatch">TextMatch</a>&nbsp;(or&nbsp;TextEntity).&nbsp;This&nbsp;is&nbsp;the&nbsp;more&nbsp;<a href="builtins.html#object">object</a>&nbsp;oriented&nbsp;version<br>
 of&nbsp;reduce_matches_dict<br>

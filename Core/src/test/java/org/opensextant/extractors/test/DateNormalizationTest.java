@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.HashMap;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.extractors.xtemporal.DateMatch;
 import org.opensextant.extractors.xtemporal.XTemporal;
+import org.opensextant.extractors.xtemporal.DateNormalization;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -79,5 +81,22 @@ public class DateNormalizationTest {
         //long epoch = d2007.getTime().getTime();
         long epoch = dt.datenorm.getTime();
         assertEquals(1192195980000L , epoch);
+    }
+
+    @Test
+    public void testNormalization(){
+        HashMap<String,String> foundFields = new HashMap<>();
+        foundFields.put("hh", "11");
+        foundFields.put("mm", "33");
+        foundFields.put("ss", "14");
+        foundFields.put("xx", "88");
+
+        assertEquals(11, DateNormalization.normalizeTime(foundFields, "hh"));
+        assertEquals(33, DateNormalization.normalizeTime(foundFields, "mm"));
+        assertEquals(14, DateNormalization.normalizeTime(foundFields, "ss"));
+        assertEquals(-1, DateNormalization.normalizeTime(foundFields, "xx"));
+
+        foundFields.put("hh", "28");
+        assertEquals(-1, DateNormalization.normalizeTime(foundFields, "hh"));
     }
 }
