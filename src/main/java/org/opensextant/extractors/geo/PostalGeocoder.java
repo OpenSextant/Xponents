@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver, CountryObserver {
 
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.1";
     public static final String METHOD_DEFAULT = String.format("PostalGeocoder v%s", VERSION);
     private static final String NO_TEXT_ID = "no-id";
     private final Logger log = LoggerFactory.getLogger(PostalGeocoder.class);
@@ -116,7 +116,8 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
 
     /**
      * OPTIMIZATION:  Set the general purpose matches (geo, taxons, etc)
-     * from a prior processing step. This helps avoid PostalGeocoder from re-running the same
+     * from a prior processing step. This helps avoid PostalGeocoder from re-running the same.
+     * Only call this if the matches array includes the output of running the PlaceGeocoder.
      * @param arr
      */
     public void setGeneralMatches(List<TextMatch> arr) {
@@ -151,7 +152,7 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
      *       ..... SA6 19DN ...      # bare alpha-numeric postal code.  MED confidence
      *   </pre>
      *
-     * @implNote Not multi-thread safe. A single call here has some amount of internal state;
+     * NOTE: Not multi-thread safe. A single call here has some amount of internal state;
      *     A second simultaneous call would disrupt that
      * @param input TextInput
      * @return array of TextMatch

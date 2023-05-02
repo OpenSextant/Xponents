@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
 public class PlaceGeocoder extends GazetteerMatcher
         implements Extractor, CountryObserver, BoundaryObserver, LocationObserver {
 
-    public static final String VERSION = "3.5";
+    public static final String VERSION = "3.6";
     public static final String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
 
     /**
@@ -90,10 +90,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private CoordinateAssociationRule coordRule = null;
     private ProvinceAssociationRule adm1Rule = null;
     private NameCodeRule nameWithAdminRule = null;
-    private MajorPlaceRule majorPlaceRule = null;
     private LocationChooserRule chooser = null;
-    private ContextualOrganizationRule placeInOrgRule = null;
-    private NonsenseFilter nonsenseFilter = null;
     private ProvinceNameSetter provinceNameSetter = null;
 
     /**
@@ -211,8 +208,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         nameWithAdminRule.setCountryObserver(this);
 
         // Nonsense is filtered out, rather than scored and ranked low.
-        nonsenseFilter = new NonsenseFilter();
-        addRule(nonsenseFilter);
+        addRule(new NonsenseFilter());
 
         /*
          * Files for Place Name filter are editable, as you likely have different ideas of who are
@@ -248,13 +244,13 @@ public class PlaceGeocoder extends GazetteerMatcher
         try {
             Map<String, Integer> popstats = GeonamesUtility
                     .mapPopulationByLocation(GeonamesUtility.loadMajorCities("/geonames.org/cities15000.txt"));
-            majorPlaceRule = new MajorPlaceRule(popstats);
+            MajorPlaceRule majorPlaceRule = new MajorPlaceRule(popstats);
+            majorPlaceRule.setCountryObserver(this);
+            majorPlaceRule.setBoundaryObserver(this);
+            addRule(majorPlaceRule);
         } catch (IOException err) {
             throw new ConfigException("Missing City population data", err);
         }
-        majorPlaceRule.setCountryObserver(this);
-        majorPlaceRule.setBoundaryObserver(this);
-        addRule(majorPlaceRule);
 
         /*
          * Account for situations like "Eugene, OR" person name followed by a stopword.
@@ -288,7 +284,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         // travel so mention of "Cleveland Caveliers visiting Seattle" would not geolocate this
         // to Ohio unless the city or state was mentioned separately.
         //
-        placeInOrgRule = new ContextualOrganizationRule();
+        ContextualOrganizationRule placeInOrgRule = new ContextualOrganizationRule();
         placeInOrgRule.setBoundaryObserver(this);
         addRule(placeInOrgRule);
 
@@ -412,22 +408,6 @@ public class PlaceGeocoder extends GazetteerMatcher
      */
     private final Map<String, Place> relevantLocations = new HashMap<>();
 
-    /*
-     * Mentions of nationalities or cultures that indicate specific countries.
-     * No longer tracked.
-     */
-
-    /**
-     * If all you are doing is geotagging (just identifying places), then
-     * enableGeocoding = false;
-     * Otherwise the default here is geocoding (identify and geolocate) places. This
-     * is not a public API attribute.
-     *
-     * @since 2.8.3
-     */
-    private final boolean geocode = true;
-    private final boolean tagOnly = !geocode;
-
     /**
      * See {@link #extract(TextInput, Parameters)} below.
      * This is the default extraction routine. If you need to tune extraction call
@@ -462,6 +442,13 @@ public class PlaceGeocoder extends GazetteerMatcher
      * @throws ExtractionException on err
      */
     public List<TextMatch> extract(TextInput input, Parameters jobParams) throws ExtractionException {
+        boolean tagOnly = false;
+        /*
+        tagOnly:
+        TODO: an option is to report TextMatches only and not geocode. This is not practical and not
+        the main purpose of this API.  Straight up GazetteerMatcher could do this.
+        */
+
         long t1 = System.currentTimeMillis();
         reset();
 

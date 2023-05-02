@@ -335,15 +335,6 @@ public class SolrProxy extends SolrUtil {
         }
     }
 
-    /**
-     * @deprecated using SolrClient terminology now.
-     * @return
-     */
-    @Deprecated
-    public SolrClient getInternalSolrServer() {
-        return solrClient;
-    }
-
     public SolrClient getInternalSolrClient() {
         return solrClient;
     }

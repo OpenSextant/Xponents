@@ -12,9 +12,9 @@
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
-    <slf4j.version>1.7.36</slf4j.version>
-    <xponents.version>3.6.2</xponents.version>
-    <xponents-core.version>3.6.2</xponents-core.version>
+    <slf4j.version>2.0.6</slf4j.version>
+    <xponents.version>3.6.3</xponents.version>
+    <xponents-core.version>3.6.3</xponents-core.version>
     <xtext.version>3.6.2</xtext.version>
   </properties>
   <dependencies>
@@ -90,7 +90,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.11</version>
+      <version>1.4.4</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

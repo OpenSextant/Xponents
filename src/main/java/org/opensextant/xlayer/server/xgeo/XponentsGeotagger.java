@@ -136,7 +136,7 @@ public class XponentsGeotagger extends TaggerResource {
     /**
      * Process the text for the given document.
      *
-     * @implNote  Please note this is NOT MT-safe. Internally there are single stateful instances of
+     * NOTE: Please note this is NOT MT-safe. Internally there are single stateful instances of
      *  Extractor taggers, which may have significant memory and initialization phases.  As a prototype
      *  that is one limitation.  If you need multiple clients to hit this service, you ideally load-balance
      *  a bank of Xponents REST server.
@@ -169,9 +169,11 @@ public class XponentsGeotagger extends TaggerResource {
             if (jobParams.tag_postal) {
                 PostalGeocoder pg = (PostalGeocoder) getExtractor(POSTAL_TAGGER);
                 if (pg != null) {
-                    // OPTIMIZATION: reuse matches accumulated so far to prevent
-                    // PostalGeocoder from repeating extract()
-                    pg.setGeneralMatches(matches);
+                    if (tag_geo(jobParams)) {
+                        // OPTIMIZATION: reuse matches accumulated so far to prevent
+                        // PostalGeocoder from repeating extract()
+                        pg.setGeneralMatches(matches);
+                    }
                     matches.addAll(pg.extract(input));
                 }
             }

@@ -21,7 +21,7 @@ import org.opensextant.extractors.geo.rules.PostalCodeFilter;
  */
 public class PostalTagger extends GazetteerMatcher implements MatchSchema, Extractor {
 
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.1";
     public static final String METHOD_DEFAULT = String.format("PostalTagger v%s", VERSION);
     private static final String NO_TEXT_ID = "no-id";
 
@@ -35,7 +35,7 @@ public class PostalTagger extends GazetteerMatcher implements MatchSchema, Extra
      */
     private static final int MIN_LEN = 4;
     private int minLen = MIN_LEN;
-    GeocodeRule triage = new PostalCodeFilter(minLen);
+    private GeocodeRule triage = new PostalCodeFilter(minLen);
 
     public PostalTagger() throws ConfigException {
         super();
@@ -111,5 +111,6 @@ public class PostalTagger extends GazetteerMatcher implements MatchSchema, Extra
      */
     public void setMinLen(int l) {
         minLen = l;
+        triage = new PostalCodeFilter(minLen);
     }
 }

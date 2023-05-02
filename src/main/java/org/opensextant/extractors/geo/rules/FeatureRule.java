@@ -96,17 +96,11 @@ public class FeatureRule extends GeocodeRule {
     }
 
     /**
-     * Assess the feature of each location found, and provide a score on that geo
-     * based on the feature type apriori score (what we prefer in general) and the likelihood of it being
-     * mentioned (relative popularity of that feature class)
      * @deprecated Feature score is now provided as part of id_bias
      */
     @Deprecated
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
-
-        FeatureClassMeta fc = lookupFeature(geo);
-        // fc is not null
-        name.incrementPlaceScore(geo, 10 * fc.factor, NAME);
+        /* no-op */
     }
 }

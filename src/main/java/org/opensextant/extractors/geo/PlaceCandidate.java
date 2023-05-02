@@ -25,7 +25,8 @@ import org.opensextant.data.LatLon;
 import org.opensextant.data.Place;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.rules.FeatureClassMeta;
-import org.opensextant.extractors.geo.rules.FeatureRule;
+import static org.opensextant.extractors.geo.rules.FeatureRule.lookupFeature;
+import static org.opensextant.extractors.geo.rules.FeatureRule.FEAT_RULE;
 import org.opensextant.util.TextUtils;
 
 /**
@@ -404,7 +405,7 @@ public class PlaceCandidate extends TextMatch {
     public void addPlace(ScoredPlace place) {
         this.addPlace(place, defaultScore(place.getPlace()));
         this.rules.add(DEFAULT_SCORE);
-        this.rules.add(FeatureRule.FEAT_RULE);
+        this.rules.add(FEAT_RULE);
     }
 
     public static final String DEFAULT_SCORE = "DefaultScore";
@@ -518,22 +519,8 @@ public class PlaceCandidate extends TextMatch {
      * @return feature score
      */
     protected double scoreFeature(Place g) {
-        FeatureClassMeta meta = FeatureRule.lookupFeature(g);
+        FeatureClassMeta meta = lookupFeature(g);
         return meta.factor * 0.10;
-    }
-
-    /**
-     * @param place
-     * @param score
-     * @deprecated Avoid incrementing location score without citing the reason. Use
-     * {@link #incrementPlaceScore(Place, Double, String)}
-     */
-    @Deprecated
-    public void incrementPlaceScore(Place place, Double score) {
-        ScoredPlace currentScore = this.scoredPlaces.get(makeKey(place));
-        if (currentScore != null) {
-            currentScore.incrementScore(score);
-        }
     }
 
     /**

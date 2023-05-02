@@ -1,5 +1,12 @@
 package org.opensextant.xlayer.server;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,11 +18,6 @@ import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ServerResource;
-
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public abstract class TaggerResource extends ServerResource {
@@ -31,9 +33,11 @@ public abstract class TaggerResource extends ServerResource {
      * The log.
      */
     protected Logger log = null;
+
     public TaggerResource() {
         super();
     }
+
     protected String operation = null;
 
     public static final String FLD_FEATURES = "features";
@@ -178,20 +182,28 @@ public abstract class TaggerResource extends ServerResource {
         job.output_filtered = false;
         job.addOutputFormat("json");
 
-        if (inputs.has(FLD_FEATURES)) {
-            resetParameters(job);
-
-            String list = inputs.getString(FLD_FEATURES);
-            Set<String> features = new HashSet<>(TextUtils.string2list(list.toLowerCase(), ","));
-            this.parseParameters(job, features);
+        String list;
+        try {
+            list = inputs.getString(FLD_FEATURES);
+            if (list != null) {
+                resetParameters(job);
+                Set<String> features = new HashSet<>(TextUtils.string2list(list.toLowerCase(), ","));
+                this.parseParameters(job, features);
+            }
+        } catch (Exception err) {
+            /* JSONObject getString() fails when retrieving a null value. "options" = null. */
         }
 
-        if (inputs.has("options")) {
-            String list = inputs.getString("options");
-            Set<String> opts = new HashSet<>(TextUtils.string2list(list.toLowerCase(), ","));
-            job.clean_input = opts.contains("clean_input");
-            job.tag_lowercase = opts.contains("lowercase");
-            job.resolve_localities = opts.contains("revgeo") || opts.contains("resolve_localities");
+        try {
+            list = inputs.getString("options");
+            if (list != null) {
+                Set<String> opts = new HashSet<>(TextUtils.string2list(list.toLowerCase(), ","));
+                job.clean_input = opts.contains("clean_input");
+                job.tag_lowercase = opts.contains("lowercase");
+                job.resolve_localities = opts.contains("revgeo") || opts.contains("resolve_localities");
+            }
+        } catch (Exception err) {
+            /* JSONObject getString() fails when retrieving a null value. "options" = null. */
         }
         //
         // Geographic filters
