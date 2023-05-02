@@ -136,6 +136,11 @@ public class XponentsGeotagger extends TaggerResource {
     /**
      * Process the text for the given document.
      *
+     * @implNote  Please note this is NOT MT-safe. Internally there are single stateful instances of
+     *  Extractor taggers, which may have significant memory and initialization phases.  As a prototype
+     *  that is one limitation.  If you need multiple clients to hit this service, you ideally load-balance
+     *  a bank of Xponents REST server.
+     *
      * @param input     the input
      * @param jobParams the job params
      * @return the representation
@@ -152,7 +157,6 @@ public class XponentsGeotagger extends TaggerResource {
             List<TextMatch> matches = new ArrayList<>();
 
             // BOTH geo and taxons could be requested:  features = "geo", "all-taxons"
-
             // `geo` tagging
             if (tag_geo(jobParams) || tag_taxons(jobParams)) {
                 PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor(GEO_TAGGER);
@@ -165,8 +169,10 @@ public class XponentsGeotagger extends TaggerResource {
             if (jobParams.tag_postal) {
                 PostalGeocoder pg = (PostalGeocoder) getExtractor(POSTAL_TAGGER);
                 if (pg != null) {
-                    List<TextMatch> postalMatches = pg.extract(input);
-                    matches.addAll(postalMatches);
+                    // OPTIMIZATION: reuse matches accumulated so far to prevent
+                    // PostalGeocoder from repeating extract()
+                    pg.setGeneralMatches(matches);
+                    matches.addAll(pg.extract(input));
                 }
             }
             if (isDebug()) {

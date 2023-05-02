@@ -70,9 +70,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /*
      * Gazetteer specific stuff:
      */
-    protected TagFilter filter = null;
+    protected TagFilter filter;
     private MatchFilter userfilter = null;
-    private MatchFilter continents = null;
+    private MatchFilter continents;
 
     /**
      * invocation counts: default filter count and user filter count
@@ -92,7 +92,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * enable trure for data such as tweets, blogs, etc. where case varies or
      * does not exist
      */
-    private boolean allowLowerCase = false;
+    private boolean allowLowerCase;
     private boolean enableCaseFilter = true;
     private boolean enableCodeHunter = false;
 
@@ -472,7 +472,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             // Get char immediately following match, for light NLP rules.
             char postChar = 0;
-            char preChar = 0;
+            char preChar;
             if (x2 < buffer.length()) {
                 postChar = buffer.charAt(x2);
             }

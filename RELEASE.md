@@ -4,6 +4,15 @@ RELEASES
 ==============
 
 # 2023
+**Xponents 3.6.2**
+* PostalGeocoder tuning:
+  * Optimization: separate tagger and geocoding passes into sepearate classes; 
+    consolidate postal code filters; Feed pre-tagging matches from PlaceGeocoder to PostalGeocoder 
+    as an option. PostalGeocoder would still run that internally if not fed externally
+  * Tagging Omission Fixed: `POSTAL CITY`  or `CITY POSTAL` are now possible, only if a city represents an 
+    administrative area, such as `ADM2`-`ADM4` or `PPLA` gazetteer feature. These would be major 
+    metropolitan areas with their own set of multiple postal codes.
+    
 **Xponents 3.6.1**
 * Taxon matching refinements and expansion.  REST API now allows for geotagger to fully extract/report all taxons
 * [#81](https://github.com/OpenSextant/Xponents/issues/81) Xponents Core: XCoord parsing of MGRS 

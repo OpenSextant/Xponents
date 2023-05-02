@@ -57,10 +57,10 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
      * 0174
      * 011 -- too short and ambiguous.
      */
-    private static final int MIN_LEN = 3;
-    private int minLen = MIN_LEN;
-    private final List<GeocodeRule> rules = new ArrayList<>();
+    private static final int MIN_LEN = 4;
     private Map<String, Country> countryCatalog = null;
+
+    private final List<PlaceCandidate> matches = new ArrayList<>();
 
     private final HashMap<String, PlaceCount> pairedPostalMentions = new HashMap<>();
     private final HashMap<String, CountryCount> inferredCountries = new HashMap<>();
@@ -71,7 +71,7 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
 
     private final GeocodeRule chooser = new PostalLocationChooser();
 
-    public PostalGeocoder() throws ConfigException {
+    public PostalGeocoder() {
         super();
     }
 
@@ -115,6 +115,20 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
     }
 
     /**
+     * OPTIMIZATION:  Set the general purpose matches (geo, taxons, etc)
+     * from a prior processing step. This helps avoid PostalGeocoder from re-running the same
+     * @param arr
+     */
+    public void setGeneralMatches(List<TextMatch> arr) {
+        matches.clear();
+        for (TextMatch m : arr) {
+            if (m instanceof PlaceCandidate && !m.isFilteredOut()) {
+                matches.add((PlaceCandidate) m);
+            }
+        }
+    }
+
+    /**
      * Tag, choose location if possible and emit an array of text matches.
      * <p>
      * INPUT:  Free text that may have postal addresses.
@@ -137,29 +151,29 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
      *       ..... SA6 19DN ...      # bare alpha-numeric postal code.  MED confidence
      *   </pre>
      *
+     * @implNote Not multi-thread safe. A single call here has some amount of internal state;
+     *     A second simultaneous call would disrupt that
      * @param input TextInput
      * @return array of TextMatch
      * @throws ExtractionException if extraction fails (Solr or Lucene errors) or rules mechanics.
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
+        reset();
+
         // Step 0. Tag potential codes.
         // note -- these postal matches are distinguished by FEAT_CODE = 'POST' or isPostal()
         List<PlaceCandidate> postalMatches = postalTagger.tagText(input, false);
 
         // Step 1. Fully tag text to find related geography and associate City + Postal.
-        //         NOTE: this assumes that the postal tagger is incomplete and any pre-selected geocoding is tossed away.
-        List<PlaceCandidate> matches = new ArrayList<>();
-        for (TextMatch m : nameTagger.extract(input)) {
-            if (m instanceof PlaceCandidate && !m.isFilteredOut()) {
-                matches.add((PlaceCandidate) m);
-            }
+        // NOTE: this assumes that the postal tagger is incomplete and any pre-selected geocoding is tossed away.
+        if (matches.isEmpty()) {
+            // OPTIMIZATION: if matches is non-zero, we'll use it.  If empty it is tagged
+            setGeneralMatches(nameTagger.extract(input));
         }
         List<PlaceCandidate> combined = new ArrayList<>();
         combined.addAll(postalMatches);
         combined.addAll(matches);
-
-        reset();
 
         /* assess each tag.  Rules filter, improve, and then choose and rate confidence on each match */
         assocFilter.setBuffer(input.buffer);
@@ -172,6 +186,9 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
 
         // TODO: combine this rule with above?
         PostalGeocoder.associateMatches(matches, postalMatches);
+
+        // Clear internal memory from external tagger
+        matches.clear();
 
         //  Step 2. (Only if Step 1 occurred) Generate new spans with the finest location chosen.
         //       "derivedMatches" here is a super set of the originals and any derivations.
@@ -192,16 +209,6 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
         postalTagger.close();
         nameTagger.close();
     }
-
-    /**
-     * Override the default MIN_LEN=4 length for a postal code.  Any textmatch with length &lt; this length will
-     * be filtered out.
-     * Postal codes in CA, FO, GB, GG, IE, IM, IS, JE, MT all have postal codes that are 2 or 3 alphanum.
-     */
-    public void setMinLen(int l) {
-        minLen = l;
-    }
-
 
     public void reset() {
         pairedPostalMentions.clear();

@@ -78,7 +78,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private TaxonMatcher taxonTagger = null;
     private Map<String, Country> countryCatalog = null;
     private GeonamesUtility nameHelper = null;
-    public Set<String> taxonCatalogs = new HashSet<>();
+    public final Set<String> taxonCatalogs = new HashSet<>();
     private final ExtractionMetrics taggingTimes = new ExtractionMetrics("tagging");
     private final ExtractionMetrics matcherTotalTimes = new ExtractionMetrics("matcher-total");
 

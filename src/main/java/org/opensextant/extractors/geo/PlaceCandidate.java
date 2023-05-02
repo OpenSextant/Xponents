@@ -830,9 +830,9 @@ public class PlaceCandidate extends TextMatch {
         return !this.evidence.isEmpty();
     }
 
-    public static Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
+    public static final Pattern tokenizer = Pattern.compile("[\\s+\\p{Punct}]+");
 
-    public static int ABBREVIATION_MAX_LEN = 5;
+    public static final int ABBREVIATION_MAX_LEN = 5;
     private int wordCount = 0;
 
     /**

@@ -12,7 +12,7 @@ import org.opensextant.extractors.geo.ScoredPlace;
 public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchema {
 
     public static final String POSTAL_ASSOC_RULE = "PostalAssociation";
-    int proximity = 20;
+    final int proximity = 20;
 
     private String currentBuffer = null;
     static final Pattern validChar = Pattern.compile("[\\w\\s,.]");

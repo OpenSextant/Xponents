@@ -49,7 +49,7 @@ public class MajorPlaceRule extends GeocodeRule {
     public static final String ADMIN = "MajorPlace.Admin";
     public static final String POP = "MajorPlace.Population";
     public static final String MENTIONED_COUNTRY = "MajorPlace.InCountry";
-    private Map<String, Integer> popStats = null;
+    private Map<String, Integer> popStats;
     private static final int GEOHASH_RESOLUTION = 5;
     private static final int POP_MIN = 50000;
 

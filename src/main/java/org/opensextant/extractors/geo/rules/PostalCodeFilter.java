@@ -9,9 +9,9 @@ import org.opensextant.extractors.geo.PlaceCandidate;
 
 public class PostalCodeFilter extends GeocodeRule {
 
-    int minLen = -1;
+    int minLen;
 
-    Pattern validPunct = Pattern.compile("^[-A-Z0-9 ]+$", Pattern.CASE_INSENSITIVE);
+    final Pattern validPunct = Pattern.compile("^[-A-Z0-9 ]+$", Pattern.CASE_INSENSITIVE);
 
     /**
      *
@@ -37,7 +37,7 @@ public class PostalCodeFilter extends GeocodeRule {
 
     private boolean filterOutYears(String txt) {
 
-        /** DATE filters for disambiguating bettween year and postal code patterns:
+        /* DATE filters for disambiguating bettween year and postal code patterns:
          * Let's use +/- 25 years around the millenium for now.
          */
         if (txt.length() != YEAR_LEN) {
