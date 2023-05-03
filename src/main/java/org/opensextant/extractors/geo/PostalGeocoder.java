@@ -17,6 +17,7 @@ import org.opensextant.extractors.geo.rules.PostalCodeAssociationRule;
 import org.opensextant.extractors.geo.rules.PostalLocationChooser;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
+import static org.opensextant.extractors.geo.PlaceCandidate.VAL_SAME_COUNTRY;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -320,7 +321,7 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
                     OTHER------------------|------------OTHER
 
                     Loop through surrounding matches and associate highest resolution in order:
-                        P/PPL  -- preffered
+                        P/PPL  -- preferred
                         A/ADM* -- second
                         A/PCL* -- third
 
@@ -339,7 +340,7 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
                 // Prior taggers may have already made linkages.
                 linkGeography(postal, other, "city", "P/PPL");
                 linkGeography(postal, other, "admin", "A/ADM");
-                linkGeography(postal, other, VAL_COUNTRY, "A/PCL");
+                linkGeography(postal, other, VAL_SAME_COUNTRY, "A/PCL");
             }
             // Linkages above will re-score geographic connections between postal ~ city, admin, country.
             //   In the end you will have 4 possible geolocations to choose from, the postal coding be the most specific.

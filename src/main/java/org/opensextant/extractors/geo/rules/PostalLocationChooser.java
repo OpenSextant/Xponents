@@ -34,8 +34,10 @@ public class PostalLocationChooser extends GeocodeRule {
         if (tuple == null) {
             return 0;
         }
+        // Resolution starts high and then decreases as geographic affinity lessens
+        // Confidence is incremented for each slot filled in, increments wane accordingly.
         int conf = 5 * tuple.size(); //
-        int resolutionLevel = 4;
+        int resolutionLevel = PlaceCandidate.KNOWN_GEO_SLOTS.length;
         for (String slot : PlaceCandidate.KNOWN_GEO_SLOTS) {
             if (name.hasLinkedGeography(slot)) {
                 conf += resolutionLevel * 2;

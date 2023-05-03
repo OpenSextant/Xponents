@@ -8,6 +8,7 @@ import org.opensextant.data.MatchSchema;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
+import static org.opensextant.extractors.geo.PlaceCandidate.VAL_SAME_COUNTRY;
 
 public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchema {
 
@@ -31,6 +32,9 @@ public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchem
      * e.g., MA MA      is nonsense; it looks like two province codes together.
      * e.g., Garden City NJ  USA 01721   is fine.  POSTAL code follows country.
      *
+     *    Garden City  01721   -- won't work if place is P/PPL only.  Must be ADM4 or PPLA for example.
+     *    90120 01721          -- also will not work; Two postal codes next to each other.
+     *    Garden City  01721-0045 --  Office park in a large metro area. That could work.
      * @param geo1
      * @param geo2
      * @return true if place mentions complement each other.
@@ -98,8 +102,8 @@ public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchem
                     if (geo2Postal) {
                         p2.markAnchor();
                     }
-                    p1.linkGeography(p2, geo1Postal ? "admin" : "postal", geo2);
-                    p2.linkGeography(p1, geo1Postal ? "postal" : "admin", geo1);
+                    p1.linkGeography(p2, geo1Postal ? "admin" : VAL_POSTAL, geo2);
+                    p2.linkGeography(p1, geo1Postal ? VAL_POSTAL : "admin", geo1);
                     p1.incrementPlaceScore(geo1, 5.0, POSTAL_ASSOC_RULE);
                     p2.incrementPlaceScore(geo2, 5.0, POSTAL_ASSOC_RULE);
 
@@ -107,6 +111,8 @@ public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchem
                     geo1.setInstanceId(p1.getMatchId());
                     geo2.setInstanceId(p2.getMatchId());
                 } else if (sameCountry(geo1, geo2)) {
+                    // TODO: Consider loosening this association.  A Postal code really should line up with
+                    // any named place by a known ADMIN code, and not just "same country".
                     // Use this to collect evidence. Boundary for geo1 and geo2 are the same.
                     this.countryObserver.countryInScope(geo1.getCountryCode());
 
@@ -118,10 +124,10 @@ public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchem
                     if (geo2Postal) {
                         p2.markAnchor();
                     }
-                    p1.linkGeography(p2, geo1Postal ? VAL_COUNTRY : VAL_POSTAL, geo2);
-                    p2.linkGeography(p1, geo1Postal ? VAL_POSTAL : VAL_COUNTRY, geo1);
-                    p1.incrementPlaceScore(geo1, 3.0, POSTAL_ASSOC_RULE);
-                    p2.incrementPlaceScore(geo2, 3.0, POSTAL_ASSOC_RULE);
+                    p1.linkGeography(p2, geo1Postal ? VAL_SAME_COUNTRY : VAL_POSTAL, geo2);
+                    p2.linkGeography(p1, geo1Postal ? VAL_POSTAL : VAL_SAME_COUNTRY, geo1);
+                    p1.incrementPlaceScore(geo1, 2.0, POSTAL_ASSOC_RULE);
+                    p2.incrementPlaceScore(geo2, 2.0, POSTAL_ASSOC_RULE);
 
                     // Match ID tracking helps with the integrity of serialized results.
                     geo1.setInstanceId(p1.getMatchId());
