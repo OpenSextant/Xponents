@@ -16,15 +16,15 @@
  */
 package org.opensextant.extraction;
 
-import org.opensextant.util.TextUtils;
 import org.opensextant.data.MatchSchema;
+import org.opensextant.util.TextUtils;
 
 /**
  * A variation on TextEntity that also records pattern metadata
  *
  * @author ubaldino
  */
-public class TextMatch extends TextEntity implements MatchSchema {
+public class TextMatch extends TextEntity implements MatchSchema, Comparable<TextMatch> {
 
     /**
      * the ID of the pattern that extracted this
@@ -151,5 +151,30 @@ public class TextMatch extends TextEntity implements MatchSchema {
      */
     public String getMatchId() {
         return match_id;
+    }
+
+    /**
+     * this match, A compared to B
+     * Order:  A B  then A > B
+     * Order:  B A  then A < B
+     * Order:  same spans then A == B
+     * @param other
+     * @return
+     */
+    public int compareTo(TextMatch other) {
+        if (other == null) {
+            return 1;
+        }
+        if (isSameMatch(other)) {
+            return 0;
+        }
+        if (isOverlap(other)) {
+            if (other.end > end) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        return isBefore(other) ? 1 : -1;
     }
 }
