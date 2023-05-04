@@ -138,11 +138,20 @@ public class TextMatch extends TextEntity implements MatchSchema, Comparable<Tex
     /**
      * If called, this overwrites existing match_id
      * Match ID is typically entity label @ offset.
-     * Alternatively a Match ID could be also label + offset + value + ... 
+     * Alternatively a Match ID could be also label + value + start offset ...
      * to distinguish this text span from others.
      */
     public void defaultMatchId() {
+
         match_id = String.format("%s@%d", this.getType(), this.start);
+    }
+
+    /**
+     * create a simple text-based identifier with form of value + start offset ...
+     * @return
+     */
+    public String getContentId() {
+        return String.format("%s@%d", this.getText(), this.start);
     }
 
     /**
@@ -170,11 +179,11 @@ public class TextMatch extends TextEntity implements MatchSchema, Comparable<Tex
         }
         if (isOverlap(other)) {
             if (other.end > end) {
-                return 1;
-            } else {
                 return -1;
+            } else {
+                return 1;
             }
         }
-        return isBefore(other) ? 1 : -1;
+        return isBefore(other) ? -1 : 1;
     }
 }
