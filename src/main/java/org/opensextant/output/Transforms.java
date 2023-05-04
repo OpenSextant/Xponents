@@ -8,9 +8,9 @@ import jodd.json.JsonArray;
 import jodd.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.opensextant.data.Geocoding;
+import org.opensextant.data.MatchSchema;
 import org.opensextant.data.Place;
 import org.opensextant.data.Taxon;
-import org.opensextant.data.MatchSchema;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.xcoord.GeocoordMatch;
@@ -22,10 +22,11 @@ import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Transforms  implements MatchSchema {
+public class Transforms implements MatchSchema {
 
     public static final String FLD_FILTERED = "filtered-out";
     public static final String FLD_TYPE = "type";
+    public static final String FLD_MATCH = "matchtext";
     public static final String FLD_MATCH_ID = "match-id";
 
     /**
@@ -47,11 +48,11 @@ public class Transforms  implements MatchSchema {
         if (!(data instanceof JsonObject)) {
             return null;
         }
-        TextMatch m = null;
+        TextMatch m;
         JsonObject a = (JsonObject) data;
 
         String typ = a.getString(FLD_TYPE);
-        String text = a.getString("matchtext");
+        String text = a.getString(FLD_MATCH);
         int start = a.getInteger("offset");
         int len = a.getInteger("length");
         int end = start + len;
@@ -140,7 +141,7 @@ public class Transforms  implements MatchSchema {
      * @param a json annot
      */
     public static void parseDate(DateMatch d, JsonObject a) {
-        d.setText(a.getString("matchtext"));
+        d.setText(a.getString(FLD_MATCH));
         d.setType(a.getString(FLD_TYPE));
         d.datenorm_text = a.getString("date-normalized");
         d.pattern_id = a.getString("pattern-id");
@@ -154,7 +155,7 @@ public class Transforms  implements MatchSchema {
      * @param a JSON annotation
      */
     public static void parseTaxon(TaxonMatch x, String t, JsonObject a) {
-        x.setText(a.getString("matchtext"));
+        x.setText(a.getString(FLD_MATCH));
         if (a.containsKey(VAL_TAXON)) {
             Taxon tx = new Taxon();
             tx.setName(a.getString("taxon"));
@@ -171,7 +172,7 @@ public class Transforms  implements MatchSchema {
      * @param node JsonObject representing the serialized JSON for an Xlayer or
      *             other annotation.
      */
-    public static final void createGeocoding(Geocoding geo, JsonObject node) {
+    public static void createGeocoding(Geocoding geo, JsonObject node) {
         if (geo.getCountryCode() != null) {
             node.put("cc", geo.getCountryCode());
         }
@@ -235,7 +236,7 @@ public class Transforms  implements MatchSchema {
      * @param node JsonObject representing the serialized JSON for an Xlayer or
      *             other annotation.
      */
-    public static final void parseGeocoding(Place geo, JsonObject node) {
+    public static void parseGeocoding(Place geo, JsonObject node) {
         if (node.containsKey("cc")) {
             geo.setCountryCode(node.getString("cc"));
         }
@@ -268,8 +269,8 @@ public class Transforms  implements MatchSchema {
         if (node.containsKey("text")) {
             geo.setPlaceName(node.getString("text"));
         }
-        if (node.containsKey("matchtext")) {
-            geo.setPlaceName(node.getString("matchtext"));
+        if (node.containsKey(FLD_MATCH)) {
+            geo.setPlaceName(node.getString(FLD_MATCH));
         }
         if (node.containsKey("name")) {
             geo.setPlaceName(node.getString("name"));
@@ -289,7 +290,7 @@ public class Transforms  implements MatchSchema {
         o.put("offset", m.start);
         o.put("length", len);
         // String matchText = TextUtils.squeeze_whitespace(name.getText());
-        o.put("matchtext", m.getText());
+        o.put(FLD_MATCH, m.getText());
         o.put(FLD_MATCH_ID, m.getMatchId());
         o.put(FLD_TYPE, m.getType());
         o.put(FLD_FILTERED, m.isFilteredOut());
@@ -309,7 +310,7 @@ public class Transforms  implements MatchSchema {
     /**
      * Cutoff confidence for geocoding results:
      */
-    public static int DEFAULT_LOWER_CONFIDENCE = 10;
+    public final static int DEFAULT_LOWER_CONFIDENCE = 10;
 
     public static JsonObject toJSON(final List<TextMatch> matches, final Parameters jobParams) {
         Logger log = LoggerFactory.getLogger(Transforms.class);
@@ -340,19 +341,20 @@ public class Transforms  implements MatchSchema {
              * filtered out, but worth tracking
              * ==========================
              */
-            if (name instanceof TaxonMatch &&
-                    (jobParams.tag_taxons || jobParams.tag_all_taxons)) {
-                TaxonMatch match = (TaxonMatch) name;
-                match.defaultMatchId();
-                ++tagCount;
-                if (!match.getTaxons().isEmpty()) {
-                    // Only get one taxon from this match. That is sufficient, but not perfect.
-                    Taxon n = match.getTaxons().get(0);
-                    JsonObject node = populateMatch(name);
-                    node.put("taxon", n.name); // Name of taxon
-                    node.put("catalog", n.catalog); // Name of catalog or source
-                    node.put("method", "TaxonMatcher");
-                    resultArray.add(node);
+            if (name instanceof TaxonMatch) {
+                if (jobParams.tag_taxons || jobParams.tag_all_taxons) {
+                    TaxonMatch match = (TaxonMatch) name;
+                    match.defaultMatchId();
+                    ++tagCount;
+                    if (!match.getTaxons().isEmpty()) {
+                        // Only get one taxon from this match. That is sufficient, but not perfect.
+                        Taxon n = match.getTaxons().get(0);
+                        JsonObject node = populateMatch(name);
+                        node.put("taxon", n.name); // Name of taxon
+                        node.put("catalog", n.catalog); // Name of catalog or source
+                        node.put("method", "TaxonMatcher");
+                        resultArray.add(node);
+                    }
                 }
                 continue;
             }
@@ -389,9 +391,12 @@ public class Transforms  implements MatchSchema {
                 continue;
             }
 
+            if (!(name instanceof PlaceCandidate)) {
+                continue;
+            }
+
             PlaceCandidate place = (PlaceCandidate) name;
-            Place resolvedPlace = place.getChosenPlace();
-            if (resolvedPlace == null){
+            if (place.getChosenPlace() == null) {
                 // TODO: need more examples of how this might happen.
                 continue;
             }
@@ -400,11 +405,10 @@ public class Transforms  implements MatchSchema {
              * ==========================
              * ANNOTATIONS: countries, places, etc.
              * ==========================
-             */
-            /*
              * Accept all country names as potential geotags Else if name can be filtered
              * out, do it now. Otherwise it is a valid place name to consider
              */
+            Place resolvedPlace = place.getChosenPlace();
             ++tagCount;
             if (place.isCountry && jobParams.tag_countries) {
                 node.put("name", resolvedPlace.getPlaceName());
@@ -412,8 +416,7 @@ public class Transforms  implements MatchSchema {
                 node.put("cc", resolvedPlace.getCountryCode());
                 node.put("confidence", place.getConfidence());
                 node.put("method", resolvedPlace.getMethod());
-            } else if (resolvedPlace != null &&
-                    (jobParams.tag_places|| jobParams.tag_postal)) {
+            } else if (jobParams.tag_places || jobParams.tag_postal) {
 
                 // IF Caller is not asking for "codes" output....
                 if (!jobParams.tag_codes) {
@@ -479,8 +482,8 @@ public class Transforms  implements MatchSchema {
         for (String slot : slots.keySet()) {
             Place linkedPlace = slots.get(slot);
             JsonObject slotValue = new JsonObject();
-            slotValue.put("matchtext", linkedPlace.getPlaceName());
-            slotValue.put("match-id", linkedPlace.getInstanceId());
+            slotValue.put(FLD_MATCH, linkedPlace.getPlaceName());
+            slotValue.put(FLD_MATCH_ID, linkedPlace.getInstanceId() == null ? "-" : linkedPlace.getInstanceId());
             relatedInfo.put(slot, slotValue);
         }
         map.put("related", relatedInfo);

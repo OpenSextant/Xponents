@@ -315,8 +315,6 @@ public class NameCodeRule extends GeocodeRule {
         reset();
         /*
          * Objective:  associate NAME, CODE pairs
-         *
-         *
          */
         for (int x = 0; x < names.size(); ++x) {
             PlaceCandidate name = names.get(x);
@@ -519,6 +517,7 @@ public class NameCodeRule extends GeocodeRule {
         double wt = weight + (comma ? 2.0 : 0.0) + (closeAssociation ? 4.0 : 0.0);
         String rl = codeGeo.isShortName() && code.isShortName() ? NAME_ADMCODE_RULE
                 : NAME_ADMNAME_RULE;
+        boolean isValidCountry = code.getLength() > 2 && code.isCountry;
         ev.setRule(rl);
         ev.setWeight(wt);
         ev.setEvaluated(true); // Shunt. Evaluate this rule here; We'll increment the location score discretely.
@@ -539,11 +538,7 @@ public class NameCodeRule extends GeocodeRule {
         // Now choose which location for CITY (name) best suits this.
         // Actually increase score for all geos that match the criteria.
         //
-        boolean matchFound = false;
         for (ScoredPlace nameGeoScore : n.getPlaces()) {
-            if (matchFound) {
-                break;
-            }
             Place nameGeo = nameGeoScore.getPlace();
             if (nameGeo.isSame(codeGeo)) {
                 continue; /* Ignore choosing same location for repeated names */
@@ -553,10 +548,8 @@ public class NameCodeRule extends GeocodeRule {
             }
             if (adm1 != null && adm1.equals(nameGeo.getHierarchicalPath())) {
                 n.incrementPlaceScore(nameGeo, ev.getWeight(), ev.getRule());
-                matchFound = true;
-            } else if (code.isCountry && sameCountry(nameGeo.getCountryCode(), codeGeo.getCountryCode())) {
+            } else if (isValidCountry && sameCountry(nameGeo.getCountryCode(), codeGeo.getCountryCode())) {
                 n.incrementPlaceScore(nameGeo, ev.getWeight(), ev.getRule());
-                matchFound = true;
             }
         }
     }

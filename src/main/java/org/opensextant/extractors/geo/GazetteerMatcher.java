@@ -50,6 +50,7 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.SolrMatcherSupport;
+import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
@@ -577,6 +578,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 if (pGeo == null) {
                     // Uknown reason why beanMap may not contain the relevant tag info -- very large docs?
                     throw new ExtractionException(String.format("[Text ID: %s] Place instance not found in-memory for gazetteer tag ID %s", input.id, solrId));
+                }
+
+                if (!GeodeticUtility.isCoord(pGeo)) {
+                    // Substantial USGS and other gazetteer entries have non-zero coordinates.  AVOID.
+                    continue;
                 }
 
                 /* OPTIMIZE: Pare down very large location matches */

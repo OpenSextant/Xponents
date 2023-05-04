@@ -17,9 +17,9 @@ import org.opensextant.extractors.geo.rules.PostalCodeAssociationRule;
 import org.opensextant.extractors.geo.rules.PostalLocationChooser;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
-import static org.opensextant.extractors.geo.PlaceCandidate.VAL_SAME_COUNTRY;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.opensextant.extractors.geo.PlaceCandidate.VAL_SAME_COUNTRY;
 
 /**
  * PostalGeocoder -- a GazetteerMatcher that uses the "postal" solr index to
@@ -173,14 +173,12 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
             // OPTIMIZATION: if matches is non-zero, we'll use it.  If empty it is tagged
             setGeneralMatches(nameTagger.extract(input));
         }
-        List<PlaceCandidate> combined = new ArrayList<>();
-        combined.addAll(postalMatches);
-        combined.addAll(matches);
+        List<PlaceCandidate> combined = assembleInputs(matches, postalMatches);
 
         /* assess each tag.  Rules filter, improve, and then choose and rate confidence on each match */
         assocFilter.setBuffer(input.buffer);
 
-        // Group tuples based on proximity and containment.
+        // Group tuples based on proximity and containment, AND order of appearence
         assocFilter.evaluate(combined);
 
         // Choose a final location for given tuple.
@@ -195,6 +193,33 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
         //  Step 2. (Only if Step 1 occurred) Generate new spans with the finest location chosen.
         //       "derivedMatches" here is a super set of the originals and any derivations.
         return PostalGeocoder.deriveMatches(postalMatches, input);
+    }
+
+    /**
+     * True up the inputs as a distinct array of matches that is ordered by appearence.
+     * @param matches
+     * @param postalMatches
+     * @return
+     */
+    private List<PlaceCandidate> assembleInputs(List<PlaceCandidate> matches, List<PlaceCandidate> postalMatches) {
+        List<PlaceCandidate> all = new ArrayList<>();
+        Set<String> unique = new HashSet<>();
+        for (PlaceCandidate pc : matches) {
+            all.add(pc);
+            unique.add(pc.getContentId());
+        }
+
+        for (PlaceCandidate pc : postalMatches) {
+            String span = pc.getContentId();
+            if (unique.contains(span)) {
+                continue;
+            }
+            all.add(pc);
+            unique.add(span);
+        }
+
+        Collections.sort(all);
+        return all;
     }
 
     @Override
@@ -364,6 +389,9 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
                 Place otherGeo = otherGeoScore.getPlace();
                 if (otherGeo.getFeatureDesignation().startsWith(featPrefix)) {
                     if (geo.sameBoundary(otherGeo)) {
+                        if (otherGeo.getInstanceId() == null) {
+                            otherGeo.setInstanceId(otherMention.getMatchId());
+                        }
                         postal.linkGeography(otherMention, slot, otherGeo);
                         postal.incrementPlaceScore(geo, 5.0, String.format("PostalAssociation/%s", slot));
                         postal.markAnchor(); // If not already marked.
