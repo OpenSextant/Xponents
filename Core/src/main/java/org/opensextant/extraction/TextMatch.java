@@ -164,8 +164,8 @@ public class TextMatch extends TextEntity implements MatchSchema, Comparable<Tex
 
     /**
      * this match, A compared to B
-     * Order:  A B  then A > B
-     * Order:  B A  then A < B
+     * Order:  A B  then A &gt; B
+     * Order:  B A  then A &lt; B
      * Order:  same spans then A == B
      * @param other
      * @return
