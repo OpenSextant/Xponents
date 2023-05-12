@@ -3,6 +3,7 @@ a.k.a,abbrev
 ab,abbrev
 acme,abbrev
 adv,abbrev
+agro,abbrev
 aka,abbrev
 alt,abbrev
 anon,abbrev
@@ -60,9 +61,11 @@ mid,abbrev
 mili,abbrev
 min,abbrev
 mod,abbrev
+mol,abbrev
 mph,abbrev
 natl,abbrev
 non,abbrev
+org,abbrev
 ortho,abbrev
 para,abbrev
 pers,abbrev
@@ -701,6 +704,7 @@ colon,bodypart
 elbow,bodypart
 eye,bodypart
 eyes,bodypart
+fist,bodypart
 gills,bodypart
 gland,bodypart
 hind,bodypart
@@ -2183,6 +2187,7 @@ pie,noun
 piece,noun
 pile,noun
 piles,noun
+pivot,noun
 pill,noun
 pillows,noun
 pilot,noun
@@ -2223,6 +2228,7 @@ port authority,noun
 poster,noun
 pound,noun
 pounds,noun
+potato,food
 poverty,noun
 power,noun
 powers,noun
@@ -5076,3 +5082,9 @@ uranium,well-known.science
 vapor,well-known.science
 volt,well-known.science
 x-ray,well-known.science
+inn,noun
+botany,well-known.science
+proton,well-known.science
+magnet,well-known.science
+pty,abbrev
+
