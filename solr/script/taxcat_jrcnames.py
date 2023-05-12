@@ -133,6 +133,8 @@ NOISE = {
     "guiding principles",
     "lessons learned",
     "better life",
+    "secret",
+    "top secret",
     u"san diegó",  # not San Diego
     "san diego",  # not San Diego
     u"san franciscó",
