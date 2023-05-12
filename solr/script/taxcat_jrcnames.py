@@ -439,6 +439,7 @@ if __name__ == "__main__":
                 node.is_valid = False
 
             builder.add(catalog_id, node)
+            print(node.id, node)
 
             if row_id % 100000 == 0:
                 print("Row # ", row_id)
