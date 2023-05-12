@@ -84,9 +84,8 @@ public class SolrProxy extends SolrUtil {
     /**
      * Initializes a Solr server from a URL
      *
-     * @throws IOException err
      */
-    public SolrProxy(URL url) throws IOException {
+    public SolrProxy(URL url) {
         this.server_url = url;
         solrClient = initializeHTTP(this.server_url);
     }
@@ -144,10 +143,7 @@ public class SolrProxy extends SolrUtil {
      * @return Instance of a Solr server
      */
     public static SolrClient initializeHTTP(URL url) {
-
-        HttpSolrClient client = new HttpSolrClient.Builder(url.toString()).allowCompression(true).build();
-        return client;
-
+        return new HttpSolrClient.Builder(url.toString()).allowCompression(true).build();
     }
 
     /**
@@ -333,15 +329,6 @@ public class SolrProxy extends SolrUtil {
             solrClient.close();
             solrClient = null;
         }
-    }
-
-    /**
-     * @deprecated using SolrClient terminology now.
-     * @return
-     */
-    @Deprecated
-    public SolrClient getInternalSolrServer() {
-        return solrClient;
     }
 
     public SolrClient getInternalSolrClient() {

@@ -368,7 +368,7 @@ public class Place extends GeoBase implements Geocoding {
 
     @Override
     public boolean isAdministrative() {
-        return GeonamesUtility.isAdministrative(featureClass);
+        return GeonamesUtility.isAdministrative(featureClass, featureCode);
     }
 
     /** Determines if this feature instance is a postal zone, coded "A/POST" */

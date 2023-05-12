@@ -50,6 +50,7 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.SolrMatcherSupport;
+import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
@@ -70,9 +71,9 @@ public class GazetteerMatcher extends SolrMatcherSupport {
     /*
      * Gazetteer specific stuff:
      */
-    protected TagFilter filter = null;
+    protected TagFilter filter;
     private MatchFilter userfilter = null;
-    private MatchFilter continents = null;
+    private MatchFilter continents;
 
     /**
      * invocation counts: default filter count and user filter count
@@ -92,7 +93,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
      * enable trure for data such as tweets, blogs, etc. where case varies or
      * does not exist
      */
-    private boolean allowLowerCase = false;
+    private boolean allowLowerCase;
     private boolean enableCaseFilter = true;
     private boolean enableCodeHunter = false;
 
@@ -472,7 +473,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
             // Get char immediately following match, for light NLP rules.
             char postChar = 0;
-            char preChar = 0;
+            char preChar;
             if (x2 < buffer.length()) {
                 postChar = buffer.charAt(x2);
             }
@@ -579,6 +580,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                     throw new ExtractionException(String.format("[Text ID: %s] Place instance not found in-memory for gazetteer tag ID %s", input.id, solrId));
                 }
 
+                if (!GeodeticUtility.isCoord(pGeo)) {
+                    // Substantial USGS and other gazetteer entries have non-zero coordinates.  AVOID.
+                    continue;
+                }
+
                 /* OPTIMIZE: Pare down very large location matches */
                 if (largeGeoCount) {
                     if (!(pGeo.isAdministrative() || pGeo.isPopulated())) {
@@ -659,7 +665,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             }
 
             // Only add PlaceCandidate if it has associated locations after filtering
-            if (geocode && validMatch && pc.hasPlaces()) {
+            if (validMatch && pc.hasPlaces()) {
                 candidates.put(pc.start, pc);
                 log.debug("Text {} matched {}", pc.getText(), namesMatched);
             } else {

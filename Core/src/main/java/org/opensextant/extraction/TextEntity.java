@@ -302,7 +302,7 @@ public class TextEntity {
      * @return true if t occurs after the current entity
      */
     public boolean isAfter(TextEntity t) {
-        return (start - t.end <= 2 && start > t.end);
+        return start > t.end;
     }
 
     /**
@@ -313,7 +313,7 @@ public class TextEntity {
      * @return true if t is before the current entity
      */
     public boolean isBefore(TextEntity t) {
-        return (t.start - end <= 2 && t.start > end);
+        return t.start > end;
     }
 
     public boolean isSameMatch(TextEntity t) {

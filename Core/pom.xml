@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents-core</artifactId>
-  <version>3.6.1</version>
+  <version>3.6.4</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents Core API</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -36,7 +36,7 @@
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <slf4j.version>1.7.36</slf4j.version>
+    <slf4j.version>2.0.6</slf4j.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
   <distributionManagement>
@@ -71,7 +71,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.13.1</version>
+        <version>4.13.2</version>
         <scope>test</scope>
       </dependency>
       <!-- Logging -->
@@ -83,7 +83,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.2.11</version>
+        <version>1.4.4</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

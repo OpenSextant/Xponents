@@ -12,17 +12,20 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
-import org.opensextant.extractors.geo.rules.*;
+import org.opensextant.extractors.geo.rules.GeocodeRule;
+import org.opensextant.extractors.geo.rules.PostalCodeAssociationRule;
+import org.opensextant.extractors.geo.rules.PostalLocationChooser;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import static org.opensextant.extractors.geo.PlaceCandidate.VAL_SAME_COUNTRY;
 
 /**
  * PostalGeocoder -- a GazetteerMatcher that uses the "postal" solr index to
  * quickly tag any known postal codes worldwide.
- * Postal codes are typically 4 to 7 alphanumeric characters
- * with space or punctuation.
- * Through Geonames.org we have identified 4 million unique patterns for
- * COUNTRY + CODE tuples.
+ * Postal codes are typically 4 to 7 alphanumeric characters with space or punctuation.
+ * Through Geonames.org we have identified 4 million unique patterns for COUNTRY + CODE tuples.
  * <p>
  * For example the Postal code "11111" in different countries is two distinct
  * codes, since we assume a postal code is unique within a country, but may
@@ -40,11 +43,12 @@ import org.opensextant.util.TextUtils;
  *
  * @author ubaldino
  */
-public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Extractor, BoundaryObserver, CountryObserver {
+public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver, CountryObserver {
 
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.1";
     public static final String METHOD_DEFAULT = String.format("PostalGeocoder v%s", VERSION);
     private static final String NO_TEXT_ID = "no-id";
+    private final Logger log = LoggerFactory.getLogger(PostalGeocoder.class);
 
     /**
      * DEFAULT - postal codes 4 chars or longer are considered, e.g.,
@@ -54,40 +58,22 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
      * 0174
      * 011 -- too short and ambiguous.
      */
-    private static final int MIN_LEN = 3;
-    private int minLen = MIN_LEN;
-    private final List<GeocodeRule> rules = new ArrayList<>();
+    private static final int MIN_LEN = 4;
     private Map<String, Country> countryCatalog = null;
+
+    private final List<PlaceCandidate> matches = new ArrayList<>();
 
     private final HashMap<String, PlaceCount> pairedPostalMentions = new HashMap<>();
     private final HashMap<String, CountryCount> inferredCountries = new HashMap<>();
 
     private final PostalCodeAssociationRule assocFilter = new PostalCodeAssociationRule();
+    private PostalTagger postalTagger = null;
+    private PlaceGeocoder nameTagger = null;
 
-    public PostalGeocoder() throws ConfigException {
+    private final GeocodeRule chooser = new PostalLocationChooser();
+
+    public PostalGeocoder() {
         super();
-
-        /* No lower case; Allow code/digits;  Do not filter on stopwords */
-        this.setAllowLowerCase(false);
-        this.setAllowLowerCaseAbbreviations(false);
-        this.setEnableCaseFilter(false);
-        this.setEnableCodeHunter(true);
-
-        // LEXICAL FILTERS
-        rules.add(new PostalCodeFilter(minLen));
-
-        // HIERARCHICAL ASSOCIATION
-        assocFilter.setBoundaryObserver(this);
-        assocFilter.setCountryObserver(this);
-        rules.add(assocFilter);
-
-        //  OMIT UNASSOCIATED CODES that look like YEAR numbers
-        rules.add(new PostalCodeYearFilter());
-
-        // DISAMBIGUATION
-        GeocodeRule chooser = new PostalLocationChooser();
-        chooser.setDefaultMethod(METHOD_DEFAULT);
-        rules.add(chooser);
     }
 
     @Override
@@ -95,20 +81,25 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
         return "PostalGeocoder";
     }
 
-    @Override
-    public String getCoreName() {
-        return "postal";
-    }
 
     @Override
     public void configure() throws ConfigException {
-        /*
-         * TODO: Figure out any GeocodeRules that help manage precision.
-         */
+        // HIERARCHICAL ASSOCIATION
+        assocFilter.setBoundaryObserver(this);
+        assocFilter.setCountryObserver(this);
+
+        // DISAMBIGUATION
+        chooser.setDefaultMethod(METHOD_DEFAULT);
+
         try {
             GeonamesUtility geodataUtil = new GeonamesUtility();
             countryCatalog = geodataUtil.getISOCountries();
 
+            postalTagger = new PostalTagger();
+            postalTagger.configure();
+
+            nameTagger = new PlaceGeocoder();
+            nameTagger.configure();
         } catch (IOException err) {
             throw new ConfigException("Failed to load country metadata", err);
         }
@@ -122,6 +113,21 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
     @Override
     public void configure(URL patfile) throws ConfigException {
         throw new ConfigException("Not an option for this extractor");
+    }
+
+    /**
+     * OPTIMIZATION:  Set the general purpose matches (geo, taxons, etc)
+     * from a prior processing step. This helps avoid PostalGeocoder from re-running the same.
+     * Only call this if the matches array includes the output of running the PlaceGeocoder.
+     * @param arr
+     */
+    public void setGeneralMatches(List<TextMatch> arr) {
+        matches.clear();
+        for (TextMatch m : arr) {
+            if (m instanceof PlaceCandidate && !m.isFilteredOut()) {
+                matches.add((PlaceCandidate) m);
+            }
+        }
     }
 
     /**
@@ -147,20 +153,73 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
      *       ..... SA6 19DN ...      # bare alpha-numeric postal code.  MED confidence
      *   </pre>
      *
+     * NOTE: Not multi-thread safe. A single call here has some amount of internal state;
+     *     A second simultaneous call would disrupt that
      * @param input TextInput
      * @return array of TextMatch
-     * @throws ExtractionException if extraction fails (Solr or Luecene errors) or rules mechanics.
+     * @throws ExtractionException if extraction fails (Solr or Lucene errors) or rules mechanics.
      */
     @Override
     public List<TextMatch> extract(TextInput input) throws ExtractionException {
-        List<PlaceCandidate> candidates = tagText(input, false);
         reset();
+
+        // Step 0. Tag potential codes.
+        // note -- these postal matches are distinguished by FEAT_CODE = 'POST' or isPostal()
+        List<PlaceCandidate> postalMatches = postalTagger.tagText(input, false);
+
+        // Step 1. Fully tag text to find related geography and associate City + Postal.
+        // NOTE: this assumes that the postal tagger is incomplete and any pre-selected geocoding is tossed away.
+        if (matches.isEmpty()) {
+            // OPTIMIZATION: if matches is non-zero, we'll use it.  If empty it is tagged
+            setGeneralMatches(nameTagger.extract(input));
+        }
+        List<PlaceCandidate> combined = assembleInputs(matches, postalMatches);
+
         /* assess each tag.  Rules filter, improve, and then choose and rate confidence on each match */
         assocFilter.setBuffer(input.buffer);
-        for (GeocodeRule r : rules) {
-            r.evaluate(candidates);
+
+        // Group tuples based on proximity and containment, AND order of appearence
+        assocFilter.evaluate(combined);
+
+        // Choose a final location for given tuple.
+        chooser.evaluate(combined);
+
+        // TODO: combine this rule with above?
+        PostalGeocoder.associateMatches(matches, postalMatches);
+
+        // Clear internal memory from external tagger
+        matches.clear();
+
+        //  Step 2. (Only if Step 1 occurred) Generate new spans with the finest location chosen.
+        //       "derivedMatches" here is a super set of the originals and any derivations.
+        return PostalGeocoder.deriveMatches(postalMatches, input);
+    }
+
+    /**
+     * True up the inputs as a distinct array of matches that is ordered by appearence.
+     * @param matches
+     * @param postalMatches
+     * @return
+     */
+    private List<PlaceCandidate> assembleInputs(List<PlaceCandidate> matches, List<PlaceCandidate> postalMatches) {
+        List<PlaceCandidate> all = new ArrayList<>();
+        Set<String> unique = new HashSet<>();
+        for (PlaceCandidate pc : matches) {
+            all.add(pc);
+            unique.add(pc.getContentId());
         }
-        return new ArrayList<>(candidates);
+
+        for (PlaceCandidate pc : postalMatches) {
+            String span = pc.getContentId();
+            if (unique.contains(span)) {
+                continue;
+            }
+            all.add(pc);
+            unique.add(span);
+        }
+
+        Collections.sort(all);
+        return all;
     }
 
     @Override
@@ -173,19 +232,10 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
      */
     @Override
     public void cleanup() {
-        this.reportMemory();
-        close();
+        postalTagger.reportMemory();
+        postalTagger.close();
+        nameTagger.close();
     }
-
-    /**
-     * Override the default MIN_LEN=4 length for a postal code.  Any textmatch with length &lt; this length will
-     * be filtered out.
-     * Postal codes in CA, FO, GB, GG, IE, IM, IS, JE, MT all have postal codes that are 2 or 3 alphanum.
-     */
-    public void setMinLen(int l) {
-        minLen = l;
-    }
-
 
     public void reset() {
         pairedPostalMentions.clear();
@@ -244,9 +294,9 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
         return inferredCountries;
     }
 
-    private static void copyMatchId(TextMatch postal, List<TextMatch> matches) {
-        for (TextMatch m : matches) {
-            if (m instanceof PlaceCandidate && m.isSameMatch(postal)) {
+    private static void copyMatchId(PlaceCandidate postal, List<PlaceCandidate> matches) {
+        for (PlaceCandidate m : matches) {
+            if (m.isSameMatch(postal)) {
                 postal.match_id = m.match_id;
                 postal.setType(m.getType());
                 return;
@@ -258,7 +308,7 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
      * Given geotagging from a prior pass of PlaceGeocoder or other stuff, compare and align
      * those tags with POSTAL tags.
      */
-    public static void associateMatches(List<TextMatch> matches, List<TextMatch> postalMatches) {
+    public static void associateMatches(List<PlaceCandidate> matches, List<PlaceCandidate> postalMatches) {
 
         /* Loop through matches;  Not guaranteeing that an array of matches is sorted
          * by document appearance.  We loop through both arrays fully -- using the postal Matches as the main loop
@@ -269,29 +319,24 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
          *    -- try to attach OTHER "" ""
          *
          */
-        for (TextMatch p1 : postalMatches) {
-            if (!(p1 instanceof PlaceCandidate)) {
-                // This shant' happen.
-                continue;
-            }
-            if (p1.isFilteredOut()) {
+        for (PlaceCandidate postal : postalMatches) {
+            if (postal.isFilteredOut()) {
                 continue;
             }
 
-            if (TextUtils.isNumeric(p1.getText()) && p1.getLength() < MIN_LEN) {
+            if (TextUtils.isNumeric(postal.getText()) && postal.getLength() < MIN_LEN) {
                 // Ignore numeric codes that are 3 digits or shorter, for now.
                 // Ho hum... a limitation, but trivial matches may slow performance down.
                 continue;
             }
-            copyMatchId(p1, matches);
-            PlaceCandidate postal = (PlaceCandidate) p1;
+            copyMatchId(postal, matches);
             if (!postal.hasPostal()) {
                 continue;
             }
 
             int proximity = 20; // chars
             // Postal is NOW a Postal code.
-            for (TextMatch m1 : matches) {
+            for (PlaceCandidate other : matches) {
                 /*
                 Potential scenario: "postal match" is the anchor.
 
@@ -301,7 +346,7 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
                     OTHER------------------|------------OTHER
 
                     Loop through surrounding matches and associate highest resolution in order:
-                        P/PPL  -- preffered
+                        P/PPL  -- preferred
                         A/ADM* -- second
                         A/PCL* -- third
 
@@ -309,11 +354,9 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
                          match#1   <Postal Code>
                          match#2  inferred, complete span from |<City> to <Country>|
                  */
-                if (!(postal.isWithinChars(m1, proximity) && m1 instanceof PlaceCandidate)) {
+                if (!(postal.isWithinChars(other, proximity))) {
                     continue;
                 }
-                // Associate postal with m1?
-                PlaceCandidate other = (PlaceCandidate) m1;
 
                 // Link specific slots by feeature type --- The geography on the other match needs to line up with the postal geo.
                 // If postal geo is chosen, use it.
@@ -322,7 +365,7 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
                 // Prior taggers may have already made linkages.
                 linkGeography(postal, other, "city", "P/PPL");
                 linkGeography(postal, other, "admin", "A/ADM");
-                linkGeography(postal, other, VAL_COUNTRY, "A/PCL");
+                linkGeography(postal, other, VAL_SAME_COUNTRY, "A/PCL");
             }
             // Linkages above will re-score geographic connections between postal ~ city, admin, country.
             //   In the end you will have 4 possible geolocations to choose from, the postal coding be the most specific.
@@ -337,16 +380,18 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
             return true;
         }
 
-        // Dare we cache the sorted scoredPlaces for each mention/otherMention?
-        //
-        // "postal" geo  ~ "02144"   ( KR.11 or US.MA )
+        //  Example: Sometown MA, 02144
+        // "postal" geo  ~ "02144"   ( KR.11 or US.MA  are possible links, for example )
+        // "other" geo   ~ "MA"
         for (ScoredPlace geoScore : postal.getPlaces()) {
-            //  slot = "admin",  if otherMention is "Massachussetts", then selected postal geo is "02144"(US.MA)
             Place geo = geoScore.getPlace();
             for (ScoredPlace otherGeoScore : otherMention.getPlaces()) {
                 Place otherGeo = otherGeoScore.getPlace();
                 if (otherGeo.getFeatureDesignation().startsWith(featPrefix)) {
                     if (geo.sameBoundary(otherGeo)) {
+                        if (otherGeo.getInstanceId() == null) {
+                            otherGeo.setInstanceId(otherMention.getMatchId());
+                        }
                         postal.linkGeography(otherMention, slot, otherGeo);
                         postal.incrementPlaceScore(geo, 5.0, String.format("PostalAssociation/%s", slot));
                         postal.markAnchor(); // If not already marked.
@@ -379,19 +424,19 @@ public class PostalGeocoder extends GazetteerMatcher implements MatchSchema, Ext
      * @param t
      * @return all postal matches, now with derived ones added.
      */
-    public static List<TextMatch> deriveMatches(List<TextMatch> postalMatches, TextInput t) {
+    public static List<TextMatch> deriveMatches(List<PlaceCandidate> postalMatches, TextInput t) {
 
         ArrayList<TextMatch> derived = new ArrayList<>();
-        for (TextMatch m : postalMatches) {
-            derived.add(m);
-            if (!(m instanceof PlaceCandidate) || m.isFilteredOut()) {
+        for (PlaceCandidate mention : postalMatches) {
+            derived.add(mention);
+            if (mention.isFilteredOut()) {
+                // Allow filtered out item to be reported, but derivation logic will not be applied.
                 continue;
             }
-            PlaceCandidate mention = (PlaceCandidate) m;
             if (mention.isAnchor() && mention.getRelated() != null) {
                 PlaceCandidate newSpan = deriveMention(mention, mention.getRelated(), t);
-                newSpan.setType(m.getType());
-                newSpan.match_id = String.format("%s-derived@%d", m.getType(), newSpan.start);
+                newSpan.setType(mention.getType());
+                newSpan.match_id = String.format("%s-derived@%d", mention.getType(), newSpan.start);
                 derived.add(newSpan);
             } else if (unqualifiedPostalLocation(mention)) {
                 // Unpaired Postal code.

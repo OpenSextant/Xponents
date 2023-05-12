@@ -16,15 +16,15 @@
  */
 package org.opensextant.extraction;
 
-import org.opensextant.util.TextUtils;
 import org.opensextant.data.MatchSchema;
+import org.opensextant.util.TextUtils;
 
 /**
  * A variation on TextEntity that also records pattern metadata
  *
  * @author ubaldino
  */
-public class TextMatch extends TextEntity implements MatchSchema {
+public class TextMatch extends TextEntity implements MatchSchema, Comparable<TextMatch> {
 
     /**
      * the ID of the pattern that extracted this
@@ -138,11 +138,20 @@ public class TextMatch extends TextEntity implements MatchSchema {
     /**
      * If called, this overwrites existing match_id
      * Match ID is typically entity label @ offset.
-     * Alternatively a Match ID could be also label + offset + value + ... 
+     * Alternatively a Match ID could be also label + value + start offset ...
      * to distinguish this text span from others.
      */
     public void defaultMatchId() {
+
         match_id = String.format("%s@%d", this.getType(), this.start);
+    }
+
+    /**
+     * create a simple text-based identifier with form of value + start offset ...
+     * @return
+     */
+    public String getContentId() {
+        return String.format("%s@%d", this.getText(), this.start);
     }
 
     /**
@@ -151,5 +160,30 @@ public class TextMatch extends TextEntity implements MatchSchema {
      */
     public String getMatchId() {
         return match_id;
+    }
+
+    /**
+     * this match, A compared to B
+     * Order:  A B  then A &gt; B
+     * Order:  B A  then A &lt; B
+     * Order:  same spans then A == B
+     * @param other
+     * @return
+     */
+    public int compareTo(TextMatch other) {
+        if (other == null) {
+            return 1;
+        }
+        if (isSameMatch(other)) {
+            return 0;
+        }
+        if (isOverlap(other)) {
+            if (other.end > end) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+        return isBefore(other) ? -1 : 1;
     }
 }

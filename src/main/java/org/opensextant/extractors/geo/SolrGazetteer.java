@@ -377,18 +377,16 @@ public class SolrGazetteer {
      * @param place   the place
      * @param as_solr the as_solr
      * @return places List of place entries
-     * @throws SolrServerException the solr server exception
-     * @throws IOException
+     * @throws SolrServerException related connectivity or Solr integrity
+     * @throws IOException related connectivity or Solr integrity
      */
     public List<Place> search(String place, boolean as_solr) throws SolrServerException, IOException {
-
         if (as_solr) {
             params.set("q", place);
         } else {
             // Bare keyword query needs to be quoted as "word word word"
             params.set("q", "\"" + place + "\"");
         }
-
         return SolrProxy.searchGazetteer(solr.getInternalSolrClient(), params);
     }
 
@@ -396,11 +394,10 @@ public class SolrGazetteer {
      *
      * @param p
      * @return
-     * @throws SolrServerException
-     * @throws IOException
+     * @throws SolrServerException -- connectivity or Solr integrity
+     * @throws IOException -- connectivity or Solr integrity
      */
     public List<Place> search(SolrParams p) throws SolrServerException, IOException {
-
         return SolrProxy.searchGazetteer(solr.getInternalSolrClient(), p);
     }
 
@@ -449,8 +446,8 @@ public class SolrGazetteer {
      * @author ubaldino
      */
     static class RelativePlace implements Comparable<RelativePlace> {
-        public long radius = -1;
-        public Place place = null;
+        public long radius;
+        public Place place;
 
         RelativePlace(Place p, long r) {
             this.place = p;
@@ -542,7 +539,7 @@ public class SolrGazetteer {
      * @param parametricQuery
      * @param lenTolerance    your choice for how much longer a valid matching name can be.
      * @return list of matching places
-     * @throws ExtractionException
+     * @throws ExtractionException if search fails
      */
     public List<Place> findPlaces(String name, String parametricQuery, int lenTolerance) throws ExtractionException {
 
@@ -578,7 +575,7 @@ public class SolrGazetteer {
      *
      * @param placeID
      * @return
-     * @throws ExtractionException
+     * @throws ExtractionException  if findPlaces query fails
      */
     public List<Place> findPlacesById(String placeID) throws ExtractionException {
         try {
@@ -598,8 +595,8 @@ public class SolrGazetteer {
      * @param parametricQuery
      * @param lenTolerance    your choice for how much longer a valid matching name
      *                        can be.
-     * @return
-     * @throws ExtractionException
+     * @return matched places, with only variants that are Romanized (Angloicized, ASCII, etc)
+     * @throws ExtractionException if findPlaces query fails
      */
     public List<Place> findPlacesRomanizedNameOf(String name, String parametricQuery, int lenTolerance)
             throws ExtractionException {

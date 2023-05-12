@@ -136,6 +136,11 @@ public class XponentsGeotagger extends TaggerResource {
     /**
      * Process the text for the given document.
      *
+     * NOTE: Please note this is NOT MT-safe. Internally there are single stateful instances of
+     *  Extractor taggers, which may have significant memory and initialization phases.  As a prototype
+     *  that is one limitation.  If you need multiple clients to hit this service, you ideally load-balance
+     *  a bank of Xponents REST server.
+     *
      * @param input     the input
      * @param jobParams the job params
      * @return the representation
@@ -152,7 +157,6 @@ public class XponentsGeotagger extends TaggerResource {
             List<TextMatch> matches = new ArrayList<>();
 
             // BOTH geo and taxons could be requested:  features = "geo", "all-taxons"
-
             // `geo` tagging
             if (tag_geo(jobParams) || tag_taxons(jobParams)) {
                 PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor(GEO_TAGGER);
@@ -165,19 +169,12 @@ public class XponentsGeotagger extends TaggerResource {
             if (jobParams.tag_postal) {
                 PostalGeocoder pg = (PostalGeocoder) getExtractor(POSTAL_TAGGER);
                 if (pg != null) {
-                    List<TextMatch> postalMatches = pg.extract(input);
-                    // Associate raw geotags with Postal matches, so any Postal codes are fully geolocated.
-                    // Filter out any postal code that does not line up with other geography in input text.
-                    if (!postalMatches.isEmpty()) {
-                        // This part combines the output from both Postal and Place Geocoders.
-                        //
-                        // 1. link postal geotags with other non-postal geotags.
-                        PostalGeocoder.associateMatches(matches, postalMatches);
-                        // 2. regenerate new spans and geocodes;  This may filter in/out geotags.
-                        List<TextMatch> derivedMatches = PostalGeocoder.deriveMatches(postalMatches, input);
-                        // 3. add the superset of postal+derived tags.
-                        matches.addAll(derivedMatches);
+                    if (tag_geo(jobParams)) {
+                        // OPTIMIZATION: reuse matches accumulated so far to prevent
+                        // PostalGeocoder from repeating extract()
+                        pg.setGeneralMatches(matches);
                     }
+                    matches.addAll(pg.extract(input));
                 }
             }
             if (isDebug()) {
