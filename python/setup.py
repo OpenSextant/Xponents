@@ -14,7 +14,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='opensextant',
-    version='1.4.17',
+    version='1.4.18',
 
     description='OpenSextant APIs and Utilities',
     long_description=long_description,
@@ -61,5 +61,5 @@ setup(
                                   './resources/*.json',
                                   './resources/*.cfg']},
 
-    install_requires=['pysolr>=3.9.0', 'chardet>=3.0.0', 'requests', 'arrow>=1.1.0', 'PyGeodesy>=21.3.3']
+    install_requires=['pysolr>=3.9.0', 'chardet>=5.0.0', 'requests', 'arrow>=1.1.0', 'PyGeodesy>=21.3.3']
 )

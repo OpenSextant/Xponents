@@ -276,6 +276,12 @@ class Coordinate:
 
 
 def bbox(lat: float, lon: float, radius: int):
+    """
+       Calculate coordinates for SW and NE corners of a SQUARE bounding box of edge length 2 x radius
+    :param lat: decimal degree latitude
+    :param lon: decimal degree longitude
+    :param radius: meters from center point
+    """
     sw, ne = LL(lon, lat).boundsOf(2 * radius, 2 * radius)
     return Coordinate(None, lat=sw.lat, lon=sw.lon), Coordinate(None, lat=ne.lat, lon=ne.lon)
 

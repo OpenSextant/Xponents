@@ -62,7 +62,7 @@ import os
 import re
 
 from opensextant import load_us_provinces
-from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id
+from opensextant.TaxCat import Taxon, TaxCatalogBuilder, get_starting_id, DEFAULT_SOLR_SERVER
 from opensextant.utility import is_ascii, has_cjk
 
 us_states = load_us_provinces()
@@ -79,7 +79,7 @@ idset = {}
 
 jrc_line_split = re.compile(r"\s+")
 
-NO_ID_BASE = 800000
+NO_ID_BASE = 1500000
 no_id_counter = 0
 
 # Ambiguous phrases or noisy ones I would prefer not to tag, so
@@ -165,6 +165,13 @@ def check_validity(e):
     phr = e.phrasenorm.replace(",", " ")
     if phr in NOISE:
         e.is_valid = False
+    else:
+        tokens = phr.split()
+        if tokens[0] in {"and", "of"}:
+            e.is_valid = False
+        elif tokens[0] == "the" and len(phr) < 10:
+            e.is_valid = False
+
     return
 
 
@@ -286,7 +293,7 @@ def create_entity(line, scan=False):
     parts = jrc_line_split.split(line, maxsplit=3)
     _id = parts[0]
     if _id == "0":
-        if test:
+        if debug:
             print("Ignore line? ID=0, ", line)
         no_id_counter += 1
         _id = no_id_counter + NO_ID_BASE
@@ -316,7 +323,7 @@ def create_entity(line, scan=False):
         if lookup_id not in nameset:
             nameset[lookup_id] = name
 
-        if test:
+        if debug:
             if name in names:
                 print("Duplicate", name, lookup_id)
             else:
@@ -327,7 +334,8 @@ def create_entity(line, scan=False):
     primary_name = None
     for lookup_id in [f"u{_id}", f"{lang}{_id}"]:
         primary_name = nameset.get(lookup_id)
-        if primary_name: break
+        if primary_name:
+            break
 
     if not primary_name:
         print("Failed to find primary name for ", line)
@@ -355,22 +363,24 @@ if __name__ == "__main__":
     catalog_id = "JRC"
     start_id = get_starting_id("JRC")
 
+    from time import sleep
     import argparse
 
     ap = argparse.ArgumentParser()
     ap.add_argument("taxonomy", help="Taxonomy file in JRCNames format")
     ap.add_argument("--starting-id", help="Solr index row ID start")
-    ap.add_argument("--solr", help="Solr URL for taxcat index")
+    ap.add_argument("--solr", help="Solr URL for taxcat index", default=DEFAULT_SOLR_SERVER)
     ap.add_argument("--max", help="Max # of rows to index; for testing")
     ap.add_argument("--invalidate", action="store_true", default=False)
     ap.add_argument("--no-fixes", action="store_true", default=False)
+    ap.add_argument("--debug", action="store_true")
 
     args = ap.parse_args()
 
     print(f"""
     TaxCat Builder for Taxonomy: {args.taxonomy}
     """)
-
+    debug = args.debug
     if args.starting_id:
         start_id = int(args.starting_id)
 
@@ -378,12 +388,13 @@ if __name__ == "__main__":
     apply_default_fixes = not args.no_fixes
 
     row_max = -1
-    test = args.solr is None
-    builder = TaxCatalogBuilder(server=args.solr, test=test)
+    builder = TaxCatalogBuilder(server=args.solr, test=args.debug)
+    builder.purge(catalog_id)
+    print("Pause"); sleep(30)
 
     if args.max:
         row_max = int(args.max)
-    elif test:
+    elif debug:
         row_max = 100000
 
     stopterms_file = os.path.join("etc", "taxcat", "stopwords.txt")
@@ -414,7 +425,7 @@ if __name__ == "__main__":
             if row.startswith("#") or len(row.strip()) == 0: continue
 
             node = create_entity(row)
-            row_id = row_id + 1
+            row_id += 1
             if not node:
                 continue
 
@@ -432,7 +443,7 @@ if __name__ == "__main__":
 
             if row_id % 100000 == 0:
                 print("Row # ", row_id)
-            if test:
+            if debug:
                 print(str(node))
             if 0 < row_max < row_id:
                 break

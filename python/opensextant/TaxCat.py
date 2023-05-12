@@ -8,8 +8,8 @@ import os
 from opensextant.utility import is_text, ConfigUtility
 
 __API_PATH = os.path.realpath(__file__)
-SOLR_SERVER = "http://localhost:7000/solr/taxcat"
-
+SOLR_SERVER = "http://127.0.0.1:7000/solr/taxcat"
+DEFAULT_SOLR_SERVER = "127.0.0.1:7000"
 
 def _scrub_cdata_content(text):
     """ User should scrub data themselves; but this gives ideas of what goes wrong when adding text to Solr
@@ -162,10 +162,19 @@ class TaxCatalogBuilder:
         _stopwords_list = self.utility.loadListFromFile(stopfile)
         self.stopwords.update(_stopwords_list)
 
+    def purge(self, catalog):
+        if not catalog:
+            raise Exception("Catalog name is required")
+        print("Purging catalog", catalog)
+        self.server.delete(f"catalog:{catalog}", commit=True)
+
     def set_server(self, svr):
         self.server_url = svr
         if not self.server_url:
             return
+
+        if not self.server_url.startswith("http"):
+            self.server_url = f"http://{self.server_url}/solr/taxcat"
 
         try:
             from pysolr import Solr
@@ -192,7 +201,7 @@ class TaxCatalogBuilder:
             self._records.clear()
 
             if flush:
-                self.server.commit()
+                self.server.commit(expungeDeletes=True)
         return
 
     def add(self, catalog, taxon: Taxon):

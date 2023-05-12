@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from opensextant.TaxCat import Taxon, get_taxnode, TaxCatalogBuilder, get_starting_id
+from opensextant.TaxCat import Taxon, get_taxnode, TaxCatalogBuilder, get_starting_id, DEFAULT_SOLR_SERVER
 import json
 
 
@@ -215,6 +215,6 @@ def main_loop(url):
 if __name__ == '__main__':
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument('--solr')
+    ap.add_argument('--solr', default=DEFAULT_SOLR_SERVER)
     args = ap.parse_args()
     main_loop(args.solr)
