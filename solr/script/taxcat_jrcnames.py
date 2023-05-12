@@ -211,13 +211,13 @@ class JRCEntity(Taxon):
             if tokens[-1] in PLACE_ENDING_FIXES:
                 # Place (T=terrain)
                 self.entity_type = "T"
-                print("Place Phrase fixed", self.phrase)
+                if debug: print("Place Phrase fixed", self.phrase)
             elif tokens[0] in PLACE_STARTING_FIXES:
                 self.entity_type = "T"
-                print("Place Phrase fixed", self.phrase)
+                if debug: print("Place Phrase fixed", self.phrase)
             elif tokens[-1] in ignore_provinces:
                 self.entity_type = "T"
-                print("Ignore Province name in token", self.phrase)
+                if debug: print("Ignore Province name in token", self.phrase)
 
             if self.entity_type == "P":
                 if self.phrasenorm.startswith("liberty "):
@@ -241,7 +241,7 @@ class JRCEntity(Taxon):
         self.is_valid = l > 2 or has_cjk(variant)
         # specifically acronyms.
         self.is_acronym = variant.isupper() and is_ascii(variant) and " " not in variant and l <= 12
-        if self.is_acronym:
+        if self.is_acronym and debug:
             print("Acronym?", variant)
 
         # taxon ID/name:
@@ -373,7 +373,7 @@ if __name__ == "__main__":
     ap.add_argument("--max", help="Max # of rows to index; for testing")
     ap.add_argument("--invalidate", action="store_true", default=False)
     ap.add_argument("--no-fixes", action="store_true", default=False)
-    ap.add_argument("--debug", action="store_true")
+    ap.add_argument("--debug", action="store_true", default=False)
 
     args = ap.parse_args()
 

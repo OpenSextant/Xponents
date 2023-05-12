@@ -7,6 +7,7 @@ exclusion,category
 бо,stopword
 за,stopword
 на,stopword
+нан,stopword
 по,stopword
 от,stopword
 привет,greeting

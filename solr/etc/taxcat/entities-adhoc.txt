@@ -282,7 +282,7 @@
 #
 2101002	O	u	Government+of+Japan
 2101002	O	u	GoJ
-# 2,102,***  US Terms for non-govt institutions
+# 2,102,000+  US Terms for non-govt institutions
 2102001	O	u	Brookings+Institute
 2102001	O	u	Brookings
 #
@@ -331,6 +331,12 @@
 2102016	O	u	Homeland Security Investigations
 2102016	O	u	DHS/HSI
 2102016	O	u	HSI
+
+2102017	O	u	Intelligence Community
+2102017	O	u	IC
+
+2102018 O   u   BBN Technologies
+2102018 O   u   BBN
 
 # More Generics
 2200001	O	u	Bank of Commerce

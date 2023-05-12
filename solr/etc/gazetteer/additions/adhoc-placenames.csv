@@ -1,4 +1,5 @@
 place_id,name,feat_class,feat_code,adm1,cc,FIPS_cc,source,name_bias,id_bias,name_type,lat,lon
+G6254927,Penn,A,ADM1,PA,US,US,X,40,75,A,40.8,-77.7
 G5001836,Mich.,A,ADM1,MI,US,US,X,40,75,A,44.25029,-85.50033
 G5037779,Minn.,A,ADM1,MN,US,US,X,40,75,A,46.2502,-94.2505
 N12145993,United States,A,PCLI,0,US,US,X,55,49,N,39.76,-98.5
