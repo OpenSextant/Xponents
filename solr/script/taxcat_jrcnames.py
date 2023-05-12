@@ -373,7 +373,7 @@ if __name__ == "__main__":
     ap.add_argument("--starting-id", help="Solr index row ID start")
     ap.add_argument("--solr", help="Solr URL for taxcat index", default=DEFAULT_SOLR_SERVER)
     ap.add_argument("--max", help="Max # of rows to index; for testing")
-    ap.add_argument("--invalidate", action="store_true", default=False)
+    ap.add_argument("--purge", action="store_true", default=False)
     ap.add_argument("--no-fixes", action="store_true", default=False)
     ap.add_argument("--debug", action="store_true", default=False)
 
@@ -386,13 +386,13 @@ if __name__ == "__main__":
     if args.starting_id:
         start_id = int(args.starting_id)
 
-    only_mark_invalid = args.invalidate
     apply_default_fixes = not args.no_fixes
 
     row_max = -1
     builder = TaxCatalogBuilder(server=args.solr, test=args.debug)
-    builder.purge(catalog_id)
-    print("Pause"); sleep(30)
+    if args.purge:
+        builder.purge(catalog_id)
+        print("Pause"); sleep(30)
 
     if args.max:
         row_max = int(args.max)
@@ -433,9 +433,6 @@ if __name__ == "__main__":
 
             # ".id" must be an Integer for text tagger
             node.id = start_id + row_id
-
-            if only_mark_invalid and node.is_valid:
-                continue
 
             if node.phrasenorm in builder.stopwords:
                 # Keep the term, but indicate it is not valid for tagging
