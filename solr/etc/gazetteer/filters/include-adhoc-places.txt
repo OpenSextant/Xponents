@@ -4,6 +4,7 @@ israel
 # But as a last name or first, "New York, Abc" would cause Abc to be filtered out.
 york
 england
+milan
 # Last names, that are ordinals -- do not filter out items based on last name, e.g., West Texas or "West, Texas"
 west
 # Syrian places

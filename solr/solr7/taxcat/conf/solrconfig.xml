@@ -738,24 +738,24 @@
 
     -->
     <requestHandler name="/tag" class="solr.TaggerRequestHandler">
-	    <str name="field">phrase_tag</str>
-	    <bool name="partialMatches">false</bool>
-	    <bool name="matchText">false</bool>
-	    <int name="valueMinLen">2</int>
-	    <int name="valueMaxLen">200</int>
-	    <str name="fq">valid:true</str>
-	    <lst name="defaults">
-	      <str name="echoParams">none</str>
-	      <str name="fl">id,catalog,taxnode,phrase,tag</str>
-          <str name="field">phrase_tag</str>
-          <bool name="partialMatches">false</bool>
-          <bool name="matchText">false</bool>
-          <int name="valueMinLen">2</int>
-          <int name="valueMaxLen">200</int>
-          <str name="fq">valid:true</str>
-	    </lst>
+      <str name="field">phrase_tag</str>
+      <bool name="partialMatches">false</bool>
+      <bool name="matchText">false</bool>
+      <int name="valueMinLen">2</int>
+      <int name="valueMaxLen">200</int>
+      <str name="fq">valid:true</str>
+      <lst name="defaults">
+        <str name="echoParams">none</str>
+        <str name="fl">id,catalog,taxnode,phrase,tag</str>
+        <str name="field">phrase_tag</str>
+        <bool name="partialMatches">false</bool>
+        <bool name="matchText">false</bool>
+        <int name="valueMinLen">2</int>
+        <int name="valueMaxLen">200</int>
+        <str name="fq">valid:true</str>
+      </lst>
     </requestHandler>
-  
+
   <!-- SearchHandler
 
        http://wiki.apache.org/solr/SearchHandler
@@ -1065,7 +1065,7 @@
        http://wiki.apache.org/solr/UpdateRequestProcessor
 
     -->
-  
+
   <!-- Add unknown fields to the schema 
   
        An example field type guessing update processor that will
