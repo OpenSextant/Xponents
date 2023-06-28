@@ -101,6 +101,9 @@
 
   <!-- Big list of Stopwords -->
   <target name="gaz-stopwords">
+    <get dest="${gaz.conf}/lang/stopwords_ar_mohataher.txt">
+      <url url="https://raw.githubusercontent.com/mohataher/arabic-stop-words/master/list.txt"/>
+    </get>
     <get dest="${gaz.conf}/lang/stopwords_tl.txt">
       <url url="https://raw.githubusercontent.com/stopwords-iso/stopwords-tl/master/stopwords-tl.txt"/>
     </get>

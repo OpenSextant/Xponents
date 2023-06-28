@@ -170,7 +170,7 @@ public class TestGazMatcher {
             if (tm instanceof PlaceCandidate) {
                 PlaceCandidate p = (PlaceCandidate) tm;
                 if (!tm.isFilteredOut()) {
-                    String label = String.format("%s(%d)", p.getText(), p.getConfidence());
+                    String label = String.format(" %s (%d)/ ", p.getText(), p.getConfidence());
                     if (p.getConfidence() < conf) {
                         placesBelow.add(label);
                     } else {
@@ -179,7 +179,7 @@ public class TestGazMatcher {
                 }
             }
         }
-        return String.format("\tPlaces Above Threshold: %s\n\tPlaces Below Threshold: %s", placesAbove, placesBelow);
+        return String.format("\n\tPlaces Above Threshold: %s\n\n\tPlaces Below Threshold: %s", placesAbove, placesBelow);
     }
 
 

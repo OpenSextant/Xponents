@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.util.ClasspathResourceLoader;
 import org.opensextant.ConfigException;
@@ -52,6 +49,9 @@ public class TagFilter extends MatchFilter {
      */
     public TagFilter() throws IOException {
         super();
+        // Load specific Xponents filters to negate things that are
+        // generally not place names.
+        // ------------------------------------------------------
         nonPlaceStopTerms = new HashSet<>();
         String[] defaultNonPlaceFilters = {"/filters/non-placenames.csv", // GENERAL
                 "/filters/non-placenames,spa.csv", // SPANISH
@@ -63,17 +63,26 @@ public class TagFilter extends MatchFilter {
             nonPlaceStopTerms.addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(f)));
         }
 
-        /*
-         * NOTE: these stop word sets are of format='wordset'
-         * Whereas other languages (es, it, etc.) are provided in format='snowball'
-         * StopFilterFactory is needed to load snowball filters.
-         */
+        // NOTE: these stop word sets are of format='wordset' -- as they are Lucene produced data sets
+        // Whereas other languages (es, it, etc.) are provided in format='snowball'
+        // StopFilterFactory is needed to load snowball filters.
+        // ------------------------------------------------------
         String[] langSet = {
                 "ja", "ko", "zh",
                 "ar", "fa", "ur",
                 "th", "tr", "id", "tl", "vi",
                 "ru", "it", "pt", "de", "nl", "es", "en"};
         loadLanguageStopwords(langSet);
+
+        // SPECIFIC NON-PLACES BY LANGUAGE; and GENERIC STOPWORDS
+        // ------------------------------------------------------
+        String lang = "ar";
+        String[] langSpecificStops = {
+                "/filters/non-placenames,ara.csv",
+                "/lang/stopwords_ar_mohataher.txt"};
+        for (String stops : langSpecificStops) {
+            langStopFilters.get("ar").addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(stops)));
+        }
     }
 
     /**
@@ -86,22 +95,6 @@ public class TagFilter extends MatchFilter {
     private void loadLanguageStopwords(String[] langids) throws IOException, ConfigException {
         for (String lg : langids) {
             langStopFilters.put(lg, LuceneStopwords.getStopwords(new ClasspathResourceLoader(TagFilter.class), lg));
-        }
-    }
-
-    private void loadStopSet(URL url, String langid) throws IOException {
-        try (InputStream strm = url.openStream()) {
-            HashSet<Object> stopTerms = new HashSet<>();
-            for (String line : IOUtils.readLines(strm, StandardCharsets.UTF_8)) {
-                if (line.trim().startsWith("#")) {
-                    continue;
-                }
-                stopTerms.add(line.trim().toLowerCase());
-            }
-            if (stopTerms.isEmpty()) {
-                throw new ConfigException("No terms found in stop filter file " + url);
-            }
-            langStopFilters.put(langid, stopTerms);
         }
     }
 
