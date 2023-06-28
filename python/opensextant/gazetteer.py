@@ -11,6 +11,7 @@ from opensextant.utility import ensure_dirs, is_ascii, has_cjk, has_arabic, \
     ConfigUtility, get_bool, trivial_bias, replace_diacritics, strip_quotes, parse_float, load_list
 from opensextant.wordstats import WordStats
 
+DEFAULT_SOLR_URL="127.0.0.1:7000"
 DEFAULT_MASTER = "master_gazetteer.sqlite"
 DEFAULT_COUNTRY_ID_BIAS = 49
 DEFAULT_WORDSTATS = "wordstats.sqlite"
@@ -1283,11 +1284,12 @@ def add_location(geo, lat, lon, add_geohash=False):
     if lat and lon:
         geo["lat"] = parse_float(lat)
         geo["lon"] = parse_float(lon)
-    else:
-        print("No location on ROW", geo.get("place_id"))
-    if add_geohash and "lat" in geo:
-        geo["geohash"] = point2geohash(geo["lat"], geo["lon"], precision=6)
-    return geo
+        if add_geohash and "lat" in geo:
+            geo["geohash"] = point2geohash(geo["lat"], geo["lon"], precision=6)
+        return True
+
+    print("No location on ROW", geo.get("place_id"))
+    return False
 
 
 class DataSource:
@@ -1370,7 +1372,11 @@ class GazetteerIndex:
 
     def __init__(self, server_url, debug=False):
 
-        self.server = pysolr.Solr(server_url)
+        self.server_url = server_url
+        if not self.server_url.startswith("http"):
+            self.server_url = f"http://{self.server_url}/solr/gazetteer"
+
+        self.server = pysolr.Solr(self.server_url)
         self.debug = debug
 
         self.commit_rate = 1000000

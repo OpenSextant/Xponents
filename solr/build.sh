@@ -4,7 +4,7 @@ if [ ! -d ./log ] ;  then
 fi
 
 SOLR_PORT=${SOLR_PORT:-7000}
-SERVER=localhost:$SOLR_PORT
+SERVER=127.0.0.1:$SOLR_PORT
 # Proxies can be sensitive, but at least we need NOPROXY
 export noproxy=localhost,127.0.0.1
 export NO_PROXY=$noproxy
@@ -37,7 +37,7 @@ index_taxcat () {
   echo "Populate core JRC Names 'entities' data file, c.2014"
   # These entries go in 3,000,000 to 5,000,000 range.
   JRC_SCRIPT=./script/taxcat_jrcnames.py
-  python3 $JRC_SCRIPT  $TAXCAT/data/entities.txt  --solr $SOLR_URL
+  python3 $JRC_SCRIPT  $TAXCAT/data/entities.txt  --solr $SOLR_URL --purge
   sleep 1
 
   # This file is manually curated, not sourced from JRC (EU). But the format is the same.
@@ -51,8 +51,9 @@ index_taxcat () {
   sleep 1
 
   python3 script/taxcat_wfb.py --solr $SOLR_URL
-  sleep 1
-  # When done for the day,  optimize
+
+  sleep 5
+  # When done for the day,  optimize.  Note - pysolr commit + expungeDeletes does not work.
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
   curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
 }
@@ -72,13 +73,6 @@ index_gazetteer () {
 
   # From SQLite master, Index
   python3 ./script/gaz_finalize.py index --solr $SOLR_URL
-
-  #
-  echo "Alter some entries"
-
-  # When done for the day,  optimize
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
 }
 
 
@@ -96,9 +90,6 @@ index_postal(){
 
   # From SQLite master, Index
   python3 ./script/gaz_finalize.py index --solr $SOLR_URL --postal --db ./tmp/postal_gazetteer.sqlite
-
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
 }
 
 do_start=0
@@ -195,10 +186,10 @@ if [ $do_data -eq 1 ] ; then
   ant taxcat-jrc
 fi
 if [ $do_taxcat -eq 1 ]; then
-  index_taxcat http://$SERVER/solr/taxcat
+  index_taxcat $SERVER
 fi
 if [ $do_gazetteer -eq 1 ]; then
-  index_gazetteer http://$SERVER/solr/gazetteer
+  index_gazetteer $SERVER
 fi
 if [ $do_postal -eq 1 ]; then 
   index_postal http://$SERVER/solr/postal
