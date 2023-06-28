@@ -145,7 +145,8 @@ NOISE = {
     "nuevo leon",
     "san pedro",
     "umm qasr",
-    "windows"
+    "windows",
+    "operating system"
 }
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
@@ -439,7 +440,6 @@ if __name__ == "__main__":
                 node.is_valid = False
 
             builder.add(catalog_id, node)
-            print(node.id, node)
 
             if row_id % 100000 == 0:
                 print("Row # ", row_id)

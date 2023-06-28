@@ -3,7 +3,7 @@ import re
 from time import sleep
 
 from opensextant import Place
-from opensextant.gazetteer import DB, estimate_name_bias, GazetteerIndex, get_default_db, coord_grid
+from opensextant.gazetteer import DB, estimate_name_bias, GazetteerIndex, get_default_db, coord_grid, DEFAULT_SOLR_URL
 from opensextant.utility import replace_diacritics, load_list, get_list
 
 
@@ -278,6 +278,8 @@ class Finalizer:
 
         print(f"Indexed {indexer.count}")
         indexer.save(done=True)
+        # SOLR optimization always happens.  This is different than SQLite optimization.
+        indexer.optimize()
 
     def index_codes(self, url):
         print("Xponents Gazetteer Finalizer: INDEX CODES, ABBREV")
@@ -313,7 +315,7 @@ if __name__ == "__main__":
     ap.add_argument("--db", default=get_default_db())
     ap.add_argument("--max", help="maximum rows to process for testing", default=-1)
     ap.add_argument("--debug", action="store_true", default=False)
-    ap.add_argument("--solr", help="Solr URL")
+    ap.add_argument("--solr", help="Solr URL", default=DEFAULT_SOLR_URL)
     ap.add_argument("--optimize", action="store_true", default=False)
     ap.add_argument("--postal", action="store_true", default=False)
     ap.add_argument("--countries", help="list of country codes CC,CC,...")
