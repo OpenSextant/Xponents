@@ -41,6 +41,11 @@ public class NameRule extends GeocodeRule {
                 continue;
             }
 
+            if (significantAdminCodeCount(name)) {
+                name.setFilteredOut(true);
+                continue;
+            }
+
             if (!name.isASCII()) {
                 name.addRule(DIACRITIC);
             }
@@ -76,6 +81,30 @@ public class NameRule extends GeocodeRule {
                 }
             }
         }
+    }
+
+    /**
+     * This filter counts "admin code" Places for a given match.  If the match is indeed
+     * a short code-like name , e.g., "BS", "MA"... and it is unassociated with a place name, then it is
+     * likely noise. Mark it filtered out.   The threshold is 20% ~ i.e., if 1 of 5 gazetteer instances of this
+     * name is a code, then we'll treat it as such.
+     *
+     * @param name
+     * @return true if a good number of the gazetteer places are Admin codes.
+     */
+    private boolean significantAdminCodeCount(PlaceCandidate name) {
+        if (name.isValid() || !(name.isShortName() && name.isUpper())) {
+            return false;
+        }
+
+        int adminCount = 0;
+        for (ScoredPlace geo : name.getPlaces()) {
+            if (geo.getPlace().isAdministrative() && geo.getPlace().isCode()) {
+                ++adminCount;
+            }
+        }
+        // Instead of dividing, use multiplication ot check.
+        return (5 * adminCount) >= name.getPlaces().size();
     }
 
     @Override

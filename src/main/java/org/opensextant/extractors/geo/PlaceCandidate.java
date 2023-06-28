@@ -249,13 +249,15 @@ public class PlaceCandidate extends TextMatch {
      */
     public boolean hasDiacritics = false;
 
+    public static int SHORT_NAME_LEN = 6;
+
     /**
      * Alias for "isAbbreviation || isAcronym"
-     *
-     * @return
+     * and a length criteria of less than #{PlaceCandidate.SHORT_NAME_LEN}
+     * @return true if name is short and likely a code or abbreviation.
      */
     public boolean isShortName() {
-        return isAbbreviation || isAcronym;
+        return (isAbbreviation || isAcronym) && this.getLength() <= SHORT_NAME_LEN;
     }
 
     /**
