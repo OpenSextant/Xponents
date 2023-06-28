@@ -5,6 +5,8 @@ from opensextant.gazetteer import DataSource, get_default_db, normalize_name, \
     load_stopterms, PlaceHeuristics, AdminLevelCodes, add_location, gaz_resource, export_admin_mapping
 from opensextant.utility import get_list, has_cjk, has_arabic, is_value, is_code, is_abbreviation, get_csv_reader
 
+from gaz_etl import is_valid_admin
+
 """
 from http://Geonames.org/export/dump
 
@@ -214,13 +216,14 @@ class GeonamesOrgScanner:
                 fclass, fcode = geo["feat_class"], geo["feat_code"]
                 if fclass != "A":
                     continue
-                # Consider other ADMIN features later...
-                if fcode != "ADM1":
+
+                add_country(geo)
+
+                if not is_valid_admin(geo["cc"], fcode):
                     continue
 
                 adm1 = parse_admin_code(geo.get("adm1"))
                 geo["adm1"] = adm1
-                add_country(geo)
                 add_location(geo, geo["lat"], geo["lon"])
 
                 admin_master.append(geo)
@@ -330,14 +333,19 @@ class GeonamesOrgGazetteer(DataSource):
                         grp = "ar"
 
                     fc = g["feat_class"]
-                    dsg = g["feat_code"]
+                    fcode = g["feat_code"]
                     if not fc:
-                        fc, dsg = guess_feature(nm)
+                        fc, fcode = guess_feature(nm)
                         g["feat_class"] = fc
-                        g["feat_code"] = dsg
+                        g["feat_code"] = fcode
+
+                    # IGNORE: Odd name convention -- "i-Japan" -- etc.  Not clear of language or source. Geonames.org.
+                    if fcode == "PCLI" and nm.lower().startswith("i-"):
+                        print("Ignore rare name pattern i-CTRY")
+                        continue
 
                     g["name_group"] = grp
-                    g["name_bias"] = self.estimator.name_bias(nm, fc, dsg, name_group=grp)
+                    g["name_bias"] = self.estimator.name_bias(nm, fc, fcode, name_group=grp)
                     g["id"] = GENERATED_BLOCK + namecount
                     yield g
 
