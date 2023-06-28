@@ -672,7 +672,7 @@ who,article
 moi,article.fre
 qui,article.fre
 sans,article.fre
-cé,article.ita
+cÔøΩ,article.ita
 che,article.ita
 gli,article.ita
 lui,article.ita
@@ -1104,16 +1104,15 @@ proto,junk
 uls,junk
 xe,junk
 arabic,language
-español,language
-français,language
+espa√±ol,language
+fran√ßais,language
 hanja,language
 italiano,language
 kana,language
 kanji,language
 norsk,language
-português,language
-vi_t,language
-_______,language
+portugu√™s,language
+vi√©t,language
 cana,latin
 canis,latin
 coli,latin
@@ -1214,7 +1213,7 @@ assumption,noun
 asylum,noun
 atlas,noun
 atlas,noun
-attaché,noun
+attach√©,noun
 avalanche,noun
 aviation,noun
 avnil,noun
@@ -1385,7 +1384,7 @@ cachet,noun
 cactus,noun
 cadre,noun
 cafe,noun
-_afe,noun
+caf√©,noun
 cage,noun
 calendar,noun
 caller,noun
@@ -3501,7 +3500,6 @@ armory,place.civil
 arsenal,place.civil
 atrium,place.civil
 attache,place.civil
-attaché,place.civil
 auditorium,place.civil
 ball field,place.civil
 barracks,place.civil
@@ -4991,7 +4989,7 @@ shakespeare,well-known.brand
 suzuki,well-known.brand
 tesla,well-known.brand
 uber,well-known.brand
-über,well-known.brand
+√ºber,well-known.brand
 vaio,well-known.brand
 volkswagen,well-known.brand
 american dream,well-known.concept
