@@ -249,6 +249,7 @@ fine,adj
 first world,adj
 fiscal,adj
 fitting,adj
+five star,adj
 flat,adj
 fond,adj
 foremost,adj
@@ -839,12 +840,13 @@ eight,enum
 eighth,enum
 eleven,enum
 fifteen,enum
-fifteen,enum
+fifteenth,enum
 fifth,enum
 first,enum
 five,enum
 four,enum
 fourteen,enum
+fourteenth,enum
 fourth,enum
 ii,enum
 iii,enum
@@ -2807,6 +2809,8 @@ folk,person.label
 folks,person.label
 fool,person.label
 foreman,person.label
+founder,person.label
+the founder,person.label
 freak,person.label
 friar,person.label
 friend,person.label
