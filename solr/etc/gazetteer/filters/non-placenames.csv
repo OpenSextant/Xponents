@@ -1110,7 +1110,6 @@ kanji,language
 norsk,language
 português,language
 việt,language
-русский,language
 cana,latin
 canis,latin
 coli,latin
@@ -1154,6 +1153,7 @@ accountability,noun
 accounting,noun
 ace,noun
 aces,noun
+aches,noun
 achilles,noun
 acorn,noun
 action,noun
@@ -1316,6 +1316,7 @@ bone,noun
 bones,noun
 bonus,noun
 book,noun
+bookmark,noun
 boom,noun
 boos,noun
 booster,noun
@@ -1626,6 +1627,7 @@ donation,noun
 dong,noun
 door,noun
 doses,noun
+dosing,noun
 dot,noun
 downfall,noun
 downside,noun
@@ -1694,6 +1696,7 @@ fence,noun
 fender,noun
 fenders,noun
 ferry,noun
+fertility,noun
 fiat,noun
 fiber,noun
 fidelity,noun
@@ -1986,6 +1989,7 @@ mailbox,noun
 main camp,noun
 maker,noun
 man,noun
+mania,noun
 management,noun
 mange,noun
 manifesto,noun
@@ -4965,6 +4969,7 @@ lego,well-known.brand
 lenovo,well-known.brand
 mac,well-known.brand
 mcdonalds,well-known.brand
+medline,well-known.brand
 moderna,well-known.brand
 monsanto,well-known.brand
 mustang,well-known.brand
@@ -5003,6 +5008,7 @@ ebola,well-known.disease
 flu,well-known.disease
 hanta,well-known.disease
 lyme,well-known.disease
+malaise,well-known.disease
 malaria,well-known.disease
 mers,well-known.disease
 pox,well-known.disease
@@ -5089,5 +5095,5 @@ inn,noun
 botany,well-known.science
 proton,well-known.science
 magnet,well-known.science
+magnesium,well-known.science
 pty,abbrev
-
