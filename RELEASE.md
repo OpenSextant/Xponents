@@ -4,6 +4,14 @@ RELEASES
 ==============
 
 # 2023
+
+**Xponents 3.6.5**
+* PlaceGeocoder tuning:
+  * Stop filters: Spanish, Arabic and Russian stopwords and non-places updated.
+  * Libraries: Apache Commons libraries updated for IO, Compress, and Codec
+  * Tagging filters: omit ADMIN level matches that are short codes, as well as 
+    avoid tagging bare country codes
+
 **Xponents 3.6.4**
 * PostalGeocoder tuning:
   * Optimization: separate tagger and geocoding passes into sepearate classes; 
