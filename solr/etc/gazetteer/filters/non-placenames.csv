@@ -72,9 +72,11 @@ pers,abbrev
 pharma,abbrev
 pjs,abbrev
 po,abbrev
+pty,abbrev
 pre,abbrev
 proj,abbrev
 pros,abbrev
+pty,abbrev
 re,abbrev
 rec,abbrev
 recap,abbrev
@@ -248,6 +250,7 @@ fine,adj
 first world,adj
 fiscal,adj
 fitting,adj
+five star,adj
 flat,adj
 fond,adj
 foremost,adj
@@ -369,6 +372,7 @@ much,adj
 muddy,adj
 municipal,adj
 mutual,adj
+nameless,adj
 nasal,adj
 nasty,adj
 natal,adj
@@ -381,7 +385,6 @@ newer,adj
 next,adj
 nice,adj
 noisy,adj
-nameless,adj
 noname,adj
 novel,adj
 oceanic,adj
@@ -671,7 +674,7 @@ who,article
 moi,article.fre
 qui,article.fre
 sans,article.fre
-cé,article.ita
+c�,article.ita
 che,article.ita
 gli,article.ita
 lui,article.ita
@@ -838,12 +841,13 @@ eight,enum
 eighth,enum
 eleven,enum
 fifteen,enum
-fifteen,enum
+fifteenth,enum
 fifth,enum
 first,enum
 five,enum
 four,enum
 fourteen,enum
+fourteenth,enum
 fourth,enum
 ii,enum
 iii,enum
@@ -952,7 +956,9 @@ pepper,food
 pineapple,food
 pita,food
 pollen,food
+potato,food
 raspberry,food
+rice,food
 rue,food
 salami,food
 salmon,food
@@ -1016,8 +1022,8 @@ ebay,internet
 enigma,internet
 entry point,internet
 epson,internet
-eudora,internet
 err,internet
+eudora,internet
 excel,internet
 explorer,internet
 ezine,internet
@@ -1110,6 +1116,7 @@ kanji,language
 norsk,language
 português,language
 việt,language
+viét,language
 cana,latin
 canis,latin
 coli,latin
@@ -1383,7 +1390,7 @@ cachet,noun
 cactus,noun
 cadre,noun
 cafe,noun
-ćafe,noun
+café,noun
 cage,noun
 calendar,noun
 caller,noun
@@ -1875,6 +1882,7 @@ independence,noun
 index,noun
 industry,noun
 ink,noun
+inn,noun
 insight,noun
 insurance,noun
 intelligence,noun
@@ -2101,6 +2109,7 @@ nest,noun
 nets,noun
 netting,noun
 never,noun
+new town,noun
 newborn,noun
 newspaper,noun
 night,noun
@@ -2193,7 +2202,6 @@ pie,noun
 piece,noun
 pile,noun
 piles,noun
-pivot,noun
 pill,noun
 pillows,noun
 pilot,noun
@@ -2205,6 +2213,7 @@ pioneer,noun
 pipes,noun
 piping,noun
 pit,noun
+pivot,noun
 pizza,noun
 place,noun
 placement,noun
@@ -2234,7 +2243,6 @@ port authority,noun
 poster,noun
 pound,noun
 pounds,noun
-potato,food
 poverty,noun
 power,noun
 powers,noun
@@ -2317,7 +2325,6 @@ revival,noun
 revolution,noun
 reward,noun
 ribbon,noun
-rice,food
 ride,noun
 rider,noun
 rifle,noun
@@ -2809,6 +2816,8 @@ folk,person.label
 folks,person.label
 fool,person.label
 foreman,person.label
+founder,person.label
+the founder,person.label
 freak,person.label
 friar,person.label
 friend,person.label
@@ -3172,6 +3181,9 @@ dab,phrase
 dah,phrase
 damn,phrase
 dang,phrase
+deep water,phrase
+deep-water,phrase
+deepwater,phrase
 def,phrase
 din,phrase
 dis,phrase
@@ -3232,7 +3244,6 @@ hoo,phrase
 hot spot,phrase
 hotspot,phrase
 huh,phrase
-uh,phrase
 hum,phrase
 i do,phrase
 ideal solution,phrase
@@ -3412,6 +3423,7 @@ turning point,phrase
 two points,phrase
 two states,phrase
 two ways,phrase
+uh,phrase
 um um,phrase
 umm,phrase
 un to,phrase
@@ -3499,7 +3511,6 @@ armory,place.civil
 arsenal,place.civil
 atrium,place.civil
 attache,place.civil
-attaché,place.civil
 auditorium,place.civil
 ball field,place.civil
 barracks,place.civil
@@ -3689,7 +3700,6 @@ piers,place.civil
 pipeline,place.civil
 plant,place.civil
 plaza,place.civil
-precinct,place.civil
 police station,place.civil
 polls,place.civil
 port city,place.civil
@@ -3698,6 +3708,7 @@ ports,place.civil
 post office,place.civil
 postal,place.civil
 power plant,place.civil
+precinct,place.civil
 primary school,place.civil
 prison,place.civil
 pub,place.civil
@@ -3913,7 +3924,6 @@ marshes,place.general
 metro,place.general
 metropolis,place.general
 metropolitan,place.general
-mer,place.general.fre
 mideast,place.general
 midwest,place.general
 mount,place.general
@@ -4023,6 +4033,7 @@ cercle,place.general.fre
 commune,place.general.fre
 departement,place.general.fre
 gouvernorat,place.general.fre
+mer,place.general.fre
 monde,place.general.fre
 territoire,place.general.fre
 cita,place.general.ita
@@ -4458,6 +4469,7 @@ coping,verb
 copy,verb
 cover,verb
 create,verb
+crosses,verb
 curl,verb
 cus,verb
 cuss,verb
@@ -5018,8 +5030,8 @@ aladdin,well-known.fiction
 aladin,well-known.fiction
 batman,well-known.fiction
 darth,well-known.fiction
-manga,well-known.fiction
 little red,well-known.fiction
+manga,well-known.fiction
 sherlock,well-known.fiction
 simpsons,well-known.fiction
 vader,well-known.fiction
@@ -5034,10 +5046,10 @@ gotham,well-known.mythology
 krypton,well-known.mythology
 midas,well-known.mythology
 middle earth,well-known.mythology
-nirvana,well-known.mythology
-poseidon,well-known.mythology
 neptune,well-known.mythology
+nirvana,well-known.mythology
 phoenix,well-known.mythology
+poseidon,well-known.mythology
 thor,well-known.mythology
 voodoo,well-known.mythology
 zeus,well-known.mythology
@@ -5069,19 +5081,22 @@ ringo,well-known.person
 shaq,well-known.person
 uncle sam,well-known.person
 bleach,well-known.science
+botany,well-known.science
 bromide,well-known.science
 edema,well-known.science
 latitude,well-known.science
 lipid,well-known.science
 longitude,well-known.science
+magnet,well-known.science
+mir,well-known.science
 ozone,well-known.science
+proton,well-known.science
 pyro,well-known.science
 quartz,well-known.science
 radon,well-known.science
 rust,well-known.science
 saline,well-known.science
 sine,well-known.science
-mir,well-known.science
 sputnik,well-known.science
 sulfur,well-known.science
 sulphur,well-known.science
@@ -5091,9 +5106,7 @@ uranium,well-known.science
 vapor,well-known.science
 volt,well-known.science
 x-ray,well-known.science
-inn,noun
 botany,well-known.science
 proton,well-known.science
 magnet,well-known.science
 magnesium,well-known.science
-pty,abbrev

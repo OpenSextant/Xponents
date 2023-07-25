@@ -12,6 +12,7 @@ casado,adj.spa
 casados,adj.spa
 claro,adj.spa
 corte,adj.spa
+executivo,adj.spa
 facil,adj.spa
 fuerte,adj.spa
 generoso,adj.spa
@@ -284,7 +285,11 @@ niña,noun
 nivel,noun
 noticia,noun
 ordenes,noun
+agencia,noun
+la agencia,noun
 policia,noun
+policía,noun
+la policía,noun
 presentación,noun
 recursos,noun
 revolucion,noun
@@ -329,6 +334,7 @@ medico,person.label.spa
 médico,person.label.spa
 padre,person.label.spa
 san,person.label.spa
+secretaría,person.label.spa
 a al,phrase
 a la,phrase
 a mi,phrase
@@ -407,6 +413,8 @@ los,preposition.spa
 aca,pronoun
 ača,pronoun
 huracán,spa
+industria,spa
+industrias,spa
 independiente,spa
 internacional,spa
 isla,spa
@@ -597,3 +605,6 @@ seguir,verb
 tiene,verb
 toma,verb
 usar,verb
+organización,noun
+el ejecutivo,person.label.spa
+

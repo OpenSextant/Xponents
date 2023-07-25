@@ -4,6 +4,7 @@ asia
 battle
 beach
 best
+black
 blue
 brain
 bravo
@@ -12,7 +13,9 @@ carry
 case
 cash
 chase
+church
 day
+dawn
 del
 do
 dot
@@ -54,6 +57,8 @@ name
 ngo
 pace
 page
+pan
+park
 person
 price
 quick
@@ -67,6 +72,7 @@ smart
 son
 soon
 spring
+star
 sun
 tottenham
 valencia
@@ -74,6 +80,7 @@ una
 van
 vic
 will
+young
 zona
 # week days
 sunday
