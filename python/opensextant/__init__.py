@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
+import math
 import os
 import re
 import sys
-import math
 from abc import ABC, abstractmethod
 from math import sqrt, sin, cos, radians, atan2, log as mathlog, log10
 
-from opensextant.utility import get_csv_reader, get_bool, get_list, load_datafile
 from pygeodesy.ellipsoidalVincenty import LatLon as LL
 from pygeodesy.geohash import encode as geohash_encode, decode as geohash_decode, neighbors as geohash_neighbors
+
+from opensextant.utility import get_csv_reader, get_bool, get_list, load_datafile
 
 PY3 = sys.version_info.major == 3
 countries = []
@@ -376,6 +377,15 @@ class Place(Coordinate):
     def __str__(self):
         return '{}, {} @({})'.format(self.name, self.country_code, self.string_coord())
 
+    def format_feature(self):
+        """
+        Yield a consolidated feature coding.
+        :return:  X/xxxx  format
+        """
+        if self.feature_code:
+            return f"{self.feature_class}/{self.feature_code}"
+        return self.feature_class
+
 
 class Country(Coordinate):
     """
@@ -657,7 +667,7 @@ def load_major_cities():
             pl.country_code = line[8]
             alt_cc = line[9]
             if alt_cc and alt_cc != pl.country_code:
-                print("Alternate Country Code",alt_cc)
+                print("Alternate Country Code", alt_cc)
             pl.adm1 = parse_admin_code(line[10])
             pl.adm2 = line[11]
             # pl.geohash = geohash_encode(pl.lat, pl.lon, precision=6)
@@ -718,6 +728,51 @@ def is_populated(feat: str):
     if not feat: return False
     return "P" == feat.upper()
 
+
+def is_academic(feat_class: str, feat_code: str) -> bool:
+    """
+
+    :param feat_class: geonames class
+    :param feat_code:  geonames designation code
+    :return:
+    """
+    return feat_class and feat_code and feat_class == "S" and feat_code.startswith("SCH")
+
+
+def characterize_location(place: Place, label: str):
+    """
+    Experimental: Not comprehensive characterization. This is intended to summarize PlaceCandidates extracted
+    from text.
+
+    Describe a Place in terms of a plain language feature type and the geographic scope or resolution.
+    E.g, Place object "P/PPL", "city"
+    E.g,  Place object "A/ADM4"  "admin"
+    E.g,  Place object "S/COORD", "site"
+
+    :param place: Place object
+    :param label:  text match label, e.g., 'country', 'place', 'coord', etc.
+    :return: feature string, resolution string
+    """
+    res = label
+    fc = place.feature_class
+    resolutions = {
+        "A":"admin",
+        "P":"city",
+        "S":"site",
+        "H":"water",
+        "R":"path",
+        "V":"area",
+        "T":"area",
+        "L":"area"
+    }
+
+    # Note label should be a limited set -- country, postal, coord, place.
+    if label == "place":
+        res = resolutions.get(fc, label)
+    if label == "coord":
+        res = "site"
+
+    return place.format_feature(), res
 
 class TextEntity:
     """
