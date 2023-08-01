@@ -4,15 +4,52 @@ Created on Mar 14, 2016
 
 @author: ubaldino
 """
-
+import sys
 import json
+from logging import getLogger
+from logging.config import dictConfig
 
 import requests
 import requests.exceptions
-from opensextant import TextMatch, PlaceCandidate
+
+from opensextant import TextMatch, PlaceCandidate, get_country, make_HASC, \
+    is_populated, is_administrative, is_academic, characterize_location
 
 # Move away from "geo" and towards a more descriptive place label.
 GEOCODINGS = {"geo", "place", "postal", "country", "coord", "coordinate"}
+
+
+def logger_config(logger_level: str, pkg: str):
+    """
+    LOGGING
+    :param logger_level:
+    :param pkg:
+    :return:
+    """
+    handlers = {
+        pkg: {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+            'formatter': 'default'
+        }
+    }
+    dictConfig({
+        'version': 1,
+        'formatters': {
+            'default': {
+                'format': '%(levelname)s in %(module)s: %(message)s',
+            }
+        },
+        'handlers': handlers,
+        'root': {
+            'level': logger_level,
+            'handlers': [pkg]
+        }
+    })
+
+    _log = getLogger(pkg)
+    _log.setLevel(logger_level)
+    return _log
 
 
 class XlayerClient:
@@ -138,6 +175,362 @@ class XlayerClient:
         return annots
 
 
+# ==================
+# Geotagger -- Simplified wrapper around Xlayer.  Reduces volume of information
+#    EXPERIMENTAL
+# ==================
+
+
+def _increment_count(dct: dict, code: str):
+    if not code:
+        raise Exception("Data quality issue -- counting on a null value")
+    dct[code] = 1 + dct.get(code, 0)
+
+
+def _infer_slot(all_inf: dict, slot: str, span: PlaceCandidate, match_id=None):
+    """
+    Insert information into slots.
+
+    :param span:
+    :return:
+    """
+    mid = match_id or span.id
+    inf = all_inf.get(mid, {})
+    if not inf:
+        all_inf[mid] = inf
+
+    if slot in inf:
+        return
+    if not span:
+        raise Exception("Data integrity issue -- inferring location should have a non-null match")
+    if slot not in Geotagger.ALLOWED_SLOTS:
+        return
+
+    ids = inf.get("match-ids", [])
+    if not ids:
+        inf["match-ids"] = ids
+    ids.append(span.id)
+
+    inf[slot] = {
+        # "name": span.place.name,  # Normalized gazetteer name
+        "matchtext": span.text  # Mention in text
+    }
+    if slot != "country":
+        inf[slot]["feature"] = span.place.format_feature()
+
+
+def score_inferences(inf, matches):
+    # PASS 2. chose location and fill out chosen metadata.
+    # RELATED location information -- use Country Code, ADM1 or the CC.ADM1 province_id to
+    # indicate location coding.  This applies to all inferences started.
+
+    for inf_id in inf:
+        inference = inf[inf_id]
+        if "scores" not in inference:
+            continue
+
+        scores = inference["scores"]
+        top_score = 0
+        top_match = None
+        for scored_id in scores:
+            score = scores[scored_id]
+            if score > top_score:
+                top_score = score
+                top_match = matches[scored_id]
+
+        feat, res = characterize_location(top_match.place, top_match.label)
+        adm1 = top_match.place.adm1
+        cc2 = top_match.place.country_code
+
+        # Flesh out the metadata for best location for this mention.
+        inference.update({
+            "matchtext": top_match.text,
+            "confidence": top_match.confidence,
+            "resolution": res,
+            "feature": feat,
+            "lat": top_match.place.lat,
+            "lon": top_match.place.lon,
+            "province_id": make_HASC(cc2, adm1),
+            "cc": cc2,
+            "adm1": adm1})
+
+        return inf
+
+
+class Geotagger:
+    """
+    GEOTAGGER REST client
+    """
+    ALLOWED_SLOTS = {"site", "city", "admin", "postal", "country"}
+
+    def __init__(self, cfg: dict, debug=False, features=["geo", "postal", "taxons"]):
+
+        self.debug = debug
+
+        log_lvl = "INFO"
+        if debug:
+            log_lvl = "DEBUG"
+        self.log = logger_config(log_lvl, __name__)
+
+        self.features = features
+        url = cfg.get("xponents.url")
+        self.xponents = XlayerClient(url)
+        self.confidence_min = int(cfg.get("xponents.confidence.min", 10))
+        # On Xponents 100 point scale.
+
+        # Test if client is alive
+        if not self.xponents.ping():
+            raise Exception("Service not available")
+
+    def dbg(self, msg, *args, **kwargs):
+        self.log.debug(msg, *args,**kwargs)
+
+    def info(self, msg, *args, **kwargs):
+        self.log.info(msg, *args, **kwargs)
+
+    def error(self, msg, *args, **kwargs):
+        self.log.error(msg, *args, **kwargs)
+
+    def _location_info(self, spans: list) -> list:
+        locs = []
+        for t in spans:
+            loc_conf = int(t.attrs.get("confidence", -1))
+            if isinstance(t, PlaceCandidate):
+                if 0 < self.confidence_min <= loc_conf:
+                    locs.append(t)
+        return locs
+
+    def infer_locations(self, locs: list) -> dict:
+        """
+        Choose the best location from the list -- Most specific is preferred.
+        :param locs: list of locations
+        :return:
+        """
+        # Order of preference:
+        # 0. site location
+        # 1. postal location w/related info
+        # 2. qualified city ~ "City, Province" ... or just "City"
+        # 3. Province
+        # 4. Country
+        #
+
+        # LOGIC:
+        #  step 1 - key all locations by match-id, for easy lookup
+        #  step 2 - distill compound locations like a postal address to reduce matches to a single "geo inference"
+        #       with one best location.
+        #  step 3 - organize all location mentions in final `inferences` listing.
+        #  step 4 - score inferences, as needed.
+
+        inferences = dict()
+
+        # PASS 1. inventory locations and award points
+        matches = {}
+        countries = dict()
+        rendered_match_ids = dict()
+
+        # Ensure matches are Place Candidates only -- location bearing information.
+        for match in locs:
+            if isinstance(match, PlaceCandidate):
+                matches[match.id] = match
+
+        # Loop through high resolution locations first.
+        for mid in matches:
+            match = matches[mid]
+            loc = match.place  # Place obj
+            attrs = match.attrs  # dict
+            label = match.label  # entity label
+            points = int(0.10 * (match.confidence or 10))
+
+            # POSTAL.  Max points ~ 40 or so, 10 points for each qualifying slot (city, prov, code, etc)
+            if label == "postal" and "related" in attrs:
+                inferences[mid] = {"match-ids": [mid], "start": match.start, "end": match.end}
+                rendered_match_ids[mid] = mid
+                points += 10
+                related_geo = attrs["related"]
+                _increment_count(countries, loc.country_code)
+                if related_geo:
+                    _infer_slot(inferences, "postal", match)
+                    for k in related_geo:
+                        # these match IDs indicate the full tuple's geographic connections.
+                        points += 10
+                        # dereference the postal match.
+                        slot = related_geo[k]
+                        slot_match = matches.get(slot.get("match-id"))
+                        slot_text = related_geo[k]["matchtext"]
+                        self.dbg("POSTAL slot %s = %s", k, related_geo[k])
+                        if slot_match:
+                            _infer_slot(inferences, k, slot_match, match_id=mid)
+                            rendered_match_ids[slot_match.id] = mid
+                        else:
+                            self.info("Xponents BUG: missing match id for postal evidence. %s = %s", k, slot_text)
+                inferences[match.id]["scores"] = {mid: points}
+
+        # Iterate over remaining matches.
+        for mid in matches:
+            match = matches[mid]
+            loc = match.place  # Place obj
+            attrs = match.attrs  # dict
+            label = match.label  # entity label
+
+            if mid not in rendered_match_ids:
+                # Ignore all upper case short names... for now. Especially if there is no related geography attached.
+                if label == "place" and match.len < 8 and match.text.isupper():
+                    self.info("    IGNORE %s", match.text)
+                    continue
+
+                if label == "postal":
+                    # Such matches should have been associated through some hook above when all postal addresses
+                    # gather related mentions.
+                    self.dbg("     (BUG) IGNORE Postal %s", match.text)
+                    continue
+
+                # Backfill any entries that appear legit, but were not associated with other compound mentions like addresses.
+                # Given this is a standalone location, there is no scoring.
+                cc2, adm1 = match.place.country_code, match.place.adm1
+                feat, res = characterize_location(match.place, match.label)
+                inferences[mid] = {
+                    "start": match.start, "end": match.end,
+                    "matchtext": match.text,
+                    "confidence": match.confidence,
+                    "resolution": res,
+                    "feature": feat,
+                    "lat": match.place.lat,
+                    "lon": match.place.lon,
+                    "province_id": make_HASC(cc2, adm1),
+                    "cc": cc2,
+                    "adm1": adm1}
+            else:
+                # Score slots found in compound POSTAL or other matches
+                points = int(0.10 * (match.confidence or 10))
+                related_mid = rendered_match_ids[mid]
+
+                if label in {"place", "postal"}:
+                    _increment_count(countries, loc.country_code)
+                    if is_academic(loc.feature_class, loc.feature_code):
+                        _infer_slot(inferences, "site", match, match_id=related_mid)
+                        points += 20
+                    elif is_populated(loc.feature_class):
+                        rules = attrs.get("rules", "").lower()
+                        qualified = "adminname" in rules or "admincode" in rules
+                        _infer_slot(inferences, "city", match, match_id=related_mid)
+                        if qualified:
+                            points += 20
+                        else:
+                            # Else location was not qualified fully with district, province, etc..  Just a city name.
+                            self.dbg("CITY %s", match.text)
+                            points += 10
+                    elif is_administrative(loc.feature_class):
+                        _infer_slot(inferences, "admin", match, match_id=related_mid)
+                        points += 5
+                        self.dbg("ADMIN %s", match.text)
+                elif label == "country":
+                    # No bonus points for country mention.
+                    if match.len == 2:
+                        self.dbg("IGNORE 2-char mention %s", match.text)
+                    else:
+                        _infer_slot(inferences, "country", match, match_id=related_mid)
+                        _increment_count(countries, loc.country_code)
+                        self.dbg("COUNTRY %s", loc)
+
+                if related_mid in inferences:
+                    inferences[related_mid]["scores"] = {mid: points}
+                else:
+                    self.dbg("We missed some feature %s %s %s", label, match.id, match.text)
+
+        score_inferences(inferences, matches)
+        for inf_id in inferences:
+            inference = inferences[inf_id]
+            for k in ["match-ids", "scores"]:
+                if k in inference:
+                    del inference[k]
+        return inferences
+
+    def _mention_info(self, spans: list) -> list:
+        men = []
+        for t in spans:
+            if not isinstance(t, PlaceCandidate) and not t.filtered_out:
+                men.append(t)
+        return men
+
+    def populate_mentions(self, spans: list) -> dict:
+        if not spans:
+            return dict()
+
+        def _add_slot(arr, slot_, txt):
+            grp = arr.get(slot_, set([]))
+            if not grp:
+                arr[slot_] = grp
+            grp.add(txt)
+
+        men = dict()
+        for t in spans:
+            # All spans are either taxon, org, or person...; taxon can break out into any flavor of taxonomic term
+            catalog = None
+            if t.attrs:
+                catalog = t.attrs.get("cat") or t.attrs.get("catalog")
+
+            # Handle special cases first, then more general ones.
+            if catalog and catalog == "nationality":
+                _add_slot(men, "nationality", t.text)
+            elif t.label in {"org", "person", "taxon"}:
+                _add_slot(men, t.label, t.text)
+            else:
+                self.info("Mention oddity ...%s", t.label)
+
+        # To allow as valid JSON, we cannot use set().  Convert back to list.
+        for slot in men:
+            men[slot] = list(men[slot])
+        return men
+
+    def _nationality_countries(self, spans):
+        countries = set([])
+        for t in spans:
+            # Its really "catalog".   "cat" may happen in other systems.
+            if not (t.attrs and "catalog" in t.attrs):
+                continue
+            if t.attrs["catalog"] == "nationality":
+                taxon = t.attrs.get("name") or t.attrs.get("taxon")  # TODO: more convergence of attribute schemes.
+                if taxon and "." in taxon:
+                    nat = taxon.split(".")[1]
+                    C = get_country(nat)
+                    if C:
+                        countries.add(C.cc_iso2)
+        return countries
+
+    def summarize(self, doc_id, text, lang=None) -> dict:
+        """
+        Call the XlayerClient process() endpoint,
+        distills output tags into `geoinferences` and `mentions` (all other non-geo tags).
+        A valid 2-char ISO 639 language code helps to tune
+
+        :param doc_id: ID of text
+        :param text: the text input
+        :param lang:  language of the text
+        :return: A single geoinference
+        """
+        tags = self.xponents.process(doc_id, text, lang=lang, features=self.features, timeout=15)
+        if self.debug:
+            self.dbg("TAGS:%d", len(tags))
+
+        output = dict()
+
+        all_locations = self._location_info(tags)
+        other_mentions = self._mention_info(tags)
+        nationality_cc = self._nationality_countries(tags)
+        # TODO -- use nationality in inference to add country info
+
+        # Choose best locations
+        output["geoinference"] = self.infer_locations(all_locations)
+
+        # Extra info: This info may be completely unrelated to geography
+        output["mentions"] = self.populate_mentions(other_mentions)
+
+        if nationality_cc:
+            self.dbg("UNUSED - Nationalities? %s", nationality_cc)
+
+        return output
+
+
 def print_results(arr):
     """
     :param arr: array of Annotations or TextMatch
@@ -170,8 +563,8 @@ def print_match(match: TextMatch):
         print(match, f"\n\tATTRS{match.attrs} {filtered}")
 
 
-def process_text(txt, docid="$DOC-ID$", features=[], preferred_countries=[], preferred_locations=[]):
-    result = xtractor.process(docid, txt, features=features,
+def process_text(extractor, txt, docid="$DOC-ID$", features=[], preferred_countries=[], preferred_locations=[]):
+    result = extractor.process(docid, txt, features=features,
                               timeout=90,
                               preferred_countries=preferred_countries,
                               preferred_locations=preferred_locations)
@@ -182,9 +575,8 @@ def process_text(txt, docid="$DOC-ID$", features=[], preferred_countries=[], pre
         print_match(match)
 
 
-if __name__ == '__main__':
+def main_demo():
     import os
-    import sys
     from traceback import format_exc
     import argparse
 
@@ -229,11 +621,11 @@ if __name__ == '__main__':
     # Support for arbitrary amounts of text
     #
     if args.text:
-        process_text(fpath, docid="test-doc-#123", features=feat,
+        process_text(xtractor, fpath, docid="test-doc-#123", features=feat,
                      preferred_countries=countries, preferred_locations=locations)
     # ======================================
     # Support data as one text record per line in a file
-    #                
+    #
     elif args.lines or args.input.endswith(".json"):
         print("INPUT: from individual lines from input file\n\n")
         is_json = args.input.endswith(".json")
@@ -252,7 +644,7 @@ if __name__ == '__main__':
                             continue
 
                     test_id = "line{}".format(lineNum)
-                    process_text(textbuf, docid=test_id, features=feat,
+                    process_text(xtractor, textbuf, docid=test_id, features=feat,
                                  preferred_countries=countries, preferred_locations=locations)
 
         except Exception as runErr:
@@ -260,12 +652,16 @@ if __name__ == '__main__':
 
     # ======================================
     # Use a single file as the source text to process
-    #                
+    #
     elif fpath:
         file_id = os.path.basename(fpath)
         try:
             with open(fpath, 'r', encoding="UTF-8") as fh:
-                process_text(fh.read(), docid=file_id, features=feat,
+                process_text(xtractor, fh.read(), docid=file_id, features=feat,
                              preferred_countries=countries, preferred_locations=locations)
         except Exception as runErr:
             print(format_exc(limit=5))
+
+
+if __name__ == '__main__':
+    main_demo()
