@@ -24,7 +24,7 @@ bin/
 log
 logs
 export
-results
+results/
 build.properties
 
 #Build files
