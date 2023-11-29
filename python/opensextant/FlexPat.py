@@ -336,7 +336,7 @@ class RegexPatternManager:
             pat = self.patterns[k]
             pat.enabled = False
 
-    def set_enabled(self, some:str, flag:bool):
+    def set_enabled(self, some: str, flag: bool):
         """
         set family enabled or not
         :param some: prefix of a family or family-variant
@@ -658,10 +658,10 @@ class PatternExtractor(Extractor):
         return test_results
 
 
-def print_test(result:dict):
+def print_test(result: dict):
     """ print the structure from default_tests()
     """
-    if not result: 
+    if not result:
         return
 
     tid = result["TEST"]

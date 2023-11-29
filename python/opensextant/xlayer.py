@@ -4,52 +4,16 @@ Created on Mar 14, 2016
 
 @author: ubaldino
 """
-import sys
 import json
-from logging import getLogger
-from logging.config import dictConfig
+import sys
 
 import requests
 import requests.exceptions
-
 from opensextant import TextMatch, PlaceCandidate, get_country, make_HASC, \
-    is_populated, is_administrative, is_academic, characterize_location
+    is_populated, is_administrative, is_academic, characterize_location, logger_config
 
 # Move away from "geo" and towards a more descriptive place label.
 GEOCODINGS = {"geo", "place", "postal", "country", "coord", "coordinate"}
-
-
-def logger_config(logger_level: str, pkg: str):
-    """
-    LOGGING
-    :param logger_level:
-    :param pkg:
-    :return:
-    """
-    handlers = {
-        pkg: {
-            'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
-            'formatter': 'default'
-        }
-    }
-    dictConfig({
-        'version': 1,
-        'formatters': {
-            'default': {
-                'format': '%(levelname)s in %(module)s: %(message)s',
-            }
-        },
-        'handlers': handlers,
-        'root': {
-            'level': logger_level,
-            'handlers': [pkg]
-        }
-    })
-
-    _log = getLogger(pkg)
-    _log.setLevel(logger_level)
-    return _log
 
 
 class XlayerClient:
@@ -283,7 +247,7 @@ class Geotagger:
             raise Exception("Service not available")
 
     def dbg(self, msg, *args, **kwargs):
-        self.log.debug(msg, *args,**kwargs)
+        self.log.debug(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
         self.log.info(msg, *args, **kwargs)
@@ -565,9 +529,9 @@ def print_match(match: TextMatch):
 
 def process_text(extractor, txt, docid="$DOC-ID$", features=[], preferred_countries=[], preferred_locations=[]):
     result = extractor.process(docid, txt, features=features,
-                              timeout=90,
-                              preferred_countries=preferred_countries,
-                              preferred_locations=preferred_locations)
+                               timeout=90,
+                               preferred_countries=preferred_countries,
+                               preferred_locations=preferred_locations)
     print(f"=========DOCID {docid}")
     print("TEXT", txt[0:200])
     print("Matches\n============")

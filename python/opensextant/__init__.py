@@ -4,12 +4,13 @@ import os
 import re
 import sys
 from abc import ABC, abstractmethod
+from logging import getLogger
+from logging.config import dictConfig
 from math import sqrt, sin, cos, radians, atan2, log as mathlog, log10
 
+from opensextant.utility import get_csv_reader, get_bool, get_list, load_datafile
 from pygeodesy.ellipsoidalVincenty import LatLon as LL
 from pygeodesy.geohash import encode as geohash_encode, decode as geohash_decode, neighbors as geohash_neighbors
-
-from opensextant.utility import get_csv_reader, get_bool, get_list, load_datafile
 
 PY3 = sys.version_info.major == 3
 countries = []
@@ -20,6 +21,39 @@ usstates = {}
 adm1_by_hasc = {}
 __loaded = False
 __language_map_init = False
+
+
+def logger_config(logger_level: str, pkg: str):
+    """
+    LOGGING
+    :param logger_level:
+    :param pkg: Name of package
+    :return:
+    """
+    handlers = {
+        pkg: {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+            'formatter': 'default'
+        }
+    }
+    dictConfig({
+        'version': 1,
+        'formatters': {
+            'default': {
+                'format': '%(levelname)s in %(module)s: %(message)s',
+            }
+        },
+        'handlers': handlers,
+        'root': {
+            'level': logger_level,
+            'handlers': [pkg]
+        }
+    })
+
+    _log = getLogger(pkg)
+    _log.setLevel(logger_level)
+    return _log
 
 
 def pkg_resource_path(rsrc):
@@ -756,14 +790,14 @@ def characterize_location(place: Place, label: str):
     res = label
     fc = place.feature_class
     resolutions = {
-        "A":"admin",
-        "P":"city",
-        "S":"site",
-        "H":"water",
-        "R":"path",
-        "V":"area",
-        "T":"area",
-        "L":"area"
+        "A": "admin",
+        "P": "city",
+        "S": "site",
+        "H": "water",
+        "R": "path",
+        "V": "area",
+        "T": "area",
+        "L": "area"
     }
 
     # Note label should be a limited set -- country, postal, coord, place.
@@ -773,6 +807,7 @@ def characterize_location(place: Place, label: str):
         res = "site"
 
     return place.format_feature(), res
+
 
 class TextEntity:
     """

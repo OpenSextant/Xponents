@@ -11,6 +11,7 @@ __API_PATH = os.path.realpath(__file__)
 SOLR_SERVER = "http://127.0.0.1:7000/solr/taxcat"
 DEFAULT_SOLR_SERVER = "127.0.0.1:7000"
 
+
 def _scrub_cdata_content(text):
     """ User should scrub data themselves; but this gives ideas of what goes wrong when adding text to Solr
        <,>,& all must be escaped.
