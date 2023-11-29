@@ -12,7 +12,7 @@ def run_test():
 
     print("Save Test Results")
     libdir = os.path.dirname(os.path.abspath(__file__))
-    output = os.path.abspath(os.path.join(libdir, "..", "..", "output", "xtemporal-tests.csv"))
+    output = os.path.abspath(os.path.join(libdir, "..", "..", "results", "xtemporal-tests.csv"))
     ensure_dirs(output)
     print("... output file at ", output)
 
