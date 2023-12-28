@@ -3,6 +3,7 @@ package org.opensextant.extractors.geo.rules;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
@@ -15,6 +16,7 @@ public class NameRule extends GeocodeRule {
     public static final String ADM1 = "QualifiedName.Prov";
     public static final String ADM2 = "QualifiedName.Dist";
     public static final String DIACRITIC = "DiacriticName";
+    public static final String UPPERCASE_NOISE = "Noise.Uppercase";
 
     public static final Set<String> P_prefixes = new HashSet<>();
     public static final Set<String> A1_suffixes = new HashSet<>();
@@ -46,7 +48,12 @@ public class NameRule extends GeocodeRule {
                 continue;
             }
 
-            if (!name.isASCII()) {
+            // Check short ASCII names vs. non-ASCII names.
+            if (name.isASCII()) {
+                if (isUppercaseNoise(name)) {
+                    continue;
+                }
+            } else {
                 name.addRule(DIACRITIC);
             }
 
@@ -81,6 +88,19 @@ public class NameRule extends GeocodeRule {
                 }
             }
         }
+    }
+
+    private boolean isUppercaseNoise(PlaceCandidate name) {
+        // UPPPER CASE name surrounded by mixed case,... and the mention is not linked
+        // to any other geography.  That means it is a random acronym of no import...
+        if (!name.isValid() || name.getRelated()==null) {
+            if (isShort(name.getLength()) && name.isUpper() && !TextUtils.isUpper(name.getSurroundingText())) {
+                name.addRule(UPPERCASE_NOISE);
+                name.setFilteredOut(true);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

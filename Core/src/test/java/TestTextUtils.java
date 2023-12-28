@@ -122,7 +122,7 @@ public class TestTextUtils {
 
     @Test
     public void testMidEastLanguages() {
-        assertTrue(TextUtils.hasMiddleEasternText("تشییع پیکر سردار شهید سید رض\u200Cالسلام آغازABC 111  " ));
+        assertTrue(TextUtils.hasMiddleEasternText("تشییع پیکر سردار شهید سید رض\u200Cالسلام آغازABC 111  "));
         assertTrue(TextUtils.hasMiddleEasternText("עִבְרִית"));
         assertFalse(TextUtils.hasMiddleEasternText("1 2 3 4 Z Y X "));
     }
@@ -183,6 +183,11 @@ public class TestTextUtils {
         // Neither upper or lower. Mixed.
         assertTrue(!TextUtils.isUpper(latinText) && !TextUtils.isLower(latinText));
         assertTrue(TextUtils.isLower("øh baby") && TextUtils.isUpper("ØH BABY"));
+    }
+
+    @Test
+    public void testCharCounting() {
+        assertEquals(1, TextUtils.countNonText("bob bob"));
     }
 
     @Test

@@ -126,8 +126,7 @@ public class NameCodeRule extends GeocodeRule {
 
         remarkAbbreviation(nm);
 
-        validation.nameIsIgnorable = ignoreShortLowercase(nm)
-                || (nm.isAbbreviation && ignoreNonAdminCode(nm));
+        validation.nameIsIgnorable = canIgnore(nm);
         // Short names, lower case will not be assessed at all.
         if (validation.nameIsIgnorable) {
             nm.setFilteredOut(true);
@@ -137,6 +136,17 @@ public class NameCodeRule extends GeocodeRule {
         }
 
         return validation;
+    }
+    private boolean canIgnore(PlaceCandidate mention){
+        if (ignoreShortLowercase(mention)){
+            return true;
+        }
+        // Remarked mention
+        if (mention.isAbbreviation) {
+            return ignoreNonAdminCode(mention);
+        }
+
+        return false;
     }
 
     private boolean validMatchPair(PlaceCandidate nm, PlaceCandidate code, PairValidation v) {
@@ -321,7 +331,12 @@ public class NameCodeRule extends GeocodeRule {
             if (name.isFilteredOut()) {
                 continue;
             }
+            if (name.hasCJKText()){
+                continue;
+            }
 
+            // First deteremine if a given mention makese sense --
+            // filter out mis-matched UPPERCASE mentions with context and geotags don't suggest it.
             PairValidation validation = validMatch(name);
             if (!validation.valid) {
                 continue;
@@ -446,7 +461,7 @@ public class NameCodeRule extends GeocodeRule {
      * </ul>
      *
      * @param pc match
-     * @return true if non-administrative feature is encountred
+     * @return true if non-administrative feature is encountered
      */
     private static boolean ignoreNonAdminCode(final PlaceCandidate pc) {
         // If found alone, unqualified what happens?

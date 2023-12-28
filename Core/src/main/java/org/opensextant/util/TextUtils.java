@@ -1714,7 +1714,7 @@ public class TextUtils {
 
         int nonText = 0;
         for (char c : t.toCharArray()) {
-            if (!Character.isLetter(c) && Character.isDigit(c) && Character.isWhitespace(c)) {
+            if (!Character.isLetter(c) && !Character.isDigit(c)) {
                 ++nonText;
             }
         }

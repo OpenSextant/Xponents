@@ -20,15 +20,18 @@ package org.opensextant.extractors.geo.rules;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.solr.common.util.Hash;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.util.FileUtility;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -38,6 +41,37 @@ public class PersonNameFilter extends GeocodeRule {
     private final Set<String> nameFilter;
     private final Set<String> titles;
     private final Set<String> suffixes;
+
+    private final static HashSet<String> FEAT_CODE_ORG_LOCATIONS = new HashSet<>();
+    static {
+        // ORGANIZATIONS that also have location or "SITEs", e.g., feat_class=S, feat_code is below.
+        // We want to acknowledge location over the fact its an organization.
+        // We can do both, but filter approach here is to filter out location that is an org.
+        // This feature coding prevents such organizations from not being geolocated.
+
+        // Hospital, Clinic
+        FEAT_CODE_ORG_LOCATIONS.add("HSP");
+        FEAT_CODE_ORG_LOCATIONS.add("HSPC");
+        FEAT_CODE_ORG_LOCATIONS.add("HSP");
+
+        // Buildings, Municipal buildings, etc.
+        FEAT_CODE_ORG_LOCATIONS.add("BLDG");
+        FEAT_CODE_ORG_LOCATIONS.add("BLDA");
+        FEAT_CODE_ORG_LOCATIONS.add("BLDO");
+
+        // Schools, Colleges, Universities
+        FEAT_CODE_ORG_LOCATIONS.add("SCH");
+        FEAT_CODE_ORG_LOCATIONS.add("SCHC");
+        FEAT_CODE_ORG_LOCATIONS.add("SCHT");
+        FEAT_CODE_ORG_LOCATIONS.add("UNIV");
+
+        // Places of worship and religious activity
+        FEAT_CODE_ORG_LOCATIONS.add("MSQE");
+        FEAT_CODE_ORG_LOCATIONS.add("SHRN");
+        FEAT_CODE_ORG_LOCATIONS.add("TMPL");
+        FEAT_CODE_ORG_LOCATIONS.add("CH");
+        FEAT_CODE_ORG_LOCATIONS.add("MSSN");
+    }
 
     /**
      * Locations that are some number of words long AND have lat/lon
@@ -97,6 +131,8 @@ public class PersonNameFilter extends GeocodeRule {
 
     private final Map<String, String> resolvedPersons = new HashMap<>();
     private final Map<String, String> resolvedOrgs = new HashMap<>();
+    private final Map<String, String> protectedLocations = new HashMap<>();
+
     private static final Pattern delPeriod = Pattern.compile("\\.+$");
 
     /** Delete ending "."or "..." */
@@ -111,6 +147,7 @@ public class PersonNameFilter extends GeocodeRule {
     public void reset() {
         resolvedPersons.clear();
         resolvedOrgs.clear();
+        protectedLocations.clear();
     }
 
     public Map<String, String> getPersonNames() {
@@ -216,7 +253,45 @@ public class PersonNameFilter extends GeocodeRule {
         return false;
     }
 
+    /**
+     * Detect if a name is a site (that might also be an Org).  Detroit City Hall ( A building and an org)
+     * @param pc
+     * @return true if named location represents particular site features
+     */
+    private boolean isSiteLocation(PlaceCandidate pc){
+        /*
+         * Shunt:  Look up feature by name.  But as names may be spelled differently
+         *  we also key known feature types by their place ID or key
+         */
+        if (protectedLocations.containsKey(pc.getTextnorm())){
+            return true;
+        }
+        for (ScoredPlace pl : pc.getPlaces()){
+            Place feature = pl.getPlace();
+            if (protectedLocations.containsKey(feature.getKey())){
+                return true;
+            }
+
+            // If feature type is known to represent both ORG AND SITE location, return true.
+            if (FEAT_CODE_ORG_LOCATIONS.contains(feature.getFeatureCode())){
+                protectedLocations.put(feature.getKey(), feature.getFeatureCode() );
+                protectedLocations.put(pc.getTextnorm(), feature.getFeatureCode() );
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean evaluateOrgName(PlaceCandidate pc, List<TaxonMatch> orgs) {
+
+        if (isSiteLocation(pc)) {
+            // Because this location also represents a taxon that is an ORG,
+            // mark the mention valid and it will avoid being filtered out
+            pc.addRule("LocationForOrg");
+            pc.markValid();
+            return true;
+        }
+
         /* is LOC candidate in ORG name
          * or ORG name in LOC candidate?
          */

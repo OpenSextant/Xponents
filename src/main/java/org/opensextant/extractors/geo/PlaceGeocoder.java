@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.util.Hash;
 import org.opensextant.ConfigException;
 import org.opensextant.data.*;
 import org.opensextant.extraction.ExtractionException;
@@ -49,6 +50,7 @@ import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
+import org.opensextant.util.TextUtils;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -92,7 +94,20 @@ public class PlaceGeocoder extends GazetteerMatcher
     private NameCodeRule nameWithAdminRule = null;
     private LocationChooserRule chooser = null;
     private ProvinceNameSetter provinceNameSetter = null;
+    private NonLatinNameRule langFilter = null;
 
+    private static final HashSet<String> LANG_SPECIFIC_FILTERS = new HashSet<>();
+    static {
+        // Most MidEast scripts:
+        LANG_SPECIFIC_FILTERS.add(TextUtils.arabicLang);
+        LANG_SPECIFIC_FILTERS.add(TextUtils.farsiLang);
+        LANG_SPECIFIC_FILTERS.add("ur");
+        // Most Asian scripts:
+        LANG_SPECIFIC_FILTERS.add(TextUtils.chineseLang);
+        LANG_SPECIFIC_FILTERS.add(TextUtils.chineseTradLang);
+        LANG_SPECIFIC_FILTERS.add(TextUtils.koreanLang);
+        LANG_SPECIFIC_FILTERS.add(TextUtils.japaneseLang);
+    }
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding pipline
      * start to finish. It makes use of XCoord to parse/geocode coordinates,
@@ -198,6 +213,8 @@ public class PlaceGeocoder extends GazetteerMatcher
         // Otherwise such rules are configured, set during the request, and evaluated
         // adhoc as you need.
         //
+        langFilter = new NonLatinNameRule();
+
         /* assess country names and codes */
         countryRule = new CountryRule();
         countryRule.setCountryObserver(this);
@@ -502,6 +519,10 @@ public class PlaceGeocoder extends GazetteerMatcher
         if (candidates.isEmpty()) {
             // May contain found taxons from known places step above.
             return matches;
+        }
+        if (LANG_SPECIFIC_FILTERS.contains(input.langid)) {
+            langFilter.reset();
+            langFilter.evaluate(candidates);
         }
 
         // Evaluate independent rules, and any that user has added.

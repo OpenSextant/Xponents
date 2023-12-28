@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.opensextant.data.Place;
+import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
 import org.opensextant.util.TextUtils;
@@ -84,8 +85,17 @@ public class NonsenseFilter extends GeocodeRule {
                 continue;
             }
 
+            if (p.hasMiddleEasternText() || p.hasCJKText()){
+                continue;
+            }
+
             /* Look at valid and invalid punctuation patterns */
             if (assessPunctuation(p)) {
+                continue;
+            }
+            if (!assessPhraseDensity(p)) {
+                p.addRule("Noise.LowDensityText");
+                p.setFilteredOut(true);
                 continue;
             }
 
@@ -150,6 +160,37 @@ public class NonsenseFilter extends GeocodeRule {
         }
     }
 
+
+    /** Names of places should have about N=5 chars to non-chars.
+     *
+     *   "A BC"  3:1      filtered out.
+     *   "AB CD"  4:1     filterd out.
+     *   "AB BCD"  5:1    possibly acceptable.
+     */
+    public static final int PHRASE_DENSITY_CHAR_RATIO = 5;
+
+    /**
+     *
+     * @param p
+     * @return True if alphanum to non-alphanum content is at or above default threshold
+     */
+    public static boolean assessPhraseDensity(TextMatch p) {
+        return assessPhraseDensity(p.getText(), PHRASE_DENSITY_CHAR_RATIO);
+    }
+
+    /**
+     *
+     * @param name
+     * @param charRatio
+     * @return True if alphanum to non-alphanum content is at or above charRatio threshold
+     */
+    public static boolean assessPhraseDensity(String name, int charRatio) {
+        int nonAlpha = TextUtils.countNonText(name);
+        if (nonAlpha==0){
+            return true;
+        }
+        return ((name.length() - nonAlpha) / nonAlpha) >= charRatio;
+    }
 
     /**
      * optimize punctuation detection and filtration.

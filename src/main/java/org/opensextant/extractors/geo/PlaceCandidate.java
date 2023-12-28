@@ -62,6 +62,8 @@ public class PlaceCandidate extends TextMatch {
     private boolean anchor = false;
     private String nonDiacriticTextnorm = null;
     private boolean reviewed = false;
+    private boolean hasCJKtext = false;
+    private boolean hasMEtext = false;
 
     public final static String VAL_SAME_COUNTRY = "same-country";
     /**
@@ -90,6 +92,16 @@ public class PlaceCandidate extends TextMatch {
     public void setText(String name) {
         super.setText(name);
         this.nonDiacriticTextnorm = TextUtils.phoneticReduction(getTextnorm(), isASCII());
+        this.hasMEtext = TextUtils.hasMiddleEasternText(name);
+        this.hasCJKtext = TextUtils.hasCJKText(name);
+    }
+
+    public boolean hasCJKText() {
+        return this.hasCJKtext;
+    }
+
+    public boolean hasMiddleEasternText() {
+        return this.hasMEtext;
     }
 
     public boolean isAbbrevLength() {
@@ -766,6 +778,22 @@ public class PlaceCandidate extends TextMatch {
      */
     public void setPostmatchTokens(String[] toks) {
         this.postTokens = toks;
+    }
+
+    public String getSurroundingText() {
+        StringJoiner joiner = new StringJoiner(" ");
+        // Find if surrounding text is not uppercase.
+        if (getPrematchTokens() != null) {
+            for (String tok : getPrematchTokens()) {
+                joiner.add(tok);
+            }
+        }
+        if (getPostmatchTokens() != null) {
+            for (String tok : getPostmatchTokens()) {
+                joiner.add(tok);
+            }
+        }
+        return joiner.toString();
     }
 
     /**
