@@ -85,7 +85,7 @@ public class TextUtils {
     public static int countIrregularPunctuation(String t) {
         int count = 0;
         Matcher m = commonPunct.matcher(t);
-        while(m.find()){
+        while (m.find()) {
             ++count;
         }
         return count;
@@ -127,6 +127,31 @@ public class TextUtils {
 
         //
         return isLatin;
+    }
+
+    /**
+     * Detects the first Arabic or Hewbrew character for now -- will be more comprehensive
+     * in scoping "Middle Eastern" scripts in text.
+     *
+     * @param data
+     * @return
+     */
+    public static final boolean hasMiddleEasternText(String data) {
+        char[] ch = data.toCharArray();
+        for (char c : ch) {
+            // Non-letters and ASCII do not count.
+            if (isASCII(c) || !Character.isLetter(c)) {
+                continue;
+            }
+
+            Character.UnicodeBlock blk = Character.UnicodeBlock.of(c);
+            if (blk == Character.UnicodeBlock.ARABIC
+                    || blk == Character.UnicodeBlock.ARABIC_EXTENDED_A
+                    || blk == Character.UnicodeBlock.HEBREW) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -448,14 +473,14 @@ public class TextUtils {
         }
 
         char ch0 = v.charAt(0);
-        if (!(Character.isDigit(ch0) || ch0 == '.' || ch0 == '-' || ch0 == '+' )){
+        if (!(Character.isDigit(ch0) || ch0 == '.' || ch0 == '-' || ch0 == '+')) {
             return false;
         }
         for (char ch : v.toCharArray()) {
             /*
              * Is the character in .-+Ee or SPACE?
              */
-            if (ch == '.' || ch == ',' || ch == '-' || ch == '+' || ch == 'e' || ch == 'E' || ch==' ') {
+            if (ch == '.' || ch == ',' || ch == '-' || ch == '+' || ch == 'e' || ch == 'E' || ch == ' ') {
                 continue;
             }
             if (!Character.isDigit(ch)) {
