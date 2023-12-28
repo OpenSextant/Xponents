@@ -85,8 +85,8 @@ rm -rf $REL/.git
 rm $REL/doc/*.mp4
 rm $REL/script/dist* 
 # Library cleanup
-rm -r $GAZ/script/__pycache__
-rm -f $GAZ/solr7-dist/licenses/log4j*2.11* 
+rm -rf $GAZ/script/__pycache__
+rm -ff $GAZ/solr7-dist/licenses/log4j*2.11* 
 
 # Docker configuration
 cp  $basedir/.gitignore $basedir/dev.env $REL/

@@ -5,6 +5,7 @@ Is the YMCA nearby the baked goods store when I'll be in Cleveland?  # Use a kno
 Is the PRT nearby the baked goods store when I'll be in Cleveland?  # Use a random short, upper case name... ditto.
 Where shall we sit on the beach in Australia?.  My gosh, EBA.  # Test acronyms colliding with short place names.
 Hi Ma, In where is my clean shirt?  # Test short phrasing or dirty text that collides with transliterations of places from SE Asia and Africa
+Hi Ma In where is my clean shirt?  # ditto, no punct.
 Where is MVs in Brazil?
 MVs at all?
 Just GA. Nothing more.
