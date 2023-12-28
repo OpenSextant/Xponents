@@ -53,7 +53,7 @@
     <slf4j.version>2.0.6</slf4j.version>
     <log4j.version>2.20.0</log4j.version>
     <restlet.version>2.4.3</restlet.version>
-    <xponents.version>3.6.5</xponents.version>
+    <xponents.version>3.6.6-SNAPSHOT</xponents.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
   <distributionManagement>
@@ -90,7 +90,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.4.4</version>
+        <version>1.4.14</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -241,7 +241,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20230227</version>
+      <version>20231013</version>
     </dependency>
 
     <!-- JSON serialization and metadata transforms -->
