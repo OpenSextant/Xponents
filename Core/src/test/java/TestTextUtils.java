@@ -202,4 +202,25 @@ public class TestTextUtils {
         assertFalse(TextUtils.isNumeric("E5.672"));
         assertFalse(TextUtils.isNumeric("abcdef"));
     }
+
+    @Test
+    public void testAbbreviations() {
+        assertTrue(TextUtils.isAbbreviation("A.B."));
+        assertTrue(TextUtils.isAbbreviation("A. B."));
+        assertTrue(TextUtils.isAbbreviation("A. B. "));
+        assertTrue(TextUtils.isAbbreviation("A.b."));
+        assertTrue(TextUtils.isAbbreviation("A.9."));
+        assertTrue(TextUtils.isAbbreviation("Bs.As."));
+        assertTrue(TextUtils.isAbbreviation("Miss."));
+        assertTrue(TextUtils.isAbbreviation("Ms."));
+
+        // NOT Abbreviations:
+        assertFalse(TextUtils.isAbbreviation("A.   B. "));
+        assertFalse(TextUtils.isAbbreviation("Sent End.  New Sent"));
+        assertFalse(TextUtils.isAbbreviation("Sent End.  New Sent or Long Sentence"));
+        assertFalse(TextUtils.isAbbreviation("1.2.23"));
+        assertFalse(TextUtils.isAbbreviation("A.B"));
+        assertFalse(TextUtils.isAbbreviation("A.@."));
+        assertFalse(TextUtils.isAbbreviation("$1.000R"));
+    }
 }

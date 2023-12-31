@@ -1035,6 +1035,76 @@ public class TextUtils {
     }
 
     /**
+     * @see #isAbbreviation(String, boolean)
+     * @param txt
+     * @return
+     */
+    public static boolean isAbbreviation(String txt) {
+        return isAbbreviation(txt, true);
+    }
+
+    public static final int ABBREV_MAX_LEN = 15;
+
+    /**
+     * Define what an acronym is:  A.B. (at minimum)
+     *   A.b.  okay
+     *   A. b.  okay
+     *   A.b    not okay
+     *   A.9.   not okay
+     *
+     * Starts with Alpha
+     * Period is required
+     *    Ends with a period
+     * One upper case letter required -- optional arg for case sensitivity
+     * Digits allowed.
+     * Spaces allowed - length no longer than 15 non-whitespace chars
+     *
+     */
+    public static boolean isAbbreviation(String orig, boolean useCase) {
+        String txt = orig.trim();
+        if (txt.length() == 0) {
+            return false;
+        }
+        char[] chars = txt.toCharArray();
+        int l = txt.length();
+        if (useCase && !(Character.isUpperCase(chars[0]) && Character.isLetter(chars[0]))) {
+            return false;
+        }
+        if (!(chars[l - 1] == '.')) {
+            return false;
+        }
+        if (txt.length() > ABBREV_MAX_LEN) {
+            return false;
+        }
+
+        // Have to iterate through all chars
+        int periods = 0;
+        int spaces = 0;
+        for (char c : chars) {
+            if (!isASCII(c)) {
+                return false;
+            }
+            if (c == '.') {
+                ++periods;
+                continue;
+            }
+            if (c == ' ') {
+                ++spaces;
+                continue;
+            }
+            if (Character.isLetter(c) || Character.isDigit(c)) {
+                continue;
+            }
+            // Phrase contains other than A-Z, 0-9, . and SP
+            return false;
+        }
+        if ((0 < spaces && periods < 2) || periods < spaces) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Supports Phoneticizer utility from OpenSextant v1.x Remove diacritics from a
      * phrase
      *
