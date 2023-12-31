@@ -791,6 +791,7 @@ public class TextUtils {
      * @return hash for the data
      * @deprecated not MD5 specific.  Use #b2hex() instead
      */
+    @Deprecated
     public static String md5_id(byte[] digest) {
         // Thanks to javacream:
         // create hex string from the 16-byte hash
