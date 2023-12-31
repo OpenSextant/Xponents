@@ -3,7 +3,6 @@ package org.opensextant.extractors.geo.rules;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.StringJoiner;
 
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
@@ -45,11 +44,12 @@ public class NameRule extends GeocodeRule {
 
             if (significantAdminCodeCount(name)) {
                 name.setFilteredOut(true);
+                name.addRule("Name.PopularAdminCode");
                 continue;
             }
 
             // Check short ASCII names vs. non-ASCII names.
-            if (name.isASCII()) {
+            if (name.isASCII() && !name.isAbbreviation) {
                 if (isUppercaseNoise(name)) {
                     continue;
                 }
@@ -93,12 +93,14 @@ public class NameRule extends GeocodeRule {
     private boolean isUppercaseNoise(PlaceCandidate name) {
         // UPPPER CASE name surrounded by mixed case,... and the mention is not linked
         // to any other geography.  That means it is a random acronym of no import...
-        if (!name.isValid() || name.getRelated()==null) {
-            if (isShort(name.getLength()) && name.isUpper() && !TextUtils.isUpper(name.getSurroundingText())) {
-                name.addRule(UPPERCASE_NOISE);
-                name.setFilteredOut(true);
-                return true;
-            }
+        if (name.isValid()) {
+            return false;
+        }
+        /* Looking to ignore pattern  Text text text NOISE Text text */
+        if (isShort(name.getLength()) && name.isUpper() && !TextUtils.isUpper(name.getSurroundingText())) {
+            name.addRule(UPPERCASE_NOISE);
+            name.setFilteredOut(true);
+            return true;
         }
         return false;
     }
@@ -117,14 +119,16 @@ public class NameRule extends GeocodeRule {
             return false;
         }
 
+        final int N = 5;
         int adminCount = 0;
+        int plCount = name.getPlaces().size();
         for (ScoredPlace geo : name.getPlaces()) {
             if (geo.getPlace().isAdministrative() && geo.getPlace().isCode()) {
                 ++adminCount;
             }
         }
         // Instead of dividing, use multiplication ot check.
-        return (5 * adminCount) >= name.getPlaces().size();
+        return (N * adminCount) >= plCount && plCount > N;
     }
 
     @Override

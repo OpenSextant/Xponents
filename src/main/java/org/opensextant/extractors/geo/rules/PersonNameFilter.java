@@ -43,6 +43,7 @@ public class PersonNameFilter extends GeocodeRule {
     private final Set<String> suffixes;
 
     private final static HashSet<String> FEAT_CODE_ORG_LOCATIONS = new HashSet<>();
+
     static {
         // ORGANIZATIONS that also have location or "SITEs", e.g., feat_class=S, feat_code is below.
         // We want to acknowledge location over the fact its an organization.
@@ -231,7 +232,9 @@ public class PersonNameFilter extends GeocodeRule {
                 continue;
             }
 
-            evaluateOtherName(pc, others);
+            if (!pc.isCountry) {
+                evaluateOtherName(pc, others);
+            }
         }
     }
 
@@ -242,7 +245,7 @@ public class PersonNameFilter extends GeocodeRule {
                 pc.isCountry = false;
                 pc.addRule("Matches.Taxon");
                 return true;
-            } else if (pc.isWithin(name) && !pc.isCountry) {
+            } else if (pc.isWithin(name)) {
                 pc.addRule(NAME_IN_ORG_RULE);
             } else if (name.isWithin(pc)) {
                 name.setFilteredOut(true);
@@ -258,24 +261,24 @@ public class PersonNameFilter extends GeocodeRule {
      * @param pc
      * @return true if named location represents particular site features
      */
-    private boolean isSiteLocation(PlaceCandidate pc){
+    private boolean isSiteLocation(PlaceCandidate pc) {
         /*
          * Shunt:  Look up feature by name.  But as names may be spelled differently
          *  we also key known feature types by their place ID or key
          */
-        if (protectedLocations.containsKey(pc.getTextnorm())){
+        if (protectedLocations.containsKey(pc.getTextnorm())) {
             return true;
         }
-        for (ScoredPlace pl : pc.getPlaces()){
+        for (ScoredPlace pl : pc.getPlaces()) {
             Place feature = pl.getPlace();
-            if (protectedLocations.containsKey(feature.getKey())){
+            if (protectedLocations.containsKey(feature.getKey())) {
                 return true;
             }
 
             // If feature type is known to represent both ORG AND SITE location, return true.
-            if (FEAT_CODE_ORG_LOCATIONS.contains(feature.getFeatureCode())){
-                protectedLocations.put(feature.getKey(), feature.getFeatureCode() );
-                protectedLocations.put(pc.getTextnorm(), feature.getFeatureCode() );
+            if (FEAT_CODE_ORG_LOCATIONS.contains(feature.getFeatureCode())) {
+                protectedLocations.put(feature.getKey(), feature.getFeatureCode());
+                protectedLocations.put(pc.getTextnorm(), feature.getFeatureCode());
                 return true;
             }
         }

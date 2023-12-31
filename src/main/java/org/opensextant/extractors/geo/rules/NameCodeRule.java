@@ -130,6 +130,7 @@ public class NameCodeRule extends GeocodeRule {
         // Short names, lower case will not be assessed at all.
         if (validation.nameIsIgnorable) {
             nm.setFilteredOut(true);
+            nm.addRule("Name.Ignorable");
             trackIgnoreTerms(nm);
             validation.valid = false;
             return validation;
@@ -175,10 +176,12 @@ public class NameCodeRule extends GeocodeRule {
             // Filter out such CODE noise.
             if (canIgnoreCode) {
                 code.setFilteredOut(true);
+                code.addRule("Name.IgnorableCode");
                 trackIgnoreTerms(code);
             }
             if (v.nameIsIgnorable) {
                 nm.setFilteredOut(true);
+                nm.addRule("Name.Ignorable");
                 trackIgnoreTerms(nm);
             }
             return false;
@@ -384,9 +387,11 @@ public class NameCodeRule extends GeocodeRule {
                 int allowedLen = name.isASCII() ? 2 : 1;
                 if (name.getLength() <= allowedLen) {
                     name.setFilteredOut(true);
+                    name.addRule("Name.TooShort");
                     continue;
                 } else if (!params.tag_codes && name.isShortName() && name.matchesCode()) {
                     name.setFilteredOut(true);
+                    name.addRule("Name.TooShort");
                     continue;
                 }
             }
@@ -407,6 +412,7 @@ public class NameCodeRule extends GeocodeRule {
                 for (ScoredPlace geo : name.getPlaces()) {
                     if (geo.getPlace().isShortName()) {
                         name.setFilteredOut(true);
+                        name.addRule("Name.TooShort,MixedCase");
                         break;
                     }
                 }

@@ -1,13 +1,8 @@
 package org.opensextant.extractors.geo.rules;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
-import org.opensextant.extractors.geo.ScoredPlace;
-import org.opensextant.util.TextUtils;
+
 
 /**
  * GeocodeRule called only if document is non-Latin such as C/J/K or MiddleEastern scripts.
@@ -25,9 +20,10 @@ public class NonLatinNameRule extends GeocodeRule {
         } else
         // Assess general alpha to non-alpha content in the name
         {
+            String lang = name.hasCJKText() ? "CJK" : name.hasMiddleEasternText() ? "AR" : "Gen";
             int charRatio = name.hasCJKText() ? 3 : name.hasMiddleEasternText() ? 5 : -1;
-            if ( charRatio > 0 && !NonsenseFilter.assessPhraseDensity(name.getText(), charRatio)) {
-                name.addRule("Lang.DensityHeuristic");
+            if (charRatio > 0 && !NonsenseFilter.assessPhraseDensity(name.getText(), charRatio)) {
+                name.addRule(String.format("Lang.%s.DensityHeuristic", lang));
                 name.setFilteredOut(true);
                 return true;
             }

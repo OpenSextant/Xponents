@@ -884,11 +884,11 @@ public class PlaceCandidate extends TextMatch {
         this.tokens = tokenizer.split(getText());
         this.wordCount = tokens.length;
         this.hasDiacritics = TextUtils.hasDiacritics(getText());
-        boolean hasSpaces = this.getText().contains(" ");
+
         /*
-         * Old logic had harmful consequences on By-lines etc: Keep scope of this narrow.
+         * Check for abbreviation
          */
-        if (!contextisUpper && isUpper() && 0 < getLength() && isAbbrevLength() && !hasSpaces) {
+        if (TextUtils.isAbbreviation(getText(), !contextisLower)) {
             this.isAcronym = true;
             this.isAbbreviation = true;
         }

@@ -97,6 +97,7 @@ public class PlaceGeocoder extends GazetteerMatcher
     private NonLatinNameRule langFilter = null;
 
     private static final HashSet<String> LANG_SPECIFIC_FILTERS = new HashSet<>();
+
     static {
         // Most MidEast scripts:
         LANG_SPECIFIC_FILTERS.add(TextUtils.arabicLang);
@@ -108,6 +109,7 @@ public class PlaceGeocoder extends GazetteerMatcher
         LANG_SPECIFIC_FILTERS.add(TextUtils.koreanLang);
         LANG_SPECIFIC_FILTERS.add(TextUtils.japaneseLang);
     }
+
     /**
      * A default Geocoding app that demonstrates how to invoke the geocoding pipline
      * start to finish. It makes use of XCoord to parse/geocode coordinates,

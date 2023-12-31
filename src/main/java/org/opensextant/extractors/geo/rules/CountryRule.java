@@ -21,7 +21,6 @@ import java.util.List;
 import org.opensextant.data.Place;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.ScoredPlace;
-import org.opensextant.util.TextUtils;
 
 public class CountryRule extends GeocodeRule {
 
