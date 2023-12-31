@@ -45,7 +45,6 @@ public class XponentTextGeotagger extends XponentGeocoder {
     @Override
     public void configure() throws ConfigException {
 
-        // new GazetteerMatcher(true /*allow lowercase tagging*/);
         tagger = new PlaceGeocoder(true);
 
         // If you really do not want to miss anything -- look at this flag:
@@ -53,7 +52,6 @@ public class XponentTextGeotagger extends XponentGeocoder {
         Parameters xponentsParams = new Parameters();
         // Default Parameters; Unlike geocoding tweet user/status.
         // Default is to tag coords, places, and countries.
-        /* "resolve_provinces" is equivalent to setProvinceName(Place) */
         xponentsParams.tag_coordinates = true;
         xponentsParams.resolve_localities = true;
         tagger.setParameters(xponentsParams);

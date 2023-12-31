@@ -22,6 +22,7 @@ public class PlaceGeocoderTester extends TestGazMatcher {
         Parameters testParams = new Parameters();
         testParams.resolve_localities = true;
         testParams.tag_coordinates = true;
+        testParams.tag_codes = true;  // To support proper detection of POSTAL codes.
         boolean lowerCaseTest = true;
         PlaceGeocoder geocoderImpl = new PlaceGeocoder(lowerCaseTest);
         geocoderImpl.setParameters(testParams);
