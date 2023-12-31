@@ -26,7 +26,7 @@ msg " TODO: document using python lib from distro, as it is not fully installed.
 cd $basedir/python
 rm -rf ./dist/*
 python3 ./setup.py sdist
-pip3 install -U -t $REL/piplib ./dist/opensextant-1.4*gz
+pip3 install -U -t $REL/piplib ./dist/opensextant-1.5*gz
 
 
 msg "Prepare additional Java resources"

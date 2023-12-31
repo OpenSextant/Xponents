@@ -106,6 +106,7 @@ NOISE = {
     "google",
     "internet explorer",
     "inter",
+    "original post",
     "yahoo",
     "twitter",
     "youtube",

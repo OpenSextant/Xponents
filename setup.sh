@@ -26,7 +26,7 @@ msg "Install Python resources"
 # Install built lib with dependencies to ./python. First install here are 
 # libraries used by Solr/ETL scripting:
 pip3 install -U --target ./piplib lxml bs4 arrow requests pyshp pycountry
-pip3 install -U --target ./piplib ./python/dist/opensextant-1.4*.tar.gz
+pip3 install -U --target ./piplib ./python/dist/opensextant-1.5*.tar.gz
 
 msg "Assemble basic JAR resources"
 . ./dev.env
