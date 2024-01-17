@@ -274,6 +274,14 @@
 2100038 O   u   The MITRE
 2100038 O   u   MITRE Corp
 
+2100039 O   u   Advanced Research Projects Agency
+2100039 O   u   ARPA
+
+2100040 O   u   Homeland Security Advanced Research Projects Agency
+2100040 O   u   HSARPA
+2100040 O   u   HS-ARPA
+
+
 #
 #
 # 2,101,***  US Terms for foreign entities

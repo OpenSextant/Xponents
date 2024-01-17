@@ -62,6 +62,8 @@ public class PlaceCandidate extends TextMatch {
     private boolean anchor = false;
     private String nonDiacriticTextnorm = null;
     private boolean reviewed = false;
+    private boolean hasCJKtext = false;
+    private boolean hasMEtext = false;
 
     public final static String VAL_SAME_COUNTRY = "same-country";
     /**
@@ -90,6 +92,16 @@ public class PlaceCandidate extends TextMatch {
     public void setText(String name) {
         super.setText(name);
         this.nonDiacriticTextnorm = TextUtils.phoneticReduction(getTextnorm(), isASCII());
+        this.hasMEtext = TextUtils.hasMiddleEasternText(name);
+        this.hasCJKtext = TextUtils.hasCJKText(name);
+    }
+
+    public boolean hasCJKText() {
+        return this.hasCJKtext;
+    }
+
+    public boolean hasMiddleEasternText() {
+        return this.hasMEtext;
     }
 
     public boolean isAbbrevLength() {
@@ -768,6 +780,22 @@ public class PlaceCandidate extends TextMatch {
         this.postTokens = toks;
     }
 
+    public String getSurroundingText() {
+        StringJoiner joiner = new StringJoiner(" ");
+        // Find if surrounding text is not uppercase.
+        if (getPrematchTokens() != null) {
+            for (String tok : getPrematchTokens()) {
+                joiner.add(tok);
+            }
+        }
+        if (getPostmatchTokens() != null) {
+            for (String tok : getPostmatchTokens()) {
+                joiner.add(tok);
+            }
+        }
+        return joiner.toString();
+    }
+
     /**
      * Given a path, 'a.b' ( province b in country a),
      * see if this name is present there.
@@ -856,11 +884,11 @@ public class PlaceCandidate extends TextMatch {
         this.tokens = tokenizer.split(getText());
         this.wordCount = tokens.length;
         this.hasDiacritics = TextUtils.hasDiacritics(getText());
-        boolean hasSpaces = this.getText().contains(" ");
+
         /*
-         * Old logic had harmful consequences on By-lines etc: Keep scope of this narrow.
+         * Check for abbreviation
          */
-        if (!contextisUpper && isUpper() && 0 < getLength() && isAbbrevLength() && !hasSpaces) {
+        if (TextUtils.isAbbreviation(getText(), !contextisLower)) {
             this.isAcronym = true;
             this.isAbbreviation = true;
         }

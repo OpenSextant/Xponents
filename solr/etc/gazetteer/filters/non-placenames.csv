@@ -1128,6 +1128,7 @@ homo,latin
 pas,latin
 philo,latin
 prima,latin
+semper,latin
 situ,latin
 synopsis,latin
 vis,latin
@@ -1567,6 +1568,7 @@ crooks,noun
 crown,noun
 cruise,noun
 crystal,noun
+crystals,noun
 cube,noun
 cult,noun
 cultures,noun
@@ -3246,6 +3248,7 @@ hotspot,phrase
 huh,phrase
 hum,phrase
 i do,phrase
+i ran,phrase
 ideal solution,phrase
 imho,phrase
 in an,phrase
@@ -4397,6 +4400,7 @@ bash,verb
 be,verb
 be in,verb
 been,verb
+beg,verb
 began,verb
 begin,verb
 begun,verb
@@ -4670,6 +4674,7 @@ owning,verb
 packed,verb
 pan,verb
 parse,verb
+pardon,verb
 parting,verb
 passing,verb
 paste,verb
@@ -5110,3 +5115,14 @@ botany,well-known.science
 proton,well-known.science
 magnet,well-known.science
 magnesium,well-known.science
+spate,noun
+honeycomb,food
+the opening,noun
+the blockade,noun
+the platform,noun
+on the rocks,phrase
+the address,phrase
+shi,stopword.ja
+fearing,verb
+nazionale,adj.it
+

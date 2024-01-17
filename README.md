@@ -156,12 +156,12 @@ Java versus Python Libraries
 Python and Java functionality overlaps but is still drastically differe.  The Core API resembles 
 the Python library somewhat.
 
-* `opensextant` (v1.4) Python API offers data utilities; Solr clients for TaxCat and Gazetteer;
+* `opensextant` (v1.5) Python API offers data utilities; Solr clients for TaxCat and Gazetteer;
   basic data models for text spans, place objects, etc.  Xponents REST client (`xlayer`) which interacts with the Java Xponents REST service.
-* Xponents Core API (v3.5) Java library provides most of the functionality as in the Python library. 
+* Xponents Core API (v3.6) Java library provides most of the functionality as in the Python library. 
   It offers more complete Unicode utilities and other metadata resources such as Country, Timezone, 
   and Language metadata
-* Xponents SDK API (v3.5) provides the Solr and client/server integrations for Gazetteer, 
+* Xponents SDK API (v3.6) provides the Solr and client/server integrations for Gazetteer, 
   TaxCat and PlaceGeocoder.
 
 
@@ -184,14 +184,14 @@ Insert these dependencies into your POM depending on what you need.
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.6.4</version>
+    <version>3.6.6</version>
   </dependency>
 
   <!-- Xponents SDK API -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.6.4</version>
+    <version>3.6.6</version>
   </dependency>
 ```
 
@@ -199,9 +199,9 @@ For reference: [OpenSextant Xponents on Maven](https://search.maven.org/search?q
 
 * `geodesy 2.0.1`   - Geodetic operations and coordinate system calculations
 * `giscore 2.0.2`  - GIS I/O
-* `opensextant-xponents-core  3.5.*` - This Core API
-* `opensextant-xponents       3.5.*` - This Solr-based tagger SDK
-* `opensextant-xponents-xtext 3.5.*` - XText, the text extraction toolkit
+* `opensextant-xponents-core  3.6.*` - This Core API
+* `opensextant-xponents       3.6.*` - This Solr-based tagger SDK
+* `opensextant-xponents-xtext 3.6.*` - XText, the text extraction toolkit
 
 
 
@@ -216,8 +216,8 @@ Someday we'll just post this to PyPi.
     popd
 
     # Install built lib with dependencies to ./piplib
-    pip3 install -U --target ./piplib ./python/dist/opensextant-1.4*.tar.gz 
-    pip3 install -U --target ./piplib lxml bs4 arrow requests
+    pip3 install -U --target ./piplib ./python/dist/opensextant-1.5*.tar.gz 
+    pip3 install -U --target ./piplib lxml bs4 arrow requests pycountry
     
     # Note - if working with a distribution release, the built Python 
     # package is in ./python/ (not ./python/dist/)

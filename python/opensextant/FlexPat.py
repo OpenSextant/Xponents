@@ -176,6 +176,9 @@ class PatternMatch(TextMatch):
         self.variant_id = None
         self.is_valid = True
         self.confidence = -1
+        # PERFORMANCE flag:  omit = True to never return the match value.
+        #          It could be filtered out and returned.  But omit means we never see it.
+        self.omit = False
 
         # Optionally -- back fill as much surrounding text as you want for
         # normalizer/validator routines. Use pre_text, post_text
@@ -584,7 +587,8 @@ class PatternExtractor(Extractor):
                         # surrounding text may be used by normalization and validation
                         domainObj.add_surrounding_text(text, tlen, length=20)
                         domainObj.normalize()
-                        results.append(domainObj)
+                        if not domainObj.omit:
+                            results.append(domainObj)
                     else:
                         genericObj = PatternMatch(m.group(), m.start(), m.end(),
                                                   pattern_id=pat.id,

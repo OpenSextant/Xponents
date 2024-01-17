@@ -26,7 +26,7 @@ msg " TODO: document using python lib from distro, as it is not fully installed.
 cd $basedir/python
 rm -rf ./dist/*
 python3 ./setup.py sdist
-pip3 install -U -t $REL/piplib ./dist/opensextant-1.4*gz
+pip3 install -U -t $REL/piplib ./dist/opensextant-1.5*gz
 
 
 msg "Prepare additional Java resources"
@@ -85,8 +85,8 @@ rm -rf $REL/.git
 rm $REL/doc/*.mp4
 rm $REL/script/dist* 
 # Library cleanup
-rm -r $GAZ/script/__pycache__
-rm -f $GAZ/solr7-dist/licenses/log4j*2.11* 
+rm -rf $GAZ/script/__pycache__
+rm -ff $GAZ/solr7-dist/licenses/log4j*2.11* 
 
 # Docker configuration
 cp  $basedir/.gitignore $basedir/dev.env $REL/

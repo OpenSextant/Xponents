@@ -41,13 +41,13 @@ public class TestTextUtils {
             String test = "a Ö ø Ø é å Å 杨寨 5 ! ē M ē ā";
             String test_id = TextUtils.text_id(test);
             assertEquals("35efe2bea1868a02530b012180d2f7e6f949040b", test_id);
-        } catch (Exception err){
-            fail("Algs? "+err.getMessage());
+        } catch (Exception err) {
+            fail("Algs? " + err.getMessage());
         }
     }
 
     @Test
-    public void testPunct(){
+    public void testPunct() {
         String testText = "Eat at Bob\"s | Country Bunker";
         assertTrue(TextUtils.hasIrregularPunctuation(testText));
         assertEquals(2, TextUtils.countIrregularPunctuation(testText));
@@ -107,7 +107,7 @@ public class TestTextUtils {
         assertTrue(TextUtils.isLatin("O a b c d O"));
 
         String t2 = Unimap.replaceDiacritics(t_original);
-        if (!t2.equals(t_remapped)){
+        if (!t2.equals(t_remapped)) {
             fail("Diacritics not replaced!");
         }
     }
@@ -118,6 +118,13 @@ public class TestTextUtils {
         assertEquals("French", TextUtils.getLanguage("fre").getName());
         assertEquals("French", TextUtils.getLanguage("fra").getName());
         assertEquals("French", TextUtils.getLanguage("FRENCH").getName());
+    }
+
+    @Test
+    public void testMidEastLanguages() {
+        assertTrue(TextUtils.hasMiddleEasternText("تشییع پیکر سردار شهید سید رض\u200Cالسلام آغازABC 111  "));
+        assertTrue(TextUtils.hasMiddleEasternText("עִבְרִית"));
+        assertFalse(TextUtils.hasMiddleEasternText("1 2 3 4 Z Y X "));
     }
 
     @Test
@@ -179,7 +186,12 @@ public class TestTextUtils {
     }
 
     @Test
-    public void testNumerics(){
+    public void testCharCounting() {
+        assertEquals(1, TextUtils.countNonText("bob bob"));
+    }
+
+    @Test
+    public void testNumerics() {
         // Valid number patterns.
         assertTrue(TextUtils.isNumeric("5.67E2"));
         assertTrue(TextUtils.isNumeric("+5.67E2"));
@@ -189,5 +201,26 @@ public class TestTextUtils {
         // Not number patterns.  Starting with "E" or any Alpha is not numeric.
         assertFalse(TextUtils.isNumeric("E5.672"));
         assertFalse(TextUtils.isNumeric("abcdef"));
+    }
+
+    @Test
+    public void testAbbreviations() {
+        assertTrue(TextUtils.isAbbreviation("A.B."));
+        assertTrue(TextUtils.isAbbreviation("A. B."));
+        assertTrue(TextUtils.isAbbreviation("A. B. "));
+        assertTrue(TextUtils.isAbbreviation("A.b."));
+        assertTrue(TextUtils.isAbbreviation("A.9."));
+        assertTrue(TextUtils.isAbbreviation("Bs.As."));
+        assertTrue(TextUtils.isAbbreviation("Miss."));
+        assertTrue(TextUtils.isAbbreviation("Ms."));
+
+        // NOT Abbreviations:
+        assertFalse(TextUtils.isAbbreviation("A.   B. "));
+        assertFalse(TextUtils.isAbbreviation("Sent End.  New Sent"));
+        assertFalse(TextUtils.isAbbreviation("Sent End.  New Sent or Long Sentence"));
+        assertFalse(TextUtils.isAbbreviation("1.2.23"));
+        assertFalse(TextUtils.isAbbreviation("A.B"));
+        assertFalse(TextUtils.isAbbreviation("A.@."));
+        assertFalse(TextUtils.isAbbreviation("$1.000R"));
     }
 }

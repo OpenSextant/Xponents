@@ -85,7 +85,7 @@ public class TextUtils {
     public static int countIrregularPunctuation(String t) {
         int count = 0;
         Matcher m = commonPunct.matcher(t);
-        while(m.find()){
+        while (m.find()) {
             ++count;
         }
         return count;
@@ -127,6 +127,31 @@ public class TextUtils {
 
         //
         return isLatin;
+    }
+
+    /**
+     * Detects the first Arabic or Hewbrew character for now -- will be more comprehensive
+     * in scoping "Middle Eastern" scripts in text.
+     *
+     * @param data
+     * @return
+     */
+    public static final boolean hasMiddleEasternText(String data) {
+        char[] ch = data.toCharArray();
+        for (char c : ch) {
+            // Non-letters and ASCII do not count.
+            if (isASCII(c) || !Character.isLetter(c)) {
+                continue;
+            }
+
+            Character.UnicodeBlock blk = Character.UnicodeBlock.of(c);
+            if (blk == Character.UnicodeBlock.ARABIC
+                    || blk == Character.UnicodeBlock.ARABIC_EXTENDED_A
+                    || blk == Character.UnicodeBlock.HEBREW) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -448,14 +473,14 @@ public class TextUtils {
         }
 
         char ch0 = v.charAt(0);
-        if (!(Character.isDigit(ch0) || ch0 == '.' || ch0 == '-' || ch0 == '+' )){
+        if (!(Character.isDigit(ch0) || ch0 == '.' || ch0 == '-' || ch0 == '+')) {
             return false;
         }
         for (char ch : v.toCharArray()) {
             /*
              * Is the character in .-+Ee or SPACE?
              */
-            if (ch == '.' || ch == ',' || ch == '-' || ch == '+' || ch == 'e' || ch == 'E' || ch==' ') {
+            if (ch == '.' || ch == ',' || ch == '-' || ch == '+' || ch == 'e' || ch == 'E' || ch == ' ') {
                 continue;
             }
             if (!Character.isDigit(ch)) {
@@ -766,6 +791,7 @@ public class TextUtils {
      * @return hash for the data
      * @deprecated not MD5 specific.  Use #b2hex() instead
      */
+    @Deprecated
     public static String md5_id(byte[] digest) {
         // Thanks to javacream:
         // create hex string from the 16-byte hash
@@ -1007,6 +1033,76 @@ public class TextUtils {
      */
     public static String normalizeAbbreviation(String word) {
         return word.replace(".", "");
+    }
+
+    /**
+     * @see #isAbbreviation(String, boolean)
+     * @param txt
+     * @return
+     */
+    public static boolean isAbbreviation(String txt) {
+        return isAbbreviation(txt, true);
+    }
+
+    public static final int ABBREV_MAX_LEN = 15;
+
+    /**
+     * Define what an acronym is:  A.B. (at minimum)
+     *   A.b.  okay
+     *   A. b.  okay
+     *   A.b    not okay
+     *   A.9.   not okay
+     *
+     * Starts with Alpha
+     * Period is required
+     *    Ends with a period
+     * One upper case letter required -- optional arg for case sensitivity
+     * Digits allowed.
+     * Spaces allowed - length no longer than 15 non-whitespace chars
+     *
+     */
+    public static boolean isAbbreviation(String orig, boolean useCase) {
+        String txt = orig.trim();
+        if (txt.length() == 0) {
+            return false;
+        }
+        char[] chars = txt.toCharArray();
+        int l = txt.length();
+        if (useCase && !(Character.isUpperCase(chars[0]) && Character.isLetter(chars[0]))) {
+            return false;
+        }
+        if (!(chars[l - 1] == '.')) {
+            return false;
+        }
+        if (txt.length() > ABBREV_MAX_LEN) {
+            return false;
+        }
+
+        // Have to iterate through all chars
+        int periods = 0;
+        int spaces = 0;
+        for (char c : chars) {
+            if (!isASCII(c)) {
+                return false;
+            }
+            if (c == '.') {
+                ++periods;
+                continue;
+            }
+            if (c == ' ') {
+                ++spaces;
+                continue;
+            }
+            if (Character.isLetter(c) || Character.isDigit(c)) {
+                continue;
+            }
+            // Phrase contains other than A-Z, 0-9, . and SP
+            return false;
+        }
+        if ((0 < spaces && periods < 2) || periods < spaces) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1689,7 +1785,7 @@ public class TextUtils {
 
         int nonText = 0;
         for (char c : t.toCharArray()) {
-            if (!Character.isLetter(c) && Character.isDigit(c) && Character.isWhitespace(c)) {
+            if (!Character.isLetter(c) && !Character.isDigit(c)) {
                 ++nonText;
             }
         }

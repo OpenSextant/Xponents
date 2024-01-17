@@ -15,6 +15,7 @@ public class NameRule extends GeocodeRule {
     public static final String ADM1 = "QualifiedName.Prov";
     public static final String ADM2 = "QualifiedName.Dist";
     public static final String DIACRITIC = "DiacriticName";
+    public static final String UPPERCASE_NOISE = "Noise.Uppercase";
 
     public static final Set<String> P_prefixes = new HashSet<>();
     public static final Set<String> A1_suffixes = new HashSet<>();
@@ -43,10 +44,16 @@ public class NameRule extends GeocodeRule {
 
             if (significantAdminCodeCount(name)) {
                 name.setFilteredOut(true);
+                name.addRule("Name.PopularAdminCode");
                 continue;
             }
 
-            if (!name.isASCII()) {
+            // Check short ASCII names vs. non-ASCII names.
+            if (name.isASCII() && !name.isAbbreviation) {
+                if (isUppercaseNoise(name)) {
+                    continue;
+                }
+            } else {
                 name.addRule(DIACRITIC);
             }
 
@@ -83,6 +90,21 @@ public class NameRule extends GeocodeRule {
         }
     }
 
+    private boolean isUppercaseNoise(PlaceCandidate name) {
+        // UPPPER CASE name surrounded by mixed case,... and the mention is not linked
+        // to any other geography.  That means it is a random acronym of no import...
+        if (name.isValid()) {
+            return false;
+        }
+        /* Looking to ignore pattern  Text text text NOISE Text text */
+        if (isShort(name.getLength()) && name.isUpper() && !TextUtils.isUpper(name.getSurroundingText())) {
+            name.addRule(UPPERCASE_NOISE);
+            name.setFilteredOut(true);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * This filter counts "admin code" Places for a given match.  If the match is indeed
      * a short code-like name , e.g., "BS", "MA"... and it is unassociated with a place name, then it is
@@ -97,14 +119,16 @@ public class NameRule extends GeocodeRule {
             return false;
         }
 
+        final int N = 5;
         int adminCount = 0;
+        int plCount = name.getPlaces().size();
         for (ScoredPlace geo : name.getPlaces()) {
             if (geo.getPlace().isAdministrative() && geo.getPlace().isCode()) {
                 ++adminCount;
             }
         }
         // Instead of dividing, use multiplication ot check.
-        return (5 * adminCount) >= name.getPlaces().size();
+        return (N * adminCount) >= plCount && plCount > N;
     }
 
     @Override

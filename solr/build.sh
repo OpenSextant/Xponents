@@ -54,8 +54,9 @@ index_taxcat () {
 
   sleep 5
   # When done for the day,  optimize.  Note - pysolr commit + expungeDeletes does not work.
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
-  curl --noproxy localhost "$SOLR_URL/update?stream.body=<optimize/>"
+  echo "TAXCAT: commit and optimize"
+  curl --noproxy localhost "$SOLR_URL/solr/taxcat/update?stream.body=<commit%20expungeDeletes=\"true\"/>"
+  curl --noproxy localhost "$SOLR_URL/solr/taxcat/update?stream.body=<optimize/>"
 }
 
 
