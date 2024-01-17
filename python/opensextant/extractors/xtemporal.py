@@ -276,7 +276,9 @@ class DateTimeMatch(PatternMatch):
             day, month = test_european_locale(slots) # Uses DM slots only
             if day and day < 0:
                 return False
-            self.locale = "euro"
+            if day and month:
+                # Non-zero day/month returned from test
+                self.locale = "euro"
         if not month:
             month = normalize_month_num(slots)
         if month <= 0:
