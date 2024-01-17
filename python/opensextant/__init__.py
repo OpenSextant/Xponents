@@ -1027,10 +1027,106 @@ def render_match(m):
     return dct
 
 
+NOT_SUBMATCH = 0
+IS_SUBMATCH = 1
+IS_DUPLICATE = 2
+
+
+def reduce_matches(matches):
+    """
+    Mark each match if it is a submatch or overlap or exact duplicate of other.
+    :param matches: array of TextMatch (or TextEntity). This is the more object oriented version
+    of reduce_matches_dict
+    :return:
+    """
+    if len(matches) < 2:
+        return
+    loop = 0
+    for M in matches:
+        loop += 1
+        m1 = M.start
+        m2 = M.end
+        for N in matches[loop:]:
+            n1 = N.start
+            n2 = N.end
+
+            if m2 < n1:
+                # M entirely before N
+                continue
+            if m1 > n2:
+                # M < entirely after N
+                continue
+
+            # One of these overlap situations may apply:
+            if M.filtered_out or N.filtered_out:
+                # Just considering if one match is filtered already the other may be valid, even if submatch, etc.
+                break
+            elif n1 == m1 and n2 == m2:
+                # Exact duplicate - Mark N as dup, as M is first in array, but only if M is a valid match.
+                N.is_duplicate = True
+                break
+            elif n1 <= m1 < m2 <= n2:
+                # M is within N span
+                M.is_submatch = True
+                break
+            elif m1 <= n1 < n2 <= m2:
+                # N is within M span
+                N.is_submatch = True
+                break
+
+
+def reduce_matches_dict(matches):
+    """
+    Accepts an array annotations (dict). Inserts the "submatch" flag in dict if there is a
+    submatch (that is, if another TextEntity A wholly contains another, B -- B is a submatch).
+    We just have to loop through half of the array ~ comparing each item to each other item once.
+
+    :param matches: array of dicts.
+    """
+    _max = len(matches)
+    if _max < 2:
+        return
+
+    loops = 0
+    for i in range(0, _max):
+        M = matches[i]
+        m1 = M['start']
+        m2 = M['end']
+
+        for j in range(i + 1, _max):
+            loops += 1
+            N = matches[j]
+            n1 = N['start']
+            n2 = N['end']
+
+            if m2 < n1:
+                # M before N
+                continue
+
+            if m1 > n2:
+                # M after N
+                continue
+
+            # Check for filtered-out matches not done in this version.
+            #
+            if n1 == m1 and n2 == m2:
+                N['submatch'] = IS_DUPLICATE
+
+            elif n1 <= m1 < m2 <= n2:
+                M['submatch'] = IS_SUBMATCH
+                # Determined state of M.
+                # break this internal loop
+
+            elif m1 <= n1 < n2 <= m2:
+                N['submatch'] = IS_SUBMATCH
+                # Determined state of N,
+                # But possibly more N contained within M. Do not break yet.
+    return
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Language Code Support
-
-
 # ISO 639 code book support -- Language codes
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 class Language:
     """
