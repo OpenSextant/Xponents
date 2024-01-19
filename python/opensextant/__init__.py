@@ -1044,35 +1044,41 @@ def reduce_matches(matches):
     loop = 0
     for M in matches:
         loop += 1
+        if M.filtered_out:
+            continue
         m1 = M.start
         m2 = M.end
+        # print(M.text, loop)
+
+        # In this loop you have to compare M against all N
+        #   Cannot exit loop on first match or overlap.
         for N in matches[loop:]:
+            if N.filtered_out:
+                continue
+
             n1 = N.start
             n2 = N.end
 
-            if m2 < n1:
+            if m2 < n1  or m1 > n2:
                 # M entirely before N
-                continue
-            if m1 > n2:
-                # M < entirely after N
+                # M entirely after N
                 continue
 
-            # One of these overlap situations may apply:
-            if M.filtered_out or N.filtered_out:
-                # Just considering if one match is filtered already the other may be valid, even if submatch, etc.
-                break
-            elif n1 == m1 and n2 == m2:
+            # print("\t", N.text, N.start, N.is_duplicate)
+            if n1 == m1 and n2 == m2:
                 # Exact duplicate - Mark N as dup, as M is first in array, but only if M is a valid match.
                 N.is_duplicate = True
-                break
             elif n1 <= m1 < m2 <= n2:
                 # M is within N span
                 M.is_submatch = True
-                break
             elif m1 <= n1 < n2 <= m2:
                 # N is within M span
                 N.is_submatch = True
-                break
+            elif m1 <= n2 <= m2 or n1 <= m2 <= n2:
+                #  n1    n2
+                #     m1    m2
+                M.is_overlap = True
+                N.is_overlap = True
 
 
 def reduce_matches_dict(matches):
@@ -1122,6 +1128,7 @@ def reduce_matches_dict(matches):
                 # Determined state of N,
                 # But possibly more N contained within M. Do not break yet.
     return
+
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Language Code Support
