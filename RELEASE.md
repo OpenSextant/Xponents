@@ -1,6 +1,16 @@
 RELEASES
 ==============
 
+# 2024
+
+**Xponents 3.6.7**: Springy
+* **Core API**
+  * Building up `TextInput` class to carry better metrics to enable filters and language-specific tuning.
+  
+* PlaceGeocoder tuning:
+  * Refined tagging and filtering of CJK texts using mostly length and punctuation filters; Non-trival names
+  and phrases will likely be grams of 3 or more characters and have no interceding space or punct.
+
 # 2023
 
 **Xponents 3.6.6**:  New Year Release

@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents</artifactId>
-  <version>3.6.7-SNAPSHOT</version>
+  <version>3.6.7</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -53,7 +53,7 @@
     <slf4j.version>2.0.9</slf4j.version>
     <log4j.version>2.22.1</log4j.version>
     <restlet.version>2.4.3</restlet.version>
-    <xponents.version>3.6.7-SNAPSHOT</xponents.version>
+    <xponents.version>3.6.7</xponents.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
   <distributionManagement>
@@ -481,10 +481,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.11</source>
-          <target>1.11</target>
+          <source>11</source>
+          <target>11</target>
           <encoding>UTF-8</encoding>
-          <compilerVersion>1.11</compilerVersion>
+          <compilerVersion>11</compilerVersion>
           <compilerArgument>-Xlint:all,-path</compilerArgument>
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
