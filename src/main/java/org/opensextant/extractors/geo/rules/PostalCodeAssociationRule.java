@@ -31,7 +31,7 @@ public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchem
      * e.g., MA 01721   is a qualified postal code.
      * e.g., MA MA      is nonsense; it looks like two province codes together.
      * e.g., Garden City NJ  USA 01721   is fine.  POSTAL code follows country.
-     *
+     * <p>
      *    Garden City  01721   -- won't work if place is P/PPL only.  Must be ADM4 or PPLA for example.
      *    90120 01721          -- also will not work; Two postal codes next to each other.
      *    Garden City  01721-0045 --  Office park in a large metro area. That could work.

@@ -80,7 +80,7 @@ public class PostalTagger extends GazetteerMatcher implements MatchSchema, Extra
      * TextMatch array of all possible postal codes that pass trivial noise filters.
      *
      * @param input TextInput
-     * @return array of TextMatch
+     * @return list of TextMatch
      * @throws ExtractionException if extraction fails (Solr or Lucene errors) or rules mechanics.
      */
     @Override

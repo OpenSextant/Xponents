@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.common.util.Hash;
 import org.opensextant.ConfigException;
 import org.opensextant.data.*;
 import org.opensextant.extraction.ExtractionException;

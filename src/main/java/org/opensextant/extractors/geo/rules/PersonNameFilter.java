@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.solr.common.util.Hash;
 import org.opensextant.ConfigException;
 import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;

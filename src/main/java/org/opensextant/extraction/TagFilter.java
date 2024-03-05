@@ -201,7 +201,7 @@ public class TagFilter extends MatchFilter {
 
     /**
      * Experimental. As the name implies use this if know the content has CJK characters
-     *
+     * <p>
      * Due to bi-gram shingling with CJK languages - Chinese, Japanese, Korean -
      * the matcher really over-matches, e.g. For really short matches, let's
      * rule out obvious bad matches.

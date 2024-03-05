@@ -3,7 +3,6 @@ package org.opensextant.extractors.xtax;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.TagFilter;
 
 public class TaxonFilter extends TagFilter {

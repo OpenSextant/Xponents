@@ -125,7 +125,6 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     /** Extracting Taxons ~ keyphrases, etc. ~ is a secondary function.
-     *
      * So either caller explicity asks for all taxons OR
      * they ask for "taxons" and no geo features.
      */
@@ -134,9 +133,7 @@ public class XponentsGeotagger extends TaggerResource {
     }
 
     /**
-     * Process the text for the given document.
-     *
-     * NOTE: Please note this is NOT MT-safe. Internally there are single stateful instances of
+     * Process the text for the given document. NOTE: Please note this is NOT MT-safe. Internally there are single stateful instances of
      *  Extractor taggers, which may have significant memory and initialization phases.  As a prototype
      *  that is one limitation.  If you need multiple clients to hit this service, you ideally load-balance
      *  a bank of Xponents REST server.

@@ -272,7 +272,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * Parameterized extraction, e.g., for REST service or other fine tuning.
      * @param input text to tag
      * @param params tagging parameters
-     * @return array of TextMatch
+     * @return list
      * @throws ExtractionException on Solr Tagger error
      */
     public List<TextMatch> extract(TextInput input, Parameters params) throws ExtractionException {
@@ -419,7 +419,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
     }
 
 
-    Pattern taxonPattern = Pattern.compile("[\\/_.-]+");
+    final Pattern taxonPattern = Pattern.compile("[\\/_.-]+");
 
     private boolean filterOutTaxon(Taxon tx) {
         // Typical flow is commented here.
@@ -449,7 +449,7 @@ public class TaxonMatcher extends SolrMatcherSupport implements Extractor {
      * Tag the input
      *
      * @param input TextInput
-     * @return array of TextMatch or Null
+     * @return list
      * @throws ExtractionException the extraction exception
      */
     @Override

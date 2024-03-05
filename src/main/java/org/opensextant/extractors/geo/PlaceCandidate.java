@@ -70,12 +70,12 @@ public class PlaceCandidate extends TextMatch {
      * Linked geographic slots, in no order. These help develop a fuller depiction of the
      * context of a place mention -- through linked-geography in these categorical slots.
      * These are ordered roughly in resolution order, fine to coarse.
-     *
+     * <p>
      * POSTAL or other Association:
      * Country vs. "Same Country" -- for small territories, a POSTAL code may be associated with the country at
      * ADM0 level for example, if there are not many admin boundaries.  So "Country" association is tight there.
      * "Same Country" is much looser, indicating only that a mentioned place is in a mentioned country
-     *
+     * <p>
      * Holding off: VAL_COUNTRY
      */
     public static final String[] KNOWN_GEO_SLOTS = {VAL_PLACE, "city", "admin", VAL_SAME_COUNTRY};

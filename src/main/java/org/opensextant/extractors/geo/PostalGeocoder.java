@@ -156,7 +156,7 @@ public class PostalGeocoder implements MatchSchema, Extractor, BoundaryObserver,
      * NOTE: Not multi-thread safe. A single call here has some amount of internal state;
      *     A second simultaneous call would disrupt that
      * @param input TextInput
-     * @return array of TextMatch
+     * @return list of TextMatch
      * @throws ExtractionException if extraction fails (Solr or Lucene errors) or rules mechanics.
      */
     @Override
