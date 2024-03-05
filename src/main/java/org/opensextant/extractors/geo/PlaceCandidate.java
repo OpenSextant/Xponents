@@ -724,7 +724,7 @@ public class PlaceCandidate extends TextMatch {
      */
     @Override
     public String toString() {
-        return summarize(false);
+        return getText();
     }
 
     /**
