@@ -16,6 +16,8 @@
  */
 package org.opensextant.data;
 
+import org.opensextant.util.TextUtils;
+
 /**
  * TextInput is a unit of data -- a tuple that represents the text and its
  * language and an identifier
@@ -37,6 +39,12 @@ public class TextInput {
     public boolean isUpper = false;
 
     /**
+     * Heuristic -- text is neither predominately lower case or upper case.
+     * @return
+     */
+    public boolean isMixedCase(){return !isLower && !isUpper;}
+
+    /**
      * A simple input.
      * If this input is to be used with the normal OpenSextant pipelines, the caller
      * must ensure the input text is UTF-8 encoded content.
@@ -47,5 +55,38 @@ public class TextInput {
     public TextInput(String tid, String buf) {
         this.id = tid;
         this.buffer = buf;
+    }
+
+    private LanguageCharacterization langHueristics = new LanguageCharacterization();
+
+    /**
+     * Language Characterization holds various heuristics and metrics about the input text
+     * lang ID, if lang is CJK, Arabic, other.
+     *
+     * NOTE -- API user can specify language Characterization or user can use LangDetect wrapper
+     * to pre-process language ID.  That result can be applied to the characterization to influence processing.
+     * @return
+     */
+    public LanguageCharacterization getCharacterization() {
+        return langHueristics;
+    }
+
+    /**
+     * With buffer and language ID set,... characterize:
+     * upper case
+     * lower case
+     * language group -- cjk, arabic, generic.
+     */
+    public void characterize() {
+        if (this.buffer != null) {
+            int[] textMetrics = TextUtils.measureCase(this.buffer);
+            this.isUpper = TextUtils.isUpperCaseDocument(textMetrics);
+            this.isLower = TextUtils.isLowerCaseDocument(textMetrics);
+        }
+        if (this.langid != null) {
+            langHueristics.characterized = true;
+            langHueristics.hasCJK = TextUtils.isCJK(this.langid);
+            langHueristics.hasMiddleEastern = TextUtils.isMiddleEastern(this.langid);
+        }
     }
 }

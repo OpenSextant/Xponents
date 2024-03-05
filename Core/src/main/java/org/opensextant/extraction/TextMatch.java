@@ -115,8 +115,7 @@ public class TextMatch extends TextEntity implements MatchSchema, Comparable<Tex
 
     /**
      * Get a normalized version of the text, lower case, punctuation and diacritics
-     * removed.
-     * If you want only pieces of this normalization, you may override it.
+     * removed. If you want only pieces of this normalization, you may override it.
      *
      * @return normalized version of text.
      */

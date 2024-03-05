@@ -50,6 +50,7 @@ import org.opensextant.data.TextInput;
 import org.opensextant.extraction.ExtractionException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extraction.SolrMatcherSupport;
+import org.opensextant.extraction.TagFilter;
 import org.opensextant.util.GeodeticUtility;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;
@@ -401,25 +402,22 @@ public class GazetteerMatcher extends SolrMatcherSupport {
         // Reset counts.
         this.defaultFilterCount = 0;
         this.userFilterCount = 0;
-        String buffer = input.buffer;
         // during post-processing tags we may have to distinguish between
         // tagging/tokenizing
         // general vs. cjk vs. ar. But not yet though.
         // boolean useGeneralMode = DEFAULT_TAG_FIELD.equals(fld);
 
         long t0 = System.currentTimeMillis();
-        log.debug("TEXT SIZE = {}", buffer.length());
+        log.debug("TEXT SIZE = {}", input.buffer.length());
         params.set("field", fld);
         Map<Object, Object> beanMap = new HashMap<>(100);
-        QueryResponse response = tagTextCallSolrTagger(buffer, input.id, beanMap);
+        QueryResponse response = tagTextCallSolrTagger(input.buffer, input.id, beanMap);
         if (beanMap.isEmpty()) {
             // Nothing found.
             return new ArrayList<>();
         }
 
-        int[] textMetrics = TextUtils.measureCase(buffer);
-        input.isUpper = TextUtils.isUpperCaseDocument(textMetrics);
-        input.isLower = TextUtils.isLowerCaseDocument(textMetrics);
+        input.characterize();
 
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
@@ -474,11 +472,11 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // Get char immediately following match, for light NLP rules.
             char postChar = 0;
             char preChar;
-            if (x2 < buffer.length()) {
-                postChar = buffer.charAt(x2);
+            if (x2 < input.buffer.length()) {
+                postChar = input.buffer.charAt(x2);
             }
             if (x1 > 0) {
-                preChar = buffer.charAt(x1 - 1);
+                preChar = input.buffer.charAt(x1 - 1);
                 if (assessApostrophe(preChar, matchText)) {
                     ++this.defaultFilterCount;
                     continue;
@@ -546,7 +544,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * TagFilter here checks only languages other than English, Spanish
              * and Vietnamese.
              */
-            if (this.enableCaseFilter && filter.filterOut(pc, input.langid, input.isUpper, input.isLower)) {
+            if (this.enableCaseFilter && filter.filterOut(pc, input)) {
                 ++this.defaultFilterCount;
                 log.debug("STOPWORD {} {}", input.langid, pc.getText());
                 continue;
@@ -563,7 +561,7 @@ public class GazetteerMatcher extends SolrMatcherSupport {
              * fully named ones when inferring boundaries (states, provinces, etc)
              */
             pc.inferTextSense(input.isLower, input.isUpper);
-            pc.setSurroundingTokens(buffer);
+            pc.setSurroundingTokens(input.buffer);
 
             @SuppressWarnings("unchecked")
             List<Object> placeRecordIds = (List<Object>) tag.get("ids");

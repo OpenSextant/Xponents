@@ -1,5 +1,7 @@
 package org.opensextant.extractors.test;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -13,8 +15,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 import org.opensextant.ConfigException;
-import org.opensextant.extractors.geo.TagFilter;
+import org.opensextant.extraction.TagFilter;
+import org.opensextant.extractors.xtax.TaxonFilter;
 import org.opensextant.util.FileUtility;
 
 public class TestStopFilters {
@@ -39,7 +43,7 @@ public class TestStopFilters {
 
     // @Test
     public void test() {
-        String[] langSet = { "ja", "cjk", "th", "vi", "id", "ar" };
+        String[] langSet = {"ja", "cjk", "th", "vi", "id", "ar"};
         Map<String, Set<String>> stopFilters = new HashMap<>();
 
         for (String lg : langSet) {
@@ -73,6 +77,14 @@ public class TestStopFilters {
             Set<String> set = stopFilters.get(lang);
             System.out.println(String.format("Lang %s= %d terms", lang, set.size()));
         }
+
     }
 
+    @Test
+    public void testFilters() throws IOException {
+        TaxonFilter filter = new TaxonFilter();
+        assertTrue(filter.filterOut("A%B"));
+        assertFalse(filter.filterOut("A-B"));
+        assertTrue(filter.filterOut("A-B/C-D"));
+    }
 }

@@ -32,7 +32,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
 import org.opensextant.ConfigException;
-import org.opensextant.extractors.geo.TagFilter;
+import org.opensextant.extraction.TagFilter;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.SolrUtil;
 import org.opensextant.util.TextUtils;

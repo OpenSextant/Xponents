@@ -1214,6 +1214,7 @@ public class TextUtils {
     public static final String vietnameseLang = "vi";
     public static final String romanianLang = "ro";
     private static final Map<String, Language> languageMapISO639 = new HashMap<>();
+    private static Set<String> languageMapMidEast = new HashSet<>();
 
     /*
      * Initialize some langauge metadata.
@@ -1221,6 +1222,13 @@ public class TextUtils {
     static {
         try {
             initLOCLanguageData(); // LOC language data is a list of all known languages w/ISO codes.
+
+            languageMapMidEast.add("ar"); // Arabic
+            languageMapMidEast.add("ur"); // Urdu
+            languageMapMidEast.add("dr"); // Dari
+            languageMapMidEast.add("fa"); // Persian / Farsi
+            languageMapMidEast.add("ps"); // Pashto
+
         } catch (Exception err) {
             throw new RuntimeException("Failed to load static resources", err);
         }
@@ -1496,6 +1504,20 @@ public class TextUtils {
         }
         String id = lang.getISO639_1_Code();
         return (id.equals(englishLang));
+    }
+
+
+    /**
+     * returns true if language ID is one of Farsi/Dari/Persian, Arabic, Urdu, Pashto
+     * @param lid Language ID
+     * @return
+     */
+    public static boolean isMiddleEastern(String lid) {
+        if (lid == null) {
+            return false;
+        }
+        Language lg = getLanguage(lid);
+        return lg != null ? languageMapMidEast.contains(lg.getISO639_1_Code()) : false;
     }
 
     /**

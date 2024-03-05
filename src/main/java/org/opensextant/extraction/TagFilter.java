@@ -1,4 +1,4 @@
-package org.opensextant.extractors.geo;
+package org.opensextant.extraction;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +12,9 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.util.ClasspathResourceLoader;
 import org.opensextant.ConfigException;
-import org.opensextant.extraction.MatchFilter;
+import org.opensextant.data.TextInput;
+import org.opensextant.extractors.geo.GazetteerMatcher;
+import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.util.LuceneStopwords;
 import org.opensextant.util.TextUtils;
 import org.supercsv.io.CsvMapReader;
@@ -35,6 +37,7 @@ public class TagFilter extends MatchFilter {
     boolean filter_stopwords = true;
     boolean filter_on_case = true;
     Set<String> nonPlaceStopTerms = null;
+    public final static int GENERIC_LOWERCASE_MIN = 12;
 
     /*
      * Select languages for experimentation.
@@ -42,8 +45,8 @@ public class TagFilter extends MatchFilter {
     private final Map<String, Set<Object>> langStopFilters = new HashMap<>();
 
     /**
-     * NOTE: This expects the files are all available. This fails if resource
-     * files are missing.
+     * TagFilter is provides access to a superset of all stop filters for placenames, etc.
+     * for general purpose tag filtering.   This is tailored to placenames but also has general stop filters by lang
      *
      * @throws ConfigException if any file has a problem.
      */
@@ -136,69 +139,46 @@ public class TagFilter extends MatchFilter {
      * term, t, is a stop term in that language.
      *
      * @param t
-     * @param langId
-     * @param docIsUpper true if input doc is mostly upper
-     * @param docIsLower true if input doc is mostly lower
+     * @param tin TextInput object, that has been characterized()
      * @return
      */
-    public boolean filterOut(PlaceCandidate t, String langId, boolean docIsUpper, boolean docIsLower) {
+    public boolean filterOut(TextMatch t, TextInput tin) {
+
         /*
          * Consider no given language ID -- only short, non-ASCII terms should be filtered out
          * against all stop filters; Otherwise there is some performance issues.
          */
-        if (langId == null) {
+        if (tin.langid == null) {
             if (t.isASCII()) {
                 return false; /* Not filtering out short crap, right now. */
             } else if (t.getLength() < 4) {
-                return assessAllFilters(t.getText().toLowerCase());
+                return assessAllFilters(t.getTextnorm());
             }
         }
-        /*
+
+        /* CASE A -- input has language ID, so we filter MATCH against stop filters for that language.
          * Consider language specific stop filters.
          * NOTE: LangID should not be 'CJK' or group. langStopFilters keys stop terms by LangID
          */
-        if (langStopFilters.containsKey(langId)) {
-            Set<Object> terms = langStopFilters.get(langId);
-            return terms.contains(t.getText().toLowerCase());
+        if (langStopFilters.containsKey(tin.langid)) {
+            Set<Object> terms = langStopFilters.get(tin.langid);
+            if (terms.contains(t.getTextnorm())) {
+                return true;
+            }
         }
 
-        /*
-         * EXPERIMENTAL.
-         * But if langID is given, we first consider if text in document
-         * is possibly a Proper name of sort...
-         * UPPERCASENAME -- possibly stop?
-         * Upper Case Name -- pass; not stop
-         * not upper case name -- possibly stop.
-         */
-        if (!docIsUpper) {
+        if (tin.getCharacterization().hasCJK) {
+            // CASE B. - generalization for CJK text -- filter out trivial trigram and bigrams for CJK
+            return filterOutCJK(t);
+        } else if (tin.isMixedCase()) {
+            // CASE C. Allow Proper names
             char c = t.getText().charAt(0);
             if (Character.isUpperCase(c) && !t.isUpper()) {
                 // Proper Name, possibly. Not stopping.
                 return false;
             }
-        }
-
-        boolean cjk = TextUtils.isCJK(langId);
-
-        /*
-         * Bi-gram + whitespace filter for CJK:
-         */
-        if (cjk && filterOutCJK(t)) {
-            return true;
-        }
-
-        /*
-         * FILTER out lower case matches for non-English, non-CJK texts.
-         * If document is mixed case. That is we still expect/assume interesting
-         * place names to be proper names. However, if you find longer name matches ~10
-         * chars or longer
-         * as lower case names, then let them pass. 10 chars is arbitrary, but approx. 1
-         * word threshold.
-         */
-        if (!cjk) {
-            if (!docIsLower && !docIsUpper) {
-                return t.isLower() && t.getLength() < 10;
-            }
+            // CASE D. Filter out lower case text
+            return t.isLower() && t.getLength() < GENERIC_LOWERCASE_MIN;
         }
         return false;
     }
@@ -220,24 +200,38 @@ public class TagFilter extends MatchFilter {
     }
 
     /**
-     * Experimental. Hack.
+     * Experimental. As the name implies use this if know the content has CJK characters
+     *
      * Due to bi-gram shingling with CJK languages - Chinese, Japanese, Korean -
      * the matcher really over-matches, e.g. For really short matches, let's
      * rule out obvious bad matches.
      *
      * <pre>
      *  ... に た ... input text matched にた
-     * gazetteer place name.
+     * gazetteer place name;  But given the space in the match we think this is invalid.
      * </pre>
      * <p>
-     * TOOD: make use of better tokenizer/matcher
-     * in SolrTextTagger configuration for CJK
      *
      * @param t
      * @return
      */
-    private boolean filterOutCJK(PlaceCandidate t) {
-        return t.getLength() < 5 && TextUtils.count_ws(t.getText()) > 0;
+    private boolean filterOutCJK(TextMatch t) {
+
+        if (t instanceof PlaceCandidate) {
+            PlaceCandidate pc = (PlaceCandidate) t;
+            if (pc.getNDTextnorm() != null) {
+                // This non-diacritic version of text should always exist...
+                int normlen = pc.getNDTextnorm().length();
+                return normlen < 3 && normlen <= t.getLength();
+            }
+        } else {
+            // Any text from a TextMatch
+            String tnorm = TextUtils.phoneticReduction(t.getTextnorm(), false);
+            // This non-diacritic version of text should always exist...
+            int normlen = tnorm.length();
+            return normlen < 3 && normlen <= t.getLength();
+        }
+        return false;
     }
 
     /**
