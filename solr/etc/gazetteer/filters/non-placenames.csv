@@ -1,4 +1,4 @@
-exclusion,category
+﻿exclusion,category
 a.k.a,abbrev
 ab,abbrev
 acme,abbrev
@@ -72,10 +72,10 @@ pers,abbrev
 pharma,abbrev
 pjs,abbrev
 po,abbrev
-pty,abbrev
 pre,abbrev
 proj,abbrev
 pros,abbrev
+pty,abbrev
 pty,abbrev
 re,abbrev
 rec,abbrev
@@ -574,6 +574,7 @@ buona,adj.ita
 de novo,adj.ita
 dolce,adj.ita
 forte,adj.ita
+nazionale,adj.ita
 novo,adj.ita
 santi,adj.ita
 boa,adj.por
@@ -674,8 +675,10 @@ who,article
 moi,article.fre
 qui,article.fre
 sans,article.fre
-c�,article.ita
 che,article.ita
+cé,article.ita
+c'è,article.ita
+cè,article.ita
 gli,article.ita
 lui,article.ita
 tra,article.ita
@@ -918,6 +921,7 @@ blueberry,food
 burgers,food
 butternut,food
 cake,food
+caviar,food
 chai,food
 chili,food
 chive,food
@@ -935,6 +939,7 @@ flour,food
 food,food
 fries,food
 grape,food
+honeycomb,food
 jam,food
 latte,food
 lattes,food
@@ -1115,8 +1120,8 @@ kana,language
 kanji,language
 norsk,language
 português,language
-việt,language
 viét,language
+việt,language
 cana,latin
 canis,latin
 coli,latin
@@ -1125,6 +1130,7 @@ datum,latin
 deus,latin
 gratis,latin
 homo,latin
+modus,latin
 pas,latin
 philo,latin
 prima,latin
@@ -1457,6 +1463,7 @@ check,noun
 cheek,noun
 chef,noun
 chemistry,noun
+cheque,noun
 chess board,noun
 childs,noun
 chimney,noun
@@ -1660,6 +1667,7 @@ elders,noun
 electron,noun
 elf,noun
 embargo,noun
+emblem,noun
 eminence,noun
 encore,noun
 end,noun
@@ -1928,6 +1936,7 @@ labor,noun
 laboratory,noun
 labour,noun
 lack,noun
+lading,noun
 lamps,noun
 landfall,noun
 landing,noun
@@ -1999,9 +2008,9 @@ mailbox,noun
 main camp,noun
 maker,noun
 man,noun
-mania,noun
 management,noun
 mange,noun
+mania,noun
 manifesto,noun
 manifold,noun
 manner,noun
@@ -2087,6 +2096,7 @@ motto,noun
 mounts,noun
 mouse,noun
 mud,noun
+mug,noun
 mural,noun
 muscle,noun
 muse,noun
@@ -2468,6 +2478,7 @@ space,noun
 spares,noun
 sparks,noun
 spat,noun
+spate,noun
 spear,noun
 speculation,noun
 speed,noun
@@ -2522,6 +2533,7 @@ survey,noun
 suspension,noun
 sweepstakes,noun
 symphony,noun
+syndicate,noun
 system,noun
 tab,noun
 table,noun
@@ -2552,8 +2564,11 @@ tent,noun
 term,noun
 test,noun
 testing,noun
+the blockade,noun
 the head,noun
 the heads,noun
+the opening,noun
+the platform,noun
 the quake,noun
 the view,noun
 the views,noun
@@ -2670,6 +2685,7 @@ wars,noun
 washer,noun
 watchman,noun
 water tank,noun
+watermark,noun
 wave,noun
 waves,noun
 wax,noun
@@ -2819,7 +2835,6 @@ folks,person.label
 fool,person.label
 foreman,person.label
 founder,person.label
-the founder,person.label
 freak,person.label
 friar,person.label
 friend,person.label
@@ -2999,6 +3014,7 @@ students,person.label
 sultan,person.label
 teen,person.label
 tf,person.label
+the founder,person.label
 tourist,person.label
 trader,person.label
 traders,person.label
@@ -3255,6 +3271,7 @@ in an,phrase
 int,phrase
 je,phrase
 jif,phrase
+key point,phrase
 kinda,phrase
 knife point,phrase
 kool,phrase
@@ -3320,6 +3337,7 @@ olive branch,phrase
 on an island,phrase
 on in,phrase
 on point,phrase
+on the rocks,phrase
 on to,phrase
 one man,phrase
 one point,phrase
@@ -3369,6 +3387,7 @@ stopover,phrase
 story building,phrase
 ta,phrase
 task force,phrase
+the address,phrase
 the adobe,phrase
 the best,phrase
 the black,phrase
@@ -3665,6 +3684,7 @@ landmark,place.civil
 levy,place.civil
 library,place.civil
 lighthouse,place.civil
+living quarters,place.civil
 lodge,place.civil
 lookout,place.civil
 main entrance,place.civil
@@ -3774,6 +3794,7 @@ suite,place.civil
 summer home,place.civil
 supermarket,place.civil
 supreme court,place.civil
+tavern,place.civil
 temple,place.civil
 the capital,place.civil
 the corner,place.civil
@@ -3789,6 +3810,7 @@ the village,place.civil
 the well,place.civil
 theater,place.civil
 theme park,place.civil
+toilets,place.civil
 tower,place.civil
 towers,place.civil
 town hall,place.civil
@@ -3796,6 +3818,7 @@ townhouse,place.civil
 trade school,place.civil
 traffic stop,place.civil
 trail,place.civil
+trails,place.civil
 train station,place.civil
 trial court,place.civil
 tunnel,place.civil
@@ -4141,6 +4164,7 @@ thus,stopword
 bonjour,stopword.fre
 tre,stopword.fre
 vous,stopword.fre
+shi,stopword.ja
 het,stopword.nld
 tao,stopword.por
 #on,stopword.wordnet
@@ -4528,6 +4552,7 @@ experiment,verb
 express,verb
 fail,verb
 favor,verb
+fearing,verb
 fed,verb
 feed,verb
 fell,verb
@@ -4673,8 +4698,8 @@ oversee,verb
 owning,verb
 packed,verb
 pan,verb
-parse,verb
 pardon,verb
+parse,verb
 parting,verb
 passing,verb
 paste,verb
@@ -5087,14 +5112,18 @@ shaq,well-known.person
 uncle sam,well-known.person
 bleach,well-known.science
 botany,well-known.science
+botany,well-known.science
 bromide,well-known.science
 edema,well-known.science
 latitude,well-known.science
 lipid,well-known.science
 longitude,well-known.science
+magnesium,well-known.science
+magnet,well-known.science
 magnet,well-known.science
 mir,well-known.science
 ozone,well-known.science
+proton,well-known.science
 proton,well-known.science
 pyro,well-known.science
 quartz,well-known.science
@@ -5111,18 +5140,3 @@ uranium,well-known.science
 vapor,well-known.science
 volt,well-known.science
 x-ray,well-known.science
-botany,well-known.science
-proton,well-known.science
-magnet,well-known.science
-magnesium,well-known.science
-spate,noun
-honeycomb,food
-the opening,noun
-the blockade,noun
-the platform,noun
-on the rocks,phrase
-the address,phrase
-shi,stopword.ja
-fearing,verb
-nazionale,adj.it
-
