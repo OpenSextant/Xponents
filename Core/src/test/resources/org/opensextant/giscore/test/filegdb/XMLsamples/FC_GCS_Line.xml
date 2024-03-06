@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<esri:DataElement xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:esri="http://www.esri.com/schemas/ArcGIS/10.1" xsi:type="esri:DEFeatureClass">
+	<CatalogPath>\StateBoundaries</CatalogPath>
+	<Name>StateBoundaries</Name>
+	<ChildrenExpanded>false</ChildrenExpanded>
+	<DatasetType>esriDTFeatureClass</DatasetType>
+	<Versioned>false</Versioned>
+	<CanVersion>false</CanVersion>
+	<ConfigurationKeyword/>
+	<HasOID>true</HasOID>
+	<OIDFieldName>OBJECTID</OIDFieldName>
+	<Fields xsi:type="esri:Fields">
+		<FieldArray xsi:type="esri:ArrayOfField">
+			<Field xsi:type="esri:Field">
+				<Name>OBJECTID</Name>
+				<Type>esriFieldTypeOID</Type>
+				<IsNullable>false</IsNullable>
+				<Length>4</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<Required>true</Required>
+				<Editable>false</Editable>
+				<AliasName>OBJECTID</AliasName>
+				<ModelName>OBJECTID</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>Shape</Name>
+				<Type>esriFieldTypeGeometry</Type>
+				<IsNullable>true</IsNullable>
+				<Length>0</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<Required>true</Required>
+				<GeometryDef xsi:type="esri:GeometryDef">
+					<AvgNumPoints>0</AvgNumPoints>
+					<GeometryType>esriGeometryPolyline</GeometryType>
+					<HasM>false</HasM>
+					<HasZ>false</HasZ>
+					<SpatialReference xsi:type="esri:GeographicCoordinateSystem">
+						<WKT>GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4269]]</WKT>
+						<XOrigin>-400</XOrigin>
+						<YOrigin>-400</YOrigin>
+						<XYScale>11258999068426.238</XYScale>
+						<ZOrigin>-10000</ZOrigin>
+						<ZScale>10000</ZScale>
+						<MOrigin>-10000</MOrigin>
+						<MScale>10000</MScale>
+						<XYTolerance>8.9831528411952133e-009</XYTolerance>
+						<ZTolerance>0.001</ZTolerance>
+						<MTolerance>0.001</MTolerance>
+						<HighPrecision>true</HighPrecision>
+						<LeftLongitude>-180</LeftLongitude>
+						<WKID>4269</WKID>
+					</SpatialReference>
+					<GridSize0>0</GridSize0>
+					<GridSize1>0</GridSize1>
+					<GridSize2>0</GridSize2>
+				</GeometryDef>
+				<AliasName>Shape</AliasName>
+				<ModelName>Shape</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>TYPE</Name>
+				<Type>esriFieldTypeString</Type>
+				<IsNullable>true</IsNullable>
+				<Length>10</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>TYPE</AliasName>
+				<ModelName>TYPE</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>Shape_Length</Name>
+				<Type>esriFieldTypeDouble</Type>
+				<IsNullable>true</IsNullable>
+				<Length>8</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<Required>true</Required>
+				<Editable>false</Editable>
+				<AliasName>Shape_Length</AliasName>
+				<ModelName>Shape_Length</ModelName>
+			</Field>
+		</FieldArray>
+	</Fields>
+	<Indexes xsi:type="esri:Indexes">
+		<IndexArray xsi:type="esri:ArrayOfIndex">
+			<Index xsi:type="esri:Index">
+				<Name>FDO_OBJECTID</Name>
+				<IsUnique>true</IsUnique>
+				<IsAscending>true</IsAscending>
+				<Fields xsi:type="esri:Fields">
+					<FieldArray xsi:type="esri:ArrayOfField">
+						<Field xsi:type="esri:Field">
+							<Name>OBJECTID</Name>
+							<Type>esriFieldTypeOID</Type>
+							<IsNullable>false</IsNullable>
+							<Length>4</Length>
+							<Precision>0</Precision>
+							<Scale>0</Scale>
+							<Required>true</Required>
+							<Editable>false</Editable>
+							<AliasName>OBJECTID</AliasName>
+							<ModelName>OBJECTID</ModelName>
+						</Field>
+					</FieldArray>
+				</Fields>
+			</Index>
+			<Index xsi:type="esri:Index">
+				<Name>FDO_Shape</Name>
+				<IsUnique>false</IsUnique>
+				<IsAscending>true</IsAscending>
+				<Fields xsi:type="esri:Fields">
+					<FieldArray xsi:type="esri:ArrayOfField">
+						<Field xsi:type="esri:Field">
+							<Name>Shape</Name>
+							<Type>esriFieldTypeGeometry</Type>
+							<IsNullable>true</IsNullable>
+							<Length>0</Length>
+							<Precision>0</Precision>
+							<Scale>0</Scale>
+							<Required>true</Required>
+							<GeometryDef xsi:type="esri:GeometryDef">
+								<AvgNumPoints>0</AvgNumPoints>
+								<GeometryType>esriGeometryPolyline</GeometryType>
+								<HasM>false</HasM>
+								<HasZ>false</HasZ>
+								<SpatialReference xsi:type="esri:GeographicCoordinateSystem">
+									<WKT>GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4269]]</WKT>
+									<XOrigin>-400</XOrigin>
+									<YOrigin>-400</YOrigin>
+									<XYScale>11258999068426.238</XYScale>
+									<ZOrigin>-10000</ZOrigin>
+									<ZScale>10000</ZScale>
+									<MOrigin>-10000</MOrigin>
+									<MScale>10000</MScale>
+									<XYTolerance>8.9831528411952133e-009</XYTolerance>
+									<ZTolerance>0.001</ZTolerance>
+									<MTolerance>0.001</MTolerance>
+									<HighPrecision>true</HighPrecision>
+									<LeftLongitude>-180</LeftLongitude>
+									<WKID>4269</WKID>
+								</SpatialReference>
+								<GridSize0>0</GridSize0>
+								<GridSize1>0</GridSize1>
+								<GridSize2>0</GridSize2>
+							</GeometryDef>
+							<AliasName>Shape</AliasName>
+							<ModelName>Shape</ModelName>
+						</Field>
+					</FieldArray>
+				</Fields>
+			</Index>
+		</IndexArray>
+	</Indexes>
+	<CLSID>{52353152-891A-11D0-BEC6-00805F7C4268}</CLSID>
+	<EXTCLSID/>
+	<RelationshipClassNames xsi:type="esri:Names"/>
+	<AliasName>Internal state boundaries of the United States</AliasName>
+	<ModelName/>
+	<HasGlobalID>false</HasGlobalID>
+	<GlobalIDFieldName/>
+	<RasterFieldName/>
+	<ExtensionProperties xsi:type="esri:PropertySet">
+		<PropertyArray xsi:type="esri:ArrayOfPropertySetProperty"/>
+	</ExtensionProperties>
+	<ControllerMemberships xsi:type="esri:ArrayOfControllerMembership"/>
+	<FeatureType>esriFTSimple</FeatureType>
+	<ShapeType>esriGeometryPolyline</ShapeType>
+	<ShapeFieldName>Shape</ShapeFieldName>
+	<HasM>false</HasM>
+	<HasZ>false</HasZ>
+	<HasSpatialIndex>true</HasSpatialIndex>
+	<AreaFieldName/>
+	<LengthFieldName>Shape_Length</LengthFieldName>
+	<Extent xsi:nil="true"/>
+	<SpatialReference xsi:type="esri:GeographicCoordinateSystem">
+		<WKT>GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4269]]</WKT>
+		<XOrigin>-400</XOrigin>
+		<YOrigin>-400</YOrigin>
+		<XYScale>11258999068426.238</XYScale>
+		<ZOrigin>-10000</ZOrigin>
+		<ZScale>10000</ZScale>
+		<MOrigin>-10000</MOrigin>
+		<MScale>10000</MScale>
+		<XYTolerance>8.9831528411952133e-009</XYTolerance>
+		<ZTolerance>0.001</ZTolerance>
+		<MTolerance>0.001</MTolerance>
+		<HighPrecision>true</HighPrecision>
+		<LeftLongitude>-180</LeftLongitude>
+		<WKID>4269</WKID>
+	</SpatialReference>
+</esri:DataElement>

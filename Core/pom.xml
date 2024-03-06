@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opensextant</groupId>
   <artifactId>opensextant-xponents-core</artifactId>
-  <version>3.6.7</version>
+  <version>3.7.0</version>
   <packaging>jar</packaging>
   <name>OpenSextant Xponents Core API</name>
   <description>An information extraction toolkit focused on geography and temporal entities</description>
@@ -35,7 +35,7 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <slf4j.version>2.0.9</slf4j.version>
+    <slf4j.version>2.0.12</slf4j.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
   <distributionManagement>
@@ -50,6 +50,11 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.13.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -123,45 +128,25 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- GEODETIC MATH LIBS -->
+    <!-- GEODETIC MATH LIBS
+    - spatial4j is used by SolrGazetteer for spatial search
+    - Jetbrains annotations and RNG are used for testing and code hygiene - mostly for GISCore
+    -->
     <dependency>
       <groupId>org.locationtech.spatial4j</groupId>
       <artifactId>spatial4j</artifactId>
       <version>0.8</version>
     </dependency>
     <dependency>
-      <groupId>org.opensextant</groupId>
-      <artifactId>giscore</artifactId>
-      <version>2.0.2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>geodesy</artifactId>
-          <groupId>org.opensextant</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-lang</artifactId>
-          <groupId>commons-lang</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>24.1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.opensextant</groupId>
-      <artifactId>geodesy</artifactId>
-      <version>2.0.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>slf4j-simple</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
-          <groupId>findbugs</groupId>
-          <artifactId>annotations</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-rng-simple</artifactId>
+      <version>1.5</version>
+      <scope>test</scope>
     </dependency>
     <!-- LANG ID -->
     <dependency>
@@ -313,7 +298,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <source>1.8</source>
+          <source>11</source>
           <header>&lt;img alt='[OpenSextant Logo]' height='36' width='36'
             src='doc-files/opensextant-manual-logo.png'/&gt;&lt;br&gt;copyright OpenSextant.org, 2013-2022
           </header>

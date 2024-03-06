@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Liquid XML Studio - FREE Community Edition 7.0.5.906 (http://www.liquid-technologies.com) -->
+<kml xmlns="http://earth.google.com/kml/2.2">
+	<Document>
+		<name><![CDATA[Example KML File]]></name>
+		<description><![CDATA[]]></description>
+		<Schema name="TrailHeadType" id="TrailHeadTypeId">
+			<SimpleField type="string" name="TrailHeadName">
+				<displayName><![CDATA[<b>Trail Head Name</b>]]></displayName>
+			</SimpleField>
+			<SimpleField type="double" name="TrailLength">
+				<displayName><![CDATA[<i>The length in miles</i>]]></displayName>
+			</SimpleField>
+			<SimpleField type="int" name="ElevationGain">
+				<displayName><![CDATA[<i>change in altitude</i>]]></displayName>
+			</SimpleField>
+			<SimpleField type="string" name="LastWalked">
+				<displayName>Last walked date and time</displayName>
+			</SimpleField>
+		</Schema>
+		<Placemark>
+			<name>Simple placemark</name>
+			<description>Attached to the ground. Intelligently places itself at the
+	          height of the underlying terrain.</description>
+			<ExtendedData>
+				<SchemaData schemaUrl="#TrailHeadTypeId">
+					<SimpleData name="TrailHeadName">Hilton Head</SimpleData>
+					<SimpleData name="TrailLength">5.665</SimpleData>
+					<SimpleData name="ElevationGain">1503</SimpleData>
+					<SimpleData name="LastWalked">2008-08-31T11:45:30Z</SimpleData>
+				</SchemaData>
+			</ExtendedData>
+			<Point>
+				<coordinates>-122.0822035425683,37.42228990140251,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Multipoint placemark</name>
+	        <MultiGeometry>
+				<Point>
+					<coordinates>-90.0,40.0</coordinates>
+				</Point>
+				<Point>
+					<coordinates>-90.0,40.01</coordinates>
+				</Point>
+				<Point>
+					<coordinates>-90.01,40.0</coordinates>
+				</Point>
+			</MultiGeometry>
+		</Placemark>		
+	</Document>
+</kml>

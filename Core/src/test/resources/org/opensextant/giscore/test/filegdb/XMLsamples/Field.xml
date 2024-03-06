@@ -1,0 +1,11 @@
+﻿<esri:Field xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:esri='http://www.esri.com/schemas/ArcGIS/10.1' xsi:type='esri:Field'>
+  <Name>night</Name>
+  <Type>esriFieldTypeString</Type>
+  <IsNullable>true</IsNullable>
+  <Length>4</Length>
+  <Precision>0</Precision>
+  <Scale>0</Scale>
+  <AliasName>day</AliasName>
+  <ModelName>night</ModelName>
+  <DefaultValue xsi:type="xs:string">afternoon</DefaultValue>
+</esri:Field>

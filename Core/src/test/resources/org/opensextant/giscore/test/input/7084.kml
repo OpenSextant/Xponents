@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+	<name><![CDATA[Example KML File]]></name>
+	<description><![CDATA[]]></description>
+	
+    <StyleMap id="default">
+    <Pair>
+    	<key>normal</key>
+    	<styleUrl>#default_normal</styleUrl>
+    </Pair>
+    <Pair>
+    	<key>highlight</key>
+    	<styleUrl>#default_highlight</styleUrl>
+    </Pair>
+    </StyleMap>
+
+    <Style id="default_normal">
+    <IconStyle>
+      <scale>1</scale>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href>
+      </Icon>
+    </IconStyle>
+    <LabelStyle>
+    	<scale>0</scale>
+    </LabelStyle>
+    <BalloonStyle>
+      <bgColor>00000000</bgColor>
+      <text>
+        <![CDATA[
+      	  <body bgcolor="#000000" width="100%">
+      			<p><b><font color="#ffffff">$[name/displayName]:</font></b> <font color="#DDDDDD">$[name]</font></p>					
+		
+      			<p><b><font color="#ffffff">$[holeNumber/displayName]:</font></b> <font color="#DDDDDD">$[holeNumber]</font></p>					
+		
+      			<p><b><font color="#ffffff">$[holeYardage/displayName]:</font></b> <font color="#DDDDDD">$[holeYardage]</font></p>					
+		
+      			<p><b><font color="#ffffff">$[holePar/displayName]:</font></b> <font color="#DDDDDD">$[holePar]</font></p>					
+		
+      		<p align="center"><font size=3 face=arial color="#0099FF">Powered by GeoCommons</font></p>
+        ]]>
+      </text>
+    </BalloonStyle>
+    </Style>
+
+    <Style id="default_highlight">
+    <IconStyle>
+      <scale>1</scale>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle_highlight.png</href>
+      </Icon>
+    </IconStyle>
+    <LabelStyle>
+    	<scale>0</scale>
+    </LabelStyle>
+    <BalloonStyle>
+      <bgColor>00000000</bgColor>
+      <text>
+        <![CDATA[
+      	  <body bgcolor="#000000" width="100%">
+      			<p><b><font color="#ffffff">$[name/displayName]:</font></b> <font color="#DDDDDD">$[name]</font></p>					
+      			<p><b><font color="#ffffff">$[holeNumber/displayName]:</font></b> <font color="#DDDDDD">$[holeNumber]</font></p>					
+      			<p><b><font color="#ffffff">$[holeYardage/displayName]:</font></b> <font color="#DDDDDD">$[holeYardage]</font></p>					
+      			<p><b><font color="#ffffff">$[holePar/displayName]:</font></b> <font color="#DDDDDD">$[holePar]</font></p>					
+      		<p align="center"><font size=3 face=arial color="#0099FF">Powered by GeoCommons</font></p>
+        ]]>
+      </text>
+    </BalloonStyle>
+    </Style> 
+	
+		<Placemark>
+			<TimeStamp>
+  				<when>2008-01-03</when>
+			</TimeStamp> 
+			<styleUrl>#default</styleUrl>
+			
+			  <name><![CDATA[By the lake]]></name>
+			
+			
+
+			
+			<ExtendedData>
+					<Data name='name'>
+						<displayName><![CDATA[name]]></displayName>
+						<value><![CDATA[By the lake]]></value>
+					</Data>
+									<Data name='holeNumber'>
+						<displayName><![CDATA[holeNumber]]></displayName>
+						<value><![CDATA[5]]></value>
+					</Data>
+									<Data name='holePar'>
+						<displayName><![CDATA[holePar]]></displayName>
+						<value><![CDATA[5]]></value>
+					</Data>
+									<Data name='holeYardage'>
+						<displayName><![CDATA[holeYardage]]></displayName>
+						<value><![CDATA[523]]></value>
+					</Data>
+							</ExtendedData>
+			
+			
+			  <Point>
+<coordinates>-111.95,33.5024</coordinates>
+</Point>
+
+			
+		</Placemark>
+	
+		<Placemark>
+			<styleUrl>#default</styleUrl>
+			
+			  <name><![CDATA[Club house]]></name>
+			<TimeSpan>
+  				<begin>2008-12-01</begin>
+  				<end>2008-12-31</end>
+			</TimeSpan> 
+			
+			
+			
+			<ExtendedData>
+									<Data name='name'>
+						<displayName><![CDATA[name]]></displayName>
+						<value><![CDATA[Club house]]></value>
+					</Data>
+									<Data name='holeNumber'>
+						<displayName><![CDATA[holeNumber]]></displayName>
+						<value><![CDATA[1]]></value>
+					</Data>
+									<Data name='holePar'>
+						<displayName><![CDATA[holePar]]></displayName>
+						<value><![CDATA[4]]></value>
+					</Data>
+									<Data name='holeYardage'>
+						<displayName><![CDATA[holeYardage]]></displayName>
+						<value><![CDATA[234]]></value>
+					</Data>
+							</ExtendedData>
+			
+			
+			  <Point>
+<coordinates>-111.956,33.5043</coordinates>
+</Point>
+
+			
+		</Placemark>
+	
+</Document>
+</kml>

@@ -1,0 +1,11 @@
+﻿<esri:Subtype xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:esri="http://www.esri.com/schemas/ArcGIS/10.1" xsi:type="esri:Subtype">
+  <SubtypeName>subtype three</SubtypeName>
+  <SubtypeCode>99</SubtypeCode>
+  <FieldInfos xsi:type="esri:ArrayOfSubtypeFieldInfo">
+    <SubtypeFieldInfo xsi:type="esri:SubtypeFieldInfo">
+      <FieldName>percentComplete</FieldName>
+      <DomainName>sampleRangeDomain</DomainName>
+      <DefaultValue xsi:type="xs:double">56</DefaultValue>
+    </SubtypeFieldInfo>
+  </FieldInfos>
+</esri:Subtype>

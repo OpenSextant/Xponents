@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<esri:DataElement xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:esri="http://www.esri.com/schemas/ArcGIS/10.1" xsi:type="esri:DEFeatureClass">
+	<CatalogPath>\CitiesRobinson</CatalogPath>
+	<Name>CitiesRobinson</Name>
+	<ChildrenExpanded>false</ChildrenExpanded>
+	<DatasetType>esriDTFeatureClass</DatasetType>
+	<Versioned>false</Versioned>
+	<CanVersion>false</CanVersion>
+	<ConfigurationKeyword/>
+	<HasOID>true</HasOID>
+	<OIDFieldName>OBJECTID</OIDFieldName>
+	<Fields xsi:type="esri:Fields">
+		<FieldArray xsi:type="esri:ArrayOfField">
+			<Field xsi:type="esri:Field">
+				<Name>OBJECTID</Name>
+				<Type>esriFieldTypeOID</Type>
+				<IsNullable>false</IsNullable>
+				<Length>4</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<Required>true</Required>
+				<Editable>false</Editable>
+				<AliasName>OBJECTID</AliasName>
+				<ModelName>OBJECTID</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>SHAPE</Name>
+				<Type>esriFieldTypeGeometry</Type>
+				<IsNullable>true</IsNullable>
+				<Length>0</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<Required>true</Required>
+				<GeometryDef xsi:type="esri:GeometryDef">
+					<AvgNumPoints>0</AvgNumPoints>
+					<GeometryType>esriGeometryPoint</GeometryType>
+					<HasM>false</HasM>
+					<HasZ>false</HasZ>
+					<SpatialReference xsi:type="esri:ProjectedCoordinateSystem">
+						<WKT>PROJCS["World_Robinson",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Robinson"],PARAMETER["False_Easting",0.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],UNIT["Meter",1.0],AUTHORITY["ESRI",54030]]</WKT>
+						<XOrigin>-16987000</XOrigin>
+						<YOrigin>-8615900</YOrigin>
+						<XYScale>10000</XYScale>
+						<ZOrigin>-100000</ZOrigin>
+						<ZScale>10000</ZScale>
+						<MOrigin>-100000</MOrigin>
+						<MScale>10000</MScale>
+						<XYTolerance>0.001</XYTolerance>
+						<ZTolerance>0.001</ZTolerance>
+						<MTolerance>0.001</MTolerance>
+						<HighPrecision>true</HighPrecision>
+						<WKID>54030</WKID>
+					</SpatialReference>
+					<GridSize0>0</GridSize0>
+				</GeometryDef>
+				<AliasName>SHAPE</AliasName>
+				<ModelName>SHAPE</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>CITY_FIPS</Name>
+				<Type>esriFieldTypeString</Type>
+				<IsNullable>true</IsNullable>
+				<Length>5</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>CITY_FIPS</AliasName>
+				<ModelName>CITY_FIPS</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>CITY_NAME</Name>
+				<Type>esriFieldTypeString</Type>
+				<IsNullable>true</IsNullable>
+				<Length>40</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>CITY_NAME</AliasName>
+				<ModelName>CITY_NAME</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>STATE_FIPS</Name>
+				<Type>esriFieldTypeString</Type>
+				<IsNullable>true</IsNullable>
+				<Length>2</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>STATE_FIPS</AliasName>
+				<ModelName>STATE_FIPS</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>STATE_NAME</Name>
+				<Type>esriFieldTypeString</Type>
+				<IsNullable>true</IsNullable>
+				<Length>25</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>STATE_NAME</AliasName>
+				<ModelName>STATE_NAME</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>STATE_CITY</Name>
+				<Type>esriFieldTypeString</Type>
+				<IsNullable>true</IsNullable>
+				<Length>7</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>STATE_CITY</AliasName>
+				<ModelName>STATE_CITY</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>TYPE</Name>
+				<Type>esriFieldTypeString</Type>
+				<IsNullable>true</IsNullable>
+				<Length>25</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>TYPE</AliasName>
+				<ModelName>TYPE</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>CAPITAL</Name>
+				<Type>esriFieldTypeString</Type>
+				<IsNullable>true</IsNullable>
+				<Length>1</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>CAPITAL</AliasName>
+				<ModelName>CAPITAL</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>ELEVATION</Name>
+				<Type>esriFieldTypeSmallInteger</Type>
+				<IsNullable>true</IsNullable>
+				<Length>2</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>ELEVATION</AliasName>
+				<ModelName>ELEVATION</ModelName>
+			</Field>
+			<Field xsi:type="esri:Field">
+				<Name>POP1990</Name>
+				<Type>esriFieldTypeInteger</Type>
+				<IsNullable>true</IsNullable>
+				<Length>4</Length>
+				<Precision>0</Precision>
+				<Scale>0</Scale>
+				<AliasName>POP1990</AliasName>
+				<ModelName>POP1990</ModelName>
+			</Field>
+		</FieldArray>
+	</Fields>
+		<Indexes xsi:type="esri:Indexes">
+		<IndexArray xsi:type="esri:ArrayOfIndex">
+			<Index xsi:type="esri:Index">
+				<Name>FDO_OBJECTID</Name>
+				<IsUnique>true</IsUnique>
+				<IsAscending>true</IsAscending>
+				<Fields xsi:type="esri:Fields">
+				<FieldArray xsi:type="esri:ArrayOfField">
+					<Field xsi:type="esri:Field">
+						<Name>OBJECTID</Name>
+						<Type>esriFieldTypeOID</Type>
+						<IsNullable>false</IsNullable>
+						<Length>4</Length>
+						<Precision>0</Precision>
+						<Scale>0</Scale>
+						<Required>true</Required>
+						<Editable>false</Editable>
+						<AliasName>OBJECTID</AliasName>
+						<ModelName>OBJECTID</ModelName>
+					</Field>
+				</FieldArray>
+				</Fields>
+			</Index>
+			<Index xsi:type="esri:Index">
+				<Name>FDO_SHAPE</Name>
+				<IsUnique>false</IsUnique>
+				<IsAscending>true</IsAscending>
+				<Fields xsi:type="esri:Fields">
+				<FieldArray xsi:type="esri:ArrayOfField">
+					<Field xsi:type="esri:Field">
+						<Name>SHAPE</Name>
+						<Type>esriFieldTypeGeometry</Type>
+						<IsNullable>true</IsNullable>
+						<Length>0</Length>
+						<Precision>0</Precision>
+						<Scale>0</Scale>
+						<Required>true</Required>
+						<GeometryDef xsi:type="esri:GeometryDef">
+							<AvgNumPoints>0</AvgNumPoints>
+							<GeometryType>esriGeometryPoint</GeometryType>
+							<HasM>false</HasM>
+							<HasZ>false</HasZ>
+							<SpatialReference xsi:type="esri:ProjectedCoordinateSystem">
+								<WKT>PROJCS["World_Robinson",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Robinson"],PARAMETER["False_Easting",0.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],UNIT["Meter",1.0],AUTHORITY["ESRI",54030]]</WKT>
+								<XOrigin>-16987000</XOrigin>
+								<YOrigin>-8615900</YOrigin>
+								<XYScale>10000</XYScale>
+								<ZOrigin>-100000</ZOrigin>
+								<ZScale>10000</ZScale>
+								<MOrigin>-100000</MOrigin>
+								<MScale>10000</MScale>
+								<XYTolerance>0.001</XYTolerance>
+								<ZTolerance>0.001</ZTolerance>
+								<MTolerance>0.001</MTolerance>
+								<HighPrecision>true</HighPrecision>
+								<WKID>54030</WKID>
+							</SpatialReference>
+							<GridSize0>115303.299689961</GridSize0>
+						</GeometryDef>
+						<AliasName>SHAPE</AliasName>
+						<ModelName>SHAPE</ModelName>
+					</Field>
+				</FieldArray>
+				</Fields>
+			</Index>
+		</IndexArray>
+	</Indexes>	
+	<CLSID>{52353152-891A-11D0-BEC6-00805F7C4268}</CLSID>
+	<EXTCLSID/>
+	<RelationshipClassNames xsi:type="esri:Names"/>
+	<AliasName/>
+	<ModelName/>
+	<HasGlobalID>false</HasGlobalID>
+	<GlobalIDFieldName/>
+	<RasterFieldName/>
+	<ExtensionProperties xsi:type="esri:PropertySet">
+		<PropertyArray xsi:type="esri:ArrayOfPropertySetProperty"/>
+	</ExtensionProperties>
+	<ControllerMemberships xsi:type="esri:ArrayOfControllerMembership"/>
+	<FeatureType>esriFTSimple</FeatureType>
+	<ShapeType>esriGeometryPoint</ShapeType>
+	<ShapeFieldName>SHAPE</ShapeFieldName>
+	<HasM>false</HasM>
+	<HasZ>false</HasZ>
+	<HasSpatialIndex>true</HasSpatialIndex>
+	<AreaFieldName/>
+	<LengthFieldName/>
+	<Extent xsi:nil="true"/>
+	<SpatialReference xsi:type="esri:ProjectedCoordinateSystem">
+		<WKT>PROJCS["World_Robinson",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Robinson"],PARAMETER["False_Easting",0.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],UNIT["Meter",1.0],AUTHORITY["ESRI",54030]]</WKT>
+		<XOrigin>-16987000</XOrigin>
+		<YOrigin>-8615900</YOrigin>
+		<XYScale>10000</XYScale>
+		<ZOrigin>-100000</ZOrigin>
+		<ZScale>10000</ZScale>
+		<MOrigin>-100000</MOrigin>
+		<MScale>10000</MScale>
+		<XYTolerance>0.001</XYTolerance>
+		<ZTolerance>0.001</ZTolerance>
+		<MTolerance>0.001</MTolerance>
+		<HighPrecision>true</HighPrecision>
+		<WKID>54030</WKID>
+	</SpatialReference>
+</esri:DataElement>

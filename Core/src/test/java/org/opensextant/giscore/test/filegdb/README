@@ -1,0 +1,14 @@
+These tests require the presence of the FileGDB API library from ESRI and 
+the appropriately compiled JNI library. Both should be compiled for a 
+64 bit platform. 
+
+For Windows you'll also need to install the Microsoft Visual C++ 2010 
+Redistributable Package and the .Net 3.5 framework to satisfy the dll dependencies.
+Install the .Net 3.5 SDK if you are running in debug mode. 
+
+java.library.path only affects the loading of the dll from java, not the 
+dependencies of the dll. For that you must set the PATH under Windows or the
+LD_LIBRARY_PATH under Linux.
+
+ 
+ 
