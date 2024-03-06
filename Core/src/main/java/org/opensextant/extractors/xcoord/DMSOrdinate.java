@@ -49,8 +49,8 @@ public final class DMSOrdinate {
     private boolean isLatitude = false;
 
     /** Where does the Degree value begin in text? */
-    protected int offsetDeg = -1;
-    protected int offsetOrdinate = -1;
+    int offsetDeg = -1;
+    int offsetOrdinate = -1;
 
     /**
      *
@@ -224,7 +224,7 @@ public final class DMSOrdinate {
      * and fractional seconds, pattern has errors hDDD:MM:SS.sss
      * .ddd, .mmm, .sss --- as many decimal places as there are h --- +/- hemisphere
      */
-    protected void set_normalized_text() {
+    private void set_normalized_text() {
 
         String d = normalizedValues.get("deg");
         String m = normalizedValues.get("min");
@@ -681,7 +681,7 @@ public final class DMSOrdinate {
 
     public static final String[] hemiLonFields = {"hemiLon", "hemiLonSign", "hemiLonPre"};
 
-    protected int offsetHemi = -1;
+    int offsetHemi = -1;
 
     private void findHemiOffset(String[] fieldNames) {
         /*

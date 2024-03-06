@@ -1,10 +1,10 @@
 package org.opensextant.annotations.test;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.opensextant.annotations.Annotation;
 import org.opensextant.annotations.AnnotationHelper;
 import org.opensextant.data.Place;
+import static org.junit.Assert.fail;
 
 public class EntityAnnotTests {
 

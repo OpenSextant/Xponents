@@ -5,14 +5,14 @@ package  org.opensextant.data;
 public interface MatchSchema{
 
     /** Core metadata type */
-    public static final String VAL_COUNTRY = "country";
+    String VAL_COUNTRY = "country";
     /** Core metadata type */
-    public static final String VAL_COORD = "coord";
+    String VAL_COORD = "coord";
     /** Core metadata type */
-    public static final String VAL_PLACE = "place";
+    String VAL_PLACE = "place";
     /** Core metadata type */
-    public static final String VAL_TAXON = "taxon";
+    String VAL_TAXON = "taxon";
     /** Core metadata type */
-    public static final String VAL_POSTAL = "postal";
+    String VAL_POSTAL = "postal";
 
 }

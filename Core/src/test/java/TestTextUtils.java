@@ -1,12 +1,8 @@
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.opensextant.util.TextUtils;
 import org.opensextant.util.Unimap;
+import static org.junit.Assert.*;
 
 public class TestTextUtils {
 
@@ -133,7 +129,7 @@ public class TestTextUtils {
         String UPPER = "This IS MOSTLY 898 UPPER Case data $%%";
         String LOWER = "This is mostly lower cased data çx®tÇ 512131";
 
-        /**
+        /*
          * UPPER CASE tests. Mostly upper case vs. all upper case.
          */
         int[] checkCase = TextUtils.measureCase(UPPER);
@@ -147,7 +143,7 @@ public class TestTextUtils {
             assertTrue(TextUtils.isUpperCaseDocument(checkCase));
         }
 
-        /**
+        /*
          * LOWER CASE tests. Mostly lower case vs. all lower case.
          */
         checkCase = TextUtils.measureCase(LOWER);

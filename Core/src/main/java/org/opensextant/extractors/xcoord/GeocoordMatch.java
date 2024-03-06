@@ -422,7 +422,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
      * @return string number of whole meters of precision
      */
     public String formatPrecision() {
-        return "" + (int) precision.precision;
+        return String.format("%d", (int)precision.precision);
     }
 
     /**
@@ -984,10 +984,7 @@ public class GeocoordMatch extends TextMatch implements Geocoding {
         if (latSep == null || lonSep == null) {
             return true;
         }
-        if (!latSep.equals(lonSep)) {
-            return true;
-        }
+        return !latSep.equals(lonSep);
         // Check more separators?
-        return false;
     }
 }

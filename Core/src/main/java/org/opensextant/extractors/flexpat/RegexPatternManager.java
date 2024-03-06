@@ -168,7 +168,7 @@ public abstract class RegexPatternManager {
         }
     }
 
-    private StringBuilder configMessages = new StringBuilder();
+    private final StringBuilder configMessages = new StringBuilder();
 
     /**
      * Initializes the pattern manager implementations. Reads the DEFINEs and RULEs
@@ -349,7 +349,7 @@ public abstract class RegexPatternManager {
             patterns.put(pat.id, pat);
 
             if (!validate_pattern(pat)) {
-                throw new IOException("Invalid Pattern @ " + pat.toString());
+                throw new IOException("Invalid Pattern @ " + pat);
             }
         }
 

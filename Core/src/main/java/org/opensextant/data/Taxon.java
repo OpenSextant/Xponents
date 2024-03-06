@@ -134,6 +134,6 @@ public class Taxon {
         if (termset == null) {
             return name;
         }
-        return name + " " + termset.toString();
+        return name + " " + termset;
     }
 }

@@ -1,11 +1,9 @@
 package org.opensextant.annotations.test;
 
-import static org.junit.Assert.assertTrue;
-
+import jodd.json.JsonParser;
 import org.junit.Test;
 import org.opensextant.annotations.Annotation;
-
-import jodd.json.JsonParser;
+import static org.junit.Assert.assertTrue;
 
 public class TestAnnot {
 

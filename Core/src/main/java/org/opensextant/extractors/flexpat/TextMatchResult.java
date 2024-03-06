@@ -51,7 +51,7 @@ public class TextMatchResult {
      */
     public List<TextMatch> matches = null;
 
-    private StringBuilder msgTrace = new StringBuilder();
+    private final StringBuilder msgTrace = new StringBuilder();
 
     /**
      * @param msg processing/matching message

@@ -39,7 +39,7 @@ import static org.opensextant.util.GeodeticUtility.geohash;
  */
 public class GeonamesUtility {
 
-    private static Logger logger = LoggerFactory.getLogger(GeonamesUtility.class);
+    private static final Logger logger = LoggerFactory.getLogger(GeonamesUtility.class);
 
     private final Map<String, Country> isoCountries = new HashMap<>();
     private final Map<String, Country> fipsCountries = new HashMap<>();
@@ -244,7 +244,7 @@ public class GeonamesUtility {
      * offset hour covers about
      * 15deg. Any answer you get here is likely best used with a range of fuziness,
      * e.g., +/- 5deg.
-     * REFERENCE: https://en.wikipedia.org/wiki/List_of_UTC_time_offsets
+     * REFERENCE: <a href="https://en.wikipedia.org/wiki/List_of_UTC_time_offsets">...</a>
      *
      * @param utc UTC offset
      * @return approximated longitude, in degrees
@@ -258,15 +258,15 @@ public class GeonamesUtility {
     /**
      * Fast TZ/Country lookup by label
      */
-    private Map<String, Set<String>> tz2cc = new HashMap<>();
+    private final Map<String, Set<String>> tz2cc = new HashMap<>();
     /**
      * Fast TZ/Country lookup by UTC offset
      */
-    private Map<Double, Set<String>> utc2cc = new HashMap<>();
+    private final Map<Double, Set<String>> utc2cc = new HashMap<>();
     /**
      * Fast TZ/Country lookup by DST offset.
      */
-    private Map<Double, Set<String>> dst2cc = new HashMap<>();
+    private final Map<Double, Set<String>> dst2cc = new HashMap<>();
 
     /**
      * List all countries in a particular TZ
@@ -397,7 +397,7 @@ public class GeonamesUtility {
      * other metrics.
      *
      * <pre>
-     *  Schema: http://download.geonames.org/export/dump/ pass in the files
+     *  Schema: <a href="http://download.geonames.org/export/dump/">...</a> pass in the files
      * formatted in geonames.org format, and named citiesNNNN.zip (.txt) where
      * NNNN is the population threshold.
      * </pre>
@@ -589,7 +589,7 @@ public class GeonamesUtility {
             }
         }
 
-        /**
+        /*
          * Important data for many tools where time-of-day or other metadata is
          * meaningful.
          */
@@ -603,7 +603,7 @@ public class GeonamesUtility {
      * this is US +
      * territories only (as of v2.8.17)
      *
-     * @return Array of Admin Level 1 Place objects
+     * @return List of Admin Level 1 Place objects
      * @since 2.8.17
      * @deprecated Use getUSStateMetadata
      */
@@ -619,15 +619,15 @@ public class GeonamesUtility {
      * this is US +
      * territories only (as of v2.8.17)
      *
-     * @return Array of US States (Admin Level 1) Place objects
+     * @return List of US States (Admin Level 1) Place objects
      */
     public List<Place> getUSStateMetadata() {
         return usStateMetadata;
     }
 
-    private List<Place> usStateMetadata = new ArrayList<>();
-    private List<Place> admin1Metadata = new ArrayList<>();
-    private Map<String, Place> admin1MetadataMap = new HashMap<>();
+    private final List<Place> usStateMetadata = new ArrayList<>();
+    private final List<Place> admin1Metadata = new ArrayList<>();
+    private final Map<String, Place> admin1MetadataMap = new HashMap<>();
 
     /**
      * Alias for getWorldAdmin1Metadata.
@@ -1066,7 +1066,7 @@ public class GeonamesUtility {
      * @return
      */
     public static boolean isPoliticalEntity(String featCode) {
-        return featCode != null ? featCode.startsWith("PCL") : false;
+        return featCode != null && featCode.startsWith("PCL");
     }
 
     /**
@@ -1172,10 +1172,7 @@ public class GeonamesUtility {
         if ( "A".equalsIgnoreCase(featClass)){
             return true;
         }
-        if (featCode!=null && "P".equalsIgnoreCase(featClass) && featCode.startsWith("PPLA")){
-            return true;
-        }
-        return false;
+        return featCode != null && "P".equalsIgnoreCase(featClass) && featCode.startsWith("PPLA");
     }
 
     /**

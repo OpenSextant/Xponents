@@ -1,6 +1,11 @@
 package org.opensextant.extractors.test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -312,7 +317,7 @@ public class TestXCoord {
                 tst.setRemarks(rmks);
 
                 TextMatchResult results = xcoord.extract_coordinates(tst.text, tst.id);
-                /**
+                /*
                  * tst.family_id
                  */
                 results.add_trace("Test Payload: " + tst.text);

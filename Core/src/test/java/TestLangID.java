@@ -1,12 +1,11 @@
-import static org.junit.Assert.*;
+import java.io.File;
+import java.net.URL;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opensextant.data.Language;
 import org.opensextant.extractors.langid.LangDetect;
-
-import java.io.File;
-import java.net.URL;
+import static org.junit.Assert.assertEquals;
 
 public class TestLangID {
 
@@ -76,14 +75,12 @@ public class TestLangID {
         lid = langid.detectSocialMediaLang("en", t);
         print(t, lid, "lower case.");
 
-        /** A tweet */
         String cjkText = "@xxxxxxxxxxxxx 재환아 ㅜㅠ 너두 감기 조심하구 옷 꼭꼭 챙겨입구 따신거 먹엉 ㅠㅠㅠ 촬영 힘내서 잘해요ヽ(；▽；)ノ"; /* Korean */
         String chiText = "2014年韩国影展 10部展映影片介绍: 《流感》香港版海报1、流感감기TheFlu导演：金成洙KIMSung-soo主演：张赫JANGHyuk秀爱SuAe类型：动作/剧情/冒险片长：121分钟制作年份：2013年剧情一... http://t.co/5mR4RNLL9f";
         String[] japText = { "おいおい大事な穴馬が...。 RT gendai_keiba: マイルＣＳ、サンライズメジャーが感冒のため出走取消（枠順発表前）。",
                 "余は、流行りの感冒にかかった。朝議は欠席する。守護職に急ぎ使いを送り、病になれ。参内するなと伝えよ。" };
         String koText = "사드 해법의 숨통 트게 한 朴대통령의";
 
-        /** Cybozu classifies this as Albanian: */
         String notChinese = "RT @1jqi: 千千万万用户不在乎RT @tyuidl: 总算见识了传说中的杀毒软件公司放病毒。 http://abc.co/6789afguhqrt";
         lid = langid.detectSocialMediaLang("zh", cjkText);
         print(cjkText, lid, "Korean/CJK test");

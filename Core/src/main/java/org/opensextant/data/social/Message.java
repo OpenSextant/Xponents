@@ -212,7 +212,7 @@ public class Message {
 
     public static final int OFFSET_HALF = 86400 / 2;
 
-    public static final boolean validateUTCOffset(int o) {
+    public static boolean validateUTCOffset(int o) {
         return Math.abs(o) < OFFSET_HALF;
     }
 
@@ -222,7 +222,7 @@ public class Message {
      * @param o
      * @return
      */
-    public static final double toUTCOffsetHours(int o) {
+    public static double toUTCOffsetHours(int o) {
         return (double) o / 3600;
     }
 
@@ -240,9 +240,6 @@ public class Message {
         if (t.utcOffset == Message.UNSET_UTC_OFFSET) {
             return false;
         }
-        if (validateUTCOffset(t.utcOffset)) {
-            return true;
-        }
-        return false;
+        return validateUTCOffset(t.utcOffset);
     }
 }

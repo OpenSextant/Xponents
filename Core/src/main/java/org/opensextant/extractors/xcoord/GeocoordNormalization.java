@@ -307,13 +307,9 @@ public final class GeocoordNormalization {
         if (lat.hasSubDegrees() && lon.hasSubMinutes()) {
             return false;
         }
-        if (lon.hasSubDegrees() && lat.hasSubMinutes()) {
-            return false;
-        }
+        return !lon.hasSubDegrees() || !lat.hasSubMinutes();
 
         // Okay, you got here, you have possible SUBDEGRE
-
-        return true;
     }
 
     /**

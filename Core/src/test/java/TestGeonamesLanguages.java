@@ -1,12 +1,9 @@
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.util.Collection;
 
 import org.junit.Test;
 import org.opensextant.util.GeonamesUtility;
+import static org.junit.Assert.*;
 
 public class TestGeonamesLanguages {
 

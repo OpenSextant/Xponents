@@ -21,14 +21,14 @@ import java.util.Collection;
  */
 public interface DeepEyeStore {
 
-    public abstract void connect() throws DeepEyeException;
+    void connect() throws DeepEyeException;
 
-    public abstract void disconnect();
+    void disconnect();
 
     /**
      * Add new record.
      */
-    public abstract void add(Record R) throws DeepEyeException;
+    void add(Record R) throws DeepEyeException;
 
     /**
      * The implementation of a record update
@@ -36,7 +36,7 @@ public interface DeepEyeStore {
      * @param R record to update
      * @throws DeepEyeException on failure to update Record
      */
-    public abstract void update(Record R) throws DeepEyeException;
+    void update(Record R) throws DeepEyeException;
 
     /**
      * Suggested Save operation: check if exists, update if it does, otherwise
@@ -48,10 +48,10 @@ public interface DeepEyeStore {
      *                          lack of privileges,
      *                          or inability to overwrite existing.
      */
-    public abstract void save(Record R) throws DeepEyeException;
+    void save(Record R) throws DeepEyeException;
 
     /** Update only the state of a record */
-    public abstract void updateState(Record R) throws DeepEyeException;
+    void updateState(Record R) throws DeepEyeException;
 
     /**
      * find a single record. Avoid the overhead of a cursor for "findOne" query.
@@ -61,12 +61,12 @@ public interface DeepEyeStore {
      * @param id
      * @return Deepeye Record object
      */
-    public abstract Record findRecord(String id) throws DeepEyeException;
+    Record findRecord(String id) throws DeepEyeException;
 
     /**
      * add a single Annotation.
      */
-    public abstract void add(Annotation A) throws DeepEyeException;
+    void add(Annotation A) throws DeepEyeException;
 
     /**
      * add a list of entity annotations.
@@ -74,22 +74,22 @@ public interface DeepEyeStore {
      * @param aList
      * @throws DeepEyeException
      */
-    public abstract void add(Collection<Annotation> aList) throws DeepEyeException;
+    void add(Collection<Annotation> aList) throws DeepEyeException;
 
     /**
      * Update an existing annotation. This does nothing if the annotation does not
      * exist in the
      * database.
      */
-    public abstract void update(Annotation A) throws DeepEyeException;
+    void update(Annotation A) throws DeepEyeException;
 
     /**
      * given the shell of a record, find similar records.
      */
-    public abstract java.util.List<Record> findSimilar(Record q) throws DeepEyeException;
+    java.util.List<Record> findSimilar(Record q) throws DeepEyeException;
 
     /**
      * given the shell of a annot, find similar records.
      */
-    public abstract java.util.List<Annotation> findSimilar(Annotation q);
+    java.util.List<Annotation> findSimilar(Annotation q);
 }

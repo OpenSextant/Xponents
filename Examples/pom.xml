@@ -7,14 +7,14 @@
        To avoid pulling in irrelevant items.
    -->
   <groupId>org.opensextant</groupId>
-  <version>3.6.0-SNAPSHOT</version>
+  <version>3.7.0-SNAPSHOT</version>
   <name>Xponent Examples</name>
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
     <slf4j.version>2.0.9</slf4j.version>
-    <xponents.version>3.6.7</xponents.version>
-    <xponents-core.version>3.6.7</xponents-core.version>
+    <xponents.version>3.7.0</xponents.version>
+    <xponents-core.version>3.7.0</xponents-core.version>
     <xtext.version>3.6.6</xtext.version>
   </properties>
   <dependencies>

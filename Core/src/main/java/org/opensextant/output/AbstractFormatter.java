@@ -107,7 +107,6 @@ public abstract class AbstractFormatter implements ResultsFormatter, MatchInterp
     /**
      * A basic job name that reflects file name
      *
-     * @return
      */
     @Override
     public String getJobName() {

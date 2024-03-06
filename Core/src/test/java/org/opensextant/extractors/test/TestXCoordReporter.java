@@ -184,7 +184,7 @@ public class TestXCoordReporter {
                 row.put(header[14], mgrs);
 
                 row.put(header[15], m.formatPrecision());
-                row.put(header[16], Long.valueOf(m.start));
+                row.put(header[16], (long)m.start);
 
                 report.write(row, header, xcoordResultsSpec);
             }

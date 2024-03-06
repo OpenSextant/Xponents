@@ -59,8 +59,8 @@ public class DateMatch extends TextMatch {
         NONE(-1, "U"), YEAR(1, "Y"), MONTH(2, "M"), WEEK(3, "W"), DAY(4, "D"), HOUR(5, "H"), MINUTE(6, "m"),
         SECOND(7, "s");
 
-        protected int level = -1;
-        protected String code = null;
+        private int level = -1;
+        private String code = null;
 
         TimeResolution(int l, String c) {
             level = l;

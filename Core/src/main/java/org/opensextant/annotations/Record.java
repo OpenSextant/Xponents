@@ -97,14 +97,13 @@ public class Record extends DeepEyeData {
 
     @Override
     public String toString() {
-        StringBuilder val = new StringBuilder();
-        val.append(this.value);
-        val.append(" (");
-        val.append(this.id);
-        val.append(" Source:");
-        val.append(source_id);
-        val.append(")");
-        return val.toString();
+        String val = this.value +
+                " (" +
+                this.id +
+                " Source:" +
+                source_id +
+                ")";
+        return val;
     }
 
     private static final Integer DEFAULT_STATE_VAL = 1;

@@ -192,10 +192,10 @@ public class TextEntity {
         return (end - start);
     }
 
-    /**
+    /* ==================================
      * Convenience methods for carrying the context through the output
      * processing
-     */
+     * ==================================*/
     /**
      * Set the context with before and after windows
      *
@@ -205,13 +205,12 @@ public class TextEntity {
     public void setContext(String before, String after) {
         this.prematch = before;
         this.postmatch = after;
-        StringBuilder buf = new StringBuilder();
-        buf.append(this.prematch);
-        buf.append(" ");
-        buf.append(this.text);
-        buf.append(" ");
-        buf.append(this.postmatch);
-        this.context = buf.toString();
+        String buf = this.prematch +
+                " " +
+                this.text +
+                " " +
+                this.postmatch;
+        this.context = buf;
     }
 
     /**

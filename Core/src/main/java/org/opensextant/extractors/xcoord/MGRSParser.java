@@ -298,11 +298,7 @@ public class MGRSParser {
         if (wsCount > 1 && containsEOL) {
             return false;
         }
-        if (wsCount > 2) {
-            return false;
-        }
-
-        return true;
+        return wsCount <= 2;
     }
 
     /**

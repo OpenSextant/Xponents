@@ -143,11 +143,10 @@ public abstract class AbstractFlexPat implements Extractor {
             } else if (count >= 0) {
                 m.match_id = TextUtils.text_id(String.format("%s,%s,%d", m.pattern_id, m.getText(), count));
             } else {
-                StringBuilder abc = new StringBuilder();
-                abc.append(m.getContextBefore());
-                abc.append(m.getText());
-                abc.append(m.getContextAfter());
-                m.match_id = TextUtils.text_id(abc.toString());
+                String abc = m.getContextBefore() +
+                        m.getText() +
+                        m.getContextAfter();
+                m.match_id = TextUtils.text_id(abc);
             }
         } catch (Exception hashErr) {
             log.error("Rare Java cryptologic err", hashErr);

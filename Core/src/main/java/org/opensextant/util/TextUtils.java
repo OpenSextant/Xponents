@@ -101,7 +101,7 @@ public class TextUtils {
      * @param data any textual data
      * @return true if content is strictly ASCII or Latin1 extended.
      */
-    public static final boolean isLatin(String data) {
+    public static boolean isLatin(String data) {
         char[] ch = data.toCharArray();
         boolean isLatin = true;
         for (char c : ch) {
@@ -136,7 +136,7 @@ public class TextUtils {
      * @param data
      * @return
      */
-    public static final boolean hasMiddleEasternText(String data) {
+    public static boolean hasMiddleEasternText(String data) {
         char[] ch = data.toCharArray();
         for (char c : ch) {
             // Non-letters and ASCII do not count.
@@ -156,7 +156,7 @@ public class TextUtils {
 
     /**
      * Helpful hints on parsing Unicode phrases. Reference:
-     * http://www.rgagnon.com/javadetails/java-0456.html
+     * <a href="http://www.rgagnon.com/javadetails/java-0456.html">...</a>
      */
 
     private static final String ALPHAMAP_PLAIN_ASCII = "AaEeIiOoUu" // grave
@@ -200,7 +200,7 @@ public class TextUtils {
      * @param s string to test
      * @return true if a single diacritic is found.
      */
-    public static final boolean hasDiacritics(final String s) {
+    public static boolean hasDiacritics(final String s) {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (ALPHAMAP_UNICODE.indexOf(c) >= 0) {
@@ -244,13 +244,13 @@ public class TextUtils {
      * @param s the string
      * @return converted string
      */
-    public static final String replaceDiacritics(final String s) {
+    public static String replaceDiacritics(final String s) {
         return Unimap.replaceDiacritics(s);
     }
 
     /**
      * remove accents from a string and replace with ASCII equivalent Reference:
-     * http://www.rgagnon.com/javadetails/java-0456.html Caveat: This implementation
+     * <a href="http://www.rgagnon.com/javadetails/java-0456.html">...</a> Caveat: This implementation
      * is not exhaustive.
      *
      * @param s
@@ -285,7 +285,7 @@ public class TextUtils {
      * @param c a character
      * @return true if c is ASCII
      */
-    public static final boolean isASCII(char c) {
+    public static boolean isASCII(char c) {
         return c > 0 && c <= ASCII_END;
     }
 
@@ -293,7 +293,7 @@ public class TextUtils {
      * @param c character
      * @return true if c is ASCII a-z or A-Z
      */
-    public static final boolean isASCIILetter(char c) {
+    public static boolean isASCIILetter(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 
@@ -466,7 +466,7 @@ public class TextUtils {
      * @param v val to parse
      * @return true if val is a numeric sequence, symbols allowed.
      */
-    public static final boolean isNumeric(final String v) {
+    public static boolean isNumeric(final String v) {
 
         if (v == null) {
             return false;
@@ -991,7 +991,7 @@ public class TextUtils {
      * @param str text
      * @return whitespace delimited tokens
      */
-    public static final String[] tokensRight(String str) {
+    public static String[] tokensRight(String str) {
         if (str.length() == 0) {
             return null;
         }
@@ -1008,7 +1008,7 @@ public class TextUtils {
      * @param str text
      * @return whitespace delimited tokens
      */
-    public static final String[] tokensLeft(String str) {
+    public static String[] tokensLeft(String str) {
         if (str.length() == 0) {
             return null;
         }
@@ -1099,10 +1099,7 @@ public class TextUtils {
             // Phrase contains other than A-Z, 0-9, . and SP
             return false;
         }
-        if ((0 < spaces && periods < 2) || periods < spaces) {
-            return false;
-        }
-        return true;
+        return (0 >= spaces || periods >= 2) && periods >= spaces;
     }
 
     /**
@@ -1214,7 +1211,7 @@ public class TextUtils {
     public static final String vietnameseLang = "vi";
     public static final String romanianLang = "ro";
     private static final Map<String, Language> languageMapISO639 = new HashMap<>();
-    private static Set<String> languageMapMidEast = new HashSet<>();
+    private static final Set<String> languageMapMidEast = new HashSet<>();
 
     /*
      * Initialize some langauge metadata.
@@ -1250,7 +1247,7 @@ public class TextUtils {
      *
      * <pre>
      * Based on:
-     * http://stackoverflow.com/questions/674041/is-there-an-elegant-way
+     * <a href="http://stackoverflow.com/questions/674041/is-there-an-elegant-way">...</a>
      * -to-convert-iso-639-2-3-letter-language-codes-to-java-lo
      *
      * Actual code mappings: en =&gt; eng eng =&gt; en
@@ -1274,9 +1271,9 @@ public class TextUtils {
      * This is Libray of Congress data for language IDs. This is offered as a tool
      * to help downstream
      * language ID and enrich metadata when tagging data from particular countries.
-     * Reference: http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt
+     * Reference: <a href="http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt">...</a>
      *
-     * @throws java.io.IOException if resource file is not found
+     * @throws IOException if resource file is not found
      */
     public static void initLOCLanguageData() throws java.io.IOException {
         //
@@ -1427,9 +1424,7 @@ public class TextUtils {
         if (lookup.contains("_")) {
             lookup = lookup.split("_")[0];
             l = languageMapISO639.get(lookup);
-            if (l != null) {
-                return l;
-            }
+            return l;
         }
         return null;
     }
@@ -1517,7 +1512,7 @@ public class TextUtils {
             return false;
         }
         Language lg = getLanguage(lid);
-        return lg != null ? languageMapMidEast.contains(lg.getISO639_1_Code()) : false;
+        return lg != null && languageMapMidEast.contains(lg.getISO639_1_Code());
     }
 
     /**
@@ -1566,7 +1561,7 @@ public class TextUtils {
      * for each char, an external method invocation is required.
      *
      * @param buf the character to be tested
-     * @return true if CJK, false otherwise
+     * @return double ratio if CJK, false otherwise
      */
     public static double measureCJKText(String buf) {
 
@@ -1583,7 +1578,7 @@ public class TextUtils {
 
     /**
      * Counts the CJK characters in buffer, buf chars Inspiration:
-     * http://stackoverflow
+     * <a href="http://stackoverflow">...</a>
      * .com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string
      * Assumption is that the
      * char array is Unicode characters.
@@ -1845,7 +1840,7 @@ public class TextUtils {
      * Takes a string and returns all the hashtags in it. Normalized tags are just
      * lowercased and
      * deduplicated.
-     * https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json
+     * <a href="https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json">...</a>
      *
      * @param tweetText text
      * @param normalize if to normalize text by lowercasing tags, etc.
@@ -1964,7 +1959,7 @@ public class TextUtils {
      * @param dt ISO date/time string.
      * @return
      */
-    public static final java.util.Date parseDate(final String dt) {
+    public static java.util.Date parseDate(final String dt) {
         if (dt == null) {
             return null;
         }

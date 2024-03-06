@@ -79,10 +79,7 @@ public class GeodeticUtility {
         if (Math.abs(lat) >= LAT_MAX) {
             return false;
         }
-        if (Math.abs(lon) >= LON_MAX) {
-            return false;
-        }
-        return true;
+        return !(Math.abs(lon) >= LON_MAX);
     }
 
     /**

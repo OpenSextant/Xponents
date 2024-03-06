@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LangDetect {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private String profilePath = null;
 
     /**
@@ -183,10 +183,7 @@ public class LangDetect {
      * @return
      */
     public static List<LangID> sort(Map<String, LangID> lids) {
-        List<LangID> sorted = new ArrayList<>();
-        for (LangID lid : lids.values()) {
-            sorted.add(lid);
-        }
+        List<LangID> sorted = new ArrayList<>(lids.values());
         Collections.sort(sorted);
         Collections.reverse(sorted);
         return sorted;
@@ -464,7 +461,7 @@ public class LangDetect {
          * If we're looking for CJK, then determine if a single character of CJK is
          * present.
          */
-        boolean hasCJK = (findCJK ? TextUtils.hasCJKText(naturalLanguage) : false);
+        boolean hasCJK = (findCJK && TextUtils.hasCJKText(naturalLanguage));
 
         int confidence = -1;
 

@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.opensextant.data.Country;
 import org.opensextant.data.Place;
 import org.opensextant.util.GeonamesUtility;
-
 import static org.junit.Assert.*;
 
 public class TestGeonamesMeta {

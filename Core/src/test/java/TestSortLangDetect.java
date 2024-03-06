@@ -1,5 +1,3 @@
-import static org.junit.Assert.assertEquals;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +6,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.opensextant.extractors.langid.LangDetect;
 import org.opensextant.extractors.langid.LangID;
+import static org.junit.Assert.assertEquals;
 
 public class TestSortLangDetect {
 

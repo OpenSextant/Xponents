@@ -1,13 +1,12 @@
 package org.opensextant.extractors.test;
 
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 import org.junit.Test;
 import org.opensextant.extractors.xcoord.PrecisionScales;
+import static org.junit.Assert.assertTrue;
 
 /**
  *

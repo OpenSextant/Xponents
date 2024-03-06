@@ -1,17 +1,15 @@
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import jodd.json.JsonObject;
+import jodd.json.JsonSerializer;
 import org.opensextant.util.FileUtility;
 import org.opensextant.util.GeonamesUtility;
 import org.opensextant.util.TextUtils;
-
-import jodd.json.JsonObject;
-import jodd.json.JsonSerializer;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class GeonamesCSV2JSON extends GeonamesUtility {
 

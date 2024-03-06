@@ -1,6 +1,3 @@
-
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -10,6 +7,7 @@ import org.junit.Test;
 import org.opensextant.extraction.MatcherUtils;
 import org.opensextant.extraction.TextEntity;
 import org.opensextant.util.FileUtility;
+import static org.junit.Assert.*;
 
 public class TestMatcherUtilis {
 

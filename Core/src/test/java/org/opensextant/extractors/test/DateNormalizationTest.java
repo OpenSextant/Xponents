@@ -1,9 +1,5 @@
 package org.opensextant.extractors.test;
 
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 import java.util.HashMap;
 
 import org.junit.BeforeClass;
@@ -11,8 +7,8 @@ import org.junit.Test;
 import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.flexpat.TextMatchResult;
 import org.opensextant.extractors.xtemporal.DateMatch;
-import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.extractors.xtemporal.DateNormalization;
+import org.opensextant.extractors.xtemporal.XTemporal;
 import static org.junit.Assert.assertEquals;
 
 /**

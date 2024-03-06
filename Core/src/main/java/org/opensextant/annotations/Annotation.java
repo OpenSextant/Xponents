@@ -140,7 +140,7 @@ public class Annotation extends DeepEyeData {
     
     public static String OFFSETS_FLD= "offsets";
 
-    private TreeSet<Integer> offsets = new TreeSet<>();
+    private final TreeSet<Integer> offsets = new TreeSet<>();
     private boolean offsetsEncoded = false;
 
     public void addOffset(int x) {

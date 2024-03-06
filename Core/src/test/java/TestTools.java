@@ -8,9 +8,7 @@ public class TestTools {
 
         StringBuilder buf = new StringBuilder();
         buf.append("0");
-        for (int x = 0; x < 120; ++x) {
-            buf.append("=");
-        }
+        buf.append("=".repeat(120));
         for (int x = 1; x < 12; ++x) {
             int X = 10 * x;
             String ins = String.format("%d", X);

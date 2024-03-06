@@ -252,7 +252,7 @@ public class FileUtility {
     /**
      *
      */
-    private static int IO_BUFFER_SIZE = 0x800;
+    private static final int IO_BUFFER_SIZE = 0x800;
 
     /**
      * Slurps a text file into a string and returns the string.
@@ -583,7 +583,7 @@ public class FileUtility {
      */
     public static boolean isWindowsSystem() {
         final String val = System.getProperty("os.name");
-        return (val != null ? val.contains("Windows") : false);
+        return (val != null && val.contains("Windows"));
     }
 
     /**
@@ -850,10 +850,7 @@ public class FileUtility {
             return false;
         }
         String test = link.toLowerCase();
-        if (test.startsWith("http:") || test.startsWith("https:")) {
-            return true;
-        }
-        return false;
+        return test.startsWith("http:") || test.startsWith("https:");
     }
 
     /**
@@ -867,9 +864,6 @@ public class FileUtility {
         if (test.endsWith("json.gz")) {
             return true;
         }
-        if (test.contains("json") && test.endsWith(".gz")) {
-            return true;
-        }
-        return false;
+        return test.contains("json") && test.endsWith(".gz");
     }
 }

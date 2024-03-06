@@ -92,10 +92,7 @@ public class Tweet extends Message {
         if (authorGeo != null && authorGeo.isCoordinate()) {
             return true;
         }
-        if (statusGeo != null && statusGeo.isCoordinate()) {
-            return true;
-        }
-        return false;
+        return statusGeo != null && statusGeo.isCoordinate();
     }
 
     /**
@@ -110,10 +107,7 @@ public class Tweet extends Message {
         if (authorGeo != null && GeodeticUtility.isCoord(authorGeo)) {
             return true;
         }
-        if (statusGeo != null && GeodeticUtility.isCoord(statusGeo)) {
-            return true;
-        }
-        return false;
+        return statusGeo != null && GeodeticUtility.isCoord(statusGeo);
     }
 
     private String geoMethod = null;
@@ -547,7 +541,7 @@ public class Tweet extends Message {
     /**
      * Order of coordinates is for geo = (LON, LAT) in twitter objects. for
      * coordinates = (LAT, LON) see
-     * http://support.gnip.com/articles/filtering-twitter-data-by-location.html
+     * <a href="http://support.gnip.com/articles/filtering-twitter-data-by-location.html">...</a>
      *
      * @param p
      * @param hasCoord
@@ -572,11 +566,8 @@ public class Tweet extends Message {
         if (o == null) {
             return false;
         }
-        if (o.isEmpty()) {
-            return false;
-        }
+        return !o.isEmpty();
         // if o.isNullObject() ?
-        return true;
     }
 
     public static boolean isValue(List<?> o) {
@@ -796,19 +787,18 @@ public class Tweet extends Message {
 
     @Override
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append(text);
 
-        buf.append(" (");
-        buf.append(id);
-        buf.append(") ");
-        buf.append("; Sent at ");
-        buf.append("" + date);
-        buf.append(" by ");
-        buf.append(authorName);
-        buf.append("; Describes self as: ");
-        buf.append(authorDesc);
-        return buf.toString();
+        String buf = text +
+                " (" +
+                id +
+                ") " +
+                "; Sent at " +
+                date.toString() +
+                " by " +
+                authorName +
+                "; Describes self as: " +
+                authorDesc;
+        return buf;
     }
 
     public void setLanguage(String l) {

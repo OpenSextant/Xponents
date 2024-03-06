@@ -303,7 +303,7 @@ public class PrecisionScales {
      */
     public static String format(double f, int digits) {
         if (digits >= formatters.length) {
-            return "" + f;
+            return Double.toString(f);
         }
         // Clone the formatter so that it's thread-safe
         // TODO: well, we would do this clone for every time this method is called.

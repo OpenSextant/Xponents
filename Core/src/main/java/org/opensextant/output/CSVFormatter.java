@@ -37,7 +37,7 @@ public class CSVFormatter extends AbstractFormatter {
 
     private CsvMapWriter writer = null;
 
-    private HashSet<String> fieldSet = new HashSet<>();
+    private final HashSet<String> fieldSet = new HashSet<>();
 
     public CSVFormatter() {
         this.outputExtension = ".csv";

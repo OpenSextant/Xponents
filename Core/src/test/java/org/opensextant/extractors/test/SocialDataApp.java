@@ -3,13 +3,12 @@ package org.opensextant.extractors.test;
 import java.io.File;
 import java.io.IOException;
 
+import jodd.json.JsonObject;
 import org.opensextant.data.social.JSONListener;
 import org.opensextant.data.social.MessageParseException;
 import org.opensextant.data.social.Tweet;
 import org.opensextant.data.social.TweetLoader;
 import org.opensextant.util.TextUtils;
-
-import jodd.json.JsonObject;
 
 public class SocialDataApp implements JSONListener {
 

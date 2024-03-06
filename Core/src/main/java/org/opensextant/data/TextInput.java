@@ -57,7 +57,7 @@ public class TextInput {
         this.buffer = buf;
     }
 
-    private LanguageCharacterization langHueristics = new LanguageCharacterization();
+    private final LanguageCharacterization langHueristics = new LanguageCharacterization();
 
     /**
      * Language Characterization holds various heuristics and metrics about the input text

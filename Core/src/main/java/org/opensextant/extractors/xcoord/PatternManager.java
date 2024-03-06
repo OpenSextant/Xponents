@@ -152,7 +152,7 @@ public final class PatternManager extends RegexPatternManager {
     protected boolean validate_pattern(RegexPattern repat) {
         GeocoordPattern p = (GeocoordPattern) repat;
         if (p.cce_family_id == XConstants.UNK_PATTERN) {
-            log.error("Invalid Pattern @ " + p.toString());
+            log.error("Invalid Pattern @ " + p);
         }
         return (p.cce_family_id != XConstants.UNK_PATTERN);
     }
