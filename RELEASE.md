@@ -3,6 +3,15 @@ RELEASES
 
 # 2024
 
+**Xponents 3.7**
+* **Core API**: Convergence
+  * Geodesy and GISCore geodetic libraries are now merged into the main Xponents Core
+  * Tests and some data for G/G modules are copied over... however the primary test data remains in their respective
+   repos `geodesy` and `giscore`.  
+  * Substantial JavaLint and security fixes were made to these 10 yr old libraries.  Also dependencies such as FindBugs
+  were replaced.
+
+
 **Xponents 3.6.7**: Springy
 * **Core API**
   * Building up `TextInput` class to carry better metrics to enable filters and language-specific tuning.
