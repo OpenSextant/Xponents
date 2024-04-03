@@ -1203,7 +1203,12 @@ def add_language(lg: Language, override=False):
 
     if lg.names:
         for nm in lg.names:
-            codes.append(nm.lower())
+            lang_name_norm = nm.lower()
+            codes.append(lang_name_norm)
+            if "modern" in lang_name_norm:
+                nm2 = get_list(lang_name_norm, delim=",")[0]
+                codes.append(nm2)
+                override = True
 
     for k in set(codes):
         if k in language_map and not override:
