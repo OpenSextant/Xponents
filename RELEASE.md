@@ -1,5 +1,6 @@
 RELEASES
 ==============
+Visit https://github.com/OpenSextant/Xponents/releases for latest library releases and notes.
 
 # 2024
 
