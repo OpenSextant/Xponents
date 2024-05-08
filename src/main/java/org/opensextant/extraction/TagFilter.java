@@ -1,9 +1,11 @@
 package org.opensextant.extraction;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -264,7 +266,7 @@ public class TagFilter extends MatchFilter {
          * entries, e.g., gazetteer.name = <exclusion term>, that will be marked
          * as search_only = true.
          */
-        try (Reader termsIO = new InputStreamReader(filestream)) {
+        try (Reader termsIO = new BufferedReader(new InputStreamReader(filestream, StandardCharsets.UTF_8))) {
             CsvMapReader termreader = new CsvMapReader(termsIO, CsvPreference.EXCEL_PREFERENCE);
             String[] columns = termreader.getHeader(true);
             Map<String, String> terms = null;
@@ -282,7 +284,6 @@ public class TagFilter extends MatchFilter {
                 stopTerms.add(trimmed);
                 stopTerms.add(trimmed.toLowerCase());
             }
-            termreader.close();
             return stopTerms;
         } catch (Exception err) {
             throw new ConfigException("Could not load exclusions.", err);

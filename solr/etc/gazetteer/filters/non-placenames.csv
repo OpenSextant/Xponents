@@ -1,4 +1,4 @@
-﻿exclusion,category
+exclusion,category
 a.k.a,abbrev
 ab,abbrev
 acme,abbrev
@@ -803,6 +803,7 @@ north western,directional
 northeast,directional
 northern,directional
 northwest,directional
+nw,directional
 onward,directional
 right,directional
 south,directional
@@ -815,6 +816,7 @@ southeastern,directional
 southern,directional
 southwest,directional
 southwestern,directional
+sw,directional
 starboard,directional
 the east,directional
 the north,directional
@@ -1392,6 +1394,7 @@ cab,noun
 cabaret,noun
 cabin,noun
 cable,noun
+cables,noun
 cache,noun
 cachet,noun
 cactus,noun
@@ -1768,6 +1771,7 @@ frame,noun
 fraud,noun
 freedom,noun
 fresh water,noun
+frigate,noun
 friends,noun
 friendship,noun
 front,noun
@@ -1903,6 +1907,7 @@ irony,noun
 issue,noun
 jacket,noun
 jag,noun
+jaw,noun
 jazz,noun
 jazz,noun
 jesuit,noun
@@ -1919,6 +1924,7 @@ joy,noun
 jubilee,noun
 jury,noun
 karat,noun
+keyhole,noun
 keys,noun
 kilo,noun
 kinder,noun
@@ -2786,6 +2792,7 @@ citizen,person.label
 cmr,person.label
 cmsr,person.label
 collector,person.label
+coder,person.label
 comm,person.label
 commander,person.label
 commis,person.label
@@ -4550,6 +4557,7 @@ exchange,verb
 exile,verb
 experiment,verb
 express,verb
+evolve,verb
 fail,verb
 favor,verb
 fearing,verb
@@ -4877,6 +4885,7 @@ swell,verb
 swim,verb
 take,verb
 taken,verb
+tamper,verb
 tap,verb
 target,verb
 tax,verb
@@ -5122,6 +5131,8 @@ magnesium,well-known.science
 magnet,well-known.science
 magnet,well-known.science
 mir,well-known.science
+nano,well-known.science
+orbit,well-known.science
 ozone,well-known.science
 proton,well-known.science
 proton,well-known.science
@@ -5140,3 +5151,5 @@ uranium,well-known.science
 vapor,well-known.science
 volt,well-known.science
 x-ray,well-known.science
+azure,color
+table top,phrase

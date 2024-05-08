@@ -144,40 +144,39 @@ public class GeonamesUtility {
      * @throws IOException if timeZones.txt is not found or has an issue.
      */
     private void loadCountryTimezones() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/geonames.org/timeZones.txt");
-        java.io.Reader tzReader = new InputStreamReader(io);
-        CsvMapReader tzMap = new CsvMapReader(tzReader, CsvPreference.TAB_PREFERENCE);
-        String[] columns = tzMap.getHeader(true);
-        Map<String, String> tzdata = null;
-        String gmtCol = null;
-        String dstCol = null;
-        for (String col : columns) {
-            if (col.startsWith("GMT ")) {
-                gmtCol = col;
-            } else if (col.startsWith("DST ")) {
-                dstCol = col;
+        try(InputStream io = getClass().getResourceAsStream("/geonames.org/timeZones.txt")) {
+            java.io.Reader tzReader = new InputStreamReader(io);
+            CsvMapReader tzMap = new CsvMapReader(tzReader, CsvPreference.TAB_PREFERENCE);
+            String[] columns = tzMap.getHeader(true);
+            Map<String, String> tzdata = null;
+            String gmtCol = null;
+            String dstCol = null;
+            for (String col : columns) {
+                if (col.startsWith("GMT ")) {
+                    gmtCol = col;
+                } else if (col.startsWith("DST ")) {
+                    dstCol = col;
+                }
             }
-        }
-        if (dstCol == null || gmtCol == null) {
-            tzMap.close();
-            throw new IOException("Bad Timezone file format from geonames.org -- changes yearly");
-        }
-        while ((tzdata = tzMap.read(columns)) != null) {
-            String cc = tzdata.get("CountryCode");
-            if (cc.trim().startsWith("#")) {
-                continue;
+            if (dstCol == null || gmtCol == null) {
+                throw new IOException("Bad Timezone file format from geonames.org -- changes yearly");
             }
+            while ((tzdata = tzMap.read(columns)) != null) {
+                String cc = tzdata.get("CountryCode");
+                if (cc.trim().startsWith("#")) {
+                    continue;
+                }
 
-            Country C = getCountry(cc);
-            if (C == null) {
-                continue;
-            }
+                Country C = getCountry(cc);
+                if (C == null) {
+                    continue;
+                }
 
-            Country.TZ tz = new Country.TZ(tzdata.get("TimeZoneId"), tzdata.get(gmtCol), tzdata.get(dstCol),
-                    tzdata.get("rawOffset (independant of DST)"));
-            C.addTimezone(tz);
+                Country.TZ tz = new Country.TZ(tzdata.get("TimeZoneId"), tzdata.get(gmtCol), tzdata.get(dstCol),
+                        tzdata.get("rawOffset (independant of DST)"));
+                C.addTimezone(tz);
+            }
         }
-        tzMap.close();
 
         // Add all TZ to countries;
         for (String cc : isoCountries.keySet()) {
@@ -476,74 +475,73 @@ public class GeonamesUtility {
     }
 
     private void loadCountryNameMap() throws IOException {
-        java.io.InputStream io = getClass().getResourceAsStream("/country-names-2021.csv");
-        java.io.Reader countryIO = new InputStreamReader(io);
-        CsvMapReader countryMap = new CsvMapReader(countryIO, CsvPreference.EXCEL_PREFERENCE);
-        String[] columns = countryMap.getHeader(true);
-        Map<String, String> country_names = null;
-        while ((country_names = countryMap.read(columns)) != null) {
-            String n = country_names.get("country_name");
-            String cc = country_names.get("ISO2_cc");
-            String iso3 = country_names.get("ISO3_cc");
-            String fips = country_names.get("FIPS_cc");
+        try (InputStream io = getClass().getResourceAsStream("/country-names-2021.csv")) {
+            java.io.Reader countryIO = new InputStreamReader(io);
+            CsvMapReader countryMap = new CsvMapReader(countryIO, CsvPreference.EXCEL_PREFERENCE);
+            String[] columns = countryMap.getHeader(true);
+            Map<String, String> country_names = null;
+            while ((country_names = countryMap.read(columns)) != null) {
+                String n = country_names.get("country_name");
+                String cc = country_names.get("ISO2_cc");
+                String iso3 = country_names.get("ISO3_cc");
+                String fips = country_names.get("FIPS_cc");
 
-            if (n == null || cc == null) {
-                continue;
+                if (n == null || cc == null) {
+                    continue;
+                }
+
+                double lat = Double.parseDouble(country_names.get("latitude"));
+                double lon = Double.parseDouble(country_names.get("longitude"));
+
+                cc = cc.toUpperCase();
+                fips = fips.toUpperCase();
+
+                // Unique Name? E.g., "Georgia" country name is not unique.
+                // This flag helps inform Disambiguation choose countries and places.
+                boolean isUniq = Boolean.parseBoolean(country_names.get("is_unique_name"));
+                boolean isTerr = Boolean.parseBoolean(country_names.get("territory"));
+
+                // FIPS could be *, but as long as we use ISO2, we're fine. if
+                // ("*".equals(cc)){ cc = fips.toUpperCase(); }
+
+                // Normalize: "US" => "united states of america"
+                defaultCountryNames.put(cc, n.toLowerCase(Locale.ENGLISH));
+
+                Country C = new Country(cc, n);
+                C.CC_FIPS = fips;
+                C.CC_ISO2 = cc;
+                C.CC_ISO3 = iso3;
+                C.setUniqueName(isUniq);
+                C.isTerritory = isTerr;
+                C.setLatitude(lat);
+                C.setLongitude(lon);
+
+
+                // TOOD: Resolve the code mapping situation for simple lookups.
+                // FIPS -> ISO mapping is 1:1
+                fips2iso.put(fips, cc);
+                if (!C.isTerritory || (!iso2fips.containsKey(cc) && !iso2fips.containsKey(iso3) && C.isTerritory)) {
+                    // ISO -> FIPS is 1 : many, so only map it here if it is unique.
+                    iso2fips.put(cc, fips); // ISO2
+                    iso2fips.put(iso3, fips);
+                } else {
+                    logger.debug("Territory not mapped in iso/fips {}, {}", fips, cc);
+                }
+
+                // ISO
+                if (!C.isTerritory) {
+                    isoCountries.put(cc, C);
+                    isoCountries.put(iso3, C);
+                }
+
+                // FIPS -- mostly unique.
+                if (!fips.equals("*")) {
+                    fipsCountries.put(fips, C);
+                }
+
+                countries.add(C);
             }
-
-            double lat = Double.parseDouble(country_names.get("latitude"));
-            double lon = Double.parseDouble(country_names.get("longitude"));
-
-            cc = cc.toUpperCase();
-            fips = fips.toUpperCase();
-
-            // Unique Name? E.g., "Georgia" country name is not unique.
-            // This flag helps inform Disambiguation choose countries and places.
-            boolean isUniq = Boolean.parseBoolean(country_names.get("is_unique_name"));
-            boolean isTerr = Boolean.parseBoolean(country_names.get("territory"));
-
-            // FIPS could be *, but as long as we use ISO2, we're fine. if
-            // ("*".equals(cc)){ cc = fips.toUpperCase(); }
-
-            // Normalize: "US" => "united states of america"
-            defaultCountryNames.put(cc, n.toLowerCase(Locale.ENGLISH));
-
-            Country C = new Country(cc, n);
-            C.CC_FIPS = fips;
-            C.CC_ISO2 = cc;
-            C.CC_ISO3 = iso3;
-            C.setUniqueName(isUniq);
-            C.isTerritory = isTerr;
-            C.setLatitude(lat);
-            C.setLongitude(lon);
-
-
-            // TOOD: Resolve the code mapping situation for simple lookups.
-            // FIPS -> ISO mapping is 1:1
-            fips2iso.put(fips, cc);
-            if (!C.isTerritory || (!iso2fips.containsKey(cc) && !iso2fips.containsKey(iso3) && C.isTerritory)) {
-                // ISO -> FIPS is 1 : many, so only map it here if it is unique.
-                iso2fips.put(cc, fips); // ISO2
-                iso2fips.put(iso3, fips);
-            } else {
-                logger.debug("Territory not mapped in iso/fips {}, {}", fips, cc);
-            }
-
-            // ISO
-            if (!C.isTerritory) {
-                isoCountries.put(cc, C);
-                isoCountries.put(iso3, C);
-            }
-
-            // FIPS -- mostly unique.
-            if (!fips.equals("*")) {
-                fipsCountries.put(fips, C);
-            }
-
-            countries.add(C);
         }
-
-        countryMap.close();
 
         if (defaultCountryNames.isEmpty()) {
             throw new IOException("No data found in country name map");
