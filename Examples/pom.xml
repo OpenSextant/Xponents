@@ -7,14 +7,14 @@
        To avoid pulling in irrelevant items.
    -->
   <groupId>org.opensextant</groupId>
-  <version>3.7.0-SNAPSHOT</version>
+  <version>3.7-SNAPSHOT</version>
   <name>Xponent Examples</name>
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
-    <slf4j.version>2.0.9</slf4j.version>
-    <xponents.version>3.7.0</xponents.version>
-    <xponents-core.version>3.7.0</xponents-core.version>
+    <slf4j.version>2.0.12</slf4j.version>
+    <xponents.version>3.7.1</xponents.version>
+    <xponents-core.version>3.7.1</xponents-core.version>
     <xtext.version>3.7.0</xtext.version>
   </properties>
   <dependencies>
@@ -108,7 +108,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-install-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.1.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -123,7 +123,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M6</version>
+        <version>3.2.3</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +172,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.5.0</version>
         <reportSets>
           <reportSet>
             <reports>

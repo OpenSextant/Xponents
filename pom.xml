@@ -416,7 +416,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
   </dependencies>
   <build>
     <pluginManagement>
@@ -495,20 +494,6 @@
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
-      <!-- run explicitly with: mvn checkstyle:check -->
-      <!-- Using Sonarqube for now.
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <configLocation>${basedir}/src/checkstyle.xml</configLocation>
-          <propertyExpansion>checkstyle.indentChars=4</propertyExpansion>
-          <suppressionsLocation>${basedir}/src/checkstyle-suppressions.xml</suppressionsLocation>
-          <consoleOutput>true</consoleOutput>
-          <failOnViolation>false</failOnViolation>
-        </configuration>
-      </plugin>
-      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>

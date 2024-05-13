@@ -2,8 +2,8 @@
 Building Xponents 
 ==================
 
-After checkout, first build Core API (opensextant-xponents-core)
-Then you can begin working with the extractor SDK (opensextant-xponents)
+After checkout, first build Xponents-Core API (opensextant-xponents-core)
+Then you can begin working with this extractor SDK (opensextant-xponents)
 
 1. Setup project. 
 
@@ -125,7 +125,7 @@ Three (3) or more different software quality practices are in play here:
 - Use Findbugs legacy to cover a lot overlap on the first three.
 
 This project overall converted from using checkstyle and findbugs to just using Sonarqube. 
-See the deployment of Sonarqube in [Examples/Docker/Sonarqube](./Examples/Docker/Sonarqube])
+See the deployment of Sonarqube in [Examples/Docker/Sonarqube](./Examples/Docker/Sonarqube)
 
 For historical purposes here is a POM snippet for using findbugs, which is no longer maintained. 
 In a similar reduction of dependencies, checkstyle plugin functions are replaced by Sonar scanning:
