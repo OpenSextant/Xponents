@@ -87,68 +87,7 @@ no_id_counter = 0
 # These are all valid JRC entities, however they do not seem to add value due to their
 # popular use or ambiguity.  On very rare occasions there are instances of person names
 # That coincide with popular place names.  The person name is marked is not valid for tagging.
-NOISE = {
-    "north", "south", "east", "west",
-    "start", "end", "total",
-    "times",
-    "the sun",
-    "the times",
-    "news agency",
-    "daily news",
-    "press agency",
-    "military intelligence",
-    "independent",
-    "international studies",
-    "international trade",
-    "will meet",
-    "the nation",
-    "facebook",
-    "google",
-    "internet explorer",
-    "inter",
-    "original post",
-    "yahoo",
-    "twitter",
-    "youtube",
-    "people",
-    "they are",
-    "our own",
-    "just want",
-    "are you", "all you",
-    "ps",
-    "pp",
-    "reach",
-    "armed forces",
-    "canal",
-    "the age",
-    "read more",
-    "presedential office",
-    "set fire",
-    "emergency",
-    "nature",
-    "status quo",
-    "the independent",
-    "gross domestic product",
-    "privacy policy",
-    "adobe reader",
-    "guiding principles",
-    "lessons learned",
-    "better life",
-    "secret",
-    "top secret",
-    u"san diegó",  # not San Diego
-    "san diego",  # not San Diego
-    u"san franciscó",
-    "san francisco",
-    "corpus christi",
-    u"nuevo león",
-    u"nuevo léon",
-    "nuevo leon",
-    "san pedro",
-    "umm qasr",
-    "windows",
-    "operating system"
-}
+# Noise stop terms are contained in ./stopwords-jrcnames.txt
 
 # Fixes are any entries that need to be remapped to entity type, p, o, etc. 
 #
@@ -167,16 +106,11 @@ def check_validity(e):
     @param e: a JRCEntity 
     """
     phr = e.phrasenorm.replace(",", " ")
-    if phr in NOISE:
+    tokens = phr.split()
+    if tokens[0] in {"and", "of"}:
         e.is_valid = False
-    else:
-        tokens = phr.split()
-        if tokens[0] in {"and", "of"}:
-            e.is_valid = False
-        elif tokens[0] == "the" and len(phr) < 10:
-            e.is_valid = False
-
-    return
+    elif tokens[0] == "the" and len(phr) < 10:
+        e.is_valid = False
 
 
 # Entries starting or ending with place markers, will be recategorized as a Place.xxxxx
@@ -403,6 +337,31 @@ if __name__ == "__main__":
 
     stopterms_file = os.path.join("etc", "taxcat", "stopwords.txt")
     builder.add_stopwords(stopterms_file)
+    print(len(builder.stopwords), " stop terms total")
+
+    stopterms_file = os.path.join("etc", "taxcat", "stopwords-jrcnames.txt")
+    builder.add_stopwords(stopterms_file)
+    print(len(builder.stopwords), " stop terms total")
+
+    # Completely arbitrary starting row ID 
+    # Manage your own Catalog regsitry for starting rows
+    # As solr has no notion of row ID and your uniqueness requirements.
+    #
+    row_id = 0
+    with open(args.taxonomy, "r", encoding="UTF-8") as fh:
+        for row in fh:
+            if row.startswith("#") or len(row.strip()) == 0: continue
+
+            row_id = row_id + 1
+            create_entity(row, scan=True)
+            if row_id % 100000 == 0:
+                print("Row # ", row_id)
+
+            if 0 < row_max < row_id:
+                break
+
+    # Zero these counters:
+    row_id = 0
 
     # Completely arbitrary starting row ID 
     # Manage your own Catalog regsitry for starting rows
