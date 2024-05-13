@@ -5,15 +5,18 @@ import java.util.List;
 
 import jodd.json.JsonObject;
 import org.json.JSONException;
+import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;
 import org.opensextant.extraction.Extractor;
 import org.opensextant.extraction.TextMatch;
+import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.geo.PostalGeocoder;
 import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
 import org.opensextant.processing.RuntimeTools;
+import org.opensextant.util.GeonamesUtility;
 import org.opensextant.xlayer.server.TaggerResource;
 import org.restlet.Context;
 import org.restlet.data.CharacterSet;
@@ -177,6 +180,7 @@ public class XponentsGeotagger extends TaggerResource {
             if (isDebug()) {
                 debug(String.format("CURRENT MEM USAGE(K)=%d", RuntimeTools.reportMemory()));
             }
+            filter(matches, jobParams);
             /*
              * transform matches as JSON output.
              */
@@ -185,6 +189,34 @@ public class XponentsGeotagger extends TaggerResource {
         } catch (Exception processingErr) {
             error("Failure on doc " + input.id, processingErr);
             return status("FAIL", processingErr.getMessage());
+        }
+    }
+
+    private void filter(List<TextMatch> matches, Parameters jobParams) {
+
+        for (TextMatch m : matches) {
+            // Big loop for conditionals... Only one special condition currently:
+            //
+            // 1. IF Caller is not asking for "codes" output.... the omit any postal codes or state/ADM1 codes
+            // that are not fully resolved.
+            if (!jobParams.tag_codes) {
+                if (m instanceof PlaceCandidate) {
+                    PlaceCandidate place = (PlaceCandidate) m;
+                    Place resolvedPlace = place.getChosenPlace();
+                    if (resolvedPlace != null && resolvedPlace.isCode()) {
+                        // This condition differentiates matches -- looking to evaluate only inferred places that are codes.
+                        //    Cases:  CODE          -- Bare CODE. although resolved, its likely noise.
+                        //    Cases:  CODE1 CODE2   -- CODE1 is resolved, but related CODE2 is not. Its noise. "AB CD", "MA VA"
+                        boolean qualified = place.isDerived() || place.isValid();
+                        // Filter out non-Postal codes if user is not requesting "codes" to be listed.
+                        if (!qualified && !GeonamesUtility.isPostal(resolvedPlace)) {
+                            place.setFilteredOut(true);
+                        } else if (place.isShortName() && !place.hasResolvedRelated()) {
+                            place.setFilteredOut(true);
+                        }
+                    }
+                }
+            }
         }
     }
 

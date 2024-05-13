@@ -27,13 +27,12 @@ import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeonamesUtility;
 import static org.opensextant.extractors.geo.rules.RuleTool.hasOnlyDefaultRules;
 
+// TODO: expand from pairs to 2-4 tuples of related geographic hierachy, e.g., City, State, Country, etc.
+
 /**
  * A rule that associates a CODE with a NAME, when the pattern
  * "NAME, CODE" appears within N characters of each other.
- * If CODE.adm1 == NAME.adm1 and CODE is an ADM1 boundary, then flag this is
- * significant.
- *
- * TODO: expand from pairs to 2-4 tuples of related geographic hierachy, e.g., City, State, Country, etc.
+ * If CODE.adm1 == NAME.adm1 and CODE is an ADM1 boundary, then flag this is significant.
  * @author ubaldino
  */
 public class NameCodeRule extends GeocodeRule {
@@ -138,8 +137,9 @@ public class NameCodeRule extends GeocodeRule {
 
         return validation;
     }
-    private boolean canIgnore(PlaceCandidate mention){
-        if (ignoreShortLowercase(mention)){
+
+    private boolean canIgnore(PlaceCandidate mention) {
+        if (ignoreShortLowercase(mention)) {
             return true;
         }
         // Remarked mention
@@ -334,7 +334,7 @@ public class NameCodeRule extends GeocodeRule {
             if (name.isFilteredOut()) {
                 continue;
             }
-            if (name.hasCJKText()){
+            if (name.hasCJKText()) {
                 continue;
             }
 
@@ -561,7 +561,7 @@ public class NameCodeRule extends GeocodeRule {
         //
         for (ScoredPlace nameGeoScore : n.getPlaces()) {
             Place nameGeo = nameGeoScore.getPlace();
-            if (nameGeo.isSame(codeGeo)) {
+            if (nameGeo.getFeatureCode().equals(codeGeo.getFeatureCode()) || nameGeo.isSame(codeGeo)) {
                 continue; /* Ignore choosing same location for repeated names */
             }
             if (!(nameGeo.isPopulated() || nameGeo.isAdministrative() || nameGeo.isSpot())) {

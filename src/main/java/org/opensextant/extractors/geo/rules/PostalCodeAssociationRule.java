@@ -58,7 +58,7 @@ public class PostalCodeAssociationRule extends GeocodeRule implements MatchSchem
     private boolean exceedsInnerSpanPunctuation(String buf, PlaceCandidate p1, PlaceCandidate p2) {
         int x1 = p1.end < p2.start ? p1.end : p2.end;
         int x2 = p1.end < p2.start ? p2.start : p1.start;
-        if (x1 >=x2){
+        if (x1 >= x2) {
             return false;
         }
         String span = buf.substring(x1, x2);

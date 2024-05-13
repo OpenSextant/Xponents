@@ -18,7 +18,6 @@ import org.opensextant.extractors.xtax.TaxonMatch;
 import org.opensextant.extractors.xtemporal.DateMatch;
 import org.opensextant.processing.Parameters;
 import org.opensextant.util.GeodeticUtility;
-import org.opensextant.util.GeonamesUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -418,17 +417,6 @@ public class Transforms implements MatchSchema {
                 node.put("method", resolvedPlace.getMethod());
             } else if (jobParams.tag_places || jobParams.tag_postal) {
 
-                // IF Caller is not asking for "codes" output....
-                if (!jobParams.tag_codes) {
-                    boolean qualified = place.isDerived() || place.isValid();
-                    // Filter out non-Postal codes if user is not requesting "codes" to be listed.
-                    if (resolvedPlace.isCode() && !qualified && !GeonamesUtility.isPostal(resolvedPlace)) {
-                        /* Given a bare token ' MA ' not attached to another term,
-                         * this would be considered just a code.  Caller must add "codes" to request to get these.
-                         */
-                        continue;
-                    }
-                }
                 /*
                  * Conf = 20 or greater to be geocoded.
                  */

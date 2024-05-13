@@ -177,6 +177,17 @@ public class PlaceCandidate extends TextMatch {
         return related.values();
     }
 
+    public boolean hasResolvedRelated() {
+        if (related != null) {
+            for (PlaceCandidate geo : related.values()) {
+                if (geo.getChosenPlace() != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // ---- the getters and setters ---------
     //
 
@@ -928,6 +939,10 @@ public class PlaceCandidate extends TextMatch {
         linkedGeography.put(slot, geo);
     }
 
+    public boolean hasLinkedGeography() {
+        return linkedGeography != null && !linkedGeography.isEmpty();
+    }
+
     public boolean hasLinkedGeography(String slot) {
         if (linkedGeography == null) {
             return false;
@@ -1016,7 +1031,7 @@ public class PlaceCandidate extends TextMatch {
             }
             if (geo.getPlace().isPostal()) {
                 hasPostal = true;
-                return hasPostal;
+                return true;
             }
         }
         return hasPostal;

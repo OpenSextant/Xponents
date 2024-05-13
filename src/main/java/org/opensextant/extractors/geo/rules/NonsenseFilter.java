@@ -71,7 +71,7 @@ public class NonsenseFilter extends GeocodeRule {
     @Override
     public void evaluate(List<PlaceCandidate> names) {
         for (PlaceCandidate p : names) {
-            if (p.isValid() || p.getTokens() == null) {
+            if (p.isValid() || p.getTokens() == null || p.isFilteredOut()) {
                 // isValid: this place was marked by other rules as valid
                 // tokens: in general trivial geo name references (continents) are not analyzed
                 // and tokens may be null.
@@ -85,7 +85,7 @@ public class NonsenseFilter extends GeocodeRule {
                 continue;
             }
 
-            if (p.hasMiddleEasternText() || p.hasCJKText()){
+            if (p.hasMiddleEasternText() || p.hasCJKText()) {
                 continue;
             }
 
@@ -162,7 +162,6 @@ public class NonsenseFilter extends GeocodeRule {
 
 
     /** Names of places should have about N=5 chars to non-chars.
-     *
      *   "A BC"  3:1      filtered out.
      *   "AB CD"  4:1     filterd out.
      *   "AB BCD"  5:1    possibly acceptable.
@@ -186,7 +185,7 @@ public class NonsenseFilter extends GeocodeRule {
      */
     public static boolean assessPhraseDensity(String name, int charRatio) {
         int nonAlpha = TextUtils.countNonText(name);
-        if (nonAlpha==0){
+        if (nonAlpha == 0) {
             return true;
         }
         return ((name.length() - nonAlpha) / nonAlpha) >= charRatio;

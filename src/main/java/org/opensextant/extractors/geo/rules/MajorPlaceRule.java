@@ -49,7 +49,7 @@ public class MajorPlaceRule extends GeocodeRule {
     public static final String ADMIN = "MajorPlace.Admin";
     public static final String POP = "MajorPlace.Population";
     public static final String MENTIONED_COUNTRY = "MajorPlace.InCountry";
-    private Map<String, Integer> popStats;
+    private final Map<String, Integer> popStats;
     private static final int GEOHASH_RESOLUTION = 5;
     private static final int POP_MIN = 50000;
 
@@ -168,7 +168,7 @@ public class MajorPlaceRule extends GeocodeRule {
             // IFF no countries are mentioned, Capitals are good proxies for country.
             inferCountry(geo);
             ev = new PlaceEvidence(geo, CAPITAL, weight + 2.0);
-        } else if (geo.isAdmin1()) {
+        } else if (geo.isAdmin1() && (!geo.isCode() || name.hasLinkedGeography())) {
             ev = new PlaceEvidence(geo, ADMIN, weight);
             inferBoundary(name.getNDTextnorm(), geo);
         } else if (popStats != null && geo.isPopulated()) {
