@@ -110,6 +110,7 @@ neighbors
 neighbour
 o'connor
 o'neal
+o'sullivan
 obama
 oleg
 paco

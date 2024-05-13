@@ -208,6 +208,7 @@ decimal,adj
 deep,adj
 dim,adj
 diplomatic,adj
+disparate,adj
 dire,adj
 dirty,adj
 dismal,adj
@@ -2221,6 +2222,7 @@ piece,noun
 pile,noun
 piles,noun
 pill,noun
+pillar,noun
 pillows,noun
 pilot,noun
 pin,noun
@@ -2348,6 +2350,7 @@ rider,noun
 rifle,noun
 rift,noun
 rig,noun
+rigor,noun
 rigs,noun
 ring,noun
 rings,noun
@@ -3420,6 +3423,7 @@ the international,phrase
 the light,phrase
 the long,phrase
 the mere,phrase
+the mitre,phrase
 the mission,phrase
 the nose,phrase
 the ocean,phrase
@@ -4419,6 +4423,7 @@ ate,verb
 attaching,verb
 auditing,verb
 avert,verb
+bake,verb
 balance,verb
 ban,verb
 ban on,verb
@@ -4428,6 +4433,7 @@ bangs,verb
 banning,verb
 barred,verb
 bash,verb
+basing,verb
 be,verb
 be in,verb
 been,verb
@@ -4705,6 +4711,7 @@ orient,verb
 oversee,verb
 owning,verb
 packed,verb
+pacing,verb
 pan,verb
 pardon,verb
 parse,verb

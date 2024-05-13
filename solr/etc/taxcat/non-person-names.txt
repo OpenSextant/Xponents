@@ -73,6 +73,7 @@ son
 soon
 spring
 star
+strong
 sun
 tottenham
 valencia
