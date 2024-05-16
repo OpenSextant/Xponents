@@ -6,7 +6,7 @@ VERSION="3.5"
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 
-REL=$basedir/dist/Xponents-$VERSION
+REL=$basedir/../dist/Xponents-$VERSION
 if [ ! -d $REL ] ; then 
   echo "Distribution does not exist: $REL"
   echo "First build per BUILD.md"

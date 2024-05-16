@@ -25,7 +25,7 @@ if [ -n "$1"  ]; then
   fi
 fi
 
-REL=$basedir/dist/Xponents-$VERSION
+REL=$basedir/../dist/Xponents-$VERSION
 if [ ! -d $REL ] ; then 
   echo "Distribution does not exist: $REL"
   echo "First build per BUILD.md"

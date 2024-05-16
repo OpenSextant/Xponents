@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!-- -*- indent-tabs-mode: nil -*- -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <!-- Examples is not intended for artifact publication. Keep version in line with other things
        To avoid pulling in irrelevant items.
@@ -15,8 +15,18 @@
     <slf4j.version>2.0.12</slf4j.version>
     <xponents.version>3.7.1</xponents.version>
     <xponents-core.version>3.7.1</xponents-core.version>
-    <xtext.version>3.7.0</xtext.version>
+    <xtext.version>3.7.1</xtext.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>commons-configuration</groupId>
+        <artifactId>commons-configuration</artifactId>
+        <version>1.10</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.opensextant</groupId>
@@ -54,7 +64,7 @@
       <groupId>gnu.getopt</groupId>
       <artifactId>java-getopt</artifactId>
       <version>1.0.13</version>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-xtext</artifactId>
@@ -89,7 +99,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.13.0</version>
+      <version>2.16.1</version>
     </dependency>
     <dependency>
       <groupId>commons-cli</groupId>

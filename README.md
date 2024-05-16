@@ -153,16 +153,19 @@ Now with the same text as above, the second and more complex example applies the
 Java versus Python Libraries
 ----------------------------
 
-Python and Java functionality overlaps but is still drastically differe.  The Core API resembles 
-the Python library somewhat.
+Python and Java functionality overlaps but is still drastically differ.  The Core API resembles 
+the Python library somewhat.  The primary NLP/geocoding work is done in the Xponents SDK proper, whereas the other 
+modules support that work as utilities and foundational data classes, etc.
 
+* Xponents SDK API (v3.7+) provides the Solr and client/server integrations for Gazetteer,
+  TaxCat and PlaceGeocoder.
+* Xponents Core API (v3.7+) Java library provides most of the functionality as in the Python library.
+  It offers more complete Unicode utilities and other metadata resources such as Country, Timezone,
+  and Language metadata.  This is now in its own [`Xponents-Core` repo](https://github.com/OpenSextant/Xponents-Core).
+* XText [`XText` repo](https://github.com/OpenSextant/XText) is used in the SDK Examples folder to demonstrate text 
+  extraction from documents and feeding the extractors using `TextInput` class with the tuple of `(text, ID, language ID)` 
 * `opensextant` (v1.5) Python API offers data utilities; Solr clients for TaxCat and Gazetteer;
   basic data models for text spans, place objects, etc.  Xponents REST client (`xlayer`) which interacts with the Java Xponents REST service.
-* Xponents Core API (v3.6) Java library provides most of the functionality as in the Python library. 
-  It offers more complete Unicode utilities and other metadata resources such as Country, Timezone, 
-  and Language metadata
-* Xponents SDK API (v3.6) provides the Solr and client/server integrations for Gazetteer, 
-  TaxCat and PlaceGeocoder.
 
 
 Setup

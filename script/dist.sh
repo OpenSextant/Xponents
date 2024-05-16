@@ -6,8 +6,9 @@ VER=3.7
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 BUILD_VER=`grep xponents.v  $basedir/build.properties |awk -F= '{print $2;}'`
-REL=$basedir/dist/Xponents-$VER
+REL=$basedir/../dist/Xponents-$VER
 GAZ=$REL/xponents-solr
+CORE=$basedir/../dist/xponents-core-$VER
 
 msg(){
   echo
@@ -23,10 +24,14 @@ cd $basedir/solr
 msg "Make Python library"
 msg " TODO: document using python lib from distro, as it is not fully installed." 
 # ----------------------
-cd $basedir/python
-rm -rf ./dist/*
-python3 ./setup.py sdist
-pip3 install -U -t $REL/piplib ./dist/opensextant-1.5*gz
+
+pydist=`ls $CORE/python/opensextant-1*.tar.gz`
+if [ -e  "$pydist" ] ; then
+    pip3 install -U -t $REL/piplib $pydist
+else
+    echo "Python API lib is missing"
+    exit
+fi
 
 
 msg "Prepare additional Java resources"
@@ -35,7 +40,7 @@ export PYTHONPATH=$REL/piplib
 cd $basedir/solr;
 # resource files for person names
 python3 ./script/assemble_person_filter.py
-# copy to Maven project
+# copy to Maven project -- TODO:  final gaz-meta should have happened befoe mvn install or ant dist
 ant gaz-meta
 
 

@@ -11,7 +11,8 @@ Visit https://github.com/OpenSextant/Xponents/releases for latest library releas
    repos `geodesy` and `giscore`.  
   * Substantial JavaLint and security fixes were made to these 10 yr old libraries.  Also dependencies such as FindBugs
   were replaced.
-
+  * Migrated to a separate repo:  Find this now maintained separately at [`Xponents-Core` repo](https://github.com/OpenSextant/Xponents-Core)
+  This is the first release ./Core/ folder will not appear in this source tree.
 
 **Xponents 3.6.7**: Springy
 * **Core API**

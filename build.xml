@@ -1,61 +1,27 @@
-<project default="setup">
+<project default="build">
   <property file="${basedir}/build.properties" />
-  <property name="core-api" value="${basedir}/Core" />
-  <property name="java.resources" value="${core-api}/src/main/resources" />
+  <!-- Important: Core API folder is now in ../Xponents-Core/ as its own buildable, independent repo.
+   - ./Core  - Java src, foundational data and APIs
+   - ./python - opensextant python library including client apps.
+
+   Changes take place in v3.7.0+ to improve buildability
+   -->
   <property name="tmp" value="${basedir}/tmp" />
-  <property name="geonames.resources" value="${java.resources}/geonames.org" />
-  <property name="pylib.resources" value="${basedir}/python/opensextant/resources" />
 
   <property name="xponents.home" value="${basedir}/" />
-  <property name="release" location="${xponents.home}/dist/Xponents-${xponents.version}" />
+  <property name="release" location="${xponents.home}/../dist/Xponents-${xponents.version}" />
   <property name="solr.release" location="${release}/xponents-solr" />
 
-  <target name="get-meta">
 
-    <mkdir dir="${core-api}/etc" />
-    <mkdir dir="${geonames.resources}" />
-    <mkdir dir="${pylib.resources}" />
-    <mkdir dir="${pylib.resources}/geonames.org" />
-    <mkdir dir="${tmp}" />
 
-    <get src="http://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt" dest="${java.resources}" verbose="true" usetimestamp="true" />
-    <get src="http://download.geonames.org/export/dump/admin1CodesASCII.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
-    <get src="http://download.geonames.org/export/dump/timeZones.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
-    <get src="http://download.geonames.org/export/dump/countryInfo.txt" dest="${geonames.resources}" verbose="true" usetimestamp="true" />
-    <get src="http://download.geonames.org/export/dump/cities15000.zip" dest="${tmp}" verbose="true" usetimestamp="true" />
-    <unzip src="${tmp}/cities15000.zip" dest="${geonames.resources}" />
-  </target>
-
-  <target name="unpack-langid">
-    <unzip src="${basedir}/etc/langdetect-profiles-v3.zip" dest="${core-api}/etc" />
-  </target>
-
-  <target name="copy-resources">
-    <copy file="${java.resources}/us-state-metadata.csv" todir="${pylib.resources}" />
-    <copy file="${java.resources}/country-names-2015.csv" todir="${pylib.resources}" />
-    <copy file="${java.resources}/country-names-2021.csv" todir="${pylib.resources}" />
-    <copy file="${java.resources}/geocoord_patterns.cfg" todir="${pylib.resources}" />
-    <copy file="${java.resources}/datetime_patterns.cfg" todir="${pylib.resources}" />
-    <copy file="${java.resources}/poli_patterns.cfg" todir="${pylib.resources}" />
-    <copy file="${java.resources}/ISO-639-2_utf-8.txt" todir="${pylib.resources}" />
-
-    <copy file="${geonames.resources}/cities15000.txt" todir="${pylib.resources}/geonames.org/" />
-    <copy file="${geonames.resources}/admin1CodesASCII.txt" todir="${pylib.resources}/geonames.org/" />
-  </target>
-
-  <target name="setup" depends="get-meta,copy-resources,unpack-langid" />
 
 
   <!-- Build and Distribution mechanics -->
 
   <target name="clean">
     <delete dir="${xponents.home}/lib" />
-    <delete dir="${xponents.home}/Core/lib" />
     <delete dir="${xponents.home}/Examples/lib" />
 
-    <exec executable="mvn" dir="${xponents.home}/Core" failonerror="true">
-      <arg value="clean" />
-    </exec>
     <exec executable="mvn" dir="${xponents.home}/Examples" failonerror="true">
       <arg value="clean" />
     </exec>
@@ -65,10 +31,6 @@
   </target>
 
   <target name="build" depends="clean">
-    <exec executable="mvn" dir="${xponents.home}/Core" failonerror="true">
-      <arg value="clean" />
-      <arg value="install" />
-    </exec>
     <exec executable="mvn" dir="${xponents.home}" failonerror="true">
       <arg value="clean" />
       <arg value="install" />
@@ -88,13 +50,6 @@
   </target>
 
   <target name="reports" >
-    <exec executable="mvn" dir="${xponents.home}/Core" failonerror="true">
-      <arg value="-DincludeScope=test" />
-      <arg value="-DincludeScope=runtime" />
-      <arg value="-DincludeScope=compile" />
-      <arg value="javadoc:jar" />
-      <arg value="dependency:copy-dependencies" />
-    </exec>
     <exec executable="mvn" dir="${xponents.home}" failonerror="true">
       <arg value="-DincludeScope=test" />
       <arg value="-DincludeScope=runtime" />
@@ -136,11 +91,6 @@
     <copy todir="${release}/src">
       <fileset dir="${xponents.home}/src"/>
     </copy>
-    <copy todir="${release}/Core">
-      <fileset dir="${xponents.home}/Core">
-        <exclude name="target/" />
-      </fileset>
-    </copy>
   </target>
 
   <target name="copy-examples">
@@ -174,17 +124,8 @@
       </fileset>
     </copy>
     <copy todir="${release}/lib/">
-      <fileset dir="${xponents.home}/Core/target">
-        <include name="*.jar" />
-      </fileset>
-    </copy>
-    <copy todir="${release}/lib/">
       <fileset dir="${xponents.home}/target">
         <include name="*.jar" />
-      </fileset>
-    </copy>
-    <copy todir="${release}/python">
-      <fileset dir="${xponents.home}/python/dist/">
       </fileset>
     </copy>
   </target>
@@ -202,11 +143,8 @@
   </target>
 
   <target name="copy-data">
-    <copy todir="${release}/test/" overwrite="true">
-      <fileset dir="${xponents.home}/Core/src/test/resources/data">
-        <include name="Coord_Patterns*.*" />
-      </fileset>
-    </copy>
+    <!-- Source data is also in Xponents-Core -->
+    <unzip src="${xponents.home}/test/data/xcoord-patterns-testcases.zip" dest="${release}/test"/>
     <unzip src="${xponents.home}/etc/langdetect-profiles-v3.zip" dest="${release}/etc" />
   </target>
 

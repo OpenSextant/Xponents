@@ -8,19 +8,14 @@ Then you can begin working with this extractor SDK (opensextant-xponents)
 1. Setup project. 
 
 ```
-  # Set up Core API with independent reference data
-  ./setup.sh
+  # Set up Core API with independent reference data -- If you are attempting a build
+  # you should also have checked out Xponents-Core repo and understand how to build that first
+  # as a precursor to this build, which depends on Core.
 
   # Set the main SDK API with the Gazetteer data unique to this project:
   cd solr && ./build.sh meta
 ```
 
-
-2. Setup Core API to build and test:
-
-```
-  (cd ./Core && mvn install)
-```
 
 3. Build a full Gazetteer from scratch.
 
@@ -52,7 +47,6 @@ Producing API documentation updates: infrequently, only for major releases.
 ```
  # target ./doc folders already exist as folders known to git.
  cp -r target/apidocs/ doc/sdk-apidocs
- cp -r Core/target/apidocs/ doc/core-apidocs
 
  # When done, commit changes, as API docs appear on GitHub public site.
 ```
@@ -79,8 +73,6 @@ Put it all together it might look like this, with notes about size of interim da
 
 ```shell
 
-  ./setup.sh
-
   # About here you head into ./solr and produce the Gazetteer accoring to those build notes.
 
   # Java modules
@@ -88,7 +80,6 @@ Put it all together it might look like this, with notes about size of interim da
   # Ant script below automates these Maven routines. So to build there are options
   # Depending on what you are doing.
   # Option -- Maven to install
-  # (cd ./Core && mvn install)
   # mvn install 
   # (cd ./Examples && mvn install)
 
@@ -217,9 +208,6 @@ Maven Publishing
 -  Review [Maven Plugin](https://maven.apache.org/plugins/maven-gpg-plugin/) for details
 
 ```
-  cd ./Core
-  mvn clean deploy -P release
-  cd ..
   mvn clean deploy -P release
 
 ```
