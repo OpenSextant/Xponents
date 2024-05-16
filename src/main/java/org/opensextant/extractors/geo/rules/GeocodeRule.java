@@ -21,7 +21,11 @@ import java.util.List;
 
 import org.opensextant.data.Place;
 import org.opensextant.data.TextInput;
-import org.opensextant.extractors.geo.*;
+import org.opensextant.extractors.geo.BoundaryObserver;
+import org.opensextant.extractors.geo.CountryObserver;
+import org.opensextant.extractors.geo.LocationObserver;
+import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.extractors.geo.ScoredPlace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.opensextant.util.GeodeticUtility.geohash;
@@ -151,6 +155,15 @@ public abstract class GeocodeRule {
             }
         }
         return p1.getHierarchicalPath() != null && p1.getHierarchicalPath().equals(p2.getHierarchicalPath());
+    }
+
+    public boolean similarFeatures(Place geo1, Place geo2) {
+        if (geo1.getFeatureCode() != null) {
+            if (geo1.getFeatureCode().equals(geo2.getFeatureCode())) {
+                return true;
+            }
+        }
+        return geo1.isSame(geo2);
     }
 
     public static void setGeohash(Place loc) {

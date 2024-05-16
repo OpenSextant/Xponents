@@ -561,7 +561,7 @@ public class NameCodeRule extends GeocodeRule {
         //
         for (ScoredPlace nameGeoScore : n.getPlaces()) {
             Place nameGeo = nameGeoScore.getPlace();
-            if (nameGeo.getFeatureCode().equals(codeGeo.getFeatureCode()) || nameGeo.isSame(codeGeo)) {
+            if (similarFeatures(nameGeo, codeGeo)) {
                 continue; /* Ignore choosing same location for repeated names */
             }
             if (!(nameGeo.isPopulated() || nameGeo.isAdministrative() || nameGeo.isSpot())) {
@@ -574,6 +574,7 @@ public class NameCodeRule extends GeocodeRule {
             }
         }
     }
+
 
     @Override
     public void evaluate(PlaceCandidate name, Place geo) {
