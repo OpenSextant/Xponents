@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 msg(){
   echo
   echo $1
@@ -8,25 +7,22 @@ msg(){
 }
 
 
-# Project setup -- if any of these resources change at all you re-run the setup 
-# to refresh the environment.
-msg "Setup Project resource data"
-ant setup
-
-# Python setup.
-msg "Build Python libraries"
+msg  "../Xponents-Core checkout and build is required to get started"
 
 unset PYTHONPATH
-if [ -d "./python/dist" ]; then
-  rm -f ./python/dist/*
-fi
-(cd ./python  &&  python3 ./setup.py sdist)
-
 msg "Install Python resources"
+
+PYLIB=`ls ../dist/xponents-core-3.*/python/opensextant-1.5.*.tar.gz`
+
+if [ ! -e $PYLIB ]; then
+  msg Locate $PYLIB first please
+  exit
+fi
+ 
+
 # Install built lib with dependencies to ./python. First install here are 
 # libraries used by Solr/ETL scripting:
-pip3 install -U --target ./piplib lxml bs4 arrow requests pyshp pycountry
-pip3 install -U --target ./piplib ./python/dist/opensextant-1.5*.tar.gz
+pip3 install -U --target ./piplib lxml bs4 arrow requests pyshp pycountry $PYLIB
 
 msg "Assemble basic JAR resources"
 . ./dev.env

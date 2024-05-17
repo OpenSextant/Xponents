@@ -12,10 +12,6 @@
   <property name="release" location="${xponents.home}/../dist/Xponents-${xponents.version}" />
   <property name="solr.release" location="${release}/xponents-solr" />
 
-
-
-
-
   <!-- Build and Distribution mechanics -->
 
   <target name="clean">
