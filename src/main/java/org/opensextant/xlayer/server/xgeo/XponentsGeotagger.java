@@ -180,7 +180,8 @@ public class XponentsGeotagger extends TaggerResource {
             if (isDebug()) {
                 debug(String.format("CURRENT MEM USAGE(K)=%d", RuntimeTools.reportMemory()));
             }
-            filter(matches, jobParams);
+
+            filter(matches, jobParams, input);
             /*
              * transform matches as JSON output.
              */
@@ -192,17 +193,32 @@ public class XponentsGeotagger extends TaggerResource {
         }
     }
 
-    private void filter(List<TextMatch> matches, Parameters jobParams) {
+    /**
+     * Complex filters -- primarily due to the addition of POSTAL feature tagging; That introduce significant
+     * noise which needs lots of special post-processing logic.
+     *
+     * @param matches
+     * @param jobParams
+     */
+    private void filter(List<TextMatch> matches, Parameters jobParams, TextInput signal) {
+
+        // Language filter for text spans.
+        boolean isGeneralLang = true;
+        if (signal.getCharacterization() != null) {
+            isGeneralLang = !(signal.getCharacterization().hasCJK || signal.getCharacterization().hasMiddleEastern);
+        }
 
         for (TextMatch m : matches) {
-            // Big loop for conditionals... Only one special condition currently:
+            // Big loop for conditionals...
             //
-            // 1. IF Caller is not asking for "codes" output.... the omit any postal codes or state/ADM1 codes
-            // that are not fully resolved.
-            if (!jobParams.tag_codes) {
-                if (m instanceof PlaceCandidate) {
-                    PlaceCandidate place = (PlaceCandidate) m;
-                    Place resolvedPlace = place.getChosenPlace();
+            if (m instanceof PlaceCandidate) {
+                PlaceCandidate place = (PlaceCandidate) m;
+                Place resolvedPlace = place.getChosenPlace();
+                boolean validCountry = place.isCountry && place.getLength() > 2;
+                boolean no_qualifying_geolocation = !place.hasResolvedRelated();
+                if (!jobParams.tag_codes) {
+                    // IF Caller is not asking for "codes" output.... then omit any postal codes or state/ADM1 codes
+                    // that are not fully resolved.
                     if (resolvedPlace != null && resolvedPlace.isCode()) {
                         // This condition differentiates matches -- looking to evaluate only inferred places that are codes.
                         //    Cases:  CODE          -- Bare CODE. although resolved, its likely noise.
@@ -211,9 +227,19 @@ public class XponentsGeotagger extends TaggerResource {
                         // Filter out non-Postal codes if user is not requesting "codes" to be listed.
                         if (!qualified && !GeonamesUtility.isPostal(resolvedPlace)) {
                             place.setFilteredOut(true);
-                        } else if (place.isShortName() && !place.hasResolvedRelated()) {
+                        } else if (place.isShortName() && no_qualifying_geolocation) {
                             place.setFilteredOut(true);
                         }
+                    }
+                }
+                if (no_qualifying_geolocation) {
+                    // When place has no related geography and is a form of code, abbrev or other noise omit. Cases:
+                    // 1. if Place represents POSTAL area
+                    // 2. is a trivial length match (but not a country). This applies to non-CjK, non-Arabic scripts
+                    if (place.hasPostal()) {
+                        place.setFilteredOut(true);
+                    } else if (m.getLength() < jobParams.minimum_tag_len && !validCountry && isGeneralLang) {
+                        place.setFilteredOut(true);
                     }
                 }
             }

@@ -106,6 +106,10 @@ public abstract class TaggerResource extends ServerResource {
         if (fmt != null) {
             job.addOutputFormat(fmt);
         }
+        String len = inputs.getFirstValue("minlen");
+        if (len != null){
+            job.minimum_tag_len = Integer.parseInt(len);
+        }
 
         return job;
     }
@@ -215,6 +219,9 @@ public abstract class TaggerResource extends ServerResource {
         }
         if (job.clean_input || job.tag_lowercase) {
             job.isdefault = false;
+        }
+        if (inputs.has("minlen")){
+            job.minimum_tag_len = inputs.getInt("minlen");
         }
 
         return job;
