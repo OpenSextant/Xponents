@@ -72,9 +72,9 @@ def create_entities(line):
     Create a taxon entry for this nationality, which may have diacritics. All phrases are unicode.
     """
     if not line: return []
-    parts = line.split(',')
-    name = get_text(parts[0]).strip()
-    cc = parts[1].strip().upper()
+    parts = line.strip().split(',')
+    name = get_text(parts[0])
+    cc = parts[1].upper()
 
     #
     # done with aliasing.

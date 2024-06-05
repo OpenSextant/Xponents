@@ -210,6 +210,8 @@ def main_loop(url):
 
     builder.save(flush=True)
     builder.optimize()
+    print("Start row:", start_id)
+    print("Final row:", start_id + builder.count)
 
 
 if __name__ == '__main__':

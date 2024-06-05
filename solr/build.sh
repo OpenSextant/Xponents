@@ -5,18 +5,15 @@ fi
 
 SOLR_PORT=${SOLR_PORT:-7000}
 SERVER=127.0.0.1:$SOLR_PORT
-# Proxies can be sensitive, but at least we need NOPROXY
-export noproxy=localhost,127.0.0.1
-export NO_PROXY=$noproxy
 
 cur=`dirname $0 `
 XPONENTS=`cd -P $cur/..; echo $PWD`
 
-export PYTHONPATH=$XPONENTS/python:$XPONENTS/piplib
+export PYTHONPATH=$XPONENTS/../piplib
 GAZ_CONF=etc/gazetteer
 SOLR_CORE_VER=solr7
 
-if [ ! -d $XPONENTS/piplib ] ; then
+if [ ! -d $XPONENTS/../piplib ] ; then
    echo "install python first"
    echo "see README"
    exit 1
@@ -31,7 +28,7 @@ index_taxcat () {
   TAXCAT=./etc/taxcat
   echo "Populate nationalities taxonomy in XTax"
   # you must set your PYTHONPATH to include required libraries built from ../python
-  python3  ./script/gaz_nationalities.py   $TAXCAT/nationalities.csv --solr $SOLR_URL --starting-id 0
+  python3  ./script/taxcat_nationalities.py   $TAXCAT/nationalities.csv --solr $SOLR_URL --starting-id 0
   sleep 1 
 
   echo "Populate core JRC Names 'entities' data file, c.2014"
@@ -141,20 +138,9 @@ if [ ! -d $XPONENTS/target ]; then
   exit 1
 fi
 
-# Oh, shoot. I'm the only one who has a copy of this scrapped data.
-do_wfb=0
-
 if [ $do_data -eq 1 ] ; then 
   echo "Acquiring Census data files for names"
   ant gaz-resources
-
-  if [ $do_wfb -eq 1 ]; then 
-    echo "Harvesting World Factbook 'factoids'"
-    python3 ./script/assemble_wfb_leaders.py
-    python3 ./script/assemble_wfb_orgs.py
-  else 
-    echo "As of 2020, WFB content has changed dramatically" 
-  fi
 fi
 
 if [ $do_meta -eq 1 ] ; then 

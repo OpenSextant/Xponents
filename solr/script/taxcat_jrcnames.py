@@ -226,8 +226,6 @@ def create_entity(line, scan=False):
     """
     global no_id_counter
     line = line.strip()
-    if not line:
-        return None
     parts = jrc_line_split.split(line, maxsplit=3)
     _id = parts[0]
     if _id == "0":
@@ -328,7 +326,8 @@ if __name__ == "__main__":
     builder = TaxCatalogBuilder(server=args.solr, test=args.debug)
     if args.purge:
         builder.purge(catalog_id)
-        print("Pause"); sleep(30)
+        print("Pause")
+        sleep(10)
 
     if args.max:
         row_max = int(args.max)
@@ -350,7 +349,8 @@ if __name__ == "__main__":
     row_id = 0
     with open(args.taxonomy, "r", encoding="UTF-8") as fh:
         for row in fh:
-            if row.startswith("#") or len(row.strip()) == 0: continue
+            if row.startswith("#") or not row.strip():
+                continue
 
             row_id = row_id + 1
             create_entity(row, scan=True)
@@ -370,7 +370,8 @@ if __name__ == "__main__":
     row_id = 0
     with open(args.taxonomy, "r", encoding="UTF-8") as fh:
         for row in fh:
-            if row.startswith("#") or len(row.strip()) == 0: continue
+            if row.startswith("#") or not row.strip():
+                continue
 
             row_id = row_id + 1
             create_entity(row, scan=True)
@@ -410,3 +411,5 @@ if __name__ == "__main__":
 
         builder.save(flush=True)
         builder.optimize()
+    print("Start row:", start_id)
+    print("Final row:", start_id + builder.count)

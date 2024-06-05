@@ -66,8 +66,12 @@ if __name__ == '__main__':
     test = False
     row_max = -1
     builder = TaxCatalogBuilder(server=args.solr)
-    row_id = int(args.starting_id)
+    start_id = int(args.starting_id)
+    row_id = start_id
     builder.server.delete(q=f"catalog:{catalog_id}", commit=True)
 
     for cfg in data_sets:
         row_id = index_names(builder, cfg['path'], catalog_id, cfg['source'], row_id)
+    print("Start row:", start_id)
+    print("Final row:", start_id + builder.count)
+
