@@ -128,7 +128,7 @@ public abstract class TaggerResource extends ServerResource {
         }
 
         // Request tagging on demand.
-        p.tag_all_taxons = kv.contains("all-taxons");
+        p.tag_all_taxons = kv.contains("all_taxons");
         p.tag_taxons = (kv.contains("taxons") || kv.contains("orgs") || kv.contains("persons"));
         p.tag_patterns = kv.contains("patterns") || kv.contains("dates");
 

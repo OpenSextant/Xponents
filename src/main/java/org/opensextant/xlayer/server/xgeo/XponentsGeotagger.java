@@ -12,6 +12,7 @@ import org.opensextant.extraction.TextMatch;
 import org.opensextant.extractors.geo.PlaceCandidate;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.geo.PostalGeocoder;
+import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.output.Transforms;
 import org.opensextant.processing.Parameters;
@@ -157,25 +158,28 @@ public class XponentsGeotagger extends TaggerResource {
             List<TextMatch> matches = new ArrayList<>();
 
             // BOTH geo and taxons could be requested:  features = "geo", "all-taxons"
-            // `geo` tagging
-            if (tag_geo(jobParams) || tag_taxons(jobParams)) {
+            if (!tag_geo(jobParams) && tag_taxons(jobParams)) {
+                // Taxonomic tags only
+                TaxonMatcher phraseTagger = (TaxonMatcher) getExtractor(TAXON_TAGGER);
+                matches.addAll(phraseTagger.extract(input, jobParams));
+            } else if (tag_geo(jobParams) || tag_taxons(jobParams)) {
+                // Geotagging
                 PlaceGeocoder xgeo = (PlaceGeocoder) getExtractor(GEO_TAGGER);
                 matches.addAll(xgeo.extract(input, jobParams));
             }
+
             if (jobParams.tag_patterns) {
                 XTemporal xt = (XTemporal) getExtractor(DATE_TAGGER);
                 matches.addAll(xt.extract(input));
             }
             if (jobParams.tag_postal) {
                 PostalGeocoder pg = (PostalGeocoder) getExtractor(POSTAL_TAGGER);
-                if (pg != null) {
-                    if (tag_geo(jobParams)) {
-                        // OPTIMIZATION: reuse matches accumulated so far to prevent
-                        // PostalGeocoder from repeating extract()
-                        pg.setGeneralMatches(matches);
-                    }
-                    matches.addAll(pg.extract(input));
+                if (tag_geo(jobParams)) {
+                    // OPTIMIZATION: reuse matches accumulated so far to prevent
+                    // PostalGeocoder from repeating extract()
+                    pg.setGeneralMatches(matches);
                 }
+                matches.addAll(pg.extract(input));
             }
             if (isDebug()) {
                 debug(String.format("CURRENT MEM USAGE(K)=%d", RuntimeTools.reportMemory()));

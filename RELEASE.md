@@ -13,6 +13,9 @@ Visit https://github.com/OpenSextant/Xponents/releases for latest library releas
   were replaced.
   * Migrated to a separate repo:  Find this now maintained separately at [`Xponents-Core` repo](https://github.com/OpenSextant/Xponents-Core)
   This is the first release ./Core/ folder will not appear in this source tree.
+* **Xponents REST**: 
+  * Noise filtering;  added `minlen` parameter to Xlayer (Xponents REST) service.  By default it filters out trivial stuff. About 3-5% reduction in 
+   noise tags from codes, short names, etc, -- things typically not useful geocodings nor typically names of places.
 
 **Xponents 3.6.7**: Springy
 * **Core API**

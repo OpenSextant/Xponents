@@ -296,6 +296,17 @@ public class Transforms implements MatchSchema {
         return o;
     }
 
+    private static JsonArray populateTaxon(List<Taxon> taxons) {
+        JsonArray arr = new JsonArray();
+        for (Taxon t : taxons) {
+            JsonObject tj = new JsonObject();
+            tj.put("cat", t.catalog);
+            tj.put("taxon", t.name);
+            arr.add(tj);
+        }
+        return arr;
+    }
+
     /**
      * Return seconds of epoch.
      *
@@ -349,8 +360,11 @@ public class Transforms implements MatchSchema {
                         // Only get one taxon from this match. That is sufficient, but not perfect.
                         Taxon n = match.getTaxons().get(0);
                         JsonObject node = populateMatch(name);
-                        node.put("taxon", n.name); // Name of taxon
+                        node.put("taxon", n.name); // Name of taxon, just the first and most common.
                         node.put("catalog", n.catalog); // Name of catalog or source
+                        if (match.getTaxons().size() > 1) {
+                            node.put("all-taxons", populateTaxon(match.getTaxons())); // Name of taxon, just the first and most common.
+                        }
                         node.put("method", "TaxonMatcher");
                         resultArray.add(node);
                     }

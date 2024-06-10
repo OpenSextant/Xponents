@@ -7,6 +7,7 @@ import org.opensextant.ConfigException;
 import org.opensextant.extraction.MatchFilter;
 import org.opensextant.extractors.geo.PlaceGeocoder;
 import org.opensextant.extractors.geo.PostalGeocoder;
+import org.opensextant.extractors.xtax.TaxonMatcher;
 import org.opensextant.extractors.xtemporal.XTemporal;
 import org.opensextant.processing.Parameters;
 import org.opensextant.xlayer.server.XlayerApp;
@@ -39,9 +40,10 @@ public class XlayerRestlet extends XlayerApp {
             banner();
             configure();
             Context ctx = getContext();
-            ctx.getAttributes().put("xgeo", tagger);
-            ctx.getAttributes().put("xtemp", dateTagger);
-            ctx.getAttributes().put("xpostal", postalGeocoder);
+            ctx.getAttributes().put(XponentsGeotagger.GEO_TAGGER, tagger);
+            ctx.getAttributes().put(XponentsGeotagger.DATE_TAGGER, dateTagger);
+            ctx.getAttributes().put(XponentsGeotagger.POSTAL_TAGGER, postalGeocoder);
+            ctx.getAttributes().put(XponentsGeotagger.TAXON_TAGGER, phraseTagger);
 
             ctx.getAttributes().put("version", this.version);
             info("%%%%   Xponents Geo Phase Configured");
@@ -59,6 +61,7 @@ public class XlayerRestlet extends XlayerApp {
     private PlaceGeocoder tagger = null;
     private XTemporal dateTagger = null;
     private PostalGeocoder postalGeocoder = null;
+    private TaxonMatcher phraseTagger = null;
 
     /**
      * @throws ConfigException
@@ -72,6 +75,8 @@ public class XlayerRestlet extends XlayerApp {
         taggerParams.resolve_localities = true;
         tagger.setParameters(taggerParams);
         tagger.configure();
+
+        phraseTagger = new TaxonMatcher();
 
         // TODO: refine this filter list. Use "/filters/non-placenames,user.csv" going forward.
         //
