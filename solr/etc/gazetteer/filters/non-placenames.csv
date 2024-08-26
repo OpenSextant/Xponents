@@ -208,10 +208,10 @@ decimal,adj
 deep,adj
 dim,adj
 diplomatic,adj
-disparate,adj
 dire,adj
 dirty,adj
 dismal,adj
+disparate,adj
 divine,adj
 done,adj
 downhill,adj
@@ -430,6 +430,7 @@ powerhouse,adj
 premier,adj
 pretty,adj
 prime,adj
+priori,adj
 private,adj
 proper,adj
 prospective,adj
@@ -640,6 +641,7 @@ otter,animal
 panda,animal
 panther,animal
 parakeet,animal
+parrot,animal
 pelican,animal
 penguin,animal
 pig,animal
@@ -676,10 +678,10 @@ who,article
 moi,article.fre
 qui,article.fre
 sans,article.fre
-che,article.ita
-cé,article.ita
 c'è,article.ita
+cé,article.ita
 cè,article.ita
+che,article.ita
 gli,article.ita
 lui,article.ita
 tra,article.ita
@@ -736,6 +738,7 @@ skin,bodypart
 tail,bodypart
 thumbs,bodypart
 toe,bodypart
+azure,color
 black,color
 blue,color
 bronze,color
@@ -817,8 +820,8 @@ southeastern,directional
 southern,directional
 southwest,directional
 southwestern,directional
-sw,directional
 starboard,directional
+sw,directional
 the east,directional
 the north,directional
 the south,directional
@@ -1058,6 +1061,7 @@ info,internet
 information technology,internet
 jabber,internet
 java,internet
+kik,internet
 link,internet
 login,internet
 lua,internet
@@ -1096,6 +1100,7 @@ startup,internet
 stat,internet
 str,internet
 telecom,internet
+the images,internet
 thunderbird,internet
 tor,internet
 ubuntu,internet
@@ -1128,6 +1133,7 @@ việt,language
 cana,latin
 canis,latin
 coli,latin
+corpus,latin
 cum,latin
 datum,latin
 deus,latin
@@ -1284,6 +1290,7 @@ belt,noun
 belt buckle,noun
 belts,noun
 bench,noun
+benchmark,noun
 berm,noun
 berth,noun
 bests,noun
@@ -1772,9 +1779,9 @@ frame,noun
 fraud,noun
 freedom,noun
 fresh water,noun
-frigate,noun
 friends,noun
 friendship,noun
+frigate,noun
 front,noun
 front door,noun
 funding,noun
@@ -2753,6 +2760,7 @@ volta,noun.ita
 aeroport,noun.por
 ag,person.label
 ally,person.label
+amateur,person.label
 ambassador,person.label
 arab,person.label
 ass,person.label
@@ -2794,8 +2802,8 @@ christian,person.label
 citizen,person.label
 cmr,person.label
 cmsr,person.label
-collector,person.label
 coder,person.label
+collector,person.label
 comm,person.label
 commander,person.label
 commis,person.label
@@ -2807,6 +2815,7 @@ constable,person.label
 corporal,person.label
 counsel,person.label
 counselor,person.label
+county sherrif,person.label
 cousin,person.label
 cowards,person.label
 criminal,person.label
@@ -3187,6 +3196,7 @@ big town,phrase
 black and white,phrase
 black box,phrase
 blah,phrase
+blocker,phrase
 boiling point,phrase
 boo,phrase
 break away,phrase
@@ -3199,7 +3209,9 @@ building a,phrase
 by chance,phrase
 by products,phrase
 by the way,phrase
+bye,phrase
 chillin,phrase
+comma,phrase
 commando,phrase
 cons,phrase
 cross country,phrase
@@ -3396,6 +3408,7 @@ state run,phrase
 stopover,phrase
 story building,phrase
 ta,phrase
+table top,phrase
 task force,phrase
 the address,phrase
 the adobe,phrase
@@ -3423,8 +3436,8 @@ the international,phrase
 the light,phrase
 the long,phrase
 the mere,phrase
-the mitre,phrase
 the mission,phrase
+the mitre,phrase
 the nose,phrase
 the ocean,phrase
 the one,phrase
@@ -3742,6 +3755,7 @@ ports,place.civil
 post office,place.civil
 postal,place.civil
 power plant,place.civil
+power station,place.civil
 precinct,place.civil
 primary school,place.civil
 prison,place.civil
@@ -3931,6 +3945,7 @@ globe,place.general
 governorate,place.general
 ground,place.general
 gulf,place.general
+habitat,place.general
 hill,place.general
 hills,place.general
 hollow,place.general
@@ -4075,25 +4090,25 @@ monde,place.general.fre
 territoire,place.general.fre
 cita,place.general.ita
 distrito,place.general.ita
-krai,place.general.non-english
-kraj,place.general.non-english
-kray,place.general.non-english
-mintaqat,place.general.non-english
-muhafazah,place.general.non-english
-muhafazat,place.general.non-english
-republica,place.general.non-english
-respublika,place.general.non-english
-sitio,place.general.non-english
-tinh,place.general.non-english
-veleyat,place.general.non-english
-wilayat,place.general.non-english
+krai,place.general.rus
+kraj,place.general.rus
+kray,place.general.rus
+mintaqat,place.general
+muhafazah,place.general
+muhafazat,place.general
+republica,place.general.spa
+respublika,place.general.rus
+sitio,place.general.spa
+tinh,place.general
+veleyat,place.general.rus
+wilayat,place.general
 estao,place.general.por
 oblast,place.general.rus
 voblast,place.general.rus
 locacion,place.general.spa
 partido,place.general.spa
 saharan,place.landmass
-atlantis,place.legend
+atlantis,well-known.mythology
 atlantic,place.ocean
 pacific,place.ocean
 zulu,place.timezone
@@ -4120,6 +4135,7 @@ porno,slang
 pussy,slang
 shit,slang
 sup,slang
+wanna,slang
 wha,slang
 y'all,slang
 yall,slang
@@ -4559,11 +4575,11 @@ earn,verb
 echo,verb
 emit,verb
 enter,verb
+evolve,verb
 exchange,verb
 exile,verb
 experiment,verb
 express,verb
-evolve,verb
 fail,verb
 favor,verb
 fearing,verb
@@ -4710,8 +4726,8 @@ offer,verb
 orient,verb
 oversee,verb
 owning,verb
-packed,verb
 pacing,verb
+packed,verb
 pan,verb
 pardon,verb
 parse,verb
@@ -5131,6 +5147,8 @@ botany,well-known.science
 botany,well-known.science
 bromide,well-known.science
 edema,well-known.science
+fauna,well-known.science
+flora,well-known.science
 latitude,well-known.science
 lipid,well-known.science
 longitude,well-known.science
@@ -5158,5 +5176,3 @@ uranium,well-known.science
 vapor,well-known.science
 volt,well-known.science
 x-ray,well-known.science
-azure,color
-table top,phrase

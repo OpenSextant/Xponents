@@ -74,6 +74,7 @@ ambassador
 constable
 contessa
 sheriff
+county sheriff
 minister
 president
 presidente
