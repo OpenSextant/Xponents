@@ -1064,6 +1064,7 @@ java,internet
 kik,internet
 link,internet
 login,internet
+logon,internet
 lua,internet
 mcafee,internet
 mem,internet
@@ -1088,6 +1089,7 @@ printer,internet
 proc,internet
 python,internet
 rfc,internet
+saas,internet
 safari,internet
 scams,internet
 seagate,internet
@@ -1468,6 +1470,7 @@ charity,noun
 charm,noun
 chart,noun
 charter,noun
+charters,noun
 charts,noun
 chat,noun
 check,noun
@@ -1918,6 +1921,7 @@ jag,noun
 jaw,noun
 jazz,noun
 jazz,noun
+jelly,noun
 jesuit,noun
 jet,noun
 job,noun
@@ -2021,6 +2025,7 @@ mail box,noun
 mailbox,noun
 main camp,noun
 maker,noun
+mallet,noun
 man,noun
 management,noun
 mange,noun
@@ -2066,6 +2071,7 @@ menu,noun
 mercy,noun
 merger,noun
 merit,noun
+mesh,noun
 mess,noun
 message,noun
 meter,noun
@@ -2207,6 +2213,7 @@ patrol,noun
 payment,noun
 peace,noun
 peer,noun
+pellet,noun
 penalty,noun
 pencil,noun
 pens,noun
@@ -2278,6 +2285,7 @@ price,noun
 pride,noun
 primate,noun
 primer,noun
+prism,noun
 privilege,noun
 prix,noun
 prize,noun
@@ -2469,6 +2477,7 @@ slack,noun
 slashes,noun
 slate,noun
 slit,noun
+slop,noun
 slope,noun
 sluice,noun
 slurry,noun
@@ -2499,6 +2508,7 @@ spear,noun
 speculation,noun
 speed,noun
 spike,noun
+spire,noun
 splinter,noun
 spool,noun
 spore,noun
@@ -2613,6 +2623,7 @@ toon,noun
 tooth,noun
 topic,noun
 topping,noun
+torch,noun
 tornado,noun
 total,noun
 tour,noun
@@ -4090,25 +4101,25 @@ monde,place.general.fre
 territoire,place.general.fre
 cita,place.general.ita
 distrito,place.general.ita
-krai,place.general.rus
-kraj,place.general.rus
-kray,place.general.rus
-mintaqat,place.general
-muhafazah,place.general
-muhafazat,place.general
-republica,place.general.spa
-respublika,place.general.rus
-sitio,place.general.spa
-tinh,place.general
-veleyat,place.general.rus
-wilayat,place.general
+krai,place.general.non-english
+kraj,place.general.non-english
+kray,place.general.non-english
+mintaqat,place.general.non-english
+muhafazah,place.general.non-english
+muhafazat,place.general.non-english
+republica,place.general.non-english
+respublika,place.general.non-english
+sitio,place.general.non-english
+tinh,place.general.non-english
+veleyat,place.general.non-english
+wilayat,place.general.non-english
 estao,place.general.por
 oblast,place.general.rus
 voblast,place.general.rus
 locacion,place.general.spa
 partido,place.general.spa
 saharan,place.landmass
-atlantis,well-known.mythology
+atlantis,place.legend
 atlantic,place.ocean
 pacific,place.ocean
 zulu,place.timezone
@@ -4849,6 +4860,7 @@ setup,verb
 sever,verb
 shake,verb
 shape,verb
+shaping,verb
 share,verb
 sharing,verb
 shatter,verb
@@ -4861,6 +4873,7 @@ shut,verb
 simmering,verb
 simmers,verb
 sing,verb
+singe,verb
 sip,verb
 sit,verb
 siting,verb
@@ -4986,6 +4999,7 @@ veja,verb.por
 vem,verb.por
 battleship,weapon
 bomb,weapon
+dagger,weapon
 explosives,weapon
 grenade,weapon
 kalashnikov,weapon
@@ -5094,6 +5108,7 @@ batman,well-known.fiction
 darth,well-known.fiction
 little red,well-known.fiction
 manga,well-known.fiction
+nemo,well-known.fiction
 sherlock,well-known.fiction
 simpsons,well-known.fiction
 vader,well-known.fiction
