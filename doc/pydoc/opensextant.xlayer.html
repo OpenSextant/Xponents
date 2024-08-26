@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="opensextant.html"><font color="#ffffff">opensextant</font></a>.xlayer</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents/dist/Xponents-3.7/piplib/opensextant/xlayer.py">/Users/ubaldino/workspace/opensource/Xponents/dist/Xponents-3.7/piplib/opensextant/xlayer.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/ubaldino/workspace/opensource/Xponents-Core/src/main/python/opensextant/xlayer.py">/Users/ubaldino/workspace/opensource/Xponents-Core/src/main/python/opensextant/xlayer.py</a></font></td></tr></table>
     <p><tt>Created&nbsp;on&nbsp;Mar&nbsp;14,&nbsp;2016<br>
 &nbsp;<br>
 @author:&nbsp;ubaldino</tt></p>
@@ -104,7 +104,7 @@ There&nbsp;are&nbsp;no&nbsp;default&nbsp;options&nbsp;supported.</tt></dd></dl>
 <dl><dt><a name="XlayerClient-ping"><strong>ping</strong></a>(self, timeout=30)</dt><dd><tt>Timeout&nbsp;of&nbsp;30&nbsp;seconds&nbsp;is&nbsp;used&nbsp;here&nbsp;so&nbsp;calls&nbsp;do&nbsp;not&nbsp;hang&nbsp;indefinitely.<br>
 :return:&nbsp;True&nbsp;if&nbsp;successful.</tt></dd></dl>
 
-<dl><dt><a name="XlayerClient-process"><strong>process</strong></a>(self, docid, text, lang=None, features=['geo'], timeout=10, preferred_countries=None, preferred_locations=None)</dt><dd><tt>Process&nbsp;text,&nbsp;extracting&nbsp;some&nbsp;entities<br>
+<dl><dt><a name="XlayerClient-process"><strong>process</strong></a>(self, docid, text, lang=None, features=['geo'], timeout=10, minlen=-1, preferred_countries=None, preferred_locations=None)</dt><dd><tt>Process&nbsp;text,&nbsp;extracting&nbsp;some&nbsp;entities<br>
 &nbsp;<br>
 &nbsp;&nbsp;lang&nbsp;=&nbsp;"xx"&nbsp;or&nbsp;None,&nbsp;where&nbsp;"xx"&nbsp;is&nbsp;a&nbsp;ISO&nbsp;language&nbsp;2-char&nbsp;code.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;general&nbsp;Chinese/Japanese/Korean&nbsp;(CJK)&nbsp;support,&nbsp;use&nbsp;lang&nbsp;=&nbsp;'cjk'<br>
@@ -118,7 +118,7 @@ There&nbsp;are&nbsp;no&nbsp;default&nbsp;options&nbsp;supported.</tt></dd></dl>
 &nbsp;&nbsp;<br>
 &nbsp;&nbsp;feature&nbsp;aliases&nbsp;"geo"&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;get&nbsp;All&nbsp;Geographic&nbsp;entities&nbsp;(places,coordinates,countries)<br>
 &nbsp;&nbsp;feature&nbsp;"taxons"&nbsp;can&nbsp;get&nbsp;at&nbsp;any&nbsp;Taxon&nbsp;"taxons",&nbsp;"persons",&nbsp;"orgs".&nbsp;&nbsp;As&nbsp;of&nbsp;Xponents&nbsp;3.6&nbsp;this&nbsp;reports&nbsp;ALL<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other&nbsp;taxons&nbsp;available&nbsp;in&nbsp;TaxCat&nbsp;tagger.&nbsp;&nbsp;"all-taxons"&nbsp;is&nbsp;offered&nbsp;as&nbsp;a&nbsp;means&nbsp;to&nbsp;distinguish&nbsp;old&nbsp;and&nbsp;new&nbsp;behavior.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other&nbsp;taxons&nbsp;available&nbsp;in&nbsp;TaxCat&nbsp;tagger.&nbsp;&nbsp;"all_taxons"&nbsp;is&nbsp;offered&nbsp;as&nbsp;a&nbsp;means&nbsp;to&nbsp;distinguish&nbsp;old&nbsp;and&nbsp;new&nbsp;behavior.<br>
 &nbsp;&nbsp;feature&nbsp;"postal"&nbsp;will&nbsp;tag&nbsp;obvious,&nbsp;qualified&nbsp;postal&nbsp;codes&nbsp;that&nbsp;are&nbsp;paired&nbsp;with&nbsp;a&nbsp;CITY,&nbsp;PROVINCE,&nbsp;or&nbsp;COUNTRY&nbsp;tag.<br>
 &nbsp;&nbsp;feature&nbsp;"patterns"&nbsp;is&nbsp;an&nbsp;alias&nbsp;for&nbsp;dates&nbsp;and&nbsp;any&nbsp;other&nbsp;pattern-based&nbsp;extractors.&nbsp;For&nbsp;now&nbsp;"dates"&nbsp;is&nbsp;only&nbsp;one<br>
 &nbsp;&nbsp;feature&nbsp;"codes"&nbsp;will&nbsp;tag,&nbsp;use&nbsp;and&nbsp;report&nbsp;coded&nbsp;information&nbsp;for&nbsp;any&nbsp;place;&nbsp;primarily&nbsp;administrative&nbsp;boundaries<br>
@@ -137,6 +137,8 @@ There&nbsp;are&nbsp;no&nbsp;default&nbsp;options&nbsp;supported.</tt></dd></dl>
 :param&nbsp;features:&nbsp;list&nbsp;of&nbsp;geo&nbsp;OR&nbsp;[places,&nbsp;coordinates,&nbsp;countries],&nbsp;orgs,&nbsp;persons,&nbsp;patterns,&nbsp;taxons<br>
 :param&nbsp;timeout:&nbsp;default&nbsp;to&nbsp;10&nbsp;seconds;&nbsp;If&nbsp;you&nbsp;think&nbsp;your&nbsp;processing&nbsp;takes&nbsp;longer,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adjust&nbsp;if&nbsp;you&nbsp;see&nbsp;exceptions.<br>
+:param&nbsp;minlen:&nbsp;minimum&nbsp;length&nbsp;of&nbsp;matches&nbsp;that&nbsp;are&nbsp;unqualified.&nbsp;To&nbsp;reduce&nbsp;noise&nbsp;in&nbsp;geotags.&nbsp;Server&nbsp;has&nbsp;a&nbsp;default<br>
+&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;4&nbsp;chars&nbsp;for&nbsp;general&nbsp;purpose&nbsp;noise&nbsp;filtering.<br>
 :param&nbsp;preferred_countries:&nbsp;Array&nbsp;of&nbsp;country&nbsp;codes&nbsp;representing&nbsp;those&nbsp;which&nbsp;are&nbsp;preferred&nbsp;fall&nbsp;backs&nbsp;when<br>
 &nbsp;&nbsp;&nbsp;&nbsp;there&nbsp;are&nbsp;ambiguous&nbsp;location&nbsp;names.<br>
 :param&nbsp;preferred_locations:&nbsp;&nbsp;Array&nbsp;of&nbsp;geohash&nbsp;representing&nbsp;general&nbsp;area&nbsp;of&nbsp;desired&nbsp;preferred&nbsp;matches<br>
