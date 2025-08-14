@@ -33,10 +33,10 @@ public class LanguageFilter extends MatchFilter {
         TOKEN_LEN.put("ja", 2);
         TOKEN_LEN.put("ko", 2);
 
-        TOKEN_LEN.put("ar", 5);
-        TOKEN_LEN.put("fa", 5);
-        TOKEN_LEN.put("ur", 5);
-        TOKEN_LEN.put("dr", 5);
+        TOKEN_LEN.put("ar", 6);
+        TOKEN_LEN.put("fa", 6);
+        TOKEN_LEN.put("ur", 6);
+        TOKEN_LEN.put("dr", 6);
 
         // "name length" is to filter out place names that are more likely places
         //
@@ -89,7 +89,7 @@ public class LanguageFilter extends MatchFilter {
     public boolean filterOut(PlaceCandidate pc) {
         for (ScoredPlace geo : pc.getPlaces()) {
             if (MAJOR_FEATURES.contains(geo.getPlace().getFeatureCode())) {
-                log.info("Allow place {}, due to location/feat {}", pc.getText(), geo.getPlace());
+                log.debug("Allow place {}, due to location/feat {}", pc.getText(), geo.getPlace());
                 return false;
             }
         }
