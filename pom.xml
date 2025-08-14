@@ -53,26 +53,28 @@
     <slf4j.version>2.0.12</slf4j.version>
     <log4j.version>2.23.0</log4j.version>
     <restlet.version>2.4.3</restlet.version>
-    <xponents.version>3.7.3</xponents.version>
+    <xponents.version>3.7.6</xponents.version>
   </properties>
   <!-- OSS Sonatype instructions: list repositories -->
+  <!-- OSSRH Retired:
   <distributionManagement>
     <repository>
       <id>ossrh</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
   </distributionManagement>
+  -->
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.16.1</version>
+        <version>2.20.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.12.0</version>
+        <version>3.18.0</version>
       </dependency>
       <dependency>
         <groupId>commons-configuration</groupId>
@@ -95,7 +97,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.4.14</version>
+        <version>1.5.18</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -123,7 +125,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
-      <version>1.10.0</version>
+      <version>1.14.0</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.woodstox</groupId>
@@ -665,14 +667,12 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.13</version>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.8.0</version>
             <extensions>true</extensions>
             <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+              <publishingServerId>central</publishingServerId>
             </configuration>
           </plugin>
         </plugins>
