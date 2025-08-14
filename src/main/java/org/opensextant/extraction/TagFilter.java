@@ -17,10 +17,12 @@ import org.opensextant.ConfigException;
 import org.opensextant.data.TextInput;
 import org.opensextant.extractors.geo.GazetteerMatcher;
 import org.opensextant.extractors.geo.PlaceCandidate;
+import org.opensextant.util.FileUtility;
 import org.opensextant.util.LuceneStopwords;
 import org.opensextant.util.TextUtils;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.prefs.CsvPreference;
+
 /*
  * We can filter out trivial place name matches that we know to be close to
  * false positives 100% of the time. E.g,. "way", "back", "north" You might
@@ -81,13 +83,10 @@ public class TagFilter extends MatchFilter {
 
         // SPECIFIC NON-PLACES BY LANGUAGE; and GENERIC STOPWORDS
         // ------------------------------------------------------
-        String lang = "ar";
-        String[] langSpecificStops = {
-                "/filters/non-placenames,ara.csv",
-                "/lang/stopwords_ar_mohataher.txt"};
-        for (String stops : langSpecificStops) {
-            langStopFilters.get("ar").addAll(loadExclusions(GazetteerMatcher.class.getResourceAsStream(stops)));
-        }
+        Set<String> terms = loadExclusions(GazetteerMatcher.class.getResourceAsStream("/filters/non-placenames,ara.csv"));
+        langStopFilters.get("ar").addAll(terms);
+        terms = FileUtility.loadDictionary(GazetteerMatcher.class.getResource("/lang/stopwords_ar_mohataher.txt"), true);
+        langStopFilters.get("ar").addAll(terms);
     }
 
     /**

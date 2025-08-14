@@ -134,6 +134,7 @@ asian,adj
 astray,adj
 authentic,adj
 auto,adj
+automated,adj
 avian,adj
 aware,adj
 axial,adj
@@ -413,6 +414,7 @@ papal,adj
 paramount,adj
 parked,adj
 partisan,adj
+partial,adj
 patient,adj
 penal,adj
 perennial,adj
@@ -1055,6 +1057,7 @@ hacker,internet
 hex,internet
 hitachi,internet
 hulu,internet
+insta,internet
 icon,internet
 img,internet
 info,internet
@@ -1602,6 +1605,7 @@ cyclone,noun
 cylinder,noun
 dairy,noun
 dame,noun
+damage,noun
 dammit,noun
 damper,noun
 danger,noun
@@ -2290,6 +2294,7 @@ privilege,noun
 prix,noun
 prize,noun
 proclamation,noun
+production,noun
 profit,noun
 progress,noun
 prohibition,noun

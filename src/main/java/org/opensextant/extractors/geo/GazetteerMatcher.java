@@ -419,6 +419,8 @@ public class GazetteerMatcher extends SolrMatcherSupport {
 
         input.characterize();
 
+        LanguageFilter langFilter = new LanguageFilter(input.langid);
+
         @SuppressWarnings("unchecked")
         List<NamedList<?>> tags = (List<NamedList<?>>) response.getResponse().get("tags");
 
@@ -462,6 +464,12 @@ public class GazetteerMatcher extends SolrMatcherSupport {
             // we might as well not make the tagger do any more work.
 
             String matchText = (String) tag.get("matchText");
+
+            /* Heuristic: Filter out particular tokens by length just by language */
+            if (langFilter.filterOut(matchText)) {
+                ++this.defaultFilterCount;
+                continue;
+            }
 
             // IF the matched text span contains odd punctuation, we'll pass on it.
             if (TextUtils.hasIrregularPunctuation(matchText)) {
@@ -662,12 +670,18 @@ public class GazetteerMatcher extends SolrMatcherSupport {
                 }
             }
 
+            // Lang filter -- apply length filter by lang now to Feature Typee.
+            if (validMatch && langFilter.filterOut(pc)) {
+                pc.addRule("LangFilter+" + input.langid);
+                validMatch = false;
+            }
+
             // Only add PlaceCandidate if it has associated locations after filtering
             if (validMatch && pc.hasPlaces()) {
                 candidates.put(pc.start, pc);
                 log.debug("Text {} matched {}", pc.getText(), namesMatched);
             } else {
-                log.debug("Place has no places={}", pc.getText());
+                log.debug("Place has no places, or is filtered out. TOK={}", pc.getText());
             }
 
         } // for tag

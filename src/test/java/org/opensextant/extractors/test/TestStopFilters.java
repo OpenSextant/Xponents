@@ -1,14 +1,10 @@
 package org.opensextant.extractors.test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,10 +12,11 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.opensextant.ConfigException;
 import org.opensextant.extraction.TagFilter;
+import org.opensextant.extractors.geo.LanguageFilter;
 import org.opensextant.extractors.xtax.TaxonFilter;
 import org.opensextant.util.FileUtility;
+import static org.junit.Assert.*;
 
 public class TestStopFilters {
 
@@ -31,7 +28,7 @@ public class TestStopFilters {
 
     }
 
-    public static void testTagFilter(String file) throws IOException, ConfigException {
+    public static void testTagFilter(String file) throws IOException {
         TagFilter filt = new TagFilter();
         String buf = FileUtility.readFile(new File(file));
         for (String tok : buf.split("\\s+")) {
@@ -54,7 +51,7 @@ public class TestStopFilters {
             }
             try (InputStream strm = obj.openStream()) {
                 HashSet<String> stopTerms = new HashSet<>();
-                for (String line : IOUtils.readLines(strm, Charset.forName("UTF-8"))) {
+                for (String line : IOUtils.readLines(strm, StandardCharsets.UTF_8)) {
                     if (line.trim().startsWith("#")) {
                         continue;
                     }
@@ -75,9 +72,24 @@ public class TestStopFilters {
         }
         for (String lang : stopFilters.keySet()) {
             Set<String> set = stopFilters.get(lang);
-            System.out.println(String.format("Lang %s= %d terms", lang, set.size()));
+            System.out.printf("Lang %s= %d terms%n", lang, set.size());
         }
 
+    }
+
+    @Test
+    public void testLangFilter() {
+
+        LanguageFilter filt = new LanguageFilter("es");
+        assertFalse(filt.filterOut("hola"));
+
+        filt = new LanguageFilter("zh");
+        assertFalse(filt.filterOut("威胁恐吓"));
+        assertTrue(filt.filterOut("威胁"));
+
+        filt = new LanguageFilter("ar");
+        assertFalse(filt.filterOut("تاريختاريخ"));
+        assertTrue(filt.filterOut("تاريخ"));
     }
 
     @Test
@@ -86,5 +98,21 @@ public class TestStopFilters {
         assertTrue(filter.filterOut("A%B"));
         assertFalse(filter.filterOut("A-B"));
         assertTrue(filter.filterOut("A-B/C-D"));
+    }
+
+    @Test
+    public void testCustomStopFilters() throws IOException {
+
+        TagFilter filt = new TagFilter();
+
+        // Test stop terms are stopped.
+        String[] terms = {"سبعمائة", "سبعمئة", "سبعون"};
+        for (String term : terms) {
+            assertTrue(filt.filterOut("ar", term));
+        }
+
+        // Test non-stop terms are not stopped:
+        String term2 = "المالية";
+        assertFalse(filt.filterOut("ar", term2));
     }
 }
