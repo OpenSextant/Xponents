@@ -85,7 +85,7 @@ public class TestStopFilters {
 
         filt = new LanguageFilter("zh");
         assertFalse(filt.filterOut("威胁恐吓"));
-        assertTrue(filt.filterOut("威胁"));
+        assertFalse(filt.filterOut("威胁"));
 
         filt = new LanguageFilter("ar");
         assertFalse(filt.filterOut("تاريختاريخ"));

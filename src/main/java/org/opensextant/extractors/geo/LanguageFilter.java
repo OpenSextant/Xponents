@@ -61,6 +61,7 @@ public class LanguageFilter extends MatchFilter {
     }
 
     static int TOKEN_LEN_DEFAULT = 6; // For undetermined language.... that is non-Latin
+    static int NAME_LEN_DEFAULT = 2 * TOKEN_LEN_DEFAULT;
 
     public LanguageFilter(String lang_id) {
         this.lang = lang_id;
@@ -93,7 +94,7 @@ public class LanguageFilter extends MatchFilter {
                 return false;
             }
         }
-        int eval_len = NAME_LEN.getOrDefault(this.lang, 2 * TOKEN_LEN_DEFAULT);
+        int eval_len = NAME_LEN.getOrDefault(this.lang, NAME_LEN_DEFAULT);
         int text_len = pc.getLength();
         // TRUE === filter out noise.  if name len is less than threshold, filter it out.
         return text_len < eval_len;

@@ -13,9 +13,9 @@
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
     <slf4j.version>2.0.12</slf4j.version>
-    <xponents.version>3.7.4</xponents.version>
-    <xponents-core.version>3.7.3</xponents-core.version>
-    <xtext.version>3.7.1</xtext.version>
+    <xponents.version>3.7.7</xponents.version>
+    <xponents-core.version>3.7.6</xponents-core.version>
+    <xtext.version>3.7.2</xtext.version>
   </properties>
 
   <dependencyManagement>
@@ -109,7 +109,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.4.14</version>
+      <version>1.5.18</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
