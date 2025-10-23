@@ -67,6 +67,14 @@ Methodology
 The **[Geocoder Handbook](./doc/Geocoder_Handbook.md)** represents 
 the Xponents methodology to geotagging and geocoding that pertains to coordinate extraction and general geotagging, i.e., XCoord and PlaceGeocoder, respectively.
 
+In terms of components here in Xponents, some basic library layout is important to understand:
+
+- **Xponents/Examples** is a demonstration project that incorporates Xponents Core, Xponents and XText
+- **Xponents Core** is the independent library
+- **Xponents** relies on core for basic classes and utilities that support tagging and geolocation, as well as the output formatting
+- **XText** supports the Examples project with content/text extraction 
+
+Starting with Examples is a great way to understand the breadth of things along with the specific Geocoding Methodology.
 
 Code Examples
 ---------------------------------------
