@@ -15,7 +15,7 @@
     <slf4j.version>2.0.17</slf4j.version>
     <xponents.version>3.8.0</xponents.version>
     <xponents-core.version>3.8.0</xponents-core.version>
-    <xtext.version>3.8.0</xtext.version>
+    <xtext.version>3.8.1</xtext.version>
   </properties>
 
   <dependencyManagement>
