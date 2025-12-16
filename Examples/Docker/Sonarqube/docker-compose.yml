@@ -1,8 +1,7 @@
-version: "3"
 
 services:
   sonarqube:
-    image: sonarqube:9-community
+    image: sonarqube:25.12.0.117093-community
     depends_on:
       - db
     environment:
@@ -10,26 +9,26 @@ services:
       SONAR_JDBC_USERNAME: sonar
       SONAR_JDBC_PASSWORD: sonar
     volumes:
-      - sonarqube9_data:/opt/sonarqube/data
-      - sonarqube9_extensions:/opt/sonarqube/extensions
-      - sonarqube9_logs:/opt/sonarqube/logs
-      - sonarqube9_temp:/opt/sonarqube/temp
+      - sonarqube25_data:/opt/sonarqube/data
+      - sonarqube25_extensions:/opt/sonarqube/extensions
+      - sonarqube25_logs:/opt/sonarqube/logs
+      - sonarqube25_temp:/opt/sonarqube/temp
     ports:
       # NOTE: starting to see modern net proxies using port 9000; remap as needed.
       - "9900:9000"
   db:
-    image: postgres:13
+    image: postgres:15
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
     volumes:
-      - postgresql_13:/var/lib/postgresql
-      - postgresql_13_data:/var/lib/postgresql/data
+      - postgresql_15_25:/var/lib/postgresql
+      - postgresql_15_25_data:/var/lib/postgresql/data
 
 volumes:
-  sonarqube9_data:
-  sonarqube9_extensions:
-  sonarqube9_logs:
-  sonarqube9_temp:
-  postgresql_13:
-  postgresql_13_data:
+  sonarqube25_data:
+  sonarqube25_extensions:
+  sonarqube25_logs:
+  sonarqube25_temp:
+  postgresql_15_25:
+  postgresql_15_25_data:
