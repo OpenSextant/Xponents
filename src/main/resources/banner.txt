@@ -10,7 +10,7 @@
 //            \ \_\
 //             \/_/
 //                       
-//                   Xponents Geotagger version 3.7 (2024-Q1)
+//                   Xponents Geotagger version 3.8 (2024-Q5)
 //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
-VERSION: 3.7.4
+VERSION: 3.8.1
 
