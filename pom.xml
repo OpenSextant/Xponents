@@ -302,6 +302,7 @@
       <groupId>org.apache.zookeeper</groupId>
       <artifactId>zookeeper</artifactId>
       <version>3.7.2</version>
+      <scope>runtime</scope>
       <exclusions>
         <exclusion>
           <groupId>io.netty</groupId>
@@ -335,12 +336,6 @@
         <groupId>org.apache.calcite</groupId>
         <artifactId>calcite-linq4j</artifactId>
         <version>1.41.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlets</artifactId>
-      <version>9.4.58.v20250814</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.htrace</groupId>
@@ -463,6 +458,10 @@
         </exclusion>
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-servlets</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-util</artifactId>
         </exclusion>
         <exclusion>
@@ -472,6 +471,10 @@
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-xml</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-rewrite</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
