@@ -187,9 +187,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>33.5.0-jre</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>33.5.0-jre</version>
       <scope>runtime</scope>
     </dependency>
 
@@ -333,9 +333,9 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-        <groupId>org.apache.calcite</groupId>
-        <artifactId>calcite-linq4j</artifactId>
-        <version>1.41.0</version>
+      <groupId>org.apache.calcite</groupId>
+      <artifactId>calcite-linq4j</artifactId>
+      <version>1.41.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.htrace</groupId>

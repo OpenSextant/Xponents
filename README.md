@@ -195,22 +195,22 @@ Insert these dependencies into your POM depending on what you need.
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents-core</artifactId>
-    <version>3.7.0</version>
+    <version>3.8.1</version>
   </dependency>
 
   <!-- Xponents SDK API -->
   <dependency>
     <groupId>org.opensextant</groupId>
     <artifactId>opensextant-xponents</artifactId>
-    <version>3.7.0</version>
+    <version>3.8.2</version>
   </dependency>
 ```
 
 For reference: [OpenSextant Xponents on Maven](https://search.maven.org/search?q=a:opensextant-xponents).  For that matter, the only relevant artifacts in our `org.opensextant` group are:
 
-* `opensextant-xponents-core  3.7.*` - This Core API
-* `opensextant-xponents       3.7.*` - This Solr-based tagger SDK
-* `opensextant-xponents-xtext 3.6.*` - XText, the text extraction toolkit
+* `opensextant-xponents-core  3.8.*` - This Core API
+* `opensextant-xponents       3.8.*` - This Solr-based tagger SDK
+* `opensextant-xponents-xtext 3.8.*` - XText, the text extraction toolkit
 
 These libraries have been folded into Xponents Core library for long term Java sustainment; They 
 are rooted under `org.opensextant.`

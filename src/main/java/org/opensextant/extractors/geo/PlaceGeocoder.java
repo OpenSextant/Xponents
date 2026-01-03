@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 public class PlaceGeocoder extends GazetteerMatcher
         implements Extractor, CountryObserver, BoundaryObserver, LocationObserver {
 
-    public static final String VERSION = "3.7";
+    public static final String VERSION = "3.8";
     public static final String METHOD_DEFAULT = String.format("PlaceGeocoder v%s", VERSION);
 
     /**

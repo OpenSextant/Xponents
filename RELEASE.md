@@ -2,6 +2,14 @@ RELEASES
 ==============
 Visit https://github.com/OpenSextant/Xponents/releases for latest library releases and notes.
 
+# 2025
+
+**Xponents 3.8**
+* Security patches: Log4J, SLF4J ~ v2.0; Logback ~ 1.5.19+, Zookeeper 3.7+; Apache Commons - io, codec, lang, text to latest
+* Minor language filter updates
+* Significant filtration in Chinese and Arabic geotags
+* Major changes in Maven packaging - new Maven Central and plugin versions
+
 # 2024
 
 **Xponents 3.7**
