@@ -3,8 +3,6 @@
   <!-- Important: Core API folder is now in ../Xponents-Core/ as its own buildable, independent repo.
    - ./Core  - Java src, foundational data and APIs
    - ./python - opensextant python library including client apps.
-
-   Changes take place in v3.7.0+ to improve buildability
    -->
   <property name="tmp" value="${basedir}/tmp" />
 
