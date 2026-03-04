@@ -10,7 +10,7 @@ Building
 ------------
 The normal `Xponents/script/dist.sh` distribution creates a release in the `./dist` folder.
 In that release the various `Dockerfile*` and `docker-compose.yml` files  will be at the 
-top level to produce the `opensextant:xponents-3.5` docker image.
+top level to produce the `opensextant:xponents-3.x` docker image.
 
 
 ```shell script
@@ -34,7 +34,7 @@ Contents of the docker distribution script is below.
 # ====================
 
 # After a succesful build (dist will be about 3.5 GB), go to the release and build docker images -- regular and then offline.
-VERSION=3.5
+VERSION=3.8
 cd ./dist/Xponents-$VERSION
 docker build --tag opensextant:xponents-$VERSION .
 

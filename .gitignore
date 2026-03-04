@@ -1,7 +1,7 @@
 #Misc:
 .DS_Store
 release
-piplib
+piplib/
 maven-repo/
 dist/
 

@@ -1,7 +1,6 @@
-FROM eclipse-temurin:18-jdk
+FROM eclipse-temurin:21-jdk
 
-ENV XLAYER_PORT=8787
-ENV RELEASE_NAME=Xponents-3.5
+ENV RELEASE_NAME=Xponents-3.8
 ENV JAVA_XMS=3500m
 ENV JAVA_XMX=3500m
 ENV XPONENTS=/home/opensextant/Xponents
@@ -9,15 +8,15 @@ ENV XPONENTS=/home/opensextant/Xponents
 RUN apt-get update  && apt-get upgrade -y
 RUN adduser opensextant --home /home/opensextant --disabled-password 
 USER opensextant
+WORKDIR $XPONENTS
 
 # --------------------------
 # Copy ./Xponents-3.x/<CONTENT> to target $XPONENTS/
 #
-COPY --chown=opensextant:opensextant . $XPONENTS/
+COPY etc/ src/ lib/ script/  python/ xponents-solr/ VERSION.txt ./
+RUN mkdir ./log
 
+EXPOSE 8787 7000
 
-WORKDIR $XPONENTS
-EXPOSE $XLAYER_PORT 7000
-
-ENTRYPOINT ./script/xlayer-docker.sh $XLAYER_PORT
+ENTRYPOINT [ "./script/xlayer-docker.sh", "8787" ]
 

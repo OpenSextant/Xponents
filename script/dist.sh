@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #
-VER=3.7
+VER=3.8
 
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
@@ -16,28 +16,48 @@ msg(){
   echo "========================="
 }
 
-msg "Stop Solr 7.x before copying to distribution"
+echo "Make sure you copy Xponents Core python lib into place in ./build"
+if [ -d "./build"  ] ; then
+   ls ./build/opensextant*tar.gz
+else
+   echo "Missing build" 
+   exit 
+fi
+
+# Python setup:
+export PYTHONPATH=$basedir/piplib
+
+
+msg "Prepare additional Java resources"
 # ----------------------
-cd $basedir/solr
-./mysolr.sh stop 7000
+ant  dist
 
 msg "Make Python library"
 msg " TODO: document using python lib from distro, as it is not fully installed." 
 # ----------------------
 
-pydist=`ls $CORE/python/opensextant-1*.tar.gz`
-if [ -e  "$pydist" ] ; then
-    pip3 install -U -t $REL/piplib $pydist
+python_installed=0
+for pydist in ./build/opensextant*.whl; do
+    cp $pydist $REL/python/
+    pip3 install -U -t $basedir/piplib pip setuptools wheel
+    pip3 install -U -t $basedir/piplib $pydist
+    python_installed=1
+    break
+done
+
+if [ "$python_installed" -eq 1 ] ;then 
+    echo "Python API installed"
 else
     echo "Python API lib is missing"
     exit
 fi
 
 
-msg "Prepare additional Java resources"
+msg "Stop Solr 7.x before copying to distribution"
 # ----------------------
-export PYTHONPATH=$REL/piplib
+
 cd $basedir/solr;
+./mysolr.sh stop 7000
 # resource files for person names
 python3 ./script/assemble_person_filter.py
 # copy to Maven project -- TODO:  final gaz-meta should have happened befoe mvn install or ant dist
@@ -55,11 +75,6 @@ pydoc3 -w opensextant \
 
 
 cd $basedir
-
-msg "Build and Package project"
-# ----------------------
-ant  dist
-
 find $REL -type f -name "*.sh" -exec chmod u+x {} \; -print
 
 msg "Patch Solr Server"
