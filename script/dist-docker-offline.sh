@@ -2,7 +2,7 @@
 
 echo "Building Docker images - Regular and Offline (Maven+Xponents)"
 
-VERSION="3.5"
+VERSION="3.8"
 script=`dirname $0;`
 basedir=`cd -P $script/..; echo $PWD`
 

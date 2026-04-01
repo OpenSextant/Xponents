@@ -16,7 +16,7 @@ services:
   gazetteer:
     container_name: gazetteer
     image: mubaldino/opensextant:xponents-3.8
-    entrypoint: ./xponents-solr/solr7-dist/bin/solr start -p 7000 -s ./xponents-solr/solr7 -m 3g -q  -foreground  -force
+    entrypoint: ./xponents-solr/solr7-dist/bin/solr start -p 7000 -s ./xponents-solr/solr7 -m 2g -q  -foreground  -force
     ports:
         - "7000:7000"
 

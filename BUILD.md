@@ -1,3 +1,44 @@
+End of Life Notice
+==================
+
+As of 2026 (and even years ealier), Apache Solr 7.7 has been over taken by serious vulnerabilities.
+For the time being the existing build of `xponents-solr` the underlying Solr catalog and tagger 
+will not be re-built.  We will use the existing published docker image `opensextant:xponents-3.5.10`
+as the master copy of the app to provide the bulk Solr catalog.  The approach to sustainment
+is to build new Docker images in the 3.x series only by patching a copy of that base image and republishing.
+
+* v3.5 --> v3.8:  
+```shell
+
+    # BUILD -- short version.
+    mvn install 
+    mvn test
+   ./script/dist.sh 
+
+    # GATHER OPENSEXTANT 3.5:
+    cd ../dist/Xponents-3.8
+    docker pull opensextant:xponents-3.5.10
+    docker run -p 8787:8787 --rm --detach  --name O35 opensextant:xponents-3.5.10
+    
+    # Remove local copy once if you got it from the build script. 
+    rm -r ./xponents-solr/ 
+    docker cp O35:/home/opensextant/Xponents/xponents-solr ./xponents-solr
+    
+    # PATCH: Copy new JARs and remove old ones.  VERIFY yourself if any vulnerable JARs are present.
+    #             Avoid over-patching like Solr 7.7 cannot be upgraded. 
+    ./patch_34_38.sh
+    
+    # REBUILD
+    docker build --tag opensextant:xponents-3.8 .
+    
+    # TEST, then PUBLISH, etc.
+    docker run --rm --detach -p 8787:8787 --name O38 opensextant:xponents-3.8
+```
+
+The rest of the BUILD instructions here are relevant to a complete software distribution. 
+For these purposes the Docker image of Xponents REST has been most useful.
+
+
 
 Building Xponents 
 ==================

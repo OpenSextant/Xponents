@@ -51,10 +51,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <solr.version>7.7.3</solr.version>
     <slf4j.version>2.0.17</slf4j.version>
-    <log4j.version>2.25.3</log4j.version>
+    <log4j.version>2.25.4</log4j.version>
     <restlet.version>2.4.3</restlet.version>
     <xponents.version>3.8.1</xponents.version>
-    <jackson.version>2.15.4</jackson.version>
+    <jackson.version>2.18.6</jackson.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -94,7 +94,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.5.19</version>
+        <version>1.5.32</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -301,7 +301,7 @@
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
       <artifactId>zookeeper</artifactId>
-      <version>3.7.2</version>
+      <version>3.8.4</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
