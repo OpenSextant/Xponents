@@ -125,7 +125,7 @@ Code References and Examples
 * Java:
     * [FlexPat overview in Java](https://opensextant.github.io/Xponents/doc/core-apidocs/org/opensextant/extractors/flexpat/package-summary.html).
 * Python:
-    * [FlexPat API](https://opensextant.github.io/Xponents/doc/pydoc/opensextant.FlexPat.html)
+    * [FlexPat API](https://opensextant.github.io/Xponents/doc/pydoc/opensextant/FlexPat.html)
 * Testing:
     * XCoord example: Invoked
       using `./script/xponents-demo.sh`, [TestXCoord.java](https://github.com/OpenSextant/Xponents/blob/master/Core/src/test/java/org/opensextant/extractors/test/TestXCoord.java)

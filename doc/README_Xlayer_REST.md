@@ -61,7 +61,7 @@ want to contribute your implementation please file an issue in the GitHub projec
 This page focuses on using the Python API to demonstrate the value of the Xponents
 geotagging and extraction approach. 
 
-[ **[Latest Release](https://github.com/OpenSextant/Xponents/releases/tag/python-v1.4.7)** ] [ **[Python API reference](../doc/pydoc/opensextant.xlayer.html)** ] [ **[Python Source](https://github.com/OpenSextant/Xponents/blob/master/python/opensextant/xlayer.py)** ]
+[ **[Latest Release](https://github.com/OpenSextant/Xponents-Core/releases/tag/python-v1.6.9)** ] [ **[Python API reference](../doc/pydoc/opensextant/xlayer.html)** ] [ **[Python Source](https://github.com/OpenSextant/Xponents-Core/blob/master/src/main/python/opensextant/xlayer.py)** ]
 
 Install it, `pip3  install opensextant-1.4.*.tar.gz`.  You now can make use of the `opensextant.xlayer` module. 
 Here is a synopsis of the `XlayerClient` in action.  You can also refer to the client test code 
