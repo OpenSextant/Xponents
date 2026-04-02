@@ -39,7 +39,7 @@ msg " TODO: document using python lib from distro, as it is not fully installed.
 python_installed=0
 for pydist in ./build/opensextant*.whl; do
     cp $pydist $REL/python/
-    pip3 install -U -t $basedir/piplib pip setuptools wheel
+    pip3 install -U -t $basedir/piplib pip setuptools wheel hatch pdoc
     pip3 install -U -t $basedir/piplib $pydist
     python_installed=1
     break
@@ -67,12 +67,7 @@ ant gaz-meta
 msg "Prepare Python API docs" 
 # ----------------------
 cd $basedir/doc/pydoc/
-pydoc3 -w opensextant \
-   opensextant.xlayer opensextant.utility \
-   opensextant.phonetics  opensextant.advas_phonetics \
-   opensextant.gazetteer opensextant.extractors \
-   opensextant.TaxCat opensextant.FlexPat
-
+python3 -m pdoc -d markdown --no-include-undocumented --search -o . opensextant
 
 cd $basedir
 find $REL -type f -name "*.sh" -exec chmod u+x {} \; -print
