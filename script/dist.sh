@@ -66,8 +66,7 @@ ant gaz-meta
 
 msg "Prepare Python API docs" 
 # ----------------------
-cd $basedir/doc/pydoc/
-python3 -m pdoc -d markdown --no-include-undocumented --search -o . opensextant
+python3 -m pdoc -d markdown --no-include-undocumented --search -o $basedir/doc/pydoc/  opensextant
 
 cd $basedir
 find $REL -type f -name "*.sh" -exec chmod u+x {} \; -print
