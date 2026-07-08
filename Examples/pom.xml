@@ -12,7 +12,7 @@
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
-    <slf4j.version>2.0.17</slf4j.version>
+    <slf4j.version>2.0.18</slf4j.version>
     <xponents.version>[3.8.0,)</xponents.version>
     <xponents-core.version>[3.8.0,)</xponents-core.version>
     <xtext.version>[3.8.0,)</xtext.version>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.apache.groovy</groupId>
       <artifactId>groovy</artifactId>
-      <version>4.0.29</version>
+      <version>4.0.32</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -109,7 +109,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.32</version>
+      <version>1.5.37</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
