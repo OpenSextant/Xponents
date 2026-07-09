@@ -9,7 +9,8 @@
 #    we're heading to the park ...    => [ we, 're, heading, to, the, park ]
 #    Mexico's valiant effort to...    => [ mexico, 's, valiant, effort, to ]
 # etc.
-#
+#    Prefix filters not working:  O'Tolland => [ o', tolland ] ... but this doesn't work.
+"o'" => "o' "
 "'s" => " 's"
 "'ve" => " 've"
 "'re" => " 're"
