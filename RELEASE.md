@@ -1,6 +1,24 @@
-RELEASES
-==============
+# RELEASES
+
 Visit https://github.com/OpenSextant/Xponents/releases for latest library releases and notes.
+
+| Module                                    | Version                          | Date     | Access |
+|-------------------------------------------|----------------------------------|----------|--------|
+| Java SDK `opensextant`                    | 3.8.3                            | 2026-OCT |        |
+| Java Core `opensextant-core`              | 3.8.3                            | 2026-OCT |        |
+| XText `opensextant-xtext`                 | 3.8.2                            | 2026-MAY |        |
+| Python REST client library, `opensextant` | 1.7                              | 2025-JUL |        |
+| Docker REST server | `opensextant-xponents-3.5.10`    | 2024     |        |
+| Xponents Solr Gazetteer | packaged with Docker REST server | 2024     |
+
+# 2026
+
+**Xponents 3.8**
+* Java library versions @ opensextant-3.8.3*  opensextant-core-3.8.3*, opensextant-xtext-3.8.2 (* pending pub to maven,)
+* Python library in Xponents-Core, is v1.7
+* Docker build is at `opensextant-xponents-3.5.10` with the `xponents-solr` world gazetteer build from 2024. 
+* In Examples/Docker a script is provided to show how to update the library functions from v3.5 to v3.8 and onward.
+
 
 # 2025
 
