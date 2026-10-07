@@ -259,10 +259,11 @@ Across all the OpenSextant thought leadership we have been primarily MITRE staff
 * Marc Ubaldino
 * David Lutz
 * Dr. Todd Hay 
-* David Smiley
-* Jason Mathews
-* Rachel Rand
-* Dr. Al Piszcz
+* Rich Markeloff
+* Jason Mathews - GISCore contributor 
+* Dr. Al Piszcz - XCoord contributor
+* Rachel Rand - GISCore contributor
+* David Smiley - All things Solr/Lucene/Spatial contributor
 
 Demonstration
 ---------------------
