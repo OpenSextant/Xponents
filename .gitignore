@@ -1,25 +1,18 @@
 #Misc:
 .DS_Store
-release
+release/
 piplib/
 maven-repo/
 dist/
+build/
 
 # Generated data or Downloaded resources.
 # Do not check in gazetteer metadata from ./solr/etc/ -- It is copied to src/main/resources to prepare JAR
-src/main/resources/additions/
-src/main/resources/filters/
 src/main/resources/lang/
-Core/src/main/resources/geonames.org/
-Core/src/main/resources/ISO-639-2_utf-8.txt
-Core/etc/langdetect
 
 
 #Maven output
 target/
-#  TODO can we remove this?:
-dist/
-build/
 bin/
 log
 logs

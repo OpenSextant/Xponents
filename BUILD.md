@@ -48,13 +48,31 @@ Then you can begin working with this extractor SDK (opensextant-xponents)
 
 1. Setup project. 
 
-```
-  # Set up Core API with independent reference data -- If you are attempting a build
-  # you should also have checked out Xponents-Core repo and understand how to build that first
-  # as a precursor to this build, which depends on Core.
+Managing public domain data sets pulled down, scraped, harvested, etc. involves additional Python libraries
+that are not required by normal use of the `opensextant` package.  Add this Pip-installable items now from the
+Xponents root folder:
 
-  # Set the main SDK API with the Gazetteer data unique to this project:
-  cd solr && ./build.sh meta
+```shell 
+
+    # Using venv or other means, follow:
+    # Xponents python lib must be built first. This is not yet public pypi:
+    mkdir -p build 
+    cp ../Xponents-Core/src/main/python/dist/opensextant-1.7.1-py3-none-any.whl ./build/
+    pip install -r ./requirements.txt
+
+```
+
+2.  Assemble Metadata resources
+
+Once python libraries are setup, run the routines to pre-assemble stop term lists and other metadata
+which is used both in the JAR libraries as well as in the Solr Gazetteer.
+
+
+```shell
+   pushd solr
+     # Get raw names data, pre-assemble metadata and start the solr server:
+     ./build.sh meta data start
+   popd
 ```
 
 
@@ -243,10 +261,20 @@ If this sounds like a bit much, then leverage the artifacts in Maven Central or 
 Maven Publishing
 ----------------
 -  Fix all versions to be release versions. No SNAPSHOTS, no broken javadoc, etc. Go through entire packgaging phase.
--  Ensure GPG key is known...
--  and OSSRH login is set in settings.xml
+-  Ensure GPG key is setup with your identity and valid email address (See below)
+-  Publish the key to a key server used by Sonatype; Use HKPS protocol in URL
+-  and Sonatype / OSSRH login is set in settings.xml
 -  Prerequsite items include a `pinentry` and Gnu PGP utilities. On Mac, `brew install gnupg pinentry-mac`, for example.
 -  Review [Maven Plugin](https://maven.apache.org/plugins/maven-gpg-plugin/) for details
+-  Refer to [Sonatype Documentation](https://central.sonatype.org/publish/requirements/gpg) for questions.
+
+```
+    gpg --generate-key
+    ...
+    ..
+    gpg --keyserver hkps://keyserver.ubuntu.com   --send-keys  1234ABC.....
+
+```
 
 ```
   mvn clean deploy -P release

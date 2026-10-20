@@ -80,12 +80,11 @@ Xponents root folder:
     cd Xponents
     ./setup.sh 
 
-    # Note - if working with a distribution release, the built Python package is in ./python/ (not ./python/dist/)
-    # Note - chose any means you want to set your effective Python environment; I use the PYTHONPATH var
 
-    export PYTHONPATH=$PWD/piplib
-
-    # or 
+    # Using venv or other means, follow:
+    # Xponents python lib must be built first. This is not yet public pypi:
+    cp ../../Xponents-Core/src/main/python/dist/opensextant-1.7.1-py3-none-any.whl ./build/
+    pip install -r ./requirements.txt
 
     . ./dev.env
     
@@ -217,6 +216,7 @@ reviewing Solr index configurations.
     unzip solr-7.7.3.zip
     SOLR_DIST=./solr7-dist
     mv ./solr-7.7.3  $SOLR_DIST
+    mv ./solr-7*zip ../build/
 
     rm -rf $SOLR_DIST/example $SOLR_DIST/server/solr/configsets $SOLR_DIST/contrib $SOLR_DIST/dist/test-framework
 

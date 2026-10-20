@@ -12,9 +12,9 @@
   <artifactId>opensextant-xponents-examples</artifactId>
   <properties>
     <checkstyle.skip>true</checkstyle.skip>
-    <slf4j.version>2.0.18</slf4j.version>
-    <xponents.version>[3.8.0,)</xponents.version>
-    <xponents-core.version>[3.8.0,)</xponents-core.version>
+    <slf4j.version>[2.0.20,2.1.0)</slf4j.version>
+    <xponents.version>[3.8.4,)</xponents.version>
+    <xponents-core.version>[3.8.4,)</xponents-core.version>
     <xtext.version>[3.8.0,)</xtext.version>
   </properties>
 
@@ -65,6 +65,7 @@
       <artifactId>java-getopt</artifactId>
       <version>1.0.13</version>
     </dependency>
+<!--
     <dependency>
       <groupId>org.opensextant</groupId>
       <artifactId>opensextant-xponents-xtext</artifactId>
@@ -84,6 +85,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+-->
     <dependency>
       <groupId>org.apache.groovy</groupId>
       <artifactId>groovy</artifactId>
@@ -99,7 +101,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.21.0</version>
+      <version>2.22.0</version>
     </dependency>
     <dependency>
       <groupId>commons-cli</groupId>
@@ -109,7 +111,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.37</version>
+      <version>1.6.5</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
