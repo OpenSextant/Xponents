@@ -9,16 +9,17 @@ build/
 # Generated data or Downloaded resources.
 # Do not check in gazetteer metadata from ./solr/etc/ -- It is copied to src/main/resources to prepare JAR
 src/main/resources/lang/
+src/main/resources/filters/
+src/main/resources/additions/
 
 
 #Maven output
 target/
 bin/
-log
-logs
-export
+log/
+logs/
+export/
 results/
-build.properties
 
 #Build files
 #Eclipse
@@ -52,3 +53,5 @@ nbproject/
 # Solr indices:
 index/
 *.sqlite
+
+.vscode/
